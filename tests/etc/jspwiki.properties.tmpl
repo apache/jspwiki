@@ -26,6 +26,15 @@ jspwiki.translatorReader.useOutlinkImage = false
 jspwiki.attachmentProvider = BasicAttachmentProvider
 jspwiki.basicAttachmentProvider.storageDir = @tests.pagedir@
 
+jspwiki.encoding = ISO-8859-1
+
+jspwiki.auth.useOldAuth = true
+jspwiki.authenticator = FileAuthenticator
+jspwiki.fileAuthenticator.fileName = @tests.auth.filename@
+
+jspwiki.filterConfig = @tests.filter@
+
+
 #
 #  Special page references.
 #
