@@ -60,8 +60,11 @@ public class AttachmentManagerTest extends TestCase
         String tmpfiles = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 
         File f = new File( tmpfiles, NAME1+BasicAttachmentProvider.DIR_EXTENSION );
+        File f2 = new File( tmpfiles, NAMEU+BasicAttachmentProvider.DIR_EXTENSION );
 
         TestEngine.deleteAll( f );
+        TestEngine.deleteAll( f2 );
+        TestEngine.emptyWorkDir();
     }
 
     public void testEnabled()        
