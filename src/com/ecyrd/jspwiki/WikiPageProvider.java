@@ -48,7 +48,7 @@ public interface WikiPageProvider
     /**
      *  Attempts to save the page text for page "page".
      */
-    public void putPageText( String page, String text );
+    public void putPageText( WikiPage page, String text );
 
     /**
      *  Return true, if page exists.
