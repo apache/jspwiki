@@ -21,6 +21,13 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+
 import org.apache.log4j.Category;
 
 /**
@@ -28,7 +35,28 @@ import org.apache.log4j.Category;
  */
 public class FileUtil
 {
-    private static final Category   log = Category.getInstance(FileUtil.class);
+    private static final Category   log      = Category.getInstance(FileUtil.class);
+    static               boolean    c_hasNIO = false;
+
+    private static final int        MINBUFSIZ = 32768; // bytes
+
+
+    static
+    {
+        try
+        {
+            if( Charset.forName( "UTF-8" ) != null )
+            {
+                log.info("JDK 1.4 detected.  Using NIO library.");
+                c_hasNIO = true;
+            }
+        }
+        catch( Exception e )
+        {
+            log.info("Not running under JDK 1.4; not using NIO library.");
+        }
+    }
+
 
     /**
      *  Makes a new temporary file and writes content into it.
@@ -154,7 +182,10 @@ public class FileUtil
     }
 
     /**
-     *  Is smart and falls back to ISO-8859-1 if you get exceptions.
+     *  Reads in file contents.
+     *  <P>
+     *  This method is smart and falls back to ISO-8859-1 if the input stream does not
+     *  seem to be in the specified encoding.
      */
     // FIXME: There is a bad bug here.  We cannot guarantee that realinput.available()
     // returns anything sane.  We don't want to read everything into a byte array
@@ -165,11 +196,14 @@ public class FileUtil
     // and use a minimum buffer size to compensate.
     // This may fail in a number of ways, a better way is seriously needed.
 
-    private static final int MINBUFSIZ = 32768; // bytes
-
     public static String readContents( InputStream input, String encoding )
         throws IOException
-    {
+    {        
+        if( c_hasNIO )
+        {
+            return readContents14( input, encoding );
+        }
+
         Reader in  = null;
         Writer out = null;
 
@@ -224,6 +258,53 @@ public class FileUtil
                 if( out != null ) out.close();
             }
             catch( Exception e ) {} // FIXME: Log errors.
+        }
+    }
+
+    /**
+     *  JDK 1.4 version of the above.  This version circumvents all kinds
+     *  of problems just by gulping in the entire inputstream to a ByteArray.
+     */
+    private static String readContents14( InputStream input, String encoding )
+        throws IOException
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        copyContents( input, out );
+
+        ByteBuffer     bbuf        = ByteBuffer.wrap( out.toByteArray() );
+
+        Charset        cset        = Charset.forName( encoding );
+        CharsetDecoder csetdecoder = cset.newDecoder();
+
+        csetdecoder.onMalformedInput( CodingErrorAction.REPORT );
+        csetdecoder.onUnmappableCharacter( CodingErrorAction.REPORT );
+
+        try
+        {
+            CharBuffer cbuf = csetdecoder.decode( bbuf );
+
+            return cbuf.toString();
+        }
+        catch( CharacterCodingException e )
+        {
+            Charset        latin1    = Charset.forName("ISO-8859-1");
+            CharsetDecoder l1decoder = latin1.newDecoder();
+
+            l1decoder.onMalformedInput( CodingErrorAction.REPORT );
+            l1decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
+
+            try
+            {
+                bbuf = ByteBuffer.wrap( out.toByteArray() );
+
+                CharBuffer cbuf = l1decoder.decode( bbuf );
+
+                return cbuf.toString();
+            }
+            catch( CharacterCodingException ex )
+            {
+                throw (CharacterCodingException) ex.fillInStackTrace();
+            }
         }
     }
 
