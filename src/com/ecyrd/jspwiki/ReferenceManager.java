@@ -116,6 +116,7 @@ public class ReferenceManager
      */
     public ReferenceManager( WikiEngine engine, Collection pages )
     {
+        log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
         m_refersTo = new HashMap();
         m_referredBy = new HashMap();
         m_engine = engine;
