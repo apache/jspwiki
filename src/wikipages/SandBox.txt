@@ -1,11 +1,11 @@
-Please check [RecentChanges].
+Please ''check [RecentChanges].
 
 Testing. fewfwefe
 
 CHeck [testpage]
 
 More testing.
-
+dsadsadsa''
 Is this {{truetype}} or not?
 What about {{{This}}}?
 How about {{this?
@@ -13,9 +13,23 @@ How about {{this?
 {{{
 {{text}}
 }}}
-ieieiensnsnsn
+goo
 
 <B>Not bold</b>
+
+motto
+
+* This is a list which we
+  shall continue on a other line.
+* There is a list item here.
+*  Another item.
+* More stuff, which continues
+ on a second line.  And on
+ a third line as well.
+ And a fourth line.
+* Third item.
+ 
+Foobar.
 
 ----
 
@@ -27,9 +41,13 @@ More text.
 
 This should be __bold__ text.
 
-__more bold text__
+__more bold text continuing
+on the next line.__
 
-__oops, forgot to close
+__more bold text continuing
+
+on the next paragraph.__
+
 
 This should be normal.
 

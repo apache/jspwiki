@@ -2,7 +2,7 @@
 
 WikiWiki is Hawaiian and means "quick".  The original idea of WikiWiki was to create a collaborative, fast environment which would still be persistent.
 
-Anyone can contribute, even anonymously.  Yes, you can delete what other people said, and even delete whole pages, but surprisingly, wiki [does work|http://c2.com/cgi/wiki?WhyWikiWorks].
+Anyone can contribute, even anonymously.  Yes, you can delete what other people said, and even delete whole pages, but surprisingly, wiki [does work|WikiWikiWeb:WhyWikiWorks].
 
 When editing, you can easily create (and you should create) hyperlinks by just putting the word in square brackets, [[like this].  If the page you are referring to does not exist, the resulting page will show the name underlined, with a following question mark.  Like this: [ThisPageDoesNotExist].  (Please don't foil this example by creating that page...)
 

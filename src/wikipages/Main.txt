@@ -1,10 +1,17 @@
-Hi!  I am Janne's [own Wiki|About].
+!!!Congratulations!
 
-If you want to test this Wiki out, please use [SandBox].
+You have successfully installed [JSPWiki|About].
 
-If you're new to Wiki, please see [OneMinuteWiki] for tips on how this
-whole shebang works.
+You have some pages set up for you:
 
-There is also a [TODO list], and a list of recent [News].
+* For testing things, try the [SandBox].
+* For a quick look on what Wiki is, check out [OneMinuteWiki].
+* For all of the Wiki features, see [TextFormattingRules].
+* For a guideline on good working habits with wiki, see [WikiEtiquette].
+* To see what this particular wiki is about, click on the Wiki name
+  on the top left corner of the browser window, or [click here|SystemInfo].
 
-[Here's a list of the regular users|UserList]
+
+Good luck, and thanks for choosing JSPWiki!
+
+--[Janne Jalkanen|mailto:jalkanen+jspwiki@regex.fi].
