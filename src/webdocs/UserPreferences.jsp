@@ -35,9 +35,9 @@
     {
         String name = wiki.safeGetParameter( request, "username" );
 
+        wiki.logout( pageContext.getSession() );
         UserProfile profile = new UserProfile();
         profile.setName( TranslatorReader.cleanLink(name) );
-
         Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
                                    profile.getStringRepresentation() );
         prefs.setMaxAge( 90*24*60*60 ); // 90 days is default.
