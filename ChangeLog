@@ -2,6 +2,8 @@
 
         * v2.1.123.
 
+        * RCSFileProvider would sometimes throw a NPE.  Fixed.
+        
         * Fixed BugXSSVulnerabilityInSearch.jsp by making sure Search.jsp
         applies entity replacement at the proper place.  Reported by Jeremy
         Bae.
