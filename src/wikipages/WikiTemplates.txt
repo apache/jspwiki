@@ -121,6 +121,31 @@ These are the different "content" pages that are included by
 "DiffContent.jsp" displays the diff, etc.  You can just easily reuse
 these, or do something else.
 
+!A clarifying picture
+{{{
+
+     Wiki.jsp, PageInfo.jsp, etc.
+        ==>   templates/<name_of_template>/ViewTemplate.jsp
+
+
+     Edit.jsp
+        ==>   templates/<name_of_template>/EditTemplate.jsp
+}}}
+
+!Structure of the "default" template
+{{{
+     ViewTemplate.jsp
+        (Provide basic layout, incl. SearchBox.jsp)
+        (Include proper content page)
+        ==> PageContent.jsp   (If request was for Wiki.jsp)
+        ==> InfoContent.jsp   (If request was for PageInfo.jsp)
+        etc.
+
+     EditTemplate.jsp
+        (Provide edit page layout)
+        (Includes only SearchBox.jsp)
+
+}}}
 
 !!Explanation of the different tags
 

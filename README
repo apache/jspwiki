@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.16 $
-                             $Date: 2003-03-02 13:37:05 $
+                         $Revision: 1.17 $
+                             $Date: 2003-03-23 09:40:59 $
                            $Author: jalkanen $
 
 What is it?
@@ -57,20 +57,25 @@ Pre-requirements
 
 Okay, so you wanna Wiki?  You'll need the following things:
 
+REQUIRED:
+
 * A JSP engine.  I recommend Tomcat from
   http://jakarta.apache.org/tomcat for a really easy installation.
-
-* JavaMail package from java.sun.com, if you want to use log4j mailing
-  capabilities.  You'll also need the Java Activation Framework.
-
-* RCS versioning system installed and available in your PATH if you
-  want to use RCS versioning.  But you can always use the
-  VersioningFileManager...
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
 
 * And of course, a server to run the JSP engine on.
+
+OPTIONAL:
+
+* JavaMail package from java.sun.com, if you want to use log4j mailing
+  capabilities.  You'll also need the Java Activation Framework.
+
+* RCS versioning system installed and available in your PATH if you
+  want to use RCS versioning.  It is also possible (and on Windows, it
+  is even recommended) to use the VersioningFileProvider, which does
+  not require RCS.
 
 
 
@@ -93,7 +98,7 @@ thing you need to set is the directory where you want your wiki pages
 to be stored.  I recommend a directory that is regularly backed up.
 
 Unzip the contents of jspwiki-samplepages.zip into your newly created
-directory.
+directory.  You can find the rest of the documentation in there.
 
 (Re)start tomcat.
 
@@ -149,8 +154,8 @@ The other good document to read is doc/Templates.txt, which explains
 how the JSPWiki templating system works.
 
 
-Where to go next?
------------------
+Where to go next aka. where is the rest of the documentation?
+-------------------------------------------------------------
 
 With this information, you should've gotten the JSPWiki engine
 running.  I now suggest that you extract all of the files in
@@ -170,7 +175,8 @@ enough not to mess with the JSP tags (all the stuff between <% and
 %>).
 
 With JSPWiki v2, we have split the functionality from presentation.
-Thus you can, and should edit only the pages under templates/.
+Thus you can, and should edit only the pages under templates/.  See
+the page WikiTemplates for more information.
 
 While Tomcat is also a fully featured Web server, it is not
 particularly fast.  You might also have a web server already running.
