@@ -7,9 +7,6 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 import javax.servlet.*;
-import com.ecyrd.jspwiki.acl.*;
-import com.ecyrd.jspwiki.auth.permissions.*;
-import com.ecyrd.jspwiki.auth.*;
 
 public class TranslatorReaderTest extends TestCase
 {
