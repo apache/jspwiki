@@ -23,8 +23,11 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.text.ParseException;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.UserProfile;
@@ -52,12 +55,21 @@ public class AttachmentServlet
     extends HttpServlet
 {
     private WikiEngine m_engine;
-    private Category log = Category.getInstance( AttachmentServlet.class ); 
+    Logger log = Logger.getLogger(this.getClass().getName());
 
     public static final String HDR_VERSION     = "version";
     public static final String HDR_NAME        = "page";
 
+    /** Default expiry period is 1 day */
+    protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000; 
+
     private String m_tmpDir;
+
+    //
+    // Not static as DateFormat objects are not thread safe.
+    // Used to handle the RFC date format = Sat, 13 Apr 2002 13:23:01 GMT
+    //
+    private final DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     /**
      * Initializes the servlet from WikiEngine properties.
@@ -76,6 +88,69 @@ public class AttachmentServlet
                    m_tmpDir + " for temporary storage." );
     }
 
+    /**
+     *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
+     */
+    private boolean checkFor304( HttpServletRequest req,
+                                 Attachment att )
+    {
+
+        Date lastModified = att.getLastModified();
+
+        //
+        //  We'll do some handling for CONDITIONAL GET (and return a 304)
+        //  If the client has set the following headers, do not try for a 304.
+        //
+        //    pragma: no-cache
+        //    cache-control: no-cache
+        //
+
+        if( "no-cache".equalsIgnoreCase(req.getHeader("Pragma"))
+            || "no-cache".equalsIgnoreCase(req.getHeader("cache-control"))) 
+        {
+            log.debug("Client specifically wants a fresh copy of this attachment :" + 
+                     att.getFileName());
+        } 
+        else 
+        {
+            long ifModifiedSince = req.getDateHeader("If-Modified-Since");
+
+            //log.info("ifModifiedSince:"+ifModifiedSince);
+            if( ifModifiedSince != -1 )
+            {
+                long lastModifiedTime = lastModified.getTime();
+
+                //log.info("lastModifiedTime:" + lastModifiedTime);
+                if( lastModifiedTime >= ifModifiedSince )
+                {
+                    return true;
+                }
+            } 
+            else
+            {
+                try 
+                {
+                    String s = req.getHeader("If-Modified-Since");
+
+                    if( s != null ) 
+                    {
+                        Date ifModifiedSinceDate = rfcDateFormat.parse(s);
+                        //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
+                        if( lastModified.after(ifModifiedSinceDate) ) 
+                        {
+                            return true;
+                        }
+                    }
+                } 
+                catch (ParseException e) 
+                {
+                    log.warn(e.getLocalizedMessage(), e);
+                }
+            }
+        }
+         
+        return false;
+    }
 
     /**
      * Serves a GET with two parameters: 'wikiname' specifying the wikiname
@@ -113,6 +188,16 @@ public class AttachmentServlet
 
                 if( att != null )
                 {
+                    //
+                    //  Check if the client already has a version of this attachment.
+                    //
+                    if( checkFor304( req, att ) )
+                    {
+                        log.debug("Client has latest version already, sending 304...");
+                        res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+                        return;
+                    }
+
                     String mimetype = getServletConfig().getServletContext().getMimeType( att.getFileName().toLowerCase() );
 
                     if( mimetype == null )
@@ -126,12 +211,19 @@ public class AttachmentServlet
                     //  We use 'inline' instead of 'attachment' so that user agents
                     //  can try to automatically open the file.
                     //
-                    res.setHeader( "Content-Disposition", 
-                                   "inline; filename=" + att.getFileName() + ";" );
 
-                    // If a size is provided by the provider, report it. 
+                    res.addHeader( "Content-Disposition",
+                                   "inline; filename=\"" + att.getFileName() + "\";" );
+                    long expires = new Date().getTime() + DEFAULT_EXPIRY;
+                    res.addDateHeader("Expires",expires);
+                    res.addDateHeader("Last-Modified",att.getLastModified().getTime());
+
+                    // If a size is provided by the provider, report it.
                     if( att.getSize() >= 0 )
+                    {
+                        log.info("size:"+att.getSize());
                         res.setContentLength( (int)att.getSize() );
+                    }
 
                     OutputStream out = res.getOutputStream();
                     InputStream  in  = mgr.getAttachmentStream( att );
@@ -147,12 +239,14 @@ public class AttachmentServlet
                     in.close();
                     out.close();
 
-                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteHost();
-                    log.debug( msg );
-
+                    if(log.isDebugEnabled())
+                    {
+                        msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteHost();
+                        log.debug( msg );
+                    }
                     if( nextPage != null ) res.sendRedirect( nextPage );
 
-		    return;
+                    return;
                 }
                 else
                 {
