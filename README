@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.9 $
-                             $Date: 2002-01-07 21:34:44 $
+                         $Revision: 1.10 $
+                             $Date: 2002-02-24 11:05:44 $
                            $Author: jalkanen $
 
 What is it?
@@ -100,6 +100,16 @@ You should see the Main Wiki page.  See the next section if you want
 to edit the pages =).
 
 
+Installation with Windows
+-------------------------
+
+If you are using a version of Microsoft Windows, you'll find that
+getting the version control functioning may be a bit problematic.
+There is some documentation within the samplepages archive, on page
+"WindowsInstall".
+
+
+
 Upgrading from previous versions
 --------------------------------
 
@@ -120,7 +130,8 @@ worth your while.  JSPWiki should in theory stay backwards compatible
 =).
 
 Check the contents of web.xml as well - there may have been some
-changes.
+changes.  It's also a good idea to check "jspwiki.properties" as well
+- there might be some new properties which you might find useful.
 
 Restart Tomcat.
 
@@ -238,9 +249,9 @@ more information.
 Contact
 -------
 
-JSPWiki was written by Janne Jalkanen.  You may send email to me
-at Janne.Jalkanen@ecyrd.com.  Feel free to send me patches, suggestions,
-whatever.
+JSPWiki was written by Janne Jalkanen.  You may send email to me at
+Janne.Jalkanen@nospam.ecyrd.com.  (Remove the nospam from the
+address).  Feel free to send me patches, suggestions, whatever.
 
 JSPWiki is available at http://www.iki.fi/~jalkanen/JSPWiki/
 
