@@ -69,6 +69,7 @@ public class FileUtil
 
     /**
      *  Runs a simple command in given directory.
+     *  The environment is inherited from the parent process.
      *
      *  @return Standard output from the command.
      */
@@ -79,9 +80,8 @@ public class FileUtil
         StringBuffer result = new StringBuffer();        
 
         log.debug("Running simple command "+command+" in "+directory);
-        String[] env = new String[0];
 
-        Process process = Runtime.getRuntime().exec( command, env, new File(directory) );
+        Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
 
         BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
 
@@ -100,6 +100,17 @@ public class FileUtil
     /**
      *  Is smart and falls back to ISO-8859-1 if you get exceptions.
      */
+    // FIXME: There is a bad bug here.  We cannot guarantee that realinput.available()
+    // returns anything sane.  We don't want to read everything into a byte array
+    // either, since that would mean having to go through at it again.  Byte array
+    // does not support mark()/reset().
+    // We get odd exceptions if we don't specify a large enough buffer size.
+    // We assume that if we get a small number from available() the data is buffered
+    // and use a minimum buffer size to compensate.
+    // This may fail in a number of ways, a better way is seriously needed.
+
+    private static final int MINBUFSIZ = 32768; // bytes
+
     public static String readContents( InputStream input, String encoding )
         throws IOException
     {
@@ -108,7 +119,7 @@ public class FileUtil
 
         BufferedInputStream realinput = new BufferedInputStream( input );
 
-        realinput.mark( realinput.available() );
+        realinput.mark( Math.max( realinput.available() * 2, MINBUFSIZ ) );
 
         try
         {
