@@ -25,7 +25,9 @@
 %>
 
 <%
-    String pagereq = wiki.getFrontPage();
+    String pagereq = wiki.safeGetParameter( request, "page" );
+    if( pagereq == null || pagereq.length() == 0 )
+        pagereq = wiki.getFrontPage();
     String userName = wiki.getUserName( request );
 
     NDC.push( wiki.getApplicationName() + ":Login.jsp"  );
