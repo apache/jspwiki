@@ -1,5 +1,13 @@
 2005-01-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.1.142.
+
+        * Implemented IdeaGetWikiInstanceByServletContext by (I lost the 
+        email, sorry)
+
+        * RSS RDF file location is now generated consistently.  
+        Fixes BugWikiEngineAccessesRDFFilesInconsistently.
+
         * v2.1.141.
 
         * You may now set the URLConstructor instance by using
