@@ -185,7 +185,7 @@
         </tr>
 
         <tr>
-          <td>|text|more text|<td><td>Makes a table.  Double bars for a table heading.</td>
+          <td>|text|more text|</td><td>Makes a table.  Double bars for a table heading.</td>
         </tr>
 
       </table>
