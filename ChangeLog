@@ -1,3 +1,13 @@
+2004-05-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.96.
+
+        * Added new FeedDiscoveryTag, deprecated RSSLinkTag.
+
+        * Added atom.jsp to support the 0.3 version of Atom.  The Atom
+        feed attempts to figure out the blog name from a page variable
+        called "blogname".
+
 2004-05-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.95.
