@@ -14,16 +14,19 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
-    String headerTitle = "";
+    String skin    = wiki.safeGetParameter( request, "skin" );
 
     if( pagereq == null )
     {
         pagereq = "Main";
     }
 
-    NDC.push( wiki.getApplicationName()+":"+pagereq );
+    if( skin == null )
+    {
+        skin = "default"; // FIXME: Should really come from settings.
+    }
 
-    String pageurl = wiki.encodeName( pagereq );
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
     
     log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
@@ -55,17 +58,22 @@
     }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    wikiContext.setRequestContext( WikiContext.VIEW );
+
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext );
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
     //
     //  Alright, then start responding.
     //
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+
+    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
 
-<%@ include file="templates/default/ViewTemplate.jsp" %>
+<wiki:Include page="<%=contentPage%>" />
 
 <%
     NDC.pop();
