@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Writes a link to the Wiki PageInfo.  Body of the link becomes the actual text.
@@ -38,20 +39,8 @@ import com.ecyrd.jspwiki.WikiPage;
  */
 // FIXME: Refactor together with LinkToTag and EditLinkTag.
 public class PageInfoLinkTag
-    extends WikiTagBase
+    extends WikiLinkTag
 {
-    protected String m_pageName;
-
-    public void setPage( String page )
-    {
-        m_pageName = page;
-    }
-
-    public String getPage()
-    {
-        return m_pageName;
-    }
-
     public final int doWikiStartTag()
         throws IOException
     {
@@ -60,9 +49,11 @@ public class PageInfoLinkTag
 
         if( m_pageName == null )
         {
-            if( m_wikiContext.getPage() != null )
+            WikiPage p = m_wikiContext.getPage();
+
+            if( p != null )
             {
-                pageName = m_wikiContext.getPage().getName();
+                pageName = p.getName();
             }
             else
             {
@@ -75,25 +66,21 @@ public class PageInfoLinkTag
             JspWriter out = pageContext.getOut();
             String encodedlink = engine.encodeName( pageName );
 
-            out.print("<A HREF=\""+engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+"\">");
+            String url = engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink;
+
+            switch( m_format )
+            {
+              case ANCHOR:
+                out.print("<A HREF=\""+url+"\">");
+                break;
+              case URL:
+                out.print( url );
+                break;
+            }
 
             return EVAL_BODY_INCLUDE;
         }
 
         return SKIP_BODY;
-    }
-
-    public int doEndTag()
-    {
-        try
-        {
-            pageContext.getOut().print("</A>");
-        }
-        catch( IOException e )
-        {
-            // FIXME: Should do something?
-        }
-
-        return EVAL_PAGE;
     }
 }
