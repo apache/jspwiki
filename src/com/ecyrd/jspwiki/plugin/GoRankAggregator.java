@@ -23,24 +23,9 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 
-import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.IOException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
-
-import java.awt.*;
-import java.awt.image.*;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import javax.servlet.ServletContext;
-import javax.swing.ImageIcon;
-
-import com.keypoint.PngEncoderB;
 
 /**
  *  Plugin for aggregating go game rankings.  Probably of very little use to anyone,
