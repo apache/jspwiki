@@ -1,3 +1,10 @@
+2001-10-25  Erik Bunn  <Erik.Bunn@memecry.net>
+
+        * Added the capability to view older versions of a WikiPage. 
+        The functionality is accessed from PageInfo.jsp. Wiki.jsp
+        is affected, as well, and WikiEngine.java has new methods
+        (but no actual new functionality).        
+
 2001-10-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * This is R2 - v1.4.0.
