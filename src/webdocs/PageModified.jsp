@@ -25,6 +25,14 @@
     // FIXME: Should the usertext be removed from the session?
     String usertext = (String)request.getSession().getAttribute("usertext");
 
+    usertext = TranslatorReader.replaceString( usertext, "<", "&lt;" );
+    usertext = TranslatorReader.replaceString( usertext, ">", "&gt;" );
+
+    String conflicttext = wiki.getText(pagereq);
+
+    conflicttext = TranslatorReader.replaceString( conflicttext, "<", "&lt;" );
+    conflicttext = TranslatorReader.replaceString( conflicttext, ">", "&gt;" );
+
     log.info("Page concurrently modified "+pagereq);
 %>
 
@@ -71,7 +79,7 @@
       <P><HR></P>
 
       <PRE>
-        <%=wiki.getText(pagereq)%>
+        <%=conflicttext%>
       </PRE>      
 
       <P><HR></P>
