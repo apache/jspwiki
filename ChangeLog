@@ -1,5 +1,7 @@
 2003-09-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Fixed some failing auth tests.
+
         * v2.1.69.
 
         * Hopefully finally fixed problems with RefMgr and english
