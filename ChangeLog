@@ -2,6 +2,11 @@
 
         * v2.1.23.
 
+        * out.png is now correctly transparent, thanks to Paul Downes.
+
+        * CachingProvider can now detect if the page has been modified
+        externally.
+
         * rss.jsp is now a part of the main distribution.  It is however,
         very weblog-specific right now, and shares a bit too much code
         with the RSSGenerator.

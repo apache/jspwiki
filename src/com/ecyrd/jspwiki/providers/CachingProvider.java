@@ -41,6 +41,8 @@ import com.ecyrd.jspwiki.*;
  */
 // FIXME: Keeps a list of all WikiPages in memory - should cache them too.
 // FIXME: Synchronization is a bit inconsistent in places.
+// FIXME: External changes should really throw a PageModifiedException, so that
+//        upper classes can handle this situation properly (such as ReferenceManager).
 public class CachingProvider
     implements WikiPageProvider
 {
