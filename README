@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.2 $
-                             $Date: 2001-07-15 21:20:29 $
+                         $Revision: 1.3 $
+                             $Date: 2001-08-13 13:23:51 $
                            $Author: jalkanen $
 
 What is it?
@@ -70,6 +70,17 @@ to be stored.  I recommend a directory that is regularly backed up.
 
 Point your browser at http://<where your Tomcat is installed>/MyWiki/.
 You should see the Main Wiki page.
+
+Allowing editing
+~~~~~~~~~~~~~~~~
+
+By default, the access to Edit.jsp is allowed only people who have
+logged in in either the "admin" or the "user" role.  This is
+configured in WEB_INF/web.xml.
+
+If you want to keep this behaviour, then go edit your
+$TOMCAT_HOME/conf/tomcat-users.xml and add people for "user" and
+"admin".
 
 
 Notes:
