@@ -1,5 +1,10 @@
 2001-08-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Added jspwiki.applicationName property, and support into
+        WikiEngine.
+
+        * Added SystemInfo.jsp
+
         * v1.3.0
 
         * Added interWiki functionality.  Now you can defined in
