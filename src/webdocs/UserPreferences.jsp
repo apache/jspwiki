@@ -53,14 +53,16 @@
 
         response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
     }       
-
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+    else
+    {
+        response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+        String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
 
-<wiki:Include page="<%=contentPage%>" />
+        <wiki:Include page="<%=contentPage%>" />
 
 <%
+    } // Else
     NDC.pop();
     NDC.remove();
 %>
