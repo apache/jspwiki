@@ -80,6 +80,7 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>context</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>  
 
@@ -263,6 +264,7 @@
     </attribute>
     <attribute>
        <name>mode</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>  
 
@@ -301,8 +303,14 @@
     <attribute>
        <name>version</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
   </tag>  
+
+  <tag>
+    <name>NextVersion</name>
+    <tagclass>com.ecyrd.jspwiki.tags.NextVersionTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
 
   <tag>
     <name>NoSuchPage</name>
@@ -310,6 +318,7 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>  
 
@@ -361,6 +370,7 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>type</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
 
@@ -382,7 +392,14 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>permission</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
+  </tag>
+
+  <tag>
+    <name>PreviousVersion</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PreviousVersionTag</tagclass>
+    <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
@@ -392,10 +409,12 @@
     <attribute>
        <name>plugin</name>
        <required>true</required>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
        <name>args</name>
        <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
 
@@ -494,9 +513,11 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>status</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
        <name>exists</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
 
@@ -511,6 +532,7 @@
     </attribute>
     <attribute>
        <name>default</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
 
