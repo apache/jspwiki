@@ -1,0 +1,84 @@
+
+JSPWiki comes with a XML-RPC interface.  For more information, see:
+
+* [http://www.xmlrpc.com/]
+* [JSPWiki:WikiRPCInterface]
+
+!!XML-RPC Standard API
+
+Here is now the API as of v1.6.12 (the command prefix being ''wiki.'').
+
+The default URL for this API is <your-wiki-url>/RPC2
+
+* __array getRecentChanges( Date timestamp )__: Get list of changed pages since 
+  ''timestamp'', which should be in UTC.  The result is an array, where each 
+  element is a struct:
+** ''name'' (string) : Name of the page.  The name is UTF-8 with URL 
+   encoding to make it ASCII.
+** ''lastModified'' (date) : Date of last modification, in UTC.
+** ''author'' (string) : Name of the author (if available).  Again, name is 
+   UTF-8 with URL encoding.
+** ''version'' (int) : Current version.
+* A page MAY be specified multiple times.  A page MAY NOT be specified multiple
+  times with the ''same'' modification date.
+
+* __int getRPCVersionSupported()__: Returns 1 with this version of the JSPWiki API.
+
+* __base64 getPage( String pagename )__: Get the raw Wiki text of page, latest 
+  version. Page name __must__ be UTF-8, with URL encoding.  Returned value is a 
+  binary object, with UTF-8 encoded page data.
+
+* __base64 getPageVersion( String pagename, int version )__: Get the raw Wiki 
+  text of page. Returns UTF-8, expects UTF-8 with URL encoding.
+
+* __base64 getPageHTML( String pagename )__: Return page in rendered HTML.  
+  Returns UTF-8, expects UTF-8 with URL encoding.
+
+* __base64 getPageHTMLVersion( String pagename, int version )__: Return page 
+  in rendered HTML, UTF-8.
+
+* __array getAllPages()__: Returns a list of all pages.  The result is an array 
+  of strings, again UTF-8 in URL encoding.
+
+* __struct getPageInfo( string pagename )__ : returns a struct with elements
+** ''name'' (string): the canonical page name, URL-encoded UTF-8.
+** ''lastModified'' (date): Last modification date, UTC.
+** ''author'' (string): author name, URL-encoded UTF-8.
+** ''version'' (int): current version
+
+* __struct getPageInfoVersion( string pagename, int version )__ : returns a
+  struct just like plain ''getPageInfo()'', but this time for a specific
+  version.
+
+* __array listLinks( string pagename )__: Lists all links for a given page.
+  The returned array contains structs, with the following elements:
+** ''page'' (string) : The page name or URL the link is to.
+** ''type'' (int) : The link type.  This is a string, with the following
+   possible values:
+*** "external" : The link is an external hyperlink
+*** "local" : This is a local Wiki name for hyperlinking
+
+As you can see, all data is returned in a ''base64'' -type in UTF-8
+encoding, regardless of what JSPWiki preference actually is.  Also,
+all incoming or outcoming strings are really UTF-8, but they have been
+URL-encoded so that the XML-RPC requirement of ASCII is fulfilled.
+
+!!The UTF-8 API
+
+This is exactly as the upper API, except that ALL strings should be
+encoded in UTF-8.  Also, instead of base64 type, all methods returning
+page data return UTF-8 format strings.
+
+This does break the XML-RPC spec somewhat, but for ease of use I think
+it is important to serve both models.  Use which one you like :-).
+
+The default URL for the UTF-8 XML-RPC API is
+
+<your-wiki-url>/RPCU
+
+!!Errors
+
+All methods which handle a page in any way can return a Fault.  Current fault
+codes are:
+
+* 1 : No such page was found.
