@@ -38,6 +38,8 @@ public class PingWeblogsComFilter
             params.addElement( "The Butt Ugly Weblog" );
             params.addElement( engine.getViewURL(blogName) );
 
+            log.debug("Pinging weblogs.com with URL: "+engine.getViewURL(blogName));
+
             xmlrpc.executeAsync("weblogUpdates.ping", params, 
                                 new AsyncCallback() 
                                 {
