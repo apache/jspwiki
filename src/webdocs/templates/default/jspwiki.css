@@ -1,5 +1,6 @@
 /* Put all generic definitions here. */
 H1,H2,H3,H4 { font-family: Arial, Helvetica, sans-serif }
+    
 DIV.small   { font-size: 70%; }
 H1.pagename { margin-top: 0; }
 IMG.inline  {}
@@ -141,6 +142,14 @@ div.index {}
 div.index .header { padding: 4px; background: #f0f0f0; }
 div.index .body {}
 div.index .section { color:red; }
+
+/*  Table of contents plugin */
+
+.toc {
+     background: #d0d0ff;
+     border: 1px;
+     padding: 8px;
+}
 
 /*  Here's a nice style you can use to put comment boxes on pages.  It's used
     on some pages. */
