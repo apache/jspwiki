@@ -1,3 +1,8 @@
+2001-10-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Bold and italic information is now carried across line and
+        paragraph breaks.
+
 2001-09-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added cssinclude.js and three browser-dependent stylesheet
