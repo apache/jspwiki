@@ -29,8 +29,7 @@ TD.diff     { background: #FFFFFF;
               font-family: monospace; }
 
 /* Added in 1.6.9 */
-TABLE.wikitable { border: 1px; }
+TABLE.wikitable { }
 TABLE.wikitable THEAD TD { font-weight: bold;
                            text-align: center; }
-TABLE.wikitable TD { text-align: left;
-                     border: 1px; }
+TABLE.wikitable TD { text-align: left; }
