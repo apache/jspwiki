@@ -83,10 +83,9 @@ public class CheckLockTag
             {
                 String id = getId();
 
-                if( id != null )
+                if( id != null && lock != null )
                 {
-                    pageContext.setAttribute( getId(),
-                                              lock );
+                    pageContext.setAttribute( id, lock );
                 }
 
                 return EVAL_BODY_INCLUDE;
