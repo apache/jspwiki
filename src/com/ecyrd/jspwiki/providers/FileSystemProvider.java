@@ -44,6 +44,7 @@ public class FileSystemProvider
     public static final String PROP_EXT = ".properties";
 
     public void putPageText( WikiPage page, String text )        
+        throws ProviderException
     {
         try
         {

@@ -204,6 +204,7 @@ public abstract class AbstractFileProvider
     }
 
     public void putPageText( WikiPage page, String text )        
+        throws ProviderException
     {
         File file = findPage( page.getName() );
         PrintWriter out = null;
