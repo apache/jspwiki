@@ -63,6 +63,15 @@ public class FileSystemProvider
         return pagefile.exists();        
     }
 
+    /**
+     *  This implementation just returns the current version, as filesystem
+     *  does not provide versioning information for now.
+     */
+    public String getPageText( String page, int version )
+    {
+        return getPageText( page );
+    }
+
     public String getPageText( String page )
     {
         StringBuffer result = new StringBuffer();

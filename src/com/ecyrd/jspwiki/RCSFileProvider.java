@@ -62,6 +62,7 @@ public class RCSFileProvider
 
             String line;
 
+            // FIXME: Use ORO for this, too.
             while( (line = stdout.readLine()) != null )
             {
                 if( line.startsWith( "head:" ) )
@@ -89,12 +90,50 @@ public class RCSFileProvider
         return info;
     }
 
+    public String getPageText( String page, int version )
+    {
+        StringBuffer result = new StringBuffer();
+
+        log.debug("Fetching specific version "+version+" of page "+page);
+        try
+        {
+            String cmd = m_checkinCommand;
+            String[] env = new String[0];
+
+            cmd = "co -p -r1."+version+" "+page+FILE_EXT;
+
+            log.debug("Command = '"+cmd+"'");
+
+            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+
+            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+
+            String line;
+
+            while( (line = stdout.readLine()) != null )
+            { 
+                result.append( line+"\n");
+            }            
+
+            process.waitFor();
+
+            log.debug("Done, returned = "+process.exitValue());
+        }
+        catch( Exception e )
+        {
+            log.error("RCS checkin failed",e);
+        }
+        
+        return result.toString();
+    }
+
     /**
      *  Puts the page into RCS and makes sure there is a fresh copy in
      *  the directory as well.
      */
     public void putPageText( String page, String text )
     {
+        // Writes it in the dir.
         super.putPageText( page, text );
 
         log.debug( "Checking in text..." );
@@ -165,7 +204,6 @@ public class RCSFileProvider
                 if( matcher.contains( line, datepattern ) )
                 {
                     MatchResult result = matcher.getMatch();
-                    System.out.println( result );
 
                     Date d = rcsdatefmt.parse( result.group(1) );
 

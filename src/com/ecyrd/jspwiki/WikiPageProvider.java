@@ -53,6 +53,12 @@ public interface WikiPageProvider
      */
 
     public Collection getVersionHistory( String page );
+
+    /**
+     *  Gets a specific version out of the repository.
+     */
+
+    public String getPageText( String page, int version );
 }
 
 
