@@ -34,12 +34,15 @@
 
       <%@ include file="PageHeader.jsp" %>
 
-      <% if( version > 0 ) { %>
+      <wiki:CheckVersion mode="notlatest">
          <FONT COLOR="red">
-            <P CLASS="versionnote">This is version <%=version%>.  It is not the current version,
-            and thus it cannot be edited.  <wiki:LinkTo>(Back to current version)</wiki:LinkTo></P> 
+            <P CLASS="versionnote">This is version <wiki:PageVersion/>.  
+            It is not the current version, and thus it cannot be edited.  
+            <wiki:LinkTo>(Back to current version)</wiki:LinkTo></P> 
          </FONT>
-      <% } %>
+      </wiki:CheckVersion>
+
+      <%-- Inserts no text if there is no page. --%>
 
       <wiki:InsertPage />
 
@@ -66,17 +69,15 @@
              if( wikipage != null )
              {
                  java.util.Date lastchange = wikipage.getLastModified();
-
-                 if( version == -1 )
-                 {
-                     %>                
+                 %>
+                 <wiki:CheckVersion mode="latest">
                      <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <wiki:Author />.</I>
-                     <%
-                 } else {
-                     %>
+                 </wiki:CheckVersion>
+
+                 <wiki:CheckVersion mode="notlatest">
                      <I>This particular version was published on <%=lastchange%> by <wiki:Author /></I>.
-                     <%
-                 }
+                 </wiki:CheckVersion>
+                 <%
              }
              %>
              <wiki:NoSuchPage>
