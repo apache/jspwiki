@@ -37,7 +37,10 @@ import org.apache.xmlrpc.XmlRpcException;
 public class RPCHandler
 {
     /** Error code: no such page. */
-    public static final int ERR_NOPAGE = 1;
+    public static final int ERR_NOPAGE    = 1;
+
+    public static final int LINK_LOCAL    = 0;
+    public static final int LINK_EXTERNAL = 1;
 
     private WikiEngine m_engine;
 
@@ -239,5 +242,55 @@ public class RPCHandler
         pagename = parsePageCheckCondition( pagename );
 
         return toRPCBase64( m_engine.getHTML( pagename, version ) );
+    }
+
+    public Vector listLinks( String pagename )
+        throws XmlRpcException
+    {
+        pagename = parsePageCheckCondition( pagename );
+
+        String pagedata = m_engine.getPureText( pagename, -1 );
+
+        LinkCollector localCollector = new LinkCollector();
+        LinkCollector extCollector   = new LinkCollector();
+
+        m_engine.textToHTML( new WikiContext(m_engine,pagename),
+                             pagedata,
+                             localCollector,
+                             extCollector );
+
+        Vector result = new Vector();
+
+        //
+        //  Add local links.
+        //
+        for( Iterator i = localCollector.getLinks().iterator(); i.hasNext(); )
+        {
+            String link = (String) i.next();
+            Hashtable ht = new Hashtable();
+            ht.put( "page", toRPCString( link ) );
+            ht.put( "type", new Integer( LINK_LOCAL ) );
+
+            result.add( ht );
+        }
+
+        //
+        // External links don't need to be changed into XML-RPC strings,
+        // simply because URLs are by definition ASCII.
+        //
+
+        for( Iterator i = extCollector.getLinks().iterator(); i.hasNext(); )
+        {
+            String link = (String) i.next();
+
+            Hashtable ht = new Hashtable();
+
+            ht.put( "page", link );
+            ht.put( "type", new Integer( LINK_EXTERNAL ) );
+
+            result.add( ht );
+        }
+
+        return result;
     }
 }
