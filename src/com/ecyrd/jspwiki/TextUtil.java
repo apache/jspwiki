@@ -579,4 +579,25 @@ public class TextUtil
 
         throw new IllegalArgumentException("There is no section no. "+section+" on the page.");
     }
+
+    /**
+     *  A simple routine which just repeates the arguments.  This is useful
+     *  for creating something like a line or something.
+     *
+     *  @param what String to repeat
+     *  @param times How many times to repeat the string.
+     *  @return Guess what?
+     *  @since 2.1.98.
+     */
+    public static String repeatString( String what, int times )
+    {
+        StringBuffer sb = new StringBuffer();
+
+        for( int i = 0; i < times; i++ )
+        {
+            sb.append( what );
+        }
+
+        return sb.toString();
+    }
 }
