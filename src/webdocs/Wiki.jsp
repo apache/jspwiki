@@ -20,7 +20,8 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
+    if( 
+    log.info("Request for page '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
 
     String redirect = wiki.getRedirectURL( wikiContext );
 
@@ -57,7 +58,7 @@
             }
 
             log.info("User "+currentUser.getName()+" has no access - displaying message.");
-            response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp?page=LoginError" );
+            response.sendRedirect( wiki.getViewURL("LoginError") );
         }
     }
 

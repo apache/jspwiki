@@ -40,7 +40,7 @@
         else
         {
             log.info("User "+currentUser.getName()+" has no access - displaying message.");
-            response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp?page=LoginError" );
+            response.sendRedirect( wiki.getViewURL("LoginError") );
         }
     }
 
@@ -48,7 +48,10 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
 
-    log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
+    if( log.isDebugEnabled() ) 
+    {
+        log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
+    }
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
