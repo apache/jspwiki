@@ -893,6 +893,9 @@ public class WikiEngine
      *  @param page Page to return
      *  @param version1 Version number of the old page.  If -1, then uses current page.
      *  @param version2 Version number of the new page.  If -1, then uses current page.
+     *
+     *  @return A HTML-ized difference between two pages.  If there is no difference,
+     *          returns an empty string.
      */
     public String getDiff( String page, int version1, int version2 )
     {
@@ -905,7 +908,10 @@ public class WikiEngine
         
         try
         {
-            diff = TextUtil.colorizeDiff( diff );
+            if( diff.length() > 0 )
+            {
+                diff = TextUtil.colorizeDiff( diff );
+            }
         }
         catch( IOException e )
         {
