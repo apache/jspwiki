@@ -52,7 +52,12 @@ public class ReferringPagesPluginTest extends TestCase
 
     private String mkLink( String page )
     {
-        return "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page="+page+"\">"+page+"</A>";        
+        return mkFullLink( page, page );
+    }
+
+    private String mkFullLink( String page, String link )
+    {
+        return "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page="+link+"\">"+page+"</A>";        
     }
 
     public void testSingleReferral()
@@ -86,6 +91,17 @@ public class ReferringPagesPluginTest extends TestCase
         assertEquals( 5, count );
     }
 
+    public void testReferenceWidth()
+        throws Exception
+    {
+        WikiContext context2 = new WikiContext( engine, "Foobar" );
+
+        String res = manager.execute( context2,
+                                      "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
+
+        assertEquals( mkFullLink( "TestP...", "TestPage" )+"\n<BR>\n",
+                      res );        
+    }
 
     public static Test suite()
     {
