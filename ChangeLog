@@ -1,3 +1,22 @@
+2005-01-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.138.
+
+        * Fixed BugErrorInDefaultJspwiki.css (reported by Per).
+
+        * Added patch to RCSFileProvider and FileUtil to close down
+        a bunch of processes that should fix 
+        BugTooManyFilesOpenWhenUsingRCS.  Contributed by Claas Ruschmeyer.
+
+        * Added new parameter: jspwiki.referenceStyle.  This may be set to
+        "absolute" or "relative", depending on whether you want to have
+        absolute or relative URLs.  It does not yet work on every link
+        construct, but it will...  This change also introduced a new
+        interface, URLConstructor, which will be pluginizable later on.
+        Hopefully it is versatile enough, but so far, please consider it
+        internal.  This change may have broken a lot of things, but it does
+        pave way for short urls.
+
 2005-01-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * TableOfContents -plugin now has a title as well...
