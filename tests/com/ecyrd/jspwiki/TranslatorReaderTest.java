@@ -943,7 +943,7 @@ public class TranslatorReaderTest extends TestCase
         String src="A\n\n**\n\nB";
 
         // System.out.println(translate(src));
-        assertEquals( "A\n<ul>\n<ul>\n<li>\n</li>\n</ul>\n</ul>\n<p>B</p>\n", 
+        assertEquals( "A\n<ul>\n<li><ul>\n<li>\n</li>\n</ul>\n</li>\n</ul>\n<p>B</p>\n", 
                       translate(src) );
     }
 
@@ -953,7 +953,7 @@ public class TranslatorReaderTest extends TestCase
         String src="A\n\n##\n\nB";
 
         // System.out.println(translate(src));
-        assertEquals( "A\n<ol>\n<ol>\n<li>\n</li>\n</ol>\n</ol>\n<p>B</p>\n", 
+        assertEquals( "A\n<ol>\n<li><ol>\n<li>\n</li>\n</ol>\n</li>\n</ol>\n<p>B</p>\n", 
                       translate(src) );
     }
 
@@ -992,10 +992,10 @@ public class TranslatorReaderTest extends TestCase
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        assertEquals( "<ul><li>Item A</li>"+
+        assertEquals( "<ul><li>Item A"+
                       "<ol><li>Numbered 1</li>"+
                       "<li>Numbered 2</li>"+
-                      "</ol>"+
+                      "</ol></li>"+
                       "<li>Item B</li>"+
                       "</ul>",
                       result );
@@ -1014,12 +1014,52 @@ public class TranslatorReaderTest extends TestCase
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        assertEquals( "<ol><li>Item A</li>"+
+        assertEquals( "<ol><li>Item A"+
                       "<ul><li>Numbered 1</li>"+
                       "<li>Numbered 2</li>"+
-                      "</ul>"+
+                      "</ul></li>"+
                       "<li>Item B</li>"+
                       "</ol>",
+                      result );
+    }
+
+    public void testNestedList()
+        throws Exception
+    {
+        String src="*Item A\n**Numbered 1\n**Numbered 2\n*Item B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul><li>Item A"+
+                      "<ul><li>Numbered 1</li>"+
+                      "<li>Numbered 2</li>"+
+                      "</ul></li>"+
+                      "<li>Item B</li>"+
+                      "</ul>",
+                      result );
+    }
+
+    public void testNestedList2()
+        throws Exception
+    {
+        String src="*Item A\n**Numbered 1\n**Numbered 2\n***Numbered3\n*Item B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul><li>Item A"+
+                      "<ul><li>Numbered 1</li>"+
+                      "<li>Numbered 2"+
+                      "<ul><li>Numbered3</li>"+
+                      "</ul></li>"+
+                      "</ul></li>"+
+                      "<li>Item B</li>"+
+                      "</ul>",
                       result );
     }
 
