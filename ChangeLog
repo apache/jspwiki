@@ -51,7 +51,7 @@
         * v2.0.12.
 
         * Diff.jsp did not use the templateDir property correctly.  Oops.
-        Reported by Steven Noels, I think.
+        Reported by Robert McGovern.
 
         * Added Expires, Last-Modified, and Cache-Control headers to
         Edit.jsp responses - this should allow certain versions of
