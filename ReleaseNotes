@@ -1,49 +1,37 @@
 
-This is a feature release of JSPWiki.
+This is a beta release of JSPWiki.  The documentation is out-of-date,
+the code is buggy and you definitely shouldn't run this on a
+production server.  Wait for the next stable release.
 
-Major changes since the last release are:
+Major changes since the last stable (1.5.0) release are:
 
-- PageInfo can now display older versions directly as well, not just
-  diffs.
+- Author information is saved in the RCS files as well.  If the author
+  is not authenticated, then the IP address is saved.
 
-- Some cosmetic enhancements.
+- Document type declarations should now be correct in all JSP files.
+  This should have no effect, but some browsers are known to change
+  rendering modes (such as Mozilla) so there might be some changes to
+  the way things look.
 
-- Wiki can now handle non-ASCII WikiNames as well.  Both the URL
-  linking scheme and the FileProviders were changed.
+- You can't put Javascript inside links anymore.  Nyah, nyah =).
 
-- Added footnotes (see included TextFormattingRules.txt in
-  jspwiki-samplepages.zip for info)
+- PageInfo is no longer in UTC, but the local timezone.
 
-- The left hand menu is now editable with a special page called
-  "LeftMenu" (surprise =).
+- Full UTF-8 support.  This is settable in the jspwiki.properties.
+  Everything should still fall back to ISO-8859-1 if need be.
 
-- Slight bug fixes (thanks to Kim Holviala, Erik Bunn, Chris
-  Brooking).
-
-- Default setup should now be easier, since there is no more default
-  access restriction, and the default provider is FileSystemProvider.
-  Also, the default logging method was changed.
-
-- index.html was removed for a better solution (see web.xml)
-
+- new CSS styles
 
 UPGRADE NOTES
 =============
 
-* The default jspwiki.properties has changed.  You might want to see
-  what's different.
+- Most JSP pages have changed again, thanks to new CSS styles and the
+  UTF-8 support.  This time the changes have been quite minimal,
+  mostly calling WikiEngine.safeGetParameter() instead of
+  request.getParameter().
 
-* Integrate the changes from web.xml - they allow you to get rid of
-  index.html and the redirection.
-
-* Check the new jspwiki-samplepages directory.  They contain new
-  versions of TextFormattingRules and other pages as well.
-
-* Wiki.jsp, LeftMenu.jsp, PageInfo.jsp, Edit.jsp, PageHeader.jsp,
-  PageModified.jsp, Search.jsp, RecentChanges.jsp, and all of the CSS
-  files have changed much since v1.4.0, mostly due to support for
-  non-ASCII page names.
-
-  Sorry about any inconvinience.  I think you'll find that most of the
-  modifications were actually helpful, especially if you're running a
-  non-english Wiki.
+- If you upgrade from your existing ISO-8859-1 -based system to UTF-8,
+  note that whenever a page is saved, it is saved as UTF-8.  So
+  basically conversion happens whenever someone edits a page.
+  However, there is no going back to ISO-8859-1 - this is a one-way
+  street!
