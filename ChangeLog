@@ -1,3 +1,10 @@
+2002-12-10  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * v2.0.0-alpha-auth, a branch of Janne's V2 alpha
+        with rudimentary but functional authentication and
+        authorization. See doc/SampleAccess.config
+        for information and setup instructions.
+
 2002-12-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.0-alpha.
