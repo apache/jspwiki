@@ -53,6 +53,9 @@
     <attribute>
        <name>urlformat</name>
     </attribute>
+    <attribute>
+       <name>monthurlformat</name>
+    </attribute>
   </tag>  
 
   <tag>
