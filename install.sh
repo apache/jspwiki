@@ -10,12 +10,13 @@ then
     private=0
 else
     echo "Installing in private"
-    TOMCAT_HOME=$HOME/jakarta-tomcat-3.2.2
+    TOMCAT_HOME=$HOME/jakarta-tomcat-3.2.3
     private=1
 fi
 
 $TOMCAT_HOME/bin/shutdown.sh
 
+ant clean
 ant war
 
 rm -rf $TOMCAT_HOME/webapps/JSPWiki
@@ -27,9 +28,12 @@ mkdir JSPWiki
 cd JSPWiki
 jar xf ../JSPWiki.war
 
+#
+#  Copy private things.
+#
 if [ $private -eq 1 ]
 then
-    cp -v /home/jalkanen/Projects/JSPWiki/jspwiki.properties $TOMCAT_HOME/webapps/JSPWiki/WEB-INF/
+    cp -v $HOME/Projects/JSPWiki/jspwiki.properties $TOMCAT_HOME/webapps/JSPWiki/WEB-INF/
 fi
 
 $TOMCAT_HOME/bin/startup.sh
