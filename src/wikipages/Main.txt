@@ -13,7 +13,7 @@ You have some pages set up for you:
   on the top left corner of the browser window, or [click here|SystemInfo].
 * If you run Microsoft Windows, then probably you want to take a look
   at [WindowsInstall] for more tips.
-
+* The [WikiRPCInterface] might interest you if you're into scripting.
 
 Good luck, and thanks for choosing JSPWiki!
 
