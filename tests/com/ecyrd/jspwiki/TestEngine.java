@@ -20,6 +20,28 @@ public class TestEngine extends WikiEngine
         super( props );
     }
 
+    public static void emptyWorkDir()
+    {
+        Properties properties = new Properties();
+        
+        try
+        {
+            properties.load( findTestProperties() );
+        
+            String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
+            if( workdir != null )
+            {
+                File f = new File( workdir );
+                
+                if( f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists() )
+                {
+                    deleteAll( f );
+                }
+            }
+        }
+        catch( IOException e ) {} // Fine   
+    }
+    
     public static final InputStream findTestProperties()
     {
         return findTestProperties( "/jspwiki.properties" );
