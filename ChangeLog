@@ -1,3 +1,24 @@
+2002-09-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.25.
+
+        * Viewing of old versions would not show the "this is version XX"
+        -banner because of an unclosed JSP comment.  Oops.
+
+        * PageInfo now shows "no versions" if there is no version history
+        available instead of an empty string.
+
+        * HistoryIteratorTag would fail if there was no version history
+        (like when you were moving from FileSystemProvider to
+        RCSFileProvider).  Now fixed.
+
+        * CachingProvider now checks if the requested version is cached,
+        and not only when the version is marked as latest.  Combined with
+        the new template system, this bug caused CachingProvider to
+        effectively ignore its own cache.
+
+        * ---- aka HR is now <HR /> as per XHTML spec.
+
 2002-09-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.24.

@@ -51,4 +51,5 @@ public class PageManagerTest extends TestCase
     {
         return new TestSuite( PageManagerTest.class );
     }
+
 }
