@@ -352,8 +352,8 @@ public class WikiEngine
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
-            m_authorizationManager = new AuthorizationManager( this, props );
             m_userManager       = new UserManager( this, props );
+            m_authorizationManager = new AuthorizationManager( this, props );
             m_templateManager   = new TemplateManager( this, props );
 
             initPageFilters( props );
