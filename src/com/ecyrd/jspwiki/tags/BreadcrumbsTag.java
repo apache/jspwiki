@@ -51,7 +51,7 @@ public class BreadcrumbsTag extends WikiTagBase
     private static final Category log = Category.getInstance(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
-    private String m_separator = " | ";
+    private String m_separator = " > ";
 
     public int getMaxpages()
     {
