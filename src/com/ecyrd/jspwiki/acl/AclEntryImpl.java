@@ -18,7 +18,7 @@ public class AclEntryImpl
 
     public boolean setPrincipal(Principal user)
     {
-        if( m_principal != null ) return false;
+        if( m_principal != null || user == null ) return false;
 
         m_principal = user;
 
@@ -108,7 +108,9 @@ public class AclEntryImpl
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("AclEntry: [User="+getPrincipal().getName());
+        Principal p = getPrincipal();
+
+        sb.append("AclEntry: [User="+(p != null ? p.getName() : "null") );
         sb.append( m_negative ? " DENY " : " ALLOW " );        
 
         for( Iterator i = m_permissions.iterator(); i.hasNext(); )

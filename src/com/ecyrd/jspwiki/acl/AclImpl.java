@@ -49,11 +49,24 @@ public class AclImpl
 
     private boolean hasEntry( AclEntry entry )
     {
+        if( entry == null )
+        {
+            return false;
+        }
+
         for( Iterator i = m_entries.iterator(); i.hasNext(); )
         {
             AclEntry e = (AclEntry) i.next();
 
-            if( e.getPrincipal().getName().equals( entry.getPrincipal().getName() ) &&
+            Principal ep     = e.getPrincipal();
+            Principal entryp = entry.getPrincipal();
+
+            if( ep == null || entryp == null )
+            {
+                throw new IllegalArgumentException("Entry is null; check code, please (entry="+entry+"; e="+e+")");
+            }
+            
+            if( ep.getName().equals( entryp.getName() ) &&
                 e.isNegative() == entry.isNegative() )
             {
                 return true;
@@ -66,6 +79,11 @@ public class AclImpl
     public boolean addEntry(Principal caller,
                             AclEntry entry)
     {
+        if( entry.getPrincipal() == null )
+        {
+            throw new IllegalArgumentException("Entry principal cannot be null");
+        }
+
         if( hasEntry( entry ) )
         {
             return false;
