@@ -9,7 +9,7 @@
 <head>
   <title><wiki:Variable var="applicationname"/>: Add Attachment</title>
   <%@ include file="header.jsp" %>
-  <META NAME="ROBOTS" CONTENT="NOINDEX">
+  <meta name="robots" content="noindex">
 </head>
 
 <body class="upload" bgcolor="#FFFFFF">
@@ -18,7 +18,7 @@
       <hr /><p>
 
       <wiki:HasAttachments>
-         <B>Currently existing attachments:</B>
+         <b>Currently existing attachments:</b>
 
          <div class="attachments" align="center">
          <table width="90%">
@@ -48,12 +48,15 @@
            In order to upload a new attachment to this page, please use the following
            box to find the file, then click on "Upload".
 
-           <P>
+           <p>
            <input type="file" name="content">
            <input type="submit" name="upload" value="Upload">
            <input type="hidden" name="action" value="upload">
            <input type="hidden" name="nextpage" value="<wiki:UploadLink format="url"/>">
+           </p>
            </form>
+
+           <span class="error"><wiki:Variable var="msg"/></span>
 
         </td>
 
