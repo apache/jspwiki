@@ -39,12 +39,14 @@
     |   |       
     |   |___com 
     |       |___[...and the rest of the source code files]
-    |          
+    |
+    |___docs
+    | 
     |___tests   
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.6 2001-10-09 19:55:50 jalkanen Exp $
+    $Id: build.xml,v 1.7 2001-10-20 10:01:10 jalkanen Exp $
 -->    
        
 <!--   
@@ -74,6 +76,10 @@
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
+
+  <!-- The place where the javadocs are created -->
+
+  <property name="docs.javadoc" value="doc/javadoc" />
 
   <!-- The temporary installation directory where all war-files 
        are collected, for example -->
@@ -161,6 +167,21 @@
            destdir="${tests.build}">
       <classpath refid="path.base" />
     </javac>
+  </target>
+
+  <!-- Creates javadocs -->
+
+  <target name="javadoc"
+          description="Compiles the javadocs.">
+
+    <mkdir dir="${docs.javadoc}" />
+
+    <javadoc sourcepath="${code.src}"
+             destdir="${docs.javadoc}"
+             packagenames="com.ecyrd.jspwiki">
+      <classpath refid="path.base" />
+    </javadoc>
+             
   </target>
 
   <!-- ============================================================== -->
