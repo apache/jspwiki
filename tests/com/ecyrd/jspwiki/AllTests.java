@@ -39,7 +39,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite("JSPWiki Unit Tests");
 
         suite.addTest( FileUtilTest.suite() );
         suite.addTest( PageManagerTest.suite() );
@@ -48,6 +48,7 @@ public class AllTests extends TestCase
         suite.addTest( UserProfileTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
+        suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( com.ecyrd.jspwiki.plugin.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.xmlrpc.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.providers.AllTests.suite() );

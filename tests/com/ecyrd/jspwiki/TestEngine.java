@@ -66,6 +66,9 @@ public class TestEngine extends WikiEngine
         return java.net.URLEncoder.encode( pagename );
     }
 
+    /**
+     *  Removes a page.
+     */
     public void deletePage( String name )
     {
         String files = getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
@@ -80,6 +83,21 @@ public class TestEngine extends WikiEngine
         {
             log.error("Couldn't delete "+name, e );
         }
+    }
+
+    public File makeAttachmentFile()
+        throws Exception
+    {
+        File tmpFile = File.createTempFile("test","txt");
+        tmpFile.deleteOnExit();
+
+        FileWriter out = new FileWriter( tmpFile );
+        
+        FileUtil.copyContents( new StringReader( "asdfaäöüdfzbvasdjkfbwfkUg783gqdwog" ), out );
+
+        out.close();
+        
+        return tmpFile;
     }
 
 }

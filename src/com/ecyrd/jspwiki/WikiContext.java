@@ -80,6 +80,8 @@ public class WikiContext
 
     public static final String    UPLOAD   = "upload";
 
+    public static final String    COMMENT  = "comment";
+
     /**
      *  Create a new WikiContext.
      *

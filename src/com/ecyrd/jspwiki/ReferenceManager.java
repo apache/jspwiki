@@ -133,26 +133,39 @@ public class ReferenceManager
      *  This is the method to call when a new page has been created and we 
      *  want to a) set up its references and b) notify the referred pages
      *  of the references. Use this method during run-time.
+     *
+     *  @param page Name of the page to update.
+     *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
     public synchronized void updateReferences( String page, Collection references )
     {
+        //
         // Create a new entry in m_refersTo.
+        //
         Collection oldRefTo = (Collection)m_refersTo.get( page );
         m_refersTo.remove( page );
         m_refersTo.put( page, references );
 
-        // We know the page exists, since it's making references somewhere.
-        // If an entry for it didn't exist previously in m_referredBy, make 
-        // sure one is added now.
+        //
+        //  We know the page exists, since it's making references somewhere.
+        //  If an entry for it didn't exist previously in m_referredBy, make 
+        //  sure one is added now.
+        //
         if( !m_referredBy.containsKey( page ) )
+        {
             m_referredBy.put( page, new HashSet() );
+        }
 
-        // Get all pages that used to be referred to by 'page' and
-        // remove that reference. (We don't want to try to figure out
-        // which particular references were removed...)
+        //
+        //  Get all pages that used to be referred to by 'page' and
+        //  remove that reference. (We don't want to try to figure out
+        //  which particular references were removed...)
+        //
         cleanReferredBy( page, oldRefTo, references );
 
-        // Notify all referred pages of their referinesshoodicity.
+        // 
+        //  Notify all referred pages of their referinesshoodicity.
+        //
         Iterator it = references.iterator();
         while( it.hasNext() )
         {
@@ -314,15 +327,18 @@ public class ReferenceManager
         Iterator it = allReferences.iterator();
         while( it.hasNext() )
         {
-            ArrayList refs = (ArrayList)it.next();
+            Collection refs = (Collection)it.next();
             if( refs != null )
             {
                 Iterator rit = refs.iterator();
                 while( rit.hasNext() )
                 {
                     String aReference = (String)rit.next();
+
                     if( m_engine.pageExists( aReference ) == false )
+                    {
                         uncreated.add( aReference );
+                    }
                 }
             }
         }

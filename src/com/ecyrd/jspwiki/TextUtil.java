@@ -316,6 +316,23 @@ public class TextUtil
 
         if( val == null ) return defval;
 
+        return isPositive( val );
+    }
+
+    /**
+     *  Returns true, if the string "val" denotes a positive string.  Allowed
+     *  values are "yes", "on", and "true".  Comparison is case-insignificant.
+     *  Null values are safe.
+     *
+     *  @param val Value to check.
+     *  @return True, if val is "true", "on", or "yes"; otherwise false.
+     *
+     *  @since 2.0.26
+     */
+    public static boolean isPositive( String val )
+    {
+        if( val == null ) return false;
+
         return ( val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
                  val.equalsIgnoreCase("yes") );
     }

@@ -84,16 +84,28 @@ P.locknote { color: red;
              }
 
 /* For the CalendarTag */
-TABLE.calendar  { font-size: 80%; }
-TABLE.calendar TD { text-align: center; }
 
-TABLE.calendar TD.othermonth { color: #707070; }
+ TABLE.calendar  { font-size: 60%;
+                   text-align: center; }
 
-TABLE.calendar TD.link { background: #E0E0E0; }
+ TD.month        { font-size: 70%;
+                   text-align: center;
+                   font-weight: bold;
+                   font-family: sans-serif; }
 
-TABLE.calendar TR.month { font-size: 120%;
-                          font-family: sans-serif; }
-TABLE.calendar TR.weekdays { font-color: #FF0000; }
+ TD.weekdays     { color: #FF0000;        /* days heading */
+                   font-size: 60%; }
+
+ TD.days         { font-size: 60%; 
+                   text-align: center;}
+										 
+ TD.link         { color: #FF2222; background: #E0E0E0;
+                   font-size: 60%;
+                   text-align: center; }
+
+ TD.othermonth   { color: #707070; 
+                   font-size: 60%; 
+                   text-align: center}
 
 /* For the BreadcrumbsTag */
 .breadcrumbs { font-size: 60%; }

@@ -28,10 +28,15 @@ import com.ecyrd.jspwiki.WikiPage;
 /**
  *  Root class for different internal wiki links.  Cannot be used directly,
  *  but provides basic stuff for other classes.
+ *  <P>
+ *  Extend from this class if you need the following attributes.
  *
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <li>format - Either "url" or "anchor".  If "url", will provide
+ *  just the URL for the link.  If "anchor", will output proper HTML
+ *  (&lt;a&gt; href="...).
  *  </UL>
  *
  *  @author Janne Jalkanen

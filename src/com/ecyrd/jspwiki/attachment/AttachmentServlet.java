@@ -218,7 +218,14 @@ public class AttachmentServlet
 
         try
         {
-            MultipartRequest multi = new ServletMultipartRequest( req, m_tmpDir, Integer.MAX_VALUE );
+            // MultipartRequest multi = new ServletMultipartRequest( req, m_tmpDir, Integer.MAX_VALUE );
+            MultipartRequest multi = new MultipartRequest( null, // no debugging
+                                                           req.getContentType(), 
+                                                           req.getContentLength(), 
+                                                           req.getInputStream(), 
+                                                           m_tmpDir, 
+                                                           Integer.MAX_VALUE,
+                                                           m_engine.getContentEncoding() );
 
             nextPage        = multi.getURLParameter( "nextpage" );
             String wikipage = multi.getURLParameter( "page" );

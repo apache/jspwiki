@@ -2,8 +2,8 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AccessRuleSet" %>
 <%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
-<%@ page import="java.util.Calendar,java.util.Date" %>
-<%@ page import="java.util.*,java.text.SimpleDateFormat" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -70,18 +70,24 @@
         }
     }
 
+    String action  = request.getParameter("action");
+    String ok      = request.getParameter("ok");
+    String preview = request.getParameter("preview");
+    String cancel  = request.getParameter("cancel");
+    String comment = request.getParameter("comment");
+    String author  = wiki.safeGetParameter( request, "author" );
+
+    //
+    //  Set up the Wiki Context.
+    //
+
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( WikiContext.EDIT );
+    wikiContext.setRequestContext( comment != null ? WikiContext.COMMENT : WikiContext.EDIT );
     wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
-
-    String action  = request.getParameter("action");
-    String ok      = request.getParameter("ok");
-    String preview = request.getParameter("preview");
-    String cancel  = request.getParameter("cancel");
 
     //
     //  Set the response type before we branch.
@@ -128,9 +134,32 @@
         wiki.getPageManager().unlockPage( lock );
         session.removeAttribute( "lock-"+pagereq );
 
-        wiki.saveText( pagereq,
-                       wiki.safeGetParameter( request, "text" ),
-                       request );
+        //
+        //  If this is a comment, then we just append it to the page.
+        //  If it is a full edit, then we will replace the previous contents.
+        //
+        if( comment != null )
+        {
+            StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+            pageText.append( "\n\n----\n\n" );
+            pageText.append( wiki.safeGetParameter( request, "text" ) );
+
+            if( author != null )
+            {
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+
+                pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
+            }
+
+            wiki.saveText( pagereq, pageText.toString(), request );
+        }
+        else
+        {
+            wiki.saveText( pagereq,
+                           wiki.safeGetParameter( request, "text" ),
+                           request );
+        }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
         return;

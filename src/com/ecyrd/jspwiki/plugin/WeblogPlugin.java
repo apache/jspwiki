@@ -60,6 +60,10 @@ public class WeblogPlugin implements WikiPlugin
 
     public static final String  DEFAULT_DATEFORMAT = "ddMMyy";
 
+    public static final String  PARAM_STARTDATE    = "startDate";
+    public static final String  PARAM_DAYS         = "days";
+    public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
+
     public static String makeEntryPage( String pageName,
                                         String date,
                                         String entryNum )
@@ -91,19 +95,29 @@ public class WeblogPlugin implements WikiPlugin
         //
         String days;
         String startDay = null;
+        boolean hasComments = false;
 
-        if( (days = context.getHttpParameter( "weblog.days" )) == null )
+        if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null )
         {
-            days = (String) params.get("days");
+            days = (String) params.get( PARAM_DAYS );
         }
 
         numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
 
 
-        if( (startDay = (String)params.get("startDate")) == null )
+        if( (startDay = (String)params.get(PARAM_STARTDATE)) == null )
         {
-            startDay = context.getHttpParameter( "weblog.startDate" );
+            startDay = context.getHttpParameter( "weblog."+PARAM_STARTDATE );
         }
+
+        if( TextUtil.isPositive( (String)params.get(PARAM_ALLOWCOMMENTS) ) )
+        {
+            hasComments = true;
+        }
+
+        //
+        //  Determine the date range which to include.
+        //
 
         startTime = Calendar.getInstance();
         stopTime  = Calendar.getInstance();
@@ -171,7 +185,20 @@ public class WeblogPlugin implements WikiPlugin
                 sb.append("</DIV>\n");
 
                 sb.append("<div class=\"weblogpermalink\">");
-                sb.append( "<a href=\"Wiki.jsp?page="+engine.encodeName(p.getName())+"\">Permalink</a>" );
+                sb.append( "<a href=\""+engine.getViewURL(p.getName())+"\">Permalink</a>" );
+                String commentPageName = TextUtil.replaceString( p.getName(),
+                                                                 "blogentry",
+                                                                 "comments" );
+
+                if( engine.pageExists( commentPageName ) )
+                {
+                    sb.append( "&nbsp;&nbsp;" );
+                    sb.append( "<a href=\""+engine.getViewURL(commentPageName)+"\">View Comments</a>" );
+                }
+
+                sb.append( "&nbsp;&nbsp;" );
+                sb.append( "<a href=\""+engine.getEditURL(commentPageName)+"&comment=true\">Comment this entry</a>" );
+
                 sb.append("</div>");
             }
             

@@ -893,6 +893,10 @@ public class TranslatorReader extends Reader
         {
             return att.getName();
         }
+        else if( link.indexOf('/') != -1 )
+        {
+            return link;
+        }
 
         return null;
     }
@@ -1347,23 +1351,19 @@ public class TranslatorReader extends Reader
         //
         //  Find end of hyperlink
         //
-        while( true )
-        {
-            ch = nextToken();
 
-            if( ch == -1 || ch == ']' )
+        ch = nextToken();
+
+        while( ch != -1 )
+        {
+            if( ch == ']' && (!isPlugin || sb.charAt( sb.length()-1 ) == '}' ) )
             {
-                if( isPlugin && sb.charAt( sb.length()-1 ) != '}' )
-                {
-                    // No change.
-                }
-                else
-                {
-                    break;
-                }
+                break;
             }
 
             sb.append( (char) ch );
+
+            ch = nextToken();
         }
 
         if( ch == -1 )
