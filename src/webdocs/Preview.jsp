@@ -23,7 +23,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
-    WikiPage wikipage = wiki.getPage( pagereq, version );
+    WikiPage wikipage = wiki.getPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
