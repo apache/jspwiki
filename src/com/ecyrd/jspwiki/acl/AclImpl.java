@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -134,9 +134,9 @@ public class AclImpl
                 //  Principal direct match.
                 //
 
-                for( Enumeration enum = ae.permissions(); enum.hasMoreElements(); )
+                for( Enumeration myEnum = ae.permissions(); myEnum.hasMoreElements(); )
                 {
-                    perms.add( enum.nextElement() );
+                    perms.add( myEnum.nextElement() );
                 }
             }
         }
@@ -268,9 +268,9 @@ public class AclImpl
     {
         StringBuffer sb = new StringBuffer();
 
-        for( Enumeration enum = entries(); enum.hasMoreElements(); )
+        for( Enumeration myEnum = entries(); myEnum.hasMoreElements(); )
         {
-            AclEntry entry = (AclEntry) enum.nextElement();
+            AclEntry entry = (AclEntry) myEnum.nextElement();
 
             Principal pal = entry.getPrincipal();
 
