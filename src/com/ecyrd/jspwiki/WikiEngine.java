@@ -86,8 +86,10 @@ public class WikiEngine
     private boolean        m_storeIPAddress = true;
 
     /** If true, uses UTF8 encoding for all data */
-
     private boolean        m_useUTF8      = true;
+
+    /** Stores references between wikipages. */
+    private ReferenceManager m_referenceManager;
 
     /**
      *  Gets a WikiEngine related to this servlet.
@@ -202,9 +204,40 @@ public class WikiEngine
             throw new IllegalArgumentException("illegal provider class");
         }
 
+        initReferenceManager();
 
         log.info("WikiEngine configured.");
     }
+
+
+
+    /**
+       Initializes the reference manager. Scans all existing WikiPages for
+       internal links and adds them to the ReferenceManager object.
+    */
+    private void initReferenceManager()
+    {
+        log.info( "Starting cross reference scan of WikiPages (" + new Date() + ")" );
+
+        Collection pages = m_provider.getAllPages();
+
+        // Build a new manager with default key lists.
+        if( m_referenceManager == null )
+            m_referenceManager = new ReferenceManager( this, pages );
+
+        // Scan the existing pages from disk and update references in the manager.
+        Iterator it = pages.iterator();
+        while( it.hasNext() )
+        {
+            WikiPage page = (WikiPage)it.next();
+            String content = m_provider.getPageText( page.getName() );
+            m_referenceManager.updateReferences( page.getName(), scanWikiLinks( content ) );
+        }
+
+        log.info( "Cross reference scan done (" + new Date() + ")" );
+
+    }
+
 
     /**
      *  Throws an exception if a property is not found.
@@ -469,7 +502,7 @@ public class WikiEngine
      *
      *  @param pagedata Raw page data to convert to HTML
      */
-    protected String textToHTML( String pagedata )
+    public String textToHTML( String pagedata )
     {
         String result = "";
 
@@ -505,6 +538,57 @@ public class WikiEngine
         return result;
     }
 
+
+
+    /**
+       Reads a WikiPageful of data from a String and returns all links
+       internal to this Wiki in a Collection.
+       
+       NOTE: this is a bit too much like textToHTML(); it just sets a
+       flag in the TranslatorReader and requests for extra info at the
+       end. Time to refactor a bit?
+    */
+    private Collection scanWikiLinks( String pagedata )
+    {
+        String result = "";
+
+        if( pagedata == null ) 
+        {
+            log.error("NULL pagedata to textToHTML()");
+            return null;
+        }
+
+        TranslatorReader in = null;
+        Collection links = null;
+
+        try
+        {
+            in = new TranslatorReader( this, new StringReader( pagedata ) );
+            in.storeInternalLinks();
+            result = FileUtil.readContents( in );
+            links = in.getInternalLinks();
+        }
+        catch( IOException e )
+        {
+            log.error("Failed to scan page data: ", e);
+        }
+        finally
+        {
+            try
+            {
+                if( in  != null ) in.close();
+            }
+            catch( Exception e ) 
+            {
+                log.fatal("Closing failed",e);
+            }
+        }
+
+        return( links );
+    }
+
+
+
     /**
      *  Writes the WikiText of a page into the
      *  page repository.
@@ -516,6 +600,9 @@ public class WikiEngine
     {
         if( m_provider == null ) 
             return;
+
+        // Hook into cross reference collection.
+        m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
 
         m_provider.putPageText( new WikiPage(page), text );
     }
@@ -538,6 +625,11 @@ public class WikiEngine
             saveText( page, text );
             return;
         }
+
+        // Hook into cross reference collection.
+        // Notice that this is definitely after the saveText() call above, 
+        // since it can be caclled externally and we only want this done once.
+        m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
 
         WikiPage p = new WikiPage( page );
 
@@ -759,5 +851,14 @@ public class WikiEngine
         }
 
         return diff;
+    }
+
+    /**
+       Returns this object's ReferenceManager.
+       (DEBUG: We may want to protect this, though...)
+    */
+    public ReferenceManager getReferenceManager()
+    {
+        return( m_referenceManager );
     }
 }
