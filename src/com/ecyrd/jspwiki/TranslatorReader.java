@@ -6,6 +6,9 @@ import org.apache.log4j.Category;
 import java.text.*;
 
 
+/**
+ *  Handles conversion from Wiki format into fully featured HTML.
+ */
 public class TranslatorReader extends Reader
 {
     public static final int READ = 0;
@@ -19,9 +22,14 @@ public class TranslatorReader extends Reader
 
     private boolean        m_iscode = false;
     private int            m_listlevel = 0;
+    private int            m_numlistlevel = 0;
 
     private WikiEngine     m_engine;
 
+    /**
+     *  @param engine The WikiEngine this reader is attached to.  Is
+     * used to figure out of a page exits.
+     */
     public TranslatorReader( WikiEngine engine, BufferedReader in )
     {
         m_in = in;
@@ -116,6 +124,9 @@ public class TranslatorReader extends Reader
         return clean.toString();
     }
 
+    /**
+     *  Figures out if a link is an off-site link.
+     */
     private boolean isExternalLink( String link )
     {
         return link.startsWith("http:") || link.startsWith("ftp:") ||
@@ -207,7 +218,7 @@ public class TranslatorReader extends Reader
     private String setHR( String line )
     {
         StringBuffer buf = new StringBuffer();
-        int start = line.indexOf("---");
+        int start = line.indexOf("----");
 
         if( start != -1 )
         {
@@ -310,7 +321,9 @@ public class TranslatorReader extends Reader
                 buf.append( "<P>" );
             }
 
+            //
             // Make a bulleted list
+            //
             if( line.startsWith("*") )
             {
                 int i;
@@ -336,6 +349,38 @@ public class TranslatorReader extends Reader
                 for( ; m_listlevel > 0; m_listlevel-- )
                 {
                     buf.append("</UL>\n");
+                }
+            }
+
+            //
+            //  Ordered list
+            //
+            if( line.startsWith("#") )
+            {
+                int i;
+
+                for( i = 0; line.charAt(i) == '#' && i < line.length(); i++ );
+                
+                if( i > m_numlistlevel )
+                {
+                    for( ; m_numlistlevel < i; m_numlistlevel++ )
+                        buf.append("<OL>\n");
+                }
+                else if( i < m_numlistlevel )
+                {
+                    for( ; m_numlistlevel > i; m_numlistlevel -- )
+                        buf.append("</OL>\n");
+                }
+                
+                buf.append("<LI>");
+                line = line.substring( i );
+            }
+            else
+            {
+                // Close all lists down.
+                for( ; m_numlistlevel > 0; m_numlistlevel-- )
+                {
+                    buf.append("</OL>\n");
                 }
             }
 
@@ -386,6 +431,11 @@ public class TranslatorReader extends Reader
                 for( ; m_listlevel > 0; m_listlevel-- )
                 {
                     buf.append( "</UL>\n" );
+                }
+
+                for( ; m_numlistlevel > 0; m_numlistlevel-- )
+                {
+                    buf.append( "</OL>\n" );
                 }
 
                 m_data = new StringReader( buf.toString() );
