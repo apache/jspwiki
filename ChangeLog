@@ -1,3 +1,13 @@
+2002-12-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.45.
+
+        * Many changes to GoRankAggregator, which you probably won't care
+        about. 
+
+        * Added fix for JBoss and pure WAR-file deployment from Øyvind
+        Løkling.
+
 2002-12-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.44.
@@ -24,7 +34,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        Hirsimäki for providing with the idea and the image.  Look for
+        Hirsim,bd(Bki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -927,7 +937,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna Väätäinen finally managed to
+        * Added support for tables.  Sanna V,bdd(Bt,bd(Binen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
