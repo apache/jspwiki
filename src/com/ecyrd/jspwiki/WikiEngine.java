@@ -291,7 +291,7 @@ public class WikiEngine
 
         try
         {
-            Collection pages = m_pageManager.getProvider().getAllPages();
+            Collection pages = m_pageManager.getAllPages();
 
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
@@ -303,9 +303,9 @@ public class WikiEngine
             Iterator it = pages.iterator();
             while( it.hasNext() )
             {
-                WikiPage page = (WikiPage)it.next();
-                String content = m_pageManager.getProvider().getPageText( page.getName(), 
-                                                         WikiPageProvider.LATEST_VERSION );
+                WikiPage page  = (WikiPage)it.next();
+                String content = m_pageManager.getPageText( page.getName(), 
+                                                            WikiPageProvider.LATEST_VERSION );
                 m_referenceManager.updateReferences( page.getName(), 
                                                      scanWikiLinks( content ) );
             }
@@ -525,7 +525,7 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        return m_pageManager.getProvider().pageExists( page );
+        return m_pageManager.pageExists( page );
     }
 
     /**
@@ -604,7 +604,7 @@ public class WikiEngine
 
         try
         {
-            result = m_pageManager.getProvider().getPageText( page, version );
+            result = m_pageManager.getPageText( page, version );
 
         }
         catch( ProviderException e )
@@ -755,7 +755,7 @@ public class WikiEngine
 
         try
         {
-            m_pageManager.getProvider().putPageText( new WikiPage(page), text );
+            m_pageManager.putPageText( new WikiPage(page), text );
         }
         catch( ProviderException e )
         {
@@ -840,7 +840,7 @@ public class WikiEngine
 
             try
             {
-                m_pageManager.getProvider().putPageText( p, text );
+                m_pageManager.putPageText( p, text );
             }
             catch( ProviderException e )
             {
@@ -854,15 +854,7 @@ public class WikiEngine
      */
     public int getPageCount()
     {
-        try
-        {
-            return m_pageManager.getProvider().getAllPages().size();
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to count pages: ",e );
-            return -1;
-        }
+        return m_pageManager.getTotalPageCount();
     }
 
     /**
@@ -880,7 +872,7 @@ public class WikiEngine
      */
     public String getCurrentProviderInfo()
     {
-        return m_pageManager.getProvider().getProviderInfo();
+        return m_pageManager.getProviderDescription();
     }
 
     /**
@@ -891,7 +883,7 @@ public class WikiEngine
     {
         try
         {
-            Collection pages = m_pageManager.getProvider().getAllPages();
+            Collection pages = m_pageManager.getAllPages();
 
             TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
 
@@ -967,7 +959,7 @@ public class WikiEngine
             items[word++].word = token;
         }
 
-        Collection results = m_pageManager.getProvider().findPages( items );
+        Collection results = m_pageManager.findPages( items );
         
         return results;
     }
@@ -980,8 +972,8 @@ public class WikiEngine
     {
         try
         {
-            WikiPage p = m_pageManager.getProvider().getPageInfo( pagereq, 
-                                                 WikiPageProvider.LATEST_VERSION );
+            WikiPage p = m_pageManager.getPageInfo( pagereq, 
+                                                    WikiPageProvider.LATEST_VERSION );
             return p;
         }
         catch( ProviderException e )
@@ -1001,7 +993,7 @@ public class WikiEngine
     {
         try
         {
-            WikiPage p = m_pageManager.getProvider().getPageInfo( pagereq, version );
+            WikiPage p = m_pageManager.getPageInfo( pagereq, version );
             return p;
         }
         catch( ProviderException e )
@@ -1020,7 +1012,7 @@ public class WikiEngine
     {
         try
         {
-            WikiPage p = m_pageManager.getProvider().getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+            WikiPage p = m_pageManager.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
             if( p != null )
                 return p.getLastModified();
@@ -1041,7 +1033,7 @@ public class WikiEngine
     {
         try
         {
-            WikiPage p = m_pageManager.getProvider().getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+            WikiPage p = m_pageManager.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
             if( p != null )
                 return p.getVersion();
@@ -1061,7 +1053,7 @@ public class WikiEngine
     {
         try
         {
-            return m_pageManager.getProvider().getVersionHistory( page );
+            return m_pageManager.getVersionHistory( page );
         }
         catch( ProviderException e )
         {
