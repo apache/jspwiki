@@ -1,5 +1,7 @@
 2002-11-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.36.
+
         * Tables now close the <TD> tag correctly with </TD>, thanks to
         the new TranslatorReader architecture.  Reported by Andreas
         Rozek.
