@@ -1014,7 +1014,8 @@ public class WikiEngine
                     pagedata,
                     localCollector,
                     null,
-                    localCollector );
+                    localCollector,
+                    false );
 
         return localCollector.getLinks();
     }
@@ -1028,7 +1029,7 @@ public class WikiEngine
                               StringTransmutator localLinkHook,
                               StringTransmutator extLinkHook )
     {
-        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null );
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null, true );
     }
 
     /**
@@ -1039,7 +1040,8 @@ public class WikiEngine
                                String pagedata, 
                                StringTransmutator localLinkHook,
                                StringTransmutator extLinkHook,
-                               StringTransmutator attLinkHook )
+                               StringTransmutator attLinkHook,
+                               boolean            parseAccessRules )
     {
         String result = "";
 
@@ -1060,6 +1062,8 @@ public class WikiEngine
             in.addLocalLinkHook( localLinkHook );
             in.addExternalLinkHook( extLinkHook );
             in.addAttachmentLinkHook( attLinkHook );
+
+            if( !parseAccessRules ) in.disableAccessRules();
             result = FileUtil.readContents( in );
         }
         catch( IOException e )
@@ -1618,6 +1622,7 @@ public class WikiEngine
 
         return context;
     }
+
 
     /**
      *  Returns the URL of the global RSS file.  May be null, if the
