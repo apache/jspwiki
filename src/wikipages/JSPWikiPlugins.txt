@@ -17,7 +17,9 @@ If a parameter contains spaces, you can use single quotes (') around the paramet
 
 Here are some sample plugins included in the archive:
 
-!!com.ecyrd.jspwiki.plugin.RecentChangesPlugin
+----
+
+!!RecentChangesPlugin
 
 Inserts the latest changes in order. 
 
@@ -28,14 +30,15 @@ Inserts the latest changes in order.
 
 !Example:
 {{{
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=5, format=compact}]
+[{INSERT RecentChangesPlugin since=5, format=compact}]
 }}}
 
 Inserts the changes from the past 5 days in a compact format.  You
 might use this to make an automatical list of changes to the [LeftMenu], or [LeftMenuFooter], for example.
 
+----
   
-!!com.ecyrd.jspwiki.plugin.UnusedPagesPlugin
+!!UnusedPagesPlugin
 
 Lists all pages that are not currently referred to by any other page, thus meaning they are inaccessible through any other means.
 
@@ -48,7 +51,9 @@ Lists all pages that are not currently referred to by any other page, thus meani
 
 See [UnusedPages].
 
-!!com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin
+----
+
+!!UndefinedPagesPlugin
 
 Lists all pages that are referred to, but not yet created.
 
@@ -60,7 +65,9 @@ Lists all pages that are referred to, but not yet created.
 
 See [UndefinedPages].
 
-!!com.ecyrd.jspwiki.plugin.ReferringPagesPlugin
+----
+
+!!ReferringPagesPlugin
 
 Finds and lists all pages that refer to the current page.
 
@@ -73,7 +80,9 @@ Finds and lists all pages that refer to the current page.
 
 See [LeftMenuFooter].
 
-!!com.ecyrd.jspwiki.plugin.CurrentTimePlugin
+----
+
+!!CurrentTimePlugin
 
 Just displays the current server time.
 
@@ -116,3 +125,15 @@ Using [[{INSERT CurrentTimePlugin format='yyyy.MM.dd G \'at\' hh:mm:ss z'}] woul
 
 [{INSERT CurrentTimePlugin format='yyyy.MM.dd G \'at\' hh:mm:ss z'}]
 
+----
+
+!!IndexPlugin
+
+Displays all of the pages in this Wiki in alphabetical order.  IndexPlugin has been contributed by AlainRavet.
+
+!Parameters
+* __itemsPerLine__ = ''n''.  Break every 'n' items on line.
+
+!Example
+
+See [PageIndex].
