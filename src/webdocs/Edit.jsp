@@ -1,6 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="java.util.Calendar,java.util.Date" %>
+<%@ page import="java.util.*,java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -54,12 +54,16 @@
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
+    String cancel  = request.getParameter("cancel");
 
     //
     //  Set the response type before we branch.
     //
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    response.addHeader( "Cache-control", "max-age=0" );
+    response.addDateHeader( "Expires", new Date().getTime() );
+    response.addDateHeader( "Last-Modified", new Date().getTime() );
 
     //log.debug("Request character encoding="+request.getCharacterEncoding());
     //log.debug("Request content type+"+request.getContentType());
@@ -89,6 +93,14 @@
             return;
         }
 
+        //
+        //  We expire ALL locks at this moment, simply because someone has
+        //  already broken it.
+        //
+        PageLock lock = wiki.getPageManager().getCurrentLock( wikipage );
+        wiki.getPageManager().unlockPage( lock );
+        session.removeAttribute( "lock-"+pagereq );
+
         wiki.saveText( pagereq,
                        wiki.safeGetParameter( request, "text" ),
                        request );
@@ -100,6 +112,19 @@
     {
         log.debug("Previewing "+pagereq);
         pageContext.forward( "Preview.jsp" );
+    }
+    else if( cancel != null )
+    {
+        log.debug("Cancelled editing "+pagereq);
+        PageLock lock = (PageLock) session.getAttribute( "lock-"+pagereq );
+
+        if( lock != null )
+        {
+            wiki.getPageManager().unlockPage( lock );
+            session.removeAttribute( "lock-"+pagereq );
+        }
+        response.sendRedirect( wiki.getViewURL(pagereq) );
+        return;
     }
 
     log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
@@ -117,6 +142,11 @@
     pageContext.setAttribute( "lastchange",
                               Long.toString( lastchange ),
                               PageContext.REQUEST_SCOPE );
+
+    PageLock lock = wiki.getPageManager().lockPage( wikipage, 
+                                                    wiki.getValidUserName(request) );
+
+    session.setAttribute( "lock-"+pagereq, lock );
 
     String contentPage = "templates/"+skin+"/EditTemplate.jsp";
 %>
