@@ -35,6 +35,46 @@ public class WikiEngineTest extends TestCase
         f.delete();
     }
 
+    public void testNonExistantDirectory()
+        throws Exception
+    {
+        String tmpdir = System.getProperties().getProperty("java.tmpdir");
+        String dirname = "non-existant-directory";
+
+        String newdir = tmpdir + File.separator + dirname;
+
+        props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
+                           newdir );
+
+        try
+        {
+            WikiEngine test = new TestEngine2( props );
+
+            fail( "Wiki did not warn about wrong property." );
+        }
+        catch( javax.servlet.ServletException e )
+        {
+            // This is okay.
+        }
+    }
+
+    public void testNonExistantDirProperty()
+        throws Exception
+    {
+        props.remove( FileSystemProvider.PROP_PAGEDIR );
+
+        try
+        {
+            WikiEngine test = new TestEngine2( props );
+
+            fail( "Wiki did not warn about missing property." );
+        }
+        catch( NoRequiredPropertyException e )
+        {
+            // This is okay.
+        }
+    }
+
     public void testNonExistantPage()
         throws Exception
     {
