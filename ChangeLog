@@ -1,5 +1,13 @@
+2002-07-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.11.
+
+        * Even more JSP tags added, including a new "Permission" tag.
+
 2002-07-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.10.
+        
         * Forgot to call link mutators with CamelCase links.  This caused
         CamelCase links disappearing from things like "Referenced by"
         -list.  Reported by Alain Ravet.
