@@ -56,23 +56,19 @@ public class UserProfileTest extends TestCase
     public void testUTFStringRepresentation()
         throws Exception
     {
-        UserProfile p = new UserProfile("username=MääMöö");
+        UserProfile p = new UserProfile();
 
-        assertEquals( "name", "Määmöö",p.getName() );
+        p.setName("Määmöö");
+        String s = p.getStringRepresentation();
+
+        UserProfile p2 = new UserProfile( s );
+        assertEquals( "name", "Määmöö", p2.getName() );
     }
 
     public void testUTFURLStringRepresentation()
         throws Exception
     {
         UserProfile p = new UserProfile("username="+TextUtil.urlEncodeUTF8("Määmöö"));
-
-        assertEquals( "name", "Määmöö",p.getName() );
-    }
-
-    public void testBrokenUTFStringRepresentation()
-        throws Exception
-    {
-        UserProfile p = new UserProfile("username%3DMääMöö");
 
         assertEquals( "name", "Määmöö",p.getName() );
     }
