@@ -40,6 +40,12 @@
 
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
+    //
+    //  Force the TranslatorReader to output absolute URLs
+    //  regardless of the current settings.
+    //
+    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
+
     response.setContentType("text/xml; charset=UTF-8" );
 
     StringBuffer result = new StringBuffer();
@@ -117,7 +123,7 @@
 
             String encodedName = wiki.encodeName(p.getName());
 
-            String url = wiki.getAbsoluteURL(WikiContext.VIEW,p.getName());
+            String url = wikiContext.getViewURL(p.getName());
 
             out.println(" <entry>");
 
@@ -162,12 +168,6 @@
 
                 if( maxlen > 0 )
                 {
-                    //
-                    //  Force the TranslatorReader to output absolute URLs
-                    //  regardless of the current settings.
-                    //
-                    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
-
                     pageText = wiki.textToHTML( wikiContext, 
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
@@ -224,7 +224,7 @@
             //  This may be useful later on, once I figure out which <link>-tag to use.
             if( wiki.pageExists(author) )
             {
-                out.println("<homepage>"+wiki.getAbsoluteURL(WikiContext.VIEW,author)+"</homepage>");
+                out.println("<homepage>"+wikiContext.getViewURL(author)+"</homepage>");
             }
             */
             out.println("  </author>\n");

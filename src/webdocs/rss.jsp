@@ -30,6 +30,12 @@
 
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
+    //
+    //  Force the TranslatorReader to output absolute URLs
+    //  regardless of the current settings.
+    //
+    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
+
     response.setContentType("text/xml; charset=UTF-8" );
 
     StringBuffer result = new StringBuffer();
@@ -102,7 +108,7 @@
 
             String encodedName = wiki.encodeName(p.getName());
 
-            String url = wiki.getAbsoluteURL(WikiContext.VIEW,p.getName());
+            String url = wikiContext.getViewURL(p.getName());
 %>
             <rdf:li rdf:resource="<%=url%>"/>
 <%
@@ -140,11 +146,6 @@
 
                 if( maxlen > 0 )
                 {
-                    //
-                    //  Force the TranslatorReader to output absolute URLs
-                    //  regardless of the current settings.
-                    //
-                    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
                     pageText = wiki.textToHTML( wikiContext, 
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
@@ -171,8 +172,8 @@
             if( p.getVersion() > 1 )
             {
                 itemBuffer.append("  <wiki:diff>"+
-                                  wiki.getAbsoluteURL( WikiContext.DIFF,
-                                                       p.getName(),
+                                  wikiContext.getURL( WikiContext.DIFF,
+                                                      p.getName(),
                                                       "r1=-1" )+
                                   "</wiki:diff>\n");
             }
@@ -199,7 +200,7 @@
             itemBuffer.append("   <rdf:Description");
             if( wiki.pageExists(author) )
             {
-                itemBuffer.append(" link=\""+wiki.getAbsoluteURL(WikiContext.VIEW,author)+"\"");
+                itemBuffer.append(" link=\""+wikiContext.getViewURL(author)+"\"");
             }
             itemBuffer.append(">\n");
             itemBuffer.append("    <rdf:value>"+author+"</rdf:value>\n");
@@ -210,8 +211,8 @@
             //  PageHistory
 
             itemBuffer.append("  <wiki:history>");
-            itemBuffer.append( wiki.getAbsoluteURL( WikiContext.INFO,
-                                                    p.getName() ) );
+            itemBuffer.append( wikiContext.getURL( WikiContext.INFO,
+                                                   p.getName() ) );
             itemBuffer.append("</wiki:history>\n");
 
             //  Close up.
