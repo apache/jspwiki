@@ -460,6 +460,12 @@ public class WikiEngine
     {
         StringBuffer result = new StringBuffer();
 
+        if( pagedata == null ) 
+        {
+            log.error("NULL pagedata to textToHTML()");
+            return "ERROR:Empty pagedata";
+        }
+
         Reader in = new StringReader( pagedata );
 
         StringWriter out = null;
@@ -722,8 +728,8 @@ public class WikiEngine
 
         try
         {
-            f1 = FileUtil.newTmpFile( p1 );
-            f2 = FileUtil.newTmpFile( p2 );
+            f1 = FileUtil.newTmpFile( p1, getContentEncoding() );
+            f2 = FileUtil.newTmpFile( p2, getContentEncoding() );
 
             String cmd = TranslatorReader.replaceString( m_diffCommand,
                                                          "%s1",
