@@ -1,3 +1,9 @@
+2004-11-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.119
+
+        * Now should compile on JDK 1.5.  Thanks to Dan Johnson.
+
 2004-11-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.118
