@@ -1,5 +1,7 @@
 2003-10-01  Erik Bunn  <ebu@basen.net>
 
+	* v2.1.75
+
 	* Modified order of UserManager and ReferenceManager
 	init in WikiEngine.initialize(). This was relevant to
 	custom manager implementations.
