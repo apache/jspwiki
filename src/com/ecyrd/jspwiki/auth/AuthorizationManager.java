@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.acl.AccessControlList;
 import com.ecyrd.jspwiki.acl.AclEntryImpl;
 import com.ecyrd.jspwiki.acl.AclImpl;
 import com.ecyrd.jspwiki.auth.permissions.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Manages all access control and authorization.
@@ -123,6 +124,39 @@ public class AuthorizationManager
     }
 
     /**
+     *  Attempts to find the ACL of a page.
+     *  If the page has a parent page, then that is tried also.
+     */
+    private AccessControlList getAcl( WikiPage page )
+    {
+        //
+        //  Does the page already have cached ACLs?
+        //
+        AccessControlList acl = page.getAcl();
+
+        if( acl == null )
+        {
+            //
+            //  Nope, check if we can get them from the authorizer
+            //
+
+            acl = m_authorizer.getPermissions( page );
+            
+            //
+            //  If still no go, try the parent.
+            //
+            if( acl == null && page instanceof Attachment )
+            {
+                WikiPage parent = m_engine.getPage( ((Attachment)page).getParentName() );
+
+                acl = getAcl( parent );
+            }
+        }
+
+        return acl;
+    }
+
+    /**
      *  Returns true or false, depending on whether this action
      *  is allowed.
      */
@@ -134,6 +168,11 @@ public class AuthorizationManager
         UserManager userManager = m_engine.getUserManager();
 
         //
+        //  A slight sanity check.
+        //
+        if( wup == null ) return false;
+
+        //
         //  Yup, superusers can do anything.
         //
         if( userManager.isAdministrator( wup ) )
@@ -141,13 +180,7 @@ public class AuthorizationManager
             return true;
         }
 
-        AccessControlList acl = page.getAcl();
-
-        if( acl == null )
-        {
-            log.debug("No ACL, querying from authorizer");
-            acl = m_authorizer.getPermissions( page );
-        }
+        AccessControlList acl = getAcl( page );
 
         //
         //  Does the page in question have an access control list?
