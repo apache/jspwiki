@@ -1,79 +1,13 @@
 
-This is the first stable release of JSPWiki v2.  It contains many new
-enhancements and fixes, so please do read these carefully!
+This is not an release of JSPWiki v2.  
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
-Major changes since the last stable (1.8.2) release are:
+Major changes since the last stable (2.0.36) release are:
 
-- Support for traditional WikiLinks without square brackets
-  (InterCapping, BumpyWords, CamelCase, ...)
-
-- Splitting of Wiki pages into "Controller" and "View" pages has
-  been done.  The user-modifiable HTML templates can be found in
-  "templates/default" -directory.  All functionality can now be
-  controlled using JSP tags.  You can see their documentation on the
-  page JSPWikiTags
-
-- There is now a fully-fledged templating system, allowing you to
-  create your own look-and-feel for the Wiki quite easily.
-
-- There is a new addition to WikiLanguage: Definition lists
-  ;term;definition.  You can use this to make comments, too, by using
-  an empty 'term': ;:Comment.
-
-- There is a new variable system, documented in WikiVariables.
-
-- It is now possible to restore old versions of pages easily.  See
-  the page history page.
-
-- Default Edit window background has been changed :-)
-
-- Many pages have had slight changes to the way they look.
-
-- UserPreferences now checks for username validity. 
-
-- CachingProvider is now used by default.
-
-- There is now full attachment support.  See WikiAttachments
-
-- It is now possible to use HTML also in the Wiki markup.  However,
-  you must turn this feature explicitly on in the jspwiki.properties
-  file, as it potentially allows your users to create damaging pages.
-
-- Page "locking" has been implemented.  All edits are tracked, and the
-  default template issues a warning, if there are potentially
-  conflicting edits.
-
-- New plugins (which can now be multiline).
-   * IndexPlugin (by Alain Ravet)
-   * Counter
-   * WeblogPlugin
-   * WeblogEntryPlugin
-
-
+- none yet.
 
 UPGRADE NOTES
 =============
 
-
-- If updating manually (from v1.8.x):
-
-  * Providers now sleep in a different package.  You must change your
-    "jspwiki.pageProvider" setting.
-
-  * CachingProvider is no longer set explicitly.  You must use the new
-    "jspwiki.usePageCache" property instead.
-
-  * All HTML code should now go into *Template.jsp instead of Wiki.jsp
-    and the other main JSP pages.
-
-  * SystemInfo.jsp is gone.  Instead, there is now a page called
-    "SystemInfo".
-
-  So, the best way to do the update is to simply save your
-  "jspwiki.properties", and "web.xml" files to some safe location,
-  DELETE your previous installation, and install it again from
-  scratch. However, after this your templates should be easily
-  modifiable, and you never again have to resort to such drastic
-  measures again... We hope.
+None yet.
