@@ -1,3 +1,14 @@
+2005-02-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.149
+
+        * New Editortag and corresponding JSP pages now fix 
+        BugCommentPreviewDeletesAllComments.
+
+        * EditorTag now is much smarter than before: you can do things like
+        put your own editing commands inside the body - the EditorTag just
+        adds all the required pieces. 
+
 2005-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.148
