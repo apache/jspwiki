@@ -61,6 +61,27 @@ public class WikiEngineTest extends TestCase
                       engine.getText( name ) );
     }
 
+    public void testEncodeNameLatin1()
+    {
+        String name = "abcåäö";
+
+        assertEquals( "abc%E5%E4%F6",
+                      engine.encodeName(name) );
+    }
+
+    public void testEncodeNameUTF8()
+        throws Exception
+    {
+        String name = "\u0041\u2262\u0391\u002E";
+
+        props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
+
+        WikiEngine engine = new TestEngine2( props );
+
+        assertEquals( "A%E2%89%A2%CE%91.",
+                      engine.encodeName(name) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( WikiEngineTest.class );
