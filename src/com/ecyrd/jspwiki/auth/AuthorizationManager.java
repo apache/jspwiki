@@ -179,18 +179,18 @@ public class AuthorizationManager
             }
             catch( ClassNotFoundException e )
             {
-                log.fatal( "Authenticator "+authClassName+" cannot be found", e);
-                throw new WikiException("Authenticator cannot be found");
+                log.fatal( "WikiAuthorizer "+authClassName+" cannot be found", e);
+                throw new WikiException("WikiAuthorizer "+authClassName+" cannot be found");
             }
             catch( InstantiationException e )
             {
-                log.fatal( "Authenticator "+authClassName+" cannot be created",e );
-                throw new WikiException("Authenticator cannot be created");
+                log.fatal( "Authorizer "+authClassName+" cannot be created", e );
+                throw new WikiException("Authorizer "+authClassName+" cannot be created");
             }
             catch( IllegalAccessException e )
             {
-                log.fatal( "You are not allowed to access this authenticator class", e );
-                throw new WikiException("You are not allowed to access this authenticator class");
+                log.fatal( "You are not allowed to access this authorizer class", e );
+                throw new WikiException("You are not allowed to access this authorizer class");
             }
         }
         else
