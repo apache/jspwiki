@@ -1,5 +1,15 @@
 2003-04-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.11.
+
+        * Checked a huge amount of authorization code, mostly reworked
+        from JSPWIKI_AUTH_BRANCH.  Still missing: authenticators (that is,
+        things interface with UserManager and manage passwords) and some
+        fine-grainedness in handling things.
+
+        * Error.jsp is now a lot more verbose about the kind of errors it
+        finds. 
+
         * v2.1.10.
 
         * A mass import of the more stable parts of the new authentication
