@@ -5,18 +5,15 @@
 <%@ page import="com.ecyrd.jspwiki.tags.InsertDiffTag" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
 <%! 
     public void jspInit()
     {
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
 
-    Category log = Category.getInstance("JSPWiki"); 
+    Category log = Category.getInstance("JSPWiki");
     WikiEngine wiki;
 %>
-
-
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
     String skin    = wiki.safeGetParameter( request, "skin" );
@@ -32,6 +29,7 @@
     }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
+    log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
     String pageurl = wiki.encodeName( pagereq );    
 
@@ -44,13 +42,11 @@
     WikiPage wikipage = wiki.getPage( pagereq );
     AccessRuleSet accessRules = wikipage.getAccessRules();
     UserProfile userProfile = wiki.getUserProfile( request );
-    
+
     if( accessRules.hasReadAccess( userProfile ) == false )
     {
         if( wiki.useStrictLogin() )
         {
-            // Need to get a sensible page to send to!
-            String pageurl = wiki.encodeName( pagereq );
             response.sendRedirect(wiki.getBaseURL()+"Login.jsp?page="+pageurl);
         }
         else
