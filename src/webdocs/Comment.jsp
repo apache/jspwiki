@@ -27,6 +27,7 @@
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
     String author  = wiki.safeGetParameter( request, "author" );
+    String remember = request.getParameter("remember");
 
     WikiContext wikiContext = wiki.createContext( request, 
                                                   WikiContext.COMMENT );
@@ -133,6 +134,11 @@
         }
 
         wiki.saveText( wikiContext, pageText.toString() );
+
+        if( remember != null )
+        {
+            wiki.getUserManager().setUserCookie( response, author );            
+        }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
         return;
