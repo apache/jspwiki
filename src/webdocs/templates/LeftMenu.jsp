@@ -1,11 +1,4 @@
-<%-- Assumes that a variable called 'wiki' exists --%>
-<H3 CLASS="leftmenuheading"><A HREF="SystemInfo.jsp"><%=wiki.getApplicationName()%></A></H3>
-
-<%!static String LEFTMENU_NAME = "LeftMenu";%>
-
-<% 
-    WikiContext leftMenuContext = new WikiContext( wiki, pagereq );
-%>
+<H3 CLASS="leftmenuheading"><A HREF="SystemInfo.jsp"><wiki:ApplicationName /></A></H3>
 
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
@@ -15,7 +8,7 @@
         <HR><P>
         <P ALIGN="center">
         <I>No LeftMenu!</I><BR>
-        <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=LEFTMENU_NAME%>">Please make one.</A><BR>
+        <wiki:EditLink page="LeftMenu">Please make one.</wiki:EditLink><BR>
         </P>
         <P><HR>
     </wiki:NoSuchPage>
@@ -28,14 +21,14 @@
     {
         %>
         <B>G'day,</B><BR>
-        <%=wiki.textToHTML( leftMenuContext, "["+leftMenuUser+"]" )%>
+        <%=wiki.textToHTML( wikiContext, "["+leftMenuUser+"]" )%>
         <%
     }
     else
     {
         %><TT>
         Set your name in<BR>
-        <%=wiki.textToHTML( leftMenuContext, "[UserPreferences]!" )%>
+        <%=wiki.textToHTML( wikiContext, "[UserPreferences]!" )%>
         </TT>
         <%
     }
