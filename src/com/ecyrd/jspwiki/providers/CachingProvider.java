@@ -286,12 +286,24 @@ public class CachingProvider
     }
     */
 
+    /**
+     *  Waits first for a little while before starting to go through
+     *  the Lucene "pages that need updating".
+     */
     private void startLuceneUpdateThread()
-    {
+    {        
         m_luceneUpdateThread = new Thread(new Runnable()
         {
             public void run()
             {
+                // FIXME: This is a kludge - JSPWiki should somehow report
+                //        that init phase is complete.
+                try
+                {
+                    Thread.sleep( 60000L );
+                }
+                catch( InterruptedException e ) {}
+
                 while( true )
                 {
                     while( m_updates.size() > 0 )
@@ -589,7 +601,7 @@ public class CachingProvider
     {
         IndexWriter writer = null;
 
-        log.info("Updating Lucene index for page '" + page.getName() + "'...");        
+        log.debug("Updating Lucene index for page '" + page.getName() + "'...");        
 
         try
         {
@@ -618,7 +630,7 @@ public class CachingProvider
             catch( IOException e ) {}
         }
 
-        log.info("Done updating Lucene index for page '" + page.getName() + "'.");
+        log.debug("Done updating Lucene index for page '" + page.getName() + "'.");
     }
 
     private void deleteFromLucene( WikiPage page )
