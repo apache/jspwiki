@@ -1400,6 +1400,51 @@ public class TranslatorReaderTest extends TestCase
     }
 
     /**
+     *   Metadata tests
+     */
+    public void testSet1()
+        throws Exception
+    {
+        String src = "Foobar.[{SET name=foo}]";
+
+        WikiPage p = new WikiPage( PAGE_NAME );
+
+        String res = translate( p, src );
+
+        assertEquals("Page text", "Foobar.", res);
+
+        assertEquals( "foo", p.getAttribute("name") );
+    }
+
+    public void testSet2()
+        throws Exception
+    {
+        String src = "Foobar.[{SET name = foo}]";
+
+        WikiPage p = new WikiPage( PAGE_NAME );
+
+        String res = translate( p, src );
+
+        assertEquals("Page text", "Foobar.", res);
+
+        assertEquals( "foo", p.getAttribute("name") );
+    }
+
+    public void testSet3()
+        throws Exception
+    {
+        String src = "Foobar.[{SET name= Janne Jalkanen}]";
+
+        WikiPage p = new WikiPage( PAGE_NAME );
+
+        String res = translate( p, src );
+
+        assertEquals("Page text", "Foobar.", res);
+
+        assertEquals( "Janne Jalkanen", p.getAttribute("name") );
+    }
+
+    /**
      *  Test collection of links.
      */
 
