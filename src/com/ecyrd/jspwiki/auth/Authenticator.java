@@ -34,28 +34,18 @@ import com.ecyrd.jspwiki.UserProfile;
  * Authenticator acts as a unified interface and simplified loader of 
  * a dynamically defined WikiAuthenticator object.
  *
- * <p>JSPWiki authentication features users, roles, and permissions.
- * Users are validated against a password, and, if successful, their
- * roles and permissions are loaded into a UserProfile. These can
- * then be compared to per-page access restrictions.
- *
- * <p><i>Roles</i> are, essentially, groups that a user can belong to.
- * Pages may be restricted to/from certain roles with the ALLOW and
- * DENY directives.
- *
- * <p><i>Permissions</i> offer a more fine-grained access system:
- * roles can be further mapped to any number of permissions. This
- * may be useful with a large user base. Pages may be restricted
- * to/from permissions with the REQUIRE directive. 
+ * <P>By default, no authenticator is defined in <i>jspwiki.properties</i>.
+ * In this case, Authenticator merely validates the UserProfile and
+ * returns, ensuring full access to a default, unprotected site. 
+ * If an authenticator <i>is</i> specified, however, the
+ * profile is passed to it for a more thorough handling. 
  * 
- * <p>As an example, you might have user <i>quibble</i> with password
- * <i>frobozz</i> (hopefully encrypted in storage), who belongs to 
- * groups <i>users</i> and <i>editors</i>; <i>users</i> may specify
- * permissions <i>read-user-data</i>, editors <i>read-all</i> and
- * <i>write-user-data</i>. Quibble would thus have access to pages
- * restricted to groups users and editors, and to those pages that
- * require permissions read-user-data, read-all, or write-user-data.
- *
+ * <P>The responsibility of a WikiAuthenticator is to check that
+ * the correct password was supplied by a user, and, if so, to
+ * mark the UserProfile object as valid. Any further processing -
+ * access permissions, etc. - is taken care of by Authorizer
+ * and WikiAuthorizer implementations. 
+
  * <p>The source of user information depends on the actual
  * authenticator class used. The simplest case is the FileAuthenticator
  * with simple file-based entries.
@@ -66,22 +56,7 @@ import com.ecyrd.jspwiki.UserProfile;
  * UserProfile with certain default roles for guest users. This,
  * however, is not the concern of the auth package.)
  *
- * <p>There are certain special identifiers used in the 
- * authentication system. You need to be aware of these when
- * setting access controls.
- *
- * <ul>
- * <li><b>ALL</b> is a special group identifier; it is parsed
- *     separately and allows or denies access by all groups.
- *     Users should never be configured to belong to ALL.
- *     (See AccessRuleSet for more information.)
- * <li><b>admin</b> is a special group identifier that always
- *     has access to everything. Admin should never be used
- *     in the page access directives, and only trusted users
- *     should be configured into the admin group.
- * </ul>
- *
- * See AccessRuleSet for more information on how page-level
+ * <P>See AccessRuleSet for more information on how page-level
  * access configuration works.
  */
 public class Authenticator
@@ -108,12 +83,16 @@ public class Authenticator
             classname = props.getProperty( PROP_AUTHENTICATOR );
             if( classname == null )
             {
-                log.warn( "jspwiki.authenticator not defined; using DummyAuthenticator." );
-                classname = "DummyAuthenticator";
+                log.warn( "No " + PROP_AUTHENTICATOR + " defined in jspwiki.properties; " +
+                          "users will be validated always." );
+                m_auth = null;
             }
-            Class authClass = WikiEngine.findWikiClass( classname, "com.ecyrd.jspwiki.auth" );
-            m_auth = (WikiAuthenticator)authClass.newInstance();
-            m_auth.initialize( props );
+            else
+            {
+                Class authClass = WikiEngine.findWikiClass( classname, "com.ecyrd.jspwiki.auth" );
+                m_auth = (WikiAuthenticator)authClass.newInstance();
+                m_auth.initialize( props );
+            }
         }
         catch( ClassNotFoundException e )
         {
@@ -140,17 +119,22 @@ public class Authenticator
 
     /**
      * Calls the current authenticator's authenticate() method.
+     * If no authenticator has been specified, validates the 
+     * user and returns true. 
      */
     public boolean authenticate( UserProfile wup )
     {
+        if( wup == null )
+            return( false );
+
         if( m_auth != null )
         {
             return( m_auth.authenticate( wup ) );
         }
         else
         {
-            log.warn( "No authenticator has been initialized!" );
-            return( false );
+            wup.setStatus( UserProfile.VALIDATED );
+            return( true );
         }
     }
 
