@@ -1,56 +1,12 @@
+[{WeblogPlugin}]
+
 This is a playground - do whatever you want.
 
-bliblib.
-
-fkowekfpowekpfkowpe
-
-fkweopfkwpeoqkfew
-f
-wqf
-ew
-fw
-e
-few
-f
-we
-fewqfewkpf weqp kfpw ekpqkfpwqeo pfkfwpqekpfkqwpefp wkpef kpqwkepf kwqpke fpkwpe fkpqwok epkwqpfkwpqokepf kqwpek fpqwokepf qwpekfpwq kepfkpqwkepf kqwpoe fpqowkpfe kqwpekfpqwk efpkoqwpoe fpoqkwpefk pqwokpefokq wpefokpqw efpowefpkqwpeo fpqwok efpokwe.
-
-__TÄMÄ GENERAATORI ON KOEKÄYTÖSSÄ JA SYNTAKSI VOI VIELÄ MUUTTUA YLLÄTTÄEN.  ÄLKÄÄ SIIS RIPOTELKO NIITÄ DIAGRAMMEJA IHAN JOKA SIVULLE, TAI JONKUN PITÄÄ SIIVOTA NE SITTEN...__
-
-Puh.  Noin.  Niin, nyt on olemassa diagrammigeneraattori.  Syntaksi on lyhykäisyydessään seuraava:
-
-{{{
-[{GoDiagram  
-label='Tähän jotain tekstiä'
-first='white'
-
-| . . . .
-| 1 . 2 .
-| . X . .
-| . . . .
-+--------
-}]
-
-}}}
-
-josta tulee:
-
-[{GoDiagram  
-label='Tähän jotain tekstiä'
-first='white'
-
-| . . . .
-| 1 . 2 .
-| . X . .
-| . . . .
-+--------
-}]
-
+gkerogkerpo gperk pgkre pwgkwepr gpewk rpgokewp rgkpåwekr gpokwreg 
+[{Image style='font-size: 200%; color:red; margin: 20px; border-width: 5px;' src='IMG_0014.JPG' height='150' align=right caption='Two happy people doing strange stuff with alcoholic beverages.'}] 
 Huomaa, että välittömästi kuvan jälkeen olevat kommentit tulevat kuvan oikealle puolelle.  Tripla-backslash (\) katkaisee ja aloittaa siististi uudelta riviltä.
 
-\\\
-
-!Parametrit:
+__Parametrit__
 
 * __label__ : Teksti joka sijoitetaan kuvan alle.  Valinnainen.  Voi sisältää ihan mitä vaan wikitekstiä, ml. hyperlinkkejä, jne.  Huomaa kuitenkin, että erikoismerkit pitää eristää \-merkillä, esmes \' ==> '.  Samaten jos haluat rivinvaihdon, sinun pitää kirjoittaa neljä '\' -merkkiä :-/.
 * __first__ : Numeroiduissa siirroissa merkitsee kumpi onpi ensin, musta eli valkoinen.  'white' tarkoittaa sitä, että ykkösellä merkitty siirto on valkoisen.  Tämäkin on valinnainen, ja jos sitä ei ole määritelty, niin silloin ykkönen on mustan siirto.

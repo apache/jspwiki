@@ -59,7 +59,7 @@ public class FileSystemProvider
      */
     public static final String FILE_EXT = ".txt";
 
-    private static final String DEFAULT_ENCODING = "ISO-8859-1";
+    public static final String DEFAULT_ENCODING = "ISO-8859-1";
 
     /**
      *  @throws FileNotFoundException If the specified page directory does not exist.
@@ -205,8 +205,6 @@ public class FileSystemProvider
                                                           m_encoding ));
 
             out.print( text );
-
-            out.close();
         }
         catch( IOException e )
         {
@@ -270,25 +268,27 @@ public class FileSystemProvider
         return wikipages.length;
     }
 
+    /**
+     * Iterates through all WikiPages, matches them against the given query,
+     * and returns a Collection of SearchResult objects.
+     */
     public Collection findPages( QueryItem[] query )
     {
         File wikipagedir = new File( m_pageDirectory );
         TreeSet res = new TreeSet( new SearchResultComparator() );
+        SearchMatcher matcher = new SearchMatcher( query );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 
-    nextfile:
         for( int i = 0; i < wikipages.length; i++ )
         {
             FileInputStream input = null;
-            
-            String line = null;
 
             // log.debug("Searching page "+wikipages[i].getPath() );
 
             String filename = wikipages[i].getName();
             int cutpoint    = filename.lastIndexOf( FILE_EXT );
-            String wikiname = filename.substring(0,cutpoint);
+            String wikiname = filename.substring( 0, cutpoint );
 
             wikiname = unmangleName( wikiname );
 
@@ -296,71 +296,15 @@ public class FileSystemProvider
             {
                 input = new FileInputStream( wikipages[i] );
                 String pagetext = FileUtil.readContents( input, m_encoding );
-
-                int scores[] = new int[ query.length ];
-
-                BufferedReader in = new BufferedReader( new StringReader(pagetext) );
-
-                while( (line = in.readLine()) != null )
+                SearchResult comparison = matcher.matchPageContent( wikiname, pagetext );
+                if( comparison != null )
                 {
-                    line = line.toLowerCase();
-
-                    for( int j = 0; j < query.length; j++ )
-                    {
-                        int index = -1;
-
-                        while( (index = line.indexOf( query[j].word, index+1 )) != -1 )
-                        {
-                            // log.debug("   Match found for "+query[j].word );
-
-                            if( query[j].type != QueryItem.FORBIDDEN )
-                            {
-                                scores[j]++; // Mark, found this word n times
-                            }
-                            else
-                            {
-                                // Found something that was forbidden.
-                                continue nextfile;
-                            }
-                        }
-                    }
-                }
-
-                //
-                //  Check that we have all required words.
-                //
-
-                int totalscore = 0;
-
-                for( int j = 0; j < scores.length; j++ )
-                {
-                    // Give five points for each occurrence
-                    // of the word in the wiki name.
-
-                    if( wikiname.toLowerCase().indexOf( query[j].word ) != -1 &&
-                        query[j].type != QueryItem.FORBIDDEN )
-                        scores[j] += 5;
-
-                    //  Filter out pages if the search word is marked 'required'
-                    //  but they have no score.
-
-                    if( query[j].type == QueryItem.REQUIRED && scores[j] == 0 )
-                        continue nextfile;
-
-                    //
-                    //  Count the total score for this page.
-                    //
-                    totalscore += scores[j];
-                }
-
-                if( totalscore > 0 )
-                {
-                    res.add( new SearchResultImpl(wikiname,totalscore) );
+                    res.add( comparison );
                 }
             }
             catch( IOException e )
             {
-                log.error( "Failed to read", e );
+                log.error( "Failed to read " + filename, e );
             }
             finally
             {
@@ -368,7 +312,7 @@ public class FileSystemProvider
                 {
                     if( input != null ) input.close();
                 }
-                catch( IOException e ) {}
+                catch( IOException e ) {} // It's fine to fail silently.
             }
         }
 
@@ -431,32 +375,4 @@ public class FileSystemProvider
             return name.endsWith( FILE_EXT );
         }
     }
-
-    /**
-     *  Searches return this class.
-     */
-    public class SearchResultImpl
-        implements SearchResult
-    {
-        int      m_score;
-        WikiPage m_page;
-
-        public SearchResultImpl( String name, int score )
-        {
-            m_page  = new WikiPage( name );
-            m_score = score;
-        }
-
-        public WikiPage getPage()
-        {
-            return m_page;
-        }
-
-        public int getScore()
-        {
-            return m_score;
-        }
-    }
-
-
 }
