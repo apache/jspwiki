@@ -109,21 +109,6 @@ public class AuthorizationManager
     }
 
     /**
-     *  Returns true or false, depending on whether this action
-     *  is allowed for this WikiPage.
-     *
-     *  @param permission Any of the available permissions "view", "edit, "comment", etc.
-     */
-    public boolean checkPermission( WikiPage page,
-                                    UserProfile wup,
-                                    String permission )
-    {
-        return checkPermission( page,
-                                wup,
-                                WikiPermission.newInstance( permission ) );
-    }
-
-    /**
      *  Attempts to find the ACL of a page.
      *  If the page has a parent page, then that is tried also.
      */
@@ -158,6 +143,22 @@ public class AuthorizationManager
 
     /**
      *  Returns true or false, depending on whether this action
+     *  is allowed for this WikiPage.
+     *
+     *  @param permission Any of the available permissions "view", "edit, "comment", etc.
+     */
+    public boolean checkPermission( WikiPage page,
+                                    UserProfile wup,
+                                    String permission )
+    {
+        return checkPermission( page,
+                                wup,
+                                WikiPermission.newInstance( permission ) );
+    }
+
+
+    /**
+     *  Returns true or false, depending on whether this action
      *  is allowed.
      */
     public boolean checkPermission( WikiPage page, 
@@ -175,7 +176,7 @@ public class AuthorizationManager
         //
         //  Yup, superusers can do anything.
         //
-        if( userManager.isAdministrator( wup ) )
+        if( wup.isAuthenticated() && userManager.isAdministrator( wup ) )
         {
             return true;
         }

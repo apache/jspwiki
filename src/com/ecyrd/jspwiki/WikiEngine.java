@@ -146,6 +146,8 @@ public class WikiEngine
     /** Stores the user manager.*/
     private UserManager      m_userManager = null;
 
+    private TemplateManager  m_templateManager = null;
+
     /** Does all our diffs for us. */
     private DifferenceEngine m_differenceEngine;
 
@@ -352,6 +354,7 @@ public class WikiEngine
             m_variableManager   = new VariableManager( props );
             m_authorizationManager = new AuthorizationManager( this, props );
             m_userManager       = new UserManager( this, props );
+            m_templateManager   = new TemplateManager( this, props );
 
             initPageFilters( props );
             initReferenceManager();            
