@@ -22,11 +22,12 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.List;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
@@ -50,24 +51,36 @@ public abstract class IteratorTag
     protected Iterator    m_iterator;
     protected WikiContext m_wikiContext;
 
-    static    Category    log = Category.getInstance( IteratorTag.class );
+    static    Logger      log = Logger.getLogger( IteratorTag.class );
 
-    public void setList( Object arg )
+    /**
+     *  Sets the collection that is used to form the iteration.
+     */
+    public void setList( Collection arg )
     {
-        if( arg instanceof Collection )
-        {
-            m_iterator = ((Collection)arg).iterator();
-        }
-        else if( arg instanceof Iterator )
-        {
-            m_iterator = (Iterator) arg;
-        }
+        m_iterator = arg.iterator();
+    }
+
+    /**
+     *  Sets the iterator directly that is used to form the iteration.
+     */
+    /*
+    public void setList( Iterator arg )
+    {
+        m_iterator = arg;
+    }
+    */
+
+    public void clearList()
+    {
+        m_iterator = null;
     }
 
     public int doStartTag()
     {
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
                                                                 PageContext.REQUEST_SCOPE );
+        if( m_iterator == null ) return SKIP_BODY;
 
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
@@ -76,16 +89,31 @@ public abstract class IteratorTag
 
         if( m_iterator.hasNext() )
         {
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            context.setPage( (WikiPage)m_iterator.next() );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(),
-                                      context.getPage() );
+            buildContext();
         }
 
         return EVAL_BODY_TAG;
+    }
+
+    /**
+     *  Arg, I hate globals.
+     */
+    private void buildContext()
+    {
+        //
+        //  Build a clone of the current context
+        //
+        WikiContext context = (WikiContext)m_wikiContext.clone();
+        context.setPage( (WikiPage)m_iterator.next() );
+
+        //
+        //  Push it to the iterator stack, and set the id.
+        //
+        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                  context,
+                                  PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( getId(),
+                                  context.getPage() );
     }
 
     public int doEndTag()
@@ -93,7 +121,7 @@ public abstract class IteratorTag
         // Return back to the original.
         pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                   m_wikiContext,
-                                  PageContext.REQUEST_SCOPE );        
+                                  PageContext.REQUEST_SCOPE );
 
         return EVAL_PAGE;
     }
@@ -115,15 +143,9 @@ public abstract class IteratorTag
             }
         }
 
-        if( m_iterator.hasNext() )
+        if( m_iterator != null && m_iterator.hasNext() )
         {
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            context.setPage( (WikiPage)m_iterator.next() );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(),
-                                      context.getPage() );
+            buildContext();
             return EVAL_BODY_TAG;
         }
         else
