@@ -92,8 +92,6 @@ public class ReferenceManagerTest extends TestCase
      *  Is a page recognized as referenced if only plural form links exist.
      */
 
-    /*
-    // FIXME: Enable back in dev branch.
     public void testUpdatePluralOnlyRef()
         throws Exception
     {
@@ -104,7 +102,6 @@ public class ReferenceManagerTest extends TestCase
         c = mgr.findReferrers( "Foobar" );
         assertTrue( "Foobar referrers", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
     }
-    */
 
 
     /** 
@@ -112,9 +109,6 @@ public class ReferenceManagerTest extends TestCase
      *  the page referenced by a singular link.
      */
 
-    // FIXME: Enable back in dev branch.
-
-    /*
     public void testUpdateFoobar2s()
         throws Exception
     {
@@ -124,7 +118,6 @@ public class ReferenceManagerTest extends TestCase
         Collection c = mgr.findReferrers( "Foobar2s" );
         assertTrue( "referrers", c!=null && c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
     }
-    */
 
     public void testUpdateBothExist()
         throws Exception
