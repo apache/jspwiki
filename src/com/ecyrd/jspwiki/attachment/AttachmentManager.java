@@ -58,6 +58,11 @@ public class AttachmentManager
      */
     public static final String  PROP_PROVIDER = "jspwiki.attachmentProvider";
 
+    /**
+     *  The maximum size of attachments that can be uploaded.
+     */
+    public static final String  PROP_MAXSIZE  = "jspwiki.attachment.maxsize";
+
     static Category log = Category.getInstance( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
     private WikiEngine             m_engine;
