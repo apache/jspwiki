@@ -1,5 +1,11 @@
 2003-06-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.38.
+
+        * Added %%-commands for styles.  %%classname will use the given
+        class as defined in the CSS file; %%( CSS-data ) will use the
+        given CSS style.
+
         * v2.1.37.
 
         * Added "template" -parameter to LinkToTag, so you can now
