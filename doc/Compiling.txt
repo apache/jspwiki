@@ -24,7 +24,9 @@ Building
 Ant is the build system.
 
 Everything should Just Compile, when you say 'ant', assuming you have
-everything in your path.
+everything in your path.  Most notably, you'll probably have to copy
+the servlet.jar into either your $JAVA_HOME/jre/lib/ext, or to
+JSPWiki/lib.
 
 There are few targets:
 
