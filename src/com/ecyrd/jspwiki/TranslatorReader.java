@@ -274,6 +274,13 @@ public class TranslatorReader extends Reader
         }
     }
 
+    private boolean m_parseAccessRules = true;
+
+    public void disableAccessRules()
+    {
+        m_parseAccessRules = false;
+    }
+
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
@@ -698,6 +705,7 @@ public class TranslatorReader extends Reader
 
     private String handleAccessRule( String ruleLine )
     {
+        if( !m_parseAccessRules ) return "";
         WikiPage          page = m_context.getPage();
         AccessControlList acl  = page.getAcl();
         UserManager       mgr  = m_context.getEngine().getUserManager();
