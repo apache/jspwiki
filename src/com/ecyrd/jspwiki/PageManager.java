@@ -28,11 +28,16 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  Manages the WikiPages.
+ *  Manages the WikiPages.  This class functions as an unified interface towards
+ *  the page providers.  It handles initialization and management of the providers,
+ *  and provides utility methods for accessing the contents.
  *
  *  @author Janne Jalkanen
  *  @since 2.0
  */
+// FIXME: This class currently only functions just as an extra layer over providers,
+//        complicating things.  We need to move more provider-specific functionality
+//        from WikiEngine (which is too big now) into this class.
 public class PageManager
 {
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
