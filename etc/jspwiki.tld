@@ -43,4 +43,28 @@
     </attribute>
   </tag>
 
+  <tag>
+    <name>Author</name>
+    <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>NoSuchPage</name>
+    <tagclass>com.ecyrd.jspwiki.tags.NoSuchPageTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+  </tag>  
+
+  <tag>
+    <name>EditLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.EditLinkTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+  </tag>  
+
 </taglib>
