@@ -11,6 +11,7 @@ import com.ecyrd.jspwiki.providers.*;
 public class AttachmentManagerTest extends TestCase
 {
     public static final String NAME1 = "TestPage";
+    public static final String NAMEU = "TestPage\u00e6";
 
     Properties props = new Properties();
 
@@ -33,6 +34,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager = m_engine.getAttachmentManager();
 
         m_engine.saveText( NAME1, "Foobar" );
+        m_engine.saveText( NAMEU, "Foobar" );
     }
 
     private File makeAttachmentFile()
@@ -53,6 +55,7 @@ public class AttachmentManagerTest extends TestCase
     public void tearDown()
     {
         m_engine.deletePage( NAME1 );
+        m_engine.deletePage( NAMEU );
 
         String tmpfiles = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 
@@ -241,6 +244,30 @@ public class AttachmentManagerTest extends TestCase
     public void testExists2() throws Exception
     {
         Attachment att = new Attachment( NAME1, "test1.bin" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        assertTrue( "attachment disappeared", 
+                    m_engine.pageExists( att.getName() ) );
+    }
+
+    public void testExistsUTF1() throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test\u00e4.bin" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        assertTrue( "attachment disappeared", 
+                    m_engine.pageExists( att.getName() ) );
+    }
+
+    public void testExistsUTF2() throws Exception
+    {
+        Attachment att = new Attachment( NAMEU, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
