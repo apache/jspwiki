@@ -284,6 +284,8 @@ public class WikiEngine
     /**
      *  Turns a WikiName into something that can be 
      *  called through using an URL.
+     *
+     *  @since 1.4.1
      */
     public String encodeName( String pagename )
     {
