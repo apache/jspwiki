@@ -49,6 +49,7 @@ public class DiffLinkTag
 {
     public static final String VER_LATEST   = "latest";
     public static final String VER_PREVIOUS = "previous";
+    public static final String VER_CURRENT  = "current";
 
     private String m_version    = VER_LATEST;
     private String m_newVersion = VER_LATEST;
@@ -117,6 +118,10 @@ public class DiffLinkTag
             r1 = m_wikiContext.getPage().getVersion() - 1;
             r1 = (r1 < 1 ) ? 1 : r1;
         }
+        else if( VER_CURRENT.equals(getVersion()) )
+        {
+            r1 = m_wikiContext.getPage().getVersion();
+        }
         else
         {
             r1 = Integer.parseInt( getVersion() );
@@ -133,6 +138,10 @@ public class DiffLinkTag
         {
             r2 = m_wikiContext.getPage().getVersion() - 1;
             r2 = (r2 < 1 ) ? 1 : r2;
+        }
+        else if( VER_CURRENT.equals(getNewVersion()) )
+        {
+            r2 = m_wikiContext.getPage().getVersion();
         }
         else
         {
