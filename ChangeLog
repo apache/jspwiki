@@ -1,5 +1,9 @@
 2001-07-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * TranslatorWriter.cleanLink() now removes all non-letters and
+        non-numbers from the link name so that you can use all sorts of
+        punctuation inside a link name.
+
         * Implemented RecentChanges list by writing RecentChanges.jsp.
         Wiki.jsp also redirects all requests to a page called
         'RecentChanges' to RecentChanges.jsp.
