@@ -31,17 +31,9 @@ import com.ecyrd.jspwiki.rss.RSSGenerator;
 /**
  *  Provides Wiki services to the JSP page.
  *
- *  There are some problems with this class:
- *  <UL>
- *   <LI>There is no synchronization of pages: we rely on the filesystem
- *       synchronization.
- *   <LI>There is a separate instance of this class for every JSP page, which
- *       means that we can't use synchronized methods.  There should really
- *       be a single class per <I>application</I>, which is a bit more
- *       problematic.
- *   <LI>If we have a single class per JVM, then we can't have multiple
- *       page repositories, or multiple page names.
- *  </UL>
+ *  <P>
+ *  This is the main interface through which everything should go.
+ *
  *  @author Janne Jalkanen
  */
 public class WikiEngine
