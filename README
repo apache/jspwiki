@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.21 $
-                             $Date: 2003-07-16 15:51:24 $
+                         $Revision: 1.22 $
+                             $Date: 2005-02-28 22:35:39 $
                            $Author: jalkanen $
 
 What is it?
@@ -77,6 +77,34 @@ OPTIONAL:
   is even recommended) to use the VersioningFileProvider, which does
   not require RCS.
 
+
+Really simple installation
+--------------------------
+
+This section is meant for you, if you just want to have a really quick
+install without much worries.  If you want to have a more complicated
+installation, check out the "Install" section below.
+
+Since JSPWiki 2.1.153, JSPWiki comes with a really simple installation
+engine.  Just do the following:
+
+1) Install Tomcat from http://jakarta.apache.org/ (or any other servlet
+   container)
+
+2) Drop the JSPWiki.war file in your <tomcat home>/webapps/ directory.
+   Optional: Rename the JSPWiki.war if you want your URL to end with
+   something else than /JSPWiki/.  For example, to get it called "wiki"
+   just rename the "JSPWiki.war" file to "wiki.war".
+
+3) Point your browser at http://<myhost>/JSPWiki/Install.jsp
+   (Or, if you renamed it in the previous phase, use something like
+   http://<myhost>/wiki/Install.jsp)
+
+4) Answer a couple of simple questions
+
+5) Point your browser to http://<myhost>/JSPWiki/
+
+That's it!
 
 
 Installation
