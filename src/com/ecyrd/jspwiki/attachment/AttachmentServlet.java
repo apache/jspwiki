@@ -380,6 +380,7 @@ public class AttachmentServlet
              */
             if( req.getContentLength() > m_maxSize )
             {
+                // FIXME: Does not delete the received files.
                 throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
                                              errorPage );
             }
