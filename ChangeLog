@@ -1,3 +1,8 @@
+2001-07-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Realm name is now "JSPWiki editor" instead of "Basic
+        Authentication Area" or whatever stupid it was.
+
 2001-07-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Conversion of {{ is now fixed - it no longer transforms {{{ into
