@@ -1051,6 +1051,22 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "Test  (a[]+b+)", translate(src) );
     }
 
+    public void testPluginEnd4()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin text='}'}]";
+
+        assertEquals( "Test }", translate(src) );
+    }
+
+    public void testPluginEnd5()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}]";
+
+        assertEquals( "Test  (a[]+b{}+Glob.+)", translate(src) );
+    }
+
     public void testVariableInsert()
         throws Exception
     {
