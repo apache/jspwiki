@@ -248,11 +248,14 @@ jspwiki.plugin.searchPath =
 #  of authentication systems.  In JSPWiki talk, the term "Authorizer" means
 #  a module that basically checks if the username and password match.
 #
-#  Define here the module you want to use for plugins.  You can either
-#  define a full class name (with the package), or a shortened version,
-#  if you're using one of the JSPWiki-provided ones.
+#  Define here the WikiAuthorizer implementation you want to use. 
+#  Specify the full classname, or the short name of one of an authorizer
+#  provided in the com.ecyrd.jspwiki.auth package.
 #
-#jspwiki.authorizer = FileAuthorizer
+#  PageAuthorizer is a simple default implementation that reads defaults
+#  from a WikiPage called 'DefaultPermissions'.
+#
+jspwiki.authorizer = PageAuthorizer
 
 
 #
