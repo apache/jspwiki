@@ -257,7 +257,15 @@ public class BasicAttachmentProvider
             out.close();
 
             Properties props = getPageProperties( att );
-            props.setProperty( versionNumber+".author", att.getAuthor() );
+
+            String author = att.getAuthor();
+
+            if( author == null )
+            {
+                author = "unknown";
+            }
+
+            props.setProperty( versionNumber+".author", author );
             putPageProperties( att, props );
         }
         catch( IOException e )
@@ -276,12 +284,10 @@ public class BasicAttachmentProvider
         return "";
     }
 
-    public InputStream getAttachmentData( Attachment att )
-        throws IOException,
+    private File findFile( File dir, Attachment att )
+        throws FileNotFoundException,
                ProviderException
     {
-        File attDir = findAttachmentDir( att );
-
         int version = att.getVersion();
 
         if( version == WikiProvider.LATEST_VERSION )
@@ -289,12 +295,23 @@ public class BasicAttachmentProvider
             version = findLatestVersion( att );
         }
 
-        File f = new File( attDir, version+"."+getFileExtension(att.getFileName()) );
+        File f = new File( dir, version+"."+getFileExtension(att.getFileName()) );
 
         if( !f.exists() )
         {
             throw new FileNotFoundException("No such file: "+f.getAbsolutePath()+" exists.");
         }
+
+        return f;
+    }
+
+    public InputStream getAttachmentData( Attachment att )
+        throws IOException,
+               ProviderException
+    {
+        File attDir = findAttachmentDir( att );
+
+        File f = findFile( attDir, att );
 
         return new FileInputStream( f );
     }
@@ -349,13 +366,18 @@ public class BasicAttachmentProvider
         }
 
         att.setVersion( version );
+        
 
-        System.out.println("Fetching info on version "+version);
+        // System.out.println("Fetching info on version "+version);
         try
         {
             Properties props = getPageProperties(att);
 
             att.setAuthor( props.getProperty( version+".author" ) );
+
+            File f = findFile( dir, att );
+
+            att.setSize( f.length() );
         }
         catch( IOException e )
         {
