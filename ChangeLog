@@ -1,3 +1,11 @@
+2004-07-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.104
+
+        * Added set/getLoginName() to UserProfile.
+
+        * Added documentation for the three new tags.
+
 2004-06-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.103
