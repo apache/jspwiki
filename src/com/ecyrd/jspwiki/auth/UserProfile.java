@@ -44,6 +44,8 @@ public class UserProfile
     public static final int CONTAINER = 2;  // Container has done auth for us.
     public static final int PASSWORD  = 3;
 
+    private String m_password = null;
+
     public UserProfile()
     {
     }
@@ -116,6 +118,21 @@ public class UserProfile
     public void setLoginStatus( int arg )
     {
         m_loginStatus = arg;
+    }
+
+    /**
+     *  Returns the password that the user gave.  We store the password
+     *  because some authenticators may need to reissue it at periodical
+     *  intervals; or possibly use the same password to multiple services.
+     */
+    public String getPassword()
+    {
+        return m_password;
+    }
+
+    public void setPassword( String arg )
+    {
+        m_password = arg;
     }
 
     public String toString()
