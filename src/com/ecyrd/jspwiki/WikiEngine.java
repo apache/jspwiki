@@ -548,7 +548,8 @@ public class WikiEngine
     }
 
     /**
-     *  Returns true, if the requested page (or an alias) exists.
+     *  Returns true, if the requested page (or an alias) exists.  Will consider
+     *  any version as existing.
      *
      *  @param page WikiName of the page.
      */
@@ -570,13 +571,24 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        WikiPage p = m_pageManager.getPageInfo( getFinalPageName(page), version );
+        String finalName = getFinalPageName( page );
+        WikiPage p = null;
+
+        if( finalName != null )
+        {
+            //
+            //  Go and check if this particular version of this page
+            //  exists.
+            //
+            p = m_pageManager.getPageInfo( finalName, version );
+        }
 
         return (p != null);
     }
 
     /**
-     *  Returns true, if the requested page (or an alias) exists.
+     *  Returns true, if the requested page (or an alias) exists, with the
+     *  specified version in the WikiPage.
      *
      *  @since 2.0
      */
