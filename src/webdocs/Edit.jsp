@@ -97,7 +97,7 @@
       <INPUT type="hidden" name="action" value="save">
       <INPUT type="hidden" name="edittime" value="<%=lastchange%>">
 
-      <TEXTAREA name="text" rows="25" cols="80"><%=wiki.getText(pagereq)%></TEXTAREA>
+      <TEXTAREA wrap="virtual" name="text" rows="25" cols="80"><%=wiki.getText(pagereq)%></TEXTAREA>
 
       <P>
       <input type="submit" name="ok" value="Save" />
