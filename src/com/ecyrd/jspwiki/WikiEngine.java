@@ -1217,22 +1217,26 @@ public class WikiEngine
 
             if( p.getAccessRules().isEmpty() )
             {
-                WikiContext context = new WikiContext( this, permissionPage );
-                String pagedata = getPureText( permissionPage, WikiProvider.LATEST_VERSION );
-                TranslatorReader in = new TranslatorReader( context, new StringReader( pagedata ) );
-                in.enablePlugins( false );
-                String translation = translatePageText( in );
+                // Always get the default rules; they apply also when authorization is "disabled".
                 AccessRuleSet rules = m_authorizer.getDefaultPermissions();
 
-                if( rules != null )
-                    rules.add( in.getAccessRules() );
-                else
-                    rules = in.getAccessRules();
+                // If authorization _is_ enabled, add page-specific rules, too.
+                if( m_authorizer.usePageRules() )
+                {
+                    WikiContext context = new WikiContext( this, permissionPage );
+                    String pagedata = getPureText( permissionPage, WikiProvider.LATEST_VERSION );
+                    TranslatorReader in = new TranslatorReader( context, new StringReader( pagedata ) );
+                    in.enablePlugins( false );
+                    String translation = translatePageText( in );
+
+                    if( rules != null )
+                        rules.add( in.getAccessRules() );
+                    else
+                        rules = in.getAccessRules();
+                }
 
                 if( rules != null )
                     p.setAccessRules( rules );
-                else
-                    p.setAccessRules( new AccessRuleSet() );
             }
         }
     }
