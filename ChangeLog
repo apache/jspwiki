@@ -1,3 +1,12 @@
+2003-10-14  Erik Bunn <ebu at iki dot fi>
+
+	 	* v2.1.80
+	 	
+	 	* Modified VariableManager and VariableTag: they now search for page
+	 	metadata after everything else fails. Using the [{SET foo="bar"}]
+	 	syntax on a WikiPage, you can examine the variable with [{$foo}] on 
+	 	the page, or using the Variable tag in your templates.
+
 2003-10-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.79.
@@ -1353,7 +1362,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        HirsimBBdki for providing with the idea and the image.  Look for
+        HirsimBB??dki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -2256,7 +2265,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VBBBdBBBdtBBBdinen finally managed to
+        * Added support for tables.  Sanna VBBB??dBBB??dtBBB??dinen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
