@@ -116,14 +116,14 @@
          {
          %>
              This page does not exist.  Why don't you go and
-             <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
+             <wiki:EditLink>create it</wiki:EditLink>?
          <%
          }
       %>
 
       <P>
-      Back to <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>"><%=pagereq%></A>,
-       or to the <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">Page History</A>.
+      Back to <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>,
+       or to the <wiki:PageInfoLink>Page History</wiki:PageInfoLink>.
        </P>
 
       <P><HR>
