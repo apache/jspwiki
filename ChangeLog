@@ -20,7 +20,7 @@
 
         * v1.9.49.
 
-        * All referral plugings (UnusedPages,UndefinedPages, and
+        * All referral plugins (UnusedPages,UndefinedPages, and
         ReferringPagesPlugin) now support a parameter "separator", which
         basically contains the wiki markup that should be used to separate
         the entires.  Suggested by Jeremy Cowgar.
