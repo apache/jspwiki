@@ -2,11 +2,16 @@
 
         * v1.9.20.
 
+        * Added a new variable system, including an all-new
+        VariableManager.  For example, "applicationname" tag was removed
+        as obsolete.  You may add variables using a [{$foobar}] -notation
+        on wiki pages, and with the wiki:Variable tag on the JSP pages.
+        
         * PageModified.jsp and Preview.jsp are now included in the new
         template system.
         
         * SystemInfo.jsp is now removed.  A page called "SystemInfo" is
-        taking its place.  It currently shows garbage, though.
+        taking its place.
 
         * Creating new pages should work now again.
         
