@@ -38,7 +38,7 @@
       <table border="0" width="100%">
       <tr>
         <td>
-           <form action="attach" method="POST" enctype="multipart/form-data">
+           <form action="attach" method="POST" enctype="multipart/form-data" accept-charset="ISO-8859-1">
 
            <%-- Do NOT change the order of wikiname and content, otherwise the 
                 servlet won't find its parts. --%>
