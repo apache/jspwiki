@@ -2,7 +2,7 @@
 
         * v2.1.46.
 
-        * Added comment functionality.
+        * Added comment functionality and CommentLinkTag.
 
         * WeblogPlugin now generates a separate <div> around the entry
         itself.  This should make it a bit easier to create your own
