@@ -244,11 +244,13 @@ public class WikiEngine
             //
             if( propertyFile == null )
             {
+                context.log("No "+PARAM_PROPERTYFILE+" defined for this context, using default from "+DEFAULT_PROPERTYFILE);
                 //  Use the default property file.
                 propertyStream = context.getResourceAsStream(DEFAULT_PROPERTYFILE);
             }
             else
             {
+                context.log("Reading properties from "+propertyFile+" instead of default.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
             }
 
@@ -268,7 +270,7 @@ public class WikiEngine
 
             initialize( props );
 
-            log.debug("Root path for this Wiki is: '"+m_rootPath+"'");
+            log.info("Root path for this Wiki is: '"+m_rootPath+"'");
         }
         catch( Exception e )
         {
