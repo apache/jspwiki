@@ -2,6 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AccessRuleSet" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -31,6 +32,19 @@
     String usertext = wiki.safeGetParameter( request, "text" );
 
     WikiPage wikipage = wiki.getPage( pagereq );
+
+    // This doesn't happen usually, but in case someone types the PageModified URL in directly:
+    AccessRuleSet accessRules = wikipage.getAccessRules();
+    UserProfile userProfile = wiki.getUserProfile( request );
+    
+    if( accessRules.hasReadAccess( userProfile ) == false )
+    {
+        StringBuffer buf = new StringBuffer();
+        buf.append( "<h4>Unable to view differences for " + pagereq + ".</h4>\n" );
+        buf.append( "You do not have sufficient privileges to view this page.\n" );
+        buf.append( "Have you logged in?\n" );
+        throw new WikiSecurityException( buf.toString() );
+    }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     wikiContext.setRequestContext( WikiContext.CONFLICT );

@@ -1,6 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AccessRuleSet" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
@@ -24,6 +25,18 @@
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
     WikiPage wikipage = wiki.getPage( pagereq );
+
+    // To prevent manual URL typing..
+    AccessRuleSet accessRules = wikipage.getAccessRules();
+    UserProfile userProfile = wiki.getUserProfile( request );
+    if( accessRules.hasReadAccess( userProfile ) == false )
+    {
+        StringBuffer buf = new StringBuffer();
+        buf.append( "<h4>Unable to preview " + pagereq + ".</h4>\n" );
+        buf.append( "You do not have sufficient privileges to view this page.\n" );
+        buf.append( "Have you logged in?\n" );
+        throw new WikiSecurityException( buf.toString() );
+    }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     wikiContext.setRequestContext( WikiContext.PREVIEW );

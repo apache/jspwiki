@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AccessRuleSet" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -36,6 +37,18 @@
     WikiPage wikipage = wiki.getPage( pagereq );
     if( wikipage == null )
         wikipage = new WikiPage( pagereq );
+
+    AccessRuleSet accessRules = wikipage.getAccessRules();
+    UserProfile userProfile = wiki.getUserProfile( request );
+    
+    if( accessRules.hasReadAccess( userProfile ) == false )
+    {
+        StringBuffer buf = new StringBuffer();
+        buf.append( "<h4>Unable to read " + pagereq + " information.</h4>\n" );
+        buf.append( "You do not have sufficient privileges to view information on this page.\n" );
+        buf.append( "Have you logged in?\n" );
+        throw new WikiSecurityException( buf.toString() );
+    }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     wikiContext.setRequestContext( WikiContext.INFO );

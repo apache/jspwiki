@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AccessRuleSet" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
@@ -41,6 +42,18 @@
     if( wikipage == null )
     {
         wikipage = new WikiPage( pagereq );
+    }
+
+    AccessRuleSet accessRules = wikipage.getAccessRules();
+    UserProfile userProfile = wiki.getUserProfile( request );
+    
+    if( accessRules.hasWriteAccess( userProfile ) == false )
+    {
+        StringBuffer buf = new StringBuffer();
+        buf.append( "<h4>Unable to edit " + pagereq + ".</h4>\n" );
+        buf.append( "You do not have sufficient privileges to view this page.\n" );
+        buf.append( "Have you logged in?\n" );
+        throw new WikiSecurityException( buf.toString() );
     }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
