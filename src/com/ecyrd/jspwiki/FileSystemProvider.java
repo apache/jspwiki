@@ -103,7 +103,7 @@ public class FileSystemProvider
     /**
      *  Finds a Wiki page from the page repository.
      */
-    private File findPage( String page )
+    protected File findPage( String page )
     {
         return new File( m_pageDirectory, mangleName(page)+FILE_EXT );
     }
