@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Date;
 import org.apache.log4j.Category;
 
+import com.ecyrd.jspwiki.WikiProvider;
+
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
  *  available variables is on a Wiki page called "WikiVariables".
@@ -189,6 +191,17 @@ public class VariableManager
         else if( name.equals("pageproviderdescription") )
         {
             res = context.getEngine().getCurrentProviderInfo();
+        }
+        else if( name.equals("attachmentprovider") )
+        {
+            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
+            res = (p != null) ? p.getClass().getName() : "-";
+        }
+        else if( name.equals("attachmentproviderdescription") )
+        {
+            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
+
+            res = (p != null) ? p.getProviderInfo() : "-";
         }
         else if( name.equals("interwikilinks") )
         {
