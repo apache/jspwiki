@@ -169,12 +169,13 @@ public class CachingProvider
         if( m_gotall == false )
         {
             all = m_provider.getAllPages();
-            m_gotall = true;
+
+            // Make sure that all pages are in the cache.
 
             // FIXME: This has the unfortunate side effect of clearing
             // the cache.
 
-            for( Iterator i = m_cache.keySet().iterator(); i.hasNext(); )
+            for( Iterator i = all.iterator(); i.hasNext(); )
             {
                 synchronized(this)
                 {
@@ -185,6 +186,8 @@ public class CachingProvider
                     m_cache.put( item.m_page.getName(), item );
                 }
             }
+
+            m_gotall = true;
         }
         else
         {
