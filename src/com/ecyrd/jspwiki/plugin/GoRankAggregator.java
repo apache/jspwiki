@@ -26,6 +26,13 @@ import java.util.*;
 import java.io.StringReader;
 import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.MalformedURLException;
 
 /**
  *  Plugin for aggregating go game rankings.  Probably of very little use to anyone,
@@ -40,13 +47,69 @@ public class GoRankAggregator
     implements WikiPlugin
 {
     private static Category log = Category.getInstance( GoRankAggregator.class );
+    
+    // FIXME:  This is now SHARED across all Wiki instances.  This is a HACK!
+    // FIXME:  Make a engine-specific thing.
+    private static List c_egfList = null;
+    private static long c_lastEGFUpdate = -1;
+
+    public static final long EGF_UPDATE_INTERVAL = 24*60*60*1000L;
 
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
     }
 
-    private Collection getPersonsFromPage( WikiContext context, String pageName )
+    /**
+     *  Give the input as HTML, and this will parse it, returning a List
+     *  of UserInfo nodes.
+     */
+    List parseEGFRatingsList( WikiContext context, String ratingsList )
+        throws IOException
+    {
+        ArrayList list = new ArrayList();
+
+        BufferedReader in = new BufferedReader( new StringReader(ratingsList) );
+
+        String line;
+
+        while( (line = in.readLine() ) != null )
+        {
+            if( line.trim().length() == 0 ) continue; // Skip empty lines.
+
+            StringTokenizer tok = new StringTokenizer( line, " \t" );
+
+            try
+            {
+                int    id    = Integer.parseInt(tok.nextToken().trim());
+                String last  = tok.nextToken();
+                String first = tok.nextToken();
+                String club  = tok.nextToken();
+                String grade = tok.nextToken();
+                int    gor   = Integer.parseInt(tok.nextToken().trim());
+
+                UserInfo info    = new UserInfo();
+                info.m_lastName  = last;
+                info.m_firstName = first;
+                info.m_rank      = parseRank( grade );
+                info.m_egfRank   = gor;
+
+                list.add( info );
+            }
+            catch( NoSuchElementException e )
+            {
+                // Skip quietly.
+            }
+            catch( NumberFormatException e )
+            {
+                // Skip quietly, too.  This line is probably some HTML crap.
+            }
+        }
+
+        return list;
+    }
+
+    List getPersonsFromPage( WikiContext context, String pageName )
         throws PluginException,
                IOException
     {
@@ -77,7 +140,7 @@ public class GoRankAggregator
         {
             String lastname  = null;
             String firstname = null;
-            String rank      = null;
+            int    rank      = 50;
 
             line = line.trim();
 
@@ -93,22 +156,27 @@ public class GoRankAggregator
                 continue;
             }
 
-            StringTokenizer st = new StringTokenizer( line, ", \t" );
+            StringTokenizer st = new StringTokenizer( line, "," );
 
             try
             {
                 lastname  = st.nextToken();
                 firstname = st.nextToken();
-                rank      = st.nextToken();
+                rank      = parseRank(st.nextToken());
             }
             catch( NoSuchElementException e )
             {
                 throw new PluginException( "Page '"+pageName+"' contains invalid data on line '"+line+"'.");
             }
+            catch( IllegalArgumentException e )
+            {
+                log.debug("Bad rank data: ",e);
+                throw new PluginException( "Page '"+pageName+"' has bad rank data on line '"+line+"': "+e.getMessage());
+            }
 
             UserInfo info    = new UserInfo();
-            info.m_lastName  = lastname;
-            info.m_firstName = firstname;
+            info.m_lastName  = lastname.trim();
+            info.m_firstName = firstname.trim();
             info.m_rank      = rank;
             info.m_club      = club;
 
@@ -118,15 +186,131 @@ public class GoRankAggregator
         return list;
     }
 
+    String printRank( int rank )
+    {
+        if( rank < 0 )
+        {
+            return -rank+" dan";
+        }
+        else
+        {
+            return rank+" kyu";
+        }
+    }
+
+    /**
+     *  Returns positive values for kyu ranks, negative for dan.
+     */
+    int parseRank( String rank )
+        throws IllegalArgumentException
+    {
+        if( rank == null || rank.length() == 0 )
+        {
+            throw new IllegalArgumentException("Null name");
+        }
+
+        rank = rank.toLowerCase();
+
+        try
+        {
+            int dan = rank.indexOf('d');
+            int kyu = rank.indexOf('k');
+
+            if( dan > 0 )
+            {
+                return - Integer.parseInt( rank.substring(0,dan).trim() );
+            }
+            else if( kyu > 0 )
+            {
+                return Integer.parseInt( rank.substring(0,kyu).trim() );
+            }
+            else
+            {
+                throw new IllegalArgumentException("Rank qualifier (kyu or dan) is missing: "+rank);
+            }        
+        }
+        catch( NumberFormatException e )
+        {
+            throw new IllegalArgumentException("Bad number format: "+rank);
+        }
+    }
+
+    private void fetchNewEGFList( WikiContext context, String url )
+        throws MalformedURLException,
+               IOException
+    {
+        synchronized( c_egfList )
+        {
+            log.info("Fetching new EGF ratings list from "+url);
+            URL source = new URL( url );
+
+            URLConnection conn      = source.openConnection();
+
+            String        encoding  = conn.getContentEncoding();
+            InputStream   in        = conn.getInputStream();
+            StringWriter  out       = new StringWriter();
+
+            if( encoding == null ) encoding = "ISO-8859-1";
+
+            log.debug("Data channel opened, now reading "+conn.getContentLength()+" bytes.");
+            FileUtil.copyContents( new InputStreamReader(in, encoding), out );
+
+            c_egfList = parseEGFRatingsList( context, out.toString() );
+
+            // FIXME: Potential problem here: If one fetch fails, then will
+            // reattempt on every new fetch.
+
+            c_lastEGFUpdate = System.currentTimeMillis();
+
+            log.debug("EGF ranking update done.");
+        }
+    }
+
+    private void updateEGF( WikiContext context, String url )
+        throws MalformedURLException,
+               IOException
+    {
+        if( c_egfList == null )
+        {
+            c_egfList = new ArrayList();
+            fetchNewEGFList( context, url );
+        }
+        else if( System.currentTimeMillis() - c_lastEGFUpdate > EGF_UPDATE_INTERVAL )
+        {
+            fetchNewEGFList( context, url );
+        }
+    }
+
+    private void mergeEGFRatings( Collection originals, Collection egf )
+    {
+        for( Iterator i = originals.iterator(); i.hasNext(); )
+        {
+            UserInfo info = (UserInfo) i.next();
+
+            for( Iterator it = egf.iterator(); it.hasNext(); )
+            {
+                UserInfo egfinfo = (UserInfo) it.next();
+
+                if( egfinfo.m_lastName.equalsIgnoreCase(info.m_lastName) &&
+                    egfinfo.m_firstName.equalsIgnoreCase(info.m_firstName) )
+                {
+                    // Same guy
+
+                    info.m_egfRank = egfinfo.m_egfRank;
+                    break;
+                }
+            }
+        }
+    }
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         StringBuffer sb = new StringBuffer();
         StringBuffer errors = new StringBuffer();
 
-        TreeSet list = new TreeSet( new RankSorter() );
-
         String pages = (String) params.get( "pages" );
+        String egfurl = (String) params.get( "egfurl" );
 
         if( pages == null )
         {
@@ -135,13 +319,15 @@ public class GoRankAggregator
 
         StringTokenizer st = new StringTokenizer( pages, ", \t" );
 
+        ArrayList personList = new ArrayList();
+
         while( st.hasMoreTokens() )
         {
             String pageName = st.nextToken();
 
             try
             {
-                list.addAll( getPersonsFromPage( context, pageName ) );
+                personList.addAll( getPersonsFromPage( context, pageName ) );
             }
             catch( PluginException e )
             {
@@ -155,23 +341,50 @@ public class GoRankAggregator
         }
 
         //
+        //  Now, let's do EGF ratings update.
+        //
+
+        try
+        {
+            if( egfurl != null )
+            {
+                updateEGF( context, egfurl );
+                
+                mergeEGFRatings( personList, c_egfList );
+            }
+        }
+        catch( MalformedURLException e )
+        {
+            errors.append( "<li>EGF URL seems to be faulty.</li>\n");
+        }
+        catch( IOException e )
+        {
+            errors.append( "<li>Could not read EGF rankings data: "+e.getMessage()+"</li>\n");
+        }
+
+        TreeSet list = new TreeSet( new RankSorter() );
+
+        list.addAll( personList );
+
+        //
         //  List now contains a sorted set of persons.
         //  Write out the HTML for this.
         //
 
         int counter = 1;
 
-        sb.append("<table border=1>\n");
-        sb.append("<tr><th>Place</th><th>Name</th><th>Club</th><th>Rank</th></tr>");
+        sb.append("<table border=\"1\">\n");
+        sb.append("<tr><th>Place</th><th>Name</th><th>Club</th><th>Rank</th><th>EGF GoR</th></tr>");
         for( Iterator i = list.iterator(); i.hasNext(); )
         {            
             sb.append("<tr>\n");
 
             UserInfo ui = (UserInfo) i.next();
-            sb.append("<td>"+counter+"</td>");
+            sb.append("<td align=center>"+counter+"</td>");
             sb.append("<td>"+ui.m_lastName+", "+ui.m_firstName+"</td>");
             sb.append("<td>"+ui.m_club+"</td>");
-            sb.append("<td>"+ui.m_rank+"</td>");
+            sb.append("<td align=center>"+printRank(ui.m_rank)+"</td>");
+            sb.append("<td align=center>"+((ui.m_egfRank > 0) ? ""+ui.m_egfRank : "?")+"</td>");
 
             sb.append("</tr>\n");
 
@@ -194,52 +407,50 @@ public class GoRankAggregator
         public String m_lastName;
         public String m_firstName;
         public String m_club;
-        public String m_rank;
+        public int    m_rank;
+        public int    m_egfRank = 0;
+
+        public String toString()
+        {
+            return m_lastName+","+m_firstName+": "+m_rank;
+        }
     }
 
+    /**
+     *  Sorts stuff according to rank, then EGF points, then last name.
+     */
     protected class RankSorter
         implements Comparator
     {
-        /**
-         *  Returns positive values for kyu ranks, negative for dan.
-         */
-        public int parseRank( String rank )
-        {
-            if( rank == null || rank.length() == 0 )
-            {
-                return 50;
-            }
-
-            try
-            {
-                int dan = rank.indexOf('d');
-                int kyu = rank.indexOf('k');
-
-                if( dan > 0 )
-                {
-                    return - Integer.parseInt( rank.substring(0,dan) );
-                }
-                else if( kyu > 0 )
-                {
-                    return Integer.parseInt( rank.substring(0,kyu) );
-                }
-                else
-                {
-                    return 50;
-                }        
-            }
-            catch( NumberFormatException e )
-            {
-                return 50;
-            }
-        }
 
         public int compare( Object o1, Object o2 )
         {
             UserInfo u1 = (UserInfo)o1;
             UserInfo u2 = (UserInfo)o2;
 
-            return parseRank(u1.m_rank) - parseRank(u2.m_rank);
+            int res = u1.m_rank - u2.m_rank;
+
+            if( res == 0 )
+            {
+                res = u2.m_egfRank - u1.m_egfRank;
+
+                if( res == 0 )
+                {
+                    res = u1.m_lastName.compareTo( u2.m_lastName );
+
+                    if( res == 0 )
+                    {
+                        res = u2.m_firstName.compareTo( u2.m_lastName );
+
+                        if( res == 0 )
+                        {
+                            res = 1; // Default, someone's gotta win.
+                        }
+                    }
+                }
+            }
+
+            return res;
         }
     }
 }
