@@ -1,5 +1,15 @@
 2002-12-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.46.
+
+        * Major import of all attachments code.  This version is actually
+        able to upload/download attachments, but I wouldn't use this for
+        any real production.  The structure may change and you may face a
+        difficult process to migrate your old attachments to a new
+        system.  
+
+        * Added attachment_big.png, thanks to Tero Tiittanen.
+
         * v1.9.45.
 
         * Many changes to GoRankAggregator, which you probably won't care
