@@ -6,6 +6,15 @@
 
 <web-app>
 
+   <!--
+       Here we define the users which are allowed to access JSPWiki
+       editor.  Comment everything out if you want to allow everybody
+       access.
+
+       This default setup needs two roles, "admin" and "user".
+       There is no real difference between these two for now.
+   -->
+
    <security-constraint>
        <web-resource-collection>
            <web-resource-name>Protected Area</web-resource-name>
