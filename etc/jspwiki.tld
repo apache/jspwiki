@@ -143,6 +143,12 @@
   </tag>  
 
   <tag>
+     <name>IsAttachment</name>
+     <tagclass>com.ecyrd.jspwiki.tags.IsAttachmentTag</tagclass>
+     <bodycontent>JSP</bodycontent>
+  </tag>
+
+  <tag>
     <name>LinkTo</name>
     <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
     <bodycontent>JSP</bodycontent>
@@ -195,6 +201,12 @@
   <tag>
     <name>PageName</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>PageSize</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageSizeTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
@@ -278,6 +290,18 @@
     <name>Translate</name>
     <tagclass>com.ecyrd.jspwiki.tags.TranslateTag</tagclass>
     <bodycontent>JSP</bodycontent>
+  </tag>
+
+  <tag>
+    <name>UploadLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.UploadLinkTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>format</name>
+    </attribute>
   </tag>
 
   <tag>
