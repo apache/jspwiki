@@ -1340,6 +1340,7 @@ public class TranslatorReader extends Reader
                 if( m_isdefinition )
                 {
                     s = "</DT><DD>";
+                    m_isdefinition = false;
                 }
                 else
                 {
