@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.5 $
-                             $Date: 2001-11-02 17:54:26 $
+                         $Revision: 1.6 $
+                             $Date: 2001-11-06 21:19:12 $
                            $Author: jalkanen $
 
 What is it?
@@ -185,6 +185,31 @@ WikiEngine.java.  This is ".txt" by default.
 There are some default files with the distribution archive.  Feel free
 to use them to bootstrap your own Wiki.
 
+
+Internationalisation
+--------------------
+
+JSPWiki can also handle UTF-8.  However, you need to switch this at
+install-time, since the old method of handling ISO-8859-1 and the new
+method of handling UTF-8 are not compatible, and I did not wish to
+break previous installations that are already using the ISO-8859-1
+charset.
+
+If you're interested, the reason is as follows:  W3C forgot to define
+a standard how URLs that are not US-ASCII should be handled.  The Web
+de-facto standard is to use ISO-8859-1 (Latin1) and encode it with
+(%xy), where xy is the hexadecimal representation.  However, this
+means that everyone else in the world can't use this.  So, very
+logically, you can also encode UTF-8 in this format.  Unfortunately,
+there is NO way to distinguish between these URLs that are really
+UTF-8 and those URLs that are ISO-8859-1, since they look exactly the
+same.  This is why you must tell JSPWiki which character set to use
+to start with.
+
+The FileSystemProvider and RCSFileProvider save the files on the disk
+just as if they were URLs.  This can get really messy with Japanese
+language page names, for example.  You can always check the URL to the
+page, to find how they are named on the disk =).
 
 
 Contact
