@@ -1379,6 +1379,36 @@ public class TranslatorReader extends Reader
             String s = null;
 
             //
+            //  Check if we're actually ending the preformatted mode.
+            //  We still must do an entity transformation here.
+            //
+            if( m_isPre )
+            {
+                if( ch == '}' )
+                {
+                    buf.append( handleClosebrace() );
+                }
+                else if( ch == '<' )
+                {
+                    buf.append("&lt;");
+                }
+                else if( ch == '>' )
+                {
+                    buf.append("&gt;");
+                }
+                else if( ch == -1 )
+                {
+                    quitReading = true;
+                }
+                else 
+                {
+                    buf.append( (char)ch );
+                }
+
+                continue;
+            }
+
+            //
             //  CamelCase detection, a non-trivial endeavour.
             //  We keep track of all white-space separated entities, which we
             //  hereby refer to as "words".  We then check for an existence
@@ -1441,32 +1471,6 @@ public class TranslatorReader extends Reader
                 previousCh = ch;
 		 
             } // if m_camelCaseLinks
-		 
-            //
-            //  Check if we're actually ending the preformatted mode.
-            //  We still must do an entity transformation here.
-            //
-            if( m_isPre )
-            {
-                if( ch == '}' )
-                {
-                    buf.append( handleClosebrace() );
-                }
-                else if (ch == '<') 
-                {
-                    buf.append("&lt;");
-                }
-                else if (ch == '>') 
-                {
-                    buf.append("&gt;");
-                }
-                else 
-                {
-                    buf.append( (char)ch );
-                }
-
-                continue;
-            }
 
             //
             //  Check if any lists need closing down.
