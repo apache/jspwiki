@@ -1,5 +1,7 @@
 2002-12-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Fixed WikiEngine.beautifyTitle() to work better with acronyms.
+
         * Moved GoRankAggregator and GoDiagram plugins into their own,
         separate project. 
 
