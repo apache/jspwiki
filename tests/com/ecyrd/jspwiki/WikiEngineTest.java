@@ -77,6 +77,9 @@ public class WikiEngineTest extends TestCase
         }
     }
 
+    /**
+     *  Check that calling pageExists( String ) works.
+     */
     public void testNonExistantPage()
         throws Exception
     {
@@ -85,6 +88,19 @@ public class WikiEngineTest extends TestCase
         assertEquals( "Page already exists",
                       false,
                       engine.pageExists( pagename ) );
+    }
+
+    /**
+     *  Check that calling pageExists( WikiPage ) works.
+     */
+    public void testNonExistantPage2()
+        throws Exception
+    {
+        WikiPage page = new WikiPage("Test1");
+
+        assertEquals( "Page already exists",
+                      false,
+                      engine.pageExists( page ) );
     }
 
     public void testPutPage()
