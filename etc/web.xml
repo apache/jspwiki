@@ -79,7 +79,6 @@
 
    AND REMOVE ME TOO -->
 
-
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->
    <welcome-file-list>
