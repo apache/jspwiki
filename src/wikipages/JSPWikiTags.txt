@@ -19,7 +19,6 @@ Here is a list of all the tags that the site administrator can use when he is bu
 * [IncludeTag]
 * [InsertDiffTag]
 * [InsertPageTag]
-* [IteratorTag]
 * [LinkToParentTag]
 * [LinkToTag]
 * [NoSuchPageTag]
