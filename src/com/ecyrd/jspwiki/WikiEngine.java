@@ -1683,10 +1683,8 @@ public class WikiEngine
             return( wup );
 
         // Try to get a limited login. This will be inserted into the request.
-        log.debug( "XXX fee fie foe 1" );
         if( !m_useStrictLogin )
         {
-            log.debug( "XXX fee fie foe 2" );
             wup = limitedLogin( request );
             if( wup != null )
             {
