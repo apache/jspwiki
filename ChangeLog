@@ -1,9 +1,14 @@
 2002-01-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.3-beta.
+        
+        * Slightly changed ebu's hack to colorize diffs to work on all
+        browsers, even those that are CSS-challenged.  Instead of
+        DIV-tags and CSS-files, we now rely on tables.
 
         * Possibly fixed a problem with Win2k and RCS by rewriting the
-        regular expression used to fetch the author name.
+        regular expression used to fetch the author name.  Thanks to Sesh
+        Jalagam for the tip.
 
 2002-01-06  Erik Bunn  <Erik.Bunn@memecry.net>
 
