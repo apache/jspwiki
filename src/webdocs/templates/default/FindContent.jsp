@@ -4,9 +4,6 @@
 
 <%-- FIXME: Get rid of the scriptlets. --%>
 <%
-    Collection list = (Collection)pageContext.getAttribute( "searchresults",
-                                                             PageContext.REQUEST_SCOPE );
-
     String query = (String)pageContext.getAttribute( "query",
                                                      PageContext.REQUEST_SCOPE );
     if( query == null ) query = "";
@@ -14,13 +11,11 @@
 
       <h2>Find pages</h2>
 
-      <% if( list != null ) 
-      {
-      %>
+      <wiki:SearchResults>
           <h4>Search results for '<%=query%>'</h4>
 
           <p>
-          <i>Found <%=list.size()%> hits, here are the top 20.</i>
+          <i>Found <wiki:SearchResultsSize/> hits, here are the top 20.</i>
           </p>
 
           <table border="0" cellpadding="4">
@@ -28,31 +23,30 @@
           <tr>
              <th width="30%" align="left">Page</th>
              <th align="left">Score</th>
-          </tr>          
-          <% if( list.size() > 0 ) { %>
-              <wiki:SearchResultIterator list="<%=list%>" id="searchref" maxItems="20">
-                  <tr>
-                      <td width="30%"><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
-                      <td><%=searchref.getScore()%></td>
-                  </tr>
-              </wiki:SearchResultIterator>
-          <% } else { %>
+          </tr>
+
+          <wiki:SearchResultIterator id="searchref" maxItems="20">
+              <tr>
+                  <td width="30%"><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
+                  <td><%=searchref.getScore()%></td>
+              </tr>
+          </wiki:SearchResultIterator>
+
+          <wiki:IfNoSearchResults>
               <tr>
                   <td width="30%"><b>No results</b></td>
               </tr>
-          <% } %>
+          </wiki:IfNoSearchResults>
 
           </table>
           <p>
           <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>
           </p>
           <p><hr /></p>
-      <%
-      }
-      %>
+      </wiki:SearchResults>
 
       <form action="<wiki:Variable var="baseURL"/>Search.jsp"
-            accept-charset="ISO-8859-1,UTF-8">
+            accept-charset="<wiki:ContentEncoding/>">
 
       <p>
       Enter your query here:<br />
