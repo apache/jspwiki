@@ -135,6 +135,13 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
 .error { color: #ff2222; 
          font-weight: bold; }
 
+/*  Index plugin */
+
+div.index {}
+div.index .header { padding: 4px; background: #f0f0f0; }
+div.index .body {}
+div.index .section { color:red; }
+
 /*  Here's a nice style you can use to put comment boxes on pages.  It's used
     on some pages. */
 
