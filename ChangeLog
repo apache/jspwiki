@@ -1,5 +1,9 @@
 2002-02-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Added support for tables.  Sanna V‰‰t‰inen finally managed to
+        convince me to add them, by pointing out some real deficiences in
+        the preformatted-text style tables =).
+
         * TextUtil.replaceString() would trash replacements of lengths of
         two or more.  Oops.
 
