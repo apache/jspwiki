@@ -274,13 +274,21 @@ public class TranslatorReader extends Reader
             result = "<U>"+text+"</U>";
             break;
 
+            //
+            //  These two are for local references - footnotes and 
+            //  references to footnotes.
+            //  We embed the page name (or whatever WikiContext gives us)
+            //  to make sure the links are unique across Wiki.
+            //
           case LOCALREF:
-            result = "<A CLASS=\"footnoteref\" HREF=\"#ref"+
+            result = "<A CLASS=\"footnoteref\" HREF=\"#ref-"+
+                m_context.getPage().getName()+"-"+
                 link+"\">[["+text+"]</A>";
             break;
 
           case LOCAL:
-            result = "<A CLASS=\"footnote\" NAME=\"ref"+
+            result = "<A CLASS=\"footnote\" NAME=\"ref-"+
+                m_context.getPage().getName()+"-"+
                 link.substring(1)+"\">[["+text+"]</A>";
             break;
 
