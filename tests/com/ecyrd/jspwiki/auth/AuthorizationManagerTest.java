@@ -37,6 +37,7 @@ public class AuthorizationManagerTest extends TestCase
     public void tearDown()
     {
         m_engine.deletePage("Test");
+        m_engine.deletePage("AdminGroup");
     }
 
     public void testSimplePermissions()
@@ -98,6 +99,55 @@ public class AuthorizationManagerTest extends TestCase
         wup.setLoginStatus( UserProfile.COOKIE );
         
         assertFalse( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
+    }
+
+    /**
+     *  A superuser should be allowed permissions.
+     */
+    public void testAdminPermissions()
+    {
+        String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "AdminGroup" );
+
+        assertTrue( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+        assertTrue( "view 1", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+        assertTrue( "delete 1", m_manager.checkPermission( p, wup, new DeletePermission() ) );
+        assertTrue( "comment 1", m_manager.checkPermission( p, wup, new CommentPermission() ) );
+
+        wup.setName( "NobodyHere" );
+
+        assertFalse( "view 2", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+    }
+
+    public void testAdminPermissions2()
+    {
+        String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        src = "[{MEMBERS FooBar}]";
+        
+        m_engine.saveText( "AdminGroup", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "FooBar" );
+
+        assertTrue( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+        assertTrue( "view 1", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+        assertTrue( "delete 1", m_manager.checkPermission( p, wup, new DeletePermission() ) );
+        assertTrue( "comment 1", m_manager.checkPermission( p, wup, new CommentPermission() ) );
+
+        wup.setName( "NobodyHere" );
+
+        assertFalse( "view 2", m_manager.checkPermission( p, wup, new ViewPermission() ) );
     }
 
     /**
