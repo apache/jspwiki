@@ -1,3 +1,12 @@
+2002-12-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.49.
+
+        * All referral plugings (UnusedPages,UndefinedPages, and
+        ReferringPagesPlugin) now support a parameter "separator", which
+        basically contains the wiki markup that should be used to separate
+        the entires.  Suggested by Jeremy Cowgar.
+
 2002-12-08  Erik Bunn  <Erik.Bunn@basen.net>
 
         * Modified exception classes to inherit WikiException
@@ -76,7 +85,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        Hirsim,bd(Bki for providing with the idea and the image.  Look for
+        Hirsimé‰ki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -979,7 +988,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna V,bdd(Bt,bd(Binen finally managed to
+        * Added support for tables.  Sanna Vé‰é‰té‰inen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
