@@ -14,12 +14,6 @@
   <shortname>jspwiki</shortname>
 
   <tag>
-    <name>ApplicationName</name>
-    <tagclass>com.ecyrd.jspwiki.tags.ApplicationNameTag</tagclass>
-    <bodycontent>empty</bodycontent>
-  </tag>
-
-  <tag>
     <name>Author</name>
     <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
     <bodycontent>empty</bodycontent>
@@ -239,6 +233,16 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>exists</name>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>Variable</name>
+    <tagclass>com.ecyrd.jspwiki.tags.VariableTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>var</name>
+       <required>true</required>
     </attribute>
   </tag>
 
