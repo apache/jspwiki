@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 
@@ -58,7 +58,7 @@ import com.ecyrd.jspwiki.*;
 public class VersioningFileProvider
     extends AbstractFileProvider
 {
-    private static final Category   log = Category.getInstance(VersioningFileProvider.class);
+    private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
    
     public static final String      PAGEDIR      = "OLD";
     public static final String      PROPERTYFILE = "page.properties";
@@ -93,6 +93,8 @@ public class VersioningFileProvider
      *  @return Latest version number in the repository, or -1, if
      *          there is no page in the repository.
      */
+
+    // FIXME: This is relatively slow.
     private int findLatestVersion( String page )
     {
         File pageDir = findOldPageDir( page );
@@ -167,18 +169,33 @@ public class VersioningFileProvider
         out.close();
     }
 
+    /**
+     *  Figures out the real version number of the page and also checks
+     *  for its existence.
+     *
+     *  @throws NoSuchVersionException if there is no such version.
+     */
     private int realVersion( String page, int requestedVersion )
         throws NoSuchVersionException
     {
+        //
+        //  Quickly check for the most common case.
+        //
+        if( requestedVersion == WikiProvider.LATEST_VERSION )
+        {
+            return -1;
+        }
+
         int latest = findLatestVersion(page);
 
-        if( requestedVersion == WikiPageProvider.LATEST_VERSION ||
-            requestedVersion == latest+1 ||
+        System.out.println("Latest version="+latest);
+
+        if( requestedVersion == latest+1 ||
             (requestedVersion == 1 && latest == -1 ) )
         {
             return -1;
         }
-        else if( requestedVersion > latest )
+        else if( requestedVersion <= 0 || requestedVersion > latest )
         {
             throw new NoSuchVersionException("Requested version "+requestedVersion+", but latest is "+latest );
         }
@@ -456,6 +473,7 @@ public class VersioningFileProvider
      */
     // FIXME: Should log errors.
     public void deletePage( String page )
+        throws ProviderException
     {
         super.deletePage( page );
 
@@ -482,8 +500,37 @@ public class VersioningFileProvider
     }
 
     public void deleteVersion( String page, int version )
+        throws ProviderException
     {
-        throw new InternalWikiException("Not supported yet");
+        File dir = findOldPageDir( page );
+
+        version = realVersion( page, version );
+
+        System.out.println("deleting v="+version);
+
+        if( version == -1 )
+        {
+            // We can let the FileSystemProvider take care
+            // of these requests.
+            super.deleteVersion( page, WikiPageProvider.LATEST_VERSION );
+
+            return;
+        }
+
+        File pageFile = new File( dir, ""+version+FILE_EXT );
+
+        if( pageFile.exists() )
+        {
+            System.out.println("deleting p="+pageFile.getAbsolutePath());
+            if( !pageFile.delete() )
+            {
+                log.error("Unable to delete page.");
+            }
+        }
+        else
+        {
+            throw new NoSuchVersionException("Page "+page+", version="+version);
+        }
     }
 
     public String getProviderInfo()
