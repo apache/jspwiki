@@ -1,3 +1,11 @@
+2005-03-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.155
+
+        * Continued reworking of CachingProvider to provide an
+        optimized result.  There are plenty of nasty dependencies
+        there... However, I did get most tests to run.
+
 2005-03-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.154
