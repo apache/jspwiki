@@ -2,6 +2,9 @@
 
         * v2.0.39.
 
+        * CachingProvider now uses cache for searching.  New class
+        "SearchMatcher".  Provided by Erik Bunn.
+
         * CheckLockTag was a bit inconsistent: if the page was locked by
         the current user, it would of course always be "locked".  This
         means that the value of "unlocked" was essentially useless for
