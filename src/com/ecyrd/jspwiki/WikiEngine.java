@@ -36,7 +36,7 @@ import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.UserProfile;
 
-import com.ecyrd.jspwiki.filters.PageFilter;
+import com.ecyrd.jspwiki.filters.FilterManager;
 
 import com.ecyrd.jspwiki.util.PriorityList;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -163,6 +163,9 @@ public class WikiEngine
     /** Does all our diffs for us. */
     private DifferenceEngine m_differenceEngine;
 
+    /** Handlers page filters. */
+    private FilterManager    m_filterManager;
+
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
 
@@ -184,8 +187,6 @@ public class WikiEngine
 
     /** The time when this engine was started. */
     private Date             m_startTime;
-
-    private PriorityList     m_pageFilters = new PriorityList();
 
     private boolean          m_isConfigured = false; // Flag.
     /**
@@ -363,15 +364,15 @@ public class WikiEngine
         try
         {
             m_pageManager       = new PageManager( this, props );
+            m_filterManager     = new FilterManager( this, props );
             m_pluginManager     = new PluginManager( props );
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
+            m_templateManager   = new TemplateManager( this, props );
             m_userManager       = new UserManager( this, props );
             m_authorizationManager = new AuthorizationManager( this, props );
-            m_templateManager   = new TemplateManager( this, props );
 
-            initPageFilters( props );
             initReferenceManager();            
         }
         catch( Exception e )
@@ -470,81 +471,9 @@ public class WikiEngine
 
         m_pluginManager.enablePlugins( true );
 
-        addPageFilter( m_referenceManager, -1000 ); // FIXME: Magic number.
+        m_filterManager.addPageFilter( m_referenceManager, -1000 ); // FIXME: Magic number.
     }
 
-    public static final String PROP_PAGEFILTER = "jspwiki.pageFilter.";
-
-    /**
-     *  Adds a page filter to the queue.  The priority defines in which
-     *  order the page filters are run, the highest priority filters go
-     *  in the queue first.
-     *  <p>
-     *  In case two filters have the same priority, their execution order is
-     *  not defined.
-     *
-     *  @since 2.1.44.
-     *  @param f PageFilter to add
-     *  @param priority The priority in which position to add it in.
-     */
-    public void addPageFilter( PageFilter f, int priority )
-    {
-        m_pageFilters.add( f, priority );
-    }
-
-    //
-    //  FIXME: It is impossible to add more than one pagefilter of the same
-    //         type because of limitations in the property file format.
-    //         we need a proper XML file format for this.
-    //
-    private void initPageFilters( Properties props )
-    {
-        for( Enumeration enum = props.propertyNames(); enum.hasMoreElements(); )
-        {
-            String name = (String) enum.nextElement();
-
-            if( name.startsWith( PROP_PAGEFILTER ) )
-            {
-                String className = props.getProperty( name );
-                try
-                {
-                    String pr = name.substring( PROP_PAGEFILTER.length() );
-               
-                    int priority = Integer.parseInt( pr );
-
-                    Class cl = ClassUtil.findClass( "com.ecyrd.jspwiki.filters",
-                                                    className );
-
-                    PageFilter filter = (PageFilter)cl.newInstance();
-
-                    filter.initialize( props );
-
-                    addPageFilter( filter, priority );
-                    log.info("Added page filter "+cl.getName()+" with priority "+priority);
-                }
-                catch( NumberFormatException e )
-                {
-                    log.error("Priority must be an integer: "+name);                   
-                }
-                catch( ClassNotFoundException e )
-                {
-                    log.error("Unable to find the filter class: "+className);
-                }
-                catch( InstantiationException e )
-                {
-                    log.error("Cannot create filter class: "+className);
-                }
-                catch( IllegalAccessException e )
-                {
-                    log.error("You are not allowed to access class: "+className);
-                }
-                catch( ClassCastException e )
-                {
-                    log.error("Suggested class is not a PageFilter: "+className);
-                }
-            }
-        }
-    }
 
     /**
      *  Throws an exception if a property is not found.
@@ -1272,7 +1201,7 @@ public class WikiEngine
 
         try
         {
-            pagedata = doPreTranslateFiltering( context, pagedata );
+            pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
             in = new TranslatorReader( context,
                                        new StringReader( pagedata ) );
@@ -1284,7 +1213,7 @@ public class WikiEngine
             if( !parseAccessRules ) in.disableAccessRules();
             result = FileUtil.readContents( in );
 
-            result = doPostTranslateFiltering( context, result );
+            result = m_filterManager.doPostTranslateFiltering( context, result );
         }
         catch( IOException e )
         {
@@ -1317,51 +1246,6 @@ public class WikiEngine
                                              scanWikiLinks( page, pageData ) );
     }
 
-    private String doPreTranslateFiltering( WikiContext context, String pageData )
-    {
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
-
-            pageData = f.preTranslate( context, pageData );
-        }
-
-        return pageData;
-    }
-
-    private String doPostTranslateFiltering( WikiContext context, String pageData )
-    {
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
-
-            pageData = f.postTranslate( context, pageData );
-        }
-
-        return pageData;
-    }
-
-    private String doPreSaveFiltering( WikiContext context, String pageData )
-    {
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
-
-            pageData = f.preSave( context, pageData );
-        }
-
-        return pageData;
-    }
-
-    private void doPostSaveFiltering( WikiContext context, String pageData )
-    {
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
-        {
-            PageFilter f = (PageFilter) i.next();
-
-            f.postSave( context, pageData );
-        }
-    }
 
     /**
      *  Writes the WikiText of a page into the
@@ -1383,7 +1267,7 @@ public class WikiEngine
         }
 
         text = TextUtil.normalizePostData(text);
-        text = doPreSaveFiltering( context, text );
+        text = m_filterManager.doPreSaveFiltering( context, text );
 
         // Hook into cross reference collection.
         
@@ -1398,7 +1282,7 @@ public class WikiEngine
         {
             m_pageManager.putPageText( page, text );
 
-            doPostSaveFiltering( context, text );
+            m_filterManager.doPostSaveFiltering( context, text );
         }
         catch( ProviderException e )
         {
@@ -1730,6 +1614,15 @@ public class WikiEngine
     public UserManager getUserManager()
     {
         return m_userManager;
+    }
+
+    /**
+     *  Returns the manager responsible for the filters.
+     *  @since 2.1.88
+     */
+    public FilterManager getFilterManager()
+    {
+        return m_filterManager;
     }
 
     /**
