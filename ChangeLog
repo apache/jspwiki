@@ -1,5 +1,7 @@
 2001-11-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.5.5-beta.
+
         * Bug fix: Starting a new page no longer results as 'null' as the
         initial text.  Oops.
 
