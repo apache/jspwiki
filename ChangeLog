@@ -1,3 +1,12 @@
+2004-03-31  Erik Bunn  <ebu@spamicide.basen.net>
+
+        * v2.1.93
+        
+        * Modified UserManager, UserDatabase, WikiDatabase: UserProfile
+        objects are now ultimately produced by the UserDatabase implementation.
+        By plugging in a different implementation, you can e.g. construct users
+        from a database.
+
 2004-01-21  Erik Bunn  <ebu@spamicide.basen.net>
 
 	* v2.1.92
