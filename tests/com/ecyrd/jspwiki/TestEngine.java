@@ -128,4 +128,16 @@ public class TestEngine extends WikiEngine
 
         saveText( context, content );
     }
+
+    public static void trace()
+    {
+        try
+        {
+            throw new Exception("Foo");
+        }
+        catch( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
 }
