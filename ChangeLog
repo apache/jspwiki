@@ -1,3 +1,22 @@
+2004-06-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.100
+        
+        * All WikiProviders now take WikiEngine as one of the arguments to
+        the constructor.  I'm sorry, but this does break all 3rd party
+        providers... The change is really simple, though; and for good
+        reason.
+
+        * Added new property: jspwiki.workDir.  This is used in the future
+        for all kinds of caching and other events.  At the moment, only
+        Lucene uses it.
+
+        * Included Mahlen Morris' patch for Apache Lucene -enabled search.
+        It's FAAAST.  Thanks!
+
+        * Bug fix: Direct URIs in text would cause a failure, if they
+        contained wikimarkup.
+
 2004-06-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Corrected DTD URI in web.xml.  Thanks to Lance Bader.
