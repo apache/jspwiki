@@ -47,18 +47,23 @@ public interface WikiAttachmentProvider
     /**
      *  Put new attachment data.
      */
-    public void putAttachmentData( Attachment att, InputStream data );
+    public void putAttachmentData( Attachment att, InputStream data )
+        throws ProviderException;
 
     /**
      *  Get attachment data.
      */
 
-    public OutputStream getAttachmentData( Attachment att );
+    public InputStream getAttachmentData( Attachment att );
 
     /**
-     *  Returns true if the attachment exists.
+     *  Lists all attachments attached to a page.
+     *
+     *  @return A collection of Attachment objects.  May be empty, but never null.
      */
-    public boolean attachmentExists( String page );
+
+    public Collection listAttachments( WikiPage page )
+        throws ProviderException;
 
     /**
      * Finds attachments based on the query.
@@ -68,7 +73,9 @@ public interface WikiAttachmentProvider
     /**
      *  Returns info about the attachment.
      */
-    public Attachment getAttachmentInfo( String name, int version );
+    public Attachment getAttachmentInfo( WikiPage page, String name, int version )
+        throws ProviderException;
+
     /**
      *  Returns version history.  Each element should be
      *  an Attachment.

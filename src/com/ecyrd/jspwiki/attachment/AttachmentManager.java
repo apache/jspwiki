@@ -20,6 +20,9 @@
 package com.ecyrd.jspwiki.attachment;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.File;
 import java.util.Properties;
 import org.apache.log4j.Category;
 
@@ -37,6 +40,8 @@ import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 public class AttachmentManager
 {
     public static final String  PROP_PROVIDER = "jspwiki.attachmentProvider";
+
+    public static final String  PROP = "";
 
     static Category log = Category.getInstance( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
@@ -104,13 +109,27 @@ public class AttachmentManager
         return m_provider != null;
     }
 
-    public void addAttachment( Attachment att )
-    {
-    }
-
     public Attachment getAttachmentInfo( String name )
     {
-        return m_provider.getAttachmentInfo( name, WikiProvider.LATEST_VERSION );
+        return getAttachmentInfo( name, WikiProvider.LATEST_VERSION );
+    }
+
+    public Attachment getAttachmentInfo( String name, int version )
+    {
+        return m_provider.getAttachmentInfo( name, version );
+    }
+
+    public InputStream getAttachmentStream( Attachment att )
+        throws IOException
+    {
+        return m_provider.getAttachmentData( att );
+    }
+
+    public void storeAttachment( Attachment att, File source )
+        throws IOException
+    {
+        log.info("Stub: Stored attachment: "+att);
+        // m_provider.putAttachmentData( att, new FileInputStream(source) );
     }
 
     public WikiAttachmentProvider getCurrentProvider()
