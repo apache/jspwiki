@@ -4,7 +4,7 @@ import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 import java.security.Principal;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -42,7 +42,7 @@ public class WikiDatabase
 {
     private WikiEngine m_engine;
 
-    static Category log = Category.getInstance( WikiDatabase.class );
+    static Logger log = Logger.getLogger( WikiDatabase.class );
 
     private HashMap m_groupPrincipals = new HashMap();
     private HashMap m_userPrincipals = new HashMap();
@@ -149,12 +149,11 @@ public class WikiDatabase
             {
                 WikiPage p = (WikiPage) i.next();
 
-                // FIX: if the pages haven't been scanned yet, no attributes.
-                // If the default perms are restrictive, the user can never save
-                // -> groups will not be updated on postSave(), either.
-                // Requires either changed initialization order, or, since this
-                // will fail with lazy-init-systems, something more elaborate..
-                List memberList = (List) p.getAttribute(ATTR_MEMBERLIST);
+                // lazy loading of pages with PageAuthorizer not possible, 
+                // because the authentication information must be 
+                // present on wiki initialization
+
+                List memberList = parseMemberList( (String)p.getAttribute(ATTR_MEMBERLIST) );
 
                 if( memberList != null )
                 {
@@ -222,6 +221,33 @@ public class WikiDatabase
          
         return( rval ); 
     }
+    
+    /**
+     *  Parses through the member list of a page.
+     */
+
+    private List parseMemberList( String memberLine )
+    {
+        if( memberLine == null ) return null;
+
+        log.debug("Parsing member list: "+memberLine);
+
+        StringTokenizer tok = new StringTokenizer( memberLine, ", " );
+
+        ArrayList members = new ArrayList();
+
+        while( tok.hasMoreTokens() )
+        {
+            String uid = tok.nextToken();
+
+            log.debug("  Adding member: "+uid);
+
+            members.add( uid );
+        }
+            
+        return members;
+    }
+
 
     /**
      *  This special filter class is used to refresh the database
@@ -233,32 +259,6 @@ public class WikiDatabase
     public class SaveFilter
         extends BasicPageFilter
     {
-        /**
-         *  Parses through the member list of a page.
-         */
-
-        private List parseMemberList( String memberLine )
-        {
-            if( memberLine == null ) return null;
-
-            log.debug("Parsing member list: "+memberLine);
-
-            StringTokenizer tok = new StringTokenizer( memberLine, ", " );
-
-            ArrayList members = new ArrayList();
-
-            while( tok.hasMoreTokens() )
-            {
-                String uid = tok.nextToken();
-
-                log.debug("  Adding member: "+uid);
-
-                members.add( uid );
-            }
-            
-            return members;
-        }
-
         public void postSave( WikiContext context, String content )
         {
             WikiPage p = context.getPage();
