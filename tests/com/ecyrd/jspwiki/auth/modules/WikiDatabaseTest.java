@@ -25,8 +25,8 @@ public class WikiDatabaseTest
 
         m_engine = new TestEngine(props);
 
-        String text1 = "Foobar.\n\n[{MEMBERS Alice, Bob, Charlie}]\n\nBlood.";
-        String text2 = "[{MEMBERS Bob}]";
+        String text1 = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nBlood.";
+        String text2 = "[{SET members=Bob}]";
 
         m_engine.saveText( "TestGroup", text1 );
         m_engine.saveText( "TestGroup2", text2 );
@@ -58,21 +58,30 @@ public class WikiDatabaseTest
 
         UserProfile p = new UserProfile();
         p.setName( "Alice" );
+        p.setLoginStatus( UserProfile.PASSWORD );
         List l = mgr.getGroupsForPrincipal( p );
 
-        assertEquals("Alice has too many groups", 2, l.size());
         assertTrue("Alice is in the wrong group (0)", containsGroup( l, "TestGroup" ) );
         assertTrue("Alice is in the wrong group (1)", containsGroup( l, "Guest" ) );
+        assertTrue("Alice is in the wrong group (2)", containsGroup( l, "NamedGuest" ) );
+        assertTrue("Alice is in the wrong group (3)", containsGroup( l, "KnownPerson" ) );
+
+        assertEquals("Alice has too many groups", 4, l.size());
 
         p.setName("Bob");
         l = mgr.getGroupsForPrincipal( p );
 
-        assertEquals("Bob has too many groups", 3, l.size());
         assertTrue("Bob is in the wrong group (0)", containsGroup( l, "TestGroup" ) );
         assertTrue("Bob is in the wrong group (1)", containsGroup( l, "TestGroup2" ) );
         assertTrue("Bob is in the wrong group (2)", containsGroup( l, "Guest" ) );
 
+        assertTrue("Bob is in the wrong group (3)", containsGroup( l, "NamedGuest" ) );
+        assertTrue("Bob is in the wrong group (4)", containsGroup( l, "KnownPerson" ) );
+
+        assertEquals("Bob has too many groups", 5, l.size());
+
         p.setName("David");
+        p.setLoginStatus( UserProfile.NONE );
         l = mgr.getGroupsForPrincipal( p );
 
         assertEquals("David has too many groups", 1, l.size());

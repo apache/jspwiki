@@ -157,7 +157,7 @@ public class AuthorizationManagerTest extends TestCase
 
         m_engine.saveText( "Test", src );
 
-        m_engine.saveText( "FooGroup", "[{MEMBERS FooBar}]" );
+        m_engine.saveText( "FooGroup", "[{SET members=FooBar}]" );
 
         WikiPage p = m_engine.getPage("Test");
 
@@ -204,13 +204,16 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "view 2", m_manager.checkPermission( p, wup, new ViewPermission() ) );
     }
 
+    /**
+     *  Also, anyone in the supergroup should be allowed all permissions.
+     */
     public void testAdminPermissions2()
     {
         String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
 
         m_engine.saveText( "Test", src );
 
-        src = "[{MEMBERS FooBar}]";
+        src = "[{SET members=FooBar}]";
         
         m_engine.saveText( "AdminGroup", src );
 
@@ -241,7 +244,7 @@ public class AuthorizationManagerTest extends TestCase
 
         WikiPage p = m_engine.getPage("Test");
 
-        m_engine.saveText( "AdminGroup", "[{MEMBERS Hobble}]" );
+        m_engine.saveText( "AdminGroup", "[{SET members=Hobble}]" );
 
         UserProfile wup = new UserProfile();
         wup.setName( "Hobble" );
