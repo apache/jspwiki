@@ -155,10 +155,6 @@ public class TranslatorReader extends Reader
 
     private boolean                m_useRelNofollow      = false;
 
-    /** If true, all links are absolute.  Otherwise uses user preference.  This is required
-        for things like RSS generation. */
-    private boolean                m_requireAbsoluteURLs = false;
-
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
@@ -231,16 +227,6 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  If set to true, then the TranslatorReader will always produce
-     *  absolute URLs (complete with the baseURL value), regardless of the
-     *  user setting.  This is very useful for RSS generation, for example.
-     */
-    public void setRequireAbsoluteURLs( boolean value )
-    {
-        m_requireAbsoluteURLs = value;
-    }
-
-    /**
      *  @param engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
      */
@@ -307,11 +293,6 @@ public class TranslatorReader extends Reader
                                                              PROP_CAMELCASELINKS, 
                                                              m_camelCaseLinks );
         }
-
-        String relativeurls = (String)m_engine.getVariable( m_context,
-                                                            WikiEngine.PROP_REFSTYLE );
-
-        setRequireAbsoluteURLs( !"relative".equals(relativeurls) );
 
         m_plainUris           = TextUtil.getBooleanProperty( props,
                                                              PROP_PLAINURIS,
@@ -1020,8 +1001,7 @@ public class TranslatorReader extends Reader
 
                 if( isImageLink( reallink ) )
                 {
-                    attachment = m_engine.getURL( WikiContext.ATTACH, attachment,
-                                                  m_requireAbsoluteURLs, null );
+                    attachment = m_context.getURL( WikiContext.ATTACH, attachment );
                     sb.append( handleImageLink( attachment, link, (cutpoint != -1) ) );
                 }
                 else
@@ -2455,10 +2435,9 @@ public class TranslatorReader extends Reader
 
         private final String getURL( String context, String link )
         {
-            return m_engine.getURL( context,
-                                    link,
-                                    m_requireAbsoluteURLs,
-                                    null );
+            return m_context.getURL( context,
+                                     link,
+                                     null );
         }
 
         /**
