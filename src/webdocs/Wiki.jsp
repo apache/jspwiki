@@ -53,9 +53,6 @@
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext );
 
-    // In the future, user access permits affect this
-    boolean isEditable = (version < 0);
-
     //
     //  Alright, then start responding.
     //
