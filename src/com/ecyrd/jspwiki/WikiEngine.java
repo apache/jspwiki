@@ -16,6 +16,12 @@ public class WikiEngine
 
     private static boolean c_configured = false;
 
+    public WikiEngine( Properties properties )
+        throws IllegalArgumentException
+    {
+        initialize( properties );
+    }
+
     public WikiEngine( ServletContext context )
     {
         String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
@@ -26,25 +32,31 @@ public class WikiEngine
         {
             props.load( new FileInputStream(propertyFile) );
 
-            m_pagelocation = getRequiredProperty( props, PROP_PAGEDIR );
-
-            //
-            //  Initialized log4j.  However, make sure that
-            //  we don't initialize it multiple times.
-            //
-            if( !c_configured )
-            {
-                PropertyConfigurator.configure( props );
-                c_configured = true;
-            }
-
-            log.info("WikiEngine configured.");
-            log.debug("files at "+m_pagelocation );
+            initialize( props );
         }
         catch( Exception e )
         {
             context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile );
         }
+    }
+
+    private void initialize( Properties props )
+        throws IllegalArgumentException
+    {
+        m_pagelocation = getRequiredProperty( props, PROP_PAGEDIR );
+
+        //
+        //  Initialized log4j.  However, make sure that
+        //  we don't initialize it multiple times.
+        //
+        if( !c_configured )
+        {
+            PropertyConfigurator.configure( props );
+            c_configured = true;
+        }
+
+        log.info("WikiEngine configured.");
+        log.debug("files at "+m_pagelocation );
     }
 
     private static String getRequiredProperty( Properties props, String key )
