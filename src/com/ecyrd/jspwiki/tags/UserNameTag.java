@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.auth.UserManager;
+import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
  *  Returns the current user name, or empty, if the user has not been
@@ -37,12 +39,13 @@ public class UserNameTag
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
+        UserManager mgr   = engine.getUserManager();
 
-        String user = engine.getUserName( (javax.servlet.http.HttpServletRequest)pageContext.getRequest() );
+        UserProfile user = mgr.getUserProfile( (javax.servlet.http.HttpServletRequest)pageContext.getRequest() );
 
         if( user != null )
         {
-            pageContext.getOut().print( user );
+            pageContext.getOut().print( user.getName() );
         }
 
         return SKIP_BODY;
