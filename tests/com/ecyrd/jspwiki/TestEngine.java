@@ -35,22 +35,28 @@ public class TestEngine extends WikiEngine
      */
     public static void deleteAll( File file )
     {
-        if( file.isDirectory() )
+        if( file != null )
         {
-            File[] files = file.listFiles();
-
-            for( int i = 0; i < files.length; i++ )
+            if( file.isDirectory() )
             {
-                if( files[i].isDirectory() )
+                File[] files = file.listFiles();
+
+                if( files != null ) 
                 {
-                    deleteAll(files[i]);
+                    for( int i = 0; i < files.length; i++ )
+                    {
+                        if( files[i].isDirectory() )
+                        {
+                            deleteAll(files[i]);
+                        }
+
+                        files[i].delete();
+                    }
                 }
-
-                files[i].delete();
             }
+            
+            file.delete();
         }
-
-        file.delete();
     }
 
     /**
