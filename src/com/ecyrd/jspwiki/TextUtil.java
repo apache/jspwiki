@@ -214,13 +214,14 @@ public class TextUtil
 
     /**
      *  Replaces the relevant entities inside the String.
-     *  All &gt;, &lt; and &quot; are replaced by their
+     *  All &amp; &gt;, &lt;, and &quot; are replaced by their
      *  respective names.
      *
      *  @since 1.6.1
      */
     public static String replaceEntities( String src )
     {
+        src = replaceString( src, "&", "&amp;" );
         src = replaceString( src, "<", "&lt;" );
         src = replaceString( src, ">", "&gt;" );
         src = replaceString( src, "\"", "&quot;" );
