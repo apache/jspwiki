@@ -435,6 +435,20 @@ public class TextUtil
      */
     public static String beautifyString( String s )
     {
+        return beautifyString( s, " " );
+    }
+
+    /**
+     *  Adds spaces in suitable locations of the input string.  This is
+     *  used to transform a WikiName into a more readable format.
+     *
+     *  @param s String to be beautified.
+     *  @param space Use this string for the space character.
+     *  @return A beautified string.
+     *  @since 2.1.127
+     */
+    public static String beautifyString( String s, String space )
+    {
         StringBuffer result = new StringBuffer();
 
         if( s == null || s.length() == 0 ) return "";
@@ -455,7 +469,7 @@ public class TextUtil
 
             if( (prevKind == UPPER) && (curKind == UPPER) && (nextKind == LOWER) )
             {
-                result.append(' ');
+                result.append(space);
                 result.append((char) cur);
             }
             else
@@ -465,7 +479,7 @@ public class TextUtil
                     || ( (curKind == LOWER) && ((nextKind == DIGIT) || (nextKind == UPPER)) )
                     || ( (curKind == DIGIT) && ((nextKind == UPPER) || (nextKind == LOWER)) ))
                 {
-                    result.append(' ');
+                    result.append(space);
                 }
             }
             prevKind = curKind;
