@@ -31,6 +31,10 @@ Major changes since the last stable (1.6.0) release are:
   release. The TranslatorReader hook to look for WikiLinks is a nasty
   kludge and should at least be optimized a bit, too.
 
+  NOTE 2: the results returned by the linklist tag are not sorted in any
+  way. Alphabetical, or maybe frequency sorting in ReferenceManager,
+  might be nice. To do.
+
   //ebu
 
 
