@@ -1,3 +1,27 @@
+2001-07-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Appearance of the jsp pages is now slightly more convergent.
+
+        * Improved search engine to accept exclusion/inclusion a la
+        Google.  Scoring now works, too.
+
+        * Added ordered lists (#).
+
+        * Horizontal ruler is now four dashes instead of three to comply
+        with the Wiki standard.
+
+2001-07-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Added jspwiki.specialPage.XXX redirection.  You can now name
+        special pages that get referred to whichever JSP page you want.
+        For example, you can always refer to RecentChanges.jsp in your
+        Wiki code by using [RecentChanges], with the following property
+        set: 
+        
+        jspwiki.specialPage.RecentChanges = RecentChanges.jsp
+
+        * v1.0.5
+
 2001-07-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Removed SkipHTMLIterator because it was a bad idea.  No

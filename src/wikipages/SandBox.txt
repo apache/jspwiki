@@ -1,10 +1,11 @@
-Testing, one, two three.
+Please check [RecentChanges].
+
 ---
 ebu: Just getting my bearings here. (Nothing to see, go back to 
 [main page|Main].) I wonder if there is an easy way of finding
 local page names to link to and return here to add them in...
 
-[JanneJalkanen]: On Wikis you typically just link everything by writing [hyperlinks|Hyperlink].  The [Find pages|http://www.ecyrd.com:8080/JSPWiki/Search.jsp] should be able to give you your bearings.
+[JanneJalkanen]: On Wikis you typically just link everything by writing [hyperlinks|Hyperlink].  The [Find page] should be able to give you your bearings.
 
 !!!Really big heading
 Text.
@@ -22,3 +23,21 @@ This should be normal.
 
 Now, let's try ''italic text''.
 
+Bulleted lists:
+* One
+* Two
+** Two.One
+*** Two.One.One
+* Three
+
+Numbered lists.
+# One
+# Two
+# Three
+## Three.One
+## Three.Two
+## Three.Three
+### Three.Three.One
+# Four
+
+End?
