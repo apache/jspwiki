@@ -1,3 +1,12 @@
+2003-05-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * RSS generator now also displays whether the file that was
+        changed was a wikipage or an attachment.
+
+        * Fixed attachment URL generation: RSSGenerator would generate
+        faulty URLs, and practically no routine did URL encoding.  Oops.
+        Reported by StefanRiss.
+
 2003-04-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.41.
