@@ -38,6 +38,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%>: Diff <%=pagereq%></TITLE>
+  <%@ include file="cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

@@ -35,6 +35,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%> Recent Changes</TITLE>
+  <%@ include file="cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

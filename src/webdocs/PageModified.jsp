@@ -40,6 +40,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%> Error - Concurrent modification of <%=pagereq%></TITLE>
+  <%@ include file="cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

@@ -73,6 +73,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%> Edit: <%=pagereq%></TITLE>
+  <%@ include file="cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFD0FF">

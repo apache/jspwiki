@@ -31,6 +31,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%> Search</TITLE>
+  <%@ include file="cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

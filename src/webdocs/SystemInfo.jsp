@@ -15,6 +15,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%>: SystemInfo</TITLE>
+  <%@ include file="cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
