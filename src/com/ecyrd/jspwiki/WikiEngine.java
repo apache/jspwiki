@@ -106,6 +106,9 @@ public class WikiEngine
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
 
+    /** Stores the relative URL to the global RSS feed. */
+    private String           m_rssURL;
+
     /** Store the ServletContext that we're in.  This may be null if WikiEngine
         is not running inside a servlet container (i.e. when testing). */
     private ServletContext   m_servletContext = null;
@@ -1042,6 +1045,21 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the URL of the global RSS file.  May be null, if the
+     *  RSS file generation is not operational.
+     *  @since 1.7.10
+     */
+    public String getGlobalRSSURL()
+    {
+        if( m_rssURL != null )
+        {
+            return getBaseURL()+m_rssURL;
+        }
+
+        return null;
+    }
+
+    /**
      *  Runs the RSS generation thread.
      *  FIXME: MUST be somewhere else, this is not a good place.
      */
@@ -1080,10 +1098,13 @@ public class WikiEngine
                         out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
 
                         FileUtil.copyContents( in, out );
+
+                        m_rssURL = fileName;
                     }
                     catch( IOException e )
                     {
                         log.error("Cannot generate RSS feed to "+fileName, e );
+                        m_rssURL = null;
                     }
                     finally
                     {
@@ -1107,6 +1128,11 @@ public class WikiEngine
             {
                 log.error("RSS thread interrupted, no more RSS feeds", e);
             }
+            
+            //
+            // Signal: no more RSS feeds.
+            //
+            m_rssURL = null;
         }
     }
 
