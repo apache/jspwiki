@@ -90,18 +90,12 @@ public class TranslatorReader extends Reader
      */
     public static final String     PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
 
-    /** Property name for the "match english plurals" -hack. */
-    public static final String     PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
-
     /** If true, consider CamelCase hyperlinks as well. */
     public static final String     PROP_CAMELCASELINKS   = "jspwiki.translatorReader.camelCaseLinks";
 
     /** If true, all hyperlinks are translated as well, regardless whether they
         are surrounded by brackets. */
     public static final String     PROP_PLAINURIS        = "jspwiki.translatorReader.plainUris";
-
-    /** If true, we'll also consider english plurals (+s) a match. */
-    private boolean                m_matchEnglishPlurals = true;
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
@@ -167,7 +161,6 @@ public class TranslatorReader extends Reader
         //  Set the properties.
         //
         Properties props      = m_engine.getWikiProperties();
-        m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
         m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" ) );
         m_plainUris           = "true".equals( props.getProperty( PROP_PLAINURIS, "false" ) );
     }
@@ -251,23 +244,7 @@ public class TranslatorReader extends Reader
      */
     private String linkExists( String page )
     {
-        boolean isThere = m_engine.pageExists( page );
-
-        if( !isThere && m_matchEnglishPlurals )
-        {
-            if( page.endsWith("s") )
-            {
-                page = page.substring( 0, page.length()-1 );
-            }
-            else
-            {
-                page += "s";
-            }
-
-            isThere = m_engine.pageExists( page );
-        }
-
-        return isThere ? page : null ;
+        return m_engine.getFinalPageName( page );
     }
 
     /**
