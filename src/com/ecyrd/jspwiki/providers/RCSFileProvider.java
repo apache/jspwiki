@@ -192,6 +192,7 @@ public class RCSFileProvider
     }
 
     public String getPageText( String page, int version )
+        throws ProviderException
     {
         String result = null;
 
