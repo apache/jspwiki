@@ -1264,7 +1264,7 @@ public class TranslatorReader extends Reader
                     while( (ch = nextToken()) == '-' );
 
                     pushBack(ch);
-                    return "<hr />";
+                    return m_renderer.makeRuler();
                 }
         
                 pushBack( ch3 );
@@ -1747,7 +1747,7 @@ public class TranslatorReader extends Reader
                             {
                                 start = buf.toString().lastIndexOf( potentialLink );
 
-                                String link = readUntil(" \t()[]{}!\"'");
+                                String link = readUntil(" \t()[]{}!\"'\n|");
 
                                 link = potentialLink + (char)ch + link; // Do not forget the start.
 
@@ -2142,6 +2142,14 @@ public class TranslatorReader extends Reader
             return "<span class=\"error\">"+error+"</span>";
         }
 
-        
+        /**
+         *  Emits a vertical line.
+         */
+
+        public String makeRuler()
+        {
+            return "<hr />";
+        }
+
     } // HTMLRenderer
 }
