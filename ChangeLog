@@ -2,15 +2,20 @@
 
         * v2.0.12.
 
+        * Diff.jsp did not use the templateDir property correctly.  Oops.
+        Reported by Steven Noels, I think.
+
         * Added Expires, Last-Modified, and Cache-Control headers to
         Edit.jsp responses - this should allow certain versions of
-        Internet Explorer to use Preview correctly.
+        Internet Explorer to use Preview correctly.  Suggested by Richard
+        Donkin.
 
         * Implemented page "locking".  When you now start to edit a page,
         the page is marked as being under editing, and the next guy will
         get a warning about that.  To facilitate this, Edit.jsp was
         changed.  Also, check out the new tags in "EditTemplate.jsp", and
         note also that the "Cancel" is now a button instead of a link.
+        Suggested by Olli Lounela.
 
 2003-01-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
