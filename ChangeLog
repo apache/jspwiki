@@ -2,6 +2,9 @@
 
         * v2.0.11.
 
+        * All boolean type properties in jspwiki.properties recognize now
+        "on" and "yes" as "true" as well.
+
         * It is now possible to allow raw HTML on WikiPages.  Beware, this
         is a very dangerous option, since it will allow people OTHER THAN
         THE ADMINISTRATOR to make wikis that can hurt users.  Requested
