@@ -2,6 +2,9 @@
 
         * v1.9.36.
 
+        * GoDiagram now uses PNG images.  It also now honors the baseURL
+        setting.
+
         * Tables now close the <TD> tag correctly with </TD>, thanks to
         the new TranslatorReader architecture.  Reported by Andreas
         Rozek.
