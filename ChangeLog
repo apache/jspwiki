@@ -1,3 +1,15 @@
+2001-11-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Bumped version to 1.4.3-cvs.
+
+        * There is now a sample entry in jspwiki.properties demonstrating
+        how to make a direct link to the page editor by using InterWiki
+        linking.  [Edit:Main] redirects you to the page where you can edit
+        the Main page.
+
+        * LeftMenu.jsp now reads its contents dynamically from a Wiki page
+        called "LeftMenu".  Thanks to Mikael Honkala for this idea.
+
 2001-10-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Bumped version to 1.4.2-cvs.
