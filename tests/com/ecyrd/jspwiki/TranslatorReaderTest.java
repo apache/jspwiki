@@ -859,6 +859,15 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testRuler()
+        throws Exception
+    {
+        String src="----";
+
+        assertEquals( "<HR />\n",
+                      translate(src) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( TranslatorReaderTest.class );
