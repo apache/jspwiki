@@ -1,3 +1,12 @@
+2002-07-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.2
+
+        * JSPWiki now supports traditional, CamelCase (or InterCapping)
+        WikiLinks without square brackets.  However, this feature is
+        turned off by default, so you'll have to edit the correct property
+        in the jspwiki.properties file.
+
 2002-06-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.1
