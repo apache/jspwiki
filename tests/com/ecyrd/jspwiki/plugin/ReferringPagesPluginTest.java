@@ -33,7 +33,7 @@ public class ReferringPagesPluginTest extends TestCase
         engine.saveText( "Foobar6", "Reference to [TestPage]." );
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
-        context = new WikiContext( engine, "TestPage" );
+        context = new WikiContext( engine, new WikiPage("TestPage") );
         manager = new PluginManager( props );
     }
 
@@ -62,7 +62,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testSingleReferral()
         throws Exception
     {
-        WikiContext context2 = new WikiContext( engine, "Foobar" );
+        WikiContext context2 = new WikiContext( engine, new WikiPage("Foobar") );
 
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE max=5}");
@@ -98,7 +98,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testReferenceWidth()
         throws Exception
     {
-        WikiContext context2 = new WikiContext( engine, "Foobar" );
+        WikiContext context2 = new WikiContext( engine, new WikiPage("Foobar") );
 
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");

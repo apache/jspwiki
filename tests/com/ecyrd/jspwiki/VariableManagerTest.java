@@ -30,7 +30,7 @@ public class VariableManagerTest extends TestCase
             m_variableManager = new VariableManager( props );
             TestEngine testEngine = new TestEngine( props );
             m_context = new WikiContext( testEngine,
-                                         PAGE_NAME );
+                                         new WikiPage(PAGE_NAME) );
 
         }
         catch( IOException e ) {}

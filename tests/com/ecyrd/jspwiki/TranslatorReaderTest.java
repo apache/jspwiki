@@ -65,7 +65,7 @@ public class TranslatorReaderTest extends TestCase
                ServletException
     {
         WikiContext context = new WikiContext( testEngine,
-                                               PAGE_NAME );
+                                               new WikiPage(PAGE_NAME) );
         Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
         StringWriter out = new StringWriter();
@@ -760,7 +760,7 @@ public class TranslatorReaderTest extends TestCase
         testEngine = new TestEngine( props );
 
         WikiContext context = new WikiContext( testEngine,
-                                               PAGE_NAME );
+                                               new WikiPage(PAGE_NAME) );
 
         Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
@@ -1409,7 +1409,7 @@ public class TranslatorReaderTest extends TestCase
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
         WikiContext context = new WikiContext( testEngine,
-                                               PAGE_NAME );
+                                               new WikiPage(PAGE_NAME) );
 
         TranslatorReader r = new TranslatorReader( context, 
                                                    new BufferedReader( new StringReader(src)) );
@@ -1433,7 +1433,7 @@ public class TranslatorReaderTest extends TestCase
         LinkCollector coll = new LinkCollector();
         String src = "["+PAGE_NAME+"/Test.txt]";
         WikiContext context = new WikiContext( testEngine,
-                                               PAGE_NAME );
+                                               new WikiPage(PAGE_NAME) );
 
         TranslatorReader r = new TranslatorReader( context, 
                                                    new BufferedReader( new StringReader(src)) );
@@ -1466,7 +1466,7 @@ public class TranslatorReaderTest extends TestCase
             LinkCollector coll = new LinkCollector();
             String src = "[TestAtt.txt]";
             WikiContext context = new WikiContext( testEngine,
-                                                   PAGE_NAME );
+                                                   new WikiPage(PAGE_NAME) );
 
             TranslatorReader r = new TranslatorReader( context, 
                                                        new BufferedReader( new StringReader(src)) );
