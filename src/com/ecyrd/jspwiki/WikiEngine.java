@@ -818,7 +818,7 @@ public class WikiEngine
      */
     public String getText( String page )
     {
-        return getText( page, -1 );
+        return getText( page, WikiPageProvider.LATEST_VERSION );
     }
 
     /**
@@ -905,7 +905,7 @@ public class WikiEngine
      */
     public String getHTML( String page )
     {
-        return getHTML( page, -1 );
+        return getHTML( page, WikiPageProvider.LATEST_VERSION );
     }
 
     /**
@@ -1351,8 +1351,10 @@ public class WikiEngine
      *  Returns a diff of two versions of a page.
      *
      *  @param page Page to return
-     *  @param version1 Version number of the old page.  If -1, then uses current page.
-     *  @param version2 Version number of the new page.  If -1, then uses current page.
+     *  @param version1 Version number of the old page.  If 
+     *         WikiPageProvider.LATEST_VERSION (-1), then uses current page.
+     *  @param version2 Version number of the new page.  If 
+     *         WikiPageProvider.LATEST_VERSION (-1), then uses current page.
      *
      *  @return A HTML-ized difference between two pages.  If there is no difference,
      *          returns an empty string.
@@ -1364,7 +1366,7 @@ public class WikiEngine
 
         // Kludge to make diffs for new pages to work this way.
 
-        if( version1 == -1 )
+        if( version1 == WikiPageProvider.LATEST_VERSION )
         {
             page1 = "";
         }
