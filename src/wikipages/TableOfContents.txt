@@ -1,0 +1,34 @@
+Generates a table of contents based on all the headings on the page.
+
+The resulting list is wrapped inside a DIV tag, which can be used to create the style and look of the TOC.
+
+!Parameters
+
+N/A
+
+!Example
+
+{{{
+__Table of Contents:__\\
+[{TableOfContents}]
+}}}
+
+!About the generated HTML
+
+The list that is created is essentially an HTML ul -list.  The generated HTML  might look like this:
+{{{
+<div class="toc">
+  <ul>
+    <li> <a class="wikipage" href="Wiki.jsp?page=SandBox2#section-SandBox2-QuickReference">Quick reference</a></li>
+    <li> <a class="wikipage" href="Wiki.jsp?page=SandBox2#section-SandBox2-WritingText">Writing text</a></li>
+    <li> <a class="wikipage" href="Wiki.jsp?page=SandBox2#section-SandBox2-Hyperlinks">Hyperlinks</a></li>
+    <li> <a class="wikipage" href="Wiki.jsp?page=SandBox2#section-SandBox2-Footnotes">Footnotes</a></li>
+  </ul>
+</div>
+}}}
+
+The look-and-feel of what it actually looks like on the browser is achieved through the magic of Cascading Style Sheets (CSS).
+
+----
+
+Back to [JSPWikiPlugins].

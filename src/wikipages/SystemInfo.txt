@@ -11,6 +11,7 @@ Here are some strategical figures and other interesting things about this partic
 | __Available InterWiki links__      | [{$interwikilinks}]
 | __Inlined images are__             | [{$inlinedimages}]
 | __Additional Plugin Search Path__  | [{$pluginpath}]
+| __Installed [PageFilters]__       | [{$pagefilters}]
 
 !Usability
 

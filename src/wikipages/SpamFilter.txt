@@ -1,0 +1,31 @@
+The SpamFilter is a JSPWiki filter that can be used to block questionable edits.
+
+!Parameters
+
+;__wordlist__: The name of the WikiPage on which the word list resides.  Default is "SpamFilterWordList".
+;__errorpage__: The name of the page to which the user is redirected, if the edit contains a matched word.  On that page, the variable [[{$msg}] is available, telling the reason.
+
+!The word list
+
+The SpamFilter looks at the [WikiVariable] called 'spamwords' on the ''wordlist'' page.  This must contain a space-separated list of words not allowed in a page.  In fact, each word is a full Perl5 regular expression, so you can do pretty complex matches as well.
+
+Of course, it is a good idea to allow only trusted users to edit the ''wordlist'' page.  Otherwise a spammer can remove the list...
+
+!Example
+
+Put the following in your filters.xml file (See [PageFilter Configuration] for more information):
+{{{
+    <filter>
+      <class>com.ecyrd.jspwiki.filters.SpamFilter</class>
+    </filter>
+}}}
+
+to start the filter.  Create a page called "SpamFilterWordList" and put the following on it:
+{{{
+[{SET spamwords='viagra money'}]
+}}}
+to prevent anyone from saving a page that contains either the word "viagra" or "money".  In a bit more complicated example:
+{{{
+[{SET spamwords='[vV][iI][aA][gG][rR][aA]'}]
+}}}
+would block the words "viagra", "Viagra", "viAGra" and so on.
