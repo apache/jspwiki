@@ -461,11 +461,6 @@ public class TranslatorReader extends Reader
         return link.startsWith("{ALLOW") || link.startsWith("{DENY");
     }
 
-    private static boolean isMemberList( String link )
-    {
-        return link.startsWith("{MEMBERS");
-    }
-
     /**
      *  Matches the given link to the list of image name patterns
      *  to determine whether it should be treated as an inline image
@@ -659,35 +654,6 @@ public class TranslatorReader extends Reader
         return "";
     }
 
-    private String handleMemberList( String memberLine )
-    {
-        if( !m_parseAccessRules ) return "";
-
-        log.debug("Parsing member list: "+memberLine);
-
-        UserManager       mgr  = m_context.getEngine().getUserManager();
-        WikiPage          page = m_context.getPage();
-
-        StringTokenizer tok = new StringTokenizer( memberLine, ", {}" );
-
-        tok.nextToken(); // skip "MEMBERS"
-
-        ArrayList members = new ArrayList();
-
-        while( tok.hasMoreTokens() )
-        {
-            String uid = tok.nextToken();
-
-            log.debug("  Adding member: "+uid);
-
-            members.add( uid );
-        }
-
-        page.setAttribute( "_members", members );
-
-        return ""; // FIXME: Should return a list of user names.
-    }
-
     private String handleAccessRule( String ruleLine )
     {
         if( !m_parseAccessRules ) return "";
@@ -801,11 +767,6 @@ public class TranslatorReader extends Reader
         StringBuffer sb        = new StringBuffer();
         String       reallink;
         int          cutpoint;
-
-        if( isMemberList( link ) )
-        {
-            return handleMemberList( link );
-        }
 
         if( isAccessRule( link ) )
         {
