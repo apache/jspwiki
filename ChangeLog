@@ -7,6 +7,7 @@
 
         * Fixed attachment URL generation: RSSGenerator would generate
         faulty URLs, and practically no routine did URL encoding.  Oops.
+        Reported by Stefan Riss. 
 
 2003-05-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
