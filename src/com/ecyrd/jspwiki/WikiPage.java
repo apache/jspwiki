@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Date;
+import java.util.HashMap;
+import com.ecyrd.jspwiki.acl.AccessControlList;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
@@ -30,12 +32,18 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 public class WikiPage
     implements Cloneable
 {
-    private String m_name;
-    private Date   m_lastModified;
+    private String       m_name;
+    private Date         m_lastModified;
+    private int          m_version = WikiPageProvider.LATEST_VERSION;
+    private String       m_author = null;
+    private HashMap      m_attributes = new HashMap();
 
-    private int    m_version = WikiPageProvider.LATEST_VERSION;
+    /**
+     *  "Summary" is a short summary of the page.  It is a String.
+     */
+    public static final String DESCRIPTION = "summary";
 
-    private String m_author = null;
+    private AccessControlList m_accessList = null;
 
     public WikiPage( String name )
     {
@@ -45,6 +53,26 @@ public class WikiPage
     public String getName()
     {
         return m_name;
+    }
+
+    /**
+     *  A WikiPage may have a number of attributes, which might or might not be 
+     *  available.  Typically attributes are things that do not need to be stored
+     *  with the wiki page to the page repository, but are generated
+     *  on-the-fly.  A provider is not required to save them, but they
+     *  can do that if they really want.
+     *
+     *  @param key The key using which the attribute is fetched
+     *  @return The attribute.  If the attribute has not been set, returns null.
+     */
+    public Object getAttribute( String key )
+    {
+        return m_attributes.get( key );
+    }
+
+    public void setAttribute( String key, Object attribute )
+    {
+        m_attributes.put( key, attribute );
     }
 
     public Date getLastModified()
@@ -65,6 +93,16 @@ public class WikiPage
     public int getVersion()
     {
         return m_version;
+    }
+
+    public AccessControlList getAcl()
+    {
+        return m_accessList;
+    }
+
+    public void setAcl( AccessControlList acl )
+    {
+        m_accessList = acl;
     }
 
     public void setAuthor( String author )
