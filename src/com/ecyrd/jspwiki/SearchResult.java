@@ -22,9 +22,9 @@ package com.ecyrd.jspwiki;
 public interface SearchResult
 {
     /**
-     *  Return the name of the page.
+     *  Return the page.
      */
-    public String getName();
+    public WikiPage getPage();
 
     /**
      *  Returns the score.
