@@ -165,6 +165,29 @@ The value of "counter" at the end is [{$counter}] and the value of "counter-aa" 
 
 ----
 
+!!InsertPage
+
+The ~InsertPage plugins allows you to include the contents of another page into the current page.
+
+!Parameters
+
+* __page__ = ''WikiName''.  The WikiName of the page you want to insert.
+* __style__ = ''CSS definition''.  A style you want to use to include the page with.
+* __maxlength__ = ''integer''.  If the page exceeds this length in characters, it will be truncated and a text "More..." linking to the page will be appended.
+
+!Example
+{{{
+[{InsertPage page='About' 
+             style='font-size: 85%; margin: 10px; padding: 5px; border-width: thin;
+ border-style:inset; background: #dedede; font-family:monospace' 
+             maxlength=200}]
+}}}
+will produce:
+
+[{InsertPage page='About' style='font-size: 85%; margin: 10px; padding: 5px; border-width: thin; border-style:inset; background: #dedede; font-family:monospace' maxlength=200}]
+
+----
+
 !!Image
 
 The Image plugin allows one to have finer control over the layout of images than just the simple inling of images.
