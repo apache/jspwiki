@@ -94,3 +94,6 @@ TABLE.calendar TD.link { background: #E0E0E0; }
 TABLE.calendar TR.month { font-size: 120%;
                           font-family: sans-serif; }
 TABLE.calendar TR.weekdays { font-color: #FF0000; }
+
+/* For the BreadcrumbsTag */
+.breadcrumbs { font-size: 60%; }
