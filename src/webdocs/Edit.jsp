@@ -95,66 +95,7 @@
 
 %>
 
-<HTML>
-
-<HEAD>
-  <TITLE><%=wiki.getApplicationName()%> Edit: <%=pagereq%></TITLE>
-  <META NAME="ROBOTS" CONTENT="NOINDEX">
-  <%@ include file="cssinclude.js" %>
-</HEAD>
-
-<BODY class="edit" BGCOLOR="#D9E8FF" onLoad="document.forms[1].text.focus()">
-
-<TABLE BORDER="0" CELLSPACING="8">
-
-  <TR>
-    <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/LeftMenu.jsp" %>
-       <P>
-       <wiki:LinkTo page="TextFormattingRules">Help on editing</wiki:LinkTo>
-       </P>
-       <%@ include file="templates/LeftMenuFooter.jsp" %>
-    </TD>
-
-    <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <%@ include file="templates/PageHeader.jsp" %>
-      <!-- <H1>Edit page <%=pagereq%></H1> -->
-
-      <FORM action="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 
-            ACCEPT-CHARSET="ISO-8859-1,UTF-8">
-
-      <INPUT type="hidden" name="page" value="<%=pagereq%>">
-      <INPUT type="hidden" name="action" value="save">
-      <INPUT type="hidden" name="edittime" value="<%=lastchange%>">
-
-      <TEXTAREA CLASS="editor" wrap="virtual" name="text" rows="25" cols="80" style="width:100%;"><%=wiki.getText(pagereq)%></TEXTAREA>
-
-      <P>
-      <input type="submit" name="ok" value="Save" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="preview" value="Preview" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <wiki:LinkTo>Cancel</wiki:LinkTo>
-      </FORM>
-
-      </P>
-      <P>
-      <wiki:NoSuchPage page="EditPageHelp">
-         Ho hum, it seems that the <wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink>
-         page is missing.  Someone must've done something to the installation...
-      </wiki:NoSuchPage>
-      </P>
-
-      <wiki:InsertPage page="EditPageHelp" />
-
-    </TD>
-  </TR>
-
-</TABLE>
-
-</BODY>
-
-</HTML>
+<%@include file="templates/default/EditTemplate.jsp" %>
 
 <%
     NDC.pop();
