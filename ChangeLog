@@ -2,6 +2,10 @@
 
         * v2.1.152
 
+        * AbstractReferralPlugin now also supports parameters like
+        "before" and "after", so you can have much better control over
+        what you do.  Thanks to Foster Schucker for the patch.
+        
         * Fixed plenty of failing tests (including the annoying "Cannot
         start managers: null).  I think I kinda like Eclipse, now that
         I'm getting used to it.
