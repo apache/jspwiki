@@ -805,8 +805,8 @@ public class TranslatorReader extends Reader
             }
             catch( PluginException e )
             {
-                log.error( "Failed to insert plugin", e );
-                log.error( "Root cause:",e.getRootThrowable() );
+                log.info( "Failed to insert plugin", e );
+                log.info( "Root cause:",e.getRootThrowable() );
                 included = m_renderer.makeError("Plugin insertion failed: "+e.getMessage());
             }
                             

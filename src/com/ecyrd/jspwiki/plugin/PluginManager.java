@@ -275,7 +275,7 @@ public class PluginManager
             catch( Exception e )
             {
                 // But all others get captured here.
-                log.warn( "Plugin failed while executing:", e );
+                log.info( "Plugin failed while executing:", e );
                 throw new PluginException( "Plugin failed", e );
             }
             
