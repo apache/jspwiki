@@ -180,11 +180,71 @@ public class TextUtil
      */
     public static String replaceEntities( String src )
     {
-        src = TranslatorReader.replaceString( src, "<", "&lt;" );
-        src = TranslatorReader.replaceString( src, ">", "&gt;" );
-        src = TranslatorReader.replaceString( src, "\"", "&quot;" );
+        src = replaceString( src, "<", "&lt;" );
+        src = replaceString( src, ">", "&gt;" );
+        src = replaceString( src, "\"", "&quot;" );
 
         return src;
     }
 
+    /**
+     *  @param orig Original string.  Null is safe.
+     */
+
+    public static String replaceString( String orig, String src, String dest )
+    {
+        if( orig == null ) return null;
+
+        StringBuffer res = new StringBuffer();
+        int start, end = 0, last = 0;
+
+        while( (start = orig.indexOf(src,end)) != -1 )
+        {
+            res.append( orig.substring( last, start ) );
+            res.append( dest );
+            end = start+src.length();
+            last = start+1;
+        }
+
+        res.append( orig.substring( end ) );
+
+        return res.toString();
+    }
+
+    /**
+     *  Replaces a part of a string with a new String.
+     *
+     *  @param start Where in the original string the replacing should start.
+     @  @param end Where the replacing should end.
+     *  @param orig Original string.  Null is safe.
+     @  @param text The new text to insert into the string.
+     */
+    public static String replaceString( String orig, int start, int end, String text )
+    {
+        if( orig == null ) return null;
+
+        StringBuffer buf = new StringBuffer(orig);
+
+        buf.replace( start, end, text );
+
+        return buf.toString();
+    }
+
+    /**
+     *  Parses an integer parameter, returning a default value
+     *  if the value is null or a non-number.
+     */
+
+    public static int parseIntParameter( String value, int defvalue )
+    {
+        int val = defvalue;
+        
+        try
+        {
+            val = Integer.parseInt( value );
+        }
+        catch( Exception e ) {}
+            
+        return val;
+    }
 }
