@@ -1,5 +1,7 @@
 2003-05-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.27.
+
         * UserManager was slightly confused about what kind of
         authentication is preferable over what.  Fixed now so that if you
         have done container-based authentication, you will actually be
