@@ -155,7 +155,7 @@ public class RSSGenerator
 
             String url = m_engine.getBaseURL()+"Wiki.jsp?page="+encodedName;
 
-            result.append("    <rdf:li rdf:resource=\""+url+"\">\n");
+            result.append("    <rdf:li rdf:resource=\""+url+"\" />\n");
 
             itemBuffer.append(" <item rdf:about=\""+url+"\">\n");
 
