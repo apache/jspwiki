@@ -8,3 +8,10 @@ FORM { font-size: 14px }
 DIV.small { font-size: 70% }
 H1.pagename {}
 IMG.inline {}
+
+A.footnoteref { vertical-align: super; 
+                font-size: 70%; }
+A.footnote { color: #0044AA; }
+P.versionnote { color: red;
+                font-size: 130%;
+                text-align: center; }
