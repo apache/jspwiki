@@ -78,6 +78,21 @@ public class AuthorizationManager
 
     /**
      *  Returns true or false, depending on whether this action
+     *  is allowed for this WikiPage.
+     *
+     *  @param permission Any of the available permissions "view", "edit, "comment", etc.
+     */
+    public boolean checkPermission( WikiPage page,
+                                    UserProfile wup,
+                                    String permission )
+    {
+        return checkPermission( page,
+                                wup,
+                                WikiPermission.newInstance( permission ) );
+    }
+
+    /**
+     *  Returns true or false, depending on whether this action
      *  is allowed.
      */
     public boolean checkPermission( WikiPage page, 
