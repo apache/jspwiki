@@ -26,6 +26,11 @@
 
     WikiPage wikipage = wiki.getPage( pagereq );
 
+    if( wikipage == null )
+    {
+        wikipage = new WikiPage( pagereq );
+    }
+
     // To prevent manual URL typing..
     AccessRuleSet accessRules = wikipage.getAccessRules();
     UserProfile userProfile = wiki.getUserProfile( request );
