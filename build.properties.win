@@ -11,5 +11,5 @@
 #
 @appname@=JSPWiki
 @pagedir@=C:\\\\temp\\\\wikipages
-@logfile@=C:\\\\temp\\\\
+@logfile@=C:\\\\temp\\\\jspwiki.log
 
