@@ -72,7 +72,8 @@ public class TranslatorReader extends Reader
     private WikiContext    m_context;
     
     /** Optionally stores internal wikilinks */
-    private ArrayList      m_localLinkMutatorChain = new ArrayList();
+    private ArrayList      m_localLinkMutatorChain    = new ArrayList();
+    private ArrayList      m_externalLinkMutatorChain = new ArrayList();
 
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
@@ -153,6 +154,20 @@ public class TranslatorReader extends Reader
         if( mutator != null )
         {
             m_localLinkMutatorChain.add( mutator );
+        }
+    }
+
+    /**
+     *  Adds a hook for processing external links.  This includes
+     *  all http:// ftp://, etc. links, including inlined images.
+     *
+     *  @param mutator The hook to call.  Null is safe.
+     */
+    public void addExternalLinkHook( StringTransmutator mutator )
+    {
+        if( mutator != null )
+        {
+            m_externalLinkMutatorChain.add( mutator );
         }
     }
 
@@ -462,9 +477,13 @@ public class TranslatorReader extends Reader
                 else if( isExternalLink( reallink ) )
                 {
                     // It's an external link, out of this Wiki
+
+                    callMutatorChain( m_externalLinkMutatorChain, reallink );
+
                     if( isImageLink( reallink ) )
                     {
-                        // Image links are 
+                        // Image links are handled differently (most probably
+                        // inlined.
                         line = TextUtil.replaceString( line, start, end+1,
                                                        makeLink( IMAGE, reallink, link ) );
                     }
