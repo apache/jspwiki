@@ -166,16 +166,21 @@ public class UserManager
         }
     }
 
-    // FIXME: Should really in the future use a cache of known user profiles,
-    //        otherwise we're swamped with userprofile instances.
 
+    /**
+     * Convenience shortcut to UserDatabase.getUserProfile().
+     */
     public UserProfile getUserProfile( String name )
     {
-        UserProfile wup = new UserProfile();
+        WikiPrincipal up = m_database.getPrincipal( name );
 
-        wup.setName( name );
-
-        return wup;
+        if( !(up instanceof UserProfile) )
+        {
+            log.info( name + " is not a user!" );
+            up = null;
+        }
+        
+        return( (UserProfile)up );
     }
 
     /**
