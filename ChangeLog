@@ -1,3 +1,14 @@
+2004-12-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.128
+
+        * WeblogPlugin is now an InitializablePlugin.
+
+        * Added the InitializablePlugin interface, which can be
+        implemented by plugins if they require any calling during
+        startup.  By default plugins are not called during JSPWiki init to
+        make it a bit faster.
+
 2004-12-12  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.127
