@@ -1,5 +1,12 @@
 2003-06-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.31.
+
+        * Added "exists" -attribute back to UserCheckTag, since it seems
+        pointless to break down perfectly good templates.  However, it's
+        use is strongly deprecated, and it is converted on-the-fly to an
+        equivalent "status" -attribute.
+
         * Moved all default template CSS definitions to jspwiki.css, as
         per the example in the mrg template.  However, the
         browser-specific files have been kept as well. Duh.  In retrospect
