@@ -25,7 +25,12 @@ import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Writes a link to the RSS file (using the "link" attribute).
+ *  <p>
+ *  This tag is now deprecated - please use the new FeedDiscoveryTag.
+ *
  *  @author Janne Jalkanen
+ *  @deprecated
+ *  @see FeedDiscoveryTag
  *  @since 2.0
  */
 public class RSSLinkTag
