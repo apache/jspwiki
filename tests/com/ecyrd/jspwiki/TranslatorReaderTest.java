@@ -772,6 +772,17 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "foo test 'me too' now\n", translate(src) );
     }
 
+    /**
+     *  Plugin output must not be parsed as Wiki text.
+     */
+    public void testPluginWikiText()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text=PageContent}]";
+
+        assertEquals( "PageContent\n", translate(src) );
+    }
+
     public void testVariableInsert()
         throws Exception
     {
