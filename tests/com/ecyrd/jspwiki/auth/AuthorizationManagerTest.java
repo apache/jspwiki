@@ -7,6 +7,7 @@ import java.util.*;
 import org.apache.log4j.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.permissions.*;
+import com.ecyrd.jspwiki.attachment.*;
 import com.ecyrd.jspwiki.acl.*;
 import java.security.acl.*;
 
@@ -78,6 +79,42 @@ public class AuthorizationManagerTest extends TestCase
         wup.setLoginStatus( UserProfile.COOKIE );
         
         assertTrue( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
+    }
+
+    public void testAttachmentPermissions()
+    {
+        String src = "[{ALLOW edit NamedGuest}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        Attachment att = new Attachment( "Test", "foobar.jpg" );
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "FooBar" );
+
+        assertFalse( "edit 1", m_manager.checkPermission( att, wup, new UploadPermission() ) );
+
+        wup.setLoginStatus( UserProfile.COOKIE );
+        
+        assertTrue( "edit 2", m_manager.checkPermission( att, wup, new UploadPermission() ) );
+    }
+
+    public void testAttachmentPermissions2()
+    {
+        String src = "[{ALLOW upload FooBar}] [{ALLOW view Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        Attachment att = new Attachment( "Test", "foobar.jpg" );
+
+        UserProfile wup = new UserProfile();
+        wup.setLoginStatus( UserProfile.PASSWORD );
+        wup.setName( "FooBar" );
+                
+        assertTrue( "download", m_manager.checkPermission( att, wup, "view" ) );
+
+        
+        assertTrue( "upload", m_manager.checkPermission( att, wup, "upload" ) );
     }
 
     /**
