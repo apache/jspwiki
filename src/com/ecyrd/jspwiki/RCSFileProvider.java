@@ -3,7 +3,20 @@ package com.ecyrd.jspwiki;
 import java.util.Properties;
 import org.apache.log4j.Category;
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import org.apache.oro.text.*;
+import org.apache.oro.text.regex.*;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
+/**
+ *  This class implements a simple RCS file provider.
+ *
+ *  @author Janne Jalkanen
+ */
 public class RCSFileProvider
     extends FileSystemProvider
 {
@@ -33,6 +46,53 @@ public class RCSFileProvider
         log.info("checkout="+m_checkoutCommand);
     }
 
+    public WikiPage getPageInfo( String page )
+    {
+        WikiPage info = super.getPageInfo( page );
+
+        try
+        {
+            String cmd = "rlog -h "+page+FILE_EXT;
+            String[] env = new String[0];
+            log.debug("Command = '"+cmd+"'");
+
+            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+
+            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+
+            String line;
+
+            while( (line = stdout.readLine()) != null )
+            {
+                if( line.startsWith( "head:" ) )
+                {
+                    int cutpoint = line.lastIndexOf('.');
+
+                    String version = line.substring( cutpoint+1 );
+
+                    int vernum = Integer.parseInt( version );
+
+                    info.setVersion( vernum );
+
+                    break;
+                }
+            }
+
+            process.waitFor();
+
+        }
+        catch( Exception e )
+        {
+            log.warn("Failed to read RCS info",e);
+        }
+
+        return info;
+    }
+
+    /**
+     *  Puts the page into RCS and makes sure there is a fresh copy in
+     *  the directory as well.
+     */
     public void putPageText( String page, String text )
     {
         super.putPageText( page, text );
@@ -44,7 +104,7 @@ public class RCSFileProvider
             String cmd = m_checkinCommand;
             String[] env = new String[0];
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", page );
+            cmd = TranslatorReader.replaceString( cmd, "%s", page+FILE_EXT );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -58,5 +118,69 @@ public class RCSFileProvider
         {
             log.error("RCS checkin failed",e);
         }
+    }
+
+    public Collection getVersionHistory( String page )
+    {
+        PatternMatcher matcher = new Perl5Matcher();
+        PatternCompiler compiler = new Perl5Compiler();
+        PatternMatcherInput input;
+
+        log.debug("Getting RCS version history");
+
+        ArrayList list = new ArrayList();        
+
+        SimpleDateFormat rcsdatefmt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+        try
+        {
+            Pattern revpattern  = compiler.compile("^revision \\d+\\.(\\d+)");
+            Pattern datepattern = compiler.compile("^date:\\s*(.*);");
+
+            String[] env = new String[0];
+
+            String cmd = "rlog "+page+FILE_EXT;
+            
+            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+
+            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+
+            String line;
+
+            WikiPage info = null;
+
+            while( (line = stdout.readLine()) != null )
+            { 
+                if( matcher.contains( line, revpattern ) )
+                {
+                    info = new WikiPage( page );
+
+                    MatchResult result = matcher.getMatch();
+
+                    int vernum = Integer.parseInt( result.group(1) );
+                    info.setVersion( vernum );
+                    list.add( info );
+                }
+
+                if( matcher.contains( line, datepattern ) )
+                {
+                    MatchResult result = matcher.getMatch();
+                    System.out.println( result );
+
+                    Date d = rcsdatefmt.parse( result.group(1) );
+
+                    info.setLastModified( d );
+                }
+            }
+
+            process.waitFor();
+
+        }
+        catch( Exception e )
+        {
+            log.error( "RCS log failed", e );
+        }
+
+        return list;
     }
 }
