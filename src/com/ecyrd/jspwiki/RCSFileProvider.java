@@ -91,7 +91,7 @@ public class RCSFileProvider
             String   cmd = m_logCommand;
             String[] env = new String[0];
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", page+FILE_EXT );
+            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
             log.debug("Command = '"+cmd+"'");
 
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
@@ -138,7 +138,7 @@ public class RCSFileProvider
             String cmd = m_checkoutVersionCommand;
             String[] env = new String[0];
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", page+FILE_EXT );
+            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
             cmd = TranslatorReader.replaceString( cmd, "%v", Integer.toString(version ) );
 
             log.debug("Command = '"+cmd+"'");
@@ -182,7 +182,7 @@ public class RCSFileProvider
             String cmd = m_checkinCommand;
             String[] env = new String[0];
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", page+FILE_EXT );
+            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -217,7 +217,7 @@ public class RCSFileProvider
 
             String[] env = new String[0];
 
-            String cmd = "rlog "+page+FILE_EXT;
+            String cmd = "rlog "+mangleName(page)+FILE_EXT;
             
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
 
