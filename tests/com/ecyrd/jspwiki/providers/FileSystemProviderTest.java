@@ -91,18 +91,13 @@ public class FileSystemProviderTest extends TestCase
         {
             test.initialize( props );
 
-            fail( "Wiki did not warn about wrong property." );
+            File f = new File( newdir );
+            assertTrue( "No dir created!", f.exists() && f.isDirectory() );
         }
-        catch( IOException e )
+        finally
         {
-            if( e instanceof FileNotFoundException )
-            {
-                // This is okay.
-            }
-            else
-            {
-                fail("Wrong exception: "+e);
-            }
+            File f = new File( newdir );
+            f.delete();
         }
     }
 

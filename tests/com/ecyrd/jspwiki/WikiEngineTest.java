@@ -63,11 +63,17 @@ public class WikiEngineTest extends TestCase
         {
             WikiEngine test = new TestEngine( props );
 
-            fail( "Wiki did not warn about wrong property." );
+            File f = new File( newdir );
+            assertTrue( "No dir created!", f.exists() && f.isDirectory() );
         }
         catch( WikiException e )
         {
-            // This is okay.
+            fail( "Wrong error!" );
+        }
+        finally
+        {
+            File f = new File( newdir );
+            f.delete();
         }
     }
 
