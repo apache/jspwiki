@@ -1,14 +1,15 @@
 
-This is the fifth stable release of JSPWiki v2.  It contains a few
+This is the sixth stable release of JSPWiki v2.  It contains a few
 bugfixes over the last stable version:
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
-Major changes since the last stable (2.0.49) release are:
+Major changes since the last stable (2.0.50) release are:
 
-- Bug fixes.
+- A new caching attachment provider, which speeds up wiki startup
+  times.  The attachments themselves are not cached, but their
+  information is.
 
-- Added TemplateDir tag.
 
 
 UPGRADE NOTES
