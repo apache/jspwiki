@@ -20,7 +20,6 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    if( 
     log.info("Request for page '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
 
     String redirect = wiki.getRedirectURL( wikiContext );
