@@ -2,6 +2,8 @@
 
         * v2.1.39.
 
+        * Added maxEntries parameter to the WeblogPlugin.
+
         * Bug fix: we didn't set the author on edit, but used the previous
         author.  Oops =).
 
