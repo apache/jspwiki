@@ -1,9 +1,10 @@
 
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.providers;
 
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
+import com.ecyrd.jspwiki.*;
 
 public class RCSFileProviderTest extends TestCase
 {
@@ -78,6 +79,30 @@ public class RCSFileProviderTest extends TestCase
         assertEquals( "wrong version", maxver, pageinfo.getVersion() );
         // +2 comes from \r\n at the end of each file.
         assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
+    }
+
+    /**
+     *  Checks if migration from FileSystemProvider to VersioningFileProvider
+     *  works by creating a dummy file without corresponding content in OLD/
+     */
+    public void testMigration()
+        throws IOException
+    {
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        
+        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        Writer out = new FileWriter( f );
+        FileUtil.copyContents( new StringReader("foobar"), out );
+        out.close();
+
+        String res = engine.getText( NAME1 );
+
+        assertEquals( "latest did not work", "foobar", res );
+
+        res = engine.getText( NAME1, 1 ); // Should be the first version.
+
+        assertEquals( "fetch by direct version did not work", "foobar", res );
     }
 
     public static Test suite()

@@ -5,6 +5,8 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
+import com.ecyrd.jspwiki.providers.*;
+
 public class WikiEngineTest extends TestCase
 {
     public static final String NAME1 = "Test1";

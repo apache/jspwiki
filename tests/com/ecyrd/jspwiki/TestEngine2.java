@@ -4,6 +4,8 @@ import java.util.Properties;
 import java.io.File;
 import javax.servlet.ServletException;
 
+import com.ecyrd.jspwiki.providers.*;
+
 /** Real test engine */
 public class TestEngine2 extends WikiEngine
 {

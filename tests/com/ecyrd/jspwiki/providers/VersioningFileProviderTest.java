@@ -1,9 +1,11 @@
 
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.providers;
 
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
+
+import com.ecyrd.jspwiki.*;
 
 // FIXME: Should this thingy go directly to the VersioningFileProvider,
 //        or should it rely on the WikiEngine API?
@@ -40,6 +42,30 @@ public class VersioningFileProviderTest extends TestCase
         f = new File( files, "OLD" );
 
         TestEngine.deleteAll(f);
+    }
+
+    /**
+     *  Checks if migration from FileSystemProvider to VersioningFileProvider
+     *  works by creating a dummy file without corresponding content in OLD/
+     */
+    public void testMigration()
+        throws IOException
+    {
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        
+        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        Writer out = new FileWriter( f );
+        FileUtil.copyContents( new StringReader("foobar"), out );
+        out.close();
+
+        String res = engine.getText( NAME1 );
+
+        assertEquals( "latest did not work", "foobar", res );
+
+        res = engine.getText( NAME1, 1 ); // Should be the first version.
+
+        assertEquals( "fetch by direct version did not work", "foobar", res );
     }
 
     public void testMillionChanges()

@@ -8,6 +8,8 @@ import java.util.*;
 import org.apache.log4j.*;
 import org.apache.xmlrpc.*;
 
+import com.ecyrd.jspwiki.providers.*;
+
 public class RPCHandlerTest extends TestCase
 {
     WikiEngine m_engine;

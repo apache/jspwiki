@@ -1,9 +1,11 @@
 
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.providers;
 
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
+
+import com.ecyrd.jspwiki.*;
 
 public class FileSystemProviderTest extends TestCase
 {
