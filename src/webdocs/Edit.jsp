@@ -132,11 +132,11 @@
                 pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
             }
 
-            wiki.saveText( pagereq, pageText.toString(), request );
+            wiki.saveText( wikipage, pageText.toString(), request );
         }
         else
         {
-            wiki.saveText( pagereq,
+            wiki.saveText( wikipage,
                            wiki.safeGetParameter( request, "text" ),
                            request );
         }
