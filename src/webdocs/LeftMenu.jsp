@@ -7,11 +7,12 @@
 
 <P>
 <% 
+    WikiContext leftMenuContext = new WikiContext( wiki, pagereq );
+
     if( wiki.pageExists( LEFTMENU_NAME ) ) 
-    {
-        WikiContext context       = new WikiContext( wiki, pagereq );
-        WikiPage    requestedpage = new WikiPage( LEFTMENU_NAME );
-        out.println( wiki.getHTML(context,requestedpage) );
+    { 
+       WikiPage    requestedpage   = new WikiPage( LEFTMENU_NAME );
+       out.println( wiki.getHTML(leftMenuContext,requestedpage) );
     }
     else
     {
@@ -26,6 +27,27 @@
     }
 %>
 </P>
+<P>
+<DIV ALIGN="center" CLASS="username">
+<%
+    String leftMenuUser = wiki.getUserName(request);
+    if( leftMenuUser != null )
+    {
+        %>
+        <B>G'day,</B><BR>
+        <%=wiki.textToHTML( leftMenuContext, "["+leftMenuUser+"]" )%>
+        <%
+    }
+    else
+    {
+        %><TT>
+        Set your name in<BR>
+        <%=wiki.textToHTML( leftMenuContext, "[UserPreferences]!" )%>
+        </TT>
+        <%
+    }
+%>
+</DIV>
 
 <!-- End of automatically generated page -->
 
