@@ -223,6 +223,7 @@ public class WikiEngine
             c_configured = true;
         }
 
+        log.info("*******************************************");
         log.info("JSPWiki "+Release.VERSTR+" starting. Whee!");
 
         log.debug("Configuring WikiEngine...");
