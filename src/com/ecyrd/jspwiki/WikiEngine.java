@@ -1098,6 +1098,15 @@ public class WikiEngine
             }
         }
 
+        //
+        //  Make sure that the author name is okay and a valid WikiName.
+        //
+
+        if( author != null )
+        {
+            author = TranslatorReader.cleanLink( author );
+        }
+
         return author;
     }
 
