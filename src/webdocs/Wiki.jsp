@@ -18,8 +18,16 @@
     {
         pagereq = "Main";
     }
-
+    
     log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
+
+    if( pagereq.equals("RecentChanges") )
+    {
+        response.sendRedirect("RecentChanges.jsp");
+        return;        
+    }
+
+
 %>
 
 <HTML>
