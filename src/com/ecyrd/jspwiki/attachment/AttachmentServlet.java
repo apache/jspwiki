@@ -30,6 +30,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.util.HttpUtil;
 import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -196,13 +197,21 @@ public class AttachmentServlet
 
         if( page == null )
         {
-            msg = "Invalid attachment name.";
+            page = HttpUtil.parsePageFromURL( req,
+                                              m_engine.getContentEncoding() );
+        }
+
+        if( page == null )
+        {
+            log.info("Invalid attachment name.");
+            res.sendError( HttpServletResponse.SC_BAD_REQUEST );
+            return;
         }
         else
         {
             try 
             {
-                // System.out.println("Attempting to download att "+page+", version "+version);
+                log.debug("Attempting to download att "+page+", version "+version);
                 if( version != null )
                 {
                     ver = Integer.parseInt( version );
@@ -288,25 +297,36 @@ public class AttachmentServlet
                 {
                     msg = "Attachment '" + page + "', version " + ver + 
                           " does not exist.";
+
+                    log.info( msg );
+                    res.sendError( HttpServletResponse.SC_NOT_FOUND,
+                                   msg );
+                    return;
                 }
                 
             }
             catch( ProviderException pe )
             {
                 msg = "Provider error: "+pe.getMessage();
+                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                               msg );
+                return;
             }
             catch( NumberFormatException nfe )
             {
                 msg = "Invalid version number (" + version + ")";
+                res.sendError( HttpServletResponse.SC_BAD_REQUEST,
+                               msg );
+                return;
             }
             catch( IOException ioe )
             {
                 msg = "Error: " + ioe.getMessage();
+                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                               msg );
+                return;
             }
         }
-        log.info( msg );
-
-        if( nextPage != null ) res.sendRedirect( nextPage );
     }
 
 
@@ -343,7 +363,6 @@ public class AttachmentServlet
      *
      *  @return The page to which we should go next.
      */
-
     protected String upload( HttpServletRequest req )
         throws RedirectException,
                IOException
@@ -373,11 +392,11 @@ public class AttachmentServlet
                         "Upload.jsp?page="+
                         m_engine.encodeName( wikipage );
 
-            /**
-             *  FIXME: This has the unfortunate side effect that it will receive the
-             *  contents.  But we can't figure out the page to redirect to
-             *  before we receive the file, due to the stupid constructor of MultipartRequest.
-             */
+            //
+            //  FIXME: This has the unfortunate side effect that it will receive the
+            //  contents.  But we can't figure out the page to redirect to
+            //  before we receive the file, due to the stupid constructor of MultipartRequest.
+            //
             if( req.getContentLength() > m_maxSize )
             {
                 // FIXME: Does not delete the received files.
@@ -419,7 +438,8 @@ public class AttachmentServlet
                     //  Should help with IE 5.22 on OSX
                     //
                     filename = filename.trim();
-                
+
+                    log.debug("file="+filename);
                     //
                     //  Attempt to open the input stream
                     //
@@ -511,6 +531,11 @@ public class AttachmentServlet
             log.warn( msg + " (attachment: " + attName + ")", e );
 
             throw e;
+        }
+        finally
+        {
+            // FIXME: In case of exceptions should absolutely
+            //        remove the uploaded file.
         }
 
         return nextPage;
