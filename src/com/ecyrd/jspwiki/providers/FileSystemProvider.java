@@ -86,7 +86,7 @@ public class FileSystemProvider
         m_encoding      = properties.getProperty( WikiEngine.PROP_ENCODING, 
                                                   DEFAULT_ENCODING );
 
-        log.info("Wikipages are read from : "+m_pageDirectory);
+        log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
     }
 
     String getPageDirectory()
@@ -226,7 +226,7 @@ public class FileSystemProvider
 
         if( wikipages == null )
         {
-            log.error("Wikipages directory does not exist!");
+            log.error("Wikipages directory '" + m_pageDirectory + "' does not exist! Please check " + PROP_PAGEDIR + " in jspwiki.properties.");
             throw new InternalWikiException("Page directory does not exist");
         }
 
