@@ -1693,10 +1693,9 @@ public class TranslatorReader extends Reader
                     if( ch == ':' )
                     {
                         word.append( (char) ch );
-                        // log.debug("Checking "+word);
+
                         if( isExternalLink( word.toString() ) )
                         {
-                            log.debug("Found potential URL starting with: "+word);
                             // How much text we've already put into the buffer?
                             int protocolLen = word.length();
 
@@ -1716,8 +1715,6 @@ public class TranslatorReader extends Reader
                             String link = makeLink(EXTERNAL,
                                                    url,
                                                    word.toString());
-
-                            log.debug("Writing "+link);
 
                             start = buf.length()-protocolLen+1;
                             buf.replace( start, start + protocolLen,
