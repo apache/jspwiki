@@ -1785,9 +1785,23 @@ public class WikiEngine
             version = Integer.parseInt( rev );
         }
 
-        WikiPage wikipage = getPage( pagereq, version );
+        //
+        //  Find the WikiPage object
+        //
+        String pagename = pagereq;
+        WikiPage wikipage; 
 
-        if( wikipage == null )
+        try
+        {
+            pagename = getFinalPageName( pagereq );
+        }
+        catch( ProviderException e ) {} // FIXME: Should not ignore!
+
+        if( pagename != null )
+        {
+            wikipage = getPage( pagename, version );
+        }
+        else
         {
             wikipage = new WikiPage( pagereq );
         }
