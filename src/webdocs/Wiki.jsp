@@ -29,10 +29,15 @@
         return;        
     }
 
-    int version = -1;
-    String rev = request.getParameter("version");
+    //
+    //  Determine requested version.  If version == -1,
+    //  then fetch current version.
+    //
+    int version          = -1;
+    String rev           = request.getParameter("version");
     String pageReference = "this page";
-    String versionInfo = "";
+    String versionInfo   = "";
+
     if( rev != null )
     {
         version = Integer.parseInt( rev );
@@ -103,7 +108,7 @@
 
              if( lastchange != null )
              {
-                // (We want to use pageLastChanged(pagereq, version) below...)
+                 // FIXME: We want to use pageLastChanged(pagereq, version) below...)
                  %>
                  <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.  
                     <A HREF="PageInfo.jsp?page=<%=pagereq%>">More info...</A></I><BR>
