@@ -1,0 +1,20 @@
+!Wiki configuration
+
+The least pain approach to defining the location of your Wiki files is
+to have them on the same drive as your Tomcat (or other web server)
+installation, and define the location in Unix format. For example,
+files in C:\JSPWiki\files are defined in the configuration file as
+/JSPWiki/files.
+
+!Version control
+
+If you need version control for your JSPWiki installation on a Windows
+machine, download the implementation from
+[http://www.cs.purdue.edu/homes/trinkle/RCS/]. You only need the
+executables in the win32 directory of the rcs57pc1.zip.
+
+The RCS executables will not work unless you set:
+* PATH environment variable to point to the location of the executables
+* TZ environment variable to a value suitable for your locale (this value must
+  be set; I have failed to get it working properly, though)
+* You also may need to set the LOGNAME environment variable.
