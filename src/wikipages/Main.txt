@@ -2,16 +2,9 @@ Hi!  I am Janne's [own Wiki|About].
 
 If you want to test this Wiki out, please use [SandBox].
 
-If you're new to Wiki, please see [OneMinuteWiki] for tips on how this whole shebang works.
-
-Please participate on [DiscussionAboutWiki].
+If you're new to Wiki, please see [OneMinuteWiki] for tips on how this
+whole shebang works.
 
 There is also a [TODO list], and a list of recent [News].
-
-There are not very many places to see right now.  Use the list below for some more or less interesting things:
-
-* [Java Tips]
-* [JavaScript tips]
-
 
 [Here's a list of the regular users|UserList]
