@@ -25,14 +25,17 @@
            <wiki:EditLink>create it</wiki:EditLink>?
       </wiki:NoSuchPage>
 
-      <P><HR>
+      <BR CLEAR="all" />
+      <P><HR />
       <table border="0" width="100%">
         <tr>
           <td align="left">
              <wiki:Permission permission="edit">
                  <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
              </wiki:Permission>
-             <wiki:PageInfoLink>More info...</wiki:PageInfoLink><BR>
+             <wiki:PageInfoLink>More info...</wiki:PageInfoLink>&nbsp;&nbsp;
+             <!-- <a href="Attachment.jsp?page=<wiki:PageName/>">Attach file...</a> -->
+             <BR>
           </td>
         </tr>
         <tr>
