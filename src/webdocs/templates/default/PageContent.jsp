@@ -10,7 +10,7 @@
             <p class="versionnote">This is version <wiki:PageVersion/>.  
             It is not the current version, and thus it cannot be edited.<br />
             <wiki:LinkTo>[Back to current version]</wiki:LinkTo>&nbsp;&nbsp;
-            <wiki:EditLink version="this">[Restore this version]</wiki:EditLink></P>
+            <wiki:EditLink version="this">[Restore this version]</wiki:EditLink></p>
          </font>
          <hr />
       </wiki:CheckVersion>
