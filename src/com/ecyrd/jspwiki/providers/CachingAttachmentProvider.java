@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -122,10 +122,9 @@ public class CachingAttachmentProvider
         throws ProviderException,
                IOException
     {
-        // FIXME: Probably not wise.
+        m_provider.putAttachmentData( att, data );
 
         m_cache.flushEntry( att.getParentName() );
-        m_provider.putAttachmentData( att, data );
     }
 
     public InputStream getAttachmentData( Attachment att )
@@ -224,7 +223,10 @@ public class CachingAttachmentProvider
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
-        log.debug("Getting attachments for "+page+", name="+name+", version="+version);
+        if( log.isDebugEnabled() )
+        {
+            log.debug("Getting attachments for "+page+", name="+name+", version="+version);
+        }
 
         //
         //  We don't cache previous versions
@@ -294,14 +296,15 @@ public class CachingAttachmentProvider
     public void deleteVersion( Attachment att )
         throws ProviderException
     {
-        m_cache.flushEntry( att.getParentName() );
+        // This isn't strictly speaking correct, but it does not really matter
+        m_cache.putInCache( att.getParentName(), null );
         m_provider.deleteVersion( att );
     }
 
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
-        m_cache.flushEntry( att.getParentName() );
+        m_cache.putInCache( att.getParentName(), null );
         m_provider.deleteAttachment( att );
     }
 
@@ -311,21 +314,6 @@ public class CachingAttachmentProvider
         int cachedPages = 0;
         long totalSize  = 0;
         
-        /*
-        for( Iterator i = m_cache.values().iterator(); i.hasNext(); )
-        {
-            CacheItem item = (CacheItem) i.next();
-
-            String text = (String) item.m_text.get();
-            if( text != null )
-            {
-                cachedPages++;
-                totalSize += text.length()*2;
-            }
-        }
-
-        totalSize = (totalSize+512)/1024L;
-        */
         return("Real provider: "+m_provider.getClass().getName()+
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits);
