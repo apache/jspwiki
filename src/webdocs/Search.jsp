@@ -30,6 +30,7 @@
     WikiPage wikipage = new WikiPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    wikiContext.setHttpRequest( request );
     wikiContext.setRequestContext( "find" );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,

@@ -29,6 +29,8 @@
 
     WikiContext wikiContext = new WikiContext( wiki, pagereq );
     wikiContext.setRequestContext( WikiContext.ERROR );
+    wikiContext.setHttpRequest( request );
+
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

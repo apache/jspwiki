@@ -68,6 +68,7 @@
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     wikiContext.setRequestContext( WikiContext.DIFF );
+    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
