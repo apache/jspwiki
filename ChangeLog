@@ -1,3 +1,12 @@
+2003-01-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.21.
+
+        * Added a JDK1.4 -specific version of the input encoding detector
+        to FileUtil.  This also means that JSPWiki can no longer be
+        compiled using a 1.3 compiler anymore.  It will run on 1.3 systems
+        however, unless something is amiss.
+
 2003-01-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
 	* v2.0.20.
@@ -315,7 +324,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        HirsimB仕ki for providing with the idea and the image.  Look for
+        HirsimBﾂ仕ki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -1218,7 +1227,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VBB仕BB仕tBB仕inen finally managed to
+        * Added support for tables.  Sanna VBBﾂ仕BBﾂ仕tBBﾂ仕inen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
