@@ -1,3 +1,7 @@
+2004-01-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.90.
+
 2004-01-12  Erik Bunn  <ebu@spamicide.basen.net>
 
 	* Added UserManager.getUserDatabase(), getAuthenticator().
