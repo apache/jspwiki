@@ -12,7 +12,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("Utility suite tests");
+        TestSuite suite = new TestSuite("PageFilter tests");
 
         suite.addTest( FilterManagerTest.suite() );
 
