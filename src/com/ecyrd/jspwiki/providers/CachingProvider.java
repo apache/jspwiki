@@ -137,6 +137,19 @@ public class CachingProvider
         }
 
         //
+        //  If we have a list of all pages in memory, then any page
+        //  not in the cache must be non-existent.
+        //
+        //  FIXME: There's a problem here; if someone modifies the
+        //         repository by adding a page outside JSPWiki, 
+        //         we won't notice it.
+
+        if( m_gotall )
+        {
+            return false;
+        }
+
+        //
         //  We could add the page to the cache here as well,
         //  but in order to understand whether that is a
         //  good thing or not we would need to analyze
@@ -324,6 +337,7 @@ public class CachingProvider
                 {
                     CacheItem item = new CacheItem();
                     item.m_page = (WikiPage) i.next();
+                    item.m_lastChecked = System.currentTimeMillis();
 
                     m_cache.put( item.m_page.getName(), item );
                 }
