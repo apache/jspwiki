@@ -1181,22 +1181,48 @@ public class TranslatorReader extends Reader
             }
 
             sb.append("<TR>");
-            m_closeTag = "</TR>";
+            m_closeTag = "</TD></TR>";
         }
         
         int ch = nextToken();
 
         if( ch == '|' )
         {
+            if( !newLine ) 
+            {
+                sb.append("</TH>");
+            }
             sb.append("<TH>");
+            m_closeTag = "</TH></TR>";
         }
         else
         {
+            if( !newLine ) 
+            {
+                sb.append("</TD>");
+            }
             sb.append("<TD>");
             pushBack( ch );
         }
 
         return sb.toString();
+    }
+
+    /**
+     *  Generic escape of next character or entity.
+     */
+    private String handleTilde()
+        throws IOException
+    {
+        int ch = nextToken();
+
+        if( ch == '|' )
+            return "|";
+
+        // No escape.
+        pushBack( ch );
+
+        return "~";
     }
 
     private void fillBuffer()
@@ -1391,9 +1417,13 @@ public class TranslatorReader extends Reader
               case '\"':
                 s = "&quot;";
                 break;
-
+                /*
               case '&':
                 s = "&amp;";
+                break;
+                */
+              case '~':
+                s = handleTilde();
                 break;
 
               case -1:
