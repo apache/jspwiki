@@ -1898,7 +1898,11 @@ public class WikiEngine
             wikipage = getPage( pagereq, version );
         }
 
-        if( wikipage == null ) wikipage = new WikiPage( pagereq );
+        if( wikipage == null ) 
+        {
+            pagereq = TranslatorReader.cleanLink( pagereq );
+            wikipage = new WikiPage( pagereq );
+        }
 
         //
         //  Figure out which template we should be using for this page.
