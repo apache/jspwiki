@@ -28,7 +28,9 @@ public class TranslatorReaderTest extends TestCase
         throws IOException,
                NoRequiredPropertyException
     {
-        Reader r = new TranslatorReader( new TestEngine( props ), 
+        WikiContext context = new WikiContext( new TestEngine(props),
+                                               "testpage" );
+        Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
         StringWriter out = new StringWriter();
         int c;
@@ -348,6 +350,14 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testPluginInserrt()
+        throws Exception
+    {
+        String src="[{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WITH text=test}]";
+
+        assertEquals( "test\n", translate(src) );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( TranslatorReaderTest.class );
