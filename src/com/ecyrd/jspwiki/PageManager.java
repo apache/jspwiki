@@ -144,10 +144,22 @@ public class PageManager
         return m_provider.getPageInfo( pageName, version );
     }
 
+    /**
+     *  Gets a version history of page.  Each element in the returned
+     *  Collection is a WikiPage.
+     *  <P>
+     *  @return If the page does not exist, returns null, otherwise a Collection 
+     *          of WikiPages.
+     */
     public Collection getVersionHistory( String pageName )
         throws ProviderException
     {
-        return m_provider.getVersionHistory( pageName );
+        if( pageExists( pageName ) )
+        {
+            return m_provider.getVersionHistory( pageName );
+        }
+        
+        return null;
     }
 
     public String getProviderDescription()
