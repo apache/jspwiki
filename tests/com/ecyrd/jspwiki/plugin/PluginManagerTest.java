@@ -41,7 +41,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         String res = manager.execute( context,
-                                      "{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WITH text=foobar}");
+                                      "{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WHERE text=foobar}");
 
         assertEquals( "foobar",
                       res );
@@ -51,7 +51,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         String res = manager.execute( context,
-                                      "{INSERT   com.ecyrd.jspwiki.plugin.SamplePlugin  WITH   text = foobar2, moo=blat}");
+                                      "{INSERT   com.ecyrd.jspwiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat}");
 
         assertEquals( "foobar2",
                       res );
@@ -62,7 +62,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         String res = manager.execute( context,
-                                      "{INSERT   com.ecyrd.jspwiki.plugin.SamplePlugin  WITH   text = foobar2, moo=blat");
+                                      "{INSERT   com.ecyrd.jspwiki.plugin.SamplePlugin  WHERE   text = foobar2, moo=blat");
 
         assertEquals( "foobar2",
                       res );
