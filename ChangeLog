@@ -1,5 +1,11 @@
 2003-03-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.34.
+
+        * Just a tiny little code cleanup, binary should not have
+        changed.  (There were a few places where magic numbers were used
+        instead of WikiPageProvider.LATEST_VERSION).
+
         * JSPWiki license is now the GNU Lesser General Public License, so
         that people who want to embed JSPWiki as a part of their products,
         can do so.  It also makes it quite a lot easier to use third-party
