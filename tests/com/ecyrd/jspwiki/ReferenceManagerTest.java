@@ -52,16 +52,18 @@ public class ReferenceManagerTest extends TestCase
     public void testBecomesUnreferenced()
         throws Exception
     {
-        engine.saveText( "TestPage", "norefs" );
+        engine.saveText( "Foobar2", "[TestPage]" );
 
         Collection c = mgr.findUnreferenced();
-        assertTrue( c.size()==2 );
+        assertEquals( "Wrong # of orphan pages, stage 1", 0, c.size() );
+
+        engine.saveText( "Foobar2", "norefs" );
+        c = mgr.findUnreferenced();
+        assertEquals( "Wrong # of orphan pages", 1, c.size() );
 
         Iterator i = c.iterator();
         String first = (String) i.next();
-        String second = (String) i.next();
-        assertTrue( ( first.equals("Foobar") && second.equals("TestPage") )
-                    || ( first.equals("TestPage") && second.equals("Foobar") ));
+        assertEquals( "Not correct referrers", "TestPage", first );
     }
 
     public void testUncreated()
@@ -92,6 +94,9 @@ public class ReferenceManagerTest extends TestCase
      *  Is a page recognized as referenced if only plural form links exist.
      */
 
+    // NB: Unfortunately, cleaning out self-references in the case there's
+    //     a plural and a singular form of the page becomes nigh impossible, so we
+    //     just don't do it.
     public void testUpdatePluralOnlyRef()
         throws Exception
     {
@@ -100,7 +105,12 @@ public class ReferenceManagerTest extends TestCase
         assertTrue( "Foobar unreferenced", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
 
         c = mgr.findReferrers( "Foobar" );
-        assertTrue( "Foobar referrers", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
+        Iterator it = c.iterator();
+        String s1 = (String)it.next();
+        String s2 = (String)it.next();
+        assertTrue( "Foobar referrers", 
+                    c.size()==2 && 
+                    ( (s1.equals("TestPage") && s2.equals("Foobar")) || ((s1.equals("Foobar") && s2.equals("TestPage"))) ));
     }
 
 
