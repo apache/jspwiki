@@ -1,3 +1,19 @@
+2002-07-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.8.2.
+
+        * Backported fix from 1.9.x: You no longer need to specify the
+        package name with providers.  You should remove the package name
+        from the provider property anyway, since the packages have changed
+        in 1.9.x.
+
+        * Bug fix: When a new page is created, the diff would show "No
+        difference."  Now it displays the content of the new page.
+        Reported by Niilo Neuvo.
+
+        * Bug fix: Some containers would not decode cookies properly, so
+        we need a workaround for that.  Reported by Kalle Kivimaa.
+
 2002-06-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.8.0.
