@@ -43,7 +43,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><wiki:ApplicationName />: Previewing <wiki:PageName />></TITLE>
+  <TITLE><wiki:ApplicationName />: Previewing <wiki:PageName /></TITLE>
   <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 
