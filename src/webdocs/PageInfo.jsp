@@ -22,7 +22,7 @@
 
     if( pagereq == null )
     {
-        pagereq = "Main";
+        pagereq = wiki.getFrontPage();
     }
 
     if( skin == null )
