@@ -941,9 +941,6 @@ public class TranslatorReaderTest extends TestCase
      *  (by Mahlen Morris).
      */
 
-    // FIXME: does not run - code base is too screwed for that.
-
-    /*
     public void testMixedList()
         throws Exception
     {
@@ -954,20 +951,18 @@ public class TranslatorReaderTest extends TestCase
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        assertEquals( "<ul><li>Item A"+
-                      "<ol><ol><li>Numbered 1"+
-                      "<li>Numbered 2"+
-                      "</ol></ol>"+
-                      "<li>Item B"+
+        assertEquals( "<ul><li>Item A</li>"+
+                      "<ol><li>Numbered 1</li>"+
+                      "<li>Numbered 2</li>"+
+                      "</ol>"+
+                      "<li>Item B</li>"+
                       "</ul>",
                       result );
     }
-    */
     /**
      *  Like testMixedList() but the list types have been reversed.
      */
-    // FIXME: does not run - code base is too screwed for that.
-    /*
+
     public void testMixedList2()
         throws Exception
     {
@@ -978,15 +973,15 @@ public class TranslatorReaderTest extends TestCase
         // Remove newlines for easier parsing.
         result = TextUtil.replaceString( result, "\n", "" );
 
-        assertEquals( "<ol><li>Item A"+
-                      "<ul><ul><li>Numbered 1"+
-                      "<li>Numbered 2"+
-                      "</ul></ul>"+
-                      "<li>Item B"+
+        assertEquals( "<ol><li>Item A</li>"+
+                      "<ul><li>Numbered 1</li>"+
+                      "<li>Numbered 2</li>"+
+                      "</ul>"+
+                      "<li>Item B</li>"+
                       "</ol>",
                       result );
     }
-    */
+
 
     public void testPluginInsert()
         throws Exception
