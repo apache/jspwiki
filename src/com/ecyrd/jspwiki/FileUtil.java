@@ -133,6 +133,11 @@ public class FileUtil
 
         process.waitFor();
         
+        // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+        process.getInputStream().close();
+        process.getOutputStream().close();
+        process.getErrorStream().close(); 
+        
         return result.toString();
     }
 

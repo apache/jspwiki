@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -196,6 +196,11 @@ public class RCSFileProvider
 
             process.waitFor();
 
+            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close(); 
+
         }
         catch( Exception e )
         {
@@ -262,6 +267,11 @@ public class RCSFileProvider
 
             int exitVal = process.exitValue();
             
+            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close(); 
+
             log.debug("Done, returned = "+exitVal);
 
             //
@@ -349,6 +359,11 @@ public class RCSFileProvider
             process.waitFor();
 
             log.debug("Done, returned = "+process.exitValue());
+
+            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close(); 
         }
         catch( Exception e )
         {
@@ -421,6 +436,11 @@ public class RCSFileProvider
             }
 
             process.waitFor();
+
+            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close(); 
 
             //
             // FIXME: This is very slow
