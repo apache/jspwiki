@@ -33,7 +33,6 @@ public class Attachment
 {
     private String m_fileName;
     private String m_parentName;
-    private long   m_fileSize;
     private int    m_status = CREATED;
 
     public static final int CREATED       = 0;
@@ -46,9 +45,6 @@ public class Attachment
 
         m_parentName = parentPage;
         m_fileName   = fileName;
-
-        // -1 for unknown size; anything >= 0 is valid.
-        m_fileSize = -1;
     }
 
     public String toString()
@@ -65,16 +61,6 @@ public class Attachment
     public void setFileName( String name )
     {
         m_fileName = name;
-    }
-
-    public long getSize()
-    {
-        return( m_fileSize );
-    }
-
-    public void setSize( long size )
-    {
-        m_fileSize = size;
     }
 
     public int getStatus()

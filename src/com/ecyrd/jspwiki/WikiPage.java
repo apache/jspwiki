@@ -39,6 +39,7 @@ public class WikiPage
 {
     private String       m_name;
     private Date         m_lastModified;
+    private long         m_fileSize = -1;
     private int          m_version = WikiPageProvider.LATEST_VERSION;
     private String       m_author = null;
     private HashMap      m_attributes = new HashMap();
@@ -50,6 +51,8 @@ public class WikiPage
 
     public static final String ALIAS = "alias";
     public static final String REDIRECT = "redirect";
+
+    public static final String SIZE = "size";
 
     private AccessControlList m_accessList = null;
 
@@ -110,6 +113,22 @@ public class WikiPage
     public int getVersion()
     {
         return m_version;
+    }
+
+    /**
+     *  @since 2.1.109
+     */
+    public long getSize()
+    {
+        return( m_fileSize );
+    }
+
+    /**
+     *  @since 2.1.109
+     */
+    public void setSize( long size )
+    {
+        m_fileSize = size;
     }
 
     /**
