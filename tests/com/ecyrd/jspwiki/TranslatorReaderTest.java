@@ -143,6 +143,28 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHyperlinksNamed1()
+        throws Exception
+    {
+        newPage("HyperLink");
+
+        String src = "This should be a [here|HyperLink#heading]";
+
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">here</a>",
+                      translate(src) );
+    }
+
+    public void testHyperlinksNamed2()
+        throws Exception
+    {
+        newPage("HyperLink");
+
+        String src = "This should be a [HyperLink#heading]";
+
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">HyperLink#heading</a>",
+                      translate(src) );
+    }
+
     //
     //  Testing CamelCase hyperlinks
     //
@@ -1329,7 +1351,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!Hello\nThis is a test";
 
-        assertEquals( "<h4><a name=\"#section-testpage-Hello\">Hello</a></h4>\nThis is a test",
+        assertEquals( "<h4><a name=\"section-testpage-Hello\">Hello</a></h4>\nThis is a test",
                       translate(src) );
     }
 
@@ -1338,7 +1360,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!Hello, testing 1, 2, 3";
 
-        assertEquals( "<h3><a name=\"#section-testpage-HelloTesting123\">Hello, testing 1, 2, 3</a></h3>",
+        assertEquals( "<h3><a name=\"section-testpage-HelloTesting123\">Hello, testing 1, 2, 3</a></h3>",
                       translate(src) );
     }
 
@@ -1347,7 +1369,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!!Hello there, how are you doing?";
 
-        assertEquals( "<h2><a name=\"#section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?</a></h2>",
+        assertEquals( "<h2><a name=\"section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?</a></h2>",
                       translate(src) );
     }
 
@@ -1356,7 +1378,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!![Hello]";
 
-        assertEquals( "<h2><a name=\"#section-testpage-Hello\"><u>Hello</u><a href=\"Edit.jsp?page=Hello\">?</a></a></h2>",
+        assertEquals( "<h2><a name=\"section-testpage-Hello\"><u>Hello</u><a href=\"Edit.jsp?page=Hello\">?</a></a></h2>",
                       translate(src) );
     }
 
