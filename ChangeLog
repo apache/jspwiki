@@ -1,5 +1,9 @@
 2002-07-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Forgot to call link mutators with CamelCase links.  This caused
+        CamelCase links disappearing from things like "Referenced by"
+        -list.  Reported by Alain Ravet.
+
         * Added ';term:def' to TextFormattingRules for definition lists.
         This incidentally also allows you to make comments into someone
         else's text, if you use an empty 'term' (;:<Comment here>).
