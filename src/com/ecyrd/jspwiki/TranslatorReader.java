@@ -27,6 +27,9 @@ import org.apache.log4j.Category;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
+import com.ecyrd.jspwiki.plugin.PluginManager;
+import com.ecyrd.jspwiki.plugin.PluginException;
+
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
  *  This is where all the magic happens.  It is CRITICAL that this
@@ -59,7 +62,8 @@ public class TranslatorReader extends Reader
     private int            m_numlistlevel = 0;
 
     private WikiEngine     m_engine;
-
+    private WikiContext    m_context;
+    
     /** Optionally stores internal wikilinks */
     private ArrayList      m_encounteredLinks;
 
@@ -83,15 +87,16 @@ public class TranslatorReader extends Reader
      *  @param engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
      */
-    public TranslatorReader( WikiEngine engine, Reader in )
+    public TranslatorReader( WikiContext context, Reader in )
     {
         PatternCompiler compiler         = new GlobCompiler();
         ArrayList       compiledpatterns = new ArrayList();
 
         m_in     = new BufferedReader( in );
-        m_engine = engine;
-
-        Collection ptrns = getImagePatterns( engine );
+        m_engine = context.getEngine();
+        m_context = context;
+        
+        Collection ptrns = getImagePatterns( m_engine );
 
         //
         //  Make them into Regexp Patterns.  Unknown patterns
@@ -126,7 +131,7 @@ public class TranslatorReader extends Reader
         // if m_encounteredLinks is non-null, htmlizeLinks will store.
         m_encounteredLinks = new ArrayList();
 
-        // DEBUG: usually, if we're interested in the links, we don't
+        // FIXME: usually, if we're interested in the links, we don't
         // really want any HTML output from this class -> the current
         // implementation is needlessly slow and unoptimized. Think 
         // about better solutions...
@@ -171,6 +176,9 @@ public class TranslatorReader extends Reader
         return ptrnlist;
     }
 
+    /**
+     *  Returns true, if the link exists.
+     */
     private boolean linkExists( String link )
     {
         return m_engine.pageExists( link );
@@ -198,11 +206,11 @@ public class TranslatorReader extends Reader
         switch(type)
         {
           case READ:
-            result = "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page="+encodedlink+"\">"+text+"</A>";
+            result = "<A CLASS=\"wikipage\" HREF=\""+m_engine.getBaseURL()+"Wiki.jsp?page="+encodedlink+"\">"+text+"</A>";
             break;
 
           case EDIT:
-            result = "<U>"+text+"</U><A HREF=\"Edit.jsp?page="+encodedlink+"\">?</A>";
+            result = "<U>"+text+"</U><A HREF=\""+m_engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">?</A>";
             break;
 
           case EMPTY:
@@ -211,21 +219,21 @@ public class TranslatorReader extends Reader
 
           case LOCALREF:
             result = "<A CLASS=\"footnoteref\" HREF=\"#ref"+
-                     link+"\">[["+text+"]</A>";
+                link+"\">[["+text+"]</A>";
             break;
 
           case LOCAL:
             result = "<A CLASS=\"footnote\" NAME=\"ref"+
-                     link.substring(1)+"\">[["+text+"]</A>";
+                link.substring(1)+"\">[["+text+"]</A>";
             break;
 
-          //
-          //  With the image, external and interwiki types we need to
-          //  make sure nobody can put in Javascript or something else
-          //  annoying into the links themselves.  We do this by preventing
-          //  a haxor from stopping the link name short with quotes in 
-          //  fillBuffer().
-          //
+            //
+            //  With the image, external and interwiki types we need to
+            //  make sure nobody can put in Javascript or something else
+            //  annoying into the links themselves.  We do this by preventing
+            //  a haxor from stopping the link name short with quotes in 
+            //  fillBuffer().
+            //
           case IMAGE:
             result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\">";
             break;
@@ -246,43 +254,6 @@ public class TranslatorReader extends Reader
         return result;
     }
 
-    /**
-     *  @param orig Original string.  Null is safe.
-     */
-
-    public static String replaceString( String orig, String src, String dest )
-    {
-        if( orig == null ) return null;
-
-        StringBuffer res = new StringBuffer();
-        int start, end = 0, last = 0;
-
-        while( (start = orig.indexOf(src,end)) != -1 )
-        {
-            res.append( orig.substring( last, start ) );
-            res.append( dest );
-            end = start+src.length();
-            last = start+1;
-        }
-
-        res.append( orig.substring( end ) );
-
-        return res.toString();
-    }
-
-    /**
-     *  @param orig Original string.  Null is safe.
-     */
-    public static String replaceString( String orig, int start, int end, String text )
-    {
-        if( orig == null ) return null;
-
-        StringBuffer buf = new StringBuffer(orig);
-
-        buf.replace( start, end, text );
-
-        return buf.toString();
-    }
 
     /**
      *  [ This is a link ] -> ThisIsALink
@@ -335,8 +306,8 @@ public class TranslatorReader extends Reader
     private boolean isExternalLink( String link )
     {
         return link.startsWith("http:") || link.startsWith("ftp:") ||
-               link.startsWith("https:") || link.startsWith("mailto:") ||
-               link.startsWith("news:");
+            link.startsWith("https:") || link.startsWith("mailto:") ||
+            link.startsWith("news:");
     }
 
     /**
@@ -379,7 +350,7 @@ public class TranslatorReader extends Reader
             if( line.charAt( start+1 ) == '[' )
             {
                 for( end = start; end < line.length() && line.charAt(end) == '['; end++ );
-                line = replaceString( line, start, start+1, "" );
+                line = TextUtil.replaceString( line, start, start+1, "" );
                 continue;
             }
 
@@ -405,19 +376,35 @@ public class TranslatorReader extends Reader
 
                 int interwikipoint = -1;
 
-                if( isExternalLink( reallink ) )
+                if( PluginManager.isPluginLink( link ) )
+                {
+                    String included;
+                    try
+                    {
+                        included = m_engine.getPluginManager().execute( m_context, link );
+                    }
+                    catch( PluginException e )
+                    {
+                        log.error( "Failed to insert plugin", e );
+                        included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
+                    }
+                            
+                    line = TextUtil.replaceString( line, start, end+1,
+                                                   included );
+                }                
+                else if( isExternalLink( reallink ) )
                 {
                     // It's an external link, out of this Wiki
                     if( isImageLink( reallink ) )
                     {
                         // Image links are 
-                        line = replaceString( line, start, end+1,
-                                              makeLink( IMAGE, reallink, link ) );
+                        line = TextUtil.replaceString( line, start, end+1,
+                                                       makeLink( IMAGE, reallink, link ) );
                     }
                     else
                     {
-                        line = replaceString( line, start, end+1, 
-                                              makeLink( EXTERNAL, reallink, link ) );
+                        line = TextUtil.replaceString( line, start, end+1, 
+                                                       makeLink( EXTERNAL, reallink, link ) );
                     }
                 }
                 else if( (interwikipoint = reallink.indexOf(":")) != -1 )
@@ -431,27 +418,27 @@ public class TranslatorReader extends Reader
 
                     if( urlReference != null )
                     {
-                        urlReference = replaceString( urlReference, "%s", wikiPage );
-                        line = replaceString( line, start, end+1,
-                                              makeLink( INTERWIKI, urlReference, link ) );
+                        urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
+                        line = TextUtil.replaceString( line, start, end+1,
+                                                       makeLink( INTERWIKI, urlReference, link ) );
                     }
                     else
                     {
-                        line = replaceString( line, start, end+1, 
-                                              link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
+                        line = TextUtil.replaceString( line, start, end+1, 
+                                                       link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
                     }
                 }
                 else if( reallink.startsWith("#") )
                 {
                     // It defines a local footnote
-                    line = replaceString( line, start, end+1, 
-                                          makeLink( LOCAL, reallink, link ) );
+                    line = TextUtil.replaceString( line, start, end+1, 
+                                                   makeLink( LOCAL, reallink, link ) );
                 }
                 else if( isNumber( reallink ) )
                 {
                     // It defines a reference to a local footnote
-                    line = replaceString( line, start, end+1, 
-                                          makeLink( LOCALREF, reallink, link ) );
+                    line = TextUtil.replaceString( line, start, end+1, 
+                                                   makeLink( LOCALREF, reallink, link ) );
                 }
                 else
                 {
@@ -465,12 +452,12 @@ public class TranslatorReader extends Reader
 
                     if( linkExists( reallink ) )
                     {
-                        line = replaceString( line, start, end+1, 
-                                              makeLink( READ, reallink, link ) );
+                        line = TextUtil.replaceString( line, start, end+1, 
+                                                       makeLink( READ, reallink, link ) );
                     }
                     else
                     {
-                        line = replaceString( line, start, end+1, makeLink( EDIT, reallink, link ) );
+                        line = TextUtil.replaceString( line, start, end+1, makeLink( EDIT, reallink, link ) );
                     }
                 }
             }
@@ -491,15 +478,15 @@ public class TranslatorReader extends Reader
     {
         if( line.startsWith("!!!") )
         {
-            line = replaceString( line, 0, 3, "<H2>" ) + "</H2>";
+            line = TextUtil.replaceString( line, 0, 3, "<H2>" ) + "</H2>";
         }
         else if( line.startsWith("!!") )
         {
-            line = replaceString( line, 0, 2, "<H3>" ) + "</H3>";
+            line = TextUtil.replaceString( line, 0, 2, "<H3>" ) + "</H3>";
         }
         else if( line.startsWith("!") )
         {
-            line = replaceString( line, 0, 1, "<H4>" ) + "</H4>";
+            line = TextUtil.replaceString( line, 0, 1, "<H4>" ) + "</H4>";
         }
         
         return line;
@@ -802,11 +789,11 @@ public class TranslatorReader extends Reader
             line = setItalic( line );
 
             line = setTT( line );
-            line = replaceString( line, "\\\\", "<BR>" );
+            line = TextUtil.replaceString( line, "\\\\", "<BR>" );
 
             if( (pre = line.indexOf("{{{")) != -1 )
             {
-                line = replaceString( line, pre, pre+3, "<PRE>" );
+                line = TextUtil.replaceString( line, pre, pre+3, "<PRE>" );
                 m_iscode = true;
             }
 
@@ -814,7 +801,7 @@ public class TranslatorReader extends Reader
             
         if( (pre = line.indexOf("}}}")) != -1 )
         {
-            line = replaceString( line, pre, pre+3, "</PRE>" );
+            line = TextUtil.replaceString( line, pre, pre+3, "</PRE>" );
             m_iscode = false;
         }
 
