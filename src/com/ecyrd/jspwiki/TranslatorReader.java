@@ -497,7 +497,7 @@ public class TranslatorReader extends Reader
                     }
                     else
                     {
-                        link = makeLink( EDIT, matchedLink, link );
+                        link = makeLink( EDIT, link, link );
                     }
 
                     line = TextUtil.replaceString( line, 
