@@ -5,16 +5,17 @@
         * New Editortag and corresponding JSP pages now fix 
         BugCommentPreviewDeletesAllComments.
 
-        * EditorTag now is much smarter than before: you can do things like
-        put your own editing commands inside the body - the EditorTag just
-        adds all the required pieces. 
+        * EditorTag now is much smarter than before: you can do things 
+        like put your own editing commands inside the body - the 
+        EditorTag just adds all the required pieces. 
 
 2005-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.148
         
-        * Oops, didn't quite fix the problems; the extra <script> tag turned
-        out to be useful after all... Fixes BugCantFindJSPWIKI_MAC.CSS.
+        * Oops, didn't quite fix the problems; the extra <script> tag 
+        turned out to be useful after all... Fixes 
+        BugCantFindJSPWIKI_MAC.CSS.
         
 2005-02-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -22,9 +23,9 @@
 
         * Fixed problem with an extra <script> tag inside cssinclude.js
 
-        * Removed several unused imports (testing out Eclipse, now that it
-        seems that it has proper emacs-like indenting - now I just need a
-        ChangeLog-plugin...
+        * Removed several unused imports (testing out Eclipse, now 
+        that it seems that it has proper emacs-like indenting - now 
+        I just need a ChangeLog-plugin...
 
 2005-01-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
