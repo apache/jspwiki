@@ -16,7 +16,11 @@
      </fileset>
   </path>
 
-  <target name="compile">
+  <target name="init">
+     <mkdir dir="${code.build}" />
+  </target>
+
+  <target name="compile" depends="init">
     <javac srcdir="${code.src}"
            destdir="${code.build}">
       <classpath refid="path.base" />
@@ -44,6 +48,7 @@
        <lib dir="lib" includes="*.jar" />
        <classes dir="${code.build}" includes="**/*.class" />
        <fileset dir="${code.src}/webdocs" includes="**" />
+       <webinf dir="etc" includes="**" />
     </war>
 
   </target>
