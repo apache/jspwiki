@@ -100,7 +100,7 @@
 
    <servlet-mapping>
        <servlet-name>AttachmentServlet</servlet-name>
-       <url-pattern>/attach</url-pattern>
+       <url-pattern>/attach/*</url-pattern>
    </servlet-mapping>
 
    <!-- This means that we don't have to use redirection
