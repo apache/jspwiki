@@ -8,4 +8,9 @@ UPGRADE NOTES
 
 - If updating manually (from v1.8.0):
 
-  * Providers now sleep in a different package.
+  * Providers now sleep in a different package.  You must change your
+    "jspwiki.pageProvider" setting.
+
+  * CachingProvider is no longer set explicitly.  You must use the new
+    "jspwiki.usePageCache" property instead.
+

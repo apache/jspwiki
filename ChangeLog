@@ -1,3 +1,28 @@
+2002-06-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.1
+
+        * Changed WikiEngine initialization so that it would better
+        integrate with servlets and/or standalone systems.  However, this
+        does not yet work as-expected, if you're using it, you'll see all
+        sorts of annoying NullPointerExceptions if things go wrong.
+
+        * Moved some of the functionality from WikiEngine into a new
+        PageManager class.
+
+        * Integrated some initial parts of the attachment package from
+        ebu.  Does not work yet, though.
+
+        * Did some code cleanup: We now have a proper WikiException (with
+        our own exceptions extending from it).  There is now also a new
+        WikiProvider interface, which WikiPageProvider and
+        AttachmentProvider extend from.
+
+        * You should no longer set CachingProvider directly, but to use
+        jspwiki.usePageCache instead.  I did this change since in many bug
+        reports it turned out that practically nobody was using the page
+        cache - presumably because nobody knew about it :-).
+
 2002-06-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Branched off 1.9.x, which is to be 2.0.  This means that it's
