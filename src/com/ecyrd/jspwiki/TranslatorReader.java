@@ -150,7 +150,7 @@ public class TranslatorReader extends Reader
 
         try
         {
-            m_camelCasePtrn       = m_compiler.compile( "(^|\\W)([A-Z][a-z]+([A-Z][a-z]+)+)" );
+            m_camelCasePtrn = m_compiler.compile( "(^|\\W|\\~)([A-Z][a-z]+([A-Z][a-z]+)+)" );
         }
         catch( MalformedPatternException e )
         {
@@ -502,7 +502,14 @@ public class TranslatorReader extends Reader
 
                 callMutatorChain( m_localLinkMutatorChain, link );
 
-                if( (matchedLink = linkExists( link )) != null )
+                if( "~".equals( res.group(1) ) )
+                {
+                    // Delete the (~) from beginning.
+                    // We'll make '~' the generic kill-processing-character from
+                    // now on.
+                    start--;
+                }
+                else if( (matchedLink = linkExists( link )) != null )
                 {
                     link = makeLink( READ, matchedLink, link );
                 }
