@@ -248,7 +248,7 @@ public class WikiEngine
         //
         try
         {
-            m_pluginManager    = new PluginManager();
+            m_pluginManager    = new PluginManager( props );
             m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
 
             initReferenceManager();            
