@@ -1,5 +1,7 @@
 2002-01-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * SystemInfo.jsp page enhanced with new features.
+
         * v1.6.5-cvs
 
         * The WikiPageProvider interface has been enhanced with new
