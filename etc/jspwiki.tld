@@ -435,6 +435,9 @@
        <name>var</name>
        <required>true</required>
     </attribute>
+    <attribute>
+       <name>default</name>
+    </attribute>
   </tag>
 
 </taglib>
