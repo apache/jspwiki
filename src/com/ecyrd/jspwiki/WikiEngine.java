@@ -85,6 +85,8 @@ public class WikiEngine
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL      = "jspwiki.baseURL";
 
+    public static final String PROP_REFSTYLE     = "jspwiki.referenceStyle";
+
     /** Property name for the "spaces in titles" -hack. */
     public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
 
@@ -166,6 +168,9 @@ public class WikiEngine
 
     /** Handlers page filters. */
     private FilterManager    m_filterManager;
+
+    /** Constructs URLs */
+    private URLConstructor   m_urlConstructor;
 
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
@@ -420,6 +425,7 @@ public class WikiEngine
         m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
         m_baseURL        = props.getProperty( PROP_BASEURL, "" );
 
+
         m_beautifyTitle  = TextUtil.getBooleanProperty( props,
                                                         PROP_BEAUTIFYTITLE, 
                                                         m_beautifyTitle );
@@ -437,6 +443,9 @@ public class WikiEngine
         //
         try
         {
+            m_urlConstructor    = new DefaultURLConstructor();
+            m_urlConstructor.initialize( this, props );
+
             m_pageManager       = new PageManager( this, props );
             m_pluginManager     = new PluginManager( props );
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
@@ -623,19 +632,8 @@ public class WikiEngine
      *  @since 2.0.3
      */
     public String getViewURL( String pageName )
-    {/*
-        pageName = encodeName( pageName );
-        String srcString = "%uWiki.jsp?page=%p";
-
-        srcString = TextUtil.replaceString( srcString, "%u", m_baseURL );
-        srcString = TextUtil.replaceString( srcString, "%p", pageName );
-
-        return srcString;
-     */
-        if( pageName == null )
-            return m_baseURL+"Wiki.jsp";
-
-        return m_baseURL+"Wiki.jsp?page="+encodeName(pageName);
+    {
+        return m_urlConstructor.makeURL( WikiContext.VIEW, pageName );
     }
 
     /**
@@ -645,7 +643,7 @@ public class WikiEngine
      */
     public String getEditURL( String pageName )
     {
-        return m_baseURL+"Edit.jsp?page="+encodeName(pageName);
+        return m_urlConstructor.makeURL( WikiContext.EDIT, pageName );
     }
 
     /**
@@ -654,7 +652,7 @@ public class WikiEngine
      */
     public String getAttachmentURL( String attName )
     {
-        return m_baseURL+"attach/"+encodeName(attName);
+        return m_urlConstructor.makeURL( WikiContext.ATTACH, attName );
     }
 
     /**
@@ -1747,12 +1745,25 @@ public class WikiEngine
     public WikiContext createContext( HttpServletRequest request,
                                       String requestContext )
     {
+        String pagereq;
+
         if( !m_isConfigured )
         {
             throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
         }
 
-        String pagereq  = safeGetParameter( request, "page" );
+        try
+        {
+            pagereq  = m_urlConstructor.parsePage( requestContext,
+                                                   request,
+                                                   getContentEncoding() );
+        }
+        catch( IOException e )
+        {
+            log.error("Unable to create context",e);
+            throw new InternalWikiException("Big internal booboo, please check logs.");
+        }
+
         String template = safeGetParameter( request, "skin" );
 
         //
