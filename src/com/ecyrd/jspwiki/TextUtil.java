@@ -30,10 +30,10 @@ public class TextUtil
     static String HEX_DIGITS =  "0123456789ABCDEF";
     static final char DIFF_ADDED_SYMBOL    = '+';
     static final char DIFF_REMOVED_SYMBOL  = '-';
-    static final String CSS_DIFF_ADDED     = "<div class=\"diffadd\">";
-    static final String CSS_DIFF_REMOVED   = "<div class=\"diffrem\">";
-    static final String CSS_DIFF_UNCHANGED = "<div class=\"diff\">";
-    static final String CSS_DIFF_CLOSE     = "</div>";
+    static final String CSS_DIFF_ADDED     = "<TR><TD BGCOLOR=#99FF99 class=\"diffadd\">";
+    static final String CSS_DIFF_REMOVED   = "<TR><TD BGCOLOR=#FF9933 class=\"diffrem\">";
+    static final String CSS_DIFF_UNCHANGED = "<TR><TD class=\"diff\">";
+    static final String CSS_DIFF_CLOSE     = "</TD></TR>";
 
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
@@ -275,6 +275,8 @@ public class TextUtil
 
         BufferedReader in = new BufferedReader( new StringReader( diffText ) );
         StringBuffer out = new StringBuffer();
+
+        out.append("<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>");
         while( ( line = in.readLine() ) != null )
         {
             stop  = CSS_DIFF_CLOSE;
@@ -295,6 +297,7 @@ public class TextUtil
             out.append( stop + "\n" );
 
         }
+        out.append("</TABLE>");
         return( out.toString() );
     }
 
