@@ -30,7 +30,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *
  *  <B>Attributes</B>
  *  <UL>
- *   <LI>type - either "page" or "attachment".
+ *   <LI>type - either "page", "attachment" or "weblogentry"
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -60,6 +60,11 @@ public class PageTypeTag
             }
             
             if( m_type.equals("page") && !(page instanceof Attachment) )
+            {
+                return EVAL_BODY_INCLUDE;
+            }
+
+            if( m_type.equals("weblogentry") && !(page instanceof Attachment) && page.getName().indexOf("_blogentry_") != -1 )
             {
                 return EVAL_BODY_INCLUDE;
             }
