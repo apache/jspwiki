@@ -1,5 +1,7 @@
 2002-09-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.21
+
 	* Added a simple WeblogPlugin and an accompanying
 	WeblogEntryPlugin.
 
