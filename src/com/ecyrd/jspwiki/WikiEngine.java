@@ -753,7 +753,7 @@ public class WikiEngine
     /**
      *  Returns the pure text of a page, no conversions.
      *
-     *  @version If WikiPageProvider.LATEST_VERSION, then uses the 
+     *  @param version If WikiPageProvider.LATEST_VERSION, then uses the 
      *  latest version.
      */
     // FIXME: Should throw an exception on unknown page/version?
