@@ -852,6 +852,9 @@ public class WikiEngine
         String propname = PROP_SPECIALPAGE+original;
         String specialpage = m_properties.getProperty( propname );
 
+        if( specialpage != null )
+            specialpage = getURL( WikiContext.NONE, specialpage, null, true );
+        
         return specialpage;
     }
 
