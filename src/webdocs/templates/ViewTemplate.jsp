@@ -18,7 +18,7 @@
        <%@ include file="../LeftMenu.jsp" %>
        <P>
        <% if( isEditable ) { %>
-          <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>
+          <wiki:EditLink>Edit <%=pageReference%></wiki:EditLink>
        <% } %>
        </P>
        <%@ include file="../LeftMenuFooter.jsp" %>
@@ -47,30 +47,19 @@
              // if version == -1, the current page is returned.
              out.println(wiki.getHTML(pagereq, version));
          }
-         else
-         {
-             if(version == -1)
-             {
-             %>
+      %>
+         <wiki:NoSuchPage>
+                <!-- FIXME: Should also note when a wrong version has been fetched. -->
                 This page does not exist.  Why don't you go and
                 <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
-             <%
-             }
-             else
-             {
-             %>
-                This version of the page does not seem to exist.
-             <%
-             }
-         }
-      %>
+         </wiki:NoSuchPage>
 
       <P><HR>
       <table border="0" width="100%">
         <tr>
           <td align="left">
              <% if( isEditable ) { %>
-                 <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>.
+                 <wiki:EditLink>Edit <%=pageReference%></wiki:EditLink>
                  &nbsp;&nbsp;
              <% } %>
              <% if( wikipage != null ) { %>
@@ -86,25 +75,22 @@
              {
                  java.util.Date lastchange = wikipage.getLastModified();
 
-                 String author = wikipage.getAuthor();
-                 if( author == null ) author = "unknown";
-
                  if( version == -1 )
                  {
                      %>                
-                     <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=author%>.</I>
+                     <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <wiki:Author />.</I>
                      <%
                  } else {
                      %>
-                     <I>This particular version was published on <%=lastchange%> by <%=author%></I>.
+                     <I>This particular version was published on <%=lastchange%> by <wiki:Author /></I>.
                      <%
                  }
-             } else {
-                 %>
-                 <I>Page not created yet.</I>
-                 <%
              }
              %>
+             <wiki:NoSuchPage>
+                 <I>Page not created yet.</I>
+             </wiki:NoSuchPage>
+
              </FONT>
           </td>
         </tr>
