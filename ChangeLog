@@ -1,3 +1,13 @@
+2004-08-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.106.
+
+        * Added documentation for WeblogPlugin and WeblogEntryPlugin.
+
+        * PluginTag now also accepts body content, which gets translated
+        to the "_body" content of the plugin.  Thanks to Foster Schucker
+        for the initial code.
+
 2004-08-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.105
