@@ -83,7 +83,8 @@
              if( lastchange != null )
              {
                  %>
-                 <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.</I><BR>
+                 <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.  
+                    <A HREF="PageInfo.jsp?page=<%=pagereq%>">More info...</A></I><BR>
                  <%
              } else {
                  %>
