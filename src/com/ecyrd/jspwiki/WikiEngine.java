@@ -376,6 +376,12 @@ public class WikiEngine
             return java.net.URLDecoder.decode( pagerequest );
     }
 
+    /**
+     *  Returns the IANA name of the character set encoding we're
+     *  supposed to be using right now.
+     *
+     *  @since 1.5.3
+     */
     public String getContentEncoding()
     {
         if( m_useUTF8 ) 
