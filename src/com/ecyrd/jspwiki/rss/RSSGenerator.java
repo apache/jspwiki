@@ -100,13 +100,80 @@ public class RSSGenerator
     /**
      *  Does the required formatting and entity replacement for XML.
      */
-    private String format( String s )
+    public static String format( String s )
     {
         s = TextUtil.replaceString( s, "&", "&amp;" );
         s = TextUtil.replaceString( s, "<", "&lt;" );
         s = TextUtil.replaceString( s, "]]>", "]]&gt;" );
 
-        return s;
+        return s.trim();
+    }
+
+    private String getAuthor( WikiPage page )
+    {
+        String author = page.getAuthor();
+
+        if( author == null ) author = "An unknown author";
+
+        return author;
+    }
+
+    private String getAttachmentDescription( Attachment att )
+    {
+        String author = getAuthor(att);
+
+        if( att.getVersion() != 1 )
+        {
+            return (author+" uploaded a new version of this attachment on "+att.getLastModified() );
+        }
+        else
+        {
+            return (author+" created this attachment on "+att.getLastModified() );
+        }
+    }
+
+    private String getPageDescription( WikiPage page )
+    {
+        StringBuffer buf = new StringBuffer();
+        String author = getAuthor(page);
+
+        if( page.getVersion() > 1 )
+        {
+            String diff = m_engine.getDiff( page.getName(),
+                                            page.getVersion()-1,
+                                            page.getVersion() );
+
+            buf.append(author+" changed this page on "+page.getLastModified()+":<br /><hr /><br />" );
+            buf.append(diff);
+        }
+        else
+        {
+            buf.append(author+" created this page on "+page.getLastModified()+":<br /><hr /><br />" );
+            buf.append(m_engine.getHTML( page.getName() ));
+        }
+
+        return buf.toString();
+    }
+
+    private String getEntryDescription( WikiPage page )
+    {
+        String res;
+
+        if( page instanceof Attachment ) 
+        {
+            res = getAttachmentDescription( (Attachment)page );
+        }
+        else
+        {
+            res = getPageDescription( page );
+        }
+
+        return res;
+    }
+
+    private String getEntryTitle( WikiPage page )
+    {
+        return page.getName();
     }
 
     /**
@@ -167,17 +234,14 @@ public class RSSGenerator
             String encodedName = m_engine.encodeName(page.getName());
 
             String url;
-            String type;
 
             if( page instanceof Attachment )
             {
                 url  = m_engine.getAttachmentURL( page.getName() );
-                type = "attachment";
             }
             else
             {
                 url  = m_engine.getViewURL(page.getName());
-                type = "page";
             }
 
             result.append("    <rdf:li rdf:resource=\""+url+"\" />\n");
@@ -185,7 +249,7 @@ public class RSSGenerator
             itemBuffer.append(" <item rdf:about=\""+url+"\">\n");
 
             itemBuffer.append("  <title>");
-            itemBuffer.append( page.getName() );
+            itemBuffer.append( getEntryTitle(page) );
             itemBuffer.append("</title>\n");
 
             itemBuffer.append("  <link>");
@@ -194,17 +258,8 @@ public class RSSGenerator
 
             itemBuffer.append("  <description>");
 
-            String author = page.getAuthor();
-            if( author == null ) author = "An unknown author";
+            itemBuffer.append( format(getEntryDescription(page)) );
 
-            if( page.getVersion() != 1 )
-            {
-                itemBuffer.append(author+" changed this "+type+" on "+page.getLastModified() );
-            }
-            else
-            {
-                itemBuffer.append(author+" created this "+type+" on "+page.getLastModified() );
-            }
             itemBuffer.append("</description>\n");
 
             if( page.getVersion() != -1 )
@@ -236,6 +291,7 @@ public class RSSGenerator
             //
             //  Author.
             //
+            String author = getAuthor(page);
             itemBuffer.append("  <dc:contributor>\n");
             itemBuffer.append("   <rdf:Description");
             if( m_engine.pageExists(author) )
