@@ -95,6 +95,7 @@ public class WikiEngine
 
     /** Store the file path to the basic URL.  When we're not running as
         a servlet, it defaults to the current directory. */
+    // FIXME: Is this too system-dependent?
     private String         m_rootPath = ".";
 
     /** Stores references between wikipages. */
