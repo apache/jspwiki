@@ -56,6 +56,11 @@
         </tr>
 
         <tr>
+          <td><b>Character Encoding</b></td>
+          <td><%=wiki.getContentEncoding()%></td>
+        </tr>
+
+        <tr>
           <td><b>Total number of pages</b></td>
           <td><%=wiki.getPageCount()%></td>
         </tr>
