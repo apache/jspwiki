@@ -711,27 +711,6 @@ public class TranslatorReader extends Reader
         return sb.toString();
     }
 
-    private String setDefinitionList( String line )
-    {
-        if( line.startsWith(";") )
-        {
-            int breakIndex = line.indexOf(':');
-
-            if( breakIndex > 0 )
-            {
-                StringBuffer res = new StringBuffer();
-
-                res.append("<DL>\n<DT>"+line.substring(1,breakIndex)+"</DT>");
-                res.append("<DD>"+line.substring(breakIndex+1)+"</DD>");
-                res.append("\n</DL>");
-
-                line = res.toString();
-            }
-        }
-
-        return line;
-    }
-
 
     /**
      *  Closes all annoying lists and things that the user might've
@@ -835,7 +814,18 @@ public class TranslatorReader extends Reader
         int ch = nextToken();
 
         if( ch == '\\' )
-            return "<BR>";
+        {
+            int ch2 = nextToken();
+
+            if( ch2 == '\\' )
+            {
+                return "<BR clear=\"all\" />";
+            }
+           
+            pushBack( ch2 );
+
+            return "<BR/>";
+        }
 
         pushBack( ch );
 
@@ -906,6 +896,10 @@ public class TranslatorReader extends Reader
                 m_isTypedText = true;
            }
         }
+        else
+        {
+            pushBack( ch );
+        }
 
         return res;
     }
@@ -975,8 +969,11 @@ public class TranslatorReader extends Reader
                 if( ch3 == '-' ) 
                 {
                     // Empty away all the rest of the dashes.
-                    while( nextToken() == '-' );
-                    return "<BR clear=\"all\" /><HR />";
+                    // Do not forget to return the first non-match back.
+                    while( (ch = nextToken()) == '-' );
+
+                    pushBack(ch);
+                    return "<HR />";
                 }
         
                 pushBack( ch3 );
@@ -1131,16 +1128,21 @@ public class TranslatorReader extends Reader
     private String handleOpenbracket()
         throws IOException
     {
-        int ch = nextToken();
+        StringBuffer sb = new StringBuffer();
+        int ch;
 
-        if( ch == '[' )
+        while( (ch = nextToken()) == '[' )
         {
-            return "[";
+            sb.append( (char)ch );
         }
 
         pushBack( ch );
 
-        StringBuffer sb = new StringBuffer();
+        if( sb.length() > 0 )
+        {
+            return sb.toString();
+        }
+
         while( true )
         {
             ch = nextToken();
