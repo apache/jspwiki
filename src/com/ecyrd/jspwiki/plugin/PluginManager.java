@@ -233,7 +233,7 @@ public class PluginManager
                             
                     arglist.put( param, value );
                             
-                    log.debug("ARG: "+param+"="+value);
+                    // log.debug("ARG: "+param+"="+value);
                     param = null;
                 }
             }
