@@ -122,6 +122,29 @@ public class RPCHandlerTest extends TestCase
                       directInfo.getLastModified().getTime() );
     }
 
+    /**
+     *  Tests if listLinks() works with a single, non-existant local page.
+     */
+    public void testListLinks()
+        throws Exception
+    {
+        String text = "[Foobar]";
+        String pageName = NAME1;
+
+        m_engine.saveText( pageName, text );
+
+        Vector links = m_handler.listLinks( pageName );
+
+        assertEquals( "link count", 1, links.size() );
+
+        Hashtable linkinfo = (Hashtable) links.elementAt(0);
+
+        assertEquals( "name", "Foobar", linkinfo.get("page") );
+        assertEquals( "type", "local",  linkinfo.get("type") );
+        assertEquals( "href", "Edit.jsp?page=Foobar", linkinfo.get("href") );
+    }
+
+
     public static Test suite()
     {
         return new TestSuite( RPCHandlerTest.class );
