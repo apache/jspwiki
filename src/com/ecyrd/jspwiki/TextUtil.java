@@ -294,6 +294,21 @@ public class TextUtil
     }
 
     /**
+     *  Gets an integer-valued property from a standard Properties
+     *  list.  If the value does not exist, or is a non-integer, returns defVal.
+     *
+     *  @since 2.1.48.
+     */
+    public static int getIntegerProperty( Properties props, 
+                                          String key,
+                                          int defVal )
+    {
+        String val = props.getProperty( key );
+
+        return parseIntParameter( val, defVal );
+    }
+
+    /**
      *  Gets a boolean property from a standard Properties list.
      *  Returns the default value, in case the key has not been set.
      *  <P>
