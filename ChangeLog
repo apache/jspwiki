@@ -1,3 +1,10 @@
+2001-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Slight cosmetical changes in jspwiki_ns.css
+
+        * Added comments around Javascript code in cssinclude.js to better
+        live with old browsers.
+
 2001-11-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Bumped version to 1.4.3-cvs.
