@@ -520,6 +520,9 @@ public class WikiEngine
             }
             return result.toString();
             /*
+              // FIXME: Should really use a nice regexp for translating
+              // JSPWiki into JSP Wiki.
+
             Perl5Util util = new Perl5Util();
             return util.substitute("s/[:upper:]{1,2}/foo/",title);
             */
