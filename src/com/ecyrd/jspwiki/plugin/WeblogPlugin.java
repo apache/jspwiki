@@ -36,8 +36,9 @@ import java.util.*;
  *  <B>Parameters</B>
  *  <UL>
  *    <LI>days - how many days the weblog aggregator should show.
- *    <LI>pageformat - What the entries should look like.
+ *    <LI>pageformat - What the entry pages should look like.
  *    <LI>startDate - Date when to start.  Format is "ddMMyy";
+ *    <li>maxEntries - How many entries to show at most.
  *  </UL>
  *
  *  The "days" and "startDate" can also be sent in HTTP parameters,
@@ -61,6 +62,7 @@ public class WeblogPlugin implements WikiPlugin
     public static final String  PARAM_STARTDATE    = "startDate";
     public static final String  PARAM_DAYS         = "days";
     public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
+    public static final String  PARAM_MAXENTRIES   = "maxEntries";
 
     public static String makeEntryPage( String pageName,
                                         String date,
@@ -94,6 +96,7 @@ public class WeblogPlugin implements WikiPlugin
         String days;
         String startDay = null;
         boolean hasComments = false;
+        int    maxEntries;
 
         if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null )
         {
@@ -112,6 +115,9 @@ public class WeblogPlugin implements WikiPlugin
         {
             hasComments = true;
         }
+
+        maxEntries = TextUtil.parseIntParameter( (String)params.get(PARAM_MAXENTRIES),
+                                                 Integer.MAX_VALUE );
 
         //
         //  Determine the date range which to include.
@@ -161,7 +167,7 @@ public class WeblogPlugin implements WikiPlugin
             SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
             sb.append("<div class=\"weblog\">\n");
-            for( Iterator i = blogEntries.iterator(); i.hasNext(); )
+            for( Iterator i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
             {
                 WikiPage p = (WikiPage) i.next();
 
