@@ -129,6 +129,15 @@ jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 #
 jspwiki.translatorReader.allowHTML = false
 
+#
+#  The JSPWiki working directory.  If not set, a temporary path will
+#  be used.  You can see the location of the workdir in the logs.
+#
+#  The working directory is used to cache things like Lucene search
+#  results.
+#
+#jspwiki.workDir = /path/to/your/workdir/
+
 ############################################################################
 #
 #  Usability niceties.
@@ -194,6 +203,12 @@ jspwiki.translatorReader.useOutlinkImage = true
 #  for while he is editing it.
 #
 jspwiki.lockExpiryTime = 60
+
+#
+#  Apache Lucene will be used to speed up search, unless you explicitly
+#  turn it off here.
+#
+#jspwiki.useLucene = true
 
 ############################################################################
 #
