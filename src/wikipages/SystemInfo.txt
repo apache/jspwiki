@@ -29,4 +29,4 @@ Here are some strategical figures and other interesting things about this partic
 
 [{ListLocksPlugin}]
 
-JSPWiki home page is at [http://www.ecyrd.com/JSPWiki/]. Welcome!
+JSPWiki home page is at [http://www.jspwiki.org/]. Welcome!
