@@ -48,6 +48,9 @@ public class WikiPage
      */
     public static final String DESCRIPTION = "summary";
 
+    public static final String ALIAS = "alias";
+    public static final String REDIRECT = "redirect";
+
     private AccessControlList m_accessList = null;
 
     public WikiPage( String name )
