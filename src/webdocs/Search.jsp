@@ -14,8 +14,10 @@
 
 
 <%
-    String query = request.getParameter("query");
+    String query = wiki.safeGetParameter( request, "query");
     Collection list = null;
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     if( query != null )
     {
@@ -90,7 +92,8 @@
 
       <P>
       
-      <FORM action="Search.jsp">
+      <FORM action="Search.jsp"
+            ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
       <INPUT type="text" name="query" size="40">
 

@@ -14,7 +14,7 @@
 
 
 <%
-    String pagereq = request.getParameter("page");
+    String pagereq = wiki.safeGetParameter( request, "page" );
 
     if( pagereq == null )
     {
@@ -24,6 +24,15 @@
     String pageurl = wiki.encodeName( pagereq );
 
     String action = request.getParameter("action");
+
+    //
+    //  Set the response type before we branch.
+    //
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+
+    log.debug("Request character encoding="+request.getCharacterEncoding());
+    log.debug("Request content type+"+request.getContentType());
 
     if( action != null && action.equals("save") )
     {
@@ -48,7 +57,9 @@
             return;
         }
 
-        wiki.saveText( pagereq, request.getParameter("text"), request );
+        wiki.saveText( pagereq,
+                       wiki.safeGetParameter( request, "text" ),
+                       request );
 
         response.sendRedirect("Wiki.jsp?page="+pageurl);
         return;
@@ -62,7 +73,7 @@
     long lastchange = 0;
     Date d = wiki.pageLastChanged( pagereq );
     if( d != null ) lastchange = d.getTime();
-    
+
 %>
 
 <HTML>
@@ -88,7 +99,8 @@
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <H1>Edit page <%=pagereq%></H1>
 
-      <FORM action="Edit.jsp?page=<%=pageurl%>&action=save" method="POST">
+      <FORM action="Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 
+            ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
       <INPUT type="hidden" name="page" value="<%=pagereq%>">
       <INPUT type="hidden" name="action" value="save">
