@@ -21,7 +21,7 @@ public class KnownGroup
         {
             UserProfile p = (UserProfile) user;
 
-            return ( p.getLoginStatus() == UserProfile.PASSWORD );
+            return p.isAuthenticated();
         }
 
         throw new InternalWikiException("Someone offered us a Principal that is not an UserProfile!");
