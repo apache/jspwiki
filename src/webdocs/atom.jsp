@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="<%=wiki.getBaseURL()%>atom.css" type="text/css"?>
 
-<%@ page import="java.util.*,com.ecyrd.jspwiki.*" %>
+<%@ page import="java.util.*"%>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
@@ -52,9 +53,17 @@
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     Properties properties = wiki.getWikiProperties();
-    String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-    String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
-
+    String channelDescription, channelLanguage;
+    
+    try
+    {
+        channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+        channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+    }
+    catch( NoRequiredPropertyException e )
+    {
+        throw new JspException("Did not find a required property!");
+    }
 
     //
     //  Now, list items.
