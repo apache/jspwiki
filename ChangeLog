@@ -1,5 +1,7 @@
 2003-03-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added some more documentation on tags.
+
         * default template changed slightly: cssinclude.js no longer uses
         the <noscript>-tag, and all of the tags were made lower-case for
         future XHTML compliancy.
