@@ -40,6 +40,12 @@
 			}
             // idx += key.length();
 		}
+
+        //
+        //  If it was not found, we'll add it here.
+        //
+        
+        propertyfile += "\n"+key+" = "+value+"\n";
 		
 		return propertyfile;
 	}
@@ -94,13 +100,22 @@
 
 <%
     String propertyString = readProperties( getServletContext() );
+    
+    Properties props = new Properties();
+    props.load( new ByteArrayInputStream(propertyString.getBytes("ISO-8859-1")) );
+    
 
     String appname = request.getParameter( "appname" );
     String baseurl = request.getParameter( "baseurl" );
     String dir = request.getParameter( "dir" );
     String logdir = request.getParameter( "logdir" );
     String workdir = request.getParameter( "workdir" );
+    String password1 = request.getParameter( "password1" );
+    String password2 = request.getParameter( "password2" );
+    String password  = request.getParameter( "password" );
 
+    String oldpassword = props.getProperty( "jspwiki.auth.masterPassword", null );
+    
     if( request.getParameter("submit") != null )
     {
         if( dir.length() == 0 )
@@ -119,6 +134,14 @@
         {
             message = "You must define a log directory";
         }
+        else if( password1 != null && !password1.equals(password2) )
+        {
+            message = "Password missing or password mismatch";
+        }
+        else if( oldpassword != null && !oldpassword.equals(password) )
+        {
+            message = "The password you gave does not match with the master password";
+        }
         else
         {
             propertyString = setProperty( propertyString, WikiEngine.PROP_APPNAME, appname );
@@ -127,6 +150,12 @@
             propertyString = setProperty( propertyString, BasicAttachmentProvider.PROP_STORAGEDIR, dir );
             propertyString = setProperty( propertyString, WikiEngine.PROP_WORKDIR, workdir );
             propertyString = setProperty( propertyString, "log4j.appender.FileLog.File", logdir );
+            
+            if( password1 != null )
+            {
+                propertyString = setProperty( propertyString, "jspwiki.auth.masterPassword", password1 );
+                oldpassword = password1;
+            }
 
             //
             //  Some default settings for the easy setup
@@ -151,10 +180,7 @@
 
 <%    
     File propertyFile = findPropertyFile( getServletContext() );
-    
-    Properties props = new Properties();
-    props.load( new ByteArrayInputStream(propertyString.getBytes("ISO-8859-1")) );
-    
+
 	if( appname == null ) appname = props.getProperty( WikiEngine.PROP_APPNAME, "MyWiki" );
     
 	if( baseurl == null ) 
@@ -170,8 +196,17 @@
 	if( logdir == null ) logdir = props.getProperty( "log4j.appender.FileLog.File", "/tmp/" );
 
 	if( workdir == null ) workdir = props.getProperty( WikiEngine.PROP_WORKDIR, "/tmp/" );
-	
+    
+    if( password1 == null ) password1 = "";
+    if( password2 == null ) password2 = "";
+    
+    
 	// FIXME: encoding as well.
+    
+    response.addHeader("Pragma", "no-cache");
+    response.setHeader( "Expires", "-1" );
+    response.setHeader("Cache-Control", "no-cache" );
+    response.setContentType("text/html; charset=UTF-8");
 %>
 
 <!DOCTYPE html 
@@ -246,7 +281,21 @@
 		<i>This is the place where all caches and other runtime stuff is stored.</i>
 	</div>
 
+
 	<h3>Other useful settings</h3>
+
+    <div class="configopt">
+        <table border="0">
+        <tr><td><b>Administrator password</b>:</td><td><input type="password" name="password1" size="30" value="<%=password1%>"/></td></tr>
+        <tr><td><b>Repeat password</b>:</td><td><input type="password" name="password2" size="30" value="<%=password2%>"/></td></tr>
+        </table>
+        <% if( oldpassword != null ) { %>
+        <i>If you want to change your current password, type it here.</i>
+        <% } else { %>
+        <i>Enter your new password here.  It's not mandatory, but anyone can access this setup page,
+           unless you set a password.  <b>HIGHLY RECOMMENDED</b></i>
+        <% } %>
+    </div>
 	
 <%--	
 	<div class="configopt">
@@ -268,6 +317,14 @@
 		<i>JSPWiki uses Jakarta Log4j for logging.  Please tell me where the log files should go to?</i>
 	</div>
 
+    <% if( oldpassword != null ) { %>
+        <hr />
+        <div class="configopt">
+        <b>Current administrator password</b>: <input type="password" name="password" size="30" value=""/><br />
+        <i>You must give the current administrator password for the change to take place.</i>
+        </div>
+    <% } %>
+    
 	<div style="width:100px; margin-left:auto;margin-right:auto;margin-top:2ex;">
 		<input type="submit" name="submit" value="Configure!" />
 	</div>
