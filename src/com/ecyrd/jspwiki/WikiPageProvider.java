@@ -36,16 +36,14 @@ import java.util.Date;
 public interface WikiPageProvider
 {
     /**
+     *  Passing this to any method should get the latest version
+     */
+    public static final int LATEST_VERSION = -1;
+
+    /**
      *  Initializes the page provider.
      */
     public void initialize( Properties properties ) throws NoRequiredPropertyException;
-
-    /**
-     *  Return the page text for page "page".
-     *
-     *  @return text content, or null if the page does not exist.
-     */
-    public String getPageText( String page );
 
     /**
      *  Attempts to save the page text for page "page".
@@ -66,7 +64,7 @@ public interface WikiPageProvider
     /**
      *  Returns info about the page.
      */
-    public WikiPage getPageInfo( String page );
+    public WikiPage getPageInfo( String page, int version );
 
     /**
      *  Returns all pages.  Each element in the returned
