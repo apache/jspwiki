@@ -3,19 +3,14 @@
 
 <%!static String LEFTMENU_NAME = "LeftMenu";%>
 
+<% 
+    WikiContext leftMenuContext = new WikiContext( wiki, pagereq );
+%>
+
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
 <P>
-<% 
-    WikiContext leftMenuContext = new WikiContext( wiki, pagereq );
-
-    if( wiki.pageExists( LEFTMENU_NAME ) ) 
-    { 
-       WikiPage    requestedpage   = new WikiPage( LEFTMENU_NAME );
-       out.println( wiki.getHTML(leftMenuContext,requestedpage) );
-    }
-%>
-
+    <wiki:InsertPage page="LeftMenu" />
     <wiki:NoSuchPage page="LeftMenu">
         <HR><P>
         <P ALIGN="center">
