@@ -1544,6 +1544,97 @@ public class TranslatorReader extends Reader
         return handleHyperlinks( sb.toString() );
     }
 
+    /**
+     *  Reads the stream until it meets one of the specified
+     *  ending characters, or stream end.  The ending character will not be left
+     *  in the stream.
+     */
+    private String readUntil( String endChars )
+        throws IOException
+    {
+        StringBuffer sb = new StringBuffer();
+        int ch = nextToken();
+
+        while( ch != -1 )
+        {
+            if( ch == '\\' ) 
+            {
+                ch = nextToken(); 
+                if( ch == -1 ) 
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if( endChars.indexOf((char)ch) != -1 )
+                {
+                    break;
+                }
+            }
+            sb.append( (char) ch );
+            ch = nextToken();
+        }
+
+        return sb.toString();
+    }
+
+    private String handleDiv( boolean newLine )
+        throws IOException
+    {
+        int ch = nextToken();
+
+        if( ch == '%' )
+        {
+            StringBuffer sb = new StringBuffer();
+
+            String style = null;
+            String clazz = null;
+
+            ch = nextToken();
+
+            //
+            //  Style or class?
+            //
+            if( ch == '(' )
+            {                
+                style = readUntil( ")" );
+            }
+            else if( Character.isLetter( (char) ch ) )
+            {
+                pushBack( ch );
+                clazz = readUntil( " \t\n\r" );
+            }
+            else
+            {
+                //
+                // Anything else stops.
+                //
+                if( m_isOpenParagraph ) 
+                { 
+                    sb.append("</p>\n"); 
+                    m_isOpenParagraph=false; 
+                }
+                sb.append( "\n</div>\n" );
+
+                return sb.toString();
+            }
+
+            // sb.append( newLine ? "<div" : "<span" );
+
+            sb.append( "<div" );
+            sb.append( style != null ? " style=\""+style+"\"" : "" );
+            sb.append( clazz != null ? " class=\""+clazz+"\"" : "" );
+            sb.append( ">" );
+
+            return sb.toString();
+        }
+
+        pushBack(ch);
+
+        return "%";
+    }
+
     private String handleBar( boolean newLine )
         throws IOException
     {
@@ -1605,6 +1696,8 @@ public class TranslatorReader extends Reader
         {
             return String.valueOf( (char)ch );
         }
+
+        if( ch == '~' ) return "~"; // Escapes itself.
 
         // No escape.
         pushBack( ch );
@@ -1934,6 +2027,10 @@ public class TranslatorReader extends Reader
                 */
               case '~':
                 s = handleTilde();
+                break;
+
+              case '%':
+                s = handleDiv( newLine );
                 break;
 
               case -1:
