@@ -77,6 +77,9 @@ public class WikiEngine
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
 
+    /** Property name for the "match english plurals" -hack. */
+    public static final String     PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
+
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
 
@@ -88,6 +91,9 @@ public class WikiEngine
 
     /** If true, uses UTF8 encoding for all data */
     private boolean          m_useUTF8      = true;
+
+    /** If true, we'll also consider english plurals (+s) a match. */
+    private boolean          m_matchEnglishPlurals = true;
 
     /** Stores the base URL. */
     private String           m_baseURL;
@@ -235,6 +241,8 @@ public class WikiEngine
         m_baseURL        = props.getProperty( PROP_BASEURL, "" );
 
         m_beautifyTitle  = "true".equals( props.getProperty( PROP_BEAUTIFYTITLE, "false" ) );
+
+        m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -521,7 +529,7 @@ public class WikiEngine
     }
 
     /**
-     *  Returns true, if the requested page exists.
+     *  Returns true, if the requested page (or an alias) exists.
      *
      *  @param page WikiName of the page.
      */
@@ -529,25 +537,30 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        return m_pageManager.pageExists( page );
+        return getFinalPageName( page ) != null;
     }
 
     /**
-     *  Returns true, if the requested page exists with the
+     *  Returns true, if the requested page (or an alias) exists with the
      *  requested version.
      *
-     *  @param page 
+     *  @param page Page name
      */
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        WikiPage p = m_pageManager.getPageInfo( page, version );
+        WikiPage p = m_pageManager.getPageInfo( getFinalPageName(page), version );
 
         return (p != null);
     }
 
+    /**
+     *  Returns true, if the requested page (or an alias) exists.
+     *
+     *  @since 2.0
+     */
     public boolean pageExists( WikiPage page )
         throws ProviderException
     {
@@ -557,6 +570,47 @@ public class WikiEngine
         }
         return false;
     }
+
+    /**
+     *  Returns the correct page name, or null, if no such
+     *  page can be found.  Aliases are considered.
+     *  <P>
+     *  In some cases, page names can refer to other pages.  For example,
+     *  when you have matchEnglishPlurals set, then a page name "Foobars"
+     *  will be transformed into "Foobar", should a page "Foobars" not exist,
+     *  but the page "Foobar" would.  This method gives you the correct
+     *  page name to refer to.
+     *  <P>
+     *  This facility can also be used to rewrite any page name, for example,
+     *  by using aliases.  It can also be used to check the existence of any
+     *  page.
+     *
+     *  @since 2.0
+     *  @param page Page name.
+     *  @return The rewritten page name.
+     */
+
+    public String getFinalPageName( String page )
+    {
+        boolean isThere = m_pageManager.pageExists( page );
+
+        if( !isThere && m_matchEnglishPlurals )
+        {
+            if( page.endsWith("s") )
+            {
+                page = page.substring( 0, page.length()-1 );
+            }
+            else
+            {
+                page += "s";
+            }
+
+            isThere = m_pageManager.pageExists( page );
+        }
+
+        return isThere ? page : null ;
+    }
+
 
     /**
      *  Turns a WikiName into something that can be 
