@@ -30,6 +30,10 @@ import com.ecyrd.jspwiki.WikiPage;
  *  <P><B>Attributes<B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <LI>format - Format, either "anchor" or "url".
+ *    <LI>version - Version number of the page to refer to.  Possible values
+ *        are "this", meaning the version of the current page; or a version
+ *        number.  Default is always to point at the latest version of the page.
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -38,35 +42,59 @@ import com.ecyrd.jspwiki.WikiPage;
 public class EditLinkTag
     extends WikiLinkTag
 {
+    public String m_version = null;
+
+    public void setVersion( String vers )
+    {
+        m_version = vers;
+    }
+
     public final int doWikiStartTag()
         throws IOException
     {
         WikiEngine engine   = m_wikiContext.getEngine();
-        String     pageName = m_pageName;
+        WikiPage   page;
+        String     versionString = "";
 
         if( m_pageName == null )
         {
             if( m_wikiContext.getPage() != null )
             {
-                pageName = m_wikiContext.getPage().getName();
+                page = m_wikiContext.getPage();
             }
             else
             {
                 return SKIP_BODY;
             }
         }
+        else
+        {
+            page = engine.getPage( m_pageName );
+        }
+
+        if( m_version != null )
+        {
+            if( "this".equalsIgnoreCase(m_version) )
+            {
+                versionString = "&version="+page.getVersion();
+            }
+            else
+            {
+                versionString = "&version="+m_version;
+            }
+        }
 
         JspWriter out = pageContext.getOut();
-        String encodedlink = engine.encodeName( pageName );
+        String encodedlink = engine.encodeName( page.getName() );
 
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">");
+            out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+versionString+"\">");
             break;
 
           case URL:
-            out.print( engine.getBaseURL()+"Edit.jsp?page="+encodedlink );
+            out.print( engine.getBaseURL()+"Edit.jsp?page="+encodedlink+versionString );
             break;
         }
 
