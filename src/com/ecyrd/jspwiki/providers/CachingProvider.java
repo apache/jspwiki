@@ -106,6 +106,17 @@ public class CachingProvider
     {
         CacheItem item = (CacheItem)m_cache.get( page );
 
+        if( checkIfPageChanged( item ) )
+        {
+            try
+            {
+                revalidatePage( item.m_page );
+            }
+            catch( ProviderException e ) {} // FIXME: Should do something!
+
+            return m_provider.pageExists( page );
+        }
+
         //
         //  A null item means that the page either does not
         //  exist, or has not yet been cached; a non-null
