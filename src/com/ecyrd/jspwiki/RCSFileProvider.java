@@ -92,8 +92,6 @@ public class RCSFileProvider
         PatternCompiler compiler = new Perl5Compiler();
         PatternMatcherInput input;
 
-        log.debug("Reading page info for "+page);
-
         WikiPage info = super.getPageInfo( page );
 
         try
@@ -101,7 +99,6 @@ public class RCSFileProvider
             String   cmd = m_logCommand;
 
             cmd = TextUtil.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
-            log.debug("Command = '"+cmd+"'");
 
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
