@@ -1,6 +1,12 @@
 2005-04-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.159
+        
+        * Added some patches to tests to make sure they all run on systems that
+        don't use Latin1 as default... Contributed by Henning Schmiedehausen.
+        
+        * TextUtil.urlEncode() & urlDecode() no longer assume that the platform
+        default encoding is Latin1.  Contributed by Henning Schmiedehausen.
 
         * Removed dependancy on the bmsi difference package, as it
         was GPL (oops).  I don't know how I missed that, but the dependency
