@@ -39,6 +39,7 @@ public class InsertPage
     public static final String PARAM_STYLE     = "style";
     public static final String PARAM_MAXLENGTH = "maxlength";
     public static final String PARAM_CLASS     = "class";
+    public static final String PARAM_SECTION   = "section";
 
     private static final String DEFAULT_STYLE = "";
 
@@ -52,6 +53,8 @@ public class InsertPage
         String clazz        = (String) params.get( PARAM_CLASS );
         String includedPage = (String) params.get( PARAM_PAGENAME );
         String style        = (String) params.get( PARAM_STYLE );
+        int    section      = TextUtil.parseIntParameter((String) params.get( PARAM_SECTION ), 
+                                                         -1 );
         int    maxlen       = TextUtil.parseIntParameter((String) params.get( PARAM_MAXLENGTH ),
                                                          -1 );
 
@@ -74,6 +77,18 @@ public class InsertPage
 
                 String pageData = engine.getPureText( page );
                 String moreLink = "";
+
+                if( section != -1 )
+                {
+                    try
+                    {
+                        pageData = TextUtil.getSection( pageData, section );
+                    }
+                    catch( IllegalArgumentException e )
+                    {
+                        throw new PluginException( e.getMessage() );
+                    }
+                }
 
                 if( pageData.length() > maxlen ) 
                 {
