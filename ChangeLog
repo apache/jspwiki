@@ -1,3 +1,7 @@
+2002-03-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.1.
+
 2002-03-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Edit.jsp had a javascript error, pointing at a wrong form.  It
