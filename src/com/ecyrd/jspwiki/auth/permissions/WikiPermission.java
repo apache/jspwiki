@@ -12,6 +12,7 @@ public abstract class WikiPermission
 {
     private static WikiPermission c_viewPermission = new ViewPermission();
     private static WikiPermission c_editPermission = new EditPermission();
+    private static WikiPermission c_createPermission = new CreatePermission();
     private static WikiPermission c_commentPermission = new CommentPermission();
     private static WikiPermission c_deletePermission = new DeletePermission();
     private static WikiPermission c_uploadPermission = new UploadPermission();
@@ -31,6 +32,8 @@ public abstract class WikiPermission
             return c_viewPermission;
         else if( representation.equalsIgnoreCase( "edit" ) )
             return c_editPermission;
+        else if( representation.equalsIgnoreCase( "create" ) )
+            return c_createPermission;
         else if( representation.equalsIgnoreCase( "comment" ) )
             return c_commentPermission;
         else if( representation.equalsIgnoreCase( "delete" ) )
