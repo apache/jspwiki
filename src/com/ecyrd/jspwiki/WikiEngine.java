@@ -1912,12 +1912,14 @@ public class WikiEngine
     public void deletePage( String pageName )
         throws ProviderException
     {
-        //
+        WikiPage p = getPage( pageName );
+        m_pageManager.deletePage( p );
     }
     
     public void deleteVersion( WikiPage page )
+        throws ProviderException
     {
-        
+        m_pageManager.deleteVersion( page );
     }
     
     /**
