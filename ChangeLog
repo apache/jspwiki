@@ -1,5 +1,8 @@
 2002-11-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added patch from Kabe Robichaux to fix a problem with older RCS
+        programs that do not support the -z flag.
+
         * v1.9.38.
 
         * The "&" translation now occurs _before_ other entities, which no
