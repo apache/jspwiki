@@ -85,8 +85,13 @@ public class TranslatorReader extends Reader
     private boolean        m_isPreSpan    = false;
     private boolean        m_isEscaping   = false;
     private boolean        m_isdefinition = false;
-    private int            m_listlevel    = 0;
-    private int            m_numlistlevel = 0;
+
+     // general list handling
+    private int            m_genlistlevel = 0;
+    private StringBuffer   m_genlistBulletBuffer = new StringBuffer();  // stores the # and * pattern
+    private boolean        m_allowPHPWikiStyleLists = true;
+
+
     private boolean        m_isOpenParagraph = false;
 
     /** Tag that gets closed at EOL. */
@@ -232,7 +237,7 @@ public class TranslatorReader extends Reader
                                                              PROP_ALLOWHTML, 
                                                              m_allowHTML );
     }
-
+    
     /**
      *  Adds a hook for processing link texts.  This hook is called
      *  when the link text is written into the output stream, and
@@ -1028,6 +1033,7 @@ public class TranslatorReader extends Reader
             m_isTypedText = false;
         }
 
+        /*
         for( ; m_listlevel > 0; m_listlevel-- )
         {
             buf.append( "</ul>\n" );
@@ -1037,6 +1043,9 @@ public class TranslatorReader extends Reader
         {
             buf.append( "</ol>\n" );
         }
+        */
+        // cleanup OL and UL lists
+        buf.append(unwindGeneralList());
 
         if( m_isPre ) 
         {
@@ -1067,6 +1076,7 @@ public class TranslatorReader extends Reader
         return buf.toString();
     }
 
+    // FIXME: should remove countChar() as it is unused
     /**
      *  Counts how many consecutive characters of a certain type exists on the line.
      *  @param line String of chars to check.
@@ -1186,7 +1196,7 @@ public class TranslatorReader extends Reader
         }
         else
         {
-            m_in.unread( ch );
+            pushBack( ch );
         }
 
         return res;
@@ -1398,84 +1408,198 @@ public class TranslatorReader extends Reader
         return buf;
     }
 
-    private int countChars( PushbackReader in, char c )
+    /**
+     *  Like original handleOrderedList() and handleUnorderedList()
+     *  however handles both ordered ('#') and unordered ('*') mixed together.
+     */
+
+    // FIXME: Refactor this; it's a bit messy.
+
+    private String handleGeneralList()
         throws IOException
     {
-        int count = 0;
-        int ch; 
+         String cStrShortName = "handleGeneralList()";   //put log messages in some context
 
-        while( (ch = in.read()) != -1 )
+         StringBuffer buf = new StringBuffer();
+
+         if( m_genlistlevel > 0 )
+         {
+             buf.append("</li>\n");
+         }
+
+         String strBullets = readWhile( "*#" );
+         String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
+         int numBullets = strBullets.length();
+
+         // override the beginning portion of bullet pattern to be like the previous
+         // to simulate PHPWiki style lists
+
+         if(m_allowPHPWikiStyleLists)
+         {
+             // only substitute if different
+             if(!( strBullets.substring(0,Math.min(numBullets,m_genlistlevel)).equals
+                   (m_genlistBulletBuffer.substring(0,Math.min(numBullets,m_genlistlevel)) ) ) )
+             {
+                 if(numBullets <= m_genlistlevel)
+                 {
+                     // Substitute all but the last character (keep the expressed bullet preference)
+                     strBullets  = (numBullets > 1 ? m_genlistBulletBuffer.substring(0, numBullets-1) : "")
+                                   + strBullets.substring(numBullets-1, numBullets);
+                 }
+                 else
+                 {
+                     strBullets = m_genlistBulletBuffer + strBullets.substring(m_genlistlevel, numBullets);
+                 }
+             }
+         }
+
+         if( strBullets.substring(0,Math.min(numBullets,m_genlistlevel)).equals
+            (m_genlistBulletBuffer.substring(0,Math.min(numBullets,m_genlistlevel)) ) )
+         {
+             int chBullet;
+
+             if( numBullets > m_genlistlevel )
+             {
+                 for( ; m_genlistlevel < numBullets; m_genlistlevel++ )
+                 {
+                     // bullets are growing, get from new bullet list
+                     chBullet = strBullets.charAt(m_genlistlevel);
+
+                     if( chBullet == '#' )
+                         buf.append("<ol>\n");
+                     else if( chBullet == '*' )
+                         buf.append("<ul>\n");
+                     else
+                         log.info(cStrShortName + " Warning: unknown bullet character '" + chBullet + "' at (+)"
+                                 );
+                 }
+             }
+             else if( numBullets < m_genlistlevel )
+             {
+                 for( ; m_genlistlevel > numBullets; m_genlistlevel-- )
+                 {
+                     // bullets are shrinking, get from old bullet list
+                     chBullet = m_genlistBulletBuffer.charAt(m_genlistlevel - 1);
+
+                     if( chBullet == '#' )
+                         buf.append("</ol>\n");
+                     else if( chBullet == '*' )
+                         buf.append("</ul>\n");
+                     else
+                         log.info(cStrShortName + " Warning: unknown bullet character '" + chBullet + "' at (-)"
+                                 );
+                 }
+             }
+         }
+         else
+         {
+             char chBullet;
+             int  numEqualBullets;
+             int  numCheckBullets;
+             // the pattern has changed, unwind and restart
+
+             // find out how much is the same
+             numEqualBullets = 0;
+             numCheckBullets = Math.min(numBullets,m_genlistlevel);
+
+             while( numEqualBullets < numCheckBullets )
+             {
+                 // if the bullets are equal so far, keep going
+                 if( strBullets.charAt(numEqualBullets) == m_genlistBulletBuffer.charAt(numEqualBullets))
+                     numEqualBullets++;
+                 // otherwise giveup, we have found how many are equal
+                 else
+                     break;
+             }
+
+             //unwind
+             for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
+             {
+                 chBullet = m_genlistBulletBuffer.charAt(m_genlistlevel - 1);
+
+                 if(chBullet == '#')
+                 {
+                     buf.append("</ol>\n");
+                 }
+                 else if (chBullet == '*')
+                 {
+                     buf.append("</ul>\n");
+                 }
+                 else
+                 {
+                     //FIXME unknown character -> error
+                     log.info(cStrShortName + " Warning: unknown character in unwind '" + chBullet + "'" );
+                 }
+
+             }
+
+             //rewind
+             for(int i = numEqualBullets; i < numBullets; i++)
+             {
+                 chBullet = strBullets.charAt(i);
+                 if(chBullet == '#')
+                 {
+                     buf.append("<ol>");
+                 }
+                 else if (chBullet == '*')
+                 {
+                     buf.append("<ul>");
+                 }
+                 else
+                 {
+                     //FIXME unknown character -> error
+                     log.info(cStrShortName + " Warning: unknown character in rewind '" + chBullet + "'" );
+                 }
+             }
+             m_genlistlevel = numBullets;
+         }
+         buf.append("<li>");
+
+         // work done, remember the new bullet list (in place of old one)
+         m_genlistBulletBuffer.setLength(0);
+         m_genlistBulletBuffer.append(strBullets);
+
+         return buf.toString();
+    }
+
+    private String unwindGeneralList()
+    {
+        String cStrShortName = "unwindGeneralList()";
+
+        StringBuffer buf = new StringBuffer();
+        int bulletCh;
+
+        if( m_genlistlevel > 0 )
         {
-            if( (char)ch == c )
+            buf.append("</li>\n");
+        }
+
+        //unwind
+        for( ; m_genlistlevel > 0; m_genlistlevel-- )
+        {
+            bulletCh = m_genlistBulletBuffer.charAt(m_genlistlevel - 1);
+
+            if(bulletCh == '#')
             {
-                count++;
+                buf.append("</ol>\n");
+            }
+            else if (bulletCh == '*')
+            {
+                buf.append("</ul>\n");
             }
             else
             {
-                in.unread( ch );
-                break;
+                //FIXME unknown character -> error
+                log.info(cStrShortName + " Warning: unknown character in unwind '" + bulletCh + "'");
             }
+
         }
 
-        return count;
-    }
-
-    private String handleUnorderedList()
-        throws IOException
-    {
-        StringBuffer buf = new StringBuffer();
-
-        if( m_listlevel > 0 )
-        {
-            buf.append("</li>\n");
-        }
-
-        int numBullets = countChars( m_in, '*' ) + 1;        
-
-        if( numBullets > m_listlevel )
-        {
-            for( ; m_listlevel < numBullets; m_listlevel++ )
-                buf.append("<ul>\n");
-        }
-        else if( numBullets < m_listlevel )
-        {
-            for( ; m_listlevel > numBullets; m_listlevel-- )
-                buf.append("</ul>\n");
-        }
-                
-        buf.append("<li>");
+        m_genlistBulletBuffer.setLength(0);
 
         return buf.toString();
     }
 
-    private String handleOrderedList()
-        throws IOException
-    {
-        StringBuffer buf = new StringBuffer();
-
-        if( m_numlistlevel > 0 )
-        {
-            buf.append("</li>\n");
-        }
-
-        int numBullets = countChars( m_in, '#' ) + 1;
-                
-        if( numBullets > m_numlistlevel )
-        {
-            for( ; m_numlistlevel < numBullets; m_numlistlevel++ )
-                buf.append("<ol>\n");
-        }
-        else if( numBullets < m_numlistlevel )
-        {
-            for( ; m_numlistlevel > numBullets; m_numlistlevel-- )
-                buf.append("</ol>\n");
-        }
-                
-        buf.append("<li>");
-
-        return buf.toString();
-
-    }
 
     private String handleDefinitionList()
         throws IOException
@@ -1578,6 +1702,43 @@ public class TranslatorReader extends Reader
 
         return sb.toString();
     }
+
+    /**
+     *  Reads the stream while the characters that have been specified are
+     *  in the stream, returning then the result as a String.
+     */
+    private String readWhile( String endChars )
+        throws IOException
+    {
+        StringBuffer sb = new StringBuffer();
+        int ch = nextToken();
+
+        while( ch != -1 )
+        {
+            if( ch == '\\' ) 
+            {
+                ch = nextToken(); 
+                if( ch == -1 ) 
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if( endChars.indexOf((char)ch) == -1 )
+                {
+                    pushBack( ch );
+                    break;
+                }
+            }
+            sb.append( (char) ch );
+            ch = nextToken();
+        }
+
+        return sb.toString();
+    }
+
+    
 
     private String handleDiv( boolean newLine )
         throws IOException
@@ -1715,7 +1876,7 @@ public class TranslatorReader extends Reader
         StringBuffer word = null;
         int previousCh = -2;
         int start = 0;
-	
+        
         boolean quitReading = false;
         boolean newLine     = true; // FIXME: not true if reading starts in middle of buffer
 
@@ -1842,10 +2003,11 @@ public class TranslatorReader extends Reader
 		 
             } // if m_camelCaseLinks
 
+            /*
             //
             //  Check if any lists need closing down.
             //
-
+            
             if( newLine && ch != '*' && ch != ' ' && m_listlevel > 0 )
             {
                 buf.append("</li>\n");
@@ -1862,6 +2024,11 @@ public class TranslatorReader extends Reader
                 {
                     buf.append("</ol>\n");
                 }
+            }
+            */
+            if( newLine && ch != '*' && ch != '#' && ch != ' ' && m_genlistlevel > 0 )
+            {
+                buf.append(unwindGeneralList());
             }
 
             if( newLine && ch != '|' && m_istable )
@@ -1975,7 +2142,8 @@ public class TranslatorReader extends Reader
               case '*':
                 if( newLine )
                 {
-                    s = handleUnorderedList();
+                    pushBack('*');
+                    s = handleGeneralList();
                 }
                 else
                 {
@@ -1986,7 +2154,8 @@ public class TranslatorReader extends Reader
               case '#':
                 if( newLine )
                 {
-                    s = handleOrderedList();
+                    pushBack('#');
+                    s = handleGeneralList();
                 }
                 else
                 {
@@ -2044,7 +2213,7 @@ public class TranslatorReader extends Reader
                 newLine = false;
             }
 
-	 }
+         }
 
         m_data = new StringReader( buf.toString() );
     }
