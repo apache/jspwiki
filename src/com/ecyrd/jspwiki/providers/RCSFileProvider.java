@@ -224,9 +224,14 @@ public class RCSFileProvider
             return super.getPageText( page, version );
 
         log.debug("Fetching specific version "+version+" of page "+page);
+
         try
         {
-            String cmd = m_checkoutVersionCommand;
+            PatternMatcher  matcher           = new Perl5Matcher();
+            PatternCompiler compiler          = new Perl5Compiler();
+            int             checkedOutVersion = -1;
+            String          line;
+            String          cmd               = m_checkoutVersionCommand;
 
             cmd = TextUtil.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
             cmd = TextUtil.replaceString( cmd, "%v", Integer.toString(version ) );
@@ -235,15 +240,22 @@ public class RCSFileProvider
 
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
             stdout = process.getInputStream();
-            result = FileUtil.readContents( stdout,
-                                            m_encoding );
+            result = FileUtil.readContents( stdout, m_encoding );
+
+            BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            Pattern headpattern = compiler.compile( PATTERN_REVISION );
+
+            while( (line = stderr.readLine()) != null )
+            {
+                if( matcher.contains( line, headpattern ) )
+                {
+                    MatchResult mr = matcher.getMatch();
+                    checkedOutVersion = Integer.parseInt( mr.group(1) );
+                }
+            }
 
             process.waitFor();
-
-            // 
-            // FIXME: A problem here: RCS will return the last version if the
-            // version in question does not exist.
-            //
 
             int exitVal = process.exitValue();
             
@@ -255,19 +267,41 @@ public class RCSFileProvider
             //  if he's getting version 1.  Else he might be trying to find
             //  a version that has been deleted.
             //
-            if( exitVal != 0 )
+            if( exitVal != 0 || checkedOutVersion == -1 )
             {
                 if( version == 1 )
                 {
-                    result = super.getPageText( page, version );
+                    System.out.println("Migrating, fetching super.");
+                    result = super.getPageText( page, WikiProvider.LATEST_VERSION );
                 }
                 else
                 {
                     throw new NoSuchVersionException( "Page: "+page+", version="+version);
                 }
             }
+            else
+            {
+                //
+                //  Check which version we actually got out!
+                //
+            
+                if( checkedOutVersion != version )
+                {
+                    throw new NoSuchVersionException( "Page: "+page+", version="+version);
+                }
+            }
+
         }
-        catch( Exception e )
+        catch( MalformedPatternException e )
+        {
+            throw new InternalWikiException("Malformed pattern in RCSFileProvider!");
+        }
+        catch( InterruptedException e )
+        {
+            // This is fine, we'll just log it.
+            log.info("RCS process was interrupted, we'll just return whatever we found.");
+        }
+        catch( IOException e )
         {
             log.error("RCS checkout failed",e);
         }
