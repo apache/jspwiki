@@ -2,6 +2,7 @@ package com.ecyrd.jspwiki.auth;
 
 import java.util.Properties;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Defines the interface for connecting to different authentication
@@ -26,4 +27,19 @@ public interface WikiAuthenticator
      * @return true, if this is a valid UserProfile, false otherwise.
      */
     public boolean authenticate( UserProfile wup );
+
+    /**
+     *  Does this authenticator support changing passwords?
+     */
+
+    public boolean canChangePasswords();
+
+    /**
+     *  Sets the user password.  This is an optional operation.
+     *
+     *  @throws ProviderException If the password cannot be set.
+     */
+
+    public void setPassword( UserProfile wup, String password )
+        throws ProviderException;
 }
