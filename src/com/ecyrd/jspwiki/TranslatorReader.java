@@ -787,7 +787,7 @@ public class TranslatorReader extends Reader
             {
                 line = TextUtil.replaceString( line, "||", "<TD>" );
 
-                buf.append( "<TABLE CLASS=\"wikitable\">\n<THEAD>\n<TR>" );
+                buf.append( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n<THEAD>\n<TR>" );
                 postScript = "</TR>\n</THEAD>\n<TBODY>";
 
                 m_istable = true;
