@@ -63,7 +63,7 @@ public class RCSFileProvider
     public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
 
     private static final String   PATTERN_DATE      = "^date:\\s*(.*)[\\+\\-;]\\d+;";
-    private static final String   PATTERN_AUTHOR    = "^\"?author=([\\w\\.\\s]*)\"?";
+    private static final String   PATTERN_AUTHOR    = "^\"?author=([\\w\\.\\s\\+\\.\\%]*)\"?";
     private static final String   PATTERN_REVISION  = "^revision \\d+\\.(\\d+)";
 
     private static final String   RCSFMT_DATE       = "yyyy-MM-dd HH:mm:ss";
@@ -155,7 +155,7 @@ public class RCSFileProvider
                 else if( matcher.contains( line, userpattern ) && found )
                 {
                     MatchResult result = matcher.getMatch();
-                    info.setAuthor( result.group(1) );
+                    info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
                 else if( found && line.startsWith("----")  )
                 {
@@ -237,9 +237,12 @@ public class RCSFileProvider
         try
         {
             String cmd = m_checkinCommand;
+            
+            String author = page.getAuthor();
+            if( author == null ) author = "unknown";
 
             cmd = TextUtil.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
-            cmd = TextUtil.replaceString( cmd, "%u", page.getAuthor() );
+            cmd = TextUtil.replaceString( cmd, "%u", TextUtil.urlEncodeUTF8(author) );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -315,7 +318,7 @@ public class RCSFileProvider
                 {
                     MatchResult result = matcher.getMatch();
 
-                    info.setAuthor( result.group(1) );
+                    info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
             }
 
