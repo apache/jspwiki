@@ -39,7 +39,7 @@ public class FileUtilTest extends TestCase
     public void testJDKString()
         throws Exception
     {
-        String src = "abcåäö";
+        String src = "abc\u00e4\u00e5\u00a6";
 
         String res = new String( src.getBytes("ISO-8859-1"), "ISO-8859-1" );
 
@@ -49,7 +49,7 @@ public class FileUtilTest extends TestCase
     public void testReadContentsLatin1()
         throws Exception
     {
-        String src = "abcåäö";
+        String src = "abc\u00e4\u00e5\u00a6";
 
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "ISO-8859-1" );
@@ -63,7 +63,7 @@ public class FileUtilTest extends TestCase
     public void testReadContentsLatin1_2()
         throws Exception
     {
-        String src = "abcåäödef";
+        String src = "abc\u00e4\u00e5\u00a6def";
 
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "UTF-8" );
@@ -88,7 +88,7 @@ public class FileUtilTest extends TestCase
             src += src;
         }
 
-        src += "åäö";
+        src += "\u00e4\u00e5\u00a6";
 
         File f = FileUtil.newTmpFile( src, "ISO-8859-1" );
 
