@@ -33,11 +33,16 @@ import com.ecyrd.jspwiki.TextUtil;
  */
 // FIXME: contains magic strings.
 public class UserProfile
-    implements Principal
+    extends WikiPrincipal
 {
-    private String m_userName;
-
     private Category log = Category.getInstance( UserProfile.class );
+
+    private int m_loginStatus = NONE;
+
+    public static final int NONE     = 0;
+    public static final int COOKIE   = 1;
+    public static final int PASSWORD = 2;
+
 
     public UserProfile()
     {
@@ -51,19 +56,9 @@ public class UserProfile
     */
     public String getStringRepresentation()
     {
-        String res = "username="+TextUtil.urlEncodeUTF8(m_userName);
+        String res = "username="+TextUtil.urlEncodeUTF8(getName());
 
         return res;
-    }
-
-    public String getName()
-    {
-        return m_userName;
-    }
-
-    public void setName( String name )
-    {
-        m_userName = name;
     }
 
     public static UserProfile parseStringRepresentation( String res )
@@ -111,6 +106,16 @@ public class UserProfile
         }
 
         return false;
+    }
+
+    public int getLoginStatus()
+    {
+        return m_loginStatus;
+    }
+
+    public void setLoginStatus( int arg )
+    {
+        m_loginStatus = arg;
     }
 
     public String toString()
