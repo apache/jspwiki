@@ -141,6 +141,7 @@ public class ContentTag
             }
 
             String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
+                                                                                  m_wikiContext.getTemplate(),
                                                                                   jspPage );
             pageContext.include( page );
         }
