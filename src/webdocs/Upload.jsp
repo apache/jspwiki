@@ -70,8 +70,8 @@
          <table width="90%">
          <wiki:AttachmentsIterator id="att">
              <tr>
-             <td><A HREF="attach?page=<%=att.getName()%>&wikiname=<%=att.getFileName()%>"><img src="images/attachment_big.png" alt="<%=att.getFileName()%>"></A></td>
-             <td><wiki:PageInfoLink><%=att.getFileName()%></wiki:PageInfoLink></td>
+             <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
+             <td><wiki:PageInfoLink><img src="images/attachment_big.png" alt="Info on <%=att.getFileName()%>"></wiki:PageInfoLink></td>
              <td><%=att.getSize()%> bytes</td>
              </tr>
          </wiki:AttachmentsIterator>
