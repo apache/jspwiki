@@ -6,6 +6,10 @@
 #  Any changes in this file will be reflected in the default
 #  jspwiki.properties-file when it is run.
 #
+#  Java and Windows do not mix too well, so you will have to put
+#  four \'s for every \ in the path...
+#
 @appname@=JSPWiki
-@pagedir@=C:\\temp\\wikipages
-@logfile@=C:\\temp\\
+@pagedir@=C:\\\\temp\\\\wikipages
+@logfile@=C:\\\\temp\\\\
+

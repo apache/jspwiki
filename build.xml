@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.29 2003-06-03 17:46:54 jalkanen Exp $
+    $Id: build.xml,v 1.30 2003-06-03 19:00:39 jalkanen Exp $
 -->    
        
 <!--   
@@ -133,14 +133,14 @@
      <mkdir dir="${code.build}" />
      <mkdir dir="${tests.build}" />
      <mkdir dir="${tests.reports}" />
-     <mkdir dir="${java.io.tmpdir}/testrepository" />
+     <mkdir dir="c:/tmp/testrepository" />
   </target>
 
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
      <replace file="etc/jspwiki.properties"
-              replacefilterfile="build.properties" />
+              replacefilterfile="${build.properties}" />
   </target>
 
   <!-- Removes the build directory and the tests build directory -->
@@ -148,6 +148,7 @@
           description="Cleans away all generated files.">
     <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
+    <delete file="etc/jspwiki.properties" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
