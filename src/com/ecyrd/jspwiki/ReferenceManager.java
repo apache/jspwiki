@@ -23,6 +23,7 @@ package com.ecyrd.jspwiki;
 import java.util.*;
 import org.apache.log4j.*;
 
+import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 
 /*
@@ -107,6 +108,8 @@ public class ReferenceManager
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
 
+    private boolean        m_matchEnglishPlurals = false;
+
     private static final Category log = Category.getInstance(ReferenceManager.class);
 
     /**
@@ -125,9 +128,16 @@ public class ReferenceManager
         m_referredBy = new HashMap();
         m_engine = engine;
 
+        m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(),
+                                                             WikiEngine.PROP_MATCHPLURALS, 
+                                                             m_matchEnglishPlurals );
+
         buildKeyLists( pages );
     }
 
+    /**
+     *  After the page has been saved, updates the reference lists.
+     */
     public void postSave( WikiContext context, String content )
     {
         WikiPage page = context.getPage();
@@ -280,7 +290,10 @@ public class ReferenceManager
     {
         // We're not really interested in first level self-references.
         if( page.equals( referrer ) )
+        {
             return;
+        }
+
         HashSet referrers = (HashSet)m_referredBy.get( page );
 
         // Even if 'page' has not been created yet, it can still be referenced.
@@ -306,12 +319,15 @@ public class ReferenceManager
 
         Set keys = m_referredBy.keySet();
         Iterator it = keys.iterator();
+
         while( it.hasNext() )
         {
             String key = (String) it.next();
-            HashSet refs = (HashSet) m_referredBy.get( key );
+            HashSet refs = getReferenceList( m_referredBy, key );
             if( refs == null || refs.isEmpty() )
+            {
                 unref.add( key );
+            }
         }
 
         return( unref );
@@ -337,12 +353,15 @@ public class ReferenceManager
 
         Collection allReferences = m_refersTo.values();
         Iterator it = allReferences.iterator();
+
         while( it.hasNext() )
         {
             Collection refs = (Collection)it.next();
+
             if( refs != null )
             {
                 Iterator rit = refs.iterator();
+
                 while( rit.hasNext() )
                 {
                     String aReference = (String)rit.next();
@@ -358,19 +377,42 @@ public class ReferenceManager
         return( uncreated );
     }
 
+    private HashSet getReferenceList( Map coll, String pagename )
+    {
+        HashSet refs = (HashSet)coll.get( pagename );
+        
+        if( refs == null && m_matchEnglishPlurals )
+        {
+            if( pagename.endsWith("s") )
+            {
+                refs = (HashSet)coll.get( pagename.substring(0,pagename.length()-1) );
+            }
+            else
+            {
+                refs = (HashSet)coll.get( pagename+"s" );
+            }
+        }
+
+        return refs;
+    }
 
     /**
      * Find all pages that refer to this page. Returns null if the page
      * does not exist or is not referenced at all, otherwise returns a 
-     * collection containint page names (String) that refer to this one.
+     * collection containing page names (String) that refer to this one.
      */
     public synchronized Collection findReferrers( String pagename )
     {
-        HashSet refs = (HashSet)m_referredBy.get( pagename );
+        HashSet refs = getReferenceList( m_referredBy, pagename );
+
         if( refs == null || refs.isEmpty() )
-            return( null );
+        {
+            return null;
+        }
         else
-            return( refs );
+        {
+            return refs;
+        }
     }
 
 
