@@ -163,14 +163,33 @@ public class VersioningFileProvider
         out.close();
     }
 
+    private int realVersion( String page, int requestedVersion )
+        throws NoSuchVersionException
+    {
+        int latest = findLatestVersion(page);
+
+        if( requestedVersion == WikiPageProvider.LATEST_VERSION ||
+            requestedVersion == latest+1 ||
+            (requestedVersion == 1 && latest == -1 ) )
+        {
+            return -1;
+        }
+        else if( requestedVersion > latest )
+        {
+            throw new NoSuchVersionException("Requested version "+requestedVersion+", but latest is "+latest );
+        }
+
+        return requestedVersion;
+    }
+
     public synchronized String getPageText( String page, int version )
+        throws ProviderException
     {
         File dir = findOldPageDir( page );
 
-        int latest = findLatestVersion(page);
+        version = realVersion( page, version );
 
-        if( version == WikiPageProvider.LATEST_VERSION ||
-            version == latest+1 )
+        if( version == -1 )
         {
             // We can let the FileSystemProvider take care
             // of these requests.
@@ -185,6 +204,7 @@ public class VersioningFileProvider
 
     // FIXME: Should this really be here?
     private String readFile( File pagedata )
+        throws ProviderException
     {
         String      result = null;
         InputStream in     = null;
@@ -201,6 +221,7 @@ public class VersioningFileProvider
                 catch( IOException e )
                 {
                     log.error("Failed to read", e);
+                    throw new ProviderException("I/O error: "+e.getMessage());
                 }
                 finally
                 {
@@ -217,6 +238,7 @@ public class VersioningFileProvider
             else
             {
                 log.warn("Failed to read page from '"+pagedata.getAbsolutePath()+"', possibly a permissions problem");
+                throw new ProviderException("I cannot read the requested page.");
             }
         }
         else
