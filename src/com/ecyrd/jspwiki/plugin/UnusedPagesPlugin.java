@@ -43,7 +43,11 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        String wikitext = wikitizeCollection( links, "\\\\", ALL_ITEMS );
+        TreeSet sortedSet = new TreeSet();
+
+        sortedSet.addAll( links );
+
+        String wikitext = wikitizeCollection( sortedSet, "\\\\", ALL_ITEMS );
         
         return makeHTML( context, wikitext );
     }
