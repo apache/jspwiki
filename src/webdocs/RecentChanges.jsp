@@ -2,6 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
+<%@ taglib uri="/WEB-INF/tlds/taglib.tld" prefix="jspwiki" %>
 
 <%! 
     public void jspInit()
@@ -30,6 +31,8 @@
     String pagereq = "Recent Changes";
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
+
+    String pageurl = wiki.encodeName( pagereq );
 
     list = wiki.getRecentChanges();
 

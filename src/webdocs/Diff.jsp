@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ taglib uri="/WEB-INF/tlds/taglib.tld" prefix="jspwiki" %>
 
 <%! 
     public void jspInit()

@@ -1,6 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.*" %>
+<%@ taglib uri="/WEB-INF/tlds/taglib.tld" prefix="jspwiki" %>
 
 <%! 
     public void jspInit()
@@ -14,7 +15,11 @@
 
 
 <%
+    String pagereq = "UndefinedPages";
+
     NDC.push( wiki.getApplicationName()+": Search" );
+
+    String pageurl = wiki.encodeName( pagereq );    
 
     String query = wiki.safeGetParameter( request, "query");
     Collection list = null;
