@@ -136,7 +136,7 @@ public class WikiEngineTest extends TestCase
     }
 
     /**
-     *  Cgeck that " is not changed.
+     *  Cgeck that basic " is changed.
      */
     public void testPutPageEntities2()
     {
@@ -150,7 +150,7 @@ public class WikiEngineTest extends TestCase
                       m_engine.pageExists( name ) );
 
         assertEquals( "wrong content",
-                      "Foobar. \"\r\n",
+                      "Foobar. &quot;\r\n",
                       m_engine.getText( name ) );
     }
 
