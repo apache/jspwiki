@@ -1,4 +1,10 @@
-2003-05-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2003-05-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.18.
+
+        * WeblogPlugin should be now quite a lot faster determining which
+        pages are blog entries.  I had to do this because my own weblog
+        was getting unbearably slow.
 
         * v2.1.17.
 
