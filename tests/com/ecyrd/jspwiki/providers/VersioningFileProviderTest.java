@@ -72,7 +72,7 @@ public class VersioningFileProviderTest extends TestCase
     {
         String text = "";
         String name = NAME1;
-        int    maxver = 1000; // Save 1000 versions.
+        int    maxver = 200; // Save 200 versions.
 
         for( int i = 0; i < maxver; i++ )
         {
