@@ -31,6 +31,7 @@ public class UserManager
     public static final String PROP_STOREIPADDRESS= "jspwiki.storeIPAddress";
 
     public static final String PROP_AUTHENTICATOR = "jspwiki.authenticator";
+    public static final String PROP_USERDATABASE = "jspwiki.userdatabase";
 
     /** If true, logs the IP address of the editor */
     private boolean            m_storeIPAddress = true;
@@ -96,12 +97,31 @@ public class UserManager
             }
         }
 
-        //
-        //  FIXME: These should not be hardcoded.
-        //
-
-        m_database = new WikiDatabase();
-        m_database.initialize( m_engine, props );
+        String dbClassName = props.getProperty( PROP_USERDATABASE );
+        if( dbClassName == null )
+            dbClassName = "com.ecyrd.jspwiki.auth.modules.WikiDatabase";
+        try
+        {
+            Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules",
+                                                 dbClassName );
+            m_database = (UserDatabase)dbClass.newInstance();
+            m_database.initialize( m_engine, props );
+        }
+        catch( ClassNotFoundException e )
+        {
+            log.fatal( "UserDatabase "+dbClassName+" cannot be found", e );
+            throw new WikiException("UserDatabase cannot be found");
+        }
+        catch( InstantiationException e )
+        {
+            log.fatal( "UserDatabase "+dbClassName+" cannot be created", e );
+            throw new WikiException("UserDatabase cannot be created");
+        }
+        catch( IllegalAccessException e )
+        {
+            log.fatal( "You are not allowed to access this user database class", e );
+            throw new WikiException("You are not allowed to access this user database class");
+        }
     }
 
     // FIXME: Should really in the future use a cache of known user profiles,
