@@ -867,6 +867,15 @@ public class WikiEngine
         String diff  = makeDiff( page1, page2 );
 
         diff = TextUtil.replaceEntities( diff );
+        
+        try
+        {
+            diff = TextUtil.colorizeDiff( diff );
+        }
+        catch( IOException e )
+        {
+            log.error("Failed to colorize diff result.");
+        }
 
         return diff;
     }
