@@ -1,5 +1,7 @@
 2002-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.33.
+
         * A couple of bugfixes: some EOL issues in multi-line plugins.
 
 2002-11-07  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
