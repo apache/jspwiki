@@ -1,3 +1,18 @@
+2003-02-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.28.
+
+        * Incorporated "unterminated plugin causes OutOfMemoryException"
+        fix from Torsten Hildebrandt.
+
+        * Added new attachment icons from Paul Downes.  Thanks heaps!
+
+        * Fixed split imports in Edit.jsp for better compatibility.
+        Reported by Wouter.
+
+        * Attachments version history is now sorted in correct order.
+        Reported by Wouter. 
+
 2003-02-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Checked in a bunch of tests from Torsten Hildebrandt.  Most of
