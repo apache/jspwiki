@@ -74,9 +74,13 @@ public class CachingProvider
     private HashMap          m_cache = new HashMap();
 
     private Cache            m_textCache;
+    private Cache            m_historyCache;
 
     private long             m_cacheMisses = 0;
     private long             m_cacheHits   = 0;
+
+    private long             m_historyCacheMisses = 0;
+    private long             m_historyCacheHits   = 0;
 
     private int              m_milliSecondsBetweenChecks = 30000;
 
@@ -103,6 +107,8 @@ public class CachingProvider
     public static final String PROP_CACHECAPACITY      = "jspwiki.cachingProvider.capacity";
 
     private static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
+
+    private static final String OSCACHE_ALGORITHM      = "com.opensymphony.module.oscache.base.algorithm.LRUCache";
 
     // Lucene properties.
     public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
@@ -139,9 +145,13 @@ public class CachingProvider
         log.debug("Cache capacity "+capacity+" pages.");
 
         m_textCache = new Cache( true, false,
-                                 "com.opensymphony.module.oscache.base.algorithm.LRUCache",
+                                 OSCACHE_ALGORITHM,
                                  capacity );
 
+        m_historyCache = new Cache( true, false,
+                                    OSCACHE_ALGORITHM,
+                                    capacity );
+                                    
         //
         //  Find and initialize real provider.
         //
@@ -204,19 +214,38 @@ public class CachingProvider
                     //  No files? Reindex!
                     //
                     Date start = new Date();
+                    IndexWriter writer = null;
+
                     log.info("Starting Lucene reindexing, this can take a couple minutes...");
 
-                    IndexWriter writer = new IndexWriter(m_luceneDirectory, new StandardAnalyzer(), true);
-                    Collection allPages = getAllPages();
-                    for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
+                    try
                     {
-                        WikiPage page = ( WikiPage ) iterator.next();
-                        String text = getPageText(page.getName(), 
-                                                  WikiPageProvider.LATEST_VERSION);
-                        luceneIndexPage(page, text, writer);
+                        // FIXME: Should smartly use a different analyzer
+                        //        in case the language is something else
+                        //        than English.
+
+                        writer = new IndexWriter( m_luceneDirectory, 
+                                                  new StandardAnalyzer(), 
+                                                  true );
+                        Collection allPages = getAllPages();
+
+                        for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
+                        {
+                            WikiPage page = (WikiPage) iterator.next();
+                            String text = getPageText( page.getName(), 
+                                                       WikiProvider.LATEST_VERSION );
+                            luceneIndexPage( page, text, writer );
+                        }
+                        writer.optimize();
                     }
-                    writer.optimize();
-                    writer.close();
+                    finally
+                    {
+                        try
+                        {
+                            if( writer != null ) writer.close();
+                        }
+                        catch( IOException e ) {}
+                    }
 
                     Date end = new Date();
                     log.info("Full Lucene index finished in " + 
@@ -247,6 +276,16 @@ public class CachingProvider
         }
     }
 
+    /*
+    public void finalize()
+    {
+        if( m_luceneUpdateThread != null )
+        {
+            m_luceneUpdateThread.
+        }
+    }
+    */
+
     private void startLuceneUpdateThread()
     {
         m_updates = new Vector();
@@ -267,9 +306,7 @@ public class CachingProvider
                     {
                         Thread.sleep(500);
                     }
-                    catch ( InterruptedException e )
-                    {
-                    }
+                    catch ( InterruptedException e ) {}
                 }
             }
         });
@@ -445,6 +482,7 @@ public class CachingProvider
     {
         m_cache.remove( page.getName() );
         m_textCache.flushEntry( page.getName() );
+        m_historyCache.flushEntry( page.getName() );
         addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
     }
 
@@ -532,15 +570,18 @@ public class CachingProvider
         }
     }
 
-    private void updateLuceneIndex( WikiPage page, String text )
+    private synchronized void updateLuceneIndex( WikiPage page, String text )
     {
-        log.info("Updating Lucene index for page '" + page.getName() + "'...");
+        IndexWriter writer = null;
+
+        log.info("Updating Lucene index for page '" + page.getName() + "'...");        
 
         try
         {
             deleteFromLucene(page);
-// Now add back the new version.
-            IndexWriter writer = new IndexWriter(m_luceneDirectory, new StandardAnalyzer(), false);
+
+            // Now add back the new version.
+            writer = new IndexWriter(m_luceneDirectory, new StandardAnalyzer(), false);
             luceneIndexPage(page, text, writer);
             m_updateCount++;
             if( m_updateCount >= LUCENE_OPTIMIZE_COUNT )
@@ -548,12 +589,20 @@ public class CachingProvider
                 writer.optimize();
                 m_updateCount = 0;
             }
-            writer.close();
         }
         catch ( IOException e )
         {
             log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
         }
+        finally
+        {
+            try
+            {
+                if( writer != null ) writer.close();
+            }
+            catch( IOException e ) {}
+        }
+
         log.info("Done updating Lucene index for page '" + page.getName() + "'.");
     }
 
@@ -815,7 +864,27 @@ public class CachingProvider
     public List getVersionHistory( String page )
         throws ProviderException
     {
-        return m_provider.getVersionHistory( page );
+        List history = null;
+
+        try
+        {
+            history = (List)m_historyCache.getFromCache( page,
+                                                         m_refreshPeriod );
+
+            log.debug("History cache hit for page "+page);
+            m_historyCacheHits++;
+        }
+        catch( NeedsRefreshException e )
+        {
+            history = m_provider.getVersionHistory( page );
+
+            m_historyCache.putInCache( page, history );
+
+            log.debug("History cache miss for page "+page);
+            m_historyCacheMisses++;
+        }
+
+        return history;
     }
 
     public synchronized String getProviderInfo()
@@ -841,6 +910,8 @@ public class CachingProvider
         return("Real provider: "+m_provider.getClass().getName()+
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits+
+               "<br />History cache hits: "+m_historyCacheHits+
+               "<br />History cache misses: "+m_historyCacheMisses+
                "<br />Cache consistency checks: "+m_milliSecondsBetweenChecks+"ms"+
                "<br />Lucene enabled: "+(m_useLucene?"yes":"no") );
     }
