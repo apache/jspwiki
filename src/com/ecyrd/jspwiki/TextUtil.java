@@ -277,6 +277,11 @@ public class TextUtil
         String start = null;
         String stop = null;
 
+        if( diffText == null )
+        {
+            return "Invalid diff - probably something wrong with server setup.";
+        }
+
         BufferedReader in = new BufferedReader( new StringReader( diffText ) );
         StringBuffer out = new StringBuffer();
 
