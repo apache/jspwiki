@@ -67,8 +67,9 @@ public class TranslatorReader extends Reader
     public  static final int              ATTACHMENT    = 10;
     private static final int              ATTACHMENTIMAGE = 11;
 
-    /** Allow this many characters to be pushed back in the stream. */
-    private static final int              PUSHBACK_BUFFER_SIZE = 8;
+    /** Allow this many characters to be pushed back in the stream.  In effect,
+        this limits the size of a single heading line.  */
+    private static final int              PUSHBACK_BUFFER_SIZE = 512;
     private PushbackReader m_in;
 
     private StringReader   m_data = new StringReader("");
@@ -744,6 +745,9 @@ public class TranslatorReader extends Reader
             name = name.trim();
             val  = val.trim();
 
+            if( val.startsWith("'") ) val = val.substring( 1 );
+            if( val.endsWith("'") )   val = val.substring( 0, val.length()-1 );
+
             // log.debug("SET name='"+name+"', value='"+val+"'.");
 
             if( name.length() > 0 && val.length() > 0 )
@@ -1083,6 +1087,21 @@ public class TranslatorReader extends Reader
         }
     }
 
+    /**
+     *  Pushes back any string that has been read.  It will obviously
+     *  be pushed back in a reverse order.
+     *
+     *  @since 2.1.77
+     */
+    private void pushBack( String s )
+        throws IOException
+    {
+        for( int i = s.length()-1; i >= 0; i-- )
+        {
+            pushBack( s.charAt(i) );
+        }
+    }
+
     private String handleBackslash()
         throws IOException
     {
@@ -1277,6 +1296,21 @@ public class TranslatorReader extends Reader
         return "-";
     }
 
+    /**
+     *  This method peeks ahead in the stream until EOL and returns the result.
+     *  It will keep the buffers untouched.
+     *
+     *  @return The string from the current position to the end of line.
+     */
+    private String peekAheadLine()
+        throws IOException
+    {
+        String s = readUntilEOL().toString();
+        pushBack( s );
+
+        return s;
+    }
+
     private String handleHeading()
         throws IOException
     {
@@ -1290,21 +1324,22 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '!' )
             {
-                buf.append("<h2>");
-                m_closeTag = "</h2>";
+                String title = cleanLink( peekAheadLine() );
+                
+                buf.append( m_renderer.makeHeading( HTMLRenderer.HEADING_LARGE, title ) );
             }
             else
             {
-                buf.append( "<h3>" );
-                m_closeTag = "</h3>";
                 pushBack( ch2 );
+                String title = cleanLink( peekAheadLine() );
+                buf.append( m_renderer.makeHeading( HTMLRenderer.HEADING_MEDIUM, title ) );
             }
         }
         else
         {
-            buf.append( "<h4>" );
-            m_closeTag = "</h4>";
             pushBack( ch );
+            String title = cleanLink( peekAheadLine() );
+            buf.append( m_renderer.makeHeading( HTMLRenderer.HEADING_SMALL, title ) );
         }
         
         return buf.toString();
@@ -2035,6 +2070,9 @@ public class TranslatorReader extends Reader
     //        out to be its own class.
     private class HTMLRenderer
     {
+        public static final int HEADING_SMALL  = 1;
+        public static final int HEADING_MEDIUM = 2;
+        public static final int HEADING_LARGE  = 3;
         /**
          *  Write a HTMLized link depending on its type.
          *
@@ -2149,6 +2187,43 @@ public class TranslatorReader extends Reader
         public String makeRuler()
         {
             return "<hr />";
+        }
+
+        private String makeHeadingAnchor( String baseName, String title )
+        {
+            return "<a name=\"#section-"+baseName+"-"+m_engine.encodeName(title)+"\">";
+        }
+
+        /**
+         *  Returns XHTML for the start of the heading.  Also sets the
+         *  line-end emitter.
+         *  @param level 
+         */ 
+        public String makeHeading( int level, String title )
+        {
+            String res = "";
+
+            String pageName = m_context.getPage().getName();
+
+            switch( level )
+            {
+              case HEADING_SMALL:
+                res = "<h4>"+makeHeadingAnchor( pageName, title );
+                m_closeTag = "</a></h4>";
+                break;
+
+              case HEADING_MEDIUM:
+                res = "<h3>"+makeHeadingAnchor( pageName, title );
+                m_closeTag = "</a></h3>";
+                break;
+
+              case HEADING_LARGE:
+                res = "<h2>"+makeHeadingAnchor( pageName, title );
+                m_closeTag = "</a></h2>";
+                break;
+            }
+
+            return res;
         }
 
     } // HTMLRenderer
