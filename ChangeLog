@@ -1,3 +1,17 @@
+2003-01-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.12.
+
+        * Added Expires, Last-Modified, and Cache-Control headers to
+        Edit.jsp responses - this should allow certain versions of
+        Internet Explorer to use Preview correctly.
+
+        * Implemented page "locking".  When you now start to edit a page,
+        the page is marked as being under editing, and the next guy will
+        get a warning about that.  To facilitate this, Edit.jsp was
+        changed.  Also, check out the new tags in "EditTemplate.jsp", and
+        note also that the "Cancel" is now a button instead of a link.
+
 2003-01-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Wrote some new documentation into sample wikipages.
