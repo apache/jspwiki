@@ -190,6 +190,30 @@ public class WikiEngine
         }
     }
 
+    public Collection getRecentChanges()
+    {
+        TreeSet set = new TreeSet( new PageTimeComparator() );
+
+        File wikipagedir = new File( m_pagelocation );
+
+        File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
+
+        for( int i = 0; i < wikipages.length; i++ )
+        {
+            String wikiname = wikipages[i].getName();
+            int cutpoint = wikiname.lastIndexOf( FILE_EXT );
+            WikiPage page = new WikiPage( wikiname.substring(0,cutpoint) );
+
+            page.setLastModified( new Date(wikipages[i].lastModified()) );
+
+            log.debug("Adding..." +page);
+
+            set.add( page );
+        }
+
+        return set;
+    }
+
     public Collection findPages( String query )
     {
         Vector v = new Vector();
@@ -256,6 +280,27 @@ public class WikiEngine
         if( !file.exists() ) return null;
 
         return new Date( file.lastModified() );
+    }
+
+
+    public class PageTimeComparator
+        implements Comparator
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            WikiPage w1 = (WikiPage)o1;
+            WikiPage w2 = (WikiPage)o2;
+            
+            // This gets most recent on top
+            int timecomparison = w2.getLastModified().compareTo( w1.getLastModified() );
+
+            if( timecomparison == 0 )
+            {
+                return w1.getName().compareTo( w2.getName() );
+            }
+
+            return timecomparison;
+        }
     }
 
     public class WikiFileFilter
