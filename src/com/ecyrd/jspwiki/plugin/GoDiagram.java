@@ -45,10 +45,10 @@ public class GoDiagram
     {
     }
 
-    private String makeImage( String content )
+    private String makeImage( WikiContext context, String content )
     {
         //return "<IMG SRC=\"images/diagram/"+content+".gif\">";
-        return "<TD><IMG SRC=\"images/diagram/"+content+".gif\"></TD>";
+        return "<TD><IMG SRC=\""+context.getEngine().getBaseURL()+"images/godiagram/"+content+".png\"></TD>";
     }
 
     public class DiagramInfo
@@ -179,7 +179,7 @@ public class GoDiagram
     /**
      *  @param first 'b', if black should have the first move, 'w' otherwise.
      */
-    private String parseDiagram( String dia, int first )
+    private String parseDiagram( WikiContext context, String dia, int first )
         throws IOException
     {
         DiagramInfo info = getDiagramInfo( dia );
@@ -205,7 +205,7 @@ public class GoDiagram
                     int num = Integer.parseInt( item );
 
                     String which = (num % 2 == first) ? "b" : "w";
-                    res.append( makeImage( which+Integer.toString(num) ) );
+                    res.append( makeImage( context, which+Integer.toString(num) ) );
                     continue;
                 }
 
@@ -213,24 +213,23 @@ public class GoDiagram
                 {
                   case '#':
                   case 'X':
-                    res.append( makeImage("b") );
+                    res.append( makeImage(context,"b") );
                     break;
 
                   case 'O':
-                    res.append( makeImage("w") );
+                    res.append( makeImage(context,"w") );
                     break;
 
                   case '.':
-                    res.append( makeImage(insertEmpty( info, row, col )) );
-                    //res.append( makeImage("empty") );
+                    res.append( makeImage(context,insertEmpty( info, row, col )) );
                     break;
 
                   case ',':
-                    res.append( makeImage("hoshi") );
+                    res.append( makeImage(context,"hoshi") );
                     break;
 
                   default:
-                    res.append( makeImage( "lc"+item ) );
+                    res.append( makeImage(context,"lc"+item ) );
                     break;
                 }
             } // col
@@ -272,7 +271,8 @@ public class GoDiagram
 
             sb.append("<table border=1 align=left cellpadding=5 style=\"margin: 10px;\">");
             sb.append("<tr><td align=center>\n");
-            sb.append( parseDiagram( diagram, 
+            sb.append( parseDiagram( context, 
+                                     diagram, 
                                      (first.startsWith("b") ? BLACK_FIRST : WHITE_FIRST )) );
             sb.append("</td></tr>\n");
             if( label != null )
