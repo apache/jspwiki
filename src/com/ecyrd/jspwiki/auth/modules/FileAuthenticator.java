@@ -11,9 +11,11 @@ import com.ecyrd.jspwiki.auth.*;
 import org.apache.log4j.Category;
 
 /**
- *  Provides a simple file-based authenticator.
+ *  Provides a simple file-based authenticator.  This is really simple,
+ *  as it does not even provide encryption for the passwords.
  *
  *  @author Janne Jalkanen
+ *  @since  2.1.29.
  */
 public class FileAuthenticator
     implements WikiAuthenticator
