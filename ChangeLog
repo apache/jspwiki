@@ -1,3 +1,14 @@
+2002-01-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Some more refactoring inside WikiEngine: removed redundant
+        code.
+
+        * Refactored TranslatorReader to be more modular.  Provided hooks
+        into the internals, so that links can now be read on-the-fly.
+
+        * WikiEngine.getInstance() is now protected against multiple
+        concurrent invocations.  This should help with startup issues.
+
 2002-01-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * CachingProvider now provides some protection against
