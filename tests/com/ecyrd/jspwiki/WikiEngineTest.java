@@ -36,6 +36,8 @@ public class WikiEngineTest extends TestCase
     {
         props.load( TestEngine.findTestProperties() );
 
+        props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
+
         m_engine = new TestEngine(props);
     }
 
@@ -43,9 +45,12 @@ public class WikiEngineTest extends TestCase
     {
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        if( files != null )
+        {
+            File f = new File( files );
 
-        f.delete();
+            m_engine.deleteAll( f );
+        }
     }
 
     public void testNonExistantDirectory()
@@ -110,6 +115,41 @@ public class WikiEngineTest extends TestCase
         assertEquals( "Page already exists",
                       false,
                       m_engine.pageExists( page ) );
+    }
+
+    public void testFinalPageName()
+        throws Exception
+    {
+        m_engine.saveText( "Foobar", "1" );
+        m_engine.saveText( "Foobars", "2" );
+
+        assertEquals( "plural mistake", "Foobars",
+                      m_engine.getFinalPageName( "Foobars" ) );
+
+        assertEquals( "singular mistake", "Foobar",
+                      m_engine.getFinalPageName( "Foobar" ) );
+    }
+
+    public void testFinalPageNameSingular()
+        throws Exception
+    {
+        m_engine.saveText( "Foobar", "1" );
+
+        assertEquals( "plural mistake", "Foobar",
+                      m_engine.getFinalPageName( "Foobars" ) );
+        assertEquals( "singular mistake", "Foobar",
+                      m_engine.getFinalPageName( "Foobar" ) );
+    }
+
+    public void testFinalPageNamePlural()
+        throws Exception
+    {
+        m_engine.saveText( "Foobars", "1" );
+
+        assertEquals( "plural mistake", "Foobars",
+                      m_engine.getFinalPageName( "Foobars" ) );
+        assertEquals( "singular mistake", "Foobars",
+                      m_engine.getFinalPageName( "Foobar" ) );
     }
 
     public void testPutPage()
