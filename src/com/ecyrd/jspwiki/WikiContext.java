@@ -91,6 +91,7 @@ public class WikiContext
 
     public static final String    PREFS    = "prefs";
     public static final String    DELETE   = "del";
+    public static final String    ATTACH   = "att";
     
     /**
      *  Create a new WikiContext.
