@@ -34,6 +34,6 @@ public class Benchmark
     {
         double totalTime = (double)m_stop - (double)m_start;
 
-        return Double.toString( (operations/totalTime) / 1000.0 );
+        return Double.toString( (operations/totalTime) * 1000.0 );
     }
 }
