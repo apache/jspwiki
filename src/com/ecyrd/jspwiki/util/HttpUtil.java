@@ -71,6 +71,7 @@ public class HttpUtil
      *  The initial slash is also removed.  If there is no page,
      *  returns null.
      */
+    /*
     public static String parsePageFromURL( HttpServletRequest request,
                                            String encoding )
         throws UnsupportedEncodingException
@@ -93,5 +94,5 @@ public class HttpUtil
 
         return name;
     }
-
+    */
 }
