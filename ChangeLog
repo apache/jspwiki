@@ -1,3 +1,12 @@
+2003-03-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * 2.1.1.
+
+        * Added ListLocksPlugin to the default SystemInfo page.
+
+        * Added "Save" button to Preview.  Thanks to Mark Anderson for the
+        original code.
+
 2003-03-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Removed a bunch of extra imports to clean up the code a bit.
