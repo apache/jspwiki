@@ -1,5 +1,7 @@
 2001-07-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.1.2
+
         * Search engine interface is now cleaner.
 
         * Separated actual Wiki page serving from the WikiEngine and hid
