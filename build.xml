@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.27 2003-06-01 15:35:13 jalkanen Exp $
+    $Id: build.xml,v 1.28 2003-06-01 15:35:55 jalkanen Exp $
 -->    
        
 <!--   
@@ -197,7 +197,7 @@
 
     <javadoc sourcepath="${code.src}"
              destdir="${docs.javadoc}"
-             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment,com.ecyrd.jspwiki.acl,com.ecyrd.jspwiki.auth,com.ecyrd.jspwiki.auth.modules,com.ecyrd.jspwiki.filters,com.ecyrd.jspwiki.util">
+             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment,com.ecyrd.jspwiki.acl,com.ecyrd.jspwiki.auth,com.ecyrd.jspwiki.auth.modules,com.ecyrd.jspwiki.filters,com.ecyrd.jspwiki.util,com.ecyrd.jspwiki.auth.permissions">
       <classpath refid="path.base" />
     </javadoc>
              
