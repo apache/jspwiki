@@ -1150,6 +1150,19 @@ public class WikiEngine
     }
 
     /**
+     *  Just convert WikiText to HTML.
+     */
+
+    public String textToHTML( WikiContext context, 
+                              String pagedata, 
+                              StringTransmutator localLinkHook,
+                              StringTransmutator extLinkHook,
+                              StringTransmutator attLinkHook )
+    {
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, attLinkHook, true );
+    }
+
+    /**
      *  Helper method for doing the HTML translation.
      */
     private String textToHTML( WikiContext context, 
