@@ -23,6 +23,7 @@ import java.lang.ref.SoftReference;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.TreeSet;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -278,7 +279,45 @@ public class CachingProvider
 
     public Collection findPages( QueryItem[] query )
     {
-        return m_provider.findPages( query );
+        TreeSet res = new TreeSet( new SearchResultComparator() );
+        SearchMatcher matcher = new SearchMatcher( query );
+
+        Collection allPages = null;
+        try
+        {
+            allPages = getAllPages();
+        }
+        catch( ProviderException pe )
+        {
+            log.error( "Unable to retrieve page list", pe );
+            return( null );
+        }
+
+        Iterator it = allPages.iterator();
+        while( it.hasNext() )
+        {
+            try
+            {
+                WikiPage page = (WikiPage) it.next();
+                String pageName = page.getName();
+                String pageContent = getTextFromCache( pageName );
+                SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
+                if( comparison != null )
+                {
+                    res.add( comparison );
+                }
+            }
+            catch( ProviderException pe )
+            {
+                log.error( "Unable to retrieve page from cache", pe );
+            }
+            catch( IOException ioe )
+            {
+                log.error( "Failed to search page", ioe );
+            }
+        }
+    
+        return( res );
     }
 
     public WikiPage getPageInfo( String page, int version )
