@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -32,6 +31,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <li>mode - In which format to insert the page.  Can be either "plain" or "html".
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -75,9 +75,16 @@ public class InsertPageTag
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
 
+        //
+        //  NB: The page might not really exist if the user is currently
+        //      creating it (i.e. it is not yet in the cache or providers), 
+        //      AND we got the page from the wikiContext.
+        //
+
         if( m_pageName == null )
         {
             page = m_wikiContext.getPage();
+            if( !engine.pageExists(page) ) return SKIP_BODY;
         }
         else
         {
@@ -89,22 +96,19 @@ public class InsertPageTag
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
-            if( engine.pageExists( page ) )
+            log.debug("Inserting page "+page);
+
+            JspWriter out = pageContext.getOut();
+
+            switch(m_mode)
             {
-                log.debug("Inserting page "+page);
-
-                JspWriter out = pageContext.getOut();
-
-                switch(m_mode)
-                {
-                  case HTML:
-                    out.print( engine.getHTML(m_wikiContext, page) );
-                    break;
-                  case PLAIN:
-                    out.print( engine.getText(m_wikiContext, page) );
-                    break;
-                }
-            } // exists
+              case HTML:
+                out.print( engine.getHTML(m_wikiContext, page) );
+                break;
+              case PLAIN:
+                out.print( engine.getText(m_wikiContext, page) );
+                break;
+            }
         }
 
         return SKIP_BODY;
