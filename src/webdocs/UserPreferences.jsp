@@ -17,7 +17,7 @@
 
 <%
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
-    String pagereq = "UserPreferences";
+    String pagereq = wikiContext.getPage().getName();
     UserManager mgr = wiki.getUserManager();
     
     NDC.push( wiki.getApplicationName()+":"+pagereq );
