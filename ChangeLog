@@ -1,8 +1,24 @@
 2002-03-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-        * v1.7.1.
+        * v1.7.2.
+
+        * When a page is saved, it gets now automatically normalized.
+        This normalizing means that all pages will now end with a newline
+        (some browsers send a newline and some don't), and also that ALL
+        line breaks are now marked with \r\n (CRLF, MS-DOS style).  Why
+        with that obsolete style?  Well, HTTP standard uses CRLF all
+        around, and most of the current JSPWiki installations use CRLF in
+        all of the files.  Also, most UNIX tools are smart enough to
+        understand CRLF, whereas not all Windows tools understand plain
+        CR (Mac style) or plain LF.  Using CRLF should make installing
+        this upgrade totally visible to most users.
+        
+        Having said that, this has not been tested very many times,
+        obviously.  Use with care :-).
 
 2002-03-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.7.1.
 
         * Edit.jsp had a javascript error, pointing at a wrong form.  It
         was not fatal, it did not affect the user in any real way, other
