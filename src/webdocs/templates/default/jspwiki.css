@@ -142,3 +142,8 @@ div.commentbox {
    padding: 4px;
    margin-left: 4px;
 }
+
+.commentbox ul, ol {
+   padding-left: 1em;
+   margin-left: 4px;
+}
