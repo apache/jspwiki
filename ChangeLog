@@ -1,5 +1,10 @@
-2001-11-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2001-11-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Oops, it was possible to put Javascript inside external or image
+        links.  Now fixed - all quotes inside link names are URLEncoded.
+
+2001-11-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+        
         * Added WikiEngine.saveText( String, String, HttpServletRequest )
         so that it can get the author information from the request.  The
         old API is still supported.
