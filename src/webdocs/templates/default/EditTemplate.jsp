@@ -31,13 +31,7 @@
 
     <td class="page" width="85%" valign="top">
 
-      <wiki:CheckRequestContext context="comment">
-         <wiki:Include page="CommentContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="edit">
-         <wiki:Include page="EditContent.jsp" />
-      </wiki:CheckRequestContext>
+       <wiki:Content/>
 
     </td>
   </tr>
