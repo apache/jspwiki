@@ -284,4 +284,13 @@ public class FileUtil
         }
     }
 
+    public static String getThrowingMethod( Throwable t )
+    {
+        if( c_hasNIO )
+        {
+            return FileUtil14.getThrowingMethod( t );
+        }
+
+        return "This information is only available with JDK 1.4";
+    }
 }

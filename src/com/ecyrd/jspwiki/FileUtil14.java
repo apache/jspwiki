@@ -86,4 +86,17 @@ public class FileUtil14
             }
         }
     }
+
+    public static String getThrowingMethod( Throwable t )
+    {
+        StackTraceElement[] trace = t.getStackTrace();
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( trace[0].isNativeMethod() ? "native method" : "" );
+        sb.append( trace[0].getClassName() );
+        sb.append(".");
+        sb.append(trace[0].getMethodName()+"(), line "+trace[0].getLineNumber());
+
+        return sb.toString();
+    }
 }
