@@ -46,6 +46,7 @@ public abstract class WikiLinkTag
 
     protected String m_pageName;
     protected int    m_format = ANCHOR;
+    protected String m_template;
 
     public void setPage( String page )
     {
@@ -55,6 +56,17 @@ public abstract class WikiLinkTag
     public String getPage()
     {
         return m_pageName;
+    }
+
+
+    public String getTemplate()
+    {
+        return m_template;
+    }
+
+    public void setTemplate( String arg )
+    {
+        m_template = arg;
     }
 
     public void setFormat( String mode )
