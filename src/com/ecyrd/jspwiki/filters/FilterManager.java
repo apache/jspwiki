@@ -151,6 +151,10 @@ public class FilterManager
         {
             log.error("Suggested class is not a PageFilter: "+className);
         }
+        catch( FilterException e )
+        {
+            log.error("Filter "+className+" failed to initialize itself.", e);
+        }
     }
 
 
@@ -179,7 +183,7 @@ public class FilterManager
 
             if( xmlStream == null )
             {
-                log.info("Cannot find property file for filters (this is okay, expected to find it as: '"+xmlFile+"')");
+                log.info("Cannot find property file for filters (this is okay, expected to find it as: '"+ (xmlFile == null ? DEFAULT_XMLFILE : xmlFile ) +"')");
                 return;
             }
             Parser parser = new uk.co.wilson.xml.MinML(); // FIXME: Should be settable
@@ -269,6 +273,7 @@ public class FilterManager
      *  Does the filtering before a translation.
      */
     public String doPreTranslateFiltering( WikiContext context, String pageData )
+        throws FilterException
     {
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
@@ -284,6 +289,7 @@ public class FilterManager
      *  Does the filtering after HTML translation.
      */
     public String doPostTranslateFiltering( WikiContext context, String pageData )
+        throws FilterException
     {
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
@@ -299,6 +305,7 @@ public class FilterManager
      *  Does the filtering before a save to the page repository.
      */
     public String doPreSaveFiltering( WikiContext context, String pageData )
+        throws FilterException
     {
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
@@ -314,6 +321,7 @@ public class FilterManager
      *  Does the page filtering after the page has been saved.
      */
     public void doPostSaveFiltering( WikiContext context, String pageData )
+        throws FilterException
     {
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
