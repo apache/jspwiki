@@ -98,7 +98,7 @@ public class SpamFilter
 
         if( source != null )
         {
-            if( m_spamPatterns == null || source.getLastModified().after(m_lastRebuild) )
+            if( m_spamPatterns == null || m_spamPatterns.isEmpty() || source.getLastModified().after(m_lastRebuild) )
             {
                 m_lastRebuild = source.getLastModified();
 
