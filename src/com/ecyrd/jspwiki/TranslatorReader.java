@@ -203,9 +203,19 @@ public class TranslatorReader extends Reader
         //
         Properties props      = m_engine.getWikiProperties();
 
-        m_camelCaseLinks      = TextUtil.getBooleanProperty( props,
+        String cclinks = (String)m_context.getPage().getAttribute( PROP_CAMELCASELINKS );
+
+        if( cclinks != null )
+        {
+            m_camelCaseLinks = TextUtil.isPositive( cclinks );
+        }
+        else
+        {
+            m_camelCaseLinks  = TextUtil.getBooleanProperty( props,
                                                              PROP_CAMELCASELINKS, 
                                                              m_camelCaseLinks );
+        }
+
         m_plainUris           = TextUtil.getBooleanProperty( props,
                                                              PROP_PLAINURIS,
                                                              m_plainUris );
