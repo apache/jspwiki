@@ -796,7 +796,7 @@ public class TranslatorReader extends Reader
             for( i = start; i<line.length() && line.charAt(i) == '-'; i++ )
             {
             }
-            buf.append("<HR>");
+            buf.append("<HR />");
             buf.append( line.substring( i ) );
 
             return buf.toString();
