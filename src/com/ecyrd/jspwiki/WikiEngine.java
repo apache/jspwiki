@@ -400,7 +400,12 @@ public class WikiEngine
         if( m_provider == null ) 
             return NO_PROVIDER_MSG;
 
-        return m_provider.getPageText( page );
+        String result = m_provider.getPageText( page );
+
+        if( result == null ) 
+            return "";
+
+        return result;
     }
 
     /**
