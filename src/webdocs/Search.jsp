@@ -48,9 +48,9 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%> Search</TITLE>
+  <TITLE><wiki:ApplicationName/> Search</TITLE>
   <META NAME="ROBOTS" CONTENT="NOINDEX">
-  <%@ include file="cssinclude.js" %>
+  <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
@@ -59,9 +59,9 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="nowrap">
-       <%@ include file="templates/LeftMenu.jsp" %>
+       <%@ include file="templates/default/LeftMenu.jsp" %>
        <P>
-       <%@ include file="templates/LeftMenuFooter.jsp" %>
+       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
     </TD>
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <H1>Find pages</H1>

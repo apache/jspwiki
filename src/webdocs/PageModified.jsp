@@ -54,9 +54,9 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%> Error - Concurrent modification of <%=pagereq%></TITLE>
+  <TITLE><wiki:ApplicationName/> Error - Concurrent modification of <wiki:PageName/></TITLE>
   <META NAME="ROBOTS" CONTENT="NOINDEX">
-  <%@ include file="cssinclude.js" %>
+  <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
@@ -65,17 +65,17 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/LeftMenu.jsp" %>
+       <%@ include file="templates/default/LeftMenu.jsp" %>
        <BR><BR>
        <P>
-       <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A>
+       Go edit <wiki:EditLink><wiki:PageName/></wiki:EditLink>.
        </P>
        <P>
-       <%@ include file="templates/LeftMenuFooter.jsp" %>
+       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
        </P>
     </TD>
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <%@ include file="templates/PageHeader.jsp" %>
+      <%@ include file="templates/default/PageHeader.jsp" %>
 
       <P>
       <B>Oops!  Someone modified the page while you were editing it!</B>
@@ -110,7 +110,7 @@
       <P><HR></P>
 
       <P>
-       <I><A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A></I>
+       <I>Go edit <wiki:EditLink><wiki:PageName /></wiki:EditLink>.</I>
       </P>
 
     </TD>
