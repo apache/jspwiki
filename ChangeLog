@@ -1,3 +1,10 @@
+2002-12-08  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Modified exception classes to inherit WikiException
+        (with the exception of InternalWikiException =).
+        
+        * Added SecurityException in preparation for auth merge.
+
 2002-12-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.48.

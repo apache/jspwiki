@@ -19,7 +19,10 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-public class PluginException extends Exception
+import com.ecyrd.jspwiki.WikiException;
+
+public class PluginException 
+    extends WikiException
 {
     private Throwable m_throwable;
     

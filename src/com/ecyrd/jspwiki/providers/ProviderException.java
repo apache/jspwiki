@@ -1,7 +1,9 @@
 package com.ecyrd.jspwiki.providers;
 
+import com.ecyrd.jspwiki.WikiException;
+
 public class ProviderException
-    extends Exception
+    extends WikiException
 {
     public ProviderException( String msg )
     {
