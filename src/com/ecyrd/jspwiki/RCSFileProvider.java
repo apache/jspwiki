@@ -94,12 +94,11 @@ public class RCSFileProvider
         try
         {
             String   cmd = m_logCommand;
-            String[] env = new String[0];
 
             cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
             log.debug("Command = '"+cmd+"'");
 
-            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             // FIXME: Should this use encoding as well?
             BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
@@ -142,14 +141,13 @@ public class RCSFileProvider
         try
         {
             String cmd = m_checkoutVersionCommand;
-            String[] env = new String[0];
 
             cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
             cmd = TranslatorReader.replaceString( cmd, "%v", Integer.toString(version ) );
 
             log.debug("Command = '"+cmd+"'");
 
-            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
             result = FileUtil.readContents( process.getInputStream(),
                                             m_encoding );
 
@@ -180,14 +178,13 @@ public class RCSFileProvider
         try
         {
             String cmd = m_checkinCommand;
-            String[] env = new String[0];
 
             cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
             cmd = TranslatorReader.replaceString( cmd, "%u", page.getAuthor() );
 
             log.debug("Command = '"+cmd+"'");
 
-            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             process.waitFor();
 
@@ -218,13 +215,11 @@ public class RCSFileProvider
             Pattern datepattern = compiler.compile("^date:\\s*(.*)[\\+\\-;]\\d+;");
             Pattern userpattern = compiler.compile("^\"author=(.*)\"");
 
-            String[] env = new String[0];
-
             String cmd = TranslatorReader.replaceString( m_fullLogCommand,
                                                          "%s",
                                                          mangleName(page)+FILE_EXT );
             
-            Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
+            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             // FIXME: Should this use encoding as well?
             BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
