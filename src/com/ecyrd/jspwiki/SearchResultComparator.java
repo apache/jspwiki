@@ -42,7 +42,7 @@ public class SearchResultComparator
         int res = s2.getScore() - s1.getScore();
 
         if( res == 0 )
-            res = s1.getName().compareTo(s2.getName());
+            res = s1.getPage().getName().compareTo(s2.getPage().getName());
 
         return res;
     }
