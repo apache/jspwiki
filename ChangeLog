@@ -1,3 +1,12 @@
+2002-10-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.29.
+
+        * Added a new property: "jspwiki.frontPage".  This allows you to
+        easily change the default page name from "Main" into something
+        else.  This is important if you're doing localized installations,
+        for example.
+
 2002-10-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.28.
