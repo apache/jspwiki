@@ -16,8 +16,6 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-
     String userName = wiki.getUserName( request );
     if( userName == null ) 
     {
@@ -28,8 +26,18 @@
 
     if( ok != null || "save".equals(request.getParameter("action")) )
     {
+        //
+        //  Servlet 2.2 API assumes all incoming data is in ISO-8859-1, so when
+        //  returning UTF-8, you get the right bytes but with the wrong encoding.
+        //
+        //  For more information, see:
+        //    http://www.jguru.com/faq/view.jsp?EID=137049
+        //
+        String name;
+        name = new String( request.getParameter("username").getBytes("ISO-8859-1"), "UTF-8");
+
         UserProfile profile = new UserProfile();
-        profile.setName( request.getParameter("username") );
+        profile.setName( name );
 
         Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
                                    profile.getStringRepresentation() );
@@ -39,6 +47,9 @@
 
         response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
     }
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -73,7 +84,7 @@
 
       <FORM action="<%=wiki.getBaseURL()%>UserPreferences.jsp" 
             method="POST"
-            ACCEPT-CHARSET="ISO-8859-1,UTF-8">
+            ACCEPT-CHARSET="UTF-8">
 
          <B>User name:</B> <INPUT type="text" name="username" size="30" value="<%=userName%>">
          <I>This must be a proper WikiName, no punctuation.</I>
