@@ -162,6 +162,13 @@ public class WikiEngine
     /** The time when this engine was started. */
     private Date             m_startTime;
 
+    /** Indicates whether to use lazy or string login policy. */
+    private boolean          m_useStrictLogin = false;
+
+    /** Property name for login policy flag. */
+    private static final String PROP_USESTRICTLOGIN = "jspwiki.policy.strictlogins";
+
+
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -297,6 +304,7 @@ public class WikiEngine
 
         m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
         m_frontPage      = props.getProperty( PROP_FRONTPAGE,   "Main" );
+        m_useStrictLogin = "true".equals( props.getProperty( PROP_USESTRICTLOGIN, "false" ) );
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -1652,6 +1660,16 @@ public class WikiEngine
 
 
     /**
+     * Returns true if JSPWiki is configured to use a strict login policy
+     * (property jspwiki.policy.strictlogins in jspwiki.properties).
+     */
+    public boolean useStrictLogin()
+    {
+        return( m_useStrictLogin );
+    }
+
+
+    /**
      * Gets a UserProfile, either from the request (presumably 
      * authenticated and with auth information) or a new one
      * (with default permissions).
@@ -1665,13 +1683,19 @@ public class WikiEngine
             return( wup );
 
         // Try to get a limited login. This will be inserted into the request.
-        wup = limitedLogin( request );
-        if( wup != null )
+        log.debug( "XXX fee fie foe 1" );
+        if( !m_useStrictLogin )
         {
-            return( wup );
+            log.debug( "XXX fee fie foe 2" );
+            wup = limitedLogin( request );
+            if( wup != null )
+            {
+                return( wup );
+            }
+
+            log.error( "Unable to get a default UserProfile!" );
         }
 
-        log.error( "Unable to get a default UserProfile!" );
         return( null );
     }
 
