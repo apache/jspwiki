@@ -667,6 +667,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "1 <PRE> &lt;B&gt; </PRE>", translate(src) );
     }
 
+    public void testCamelCaseInPre()
+        throws Exception
+    {
+        String src = "1 {{{ CamelCase }}}";
+
+        assertEquals( "1 <PRE> CamelCase </PRE>", translate(src) );
+    }
+
     public void testList1()
         throws Exception
     {
@@ -1203,10 +1211,22 @@ public class TranslatorReaderTest extends TestCase
 
         assertNotNull( translation );
     }
+
+    /**
+     *  Shortened version of the previous one.
+     */
+    public void testBrokenPageTextShort()
+        throws Exception
+    {
+        String src = "{{{\ncode.}}\n";
+
+        assertNotNull( translate(src) );
+    }
+
     
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
-        "Please ''check [RecentChanges].\n" + 
+                "Please ''check [RecentChanges].\n" + 
         "\n" + 
         "Testing. fewfwefe\n" + 
         "\n" + 
@@ -1257,7 +1277,7 @@ public class TranslatorReaderTest extends TestCase
         "on the next paragraph.__\n" + 
         "\n" + 
         "\n" + 
-        "This should be normal.\n" + 
+        "This should be normal.\n" +
         "\n" + 
         "Now, let's try ''italic text''.\n" + 
         "\n" + 
@@ -1281,16 +1301,16 @@ public class TranslatorReaderTest extends TestCase
         "## Three.Three\n" + 
         "### Three.Three.One\n" + 
         "# Four\n" + 
-        "\n" + 
+        "\n" +
         "End?\n" + 
         "\n" + 
-        "No, let's {{break}} things.\\ {{{ {{{ {{text}} }}} }}}\n" + 
+        "No, let's {{break}} things.\\ {{{ {{{ {{text}} }}} }}}\n" +
         "\n" + 
         "More breaking.\n" + 
-        "\n" + 
+        "\n" +
         "{{{\n" + 
         "code.}}\n" + 
-        "----\n" + 
+        "----\n" +
         "author: [Asser], [Ebu], [JanneJalkanen], [Jarmo|mailto:jarmo@regex.com.au]\n";
     
 
