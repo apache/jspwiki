@@ -25,7 +25,14 @@ import org.apache.log4j.*;
 import com.ecyrd.jspwiki.*;
 
 /**
+ * A simplistic WikiAuthorizer that reads variables <i>jspwiki.authorizer.dummy.roles</i>
+ * and <i>jspwiki.authorizer.dummy.permissions</i> from <i>jspwiki.properties</i> and 
+ * assigns all users the given roles and permissions on login.
  *
+ * <P>Notice that all users share the roles and permissions, but in addition,
+ * as a property of the WikiEngine, they are supposed to have access with name-role
+ * (user frobozz has role frobozz). This WikiAuthorizer may be somewhat useful for
+ * simple user-specific restrictions.
  */
 public class DummyAuthorizer
     implements WikiAuthorizer
