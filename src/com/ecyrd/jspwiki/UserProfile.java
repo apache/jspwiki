@@ -68,6 +68,13 @@ public class UserProfile
         {
             if( res != null )
             {
+                //
+                //  Not all browsers or containers do proper cookie
+                //  decoding, which is why we can suddenly get stuff
+                //  like "username=3DJanneJalkanen", so we have to
+                //  do the conversion here.
+                //
+                res = TextUtil.urlDecodeUTF8( res );
                 StringTokenizer tok = new StringTokenizer( res, " ,=" );
 
                 while( tok.hasMoreTokens() )
@@ -77,7 +84,7 @@ public class UserProfile
                     
                     if( param.equals("username") )
                     {
-                        m_userName = TextUtil.urlDecodeUTF8(value);
+                        m_userName = value;
                     }
                 }
             }
