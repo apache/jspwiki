@@ -146,12 +146,21 @@ public class PageManager
     public String getPageText( String pageName, int version )
         throws ProviderException
     {
+        if( pageName == null || pageName.length() == 0 )
+        {
+            throw new ProviderException("Illegal page name");
+        }
         return m_provider.getPageText( pageName, version );
     }
 
     public void putPageText( WikiPage page, String content )
         throws ProviderException
     {
+        if( page == null || page.getName() == null || page.getName().length() == 0 )
+        {
+            throw new ProviderException("Illegal page name");
+        }
+
         m_provider.putPageText( page, content );
     }
 
@@ -260,6 +269,11 @@ public class PageManager
     public WikiPage getPageInfo( String pageName, int version )
         throws ProviderException
     {
+        if( pageName == null || pageName.length() == 0 )
+        {
+            throw new ProviderException("Illegal page name");
+        }
+
         return m_provider.getPageInfo( pageName, version );
     }
 
@@ -300,7 +314,13 @@ public class PageManager
     }
 
     public boolean pageExists( String pageName )
+        throws ProviderException
     {
+        if( pageName == null || pageName.length() == 0 )
+        {
+            throw new ProviderException("Illegal page name");
+        }
+
         return m_provider.pageExists( pageName );
     }
 
