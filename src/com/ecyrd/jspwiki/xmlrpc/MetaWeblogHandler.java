@@ -74,6 +74,8 @@ public class MetaWeblogHandler
                                    String permission )
         throws XmlRpcException
     {
+        return;
+        /*
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
         UserProfile currentUser  = m_engine.getUserManager().getUserProfile( username );
         currentUser.setPassword( password );
@@ -105,6 +107,7 @@ public class MetaWeblogHandler
                 throw new XmlRpcException(0, "Password or username not valid.");
             }
         }
+        */
     }
 
     /**
