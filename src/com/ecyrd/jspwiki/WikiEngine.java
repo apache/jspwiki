@@ -26,11 +26,13 @@ import org.apache.oro.text.perl.Perl5Util;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -86,6 +88,9 @@ public class WikiEngine
     /** Property name for the default front page. */
     public static final String PROP_FRONTPAGE    = "jspwiki.frontPage";
 
+    /** The name the UserProfile is stored in a Session by. */
+    public static final String WIKIUSER = "wup";   
+
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
 
@@ -120,6 +125,12 @@ public class WikiEngine
     /** Stores the Attachment manager */
     private AttachmentManager m_attachmentManager = null;
 
+    /** Stores the Authenticator */
+    private Authenticator m_authenticator = null;
+
+    /** Stores the Authorizer */
+    private Authorizer m_authorizer = null;
+
     /** Stores the Page manager */
     private PageManager      m_pageManager = null;
 
@@ -144,6 +155,11 @@ public class WikiEngine
 
     /** The default front page name.  Defaults to "Main". */
     private String           m_frontPage;
+
+    /** The default flags used when running data through a TranslatorReader. */
+    private static final int DEFAULT_TRANSLATION_FLAGS = 0x0;
+
+
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -281,6 +297,8 @@ public class WikiEngine
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( props );
             m_variableManager   = new VariableManager( props );
+            m_authenticator     = new Authenticator( props );
+            m_authorizer        = new Authorizer( props );
 
             initReferenceManager();            
         }
@@ -322,8 +340,6 @@ public class WikiEngine
      */
     private void initReferenceManager()
     {
-        m_pluginManager.enablePlugins( false );
-
         long start = System.currentTimeMillis();
         log.info( "Starting cross reference scan of WikiPages" );
 
@@ -356,9 +372,8 @@ public class WikiEngine
         log.info( "Cross reference scan done (" +
                   (System.currentTimeMillis()-start) +
                   " ms)" );
-
-        m_pluginManager.enablePlugins( true );
     }
+
 
 
     /**
@@ -382,7 +397,6 @@ public class WikiEngine
      *  Internal method for getting a property.  This is used by the
      *  TranslatorReader for example.
      */
-
     public Properties getWikiProperties()
     {
         return m_properties;
@@ -552,8 +566,7 @@ public class WikiEngine
     }
 
     /**
-     *  Beautifies the title of the page by appending spaces in suitable
-     *  places.
+     *  Beautifies the title of the page.
      *
      *  @since 1.7.11
      */
@@ -563,25 +576,24 @@ public class WikiEngine
         {
             StringBuffer result = new StringBuffer();
 
-            char prev  = ' ';
-            char prev2 = ' ';
-
             for( int i = 0; i < title.length(); i++ )
             {
-                char ch = title.charAt(i);
-
-                if( (Character.isUpperCase( ch ) || Character.isDigit( ch )) && 
-                    (Character.isLowerCase( prev ) ||
-                     (Character.isUpperCase(prev) && Character.isLowerCase(prev2)) ) )
+                // No space in front of the first line.
+                if( Character.isUpperCase(title.charAt(i)) && i > 0 )
                 {
                     result.append(' ');
                 }
 
-                result.append( ch );
-                prev2 = prev;
-                prev  = ch;
+                result.append( title.charAt(i) );
             }
             return result.toString();
+            /*
+              // FIXME: Should really use a nice regexp for translating
+              // JSPWiki into JSP Wiki.
+
+            Perl5Util util = new Perl5Util();
+            return util.substitute("s/[:upper:]{1,2}/foo/",title);
+            */
         }
 
         return title;
@@ -892,14 +904,14 @@ public class WikiEngine
     protected Collection scanWikiLinks( String pagedata )
     {
         LinkCollector localCollector = new LinkCollector();        
-
-        textToHTML( new WikiContext(this,""),
-                    pagedata,
-                    localCollector,
-                    null );
-
-        return localCollector.getLinks();
+        TranslatorReader in = new TranslatorReader( new WikiContext(this,""), 
+                                                    new StringReader( pagedata ) );
+        in.enablePlugins( false );
+        in.addLocalLinkHook( localCollector );
+        String translation = translatePageText( in );
+        return( localCollector.getLinks() );
     }
+
 
     /**
      *  Helper method for combining simple  textToHTML() and scanWikiLinks().
@@ -917,17 +929,36 @@ public class WikiEngine
             return null;
         }
 
+        TranslatorReader in = new TranslatorReader( context, 
+                                                    new StringReader( pagedata ) );
+        in.addLocalLinkHook( localLinkHook );
+        in.addExternalLinkHook( extLinkHook );
+        result = translatePageText( in );
+
+        return( result );
+    }
+
+    /**
+     * Simple wrapper for the TranslatorReader trnasformation process,
+     * with default translation flags.
+     */
+    private String translatePageText( TranslatorReader transformer )
+    {
+        return( translatePageText( transformer, DEFAULT_TRANSLATION_FLAGS ) );
+    }
+
+    /**
+     * Simple wrapper for the TranslatorReader trnasformation process.
+     * Flags are not used currently; may be activated later. 
+     */
+    private String translatePageText( TranslatorReader transformer, int flags )
+    {
+        String result = "";
         TranslatorReader in = null;
-        Collection links = null;
 
         try
         {
-            in = new TranslatorReader( context,
-                                       new StringReader( pagedata ) );
-
-            in.addLocalLinkHook( localLinkHook );
-            in.addExternalLinkHook( extLinkHook );
-            result = FileUtil.readContents( in );
+            result = FileUtil.readContents( transformer );
         }
         catch( IOException e )
         {
@@ -947,6 +978,7 @@ public class WikiEngine
 
         return( result );
     }
+
 
     /**
      *  Writes the WikiText of a page into the
@@ -970,81 +1002,6 @@ public class WikiEngine
         {
             log.error( "Unable to put page", e );
         }
-    }
-
-    /**
-     *  Retrieves the user name.  It will check if user has been authenticated,
-     *  or he has a cookie with his username set.  The cookie takes precedence, 
-     *  which allows the wiki master to set up a site with a single master
-     *  password.  Note that this behaviour will be changed in 2.1 or thereabouts.
-     *  Earlier versions than 1.9.42 preferred the authenticated name over
-     *  the cookie name.
-     *
-     *  @param request HttpServletRequest that was called.
-     *  @return The WikiName of the user, or null, if no username was set.
-     */
-    // FIXME: This is a terrible time waster, parsing the 
-    // textual data every time it is used.
-
-    public String getUserName( HttpServletRequest request )
-    {
-        if( request == null )
-        {
-            return null;
-        }
-
-        // Get the user authentication - if he's not been authenticated
-        // we then check from cookies.
-
-        String author = request.getRemoteUser();
-
-        //
-        //  Try to fetch something from a cookie.
-        //
-
-        Cookie[] cookies = request.getCookies();
-
-        if( cookies != null )
-        {
-            for( int i = 0; i < cookies.length; i++ )
-            {
-                if( cookies[i].getName().equals( PREFS_COOKIE_NAME ) )
-                {
-                    UserProfile p = new UserProfile(cookies[i].getValue());
-
-                    author = p.getName();
-
-                    break;
-                }
-            }
-        }
-
-        return author;
-    }
-
-    /**
-     *  If no author name has been set, then use the 
-     *  IP address, if allowed.  If no IP address is allowed,
-     *  then returns a default.
-     *
-     *  @return Returns any sort of user name.  Never returns null.
-     */
-
-    public String getValidUserName( HttpServletRequest request )
-    {
-        String user = getUserName( request );
-
-        if( user == null && m_storeIPAddress )
-        {
-            user = request.getRemoteAddr();
-        }
-
-        if( user == null )
-        {
-            user = "unknown"; // FIXME: Magic
-        }
-
-        return user;
     }
 
 
@@ -1071,7 +1028,8 @@ public class WikiEngine
 
             WikiPage p = new WikiPage( page );
 
-            String author = getValidUserName( request );
+            UserProfile wup = getUserProfile( request );
+            String author = wup.getName();
 
             p.setAuthor( author );
 
@@ -1201,10 +1159,10 @@ public class WikiEngine
         return results;
     }
 
+
     /**
      *  Return a bunch of information from the web page.
      */
-
     public WikiPage getPage( String pagereq )
     {
         return getPage( pagereq, WikiProvider.LATEST_VERSION );
@@ -1214,18 +1172,16 @@ public class WikiEngine
      *  Returns specific information about a Wiki page.
      *  @since 1.6.7.
      */
-
     public WikiPage getPage( String pagereq, int version )
     {
         try
         {
             WikiPage p = m_pageManager.getPageInfo( pagereq, version );
-
             if( p == null )
             {
                 p = m_attachmentManager.getAttachmentInfo( (WikiContext)null, pagereq );
             }
-
+            checkPermissions( p );
             return p;
         }
         catch( ProviderException e )
@@ -1234,6 +1190,44 @@ public class WikiEngine
             return null;
         }
     }
+
+    
+    /**
+     * Checks whether the WikiPage has permissions loaded.
+     * If not, does an extra round through the TranslatorReader and
+     * requests the permissions from it, and attaches them to the page object.
+     * 
+     * <P>Permissions are always determined from the LATEST version of the page.
+     * 
+     * <P>An attachment's permissions are the same as their parent's.
+     *
+     * <p>Permission checks have been spliced into the WikiEngine.getPage()
+     * methods as an afterthought. A better technique would be good. FIX!
+     */
+    public void checkPermissions( WikiPage p )
+    {
+        if( p != null )
+        {
+            String permissionPage = null;
+            if( p instanceof Attachment )
+                permissionPage = ((Attachment)p).getParentName();
+            else
+                permissionPage = p.getName();
+
+            if( p.getAccessRules().isEmpty() )
+            {
+                WikiContext context = new WikiContext( this, permissionPage );
+                String pagedata = getPureText( permissionPage, WikiProvider.LATEST_VERSION );
+                TranslatorReader in = new TranslatorReader( context, new StringReader( pagedata ) );
+                in.enablePlugins( false );
+                String translation = translatePageText( in );
+                AccessRuleSet rules = m_authorizer.getDefaultPermissions();
+                rules.add( in.getAccessRules() );
+                p.setAccessRules( rules );
+            }
+        }
+    }
+
 
     /**
      *  Returns the date the page was last changed.
@@ -1522,6 +1516,227 @@ public class WikiEngine
             //
             m_rssURL = null;
         }
+    }
+
+
+    /**
+     * Given a user name and password, calls the configured Authenticator
+     * and validates the user. Inserts a WikiUserProfile for the user into
+     * the session; this WUP can then be used to add and query the user's 
+     * permissions and check the user ID, both in JSP pages and Wiki code.
+     */
+    public void login( String uid, String passwd, HttpSession session )
+    {
+        if( session == null )
+        {
+            log.error( "No session provided by caller. Unable to login " + uid + "." );
+            return;
+        }
+
+        UserProfile wup = new UserProfile();
+        wup.setName( uid );
+        wup.setPassword( passwd );
+        boolean isValid = m_authenticator.authenticate( wup );
+        if( isValid )
+        {
+            m_authorizer.loadPermissions( wup );
+            session.setAttribute( WIKIUSER, wup );
+            log.debug( "Added WUP " + wup + " for " + uid );
+        }
+    }
+
+    /**
+     * Performs a "limited" login: sniffs for a user name from a cookie or the
+     * client, and creates a limited user profile based on it. 
+     */
+    protected UserProfile limitedLogin( HttpServletRequest request )
+    {
+        UserProfile wup = null;
+        String role = null;
+
+        // See if a cookie exists, and create a 'preferred guest' account if so.
+        String storedProfile = retrieveCookieValue( request, PREFS_COOKIE_NAME );
+
+        if( storedProfile != null )
+        {
+            wup = new UserProfile( storedProfile );
+            wup.setStatus( UserProfile.NAMED );
+            m_authorizer.addRole( wup, Authorizer.AUTH_PARTICIPANT_ROLE );
+        }
+        else
+        {
+            String uid = request.getRemoteUser();
+            if( uid == null && m_storeIPAddress )
+            {
+                uid = request.getRemoteAddr();
+            }
+            if( uid == null )
+            {
+                uid = Authorizer.AUTH_UNKNOWN_UID;
+            }
+            wup = new UserProfile();
+            wup.setName( uid );
+            wup.setStatus( UserProfile.UNKNOWN );
+            log.debug( "XXX " + wup.dump() );
+            log.debug( "XXX adding " + Authorizer.AUTH_GUEST_ROLE + " to " + wup );
+            m_authorizer.addRole( wup, Authorizer.AUTH_GUEST_ROLE );
+        }
+
+        // Limited login hasn't been authenticated. Just to emphasize the point:
+        wup.setPassword( null ); 
+
+        HttpSession session = request.getSession( true );
+        session.setAttribute( WIKIUSER, wup );
+
+        return( wup );
+    }
+
+
+    
+    /**
+     * Removes a UserProfile from a session.
+     */
+    public void logout( HttpSession session )
+    {
+        log.debug( "Logging out." );
+        UserProfile wup = (UserProfile)session.getAttribute( WIKIUSER );
+        if( wup != null )
+        {
+            log.debug( "logged out user " + wup.getName() );
+            session.setAttribute( WIKIUSER, null );
+        }
+    }
+
+
+    /**
+     * Gets a UserProfile, either from the request (presumably 
+     * authenticated and with auth information) or a new one
+     * (with default permissions).
+     */
+    public UserProfile getUserProfile( HttpServletRequest request )
+    {
+        // First, see if we already have a user profile.
+        HttpSession session = request.getSession( true );
+        UserProfile wup = (UserProfile)session.getAttribute( WIKIUSER );
+        if( wup != null )
+            return( wup );
+
+        // Try to get a limited login. This will be inserted into the request.
+        wup = limitedLogin( request );
+        if( wup != null )
+        {
+            return( wup );
+        }
+
+        log.error( "Unable to get a default UserProfile!" );
+        return( null );
+    }
+
+    
+    /**
+     * Returns the user name of a logged in user. Returns null if login has not been done.
+     *
+     * <p>(This method replaces the old, cookie-based username facility.)
+     */
+    public String getUserName( HttpServletRequest request )
+    {
+        UserProfile wup = getUserProfile( request );
+        if( wup != null )
+        {
+            return( wup.getName() );
+        }
+
+        return( null );
+    }
+
+    /**
+     *  If no author name has been set, then use the 
+     *  IP address, if allowed.  If no IP address is allowed,
+     *  then returns a default.
+     *
+     *  NOTE: this is a compatibility method to the main branch.
+     *  It should not be needed with the new auth system. FIX!
+     *
+     *  @return Returns any sort of user name.  Never returns null.
+     */
+    public String getValidUserName( HttpServletRequest request )
+    {
+        return( getUserName( request ) );
+    }
+
+    /**
+     *  Retrieves the user name.  It will check if user has been authenticated,
+     *  or he has a cookie with his username set.  The cookie takes precedence, 
+     *  which allows the wiki master to set up a site with a single master
+     *  password.  Note that this behaviour will be changed in 2.1 or thereabouts.
+     *  Earlier versions than 1.9.42 preferred the authenticated name over
+     *  the cookie name.
+     *
+     *  @param request HttpServletRequest that was called.
+     *  @return The WikiName of the user, or null, if no username was set.
+     */
+    // FIXME: This is a terrible time waster, parsing the 
+    // textual data every time it is used.
+    /*
+    public String getUserName( HttpServletRequest request )
+    {
+        if( request == null )
+        {
+            return null;
+        }
+
+        // Get the user authentication - if he's not been authenticated
+        // we then check from cookies.
+
+        String author = request.getRemoteUser();
+
+        //
+        //  Try to fetch something from a cookie.
+        //
+
+        Cookie[] cookies = request.getCookies();
+
+        if( cookies != null )
+        {
+            for( int i = 0; i < cookies.length; i++ )
+            {
+                if( cookies[i].getName().equals( PREFS_COOKIE_NAME ) )
+                {
+                    UserProfile p = new UserProfile(cookies[i].getValue());
+
+                    author = p.getName();
+
+                    break;
+                }
+            }
+        }
+
+        return author;
+    }
+    */
+
+    /**
+     * Attempts to retrieve the given cookie value from the request.
+     * Returns the string value (which may or may not be decoded 
+     * correctly, depending on browser!), or null if the cookie is
+     * not found.
+     */
+    public String retrieveCookieValue( HttpServletRequest request, String cookieName )
+    {
+        Cookie[] cookies = request.getCookies();
+
+        if( cookies != null )
+        {
+            for( int i = 0; i < cookies.length; i++ )
+            {
+                if( cookies[i].getName().equals( cookieName ) )
+                {
+                    return( cookies[i].getValue() );
+                }
+            }
+        }
+
+        return( null );
     }
 
 }
