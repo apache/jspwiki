@@ -8,10 +8,14 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 public class WikiGroup
+    extends WikiPrincipal
     implements Group
 {
     private Vector m_members = new Vector();
-    private String m_name;
+
+    public WikiGroup()
+    {
+    }
 
     public boolean addMember(Principal user)
     {
@@ -25,16 +29,6 @@ public class WikiGroup
         return true;
     }
 
-
-    public String getName()
-    {
-        return m_name;
-    }
-
-    public void setName( String arg )
-    {
-        m_name = arg;
-    }
 
     public boolean removeMember(Principal user)
     {
@@ -88,5 +82,10 @@ public class WikiGroup
         }
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "[Group: "+getName()+"]";
     }
 }
