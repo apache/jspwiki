@@ -3,8 +3,13 @@
 <%@ page import="java.util.*" %>
 
 <%! 
+    public void jspInit()
+    {
+        wiki = new WikiEngine( getServletContext() );
+    }
+
     Category log = Category.getInstance("JSPWikiSearch");
-    WikiEngine wiki = new WikiEngine(); 
+    WikiEngine wiki;
 %>
 
 

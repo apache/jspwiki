@@ -2,8 +2,13 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 
 <%! 
+    public void jspInit()
+    {
+        wiki = new WikiEngine( getServletContext() );
+    }
+
     Category log = Category.getInstance("JSPWiki");
-    WikiEngine wiki = new WikiEngine(); 
+    WikiEngine wiki;
 %>
 
 

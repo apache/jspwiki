@@ -4,11 +4,10 @@
 <%! 
     public void jspInit()
     {
-        BasicConfigurator.configure();
+        wiki = new WikiEngine( getServletContext() );
     }
-
     Category log = Category.getInstance("JSPWiki"); 
-    WikiEngine wiki = new WikiEngine();
+    WikiEngine wiki;
 %>
 
 
