@@ -1,3 +1,15 @@
+2002-11-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.41.
+
+        * Fixed EditTemplate.jsp to show the link to EditPageHelp in a
+        manner consistent with other edit links.
+
+        * EditLinkTag would crash if the page it was referring to did not
+        exist.  Reported by Torsten Hildebrand.
+
+        * Fixed camelcase patch from Jeff Phillips - thanks Jeff!
+
 2002-11-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.40.
