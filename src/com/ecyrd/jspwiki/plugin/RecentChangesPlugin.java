@@ -28,7 +28,8 @@ import java.text.SimpleDateFormat;
 /**
  *  Returns the Recent Changes.
  *
- *  Parameters: since=number of days
+ *  Parameters: since=number of days,
+ *              format=(compact|full)
  *
  *  @author Janne Jalkanen
  */
@@ -52,12 +53,21 @@ public class RecentChangesPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        int since = TextUtil.parseIntParameter( (String) params.get("since"),
-                                                DEFAULT_DAYS );
+        int      since    = TextUtil.parseIntParameter( (String) params.get("since"),
+                                                        DEFAULT_DAYS );
+        int      spacing  = 4;
+        boolean  showAuthor = true;
 
-        int spacing = TextUtil.parseIntParameter( (String)params.get("spacing"),
-                                                  4 );
-        
+        //
+        //  Which format we want to see?
+        //
+        String format = (String)params.get("format");
+        if( "compact".equals( params.get("format") ) )
+        {
+            spacing  = 0;
+            showAuthor = false;
+        }
+
         Calendar sincedate = new GregorianCalendar();
         sincedate.add( Calendar.DAY_OF_MONTH, -since );
 
@@ -98,13 +108,26 @@ public class RecentChangesPlugin
                     olddate = lastmod;
                 }
 
+                String pageurl = context.getEngine().encodeName(pageref.getName());
+
                 out.write("<TR>\n");
                 out.write("<TD WIDTH=\"30%\"><A HREF=\""+
                           context.getEngine().getBaseURL()+
-                          "Wiki.jsp?page="+
-                          context.getEngine().encodeName(pageref.getName())+
+                          "Wiki.jsp?page="+pageurl+
                           "\">"+pageref.getName()+"</A></TD>\n");
-                out.write("<TD>"+tfmt.format(lastmod)+"</TD>\n");
+                out.write("<TD><A HREF=\"Diff.jsp?page="+pageurl+"&r1=-1\">"+
+                          tfmt.format(lastmod)+
+                          "</A></TD>\n");
+                // FIXME: The following code does not really work.
+                // Problem is that the WikiPageProvider interface does not really
+                // work well with versioning.
+                /*
+                if( showAuthor )
+                {
+                    out.write("<TD>"+pageref.getAuthor()+"</TD>");
+                }
+                */
+
                 out.write("</TR>\n");
             }
 
