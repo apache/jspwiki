@@ -1,5 +1,8 @@
 2002-01-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Added CachingProvider, inspired by Chris Brooking (though in a
+        far simpler form).
+
         * v1.6.4-cvs.
 
         * RecentChanges list now displays author info.
