@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -481,7 +481,7 @@ public class WikiEngine
     /**
      *  Returns the pure text of a page, no conversions.
      */
-    private String getPureText( String page, int version )
+    public String getPureText( String page, int version )
     {
         if( m_provider == null ) 
             return NO_PROVIDER_MSG;
