@@ -174,7 +174,7 @@ public class WikiEngineTest extends TestCase
 
         String data = m_engine.getHTML( name );
 
-        assertEquals( "<I>Foobar.</I>\n",
+        assertEquals( "<i>Foobar.</i>\n",
                        data );
     }
 

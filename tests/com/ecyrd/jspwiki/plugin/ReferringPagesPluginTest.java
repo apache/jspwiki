@@ -56,7 +56,7 @@ public class ReferringPagesPluginTest extends TestCase
 
     private String mkFullLink( String page, String link )
     {
-        return "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page="+link+"\">"+page+"</A>";        
+        return "<a class=\"wikipage\" href=\"Wiki.jsp?page="+link+"\">"+page+"</a>";        
     }
 
     public void testSingleReferral()
@@ -67,7 +67,7 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
-        assertEquals( mkLink( "TestPage" )+"<BR />\n",
+        assertEquals( mkLink( "TestPage" )+"<br />\n",
                       res );
     }
 
@@ -82,14 +82,14 @@ public class ReferringPagesPluginTest extends TestCase
         // Count the number of hyperlinks.  We could check their
         // correctness as well, though.
 
-        while( (index = res.indexOf("<A",index+1)) != -1 )
+        while( (index = res.indexOf("<a",index+1)) != -1 )
         {
             count++;
         }
 
         assertEquals( 5, count );
 
-        String expected = "...and 2 more<BR />";
+        String expected = "...and 2 more<br />";
 
         assertEquals( "End", expected, 
                       res.substring( res.length()-expected.length() ) );
@@ -103,7 +103,7 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
 
-        assertEquals( mkFullLink( "TestP...", "TestPage" )+"<BR />\n",
+        assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />\n",
                       res );        
     }
 

@@ -358,15 +358,15 @@ public class TranslatorReader extends Reader
         switch(type)
         {
           case READ:
-            result = "<A CLASS=\"wikipage\" HREF=\""+m_engine.getViewURL(link)+"\">"+text+"</A>";
+            result = "<a class=\"wikipage\" href=\""+m_engine.getViewURL(link)+"\">"+text+"</a>";
             break;
 
           case EDIT:
-            result = "<U>"+text+"</U><A HREF=\""+m_engine.getEditURL(link)+"\">?</A>";
+            result = "<u>"+text+"</u><a href=\""+m_engine.getEditURL(link)+"\">?</a>";
             break;
 
           case EMPTY:
-            result = "<U>"+text+"</U>";
+            result = "<u>"+text+"</u>";
             break;
 
             //
@@ -376,15 +376,15 @@ public class TranslatorReader extends Reader
             //  to make sure the links are unique across Wiki.
             //
           case LOCALREF:
-            result = "<A CLASS=\"footnoteref\" HREF=\"#ref-"+
+            result = "<a class=\"footnoteref\" href=\"#ref-"+
                 m_context.getPage().getName()+"-"+
-                link+"\">["+text+"]</A>";
+                link+"\">["+text+"]</a>";
             break;
 
           case LOCAL:
-            result = "<A CLASS=\"footnote\" NAME=\"ref-"+
+            result = "<a class=\"footnote\" name=\"ref-"+
                 m_context.getPage().getName()+"-"+
-                link.substring(1)+"\">["+text+"]</A>";
+                link.substring(1)+"\">["+text+"]</a>";
             break;
 
             //
@@ -395,24 +395,24 @@ public class TranslatorReader extends Reader
             //  fillBuffer().
             //
           case IMAGE:
-            result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\" />";
+            result = "<img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" />";
             break;
 
           case IMAGELINK:
-            result = "<A HREF=\""+text+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" /></A>";
+            result = "<a href=\""+text+"\"><img class=\"inline\" src=\""+link+"\" /></a>";
             break;
 
           case IMAGEWIKILINK:
             String pagelink = m_engine.getViewURL(text);
-            result = "<A CLASS=\"wikipage\" HREF=\""+pagelink+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\" /></A>";
+            result = "<a class=\"wikipage\" href=\""+pagelink+"\"><img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" /></a>";
             break;
 
           case EXTERNAL:
-            result = "<A CLASS=\"external\" HREF=\""+link+"\">"+text+"</A>";
+            result = "<a class=\"external\" href=\""+link+"\">"+text+"</a>";
             break;
 
           case INTERWIKI:
-            result = "<A CLASS=\"interwiki\" HREF=\""+link+"\">"+text+"</A>";
+            result = "<a class=\"interwiki\" href=\""+link+"\">"+text+"</a>";
             break;
 
           case ATTACHMENT:
@@ -686,7 +686,7 @@ public class TranslatorReader extends Reader
             {
                 log.error( "Failed to insert plugin", e );
                 log.error( "Root cause:",e.getRootThrowable() );
-                included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
+                included = "<font color=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</font>";
             }
                             
             sb.append( included );
@@ -725,11 +725,11 @@ public class TranslatorReader extends Reader
             }
             catch( NoSuchVariableException e )
             {
-                value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+                value = "<font color=\"#FF0000\">"+e.getMessage()+"</font>";
             }
             catch( IllegalArgumentException e )
             {
-                value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+                value = "<font color=\"#FF0000\">"+e.getMessage()+"</font>";
             }
 
             sb.append( value );
@@ -782,7 +782,7 @@ public class TranslatorReader extends Reader
             }
             else
             {
-                sb.append( link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
+                sb.append( link+" <font color=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</font>");
             }
         }
         else if( reallink.startsWith("#") )
@@ -880,41 +880,41 @@ public class TranslatorReader extends Reader
 
         if( m_isbold )
         {
-            buf.append("</B>");
+            buf.append("</b>");
             m_isbold = false;
         }
 
         if( m_isitalic )
         {
-            buf.append("</I>");
+            buf.append("</i>");
             m_isitalic = false;
         }
 
         if( m_isTypedText )
         {
-            buf.append("</TT>");
+            buf.append("</tt>");
             m_isTypedText = false;
         }
 
         for( ; m_listlevel > 0; m_listlevel-- )
         {
-            buf.append( "</UL>\n" );
+            buf.append( "</ul>\n" );
         }
 
         for( ; m_numlistlevel > 0; m_numlistlevel-- )
         {
-            buf.append( "</OL>\n" );
+            buf.append( "</ol>\n" );
         }
 
         if( m_isPre ) 
         {
-            buf.append("</PRE>\n");
+            buf.append("</pre>\n");
             m_isPre = false;
         }
 
         if( m_istable )
         {
-            buf.append( "</TABLE>" );
+            buf.append( "</table>" );
             m_istable = false;
         }
 
@@ -977,12 +977,12 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '\\' )
             {
-                return "<BR clear=\"all\" />";
+                return "<br clear=\"all\" />";
             }
            
             pushBack( ch2 );
 
-            return "<BR />";
+            return "<br />";
         }
 
         pushBack( ch );
@@ -998,7 +998,7 @@ public class TranslatorReader extends Reader
 
         if( ch == '_' )
         {
-            res      = m_isbold ? "</B>" : "<B>";
+            res      = m_isbold ? "</b>" : "<b>";
             m_isbold = !m_isbold;
         }
         else
@@ -1020,7 +1020,7 @@ public class TranslatorReader extends Reader
 
         if( ch == '\'' )
         {
-            res        = m_isitalic ? "</I>" : "<I>";
+            res        = m_isitalic ? "</i>" : "<i>";
             m_isitalic = !m_isitalic;
         }
         else
@@ -1043,14 +1043,14 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '{' )
             {
-                res = "<PRE>";
+                res = "<pre>";
                 m_isPre = true;
             }
             else
             {
                 pushBack( ch2 );
                 
-                res = "<TT>";
+                res = "<tt>";
                 m_isTypedText = true;
            }
         }
@@ -1081,7 +1081,7 @@ public class TranslatorReader extends Reader
                 if( m_isPre )
                 {
                     m_isPre = false;
-                    res = "</PRE>";
+                    res = "</pre>";
                 }
                 else
                 {
@@ -1094,7 +1094,7 @@ public class TranslatorReader extends Reader
 
                 if( !m_isPre )
                 {
-                    res = "</TT>";
+                    res = "</tt>";
                     m_isTypedText = false;
                 }
                 else
@@ -1131,7 +1131,7 @@ public class TranslatorReader extends Reader
                     while( (ch = nextToken()) == '-' );
 
                     pushBack(ch);
-                    return "<HR />";
+                    return "<hr />";
                 }
         
                 pushBack( ch3 );
@@ -1157,20 +1157,20 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '!' )
             {
-                buf.append("<H2>");
-                m_closeTag = "</H2>";
+                buf.append("<h2>");
+                m_closeTag = "</h2>";
             }
             else
             {
-                buf.append( "<H3>" );
-                m_closeTag = "</H3>";
+                buf.append( "<h3>" );
+                m_closeTag = "</h3>";
                 pushBack( ch2 );
             }
         }
         else
         {
-            buf.append( "<H4>" );
-            m_closeTag = "</H4>";
+            buf.append( "<h4>" );
+            m_closeTag = "</h4>";
             pushBack( ch );
         }
         
@@ -1228,7 +1228,7 @@ public class TranslatorReader extends Reader
 
         if( m_listlevel > 0 )
         {
-            buf.append("</LI>\n");
+            buf.append("</li>\n");
         }
 
         int numBullets = countChars( m_in, '*' ) + 1;        
@@ -1236,15 +1236,15 @@ public class TranslatorReader extends Reader
         if( numBullets > m_listlevel )
         {
             for( ; m_listlevel < numBullets; m_listlevel++ )
-                buf.append("<UL>\n");
+                buf.append("<ul>\n");
         }
         else if( numBullets < m_listlevel )
         {
             for( ; m_listlevel > numBullets; m_listlevel-- )
-                buf.append("</UL>\n");
+                buf.append("</ul>\n");
         }
                 
-        buf.append("<LI>");
+        buf.append("<li>");
 
         return buf.toString();
     }
@@ -1256,7 +1256,7 @@ public class TranslatorReader extends Reader
 
         if( m_numlistlevel > 0 )
         {
-            buf.append("</LI>\n");
+            buf.append("</li>\n");
         }
 
         int numBullets = countChars( m_in, '#' ) + 1;
@@ -1264,15 +1264,15 @@ public class TranslatorReader extends Reader
         if( numBullets > m_numlistlevel )
         {
             for( ; m_numlistlevel < numBullets; m_numlistlevel++ )
-                buf.append("<OL>\n");
+                buf.append("<ol>\n");
         }
         else if( numBullets < m_numlistlevel )
         {
             for( ; m_numlistlevel > numBullets; m_numlistlevel-- )
-                buf.append("</OL>\n");
+                buf.append("</ol>\n");
         }
                 
-        buf.append("<LI>");
+        buf.append("<li>");
 
         return buf.toString();
 
@@ -1285,9 +1285,9 @@ public class TranslatorReader extends Reader
         {
             m_isdefinition = true;
 
-            m_closeTag = "</DD>\n</DL>";
+            m_closeTag = "</dd>\n</dl>";
 
-            return "<DL>\n<DT>";
+            return "<dl>\n<dt>";
         }
 
         return ";";
@@ -1358,12 +1358,12 @@ public class TranslatorReader extends Reader
         {
             if( !m_istable )
             {
-                sb.append("<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n");
+                sb.append("<table class=\"wikitable\" border=\"1\">\n");
                 m_istable = true;
             }
 
-            sb.append("<TR>");
-            m_closeTag = "</TD></TR>";
+            sb.append("<tr>");
+            m_closeTag = "</td></tr>";
         }
         
         int ch = nextToken();
@@ -1372,18 +1372,18 @@ public class TranslatorReader extends Reader
         {
             if( !newLine ) 
             {
-                sb.append("</TH>");
+                sb.append("</th>");
             }
-            sb.append("<TH>");
-            m_closeTag = "</TH></TR>";
+            sb.append("<th>");
+            m_closeTag = "</th></tr>";
         }
         else
         {
             if( !newLine ) 
             {
-                sb.append("</TD>");
+                sb.append("</td>");
             }
-            sb.append("<TD>");
+            sb.append("<td>");
             pushBack( ch );
         }
 
@@ -1528,25 +1528,25 @@ public class TranslatorReader extends Reader
 
             if( newLine && ch != '*' && ch != ' ' && m_listlevel > 0 )
             {
-                buf.append("</LI>\n");
+                buf.append("</li>\n");
                 for( ; m_listlevel > 0; m_listlevel-- )
                 {
-                    buf.append("</UL>\n");
+                    buf.append("</ul>\n");
                 }
             }
 
             if( newLine && ch != '#' && ch != ' ' && m_numlistlevel > 0 )
             {
-                buf.append("</LI>\n");
+                buf.append("</li>\n");
                 for( ; m_numlistlevel > 0; m_numlistlevel-- )
                 {
-                    buf.append("</OL>\n");
+                    buf.append("</ol>\n");
                 }
             }
 
             if( newLine && ch != '|' && m_istable )
             {
-                buf.append("</TABLE>\n");
+                buf.append("</table>\n");
                 m_istable = false;
                 m_closeTag = null;
             }
@@ -1577,7 +1577,7 @@ public class TranslatorReader extends Reader
                 {
                     // Paragraph change.
 
-                    buf.append("<P>\n");
+                    buf.append("<p>\n");
                 }
                 else
                 {
@@ -1636,7 +1636,7 @@ public class TranslatorReader extends Reader
               case ':':
                 if( m_isdefinition )
                 {
-                    s = "</DT><DD>";
+                    s = "</dt><dd>";
                     m_isdefinition = false;
                 }
                 else
