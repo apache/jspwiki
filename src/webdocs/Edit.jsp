@@ -95,7 +95,7 @@
   <%@ include file="cssinclude.js" %>
 </HEAD>
 
-<BODY class="edit" BGCOLOR="#FFD0FF" onLoad="document.forms[0].text.focus()">
+<BODY class="edit" BGCOLOR="#FFD0FF" onLoad="document.forms[1].text.focus()">
 
 <TABLE BORDER="0" CELLSPACING="8">
 
