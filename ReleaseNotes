@@ -41,7 +41,9 @@ UPGRADE NOTES
 - If updating manually:
   - copy all JSP files
   - remove the extra special page entries from jspwiki.properties -
-    the only ones you should be left with are "SystemInfo" and "FindPage".
+    the only ones you should be left with are "SystemInfo" and "FindPage"
+    (except if you have some of your own defined).
+  - Remove RecentChanges.jsp - it is no longer required.
   - Copy the new JSPWiki sample pages (LeftMenuFooter, RecentChanges,
     UndefinedPages, UnusedPages are new) into your wiki page repository.
   - ant build; cp -r build/com .../JSPWiki/WEB-INF/classes/
