@@ -42,16 +42,17 @@
     if( wikipage == null )
     {
         wikipage = new WikiPage( pagereq );
+        wiki.checkPermissions( wikipage );
     }
 
     AccessRuleSet accessRules = wikipage.getAccessRules();
     UserProfile userProfile = wiki.getUserProfile( request );
-    
+
     if( accessRules.hasWriteAccess( userProfile ) == false )
     {
         StringBuffer buf = new StringBuffer();
         buf.append( "<h4>Unable to edit " + pagereq + ".</h4>\n" );
-        buf.append( "You do not have sufficient privileges to view this page.\n" );
+        buf.append( "You do not have sufficient privileges to edit this page.\n" );
         buf.append( "Have you logged in?\n" );
         throw new WikiSecurityException( buf.toString() );
     }
