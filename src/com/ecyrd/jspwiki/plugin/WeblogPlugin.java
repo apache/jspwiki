@@ -73,7 +73,7 @@ public class WeblogPlugin implements WikiPlugin
                 sb.append("<DIV CLASS=\"weblogheading\">");
 
                 Date entryDate = engine.getPage( p.getName(), 1 ).getLastModified();
-                sb.append( entryDatefmt.format(entryDate) );
+                sb.append( entryDateFmt.format(entryDate) );
 
                 // FIXME: Add permalink here.
                 
