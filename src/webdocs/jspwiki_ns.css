@@ -3,8 +3,9 @@ H1 { font-size: 36px }
 H2 { font-size: 24px }
 H3 { font-size: 20px }
 H4 { font-size: 16px }
-P,UL,OL,BODY,TD,PRE  { font-size: 16px }
+P,UL,OL,BODY,TD { font-size: 16px }
 FORM { font-size: 14px }
+PRE { font-size: 14px }
 DIV.small { font-size: 70% }
 H1.pagename {}
 IMG.inline {}
