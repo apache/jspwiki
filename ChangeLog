@@ -1,3 +1,7 @@
+2003-04-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.6.
+
 2003-04-08  Erik Bunn  <Erik.Bunn@no_spam.ecyrd.com>
 
         * Modified FileSystemProvider, CachingProvider; added 
