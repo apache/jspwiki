@@ -1,3 +1,10 @@
+2005-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.148
+        
+        * Oops, didn't quite fix the problems; the extra <script> tag turned
+        out to be useful after all... Fixes BugCantFindJSPWIKI_MAC.CSS.
+        
 2005-02-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.147

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/ecs.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/lucene.jar"/>
+	<classpathentry kind="lib" path="lib/multipartrequest.jar"/>
+	<classpathentry kind="lib" path="lib/oro.jar"/>
+	<classpathentry kind="lib" path="lib/oscache.jar"/>
+	<classpathentry kind="lib" path="lib/sandler.jar"/>
+	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
+	<classpathentry kind="lib" path="/home/jalkanen/Projects/JSPWiki/lib/servlet.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>
