@@ -1,3 +1,12 @@
+2004-09-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.111
+
+        * Added TableOfContents plugin.
+
+        * Now recognizes all official IANA URI types correctly as
+        external links.
+
 2004-09-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.110
