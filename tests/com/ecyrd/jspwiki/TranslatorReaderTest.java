@@ -11,6 +11,8 @@ public class TranslatorReaderTest extends TestCase
     Properties props = new Properties();
     Vector     created = new Vector();
 
+    static final String PAGE_NAME = "testpage";
+
     TestEngine testEngine;
 
     public TranslatorReaderTest( String s )
@@ -57,7 +59,7 @@ public class TranslatorReaderTest extends TestCase
                ServletException
     {
         WikiContext context = new WikiContext( testEngine,
-                                               "testpage" );
+                                               PAGE_NAME );
         Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
         StringWriter out = new StringWriter();
@@ -689,6 +691,14 @@ public class TranslatorReaderTest extends TestCase
         String src="[{INSERT SamplePlugin WHERE text=test}]";
 
         assertEquals( "test\n", translate(src) );
+    }
+
+    public void testVariableInsert()
+        throws Exception
+    {
+        String src="[{$pagename}]";
+
+        assertEquals( PAGE_NAME+"\n", translate(src) );
     }
 
     public void testTable1()
