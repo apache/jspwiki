@@ -515,4 +515,67 @@ public class TextUtil
 
         return props;
     }
+
+    /**
+     *  Counts the number of sections (separated with "----") from the page.
+     *
+     *  @param pagedata The WikiText to parse.
+     *  @return int Number of counted sections.
+     *  @since 2.1.86.
+     */
+
+    public static int countSections( String pagedata )
+    {
+        int tags  = 0;
+        int start = 0;
+
+        while( (start = pagedata.indexOf("----",start)) != -1 )
+        {
+            tags++;
+            start+=4; // Skip this "----"
+        }
+
+        //
+        // The first section does not get the "----"
+        //
+        return pagedata.length() > 0 ? tags+1 : 0;
+    }
+
+    /**
+     *  Gets the given section (separated with "----") from the page text.
+     *  Note that the first section is always #1.  If a page has no section markers,
+     *  them there is only a single section, #1.
+     *
+     *  @param pagedata WikiText to parse.
+     *  @param section  Which section to get.
+     *  @return String  The section.
+     *  @throws IllegalArgumentException If the page does not contain this many sections.
+     *  @since 2.1.86.
+     */
+    public static String getSection( String pagedata, int section )
+        throws IllegalArgumentException
+    {
+        int tags  = 0;
+        int start = 0;
+        int previous = 0;
+
+        while( (start = pagedata.indexOf("----",start)) != -1 )
+        {
+            if( ++tags == section )
+            {
+                return pagedata.substring( previous, start );
+            }
+
+            start += 4; // Skip this "----"
+
+            previous = start;
+        }
+
+        if( ++tags == section )
+        {
+            return pagedata.substring( previous );
+        }
+
+        throw new IllegalArgumentException("There is no section no. "+section+" on the page.");
+    }
 }
