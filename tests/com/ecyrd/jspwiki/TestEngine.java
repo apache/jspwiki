@@ -67,7 +67,8 @@ public class TestEngine extends WikiEngine
     }
 
     /**
-     *  Removes a page.
+     *  Removes a page, but not any auxiliary information.  Works only
+     *  with FileSystemProvider.
      */
     public void deletePage( String name )
     {
@@ -85,6 +86,9 @@ public class TestEngine extends WikiEngine
         }
     }
 
+    /**
+     *  Deletes all attachments related to the given page.
+     */
     public void deleteAttachments( String page )
     {
         try
@@ -101,6 +105,9 @@ public class TestEngine extends WikiEngine
         }
     }
 
+    /**
+     *  Makes a temporary file with some content, and returns a handle to it.
+     */
     public File makeAttachmentFile()
         throws Exception
     {
