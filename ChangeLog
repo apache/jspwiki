@@ -1,3 +1,19 @@
+2005-03-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.154
+        
+        * Fixed a bunch of tests that were broken by 2.1.152.
+        
+        * RepositoryModifiedException now has a new constructor
+        with the page name as well.
+
+        * MAJOR change to CachingProvider: it was getting a bit too
+        unwieldy to debug, so I changed it to completely use OSCache.
+        This should hopefully help the caching issues somewhat (I
+        just hope I didn't do any major damage...)
+
+        * WikiPage is now Comparable.
+
 2005-03-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.153
