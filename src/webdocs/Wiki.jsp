@@ -51,8 +51,11 @@
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
+
     <TD WIDTH="85%" VALIGN="top">
-      <H1><%=pagereq%></H1>
+
+      <%@ include file="PageHeader.jsp" %>
+
       <%
          if( wiki.pageExists( pagereq ) )
          {

@@ -27,6 +27,8 @@
     Collection list = null;
 
     list = wiki.getRecentChanges();
+
+    String pagereq = "Recent Changes";
 %>
 
 <HTML>
@@ -46,7 +48,7 @@
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
     <TD WIDTH="85%" VALIGN="top">
-      <H1>Recent Changes</H1>
+      <%@ include file="PageHeader.jsp" %>
 
       <% if( list != null ) 
       {
