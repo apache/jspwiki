@@ -20,7 +20,13 @@
 <%
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     WikiPage    wikipage    = wikiContext.getPage();
-    
+
+    if( wiki.getBaseURL().length() == 0 )
+    {
+        response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate RSS" );
+        return;
+    }
+
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
     response.setContentType("text/xml; charset=UTF-8" );
@@ -73,7 +79,7 @@
 
             String encodedName = wiki.encodeName(p.getName());
 
-            String url = wiki.getViewURL(p.getName());
+            String url = wiki.getAbsoluteURL(WikiContext.VIEW,p.getName());
 %>
             <rdf:li rdf:resource="<%=url%>"/>
 <%
@@ -111,6 +117,7 @@
 
                 if( maxlen > 0 )
                 {
+                    wikiContext.setVariable( WikiEngine.PROP_URLSTYLE, "absolute" );
                     pageText = wiki.textToHTML( wikiContext, 
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
@@ -137,10 +144,10 @@
             if( p.getVersion() > 1 )
             {
                 itemBuffer.append("  <wiki:diff>"+
-                              wiki.getBaseURL()+"Diff.jsp?page="+
-                              encodedName+
-                              "&amp;r1=-1"+
-                              "</wiki:diff>\n");
+                                  wiki.getAbsoluteURL( WikiContext.DIFF,
+                                                       p.getName(),
+                                                      "r1=-1" )+
+                                  "</wiki:diff>\n");
             }
 
             //
@@ -165,7 +172,7 @@
             itemBuffer.append("   <rdf:Description");
             if( wiki.pageExists(author) )
             {
-                itemBuffer.append(" link=\""+wiki.getViewURL(author)+"\"");
+                itemBuffer.append(" link=\""+wiki.getAbsoluteURL(WikiContext.VIEW,author)+"\"");
             }
             itemBuffer.append(">\n");
             itemBuffer.append("    <rdf:value>"+author+"</rdf:value>\n");
@@ -176,8 +183,8 @@
             //  PageHistory
 
             itemBuffer.append("  <wiki:history>");
-            itemBuffer.append( wiki.getBaseURL()+"PageInfo.jsp?page="+
-                           encodedName );
+            itemBuffer.append( wiki.getAbsoluteURL( WikiContext.INFO,
+                                                    p.getName() ) );
             itemBuffer.append("</wiki:history>\n");
 
             //  Close up.
