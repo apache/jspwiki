@@ -48,7 +48,6 @@ public abstract class AbstractFileProvider
 {
     private static final Category   log = Category.getInstance(AbstractFileProvider.class);
     private String m_pageDirectory = "/tmp/";
-    private WikiEngine m_engine;
     
     protected String m_encoding;
 
@@ -92,18 +91,6 @@ public abstract class AbstractFileProvider
                                              DEFAULT_ENCODING );
 
         log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
-    }
-
-
-    public void setWikiEngine( WikiEngine e )
-    {
-        m_engine = e;
-    }
-
-
-    public WikiEngine getWikiEngine()
-    {
-        return( m_engine );
     }
 
 

@@ -29,22 +29,10 @@ public class CounterProvider
 
     String defaultText = "[Foo], [Bar], [Blat], [Blah]";
 
-    /** Controlling WikiEngine. */
-    private WikiEngine m_engine;
 
     public void initialize( Properties props )
     {
         m_initCalls++;
-    }
-
-    public void setWikiEngine( WikiEngine e )
-    {
-	m_engine = e;
-    }
-
-    public WikiEngine getWikiEngine()
-    {
-	return( m_engine );
     }
 
     public String getProviderInfo()
