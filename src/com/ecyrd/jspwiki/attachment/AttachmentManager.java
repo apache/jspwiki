@@ -30,6 +30,7 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -110,18 +111,70 @@ public class AttachmentManager
         return m_provider != null;
     }
 
-    public Attachment getAttachmentInfo( WikiPage page, String name )
+    public Attachment getAttachmentInfo( String name )
         throws ProviderException
     {
-        return getAttachmentInfo( page, name, WikiProvider.LATEST_VERSION );
+        return getAttachmentInfo( name, WikiProvider.LATEST_VERSION );
     }
 
-    public Attachment getAttachmentInfo( WikiPage wikipage, String name, int version )
+    public Attachment getAttachmentInfo( String name, int version )
         throws ProviderException
     {
-        return m_provider.getAttachmentInfo( wikipage, name, version );
+        if( name == null )
+        {
+            return null;
+        }
+
+        return getAttachmentInfo( null, name, version );
     }
 
+    public Attachment getAttachmentInfo( WikiContext context,
+                                         String attachmentname )
+        throws ProviderException
+    {
+        return getAttachmentInfo( context, attachmentname, WikiProvider.LATEST_VERSION );
+    }
+
+    /**
+     *  Checks for a compound name, and attempts to get attachment information.
+     */
+    public Attachment getAttachmentInfo( WikiContext context, 
+                                         String attachmentname, 
+                                         int version )
+        throws ProviderException
+    {
+        WikiPage currentPage = null;
+
+        if( context != null )
+        {
+            currentPage = context.getPage();
+        }
+
+        int cutpt = attachmentname.lastIndexOf('/');
+        
+        if( cutpt != -1 )
+        {
+            currentPage = new WikiPage( attachmentname.substring(0,cutpt) );
+            attachmentname = attachmentname.substring(cutpt+1);
+        }
+
+        // 
+        //  If the page cannot be determined, we cannot possibly find the 
+        //  attachments.
+        //
+        if( currentPage == null )
+        {
+            return null;
+        }
+
+        // System.out.println("Seeking info on "+currentPage+"::"+attachmentname);
+
+        return m_provider.getAttachmentInfo( currentPage, attachmentname, version );
+    }
+
+    /**
+     *  Returns the list of attachments associated with a given wiki page.
+     */
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
     {
@@ -161,6 +214,19 @@ public class AttachmentManager
                ProviderException
     {
         m_provider.putAttachmentData( att, in );
+    }
+
+    public Collection getVersionHistory( String attachmentName )
+        throws ProviderException
+    {
+        Attachment att = getAttachmentInfo( (WikiContext)null, attachmentName );
+
+        if( att != null )
+        {
+            return m_provider.getVersionHistory( att );
+        }
+       
+        return null;
     }
 
     public WikiAttachmentProvider getCurrentProvider()
