@@ -1,3 +1,10 @@
+2004-04-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.94.
+
+        * Now default template links to jspwiki.org EditPageHelp in case
+        the page is missing.  Suggested by SebastianPetzelberger.
+
 2004-03-31  Erik Bunn  <ebu@spamicide.basen.net>
 
         * v2.1.93
