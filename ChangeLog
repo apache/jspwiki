@@ -1,5 +1,7 @@
 2002-02-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.6.10-cvs
+
         * XML-RPC interface now hopefully gives out the modification time
         in UTC, before it used the local timezone.
 
