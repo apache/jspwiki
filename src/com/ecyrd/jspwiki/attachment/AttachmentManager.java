@@ -156,6 +156,13 @@ public class AttachmentManager
         m_provider.putAttachmentData( att, new FileInputStream(source) );
     }
 
+    public void storeAttachment( Attachment att, InputStream in )
+        throws IOException,
+               ProviderException
+    {
+        m_provider.putAttachmentData( att, in );
+    }
+
     public WikiAttachmentProvider getCurrentProvider()
     {
         return m_provider;
