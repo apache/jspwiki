@@ -71,10 +71,12 @@ public class WeblogPlugin implements WikiPlugin
         
         try
         {
-            Collection blogEntries = findBlogEntries( context.getEngine().getPageManager(),
-                                                      weblogName,
-                                                      startTime.getTime(),
-                                                      stopTime.getTime() );
+            List blogEntries = findBlogEntries( context.getEngine().getPageManager(),
+                                                weblogName,
+                                                startTime.getTime(),
+                                                stopTime.getTime() );
+            Collections.sort( blogEntries, new PageTimeComparator() );
+
 
             SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
@@ -118,8 +120,8 @@ public class WeblogPlugin implements WikiPlugin
      *  Attempts to locate all pages that correspond to the 
      *  blog entry pattern.
      */
-    private Collection findBlogEntries( PageManager mgr,
-                                        String baseName, Date start, Date end )
+    public List findBlogEntries( PageManager mgr,
+                                 String baseName, Date start, Date end )
         throws ProviderException
     {
         Collection everyone = mgr.getAllPages();
