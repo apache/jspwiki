@@ -27,13 +27,13 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    usertext = TranslatorReader.replaceString( usertext, "<", "&lt;" );
-    usertext = TranslatorReader.replaceString( usertext, ">", "&gt;" );
+    usertext = TextUtil.replaceString( usertext, "<", "&lt;" );
+    usertext = TextUtil.replaceString( usertext, ">", "&gt;" );
 
     String conflicttext = wiki.getText(pagereq);
 
-    conflicttext = TranslatorReader.replaceString( conflicttext, "<", "&lt;" );
-    conflicttext = TranslatorReader.replaceString( conflicttext, ">", "&gt;" );
+    conflicttext = TextUtil.replaceString( conflicttext, "<", "&lt;" );
+    conflicttext = TextUtil.replaceString( conflicttext, ">", "&gt;" );
 
     log.info("Page concurrently modified "+pagereq);
 %>
