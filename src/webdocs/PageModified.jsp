@@ -51,7 +51,9 @@
 
     log.info("Page concurrently modified "+pagereq);
 
-    String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "ViewTemplate.jsp" );
 %>
 
 <wiki:Include page="<%=contentPage%>" />

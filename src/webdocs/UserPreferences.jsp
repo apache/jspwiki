@@ -53,7 +53,9 @@
     else
     {
         response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-        String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
+        String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                                wikiContext.getTemplate(),
+                                                                "ViewTemplate.jsp" );
 %>
 
         <wiki:Include page="<%=contentPage%>" />

@@ -189,7 +189,10 @@
         session.setAttribute( "lock-"+pagereq, lock );
     }
 
-    String contentPage = "templates/"+wikiContext.getTemplate()+"/EditTemplate.jsp";
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "EditTemplate.jsp" );
+
 %>
 
 <wiki:Include page="<%=contentPage%>" />

@@ -29,7 +29,9 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    String contentPage = "templates/"+wikiContext.getTemplate()+"/UploadTemplate.jsp";
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "UploadTemplate.jsp" );
 %>
 
 <wiki:Include page="<%=contentPage%>" />
