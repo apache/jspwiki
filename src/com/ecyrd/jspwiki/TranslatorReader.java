@@ -156,7 +156,8 @@ public class TranslatorReader extends Reader
 
         try
         {
-            m_camelCasePtrn = m_compiler.compile( "(^|\\W|\\~)([A-Z][a-z]+([A-Z][a-z]+)+)" );
+            //m_camelCasePtrn = m_compiler.compile( "(^|\\W|\\~)([A-Z][a-z]+([A-Z][a-z]+)+)" );
+            m_camelCasePtrn = m_compiler.compile( "(^|\\W|\\~)([A-Z]+[a-z]+[A-Z]+[a-zA-Z0-9]*)" );
         }
         catch( MalformedPatternException e )
         {
@@ -477,64 +478,50 @@ public class TranslatorReader extends Reader
     /**
      *  Attempts to set traditional, CamelCase style WikiLinks.
      */
-    private String setCamelCaseLinks( String line )
+    private String setCamelCaseLinks( String word )
     {
         PatternMatcherInput input;
 
-        input = new PatternMatcherInput( line );
+        input = new PatternMatcherInput( word );
 
-        while( m_matcher.contains( input, m_camelCasePtrn ) )
+        if( m_matcher.contains( input, m_camelCasePtrn ) )
         {
-            //
-            //  Weed out links that will be matched later on.
-            //
-
             MatchResult res = m_matcher.getMatch();
-            int lastOpen  = line.substring(0,res.endOffset(2)).lastIndexOf('[');
-            int lastClose = line.substring(0,res.endOffset(2)).lastIndexOf(']');
+  
+            int start = res.beginOffset(2);
+            int end   = res.endOffset(2);
 
-            if( (lastOpen < lastClose && lastOpen >= 0) || // Links closed ok
-                lastOpen < 0 )                             // No links yet
+            String link = res.group(2);
+            String matchedLink;
+
+            // System.out.println("WORD="+word);
+            // System.out.println("  Replacing: "+link);
+
+            callMutatorChain( m_localLinkMutatorChain, link );
+
+            if( "~".equals( res.group(1) ) )
             {
-                int start = res.beginOffset(2);
-                int end   = res.endOffset(2);
+                // Delete the (~) from beginning.
+                // We'll make '~' the generic kill-processing-character from
+                // now on.
+                start--;
+            }
+            else if( (matchedLink = linkExists( link )) != null )
+            {
+                link = makeLink( READ, matchedLink, link );
+            }
+            else
+            {
+                link = makeLink( EDIT, link, link );
+            }
 
-                String link = res.group(2);
-                String matchedLink;
+            word = TextUtil.replaceString( word, 
+                                           start, 
+                                           end, 
+                                           link );
+        } // if match
 
-                // System.out.println("LINE="+line);
-                // System.out.println("  Replacing: "+link);
-                // System.out.println("  open="+lastOpen+", close="+lastClose);
-
-                callMutatorChain( m_localLinkMutatorChain, link );
-
-                if( "~".equals( res.group(1) ) )
-                {
-                    // Delete the (~) from beginning.
-                    // We'll make '~' the generic kill-processing-character from
-                    // now on.
-                    start--;
-                }
-                else if( (matchedLink = linkExists( link )) != null )
-                {
-                    link = makeLink( READ, matchedLink, link );
-                }
-                else
-                {
-                    link = makeLink( EDIT, link, link );
-                }
-
-                line = TextUtil.replaceString( line, 
-                                               start, 
-                                               end, 
-                                               link );
-
-                input.setInput( line );
-                input.setCurrentOffset( start+link.length() );
-            } // if()
-        } // while
-
-        return line;
+        return word;
     }
 
     
@@ -1312,18 +1299,16 @@ public class TranslatorReader extends Reader
                         String camelCase = setCamelCaseLinks(word.toString());
 
                         // If we did not get the same word back, then we have a camelcase.
-                        // Replace our word in the buffer, and reset!
+                        // Replace our word in the buffer.
                         if( !camelCase.equals(word.toString()) )
                         {
                             buf.replace(buf.length() - word.length(),
                                         buf.length(),
                                         camelCase);
-                            word = null;
                         }
-                        else
-                        {
-                            word.append( (char)ch );
-                        }
+
+                        // We've ended a word boundry, so time to reset.
+                        word = null;
                     }
                     else
                     {
@@ -1509,298 +1494,6 @@ public class TranslatorReader extends Reader
         m_data = new StringReader( buf.toString() );
     }
 
-    /*
-    private void fillBuffer()
-        throws IOException
-    {
-        int pre;
-        String postScript = ""; // Gets added at the end of line.
-
-        StringBuffer buf = new StringBuffer();
-
-        String line = m_in.readLine();
-
-        if( line == null ) 
-        {
-            m_data = new StringReader("");
-            return;
-        }
-
-        String trimmed = line.trim();
-
-        //
-        // Stupid hack to enable multi-line plugin entries. This should not be.
-        // Then again, this line-based parsing shouldn't be, either.
-        // We simply read stuff in until we encounter the line that closes the
-        // plugin. May potentially cause long lines, especially if a close tag 
-        // is missing.
-        //
-
-        int pluginStart = -1;
-        int pluginEnd = -1;
-
-        if( (pluginStart = line.indexOf( "[{" )) != -1 && 
-            (pluginEnd = line.indexOf( "}]", pluginStart )) == -1 )
-        {
-            StringBuffer sb = new StringBuffer( line );
-            boolean pluginClosed = false;
-            while( !pluginClosed )
-            {
-                String additional = m_in.readLine();
-                if( additional != null )
-                {
-                    sb.append( "\n" );
-                    sb.append( additional );
-                    if( additional.indexOf( "}]" ) != -1 )
-                        pluginClosed = true;
-                }
-                else
-                {
-                    log.error( "Unclosed plugin" );
-                }
-            }
-            line = sb.toString();
-        }
-
-        //
-        //  Replace the most obvious items that could possibly
-        //  break the resulting HTML code.
-        //
-
-        line = TextUtil.replaceEntities( line );
-
-        if( !m_iscode )
-        {
-
-            //
-            //  Tables
-            //
-            if( trimmed.startsWith("|") )
-            {
-                StringBuffer tableLine = new StringBuffer();
-
-                if( !m_istable )
-                {
-                    buf.append( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n" );
-                    m_istable = true;
-                }
-
-                buf.append( "<TR>" );
-
-                //
-                //  The following piece of code will go through the line character
-                //  by character, and replace all references to the table markers (|)
-                //  by a <TD>, EXCEPT when '|' can be found inside a link.
-                //
-                boolean islink = false;
-                for( int i = 0; i < line.length(); i++ )
-                {
-                    char c = line.charAt(i);
-                    switch( c )
-                    {
-                      case '|':
-                        if( !islink )
-                        {
-                            if( i < line.length()-1 && line.charAt(i+1) == '|' )
-                            {
-                                // It's a heading.
-                                tableLine.append( "<TH>" );
-                                i++;
-                            }
-                            else
-                            {
-                                // It's a normal thingy.
-                                tableLine.append( "<TD>" );
-                            }
-                        }
-                        else
-                        {
-                            tableLine.append( c );
-                        }
-                        break;
-
-                      case '[':
-                        islink = true;
-                        tableLine.append( c );
-                        break;
-
-                      case ']':
-                        islink = false;
-                        tableLine.append( c );
-                        break;
-
-                      default:
-                        tableLine.append( c );
-                        break;
-                    }
-                } // for
-
-                line = tableLine.toString();
-
-                postScript = "</TR>";
-            }
-            else if( !trimmed.startsWith("|") && m_istable )
-            {
-                buf.append( "</TABLE>" );
-                m_istable = false;
-            }
-
-            //
-            //  FIXME: The following two blocks of code are temporary
-            //  solutions for code going all wonky if you do multiple #*:s inside
-            //  each other.
-            //  A real solution is needed - this only closes down the other list
-            //  before the other one gets started.
-            //
-            if( line.startsWith("*") )
-            {
-                for( ; m_numlistlevel > 0; m_numlistlevel-- )
-                {
-                    buf.append("</OL>\n");
-                }
-
-            }
-
-            if( line.startsWith("#") )
-            {
-                for( ; m_listlevel > 0; m_listlevel-- )
-                {
-                    buf.append("</UL>\n");
-                }
-            }
-
-            //
-            // Make a bulleted list
-            //
-            if( line.startsWith("*") )
-            {
-                // Close all other lists down.
-
-                int numBullets = countChar( line, 0, '*' );
-                
-                if( numBullets > m_listlevel )
-                {
-                    for( ; m_listlevel < numBullets; m_listlevel++ )
-                        buf.append("<UL>\n");
-                }
-                else if( numBullets < m_listlevel )
-                {
-                    for( ; m_listlevel > numBullets; m_listlevel-- )
-                        buf.append("</UL>\n");
-                }
-                
-                buf.append("<LI>");
-                line = line.substring( numBullets );
-            }
-            else if( line.startsWith(" ") && m_listlevel > 0 && trimmed.length() != 0 )
-            {
-                // This is a continuation of a previous line.
-            }
-            else if( line.startsWith("#") && m_listlevel > 0 )
-            {
-                // We don't close all things for the other list type.
-            }
-            else
-            {
-                // Close all lists down.
-                for( ; m_listlevel > 0; m_listlevel-- )
-                {
-                    buf.append("</UL>\n");
-                }
-            }
-
-            //
-            //  Ordered list
-            //
-            if( line.startsWith("#") )
-            {
-                // Close all other lists down.
-                if( m_numlistlevel == 0 )
-                {
-                    for( ; m_listlevel > 0; m_listlevel-- )
-                    {
-                        buf.append("</UL>\n");
-                    }
-                }
-
-                int numBullets = countChar( line, 0, '#' );
-                
-                if( numBullets > m_numlistlevel )
-                {
-                    for( ; m_numlistlevel < numBullets; m_numlistlevel++ )
-                        buf.append("<OL>\n");
-                }
-                else if( numBullets < m_numlistlevel )
-                {
-                    for( ; m_numlistlevel > numBullets; m_numlistlevel -- )
-                        buf.append("</OL>\n");
-                }
-                
-                buf.append("<LI>");
-                line = line.substring( numBullets );
-            }
-            else if( line.startsWith(" ") && m_numlistlevel > 0 && trimmed.length() != 0 )
-            {
-                // This is a continuation of a previous line.
-            }
-            else if( line.startsWith("*") && m_numlistlevel > 0 )
-            {
-                // We don't close things for the other list type.
-            }
-            else
-            {
-                // Close all lists down.
-                for( ; m_numlistlevel > 0; m_numlistlevel-- )
-                {
-                    buf.append("</OL>\n");
-                }
-            }
-
-            // Do the standard settings
-
-            if( m_camelCaseLinks )
-            {
-                line = setCamelCaseLinks( line );
-            }
-
-            line = setDefinitionList( line );
-            line = setHeadings( line );
-            line = setHR( line );
-            line = setBold( line );
-            line = setItalic( line );
-
-            line = setTT( line );
-            line = TextUtil.replaceString( line, "\\\\", "<BR>" );
-
-            line = setHyperLinks( line );
-
-            // Is this an empty line?
-            if( trimmed.length() == 0 )
-            {
-                buf.append( "<P>" );
-            }
-
-            if( (pre = line.indexOf("{{{")) != -1 )
-            {
-                line = TextUtil.replaceString( line, pre, pre+3, "<PRE>" );
-                m_iscode = true;
-            }
-
-        }
-            
-        if( (pre = line.indexOf("}}}")) != -1 )
-        {
-            line = TextUtil.replaceString( line, pre, pre+3, "</PRE>" );
-            m_iscode = false;
-        }
-
-        buf.append( line );
-        buf.append( postScript );
-        buf.append( "\n" );
-        
-        m_data = new StringReader( buf.toString() );
-    }
-    */
 
     public int read()
         throws IOException
