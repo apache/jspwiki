@@ -348,6 +348,7 @@ public class ReferenceManager
      * with one user, one WikiEngine only.
      */
     // FIXME: Remove, not good putting debug code in distribution.
+    /*
     public void dump()
     {
         try
@@ -401,5 +402,5 @@ public class ReferenceManager
             e.printStackTrace();
         }
     }
-
+    */
 }
