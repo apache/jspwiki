@@ -1,3 +1,11 @@
+2002-10-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.28.
+
+        * Just incorporated a bit more attachment stuff.  Also fixed the
+        problem of AttachmentManager complaining at startup, if no
+        attachmentProvider was defined.
+
 2002-09-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.27.
