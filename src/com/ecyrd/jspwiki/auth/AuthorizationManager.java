@@ -9,6 +9,7 @@ import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.acl.AccessControlList;
 import com.ecyrd.jspwiki.acl.AclEntryImpl;
@@ -17,17 +18,28 @@ import com.ecyrd.jspwiki.auth.permissions.*;
 
 public class AuthorizationManager
 {
+    public static final String PROP_STRICTLOGINS = "jspwiki.policy.strictLogins";
+
     static Category log = Category.getInstance( AuthorizationManager.class );
 
     private WikiAuthorizer    m_authorizer;
     private AccessControlList m_defaultPermissions;
 
+    private boolean           m_strictLogins = false;
+
     public AuthorizationManager( WikiEngine engine, Properties properties )
     {
+        m_authorizer = new PageAuthorizer();  // FIXME: Should be settable
+        m_authorizer.initialize( engine, properties );
+
+        m_strictLogins = TextUtil.getBooleanProperty( properties,
+                                                      PROP_STRICTLOGINS,
+                                                      false );
+
         AclEntryImpl ae = new AclEntryImpl();
 
         WikiGroup allGroup = new AllGroup();
-        allGroup.setName("all");
+        allGroup.setName("All");
         ae.setPrincipal( allGroup );
         ae.addPermission( new ViewPermission() );
         ae.addPermission( new EditPermission() );
@@ -43,6 +55,11 @@ public class AuthorizationManager
         }
     }
 
+    public boolean strictLogins()
+    {
+        return m_strictLogins;
+    }
+
     /**
      *  Returns true or false, depending on whether this action
      *  is allowed.
@@ -55,14 +72,23 @@ public class AuthorizationManager
 
         AccessControlList acl = page.getAcl();
 
+        if( acl == null )
+        {
+            log.debug("No ACL, querying from authorizer");
+            acl = m_authorizer.getPermissions( page );
+        }
+
         //
         //  Does the page in question have an access control list?
         //
         if( acl != null )
         {
             log.debug("ACL for this page is: "+acl);
+            log.debug("Checking for wup: "+wup);
+            log.debug("Permission: "+permission);
             res = acl.findPermission( wup, permission );
         }
+
 
         //
         //  If there was no result, then query from the default
@@ -72,12 +98,13 @@ public class AuthorizationManager
         if( res == AccessControlList.NONE )
         {
             log.debug("Page defines no permissions for "+wup.getName()+", checking defaults.");
-            /*
-              FIXME!
+
             acl = m_authorizer.getDefaultPermissions();
 
-            res = acl.findPermission( wup, permission );
-            */
+            if( acl != null )
+            {
+                res = acl.findPermission( wup, permission );
+            }
         }
 
         //
