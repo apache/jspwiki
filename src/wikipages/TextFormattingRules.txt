@@ -4,7 +4,7 @@ When you've figured out how the editor works, then you should read [WikiEtiquett
 
 {{{
 ----       = Make a horizontal ruler. Extra '-' is ignored.
-\\         = force a line break
+\\         = force a line break, \\\=force line break and clear.
 
 [link]     = creates a hyperlink to an internal WikiPage called 'Link'.
 [this is also a link] = creates a hyperlink to an internal WikiPage called
