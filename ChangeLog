@@ -1,3 +1,10 @@
+2003-07-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.53.
+
+        * Added VotePlugin as an experiment.  Don't use it for anything
+        real. 
+
 2003-07-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.52
