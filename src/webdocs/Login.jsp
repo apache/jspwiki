@@ -69,7 +69,7 @@
 
 <head>
   <title><wiki:Variable var="applicationname"/> login</title>
-  <%@ include file="templates/default/cssinclude.js" %>
+  <%@ include file="templates/default/header.jsp" %>
   <META NAME="ROBOTS" CONTENT="NOINDEX">
 </head>
 
