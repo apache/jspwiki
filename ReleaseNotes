@@ -1,19 +1,14 @@
 
-This is the fourth stable release of JSPWiki v2.  It contains a few
+This is the fifth stable release of JSPWiki v2.  It contains a few
 bugfixes over the last stable version:
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
-Major changes since the last stable (2.0.45) release are:
+Major changes since the last stable (2.0.49) release are:
 
-- Now uses the OSCache library for caching pages.  This should result in a big speedup.
+- Bug fixes.
 
-- FileSystemProvider, RCSFileProvider and VersioningFileProvider now
-  actually create the directories if they don't exist yet.
-
-- It is now possible to define multiple wikis using the same set of
-  files.  See instructions in MultipleWikis.
-
+- Added TemplateDir tag.
 
 
 UPGRADE NOTES
@@ -41,12 +36,11 @@ UPGRADE NOTES
   modifiable, and you never again have to resort to such drastic
   measures again... We hope.
 
-- If updating manually from 2.0.36-39:
+- If updating manually from 2.0.36-49:
 
   * Copy the new JSPWiki.jar into your WEB-INF/lib and restart
     your servlet container.
 
   * Copy the JSP pages in the JSPWiki distribution into your webapp
-    directory.  You don't have to touch the templates.
-
-  * Copy the images/out.png to your images/out.png
+    directory.  You don't have to touch the templates.  However, if
+    you want, you can start to use the new TemplateDir JSP tag.
