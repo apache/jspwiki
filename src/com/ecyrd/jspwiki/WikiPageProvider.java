@@ -12,7 +12,7 @@ public interface WikiPageProvider
     /**
      *  Initializes the page provider.
      */
-    public void initialize( Properties properties );
+    public void initialize( Properties properties ) throws NoRequiredPropertyException;
 
     /**
      *  Return the page text for page "page".
@@ -30,14 +30,22 @@ public interface WikiPageProvider
 
     public boolean pageExists( String page );
 
-    public Collection getRecentChanges();
-
+    /**
+     *  Finds pages based on the query.
+     */
     public Collection findPages( QueryItem[] query );
 
     /**
-     *  Returns the date the page was last changed.
+     *  Returns info about the page.
      */
-    public Date pageLastChanged( String page );
+    public WikiPage getPageInfo( String page );
+
+    /**
+     *  Returns all pages.  Each element in the returned
+     *  Collection should be a WikiPage.
+     */
+
+    public Collection getAllPages();
 }
 
 

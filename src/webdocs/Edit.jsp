@@ -5,7 +5,7 @@
 <%! 
     public void jspInit()
     {
-        wiki = new WikiEngine( getServletContext() );
+        wiki = WikiEngine.getInstance( getServletConfig() );
     }
 
     Category log = Category.getInstance("JSPWiki");

@@ -25,7 +25,7 @@ public class WikiEngine
 {
     private static final Category   log = Category.getInstance(WikiEngine.class);
 
-    private WikiPageProvider m_provider = new FileSystemProvider();
+    private WikiPageProvider m_provider;
 
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
@@ -35,11 +35,37 @@ public class WikiEngine
     /** Stores properties. */
     private Properties     m_properties;
 
+    public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
+
+    private static Hashtable c_engines = new Hashtable();
+
+    /**
+     *  Gets a WikiEngine related to this servlet.
+     */
+    public static WikiEngine getInstance( ServletConfig config )
+    {
+        ServletContext context = config.getServletContext();        
+        String appid = context.getRealPath("/");
+
+        config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
+
+        WikiEngine engine = (WikiEngine) c_engines.get( appid );
+
+        if( engine == null )
+        {
+            engine = new WikiEngine( config.getServletContext() );
+
+            c_engines.put( appid, engine );
+        }
+
+        return engine;
+    }
+
     /**
      *  Instantiate the WikiEngine using a given set of properties.
      */
     public WikiEngine( Properties properties )
-        throws IllegalArgumentException
+        throws NoRequiredPropertyException
     {
         initialize( properties );
     }
@@ -48,7 +74,7 @@ public class WikiEngine
      *  Instantiate using this method when you're running as a servlet and
      *  WikiEngine will figure out where to look for the property file.
      */
-    public WikiEngine( ServletContext context )
+    protected WikiEngine( ServletContext context )
     {
         String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
 
@@ -62,7 +88,7 @@ public class WikiEngine
         }
         catch( Exception e )
         {
-            context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile );
+            context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile+". "+e.getMessage() );
         }
     }
 
@@ -70,7 +96,7 @@ public class WikiEngine
      *  Does all the real initialization.
      */
     private void initialize( Properties props )
-        throws IllegalArgumentException
+        throws NoRequiredPropertyException
     {
         m_properties = props;
         //
@@ -83,8 +109,36 @@ public class WikiEngine
             c_configured = true;
         }
 
+        log.debug("Configuring WikiEngine...");
 
-        m_provider.initialize( props );
+        String classname = getRequiredProperty( props, PROP_PAGEPROVIDER );
+
+        log.debug("Provider="+classname);
+
+        try
+        {
+            Class providerclass = Class.forName( classname );
+
+            m_provider = (WikiPageProvider)providerclass.newInstance();
+
+            log.debug("Initializing provider class "+m_provider);
+            m_provider.initialize( props );
+        }
+        catch( ClassNotFoundException e )
+        {
+            log.error("Unable to locate provider class "+classname,e);
+            throw new IllegalArgumentException("no provider class");
+        }
+        catch( InstantiationException e )
+        {
+            log.error("Unable to create provider class "+classname,e);
+            throw new IllegalArgumentException("faulty provider class");
+        }
+        catch( IllegalAccessException e )
+        {
+            log.error("Illegal access to provider class "+classname,e);
+            throw new IllegalArgumentException("illegal provider class");
+        }
 
 
         log.info("WikiEngine configured.");
@@ -94,11 +148,15 @@ public class WikiEngine
      *  Throws an exception if a property is not found.
      */
     static String getRequiredProperty( Properties props, String key )
+        throws NoRequiredPropertyException
     {
         String value = props.getProperty(key);
 
         if( value == null )
-            throw new IllegalArgumentException( "Property "+key+" is required" );
+        {
+            throw new NoRequiredPropertyException( "Required property not found",
+                                                   key );
+        }
 
         return value;
     }
@@ -193,7 +251,13 @@ public class WikiEngine
 
     public Collection getRecentChanges()
     {
-        return m_provider.getRecentChanges();
+        Collection pages = m_provider.getAllPages();
+
+        TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
+
+        sortedPages.addAll( pages );
+
+        return sortedPages;
     }
 
     /**
@@ -261,9 +325,15 @@ public class WikiEngine
 
     /**
      *  Returns the date the page was last changed.
+     *  If the page does not exist, returns null.
      */
     public Date pageLastChanged( String page )
     {
-        return m_provider.pageLastChanged(page);
+        WikiPage p = m_provider.getPageInfo( page );
+
+        if( p != null )
+            return p.getLastModified();
+
+        return null;
     }
 }

@@ -6,7 +6,7 @@
 <%! 
     public void jspInit()
     {
-        wiki = new WikiEngine( getServletContext() );
+        wiki = WikiEngine.getInstance( getServletConfig() );
     }
 
     public boolean isSameDay( Date a, Date b )

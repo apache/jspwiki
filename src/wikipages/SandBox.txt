@@ -1,10 +1,21 @@
 Please check [RecentChanges].
 
-Testing.
+Testing. fewfwefe
+
+CHeck [testpage]
 
 More testing.
 
-nsnsnsfdsfd
+Is this {{truetype}} or not?
+What about {{{This}}}?
+How about {{this?
+
+{{{
+{{text}}
+}}}
+ieieiensnsnsn
+
+<B>Not bold</b>
 
 ----
 
@@ -26,9 +37,13 @@ Now, let's try ''italic text''.
 
 Bulleted lists:
 * One
+  Or more.
 * Two
+
 ** Two.One
+
 *** Two.One.One
+
 * Three
 
 Numbered lists.
@@ -42,3 +57,12 @@ Numbered lists.
 # Four
 
 End?
+
+No, let's {{break}} things.\\ {{{ {{{ {{text}} }}} }}}
+
+More breaking.
+
+{{{
+code.}}
+----
+author: [Asser], [Ebu], [JanneJalkanen], [Jarmo|mailto:jarmo@regex.com.au]

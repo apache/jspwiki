@@ -14,12 +14,15 @@ else
     private=1
 fi
 
+$TOMCAT_HOME/bin/shutdown.sh
+
 ant war
 
 rm -rf $TOMCAT_HOME/webapps/JSPWiki
 cp /tmp/jalkanen/JSPWiki/*.war $TOMCAT_HOME/webapps
 
 cd $TOMCAT_HOME/webapps
+rm -rf JSPWiki
 mkdir JSPWiki
 cd JSPWiki
 jar xf ../JSPWiki.war
@@ -29,5 +32,4 @@ then
     cp -v /home/jalkanen/Projects/JSPWiki/jspwiki.properties $TOMCAT_HOME/webapps/JSPWiki/WEB-INF/
 fi
 
-$TOMCAT_HOME/bin/shutdown.sh
 $TOMCAT_HOME/bin/startup.sh

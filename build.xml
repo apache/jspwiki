@@ -37,6 +37,8 @@
   </target>
 
   <target name="clean">
+    <delete dir="${tests.build}" />
+    <delete dir="${code.build}" />
   </target>
 
   <target name="compiletests">

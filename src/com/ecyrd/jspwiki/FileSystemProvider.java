@@ -5,6 +5,7 @@ import java.util.Properties;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
+import java.util.ArrayList;
 import org.apache.log4j.Category;
 
 /**
@@ -33,11 +34,17 @@ public class FileSystemProvider
 
 
     public void initialize( Properties properties )
-        throws IllegalArgumentException
+        throws NoRequiredPropertyException
     {
+        log.debug("Initing FileSystemProvider");
         m_pageDirectory = WikiEngine.getRequiredProperty( properties, PROP_PAGEDIR );
 
         log.info("Wikipages are read from : "+m_pageDirectory);
+    }
+
+    String getPageDirectory()
+    {
+        return m_pageDirectory;
     }
 
     /**
@@ -126,11 +133,11 @@ public class FileSystemProvider
         }
     }
 
-    public Collection getRecentChanges()
+    public Collection getAllPages()
     {
-        log.debug("Getting recent changes list...");
+        log.debug("Getting all pages...");
 
-        TreeSet set = new TreeSet( new PageTimeComparator() );
+        ArrayList set = new ArrayList();
 
         File wikipagedir = new File( m_pageDirectory );
 
@@ -147,7 +154,7 @@ public class FileSystemProvider
             set.add( page );
         }
 
-        return set;
+        return set;        
     }
 
     public Collection findPages( QueryItem[] query )
@@ -237,13 +244,16 @@ public class FileSystemProvider
         return res;
     }
 
-    public Date pageLastChanged( String page )
+    public WikiPage getPageInfo( String page )
     {
         File file = findPage( page );
 
         if( !file.exists() ) return null;
 
-        return new Date( file.lastModified() );
+        WikiPage p = new WikiPage( page );
+        p.setLastModified( new Date(file.lastModified()) );
+
+        return p;
     }
 
     public class WikiFileFilter
