@@ -221,6 +221,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "1<TT>\n2345\n</TT>6\n", translate(src) );
     }
 
+    public void testTTLinks()
+        throws Exception
+    {
+        String src = "1{{\n2345\n[a link]\n}}6";
+
+        assertEquals( "1<TT>\n2345\n<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ALink\">a link</A>\n</TT>6\n", translate(src) );
+    }
+
     public void testPre()
         throws Exception
     {
