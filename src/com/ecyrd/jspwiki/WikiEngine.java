@@ -369,7 +369,7 @@ public class WikiEngine
      *  TranslatorReader for example.
      */
 
-    protected Properties getWikiProperties()
+    public Properties getWikiProperties()
     {
         return m_properties;
     }
@@ -1337,6 +1337,15 @@ public class WikiEngine
     public PageManager getPageManager()
     {
         return m_pageManager;
+    }
+
+    /**
+     *  Returns the current AttachmentManager.
+     *  @since 1.9.31.
+     */
+    public AttachmentManager getAttachmentManager()
+    {
+        return m_attachmentManager;
     }
 
     /**
