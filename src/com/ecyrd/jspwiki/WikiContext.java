@@ -280,6 +280,31 @@ public class WikiContext
         return m_currentUser;
     }
 
+    public String getViewURL( String page )
+    {
+        return getURL( VIEW, page, null );
+    }
+
+    public String getURL( String context,
+                          String page )
+    {
+        return getURL( context, page, null );
+    }
+
+    /**
+     *  Returns an URL from a page
+     */
+    public String getURL( String context,
+                          String page,
+                          String params )
+    {
+        // FIXME: is rather slow
+        return m_engine.getURL( context,
+                                page,
+                                params,
+                                "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE )) );
+    }
+
     /**
      *  Returns a shallow clone of the WikiContext.
      *
