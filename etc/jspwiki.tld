@@ -19,9 +19,6 @@
     <teiclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
-       <name>page</name>
-    </attribute>
-    <attribute>
        <name>id</name>
     </attribute>
   </tag>  
