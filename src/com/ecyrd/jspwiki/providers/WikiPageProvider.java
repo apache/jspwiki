@@ -88,6 +88,8 @@ public interface WikiPageProvider
     /**
      *  Returns version history.  Each element should be
      *  a WikiPage.
+     *
+     *  @return A collection of wiki pages.
      */
 
     public Collection getVersionHistory( String page )
