@@ -92,7 +92,11 @@ public class WikiEngine
 
     /** Stores the base URL. */
     private String         m_baseURL;
-    
+
+    /** Store the file path to the basic URL.  When we're not running as
+        a servlet, it defaults to the current directory. */
+    private String         m_rootPath = ".";
+
     /** Stores references between wikipages. */
     private ReferenceManager m_referenceManager = null;
 
@@ -153,6 +157,8 @@ public class WikiEngine
             props.load( new FileInputStream(propertyFile) );
 
             initialize( props );
+
+            m_rootPath = context.getRealPath("/");
         }
         catch( Exception e )
         {
@@ -264,7 +270,7 @@ public class WikiEngine
 
                         String feed = m_rssGenerator.generate();
 
-                        File file = new File("rss.rdf"); // FIXME: magic
+                        File file = new File(m_rootPath,"rss.rdf"); // FIXME: magic
 
                         in  = new StringReader(feed);
                         out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
