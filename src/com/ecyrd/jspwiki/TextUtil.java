@@ -198,7 +198,11 @@ public class TextUtil
     }
 
     /**
+     *  Replaces a string with an other string.
+     *
      *  @param orig Original string.  Null is safe.
+     *  @param src  The string to find.
+     *  @param dest The string to replace <I>src</I> with.
      */
 
     public static String replaceString( String orig, String src, String dest )
@@ -212,8 +216,8 @@ public class TextUtil
         {
             res.append( orig.substring( last, start ) );
             res.append( dest );
-            end = start+src.length();
-            last = start+1;
+            end  = start+src.length();
+            last = start+src.length();
         }
 
         res.append( orig.substring( end ) );
