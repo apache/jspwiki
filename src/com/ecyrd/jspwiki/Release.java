@@ -53,6 +53,15 @@ public class Release
     public static final String     VERSTR        = 
         VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;
 
+    /**
+     *  Executing this class directly from command line prints out
+     *  the current version.
+     *  <P>Example:
+     *  <PRE>
+     *  % java com.ecyrd.jspwiki.Release
+     *  1.9.26-cvs
+     *  </PRE>
+     */
     public static void main( String argv[] )
     {
         System.out.println(VERSTR);
