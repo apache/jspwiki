@@ -1,3 +1,14 @@
+2002-07-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.9.
+
+        * Bug fix: In rare occasions VersioningFileProvider would not
+        return correct page information.
+
+        * More JSP tags implemented.
+
+        * Added new plugin "IndexPlugin", by Alain Ravet.
+
 2002-07-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.8. (The afternoon version.)
