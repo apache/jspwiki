@@ -30,6 +30,8 @@
 
     // This is required by PageHeader.jsp
     String pagereq = "Recent Changes";
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">

@@ -15,7 +15,7 @@
 
 
 <%
-    String pagereq = request.getParameter("page");
+    String pagereq = wiki.safeGetParameter( request, "page" );
 
     if( pagereq == null )
     {
@@ -23,7 +23,9 @@
     }
 
     String pageurl = wiki.encodeName( pagereq );
-    String usertext = (String) request.getParameter( "text" );
+    String usertext = wiki.safeGetParameter( request, "text" );
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     usertext = TranslatorReader.replaceString( usertext, "<", "&lt;" );
     usertext = TranslatorReader.replaceString( usertext, ">", "&gt;" );

@@ -11,7 +11,7 @@
 %>
 
 <%
-    String pagereq = request.getParameter("page");
+    String pagereq = wiki.safeGetParameter( request, "page" );
 
     if( pagereq == null )
     {
@@ -47,6 +47,12 @@
 
     // In the future, user access permits affect this
     boolean isEditable = (version < 0);
+
+    //
+    //  Alright, then start responding.
+    //
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"

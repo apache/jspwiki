@@ -13,7 +13,7 @@
 
 
 <%
-    String pagereq = request.getParameter("page");
+    String pagereq = wiki.safeGetParameter( request, "page" );
 
     if( pagereq == null )
     {
@@ -23,6 +23,8 @@
     String pageurl = wiki.encodeName( pagereq );    
 
     log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">

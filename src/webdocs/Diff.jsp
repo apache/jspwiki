@@ -12,7 +12,7 @@
 
 
 <%
-    String pagereq = request.getParameter("page");
+    String pagereq = wiki.safeGetParameter( request, "page" );
 
     if( pagereq == null )
     {
@@ -34,6 +34,7 @@
 
     log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
