@@ -82,6 +82,7 @@ public class WikiContext
     public static final String    UPLOAD   = "upload";
 
     public static final String    COMMENT  = "comment";
+    public static final String    FIND     = "find";
 
     /**
      *  Create a new WikiContext.
