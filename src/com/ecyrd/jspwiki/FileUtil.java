@@ -130,6 +130,8 @@ public class FileUtil
         {
             out.write( c );
         }
+
+        out.flush();
     }
 
     /**
@@ -147,6 +149,8 @@ public class FileUtil
         {
             out.write( c );
         }
+
+        out.flush();
     }
 
     /**
