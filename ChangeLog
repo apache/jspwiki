@@ -1,5 +1,13 @@
 2003-08-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.56.
+
+        * Fixed a problem where special pages (Search.jsp,
+        UserPreferences.jsp) had always "Main" as their title.
+        Incidentally, the solution also allows you to localize the search
+        and preferences page names.  See jspwiki.properties for more
+        information.  Reported by Niilo Neuvo.
+
         * v2.1.55.
 
         * ReferenceManager is now a PageFilter.
