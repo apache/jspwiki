@@ -113,9 +113,15 @@ public class FilterManager
      *  @since 2.1.44.
      *  @param f PageFilter to add
      *  @param priority The priority in which position to add it in.
+     *  @throws IllegalArgumentException If the PageFilter is null or invalid.
      */
     public void addPageFilter( PageFilter f, int priority )
     {
+        if( f == null )
+        {
+            throw new IllegalArgumentException("Attempt to provide a null filter - this should never happen.  Please check your configuration (or if you're a developer, check your own code.)");
+        }
+
         m_pageFilters.add( f, priority );
     }
 
