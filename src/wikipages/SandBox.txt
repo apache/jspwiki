@@ -1,8 +1,2 @@
 This is a playground - do whatever you want.
 
-!My weblog
-[{INSERT WeblogPlugin}]
-
-----
-
-[{INSERT WeblogEntryPlugin}]
