@@ -1,6 +1,7 @@
 
 package com.ecyrd.jspwiki;
 import java.util.Properties;
+import java.io.File;
 
 /** Real test engine */
 public class TestEngine2 extends WikiEngine
@@ -9,5 +10,14 @@ public class TestEngine2 extends WikiEngine
         throws NoRequiredPropertyException
     {
         super( props );
+    }
+
+    public void deletePage( String name )
+    {
+        String files = getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        File f = new File( files, name+FileSystemProvider.FILE_EXT );
+
+        f.delete();
     }
 }
