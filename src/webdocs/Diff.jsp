@@ -19,6 +19,8 @@
         pagereq = "Main";
     }
 
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
+
     String pageurl = wiki.encodeName( pagereq );    
 
     String srev1 = request.getParameter("r1");
@@ -94,4 +96,7 @@
 
 </HTML>
 
-
+<%
+    NDC.pop();
+    NDC.remove();
+%>

@@ -14,6 +14,8 @@
 
 
 <%
+    NDC.push( wiki.getApplicationName()+": Search" );
+
     String query = wiki.safeGetParameter( request, "query");
     Collection list = null;
 
@@ -123,3 +125,8 @@
 </BODY>
 
 </HTML>
+
+<%
+    NDC.pop();
+    NDC.remove();
+%>

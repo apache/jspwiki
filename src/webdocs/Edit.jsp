@@ -21,6 +21,8 @@
         throw new ServletException("No page defined");
     }
 
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
+
     String pageurl = wiki.encodeName( pagereq );
 
     String action = request.getParameter("action");
@@ -189,3 +191,8 @@
 </BODY>
 
 </HTML>
+
+<%
+    NDC.pop();
+    NDC.remove();
+%>

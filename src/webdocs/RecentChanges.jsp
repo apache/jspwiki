@@ -26,10 +26,12 @@
 <%
     Collection list = null;
 
-    list = wiki.getRecentChanges();
-
     // This is required by PageHeader.jsp
     String pagereq = "Recent Changes";
+
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
+
+    list = wiki.getRecentChanges();
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
@@ -105,3 +107,7 @@
 </BODY>
 
 </HTML>
+<%
+    NDC.pop();
+    NDC.remove();
+%>

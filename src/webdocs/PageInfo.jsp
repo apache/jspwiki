@@ -20,6 +20,8 @@
         pagereq = "Main";
     }
 
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
+
     String pageurl = wiki.encodeName( pagereq );    
 
     log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
@@ -141,5 +143,9 @@
 </BODY>
 
 </HTML>
+<%
+    NDC.pop();
+    NDC.remove();
+%>
 
 
