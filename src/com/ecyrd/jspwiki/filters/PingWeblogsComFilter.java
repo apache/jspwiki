@@ -25,7 +25,15 @@ public class PingWeblogsComFilter
     {
         String     blogName = context.getPage().getName();
         WikiEngine engine   = context.getEngine();
+
+        int blogentryTxt = blogName.indexOf("_blogentry_");
+        if( blogentryTxt == -1 )
+        {
+            return; // This is not a weblog entry.
+        }
         
+        blogName = blogName.substring( blogentryTxt );
+
         if( blogName.equals( engine.getFrontPage() ) )
         {
             blogName = null;
