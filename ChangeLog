@@ -1,5 +1,7 @@
 2001-10-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * build.xml can now generate javadocs to docs/javadoc.
+
         * Edit.jsp now has explains headings, too (thanks Matti).
 
         * Changed the versioning so that whenever you check out a CVS
