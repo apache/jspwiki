@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
@@ -138,17 +139,28 @@
         //  If this is an append, then we just append it to the page.
         //  If it is a full edit, then we will replace the previous contents.
         //
-        if( append != null )
+
+        try
         {
-            StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+            if( append != null )
+            {
+                StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
 
-            pageText.append( text );
+                pageText.append( text );
 
-            wiki.saveText( wikiContext, pageText.toString() );
+                wiki.saveText( wikiContext, pageText.toString() );
+
+            }
+            else
+            {
+                wiki.saveText( wikiContext, text );
+            }
         }
-        else
+        catch( RedirectException ex )
         {
-            wiki.saveText( wikiContext, text );
+            session.setAttribute("msg", ex.getMessage());
+            response.sendRedirect( ex.getRedirect() );
+            return;
         }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
