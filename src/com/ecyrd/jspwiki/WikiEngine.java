@@ -94,9 +94,8 @@ public class WikiEngine
     private String         m_baseURL;
 
     /** Store the file path to the basic URL.  When we're not running as
-        a servlet, it defaults to the current directory. */
-    // FIXME: Is this too system-dependent?
-    private String         m_rootPath = ".";
+        a servlet, it defaults to the user's current directory. */
+    private String         m_rootPath = System.getProperty("user.dir");
 
     /** Stores references between wikipages. */
     private ReferenceManager m_referenceManager = null;
