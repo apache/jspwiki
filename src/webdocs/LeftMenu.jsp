@@ -1,5 +1,5 @@
 <%-- Assumes that a variable called 'wiki' exists --%>
-<H3><A HREF="SystemInfo.jsp"><%=wiki.getApplicationName()%></A></H3>
+<H3 CLASS="leftmenuheading"><A HREF="SystemInfo.jsp"><%=wiki.getApplicationName()%></A></H3>
 
 <%!static String LEFTMENU_NAME = "LeftMenu";%>
 
