@@ -259,6 +259,11 @@ public class AttachmentServlet
                 }
 
                 //
+                //  Should help with IE 5.22 on OSX
+                //
+                filename = filename.trim();
+
+                //
                 //  Attempt to open the input stream
                 //
                 if( f != null )
