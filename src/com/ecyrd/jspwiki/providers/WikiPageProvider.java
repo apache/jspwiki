@@ -105,6 +105,8 @@ public interface WikiPageProvider
      *
      *  @param page Name of the page to fetch.
      *  @param version Version of the page to fetch.
+     *
+     *  @return The content of the page, or null, if the page does not exist.
      */
 
     public String getPageText( String page, int version )
