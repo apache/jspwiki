@@ -24,7 +24,7 @@ public class VariableManagerTest extends TestCase
         Properties props = new Properties();
         try
         {
-            props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+            props.load( TestEngine.findTestProperties() );
             PropertyConfigurator.configure(props);
 
             m_variableManager = new VariableManager( props );

@@ -27,7 +27,7 @@ public class AttachmentManagerTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        props.load( TestEngine.findTestProperties() );
 
         m_engine  = new TestEngine(props);
         m_manager = m_engine.getAttachmentManager();
@@ -113,6 +113,7 @@ public class AttachmentManagerTest extends TestCase
         assertEquals( "name", att.getName(), att2.getName() );
         assertEquals( "author", att.getAuthor(), att2.getAuthor() );
         assertEquals( "size", c_fileContents.length(), att2.getSize() );
+        assertEquals( "version", 1, att2.getVersion() );
 
         InputStream in = m_manager.getAttachmentStream( att2 );
 
@@ -121,6 +122,7 @@ public class AttachmentManagerTest extends TestCase
         StringWriter sout = new StringWriter();
         FileUtil.copyContents( new InputStreamReader(in), sout );
 
+        in.close();
         sout.close();
 
         assertEquals( "contents", c_fileContents, sout.toString() );
@@ -154,6 +156,7 @@ public class AttachmentManagerTest extends TestCase
         StringWriter sout = new StringWriter();
         FileUtil.copyContents( new InputStreamReader(in), sout );
 
+        in.close();
         sout.close();
 
         assertEquals( "contents", c_fileContents, sout.toString() );
@@ -206,6 +209,7 @@ public class AttachmentManagerTest extends TestCase
         assertEquals( "name", att.getName(), att2.getName() );
         assertEquals( "author", "FirstPost", att2.getAuthor() );
         assertEquals( "size", c_fileContents.length(), att2.getSize() );
+        assertEquals( "version", 1, att2.getVersion() );
 
         InputStream in = m_manager.getAttachmentStream( att2 );
 
@@ -214,6 +218,7 @@ public class AttachmentManagerTest extends TestCase
         StringWriter sout = new StringWriter();
         FileUtil.copyContents( new InputStreamReader(in), sout );
 
+        in.close();
         sout.close();
 
         assertEquals( "contents", c_fileContents, sout.toString() );

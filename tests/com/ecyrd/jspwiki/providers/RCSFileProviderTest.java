@@ -22,7 +22,7 @@ public class RCSFileProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki_rcs.properties") );
+        props.load( TestEngine.findTestProperties("/jspwiki_rcs.properties") );
 
         engine = new TestEngine(props);
     }

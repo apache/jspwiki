@@ -16,6 +16,8 @@ public class AllTests extends TestCase
 
         suite.addTest( PluginManagerTest.suite() );
         suite.addTest( ReferringPagesPluginTest.suite() );
+        suite.addTest( CounterPluginTest.suite() );
+        suite.addTest( UndefinedPagesPluginTest.suite() );
 
         return suite;
     }

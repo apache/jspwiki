@@ -27,7 +27,7 @@ public class RPCHandlerTest extends TestCase
         throws Exception
     {
         m_props = new Properties();
-        m_props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        m_props.load( TestEngine.findTestProperties() );
 
         deleteTempFiles();
 
