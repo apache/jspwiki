@@ -1,3 +1,10 @@
+2001-11-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.5.7-beta.
+
+        * Incorporated fix from Chris Brooking for the URL encoding, a
+        workaround for JDK bug #4257115.
+
 2001-11-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.5.6
