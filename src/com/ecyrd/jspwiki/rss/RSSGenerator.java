@@ -37,6 +37,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *  @author Janne Jalkanen
  *  @since  1.7.5.
  */
+// FIXME: Merge with rss.jsp
+// FIXME: Limit diff and page content size.
 public class RSSGenerator
 {
     private WikiEngine         m_engine;
