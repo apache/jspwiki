@@ -1,15 +1,29 @@
 <%-- Assumes that a variable called 'wiki' exists --%>
 <H3><A HREF="SystemInfo.jsp"><%=wiki.getApplicationName()%></A></H3>
 
-<P>
-<A HREF="Wiki.jsp?page=Main">Main page</A><BR>
-<A HREF="Wiki.jsp?page=About">About</A><BR>
-<A HREF="Wiki.jsp?page=News">News</A><BR>
-<A HREF="Wiki.jsp?page=RecentChanges">Recent Changes</A><BR>
-<A HREF="Wiki.jsp?page=WikiEtiquette">WikiEtiquette</A><BR>
-</P>
+<%!static String LEFTMENU_NAME = "LeftMenu";%>
+
+<!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
 <P>
-<A HREF="Search.jsp">Find pages</A>
+<% 
+    if( wiki.pageExists( LEFTMENU_NAME ) ) 
+    {
+        out.println( wiki.getHTML(LEFTMENU_NAME) );
+    }
+    else
+    {
+        %>
+        <HR><P>
+        <P ALIGN="center">
+        <I>No LeftMenu!</I><BR>
+        <A HREF="Edit.jsp?page=<%=LEFTMENU_NAME%>">Please make one.</A><BR>
+        </P>
+        <P><HR>
+        <%
+    }
+%>
 </P>
+
+<!-- End of automatically generated page -->
 
