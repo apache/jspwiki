@@ -1,5 +1,13 @@
 2003-01-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.19.
+
+        * Broke WikiAttachmentProvider as well with deletePage() and
+        deleteVersion().
+
+        * Added Breadcrumbs tag from Ken Liu.  The default template now
+        also includes it.
+
         * v2.0.18.
 
         * Broke WikiPageProvider by adding deletePage() and
