@@ -136,7 +136,7 @@ public class TranslatorReader extends Reader
     {
         StringBuffer clean = new StringBuffer();
 
-        StringTokenizer st = new StringTokenizer( link, " _" );
+        StringTokenizer st = new StringTokenizer( link, " -" );
 
         while( st.hasMoreTokens() )
         {
@@ -151,7 +151,9 @@ public class TranslatorReader extends Reader
 
         for( int i = 0; i < clean.length(); i++ )
         {
-            if( !Character.isLetterOrDigit(clean.charAt(i)) )
+            if( !(Character.isLetterOrDigit(clean.charAt(i)) ||
+                  clean.charAt(i) == '_' ||
+                  clean.charAt(i) == '.') )
             {
                 clean.deleteCharAt(i);
                 --i; // We just shortened this buffer.
@@ -169,6 +171,11 @@ public class TranslatorReader extends Reader
         return link.startsWith("http:") || link.startsWith("ftp:") ||
                link.startsWith("https:") || link.startsWith("mailto:") ||
                link.startsWith("news:");
+    }
+
+    private boolean isImageLink( String link )
+    {
+        return link.endsWith(".png");
     }
 
     private String setHyperLinks( String line )
@@ -209,7 +216,15 @@ public class TranslatorReader extends Reader
 
                 if( isExternalLink( reallink ) )
                 {
-                    line = replaceString( line, start, end+1, "<A HREF=\""+reallink+"\">"+link+"</A>" );
+                    if( isImageLink( reallink ) )
+                    {
+                        line = replaceString( line, start, end+1,
+                                              "<IMG CLASS=\"inline\" SRC=\""+reallink+"\" ALT=\""+link+"\">" );
+                    }
+                    else
+                    {
+                        line = replaceString( line, start, end+1, "<A HREF=\""+reallink+"\">"+link+"</A>" );
+                    }
                 }
                 else if( (interwikipoint = reallink.indexOf(":")) != -1 )
                 {
