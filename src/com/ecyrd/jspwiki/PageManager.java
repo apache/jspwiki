@@ -22,6 +22,10 @@ package com.ecyrd.jspwiki;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Date;
+import java.util.Iterator;
+
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -42,10 +46,18 @@ public class PageManager
 {
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
+    public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
 
     static Category log = Category.getInstance( PageManager.class );
 
     private WikiPageProvider m_provider;
+
+    private HashMap m_pageLocks = new HashMap();
+
+    /**
+     *  The expiry time.  Default is 60 minutes.
+     */
+    private int     m_expiryTime = 60;
 
     /**
      *  Creates a new PageManager.
@@ -57,6 +69,9 @@ public class PageManager
         String classname;
 
         boolean useCache = "true".equals(props.getProperty( PROP_USECACHE ));
+
+        m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ),
+                                                   m_expiryTime );
 
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.
@@ -104,7 +119,12 @@ public class PageManager
         {
             log.error("An I/O exception occurred while trying to create a new page provider: "+classname, e );
             throw new WikiException("Unable to start page provider: "+e.getMessage());
-        }
+        }        
+
+        //
+        //  Start the lock reaper.
+        //
+        new LockReaper().start();
     }
 
     /**
@@ -131,6 +151,80 @@ public class PageManager
         throws ProviderException
     {
         m_provider.putPageText( page, content );
+    }
+
+    /**
+     *  Locks page for editing.  Note, however, that the PageManager
+     *  will in no way prevent you from actually editing this page;
+     *  the lock is just for information.
+     *
+     *  @return null, if page could not be locked.
+     */
+    public PageLock lockPage( WikiPage page, String user )
+    {
+        PageLock lock = null;
+
+        synchronized( m_pageLocks )
+        {
+            lock = (PageLock) m_pageLocks.get( page.getName() );
+
+            if( lock == null )
+            {
+                //
+                //  Lock is available, so make a lock.
+                //
+                Date d = new Date();
+                lock = new PageLock( page, user, d,
+                                     new Date( d.getTime() + m_expiryTime*60*1000L ) );
+
+                m_pageLocks.put( page.getName(), lock );                
+
+                log.debug( "Locked page "+page.getName()+" for "+user);
+            }
+            else
+            {
+                log.debug( "Page "+page.getName()+" already locked by "+lock.getLocker() );
+                lock = null; // Nothing to return
+            }
+        }
+
+        return lock;
+    }
+
+    /**
+     *  Marks a page free to be written again.  If there has not been a lock,
+     *  will fail quietly.
+     *
+     *  @param lock A lock acquired in lockPage().  Safe to be null.
+     */
+    public void unlockPage( PageLock lock )
+    {
+        if( lock == null ) return;
+
+        synchronized( m_pageLocks )
+        {
+            PageLock old = (PageLock)m_pageLocks.remove( lock.getPage().getName() );
+
+            log.debug( "Unlocked page "+lock.getPage().getName() );
+        }
+    }
+
+    /**
+     *  Returns the current lock owner of a page.  If the page is not
+     *  locked, will return null.
+     *
+     *  @return Current lock.
+     */
+    public PageLock getCurrentLock( WikiPage page )
+    {
+        PageLock lock = null;
+
+        synchronized( m_pageLocks )
+        {
+            lock = (PageLock)m_pageLocks.get( page.getName() );
+        }
+
+        return lock;
     }
 
     public Collection findPages( QueryItem[] query )
@@ -183,5 +277,47 @@ public class PageManager
     public boolean pageExists( String pageName )
     {
         return m_provider.pageExists( pageName );
+    }
+
+    /**
+     *  This is a simple reaper thread that runs roughly every minute
+     *  or so (it's not really that important, as long as it runs),
+     *  and removes all locks that have expired.
+     */
+    private class LockReaper extends Thread
+    {
+        public void run()
+        {
+            while( true )
+            {
+                try
+                {
+                    Thread.sleep( 60 * 1000L );
+
+                    synchronized( m_pageLocks )
+                    {
+                        Collection entries = m_pageLocks.values();
+
+                        Date now = new Date();
+
+                        for( Iterator i = entries.iterator(); i.hasNext(); )
+                        {
+                            PageLock p = (PageLock) i.next();
+
+                            if( now.after( p.getExpiryTime() ) )
+                            {
+                                i.remove();
+
+                                log.debug( "Reaped lock: "+p.getPage().getName()+
+                                           " by "+p.getLocker()+
+                                           ", acquired "+p.getAcquisitionTime()+
+                                           ", and expired "+p.getExpiryTime() );
+                            }
+                        }
+                    }
+                }
+                catch( Throwable t ) {}
+            }
+        }
     }
 }
