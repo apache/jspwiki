@@ -894,7 +894,6 @@ public class WikiEngine
      *  @param version1 Version number of the old page.  If -1, then uses current page.
      *  @param version2 Version number of the new page.  If -1, then uses current page.
      */
-    // FIXME: Add syntax coloring here.
     public String getDiff( String page, int version1, int version2 )
     {
         String page1 = getPureText( page, version1 );
