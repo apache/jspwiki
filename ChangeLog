@@ -1,5 +1,10 @@
 2003-05-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.44.
+
+        * The RSS feed now displays the changed pages as well.  Suggested
+        by Alain Ravet.
+
         * v2.0.43.
 
         * CheckLockTag would sometimes throw a NullPointerException.
