@@ -67,4 +67,13 @@
     </attribute>
   </tag>  
 
+  <tag>
+    <name>LinkTo</name>
+    <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+  </tag>  
+
 </taglib>
