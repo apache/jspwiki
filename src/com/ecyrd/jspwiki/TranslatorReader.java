@@ -617,7 +617,7 @@ public class TranslatorReader extends Reader
 
         if( m_istable )
         {
-            buf.append( "</TBODY>\n</TABLE>" );
+            buf.append( "</TABLE>" );
             m_istable = false;
         }
 
@@ -783,28 +783,73 @@ public class TranslatorReader extends Reader
             //
             //  Tables
             //
-            if( line.startsWith("||") && !m_istable )
+            if( trimmed.startsWith("|") )
             {
-                line = TextUtil.replaceString( line, "||", "<TD>" );
+                StringBuffer tableLine = new StringBuffer();
 
-                buf.append( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n<THEAD>\n<TR>" );
-                postScript = "</TR>\n</THEAD>\n<TBODY>";
-
-                m_istable = true;
-            }
-            else if( line.startsWith("|") && m_istable )
-            {
-                line = TextUtil.replaceString( line, "| ", "<TD> " );
+                if( !m_istable )
+                {
+                    buf.append( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n" );
+                    m_istable = true;
+                }
 
                 buf.append( "<TR>" );
+
+                //
+                //  The following piece of code will go through the line character
+                //  by character, and replace all references to the table markers (|)
+                //  by a <TD>, EXCEPT when '|' can be found inside a link.
+                //
+                boolean islink = false;
+                for( int i = 0; i < line.length(); i++ )
+                {
+                    char c = line.charAt(i);
+                    switch( c )
+                    {
+                      case '|':
+                        if( !islink )
+                        {
+                            if( i < line.length()-1 && line.charAt(i+1) == '|' )
+                            {
+                                tableLine.append( "<TD CLASS=\"tablehead\">" );
+                                i++;
+                            }
+                            else
+                            {
+                                tableLine.append( "<TD>" );
+                            }
+                        }
+                        else
+                        {
+                            tableLine.append( c );
+                        }
+                        break;
+
+                      case '[':
+                        islink = true;
+                        tableLine.append( c );
+                        break;
+
+                      case ']':
+                        islink = false;
+                        tableLine.append( c );
+                        break;
+
+                      default:
+                        tableLine.append( c );
+                        break;
+                    }
+                } // for
+
+                line = tableLine.toString();
+
                 postScript = "</TR>";
             }
-            else if( !line.startsWith("|") && m_istable )
+            else if( !trimmed.startsWith("|") && m_istable )
             {
-                buf.append( "</TBODY>\n</TABLE>" );
+                buf.append( "</TABLE>" );
                 m_istable = false;
             }
-
 
             //
             // Make a bulleted list
