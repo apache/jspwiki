@@ -50,7 +50,10 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  <P>
  *  Using this class:  Always get yourself an instance from JSP page
  *  by using the WikiEngine.getInstance() method.  Never create a new
- * WikiEngine() from scratch, unless you're writing tests.
+ *  WikiEngine() from scratch, unless you're writing tests.
+ *  <p>
+ *  There's basically only a single WikiEngine for each web application, and
+ *  you should always get it using the WikiEngine.getInstance() method.
  *
  *  @author Janne Jalkanen
  */
@@ -190,6 +193,9 @@ public class WikiEngine
      *  is only called from JSP pages (and JspInit()) to be specific,
      *  we throw a RuntimeException if things don't work.
      *  
+     *  @param config The ServletConfig object for this servlet.
+     *
+     *  @return A WikiEngine instance.
      *  @throws InternalWikiException in case something fails.  This
      *          is a RuntimeException, so be prepared for it.
      */
@@ -470,9 +476,16 @@ public class WikiEngine
     public static final String PROP_PAGEFILTER = "jspwiki.pageFilter.";
 
     /**
-     *  Adds a page filter to the queue.
+     *  Adds a page filter to the queue.  The priority defines in which
+     *  order the page filters are run, the highest priority filters go
+     *  in the queue first.
+     *  <p>
+     *  In case two filters have the same priority, their execution order is
+     *  not defined.
      *
      *  @since 2.1.44.
+     *  @param f PageFilter to add
+     *  @param priority The priority in which position to add it in.
      */
     public void addPageFilter( PageFilter f, int priority )
     {
@@ -535,7 +548,16 @@ public class WikiEngine
 
     /**
      *  Throws an exception if a property is not found.
+     *
+     *  @param props A set of properties to search the key in.
+     *  @param key   The key to look for.
+     *  @return The required property
+     *
+     *  @throws NoRequiredPropertyException If the search key is not 
+     *          in the property set.
      */
+
+    // FIXME: Should really be in some util file.
     public static String getRequiredProperty( Properties props, String key )
         throws NoRequiredPropertyException
     {
@@ -561,6 +583,7 @@ public class WikiEngine
     }
 
     /**
+     *  Don't use.
      *  @since 1.8.0
      */
     public String getPluginSearchPath()
@@ -1015,9 +1038,14 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the unconverted text of a page.
+     *  Returns the un-HTMLized text of the latest version of a page.
+     *  This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable
+     *  for inclusion on an HTML page.  If you want to have the
+     *  page text without any conversions, use getPureText().
      *
      *  @param page WikiName of the page to fetch.
+     *  @return WikiText.
      */
     public String getText( String page )
     {
@@ -1025,11 +1053,16 @@ public class WikiEngine
     }
 
     /**
-     * Returns the unconverted text of the given version of a page,
-     * if it exists.  This method also replaces the HTML entities.
+     *  Returns the un-HTMLized text of the given version of a page.
+     *  This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable
+     *  for inclusion on an HTML page.  If you want to have the
+     *  page text without any conversions, use getPureText().
+     *
      *
      * @param page WikiName of the page to fetch
      * @param version  Version of the page to fetch
+     * @return WikiText.
      */
     public String getText( String page, int version )
     {
@@ -1047,10 +1080,35 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the pure text of a page, no conversions.
+     *  Returns the un-HTMLized text of the given version of a page in
+     *  the given context.  USE THIS METHOD if you don't know what
+     *  doing.
+     *  <p>
+     *  This method also replaces the &lt; and &amp; -characters with
+     *  their respective HTML entities, thus making it suitable
+     *  for inclusion on an HTML page.  If you want to have the
+     *  page text without any conversions, use getPureText().
      *
+     *  @since 1.9.15.
+     */
+    public String getText( WikiContext context, WikiPage page )
+    {
+        return getText( page.getName(), page.getVersion() );
+    }
+
+
+    /**
+     *  Returns the pure text of a page, no conversions.  Use this
+     *  if you are writing something that depends on the parsing
+     *  of the page.  Note that you should always check for page
+     *  existence through pageExists() before attempting to fetch
+     *  the page contents.
+     *
+     *  @param page    The name of the page to fetch.
      *  @param version If WikiPageProvider.LATEST_VERSION, then uses the 
      *  latest version.
+     *  @return The page contents.  If the page does not exist,
+     *          returns an empty string.
      */
     // FIXME: Should throw an exception on unknown page/version?
     public String getPureText( String page, int version )
@@ -1075,22 +1133,19 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the pure text of a page, no conversions.  Use this
+     *  if you are writing something that depends on the parsing
+     *  the page. Note that you should always check for page
+     *  existence through pageExists() before attempting to fetch
+     *  the page contents.
+     *  
+     *  @param page A handle to the WikiPage
+     *  @return String of WikiText.
      *  @since 2.1.13.
      */
     public String getPureText( WikiPage page )
     {
         return getPureText( page.getName(), page.getVersion() );
-    }
-
-    /**
-     *  Returns plain text (with HTML entities replaced). This should
-     *  be the main entry point for getText().
-     *
-     *  @since 1.9.15.
-     */
-    public String getText( WikiContext context, WikiPage page )
-    {
-        return getText( page.getName(), page.getVersion() );
     }
 
     /**
