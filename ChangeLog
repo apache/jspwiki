@@ -1,3 +1,10 @@
+2003-07-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Changed default "has this page been changed" -check interval in
+        CachingProvider to 30 seconds, because there were some issues in
+        high-load situations when using a shorter interval.  Also removed
+        some non-functional code.
+
 2003-07-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.44.
