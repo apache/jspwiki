@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.25 2002-12-09 19:08:41 jalkanen Exp $
+    $Id: build.xml,v 1.25.2.1 2002-12-11 13:03:01 ebu Exp $
 -->    
        
 <!--   
@@ -179,7 +179,8 @@
   <target name="compiletests" depends="init"
           description="Builds the test code.">
     <javac srcdir="${tests.src}"
-           destdir="${tests.build}">
+           destdir="${tests.build}"
+           debug="on">
       <classpath refid="path.base" />
     </javac>
   </target>
