@@ -25,6 +25,13 @@ Here are some strategical figures and other interesting things about this partic
 | __If we do, what's the file name?__ | [{$jspwiki.rss.fileName}]
 | __How often is the RSS updated?__ |  [{$jspwiki.rss.interval}]
 
+!Personal information
+
+Here is what I know about you currently:
+
+| __User name__    | [{$username}]
+| __Login status__ | [{$loginstatus}]
+
 !List of currently edited pages
 
 [{ListLocksPlugin}]
