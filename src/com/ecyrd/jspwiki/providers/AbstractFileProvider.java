@@ -362,6 +362,7 @@ public abstract class AbstractFileProvider
     }
 
     public void deleteVersion( String pageName, int version )
+        throws ProviderException
     {
         if( version == WikiProvider.LATEST_VERSION )
         {
@@ -372,6 +373,7 @@ public abstract class AbstractFileProvider
     }
 
     public void deletePage( String pageName )
+        throws ProviderException
     {
         File f = findPage( pageName );
 
