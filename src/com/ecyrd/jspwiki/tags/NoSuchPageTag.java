@@ -62,7 +62,7 @@ public class NoSuchPageTag
             page = engine.getPage( m_pageName );
         }
 
-        System.out.println("Checking "+page);
+        // System.out.println("Checking "+page);
 
         if( page != null && engine.pageExists( page.getName(), page.getVersion() ) )
         {
