@@ -33,7 +33,7 @@ public class PingWeblogsComFilter
             return; // This is not a weblog entry.
         }
         
-        blogName = blogName.substring( blogentryTxt );
+        blogName = blogName.substring( 0, blogentryTxt );
 
         if( blogName.equals( engine.getFrontPage() ) )
         {
