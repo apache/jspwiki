@@ -1,3 +1,10 @@
+2003-03-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.37.
+
+        * Bug fix: If the user name was received from container, JSPWiki would get
+        confused if it contained spaces.  Reported by Foster Schucker.
+
 2003-03-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * 2.0.36.  Stable 2.0!  YAY!
