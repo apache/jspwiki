@@ -1554,6 +1554,21 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "Janne Jalkanen", p.getAttribute("name") );
     }
 
+    public void testSet4()
+        throws Exception
+    {
+        String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
+
+        WikiPage p = new WikiPage( PAGE_NAME );
+
+        String res = translate( p, src );
+
+        assertEquals("Page text", "Foobar.", res);
+
+        assertEquals( "Janne Jalkanen", p.getAttribute("name") );
+        assertEquals( "Janne Jalkanen", p.getAttribute("too") );
+    }
+
     /**
      *  Test collection of links.
      */
