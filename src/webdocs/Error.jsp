@@ -25,6 +25,9 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     String msg = "An unknown error was caught by Error.jsp";
+
+    Throwable realcause = null;
+
     if( exception != null )        
     {   
         msg = exception.getMessage();
@@ -32,26 +35,30 @@
         {
             msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
         }
+
+        //
+        //  This allows us to get the actual cause of the exception.
+        //  Note the cast; at least Tomcat has two classes called "JspException"
+        //  imported in JSP pages.
+        //
+
+
+        if( exception instanceof javax.servlet.jsp.JspException )
+        {
+            log.debug("IS JSPEXCEPTION");
+            realcause = ((javax.servlet.jsp.JspException)exception).getRootCause();
+            log.debug("REALCAUSE="+realcause);
+        }
+
+        if( realcause == null ) realcause = exception;    
+    }
+    else
+    {
+        realcause = new Exception("Unknown general exception");
     }
 
     log.debug("Error.jsp exception is: ",exception);
 
-    //
-    //  This allows us to get the actual cause of the exception.
-    //  Note the cast; at least Tomcat has two classes called "JspException"
-    //  imported in JSP pages.
-    //
-
-    Throwable realcause = null;
-
-    if( exception instanceof javax.servlet.jsp.JspException )
-    {
-        log.debug("IS JSPEXCEPTION");
-        realcause = ((javax.servlet.jsp.JspException)exception).getRootCause();
-        log.debug("REALCAUSE="+realcause);
-    }
-
-    if( realcause == null ) realcause = exception;    
 
     pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
 %>
