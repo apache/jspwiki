@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki;
 
 import java.util.StringTokenizer;
+import java.util.NoSuchElementException;
+import org.apache.log4j.Category;
 
 /**
  *  Contains user profile information.
@@ -32,6 +34,8 @@ public class UserProfile
 {
     private String m_userName;
 
+    private Category log = Category.getInstance( UserProfile.class );
+
     public UserProfile()
     {
     }
@@ -43,7 +47,9 @@ public class UserProfile
 
     public String getStringRepresentation()
     {
-        return "username="+m_userName;
+        String res = "username="+TextUtil.urlEncodeUTF8(m_userName);
+
+        return res;
     }
 
     public String getName()
@@ -58,20 +64,27 @@ public class UserProfile
 
     public void parseStringRepresentation( String res )
     {
-        if( res != null )
+        try
         {
-            StringTokenizer tok = new StringTokenizer( res, " ,=" );
-
-            while( tok.hasMoreTokens() )
+            if( res != null )
             {
-                String param = tok.nextToken();
-                String value = tok.nextToken();
-                    
-                if( param.equals("username") )
+                StringTokenizer tok = new StringTokenizer( res, " ,=" );
+
+                while( tok.hasMoreTokens() )
                 {
-                    m_userName = value;
+                    String param = tok.nextToken();
+                    String value = tok.nextToken();
+                    
+                    if( param.equals("username") )
+                    {
+                        m_userName = TextUtil.urlDecodeUTF8(value);
+                    }
                 }
             }
+        }
+        catch( NoSuchElementException e )
+        {
+            log.warn("Missing or broken token in user profile: '"+res+"'");
         }
     }
 }
