@@ -18,7 +18,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
 */
-package com.ecyrd.jspwiki.plugin;
+package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
 import java.util.*;
