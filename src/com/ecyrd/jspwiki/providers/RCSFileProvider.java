@@ -122,6 +122,8 @@ public class RCSFileProvider
 
         WikiPage info = super.getPageInfo( page, version );
 
+        if( info == null ) return null;
+
         try
         {
             String   cmd = m_fullLogCommand;
