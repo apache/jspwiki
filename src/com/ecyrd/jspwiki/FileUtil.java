@@ -169,6 +169,13 @@ public class FileUtil
         }
         catch( IOException e )
         {
+            //
+            //  The reading should fail with an IOException, if the UTF-8 format 
+            //  is damaged, i.e. there is ISO-Latin1 instead of UTF-8.
+            //
+
+            // FIXME: This does NOT work with JDK1.4!
+
             if( !encoding.equals("ISO-8859-1") )
             {
                 // FIXME: The real exceptions we get in case there is a problem with
