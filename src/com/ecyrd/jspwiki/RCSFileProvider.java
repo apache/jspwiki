@@ -213,7 +213,9 @@ public class RCSFileProvider
         {
             Pattern revpattern  = compiler.compile("^revision \\d+\\.(\\d+)");
             Pattern datepattern = compiler.compile("^date:\\s*(.*)[\\+\\-;]\\d+;");
-            Pattern userpattern = compiler.compile("^\"author=(.*)\"");
+            // This complicated pattern is required, since on Linux RCS adds
+            // quotation marks, but on Windows, it does not.
+            Pattern userpattern = compiler.compile("^\"?author=([\\w\\.\\s]*)\"?");
 
             String cmd = TextUtil.replaceString( m_fullLogCommand,
                                                  "%s",
