@@ -1,3 +1,15 @@
+2003-09-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.71.
+
+        * Oops, using container-based authentication got you in wrong
+        groups. Fixed.
+
+        * Added permission checking for attachments as well.  New
+        permission called "upload".
+
+        * Attachment image URL now uses baseURL.  Reported by Niilo Neuvo.
+
 2003-09-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.70.
