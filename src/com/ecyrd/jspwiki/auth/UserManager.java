@@ -13,6 +13,8 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
+import com.ecyrd.jspwiki.auth.modules.*;
+
 /**
  *  Manages user accounts, logins/logouts, passwords, etc.
  */
@@ -41,7 +43,7 @@ public class UserManager
     public static final String GROUP_KNOWNPERSON = "KnownPerson";
 
     private WikiAuthenticator  m_authenticator;
-    // private WikiPrincipalist   m_principalist;
+    private UserDatabase       m_database;
 
     private WikiEngine         m_engine;
 
@@ -57,7 +59,7 @@ public class UserManager
         WikiGroup all = new AllGroup();
         all.setName( "All" );
         m_groups.put( GROUP_GUEST,       new AllGroup() );
-        m_groups.put( "All",             all );
+        // m_groups.put( "All",             all );
         m_groups.put( GROUP_NAMEDGUEST,  new NamedGroup() );
         m_groups.put( GROUP_KNOWNPERSON, new KnownGroup() );
 
@@ -95,10 +97,9 @@ public class UserManager
         //
         //  FIXME: These should not be hardcoded.
         //
-        /*
-        m_principalist = new WikiPagePrincipalist();
-        m_principalist.initialize( m_engine, props );
-        */
+
+        m_database = new WikiDatabase();
+        m_database.initialize( m_engine, props );
     }
 
     // FIXME: Should really in the future use a cache of known user profiles,
@@ -156,8 +157,15 @@ public class UserManager
     // FIXME: Should really query the page manager.
 
     public List getGroupsForPrincipal( Principal user )
+        throws NoSuchPrincipalException
     {
-        ArrayList list = new ArrayList();
+        List list = m_database.getGroupsForPrincipal( user );
+
+        if( list == null ) list = new ArrayList();
+
+        //
+        //  Add the default groups.
+        //
 
         synchronized( m_groups )
         {
