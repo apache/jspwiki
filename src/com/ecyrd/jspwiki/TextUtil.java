@@ -501,8 +501,6 @@ public class TextUtil
     public static Properties createProperties( String[] values )
         throws IllegalArgumentException
     {
-        System.out.println("ADDING: "+values.length);
-
         if( values.length % 2 != 0 )
             throw new IllegalArgumentException( "One value is missing.");
 
@@ -511,7 +509,6 @@ public class TextUtil
         for( int i = 0; i < values.length; i += 2 )
         {
             props.setProperty( values[i], values[i+1] );
-            System.out.println("Adding: "+values[i]+"="+values[i+1]);
         }
 
         return props;
