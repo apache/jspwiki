@@ -101,7 +101,7 @@ public class RCSFileProvider
 
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
 
-            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
 
             String line;
 
@@ -150,7 +150,8 @@ public class RCSFileProvider
 
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
 
-            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream(),
+                                                                              m_encoding) );
 
             String line;
 
