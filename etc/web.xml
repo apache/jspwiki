@@ -69,12 +69,12 @@
 
    <servlet-mapping>
        <servlet-name>XMLRPC</servlet-name>
-       <url-pattern>/RPC2</url-pattern>
+       <url-pattern>/RPC2/</url-pattern>
    </servlet-mapping>
 
    <servlet-mapping>
        <servlet-name>XMLRPC-UTF8</servlet-name>
-       <url-pattern>/RPCU</url-pattern>
+       <url-pattern>/RPCU/</url-pattern>
    </servlet-mapping>
 
    AND REMOVE ME TOO -->
