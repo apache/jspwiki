@@ -1,3 +1,8 @@
+2002-12-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Moved GoRankAggregator and GoDiagram plugins into their own,
+        separate project. 
+
 2002-12-09  Erik Bunn  <Erik.Bunn@basen.net>
 
         * v1.9.50.
@@ -96,7 +101,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        HirsimŽäki for providing with the idea and the image.  Look for
+        HirsimÂŽäki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -999,7 +1004,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VŽäŽätŽäinen finally managed to
+        * Added support for tables.  Sanna VÂŽäŽätÂŽäinen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
