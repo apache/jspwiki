@@ -110,6 +110,25 @@ public class GoRankAggregatorTest extends TestCase
         assertEquals( "76: egf", 100, u1.m_egfRank );
     }
 
+    public void testScandicComparisons()
+        throws Exception
+    {
+        assertTrue( agg.scandicEquals("Möttönen", "Mottonen") );
+    }
+
+    public void testScandicComparisons2()
+        throws Exception
+    {
+        assertTrue( agg.scandicEquals("Ääliö", "Aaliö") );
+    }
+
+    public void testScandicComparisons3()
+        throws Exception
+    {
+        assertTrue( agg.scandicEquals("Örmönen", "Ormonen") );
+    }
+
+
     public void testAggregate()
         throws Exception
     {
