@@ -84,12 +84,17 @@ public class TestEngine extends WikiEngine
     /**
      *  Copied from FileSystemProvider
      */
-    protected String mangleName( String pagename )
+    protected static String mangleName( String pagename )
+        throws IOException
     {
+        Properties properties = new Properties();
+        
         // FIXME: Horrible kludge, very slow, etc.
-        if( "UTF-8".equals( getContentEncoding() ) )
+        if( "UTF-8".equals( properties.getProperty(PROP_ENCODING) ) )
+        {
             return TextUtil.urlEncodeUTF8( pagename );
-
+        }
+        
         return java.net.URLEncoder.encode( pagename );
     }
 
@@ -97,12 +102,15 @@ public class TestEngine extends WikiEngine
      *  Removes a page, but not any auxiliary information.  Works only
      *  with FileSystemProvider.
      */
-    public void deletePage( String name )
+    public static void deleteTestPage( String name )
     {
-        String files = getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
-
+        Properties properties = new Properties();
+        
         try
         {
+            properties.load( findTestProperties() );
+            String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
             File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
 
             f.delete();
