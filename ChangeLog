@@ -9,7 +9,9 @@
         "keep editing" and "cancel" so that it's more user-friendly now.
         Note that they the content preview "Save" is a CSS hack, and the
         content preview "Keep editing" is a Javascript hack, so they might
-        not always work.
+        not always work.  The modifications required only changes to the
+        "default" template, so anyone who has their own template needs to
+        check out how it's done.
 
         * v2.1.83.
 
