@@ -23,6 +23,7 @@ package com.ecyrd.jspwiki;
 import java.util.*;
 import org.apache.log4j.*;
 
+import com.ecyrd.jspwiki.filters.BasicPageFilter;
 
 /*
   BUGS
@@ -91,6 +92,7 @@ import org.apache.log4j.*;
  *  @since 1.6.1
  */
 public class ReferenceManager
+    extends BasicPageFilter
 {
     /** Maps page wikiname to a Collection of pages it refers to. The Collection 
      *  must contain Strings. The Collection may contain names of non-existing
@@ -126,6 +128,14 @@ public class ReferenceManager
         buildKeyLists( pages );
     }
 
+    public void postSave( WikiContext context, String content )
+    {
+        WikiPage page = context.getPage();
+
+        updateReferences( page.getName(),
+                          context.getEngine().scanWikiLinks( page, content ) );
+
+    }
     
     /**
      *  Updates the referred pages of a new or edited WikiPage. If a refersTo
