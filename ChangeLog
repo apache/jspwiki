@@ -2,6 +2,9 @@
 
         * v1.9.17.
 
+        * Added Translate tag for writing Wiki content directly from the
+        page.
+
         * Non-existing pages would crash both Wiki.jsp and Edit.jsp.  Now
         fixed.  Reported by Alain Ravet.
 
