@@ -158,9 +158,7 @@ public class CachingAttachmentProvider
         {
             try
             {
-                Collection c = m_provider.listAttachments( page );
-                m_cache.putInCache( page.getName(), c );
-                m_cacheMisses++;
+                Collection c = refresh( page );
 
                 return c;
             }
