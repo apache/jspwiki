@@ -44,7 +44,7 @@
     }
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    UserProfile currentUser  = wiki.getUserManager().getUserProfile( request );
+    UserProfile currentUser  = wikiContext.getCurrentUser();
 
     if( !mgr.checkPermission( wikiContext.getPage(),
                               currentUser,
@@ -123,13 +123,12 @@
                 pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
             }
 
-            wiki.saveText( wikipage, pageText.toString(), request );
+            wiki.saveText( wikiContext, pageText.toString() );
         }
         else
         {
-            wiki.saveText( wikipage,
-                           wiki.safeGetParameter( request, "text" ),
-                           request );
+            wiki.saveText( wikiContext,
+                           wiki.safeGetParameter( request, "text" ) );
         }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
