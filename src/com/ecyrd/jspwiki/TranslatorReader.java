@@ -37,8 +37,13 @@ import org.apache.oro.text.regex.*;
 //        is to move away from a line-based system into a pure stream-based system.
 public class TranslatorReader extends Reader
 {
-    public static final int READ = 0;
-    public static final int EDIT = 1;
+    public  static final int              READ  = 0;
+    public  static final int              EDIT  = 1;    
+    private static final int              EMPTY = 2;  // Empty message
+    private static final int              LOCAL = 3;
+    private static final int              LOCALREF = 4;
+    private static final int              IMAGE = 5;
+    private static final int              EXTERNAL = 6;
 
     private BufferedReader m_in;
 
@@ -147,14 +152,46 @@ public class TranslatorReader extends Reader
 
         if( text == null ) text = link;
 
+        // Make sure we make a link name that can be accepted
+        // as a valid URL.
+
+        String encodedlink = m_engine.encodeName( link );
+
+        if( encodedlink.length() == 0 )
+        {
+            type = EMPTY;
+        }
+
         switch(type)
         {
           case READ:
-            result = "<A HREF=\"Wiki.jsp?page="+link+"\">"+text+"</A>";
+            result = "<A HREF=\"Wiki.jsp?page="+encodedlink+"\">"+text+"</A>";
             break;
 
           case EDIT:
-            result = "<U>"+text+"</U><A HREF=\"Edit.jsp?page="+link+"\">?</A>";
+            result = "<U>"+text+"</U><A HREF=\"Edit.jsp?page="+encodedlink+"\">?</A>";
+            break;
+
+          case EMPTY:
+            result = "<U>"+text+"</U>";
+            break;
+
+          case LOCALREF:
+            result = "<A CLASS=\"footnoteref\" HREF=\"#ref"+
+                     link+"\">[["+text+"]</A>";
+            break;
+
+          case LOCAL:
+            result = "<A CLASS=\"footnote\" NAME=\"ref"+
+                     link.substring(1)+"\">[["+text+"]</A>";
+            break;
+
+          case IMAGE:
+            result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\">";
+            break;
+
+          case EXTERNAL:
+            result = "<A HREF=\""+link+"\">"+text+"</A>";
             break;
 
           default:
@@ -210,6 +247,11 @@ public class TranslatorReader extends Reader
     {
         StringBuffer clean = new StringBuffer();
 
+        //
+        //  Compress away all whitespace and capitalize
+        //  all words in between.
+        //
+
         StringTokenizer st = new StringTokenizer( link, " -" );
 
         while( st.hasMoreTokens() )
@@ -221,7 +263,13 @@ public class TranslatorReader extends Reader
             clean.append( component );
         }
 
-        //  Remove offending characters that are not allowed inside filenames
+        //
+        //  Remove non-alphanumeric characters that should not
+        //  be put inside WikiNames.  Note that all valid
+        //  Unicode letters are considered okay for WikiNames.
+        //  It is the problem of the WikiPageProvider to take
+        //  care of actually storing that information.
+        //
 
         for( int i = 0; i < clean.length(); i++ )
         {
@@ -263,6 +311,20 @@ public class TranslatorReader extends Reader
         return false;
     }
 
+    // FIXME: Non-optimal.
+    private boolean isNumber( String s )
+    {
+        try
+        {
+            int i = Integer.parseInt( s );
+        }
+        catch( Exception e )
+        {
+            return false;
+        }
+        return true;
+    }
+
     private String setHyperLinks( String line )
     {
         int start, end = 0;
@@ -301,14 +363,17 @@ public class TranslatorReader extends Reader
 
                 if( isExternalLink( reallink ) )
                 {
+                    // It's an external link, out of this Wiki
                     if( isImageLink( reallink ) )
                     {
+                        // Image links are 
                         line = replaceString( line, start, end+1,
-                                              "<IMG CLASS=\"inline\" SRC=\""+reallink+"\" ALT=\""+link+"\">" );
+                                              makeLink( IMAGE, reallink, link ) );
                     }
                     else
                     {
-                        line = replaceString( line, start, end+1, "<A HREF=\""+reallink+"\">"+link+"</A>" );
+                        line = replaceString( line, start, end+1, 
+                                              makeLink( EXTERNAL, reallink, link ) );
                     }
                 }
                 else if( (interwikipoint = reallink.indexOf(":")) != -1 )
@@ -332,14 +397,27 @@ public class TranslatorReader extends Reader
                                               link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
                     }
                 }
+                else if( reallink.startsWith("#") )
+                {
+                    // It defines a local footnote
+                    line = replaceString( line, start, end+1, 
+                                          makeLink( LOCAL, reallink, link ) );
+                }
+                else if( isNumber( reallink ) )
+                {
+                    // It defines a reference to a local footnote
+                    line = replaceString( line, start, end+1, 
+                                          makeLink( LOCALREF, reallink, link ) );
+                }
                 else
                 {
-                    // It's internal.
+                    // It's an internal Wiki link
                     reallink = cleanLink( reallink );
 
                     if( linkExists( reallink ) )
                     {
-                        line = replaceString( line, start, end+1, makeLink( READ, reallink, link ) );
+                        line = replaceString( line, start, end+1, 
+                                              makeLink( READ, reallink, link ) );
                     }
                     else
                     {
