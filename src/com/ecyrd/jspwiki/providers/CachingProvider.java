@@ -76,6 +76,10 @@ public class CachingProvider
 
     private int  m_milliSecondsBetweenChecks = 30000;
 
+    // FIXME: This MUST be cached somehow.
+
+    private boolean m_gotall = false;
+
     /**
      *  Defines, in seconds, the amount of time a text will live in the cache
      *  at most before requiring a refresh.
@@ -174,6 +178,19 @@ public class CachingProvider
         if( item != null )
         {
             return true;
+        }
+
+        //
+        //  If we have a list of all pages in memory, then any page
+        //  not in the cache must be non-existent.
+        //
+        //  FIXME: There's a problem here; if someone modifies the
+        //         repository by adding a page outside JSPWiki, 
+        //         we won't notice it.
+
+        if( m_gotall )
+        {
+            return false;
         }
 
         //
@@ -362,10 +379,6 @@ public class CachingProvider
         }
     }
 
-    // FIXME: This MUST be cached somehow.
-
-    private boolean m_gotall = false;
-
     public Collection getAllPages()
         throws ProviderException
     {
@@ -377,15 +390,13 @@ public class CachingProvider
 
             // Make sure that all pages are in the cache.
 
-            // FIXME: This has the unfortunate side effect of clearing
-            // the cache.
-
             synchronized(this)
             {
                 for( Iterator i = all.iterator(); i.hasNext(); )
                 {
                     CacheItem item = new CacheItem();
                     item.m_page = (WikiPage) i.next();
+                    item.m_lastChecked = System.currentTimeMillis();
 
                     m_cache.put( item.m_page.getName(), item );
                 }
