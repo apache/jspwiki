@@ -1,3 +1,11 @@
+2001-10-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Changed the versioning so that whenever you check out a CVS
+        copy, you get vX.Y.Z-cvs as the version string.  This was done to
+        separate the development version from the actual release version.
+
+        * Added the list of image inline link patterns to SystemInfo.jsp.
+
 2001-10-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.3.3 - not released.
