@@ -32,11 +32,9 @@
         //  is the best place to show errors, though.
        
         long pagedate   = Long.parseLong(request.getParameter("edittime"));
-        Date lastchange = wiki.pageLastChanged( pagereq );
+        Date change     = wiki.pageLastChanged( pagereq );
 
-        log.debug("Page date="+pagedate+", last changed "+lastchange.getTime());
-
-        if( lastchange.getTime() != pagedate )
+        if( change != null && change.getTime() != pagedate )
         {
             //
             // Someone changed the page while we were editing it!
@@ -61,6 +59,14 @@
     }
 
     log.info("Editing page "+pagereq);
+
+    //
+    //  If the page does not exist, we'll get a null here.
+    //
+    long lastchange = 0;
+    Date d = wiki.pageLastChanged( pagereq );
+    if( d != null ) lastchange = d.getTime();
+    
 %>
 
 <HTML>
@@ -88,7 +94,7 @@
 
       <INPUT type="hidden" name="page" value="<%=pagereq%>">
       <INPUT type="hidden" name="action" value="save">
-      <INPUT type="hidden" name="edittime" value="<%=wiki.pageLastChanged(pagereq).getTime()%>">
+      <INPUT type="hidden" name="edittime" value="<%=lastchange%>">
 
       <TEXTAREA name="text" rows="25" cols="80"><%=wiki.getText(pagereq)%></TEXTAREA>
 
