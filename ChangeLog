@@ -1,5 +1,7 @@
 2005-01-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * BugReportHandler ignores now _body (oops) :)
+
         * v2.1.135
 
         * Should fix the spurious problem people had trying to attach files
