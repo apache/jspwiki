@@ -23,6 +23,12 @@ public class NamedGroup
 
             return p.getLoginStatus() >= UserProfile.COOKIE;
         }
+        else if( user instanceof WikiGroup )
+        {
+            WikiGroup wg = (WikiGroup) user;
+
+            return equals( wg );
+        }
 
         throw new InternalWikiException("Someone offered us a Principal that is not an UserProfile!");
     }
