@@ -18,7 +18,7 @@
       <h3>Please enter your comments below:</h3>
       </p>
 
-      <form action="<wiki:EditLink format="url" />" method="POST" 
+      <form action="<wiki:CommentLink format="url" />" method="POST" 
             accept-charset="<wiki:ContentEncoding />">
 
       <p>
@@ -29,9 +29,6 @@
       <input type="hidden" name="page"     value="<wiki:PageName/>" />
       <input type="hidden" name="action"   value="save" />
       <input type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>" />
-      <wiki:CheckRequestContext context="comment">
-         <input type="hidden" name="comment" value="true" />
-      </wiki:CheckRequestContext>
 
       <%-- End of required area --%>
 
