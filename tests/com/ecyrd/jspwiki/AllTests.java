@@ -54,6 +54,7 @@ public class AllTests extends TestCase
         suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.acl.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.util.AllTests.suite() );
 
         return suite;
     }
