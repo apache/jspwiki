@@ -192,6 +192,17 @@ public class VariableManager
         {
             res = context.getEngine().getCurrentProviderInfo();
         }
+        else if( name.equals("attachmentprovider") )
+        {
+            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
+            res = (p != null) ? p.getClass().getName() : "-";
+        }
+        else if( name.equals("attachmentproviderdescription") )
+        {
+            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
+
+            res = (p != null) ? p.getProviderInfo() : "-";
+        }
         else if( name.equals("interwikilinks") )
         {
             // FIXME: Use StringBuffer
