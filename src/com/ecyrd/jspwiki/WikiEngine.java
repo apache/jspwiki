@@ -228,12 +228,6 @@ public class WikiEngine
         return( getInstance( config.getServletContext(), null ) );
     }
     
-    public static synchronized WikiEngine getInstance( ServletConfig config,
-                                                       Properties props )
-    {
-        return( getInstance( config.getServletContext(), null ) );
-    }
-
     /**
      * Gets a WikiEngine related to the servlet. Works like getInstance(ServletConfig),
      * but does not force the Properties object. This method is just an optional way
@@ -244,6 +238,20 @@ public class WikiEngine
      * @param props  A set of properties, or null, if we are to load JSPWiki's default 
      *               jspwiki.properties (this is the usual case).
      */
+    public static synchronized WikiEngine getInstance( ServletConfig config,
+                                                       Properties props )
+    {
+        return( getInstance( config.getServletContext(), null ) );
+    }
+
+    /**
+     * Gets a WikiEngine related to the servlet. Works just like getInstance( ServletConfig )
+     * 
+     * @param config The ServletContext of the webapp servlet/JSP calling this method.
+     * @param props  A set of properties, or null, if we are to load JSPWiki's default 
+     *               jspwiki.properties (this is the usual case).
+     */
+
     public static synchronized WikiEngine getInstance( ServletContext context, 
                                                        Properties props )
         throws InternalWikiException
