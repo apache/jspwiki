@@ -553,6 +553,56 @@ public class WikiEngine
 
 
     /**
+     *  Returns the query string (the portion after the question mark).
+     *
+     *  @return The query string.  If the query string is null,
+     *   returns an empty string.
+     *
+     *  @since 2.0.40.
+     */
+    public String safeGetQueryString( HttpServletRequest request )
+    {
+        if (request == null)
+        {
+            return "";
+        }
+
+        try
+        {
+            String res = request.getQueryString();
+            if( res != null )
+            {
+                res = new String(res.getBytes("ISO-8859-1"),
+                                 getContentEncoding() );
+
+                //
+                // Ensure that the 'page=xyz' attribute is removed
+                // FIXME: Is it really the mandate of this routine to
+                //        do that?
+                //
+                int pos1 = res.indexOf("page=");
+                if (pos1 >= 0)
+                {
+                    String tmpRes = res.substring(0, pos1);
+                    int pos2 = res.indexOf("&",pos1) + 1;
+                    if ( (pos2 > 0) && (pos2 < res.length()) )
+                    {
+                        tmpRes = tmpRes + res.substring(pos2);
+                    }
+                    res = tmpRes;
+                }
+            }
+
+            return res;
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal( "Unsupported encoding", e );
+            return "";
+        }
+    }
+
+    /**
      *  Returns an URL to some other Wiki that we know.
      *
      *  @return null, if no such reference was found.
