@@ -1,13 +1,14 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html>
 
 <head>
   <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
-  <%@ include file="header.jsp" %>
+  <wiki:Include page="commonheader.jsp"/>
 </head>
 
 <body bgcolor="#FFFFFF">
@@ -15,8 +16,8 @@
 <table border="0" cellspacing="8" width="95%">
 
   <tr>
-    <td class="leftmenu" width="10%" valign="top" nowrap="true">
-       <%@ include file="LeftMenu.jsp" %>
+    <td class="leftmenu" width="10%" valign="top" nowrap="nowrap">
+       <wiki:Include page="LeftMenu.jsp"/>
        <p>
        <wiki:CheckRequestContext context="view">
           <wiki:Permission permission="edit">
@@ -24,13 +25,12 @@
           </wiki:Permission>
        </wiki:CheckRequestContext>
        </p>
-       <%@ include file="LeftMenuFooter.jsp" %>
-       <p>
-           <div align="center">
-           <wiki:RSSImageLink title="Aggregate the RSS feed" /><br />
-           <wiki:RSSUserlandLink title="Aggregate the RSS feed in Radio Userland!" />
-           </div>
-       </p>
+       <wiki:Include page="LeftMenuFooter.jsp"/>
+
+       <br /><br />
+       <div align="center">
+           <wiki:RSSImageLink title="Aggregate the RSS feed" />
+       </div>
     </td>
 
     <td class="page" width="85%" valign="top">
@@ -40,7 +40,7 @@
             <td align="left">
                 <h1 class="pagename"><a name="Top"><wiki:PageName/></a></h1>
             </td>
-            <td align="right"><%@ include file="SearchBox.jsp" %></td>
+            <td align="right"><wiki:Include page="SearchBox.jsp"/></td>
          </tr>
          <tr>
             <td colspan="2" class="breadcrumbs">Your trail: <wiki:Breadcrumbs /></td>
