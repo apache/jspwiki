@@ -54,7 +54,7 @@ public class UserManager
     public static final String PROP_STOREIPADDRESS= "jspwiki.storeIPAddress";
 
     public static final String PROP_AUTHENTICATOR = "jspwiki.authenticator";
-    public static final String PROP_USERDATABASE = "jspwiki.userdatabase";
+    public static final String PROP_USERDATABASE  = "jspwiki.userdatabase";
 
     public static final String PROP_ADMINISTRATOR = "jspwiki.auth.administrator";
 
@@ -222,11 +222,9 @@ public class UserManager
         //
         WikiGroup superPrincipal = getWikiGroup( m_administrator );
 
-        System.out.println("superprincipal="+superPrincipal);
-
         if( superPrincipal == null )
         {
-            log.warn("No supergroup '"+m_administrator+"' exists; you should create one.");
+            // log.warn("No supergroup '"+m_administrator+"' exists; you should create one.");
 
             return false;
         }
@@ -324,6 +322,7 @@ public class UserManager
     /**
      *  Attempts to find a Principal from the list of known principals.
      */
+
     public Principal getPrincipal( String name )
     {
         Principal p = getWikiGroup( name );
@@ -364,23 +363,27 @@ public class UserManager
         }
 
         UserProfile wup = getUserProfile( username );
-        if( wup != null )
+        if( wup != null ) 
+        {
             wup.setPassword( password );
 
-        boolean isValid = m_authenticator.authenticate( wup );
+            boolean isValid = m_authenticator.authenticate( wup );
 
-        if( isValid )
-        {
-            wup.setLoginStatus( UserProfile.PASSWORD );
-            session.setAttribute( WIKIUSER, wup );
-            log.info("Logged in user "+username);
-        }
-        else
-        {
-            log.info("Username "+username+" attempted to log in with the wrong password.");
-        }
+            if( isValid )
+            {
+                wup.setLoginStatus( UserProfile.PASSWORD );
+                session.setAttribute( WIKIUSER, wup );
+                log.info("Logged in user "+username);
+            }
+            else
+            {
+                log.info("Username "+username+" attempted to log in with the wrong password.");
+            }
 
-        return isValid;
+            return isValid;
+        }
+        
+        return false;
     }
 
     /**
@@ -474,26 +477,8 @@ public class UserManager
                 wup = UserProfile.parseStringRepresentation( uid );
                 if( wup != null )
                 {
-                    log.debug("wup="+wup);
                     wup.setLoginStatus( UserProfile.COOKIE );
                 }
-            }
-            else
-            {
-                //
-                //  No username either, so fall back to the IP address.
-                // 
-                if( m_storeIPAddress )
-                {
-                    uid = request.getRemoteAddr();
-                }
-                if( uid == null )
-                {
-                    uid = "unknown"; // FIXME: Magic
-                }
-                wup = getUserProfile( uid );
-                if( wup != null )
-                    wup.setLoginStatus( UserProfile.NONE );
             }
         }
 
@@ -502,8 +487,20 @@ public class UserManager
         if( wup == null )
         {
             wup = new UserProfile();
-            wup.setName( GROUP_GUEST );
+            wup.setLoginName( GROUP_GUEST );
             wup.setLoginStatus( UserProfile.NONE );
+
+            //
+            //  No username either, so fall back to the IP address.
+            // 
+            if( m_storeIPAddress )
+            {
+                wup.setName( request.getRemoteHost() );
+            }
+            else
+            {
+                wup.setName( wup.getLoginName() );
+            }
         }
 
         //
