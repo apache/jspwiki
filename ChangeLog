@@ -1,3 +1,7 @@
+2001-07-15    <Janne.Jalkanen@regex.fi>
+
+	* Added rudimentary page locking.
+
 2001-07-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Appearance of the jsp pages is now slightly more convergent.

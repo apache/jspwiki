@@ -1,0 +1,116 @@
+Emacs, this is -*- Text -*- for you.
+
+
+                        JSPWiki documentation
+                        =====================
+
+                         $Revision: 1.1 $
+                             $Date: 2001-07-15 19:48:51 $
+                           $Author: jalkanen $
+
+What is it?
+-----------
+
+JSPWiki is a very simple WikiWiki clone.  It keeps all of its
+formatting in JSP files, and uses a custom Java class called
+'com.ecyrd.jspwiki.WikiEngine' to all interfacing with the Wiki
+system.
+
+
+    Copyright (C) 2001 Janne Jalkanen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+The license file can be found in doc/LICENSE.
+
+(No, the GPL does not mean that all the content in your new wiki will
+be under the GPL, anymore than any text you write using Emacs becomes
+GPL.)
+
+One small request I have.  If you really, really like this software,
+donate a small amount of money to the World Wildlife Foundation
+(WWF), Free Software Foundation (FSF), or Electronic Freedom
+Foundation (EFF), or whichever charity is close to your heart.
+
+The world doesn't need to become a bad place.
+
+
+Installation
+------------
+
+First, install a JSP engine and a web server.  You can download Tomcat
+from http://jakarta.apache.org/tomcat/.  This software was built
+originally on top of Tomcat 3.2.2, but probably most other versions
+work, too, and most other JSP containers.
+
+After you've installed the engine and checked that it works, you just
+make a subdirectory under $TOMCAT_HOME/webapps/.  For example, if you
+want your application to be called 'MyWiki', just create a directory
+called 'MyWiki', then extract all files from the war files into that
+directory, preserving the directory structure.
+
+Edit the WEB-INF/jspwiki.properties file to your liking.  The only
+thing you need to set is the directory where you want your wiki pages
+to be stored.  I recommend a directory that is regularly backed up.
+
+(Re)start tomcat.
+
+Point your browser at http://<where your Tomcat is installed>/MyWiki/.
+You should see the Main Wiki page.
+
+
+Notes:
+~~~~~~
+
+Feel free to edit the JSP pages anyway you like.  Just don't touch any
+of the Java code, unless you know what you're doing, because otherwise
+the Wiki might stop to work.  Most modern HTML editors are smart
+enough not to mess with the JSP tags (all the stuff between <% and
+%>).
+
+While Tomcat is also a fully featured Web server, it is not
+particularly fast.  You might also have a web server already running.
+Tomcat does integrate itself pretty well with existing web servers,
+such as Apache, so you can just see the instructions at
+http://jakarta.apache.org/ to see how to get Tomcat and Apache talking
+to each other using mod_jk.  (Don't use mod_jserv, it's outdated and
+confusing.)
+
+
+
+Files
+-----
+
+Files are kept in a subdirectory, which is defined in the
+jspwiki.properties file.  All files are in text format (usually in the
+system's native format), with a file ending defined in
+WikiEngine.java.  This is ".txt" by default.
+
+There are some default files with the distribution archive.  Feel free
+to use them to bootstrap your own Wiki.
+
+
+Contact
+-------
+
+JSPWiki was written by Janne Jalkanen.  You may send email to me
+at Janne.Jalkanen@iki.fi.  Feel free to send me patches, suggestions,
+whatever.
+
+JSPWiki is available at http://www.iki.fi/~jalkanen/JSPWiki/
+
+My PGP key is below.
+
