@@ -38,18 +38,30 @@
     String action = request.getParameter("action");
     String uid    = request.getParameter("uid");
     String passwd = request.getParameter("passwd");
-    String msg = (String)wikiContext.getVariable("msg");
-    if( msg == null )
-        wikiContext.setVariable( "msg", "" );
 
     UserManager mgr = wiki.getUserManager();    
 
+    session.setAttribute("msg","");
+
     if( "login".equals(action) )
     {
+        mgr.setUserCookie( response, uid );
+
         if( mgr.login( uid, passwd, session ) )
         {
             response.sendRedirect( wiki.getViewURL(pagereq) );
             return;
+        }
+        else
+        {
+            if( passwd.toUpperCase().equals(passwd) )
+            {
+                session.setAttribute("msg", "Invalid login (please check your Caps Lock key)");
+            }
+            else
+            {
+                session.setAttribute("msg", "Not a valid login.");
+            }
         }
     }
     else if( "logout".equals(action) )
@@ -70,13 +82,13 @@
 <head>
   <title><wiki:Variable var="applicationname"/> login</title>
   <%@ include file="templates/default/header.jsp" %>
-  <META NAME="ROBOTS" CONTENT="NOINDEX">
+  <meta name="robots" content="noindex,nofollow">
 </head>
 
 <body class="login" bgcolor="#FFFFFF">
   <br />
   <br />
-  <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="UTF-8" method="POST" />
+  <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="<wiki:ContentEncoding />" method="POST" />
   <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
   <div align="center">
     <table border="0" cellspacing="3" cellpadding="5" width="35%" bgcolor="#efefef" />
@@ -84,13 +96,13 @@
         <td colspan="2" bgcolor="#bfbfff">
           <div align="center">
             <h3>Welcome to <wiki:Variable var="applicationname"/></h3>
-            <p><wiki:Variable var="msg" /></p>
+            <p style="color:red"><wiki:Variable var="msg" /></p>
           </div>
         </td>
       </tr>
       <tr>
         <td>Login:</td>
-        <td><input type="text" name="uid" /></td>
+        <td><input type="text" name="uid" value="<wiki:Variable var="uid" default="" />" /></td>
       </tr>
       <tr>
         <td>Password:</td>
