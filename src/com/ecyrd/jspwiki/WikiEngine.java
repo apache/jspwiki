@@ -156,11 +156,11 @@ public class WikiEngine
         {
             m_rootPath = context.getRealPath("/");
 
-            log.debug("Root path for this Wiki is: '"+m_rootPath+"'");
-
             props.load( new FileInputStream(propertyFile) );
 
             initialize( props );
+
+            log.debug("Root path for this Wiki is: '"+m_rootPath+"'");
         }
         catch( Exception e )
         {
