@@ -2,6 +2,8 @@
 
         * v2.1.70.
 
+        * Added variable "requestcontext".  Requested by Francois Parlant.
+
         * Slight changes to auth code; authentication via cookie no longer
         considered trustworthy =). 
 
