@@ -226,6 +226,31 @@ public class AttachmentManagerTest extends TestCase
     }
 
 
+    public void testExists() throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test1" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        assertTrue( "attachment disappeared", 
+                    m_engine.pageExists( NAME1+"/test1" ) );
+    }
+
+    public void testExists2() throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test1.bin" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        assertTrue( "attachment disappeared", 
+                    m_engine.pageExists( att.getName() ) );
+    }
+
+
     public static Test suite()
     {
         return new TestSuite( AttachmentManagerTest.class );
