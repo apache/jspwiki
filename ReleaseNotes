@@ -3,16 +3,47 @@ This is a feature release of JSPWiki.
 
 Major changes since the last release are:
 
-* Page names can now contain also underscores and dots (_ and .)
+- PageInfo can now display older versions directly as well, not just
+  diffs.
 
-* You can now specify using regular expressions which images are
-  automatically included in the page when you make a hyperlink to
-  them.  Check out the jspwiki.properties file for examples.
+- Some cosmetic enhancements.
 
-* You can now have list items (for the * and # lists) spanning
-  multiple lines if you align the lines with spaces (like these lines
-  here).
+- Wiki can now handle non-ASCII WikiNames as well.  Both the URL
+  linking scheme and the FileProviders were changed.
 
-* The sample pages included with this package have been rewritten.
+- Added footnotes (see included TextFormattingRules.txt in
+  jspwiki-samplepages.zip for info)
+
+- The left hand menu is now editable with a special page called
+  "LeftMenu" (surprise =).
+
+- Slight bug fixes (thanks to Kim Holviala, Erik Bunn, Chris
+  Brooking).
+
+- Default setup should now be easier, since there is no more default
+  access restriction, and the default provider is FileSystemProvider.
+  Also, the default logging method was changed.
+
+- index.html was removed for a better solution (see web.xml)
 
 
+UPGRADE NOTES
+=============
+
+* The default jspwiki.properties has changed.  You might want to see
+  what's different.
+
+* Integrate the changes from web.xml - they allow you to get rid of
+  index.html and the redirection.
+
+* Check the new jspwiki-samplepages directory.  They contain new
+  versions of TextFormattingRules and other pages as well.
+
+* Wiki.jsp, LeftMenu.jsp, PageInfo.jsp, Edit.jsp, PageHeader.jsp,
+  PageModified.jsp, Search.jsp, RecentChanges.jsp, and all of the CSS
+  files have changed much since v1.4.0, mostly due to support for
+  non-ASCII page names.
+
+  Sorry about any inconvinience.  I think you'll find that most of the
+  modifications were actually helpful, especially if you're running a
+  non-english Wiki.
