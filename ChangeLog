@@ -1,5 +1,8 @@
 2002-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * PageInfo and Edit now also include PageHeader.jsp.  Suggested by
+        Kim Holviala.
+
         * v1.6.11-beta.
 
         * XML-RPC interface now supports a new method:
