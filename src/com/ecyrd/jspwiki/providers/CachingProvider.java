@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -31,6 +31,9 @@ import java.util.Iterator;
 import java.io.IOException;
 import org.apache.log4j.Logger;
 
+import com.opensymphony.module.oscache.base.Cache;
+import com.opensymphony.module.oscache.base.NeedsRefreshException;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -43,8 +46,10 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  This class also detects if someone has modified the page
  *  externally, not through JSPWiki routines, and throws the proper
  *  RepositoryModifiedException.
- *
+ *  <p>
  *  Heavily based on ideas by Chris Brooking.
+ *  <p>
+ *  Since 2.1.52 uses the OSCache library from OpenSymphony.
  *
  *  @author Janne Jalkanen
  *  @since 1.6.4
@@ -52,6 +57,8 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 // FIXME: Keeps a list of all WikiPages in memory - should cache them too.
 // FIXME: Synchronization is a bit inconsistent in places.
+// FIXME: A part of the stuff is now redundant, since we could easily use the text cache
+//        for a lot of things.  RefactorMe.
 
 public class CachingProvider
     implements WikiPageProvider
@@ -62,12 +69,25 @@ public class CachingProvider
 
     private HashMap          m_cache = new HashMap();
 
+    private Cache            m_textCache;
+
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
     private int  m_milliSecondsBetweenChecks = 30000;
 
+    /**
+     *  Defines, in seconds, the amount of time a text will live in the cache
+     *  at most before requiring a refresh.
+     */
+    
+    // FIXME: This can be long, since we check it on our own.
+    private int  m_refreshPeriod = 24*60*60; // Default is one day.
+
     public static final String PROP_CACHECHECKINTERVAL = "jspwiki.cachingProvider.cacheCheckInterval";
+    public static final String PROP_CACHECAPACITY      = "jspwiki.cachingProvider.capacity";
+
+    private static final int   DEFAULT_CACHECAPACITY   = 200; // Good for a small wiki
 
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
@@ -75,12 +95,31 @@ public class CachingProvider
     {
         log.debug("Initing CachingProvider");
 
+        //
+        //  Cache consistency checks
+        //
         m_milliSecondsBetweenChecks = TextUtil.getIntegerProperty( properties,
                                                                    PROP_CACHECHECKINTERVAL,
                                                                    m_milliSecondsBetweenChecks );
 
         log.debug("Cache consistency checks every "+m_milliSecondsBetweenChecks+" ms");
 
+        //
+        //  Text cache capacity
+        //
+        int capacity = TextUtil.getIntegerProperty( properties,
+                                                    PROP_CACHECAPACITY,
+                                                    DEFAULT_CACHECAPACITY );
+
+        log.debug("Cache capacity "+capacity+" pages.");
+
+        m_textCache = new Cache( true, false,
+                                 "com.opensymphony.module.oscache.base.algorithm.LRUCache",
+                                 capacity );
+
+        //
+        //  Find and initialize real provider.
+        //
         String classname = WikiEngine.getRequiredProperty( properties, 
                                                            PageManager.PROP_PAGEPROVIDER );
         
@@ -244,6 +283,7 @@ public class CachingProvider
         throws ProviderException
     {
         m_cache.remove( page.getName() );
+        m_textCache.flushEntry( page.getName() );
         addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
     }
 
@@ -285,14 +325,18 @@ public class CachingProvider
         }
         else
         {
-            String text = (String)item.m_text.get();
-
-            if( text == null )
+            String text;
+            try
             {
-                // Oops, expired already
-                // log.debug("Page "+page+" expired.");
+                text = (String)m_textCache.getFromCache( page,
+                                                         m_refreshPeriod );
+                
+            }
+            catch( NeedsRefreshException e )
+            {
                 text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
-                item.m_text = new SoftReference( text );
+
+                m_textCache.putInCache( page, text );
 
                 m_cacheMisses++;
 
@@ -342,7 +386,6 @@ public class CachingProvider
                 {
                     CacheItem item = new CacheItem();
                     item.m_page = (WikiPage) i.next();
-                    item.m_text = new SoftReference( null );
 
                     m_cache.put( item.m_page.getName(), item );
                 }
@@ -376,7 +419,11 @@ public class CachingProvider
             item = new CacheItem();
 
             item.m_page = newpage;
-            item.m_text = new SoftReference( text );
+
+            if( text != null )
+            {
+                m_textCache.putInCache( pageName, text );
+            }
 
             m_cache.put( pageName, item );
         }
@@ -482,6 +529,7 @@ public class CachingProvider
         int cachedPages = 0;
         long totalSize  = 0;
         
+        /*
         for( Iterator i = m_cache.values().iterator(); i.hasNext(); )
         {
             CacheItem item = (CacheItem) i.next();
@@ -495,12 +543,10 @@ public class CachingProvider
         }
 
         totalSize = (totalSize+512)/1024L;
-
+        */
         return("Real provider: "+m_provider.getClass().getName()+
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits+
-               "<br />Cached pages: "+cachedPages+
-               "<br />Total cache size (kBytes): "+totalSize+
                "<br />Cache consistency checks: "+m_milliSecondsBetweenChecks+"ms");
     }
 
@@ -557,6 +603,5 @@ public class CachingProvider
     {
         WikiPage      m_page;
         long          m_lastChecked = 0L;
-        SoftReference m_text;
     }
 }
