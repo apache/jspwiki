@@ -1,5 +1,10 @@
 2002-09-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.23.
+
+        * Bug fix: no longer crashes if baseURL is not defined.  Reported
+        by Alain Ravet.
+
         * Fixed a problem when trying to escape '[' character using '[['.
 
 2002-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
