@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
+import java.util.Iterator;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import org.apache.log4j.Logger;
@@ -396,6 +397,7 @@ public class RCSFileProvider
 
                     int vernum = Integer.parseInt( result.group(1) );
                     info.setVersion( vernum );
+
                     list.add( info );
                 }
 
@@ -418,6 +420,17 @@ public class RCSFileProvider
 
             process.waitFor();
 
+            //
+            // FIXME: This is very slow
+            //
+            for( Iterator i = list.iterator(); i.hasNext(); )
+            {
+                WikiPage p = (WikiPage) i.next();
+
+                String content = getPageText( p.getName(), p.getVersion() );
+
+                p.setSize( content.length() );
+            }
         }
         catch( Exception e )
         {
