@@ -95,12 +95,15 @@ public class FileUtil14
     {
         StackTraceElement[] trace = t.getStackTrace();
         StringBuffer sb = new StringBuffer();
-
-        sb.append( trace[0].isNativeMethod() ? "native method" : "" );
-        sb.append( trace[0].getClassName() );
-        sb.append(".");
-        sb.append(trace[0].getMethodName()+"(), line "+trace[0].getLineNumber());
-
+        
+        if( trace == null || trace.length == 0 ) {
+            sb.append( "[Stack trace not available]" );
+        } else {
+            sb.append( trace[0].isNativeMethod() ? "native method" : "" );
+            sb.append( trace[0].getClassName() );
+            sb.append(".");
+            sb.append(trace[0].getMethodName()+"(), line "+trace[0].getLineNumber());
+        }
         return sb.toString();
     }
 }
