@@ -38,6 +38,9 @@ import com.ecyrd.jspwiki.*;
  */
 public class RPCServlet extends HttpServlet
 {
+    /** This is what is appended to each command. */
+    public static final String XMLRPC_PREFIX = "wiki";
+
     private WikiEngine       m_engine;
     private XmlRpcServer     m_xmlrpcServer = new XmlRpcServer();
 
@@ -49,7 +52,7 @@ public class RPCServlet extends HttpServlet
 
         RPCHandler rpchandler = new RPCHandler( m_engine );
 
-        m_xmlrpcServer.addHandler( "jspwiki", rpchandler );
+        m_xmlrpcServer.addHandler( XMLRPC_PREFIX, rpchandler );
     }
 
     public void doPost( HttpServletRequest request, HttpServletResponse response )
