@@ -1,3 +1,17 @@
+2002-12-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.1.
+
+        * Attachments are now sent back using Content-Disposition: inline
+        instead of Content-Disposition: attachment.  This means that they
+        should now be opened automatically by browsers.  Suggested by
+        Torsten Hildebrandt.
+
+        * Interwiki references that lead out of the wiki are now also
+        tagged with the outlink image.  Reported by Alain Ravet.
+
+        * Outlink images are now on by default.
+
 2002-12-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.0-alpha.
