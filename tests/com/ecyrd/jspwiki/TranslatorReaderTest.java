@@ -333,7 +333,7 @@ public class TranslatorReaderTest extends TestCase
         String src = "Link [test|http://www.ecyrd.com/test.png]";
 
         assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://www.ecyrd.com/test.png\" ALT=\"test\">\n",
-                     translate(src) );
+                     translate2(src) );
     }
 
     public void testInlineImages2()
@@ -342,7 +342,7 @@ public class TranslatorReaderTest extends TestCase
         String src = "Link [test|http://www.ecyrd.com/test.ppm]";
 
         assertEquals("Link <A CLASS=\"external\" HREF=\"http://www.ecyrd.com/test.ppm\">test</A>\n",
-                     translate(src) );
+                     translate2(src) );
     }
 
     public void testInlineImages3()
@@ -351,7 +351,7 @@ public class TranslatorReaderTest extends TestCase
         String src = "Link [test|http://images.com/testi]";
 
         assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://images.com/testi\" ALT=\"test\">\n",
-                     translate(src) );
+                     translate2(src) );
     }
 
     public void testInlineImages4()
@@ -360,7 +360,7 @@ public class TranslatorReaderTest extends TestCase
         String src = "Link [test|http://foobar.jpg]";
 
         assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"test\">\n",
-                     translate(src) );
+                     translate2(src) );
     }
 
     // No link text should be just embedded link.
@@ -370,7 +370,7 @@ public class TranslatorReaderTest extends TestCase
         String src = "Link [http://foobar.jpg]";
 
         assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"http://foobar.jpg\">\n",
-                     translate(src) );
+                     translate2(src) );
     }
 
     public void testInlineImagesLink()
@@ -379,6 +379,15 @@ public class TranslatorReaderTest extends TestCase
         String src = "Link [http://link.to/|http://foobar.jpg]";
 
         assertEquals("Link <A HREF=\"http://link.to/\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\"></A>\n",
+                     translate2(src) );
+    }
+
+    public void testInlineImagesLink3()
+        throws Exception
+    {
+        String src = "Link [SandBox|http://foobar.jpg]";
+
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=SandBox\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"SandBox\"></A>\n",
                      translate(src) );
     }
 
