@@ -1308,6 +1308,9 @@ public class WikiEngine
         text = doPreSaveFiltering( context, text );
 
         // Hook into cross reference collection.
+        
+        // FIXME: Should really use PageFilters for this functionality!
+
         m_referenceManager.updateReferences( page.getName(), 
                                              scanWikiLinks( page, text ) );
 
