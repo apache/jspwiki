@@ -253,11 +253,14 @@ public class GoDiagram
         String diagram = (String) params.get( "_body" );
         String label   = (String) params.get( "label" );
         String first   = (String) params.get( "first" );
+        String align   = (String) params.get( "align" );
 
         if( diagram == null || diagram.length() == 0 )
         {
             return "<B>No diagram detected.</B>";
         }
+
+        if( align == null ) align = "left";
 
         if( first == null || first.length() == 0 || 
             !(first.startsWith("w") || first.startsWith("W")) )
@@ -269,7 +272,7 @@ public class GoDiagram
         {
             StringBuffer sb = new StringBuffer();
 
-            sb.append("<table border=1 align=left cellpadding=5 style=\"margin: 10px;\">");
+            sb.append("<table border=1 align="+align+" cellpadding=5 style=\"margin: 10px;\">");
             sb.append("<tr><td align=center>\n");
             sb.append( parseDiagram( context, 
                                      diagram, 
