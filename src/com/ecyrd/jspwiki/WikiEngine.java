@@ -201,7 +201,9 @@ public class WikiEngine
             log.warn("Failed to load page '"+page+"' from '"+pagedata.getAbsolutePath()+"'");
         }
 
-        return result.toString();        
+        String res = result.toString();
+
+        return res;
     }
 
     /**
