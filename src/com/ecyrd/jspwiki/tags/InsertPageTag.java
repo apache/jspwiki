@@ -38,7 +38,11 @@ import com.ecyrd.jspwiki.WikiPage;
 public class InsertPageTag
     extends WikiTagBase
 {
+    public static final int HTML  = 0;
+    public static final int PLAIN = 1;
+
     protected String m_pageName;
+    private   int    m_mode = HTML;
 
     public void setPage( String page )
     {
@@ -48,6 +52,14 @@ public class InsertPageTag
     public String getPage()
     {
         return m_pageName;
+    }
+
+    public void setMode( String arg )
+    {
+        if( "plain".equals(arg) )
+            m_mode = PLAIN;
+        else
+            m_mode = HTML;
     }
 
     public final int doWikiStartTag()
@@ -69,7 +81,15 @@ public class InsertPageTag
         {
             JspWriter out = pageContext.getOut();
 
-            out.print( engine.getHTML(m_wikiContext, page) );
+            switch(m_mode)
+            {
+              case HTML:
+                out.print( engine.getHTML(m_wikiContext, page) );
+                break;
+              case PLAIN:
+                out.print( engine.getText(m_wikiContext, page) );
+                break;
+            }
         }
 
         return SKIP_BODY;
