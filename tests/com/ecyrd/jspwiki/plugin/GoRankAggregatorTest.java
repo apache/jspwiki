@@ -135,6 +135,40 @@ public class GoRankAggregatorTest extends TestCase
         assertEquals("User3 rank", 2, u3.m_rank );
     }
 
+    /**
+     *  Check that changing the club works in the middle.
+     */
+    public void testAggregate2()
+        throws Exception
+    {
+        testEngine.saveText("Rating1", "----\n\n{{{\nClub: Helsinki\n"+
+                            "Jalkanen, Janne, 7k\n"+
+                            "Eskelinen, Olli, 2k\n"+
+                            "\n"+
+                            "Club: Hobbiton\n"+
+                            "Gobble, Foo, 2k\n\n}}}\n");
+
+        List results = agg.getPersonsFromPage( context, "Rating1" );
+
+        assertEquals( "size", 3, results.size() );
+
+        GoRankAggregator.UserInfo u1 = (GoRankAggregator.UserInfo) results.get(0);
+        GoRankAggregator.UserInfo u2 = (GoRankAggregator.UserInfo) results.get(1);
+        GoRankAggregator.UserInfo u3 = (GoRankAggregator.UserInfo) results.get(2);
+
+        assertEquals("User1 name", "Jalkanen", u1.m_lastName );
+        assertEquals("User2 name", "Eskelinen", u2.m_lastName );
+        assertEquals("User3 name", "Gobble", u3.m_lastName );
+
+        assertEquals("User1 rank", 7, u1.m_rank );
+        assertEquals("User2 rank", 2, u2.m_rank );
+        assertEquals("User3 rank", 2, u3.m_rank );
+
+        assertEquals("User1 club", "Helsinki", u1.m_club);
+        assertEquals("User2 club", "Helsinki", u2.m_club);
+        assertEquals("User3 club", "Hobbiton", u3.m_club);
+    }
+
     public static Test suite()
     {
         return new TestSuite( GoRankAggregatorTest.class );
