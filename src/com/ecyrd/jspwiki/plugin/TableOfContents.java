@@ -76,7 +76,11 @@ public class TableOfContents
         
         if( title != null )
         {
-            sb.append("<h2>"+TextUtil.replaceEntities(title)+"</h2>\n");
+            sb.append("<h4>"+TextUtil.replaceEntities(title)+"</h4>\n");
+        }
+        else
+        {
+            sb.append("<h4>Table of Contents</h4>\n");
         }
 
         try
