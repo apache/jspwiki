@@ -188,7 +188,7 @@ public class RSSGenerator
                 result.append("  <wiki:diff>"+
                               m_engine.getBaseURL()+"Diff.jsp?page="+
                               encodedName+
-                              "?r1="+page.getVersion()+
+                              "&amp;r1=-1"+
                               "</wiki:diff>\n");
             }
 
