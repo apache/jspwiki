@@ -528,7 +528,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1\\\\2";
 
-        assertEquals( "1<BR/>2", translate(src) );
+        assertEquals( "1<BR />2", translate(src) );
     }
 
     public void testLinebreakClear()

@@ -824,7 +824,7 @@ public class TranslatorReader extends Reader
            
             pushBack( ch2 );
 
-            return "<BR/>";
+            return "<BR />";
         }
 
         pushBack( ch );
