@@ -17,6 +17,8 @@ In addition, you can now (since 1.9.30) omit even the "INSERT", so the shortest 
 
 If a parameter contains spaces, you can use single quotes (') around the parameter.  Like this:
 
+In the examples on the plugin documentation pages these forms are used interchangeably.
+
 [[{INSERT CurrentTimePlugin format='dd MM yyyy'}]
 
 !!List of plugins included with JSPWiki
