@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -83,19 +84,27 @@ public class InsertPageTag
             page = engine.getPage( m_pageName );
         }
 
-        if( page != null && engine.pageExists(page) )
+        if( page != null )
         {
-            JspWriter out = pageContext.getOut();
+            // FIXME: Do version setting later.
+            // page.setVersion( WikiProvider.LATEST_VERSION );
 
-            switch(m_mode)
+            if( engine.pageExists( page ) )
             {
-              case HTML:
-                out.print( engine.getHTML(m_wikiContext, page) );
-                break;
-              case PLAIN:
-                out.print( engine.getText(m_wikiContext, page) );
-                break;
-            }
+                log.debug("Inserting page "+page);
+
+                JspWriter out = pageContext.getOut();
+
+                switch(m_mode)
+                {
+                  case HTML:
+                    out.print( engine.getHTML(m_wikiContext, page) );
+                    break;
+                  case PLAIN:
+                    out.print( engine.getText(m_wikiContext, page) );
+                    break;
+                }
+            } // exists
         }
 
         return SKIP_BODY;
