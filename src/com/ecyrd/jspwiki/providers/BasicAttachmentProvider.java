@@ -322,18 +322,24 @@ public class BasicAttachmentProvider
 
         File dir = findPageDir( page.getName() );
 
-        String[] attachments = dir.list();
-
-        for( int i = 0; i < attachments.length; i++ )
+        if( dir != null )
         {
-            File f = new File( dir, attachments[i] );
+            String[] attachments = dir.list();
 
-            if( f.isDirectory() )
+            if( attachments != null )
             {
-                Attachment att = getAttachmentInfo( page, attachments[i],
-                                                    WikiProvider.LATEST_VERSION );
+                for( int i = 0; i < attachments.length; i++ )
+                {
+                    File f = new File( dir, attachments[i] );
 
-                result.add( att );
+                    if( f.isDirectory() )
+                    {
+                        Attachment att = getAttachmentInfo( page, attachments[i],
+                                                            WikiProvider.LATEST_VERSION );
+
+                        result.add( att );
+                    }
+                }
             }
         }
 
