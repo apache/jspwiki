@@ -67,6 +67,11 @@ public class TranslatorReader extends Reader
     public  static final int              ATTACHMENT    = 10;
     private static final int              ATTACHMENTIMAGE = 11;
 
+    /** Lists all punctuation characters allowed in WikiMarkup. These
+        will not be cleaned away. */
+
+    private static final String           PUNCTUATION_CHARS_ALLOWED = "._";
+
     /** Allow this many characters to be pushed back in the stream.  In effect,
         this limits the size of a single heading line.  */
     private static final int              PUSHBACK_BUFFER_SIZE = 512;
@@ -82,7 +87,6 @@ public class TranslatorReader extends Reader
     private boolean        m_isTypedText  = false;
     private boolean        m_istable      = false;
     private boolean        m_isPre        = false;
-    private boolean        m_isPreSpan    = false;
     private boolean        m_isEscaping   = false;
     private boolean        m_isdefinition = false;
 
@@ -150,7 +154,7 @@ public class TranslatorReader extends Reader
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
 
-    private HTMLRenderer           m_renderer = new HTMLRenderer();
+    private TextRenderer           m_renderer = new HTMLRenderer();
 
     /**
      *  The default inlining pattern.  Currently "*.png"
@@ -162,6 +166,15 @@ public class TranslatorReader extends Reader
      *  to find CamelCase links.
      */
     private static final String    WORD_SEPARATORS = ",.|;+=&()";
+
+    protected static final int BOLD           = 0;
+    protected static final int ITALIC         = 1;
+    protected static final int TYPED          = 2;
+    
+    protected static final int HEADING_SMALL  = 1;
+    protected static final int HEADING_MEDIUM = 2;
+    protected static final int HEADING_LARGE  = 3;
+
 
     /**
      *  @param engine The WikiEngine this reader is attached to.  Is
@@ -236,6 +249,17 @@ public class TranslatorReader extends Reader
         m_allowHTML           = TextUtil.getBooleanProperty( props,
                                                              PROP_ALLOWHTML, 
                                                              m_allowHTML );
+    }
+
+    /**
+     *  Sets the currently used renderer.  This method is protected because
+     *  we only want to use it internally for now.  The renderer interface
+     *  is not yet set to stone, so it's not expected that third parties
+     *  would use this.
+     */
+    protected void setRenderer( TextRenderer renderer )
+    {
+        m_renderer = renderer;
     }
     
     /**
@@ -448,9 +472,10 @@ public class TranslatorReader extends Reader
 
         for( int i = 0; i < clean.length(); i++ )
         {
-            if( !(Character.isLetterOrDigit(clean.charAt(i)) ||
-                  clean.charAt(i) == '_' ||
-                  clean.charAt(i) == '.') )
+            char ch = clean.charAt(i);
+
+            if( !(Character.isLetterOrDigit(ch) ||
+                  PUNCTUATION_CHARS_ALLOWED.indexOf(ch) != -1 ))
             {
                 clean.deleteCharAt(i);
                 --i; // We just shortened this buffer.
@@ -607,7 +632,7 @@ public class TranslatorReader extends Reader
         }
         else
         {
-            result = makeLink( EXTERNAL, url, url ) + outlinkImage();
+            result = makeLink( EXTERNAL, url, url ) + m_renderer.outlinkImage();
         }
 
         result += last;
@@ -868,7 +893,7 @@ public class TranslatorReader extends Reader
             else
             {
                 sb.append( makeLink( EXTERNAL, reallink, link ) );
-                sb.append( outlinkImage() );
+                sb.append( m_renderer.outlinkImage() );
             }
         }
         else if( (interwikipoint = reallink.indexOf(":")) != -1 )
@@ -898,7 +923,7 @@ public class TranslatorReader extends Reader
 
                 if( isExternalLink(urlReference) )
                 {
-                    sb.append( outlinkImage() );
+                    sb.append( m_renderer.outlinkImage() );
                 }
             }
             else
@@ -1026,19 +1051,19 @@ public class TranslatorReader extends Reader
 
         if( m_isbold )
         {
-            buf.append("</b>");
+            buf.append(m_renderer.closeTextEffect(BOLD));
             m_isbold = false;
         }
 
         if( m_isitalic )
         {
-            buf.append("</i>");
+            buf.append(m_renderer.closeTextEffect(ITALIC));
             m_isitalic = false;
         }
 
         if( m_isTypedText )
         {
-            buf.append("</tt>");
+            buf.append(m_renderer.closeTextEffect(TYPED));
             m_isTypedText = false;
         }
 
@@ -1058,27 +1083,20 @@ public class TranslatorReader extends Reader
 
         if( m_isPre ) 
         {
-            buf.append("</pre>\n");
+            buf.append(m_renderer.closePreformatted());
 	    m_isEscaping   = false;
             m_isPre = false;
         }
 
-        if( m_isPreSpan ) 
-        {
-            buf.append("</span>");
-	    m_isEscaping   = false;
-            m_isPreSpan = false;
-        }
-
         if( m_istable )
         {
-            buf.append( "</table>" );
+            buf.append( m_renderer.closeTable() );
             m_istable = false;
         }
 
 	if( m_isOpenParagraph )
 	{
-	    buf.append("</p>");
+	    buf.append( m_renderer.closeParagraph() );
 	    m_isOpenParagraph = false;
 	}
 
@@ -1157,12 +1175,12 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '\\' )
             {
-                return "<br clear=\"all\" />";
+                return m_renderer.lineBreak(true);
             }
            
             pushBack( ch2 );
 
-            return "<br />";
+            return m_renderer.lineBreak(false);
         }
 
         pushBack( ch );
@@ -1178,7 +1196,7 @@ public class TranslatorReader extends Reader
 
         if( ch == '_' )
         {
-            res      = m_isbold ? "</b>" : "<b>";
+            res      = m_isbold ? m_renderer.closeTextEffect(BOLD) : m_renderer.openTextEffect(BOLD);
             m_isbold = !m_isbold;
         }
         else
@@ -1200,7 +1218,7 @@ public class TranslatorReader extends Reader
 
         if( ch == '\'' )
         {
-            res        = m_isitalic ? "</i>" : "<i>";
+            res        = m_isitalic ? m_renderer.closeTextEffect(ITALIC) : m_renderer.openTextEffect(ITALIC);
             m_isitalic = !m_isitalic;
         }
         else
@@ -1223,23 +1241,15 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '{' )
             {
-                if( isBlock )
-                {
-                    res = "<pre>";
-                    m_isPre = true;
-                }
-                else
-                {
-                    res = "<span style=\"font-family:monospace; whitespace:pre;\">";
-                    m_isPreSpan = true;
-                }
+                res = m_renderer.openPreformatted( isBlock );
+                m_isPre = true;
 		m_isEscaping = true;
             }
             else
             {
                 pushBack( ch2 );
                 
-                res = "<tt>";
+                res = m_renderer.openTextEffect(TYPED);
                 m_isTypedText = true;
            }
         }
@@ -1271,13 +1281,7 @@ public class TranslatorReader extends Reader
                 {
                     m_isPre = false;
 		    m_isEscaping = false;
-                    res = "</pre>";
-                }
-		else if( m_isPreSpan )
-                {
-                    m_isPreSpan = false;
-		    m_isEscaping = false;
-                    res = "</span>";
+                    res = m_renderer.closePreformatted();
                 }
                 else
                 {
@@ -1290,7 +1294,7 @@ public class TranslatorReader extends Reader
 
                 if( !m_isEscaping )
                 {
-                    res = "</tt>";
+                    res = m_renderer.closeTextEffect(TYPED);
                     m_isTypedText = false;
                 }
                 else
@@ -1372,20 +1376,20 @@ public class TranslatorReader extends Reader
             {
                 String title = cleanLink( peekAheadLine() );
                 
-                buf.append( m_renderer.makeHeading( HTMLRenderer.HEADING_LARGE, title ) );
+                buf.append( m_renderer.makeHeading( HEADING_LARGE, title ) );
             }
             else
             {
                 pushBack( ch2 );
                 String title = cleanLink( peekAheadLine() );
-                buf.append( m_renderer.makeHeading( HTMLRenderer.HEADING_MEDIUM, title ) );
+                buf.append( m_renderer.makeHeading( HEADING_MEDIUM, title ) );
             }
         }
         else
         {
             pushBack( ch );
             String title = cleanLink( peekAheadLine() );
-            buf.append( m_renderer.makeHeading( HTMLRenderer.HEADING_SMALL, title ) );
+            buf.append( m_renderer.makeHeading( HEADING_SMALL, title ) );
         }
         
         return buf.toString();
@@ -1433,7 +1437,7 @@ public class TranslatorReader extends Reader
 
          if( m_genlistlevel > 0 )
          {
-             buf.append("</li>\n");
+             buf.append(m_renderer.closeListItem());
          }
 
          String strBullets = readWhile( "*#" );
@@ -1518,7 +1522,7 @@ public class TranslatorReader extends Reader
              }
              m_genlistlevel = numBullets;
          }
-         buf.append("<li>");
+         buf.append( m_renderer.openListItem() );
 
          // work done, remember the new bullet list (in place of old one)
          m_genlistBulletBuffer.setLength(0);
@@ -1529,14 +1533,14 @@ public class TranslatorReader extends Reader
 
     private String unwindGeneralList()
     {
-        String cStrShortName = "unwindGeneralList()";
+        // String cStrShortName = "unwindGeneralList()";
 
         StringBuffer buf = new StringBuffer();
         int bulletCh;
 
         if( m_genlistlevel > 0 )
         {
-            buf.append("</li>\n");
+            buf.append(m_renderer.closeListItem());
         }
 
         //unwind
@@ -1558,9 +1562,9 @@ public class TranslatorReader extends Reader
         {
             m_isdefinition = true;
 
-            m_closeTag = "</dd>\n</dl>";
+            m_closeTag = m_renderer.closeDefinitionItem()+m_renderer.closeDefinitionList();
 
-            return "<dl>\n<dt>";
+            return m_renderer.openDefinitionList()+m_renderer.openDefinitionTitle();
         }
 
         return ";";
@@ -1610,7 +1614,7 @@ public class TranslatorReader extends Reader
 
         if( ch == -1 )
         {
-            log.info("Warning: unterminated link detected!");
+            log.debug("Warning: unterminated link detected!");
             return sb.toString();
         }
 
@@ -1729,18 +1733,21 @@ public class TranslatorReader extends Reader
                     m_isOpenParagraph=false; 
                 }
                 */
-                sb.append( "\n</div>\n" );
+                sb.append( m_renderer.closeDiv() );
 
                 return sb.toString();
             }
 
             // sb.append( newLine ? "<div" : "<span" );
 
+            sb.append( m_renderer.openDiv( style, clazz ) );
+
+/*
             sb.append( "<div" );
             sb.append( style != null ? " style=\""+style+"\"" : "" );
             sb.append( clazz != null ? " class=\""+clazz+"\"" : "" );
             sb.append( ">" );
-
+*/
             return sb.toString();
         }
 
@@ -1763,12 +1770,12 @@ public class TranslatorReader extends Reader
         {
             if( !m_istable )
             {
-                sb.append("<table class=\"wikitable\" border=\"1\">\n");
+                sb.append( m_renderer.openTable() );
                 m_istable = true;
             }
 
-            sb.append("<tr>");
-            m_closeTag = "</td></tr>";
+            sb.append( m_renderer.openTableRow() );
+            m_closeTag = m_renderer.closeTableItem()+m_renderer.closeTableRow();
         }
         
         int ch = nextToken();
@@ -1777,18 +1784,18 @@ public class TranslatorReader extends Reader
         {
             if( !newLine ) 
             {
-                sb.append("</th>");
+                sb.append( m_renderer.closeTableHeading() );
             }
-            sb.append("<th>");
-            m_closeTag = "</th></tr>";
+            sb.append( m_renderer.openTableHeading() );
+            m_closeTag = m_renderer.closeTableHeading()+m_renderer.closeTableRow();
         }
         else
         {
             if( !newLine ) 
             {
-                sb.append("</td>");
+                sb.append( m_renderer.closeTableItem() );
             }
-            sb.append("<td>");
+            sb.append( m_renderer.openTableItem() );
             pushBack( ch );
         }
 
@@ -1953,29 +1960,6 @@ public class TranslatorReader extends Reader
 		 
             } // if m_camelCaseLinks
 
-            /*
-            //
-            //  Check if any lists need closing down.
-            //
-            
-            if( newLine && ch != '*' && ch != ' ' && m_listlevel > 0 )
-            {
-                buf.append("</li>\n");
-                for( ; m_listlevel > 0; m_listlevel-- )
-                {
-                    buf.append("</ul>\n");
-                }
-            }
-
-            if( newLine && ch != '#' && ch != ' ' && m_numlistlevel > 0 )
-            {
-                buf.append("</li>\n");
-                for( ; m_numlistlevel > 0; m_numlistlevel-- )
-                {
-                    buf.append("</ol>\n");
-                }
-            }
-            */
             if( newLine && ch != '*' && ch != '#' && ch != ' ' && m_genlistlevel > 0 )
             {
                 buf.append(unwindGeneralList());
@@ -1983,7 +1967,7 @@ public class TranslatorReader extends Reader
 
             if( newLine && ch != '|' && m_istable )
             {
-                buf.append("</table>\n");
+                buf.append( m_renderer.closeTable() );
                 m_istable = false;
                 m_closeTag = null;
             }
@@ -2014,9 +1998,9 @@ public class TranslatorReader extends Reader
                 {
                     // Paragraph change.
 		    if( m_isOpenParagraph )
-			buf.append("</p>");
+			buf.append( m_renderer.closeParagraph() );
 
-                    buf.append("<p>\n");
+                    buf.append( m_renderer.openParagraph() );
 		    m_isOpenParagraph = true;
                 }
                 else
@@ -2076,7 +2060,7 @@ public class TranslatorReader extends Reader
               case ':':
                 if( m_isdefinition )
                 {
-                    s = "</dt><dd>";
+                    s = m_renderer.closeDefinitionTitle()+m_renderer.openDefinitionItem();
                     m_isdefinition = false;
                 }
                 else
@@ -2221,10 +2205,108 @@ public class TranslatorReader extends Reader
     // FIXME: Not everything is yet, and in the future this class will be spawned
     //        out to be its own class.
     private class HTMLRenderer
+        extends TextRenderer
     {
-        public static final int HEADING_SMALL  = 1;
-        public static final int HEADING_MEDIUM = 2;
-        public static final int HEADING_LARGE  = 3;
+        private boolean m_isPreBlock = false;
+        private TranslatorReader m_cleanTranslator;
+
+        /*
+        public HTMLRenderer()
+        {
+            m_cleanTranslator = new TranslatorReader();
+            m_cleanTranslator.setRenderer( //FIXME: Can't create infinite loop here
+        }
+        */
+
+        public String openDiv( String style, String clazz )
+        {
+            StringBuffer sb = new StringBuffer();
+
+            sb.append( "<div" );
+            sb.append( style != null ? " style=\""+style+"\"" : "" );
+            sb.append( clazz != null ? " class=\""+clazz+"\"" : "" );
+            sb.append( ">" );
+
+            return sb.toString();
+        }
+
+        public String closeDiv()
+        {
+            return "</div>";
+        }
+
+        public String openParagraph()
+        {
+            return "<p>\n";
+        }
+
+        public String closeParagraph()
+        {
+            return "</p>";
+        }
+
+        /**
+         *  Writes out a text effect
+         */
+        public String openTextEffect( int effect )
+        {
+            switch( effect )
+            {
+              case BOLD:
+                return "<b>";
+              case ITALIC:
+                return "<i>";
+              case TYPED:
+                return "<tt>";
+            }
+
+            return "";
+        }
+
+        public String closeTextEffect( int effect )
+        {
+            switch( effect )
+            {
+              case BOLD:
+                return "</b>";
+              case ITALIC:
+                return "</i>";
+              case TYPED:
+                return "</tt>";
+            }
+
+            return "";
+        }
+
+        public String openDefinitionItem()
+        {
+            return "<dd>";
+        }
+
+        public String closeDefinitionItem()
+        {
+            return "</dd>\n";
+        }
+
+        public String openDefinitionTitle()
+        {
+            return "<dt>";
+        }
+        public String closeDefinitionTitle()
+        {
+            return "</dt>";
+        }
+
+        public String openDefinitionList()
+        {
+            return "<dl>\n";
+        }
+
+        public String closeDefinitionList()
+        {
+            return "</dl>";
+        }
+        
 
         /**
          *  Write a HTMLized link depending on its type.
@@ -2412,6 +2494,16 @@ public class TranslatorReader extends Reader
             return res;
         }
 
+        public String openListItem()
+        {
+            return "<li>";
+        }
+
+        public String closeListItem()
+        {
+            return "</li>\n";
+        }
+
         /**
          *  @param bullet A character detailing which kind of a list
          *  we are dealing with here.  Options are '#' and '*'.
@@ -2437,5 +2529,325 @@ public class TranslatorReader extends Reader
             return res;
         }
 
+        public String openTable()
+        {
+            return "<table class=\"wikitable\" border=\"1\">\n";
+        }
+
+        public String closeTable()
+        {
+            return "</table>\n";
+        }
+
+        public String openTableRow()
+        {
+            return "<tr>";
+        }
+
+        public String closeTableRow()
+        {
+            return "</tr>";
+        }
+
+        public String openTableItem()
+        {
+            return "<td>";
+        }
+
+        public String closeTableItem()
+        {
+            return "</td>";
+        }
+
+        public String openTableHeading()
+        {
+            return "<th>";
+        }
+
+        public String closeTableHeading()
+        {
+            return "</th>";
+        }
+
+        public String openPreformatted( boolean isBlock )
+        {
+            m_isPreBlock = isBlock;
+
+            if( isBlock )
+            {
+                return "<pre>";
+            }
+            
+            return "<span style=\"font-family:monospace; whitespace:pre;\">";
+        }
+
+        public String closePreformatted()
+        {
+            if( m_isPreBlock )
+                return "</pre>\n";
+            
+            return "</span>";
+        }
+
+        /**
+         *  If outlink images are turned on, returns a link to the outward
+         *  linking image.
+         */
+        public String outlinkImage()
+        {
+            if( m_useOutlinkImage )
+            {
+                return "<img class=\"outlink\" src=\""+m_engine.getBaseURL()+"images/out.png\" alt=\"\" />";
+            }
+
+            return "";
+        }
+
+        /**
+         *  @param clear If true, then flushes all thingies.
+         */
+        public String lineBreak( boolean clear )
+        {
+            if( clear )
+                return "<br clear=\"all\" />";
+            
+            return "<br />";
+        }
+
     } // HTMLRenderer
+
+    /**
+     *  A very simple class for outputting plain text with no
+     *  formatting.
+     */
+    private class TextRenderer
+    {
+        public String openDiv( String style, String clazz )
+        {
+            return "";
+        }
+
+        public String closeDiv()
+        {
+            return "";
+        }
+
+        public String openParagraph()
+        {
+            return "";
+        }
+
+        public String closeParagraph()
+        {
+            return "\n\n";
+        }
+
+        /**
+         *  Writes out a text effect
+         */
+        public String openTextEffect( int effect )
+        {
+            return "";
+        }
+
+        public String closeTextEffect( int effect )
+        {
+            return "";
+        }
+
+        public String openDefinitionItem()
+        {
+            return " : ";
+        }
+
+        public String closeDefinitionItem()
+        {
+            return "\n";
+        }
+
+        public String openDefinitionTitle()
+        {
+            return "";
+        }
+
+        public String closeDefinitionTitle()
+        {
+            return "";
+        }
+
+        public String openDefinitionList()
+        {
+            return "";
+        }
+
+        public String closeDefinitionList()
+        {
+            return "\n";
+        }
+        
+
+        /**
+         *  Write a HTMLized link depending on its type.
+         *
+         *  <p>This jsut calls makeLink() with "section" set to null.
+         */
+        public String makeLink( int type, String link, String text )
+        {
+            return text;
+        }
+
+        public String makeLink( int type, String link, String text, String section )
+        {
+            return text;
+        }
+
+        /**
+         *  Writes HTML for error message.
+         */
+
+        public String makeError( String error )
+        {
+            return "ERROR: "+error;
+        }
+
+        /**
+         *  Emits a vertical line.
+         */
+
+        public String makeRuler()
+        {
+            return "----------------------------------";
+        }
+
+        /**
+         *  Returns XHTML for the start of the heading.  Also sets the
+         *  line-end emitter.
+         *  @param level 
+         */ 
+        public String makeHeading( int level, String title )
+        {
+            String res = "";
+
+            String pageName = m_context.getPage().getName();
+
+            switch( level )
+            {
+              case HEADING_SMALL:
+                res = title;
+                m_closeTag = "\n\n";
+                break;
+
+              case HEADING_MEDIUM:
+                res = title;                
+                m_closeTag = "\n"+TextUtil.repeatString("-",title.length())+"\n\n";
+                break;
+
+              case HEADING_LARGE:
+                res = title.toUpperCase();
+                m_closeTag= "\n"+TextUtil.repeatString("=",title.length())+"\n\n";
+                break;
+            }
+
+            return res;
+        }
+
+        /**
+         *  @param bullet A character detailing which kind of a list
+         *  we are dealing with here.  Options are '#' and '*'.
+         */
+        // FIXME: Should really start a different kind of list depending
+        //        on the bullet type
+        public String openList( char bullet )
+        {
+            return "\n";
+        }
+
+        public String openListItem()
+        {
+            return "- "; 
+        }
+
+        public String closeListItem()
+        {
+            return "\n";
+        }
+
+        /**
+         *  @param bullet A character detailing which kind of a list
+         *  we are dealing with here.  Options are '#' and '*'.
+         */
+        public String closeList( char bullet )
+        {
+            return "\n\n";
+        }
+
+        public String openTable()
+        {
+            return "\n";
+        }
+
+        public String closeTable()
+        {
+            return "\n";
+        }
+
+        public String openTableRow()
+        {
+            return "";
+        }
+
+        public String closeTableRow()
+        {
+            return "\n";
+        }
+
+        public String openTableItem()
+        {
+            return "\t";
+        }
+
+        public String closeTableItem()
+        {
+            return "";
+        }
+
+        public String openTableHeading()
+        {
+            return "\t";
+        }
+
+        public String closeTableHeading()
+        {
+            return "";
+        }
+
+        public String openPreformatted( boolean isBlock )
+        {
+            return "";
+        }
+
+        public String closePreformatted()
+        {
+            return "\n";
+        }
+
+        /**
+         *  If outlink images are turned on, returns a link to the outward
+         *  linking image.
+         */
+        public String outlinkImage()
+        {
+            return "";
+        }
+
+        /**
+         *  @param clear If true, then flushes all thingies.
+         */
+        public String lineBreak( boolean clear )
+        {
+            return "\n";
+        }
+
+    } // TextRenderer
+
 }
