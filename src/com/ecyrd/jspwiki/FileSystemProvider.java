@@ -212,6 +212,20 @@ public class FileSystemProvider
         return set;        
     }
 
+    public Collection getAllChangedSince( Date date )
+    {
+        return new ArrayList(); // FIXME
+    }
+
+    public int getPageCount()
+    {
+        File wikipagedir = new File( m_pageDirectory );
+
+        File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
+
+        return wikipages.length;
+    }
+
     public Collection findPages( QueryItem[] query )
     {
         File wikipagedir = new File( m_pageDirectory );
@@ -329,6 +343,11 @@ public class FileSystemProvider
         list.add( getPageInfo( page ) );
 
         return list;
+    }
+
+    public String getProviderInfo()
+    {
+        return "";
     }
 
     public class WikiFileFilter
