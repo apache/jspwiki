@@ -20,7 +20,7 @@ public class ShortURLConstructor
                             String name,
                             boolean absolute )
     {
-        String viewurl = "%n";
+        String viewurl = "/wiki/%n";
 
         if( absolute ) 
             viewurl = "%uwiki/%n";
@@ -32,7 +32,7 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.EDIT) )
         {
-            return doReplacement( viewurl+"?action=Edit", name, absolute );
+            return doReplacement( viewurl+"?do=Edit", name, absolute );
         }
         else if( context.equals(WikiContext.ATTACH) )
         {
@@ -40,11 +40,11 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.INFO) )
         {
-            return doReplacement( viewurl+"?action=PageInfo", name, absolute );
+            return doReplacement( viewurl+"?do=PageInfo", name, absolute );
         }
         else if( context.equals(WikiContext.DIFF) )
         {
-            return doReplacement( viewurl+"?action=Diff", name, absolute );
+            return doReplacement( viewurl+"?do=Diff", name, absolute );
         }
         else if( context.equals(WikiContext.NONE) )
         {
@@ -52,11 +52,11 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.UPLOAD) )
         {
-            return doReplacement( viewurl+"?action=Upload", name, absolute ); 
+            return doReplacement( viewurl+"?do=Upload", name, absolute ); 
         }
         else if( context.equals(WikiContext.COMMENT) )
         {
-            return doReplacement( viewurl+"?action=Comment", name, absolute ); 
+            return doReplacement( viewurl+"?do=Comment", name, absolute ); 
         }
         else if( context.equals(WikiContext.ERROR) )
         {
