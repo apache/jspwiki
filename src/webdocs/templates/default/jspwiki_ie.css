@@ -99,5 +99,5 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
 
 /* For the image plugin tag. */
 .imageplugin { margin: 5px 5px 5px 5px; }
-.imageplugin img { }
+.imageplugin img { border: 0; }
 .imageplugin caption { font-size: 80%; }
