@@ -79,7 +79,7 @@ public class FileUtilTest extends TestCase
 
         try
         {
-            Process process = Runtime.getRuntime().exec( "cat \""+f.getAbsolutePath()+"\"", 
+            Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), 
                                                          envp, 
                                                          f.getParentFile() );
 
