@@ -2,6 +2,9 @@
 
         * v2.1.67.
 
+        * Fixed also a couple of ReferenceManager bugs relating to plural
+        page names.  However, a couple of small problems still remain.
+
         * BasicAttachmentProvider no longer fails if there are extraneous
         directories in the attachment repository.  Reported by someone
         whom I can't recall...
