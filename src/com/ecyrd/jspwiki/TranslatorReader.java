@@ -154,7 +154,7 @@ public class TranslatorReader extends Reader
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
 
-    private TextRenderer           m_renderer = new HTMLRenderer();
+    private TextRenderer           m_renderer;
 
     /**
      *  The default inlining pattern.  Currently "*.png"
@@ -175,6 +175,36 @@ public class TranslatorReader extends Reader
     protected static final int HEADING_MEDIUM = 2;
     protected static final int HEADING_LARGE  = 3;
 
+    /**
+     *  Creates a TranslatorReader using the default HTML renderer.
+     */
+    public TranslatorReader( WikiContext context, Reader in )
+    {
+        initialize( context, in, new HTMLRenderer() );
+    }
+
+    public TranslatorReader( WikiContext context, Reader in, TextRenderer renderer )
+    {
+        initialize( context, in, renderer );
+    }
+
+    /**
+     *  Replaces the current input character stream with a new one.
+     *  @param in New source for input.  If null, this method does nothing.
+     *  @return the old stream
+     */
+    public Reader setInputReader( Reader in )
+    {
+        Reader old = m_in;
+
+        if( in != null )
+        {
+            m_in = new PushbackReader( new BufferedReader( in ),
+                                       PUSHBACK_BUFFER_SIZE );
+        }
+
+        return old;
+    }
 
     /**
      *  @param engine The WikiEngine this reader is attached to.  Is
@@ -182,16 +212,20 @@ public class TranslatorReader extends Reader
      */
 
     // FIXME: TranslatorReaders should be pooled for better performance.
-    public TranslatorReader( WikiContext context, Reader in )
+    private void initialize( WikiContext context, 
+                             Reader in, 
+                             TextRenderer renderer )
     {
         PatternCompiler compiler         = new GlobCompiler();
         ArrayList       compiledpatterns = new ArrayList();
 
-        m_in     = new PushbackReader( new BufferedReader( in ),
-                                       PUSHBACK_BUFFER_SIZE );
         m_engine = context.getEngine();
         m_context = context;
-        
+
+        m_renderer = renderer;
+
+        setInputReader( in );
+
         Collection ptrns = getImagePatterns( m_engine );
 
         //
@@ -1133,6 +1167,7 @@ public class TranslatorReader extends Reader
     private int nextToken()
         throws IOException
     {
+        if( m_in == null ) return -1;
         return m_in.read();
     }
 
@@ -1143,7 +1178,7 @@ public class TranslatorReader extends Reader
     private void pushBack( int c )
         throws IOException
     {        
-        if( c != -1 )
+        if( c != -1 && m_in != null )
         {
             m_in.unread( c );
         }
@@ -1374,21 +1409,21 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '!' )
             {
-                String title = cleanLink( peekAheadLine() );
+                String title = peekAheadLine();
                 
                 buf.append( m_renderer.makeHeading( HEADING_LARGE, title ) );
             }
             else
             {
                 pushBack( ch2 );
-                String title = cleanLink( peekAheadLine() );
+                String title = peekAheadLine();
                 buf.append( m_renderer.makeHeading( HEADING_MEDIUM, title ) );
             }
         }
         else
         {
             pushBack( ch );
-            String title = cleanLink( peekAheadLine() );
+            String title = peekAheadLine();
             buf.append( m_renderer.makeHeading( HEADING_SMALL, title ) );
         }
         
@@ -2211,12 +2246,30 @@ public class TranslatorReader extends Reader
         private TranslatorReader m_cleanTranslator;
 
         /*
+           FIXME: It's relatively slow to create two TranslatorReaders each time.
+        */
         public HTMLRenderer()
         {
-            m_cleanTranslator = new TranslatorReader();
-            m_cleanTranslator.setRenderer( //FIXME: Can't create infinite loop here
         }
-        */
+
+        /**
+         *  Does a lazy init.  Otherwise, we would get into a situation
+         *  where HTMLRenderer would try and boot a TranslatorReader before
+         *  the TranslatorReader it is contained by is up.
+         */
+        private TranslatorReader getCleanTranslator()
+        {
+            if( m_cleanTranslator == null )
+            {
+                WikiContext dummyContext = new WikiContext( m_engine, 
+                                                            new WikiPage("_Dummy"));
+                m_cleanTranslator = new TranslatorReader( dummyContext, 
+                                                          null,
+                                                          new TextRenderer() );
+            }
+
+            return m_cleanTranslator;
+        }
 
         public String openDiv( String style, String clazz )
         {
@@ -2440,6 +2493,7 @@ public class TranslatorReader extends Reader
 
         private String makeHeadingAnchor( String baseName, String title )
         {
+            title = cleanLink( title );
             return "<a name=\"section-"+baseName+"-"+m_engine.encodeName(title)+"\">";
         }
 
@@ -2455,20 +2509,34 @@ public class TranslatorReader extends Reader
 
             String pageName = m_context.getPage().getName();
 
+            StringWriter outTitle = new StringWriter();
+
+            try
+            {
+                TranslatorReader read = getCleanTranslator();
+                read.setInputReader( new StringReader(title) );
+                FileUtil.copyContents( read, outTitle );
+            }
+            catch( IOException e )
+            {
+                log.fatal("CleanTranslator not working", e);
+                throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() );
+            }
+
             switch( level )
             {
               case HEADING_SMALL:
-                res = "<h4>"+makeHeadingAnchor( pageName, title );
+                res = "<h4>"+makeHeadingAnchor( pageName, outTitle.toString() );
                 m_closeTag = "</a></h4>";
                 break;
 
               case HEADING_MEDIUM:
-                res = "<h3>"+makeHeadingAnchor( pageName, title );
+                res = "<h3>"+makeHeadingAnchor( pageName, outTitle.toString() );
                 m_closeTag = "</a></h3>";
                 break;
 
               case HEADING_LARGE:
-                res = "<h2>"+makeHeadingAnchor( pageName, title );
+                res = "<h2>"+makeHeadingAnchor( pageName, outTitle.toString() );
                 m_closeTag = "</a></h2>";
                 break;
             }
