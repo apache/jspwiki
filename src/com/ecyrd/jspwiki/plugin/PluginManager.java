@@ -58,6 +58,9 @@ public class PluginManager
 
     Vector m_searchPath = new Vector();
 
+    /**
+     *  Create a new PluginManager.
+     */
     public PluginManager( Properties props )
     {
         String packageNames = props.getProperty( PROP_SEARCHPATH );
@@ -81,12 +84,20 @@ public class PluginManager
     /**
      *  Returns true if the link is really command to insert
      *  a plugin.
+     *  <P>
+     *  Currently we just check if the link starts with "{INSERT".
      */
     public static boolean isPluginLink( String link )
     {
         return link.startsWith("{INSERT");
     }
 
+    /**
+     *  Attempts to locate a plugin class from the class path
+     *  set in the property file.
+     *
+     *  @throws ClassNotFoundException if no such class exists.
+     */
     private Class findPluginClass( String classname )
         throws ClassNotFoundException
     {
