@@ -320,6 +320,8 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /** Check an reported error condition where empty list items could cause crashes */
+
     public void testEmptySecondLevelList()
         throws Exception
     {

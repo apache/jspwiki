@@ -2,6 +2,9 @@
 
         * v1.5.2
 
+        * For browsers that do not support CSS, Wiki.jsp now also uses
+        explicit FONT when displaying version information.
+
         * Empty list items could cause crashes in parsing.  Now fixed,
         thanks to Mikael Honkala for reporting this.
 
