@@ -15,7 +15,7 @@ public class StressTestRCSProvider extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    TestEngine engine;
 
     public StressTestRCSProvider( String s )
     {

@@ -12,7 +12,7 @@ public class RCSFileProviderTest extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    TestEngine engine;
 
     public RCSFileProviderTest( String s )
     {

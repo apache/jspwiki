@@ -16,7 +16,7 @@ public class VersioningFileProviderTest extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    TestEngine engine;
 
     public VersioningFileProviderTest( String s )
     {

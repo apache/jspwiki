@@ -13,7 +13,7 @@ public class StressTestSpeed extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    TestEngine engine;
 
     public StressTestSpeed( String s )
     {

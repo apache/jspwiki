@@ -13,7 +13,7 @@ public class StressTestVersioningProvider extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    TestEngine engine;
 
     public StressTestVersioningProvider( String s )
     {
