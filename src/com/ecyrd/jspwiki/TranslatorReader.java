@@ -1004,6 +1004,36 @@ public class TranslatorReader extends Reader
         String trimmed = line.trim();
 
         //
+        // Stupid hack to enable multi-line plugin entries. This should not be.
+        // Then again, this line-based parsing shouldn't be, either.
+        // We simply read stuff in until we encounter the line that closes the
+        // plugin. May potentially cause long lines, especially if a close tag 
+        // is missing.   ebu 2002-11-01
+        //
+        int pluginStart = -1;
+        int pluginEnd = -1;
+        if( (pluginStart = line.indexOf( "[{" )) != -1 && (pluginEnd = line.indexOf( "}]", pluginStart )) == -1 )
+        {
+            StringBuffer sb = new StringBuffer( line );
+            boolean pluginClosed = false;
+            while( !pluginClosed )
+            {
+                String additional = m_in.readLine();
+                if( additional != null )
+                {
+                    sb.append( additional );
+                    if( additional.indexOf( "}]" ) != -1 )
+                        pluginClosed = true;
+                }
+                else
+                {
+                    log.error( "Unclosed plugin" );
+                }
+            }
+            line = sb.toString();
+        }
+
+        //
         //  Replace the most obvious items that could possibly
         //  break the resulting HTML code.
         //
