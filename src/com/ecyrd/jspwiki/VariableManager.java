@@ -174,7 +174,7 @@ public class VariableManager
         }
         else if( name.equals("jspwikiversion") )
         {
-            res = Release.VERSTR;
+            res = Release.getVersionString();
         }
         else if( name.equals("encoding") )
         {
