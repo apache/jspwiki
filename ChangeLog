@@ -1,6 +1,6 @@
 2003-07-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-        * v2.0.49.
+        * v2.0.49-stable.
 
         * Backported OSCache support from 2.1.x.  Use
         "jspwiki.cachingProvider.capacity" to set the cache size.
