@@ -149,6 +149,19 @@ public interface WikiPageProvider
      */
     public void deletePage( String pageName )
         throws ProviderException;
+
+    
+    /**
+     * Sets the WikiEngine governing this provider. Since providers are to 
+     * be instantiated dynamically, this method should be called after
+     * initialize( properties ) and before commencing actual use.
+     * 
+     * <p>The WikiEngine is needed for signalling about unexpected 
+     * changes in the page db. 
+     */
+    public void setWikiEngine( WikiEngine e );
 }
+
+
 
 
