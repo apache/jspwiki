@@ -106,6 +106,8 @@ public abstract class AbstractFileProvider
     protected String mangleName( String pagename )
     {
         // FIXME: Horrible kludge, very slow, etc.
+
+        // FIXME: SHOULD THIS DO A / => %2F MAPPING!?!
         if( "UTF-8".equalsIgnoreCase( m_encoding ) )
             return TextUtil.urlEncodeUTF8( pagename );
 
