@@ -1,3 +1,17 @@
+2005-01-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.129.
+
+        * Added EditorTag, which replaces the entire <textarea> -thingy
+        from EditContet.jsp.  It's still a bit skeletonish, and needs
+        things like localizability and the ability to change how the
+        textarea looks, for example.
+
+2004-12-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Bug fix: The internal context is now created with the proper
+        name when referring to using plural forms.
+
 2004-12-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Added a slight delay to Lucene update thread to make sure it is
