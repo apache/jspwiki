@@ -44,7 +44,7 @@
       </wiki:HasAttachments>
 
       <p><hr />
-      <table border="0" width="100%">
+      <table border="0" width="100%" class="pageactions">
         <tr>
           <td align="left">
              <a href="#Top">Go to top</a>&nbsp;&nbsp;
