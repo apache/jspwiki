@@ -18,16 +18,11 @@ public interface URLConstructor
                             Properties properties );
 
     /**
-     *  Constructs the URL.
-     */
-    public String makeURL( String context,
-                           String name );
-
-    /**
      *  Constructs the URL with a bunch of parameters.
      */
     public String makeURL( String context,
                            String name,
+                           boolean absolute,
                            String parameters );
 
     /**
