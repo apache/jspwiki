@@ -1,4 +1,4 @@
-2004-01-12  Erik Bunn  <ebu@basen.net>
+2004-01-12  Erik Bunn  <ebu@spamicide.basen.net>
 
 	* Added UserManager.getUserDatabase(), getAuthenticator().
 	These are useful for external user providers.
@@ -35,7 +35,7 @@
         * Added the "section" parameter to InsertPage plugin.  Requested
         by John Volkar.
 
-2003-10-20  Erik Bunn  <ebu@basen.net>
+2003-10-20  Erik Bunn  <ebu@spamicide.basen.net>
 
         * v2.1.85
         
@@ -1349,7 +1349,7 @@
         * Moved GoRankAggregator and GoDiagram plugins into their own,
         separate project. 
 
-2002-12-09  Erik Bunn  <Erik.Bunn@basen.net>
+2002-12-09  Erik Bunn  <Erik.Bunn@spamicide.basen.net>
 
         * v1.9.50.
         
@@ -1369,7 +1369,7 @@
         basically contains the wiki markup that should be used to separate
         the entires.  Suggested by Jeremy Cowgar.
 
-2002-12-08  Erik Bunn  <Erik.Bunn@basen.net>
+2002-12-08  Erik Bunn  <Erik.Bunn@spamicide.basen.net>
 
         * Modified exception classes to inherit WikiException
         (with the exception of InternalWikiException =).
