@@ -225,7 +225,12 @@ public class WeblogPlugin implements WikiPlugin
                 if( hasComments )
                 {
                     sb.append( "&nbsp;&nbsp;" );
-                    sb.append( "<a target=\"_blank\" href=\""+engine.getBaseURL()+"Comment.jsp?page="+engine.encodeName(commentPageName)+"\">Comments?</a>" );
+                    sb.append( "<a target=\"_blank\" href=\""+
+                               engine.getBaseURL()+
+                               "Comment.jsp?page="+
+                               engine.encodeName(commentPageName)+"\">Comments? ("+
+                               guessNumberOfComments(engine, commentPageName)+
+                               ")</a>" );
                 }
                 
                 sb.append("</div>\n");
@@ -245,6 +250,23 @@ public class WeblogPlugin implements WikiPlugin
         }
 
         return sb.toString();
+    }
+
+    private int guessNumberOfComments( WikiEngine engine, String commentpage )
+        throws ProviderException
+    {
+        String pagedata = engine.getPureText( commentpage, WikiProvider.LATEST_VERSION );
+
+        int tags  = 0;
+        int start = 0;
+
+        while( (start = pagedata.indexOf("----",start)) != -1 )
+        {
+            tags++;
+            start+=4; // Skip this "----"
+        }
+
+        return tags;
     }
 
     /**
