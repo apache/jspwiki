@@ -34,15 +34,24 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 
 /**
+ *  Provides a caching page provider.  This class rests on top of a
+ *  real provider class and provides a cache to speed things up.  Only
+ *  if the cache copy of the page text has expired, we fetch it from
+ *  the provider.
+ *  <p>
+ *  This class also detects if someone has modified the page
+ *  externally, not through JSPWiki routines, and throws the proper
+ *  RepositoryModifiedException.
+ *
  *  Heavily based on ideas by Chris Brooking.
  *
  *  @author Janne Jalkanen
  *  @since 1.6.4
+ *  @see RepositoryModifiedException
  */
 // FIXME: Keeps a list of all WikiPages in memory - should cache them too.
 // FIXME: Synchronization is a bit inconsistent in places.
-// FIXME: External changes should really throw a PageModifiedException, so that
-//        upper classes can handle this situation properly (such as ReferenceManager).
+
 public class CachingProvider
     implements WikiPageProvider
 {
@@ -119,14 +128,20 @@ public class CachingProvider
         return m_provider.pageExists( page );
     }
 
+    /**
+     *  @throws RepositoryModifiedException If the page has been externally modified.
+     */
     public String getPageText( String page, int version )
         throws ProviderException
     {
-        String result;
+        String result = null;
 
         if( version == WikiPageProvider.LATEST_VERSION )
         {
-            result = getTextFromCache( page );
+            if( pageExists( page ) )
+            {
+                result = getTextFromCache( page );
+            }
         }
         else
         {
@@ -159,16 +174,34 @@ public class CachingProvider
 
         if( currentTime - item.m_lastChecked > m_milliSecondsBetweenChecks )
         {
+            log.debug("Consistency check: has page "+item.m_page.getName()+" been changed?");
+
             try
             {
                 WikiPage cached  = item.m_page;
                 WikiPage current = m_provider.getPageInfo( cached.getName(),
                                                            LATEST_VERSION );
 
+                //
+                //   Page has been deleted.
+                //
+                if( current == null ) 
+                {
+                    log.debug("Page "+cached.getName()+" has been removed externally.");
+                    return true;
+                }
+
                 item.m_lastChecked = currentTime;
 
                 long epsilon = 1000L; // FIXME: This should be adjusted according to provider granularity.
-                if( current.getLastModified().getTime() - cached.getLastModified().getTime() > epsilon )
+
+                Date curDate = current.getLastModified();
+                Date cacDate = cached.getLastModified();
+
+                log.debug("cached date = "+cacDate+", current date = "+curDate);                
+
+                if( curDate != null && cacDate != null &&
+                    curDate.getTime() - cacDate.getTime() > epsilon )
                 {                
                     log.debug("Page "+current.getName()+" has been externally modified, refreshing contents.");
                     return true;
@@ -193,6 +226,9 @@ public class CachingProvider
         addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
     }
 
+    /**
+     *  @throws RepositoryModifiedException If the page has been externally modified.
+     */
     private String getTextFromCache( String page )
         throws ProviderException
     {
@@ -210,13 +246,14 @@ public class CachingProvider
         if( checkIfPageChanged( item ) )
         {
             revalidatePage( item.m_page );
-            item = (CacheItem) m_cache.get( page );
+
+            throw new RepositoryModifiedException( page );
         }
 
         if( item == null )
         {
             // Page has never been seen.
-            // log.debug("Page "+page+" never seen.");
+            log.debug("Page "+page+" never seen.");
             String text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
 
             addPage( page, text );
@@ -232,7 +269,7 @@ public class CachingProvider
             if( text == null )
             {
                 // Oops, expired already
-                // log.debug("Page "+page+" expired.");
+                log.debug("Page "+page+" expired.");
                 text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
                 item.m_text = new SoftReference( text );
 
@@ -241,7 +278,7 @@ public class CachingProvider
                 return text;
             }
 
-            // log.debug("Page "+page+" found in cache.");
+            log.debug("Page "+page+" found in cache.");
 
             m_cacheHits++;
 
@@ -256,10 +293,7 @@ public class CachingProvider
         {
             m_provider.putPageText( page, text );
 
-            CacheItem item = new CacheItem();
-            item.m_page = page;
-            item.m_text = new SoftReference( text );
-            m_cache.put( page.getName(), item );
+            revalidatePage( page );
         }
     }
 
@@ -370,6 +404,10 @@ public class CachingProvider
                     res.add( comparison );
                 }
             }
+            catch( RepositoryModifiedException rme )
+            {
+                // FIXME: What to do in this case???
+            }
             catch( ProviderException pe )
             {
                 log.error( "Unable to retrieve page from cache", pe );
@@ -441,7 +479,8 @@ public class CachingProvider
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits+
                "<br />Cached pages: "+cachedPages+
-               "<br />Total cache size (kBytes): "+totalSize);
+               "<br />Total cache size (kBytes): "+totalSize+
+               "<br />Cache consistency checks: "+m_milliSecondsBetweenChecks+"ms");
     }
 
     public void deleteVersion( String pageName, int version )
