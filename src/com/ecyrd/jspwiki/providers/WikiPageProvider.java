@@ -37,19 +37,8 @@ import com.ecyrd.jspwiki.*;
  *  which would provide intelligent backups for subclasses.
  */
 public interface WikiPageProvider
+    extends WikiProvider
 {
-    /**
-     *  Passing this to any method should get the latest version
-     */
-    public static final int LATEST_VERSION = -1;
-
-    /**
-     *  Initializes the page provider.
-     */
-    public void initialize( Properties properties ) 
-        throws NoRequiredPropertyException,
-               IOException;
-
     /**
      *  Attempts to save the page text for page "page".
      */
@@ -111,13 +100,6 @@ public interface WikiPageProvider
     public String getPageText( String page, int version )
         throws ProviderException;
 
-    /**
-     *  Return a valid HTML string for information.  May
-     *  be anything.
-     *  @since 1.6.4
-     */
-
-    public String getProviderInfo();
 }
 
 
