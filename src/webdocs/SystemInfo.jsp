@@ -1,6 +1,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
     public void jspInit()
@@ -16,6 +18,13 @@
     if( pagereq == null )
         pagereq = "SystemInfo";
     String pageurl = wiki.encodeName( pagereq );
+
+    WikiPage wikipage = wiki.getPage( pagereq );
+
+    WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext );
+
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 
