@@ -74,6 +74,9 @@ public class WikiEngine
 
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
 
+    /** Property for application name */
+    public static final String PROP_APPNAME      = "jspwiki.applicationName";
+    
     /** Property start for any interwiki reference. */
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
@@ -865,7 +868,7 @@ public class WikiEngine
     // FIXME: Should use servlet context as a default instead of a constant.
     public String getApplicationName()
     {
-        String appName = m_properties.getProperty("jspwiki.applicationName");
+        String appName = m_properties.getProperty(PROP_APPNAME);
 
         if( appName == null )
             return Release.APPNAME;
