@@ -449,13 +449,9 @@ public class WikiEngine
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
      */
-    // FIXME: Move to ReferenceManager itself.
     private void initReferenceManager()
     {
         m_pluginManager.enablePlugins( false );
-
-        long start = System.currentTimeMillis();
-        log.info( "Starting cross reference scan of WikiPages" );
 
         try
         {
@@ -465,44 +461,15 @@ public class WikiEngine
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
             {
-                m_referenceManager = new ReferenceManager( this, pages );
+                m_referenceManager = new ReferenceManager( this );
+                m_referenceManager.initialize( pages );
             }
         
-            // Scan the existing pages from disk and update references in the manager.
-            Iterator it = pages.iterator();
-            while( it.hasNext() )
-            {
-                WikiPage page  = (WikiPage)it.next();
-
-                if( page instanceof Attachment )
-                {
-                    // We cannot build a reference list from the contents
-                    // of attachments, so we skip them.
-                }
-                else
-                {
-                    String content = m_pageManager.getPageText( page.getName(), 
-                                                                WikiPageProvider.LATEST_VERSION );
-                    Collection links = scanWikiLinks( page, content );
-                    Collection attachments = m_attachmentManager.listAttachments( page );
-
-                    for( Iterator atti = attachments.iterator(); atti.hasNext(); )
-                    {
-                        links.add( ((Attachment)(atti.next())).getName() );
-                    }
-
-                    m_referenceManager.updateReferences( page.getName(), links );
-                }
-            }
         }
         catch( ProviderException e )
         {
             log.fatal("PageProvider is unable to list pages: ", e);
         }
-
-        log.info( "Cross reference scan done (" +
-                  (System.currentTimeMillis()-start) +
-                  " ms)" );
 
         m_pluginManager.enablePlugins( true );
 
@@ -1841,7 +1808,7 @@ public class WikiEngine
                         //  Generate RSS file, output it to
                         //  default "rss.rdf".
                         //
-                        log.info("Regenerating RSS feed to "+fileName);
+                        log.debug("Regenerating RSS feed to "+fileName);
 
                         String feed = m_rssGenerator.generate();
 
