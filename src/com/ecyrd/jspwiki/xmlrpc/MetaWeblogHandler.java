@@ -83,8 +83,18 @@ public class MetaWeblogHandler
             {
                 return;
             }
+            else
+            {
+                String msg = "Insufficient permissions to do "+permission+" on "+page.getName();
+                log.error( msg );
+                throw new XmlRpcException(0, msg );
+            }
         }
-        else throw new XmlRpcException(0, "Password or username not valid.");
+        else 
+        {
+            log.error( "Username '"+username+"' or password not valid." );
+            throw new XmlRpcException(0, "Password or username not valid.");
+        }
     }
 
     /**
