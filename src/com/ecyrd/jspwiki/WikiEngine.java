@@ -59,11 +59,6 @@ public class WikiEngine
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
-    /** Determines the command to be used for 'diff'.  This program must
-        be able to output diffs in the unified format. It defaults to
-        'diff -u %s1 %s2'.*/
-    public static final String PROP_DIFFCOMMAND  = "jspwiki.diffCommand";
-
     /** If true, then the user name will be stored with the page data.*/
     public static final String PROP_STOREUSERNAME= "jspwiki.storeUserName";
 
@@ -75,8 +70,6 @@ public class WikiEngine
 
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL      = "jspwiki.baseURL";
-
-    private String         m_diffCommand = "diff -u %s1 %s2"; 
 
     private static Hashtable c_engines = new Hashtable();
 
@@ -99,7 +92,10 @@ public class WikiEngine
     private ReferenceManager m_referenceManager;
 
     /** Stores the Plugin manager */
-    private PluginManager  m_pluginManager;
+    private PluginManager    m_pluginManager;
+
+    /** Does all our diffs for us. */
+    private DifferenceEngine m_differenceEngine;
     
     /**
      *  Gets a WikiEngine related to this servlet.
@@ -174,8 +170,6 @@ public class WikiEngine
 
         log.debug("Configuring WikiEngine...");
 
-        m_diffCommand = props.getProperty( PROP_DIFFCOMMAND, m_diffCommand );
-
         m_saveUserInfo   = "true".equals( props.getProperty( PROP_STOREUSERNAME, "true" ) );
         m_storeIPAddress = "true".equals( props.getProperty( PROP_STOREIPADDRESS, "true" ) );
 
@@ -216,7 +210,9 @@ public class WikiEngine
         }
 
         m_pluginManager = new PluginManager();
-        
+
+        m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
+
         initReferenceManager();
 
         log.info("WikiEngine configured.");
@@ -248,7 +244,8 @@ public class WikiEngine
             WikiPage page = (WikiPage)it.next();
             String content = m_provider.getPageText( page.getName(), 
                                                      WikiPageProvider.LATEST_VERSION );
-            m_referenceManager.updateReferences( page.getName(), scanWikiLinks( content ) );
+            m_referenceManager.updateReferences( page.getName(), 
+                                                 scanWikiLinks( content ) );
         }
 
         log.info( "Cross reference scan done (" +
@@ -554,31 +551,32 @@ public class WikiEngine
      */
     public String textToHTML( WikiContext context, String pagedata )
     {
-        return textToHTML( context, pagedata, null );
+        return textToHTML( context, pagedata, null, null );
     }
 
     /**
-       Reads a WikiPageful of data from a String and returns all links
-       internal to this Wiki in a Collection.
-    */
+     *  Reads a WikiPageful of data from a String and returns all links
+     *  internal to this Wiki in a Collection.
+     */
     protected Collection scanWikiLinks( String pagedata )
     {
-        LinkCollector collector = new LinkCollector();
+        LinkCollector localCollector = new LinkCollector();        
 
         textToHTML( new WikiContext(this,""),
                     pagedata,
-                    collector );
+                    localCollector,
+                    null );
 
-        return collector.getLinks();
+        return localCollector.getLinks();
     }
-
 
     /**
      *  Helper method for combining simple  textToHTML() and scanWikiLinks().
      */
-    private String textToHTML( WikiContext context, 
-                               String pagedata, 
-                               StringTransmutator localLinkHook )
+    public String textToHTML( WikiContext context, 
+                              String pagedata, 
+                              StringTransmutator localLinkHook,
+                              StringTransmutator extLinkHook )
     {
         String result = "";
 
@@ -597,6 +595,7 @@ public class WikiEngine
                                        new StringReader( pagedata ) );
 
             in.addLocalLinkHook( localLinkHook );
+            in.addExternalLinkHook( extLinkHook );
             result = FileUtil.readContents( in );
         }
         catch( IOException e )
@@ -616,28 +615,6 @@ public class WikiEngine
         }
 
         return( result );
-    }
-
-    /**
-     *  Just a simple class collecting all of the links
-     *  that come in.
-     */
-    private class LinkCollector
-        implements StringTransmutator
-    {
-        private ArrayList m_items = new ArrayList();
-
-        public Collection getLinks()
-        {
-            return m_items;
-        }
-
-        public String mutate( WikiContext context, String in )
-        {
-            m_items.add( in );
-
-            return in;
-        }
     }
 
     /**
@@ -903,7 +880,7 @@ public class WikiEngine
         String page1 = getPureText( page, version1 );
         String page2 = getPureText( page, version2 );
 
-        String diff  = makeDiff( page1, page2 );
+        String diff  = m_differenceEngine.makeDiff( page1, page2 );
 
         diff = TextUtil.replaceEntities( diff );
         
@@ -911,55 +888,12 @@ public class WikiEngine
         {
             if( diff.length() > 0 )
             {
-                diff = TextUtil.colorizeDiff( diff );
+                diff = m_differenceEngine.colorizeDiff( diff );
             }
         }
         catch( IOException e )
         {
             log.error("Failed to colorize diff result.");
-        }
-
-        return diff;
-    }
-
-    /**
-     *  Makes the diff by calling "diff" program.
-     */
-    private String makeDiff( String p1, String p2 )
-    {
-        File f1 = null, f2 = null;
-        String diff = null;
-
-        try
-        {
-            f1 = FileUtil.newTmpFile( p1, getContentEncoding() );
-            f2 = FileUtil.newTmpFile( p2, getContentEncoding() );
-
-            String cmd = TextUtil.replaceString( m_diffCommand,
-                                                 "%s1",
-                                                 f1.getPath() );
-            cmd = TextUtil.replaceString( cmd,
-                                          "%s2",
-                                          f2.getPath() );
-
-            String output = FileUtil.runSimpleCommand( cmd, f1.getParent() );
-
-            // FIXME: Should this rely on the system default encoding?
-            diff = new String(output.getBytes("ISO-8859-1"),
-                              getContentEncoding() );
-        }
-        catch( IOException e )
-        {
-            log.error("Failed to do file diff",e);
-        }
-        catch( InterruptedException e )
-        {
-            log.error("Interrupted",e);
-        }
-        finally
-        {
-            if( f1 != null ) f1.delete();
-            if( f2 != null ) f2.delete();
         }
 
         return diff;
