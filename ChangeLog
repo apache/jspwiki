@@ -1,5 +1,11 @@
 2003-02-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.26.
+
+        * Bug fix: BasicAttachmentProvider still didn't migrate correctly
+        from earlier versions.  Sigh...  Patch provided by Torsten
+        Hildebrandt.
+
         * Added Jason Pell's MultipartRequestLibrary v1.30b3, which should
         fix plenty of problems related with uploads.
 
