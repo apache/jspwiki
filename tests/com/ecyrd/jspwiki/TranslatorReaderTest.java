@@ -760,7 +760,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1\n{{{ <b> }}}";
 
-        assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate(src) );
+        assertEquals( "1\n<pre> &lt;b&gt; </pre>\n", translate(src) );
     }
 
     public void testCamelCaseInPre()
@@ -768,7 +768,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1\n{{{ CamelCase }}}";
 
-        assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
+        assertEquals( "1\n<pre> CamelCase </pre>\n", translate(src) );
     }
 
     public void testList1()
