@@ -216,7 +216,6 @@ public class VersioningFileProviderTest extends TestCase
     public void testDeleteVersion()
         throws Exception
     {
-        System.out.println("*****");
         engine.saveText( NAME1, "v1\r\n" );
         engine.saveText( NAME1, "v2\r\n" );
         engine.saveText( NAME1, "v3\r\n" );
