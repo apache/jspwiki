@@ -295,14 +295,61 @@ public class WikiEngine
     }
 
     /**
+     * Returns the unconverted text of the given version of a page,
+     * if it exists.
+     *
+     * @param page WikiName of the page to fetch
+     * @param version  Version of the page to fetch
+     */
+    public String getText( String page, int version )
+    {
+        if( m_provider == null ) 
+            return NO_PROVIDER_MSG;
+
+	// (What do we get if the version doesn't exist?)
+	// (Null. Need to implement a check. TODO.)
+        return m_provider.getPageText( page, version );
+    }
+
+
+    /**
      *  Returns the converted HTML of the page.
      *
      *  @param page WikiName of the page to convert.
      */
     public String getHTML( String page )
     {
-        StringBuffer result = new StringBuffer();
         String pagedata = getText( page );
+	return( textToHTML( pagedata ) );
+    }
+
+    /**
+     *  Returns the converted HTML of the page's specific version.
+     *  The version must be a positive integer, otherwise the current
+     *  version is returned.
+     *
+     *  @param page WikiName of the page to convert.
+     *  @param version Version number to fetch
+     */
+    public String getHTML( String page, int version )
+    {
+	String pagedata = null;
+	if(version >= 0)
+	    pagedata = getText( page, version );
+	else
+	    pagedata = getText( page );
+
+	return( textToHTML( pagedata ) );
+    }
+
+    /**
+     *  Converts raw page data to HTML.
+     *
+     *  @param pagedata Raw page data to convert to HTML
+     */
+    protected String textToHTML( String pagedata )
+    {
+        StringBuffer result = new StringBuffer();
 
         Reader in = new StringReader( pagedata );
 
