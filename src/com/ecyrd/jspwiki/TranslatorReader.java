@@ -1302,6 +1302,8 @@ public class TranslatorReader extends Reader
      *
      *  @return The string from the current position to the end of line.
      */
+
+    // FIXME: Always returns an empty line, even if the stream is full.
     private String peekAheadLine()
         throws IOException
     {
@@ -1346,7 +1348,8 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Reads the stream until the next EOL or EOF.
+     *  Reads the stream until the next EOL or EOF.  Note that it will also read the
+     *  EOL from the stream.
      */
     private StringBuffer readUntilEOL()
         throws IOException
@@ -1358,10 +1361,13 @@ public class TranslatorReader extends Reader
         {
             ch = nextToken();
 
-            if( ch == -1 || ch == '\n' )
+            if( ch == -1 )
                 break;
 
             buf.append( (char) ch );
+
+            if( ch == '\n' ) 
+                break;
         }
 
         return buf;
