@@ -258,9 +258,9 @@ public class TextUtil
      *  Replaces a part of a string with a new String.
      *
      *  @param start Where in the original string the replacing should start.
-     @  @param end Where the replacing should end.
+     *  @param end Where the replacing should end.
      *  @param orig Original string.  Null is safe.
-     @  @param text The new text to insert into the string.
+     *  @param text The new text to insert into the string.
      */
     public static String replaceString( String orig, int start, int end, String text )
     {
