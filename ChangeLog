@@ -1,3 +1,10 @@
+2003-04-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.7.
+
+        * Added preliminary support for the MetaWeblog API.  The endpoint
+        is the same endpoint that is used by the normal wiki RPC API.
+
 2003-04-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Added "style", "border", and "class" -attributes to the Image
