@@ -77,13 +77,13 @@ public class WeblogPlugin implements WikiPlugin
 
                 // FIXME: Add permalink here.
                 
-                sb.append("</DIV>");
+                sb.append("</DIV>\n");
 
                 sb.append("<DIV CLASS=\"weblogentry\">");
 
                 sb.append( engine.getHTML( context, p ) );
                 
-                sb.append("</DIV>");
+                sb.append("</DIV>\n");
             }
             
             sb.append("</DIV>\n");
