@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.providers;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ public class RCSFileProvider
         PatternMatcher  matcher  = new Perl5Matcher();
         PatternCompiler compiler = new Perl5Compiler();
         PatternMatcherInput input;
+        BufferedReader  stdout   = null;
 
         WikiPage info = super.getPageInfo( page, version );
 
@@ -121,7 +123,7 @@ public class RCSFileProvider
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             // FIXME: Should this use encoding as well?
-            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
+            stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
 
             String line;
             Pattern headpattern = compiler.compile( PATTERN_REVISION );
@@ -190,6 +192,14 @@ public class RCSFileProvider
             // This also occurs when 'info' was null.
             log.warn("Failed to read RCS info",e);
         }
+        finally
+        {
+            try
+            {
+                if( stdout != null ) stdout.close();
+            }
+            catch( IOException e ) {}
+        }
 
         return info;
     }
@@ -198,6 +208,7 @@ public class RCSFileProvider
         throws ProviderException
     {
         String result = null;
+        InputStream stdout = null;
 
         // Let parent handle latest fetches, since the FileSystemProvider
         // can do the file reading just as well.
@@ -216,7 +227,8 @@ public class RCSFileProvider
             log.debug("Command = '"+cmd+"'");
 
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
-            result = FileUtil.readContents( process.getInputStream(),
+            stdout = process.getInputStream();
+            result = FileUtil.readContents( stdout,
                                             m_encoding );
 
             process.waitFor();
@@ -239,7 +251,15 @@ public class RCSFileProvider
         {
             log.error("RCS checkout failed",e);
         }
-        
+        finally
+        {
+            try
+            {
+                if( stdout != null ) stdout.close();
+            }
+            catch( Exception e ) {}
+        }
+
         return result;
     }
 
@@ -285,6 +305,7 @@ public class RCSFileProvider
         PatternMatcher matcher = new Perl5Matcher();
         PatternCompiler compiler = new Perl5Compiler();
         PatternMatcherInput input;
+        BufferedReader stdout  = null;
 
         log.debug("Getting RCS version history");
 
@@ -305,7 +326,7 @@ public class RCSFileProvider
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             // FIXME: Should this use encoding as well?
-            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+            stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
 
             String line;
 
@@ -347,6 +368,14 @@ public class RCSFileProvider
         catch( Exception e )
         {
             log.error( "RCS log failed", e );
+        }
+        finally
+        {
+            try
+            {
+                if( stdout != null ) stdout.close();
+            }
+            catch( IOException e ) {}
         }
 
         return list;
