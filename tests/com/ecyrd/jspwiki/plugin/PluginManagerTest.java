@@ -147,6 +147,16 @@ public class PluginManagerTest extends TestCase
                       res );
     }
 
+    public void testNoInsert()
+        throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{SamplePlugin WHERE text=15}");
+
+        assertEquals( "15",
+                      res );
+    }
+
     
 
     public static Test suite()
