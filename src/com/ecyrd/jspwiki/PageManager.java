@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.log4j.Category;
 
@@ -226,6 +227,29 @@ public class PageManager
         }
 
         return lock;
+    }
+
+    /**
+     *  Returns a list of currently applicable locks.  Note that by the time you get the list,
+     *  the locks may have already expired, so use this only for informational purposes.
+     *
+     *  @return List of PageLock objects, detailing the locks.  If no locks exist, returns
+     *          an empty list.
+     *  @since 2.0.22.
+     */
+    public List getActiveLocks()
+    {
+        ArrayList result = new ArrayList();
+
+        synchronized( m_pageLocks )
+        {
+            for( Iterator i = m_pageLocks.values().iterator(); i.hasNext(); )
+            {
+                result.add( i.next() );
+            }
+        }
+
+        return result;
     }
 
     public Collection findPages( QueryItem[] query )
