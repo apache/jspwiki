@@ -1095,15 +1095,20 @@ public class WikiEngine
      *  Returns a Collection of WikiPages, sorted in time
      *  order of last change.
      */
+
+    // FIXME: Should really get a Date object and do proper comparisons.
+    //        This is terribly wasteful.
     public Collection getRecentChanges()
     {
         try
         {
             Collection pages = m_pageManager.getAllPages();
+            Collection  atts = m_attachmentManager.getAllAttachments();
 
             TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
 
             sortedPages.addAll( pages );
+            sortedPages.addAll( atts );
 
             return sortedPages;
         }

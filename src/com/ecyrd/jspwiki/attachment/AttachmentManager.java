@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.File;
 import java.util.Properties;
 import java.util.Collection;
+import java.util.Date;
+import java.util.ArrayList;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -257,6 +259,24 @@ public class AttachmentManager
         }
        
         return null;
+    }
+
+    /**
+     *  Returns a collection of Attachments, containing each and every attachment
+     *  that is in this Wiki.
+     *
+     *  @return A collection of attachments.  If attachments are disabled, will
+     *          return an empty collection.
+     */
+    public Collection getAllAttachments()
+        throws ProviderException
+    {        
+        if( attachmentsEnabled() )
+        {
+            return m_provider.listAllChanged( new Date(0L) );
+        }
+
+        return new ArrayList();
     }
 
     public WikiAttachmentProvider getCurrentProvider()

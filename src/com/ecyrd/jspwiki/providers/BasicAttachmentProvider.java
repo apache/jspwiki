@@ -31,7 +31,10 @@ import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Date;
+import java.util.List;
+import java.util.Collections;
 
 import org.apache.log4j.Category;
 
@@ -340,6 +343,44 @@ public class BasicAttachmentProvider
     public Collection findAttachments( QueryItem[] query )
     {
         return null;
+    }
+
+    // FIXME: Very unoptimized.
+    public List listAllChanged( Date timestamp )
+        throws ProviderException
+    {
+        File attDir = new File( m_storageDir );
+
+        if( !attDir.exists() )
+        {
+            throw new ProviderException("Specified attachment directory "+m_storageDir+" does not exist!");
+        }
+
+        ArrayList list = new ArrayList();
+
+        String[] pagesWithAttachments = attDir.list( new AttachmentFilter() );
+
+        for( int i = 0; i < pagesWithAttachments.length; i++ )
+        {
+            String pageId = pagesWithAttachments[i];
+            pageId = pageId.substring( 0, pageId.length()-DIR_EXTENSION.length() );
+            
+            Collection c = listAttachments( new WikiPage(pageId) );
+
+            for( Iterator it = c.iterator(); it.hasNext(); )
+            {
+                Attachment att = (Attachment) it.next();
+
+                if( att.getLastModified().after( timestamp ) )
+                {
+                    list.add( att );
+                }
+            }
+        }
+
+        Collections.sort( list, new PageTimeComparator() );
+
+        return list;
     }
 
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )

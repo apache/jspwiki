@@ -21,7 +21,7 @@
 package com.ecyrd.jspwiki;
 
 /**
- *  Contains release information.
+ *  Contains release and version information.
  *
  *  @author Janne Jalkanen
  */
@@ -32,9 +32,13 @@ public class Release
      */
     public static final String     APPNAME       = "JSPWiki";
 
-    /** This should be empty when doing a release - otherwise
-        keep it as "cvs" so that whenever someone checks out the code,
-        they know it is a bleeding-edge version. */
+    /** 
+     *  This should be empty when doing a release - otherwise
+     *  keep it as "cvs" so that whenever someone checks out the code,
+     *  they know it is a bleeding-edge version.  Other possible
+     *  values are "-alpha" and "-beta" for alpha and beta versions,
+     *  respectively.
+     */
     private static final String    POSTFIX       = "-auth-cvs";
 
     /**
@@ -44,11 +48,11 @@ public class Release
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 0;
-    public static final int        MINORREVISION = 3;
+    public static final int        MINORREVISION = 5;
 
     /**
      *  This is the generic version string you should use
-     *  when printing out the version.
+     *  when printing out the version.  It is of the form "x.y.z-ttt".
      */
     public static final String     VERSTR        = 
         VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;

@@ -57,7 +57,7 @@ public class TranslatorReader extends Reader
     private static final int              INTERWIKI     = 7;
     private static final int              IMAGELINK     = 8;
     private static final int              IMAGEWIKILINK = 9;
-    private static final int              ATTACHMENT    = 10;
+    public  static final int              ATTACHMENT    = 10;
     private static final int              ATTACHMENTIMAGE = 11;
 
     /** Allow this many characters to be pushed back in the stream. */
