@@ -26,7 +26,8 @@ public interface PageFilter
      *  Is called whenever the a new PageFilter is instantiated and
      *  reset.
      */
-    public void initialize( Properties properties );
+    public void initialize( Properties properties )
+        throws FilterException;
 
     /**
      *  This method is called whenever a page has been loaded from the provider,
@@ -36,19 +37,22 @@ public interface PageFilter
      *  @param wikiContext The current wikicontext.
      *  @param content     WikiMarkup.
      */
-    public String preTranslate( WikiContext wikiContext, String content );
+    public String preTranslate( WikiContext wikiContext, String content )
+        throws FilterException;
 
     /**
      *  This method is called after a page has been fed through the TranslatorReader,
      *  so anything you are seeing here is translated content.  If you want to
      *  do any of your own WikiMarkup2HTML translation, do it here.
      */
-    public String postTranslate( WikiContext wikiContext, String htmlContent );
+    public String postTranslate( WikiContext wikiContext, String htmlContent )
+        throws FilterException;
 
     /**
      *  This method is called before the page has been saved to the PageProvider.
      */
-    public String preSave( WikiContext wikiContext, String content );
+    public String preSave( WikiContext wikiContext, String content )
+        throws FilterException;
 
     /**
      *  This method is called after the page has been successfully saved.
@@ -58,5 +62,6 @@ public interface PageFilter
      *  Since the result is discarded from this method, this is only useful
      *  for things like counters, etc.
      */
-    public void postSave( WikiContext wikiContext, String content );
+    public void postSave( WikiContext wikiContext, String content )
+        throws FilterException;
 }
