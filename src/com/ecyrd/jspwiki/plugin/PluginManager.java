@@ -20,7 +20,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import org.apache.oro.text.regex.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -92,7 +92,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public class PluginManager
 {
-    private static Category log = Category.getInstance( PluginManager.class );
+    private static Logger log = Logger.getLogger( PluginManager.class );
 
     /**
      *  This is the default package to try in case the instantiation

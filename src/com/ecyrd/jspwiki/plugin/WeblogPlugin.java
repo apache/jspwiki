@@ -21,7 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
@@ -53,7 +53,7 @@ import java.util.*;
 
 public class WeblogPlugin implements WikiPlugin
 {
-    private static Category     log = Category.getInstance(WeblogPlugin.class);
+    private static Logger     log = Logger.getLogger(WeblogPlugin.class);
 
     public static final int     DEFAULT_DAYS = 7;
     public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";

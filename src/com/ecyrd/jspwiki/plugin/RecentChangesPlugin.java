@@ -19,7 +19,7 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import java.util.*;
@@ -40,7 +40,7 @@ public class RecentChangesPlugin
     /** How many days we show by default. */
     private static final int    DEFAULT_DAYS = 100*365;
 
-    private static Category log = Category.getInstance( RecentChangesPlugin.class );
+    private static Logger log = Logger.getLogger( RecentChangesPlugin.class );
 
     private boolean isSameDay( Date a, Date b )
     {

@@ -19,7 +19,7 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
@@ -35,7 +35,7 @@ import java.text.SimpleDateFormat;
 public class CurrentTimePlugin
     implements WikiPlugin
 {
-    private static Category log = Category.getInstance( CurrentTimePlugin.class );
+    private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
     public static final String DEFAULT_FORMAT = "HH:mm:ss dd-MMM-yyyy zzzz";
 

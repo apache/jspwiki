@@ -21,7 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,7 +33,7 @@ import java.util.*;
  */
 public class WeblogEntryPlugin implements WikiPlugin
 {
-    private static Category     log = Category.getInstance(WeblogEntryPlugin.class);
+    private static Logger     log = Logger.getLogger(WeblogEntryPlugin.class);
 
     public static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 

@@ -21,7 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
@@ -43,7 +43,7 @@ import java.util.*;
  */
 public class IndexPlugin implements WikiPlugin
 {
-    protected static Category   log = Category.getInstance(IndexPlugin.class);
+    protected static Logger   log = Logger.getLogger(IndexPlugin.class);
 
     public  static final String INITIALS_COLOR                  = "red" ;
     private static final int    DEFAULT_ITEMS_PER_LINE          = 4     ;

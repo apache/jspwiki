@@ -19,7 +19,7 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 
@@ -40,7 +40,7 @@ import java.util.*;
 public class Counter
     implements WikiPlugin
 {
-    private static Category log = Category.getInstance( Counter.class );
+    private static Logger log = Logger.getLogger( Counter.class );
 
     static final String VARIABLE_NAME = "counter";
 

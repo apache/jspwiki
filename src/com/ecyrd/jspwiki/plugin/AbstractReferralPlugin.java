@@ -19,7 +19,7 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 import java.io.StringReader;
@@ -33,7 +33,7 @@ import java.io.IOException;
 public abstract class AbstractReferralPlugin
     implements WikiPlugin
 {
-    private static Category log = Category.getInstance( AbstractReferralPlugin.class );
+    private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
 
     public static final int    ALL_ITEMS       = -1;
     public static final String PARAM_MAXWIDTH  = "maxwidth";

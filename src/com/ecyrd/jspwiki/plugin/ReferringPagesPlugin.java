@@ -19,7 +19,7 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 
@@ -34,7 +34,7 @@ import java.util.*;
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
 {
-    private static Category log = Category.getInstance( ReferringPagesPlugin.class );
+    private static Logger log = Logger.getLoggerx( ReferringPagesPlugin.class );
 
     public static final String PARAM_MAX      = "max";
     public static final String PARAM_EXTRAS   = "extras";
