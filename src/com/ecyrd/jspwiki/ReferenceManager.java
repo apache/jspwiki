@@ -92,6 +92,7 @@ import com.ecyrd.jspwiki.filters.BasicPageFilter;
  *  @author ebu@memecry.net
  *  @since 1.6.1
  */
+
 public class ReferenceManager
     extends BasicPageFilter
 {
@@ -323,6 +324,7 @@ public class ReferenceManager
         while( it.hasNext() )
         {
             String key = (String) it.next();
+            //HashSet refs = (HashSet) m_referredBy.get( key );
             HashSet refs = getReferenceList( m_referredBy, key );
             if( refs == null || refs.isEmpty() )
             {
@@ -330,7 +332,7 @@ public class ReferenceManager
             }
         }
 
-        return( unref );
+        return unref;
     }
 
     
@@ -374,14 +376,17 @@ public class ReferenceManager
             }
         }
 
-        return( uncreated );
+        return uncreated;
     }
 
+    /**
+     *  Searches for the given page in the given Map.
+     */
     private HashSet getReferenceList( Map coll, String pagename )
     {
         HashSet refs = (HashSet)coll.get( pagename );
         
-        if( refs == null && m_matchEnglishPlurals )
+        if( (refs == null || refs.size() == 0) && m_matchEnglishPlurals )
         {
             if( pagename.endsWith("s") )
             {
@@ -423,6 +428,7 @@ public class ReferenceManager
      * with one user, one WikiEngine only.
      */
     // FIXME: Remove, not good putting debug code in distribution.
+
     /*
     public void dump()
     {
