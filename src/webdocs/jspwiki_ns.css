@@ -16,3 +16,6 @@ A.footnote { color: #0044AA; }
 P.versionnote { color: red;
                 font-size: 130%;
                 text-align: center; }
+
+/* Added in v1.5.1 */
+H3.leftmenuheading { }
