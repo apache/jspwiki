@@ -21,8 +21,7 @@ public class NamedGroup
         {
             UserProfile p = (UserProfile) user;
 
-            return ( p.getLoginStatus() == UserProfile.PASSWORD ||
-                     p.getLoginStatus() == UserProfile.COOKIE );
+            return p.getLoginStatus() >= UserProfile.COOKIE;
         }
 
         throw new InternalWikiException("Someone offered us a Principal that is not an UserProfile!");
