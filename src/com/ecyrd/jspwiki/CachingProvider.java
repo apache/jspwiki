@@ -144,6 +144,8 @@ public class CachingProvider
         m_cache.remove( page.getName() );
     }
 
+    // FIXME: This MUST be cached somehow.
+
     public Collection getAllPages()
     {
         return m_provider.getAllPages();
