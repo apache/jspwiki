@@ -56,6 +56,14 @@
          <wiki:Include page="InfoContent.jsp" />
       </wiki:CheckRequestContext>
 
+      <wiki:CheckRequestContext context="preview">
+         <wiki:Include page="PreviewContent.jsp" />
+      </wiki:CheckRequestContext>
+
+      <wiki:CheckRequestContext context="conflict">
+         <wiki:Include page="ConflictContent.jsp" />
+      </wiki:CheckRequestContext>
+
     </TD>
   </TR>
 
