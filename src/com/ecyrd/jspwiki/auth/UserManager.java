@@ -55,6 +55,11 @@ public class UserManager
         return group;
     }
 
+    public Principal getPrincipal( String name )
+    {
+        return getUserProfile(name); // FIXME: This is a kludge to get things compiling.
+    }
+
     public void login( String username, String password, HttpSession session )
     {
         log.info("Logged in user "+username);

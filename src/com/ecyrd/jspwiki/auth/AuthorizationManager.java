@@ -8,6 +8,7 @@ import java.security.acl.NotOwnerException;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.acl.AccessControlList;
 import com.ecyrd.jspwiki.acl.AclEntryImpl;
