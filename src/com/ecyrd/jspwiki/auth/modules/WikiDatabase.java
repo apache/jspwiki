@@ -44,7 +44,7 @@ public class WikiDatabase
     {
         m_engine = engine;
 
-        m_engine.addPageFilter( new SaveFilter(), 1000000 );
+        m_engine.getFilterManager().addPageFilter( new SaveFilter(), 1000000 );
 
         initUserDatabase();
     }
