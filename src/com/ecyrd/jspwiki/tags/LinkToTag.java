@@ -27,6 +27,7 @@ import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes a link to a Wiki page.  Body of the link becomes the actual text.
+ *  The link is written regardless to whether the page exists or not.
  *
  *  <P><B>Attributes<B></P>
  *  <UL>
@@ -70,31 +71,26 @@ public class LinkToTag
             }
         }
 
-        if( engine.pageExists(pageName) )
+        JspWriter out = pageContext.getOut();
+        String encodedlink = engine.encodeName( pageName );
+
+        String url = engine.getBaseURL()+"Wiki.jsp?page="+encodedlink;
+        if( getVersion() != null )
         {
-            JspWriter out = pageContext.getOut();
-            String encodedlink = engine.encodeName( pageName );
-
-            String url = engine.getBaseURL()+"Wiki.jsp?page="+encodedlink;
-            if( getVersion() != null )
-            {
-                url += "&version="+getVersion();
-            }
-
-            switch( m_format )
-            {
-              case ANCHOR:
-                out.print("<A CLASS=\"wikipage\" HREF=\""+url+"\">");
-                break;
-              case URL:
-                out.print( url );
-                break;
-            }
-
-            return EVAL_BODY_INCLUDE;
+            url += "&version="+getVersion();
         }
 
-        return SKIP_BODY;
+        switch( m_format )
+        {
+          case ANCHOR:
+            out.print("<A CLASS=\"wikipage\" HREF=\""+url+"\">");
+            break;
+          case URL:
+            out.print( url );
+            break;
+        }
+
+        return EVAL_BODY_INCLUDE;
     }
 
 }
