@@ -75,9 +75,16 @@ public class InsertPageTag
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
 
+        //
+        //  NB: The page might not really exist if the user is currently
+        //      creating it (i.e. it is not yet in the cache or providers), 
+        //      AND we got the page from the wikiContext.
+        //
+
         if( m_pageName == null )
         {
             page = m_wikiContext.getPage();
+            if( !engine.pageExists(page) ) return SKIP_BODY;
         }
         else
         {
@@ -89,28 +96,19 @@ public class InsertPageTag
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
-            //
-            //  NB: The page might not really exist if the user is currently
-            //      creating it (i.e. it is not yet in the cache or providers), 
-            //      AND we got the page from the wikiContext.
-            //
+            log.debug("Inserting page "+page);
 
-            if( engine.pageExists( page ) )
+            JspWriter out = pageContext.getOut();
+
+            switch(m_mode)
             {
-                log.debug("Inserting page "+page);
-
-                JspWriter out = pageContext.getOut();
-
-                switch(m_mode)
-                {
-                  case HTML:
-                    out.print( engine.getHTML(m_wikiContext, page) );
-                    break;
-                  case PLAIN:
-                    out.print( engine.getText(m_wikiContext, page) );
-                    break;
-                }
-            } // exists
+              case HTML:
+                out.print( engine.getHTML(m_wikiContext, page) );
+                break;
+              case PLAIN:
+                out.print( engine.getText(m_wikiContext, page) );
+                break;
+            }
         }
 
         return SKIP_BODY;
