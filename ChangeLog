@@ -1,3 +1,8 @@
+2002-05-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * UserPreferences now allows you to clear the preferences.
+        Suggested by Robert McGovern, who kindly sent me a patch for it.
+
 2002-05-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.8.
