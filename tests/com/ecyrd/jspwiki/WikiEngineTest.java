@@ -226,6 +226,13 @@ public class WikiEngineTest extends TestCase
         assertEquals("DELETEME", m_engine.beautifyTitle( src ) );
     }
 
+    public void testBeautifyTitleAcronym3()
+    {
+        String src = "JSPWikiFAQ";
+
+        assertEquals("JSPWiki FAQ", m_engine.beautifyTitle( src ) );
+    }
+
     public void testBeautifyTitleNumbers()
     {
         String src = "TestPage12";
