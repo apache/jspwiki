@@ -80,6 +80,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%> Edit: <%=pagereq%></TITLE>
+  <META NAME="ROBOTS" CONTENT="NOINDEX">
   <%@ include file="cssinclude.js" %>
 </HEAD>
 

@@ -35,6 +35,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%> Search</TITLE>
+  <META NAME="ROBOTS" CONTENT="NOINDEX">
   <%@ include file="cssinclude.js" %>
 </HEAD>
 

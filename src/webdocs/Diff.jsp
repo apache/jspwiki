@@ -45,6 +45,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%>: Diff <%=pagereq%></TITLE>
+  <META NAME="ROBOTS" CONTENT="NOINDEX">
   <%@ include file="cssinclude.js" %>
 </HEAD>
 
