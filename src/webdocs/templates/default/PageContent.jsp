@@ -43,7 +43,7 @@
          </div>
       </wiki:HasAttachments>
 
-      <p><hr />
+      <hr /><br />
       <table border="0" width="100%" class="pageactions">
         <tr>
           <td align="left">
@@ -78,4 +78,3 @@
           </td>
         </tr>
       </table>
-      </p>

@@ -1,21 +1,20 @@
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <div align="center">
-    <a href="<wiki:LinkTo page="SystemInfo" format="url"/>" onMouseOver="document.jspwiki_logo.src='images/jspwiki_logo.png'" onMouseOut="document.jspwiki_logo.src='images/jspwiki_logo_s.png'"><img src="images/jspwiki_logo_s.png" border="0" name="jspwiki_logo"/></a><br />
+    <a href="<wiki:LinkTo page="SystemInfo" format="url"/>" onmouseover="document.jspwiki_logo.src='images/jspwiki_logo.png'" onmouseout="document.jspwiki_logo.src='images/jspwiki_logo_s.png'"><img src="images/jspwiki_logo_s.png" border="0" name="jspwiki_logo" alt="JSPWiki logo"/></a><br />
 </div>
 
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
-<p>
-    <wiki:InsertPage page="LeftMenu" />
-    <wiki:NoSuchPage page="LeftMenu">
-        <hr><p>
-        <p align="center">
-        <i>No LeftMenu!</i><br />
-        <wiki:EditLink page="LeftMenu">Please make one.</wiki:EditLink><br />
-        </p>
-        <p><hr /></p>
-    </wiki:NoSuchPage>
-</p>
-<p>
+<wiki:InsertPage page="LeftMenu" />
+<wiki:NoSuchPage page="LeftMenu">
+    <hr />
+    <p align="center">
+    <i>No LeftMenu!</i><br />
+    <wiki:EditLink page="LeftMenu">Please make one.</wiki:EditLink><br />
+    </p>
+    <hr />
+</wiki:NoSuchPage>
+
 <div align="center" class="username">
 
     <wiki:UserCheck status="known">
@@ -31,7 +30,6 @@
     </wiki:UserCheck>
 </div>
 <wiki:Include page="LoginBox.jsp" />
-</p>
 
 <!-- End of automatically generated page -->
 
