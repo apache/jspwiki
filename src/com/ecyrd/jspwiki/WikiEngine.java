@@ -485,6 +485,7 @@ public class WikiEngine
      *  @version If WikiPageProvider.LATEST_VERSION, then uses the 
      *  latest version.
      */
+    // FIXME: Should throw an exception on unknown page/version?
     public String getPureText( String page, int version )
     {
         if( m_provider == null ) 
