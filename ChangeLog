@@ -1,3 +1,22 @@
+2002-01-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Added new RPC API: getPageInfo( string page ), and getPageInfo(
+        string page, int version ).  Also, the struct returned by
+        getRecentChanges() and getPageInfo() got enhanced.
+
+        * Wiki.jsp now shows the info on old versions properly: before it
+        would show data pertaining to the current version, even if viewing
+        an older version.
+
+        * WikiPageProvider interface reworked slightly: Both getPageInfo()
+        and getPageText() now need the version parameter.  Versionless
+        methods are no longer supported (use LATEST_VERSION as a special
+        tag for version to get the latest.)  I did this to simplify the
+        API so that there would be less methods to implement.
+
+        * RCSFileProvider can now fetch information on old pages
+        correctly. 
+
 2002-01-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.6-cvs.
