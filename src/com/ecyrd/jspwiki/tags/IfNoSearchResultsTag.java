@@ -43,7 +43,6 @@ public class IfNoSearchResultsTag
                                                                 PageContext.REQUEST_SCOPE );
         if( list == null || list.size() == 0 )
         {   
-            log.info("No list: "+list+" sz="+(list!=null?""+list.size():""));
             return EVAL_BODY_INCLUDE;
         }
 
