@@ -1,3 +1,11 @@
+2001-12-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.6.1-cvs.
+
+        * Removed last traces of JSP tags.
+
+        * Changed plugin parameter marker to WHERE instead of WITH.
+
 2001-11-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added new property: jspwiki.baseURL to define protection against
