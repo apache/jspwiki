@@ -338,3 +338,37 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Library General
 Public License instead of this License.
+
+
+
+    Copyright (C) 2002  Janne Jalkanen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    In addition, as a special exception, Janne Jalkanen gives
+    permission to link the code of this program with the following
+    Jakarta libraries (or with modified versions of the same libraries
+    that use the same license as the previous versions), and
+    distribute linked combinations including the two.  You must obey
+    the GNU General Public License in all respects for all of the code
+    used other than those libraries.  If you modify this file, you may
+    extend this exception to your version of the file, but you are not
+    obligated to do so.  If you do not wish to do so, delete this
+    exception statement from your version.
+
+    The libraries referred to in the above paragraph are:
+    - Jakarta ORO Regular Expression library
+    - Jakarta Log4j Logging library
+    - Jakarta XML-RPC library
