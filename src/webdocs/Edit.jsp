@@ -184,6 +184,10 @@
           <td>{{text}}</td><td>Makes text in <TT>monospaced font</TT>.</TD>
         </tr>
 
+        <tr>
+          <td>|text|more text|<td><td>Makes a table.  Double bars for a table heading.</td>
+        </tr>
+
       </table>
 
       <P>Don't try to use HTML, since it just won't work.</P>
