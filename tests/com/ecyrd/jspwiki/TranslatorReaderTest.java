@@ -335,7 +335,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="Footnote[1]";
 
-        assertEquals( "Footnote<A CLASS=\"footnoteref\" HREF=\"#ref1\">[1]</A>\n", 
+        assertEquals( "Footnote<A CLASS=\"footnoteref\" HREF=\"#ref-testpage-1\">[1]</A>\n", 
                       translate(src) );
     }
 
@@ -344,7 +344,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[#2356] Footnote.";
 
-        assertEquals( "<A CLASS=\"footnote\" NAME=\"ref2356\">[#2356]</A> Footnote.\n", 
+        assertEquals( "<A CLASS=\"footnote\" NAME=\"ref-testpage-2356\">[#2356]</A> Footnote.\n", 
                       translate(src) );
     }
 
