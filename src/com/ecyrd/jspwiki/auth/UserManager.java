@@ -110,8 +110,12 @@ public class UserManager
         }
 
         String dbClassName = props.getProperty( PROP_USERDATABASE );
+
         if( dbClassName == null )
+        {
             dbClassName = "com.ecyrd.jspwiki.auth.modules.WikiDatabase";
+        }
+
         try
         {
             Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules",
