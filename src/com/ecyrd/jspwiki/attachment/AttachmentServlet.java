@@ -251,10 +251,16 @@ public class AttachmentServlet
 
                 if( filename == null || filename.trim().length() == 0 )
                 {
-                    log.error("Empty file name given.");
+                    log.info("Empty file name given.");
 
                     return nextPage;
                 }
+
+                //
+                //  This should fix problems with IE 5.22 on OSX, which
+                //  prefixes filenames with 0x0D0A.
+                //
+                filename = filename.trim();
 
                 //
                 //  Attempt to open the input stream
