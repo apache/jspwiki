@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Properties;
-import java.util.Hashtable;
 import java.io.InputStream;
 import java.io.IOException;
 

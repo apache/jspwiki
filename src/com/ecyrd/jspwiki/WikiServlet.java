@@ -26,8 +26,6 @@ import java.io.*;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.util.HttpUtil;
-
 /**
  */
 public class WikiServlet

@@ -22,14 +22,12 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Collection;
-import java.util.List;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 

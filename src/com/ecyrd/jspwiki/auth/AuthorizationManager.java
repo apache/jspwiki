@@ -22,8 +22,6 @@ package com.ecyrd.jspwiki.auth;
 import java.util.Properties;
 import java.util.List;
 import java.util.Iterator;
-import java.security.Permissions;
-import java.security.Permission;
 import java.security.acl.NotOwnerException;
 import java.security.Principal;
 

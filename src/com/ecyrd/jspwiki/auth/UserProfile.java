@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.auth;
 
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
-import java.security.Principal;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.TextUtil;
 

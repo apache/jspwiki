@@ -22,8 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.

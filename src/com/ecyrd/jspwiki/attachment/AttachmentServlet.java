@@ -25,7 +25,6 @@ import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
-import java.text.ParseException;
 
 import org.apache.log4j.Logger;
 

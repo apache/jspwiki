@@ -24,14 +24,6 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
-import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.html.Input;
-import org.apache.ecs.html.Select;
-import org.apache.ecs.html.TextArea;
-
-import com.ecyrd.jspwiki.forms.*;
-import com.ecyrd.jspwiki.util.FormUtil;
-
 /**
  *  Opens a WikiForm.
  *

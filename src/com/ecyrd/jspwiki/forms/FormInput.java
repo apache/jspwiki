@@ -24,10 +24,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
-import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.html.Input;
-
-import com.ecyrd.jspwiki.util.FormUtil;
 
 /**
  *  Creates a simple input text field.

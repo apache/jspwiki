@@ -21,13 +21,11 @@ package com.ecyrd.jspwiki.util;
 
 import java.text.*;
 import java.util.Date;
-import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiPage;
 
 /**

@@ -4,6 +4,10 @@
 
         * Fixed problem with an extra <script> tag inside cssinclude.js
 
+        * Removed several unused imports (testing out Eclipse, now that it
+        seems that it has proper emacs-like indenting - now I just need a
+        ChangeLog-plugin...
+
 2005-01-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.146.

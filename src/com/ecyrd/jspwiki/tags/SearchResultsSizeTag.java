@@ -23,10 +23,6 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.jsp.PageContext;
 
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.TranslatorReader;
-
 /**
  *  Outputs the size of the search results list, if it contains any items.
  *  Otherwise outputs an empty string.

@@ -19,8 +19,6 @@
  */
 package com.ecyrd.jspwiki.auth;
 
-import com.ecyrd.jspwiki.WikiException;
-
 /**
  *  Thrown in some error situations where a WikiPrincipal object does not exist.
  */

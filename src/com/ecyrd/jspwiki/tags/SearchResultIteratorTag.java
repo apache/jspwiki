@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;

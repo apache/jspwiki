@@ -24,8 +24,6 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
-import com.ecyrd.jspwiki.util.FormUtil;
-
 /**
  *  Closes a WikiForm.
  *

@@ -26,11 +26,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.plugin.WeblogEntryPlugin;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
-import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.auth.AuthorizationManager;
-import com.ecyrd.jspwiki.auth.WikiAuthenticator;
-import com.ecyrd.jspwiki.auth.UserProfile;
 import java.util.*;
 import org.apache.xmlrpc.XmlRpcException;
 

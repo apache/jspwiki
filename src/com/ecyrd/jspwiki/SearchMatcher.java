@@ -20,12 +20,9 @@
 package com.ecyrd.jspwiki;
 
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;
-
-import com.ecyrd.jspwiki.providers.FileSystemProvider;
 
 /**
  * SearchMatcher performs the task of matching a search query to a page's 

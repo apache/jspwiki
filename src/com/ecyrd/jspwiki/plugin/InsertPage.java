@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
-import com.ecyrd.jspwiki.auth.permissions.ViewPermission;
 import java.util.*;
 
 /**

@@ -23,10 +23,6 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.jsp.PageContext;
 
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.TranslatorReader;
-
 /**
  *  If there have been no search results, then outputs the body text.
  *

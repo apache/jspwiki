@@ -19,8 +19,6 @@
  */
 package com.ecyrd.jspwiki.auth;
 
-import com.ecyrd.jspwiki.WikiException;
-
 /**
  *  The authenticator may fail with this.
  *

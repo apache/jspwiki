@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
-import java.text.SimpleDateFormat;
 
 /**
  *  This is a plugin for the administrator: It allows him to see in a single

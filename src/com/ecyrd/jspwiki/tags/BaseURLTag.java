@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Writes the jspwiki.baseURL property.

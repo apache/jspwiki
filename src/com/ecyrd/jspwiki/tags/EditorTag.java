@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.io.StringReader;
 import javax.servlet.jsp.PageContext;
 
 import com.ecyrd.jspwiki.WikiContext;

@@ -22,9 +22,7 @@ package com.ecyrd.jspwiki.filters;
 import java.util.*;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.TextUtil;
 
-import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
 import org.apache.log4j.Logger;

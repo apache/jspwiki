@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.acl;
 
 import java.security.acl.AclEntry;
-import java.security.acl.Acl;
 import java.security.acl.Permission;
 import java.security.acl.Group;
 import java.security.Principal;

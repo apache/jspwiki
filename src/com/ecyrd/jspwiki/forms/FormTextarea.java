@@ -21,7 +21,6 @@
 package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.util.FormUtil;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 

@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.auth;
 
 import java.util.Properties;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Defines the interface for connecting to different authentication

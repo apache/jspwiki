@@ -24,7 +24,6 @@ import java.io.IOException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Returns the currently requested page or attachment size.
