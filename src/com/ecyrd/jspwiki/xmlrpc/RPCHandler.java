@@ -37,6 +37,11 @@ public class RPCHandler
 {
     private WikiEngine m_engine;
 
+    /**
+     *  This is the currently implemented JSPWiki XML-RPC code revision.
+     */
+    public static final int RPC_VERSION = 1;
+
     Category log = Category.getInstance( RPCHandler.class ); 
 
     public RPCHandler( WikiEngine engine )
@@ -70,6 +75,14 @@ public class RPCHandler
     public String getApplicationName()
     {
         return toRPCString(m_engine.getApplicationName());
+    }
+
+    /**
+     *  Returns the current supported JSPWiki XML-RPC API.
+     */
+    public int getRPCVersionSupported()
+    {
+        return RPC_VERSION;
     }
 
     public Vector getAllPages()
