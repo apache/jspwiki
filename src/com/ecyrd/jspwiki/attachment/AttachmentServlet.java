@@ -221,7 +221,7 @@ public class AttachmentServlet
                     // If a size is provided by the provider, report it.
                     if( att.getSize() >= 0 )
                     {
-                        log.info("size:"+att.getSize());
+                        // log.info("size:"+att.getSize());
                         res.setContentLength( (int)att.getSize() );
                     }
 
