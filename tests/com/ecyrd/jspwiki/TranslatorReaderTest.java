@@ -100,6 +100,32 @@ public class TranslatorReaderTest extends TestCase
         return out.toString();
     }
 
+    private String translate_nofollow( String src )
+        throws IOException,
+               NoRequiredPropertyException,
+               ServletException,
+               WikiException
+    {
+        props.load( TestEngine.findTestProperties() );
+
+        props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
+        TestEngine testEngine2 = new TestEngine( props );
+
+        WikiContext context = new WikiContext( testEngine2,
+                                               new WikiPage(PAGE_NAME) );
+        Reader r = new TranslatorReader( context, 
+                                         new BufferedReader( new StringReader(src)) );
+        StringWriter out = new StringWriter();
+        int c;
+
+        while( ( c=r.read()) != -1 )
+        {
+            out.write( c );
+        }
+
+        return out.toString();
+    }
+
     public void testHyperlinks2()
         throws Exception
     {
@@ -469,6 +495,15 @@ public class TranslatorReaderTest extends TestCase
 
         assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">link</a>",
                       translate(src) );
+    }
+
+    public void testHyperlinksExtNofollow()
+        throws Exception
+    {
+        String src = "This should be a [link|http://www.regex.fi/]";
+
+        assertEquals( "This should be a <a class=\"external\" rel=\"nofollow\" href=\"http://www.regex.fi/\">link</a>",
+                      translate_nofollow(src) );
     }
 
     //
