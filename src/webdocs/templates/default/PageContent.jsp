@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-<%-- Inserts page content. -->
+<%-- Inserts page content. --%>
 
       <wiki:CheckVersion mode="notlatest">
          <FONT COLOR="red">
