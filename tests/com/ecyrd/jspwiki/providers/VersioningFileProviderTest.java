@@ -183,6 +183,63 @@ public class VersioningFileProviderTest extends TestCase
         assertEquals( "size", 3, history.size() );
     }
 
+    public void testDelete()
+        throws Exception
+    {
+        engine.saveText( NAME1, "v1" );
+        engine.saveText( NAME1, "v2" );
+        engine.saveText( NAME1, "v3" );
+
+        PageManager mgr = engine.getPageManager();
+        WikiPageProvider provider = mgr.getProvider();
+
+        provider.deletePage( NAME1 );
+
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        assertFalse( "file exists", f.exists() );
+
+        f = new File( files+File.separator+"RCS", NAME1+FileSystemProvider.FILE_EXT+",v" );
+
+        assertFalse( "RCS file exists", f.exists() );
+    }
+
+    public void testDeleteVersion()
+        throws Exception
+    {
+        System.out.println("*****");
+        engine.saveText( NAME1, "v1\r\n" );
+        engine.saveText( NAME1, "v2\r\n" );
+        engine.saveText( NAME1, "v3\r\n" );
+
+        PageManager mgr = engine.getPageManager();
+        WikiPageProvider provider = mgr.getProvider();
+
+        List l = provider.getVersionHistory( NAME1 );
+        assertEquals( "wrong # of versions", 3, l.size() );
+
+        provider.deleteVersion( NAME1, 2 );
+
+        l = provider.getVersionHistory( NAME1 );
+
+        assertEquals( "wrong # of versions", 2, l.size() );
+
+        assertEquals( "v1", "v1\r\n", provider.getPageText( NAME1, 1 ) );
+        assertEquals( "v3", "v3\r\n", provider.getPageText( NAME1, 3 ) );
+
+        try
+        {
+            provider.getPageText( NAME1, 2 );
+            fail( "v2" );
+        }
+        catch( NoSuchVersionException e )
+        {
+            // This is expected
+        }
+    }
+
     public static Test suite()
     {
         return new TestSuite( VersioningFileProviderTest.class );
