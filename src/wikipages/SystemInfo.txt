@@ -1,0 +1,10 @@
+| __Application name__               | foo 
+| __JSPWiki Engine Version__         | x.x.x 
+| __Character Encoding__             | x   
+| __Total Number of Pages__          | 0   
+| __Current Page Provider__          | ??? 
+| __Available InterWiki links__      |   ??? 
+| __Inlined images are__             | *.* 
+| __Additional Plugin Search Path__  |   none
+
+JSPWiki home page is at [http://www.ecyrd.com/JSPWiki/]. Welcome!
