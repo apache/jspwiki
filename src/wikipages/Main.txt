@@ -11,6 +11,8 @@ You have some pages set up for you:
 * For a guideline on good working habits with wiki, see [WikiEtiquette].
 * To see what this particular wiki is about, click on the Wiki name
   on the top left corner of the browser window, or [click here|SystemInfo].
+* If you run Microsoft Windows, then probably you want to take a look
+  at [WindowsInstall] for more tips.
 
 
 Good luck, and thanks for choosing JSPWiki!

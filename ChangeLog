@@ -1,5 +1,13 @@
 2002-02-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.6.12-beta.
+
+        * Added XML-RPC command "listLinks".
+
+        * Did some code reorganization: New class DifferenceEngine now
+        handles all diffs.  This was done in preparation for internal diff
+        handling.  Also, LinkCollector is now a class of its own.
+
         * XML-RPC Command prefix is now "wiki" instead of "jspwiki".
 
 2002-02-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
