@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -202,6 +202,12 @@ public class FileSystemProvider
         File wikipagedir = new File( m_pageDirectory );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
+
+        if( wikipages == null )
+        {
+            log.error("Wikipages directory does not exist!");
+            throw new InternalWikiException("Page directory does not exist");
+        }
 
         for( int i = 0; i < wikipages.length; i++ )
         {
