@@ -86,9 +86,9 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res ) 
         throws IOException, ServletException 
     {
-        String page     = req.getParameter( "page" );
-        String version  = req.getParameter( HDR_VERSION );
-        String nextPage = req.getParameter( "nextpage" );
+        String page     = m_engine.safeGetParameter( req, "page" );
+        String version  = m_engine.safeGetParameter( req, HDR_VERSION );
+        String nextPage = m_engine.safeGetParameter( req, "nextpage" );
 
         String msg      = "An error occurred. Ouch.";
         int    ver      = WikiProvider.LATEST_VERSION;
