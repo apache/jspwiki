@@ -65,8 +65,14 @@ public class TranslatorReader extends Reader
         return result;
     }
 
-    private String replaceString( String orig, String src, String dest )
+    /**
+     *  @param orig Original string.  Null is safe.
+     */
+
+    public static String replaceString( String orig, String src, String dest )
     {
+        if( orig == null ) return null;
+
         StringBuffer res = new StringBuffer();
         int start, end = 0, last = 0;
 
@@ -83,8 +89,13 @@ public class TranslatorReader extends Reader
         return res.toString();
     }
 
-    private String replaceString( String orig, int start, int end, String text )
+    /**
+     *  @param orig Original string.  Null is safe.
+     */
+    public static String replaceString( String orig, int start, int end, String text )
     {
+        if( orig == null ) return null;
+
         StringBuffer buf = new StringBuffer(orig);
 
         buf.replace( start, end, text );
@@ -265,6 +276,49 @@ public class TranslatorReader extends Reader
         return buf.toString();
     }
 
+    /**
+     *  {{text}} = <TT>text</TT>
+     */
+    private String setTT( String line )
+    {
+        StringBuffer buf = new StringBuffer();
+        boolean      ison = false;
+
+        for( int i = 0; i < line.length(); i++ )
+        {
+            if( line.charAt(i) == '{' && i < line.length()-2 )
+            {
+                // Don't get confused with {{{text}}}!
+                if( (line.charAt(i+1) == '{') && (line.charAt(i+2) != '{') )
+                {
+                    buf.append( "<TT>" );
+                    ison = true;
+                    i++;
+                }
+                else buf.append( "{" );
+            }
+            else if( line.charAt(i) == '}' && i < line.length()-1 )
+            {
+                if( line.charAt(i+1) == '}' && ison )
+                {
+                    buf.append( "</TT>" );
+                    ison = false;
+                    i++;
+                }
+                else buf.append( "}" );
+            }
+            else buf.append( line.charAt(i) );
+        }
+
+        // Make sure we don't forget it open.
+        if( ison )
+        {
+            buf.append("</TT>");
+        }
+
+        return buf.toString();
+    }
+
     private String setItalic( String line )
     {
         StringBuffer buf = new StringBuffer();
@@ -397,6 +451,9 @@ public class TranslatorReader extends Reader
                 line = replaceString( line, "{{{", "<PRE>" );
                 m_iscode = true;
             }
+
+            // Needs to be after the pre tag.
+            line = setTT( line );
             
             line = replaceString( line, "\\\\", "<BR>" );
         }
