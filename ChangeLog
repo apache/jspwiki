@@ -1,3 +1,13 @@
+2003-05-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.25.
+
+        * CachingProvider now caches saved page modification dates
+        correctly. 
+
+        * CachingProvider can now also detect deleted pages, and signals
+        PageManager correctly in this case.
+
 2003-05-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.24.
