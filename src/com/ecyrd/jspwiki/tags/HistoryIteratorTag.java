@@ -67,6 +67,12 @@ public class HistoryIteratorTag
             {
                 Collection versions = engine.getVersionHistory( page.getName() );
 
+                if( versions == null )
+                {
+                    // There is no history
+                    return SKIP_BODY;
+                }
+
                 m_iterator = versions.iterator();
 
                 if( m_iterator.hasNext() )
@@ -77,6 +83,10 @@ public class HistoryIteratorTag
                                               PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(),
                                               context.getPage() );
+                }
+                else
+                {
+                    return SKIP_BODY;
                 }
             }
 
@@ -108,7 +118,7 @@ public class HistoryIteratorTag
             }
         }
 
-        if( m_iterator.hasNext() )
+        if( m_iterator != null && m_iterator.hasNext() )
         {
             WikiContext context = new WikiContext( m_wikiContext.getEngine(), 
                                                    (WikiPage)m_iterator.next() );
