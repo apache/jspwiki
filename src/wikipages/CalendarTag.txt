@@ -11,6 +11,9 @@ You can direct the behaviour of the CalendarTag using the following tag paramete
 
 ;__pageformat__: A page name description string.  If a page corresponding to this page format exists, then a link of the 'urlformat' below, is generated.
 ;__urlformat__: Each link of a date should correspond to this URL.  The parameters are the same as in the java.util.SimpleDateFormat.  Required.
+;__monthurlformat__: The month and year name on top of the calendar should point to this URL. The parameters are the same as in the java.util.SimpleDateFormat class.  Optional.  In addition, you can use "%d" to signify the length of the current month.
+
+Also, in all of the parameters the wildcard "%p" can be used to point at the current page name.
 
 !Example
 
