@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import com.ecyrd.jspwiki.WikiContext;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  *  Converts the body text into HTML content.
@@ -37,7 +37,7 @@ import org.apache.log4j.Category;
 public class TranslateTag
     extends BodyTagSupport
 {
-    static    Category    log = Category.getInstance( TranslateTag.class );
+    static    Logger    log = Logger.getLogger( TranslateTag.class );
 
     public final int doAfterBody()
         throws JspException
