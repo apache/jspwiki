@@ -22,6 +22,7 @@ public class ReferringPagesPluginTest extends TestCase
     {
         props.load( TestEngine.findTestProperties() );
 
+        props.setProperty( "jspwiki.breakTitleWithSpaces", "false" );
         engine = new TestEngine(props);
 
         engine.saveText( "TestPage", "Reference to [Foobar]." );
