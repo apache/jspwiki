@@ -16,6 +16,8 @@ public class WikiEngine
 
     private static boolean c_configured = false;
 
+    private Properties     m_properties;
+
     public WikiEngine( Properties properties )
         throws IllegalArgumentException
     {
@@ -43,6 +45,8 @@ public class WikiEngine
     private void initialize( Properties props )
         throws IllegalArgumentException
     {
+        m_properties = props;
+
         m_pagelocation = getRequiredProperty( props, PROP_PAGEDIR );
 
         //
@@ -74,13 +78,37 @@ public class WikiEngine
         return new File( m_pagelocation, page+FILE_EXT );
     }
 
+    /**
+     *  If the page is a special page, then returns a direct URL
+     *  to that page.  Otherwise returns null.
+     */
+    public String getSpecialPageReference( String original )
+    {
+        String propname = "jspwiki.specialPage."+original;
+        String specialpage = m_properties.getProperty( propname );
+
+        return specialpage;
+    }
+
+    /**
+     *  Returns true, if the requested page exists.
+     *
+     *  @param page WikiName of the page.
+     */
     public boolean pageExists( String page )
     {
+        if( getSpecialPageReference(page) != null ) return true;
+
         File pagefile = findPage( page );
 
         return pagefile.exists();
     }
 
+    /**
+     *  Returns the unconverted text of a page.
+     *
+     *  @param page WikiName of the page to fetch.
+     */
     public String getText( String page )
     {
         StringBuffer result = new StringBuffer();
@@ -131,6 +159,11 @@ public class WikiEngine
         return result.toString();        
     }
 
+    /**
+     *  Returns the converted HTML of the page.
+     *
+     *  @param page WikiName of the page to convert.
+     */
     public String getHTML( String page )
     {
         StringBuffer result = new StringBuffer();
@@ -226,34 +259,74 @@ public class WikiEngine
         return set;
     }
 
+    public static final int REQUIRED = 1;
+    public static final int FORBIDDEN = -1;
+    public static final int REQUESTED = 0;
+
     public Collection findPages( String query )
     {
-        Vector v = new Vector();
+        TreeSet res = new TreeSet( new SearchResultComparator() );
         StringTokenizer st = new StringTokenizer( query, " \t," );
 
         String[] words = new String[st.countTokens()];
+        int[] required = new int[st.countTokens()];
+
         int word = 0;
+
+        //
+        //  Parse incoming search string
+        //
 
         while( st.hasMoreTokens() )
         {
-            words[word++] = st.nextToken().toLowerCase();
+            String token = st.nextToken().toLowerCase();
+            
+            switch( token.charAt(0) )
+            {
+              case '+':
+                required[word] = REQUIRED;
+                token = token.substring(1);
+                log.debug("Required word: "+token);
+                break;
+                
+              case '-':
+                required[word] = FORBIDDEN;
+                token = token.substring(1);
+                log.debug("Forbidden word: "+token);
+                break;
+
+              default:
+                required[word] = REQUESTED;
+                log.debug("Requested word: "+token);
+                break;
+            }
+
+            words[word++] = token;
         }
 
+        //
+        //  Do the find
+        //
         File wikipagedir = new File( m_pagelocation );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 
+    nextfile:
         for( int i = 0; i < wikipages.length; i++ )
         {
             String line = null;
-            int score = 0;
 
             log.debug("Searching page "+wikipages[i].getPath() );
+
+            String filename = wikipages[i].getName();
+            int cutpoint    = filename.lastIndexOf( FILE_EXT );
+            String wikiname = filename.substring(0,cutpoint);
 
             try
             {
                 BufferedReader in = new BufferedReader( new FileReader(wikipages[i] ) );
-
+                int scores[] = new int[ words.length ];
+                
                 while( (line = in.readLine()) != null )
                 {
                     line = line.toLowerCase();
@@ -263,17 +336,50 @@ public class WikiEngine
                         if( line.indexOf( words[j] ) != -1 )
                         {
                             log.debug("   Match found for "+words[j] );
-                            score++;
+
+                            if( required[j] != FORBIDDEN )
+                            {
+                                scores[j]++; // Mark, found this word n times
+                            }
+                            else
+                            {
+                                // Found something that was forbidden.
+                                continue nextfile;
+                            }
                         }
                     }
                 }
 
-                if( score > 0 )
-                {
-                    String wikiname = wikipages[i].getName();
+                //
+                //  Check that we have all required words.
+                //
 
-                    int cutpoint = wikiname.lastIndexOf( FILE_EXT );
-                    v.add( wikiname.substring(0,cutpoint) );
+                int totalscore = 0;
+
+                for( int j = 0; j < scores.length; j++ )
+                {
+                    // Give five points for each occurrence
+                    // of the word in the wiki name.
+
+                    if( wikiname.toLowerCase().indexOf( words[j] ) != -1 &&
+                        required[j] != FORBIDDEN )
+                        scores[j] += 5;
+
+                    //  Filter out pages if the search word is marked 'required'
+                    //  but they have no score.
+
+                    if( required[j] == REQUIRED && scores[j] == 0 )
+                        continue nextfile;
+
+                    //
+                    //  Count the total score for this page.
+                    //
+                    totalscore += scores[j];
+                }
+
+                if( totalscore > 0 )
+                {
+                    res.add( new SearchResultImpl(wikiname,totalscore) );
                 }
             }
             catch( IOException e )
@@ -282,7 +388,7 @@ public class WikiEngine
             }
         }
 
-        return v;
+        return res;
     }
 
     public Date pageLastChanged( String page )
@@ -294,6 +400,51 @@ public class WikiEngine
         return new Date( file.lastModified() );
     }
 
+
+    /**
+     *  Searches return this class.
+     */
+    public class SearchResultImpl
+        implements SearchResult
+    {
+        int    m_score;
+        String m_name;
+
+        public SearchResultImpl( String name, int score )
+        {
+            m_name = name;
+            m_score = score;
+        }
+
+        public String getName()
+        {
+            return m_name;
+        }
+
+        public int getScore()
+        {
+            return m_score;
+        }
+    }
+
+    public class SearchResultComparator
+        implements Comparator
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            SearchResult s1 = (SearchResult)o1;
+            SearchResult s2 = (SearchResult)o2;
+
+            // Bigger scores are first.
+
+            int res = s2.getScore() - s1.getScore();
+
+            if( res == 0 )
+                res = s1.getName().compareTo(s2.getName());
+
+            return res;
+        }
+    }
 
     public class PageTimeComparator
         implements Comparator
