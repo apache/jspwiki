@@ -2,6 +2,10 @@
 
         * v1.9.8. (The afternoon version.)
 
+        * Changed the default Edit.jsp background to something else, since
+        so many people are running with the default.  I told you it was
+        ugly - I am not sure the new version is any better :-).
+
         * Moved ViewTemplate.jsp into templates/
 
         * Added AuthorTag.
