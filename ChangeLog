@@ -1,3 +1,22 @@
+2003-10-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.76.
+
+        * Implemented deleteVersion() for VersioningFileProvider.
+        However, there's still a critical bug in it.
+
+        * Added built-in properties so that certain settings can also be
+        fetched internally.
+
+        * Added "redirect" capacity: Any page can contain now a 
+        [{SET redirect=http://foo.bar.com}] and automatically be
+        redirected to anywhere.  This essentially duplicates the
+        functionality of "jspwiki.specialPage" -setting, but in an
+        user-controllable manner.
+
+        * Added "alias" capacity: you can now put a [{SET alias=PageName}]
+        on a page and it will be redirected on view to some other page.
+
 2003-10-01  Erik Bunn  <ebu at basen dot net>
 
         * Modified WikiDatabase: removed hard-coding of 'members' attr name,
