@@ -61,7 +61,13 @@ public class RCSFileProvider
     public static final String    PROP_LOG      = "jspwiki.rcsFileProvider.logCommand";
     public static final String    PROP_FULLLOG  = "jspwiki.rcsFileProvider.fullLogCommand";
     public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
-    
+
+    private static final String   PATTERN_DATE      = "^date:\\s*(.*)[\\+\\-;]\\d+;";
+    private static final String   PATTERN_AUTHOR    = "^\"?author=([\\w\\.\\s]*)\"?";
+    private static final String   PATTERN_REVISION  = "^revision \\d+\\.(\\d+)";
+
+    private static final String   RCSFMT_DATE       = "yyyy-MM-dd HH:mm:ss";
+
     public void initialize( Properties props )
         throws NoRequiredPropertyException
     {
@@ -88,17 +94,17 @@ public class RCSFileProvider
 
     // NB: This is a very slow method.
 
-    public WikiPage getPageInfo( String page )
+    public WikiPage getPageInfo( String page, int version )
     {
         PatternMatcher  matcher  = new Perl5Matcher();
         PatternCompiler compiler = new Perl5Compiler();
         PatternMatcherInput input;
 
-        WikiPage info = super.getPageInfo( page );
+        WikiPage info = super.getPageInfo( page, version );
 
         try
         {
-            String   cmd = m_logCommand;
+            String   cmd = m_fullLogCommand;
 
             cmd = TextUtil.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
 
@@ -108,10 +114,13 @@ public class RCSFileProvider
             BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
 
             String line;
-            Pattern headpattern = compiler.compile("^head: \\d+\\.(\\d+)");
+            Pattern headpattern = compiler.compile( PATTERN_REVISION );
             // This complicated pattern is required, since on Linux RCS adds
             // quotation marks, but on Windows, it does not.
-            Pattern userpattern = compiler.compile("^\"?author=([\\w\\.\\s]*)\"?");
+            Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
+            Pattern datepattern = compiler.compile( PATTERN_DATE );
+            SimpleDateFormat rcsdatefmt = new SimpleDateFormat( RCSFMT_DATE );
+            boolean found = false;
 
             while( (line = stdout.readLine()) != null )
             {
@@ -119,12 +128,30 @@ public class RCSFileProvider
                 {                    
                     MatchResult result = matcher.getMatch();
                     int vernum = Integer.parseInt( result.group(1) );
-                    info.setVersion( vernum );
+
+                    if( vernum == version || version == WikiPageProvider.LATEST_VERSION )
+                    {
+                        info.setVersion( vernum );
+                        found = true;
+                    }
                 }
-                else if( matcher.contains( line, userpattern ) )
+                else if( matcher.contains( line, datepattern ) && found )
                 {
                     MatchResult result = matcher.getMatch();
-                    info.setAuthor( result.group(1) );                    
+
+                    Date d = rcsdatefmt.parse( result.group(1) );
+
+                    info.setLastModified( d );
+                }
+                else if( matcher.contains( line, userpattern ) && found )
+                {
+                    MatchResult result = matcher.getMatch();
+                    info.setAuthor( result.group(1) );
+                }
+                else if( found && line.startsWith("----")  )
+                {
+                    // End of line sign from RCS
+                    break;
                 }
             }
 
@@ -142,6 +169,11 @@ public class RCSFileProvider
     public String getPageText( String page, int version )
     {
         String result = null;
+
+        // Let parent handle latest fetches.
+
+        if( version == WikiPageProvider.LATEST_VERSION )
+            return super.getPageText( page, version );
 
         log.debug("Fetching specific version "+version+" of page "+page);
         try
@@ -213,15 +245,15 @@ public class RCSFileProvider
 
         ArrayList list = new ArrayList();        
 
-        SimpleDateFormat rcsdatefmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat rcsdatefmt = new SimpleDateFormat( RCSFMT_DATE );
 
         try
         {
-            Pattern revpattern  = compiler.compile("^revision \\d+\\.(\\d+)");
-            Pattern datepattern = compiler.compile("^date:\\s*(.*)[\\+\\-;]\\d+;");
+            Pattern revpattern  = compiler.compile( PATTERN_REVISION );
+            Pattern datepattern = compiler.compile( PATTERN_DATE );
             // This complicated pattern is required, since on Linux RCS adds
             // quotation marks, but on Windows, it does not.
-            Pattern userpattern = compiler.compile("^\"?author=([\\w\\.\\s]*)\"?");
+            Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
 
             String cmd = TextUtil.replaceString( m_fullLogCommand,
                                                  "%s",
