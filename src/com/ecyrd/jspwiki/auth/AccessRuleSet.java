@@ -29,31 +29,66 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.UserProfile;
 
 /**
- * Logic:
+ * AccessRuleSet collects access rules for WikiPages and performs
+ * the logic to determine whether someone has sufficient access.
+ *
+ * <P>This implementation builds two chains of rules, one for READ
+ * operations (viewing page data), one for WRITE (editing page data).
+ * Chains are collected as a page is parsed, and when access is 
+ * checked, the rules are resolved last-first. The first conclusive
+ * match produces the result; if no conclusive matches are found, 
+ * AccessRuleSet defaults to denial.
+ *
+ * <p>The following formats are parsed by ACR. Capitalized words are 
+ * reserved keywords, italicized words are variables described below.
+ *
+ * <p>
+ * <i>rule</i> = <i>operation</i> <i>chain</i> <i>list</i> <br>
+ * <i>operation</i> = [ALLOW|DENY|REQUIRE] <br>
+ * <i>chain</i> = [READ|WRITE] <br>
+ * <i>list</i> = [<i>rolelist</i>|<i>permissionlist</i>] <br>
+ * <i>rolelist</i> = [<i>role</i>|<i>role</i>,<i>rolelist</i>] <br>
+ * <i>permissionlist</i> = [<i>permission</i>|<i>permission</i>,<i>permissionlist</i>] <br>
+ *
+ * <p>Finally, a <i>role</i> is a free-form keyword, assigned to a user by
+ * a WikiAuthorizer. A <i>permission</i> is a free-form keyword, assigned to a role
+ * by a WikiAuthorizer.
+ *
+ * <p>Certain special roles are available. They are described in Authorizer, 
+ * but we list them here briefly.
+ *
  * <ul>
- * <li>AccessRuleSet is never empty: always defaults first.
- * <li>Special entry DENY xxx ALL: clears rule list and adds a deny-all entry
- * <li>Special entry ALLOW xxx ALL: clears rule list and adds an allow-all entry
- * <li>Any other entries are added in parsing order (order they appear in on page).
- * <li>Several values may be given in one rule; these permissions are ORred.
- * <li>The first non-matching rule causes permission to be denied.
- * <li>Special permission "admin" always allows access
- * <li>In jspwiki.properties, any number of jspwiki.authorizer.defaultrule.# = ALLOW READ x,y
+ * <li>ALL indicates all users, whatever their role or permission
+ * <li>admin indicates that the user has administrative access
+ * <li>guest is a role assigned to all non-authenticated, non-recognized visitors
+ * <li>participant is a role assigned to all non-authenticated, recognized visitors
  * </ul>
- * 
+ *
+ * <p>All roles for authenticated users are provided by a WikiAuthorizer.
+ *
+ * <p>When building a rule chain, a later entry overrides previous entries.
+ * ARS inserts various AccessRule objects into the chains depending on the
+ * exact rule; a DENY all causes an AlwaysDenyRule to be inserted, an 
+ * ALLOW foobar causes an RoleAllowRule to be added.
+ *
+ * <p>An ALLOW role is conclusive when the match is positive; otherwise it
+ * is inconclusive, and the previous rule is considered next. A DENY rule
+ * is conclusive when the match is negative, otherwise it is inconclusive.
+ * A REQUIRE rule is always conclusive; <i>REQUIRE foobar</i> is therefore logically
+ * the same as a chain of <i>DENY ALL</i>, <i>ALLOW foobar</i>. It doesn't make
+ * much sense to place several REQUIRE rules on one page.
+
  * <p>Examples:
  * <p>No rules on page:  allow read, write by all
  * <p><pre>
- * [{ALLOW READ basen, guest}]
- * [{ALLOW READ ohyeahsomeoneelse}]
- * [{ALLOW WRITE basen}]
+ * [{ALLOW READ editor, guest}]
+ * [{ALLOW READ newbie}]
+ * [{ALLOW WRITE editor}]
  * 
  * [{ALLOW READ ALL}]
  * [{DENY READ limited-access}]
  *
  * </pre>
- *
- *
  */
 public class AccessRuleSet
     implements Cloneable
@@ -220,7 +255,7 @@ public class AccessRuleSet
         {
             String addable = tok.nextToken().trim();
             roles.add( addable );
-            log.debug( "XXX added role " + addable + " to page" );
+            log.debug( "added role " + addable + " to page" );
         }
         return( roles );
     }
