@@ -54,7 +54,7 @@ public class WikiEngineTest extends TestCase
 
             fail( "Wiki did not warn about wrong property." );
         }
-        catch( javax.servlet.ServletException e )
+        catch( WikiException e )
         {
             // This is okay.
         }
@@ -71,7 +71,7 @@ public class WikiEngineTest extends TestCase
 
             fail( "Wiki did not warn about missing property." );
         }
-        catch( NoRequiredPropertyException e )
+        catch( WikiException e )
         {
             // This is okay.
         }
@@ -173,6 +173,34 @@ public class WikiEngineTest extends TestCase
         
         assertEquals( "item 0", result[0], "Foobar" );
         assertEquals( "item 1", result[1], "ThisIsALink" );
+    }
+
+    /**
+     *  Tries to find an existing class.
+     */
+    public void testFindClass()
+        throws Exception
+    {
+        Class foo = WikiEngine.findWikiClass( "WikiPage", "com.ecyrd.jspwiki" );
+
+        assertEquals( foo.getName(), "com.ecyrd.jspwiki.WikiPage" );
+    }
+
+    /**
+     *  Non-existant classes should throw ClassNotFoundEx.
+     */
+    public void testFindClassNoClass()
+        throws Exception
+    {
+        try
+        {
+            Class foo = WikiEngine.findWikiClass( "MubbleBubble", "com.ecyrd.jspwiki" );
+            fail("Found class");
+        }
+        catch( ClassNotFoundException e )
+        {
+            // Expected
+        }
     }
 
     public static Test suite()
