@@ -114,9 +114,14 @@ public class AclImplTest
 
         assertTrue( "view", m_acl.checkPermission( wup, new ViewPermission() ) );
         assertFalse( "edit", m_acl.checkPermission( wup, new EditPermission() ) );
+        assertFalse( "comment", m_acl.checkPermission( wup, new CommentPermission() ) );
 
         assertEquals( "edit none", AclImpl.NONE, 
                       m_acl.findPermission( wup, new EditPermission() ) );
+
+        assertEquals( "comment none", AclImpl.NONE, 
+                      m_acl.findPermission( wup, new CommentPermission() ) );
+
 
         assertEquals( "view allow", AclImpl.ALLOW, 
                       m_acl.findPermission( wup, new ViewPermission() ) );
@@ -129,11 +134,14 @@ public class AclImplTest
 
         assertTrue( "view", m_acl.checkPermission( wup, new ViewPermission() ) );
         assertTrue( "edit", m_acl.checkPermission( wup, new EditPermission() ) );
+        assertTrue( "comment", m_acl.checkPermission( wup, new CommentPermission() ) );
 
         assertEquals( "view allow", AclImpl.ALLOW, 
                       m_acl.findPermission( wup, new ViewPermission() ) );
         assertEquals( "edit allow", AclImpl.ALLOW, 
                       m_acl.findPermission( wup, new EditPermission() ) );
+        assertEquals( "comment allow", AclImpl.ALLOW,
+                      m_acl.findPermission( wup, new CommentPermission() ) );
     }
 
     public void testCharlie()
