@@ -110,6 +110,9 @@ public class WikiEngine
     /** Stores the Plugin manager */
     private PluginManager    m_pluginManager;
 
+    /** Stores the Variable manager */
+    private VariableManager  m_variableManager;
+
     /** Stores the Attachment manager */
     private AttachmentManager m_attachmentManager = null;
 
@@ -260,6 +263,7 @@ public class WikiEngine
             m_pluginManager     = new PluginManager( props );
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( props );
+            m_variableManager   = new VariableManager( props );
 
             initReferenceManager();            
         }
@@ -1301,6 +1305,11 @@ public class WikiEngine
     public PluginManager getPluginManager()
     {
         return m_pluginManager;
+    }
+
+    public VariableManager getVariableManager()
+    {
+        return m_variableManager;
     }
 
     /**
