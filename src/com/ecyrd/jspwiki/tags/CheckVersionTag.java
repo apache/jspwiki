@@ -25,6 +25,7 @@ import java.io.StringReader;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.TranslatorReader;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Does a version check on the page.  Mode is as follows:
@@ -32,6 +33,7 @@ import com.ecyrd.jspwiki.TranslatorReader;
  *   <LI>latest = Include page content, if the page is the latest version.
  *   <LI>notlatest = Include page content, if the page is NOT the latest version.
  *  </UL>
+ *  If the page does not exist, body content is never included.
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -57,12 +59,13 @@ public class CheckVersionTag
     }
 
     public final int doWikiStartTag()
-        throws IOException
+        throws IOException,
+               ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
-        if( page != null )
+        if( page != null && engine.pageExists(page) )
         {
             int version = page.getVersion();
             boolean include = false;

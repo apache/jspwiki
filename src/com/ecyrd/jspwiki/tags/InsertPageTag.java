@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Writes page content in HTML.
@@ -57,13 +58,18 @@ public class InsertPageTag
     public void setMode( String arg )
     {
         if( "plain".equals(arg) )
+        {
             m_mode = PLAIN;
+        }
         else
+        {
             m_mode = HTML;
+        }
     }
 
     public final int doWikiStartTag()
-        throws IOException
+        throws IOException,
+               ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
@@ -77,7 +83,7 @@ public class InsertPageTag
             page = engine.getPage( m_pageName );
         }
 
-        if( page != null )
+        if( page != null && engine.pageExists(page) )
         {
             JspWriter out = pageContext.getOut();
 
