@@ -256,6 +256,68 @@ public class AuthorizationManagerTest extends TestCase
     }
 
     /**
+     *  From Paul Downes.
+     */
+    public void testFunnyPermissions()
+    {
+        String src = "[{DENY edit Guest}]\n[{ALLOW edit NamedGuest}]\n";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName("Foogor");
+
+        assertFalse("guest edit", m_manager.checkPermission( p, wup, new EditPermission() ) );
+        
+        wup.setLoginStatus( UserProfile.COOKIE );
+
+        assertTrue("namedguest edit", m_manager.checkPermission( p, wup, new EditPermission() ));
+    }
+
+    /**
+     *  From Paul Downes.
+     */
+    public void testFunnyPermissions2()
+    {
+        String src = "[{ALLOW edit Guest}]\n[{DENY edit Guest}]\n";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName("Foogor");
+
+        assertTrue("guest edit", m_manager.checkPermission( p, wup, new EditPermission() ) );
+        
+        wup.setLoginStatus( UserProfile.COOKIE );
+
+        assertTrue("namedguest edit", m_manager.checkPermission( p, wup, new EditPermission() ));
+    }
+
+    /**
+     *  From Paul Downes.
+     */
+    public void testFunnyPermissions3()
+    {
+        String src = "[{ALLOW edit Guest}]\n[{DENY view Guest}]\n";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName("Foogor");
+
+        assertFalse("guest edit", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+
+        assertTrue("view", m_manager.checkPermission( p, wup, new EditPermission() ));
+    }
+
+
+    /**
      *  Returns a string representation of the permissions of the page.
      */
     public static String printPermissions( WikiPage p )
