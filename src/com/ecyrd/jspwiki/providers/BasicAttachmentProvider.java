@@ -349,7 +349,7 @@ public class BasicAttachmentProvider
 
         if( !dir.exists() )
         {
-            log.debug("Attachment dir not found - thus no attachment can exist.");
+            // log.debug("Attachment dir not found - thus no attachment can exist.");
             return null;
         }
 
