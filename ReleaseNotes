@@ -15,7 +15,7 @@ Major changes since the 2.0 series are:
 
 - "almost XHTML"
 
-- Page variables (see SET-directive)
+- Page variables (see SET-directive), also accessible on pages
 
 - RSS-per-page generation
 
@@ -28,6 +28,8 @@ Major changes since the 2.0 series are:
 - Multiple Wikis with a single WAR-file -support.
 
 - In-page hyperlinks.
+
+- Multiply nested links now work
 
 
 UPGRADE NOTES
