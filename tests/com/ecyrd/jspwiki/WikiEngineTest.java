@@ -119,6 +119,22 @@ public class WikiEngineTest extends TestCase
                       m_engine.getText( name ) );
     }
 
+    public void testPutPageEntities()
+    {
+        String text = "Foobar. &quot;\r\n";
+        String name = NAME1;
+
+        m_engine.saveText( name, text );
+
+        assertEquals( "page does not exist",
+                      true,
+                      m_engine.pageExists( name ) );
+
+        assertEquals( "wrong content",
+                      "Foobar. &amp;quot;\r\n",
+                      m_engine.getText( name ) );
+    }
+
     public void testGetHTML()
     {
         String text = "''Foobar.''";
