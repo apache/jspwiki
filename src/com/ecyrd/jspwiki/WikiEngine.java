@@ -296,7 +296,7 @@ public class WikiEngine
         //
         try
         {
-            if( props.getProperty( RSSGenerator.PROP_GENERATE_RSS, "true" ).equalsIgnoreCase("true") )
+            if( props.getProperty( RSSGenerator.PROP_GENERATE_RSS, "false" ).equalsIgnoreCase("true") )
             {
                 m_rssGenerator = new RSSGenerator( this, props );
             }
