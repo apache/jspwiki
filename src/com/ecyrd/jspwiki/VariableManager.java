@@ -196,7 +196,7 @@ public class VariableManager
             for( Iterator i = context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
             {
                 String link = (String) i.next();
-                res += link+" --&gt; "+context.getEngine().getInterWikiURL(link)+"<BR>\n";
+                res += link+" --&gt; "+context.getEngine().getInterWikiURL(link)+"<br />\n";
             }
         }
         else if( name.equals("inlinedimages") )
@@ -205,7 +205,7 @@ public class VariableManager
             for( Iterator i = context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
                 String ptrn = (String) i.next();
-                res += ptrn+"<BR>\n";
+                res += ptrn+"<br />\n";
             }
         }
         else if( name.equals("pluginpath") )
