@@ -38,7 +38,7 @@
     {   
         msg = exception.getMessage();
         if( msg == null || msg.length() == 0 )
-            msg = "An unknown exception was caught by Error.jsp.";
+            msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
     }
 
     pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
