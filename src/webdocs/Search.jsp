@@ -41,8 +41,7 @@
     <TD WIDTH="15%" VALIGN="top">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="Wiki.jsp?page=HelpOnSearching">Help on searching</A>
-       </P>
+       <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
     <TD WIDTH="85%" VALIGN="top">
       <H1>Find pages</H1>
@@ -53,16 +52,21 @@
           <H4>Search results for '<%=query%>'</H4>
 
           <table border="0" cellpadding="4">
+
+          <tr>
+             <th width="30%" align="left">Page</th>
+             <th align="left">Score</th>
+          </tr>
           <%
           if( list.size() > 0 )
           {
               for( Iterator i = list.iterator(); i.hasNext(); )
               {
-                  String pageref = (String) i.next();
+                  SearchResult pageref = (SearchResult) i.next();
                   %>
                   <TR>
-                      <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=pageref%>"><%=pageref%></A></TD>
-                      <TD>100%</TD>
+                      <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=pageref.getName()%>"><%=pageref.getName()%></A></TD>
+                      <TD><%=pageref.getScore()%></TD>
                   </TR>
                   <%
               }
@@ -71,7 +75,7 @@
            {
               %>
               <TR>
-                  <TD><B>No results</B></TD>
+                  <TD width="30%"><B>No results</B></TD>
               </TR>
               <%
            }
@@ -85,12 +89,25 @@
       
       <FORM action="Search.jsp">
 
-      <INPUT type="text" name="query">
+      <INPUT type="text" name="query" size="40">
 
       <P>
       <input type="submit" name="ok" value="Find!" />
       </FORM>
 
+      <P>
+      Use '+' to require a word, '-' to forbid a word.  For example:
+
+      <pre>
+          +java -emacs jsp
+      </pre>
+
+      finds pages that MUST include the word "java", and MAY NOT include
+      the word "emacs".  Also, pages that contain the word "jsp" are
+      ranked before the pages that don't.
+      <P>
+      All searches are case insensitive.  If a page contains both
+      forbidden and required keywords, it is not shown.
     </TD>
   </TR>
 
