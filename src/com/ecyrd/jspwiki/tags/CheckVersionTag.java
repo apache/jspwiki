@@ -72,19 +72,23 @@ public class CheckVersionTag
 
             WikiPage latest = engine.getPage( page.getName() );
 
+            //log.debug("Doing version check: this="+page.getVersion()+
+            //          ", latest="+latest.getVersion());
+
             switch( m_mode )
             {
               case LATEST:
-                include = (version < 0) || (latest.getVersion() == page.getVersion());
+                include = (version < 0) || (latest.getVersion() == version);
                 break;
 
               case NOTLATEST:
-                include = (version > 0) && (latest.getVersion() != page.getVersion());
+                include = (version > 0) && (latest.getVersion() != version);
                 break;
             }
 
             if( include )
             {
+                // log.debug("INCLD");
                 return EVAL_BODY_INCLUDE;
             }
         }
