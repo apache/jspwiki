@@ -58,7 +58,7 @@
        <%@ include file="LeftMenu.jsp" %>
        <BR><BR>
        <P>
-       <A HREF="Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A>
+       <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A>
        </P>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
@@ -100,7 +100,7 @@
       <P><HR></P>
 
       <P>
-       <I><A HREF="Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A></I>
+       <I><A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A></I>
       </P>
 
     </TD>

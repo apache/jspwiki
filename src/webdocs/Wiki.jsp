@@ -77,7 +77,7 @@
        <%@ include file="LeftMenu.jsp" %>
        <P>
        <% if( isEditable ) { %>
-          <A HREF="Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>
+          <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>
        <% } %>
        </P>
        <P>
@@ -91,7 +91,7 @@
       <% if( version > 0 ) { %>
          <FONT COLOR="red">
             <P CLASS="versionnote">This is version <%=version%>.  It is not the current version,
-            and thus it cannot be edited.  <A HREF="Wiki.jsp?page=<%=pageurl%>">(Back to current version)</A></P> 
+            and thus it cannot be edited.  <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">(Back to current version)</A></P> 
          </FONT>
       <% } %>
 
@@ -107,7 +107,7 @@
              {
              %>
                 This page does not exist.  Why don't you go and
-                <A HREF="Edit.jsp?page=<%=pageurl%>">create it</A>?
+                <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
              <%
              }
              else
@@ -124,7 +124,7 @@
         <tr>
           <td align="left">
              <% if( isEditable ) { %>
-                 <A HREF="Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>.
+                 <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>.
              <% } %>
           </td>
           <td align="right">
@@ -136,7 +136,7 @@
                  // FIXME: We want to use pageLastChanged(pagereq, version) below...)
                  %>
                  <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.  
-                    <A HREF="PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
+                    <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
                  <%
              } else {
                  %>

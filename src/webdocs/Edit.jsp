@@ -64,7 +64,7 @@
                        wiki.safeGetParameter( request, "text" ),
                        request );
 
-        response.sendRedirect("Wiki.jsp?page="+pageurl);
+        response.sendRedirect(wiki.getBaseURL()+"Wiki.jsp?page="+pageurl);
         return;
     }
 
@@ -95,7 +95,7 @@
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="Wiki.jsp?page=TextFormattingRules">Help on editing</A>
+       <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=TextFormattingRules">Help on editing</A>
        </P>
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
@@ -103,7 +103,7 @@
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <H1>Edit page <%=pagereq%></H1>
 
-      <FORM action="Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 
+      <FORM action="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
       <INPUT type="hidden" name="page" value="<%=pagereq%>">
@@ -115,7 +115,7 @@
       <P>
       <input type="submit" name="ok" value="Save" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <A HREF="Wiki.jsp?page=<%=pageurl%>">Cancel</A>
+      <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">Cancel</A>
       <P>
       Here's a short reminder on what elements you have at your disposal:
       
@@ -131,7 +131,7 @@
         </tr>
         <tr>
           <td>[link]</td><td>Create hyperlink to "link", where "link"
-          can be either an internal <A HREF="Wiki.jsp?page=WikiName">WikiName</A>
+          can be either an internal <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=WikiName">WikiName</A>
           or an external link (http://)</td>
         </tr>
         <tr>
@@ -180,7 +180,7 @@
       <P>To embed images just put them available on the web using one
       of the approved formats, and they will get inlined automatically.
       To see the list of approved formats, go check 
-      <A HREF="Wiki.jsp?page=SystemInfo">SystemInfo</A>.</P>
+      <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=SystemInfo">SystemInfo</A>.</P>
 
       </FORM>
 

@@ -103,13 +103,13 @@
                                %>
                                <tr>
                                    <td>
-                                   <A HREF="Wiki.jsp?page=<%=pageurl%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
+                                   <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
                                    </td>
                                    <td><%=p.getLastModified()%></td>
                                    <td><%=p.getAuthor()%></td>
                                    <td>
                                    <% if( p.getVersion() > 1 ) { %>
-                                       <A HREF="Diff.jsp?page=<%=pageurl%>&r1=<%=p.getVersion()%>&r2=<%=p.getVersion()-1%>">diff to version <%=p.getVersion()-1%></A>
+                                       <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=p.getVersion()%>&r2=<%=p.getVersion()-1%>">diff to version <%=p.getVersion()-1%></A>
                                    <% } %>
                                    </td>
                                </tr>
@@ -122,7 +122,7 @@
              </table>
              
              <BR>
-             <A HREF="Wiki.jsp?page=<%=pageurl%>">Back to <%=pagereq%></A>
+             <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">Back to <%=pagereq%></A>
 
              <%
          }
@@ -130,7 +130,7 @@
          {
          %>
              This page does not exist.  Why don't you go and
-             <A HREF="Edit.jsp?page=<%=pageurl%>">create it</A>?
+             <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
          <%
          }
       %>

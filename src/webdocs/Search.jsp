@@ -78,7 +78,7 @@
                   SearchResult pageref = (SearchResult) i.next();
                   %>
                   <TR>
-                      <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=wiki.encodeName(pageref.getName())%>"><%=pageref.getName()%></A></TD>
+                      <TD WIDTH="30%"><A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=wiki.encodeName(pageref.getName())%>"><%=pageref.getName()%></A></TD>
                       <TD><%=pageref.getScore()%></TD>
                   </TR>
                   <%
@@ -100,7 +100,7 @@
 
       <P>
       
-      <FORM action="Search.jsp"
+      <FORM action="<%=wiki.getBaseURL()%>Search.jsp"
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
       <INPUT type="text" name="query" size="40">

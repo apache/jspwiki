@@ -82,7 +82,7 @@
          {
          %>
              This page does not exist.  Why don't you go and
-             <A HREF="Edit.jsp?page=<%=pageurl%>">create it</A>?
+             <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
          <%
          }
       %>
