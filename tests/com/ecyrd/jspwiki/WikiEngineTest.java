@@ -61,6 +61,19 @@ public class WikiEngineTest extends TestCase
                       engine.getText( name ) );
     }
 
+    public void testGetHTML()
+    {
+        String text = "''Foobar.''";
+        String name = NAME1;
+
+        engine.saveText( name, text );
+
+        String data = engine.getHTML( name );
+
+        assertEquals( "<I>Foobar.</I>\n",
+                       data );
+    }
+
     public void testEncodeNameLatin1()
     {
         String name = "abcåäö";
@@ -80,6 +93,33 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "A%E2%89%A2%CE%91.",
                       engine.encodeName(name) );
+    }
+
+    private static int ITERATIONS = 100;
+
+    public void testSpeed1()
+        throws Exception
+    {
+        InputStream is = getClass().getClassLoader().getResourceAsStream("/TextFormattingRules.txt");
+        Reader      in = new InputStreamReader( is, "ISO-8859-1" );
+        StringWriter out = new StringWriter();
+
+        FileUtil.copyContents( in, out );
+
+        engine.saveText( NAME1, out.toString() );
+
+        long start = System.currentTimeMillis();
+
+        for( int i = 0; i < ITERATIONS; i++ )
+        {
+            String txt = engine.getHTML( NAME1 );
+            assertTrue( 0 != txt.length() );
+        }
+
+        long end = System.currentTimeMillis();
+
+        System.out.println( ITERATIONS+" pages took "+(end-start)+" ms (="+
+                            ((end-start)/(double)ITERATIONS)+" ms/page)" );
     }
 
     public static Test suite()
