@@ -19,8 +19,6 @@ Major changes since the last stable (1.6.0) release are:
   way. Alphabetical, or maybe frequency sorting in ReferenceManager,
   might be nice. To do.
 
-  //ebu
-
 - New plugin system:  You can now embed any plugin class that
   implements the com.ecyrd.jspwiki.plugin.WikiPlugin interface onto a
   Wiki page just simply by using the command
@@ -33,6 +31,14 @@ Major changes since the last stable (1.6.0) release are:
 - new property: jspwiki.baseURL for those cases where you need to
   tunnel your Wiki through a firewall or something, using some sort of
   URL rewriting scheme.
+
+- Some UI shortcuts (click on the last modification date to see the
+  latest modification, for example).
+
+- Possibly fixed some problems with RCS and Windows.
+
+- diffs are now colorized for easier reading.  They no longer flow off
+  the edge, either. :-)
 
 
 UPGRADE NOTES

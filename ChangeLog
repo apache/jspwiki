@@ -2,6 +2,8 @@
 
         * v1.6.3-beta.
         
+        * Changed my email address.
+
         * Slightly changed ebu's hack to colorize diffs to work on all
         browsers, even those that are CSS-challenged.  Instead of
         DIV-tags and CSS-files, we now rely on tables.
