@@ -37,4 +37,6 @@
 <%
     NDC.pop();
     NDC.remove();
+
+    session.removeAttribute("msg");
 %>
