@@ -1,5 +1,11 @@
 2005-01-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Added styles for the TableOfContents plugin in the default
+        jspwiki.css.
+
+        * Added a "center" style in the default jspwiki.css (which is smart
+        enough to center tables as well on most browsers).
+
         * v2.1.136
 
         * InfoContent.jsp no longer uses scriptlets to determine previous
