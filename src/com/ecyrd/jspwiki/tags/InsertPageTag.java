@@ -29,7 +29,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Writes page content in HTML.
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *  </UL>

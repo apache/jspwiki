@@ -29,7 +29,7 @@ import com.ecyrd.jspwiki.WikiPage;
  *  Root class for different internal wiki links.  Cannot be used directly,
  *  but provides basic stuff for other classes.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *  </UL>

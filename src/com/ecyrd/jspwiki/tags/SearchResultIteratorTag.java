@@ -36,7 +36,7 @@ import com.ecyrd.jspwiki.SearchResult;
 /**
  *  Iterates through Search result results.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>max = how many search results should be shown.
  *  </UL>

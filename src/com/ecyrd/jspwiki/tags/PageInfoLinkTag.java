@@ -28,7 +28,7 @@ import com.ecyrd.jspwiki.WikiPage;
 /**
  *  Writes a link to the Wiki PageInfo.  Body of the link becomes the actual text.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *  </UL>

@@ -29,7 +29,7 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
 /**
  *  Returns the value of an Wiki variable.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>var - Name of the variable.  Required.
  *    <LI>default - Revert to this value, if the value of "var" is null.

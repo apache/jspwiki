@@ -36,7 +36,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 /**
  *  Iterates through tags.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>list - a collection.
  *  </UL>

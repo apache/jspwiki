@@ -29,7 +29,7 @@ import com.ecyrd.jspwiki.WikiPage;
  *  Writes a link to a Wiki page.  Body of the link becomes the actual text.
  *  The link is written regardless to whether the page exists or not.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *    <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.

@@ -30,7 +30,7 @@ import com.ecyrd.jspwiki.WikiPage;
  *  Writes difference between two pages using a HTML table.  If there is
  *  no difference, includes the body.
  *
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *  </UL>

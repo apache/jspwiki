@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes an edit link.  Body of the link becomes the link text.
- *  <P><B>Attributes<B></P>
+ *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *    <LI>format - Format, either "anchor" or "url".
