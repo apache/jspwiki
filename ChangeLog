@@ -4,6 +4,7 @@
 
         * Added preliminary support for the MetaWeblog API.  The endpoint
         is the same endpoint that is used by the normal wiki RPC API.
+        Currently only newPost and newMediaObject are supported.
 
 2003-04-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
