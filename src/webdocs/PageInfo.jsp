@@ -93,7 +93,9 @@
 
                                %>
                                <tr>
-                                   <td><%=p.getVersion()%></td>
+                                   <td>
+                                   <A HREF="ReadPage.jsp?page=<%=pagereq%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
+                                   </td>
                                    <td><%=p.getLastModified()%></td>
                                    <td><%=p.getAuthor()%></td>
                                    <td>
