@@ -157,7 +157,7 @@ public class AtomAPIServlet extends HttpServlet
             log.error("I/O exception",e);
             throw new ServletException("Could not get body of request",e);
         }
-        catch( ProviderException e )
+        catch( WikiException e )
         {
             log.error("Provider exception while posting",e);
             throw new ServletException("JSPWiki cannot save the entry",e);
