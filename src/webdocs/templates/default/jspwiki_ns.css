@@ -109,3 +109,8 @@ P.locknote { color: red;
 
 /* For the BreadcrumbsTag */
 .breadcrumbs { font-size: 60%; }
+
+/* For the image plugin tag. */
+.imageplugin { margin: 5px 5px 5px 5px; }
+.imageplugin img { }
+.imageplugin caption { font-size: 80%; }
