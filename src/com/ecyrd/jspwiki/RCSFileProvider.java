@@ -50,7 +50,7 @@ public class RCSFileProvider
 {
     private String m_checkinCommand  = "ci -q -m\"author=%u\" -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
-    private String m_logCommand      = "rlog -zLT -h %s";
+    private String m_logCommand      = "rlog -zLT -r %s";
     private String m_fullLogCommand  = "rlog -zLT %s";
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
     
@@ -86,9 +86,14 @@ public class RCSFileProvider
         log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
-    // FIXME: Does not get user.
     public WikiPage getPageInfo( String page )
     {
+        PatternMatcher  matcher  = new Perl5Matcher();
+        PatternCompiler compiler = new Perl5Compiler();
+        PatternMatcherInput input;
+
+        log.debug("Reading page info for "+page);
+
         WikiPage info = super.getPageInfo( page );
 
         try
@@ -104,21 +109,23 @@ public class RCSFileProvider
             BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
 
             String line;
+            Pattern headpattern = compiler.compile("^head: \\d+\\.(\\d+)");
+            // This complicated pattern is required, since on Linux RCS adds
+            // quotation marks, but on Windows, it does not.
+            Pattern userpattern = compiler.compile("^\"?author=([\\w\\.\\s]*)\"?");
 
-            // FIXME: Use ORO for this, too.
             while( (line = stdout.readLine()) != null )
             {
-                if( line.startsWith( "head:" ) )
-                {
-                    int cutpoint = line.lastIndexOf('.');
-
-                    String version = line.substring( cutpoint+1 );
-
-                    int vernum = Integer.parseInt( version );
-
+                if( matcher.contains( line, headpattern ) )
+                {                    
+                    MatchResult result = matcher.getMatch();
+                    int vernum = Integer.parseInt( result.group(1) );
                     info.setVersion( vernum );
-
-                    break;
+                }
+                else if( matcher.contains( line, userpattern ) )
+                {
+                    MatchResult result = matcher.getMatch();
+                    info.setAuthor( result.group(1) );                    
                 }
             }
 
