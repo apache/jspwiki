@@ -337,6 +337,28 @@ public class TextUtil
     }
 
     /**
+     *  Fetches a String property from the set of Properties.  This differs from
+     *  Properties.getProperty() in a couple of key respects: First, property value
+     *  is trim()med (so no extra whitespace back and front), and well, that's it.
+     *  
+     *  @param props The Properties to search through
+     *  @param key   The property key
+     *  @param defval A default value to return, if the property does not exist.
+     *  @return The property value.
+     *  @since 2.1.151
+     */
+    public static String getStringProperty( Properties props,
+                                            String key,
+                                            String defval )
+    {
+        String val = props.getProperty( key );
+        
+        if( val == null ) return defval;
+        
+        return val.trim();
+    }
+    
+    /**
      *  Returns true, if the string "val" denotes a positive string.  Allowed
      *  values are "yes", "on", and "true".  Comparison is case-insignificant.
      *  Null values are safe.
