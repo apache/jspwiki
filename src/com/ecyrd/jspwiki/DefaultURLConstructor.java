@@ -84,13 +84,14 @@ public class DefaultURLConstructor
 
     /**
      *  Constructs the URL with a bunch of parameters.
+     *  @param parameters If null or empty, no parameters are added.
      */
     public String makeURL( String context,
                            String name,
                            boolean absolute,
                            String parameters )
     {
-        if( parameters != null )
+        if( parameters != null && parameters.length() > 0 )
         {            
             if( context.equals(WikiContext.ATTACH) )
             {
