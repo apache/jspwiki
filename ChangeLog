@@ -1,3 +1,10 @@
+2003-05-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.16.
+
+        * Added TemplateDir tag, so that templates can now figure out
+        which template they belong to. 
+
 2003-05-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.15.
