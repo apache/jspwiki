@@ -31,8 +31,8 @@
 // end hiding contents from old browsers -->
 </script>
 
-<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />">
-<link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />">
-<link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help">
-<link rel="start"  href="<wiki:LinkTo format="url" page="Main"/>"                title="Front page">
+<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
+<link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
+<link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
+<link rel="start"  href="<wiki:LinkTo format="url" page="Main"/>"                title="Front page" />
 

@@ -12,16 +12,16 @@
     if( query == null ) query = "";
 %>
 
-      <H2>Find pages</H2>
+      <h2>Find pages</h2>
 
       <% if( list != null ) 
       {
       %>
-          <H4>Search results for '<%=query%>'</H4>
+          <h4>Search results for '<%=query%>'</h4>
 
-          <P>
-          <I>Found <%=list.size()%> hits, here are the top 20.</I>
-          </P>
+          <p>
+          <i>Found <%=list.size()%> hits, here are the top 20.</i>
+          </p>
 
           <table border="0" cellpadding="4">
 
@@ -31,39 +31,38 @@
           </tr>          
           <% if( list.size() > 0 ) { %>
               <wiki:SearchResultIterator list="<%=list%>" id="searchref" maxItems="20">
-                  <TR>
-                      <TD WIDTH="30%"><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></TD>
-                      <TD><%=searchref.getScore()%></TD>
-                  </TR>
+                  <tr>
+                      <td width="30%"><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
+                      <td><%=searchref.getScore()%></td>
+                  </tr>
               </wiki:SearchResultIterator>
           <% } else { %>
-              <TR>
-                  <TD width="30%"><B>No results</B></TD>
-              </TR>
+              <tr>
+                  <td width="30%"><b>No results</b></td>
+              </tr>
           <% } %>
 
           </table>
-          <P>
-          <A HREF="http://www.google.com/search?q=<%=query%>" TARGET="_blank">Try this same search on Google!</A>
-          </P>
-          <P><HR></P>
+          <p>
+          <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>
+          </p>
+          <p><hr /></p>
       <%
       }
       %>
 
-      <P>
+      <form action="<wiki:Variable var="baseURL"/>Search.jsp"
+            accept-charset="ISO-8859-1,UTF-8">
 
-      <FORM action="<wiki:Variable var="baseURL"/>Search.jsp"
-            ACCEPT-CHARSET="ISO-8859-1,UTF-8">
+      <p>
+      Enter your query here:<br />
+      <input type="text" name="query" size="40" value="<%=query%>" /></p>
 
-      Enter your query here:<BR>
-      <INPUT type="text" name="query" size="40" value="<%=query%>">
+      <p>
+      <input type="submit" name="ok" value="Find!" /></p>
+      </form>
 
-      <P>
-      <input type="submit" name="ok" value="Find!" />
-      </FORM>
-
-      <P>
+      <p>
       Use '+' to require a word, '-' to forbid a word.  For example:
 
       <pre>
@@ -72,7 +71,8 @@
 
       finds pages that MUST include the word "java", and MAY NOT include
       the word "emacs".  Also, pages that contain the word "jsp" are
-      ranked before the pages that don't.
-      <P>
+      ranked before the pages that don't.</p>
+      <p>
       All searches are case insensitive.  If a page contains both
-      forbidden and required keywords, it is not shown.
+      forbidden and required keywords, it is not shown.</p>
+

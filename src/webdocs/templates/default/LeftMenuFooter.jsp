@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <!-- LeftMenuFooter is automatically generated from a Wiki page called "LeftMenuFooter" -->
 
-<P>
+<p>
     <wiki:InsertPage page="LeftMenuFooter" />
     <wiki:NoSuchPage page="LeftMenuFooter">
         <p><hr /></p>
@@ -10,7 +10,7 @@
         <i>No LeftMenuFooter!</i><br />
         <wiki:EditLink page="LeftMenuFooter">Please make one.</wiki:EditLink><br />
         </p>
-        <p><hr></p>
+        <p><hr /></p>
     </wiki:NoSuchPage>
 </p>
 

@@ -4,24 +4,24 @@
 
    <table cellspacing="4">
        <tr>
-           <td><B>Page name</B></td>
+           <td><b>Page name</b></td>
            <td><wiki:LinkTo><wiki:PageName /></wiki:LinkTo></td>
        </tr>
 
        <wiki:PageType type="attachment">
            <tr>
-              <td><B>Parent page</B></td>
+              <td><b>Parent page</b></td>
               <td><wiki:LinkToParent><wiki:ParentPageName /></wiki:LinkToParent></td>
            </tr>
        </wiki:PageType>
 
        <tr>
-           <td><B>Page last modified</B></td>
+           <td><b>Page last modified</b></td>
            <td><wiki:PageDate /></td>
        </tr>
 
        <tr>
-           <td><B>Current page version</B></td>
+           <td><b>Current page version</b></td>
            <td><wiki:PageVersion>No versions.</wiki:PageVersion></td>
        </tr>
 
@@ -79,7 +79,7 @@
       </tr>
 </table>
              
-    <BR />
+    <br />
     <wiki:PageType type="page">
        <wiki:LinkTo>Back to <wiki:PageName/></wiki:LinkTo>
     </wiki:PageType>
@@ -90,16 +90,17 @@
            <%-- Do NOT change the order of wikiname and content, otherwise the 
                 servlet won't find its parts. --%>
 
-           <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>">
+           <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
 
            In order to update this attachment with a newer version, find the
            file using "Browse", then click on "Update".
 
-           <P>
-           <input type="file" name="content">
-           <input type="submit" name="upload" value="Update">
-           <input type="hidden" name="action" value="upload">
-           <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format="url"/>">
+           <p>
+           <input type="file" name="content" />
+           <input type="submit" name="upload" value="Update" />
+           <input type="hidden" name="action" value="upload" />
+           <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format="url"/>" />
+           </p>
            </form>
 
 
@@ -112,3 +113,4 @@
     This page does not exist.  Why don't you go and
     <wiki:EditLink>create it</wiki:EditLink>?
 </wiki:NoSuchPage>
+

@@ -28,6 +28,7 @@
         </tt>    
     </wiki:UserCheck>
 </div>
+</p>
 
 <!-- End of automatically generated page -->
 
