@@ -32,6 +32,7 @@ import java.io.IOException;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Provides a caching page provider.  This class rests on top of a
@@ -77,7 +78,8 @@ public class CachingProvider
         
         try
         {            
-            Class providerclass = WikiEngine.findWikiClass( classname, "com.ecyrd.jspwiki.providers" );
+            Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
+                                                       classname );
 
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
