@@ -156,8 +156,9 @@ public class WikiEngine
     /** The time when this engine was started. */
     private Date             m_startTime;
 
-    private PriorityList m_pageFilters = new PriorityList();
+    private PriorityList     m_pageFilters = new PriorityList();
 
+    private boolean          m_isConfigured = false; // Flag.
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -340,6 +341,7 @@ public class WikiEngine
         }
 
         log.info("WikiEngine configured.");
+        m_isConfigured = true;
     }
 
     /**
@@ -1603,6 +1605,7 @@ public class WikiEngine
      *                        cannot be directly located.  May be null.
      *  @throws ClassNotFoundException if the class could not be located.
      */
+    /*
     public static Class findWikiClass( String className, String defaultPackage )
         throws ClassNotFoundException
     {
@@ -1635,7 +1638,7 @@ public class WikiEngine
 
         return tryClass;
     }
-
+    */
 
     /**
      *  Returns this object's ReferenceManager.
@@ -1705,6 +1708,11 @@ public class WikiEngine
     public WikiContext createContext( HttpServletRequest request,
                                       String requestContext )
     {
+        if( !m_isConfigured )
+        {
+            throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
+        }
+
         String pagereq  = safeGetParameter( request, "page" );
         String template = safeGetParameter( request, "skin" );
 
