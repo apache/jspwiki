@@ -55,7 +55,7 @@ public class FileUtilTest extends TestCase
     /**
        ISO Latin 1 from a pipe.
 
-       Works only on UNIX systems now.
+       FIXME: Works only on UNIX systems now.
     */
     public void testReadContentsFromPipe()
         throws Exception
