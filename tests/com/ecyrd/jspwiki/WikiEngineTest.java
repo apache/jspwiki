@@ -60,7 +60,7 @@ public class WikiEngineTest extends TestCase
         }
 
     }
-
+    
     public void testNonExistantDirectory()
         throws Exception
     {
@@ -673,7 +673,13 @@ public class WikiEngineTest extends TestCase
 
         saved.delete();
 
-        Thread.sleep( 5000L ); // Wait five seconds for CachingProvider to wake up.
+        assertFalse( "File not deleted!", saved.exists() );
+
+        Thread.sleep( 5000L ); // Wait five seconds for CachingProvider to catch up.
+
+        WikiPage p = m_engine.getPage( NAME1 );
+
+        assertNull( "Got page!", p );
 
         String text = m_engine.getText( NAME1 );
 
