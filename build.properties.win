@@ -14,5 +14,6 @@
 @logfile@=C:\\\\temp\\\\jspwiki.log
 
 @tests.pagedir@=C:\\\\temp\\\\testrepository
+@tests.workdir@=C:\\\\temp\\\\testworkdir
 @tests.logfile@=C:\\\\temp\\\\jspwikitests.log
 
