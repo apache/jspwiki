@@ -451,7 +451,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://www.ecyrd.com/test.png]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://www.ecyrd.com/test.png\" ALT=\"test\">",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://www.ecyrd.com/test.png\" ALT=\"test\" />",
                      translate(src) );
     }
 
@@ -469,7 +469,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://images.com/testi]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://images.com/testi\" ALT=\"test\">",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://images.com/testi\" ALT=\"test\" />",
                      translate(src) );
     }
 
@@ -478,7 +478,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://foobar.jpg]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"test\">",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"test\" />",
                      translate(src) );
     }
 
@@ -488,7 +488,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [http://foobar.jpg]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"http://foobar.jpg\">",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"http://foobar.jpg\" />",
                      translate(src) );
     }
 
@@ -497,7 +497,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
 
-        assertEquals("Link <A HREF=\"http://link.to/\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\"></A>",
+        assertEquals("Link <A HREF=\"http://link.to/\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" /></A>",
                      translate(src) );
     }
 
@@ -508,7 +508,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("SandBox");
 
-        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=SandBox\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"SandBox\"></A>",
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=SandBox\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"SandBox\" /></A>",
                      translate(src) );
     }
 
@@ -598,6 +598,14 @@ public class TranslatorReaderTest extends TestCase
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
 
         assertEquals( "1 <PRE> {{{ 2345 </PRE> }}} 6", translate(src) );
+    }
+
+    public void testHTMLInPre()
+        throws Exception
+    {
+        String src = "1 {{{ <B> }}}";
+
+        assertEquals( "1 <PRE> &lt;B&gt; </PRE>", translate(src) );
     }
 
     public void testList1()
