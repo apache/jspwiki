@@ -1,6 +1,14 @@
 2003-02-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-        * Bug fix: WeblogEntryPlugin would sort entries wrong on month
+        * v2.0.24.
+
+        * CalendarTag is now smarter and can adapt itself to the date.
+
+        * Bug fix: WeblogPlugin would prefer the local parameter instead
+        of the one given in HTTP parameters to decide how many days should
+        be shown.
+
+        * Bug fix: WeblogPlugin would sort entries wrong on month
         threshold.  Reported by Ebu.
 
 2003-01-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
