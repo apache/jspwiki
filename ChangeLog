@@ -1,5 +1,12 @@
 2001-11-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.5.3
+
+        * JSPWiki can now handle also non-ISO-8859-1 charsets.  Check
+        README for more info.  Thanks to  Chris Brooking for the initial
+        code.  This is a heavy-duty change - most of the JSP pages were
+        affected, since they need to decode the page names in a new way.
+
         * v1.5.2
 
         * For browsers that do not support CSS, Wiki.jsp now also uses
