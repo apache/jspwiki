@@ -145,6 +145,9 @@ public class WikiEngine
     /** The default front page name.  Defaults to "Main". */
     private String           m_frontPage;
 
+    /** The time when this engine was started. */
+    private Date             m_startTime;
+
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -236,7 +239,9 @@ public class WikiEngine
     private void initialize( Properties props )
         throws WikiException
     {
+        m_startTime  = new Date();
         m_properties = props;
+
         //
         //  Initialized log4j.  However, make sure that
         //  we don't initialize it multiple times.  Also, if
@@ -448,13 +453,32 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the moment when this engine was started.
+     * 
+     *  @since 2.0.15.
+     */
+
+    public Date getStartTime()
+    {
+        return m_startTime;
+    }
+
+    /**
      *  Returns the basic URL to a page, without any modifications.
      *  You may add any parameters to this.
      *
      *  @since 2.0.3
      */
     public String getViewURL( String pageName )
-    {
+    {/*
+        pageName = encodeName( pageName );
+        String srcString = "%uWiki.jsp?page=%p";
+
+        srcString = TextUtil.replaceString( srcString, "%u", m_baseURL );
+        srcString = TextUtil.replaceString( srcString, "%p", pageName );
+
+        return srcString;
+     */
         return m_baseURL+"Wiki.jsp?page="+encodeName(pageName);
     }
 
@@ -1335,6 +1359,7 @@ public class WikiEngine
      *  Returns a Collection of WikiPages containing the
      *  version history of a page.
      */
+    // FIXME: Should return a List.
     public Collection getVersionHistory( String page )
     {
         Collection c = null;
