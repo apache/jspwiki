@@ -40,6 +40,7 @@ import com.ecyrd.jspwiki.*;
  *  @since 1.6.4
  */
 // FIXME: Keeps a list of all WikiPages in memory - should cache them too.
+// FIXME: Synchronization is a bit inconsistent in places.
 public class CachingProvider
     implements WikiPageProvider
 {
@@ -146,7 +147,12 @@ public class CachingProvider
     private String getTextFromCache( String page )
         throws ProviderException
     {
-        CacheItem item = (CacheItem)m_cache.get( page );
+        CacheItem item;
+
+        synchronized(this)
+        {
+            item = (CacheItem)m_cache.get( page );
+        }
 
         if( item == null )
         {
@@ -187,16 +193,14 @@ public class CachingProvider
     public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
-        m_provider.putPageText( page, text );
-
-        // Invalidate cache after writing to it.
-        // FIXME: possible race condition here.  Someone might still get
-        // the old version.
-
         synchronized(this)
         {
-            m_cache.remove( page.getName() );
-            addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
+            m_provider.putPageText( page, text );
+
+            CacheItem item = new CacheItem();
+            item.m_page = page;
+            item.m_text = new SoftReference( text );
+            m_cache.put( page.getName(), item );
         }
     }
 
