@@ -576,7 +576,7 @@ public class TranslatorReader extends Reader
     {
         for( int i = 0; i < c_externalLinks.length; i++ )
         {
-            if( link.equals( c_externalLinks[i] ) ) return true;
+            if( link.startsWith( c_externalLinks[i] ) ) return true;
         }
 
         return false;
