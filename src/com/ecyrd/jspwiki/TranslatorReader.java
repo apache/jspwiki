@@ -62,7 +62,7 @@ public class TranslatorReader extends Reader
 
     private static Category log = Category.getInstance( TranslatorReader.class );
 
-    private boolean        m_iscode       = false;
+    //private boolean        m_iscode       = false;
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
     private boolean        m_isTypedText  = false;
@@ -102,12 +102,18 @@ public class TranslatorReader extends Reader
         are surrounded by brackets. */
     public static final String     PROP_PLAINURIS        = "jspwiki.translatorReader.plainUris";
 
+    /** If true, all outward links (external links) have a small link image appended. */
+    public static final String     PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
+
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
 
     /** If true, consider URIs that have no brackets as well. */
     // FIXME: Currently reserved, but not used.
     private boolean                m_plainUris           = false;
+
+    /** If true, all outward links use a small link image. */
+    private boolean                m_useOutlinkImage     = false;
 
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
@@ -169,8 +175,10 @@ public class TranslatorReader extends Reader
         //  Set the properties.
         //
         Properties props      = m_engine.getWikiProperties();
+
         m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" ) );
         m_plainUris           = "true".equals( props.getProperty( PROP_PLAINURIS, "false" ) );
+        m_useOutlinkImage     = "true".equals( props.getProperty( PROP_USEOUTLINKIMAGE, "false" ) );
     }
 
     /**
@@ -347,16 +355,16 @@ public class TranslatorReader extends Reader
             //  fillBuffer().
             //
           case IMAGE:
-            result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\">";
+            result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\" />";
             break;
 
           case IMAGELINK:
-            result = "<A HREF=\""+text+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\"></A>";
+            result = "<A HREF=\""+text+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" /></A>";
             break;
 
           case IMAGEWIKILINK:
             String pagelink = m_engine.getBaseURL()+"Wiki.jsp?page="+text;
-            result = "<A CLASS=\"wikipage\" HREF=\""+pagelink+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\"></A>";
+            result = "<A CLASS=\"wikipage\" HREF=\""+pagelink+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\" /></A>";
             break;
 
           case EXTERNAL:
@@ -635,6 +643,11 @@ public class TranslatorReader extends Reader
             else
             {
                 sb.append( makeLink( EXTERNAL, reallink, link ) );
+
+                if( m_useOutlinkImage )
+                {
+                    sb.append( "<img class=\"outlink\" src=\""+m_engine.getBaseURL()+"images/out.png\" alt=\"\" />" );
+                }
             }
         }
         else if( (interwikipoint = reallink.indexOf(":")) != -1 )
@@ -735,10 +748,10 @@ public class TranslatorReader extends Reader
             buf.append( "</OL>\n" );
         }
 
-        if( m_iscode ) 
+        if( m_isPre ) 
         {
             buf.append("</PRE>\n");
-            m_iscode = false;
+            m_isPre = false;
         }
 
         if( m_istable )
@@ -1234,6 +1247,7 @@ public class TranslatorReader extends Reader
 
             //
             //  Check if we're actually ending the preformatted mode.
+            //  We still must do an entity transformation here.
             //
             if( m_isPre )
             {
@@ -1241,7 +1255,15 @@ public class TranslatorReader extends Reader
                 {
                     buf.append( handleClosebrace() );
                 }
-                else
+                else if (ch == '<') 
+                {
+                    buf.append("&lt;");
+                }
+                else if (ch == '>') 
+                {
+                    buf.append("&gt;");
+                }
+                else 
                 {
                     buf.append( (char)ch );
                 }
