@@ -30,6 +30,12 @@ public class WikiContext
         m_engine = engine;
     }
 
+    public WikiContext( WikiEngine engine, WikiPage page )
+    {
+        m_page   = page;
+        m_engine = engine;
+    }
+
     public WikiEngine getEngine()
     {
         return m_engine;
