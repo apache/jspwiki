@@ -1,3 +1,9 @@
+2001-07-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Implemented RecentChanges list by writing RecentChanges.jsp.
+        Wiki.jsp also redirects all requests to a page called
+        'RecentChanges' to RecentChanges.jsp.
+
 2001-07-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added configuration at etc/jspwiki.properties.
