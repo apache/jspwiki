@@ -29,24 +29,24 @@
     |___build.xml
     |  
     |___etc
-    |   |___[jspwiki.properties and other misc files]
+    |   |___[jspwiki.properties and web.xml]
     |          
     |___src     
     |   |___webdocs
     |   |   |___[all .jsp files]
-    |   |   |___WEB-INF
-    |   |       |___web.xml [the deployment file]
     |   |       
     |   |___com 
     |       |___[...and the rest of the source code files]
     |
     |___docs
+    |
+    |___lib
     | 
     |___tests   
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.9 2001-10-21 10:50:22 jalkanen Exp $
+    $Id: build.xml,v 1.10 2001-11-02 17:55:37 jalkanen Exp $
 -->    
        
 <!--   
@@ -208,7 +208,8 @@
 
         We include the following things:
 
-        1) All .jar -files in the lib-directory.
+        1) All .jar -files in the lib-directory (except servlet.jar, since
+           it's gonna be provided by the servlet container anyway.)
         2) All .class-files from the build-directory
         3) Everything from the src/webdocs -directory
         4) Everything from the etc-directory go to the WEB-INF -directory
@@ -218,9 +219,13 @@
   <target name="war" depends="compile,installinit"
           description="Builds the WAR file for installation.">
 
+    <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
+
+    <delete file="${warfile}" />
+
     <war warfile="${install.fulldir}/${ant.project.name}.war"
-         webxml="${code.src}/webdocs/WEB-INF/web.xml">
-       <lib dir="lib" includes="*.jar" />
+         webxml="etc/web.xml">
+       <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar"/>
        <classes dir="${code.build}" includes="**/*.class" />
        <fileset dir="${code.src}/webdocs" includes="**" />
        <webinf dir="etc" includes="**" />
@@ -249,8 +254,13 @@
          command="export" 
          tag="${cvs.tag}" />
 
-    <zip zipfile="${install.fulldir}/${ant.project.name}-src.zip"
-         basedir="${install.src}" />
+    <zip zipfile="${install.fulldir}/${ant.project.name}-src.zip">
+        <zipfileset dir="${install.src}" />
+    </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-samplepages.zip">
+        <zipfileset dir="${install.src}/${ant.project.name}/src/wikipages" />
+    </zip>
 
   </target>
 
@@ -269,8 +279,11 @@
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
      <copy file="doc/LICENSE" todir="${install.fulldir}" />
-     <zip zipfile="${release.dir}/${ant.project.name}.zip"
-          basedir="${install.fulldir}" />
+
+     <zip zipfile="${release.dir}/${ant.project.name}.zip">
+        <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
+     </zip>
+
   </target>
 
   <!-- ============================================================== -->
