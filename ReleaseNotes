@@ -1,6 +1,8 @@
 
-This is an ALPHA release of JSPWiki.  Thus it's not really ready for
-prime time, but you can certainly go an test it!
+This is the first stable release of JSPWiki v2.  It contains many new
+enhancements and fixes, so please do read these carefully!
+
+Most of the documentation is now contained in jspwiki_samplepages.zip
 
 Major changes since the last stable (1.8.2) release are:
 
@@ -10,13 +12,20 @@ Major changes since the last stable (1.8.2) release are:
 - Splitting of Wiki pages into "Controller" and "View" pages has
   been done.  The user-modifiable HTML templates can be found in
   "templates/default" -directory.  All functionality can now be
-  controlled using JSP tags.
+  controlled using JSP tags.  You can see their documentation on the
+  page JSPWikiTags
+
+- There is now a fully-fledged templating system, allowing you to
+  create your own look-and-feel for the Wiki quite easily.
 
 - There is a new addition to WikiLanguage: Definition lists
   ;term;definition.  You can use this to make comments, too, by using
   an empty 'term': ;:Comment.
 
 - There is a new variable system, documented in WikiVariables.
+
+- It is now possible to restore old versions of pages easily.  See
+  the page history page.
 
 - Default Edit window background has been changed :-)
 
@@ -26,7 +35,15 @@ Major changes since the last stable (1.8.2) release are:
 
 - CachingProvider is now used by default.
 
-- There is now full attachment support.
+- There is now full attachment support.  See WikiAttachments
+
+- It is now possible to use HTML also in the Wiki markup.  However,
+  you must turn this feature explicitly on in the jspwiki.properties
+  file, as it potentially allows your users to create damaging pages.
+
+- Page "locking" has been implemented.  All edits are tracked, and the
+  default template issues a warning, if there are potentially
+  conflicting edits.
 
 - New plugins (which can now be multiline).
    * IndexPlugin (by Alain Ravet)
@@ -35,16 +52,10 @@ Major changes since the last stable (1.8.2) release are:
    * WeblogEntryPlugin
 
 
-MAJOR PIECES MISSING
-====================
-
-The JSP tags are very badly documented.
-
 
 UPGRADE NOTES
 =============
 
-(NB: These notes are still incomplete).
 
 - If updating manually (from v1.8.x):
 
