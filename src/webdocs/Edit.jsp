@@ -146,7 +146,10 @@
     PageLock lock = wiki.getPageManager().lockPage( wikipage, 
                                                     wiki.getValidUserName(request) );
 
-    session.setAttribute( "lock-"+pagereq, lock );
+    if( lock != null )
+    {
+        session.setAttribute( "lock-"+pagereq, lock );
+    }
 
     String contentPage = "templates/"+skin+"/EditTemplate.jsp";
 %>
