@@ -1,3 +1,14 @@
+2003-09-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.74.
+
+        * ReferenceManager now keeps its lists sorted.  This has the
+        effect of having backlink lists (referred-by), Unreferenced pages,
+        etc.  sorted as well.  Requested by John Volkar.
+
+        * Fixed problem with plain style URIs not being terminated at
+        EOL.
+
 2003-09-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.73.
