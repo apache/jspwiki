@@ -397,15 +397,7 @@ public class WikiEngine
      */
     public String getText( String page )
     {
-        if( m_provider == null ) 
-            return NO_PROVIDER_MSG;
-
-        String result = m_provider.getPageText( page );
-
-        if( result == null ) 
-            return "";
-
-        return result;
+        return getText( page, -1 );
     }
 
     /**
@@ -420,9 +412,25 @@ public class WikiEngine
         if( m_provider == null ) 
             return NO_PROVIDER_MSG;
 
-	// FIXME: What do we get if the version doesn't exist?
-	// Null. Need to implement a check.
-        return m_provider.getPageText( page, version );
+        String result = null;
+
+        if( version >= 0 )
+        {
+            // FIXME: What do we get if the version doesn't exist?
+            // Null. Need to implement a check.
+            result = m_provider.getPageText( page, version );
+        }
+        else
+        {
+            result = m_provider.getPageText( page );
+        }
+
+        if( result == null )
+            result = "";
+
+        result = TextUtil.replaceEntities( result );
+
+        return result;
     }
 
 
@@ -705,8 +713,7 @@ public class WikiEngine
 
         String diff  = makeDiff( page1, page2 );
 
-        diff = TranslatorReader.replaceString( diff, "<", "&lt;" );
-        diff = TranslatorReader.replaceString( diff, ">", "&gt;" );
+        diff = TextUtil.replaceEntities( diff );
 
         return diff;
     }
