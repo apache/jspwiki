@@ -1,3 +1,15 @@
+2003-06-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.28.
+
+        * Mental note: when you say "cvs commit", see which directory
+        you're in.
+
+        * There is now a general saving/loading filtering
+        functionality. See the new "filters" package.  It does not still
+        have all of the usability that would be nice, but it should be
+        ready for testing.
+
 2003-05-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.27.
