@@ -142,6 +142,13 @@
         </tr>
 
         <tr>
+          <td>!, !!, !!!</td>
+          <td>Start a line with an exclamation mark (!) to make
+          a heading.  More exclamation marks mean bigger headings.
+          </td>
+        </tr>
+
+        <tr>
           <td>__text__</td><td>Makes text <B>bold</B>.</td>
         </tr>
 
