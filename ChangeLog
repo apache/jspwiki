@@ -1,3 +1,11 @@
+2004-12-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added a slight delay to Lucene update thread to make sure it is
+        not conflicting with the rest of the startup.
+
+        * Now compiles under JDK 1.5.0 (there's an odd dependency I didn't
+        have time to look at, so I had to add "-source 1.4" to build.xml).
+
 2004-12-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.128
