@@ -31,6 +31,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <li>mode - In which format to insert the page.  Can be either "plain" or "html".
  *  </UL>
  *
  *  @author Janne Jalkanen
