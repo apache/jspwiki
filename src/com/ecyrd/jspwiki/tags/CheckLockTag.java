@@ -39,6 +39,7 @@ public class CheckLockTag
 {
     public static final int LOCKED    = 0;
     public static final int NOTLOCKED = 1;
+    public static final int OWNED     = 2;
 
     private int m_mode;
 
@@ -47,6 +48,10 @@ public class CheckLockTag
         if( "locked".equals(arg) )
         {
             m_mode = LOCKED;
+        }
+        else if("owned".equals(arg) )
+        {
+            m_mode = OWNED;
         }
         else
         {
@@ -72,10 +77,16 @@ public class CheckLockTag
             PageLock userLock = (PageLock) session.getAttribute("lock-"+page.getName());
 
             if( (lock != null && m_mode == LOCKED && lock != userLock ) ||
+                (lock != null && m_mode == OWNED && lock == userLock ) ||
                 (lock == null && m_mode == NOTLOCKED) )
             {
-                pageContext.setAttribute( getId(),
-                                          lock );
+                String id = getId();
+
+                if( id != null )
+                {
+                    pageContext.setAttribute( getId(),
+                                              lock );
+                }
 
                 return EVAL_BODY_INCLUDE;
             }
