@@ -44,13 +44,7 @@
 
             log.info("Page changed, warning user.");
 
-            // FIXME: This is put into session, but it is probably
-            //        a better idea if it's stored in request, but since
-            //        the request can be long, we need to POST it.
-
-            request.getSession().setAttribute("usertext",request.getParameter("text"));
-
-            response.sendRedirect("PageModified.jsp?page="+pageurl);
+            pageContext.forward( "PageModified.jsp" );
             return;
         }
 
