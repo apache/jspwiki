@@ -9,5 +9,6 @@
   <link rel="stylesheet" type="text/css" media="print" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki_print.css" />
   <link rel="alternate stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki_print.css" title="Print friendly" />
   <link rel="alternate stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" title="Standard" />
+  <link rel="icon" type="image/png" href="<wiki:BaseURL/>images/favicon.png" />
   <wiki:FeedDiscovery />
 
