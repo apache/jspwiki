@@ -197,11 +197,12 @@ public class FileSystemProvider
     public void putPageText( WikiPage page, String text )        
     {
         File file = findPage( page.getName() );
+        PrintWriter out = null;
 
         try
         {
-            PrintWriter out = new PrintWriter(new OutputStreamWriter( new FileOutputStream( file ),
-                                                                      m_encoding ));
+            out = new PrintWriter(new OutputStreamWriter( new FileOutputStream( file ),
+                                                          m_encoding ));
 
             out.print( text );
 
@@ -210,6 +211,10 @@ public class FileSystemProvider
         catch( IOException e )
         {
             log.error( "Saving failed" );
+        }
+        finally
+        {
+            if( out != null ) out.close();
         }
     }
 
@@ -275,6 +280,8 @@ public class FileSystemProvider
     nextfile:
         for( int i = 0; i < wikipages.length; i++ )
         {
+            FileInputStream input = null;
+            
             String line = null;
 
             // log.debug("Searching page "+wikipages[i].getPath() );
@@ -287,8 +294,8 @@ public class FileSystemProvider
 
             try
             {
-                FileInputStream input = new FileInputStream( wikipages[i] );
-                String pagetext       = FileUtil.readContents( input, m_encoding );
+                input = new FileInputStream( wikipages[i] );
+                String pagetext = FileUtil.readContents( input, m_encoding );
 
                 int scores[] = new int[ query.length ];
 
@@ -354,6 +361,14 @@ public class FileSystemProvider
             catch( IOException e )
             {
                 log.error( "Failed to read", e );
+            }
+            finally
+            {
+                try
+                {
+                    if( input != null ) input.close();
+                }
+                catch( IOException e ) {}
             }
         }
 
