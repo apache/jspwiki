@@ -1,5 +1,12 @@
 2005-01-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.1.140.
+
+        * TranslatorReader now completely uses the new URL generation scheme.
+
+        * RSS generation now uses absolute URLs regardless of the setting of
+        jspwiki.referenceStyle.  It also uses the new URL generation scheme.
+
         * InsertPage plugin now has a "default" attribute.
 
 2005-01-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
