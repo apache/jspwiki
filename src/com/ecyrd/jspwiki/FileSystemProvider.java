@@ -41,7 +41,7 @@ public class FileSystemProvider
 {
 
     private static final Category   log = Category.getInstance(FileSystemProvider.class);
-    private String m_pageDirectory = "/home/jalkanen/Projects/JSPWiki/src/wikipages";
+    private String m_pageDirectory = "/tmp/";
 
     /**
      *  Name of the property that defines where page directories are.
@@ -164,9 +164,9 @@ public class FileSystemProvider
         return res;
     }
 
-    public void putPageText( String page, String text )
+    public void putPageText( WikiPage page, String text )
     {
-        File file = findPage( page );
+        File file = findPage( page.getName() );
 
         try
         {
