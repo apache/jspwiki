@@ -86,6 +86,7 @@ public class TranslatorReader extends Reader
     /** Optionally stores internal wikilinks */
     private ArrayList      m_localLinkMutatorChain    = new ArrayList();
     private ArrayList      m_externalLinkMutatorChain = new ArrayList();
+    private ArrayList      m_attachmentLinkMutatorChain = new ArrayList();
 
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
@@ -232,6 +233,19 @@ public class TranslatorReader extends Reader
         if( mutator != null )
         {
             m_externalLinkMutatorChain.add( mutator );
+        }
+    }
+
+    /**
+     *  Adds a hook for processing attachment links.
+     *
+     *  @param mutator The hook to call.  Null is safe.
+     */
+    public void addAttachmentLinkHook( StringTransmutator mutator )
+    {
+        if( mutator != null )
+        {
+            m_attachmentLinkMutatorChain.add( mutator );
         }
     }
 
@@ -773,6 +787,8 @@ public class TranslatorReader extends Reader
             String attachment = findAttachment( reallink );
             if( attachment != null )
             {
+                callMutatorChain( m_attachmentLinkMutatorChain, attachment );
+
                 if( isImageLink( reallink ) )
                 {
                     attachment = m_engine.getBaseURL()+"attach?page="+attachment;
