@@ -29,6 +29,7 @@ import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.WikiAuthenticator;
 import com.ecyrd.jspwiki.auth.UserProfile;
 import java.util.*;
 import org.apache.xmlrpc.XmlRpcException;
@@ -62,6 +63,10 @@ public class MetaWeblogHandler
      *  Does a quick check against the current user
      *  and does he have permissions to do the stuff
      *  that he really wants to.
+     *  <p>
+     *  If there is no authentication enabled, returns normally.
+     *
+     *  @throw XmlRpcException with the correct error message, if auth fails.
      */
     private void checkPermissions( WikiPage page, 
                                    String username,
@@ -73,27 +78,32 @@ public class MetaWeblogHandler
         UserProfile currentUser  = m_engine.getUserManager().getUserProfile( username );
         currentUser.setPassword( password );
 
-        boolean isValid = m_engine.getUserManager().getAuthenticator().authenticate( currentUser );
+        WikiAuthenticator auth = m_engine.getUserManager().getAuthenticator();
+
+        if( auth != null )
+        {
+            boolean isValid = auth.authenticate( currentUser );
         
-        if( isValid )
-        {
-            if( !mgr.checkPermission( page,
-                                      currentUser,
-                                      permission ) )
+            if( isValid )
             {
-                return;
+                if( !mgr.checkPermission( page,
+                                          currentUser,
+                                          permission ) )
+                {
+                    return;
+                }
+                else
+                {
+                    String msg = "Insufficient permissions to do "+permission+" on "+page.getName();
+                    log.error( msg );
+                    throw new XmlRpcException(0, msg );
+                }
             }
-            else
+            else 
             {
-                String msg = "Insufficient permissions to do "+permission+" on "+page.getName();
-                log.error( msg );
-                throw new XmlRpcException(0, msg );
+                log.error( "Username '"+username+"' or password not valid." );
+                throw new XmlRpcException(0, "Password or username not valid.");
             }
-        }
-        else 
-        {
-            log.error( "Username '"+username+"' or password not valid." );
-            throw new XmlRpcException(0, "Password or username not valid.");
         }
     }
 
