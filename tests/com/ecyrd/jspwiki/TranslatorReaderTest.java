@@ -201,6 +201,16 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /** Hyperlinks inside URIs. */
+    public void testHyperlinksCCURLs()
+        throws Exception
+    {
+        String src = "http://www.foo.bar/ANewHope/";
+
+        assertEquals( "http://www.foo.bar/ANewHope/\n",
+                      translate(src) );
+    }
+
     public void testHyperlinksExt()
         throws Exception
     {
