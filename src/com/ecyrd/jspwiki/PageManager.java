@@ -102,7 +102,7 @@ public class PageManager
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
             log.debug("Initializing page provider class "+m_provider);
-            m_provider.initialize( props );
+            m_provider.initialize( m_engine, props );
         }
         catch( ClassNotFoundException e )
         {

@@ -39,7 +39,7 @@ public interface WikiProvider
     /**
      *  Initializes the page provider.
      */
-    public void initialize( Properties properties ) 
+    public void initialize( WikiEngine engine, Properties properties ) 
         throws NoRequiredPropertyException,
                IOException;
 

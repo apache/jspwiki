@@ -84,7 +84,7 @@ public class BasicAttachmentProvider
     
     static final Category log = Category.getInstance( BasicAttachmentProvider.class );
 
-    public void initialize( Properties properties ) 
+    public void initialize( WikiEngine engine, Properties properties ) 
         throws NoRequiredPropertyException,
                IOException
     {

@@ -73,7 +73,7 @@ public class CachingAttachmentProvider
     // FIXME: Make settable.
     private int  m_refreshPeriod = 60*10; // 10 minutes at the moment
 
-    public void initialize( Properties properties )
+    public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
@@ -98,7 +98,7 @@ public class CachingAttachmentProvider
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
             log.debug("Initializing real provider class "+m_provider);
-            m_provider.initialize( properties );
+            m_provider.initialize( engine, properties );
         }
         catch( ClassNotFoundException e )
         {

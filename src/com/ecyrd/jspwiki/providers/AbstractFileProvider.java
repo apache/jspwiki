@@ -69,7 +69,7 @@ public abstract class AbstractFileProvider
      *  @throws FileNotFoundException If the specified page directory does not exist.
      *  @throws IOException In case the specified page directory is a file, not a directory.
      */
-    public void initialize( Properties properties )
+    public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {

@@ -63,11 +63,11 @@ public class VersioningFileProvider
     public static final String      PAGEDIR      = "OLD";
     public static final String      PROPERTYFILE = "page.properties";
 
-    public void initialize( Properties properties )
+    public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
-        super.initialize(properties);
+        super.initialize( engine, properties );
     }
 
     /**

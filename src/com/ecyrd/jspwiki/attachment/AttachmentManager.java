@@ -116,7 +116,7 @@ public class AttachmentManager
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
-            m_provider.initialize( props );
+            m_provider.initialize( m_engine, props );
         }
         catch( ClassNotFoundException e )
         {
