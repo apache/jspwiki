@@ -1,3 +1,20 @@
+2002-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.6.11-beta.
+
+        * XML-RPC interface now supports a new method:
+        getRPCVersionSupported(), which returns which version of API we
+        support.  This is currently 1.
+
+        * Fixed <TT> support: it is now actually possible to write
+        multiple lines using {{ and }}, much like it is with '' and __.
+        Suggested by Sesh Jalagam.
+
+        * Rewrote table support.  The TranslatorReader engine is now a lot
+        smarter about things than it used to be, and now it does not
+        matter how you use the table marker, as long as it's the first
+        character on the line.
+
 2002-02-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Bug fix: RCSFileProvider could hang in certain operations,
