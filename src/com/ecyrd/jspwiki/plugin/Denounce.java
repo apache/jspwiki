@@ -21,7 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class Denounce implements WikiPlugin
 {
-    private static Category     log = Category.getInstance(Denounce.class);
+    private static Logger     log = Logger.getLogger(Denounce.class);
 
     public static final String PARAM_LINK = "link";
     public static final String PARAM_TEXT = "text";
