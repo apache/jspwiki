@@ -379,7 +379,7 @@ public class TranslatorReader extends Reader
     {
         return link.startsWith("http:") || link.startsWith("ftp:") ||
             link.startsWith("https:") || link.startsWith("mailto:") ||
-            link.startsWith("news:");
+            link.startsWith("news:") || link.startsWith("file:");
     }
 
     /**
@@ -533,8 +533,15 @@ public class TranslatorReader extends Reader
                     // InterWiki links also get added to external link chain
                     // after the links have been resolved.
 
+                    // FIXME: There is an interesting issue here:  We probably should
+                    //        URLEncode the wikiPage, but we can't since some of the
+                    //        Wikis use slashes (/), which won't survive URLEncoding.
+                    //        Besides, we don't know which character set the other Wiki
+                    //        is using, so you'll have to write the entire name as it appears
+                    //        in the URL.  Bugger.
+
                     String extWiki = reallink.substring( 0, interwikipoint );
-                    String wikiPage = m_engine.encodeName(reallink.substring( interwikipoint+1 ));
+                    String wikiPage = reallink.substring( interwikipoint+1 );
 
                     String urlReference = m_engine.getInterWikiURL( extWiki );
 
