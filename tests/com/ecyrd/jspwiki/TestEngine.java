@@ -88,14 +88,12 @@ public class TestEngine extends WikiEngine
         throws IOException
     {
         Properties properties = new Properties();
-        
-        // FIXME: Horrible kludge, very slow, etc.
-        if( "UTF-8".equals( properties.getProperty(PROP_ENCODING) ) )
-        {
-            return TextUtil.urlEncodeUTF8( pagename );
-        }
-        
-        return java.net.URLEncoder.encode( pagename );
+        String m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING,
+                AbstractFileProvider.DEFAULT_ENCODING );
+
+        pagename = TextUtil.urlEncode( pagename, m_encoding );
+        pagename = TextUtil.replaceString( pagename, "/", "%2F" );
+        return pagename;
     }
 
     /**
@@ -130,7 +128,7 @@ public class TestEngine extends WikiEngine
         {
             String files = getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 
-            File f = new File( files, page+BasicAttachmentProvider.DIR_EXTENSION );
+            File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
 
             deleteAll( f );
         }
