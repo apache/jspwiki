@@ -1,13 +1,39 @@
 
-This is not an release of JSPWiki v2.  
+This is an ALPHA release of JSPWiki v2.2  
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
-Major changes since the last stable (2.0.36) release are:
+Major changes since the 2.0 series are:
 
-- none yet.
+- Authentication support
+
+- Page Filters
+
+- Muchos enhanced WeblogPlugin
+
+- Style support using the %%-directive
+
+- "almost XHTML"
+
+- Page variables (see SET-directive)
+
+- RSS-per-page generation
+
+- Caching attachment provider
+
+- OSCache integration
+
+- Printer-friendly stylesheet for the default template
+
+- Multiple Wikis with a single WAR-file -support.
+
 
 UPGRADE NOTES
 =============
 
-None yet.
+Drop the JSPWiki.war into place.  Modify your template according to
+the new stuff in the default template.  More precise docs to came
+later. 
+
+Please visit http://www.jspwiki.org/Wiki.jsp?page=Release2.2Discussion
+for further information.
