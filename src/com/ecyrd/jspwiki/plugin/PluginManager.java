@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.oro.text.regex.*;
 import org.apache.log4j.Logger;
+import org.apache.ecs.xhtml.*;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -129,6 +130,7 @@ public class PluginManager
     Pattern m_pluginPattern;
 
     private boolean m_pluginsEnabled = true;
+    private boolean m_initStage      = false;
 
     /**
      *  Create a new PluginManager.
@@ -175,6 +177,14 @@ public class PluginManager
     public void enablePlugins( boolean enabled )
     {
         m_pluginsEnabled = enabled;
+    }
+
+    /**
+     *  Sets the initialization stage for the initial page scan.
+     */
+    public void setInitStage( boolean value )
+    {
+        m_initStage = value;
     }
 
     /**
@@ -227,27 +237,25 @@ public class PluginManager
      */
     private String stackTrace( Map params, Throwable t )
     {
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter( sw );
-
-        out.println("<div class=\"debug\">");
-        out.println("Plugin execution failed, stack trace follows:");
-        out.println("<pre>");
-        t.printStackTrace( out );
-        out.println("</pre>");
-        out.println("<b>Parameters to the plugin</b>");
-        out.println("<ul>");
+        div d = new div();
+        d.setClass("debug");
+        d.addElement("Plugin execution failed, stack trace follows:");
+        StringWriter out = new StringWriter();
+        t.printStackTrace( new PrintWriter(out) );
+        d.addElement( new pre( out.toString() ) );
+        d.addElement( new b( "Parameters to the plugin" ) );
+        
+        ul list = new ul();
         for( Iterator i = params.keySet().iterator(); i.hasNext(); )
         {
             String key = (String) i.next();
 
-            out.println("  <li>'"+key+"'='"+params.get(key)+"'</li>");
+            list.addElement(new li( key+"'='"+params.get(key) ) );
         }
-        out.println("</ul>");
-        out.println("</div>");
-        out.flush();
 
-        return sw.toString();
+        d.addElement( list );
+
+        return d.toString();
     }
 
     /**
@@ -310,7 +318,18 @@ public class PluginManager
             //
             try
             {
-                return plugin.execute( context, params );
+                if( m_initStage )
+                {
+                    if( plugin instanceof InitializablePlugin )
+                    {
+                        ((InitializablePlugin)plugin).initialize( context, params );
+                    }
+                    return "";
+                }
+                else
+                {
+                    return plugin.execute( context, params );
+                }
             }
             catch( PluginException e )
             {
