@@ -10,8 +10,7 @@ import com.ecyrd.jspwiki.providers.*;
 public class TestEngine2 extends WikiEngine
 {
     public TestEngine2( Properties props )
-        throws NoRequiredPropertyException,
-               ServletException
+        throws WikiException
     {
         super( props );
     }

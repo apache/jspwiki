@@ -10,8 +10,7 @@ import java.io.*;
 public class TestEngine extends WikiEngine
 {
     public TestEngine( Properties props )
-        throws NoRequiredPropertyException,
-               ServletException
+        throws WikiException
     {
         super( props );
     }
