@@ -30,7 +30,7 @@ public class PluginManagerTest extends TestCase
 
         engine = new TestEngine2(props);
         context = new WikiContext( engine, "testpage" );
-        manager = new PluginManager();
+        manager = new PluginManager( props );
     }
 
     public void tearDown()
@@ -56,6 +56,45 @@ public class PluginManagerTest extends TestCase
         assertEquals( "foobar",
                       res );
     }
+
+
+    public void testSimpleInsertNoPackage2()
+        throws Exception
+    {
+        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo" );
+        PluginManager m = new PluginManager( props );
+        String res = m.execute( context,
+                                "{INSERT SamplePlugin2 WHERE text=foobar}");
+
+        assertEquals( "foobar",
+                      res );
+    }
+
+    public void testSimpleInsertNoPackage3()
+        throws Exception
+    {
+        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo" );
+        PluginManager m = new PluginManager( props );
+        String res = m.execute( context,
+                                "{INSERT SamplePlugin3 WHERE text=foobar}");
+
+        assertEquals( "foobar",
+                      res );
+    }
+
+    /** Check that in all cases com.ecyrd.jspwiki.plugin is searched. */
+    public void testSimpleInsertNoPackage4()
+        throws Exception
+    {
+        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
+        PluginManager m = new PluginManager( props );
+        String res = m.execute( context,
+                                "{INSERT SamplePlugin WHERE text=foobar}");
+
+        assertEquals( "foobar",
+                      res );
+    }
+
 
     public void testSimpleInsert2()
         throws Exception
