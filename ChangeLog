@@ -1,3 +1,11 @@
+2002-12-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.6.
+
+        * Inspiration continues.  Now ReferenceManager also understands
+        about attachments, so they can now be cross-referenced, be on
+        unused or undefined pages, etc.
+
 2002-12-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.5.
