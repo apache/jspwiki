@@ -25,7 +25,7 @@ public class UserManager
     private boolean            m_storeIPAddress = true;
 
 
-    public UserManager( Properties props )
+    public UserManager( WikiEngine engine, Properties props )
     {
         m_storeIPAddress = TextUtil.getBooleanProperty( props,
                                                         PROP_STOREIPADDRESS, 

@@ -21,7 +21,7 @@ public class AuthorizationManager
     private WikiAuthorizer    m_authorizer;
     private AccessControlList m_defaultPermissions;
 
-    public AuthorizationManager( Properties properties )
+    public AuthorizationManager( WikiEngine engine, Properties properties )
     {
         AclEntryImpl ae = new AclEntryImpl();
 
