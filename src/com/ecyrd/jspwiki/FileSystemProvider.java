@@ -236,17 +236,22 @@ public class FileSystemProvider
 
             try
             {
-                // FIXME: UTF-8 fixes
-                BufferedReader in = new BufferedReader( new FileReader(wikipages[i] ) );
+                FileInputStream input = new FileInputStream( wikipages[i] );
+                String pagetext       = FileUtil.readContents( input, m_encoding );
+
                 int scores[] = new int[ query.length ];
-                
+
+                BufferedReader in = new BufferedReader( new StringReader(pagetext) );
+
                 while( (line = in.readLine()) != null )
                 {
                     line = line.toLowerCase();
 
                     for( int j = 0; j < query.length; j++ )
                     {
-                        if( line.indexOf( query[j].word ) != -1 )
+                        int index = -1;
+
+                        while( (index = line.indexOf( query[j].word, index+1 )) != -1 )
                         {
                             log.debug("   Match found for "+query[j].word );
 
