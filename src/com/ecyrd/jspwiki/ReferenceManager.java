@@ -56,58 +56,61 @@ import org.apache.log4j.*;
 */
 
 /**
-   Keeps track of wikipage references:
-   <UL>
-   <LI>What pages a given page refers to
-   <LI>What pages refer to a given page
-   </UL>
-
-   This is a quick'n'dirty approach without any finesse in storage and
-   searching algorithms; we trust java.util.*.
-
-   This class contains two HashMaps, m_refersTo and m_referredBy. The 
-   first is indexed by WikiPage names and contains a Collection of all
-   WikiPages the page refers to. (Multiple references are not counted,
-   naturally.) The second is indexed by WikiPage names and contains 
-   a HashSet of all pages that refer to the indexing page. (Notice - 
-   the keys of both HashMaps should be kept in sync.)
-
-   When a page is added or edited, its references are parsed, a Collection
-   is received, and we crudely replace anything previous with this new
-   Collection. We then check each referenced page name and make sure they
-   know they are referred to by the new page.
-
-   Based on this information, we can perform non-optimal searches for 
-   e.g. unreferenced pages, top ten lists, etc.
-
-   The owning class must take responsibility of filling in any pre-existing
-   information, probably by loading each and every WikiPage and calling this
-   class to update the references when created.
-
-   @author ebu@memecry.net
-*/
+ *  Keeps track of wikipage references:
+ *  <UL>
+ *  <LI>What pages a given page refers to
+ *  <LI>What pages refer to a given page
+ *  </UL>
+ *
+ *  This is a quick'n'dirty approach without any finesse in storage and
+ *  searching algorithms; we trust java.util.*.
+ *  <P>
+ *  This class contains two HashMaps, m_refersTo and m_referredBy. The 
+ *  first is indexed by WikiPage names and contains a Collection of all
+ *  WikiPages the page refers to. (Multiple references are not counted,
+ *  naturally.) The second is indexed by WikiPage names and contains 
+ *  a HashSet of all pages that refer to the indexing page. (Notice - 
+ *  the keys of both HashMaps should be kept in sync.)
+ *  <P>
+ *  When a page is added or edited, its references are parsed, a Collection
+ *  is received, and we crudely replace anything previous with this new
+ *  Collection. We then check each referenced page name and make sure they
+ *  know they are referred to by the new page.
+ *  <P>
+ *  Based on this information, we can perform non-optimal searches for 
+ *  e.g. unreferenced pages, top ten lists, etc.
+ *  <P>
+ *  The owning class must take responsibility of filling in any pre-existing
+ *  information, probably by loading each and every WikiPage and calling this
+ *  class to update the references when created.
+ *
+ *  @author ebu@memecry.net
+ *  @since 1.6.1
+ */
 public class ReferenceManager
 {
     /** Maps page wikiname to a Collection of pages it refers to. The Collection 
-        must contain Strings. The Collection may contain names of non-existing
-        pages. */
-    private HashMap m_refersTo;
+     *  must contain Strings. The Collection may contain names of non-existing
+     *  pages.
+     */
+    private HashMap        m_refersTo;
     /** Maps page wikiname to a HashSet of referring pages. The HashSet must
-        contain Strings. Non-existing pages (a reference exists, but not a file
-        for the page contents) may have an empty HashSet in m_referredBy. */
-    private HashMap m_referredBy;
+     *  contain Strings. Non-existing pages (a reference exists, but not a file
+     *  for the page contents) may have an empty HashSet in m_referredBy.
+     */
+    private HashMap        m_referredBy;
     /** The WikiEngine that owns this object. */
-    private WikiEngine m_engine;
+    private WikiEngine     m_engine;
 
     /**
-       Builds a new ReferenceManager with default (null) entries for
-       the WikiPages contained in the pages Collection. (This collection
-       must be given for subsequent updateReferences() calls to work.)
-       <P>
-       The collection should contain an entry for all currently existing WikiPages.
-
-       @param pages   a Collection of WikiPages 
-    */
+     *  Builds a new ReferenceManager with default (null) entries for
+     *  the WikiPages contained in the pages Collection. (This collection
+     *  must be given for subsequent updateReferences() calls to work.)
+     *  <P>
+     *  The collection should contain an entry for all currently existing WikiPages.
+     *
+     *  @param pages   a Collection of WikiPages 
+     */
     public ReferenceManager( WikiEngine engine, Collection pages )
     {
         m_refersTo = new HashMap();
@@ -119,14 +122,14 @@ public class ReferenceManager
 
     
     /**
-       Updates the referred pages of a new or edited WikiPage. If a refersTo
-       entry for this page already exists, it is removed and a new one is built
-       from scratch. Also calls updateReferredBy() for each referenced page.
-       <P>
-       This is the method to call when a new page has been created and we 
-       want to a) set up its references and b) notify the referred pages
-       of the references. Use this method during run-time.
-    */
+     *  Updates the referred pages of a new or edited WikiPage. If a refersTo
+     *  entry for this page already exists, it is removed and a new one is built
+     *  from scratch. Also calls updateReferredBy() for each referenced page.
+     *  <P>
+     *  This is the method to call when a new page has been created and we 
+     *  want to a) set up its references and b) notify the referred pages
+     *  of the references. Use this method during run-time.
+     */
     public synchronized void updateReferences( String page, Collection references )
     {
         // Create a new entry in m_refersTo.
@@ -190,16 +193,16 @@ public class ReferenceManager
 
 
     /**
-       When initially building a ReferenceManager from scratch, call this method
-       BEFORE calling updateReferences() with a full list of existing page names.
-       It builds the refersTo and referredBy key lists, thus enabling 
-       updateReferences() to function correctly.
-       <P>
-       This method should NEVER be called after initialization. It clears all mappings 
-       from the reference tables.
-       
-       @param pages   a Collection containing WikiPage objects.
-    */
+     *  When initially building a ReferenceManager from scratch, call this method
+     * BEFORE calling updateReferences() with a full list of existing page names.
+     * It builds the refersTo and referredBy key lists, thus enabling 
+     * updateReferences() to function correctly.
+     * <P>
+     * This method should NEVER be called after initialization. It clears all mappings 
+     * from the reference tables.
+     * 
+     * @param pages   a Collection containing WikiPage objects.
+     */
     private synchronized void buildKeyLists( Collection pages )
     {
         m_refersTo.clear();
@@ -226,12 +229,12 @@ public class ReferenceManager
 
 
     /**
-       Marks the page as referred to by the referrer. If the page does not
-       exist previously, nothing is done. (This means that some page, somewhere,
-       has a link to a page that does not exist.)
-       <P>
-       This method is NOT synchronized. It should only be referred to from
-       within a synchronized method, or it should be made synced if necessary.       
+     * Marks the page as referred to by the referrer. If the page does not
+     * exist previously, nothing is done. (This means that some page, somewhere,
+     * has a link to a page that does not exist.)
+     * <P>
+     * This method is NOT synchronized. It should only be referred to from
+     * within a synchronized method, or it should be made synced if necessary.       
      */
     private void updateReferredBy( String page, String referrer )
     {
@@ -254,9 +257,9 @@ public class ReferenceManager
 
 
     /** 
-        Finds all unreferenced pages. This requires a linear scan through
-        m_referredBy to locate keys with null or empty values.
-    */
+     *  Finds all unreferenced pages. This requires a linear scan through
+     *  m_referredBy to locate keys with null or empty values.
+     */
     public synchronized Collection findUnreferenced()
     {
         ArrayList unref = new ArrayList();
@@ -276,15 +279,15 @@ public class ReferenceManager
 
     
     /**
-       Finds all references to non-existant pages. This requires a linear
-       scan through m_refersTo values; each value must have a corresponding
-       key entry in the reference HashMaps, otherwise such a page has never
-       been created. 
-       <P>
-       Returns a Collection containing Strings of unreferenced page names.
-       Each non-existant page name is shown only once - we don't return information
-       on who referred to it.
-    */
+     * Finds all references to non-existant pages. This requires a linear
+     * scan through m_refersTo values; each value must have a corresponding
+     * key entry in the reference HashMaps, otherwise such a page has never
+     * been created. 
+     * <P>
+     * Returns a Collection containing Strings of unreferenced page names.
+     * Each non-existant page name is shown only once - we don't return information
+     * on who referred to it.
+     */
     public synchronized Collection findUncreated()
     {
         HashSet uncreated = new HashSet();
@@ -314,10 +317,10 @@ public class ReferenceManager
 
 
     /**
-       Find all pages that refer to this page. Returns null if the page
-       does not exist or is not referenced at all, otherwise returns a 
-       collection containint page names (String) that refer to this one.
-    */
+     * Find all pages that refer to this page. Returns null if the page
+     * does not exist or is not referenced at all, otherwise returns a 
+     * collection containint page names (String) that refer to this one.
+     */
     public synchronized Collection findReferrers( String pagename )
     {
         HashSet refs = (HashSet)m_referredBy.get( pagename );
@@ -330,10 +333,10 @@ public class ReferenceManager
 
 
     /**
-       Test method: dumps the contents of our link lists to stdout.
-       This method is NOT synchronized, and should be used in testing
-       with one user, one WikiEngine only.
-    */
+     * Test method: dumps the contents of our link lists to stdout.
+     * This method is NOT synchronized, and should be used in testing
+     * with one user, one WikiEngine only.
+     */
     public void dump()
     {
         try
