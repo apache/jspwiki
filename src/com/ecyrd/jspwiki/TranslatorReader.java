@@ -22,7 +22,7 @@ package com.ecyrd.jspwiki;
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
@@ -32,14 +32,10 @@ import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.acl.AccessControlList;
-import com.ecyrd.jspwiki.acl.AclImpl;
-import com.ecyrd.jspwiki.acl.AclEntryImpl;
-import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.modules.PageAuthorizer;
+import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.auth.UserManager;
-import java.security.acl.AclEntry;
-import java.security.acl.NotOwnerException;
-import java.security.Principal;
 
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
@@ -79,7 +75,7 @@ public class TranslatorReader extends Reader
 
     private StringReader   m_data = new StringReader("");
 
-    private static Category log = Category.getInstance( TranslatorReader.class );
+    private static Logger log = Logger.getLogger( TranslatorReader.class );
 
     //private boolean        m_iscode       = false;
     private boolean        m_isbold       = false;
@@ -731,14 +727,9 @@ public class TranslatorReader extends Reader
     private String handleAccessRule( String ruleLine )
     {
         if( !m_parseAccessRules ) return "";
+        AccessControlList acl;
         WikiPage          page = m_context.getPage();
-        AccessControlList acl  = page.getAcl();
         UserManager       mgr  = m_context.getEngine().getUserManager();
-
-        if( acl == null )
-        {            
-            acl = new AclImpl();            
-        }
 
         if( ruleLine.startsWith( "{" ) )
             ruleLine = ruleLine.substring( 1 );
@@ -746,58 +737,18 @@ public class TranslatorReader extends Reader
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
 
         log.debug("page="+page.getName()+", ACL = "+ruleLine);
-
+        
         try
         {
-            StringTokenizer fieldToks = new StringTokenizer( ruleLine );
-            String policy  = fieldToks.nextToken();
-            String chain   = fieldToks.nextToken();            
-
-            while( fieldToks.hasMoreTokens() )
-            {
-                String roleOrPerm = fieldToks.nextToken( "," ).trim();
-                boolean isNegative = true;
-
-                Principal principal = mgr.getPrincipal( roleOrPerm );
-
-                if( policy.equals("ALLOW") ) isNegative = false;
-
-                AclEntry oldEntry = acl.getEntry( principal, isNegative );
-
-                if( oldEntry != null )
-                {
-                    log.debug("Adding to old acl list: "+principal+", "+chain);
-                    oldEntry.addPermission( WikiPermission.newInstance( chain ) );
-                }
-                else
-                {
-                    log.debug("Adding new acl entry for "+chain);
-                    AclEntry entry = new AclEntryImpl();
-            
-                    entry.setPrincipal( principal );
-                    if( isNegative ) entry.setNegativePermissions();
-                    entry.addPermission( WikiPermission.newInstance( chain ) );
-                    
-                    acl.addEntry( principal, entry );
-                }
-            }
+            acl = PageAuthorizer.parseAcl( page, mgr, ruleLine );
 
             page.setAcl( acl );
 
             log.debug( acl.toString() );
         }
-        catch( NoSuchElementException nsee )
+        catch( WikiSecurityException wse )
         {
-            log.warn( "Invalid access rule: " + ruleLine + " - defaults will be used." );
-            return m_renderer.makeError("Invalid access rule: "+ruleLine);
-        }
-        catch( NotOwnerException noe )
-        {
-            throw new InternalWikiException("Someone has implemented access control on access control lists without telling me.");
-        }
-        catch( IllegalArgumentException iae )
-        {
-            return m_renderer.makeError("Invalid permission type: "+ruleLine);
+            return m_renderer.makeError( wse.getMessage() );
         }
 
         return "";
