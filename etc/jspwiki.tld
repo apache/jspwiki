@@ -49,12 +49,15 @@
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>pageformat</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
        <name>urlformat</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
        <name>monthurlformat</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>  
 
