@@ -1,28 +1,25 @@
 
-This is the second stable release of JSPWiki v2.  It contains a few
+This is the third stable release of JSPWiki v2.  It contains a few
 bugfixes over the last stable version:
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
-Major changes since the last stable (2.0.36) release are:
+Major changes since the last stable (2.0.39) release are:
 
-* Searching should now be a lot faster, thanks to Erik Bunn.
+* CalendarTag monthly navigation has been backported from 2.1 branch.
 
-* CheckLockTag was a bit inconsistent: if the page was locked by the
-  current user, it would of course always be "locked".  This means
-  that the value of "unlocked" was essentially useless for Edit pages.
-  I added a new value for "mode": "owned".
+* Fixed jspwiki.tld, which was causing problems to a bunch of people.
 
-* Added Image plugin from 2.1.x branch.
+* A bunch of bugfixes and enhancements to the RSS Generator.
+  * You can now see the diffs as well.
+  * Attachment URLs were wrong.
+  * RSS generator now separates cleanly between attachments and pages.
 
-* Bug fix: FileSystemProvider did not close file handles properly.
-  This could use up your available file handles pretty quickly until
-  the next garbage collection.
+* out.png is now transparent.
 
-* RecentChangesPlugin did not heed jspwiki.baseURL.  Oops.
+* CheckLockTag would sometimes create an NullPointerException.
 
-* Bug fix: If the user name was received from container, JSPWiki would
-  get confused if it contained spaces.
+* Wiki.jsp is a bit more stable against bad pagenames.
 
 
 UPGRADE NOTES
@@ -50,10 +47,12 @@ UPGRADE NOTES
   modifiable, and you never again have to resort to such drastic
   measures again... We hope.
 
-- If updating manually from 2.0.36:
+- If updating manually from 2.0.36-39:
 
   * Copy the new JSPWiki.jar into your WEB-INF/lib and restart
     your servlet container.
 
   * Copy the JSP pages in the JSPWiki distribution into your webapp
     directory.  You don't have to touch the templates.
+
+  * Copy the images/out.png to your images/out.png
