@@ -1,3 +1,11 @@
+2003-02-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.29.
+
+        * Fixed a couple of small problems: WikiContext.COMMENT was
+        missing, and a small change in EditTemplate.jsp allows Konqueror
+        3.1 to work correctly with sites using UTF-8.
+
 2003-02-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.28.
