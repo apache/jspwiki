@@ -1,5 +1,9 @@
 2002-03-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Edit.jsp text editor now knows how to adjust its own width
+        according to browser window width, if your browser knows CSS.
+        Thanks to Matthew Simoneau for the tip.
+
         * Included a new version of xmlrpc.jar: this version just has the
         default charset set to "UTF-8" instead of ISO-Latin-1.
 
