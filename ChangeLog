@@ -1,3 +1,10 @@
+2002-11-07  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
+
+        * Added plugin execution disabling, and disabled 
+        their execution during the initial reference manager scan.
+        This is mainly important in wiki's with lots of complex custom
+        plugins.
+        
 2002-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.32.
