@@ -39,8 +39,6 @@
 
    <!--
        OK, this then defines that our UTF-8 -capable server.
-
-       Don't touch this either, unless you know what you're doing.
      -->
 
    <servlet>
@@ -64,6 +62,11 @@
        URLs should correspond to which XML RPC servlet.
      -->
 
+   <!-- By default, this is disabled.  If you want to enabled it,
+        just uncomment the whole section. -->
+
+   <!--  REMOVE ME TO ENABLE XML-RPC
+
    <servlet-mapping>
        <servlet-name>XMLRPC</servlet-name>
        <url-pattern>/RPC2</url-pattern>
@@ -74,6 +77,7 @@
        <url-pattern>/RPCU</url-pattern>
    </servlet-mapping>
 
+   AND REMOVE ME TOO -->
 
 
    <!-- This means that we don't have to use redirection
