@@ -50,8 +50,27 @@ public class WeblogPlugin implements WikiPlugin
     private static Category     log = Category.getInstance(WeblogPlugin.class);
 
     public static final int     DEFAULT_DAYS = 7;
-    public static final String  DEFAULT_PAGEFORMAT = "%p-blogentry-";
-    
+    public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
+
+    public static final String  DEFAULT_DATEFORMAT = "ddMMyy";
+
+    public static String makeEntryPage( String pageName,
+                                        String date,
+                                        String entryNum )
+    {
+        return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date+"_"+entryNum;
+    }
+
+    public static String makeEntryPage( String pageName )
+    {
+        return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName);
+    }
+
+    public static String makeEntryPage( String pageName, String date )
+    {
+        return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
+    }
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -75,8 +94,8 @@ public class WeblogPlugin implements WikiPlugin
                                                 weblogName,
                                                 startTime.getTime(),
                                                 stopTime.getTime() );
-            Collections.sort( blogEntries, new PageTimeComparator() );
 
+            Collections.sort( blogEntries, new PageNameComparator() );
 
             SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
@@ -119,6 +138,7 @@ public class WeblogPlugin implements WikiPlugin
     /**
      *  Attempts to locate all pages that correspond to the 
      *  blog entry pattern.
+     *
      */
     public List findBlogEntries( PageManager mgr,
                                  String baseName, Date start, Date end )
@@ -127,7 +147,8 @@ public class WeblogPlugin implements WikiPlugin
         Collection everyone = mgr.getAllPages();
         ArrayList  result = new ArrayList();
 
-        baseName = TextUtil.replaceString( DEFAULT_PAGEFORMAT, "%p", baseName );
+        baseName = makeEntryPage( baseName );
+        SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
  
         for( Iterator i = everyone.iterator(); i.hasNext(); )
         {
@@ -139,14 +160,17 @@ public class WeblogPlugin implements WikiPlugin
             {
                 String entry = pageName.substring( baseName.length() );
 
-                int idx = entry.indexOf('-');
+                int idx = entry.indexOf('_');
 
                 if( idx == -1 )
                     continue;
 
                 String day = entry.substring( 0, idx );
 
-                SimpleDateFormat fmt = new SimpleDateFormat("ddMMyy");
+                //
+                //  Note that we're not interested in the actual modification
+                //  date, we use the page name for the creation date.
+                //
                 Date pageDay = fmt.parse( day, new ParsePosition(0) );
                 
                 if( pageDay != null )
@@ -161,5 +185,23 @@ public class WeblogPlugin implements WikiPlugin
         
         return result;
     }
-    
+
+    /**
+     *  Reverse comparison.
+     */
+    private class PageNameComparator implements Comparator
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            if( o1 == null || o2 == null ) 
+            { 
+                return 0; 
+            }
+            
+            WikiPage page1 = (WikiPage)o1;
+            WikiPage page2 = (WikiPage)o2;
+
+            return page2.getName().compareTo( page1.getName() );
+        }
+    }
 }
