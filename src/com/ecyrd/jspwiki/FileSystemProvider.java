@@ -204,10 +204,8 @@ public class FileSystemProvider
         {
             String wikiname = wikipages[i].getName();
             int cutpoint = wikiname.lastIndexOf( FILE_EXT );
-            WikiPage page = new WikiPage( unmangleName(wikiname.substring(0,cutpoint)) );
 
-            page.setLastModified( new Date(wikipages[i].lastModified()) );
-
+            WikiPage page = getPageInfo( unmangleName(wikiname.substring(0,cutpoint)) );
             set.add( page );
         }
 
