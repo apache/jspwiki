@@ -31,30 +31,19 @@ import com.ecyrd.jspwiki.WikiPage;
  *  <P><B>Attributes<B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <LI>mode - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
  *  </UL>
  *
  *  @author Janne Jalkanen
  *  @since 2.0
  */
 public class LinkToTag
-    extends WikiTagBase
+    extends WikiLinkTag
 {
-    protected String m_pageName;
-
-    public void setPage( String page )
-    {
-        m_pageName = page;
-    }
-
-    public String getPage()
-    {
-        return m_pageName;
-    }
-
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine   = m_wikiContext.getEngine();
         String     pageName = m_pageName;
 
         if( m_pageName == null )
@@ -74,7 +63,15 @@ public class LinkToTag
             JspWriter out = pageContext.getOut();
             String encodedlink = engine.encodeName( pageName );
 
-            out.print("<A CLASS=\"wikipage\" HREF=\""+engine.getBaseURL()+"Wiki.jsp?page="+encodedlink+"\">");
+            switch( m_format )
+            {
+              case ANCHOR:
+                out.print("<A CLASS=\"wikipage\" HREF=\""+engine.getBaseURL()+"Wiki.jsp?page="+encodedlink+"\">");
+                break;
+              case URL:
+                out.print( engine.getBaseURL()+"Wiki.jsp?page="+encodedlink );
+                break;
+            }
 
             return EVAL_BODY_INCLUDE;
         }
@@ -82,17 +79,4 @@ public class LinkToTag
         return SKIP_BODY;
     }
 
-    public int doEndTag()
-    {
-        try
-        {
-            pageContext.getOut().print("</A>");
-        }
-        catch( IOException e )
-        {
-            // FIXME: Should do something?
-        }
-
-        return EVAL_PAGE;
-    }
 }

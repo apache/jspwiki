@@ -36,24 +36,12 @@ import com.ecyrd.jspwiki.WikiPage;
  *  @since 2.0
  */
 public class EditLinkTag
-    extends WikiTagBase
+    extends WikiLinkTag
 {
-    protected String m_pageName;
-
-    public void setPage( String page )
-    {
-        m_pageName = page;
-    }
-
-    public String getPage()
-    {
-        return m_pageName;
-    }
-
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine   = m_wikiContext.getEngine();
         String     pageName = m_pageName;
 
         if( m_pageName == null )
@@ -71,22 +59,17 @@ public class EditLinkTag
         JspWriter out = pageContext.getOut();
         String encodedlink = engine.encodeName( pageName );
 
-        out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">");
+        switch( m_format )
+        {
+          case ANCHOR:
+            out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">");
+            break;
+
+          case URL:
+            out.print( engine.getBaseURL()+"Edit.jsp?page="+encodedlink );
+            break;
+        }
 
         return EVAL_BODY_INCLUDE;
-    }
-
-    public int doEndTag()
-    {
-        try
-        {
-            pageContext.getOut().print("</A>");
-        }
-        catch( IOException e )
-        {
-            // FIXME: Should do something?
-        }
-
-        return EVAL_PAGE;
     }
 }
