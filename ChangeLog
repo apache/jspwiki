@@ -1,3 +1,11 @@
+2003-06-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.35.
+
+        * If CamelCase links have been set on, then straight URLs are now
+        linked, too.  This makes JSPWiki behaviour similar to all other
+        WikiEngines that support traditional linking.
+
 2003-06-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.34.
