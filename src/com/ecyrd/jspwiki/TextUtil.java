@@ -20,10 +20,20 @@
 package com.ecyrd.jspwiki;
 
 import java.io.UnsupportedEncodingException;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.IOException;
+
 
 public class TextUtil
 {
     static String HEX_DIGITS =  "0123456789ABCDEF";
+    static final char DIFF_ADDED_SYMBOL    = '+';
+    static final char DIFF_REMOVED_SYMBOL  = '-';
+    static final String CSS_DIFF_ADDED     = "<div class=\"diffadd\">";
+    static final String CSS_DIFF_REMOVED   = "<div class=\"diffrem\">";
+    static final String CSS_DIFF_UNCHANGED = "<div class=\"diff\">";
+    static final String CSS_DIFF_CLOSE     = "</div>";
 
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
@@ -247,4 +257,45 @@ public class TextUtil
             
         return val;
     }
+
+
+    /**
+     * Goes through output provided by a diff command and inserts
+     * HTML tags to make the result more legible.
+     * Currently colors lines starting with a + green,
+     * those starting with - reddish (hm, got to think of
+     * color blindness here...).
+     */
+    public static String colorizeDiff( String diffText )
+        throws IOException
+    {
+        String line = null;
+        String start = null;
+        String stop = null;
+
+        BufferedReader in = new BufferedReader( new StringReader( diffText ) );
+        StringBuffer out = new StringBuffer();
+        while( ( line = in.readLine() ) != null )
+        {
+            stop  = CSS_DIFF_CLOSE;
+            switch( line.charAt( 0 ) )
+            {
+              case DIFF_ADDED_SYMBOL:
+                start = CSS_DIFF_ADDED;
+                break;
+              case DIFF_REMOVED_SYMBOL:
+                start = CSS_DIFF_REMOVED;
+                break;
+              default:
+                start = CSS_DIFF_UNCHANGED;
+            }
+            
+            out.append( start );
+            out.append( line.trim() );
+            out.append( stop + "\n" );
+
+        }
+        return( out.toString() );
+    }
+
 }
