@@ -228,7 +228,11 @@ public class PluginManager
         int             type;
 
         String param = null, value = null;
-                
+
+        tok.eolIsSignificant( true );
+
+        boolean isArgumentLine = true; // First line always is.
+
         while( (type = tok.nextToken() ) != StreamTokenizer.TT_EOF )
         {
             String s;
@@ -238,8 +242,16 @@ public class PluginManager
               case StreamTokenizer.TT_WORD:
                 s = tok.sval;
                 break;
+              case StreamTokenizer.TT_EOL:
+                isArgumentLine = false; // Let's assume it is.
+                s = null;
+                break;
               case StreamTokenizer.TT_NUMBER:
                 s = Integer.toString( new Double(tok.nval).intValue() );
+                break;
+              case '=':
+                isArgumentLine = true; // Yes, we found a '=' somewhere.
+                s = null;
                 break;
               case '\'':
                 s = tok.sval;
