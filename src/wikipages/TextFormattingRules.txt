@@ -29,15 +29,20 @@ __text__ = prints 'text' in bold.
 The link can also be a direct URL starting with http:, ftp:, mailto:,
 https:, or news:, in which case the link points to an external
 entity. For example, to point at the java.sun.com home page, use
-[[http://java.sun.com], which becomes [http://java.sun.com/] or [[Java
-home page|http://java.sun.com], which becomes [Java home
-page|http://java.sun.com].
+[[http://java.sun.com], which becomes [http://java.sun.com/] or [[Java home page|http://java.sun.com], which becomes [Java home page|http://java.sun.com].
 
 To add a new page you just create a link to it from somewhere
 else. After all, there isn't much point in having a page if you can't
 access it! You'll then see a small question mark after the page name
 when you return to that page. Then click on it and you have created a
 new page!
+
+!InterWiki links
+
+You can also do links between different Wikis without knowing the URL.  Just use a link in the form [[Wiki:WikiPage] and JSPWiki will create a link for you.  For example, this link points to the [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Check the [SystemInfo] page for more information on which Wiki links are available.
+
+If an InterWiki link is not supported, you'll get a notification of it on the page when
+you save your page.
 
 !Bulleted lists
 
@@ -101,8 +106,7 @@ page.
 !Deleting pages
 
 This is not possible. You can, of course, remove all the links to that
-page, which makes it inaccesible. Or you can [email
-me|mailto:jalkanen+jspwiki@regex.fi], and I'll remove the page.
+page, which makes it inaccesible. Or you can [email me|mailto:jalkanen+jspwiki@regex.fi], and I'll remove the page.
 
 !Adding new pages
 
