@@ -180,7 +180,7 @@ div.commentbox {
    margin-left: 4px;
 }
 
-.commentbox ul, ol {
+.commentbox ul, .commentbox ol {
    padding-left: 1em;
    margin-left: 4px;
 }
