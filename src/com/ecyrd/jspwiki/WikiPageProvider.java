@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -71,9 +71,24 @@ public interface WikiPageProvider
     /**
      *  Returns all pages.  Each element in the returned
      *  Collection should be a WikiPage.
+     *  @deprecated
      */
 
     public Collection getAllPages();
+
+    /**
+     *  Gets a list of recent changes.
+     *  @since 1.6.4
+     */
+
+    public Collection getAllChangedSince( Date date );
+
+    /**
+     *  Gets the number of pages.
+     *  @since 1.6.4
+     */
+
+    public int getPageCount();
 
     /**
      *  Returns version history.  Each element should be
@@ -87,6 +102,14 @@ public interface WikiPageProvider
      */
 
     public String getPageText( String page, int version );
+
+    /**
+     *  Return a valid HTML string for information.  May
+     *  be anything.
+     *  @since 1.6.4
+     */
+
+    public String getProviderInfo();
 }
 
 
