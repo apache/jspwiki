@@ -128,7 +128,7 @@ __A word of warning:__ If you use the Back button of your browser to go into the
 
 !Deleting pages
 
-This is not possible. You can, of course, remove all the links to that page, which makes it inaccesible. Or you can [email me|mailto:jalkanen+jspwiki@regex.fi], and I'll remove the page.
+This is not possible. You can, of course, remove all the links to that page, which makes it inaccesible. Or you can email the administrator, and I'll remove the page.
 
 !Adding new pages
 
