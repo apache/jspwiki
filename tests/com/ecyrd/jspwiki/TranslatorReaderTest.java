@@ -724,7 +724,34 @@ public class TranslatorReaderTest extends TestCase
                       "</TABLE><P>\n",
                       translate(src) );
     }
-    
+
+    public void testDescription()
+        throws Exception
+    {
+        String src=";:Foo";
+
+        assertEquals( "<DL>\n<DT></DT><DD>Foo</DD>\n</DL>\n",
+                      translate(src) );
+    }
+
+    public void testDescription2()
+        throws Exception
+    {
+        String src=";Bar:Foo";
+
+        assertEquals( "<DL>\n<DT>Bar</DT><DD>Foo</DD>\n</DL>\n",
+                      translate(src) );
+    }
+
+    public void testDescription3()
+        throws Exception
+    {
+        String src=";:";
+
+        assertEquals( "<DL>\n<DT><STRONG></STRONG></DT><DD></DD>\n</DL>\n",
+                      translate(src) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( TranslatorReaderTest.class );
