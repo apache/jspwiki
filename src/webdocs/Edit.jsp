@@ -36,7 +36,7 @@
 
     if( action != null && action.equals("save") )
     {
-        log.info("Saving page "+pagereq);
+        log.info("Saving page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
