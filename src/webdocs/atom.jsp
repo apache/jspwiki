@@ -47,14 +47,8 @@
     Properties properties = wiki.getWikiProperties();
     String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
     String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
-%>
 
-<feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:lang="<%=wiki.getContentEncoding()%>">
-  <title mode="escaped" type="text/html"><%=wiki.getApplicationName()%></title>
-  <%--<tagline>FIXME: We support no subtitles here</tagline> --%>
 
-  <link rel="alternate" href="<%=wiki.getBaseURL()%>" title="<%=wiki.getApplicationName()%>" type="text/html"/>
-<%
     //
     //  Now, list items.
     //
@@ -67,6 +61,36 @@
 
     Collections.sort( changed, new PageTimeComparator() );
 
+    //
+    //  Check if nothing has changed, so we can just return a 304
+    //
+    boolean hasChanged = false;
+    Date    latest     = new Date(0);
+
+    for( Iterator i = changed.iterator(); i.hasNext(); )
+    {
+        WikiPage p = (WikiPage) i.next();
+
+        if( !HttpUtil.checkFor304( request, p ) ) hasChanged = true;
+        if( p.getLastModified().after( latest ) ) latest = p.getLastModified();
+    }
+
+    if( !hasChanged )
+    {
+        response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+        return;
+    }
+
+    response.addDateHeader("Last-Modified",latest.getTime());
+
+%>
+
+<feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:lang="<%=wiki.getContentEncoding()%>">
+  <title mode="escaped" type="text/html"><%=wiki.getApplicationName()%></title>
+  <%--<tagline>FIXME: We support no subtitles here</tagline> --%>
+
+  <link rel="alternate" href="<%=wiki.getBaseURL()%>" title="<%=wiki.getApplicationName()%>" type="text/html"/>
+<%
     Date    blogmodified = new Date();
     String  blogauthor   = "";
 
@@ -92,7 +116,7 @@
 
             String encodedName = wiki.encodeName(p.getName());
 
-            String url = wiki.getAbsoluteViewURL(p.getName());
+            String url = wiki.getAbsoluteURL(WikiContext.VIEW,p.getName());
 
             out.println(" <entry>");
 
@@ -199,7 +223,7 @@
             //  This may be useful later on, once I figure out which <link>-tag to use.
             if( wiki.pageExists(author) )
             {
-                out.println("<homepage>"+wiki.getAbsoluteViewURL(author)+"</homepage>");
+                out.println("<homepage>"+wiki.getAbsoluteURL(WikiContext.VIEW,author)+"</homepage>");
             }
             */
             out.println("  </author>\n");
