@@ -52,6 +52,10 @@
          <wiki:Include page="DiffContent.jsp" />
       </wiki:CheckRequestContext>
 
+      <wiki:CheckRequestContext context="info">
+         <wiki:Include page="InfoContent.jsp" />
+      </wiki:CheckRequestContext>
+
     </TD>
   </TR>
 
