@@ -35,6 +35,12 @@ Major changes since the last stable (1.8.2) release are:
    * WeblogEntryPlugin
 
 
+MAJOR PIECES MISSING
+====================
+
+The JSP tags are very badly documented.
+
+
 UPGRADE NOTES
 =============
 
