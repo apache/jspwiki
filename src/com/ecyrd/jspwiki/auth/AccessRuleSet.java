@@ -260,7 +260,7 @@ public class AccessRuleSet
             String role = (String)keywords.get(i);
             if( "ALLOW".equals( policy ) )
             {
-                if( Authorizer.ROLE_ALL.equals( role ) )
+                if( Authorizer.AUTH_ROLE_ALL.equals( role ) )
                 {
                     chain.clear();
                     chain.add( new AlwaysAllowRule() );
@@ -270,7 +270,7 @@ public class AccessRuleSet
             }
             else if( "DENY".equals( policy ) )
             {
-                if( Authorizer.ROLE_ALL.equals( role ) )
+                if( Authorizer.AUTH_ROLE_ALL.equals( role ) )
                 {
                     chain.clear();
                     chain.add( new AlwaysDenyRule() );
@@ -280,7 +280,7 @@ public class AccessRuleSet
             }
             else if( "REQUIRE".equals( policy ) )
             {
-                if( Authorizer.ROLE_ALL.equals( role ) == false )
+                if( Authorizer.AUTH_ROLE_ALL.equals( role ) == false )
                     chain.add( new RequirePermissionRule( (String)keywords.get(i) ) );
             }
         }
@@ -303,7 +303,7 @@ public class AccessRuleSet
     {
         if( wup == null )
             return( false );
-        if( wup.hasRole( Authorizer.ROLE_ADMIN ) )
+        if( wup.hasRole( Authorizer.AUTH_ROLE_ADMIN ) )
             return( true );
 
         log.debug( "Checking for " + chainName + " access" );
