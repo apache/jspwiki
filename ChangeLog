@@ -1,3 +1,9 @@
+2003-09-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.65.
+
+        * WeblogPlugin now beautifies the entry author name.
+
 2003-09-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.64.
