@@ -21,9 +21,11 @@ package com.ecyrd.jspwiki;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Collection;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Manages the WikiPages.
@@ -106,5 +108,63 @@ public class PageManager
     public WikiPageProvider getProvider()
     {
         return m_provider;
+    }
+
+    public Collection getAllPages()
+        throws ProviderException
+    {
+        return m_provider.getAllPages();
+    }
+
+    public String getPageText( String pageName, int version )
+        throws ProviderException
+    {
+        return m_provider.getPageText( pageName, version );
+    }
+
+    public void putPageText( WikiPage page, String content )
+        throws ProviderException
+    {
+        m_provider.putPageText( page, content );
+    }
+
+    public Collection findPages( QueryItem[] query )
+    {
+        return m_provider.findPages( query );
+    }
+
+    public WikiPage getPageInfo( String pageName, int version )
+        throws ProviderException
+    {
+        return m_provider.getPageInfo( pageName, version );
+    }
+
+    public Collection getVersionHistory( String pageName )
+        throws ProviderException
+    {
+        return m_provider.getVersionHistory( pageName );
+    }
+
+    public String getProviderDescription()
+    {
+        return m_provider.getProviderInfo();
+    }
+
+    public int getTotalPageCount()
+    {
+        try
+        {
+            return m_provider.getAllPages().size();
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to count pages: ",e );
+            return -1;
+        }
+    }
+
+    public boolean pageExists( String pageName )
+    {
+        return m_provider.pageExists( pageName );
     }
 }
