@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 
@@ -61,6 +62,7 @@ public class CalendarTag
     private String m_month = null;
     private SimpleDateFormat m_pageFormat = null;
     private SimpleDateFormat m_urlFormat = null;
+    private SimpleDateFormat m_monthUrlFormat = null;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
     /*
@@ -85,6 +87,26 @@ public class CalendarTag
         m_urlFormat = new SimpleDateFormat(format);
     }
 
+    public void setMonthurlformat( String format )
+    {
+        m_monthUrlFormat = new SimpleDateFormat( format );
+    }
+
+    private String format( String txt )
+    {
+        WikiPage p = m_wikiContext.getPage();
+
+        if( p != null )
+        {
+            return TextUtil.replaceString( txt, "%p", p.getName() );
+        }
+
+        return txt;
+    }
+
+    /**
+     *  Returns a link to the given day.
+     */
     private String getDayLink( Calendar day )
     {
         WikiEngine engine = m_wikiContext.getEngine();
@@ -124,10 +146,36 @@ public class CalendarTag
             result = "<td class=\"days\">"+day.get(Calendar.DATE)+"</td>";
         }
 
-        return result;
+        return format(result);
     }
 
-    private String getMonthLink( Calendar day, String txt, String queryString )
+    private String getMonthLink( Calendar day )
+    {
+        SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM yyyy" );
+        String result;
+
+        if( m_monthUrlFormat == null )
+        {
+            result = monthfmt.format( day.getTime() );
+        }
+        else
+        {
+            Calendar cal = (Calendar)day.clone();
+            int firstDay = cal.getActualMinimum( Calendar.DATE );
+            int lastDay  = cal.getActualMaximum( Calendar.DATE );
+
+            cal.set( Calendar.DATE, lastDay );
+            String url = m_monthUrlFormat.format( cal.getTime() );
+
+            url = TextUtil.replaceString( url, "%d", Integer.toString( lastDay-firstDay+1 ) );
+
+            result = "<a href=\""+url+"\">"+monthfmt.format(cal.getTime())+"</a>";
+        }
+
+        return format(result);
+        
+    }
+    private String getMonthNaviLink( Calendar day, String txt, String queryString )
     {
         String result = "";
         Calendar nextMonth = Calendar.getInstance();
@@ -179,7 +227,7 @@ public class CalendarTag
             result="<td> </td>";
         }    
 
-        return result;
+        return format(result);
     }
 
     public final int doWikiStartTag()
@@ -187,7 +235,6 @@ public class CalendarTag
                ProviderException
     {
         WikiEngine       engine   = m_wikiContext.getEngine();
-        SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM yyyy" );
         JspWriter        out      = pageContext.getOut();
         Calendar         cal      = Calendar.getInstance();
         Calendar         prevCal  = Calendar.getInstance();
@@ -231,11 +278,11 @@ public class CalendarTag
         HttpServletRequest httpServletRequest = m_wikiContext.getHttpRequest();
         String queryString = engine.safeGetQueryString( httpServletRequest );
         out.write( "<tr>"+
-                   getMonthLink(prevCal,"&lt;&lt;", queryString)+
+                   getMonthNaviLink(prevCal,"&lt;&lt;", queryString)+
                    "<td colspan=5 class=\"month\">"+
-                   monthfmt.format( cal.getTime() )+
+                   getMonthLink( cal )+
                    "</td>"+
-                   getMonthLink(nextCal,"&gt;&gt;", queryString)+ 
+                   getMonthNaviLink(nextCal,"&gt;&gt;", queryString)+ 
                    "</tr>\n"
                  );
 
