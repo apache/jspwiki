@@ -24,7 +24,7 @@ import java.io.*;
 import org.apache.log4j.Category;
 
 /**
- *  Generic utilities.
+ *  Generic utilities related to file and stream handling.
  */
 public class FileUtil
 {
@@ -41,21 +41,26 @@ public class FileUtil
     public static File newTmpFile( String content, String encoding )
         throws IOException
     {
-        File f = File.createTempFile( "jspwiki", null );
+        Writer out = null;
+        Reader in  = null;
+        File   f   = null;
 
-        StringReader in = new StringReader( content );
-
-        Writer out = new OutputStreamWriter( new FileOutputStream( f ),
-                                             encoding );
-
-        int c;
-
-        while( (c = in.read()) != -1 )
+        try
         {
-            out.write( c );
-        }
+            f = File.createTempFile( "jspwiki", null );
+            
+            in = new StringReader( content );
 
-        out.close();
+            out = new OutputStreamWriter( new FileOutputStream( f ),
+                                          encoding );
+
+            copyContents( in, out );
+        }
+        finally
+        {
+            if( in  != null ) in.close();
+            if( out != null ) out.close();
+        }
 
         return f;
     }
@@ -97,6 +102,25 @@ public class FileUtil
         return result.toString();
     }
 
+
+    /**
+     *  Just copies all characters from <I>in</I> to <I>out</I>.
+     *
+     *  @since 1.5.8
+     */
+    // FIXME: Could probably be more optimized
+    public static void copyContents( Reader in, Writer out )
+        throws IOException
+    {
+        int c;
+        
+        while( (c = in.read()) != -1  )
+        {
+            out.write( c );
+        }
+    }
+
+
     /**
      *  Is smart and falls back to ISO-8859-1 if you get exceptions.
      */
@@ -127,12 +151,7 @@ public class FileUtil
                                                             encoding ) );
             out = new StringWriter();
 
-            int c;
-        
-            while( (c = in.read()) != -1  )
-            {
-                out.write( c );
-            }
+            copyContents( in, out );
 
             return out.toString();
         }
@@ -168,4 +187,33 @@ public class FileUtil
             catch( Exception e ) {} // FIXME: Log errors.
         }
     }
+
+    /**
+     *  Returns the full contents of the Reader as a String.
+     *
+     *  @since 1.5.8
+     */
+    public static String readContents( Reader in )
+        throws IOException
+    {
+        Writer out = null;
+
+        try
+        {
+            out = new StringWriter();
+
+            copyContents( in, out );
+
+            return out.toString();
+        }
+        finally
+        {
+            try
+            {
+                if( out != null ) out.close();
+            }
+            catch( Exception e ) {} // FIXME: Log errors.
+        }
+    }
+
 }
