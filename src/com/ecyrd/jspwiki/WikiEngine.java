@@ -599,27 +599,7 @@ public class WikiEngine
     {
         if( m_beautifyTitle )
         {
-            StringBuffer result = new StringBuffer();
-
-            char prev  = ' ';
-            char prev2 = ' ';
-
-            for( int i = 0; i < title.length(); i++ )
-            {
-                char ch = title.charAt(i);
-
-                if( (Character.isUpperCase( ch ) || Character.isDigit( ch )) && 
-                    (Character.isLowerCase( prev ) ||
-                     (Character.isUpperCase(prev) && Character.isLowerCase(prev2)) ) )
-                {
-                    result.append(' ');
-                }
-
-                result.append( ch );
-                prev2 = prev;
-                prev  = ch;
-            }
-            return result.toString();
+            return TextUtil.beautifyString( title );
         }
 
         return title;
