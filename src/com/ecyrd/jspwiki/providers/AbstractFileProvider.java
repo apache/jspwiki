@@ -87,8 +87,8 @@ public abstract class AbstractFileProvider
             throw new IOException("Page directory is not a directory: "+m_pageDirectory);
         }
 
-        m_encoding      = properties.getProperty( WikiEngine.PROP_ENCODING, 
-                                                  DEFAULT_ENCODING );
+        m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, 
+                                             DEFAULT_ENCODING );
 
         log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
     }
