@@ -85,6 +85,7 @@
   <tag>
     <name>HistoryIterator</name>
     <tagclass>com.ecyrd.jspwiki.tags.HistoryIteratorTag</tagclass>
+    <teiclass>com.ecyrd.jspwiki.tags.HistoryIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
