@@ -34,8 +34,23 @@ package com.ecyrd.jspwiki.providers;
 public class RepositoryModifiedException
     extends ProviderException
 {
-    public RepositoryModifiedException( String msg )
+    protected String m_page;
+    
+    /**
+     * Constructs the exception.
+     * 
+     * @param msg
+     * @param pageName  The name of the page which was modified
+     */
+    public RepositoryModifiedException( String msg, String pageName )
     {
         super( msg );
+        
+        m_page = pageName;
+    }
+    
+    public String getPageName()
+    {
+        return m_page;
     }
 }
