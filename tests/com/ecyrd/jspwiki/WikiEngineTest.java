@@ -137,6 +137,7 @@ public class WikiEngineTest extends TestCase
 
     /**
      *  Cgeck that " is not changed.
+     */
     public void testPutPageEntities2()
     {
         String text = "Foobar. \"\r\n";
