@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="java.util.Calendar,java.util.Date" %>
 
 <%! 
     public void jspInit()
@@ -25,6 +26,28 @@
     if( action != null && action.equals("save") )
     {
         log.info("Saving page "+pagereq);
+
+        //  FIXME: I am not entirely sure if the JSP page is the
+        //  best place to check for concurrent changes.  It certainly
+        //  is the best place to show errors, though.
+       
+        long pagedate   = Long.parseLong(request.getParameter("edittime"));
+        Date lastchange = wiki.pageLastChanged( pagereq );
+
+        if( lastchange.getTime() != pagedate )
+        {
+            //
+            // Someone changed the page while we were editing it!
+            //
+
+            // FIXME: This is put into session, but it is probably
+            //        a better idea if it's stored in request, but since
+            //        the request can be long, we need to POST it.
+
+            getSession().putParameter("usertext",request.getParameter("text"));
+
+            response.sendRedirect("PageModified.jsp?page="+pagereq);
+        }
 
         wiki.saveText( pagereq, request.getParameter("text") );
 
@@ -60,6 +83,7 @@
 
       <INPUT type="hidden" name="page" value="<%=pagereq%>">
       <INPUT type="hidden" name="action" value="save">
+      <INPUT type="hidden" name="edittime" value="<%=Calendar.getInstance().getTime().getTime()%>">
 
       <TEXTAREA name="text" rows="25" cols="80"><%=wiki.getText(pagereq)%></TEXTAREA>
 
