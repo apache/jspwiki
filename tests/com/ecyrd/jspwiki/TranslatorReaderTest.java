@@ -337,7 +337,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n**\n\nB";
 
-        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n<P></UL>\n</UL>\n\nB\n", 
+        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n</UL>\n</UL>\n<P>\nB\n", 
                       translate(src) );
     }
 
@@ -346,7 +346,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n##\n\nB";
 
-        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n<P></OL>\n</OL>\n\nB\n", 
+        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n</OL>\n</OL>\n<P>\nB\n", 
                       translate(src) );
     }
 
@@ -356,6 +356,23 @@ public class TranslatorReaderTest extends TestCase
         String src="[{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WHERE text=test}]";
 
         assertEquals( "test\n", translate(src) );
+    }
+
+    public void testTable1()
+        throws Exception
+    {
+        String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
+
+        assertEquals( "<TABLE CLASS=\"wikitable\">\n"+
+                      "<THEAD>\n"+
+                      "<TR><TD> heading <TD> heading2 </TR>\n"+
+                      "</THEAD>\n"+
+                      "<TBODY>\n"+
+                      "<TR><TD> Cell 1 <TD> Cell 2 </TR>\n"+
+                      "<TR><TD> Cell 3 <TD> Cell 4</TR>\n"+
+                      "</TBODY>\n"+
+                      "</TABLE><P>\n",
+                      translate(src) );
     }
     
     public static Test suite()
