@@ -222,11 +222,13 @@ public class ReferenceManager
                 }
             }
 
+            serializeToDisk();
         }
 
         log.info( "Cross reference scan done (" +
                   (System.currentTimeMillis()-start) +
                   " ms)" );
+
     }
 
     /**
