@@ -144,8 +144,8 @@ public class TranslatorReader extends Reader
     private boolean isExternalLink( String link )
     {
         return link.startsWith("http:") || link.startsWith("ftp:") ||
-        link.startsWith("https:") || link.startsWith("mailto:") ||
-        link.startsWith("news:");
+               link.startsWith("https:") || link.startsWith("mailto:") ||
+               link.startsWith("news:");
     }
 
     private String setHyperLinks( String line )
@@ -182,9 +182,34 @@ public class TranslatorReader extends Reader
                     reallink = link.trim();
                 }
 
+                int interwikipoint = -1;
+
                 if( isExternalLink( reallink ) )
                 {
                     line = replaceString( line, start, end+1, "<A HREF=\""+reallink+"\">"+link+"</A>" );
+                }
+                else if( (interwikipoint = reallink.indexOf(":")) != -1 )
+                {
+                    // It's an interwiki link
+
+                    System.out.println("Interwiki: "+reallink);
+
+                    String extWiki = reallink.substring( 0, interwikipoint );
+                    String wikiPage = cleanLink(reallink.substring( interwikipoint+1 ));
+
+                    String urlReference = m_engine.getInterWikiURL( extWiki );
+
+                    if( urlReference != null )
+                    {
+                        urlReference = replaceString( urlReference, "%s", wikiPage );
+                        line = replaceString( line, start, end+1, 
+                                              "<A HREF=\""+urlReference+"\">"+link+"</A>" );
+                    }
+                    else
+                    {
+                        line = replaceString( line, start, end+1, 
+                                              link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
+                    }
                 }
                 else
                 {
