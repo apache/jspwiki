@@ -168,17 +168,17 @@ public class Denounce implements WikiPlugin
 
     private boolean matchHeaders( HttpServletRequest request )
     {
-        boolean result = false;
-
         //
         //  User Agent
         //
 
         String userAgent = request.getHeader("User-Agent");
 
-        log.debug("Matching user agent "+userAgent+" to list of known patterns.");
-
-        result |= matchPattern( c_agentPatterns, userAgent );
+        if( matchPattern( c_agentPatterns, userAgent ) )
+        {
+            log.debug("Matched user agent "+userAgent+" for denounce.");
+            return true;
+        }
 
         //
         //  Referrer header
@@ -186,9 +186,11 @@ public class Denounce implements WikiPlugin
 
         String refererPath = request.getHeader("Referer");
 
-        log.debug("Matching referer "+refererPath+" to list of known patterns.");
-
-        result |= matchPattern( c_refererPatterns, refererPath );
+        if( matchPattern( c_refererPatterns, refererPath ) )
+        {
+            log.debug("Matched referer "+refererPath+" for denounce.");
+            return true;
+        }
 
         //
         //  Host
@@ -196,10 +198,12 @@ public class Denounce implements WikiPlugin
 
         String host = request.getRemoteHost();
 
-        log.debug("Matching host "+host+" to list of known patterns.");
+        if( matchPattern( c_hostPatterns, host ) )
+        {
+            log.debug("Matched host "+host+" for denounce.");
+            return true;
+        }
 
-        result |= matchPattern( c_hostPatterns, host );
-
-        return result;
+        return false;
     }
 }
