@@ -169,7 +169,7 @@ public class BugReportHandler
                                               String title,
                                               String baseName )
     {
-        String basicPageName = "Bug"+((baseName != null)?baseName:"")+TranslatorReader.cleanLink(title);
+        String basicPageName = ((baseName != null)?baseName:"Bug")+TranslatorReader.cleanLink(title);
 
         WikiEngine engine = context.getEngine();
         
