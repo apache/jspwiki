@@ -1,3 +1,10 @@
+2005-01-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.137
+
+        * Added parameters "submit", "preview" and "cancel" to EditorTag
+        (so you can localize it).
+
 2005-01-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added styles for the TableOfContents plugin in the default
