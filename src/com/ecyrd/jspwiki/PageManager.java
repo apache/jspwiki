@@ -34,6 +34,8 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 
+import com.ecyrd.jspwiki.util.ClassUtil;
+
 /**
  *  Manages the WikiPages.  This class functions as an unified interface towards
  *  the page providers.  It handles initialization and management of the providers,
@@ -94,8 +96,9 @@ public class PageManager
 
         try
         {
-            Class providerclass = WikiEngine.findWikiClass( classname, 
-                                                            "com.ecyrd.jspwiki.providers" );
+            Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
+                                                       classname );
+
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
             log.debug("Initializing page provider class "+m_provider);
