@@ -61,7 +61,6 @@ public class WikiEngine
      *  WikiEngine will figure out where to look for the property file.
      */
     public WikiEngine( ServletContext context )
-        throws ServletException
     {
         String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
 
@@ -76,8 +75,6 @@ public class WikiEngine
         catch( Exception e )
         {
             context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile );
-
-            throw new ServletException( "Failed to load properties", e );
         }
     }
 
@@ -222,8 +219,6 @@ public class WikiEngine
         {
             Reader in = null;
             StringWriter out = null;
-
-            log.debug("Reading");
 
             try
             {
