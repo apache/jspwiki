@@ -726,6 +726,30 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "&lt;P&gt;", translate(src) );
     }
 
+    public void testHTMLWhenAllowed()
+        throws Exception
+    {
+        String src = "<P>";
+
+        props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
+        testEngine = new TestEngine( props );
+
+        WikiContext context = new WikiContext( testEngine,
+                                               PAGE_NAME );
+
+        Reader r = new TranslatorReader( context, 
+                                         new BufferedReader( new StringReader(src)) );
+        StringWriter out = new StringWriter();
+        int c;
+
+        while( ( c=r.read()) != -1 )
+        {
+            out.write( c );
+        }
+
+        assertEquals( "<P>", out.toString() );
+    }
+
     public void testQuotes()
         throws Exception
     {
