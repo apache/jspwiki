@@ -433,10 +433,7 @@ public class WikiEngine
      */
     public String getHTML( String page )
     {
-        String pagedata = getText( page );
-	String res = textToHTML( pagedata );
-
-        return res;
+        return getHTML( page, -1 );
     }
 
     /**
@@ -466,7 +463,7 @@ public class WikiEngine
      */
     protected String textToHTML( String pagedata )
     {
-        StringBuffer result = new StringBuffer();
+        String result = "";
 
         if( pagedata == null ) 
         {
@@ -474,34 +471,22 @@ public class WikiEngine
             return "ERROR:Empty pagedata";
         }
 
-        Reader in = new StringReader( pagedata );
-
-        StringWriter out = null;
+        Reader in = null;
 
         try
         {
-            in = new TranslatorReader( this, new BufferedReader(in) );
-            out = new StringWriter();
-            
-            int c;
-
-            while( (c = in.read()) != -1  )
-            {
-                out.write( c );
-            }
-
-            result.append( out.toString() );
+            in     = new TranslatorReader( this, new StringReader( pagedata ) );
+            result = FileUtil.readContents( in );
         }
         catch( IOException e )
         {
-            log.error("Failed to read", e);
+            log.error("Failed to convert page data to HTML", e);
         }
         finally
         {
             try
             {
-                if( out != null ) out.close();
-                if( in  != null ) in.close();
+                if( in != null ) in.close();
             }
             catch( Exception e ) 
             {
@@ -509,7 +494,7 @@ public class WikiEngine
             }
         }
 
-        return result.toString();
+        return result;
     }
 
     /**
