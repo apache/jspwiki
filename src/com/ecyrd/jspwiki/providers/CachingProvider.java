@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -19,17 +19,19 @@
  */
 package com.ecyrd.jspwiki.providers;
 
-import java.lang.ref.SoftReference;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.TreeSet;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 import java.io.IOException;
+import java.io.File;
+import java.io.StringReader;
+import java.util.*;
 import org.apache.log4j.Logger;
+
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.search.*;
 
 import com.opensymphony.module.oscache.base.Cache;
 import com.opensymphony.module.oscache.base.NeedsRefreshException;
@@ -50,6 +52,8 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Heavily based on ideas by Chris Brooking.
  *  <p>
  *  Since 2.1.52 uses the OSCache library from OpenSymphony.
+ *  <p>
+ *  Since 2.1.100 uses the Apache Lucene library to help in searching.
  *
  *  @author Janne Jalkanen
  *  @since 1.6.4
@@ -71,14 +75,21 @@ public class CachingProvider
 
     private Cache            m_textCache;
 
-    private long m_cacheMisses = 0;
-    private long m_cacheHits   = 0;
+    private long             m_cacheMisses = 0;
+    private long             m_cacheHits   = 0;
 
-    private int  m_milliSecondsBetweenChecks = 30000;
+    private int              m_milliSecondsBetweenChecks = 30000;
 
     // FIXME: This MUST be cached somehow.
 
-    private boolean m_gotall = false;
+    private boolean          m_gotall = false;
+
+    // Lucene data, if used.
+    private boolean          m_useLucene = false;
+    private String           m_luceneDirectory = null;
+    private int              m_updateCount = 0;
+    private Thread           m_luceneUpdateThread = null;
+    private Vector           m_updates = null; // Vector because multi-threaded.
 
     /**
      *  Defines, in seconds, the amount of time a text will live in the cache
@@ -91,9 +102,19 @@ public class CachingProvider
     public static final String PROP_CACHECHECKINTERVAL = "jspwiki.cachingProvider.cacheCheckInterval";
     public static final String PROP_CACHECAPACITY      = "jspwiki.cachingProvider.capacity";
 
-    private static final int   DEFAULT_CACHECAPACITY   = 200; // Good for a small wiki
+    private static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
 
-    public void initialize( Properties properties )
+    // Lucene properties.
+    public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
+
+    private static final String LUCENE_DIR             = "lucene";
+
+    // Number of page updates before we optimize the index.
+    public static final int LUCENE_OPTIMIZE_COUNT      = 10;
+    private static final String LUCENE_ID              = "id";
+    private static final String LUCENE_PAGE_CONTENTS   = "contents";
+
+    public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
@@ -135,7 +156,7 @@ public class CachingProvider
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
             log.debug("Initializing real provider class "+m_provider);
-            m_provider.initialize( properties );
+            m_provider.initialize( engine, properties );
         }
         catch( ClassNotFoundException e )
         {
@@ -153,7 +174,125 @@ public class CachingProvider
             throw new IllegalArgumentException("illegal provider class");
         }
 
+        //
+        // See if we're using Lucene, and if so, ensure that its 
+        // index directory is up to date.
+        // 
+        m_useLucene = TextUtil.getBooleanProperty(properties, PROP_USE_LUCENE, true );
+
+        if( m_useLucene )
+        {
+            m_luceneDirectory = engine.getWorkDir()+File.separator+LUCENE_DIR;
+          
+            // FIXME: Just to be simple for now, we will do full reindex 
+            // only if no files are in lucene directory.
+
+            File dir = new File(m_luceneDirectory);
+
+            log.info("Lucene enabled, cache will be in: "+dir.getAbsolutePath());
+
+            try
+            {
+                if( !dir.exists() )
+                {
+                    dir.mkdirs();
+                }
+
+                if( dir.list().length == 0 )
+                {  
+                    //
+                    //  No files? Reindex!
+                    //
+                    Date start = new Date();
+                    log.info("Starting Lucene reindexing, this can take a couple minutes...");
+
+                    IndexWriter writer = new IndexWriter(m_luceneDirectory, new StandardAnalyzer(), true);
+                    Collection allPages = getAllPages();
+                    for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
+                    {
+                        WikiPage page = ( WikiPage ) iterator.next();
+                        String text = getPageText(page.getName(), 
+                                                  WikiPageProvider.LATEST_VERSION);
+                        luceneIndexPage(page, text, writer);
+                    }
+                    writer.optimize();
+                    writer.close();
+
+                    Date end = new Date();
+                    log.info("Full Lucene index finished in " + 
+                             (end.getTime() - start.getTime()) + " milliseconds.");
+                }
+                else
+                {
+                    log.info("Files found in Lucene directory, not reindexing.");
+                }
+            }
+            catch( NoClassDefFoundError e )
+            {
+                log.info("Lucene libraries do not exist - not using Lucene");
+                m_useLucene = false;
+            }
+            catch ( IOException e )
+            {
+                log.error("Problem while creating Lucene index.", e);
+                m_useLucene = false;
+            }
+            catch ( ProviderException e )
+            {
+                log.error("Problem reading pages while creating Lucene index.", e);
+                throw new IllegalArgumentException("unable to create Lucene index");
+            }
+
+            startLuceneUpdateThread();
+        }
     }
+
+    private void startLuceneUpdateThread()
+    {
+        m_updates = new Vector();
+        m_luceneUpdateThread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while( true )
+                {
+                    while( m_updates.size() > 0 )
+                    {
+                        Object[] pair = ( Object[] ) m_updates.remove(0);
+                        WikiPage page = ( WikiPage ) pair[0];
+                        String text = ( String ) pair[1];
+                        updateLuceneIndex(page, text);
+                    }
+                    try
+                    {
+                        Thread.sleep(500);
+                    }
+                    catch ( InterruptedException e )
+                    {
+                    }
+                }
+            }
+        });
+        m_luceneUpdateThread.start();
+    }
+
+
+    private void luceneIndexPage( WikiPage page, String text, IndexWriter writer ) 
+        throws IOException
+    {
+        // make a new, empty document
+        Document doc = new Document();
+
+        // Raw name is the keyword we'll use to refer to this document for updates.
+        doc.add(Field.Keyword(LUCENE_ID, page.getName()));
+
+        // Body text is indexed, but not stored in doc. We add in the 
+        // title text as well to make sure it gets considered.
+        doc.add(Field.Text(LUCENE_PAGE_CONTENTS, new StringReader(text + " " +
+                TextUtil.beautifyString(page.getName()))));
+        writer.addDocument(doc);
+    }
+
 
 
     public boolean pageExists( String page )
@@ -378,11 +517,61 @@ public class CachingProvider
     {
         synchronized(this)
         {
+            if( m_useLucene )
+            {
+                // Add work item to m_updates queue.
+                Object[] pair = new Object[2];
+                pair[0] = page;
+                pair[1] = text;
+                m_updates.add(pair);
+            }
+
             m_provider.putPageText( page, text );
 
             revalidatePage( page );
         }
     }
+
+    private void updateLuceneIndex( WikiPage page, String text )
+    {
+        log.info("Updating Lucene index for page '" + page.getName() + "'...");
+
+        try
+        {
+            deleteFromLucene(page);
+// Now add back the new version.
+            IndexWriter writer = new IndexWriter(m_luceneDirectory, new StandardAnalyzer(), false);
+            luceneIndexPage(page, text, writer);
+            m_updateCount++;
+            if( m_updateCount >= LUCENE_OPTIMIZE_COUNT )
+            {
+                writer.optimize();
+                m_updateCount = 0;
+            }
+            writer.close();
+        }
+        catch ( IOException e )
+        {
+            log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
+        }
+        log.info("Done updating Lucene index for page '" + page.getName() + "'.");
+    }
+
+    private void deleteFromLucene( WikiPage page )
+    {
+        try
+        {
+            // Must first remove existing version of page.
+            IndexReader reader = IndexReader.open(m_luceneDirectory);
+            reader.delete(new Term(LUCENE_ID, page.getName()));
+            reader.close();
+        }
+        catch ( IOException e )
+        {
+            log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
+        }
+    }
+
 
     public Collection getAllPages()
         throws ProviderException
@@ -475,7 +664,15 @@ public class CachingProvider
         Collection allPages = null;
         try
         {
-            allPages = getAllPages();
+            if( m_useLucene )
+            {
+// To keep the scoring mechanism the same, we'll only use Lucene to determine which pages to score.
+                allPages = searchLucene(query);
+            }
+            else
+            {
+                allPages = getAllPages();
+            }
         }
         catch( ProviderException pe )
         {
@@ -513,6 +710,72 @@ public class CachingProvider
     
         return( res );
     }
+
+
+    /**
+     * @param queryTerms
+     * @return Collection of WikiPage items for the pages that Lucene claims will match the search.
+     */
+    private Collection searchLucene( QueryItem[] queryTerms )
+    {
+        try
+        {
+            Searcher searcher = new IndexSearcher(m_luceneDirectory);
+
+            BooleanQuery query = new BooleanQuery();
+            for ( int curr = 0; curr < queryTerms.length; curr++ )
+            {
+                QueryItem queryTerm = queryTerms[curr];
+                if( queryTerm.word.indexOf(' ') >= 0 )
+                {   // this is a phrase search
+                    StringTokenizer tok = new StringTokenizer(queryTerm.word);
+                    while( tok.hasMoreTokens() )
+                    {
+// Just find pages with the words, so that included stop words don't mess up search.
+                        String word = tok.nextToken();
+                        query.add(new TermQuery(new Term(LUCENE_PAGE_CONTENTS, word)),
+                                queryTerm.type == QueryItem.REQUIRED,
+                                queryTerm.type == QueryItem.FORBIDDEN);
+                    }
+/* Since we're not using Lucene to score, no reason to use PhraseQuery, which removes stop words.
+                    PhraseQuery phraseQ = new PhraseQuery();
+                    StringTokenizer tok = new StringTokenizer(queryTerm.word);
+                    while (tok.hasMoreTokens()) {
+                        String word = tok.nextToken();
+                        phraseQ.add(new Term(LUCENE_PAGE_CONTENTS, word));
+                    }
+                    query.add(phraseQ,
+                            queryTerm.type == QueryItem.REQUIRED,
+                            queryTerm.type == QueryItem.FORBIDDEN);
+*/
+                }
+                else
+                { // single word query
+                    query.add(new TermQuery(new Term(LUCENE_PAGE_CONTENTS, queryTerm.word)),
+                            queryTerm.type == QueryItem.REQUIRED,
+                            queryTerm.type == QueryItem.FORBIDDEN);
+                }
+            }
+            Hits hits = searcher.search(query);
+
+            ArrayList list = new ArrayList(hits.length());
+            for ( int curr = 0; curr < hits.length(); curr++ )
+            {
+                Document doc = hits.doc(curr);
+                String pageName = doc.get(LUCENE_ID);
+                list.add(getPageInfo(pageName, WikiPageProvider.LATEST_VERSION));
+            }
+
+            searcher.close();
+            return list;
+        }
+        catch ( Exception e )
+        {
+            log.error("Failed during Lucene search", e);
+            return Collections.EMPTY_LIST;
+        }
+    }
+
 
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
@@ -578,7 +841,8 @@ public class CachingProvider
         return("Real provider: "+m_provider.getClass().getName()+
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits+
-               "<br />Cache consistency checks: "+m_milliSecondsBetweenChecks+"ms");
+               "<br />Cache consistency checks: "+m_milliSecondsBetweenChecks+"ms"+
+               "<br />Lucene enabled: "+(m_useLucene?"yes":"no") );
     }
 
     public void deleteVersion( String pageName, int version )
@@ -615,6 +879,11 @@ public class CachingProvider
         //
         synchronized(this)
         {
+            if( m_useLucene ) 
+            {
+                deleteFromLucene(getPageInfo(pageName, WikiPageProvider.LATEST_VERSION));
+            }
+
             m_cache.remove( pageName );
 
             m_provider.deletePage( pageName );
