@@ -32,8 +32,10 @@
         wikipage = new WikiPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    wikiContext.setRequestContext( WikiContext.INFO );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext );
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
     log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 

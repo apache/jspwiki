@@ -10,11 +10,6 @@
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
 
-    String getVersionText( int ver )
-    {
-        return ver > 0 ? ("version "+ver) : "current version";
-    }
-
     Category log = Category.getInstance("JSPWiki"); 
     WikiEngine wiki;
 %>
@@ -22,11 +17,18 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String skin    = wiki.safeGetParameter( request, "skin" );
+
     String headerTitle = "";
 
     if( pagereq == null )
     {
         pagereq = "Main";
+    }
+
+    if( skin == null )
+    {
+        skin = "default"; // FIXME: Should really come from settings.
     }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
@@ -66,23 +68,27 @@
     WikiPage wikipage = wiki.getPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    wikiContext.setRequestContext( WikiContext.DIFF );
+
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext );
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
     pageContext.setAttribute( InsertDiffTag.ATTR_OLDVERSION,
-                              new Integer(ver1) );
+                              new Integer(ver1),
+                              pageContext.REQUEST_SCOPE );
     pageContext.setAttribute( InsertDiffTag.ATTR_NEWVERSION,
-                              new Integer(ver2) );
+                              new Integer(ver2),
+                              pageContext.REQUEST_SCOPE );
 
-    String versionDescription1 = getVersionText( ver1 );
-    String versionDescription2 = getVersionText( ver2 );
-
-    log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
+    // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+
+    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
 
-<%@ include file="templates/default/DiffTemplate.jsp" %>
+<wiki:Include page="<%=contentPage%>" />
 
 <%
     NDC.pop();
