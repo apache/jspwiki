@@ -547,6 +547,28 @@ public class TranslatorReader extends Reader
         String       reallink;
         int          cutpoint;
 
+        //
+        //  Start with plugin links.
+        //
+        if( PluginManager.isPluginLink( link ) )
+        {
+            String included;
+            try
+            {
+                included = m_engine.getPluginManager().execute( m_context, link );
+            }
+            catch( PluginException e )
+            {
+                log.error( "Failed to insert plugin", e );
+                log.error( "Root cause:",e.getRootThrowable() );
+                included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
+            }
+                            
+            sb.append( included );
+
+            return sb.toString();
+        }
+
         link = TextUtil.replaceEntities( link );
 
         if( (cutpoint = link.indexOf('|')) != -1 )
@@ -568,23 +590,7 @@ public class TranslatorReader extends Reader
         //
         //  In many cases these are the same.  [link|reallink].
         //  
-        if( PluginManager.isPluginLink( link ) )
-        {
-            String included;
-            try
-            {
-                included = m_engine.getPluginManager().execute( m_context, link );
-            }
-            catch( PluginException e )
-            {
-                log.error( "Failed to insert plugin", e );
-                log.error( "Root cause:",e.getRootThrowable() );
-                included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
-            }
-                            
-            sb.append( included );
-        }
-        else if( VariableManager.isVariableLink( link ) )
+        if( VariableManager.isVariableLink( link ) )
         {
             String value;
             
