@@ -1,3 +1,12 @@
+2005-01-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.145.
+
+        * createContext() now prevents non-wikinames to be created.  This
+        may fix a bunch of potential problems.
+
+        * FilterManager.addPageFilter() now does a bit of a sanity check.
+
 2005-01-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.144.
