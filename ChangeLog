@@ -1,3 +1,9 @@
+2003-08-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.58.
+
+        * WeblogPlugin now also supports the "page" parameter.
+
 2003-08-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
 	* v2.1.57.
