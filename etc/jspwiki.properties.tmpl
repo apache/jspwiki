@@ -253,13 +253,15 @@ jspwiki.plugin.searchPath =
 #
 #  Define here the WikiAuthorizer and WikiAuthenticator implementations
 #  you want to use. Specify the full classname, or the short names of
-#  implementations provided in the JSPWiki codebase.
+#  implementations provided in the JSPWiki codebase 
+#  (com.ecyrd.jspwiki.auth.modules).
 
 #
 #  PageAuthorizer is a simple default implementation that reads defaults
 #  from a WikiPage called 'DefaultPermissions'. 
+#  PageAuthorizer is used by default.
 #
-jspwiki.authorizer = PageAuthorizer
+# jspwiki.authorizer = PageAuthorizer
 
 #
 #  FileAuthenticator is a simple authorizer that basically reads the 
@@ -275,6 +277,18 @@ jspwiki.authorizer = PageAuthorizer
 #  attribute.
 #
 # jspwiki.fileAuthenticator.fileName = /tmp/mypasswordfile.txt
+
+#
+#  Users are mapped to groups by a UserDatabase. The default UDB is
+#  the WikiDatabase, which looks for group members in page meta-data:
+#  the page name determines the group name, and a [{SET members=...}]
+#  adds members to that group. 
+#  WikiDatabase is used by default.
+#
+#  Override with your own UserDatabase implementation with this property:
+#
+# jspwiki.userdatabase = WikiDatabase
+
 
 #############################################################################
 #
