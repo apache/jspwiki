@@ -476,11 +476,11 @@ public class TranslatorReader extends Reader
                 //
 
                 MatchResult res = matcher.getMatch();
-                int lastOpen = line.substring(0,res.endOffset(2)).lastIndexOf('[');
+                int lastOpen  = line.substring(0,res.endOffset(2)).lastIndexOf('[');
                 int lastClose = line.substring(0,res.endOffset(2)).lastIndexOf(']');
 
-                if( lastOpen < lastClose || lastOpen < 0 || 
-                    !(lastOpen >= 0 && lastClose < 0) )
+                if( (lastOpen < lastClose && lastOpen >= 0) || // Links closed ok
+                    lastOpen < 0 )                             // No links yet
                 {
                     int start = res.beginOffset(2);
                     int end   = res.endOffset(2);
