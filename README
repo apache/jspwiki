@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.8 $
-                             $Date: 2002-01-07 21:30:57 $
+                         $Revision: 1.9 $
+                             $Date: 2002-01-07 21:34:44 $
                            $Author: jalkanen $
 
 What is it?
@@ -239,7 +239,7 @@ Contact
 -------
 
 JSPWiki was written by Janne Jalkanen.  You may send email to me
-at Janne.Jalkanen@iki.fi.  Feel free to send me patches, suggestions,
+at Janne.Jalkanen@ecyrd.com.  Feel free to send me patches, suggestions,
 whatever.
 
 JSPWiki is available at http://www.iki.fi/~jalkanen/JSPWiki/
