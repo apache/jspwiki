@@ -55,8 +55,8 @@ public class ReferringPagesPlugin
             catch( Exception e ) {}
         }
 
-        log.info( "Fetching referring pages for "+context.getPage().getName()+
-                  " with a max of "+items );
+        log.debug( "Fetching referring pages for "+context.getPage().getName()+
+                   " with a max of "+items );
         
         String wikitext = wikitizeCollection( links, "\\\\", items );
         
