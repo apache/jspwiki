@@ -31,6 +31,15 @@ import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.acl.AccessControlList;
+import com.ecyrd.jspwiki.acl.AclImpl;
+import com.ecyrd.jspwiki.acl.AclEntryImpl;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.UserProfile;
+import com.ecyrd.jspwiki.auth.UserManager;
+import java.security.acl.AclEntry;
+import java.security.acl.NotOwnerException;
+import java.security.Principal;
 
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
@@ -330,6 +339,15 @@ public class TranslatorReader extends Reader
     }
 
     /**
+     *  Forms an error message.
+     */
+    // FIXME: All errors shoudl now use this instead of <font>
+    private String makeError( String error )
+    {
+        return "<span class=\"error\">"+error+"</span>";
+    }
+
+    /**
      *  Write a HTMLized link depending on its type.
      *  The link mutator chain is processed.
      *
@@ -500,6 +518,12 @@ public class TranslatorReader extends Reader
             link.startsWith("news:") || link.startsWith("file:");
     }
 
+    private static boolean isAccessRule( String link )
+    {
+        return link.startsWith("{ALLOW") || link.startsWith("{DENY");
+    }
+
+
     /**
      *  Matches the given link to the list of image name patterns
      *  to determine whether it should be treated as an inline image
@@ -663,6 +687,78 @@ public class TranslatorReader extends Reader
         return "";
     }
 
+    private String handleAccessRule( String ruleLine )
+    {
+        WikiPage          page = m_context.getPage();
+        AccessControlList acl  = page.getAcl();
+        UserManager       mgr  = m_context.getEngine().getUserManager();
+
+        if( acl == null )
+        {            
+            acl = new AclImpl();            
+        }
+
+        if( ruleLine.startsWith( "{" ) )
+            ruleLine = ruleLine.substring( 1 );
+        if( ruleLine.endsWith( "}" ) )
+            ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
+
+        log.debug("page="+page.getName()+", ACL = "+ruleLine);
+
+        try
+        {
+            StringTokenizer fieldToks = new StringTokenizer( ruleLine );
+            String policy  = fieldToks.nextToken();
+            String chain   = fieldToks.nextToken();            
+
+            while( fieldToks.hasMoreTokens() )
+            {
+                String roleOrPerm = fieldToks.nextToken( "," ).trim();
+                boolean isNegative = true;
+
+                UserProfile principal = mgr.getUserProfile( roleOrPerm );
+
+                if( policy.equals("ALLOW") ) isNegative = false;
+
+                AclEntry oldEntry = acl.getEntry( principal, isNegative );
+
+                if( oldEntry != null )
+                {
+                    log.debug("Adding to old acl list: "+principal+", "+chain);
+                    oldEntry.addPermission( WikiPermission.newInstance( chain ) );
+                }
+                else
+                {
+                    log.debug("Adding new acl entry for "+chain);
+                    AclEntry entry = new AclEntryImpl();
+            
+                    entry.setPrincipal( principal );
+                    if( isNegative ) entry.setNegativePermissions();
+                    entry.addPermission( WikiPermission.newInstance( chain ) );
+                    
+                    acl.addEntry( principal, entry );
+                }
+            }
+
+            page.setAcl( acl );
+        }
+        catch( NoSuchElementException nsee )
+        {
+            log.warn( "Invalid access rule: " + ruleLine + " - defaults will be used." );
+            return makeError("Invalid access rule: "+ruleLine);
+        }
+        catch( NotOwnerException noe )
+        {
+            throw new InternalWikiException("Someone has implemented access control on access control lists without telling me.");
+        }
+        catch( IllegalArgumentException iae )
+        {
+            return makeError("Invalid permission type: "+ruleLine);
+        }
+
+        return "";
+    }
+
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
@@ -672,9 +768,11 @@ public class TranslatorReader extends Reader
         String       reallink;
         int          cutpoint;
 
-        //
-        //  Start with plugin links.
-        //
+        if( isAccessRule( link ) )
+        {
+            return handleAccessRule( link );
+        }
+
         if( PluginManager.isPluginLink( link ) )
         {
             String included;
@@ -686,7 +784,7 @@ public class TranslatorReader extends Reader
             {
                 log.error( "Failed to insert plugin", e );
                 log.error( "Root cause:",e.getRootThrowable() );
-                included = "<font color=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</font>";
+                included = makeError("Plugin insertion failed: "+e.getMessage());
             }
                             
             sb.append( included );
