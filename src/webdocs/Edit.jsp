@@ -1,6 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AccessRuleSet" %>
+<%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page import="java.util.*,java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>

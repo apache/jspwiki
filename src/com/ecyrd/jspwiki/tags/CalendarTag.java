@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -34,7 +36,18 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 
 
 /**
- *  Provides a nice calendar.
+ *  Provides a nice calendar.  Responds to the following HTTP parameters:
+ *  <ul>
+ *  <li>calendar.date - If this parameter exists, then the calendar
+ *  date is taken from the month and year.  The date must be in ddMMyy
+ *  format.
+ *  <li>weblog.startDate - If calendar.date parameter does not exist,
+ *  we then check this date.
+ *  </ul>
+ *
+ *  If neither calendar.date nor weblog.startDate parameters exist,
+ *  then the calendar will default to the current month.
+ *
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -49,6 +62,7 @@ public class CalendarTag
     private String m_month = null;
     private SimpleDateFormat m_pageFormat = null;
     private SimpleDateFormat m_urlFormat = null;
+    private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
     /*
     public void setYear( String year )
@@ -118,16 +132,42 @@ public class CalendarTag
         throws IOException,
                ProviderException
     {
+        WikiEngine       engine   = m_wikiContext.getEngine();
         SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM yyyy" );
+        JspWriter        out      = pageContext.getOut();
+        Calendar         cal      = Calendar.getInstance();
 
-        JspWriter out = pageContext.getOut();
-        Calendar cal = Calendar.getInstance();
+        //
+        //  Check if there is a parameter in the request to set the date.
+        //
+        String calendarDate = engine.safeGetParameter( pageContext.getRequest(), 
+                                                       "calendar.date" );
+        if( calendarDate == null )
+        {
+            calendarDate = engine.safeGetParameter( pageContext.getRequest(),
+                                                    "weblog.startDate" );
+        }
+        
+        if( calendarDate != null )
+        {
+            try
+            {
+                Date d = m_dateFormat.parse( calendarDate );
+                cal.setTime( d );
+            }
+            catch( ParseException e )
+            {
+                log.warn( "date format wrong: "+calendarDate );
+            }
+        }
 
         cal.set( Calendar.DATE, 1 ); // First, set to first day of month
 
         out.write( "<table class=\"calendar\">\n" );
 
-        out.write( "<tr><td colspan=7 class=\"month\">"+monthfmt.format( cal.getTime() )+"</td>" );
+        out.write( "<tr><td colspan=7 class=\"month\">"+
+                   monthfmt.format( cal.getTime() )+
+                   "</td>" );
 
         int month = cal.get( Calendar.MONTH );
         cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY ); // Then, find the first day of the week.

@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+
 import org.apache.log4j.Category;
 
 /**
@@ -28,7 +29,28 @@ import org.apache.log4j.Category;
  */
 public class FileUtil
 {
-    private static final Category   log = Category.getInstance(FileUtil.class);
+    private static final Category   log      = Category.getInstance(FileUtil.class);
+    static               boolean    c_hasNIO = false;
+
+    private static final int        MINBUFSIZ = 32768; // bytes
+
+
+    static
+    {
+        try
+        {
+            if( java.nio.charset.Charset.forName( "UTF-8" ) != null )
+            {
+                log.info("JDK 1.4 detected.  Using NIO library.");
+                c_hasNIO = true;
+            }
+        }
+        catch( Throwable t )
+        {
+            log.info("Not running under JDK 1.4; not using NIO library.");
+        }
+    }
+
 
     /**
      *  Makes a new temporary file and writes content into it.
@@ -154,7 +176,10 @@ public class FileUtil
     }
 
     /**
-     *  Is smart and falls back to ISO-8859-1 if you get exceptions.
+     *  Reads in file contents.
+     *  <P>
+     *  This method is smart and falls back to ISO-8859-1 if the input stream does not
+     *  seem to be in the specified encoding.
      */
     // FIXME: There is a bad bug here.  We cannot guarantee that realinput.available()
     // returns anything sane.  We don't want to read everything into a byte array
@@ -165,11 +190,14 @@ public class FileUtil
     // and use a minimum buffer size to compensate.
     // This may fail in a number of ways, a better way is seriously needed.
 
-    private static final int MINBUFSIZ = 32768; // bytes
-
     public static String readContents( InputStream input, String encoding )
         throws IOException
-    {
+    {        
+        if( c_hasNIO )
+        {
+            return FileUtil14.readContents( input, encoding );
+        }
+
         Reader in  = null;
         Writer out = null;
 
@@ -226,6 +254,7 @@ public class FileUtil
             catch( Exception e ) {} // FIXME: Log errors.
         }
     }
+
 
     /**
      *  Returns the full contents of the Reader as a String.

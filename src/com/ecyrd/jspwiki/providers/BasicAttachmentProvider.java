@@ -132,6 +132,32 @@ public class BasicAttachmentProvider
         File f = new File( findPageDir(att.getParentName()), 
                            mangleName(att.getFileName()+ATTDIR_EXTENSION) );
 
+        //
+        //  Migration code for earlier versions of JSPWiki.
+        //  Originally, we used plain filename.  Then we realized we need
+        //  to urlencode it.  Then we realized that we have to use a
+        //  postfix to make sure illegal file names are never formed.
+        //
+        if( !f.exists() )
+        {
+            File oldf = new File( findPageDir( att.getParentName() ),
+                                  mangleName( att.getFileName() ) );
+            if( oldf.exists() )
+            {
+                f = oldf;
+            }
+            else
+            {
+                oldf = new File( findPageDir( att.getParentName() ),
+                                 att.getFileName() );
+
+                if( oldf.exists() )
+                {
+                    f = oldf;
+                }
+            }
+        }
+
         return f;
     }
 

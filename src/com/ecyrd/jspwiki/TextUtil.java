@@ -22,12 +22,13 @@ package com.ecyrd.jspwiki;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
+
 /**
  *  Contains a number of static utility methods.
  */
 public class TextUtil
 {
-    static String HEX_DIGITS =  "0123456789ABCDEF";
+    static final String   HEX_DIGITS = "0123456789ABCDEF";
 
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
