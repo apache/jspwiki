@@ -1,3 +1,23 @@
+2002-11-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.30.
+
+        * The INSERT is no longer required to signify plugins.  It is
+        recommended, but not required.  This at the request of many people
+        who are using an insane amount of plugins :-).
+
+        * New plugin: Counter.
+
+        * Added support to VariableManager to display Context Variables.
+
+        * Added Wiki Context Variables.  These exist solely in the
+        WikiContext class, and allow you to define transient variables on
+        a pageview basis.
+
+        * Added a patch to allow multiline plugins from ebu.
+        Unfortunately, this does not work fully yet - newlines in the
+        middle of arguments break stuff.
+
 2002-10-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.29.
