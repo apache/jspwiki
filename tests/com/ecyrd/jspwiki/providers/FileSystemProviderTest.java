@@ -72,6 +72,40 @@ public class FileSystemProviderTest extends TestCase
         }
     }
 
+    public void testAuthor()
+        throws Exception
+    {
+        try
+        {
+            WikiPage page = new WikiPage("≈‰Test");
+            page.setAuthor("Min‰");
+
+            m_provider.putPageText( page, "test" );
+
+            WikiPage page2 = m_provider.getPageInfo( "≈‰Test", 1 );
+
+            assertEquals( "Min‰", page2.getAuthor() );
+        }
+        finally
+        {
+            File resultfile = new File( m_pagedir,
+                                        "%C5%E4Test.txt" );
+            try
+            {
+                resultfile.delete();
+            }
+            catch(Exception e) {}
+
+            resultfile = new File( m_pagedir,
+                                   "%C5%E4Test.properties" );
+            try
+            {
+                resultfile.delete();
+            }
+            catch(Exception e) {}
+        }
+    }
+
     public void testNonExistantDirectory()
         throws Exception
     {
