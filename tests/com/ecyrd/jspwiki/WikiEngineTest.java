@@ -122,6 +122,17 @@ public class WikiEngineTest extends TestCase
                             ((end-start)/(double)ITERATIONS)+" ms/page)" );
     }
 
+    public void testReadLinks()
+        throws Exception
+    {
+        String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
+
+        Object[] result = engine.scanWikiLinks( src ).toArray();
+        
+        assertEquals( "item 0", result[0], "Foobar" );
+        assertEquals( "item 1", result[1], "ThisIsALink" );
+    }
+
     public static Test suite()
     {
         return new TestSuite( WikiEngineTest.class );
