@@ -1,4 +1,13 @@
+2004-05-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.97.
+
+        * Added preliminary support for the Atom blog API.  It still does
+        not yet completely work, however.
+
 2004-05-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Denounce plugin no longer fails on null user-agent.
 
         * v2.1.96.
 
