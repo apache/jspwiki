@@ -1,3 +1,8 @@
+2002-02-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * New class: InternalWikiException which gets thrown in case
+        something really fishy and serious is going on inside Wiki.
+
 2002-02-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Fixed a slow routine in TranslatorReader, shaving off roughly
