@@ -434,7 +434,9 @@ public class WikiEngine
     public String getHTML( String page )
     {
         String pagedata = getText( page );
-	return( textToHTML( pagedata ) );
+	String res = textToHTML( pagedata );
+
+        return res;
     }
 
     /**
@@ -453,7 +455,8 @@ public class WikiEngine
 	else
 	    pagedata = getText( page );
 
-	return( textToHTML( pagedata ) );
+        String res = textToHTML( pagedata );
+	return res;
     }
 
     /**
