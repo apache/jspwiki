@@ -1,3 +1,11 @@
+2002-12-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.7.
+
+        * Added new title beautifier code from Torsten Hildebrandt.  It's
+        a bit different from what we used to have, but it does now less
+        mistakes.  :-).
+
 2002-12-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.6 - The I Should Really Be Sleeping But Let's See If Killer

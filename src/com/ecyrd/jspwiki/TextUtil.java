@@ -364,7 +364,13 @@ public class TextUtil
             return OTHER;
     }
 
-
+    /**
+     *  Adds spaces in suitable locations of the input string.  This is
+     *  used to transform a WikiName into a more readable format.
+     *
+     *  @param s String to be beautified.
+     *  @return A beautified string.
+     */
     public static String beautifyString( String s )
     {
         StringBuffer result = new StringBuffer();
