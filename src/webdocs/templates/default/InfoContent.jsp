@@ -15,7 +15,7 @@
 
        <tr>
            <td><B>Current page version</B></td>
-           <td><wiki:PageVersion /></td>
+           <td><wiki:PageVersion>No versions.</wiki:PageVersion></td>
        </tr>
 
        <tr>
@@ -28,7 +28,6 @@
                         <th>Author</th>
                         <th>Changes from previous</th>
                    </tr>
-
                    <wiki:HistoryIterator id="currentPage">
                      <tr>
                          <td>
