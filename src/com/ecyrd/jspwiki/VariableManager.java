@@ -269,6 +269,10 @@ public class VariableManager
 
             return wup != null ? wup.getName() : "not logged in";
         }
+        else if( name.equals("requestcontext") )
+        {
+            return context.getRequestContext();
+        }
         else
         {
             // 
