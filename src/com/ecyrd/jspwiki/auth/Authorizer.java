@@ -37,10 +37,22 @@ import com.ecyrd.jspwiki.UserProfile;
  * them agains a WikiUserPrincipal's permissions. 
  *
  *  
- * <p>Currently, the structure of access rules only permits 
- * a simple AND of positive or negative matches. We may want
- * to expand on this, and modify the AccessRule chain structure
- * appropriately.
+ * Authorizer specifies the following special roles:
+ * <ul>
+ * <li> <i>guest</i> (AUTH_ROLE_GUEST) - the role given to casual 
+ *      visitors who haven't been authenticated or recognized in
+ *      any way.
+ * <li> <i>participant</i> (AUTH_PARTICIPANT_ROLE) - the role given 
+ *      to visitors who have set their name (user properties) and
+ *      allowed JSPWiki to store a cookie on their computer.
+ * <li> <i>admin</i> (AUTH_AUTH_ROLE_ADMIN) - a role that always has
+ *      access everywhere, whatever the explicit rules state.
+ *      (This needs to be assigned to administrative users in the
+ *      authorization source.)
+ * <li> <i>ALL</i> (AUTH_ROLE_ALL) - a special label used in access
+ *      rules that implies everyone. Mainly useful in a deny all/allow all
+ *      purpose. 
+ *
  */
 public class Authorizer
 {
@@ -52,19 +64,19 @@ public class Authorizer
     private WikiAuthorizer m_authorizer;
 
     /** The default role assigned to people who have bothered to name themselves. */
-    public static final String AUTH_PARTICIPANT_ROLE = "participant";
+    public static final String AUTH_ROLE_PARTICIPANT = "participant";
 
     /** The default role assigned to people who haven't bothered to name themselves. */
-    public static final String AUTH_GUEST_ROLE = "guest";
+    public static final String AUTH_ROLE_GUEST = "guest";
 
     /** The default name assigned to people who haven't bothered to name themselves. */
     public static final String AUTH_UNKNOWN_UID = "unknown";
 
     /** Special permission key for including all users. */
-    public static final String ROLE_ALL = "ALL";
+    public static final String AUTH_ROLE_ALL = "ALL";
 
     /** Special role identifier for uninhibited access. */
-    public static final String ROLE_ADMIN = "admin";
+    public static final String AUTH_ROLE_ADMIN = "admin";
 
     /**
      * Creates a new Authorizer, using the class defined in the
