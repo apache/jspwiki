@@ -1,3 +1,15 @@
+2004-09-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.108
+
+        * CachingProvider now also caches page history.  This helps the
+        history generation from the really slow providers like
+        RCSProvider.
+
+        * ReferenceManager now serializes its status on disk at every
+        save, and returns it at startup.  This provides *significant*
+        speedup at JSPWiki start.
+
 2004-08-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.107
