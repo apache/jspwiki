@@ -41,18 +41,13 @@
          </FONT>
       <% } %>
 
-      <%
-         if( wiki.pageExists( pagereq ) )
-         {
-             // if version == -1, the current page is returned.
-             out.println(wiki.getHTML(pagereq, version));
-         }
-      %>
-         <wiki:NoSuchPage>
-                <!-- FIXME: Should also note when a wrong version has been fetched. -->
-                This page does not exist.  Why don't you go and
-                <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
-         </wiki:NoSuchPage>
+      <wiki:InsertPage />
+
+      <wiki:NoSuchPage>
+           <!-- FIXME: Should also note when a wrong version has been fetched. -->
+           This page does not exist.  Why don't you go and
+           <wiki:EditLink>create it</wiki:EditLink>?
+      </wiki:NoSuchPage>
 
       <P><HR>
       <table border="0" width="100%">
