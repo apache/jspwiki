@@ -19,7 +19,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    log.info("Vote '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
+    log.info("Vote '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
 
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,

@@ -90,7 +90,7 @@
 
     if( ok != null )
     {
-        log.info("Saving page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
+        log.info("Saving page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -185,7 +185,7 @@
         return;
     }
 
-    log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
+    log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
 
     //
     //  Determine and store the date the latest version was changed.  Since

@@ -68,7 +68,7 @@
                               new Integer(ver2),
                               pageContext.REQUEST_SCOPE );
 
-    // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
+    // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
