@@ -49,17 +49,17 @@ public class BreadcrumbsTag extends WikiTagBase
 {
     private static final Category log = Category.getInstance(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
-    private int m_maxsize = 10;
+    private int m_maxQueueSize = 11;
     private String m_separator = " | ";
 
     public int getMaxpages()
     {
-        return m_maxsize;
+        return m_maxQueueSize;
     }
 
     public void setMaxpages(int maxpages)
     {
-        m_maxsize = maxpages;
+        m_maxQueueSize = maxpages + 1;
     }
 
     public String getSeparator()
@@ -81,7 +81,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
         if( trail == null )
         {
-            trail = new FixedQueue(m_maxsize);
+            trail = new FixedQueue(m_maxQueueSize);
         }
 
         if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) )
