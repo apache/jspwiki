@@ -142,14 +142,17 @@
              {
                  java.util.Date lastchange = wikipage.getLastModified();
 
+                 String author = wikipage.getAuthor();
+                 if( author == null ) author = "unknown";
+
                  if( version == -1 )
                  {
                      %>                
-                     <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=wikipage.getAuthor()%>.</I>
+                     <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=author%>.</I>
                      <%
                  } else {
                      %>
-                     <I>This particular version was published on <%=lastchange%> by <%=wikipage.getAuthor()%></I>.
+                     <I>This particular version was published on <%=lastchange%> by <%=author%></I>.
                      <%
                  }
              } else {

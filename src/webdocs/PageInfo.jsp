@@ -108,7 +108,7 @@
                                    <td>
                                    <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=-1&r2=<%=p.getVersion()%>"><%=p.getLastModified()%></A>
                                    </td>
-                                   <td><%=p.getAuthor()%></td>
+                                   <td><%=p.getAuthor() != null ? p.getAuthor() : "unknown"%></td>
                                    <td>
                                    <% if( p.getVersion() > 1 ) { %>
                                        <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=p.getVersion()%>&r2=<%=p.getVersion()-1%>">changes from version <%=p.getVersion()-1%> to <%=p.getVersion()%></A>

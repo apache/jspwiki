@@ -126,7 +126,11 @@ public class RPCHandler
 
         ht.put( "lastModified", cal.getTime() );
         ht.put( "version", new Integer(page.getVersion()) );
-        ht.put( "author", toRPCString(page.getAuthor()) );
+
+        if( page.getAuthor() != null )
+        {
+            ht.put( "author", toRPCString(page.getAuthor()) );
+        }
 
         return ht;
     }
