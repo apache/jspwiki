@@ -187,16 +187,26 @@ public class TranslatorReader extends Reader
                      link.substring(1)+"\">[["+text+"]</A>";
             break;
 
+          //
+          //  With the image, external and interwiki types we need to
+          //  make sure nobody can put in Javascript or something else
+          //  annoying into the links themselves.  We do this by preventing
+          //  a haxor from stopping the link name short with quotes.
+          //  FIXME: Triplicate code, refactor.
+          //
           case IMAGE:
-            result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\">";
+            encodedlink = replaceString( link, "\"", "%22" );
+            result = "<IMG CLASS=\"inline\" SRC=\""+encodedlink+"\" ALT=\""+text+"\">";
             break;
 
           case EXTERNAL:
-            result = "<A CLASS=\"external\" HREF=\""+link+"\">"+text+"</A>";
+            encodedlink = replaceString( link, "\"", "%22" );
+            result = "<A CLASS=\"external\" HREF=\""+encodedlink+"\">"+text+"</A>";
             break;
 
           case INTERWIKI:
-            result = "<A CLASS=\"interwiki\" HREF=\""+link+"\">"+text+"</A>";
+            encodedlink = replaceString( link, "\"", "%22" );
+            result = "<A CLASS=\"interwiki\" HREF=\""+encodedlink+"\">"+text+"</A>";
             break;
 
           default:
