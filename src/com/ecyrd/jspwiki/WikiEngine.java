@@ -24,6 +24,7 @@ import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import com.ecyrd.jspwiki.plugin.PluginManager;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -72,6 +73,9 @@ public class WikiEngine
     /** Define the used encoding.  Currently supported are ISO-8859-1 and UTF-8 */
     public static final String PROP_ENCODING     = "jspwiki.encoding";
 
+    /** The name for the base URL to use in all references. */
+    public static final String PROP_BASEURL      = "jspwiki.baseURL";
+
     private String         m_diffCommand = "diff -u %s1 %s2"; 
 
     private static Hashtable c_engines = new Hashtable();
@@ -88,9 +92,15 @@ public class WikiEngine
     /** If true, uses UTF8 encoding for all data */
     private boolean        m_useUTF8      = true;
 
+    /** Stores the base URL. */
+    private String         m_baseURL;
+    
     /** Stores references between wikipages. */
     private ReferenceManager m_referenceManager;
 
+    /** Stores the Plugin manager */
+    private PluginManager  m_pluginManager;
+    
     /**
      *  Gets a WikiEngine related to this servlet.
      */
@@ -170,7 +180,8 @@ public class WikiEngine
         m_storeIPAddress = "true".equals( props.getProperty( PROP_STOREIPADDRESS, "true" ) );
 
         m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
-
+        m_baseURL        = props.getProperty( PROP_BASEURL, "" );
+        
         //
         //  Find the page provider
         //
@@ -204,6 +215,8 @@ public class WikiEngine
             throw new IllegalArgumentException("illegal provider class");
         }
 
+        m_pluginManager = new PluginManager();
+        
         initReferenceManager();
 
         log.info("WikiEngine configured.");
@@ -217,14 +230,17 @@ public class WikiEngine
     */
     private void initReferenceManager()
     {
-        log.info( "Starting cross reference scan of WikiPages (" + new Date() + ")" );
+        long start = System.currentTimeMillis();
+        log.info( "Starting cross reference scan of WikiPages" );
 
         Collection pages = m_provider.getAllPages();
 
         // Build a new manager with default key lists.
         if( m_referenceManager == null )
+        {
             m_referenceManager = new ReferenceManager( this, pages );
-
+        }
+        
         // Scan the existing pages from disk and update references in the manager.
         Iterator it = pages.iterator();
         while( it.hasNext() )
@@ -234,8 +250,9 @@ public class WikiEngine
             m_referenceManager.updateReferences( page.getName(), scanWikiLinks( content ) );
         }
 
-        log.info( "Cross reference scan done (" + new Date() + ")" );
-
+        log.info( "Cross reference scan done (" +
+                  (System.currentTimeMillis()-start) +
+                  " ms)" );
     }
 
 
@@ -266,6 +283,18 @@ public class WikiEngine
         return m_properties;
     }
 
+    /**
+     *  Returns the base URL.  Always prepend this to any reference
+     *  you make.
+     *
+     *  @since 1.6.1
+     */
+
+    public String getBaseURL()
+    {
+        return m_baseURL;
+    }
+    
     /**
      *  This is a safe version of the Servlet.Request.getParameter() routine.
      *  Unfortunately, the default version always assumes that the incoming
@@ -466,7 +495,25 @@ public class WikiEngine
         return result;
     }
 
+    /**
+     *  Returns the converted HTML of the page using a different
+     *  context than the default context.
+     */
 
+    public String getHTML( WikiContext context, WikiPage page )
+    {
+	String pagedata = null;
+
+	if( page.getVersion() >= 0)
+	    pagedata = getText( page.getName(), page.getVersion() );
+	else
+	    pagedata = getText( page.getName() );
+
+        String res = textToHTML( context, pagedata );
+
+	return res;
+    }
+    
     /**
      *  Returns the converted HTML of the page.
      *
@@ -482,18 +529,18 @@ public class WikiEngine
      *  The version must be a positive integer, otherwise the current
      *  version is returned.
      *
-     *  @param page WikiName of the page to convert.
+     *  @param pagename WikiName of the page to convert.
      *  @param version Version number to fetch
      */
-    public String getHTML( String page, int version )
+    public String getHTML( String pagename, int version )
     {
-	String pagedata = null;
-	if(version >= 0)
-	    pagedata = getText( page, version );
-	else
-	    pagedata = getText( page );
+        WikiContext context = new WikiContext( this,
+                                               pagename );
+        WikiPage page = new WikiPage( pagename );
+        page.setVersion( version );
+        
+        String res = getHTML( context, page );
 
-        String res = textToHTML( pagedata );
 	return res;
     }
 
@@ -502,7 +549,7 @@ public class WikiEngine
      *
      *  @param pagedata Raw page data to convert to HTML
      */
-    public String textToHTML( String pagedata )
+    public String textToHTML( WikiContext context, String pagedata )
     {
         String result = "";
 
@@ -516,7 +563,8 @@ public class WikiEngine
 
         try
         {
-            in     = new TranslatorReader( this, new StringReader( pagedata ) );
+            in     = new TranslatorReader( context,
+                                           new StringReader( pagedata ) );
             result = FileUtil.readContents( in );
         }
         catch( IOException e )
@@ -544,7 +592,7 @@ public class WikiEngine
        Reads a WikiPageful of data from a String and returns all links
        internal to this Wiki in a Collection.
        
-       NOTE: this is a bit too much like textToHTML(); it just sets a
+       FIXME: this is a bit too much like textToHTML(); it just sets a
        flag in the TranslatorReader and requests for extra info at the
        end. Time to refactor a bit?
     */
@@ -563,7 +611,8 @@ public class WikiEngine
 
         try
         {
-            in = new TranslatorReader( this, new StringReader( pagedata ) );
+            in = new TranslatorReader( new WikiContext(this,""),
+                                       new StringReader( pagedata ) );
             in.storeInternalLinks();
             result = FileUtil.readContents( in );
             links = in.getInternalLinks();
@@ -823,12 +872,12 @@ public class WikiEngine
             f1 = FileUtil.newTmpFile( p1, getContentEncoding() );
             f2 = FileUtil.newTmpFile( p2, getContentEncoding() );
 
-            String cmd = TranslatorReader.replaceString( m_diffCommand,
-                                                         "%s1",
-                                                         f1.getPath() );
-            cmd = TranslatorReader.replaceString( cmd,
-                                                  "%s2",
-                                                  f2.getPath() );
+            String cmd = TextUtil.replaceString( m_diffCommand,
+                                                 "%s1",
+                                                 f1.getPath() );
+            cmd = TextUtil.replaceString( cmd,
+                                          "%s2",
+                                          f2.getPath() );
 
             String output = FileUtil.runSimpleCommand( cmd, f1.getParent() );
 
@@ -854,11 +903,22 @@ public class WikiEngine
     }
 
     /**
-       Returns this object's ReferenceManager.
-       (DEBUG: We may want to protect this, though...)
-    */
+     *  Returns this object's ReferenceManager.
+     *  @since 1.6.1
+     */
+    // (FIXME: We may want to protect this, though...)
     public ReferenceManager getReferenceManager()
     {
-        return( m_referenceManager );
+        return m_referenceManager;
+    }
+
+    /**      
+     *  Returns the current plugin manager.
+     *  @since 1.6.1
+     */
+
+    public PluginManager getPluginManager()
+    {
+        return m_pluginManager;
     }
 }
