@@ -4,6 +4,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
+import java.security.Principal;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.TextUtil;
