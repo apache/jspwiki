@@ -1,3 +1,10 @@
+2004-11-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.121.
+
+        * Fixed two instances of "&" not being encoded properly in
+        CalendarTag.  Fixes bug "BugAmpersandNotEncodedProperly".
+
 2004-11-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.120
