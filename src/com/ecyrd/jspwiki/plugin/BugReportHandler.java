@@ -152,7 +152,7 @@ public class BugReportHandler
             context.getEngine().saveText( newContext,
                                           str.toString() );
 
-            return "A new bug report has been created: <a href=\""+context.getEngine().getViewURL(pageName)+"\">"+pageName+"</a>";
+            return "A new bug report has been created: <a href=\""+context.getViewURL(pageName)+"\">"+pageName+"</a>";
         }
         catch( WikiException e )
         {

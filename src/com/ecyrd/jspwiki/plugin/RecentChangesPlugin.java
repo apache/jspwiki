@@ -132,10 +132,9 @@ public class RecentChangesPlugin
                 }
                 else
                 {
-                    out.write("<td><a href=\""+engine.getURL(WikiContext.DIFF,
-                                                             pageref.getName(),
-                                                             false,
-                                                             "r1=-1")+"\">"+
+                    out.write("<td><a href=\""+context.getURL(WikiContext.DIFF,
+                                                              pageref.getName(),
+                                                              "r1=-1")+"\">"+
                               tfmt.format(lastmod)+
                               "</a></td>\n");
                 }

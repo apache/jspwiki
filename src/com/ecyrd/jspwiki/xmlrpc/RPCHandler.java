@@ -20,7 +20,7 @@
 package com.ecyrd.jspwiki.xmlrpc;
 
 import java.io.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.ViewPermission;
@@ -40,7 +40,7 @@ import org.apache.xmlrpc.XmlRpcException;
 public class RPCHandler
     extends AbstractRPCHandler
 {
-    Category log = Category.getInstance( RPCHandler.class ); 
+    Logger log = Logger.getLogger( RPCHandler.class ); 
 
     public void initialize( WikiEngine engine )
     {
@@ -263,7 +263,10 @@ public class RPCHandler
         LinkCollector extCollector   = new LinkCollector();
         LinkCollector attCollector   = new LinkCollector();
 
-        m_engine.textToHTML( new WikiContext(m_engine,page),
+        WikiContext context = new WikiContext( m_engine, page );
+        context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
+
+        m_engine.textToHTML( context,
                              pagedata,
                              localCollector,
                              extCollector,
@@ -294,11 +297,11 @@ public class RPCHandler
 
             if( m_engine.pageExists(link) )
             {
-                ht.put( "href", m_engine.getViewURL(link) );
+                ht.put( "href", context.getURL(WikiContext.VIEW,link) );
             }
             else
             {
-                ht.put( "href", m_engine.getEditURL(link) );
+                ht.put( "href", context.getURL(WikiContext.EDIT,link) );
             }
 
             result.add( ht );
@@ -315,7 +318,7 @@ public class RPCHandler
 
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", m_engine.getAttachmentURL(link) );
+            ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
 
             result.add( ht );
         }

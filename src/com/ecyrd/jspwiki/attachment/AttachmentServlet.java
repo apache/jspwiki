@@ -301,7 +301,7 @@ public class AttachmentServlet
     {
         String msg     = "";
         String attName = "(unknown)";
-        String errorPage = m_engine.getURL( WikiContext.ERROR, "" ); // If something bad happened, Upload should be able to take care of most stuff
+        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
 
         try
@@ -320,8 +320,8 @@ public class AttachmentServlet
             String wikipage = multi.getURLParameter( "page" );
 
             WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
-            errorPage = m_engine.getURL( WikiContext.UPLOAD,
-                                         wikipage );
+            errorPage = context.getURL( WikiContext.UPLOAD,
+                                        wikipage );
 
             //
             //  FIXME: This has the unfortunate side effect that it will receive the

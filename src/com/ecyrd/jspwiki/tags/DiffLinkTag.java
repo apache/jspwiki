@@ -149,20 +149,18 @@ public class DiffLinkTag
             r2 = Integer.parseInt( getNewVersion() );
         }
 
+        String url = m_wikiContext.getURL( WikiContext.DIFF,
+                                           pageName,
+                                           "r1="+r1+"&amp;r2="+r2 );
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a href=\""+engine.getURL( WikiContext.DIFF, 
-                                                  pageName, 
-                                                  false,
-                                                  "r1="+r1+"&amp;r2="+r2)+"\">");
+            out.print("<a href=\""+url+"\">");
+
             break;
 
           case URL:
-            out.print( engine.getURL( WikiContext.DIFF, 
-                                      pageName,
-                                      false,
-                                      "r1="+r1+"&amp;r2="+r2 ) );
+            out.print( url );
             break;
         }
 

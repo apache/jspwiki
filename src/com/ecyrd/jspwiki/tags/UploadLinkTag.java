@@ -63,8 +63,8 @@ public class UploadLinkTag
 
         JspWriter out = pageContext.getOut();
 
-        String url = engine.getURL( WikiContext.UPLOAD,
-                                    pageName );
+        String url = m_wikiContext.getURL( WikiContext.UPLOAD,
+                                           pageName );
 
         switch( m_format )
         {

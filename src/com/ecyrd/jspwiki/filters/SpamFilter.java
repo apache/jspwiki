@@ -131,7 +131,7 @@ public class SpamFilter
                 //
 
                 throw new RedirectException( "Content matches the spam filter '"+p.getPattern()+"'", 
-                                             context.getEngine().getViewURL(m_errorPage) );
+                                             context.getURL(WikiContext.VIEW,m_errorPage) );
             }
         }
 

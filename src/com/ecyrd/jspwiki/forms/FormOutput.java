@@ -79,7 +79,7 @@ public class FormOutput
         }
 
         String sourcePage = ctx.getPage().getName();
-        String submitServlet = ctx.getEngine().getViewURL( sourcePage );
+        String submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
 
         // If there is previous FormInfo available - say, from a
         // FormSet plugin - use it.

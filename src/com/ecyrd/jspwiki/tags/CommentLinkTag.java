@@ -90,8 +90,7 @@ public class CommentLinkTag
 
     private String getCommentURL( String pageName )
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        return engine.getURL(WikiContext.COMMENT, pageName);
+        return m_wikiContext.getURL(WikiContext.COMMENT, pageName);
     }
 
 }

@@ -128,6 +128,14 @@ public class MetaWeblogHandler
         return ht;
     }
 
+    private String getURL( String page )
+    {
+        return m_engine.getURL( WikiContext.VIEW,
+                                page,
+                                null,
+                                true ); // Force absolute urls
+    }
+
     /**
      *  Takes a wiki page, and creates a metaWeblog struct
      *  out of it.
@@ -141,8 +149,8 @@ public class MetaWeblogHandler
         WikiPage firstVersion = m_engine.getPage( page.getName(), 1 );
 
         ht.put("dateCreated", firstVersion.getLastModified());
-        ht.put("link", m_engine.getViewURL(page.getName()));
-        ht.put("permaLink", m_engine.getViewURL(page.getName()));
+        ht.put("link", getURL(page.getName()));
+        ht.put("permaLink", getURL(page.getName()));
         ht.put("postid", page.getName());
         ht.put("userid", page.getAuthor());
 
@@ -291,7 +299,7 @@ public class MetaWeblogHandler
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 
-            url = m_engine.getAttachmentURL(att.getName());
+            url = m_engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
         }
         catch( Exception e )
         {

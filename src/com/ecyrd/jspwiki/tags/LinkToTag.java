@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -84,22 +85,19 @@ public class LinkToTag
 
         if( isattachment )
         {
-            url = engine.getAttachmentURL(pageName);
+            url = m_wikiContext.getURL(WikiContext.ATTACH,pageName,
+                                       (getVersion() != null) ? "version="+getVersion() : null );
             linkclass = "attachment";
-
-            if( getVersion() != null ) url += "?version="+getVersion();
         }
         else
         {
-            url = engine.getViewURL( pageName );
+            StringBuffer params = new StringBuffer();
+            if( getVersion() != null ) params.append( "version="+getVersion() );
+            if( getTemplate() != null ) params.append( (params.length()>0?"&amp;":"") + "skin="+getTemplate() );
+
+            url = m_wikiContext.getURL( WikiContext.ATTACH, pageName,
+                                        params.toString() );
             linkclass = "wikipage";
-
-            if( getVersion() != null ) url += "&amp;version="+getVersion();
-
-            if( getTemplate() != null )
-            {
-                url += "&amp;skin="+getTemplate();
-            }
         }
 
         switch( m_format )

@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
@@ -93,12 +94,12 @@ public class EditLinkTag
                 
                 if( page != null )
                 {
-                    versionString = "&amp;version="+page.getVersion();
+                    versionString = "version="+page.getVersion();
                 }
             }
             else
             {
-                versionString = "&amp;version="+m_version;
+                versionString = "version="+m_version;
             }
         }
 
@@ -111,11 +112,11 @@ public class EditLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a href=\""+engine.getEditURL(pageName)+versionString+"\">");
+            out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)+"\">");
             break;
 
           case URL:
-            out.print( engine.getEditURL(pageName)+versionString );
+            out.print( m_wikiContext.getURL(WikiContext.EDIT,pageName,versionString) );
             break;
         }
 

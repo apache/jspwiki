@@ -240,13 +240,17 @@ public class RSSGenerator
 
             if( page instanceof Attachment )
             {
-                url = m_engine.getAbsoluteURL( WikiContext.ATTACH, 
-                                               page.getName() );
+                url = m_engine.getURL( WikiContext.ATTACH, 
+                                       page.getName(),
+                                       null,
+                                       true );
             }
             else
             {
-                url = m_engine.getAbsoluteURL( WikiContext.VIEW, 
-                                               page.getName() );
+                url = m_engine.getURL( WikiContext.VIEW, 
+                                       page.getName(),
+                                       null,
+                                       true );
             }
 
             result.append("    <rdf:li rdf:resource=\""+url+"\" />\n");
@@ -277,8 +281,8 @@ public class RSSGenerator
                 itemBuffer.append("  <wiki:diff>"+
                                   m_engine.getURL(WikiContext.DIFF,
                                                   page.getName(),
-                                                  true,
-                                                  "r1=-1")+
+                                                  "r1=-1",
+                                                  true)+
                                   "</wiki:diff>\n");
             }
 
@@ -302,7 +306,7 @@ public class RSSGenerator
             itemBuffer.append("   <rdf:Description");
             if( m_engine.pageExists(author) )
             {
-                itemBuffer.append(" link=\""+m_engine.getAbsoluteURL(WikiContext.VIEW,author)+"\"");
+                itemBuffer.append(" link=\""+m_engine.getURL(WikiContext.VIEW,author,null,true)+"\"");
             }
             itemBuffer.append(">\n");
             itemBuffer.append("    <rdf:value>"+author+"</rdf:value>\n");
@@ -313,8 +317,10 @@ public class RSSGenerator
             //  PageHistory
 
             itemBuffer.append("  <wiki:history>");
-            itemBuffer.append( m_engine.getAbsoluteURL(WikiContext.INFO,
-                                                       page.getName()) );
+            itemBuffer.append( m_engine.getURL(WikiContext.INFO,
+                                               page.getName(),
+                                               null,
+                                               true ) );
             itemBuffer.append("</wiki:history>\n");
 
             //  Close up.

@@ -52,8 +52,9 @@ public class WeblogArchivePlugin implements WikiPlugin
         if( weblogName == null ) weblogName = context.getPage().getName();
         
 
-        m_monthUrlFormat = new SimpleDateFormat("'"+engine.getViewURL( weblogName )
-                                                +"&amp;weblog.startDate='ddMMyy'&amp;weblog.days=%d'");
+        m_monthUrlFormat = new SimpleDateFormat("'"+
+                                                context.getURL( WikiContext.VIEW, weblogName,
+                                                                "weblog.startDate='ddMMyy'&amp;weblog.days=%d")+"'");
 
         StringBuffer sb = new StringBuffer();
 

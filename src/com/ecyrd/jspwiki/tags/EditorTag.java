@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import javax.servlet.jsp.PageContext;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
@@ -92,7 +93,7 @@ public class EditorTag
 
         form f = new form();
         f.setName("editForm");
-        f.setAction( engine.getEditURL( page.getName() ) );
+        f.setAction( m_wikiContext.getURL( WikiContext.EDIT, page.getName() ) );
         f.setMethod( "POST" );
         f.setAcceptCharset( engine.getContentEncoding() );
 

@@ -90,7 +90,7 @@ public class FormOpen
         String sourcePage = ctx.getPage().getName();
         String submitServlet = (String)params.get( PARAM_SUBMITHANDLER );
         if( submitServlet == null )
-            submitServlet = ctx.getEngine().getViewURL( sourcePage );
+            submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
 
         FormInfo info = getFormInfo( ctx );
         if( info != null )

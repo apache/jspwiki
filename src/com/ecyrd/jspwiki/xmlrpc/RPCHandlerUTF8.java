@@ -218,7 +218,10 @@ public class RPCHandlerUTF8
         LinkCollector extCollector   = new LinkCollector();
         LinkCollector attCollector   = new LinkCollector();
 
-        m_engine.textToHTML( new WikiContext(m_engine,page),
+        WikiContext context = new WikiContext( m_engine, page );
+        context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
+
+        m_engine.textToHTML( context,
                              pagedata,
                              localCollector,
                              extCollector,
@@ -240,11 +243,11 @@ public class RPCHandlerUTF8
 
             if( m_engine.pageExists(link) )
             {
-                ht.put( "href", m_engine.getViewURL(link) );
+                ht.put( "href", context.getViewURL(link) );
             }
             else
             {
-                ht.put( "href", m_engine.getEditURL(link) );
+                ht.put( "href", context.getURL(WikiContext.EDIT,link) );
             }
 
             result.add( ht );
@@ -261,7 +264,7 @@ public class RPCHandlerUTF8
 
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", m_engine.getAttachmentURL(link) );
+            ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
 
             result.add( ht );
         }

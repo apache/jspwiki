@@ -223,7 +223,8 @@ public class WeblogPlugin
 
                 sb.append("<div class=\"weblogentrybody\">\n");
 
-                WikiContext entryCtx = new WikiContext( engine, p );
+                WikiContext entryCtx = (WikiContext) context.clone();
+                entryCtx.setPage( p );
 
                 sb.append( engine.getHTML( entryCtx, 
                                            engine.getPage(p.getName()) ) );
@@ -241,7 +242,7 @@ public class WeblogPlugin
                 {
                     if( engine.pageExists(author) )
                     {
-                        author = "<a href=\""+engine.getViewURL( author )+"\">"+engine.beautifyTitle(author)+"</a>";
+                        author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.beautifyTitle(author)+"</a>";
                     }
                 }
                 else
@@ -250,7 +251,7 @@ public class WeblogPlugin
                 }
 
                 sb.append("By "+author+"&nbsp;&nbsp;");
-                sb.append( "<a href=\""+engine.getViewURL(p.getName())+"\">Permalink</a>" );
+                sb.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, p.getName())+"\">Permalink</a>" );
                 String commentPageName = TextUtil.replaceString( p.getName(),
                                                                  "blogentry",
                                                                  "comments" );
@@ -266,10 +267,9 @@ public class WeblogPlugin
                     //
                     sb.append( "&nbsp;&nbsp;" );
                     sb.append( "<a target=\"_blank\" href=\""+
-                               engine.getURL(WikiContext.COMMENT,
-                                             commentPageName,
-                                             false,
-                                             "nc="+numComments)+
+                               entryCtx.getURL(WikiContext.COMMENT,
+                                               commentPageName,
+                                               "nc="+numComments)+
                                "\">Comments? ("+
                                numComments+
                                ")</a>" );

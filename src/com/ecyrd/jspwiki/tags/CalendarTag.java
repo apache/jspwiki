@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -126,7 +127,7 @@ public class CalendarTag
                 }
                 else
                 {
-                    result = "<td class=\"link\"><a href=\""+engine.getViewURL( pagename )+"\">"+
+                    result = "<td class=\"link\"><a href=\""+m_wikiContext.getViewURL( pagename )+"\">"+
                              day.get( Calendar.DATE )+"</a></td>";
                 }
             }
@@ -190,7 +191,8 @@ public class CalendarTag
             String pageName = thePage.getName();
 
             String calendarDate = m_dateFormat.format(day.getTime());
-            String url = engine.getViewURL(pageName) + "&amp;calendar.date="+calendarDate;
+            String url = m_wikiContext.getURL( WikiContext.VIEW, pageName, 
+                                               "calendar.date="+calendarDate );
 
             if ( (queryString != null) && (queryString.length() > 0) )
 	    {

@@ -65,7 +65,7 @@ public class PageInfoLinkTag
         {
             JspWriter out = pageContext.getOut();
 
-            String url = engine.getURL( WikiContext.INFO, pageName );
+            String url = m_wikiContext.getURL( WikiContext.INFO, pageName );
 
             switch( m_format )
             {

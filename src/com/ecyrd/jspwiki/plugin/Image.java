@@ -89,7 +89,7 @@ public class Image
 
             if( att != null )
             {
-                src = engine.getAttachmentURL(att.getName());
+                src = context.getURL( WikiContext.ATTACH, att.getName() );
             }
         }
         catch( ProviderException e )

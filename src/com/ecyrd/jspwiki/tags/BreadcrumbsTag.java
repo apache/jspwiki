@@ -127,7 +127,7 @@ public class BreadcrumbsTag extends WikiTagBase
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
             out.print("<a class=\"" + linkclass + "\" href=\"" + 
-                      engine.getViewURL(curPage)+ "\">" + curPage + "</a>");
+                      m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
 
             if( i < queueSize - 2 ) 
             {
