@@ -1,3 +1,12 @@
+2003-10-01  Erik Bunn  <ebu@basen.net>
+
+	* Modified order of UserManager and ReferenceManager
+	init in WikiEngine.initialize(). This was relevant to
+	custom manager implementations.
+
+	* Modified AuthorizationManager to look for property
+	jspwiki.authorizer and load a WikiAuthorizer dynamically.
+
 2003-09-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.74.
