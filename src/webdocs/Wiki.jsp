@@ -49,6 +49,11 @@
 
     WikiPage wikipage = wiki.getPage( pagereq, version );
 
+    if( wikipage == null )
+    {
+        wikipage = new WikiPage( pagereq );
+    }
+
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext );
