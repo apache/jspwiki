@@ -81,6 +81,7 @@ public class AttachmentManagerTest extends TestCase
         assertNotNull( "attachment disappeared", att2 );
         assertEquals( "name", att.getName(), att2.getName() );
         assertEquals( "author", att.getAuthor(), att2.getAuthor() );
+        assertEquals( "size", c_fileContents.length(), att2.getSize() );
 
         InputStream in = m_manager.getAttachmentStream( att2 );
 
@@ -124,6 +125,15 @@ public class AttachmentManagerTest extends TestCase
         sout.close();
 
         assertEquals( "contents", c_fileContents, sout.toString() );
+
+
+        //
+        // Check that first author did not disappear
+        //
+
+        Attachment att3 = m_manager.getAttachmentInfo( new WikiPage(NAME1), "test1.txt", 1 );
+        assertEquals( "version of v1", 1, att3.getVersion() );
+        assertEquals( "name of v1", "FirstPost", att3.getAuthor() );
     }
 
     public void testListAttachments()
