@@ -2,6 +2,10 @@
 
         * v2.1.140.
 
+        * JSPwiki now supports the Google initiative wiki/blog spam reduction
+        by using rel="nofollow" for any links outside the wiki.  Set
+        "jspwiki.translatorReader.useRelNofollow" to "true" to enable this.
+
         * TranslatorReader now completely uses the new URL generation scheme.
 
         * RSS generation now uses absolute URLs regardless of the setting of
