@@ -109,18 +109,16 @@ jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 #
 #  Determines which character encoding JSPWiki should use.  If you want
 #  to support all languages in your Wiki, you probably want to enable
-#  this.  If you're upgrading, or are planning just to use the ISO-Latin1
-#  character set (like most western people would), you can just leave
-#  it at the default.  If you enable it, remember that most people won't
-#  be able to type in special characters anyway.
+#  this.  From JSPWiki 2.2, it is strongly suggested that you use UTF-8.
 #  
 #  Note that you can't switch these in the mean time, since the way the
 #  files are encoded on disk is incompatible between ISO-Latin1 and UTF-8.
 #  Don't try.  You'll get all sorts of interesting problems, if you do.
 #
-#  Possible values are 'ISO-8859-1' (default) and 'UTF-8'.
+#  Possible values are 'ISO-8859-1' (default, if none has been specified) 
+#  and 'UTF-8'.
 
-#jspwiki.encoding = UTF-8
+jspwiki.encoding = UTF-8
 
 #
 #  Determines whether raw HTML is allowed as Wiki input.
