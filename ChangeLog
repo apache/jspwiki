@@ -3,7 +3,8 @@
         * v2.1.47.
 
         * It is now possible to set the "remember" -flag to Comment.jsp,
-        who will then write the author info to a cookie.
+        who will then write the author info to a cookie.  The default
+        template shows you how.
 
 2003-07-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
