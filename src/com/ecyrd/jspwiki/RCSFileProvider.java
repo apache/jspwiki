@@ -141,7 +141,16 @@ public class RCSFileProvider
 
                     Date d = rcsdatefmt.parse( result.group(1) );
 
-                    info.setLastModified( d );
+                    if( d != null )
+                    {
+                        info.setLastModified( d );
+                    }
+                    else
+                    {
+                        log.info("WikiPage "+info.getName()+
+                                 " has null modification date for version "+
+                                 version);
+                    }
                 }
                 else if( matcher.contains( line, userpattern ) && found )
                 {
