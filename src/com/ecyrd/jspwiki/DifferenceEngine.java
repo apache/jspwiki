@@ -151,15 +151,23 @@ public class DifferenceEngine
         while( ( line = in.readLine() ) != null )
         {
             stop  = CSS_DIFF_CLOSE;
-            switch( line.charAt( 0 ) )
+
+            if( line.length() > 0 )
             {
-              case DIFF_ADDED_SYMBOL:
-                start = CSS_DIFF_ADDED;
-                break;
-              case DIFF_REMOVED_SYMBOL:
-                start = CSS_DIFF_REMOVED;
-                break;
-              default:
+                switch( line.charAt( 0 ) )
+                {
+                  case DIFF_ADDED_SYMBOL:
+                    start = CSS_DIFF_ADDED;
+                    break;
+                  case DIFF_REMOVED_SYMBOL:
+                    start = CSS_DIFF_REMOVED;
+                    break;
+                  default:
+                    start = CSS_DIFF_UNCHANGED;
+                }
+            }
+            else
+            {
                 start = CSS_DIFF_UNCHANGED;
             }
             
