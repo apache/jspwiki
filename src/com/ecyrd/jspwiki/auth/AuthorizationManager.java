@@ -51,6 +51,7 @@ public class AuthorizationManager
 {
     public static final String PROP_STRICTLOGINS = "jspwiki.policy.strictLogins";
     public static final String PROP_AUTHORIZER   = "jspwiki.authorizer";
+    public static final String DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.modules.PageAuthorizer";
  
     static Category log = Category.getInstance( AuthorizationManager.class );
 
@@ -164,7 +165,7 @@ public class AuthorizationManager
     private WikiAuthorizer getAuthorizerImplementation( Properties props )
         throws WikiException
     {
-        String authClassName = props.getProperty( PROP_AUTHORIZER );
+        String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
         WikiAuthorizer impl = null;
                                                                                 
         if( authClassName != null )
@@ -172,7 +173,7 @@ public class AuthorizationManager
             try
             {
                 // TODO: this should probably look in package ...modules
-                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth", authClassName );
+                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules", authClassName );
                 impl = (WikiAuthorizer)authClass.newInstance();
                 return( impl );
             }
