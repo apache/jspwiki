@@ -82,6 +82,9 @@ public class WikiEngine
     /** Property name for the template that is used. */
     public static final String PROP_TEMPLATEDIR  = "jspwiki.templateDir";
 
+    /** Property name for the default front page. */
+    public static final String PROP_FRONTPAGE    = "jspwiki.frontPage";
+
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
 
@@ -137,6 +140,9 @@ public class WikiEngine
 
     /** Stores the template path.  This is relative to "templates". */
     private String           m_templateDir;
+
+    /** The default front page name.  Defaults to "Main". */
+    private String           m_frontPage;
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -252,6 +258,7 @@ public class WikiEngine
 
         m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
         m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
+        m_frontPage      = props.getProperty( PROP_FRONTPAGE,   "Main" );
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -396,6 +403,15 @@ public class WikiEngine
     public String getBaseURL()
     {
         return m_baseURL;
+    }
+
+    /**
+     *  Returns the default front page, if no page is used.
+     */
+
+    public String getFrontPage()
+    {
+        return m_frontPage;
     }
 
     /**
