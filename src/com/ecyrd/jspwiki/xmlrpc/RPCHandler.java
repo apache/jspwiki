@@ -61,6 +61,18 @@ public class RPCHandler
         return result;
     }
 
+    private Hashtable encodeWikiPage( WikiPage page )
+    {
+        Hashtable ht = new Hashtable();
+
+        ht.put( "name", page.getName() );
+        ht.put( "lastModified", page.getLastModified() );
+        ht.put( "version", new Integer(page.getVersion()) );
+        ht.put( "author", page.getAuthor() );
+
+        return ht;
+    }
+
     public Vector getRecentChanges( Date since )
     {
         Collection pages = m_engine.getRecentChanges();
@@ -72,15 +84,21 @@ public class RPCHandler
 
             if( page.getLastModified().after( since ) )
             {
-                Hashtable ht = new Hashtable();
-                ht.put( "name", page.getName() );
-                ht.put( "date", page.getLastModified() );
-
-                result.add( ht );
+                result.add( encodeWikiPage( page ) );
             }
         }
 
         return result;
+    }
+
+    public Hashtable getPageInfo( String pagename )
+    {
+        return encodeWikiPage( m_engine.getPage(pagename) );
+    }
+
+    public Hashtable getPageInfo( String pagename, int version )
+    {
+        return encodeWikiPage( m_engine.getPage( pagename, version ) );
     }
 
     public String getPage( String pagename )
