@@ -290,7 +290,7 @@ public class WikiEngine
         //
         try
         {
-            m_pageManager       = new PageManager( props );
+            m_pageManager       = new PageManager( this, props );
             m_pluginManager     = new PluginManager( props );
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
