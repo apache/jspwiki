@@ -1,5 +1,9 @@
 2002-03-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Edit.jsp had a javascript error, pointing at a wrong form.  It
+        was not fatal, it did not affect the user in any real way, other
+        than being an annoyance.
+
         * DifferenceEngine no longer crashes if it gets empty lines from
         diff. 
 
