@@ -44,13 +44,11 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  @author Janne Jalkanen
  *  @since 2.0
  */
-public class HistoryIteratorTag
-    extends BodyTagSupport
-{
-    protected String      m_pageName;
-    protected Iterator    m_iterator;
-    protected WikiContext m_wikiContext;
 
+// FIXME: Too much in common with IteratorTag - REFACTOR
+public class HistoryIteratorTag
+    extends IteratorTag
+{
     static    Category    log = Category.getInstance( HistoryIteratorTag.class );
 
     public final int doStartTag()
@@ -91,16 +89,6 @@ public class HistoryIteratorTag
         }
 
         return SKIP_BODY;
-    }
-
-    public final int doEndTag()
-    {
-        // Return back to the original.
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  m_wikiContext,
-                                  PageContext.REQUEST_SCOPE );        
-
-        return EVAL_PAGE;
     }
 
     public final int doAfterBody()
