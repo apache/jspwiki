@@ -151,6 +151,19 @@ div.index .section { color:red; }
      padding: 8px;
 }
 
+.toc ul {
+     list-style: none;
+     margin-left: 0;
+     padding-left: 0;
+}
+
+.toc li {
+     margin-left: 1em;
+     padding-left: 0;
+     display: block;
+}
+
+
 /*  Here's a nice style you can use to put comment boxes on pages.  It's used
     on some pages. */
 
@@ -168,3 +181,16 @@ div.commentbox {
    padding-left: 1em;
    margin-left: 4px;
 }
+
+/*  To make centering easier */
+
+.center { 
+    text-align: center;
+}
+
+.center table { 
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
