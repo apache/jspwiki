@@ -31,8 +31,16 @@ import java.util.*;
 /**
  *  Builds a simple weblog.
  *
+ *  <B>Parameters</B>
+ *  <UL>
+ *    <LI>days - how many days the weblog aggregator should show.
+ *  </UL>
  *  @since 1.9.21
  */
+
+// FIXME: Add "entries" param as an alternative to "days".
+// FIXME: Entries arrive in wrong order.
+
 public class WeblogPlugin implements WikiPlugin
 {
     private static Category     log = Category.getInstance(WeblogPlugin.class);
@@ -84,6 +92,10 @@ public class WeblogPlugin implements WikiPlugin
                 sb.append( engine.getHTML( context, p ) );
                 
                 sb.append("</DIV>\n");
+
+                sb.append("<div class=\"weblogpermalink\">");
+                sb.append( "<a href=\"Wiki.jsp?page="+engine.encodeName(p.getName())+"\">Permalink</a>" );
+                sb.append("</div>");
             }
             
             sb.append("</DIV>\n");
