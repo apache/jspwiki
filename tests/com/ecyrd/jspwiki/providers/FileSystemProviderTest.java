@@ -13,6 +13,7 @@ public class FileSystemProviderTest extends TestCase
 {
     FileSystemProvider m_provider;
     String             m_pagedir;
+    Properties props  = new Properties();
 
     public FileSystemProviderTest( String s )
     {
@@ -24,7 +25,6 @@ public class FileSystemProviderTest extends TestCase
     {
         m_pagedir = System.getProperties().getProperty("java.io.tmpdir");
 
-        Properties props  = new Properties();
         Properties props2 = new Properties();
 
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
@@ -167,6 +167,19 @@ public class FileSystemProviderTest extends TestCase
         }
     }
 
+    public void testDelete()
+        throws Exception
+    {
+        m_provider.putPageText( new WikiPage("Test"), "v1" );
+
+        m_provider.deletePage( "Test" );
+
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        File f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
+
+        assertFalse( "file exists", f.exists() );
+    }
 
     public static Test suite()
     {
