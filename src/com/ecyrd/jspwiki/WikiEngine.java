@@ -166,6 +166,16 @@ public class WikiEngine
     }
 
     /**
+     *  Returns an URL to some other Wiki that we know.
+     *
+     *  @return null, if no such reference was found.
+     */
+    String getInterWikiURL( String wikiName )
+    {
+        return m_properties.getProperty("jspwiki.interWikiRef."+wikiName);
+    }
+
+    /**
      *  If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns null.
      */
