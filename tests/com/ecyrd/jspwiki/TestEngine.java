@@ -3,7 +3,7 @@ package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.io.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.providers.*;
 
@@ -12,7 +12,7 @@ import com.ecyrd.jspwiki.providers.*;
  */
 public class TestEngine extends WikiEngine
 {
-    static Category log = Category.getInstance( TestEngine.class );
+    static Logger log = Logger.getLogger( TestEngine.class );
 
     public TestEngine( Properties props )
         throws WikiException
@@ -43,7 +43,7 @@ public class TestEngine extends WikiEngine
             {
                 if( files[i].isDirectory() )
                 {
-                    deleteAll(files[i]);                
+                    deleteAll(files[i]);
                 }
 
                 files[i].delete();
