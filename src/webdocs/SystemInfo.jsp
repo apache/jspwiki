@@ -56,7 +56,7 @@
         </tr>
 
         <tr>
-          <td><b>Character Encoding</b></td>
+          <td><b>Character encoding</b></td>
           <td><%=wiki.getContentEncoding()%></td>
         </tr>
 
