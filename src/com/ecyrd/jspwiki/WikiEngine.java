@@ -34,6 +34,11 @@ import com.ecyrd.jspwiki.rss.RSSGenerator;
  *  <P>
  *  This is the main interface through which everything should go.
  *
+ *  <P>
+ *  Using this class:  Always get yourself an instance from JSP page
+ *  by using the WikiEngine.getInstance() method.  Never create a new
+ * WikiEngine() from scratch, unless you're writing tests.
+ *
  *  @author Janne Jalkanen
  */
 public class WikiEngine
@@ -126,6 +131,7 @@ public class WikiEngine
 
     /**
      *  Instantiate the WikiEngine using a given set of properties.
+     *  Use this constructor for testing purposes only.
      */
     public WikiEngine( Properties properties )
         throws NoRequiredPropertyException,
@@ -136,7 +142,9 @@ public class WikiEngine
 
     /**
      *  Instantiate using this method when you're running as a servlet and
-     *  WikiEngine will figure out where to look for the property file.
+     *  WikiEngine will figure out where to look for the property
+     * file.
+     *  Do not use this method - use WikiEngine.getInstance() instead.
      */
     protected WikiEngine( ServletContext context )
     {
@@ -334,9 +342,9 @@ public class WikiEngine
 
 
     /**
-       Initializes the reference manager. Scans all existing WikiPages for
-       internal links and adds them to the ReferenceManager object.
-    */
+     *  Initializes the reference manager. Scans all existing WikiPages for
+     *  internal links and adds them to the ReferenceManager object.
+     */
     private void initReferenceManager()
     {
         long start = System.currentTimeMillis();
