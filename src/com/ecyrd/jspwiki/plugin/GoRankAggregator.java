@@ -165,10 +165,6 @@ public class GoRankAggregator
 
         while( (line = in.readLine() ) != null )
         {
-            String lastname  = null;
-            String firstname = null;
-            int    rank      = 50;
-
             line = line.trim();
 
             if( line.length() == 0 ) continue;
@@ -187,9 +183,33 @@ public class GoRankAggregator
 
             try
             {
-                lastname  = st.nextToken();
-                firstname = st.nextToken();
-                rank      = parseRank(st.nextToken());
+                UserInfo info    = new UserInfo();
+
+                info.m_lastName  = st.nextToken().trim();
+                info.m_firstName = st.nextToken().trim();
+                info.m_rank      = parseRank(st.nextToken());
+                info.m_club      = club;
+                info.m_clubPage  = pageName;
+
+                while( st.hasMoreTokens() )
+                {
+                    String serverNick = st.nextToken().trim();
+
+                    int brk = serverNick.indexOf(':');
+                    
+                    if( brk == -1 || brk == 0 || brk == serverNick.length()-1 )
+                    {
+                        throw new PluginException("Could not parse server:nick combination on line '"+
+                                                  line+"' :: '"+serverNick+"'");
+                    }
+
+                    String server = serverNick.substring( 0, brk ).toLowerCase();
+                    String nick   = serverNick.substring( brk+1 );
+
+                    info.addNick( server, nick );
+                }
+
+                list.add( info );
             }
             catch( NoSuchElementException e )
             {
@@ -201,14 +221,6 @@ public class GoRankAggregator
                 throw new PluginException( "Page '"+pageName+"' has bad rank data on line '"+line+"': "+e.getMessage());
             }
 
-            UserInfo info    = new UserInfo();
-            info.m_lastName  = lastname.trim();
-            info.m_firstName = firstname.trim();
-            info.m_rank      = rank;
-            info.m_club      = club;
-            info.m_clubPage  = pageName;
-
-            list.add( info );
         }
 
         return list;
@@ -345,6 +357,8 @@ public class GoRankAggregator
         String pages = (String) params.get( "pages" );
         String egfurl = (String) params.get( "egfurl" );
 
+        String kgsurl = (String) params.get( "kgsurl" );
+
         if( pages == null )
         {
             return "ERROR: Parameter 'pages' is required.";
@@ -407,7 +421,8 @@ public class GoRankAggregator
         int counter = 1;
 
         sb.append("<table border=\"1\">\n");
-        sb.append("<tr><th>Place</th><th>Name</th><th>Club</th><th>Rank</th><th>EGF GoR</th></tr>");
+        sb.append("<tr><th>Place</th><th>Name</th><th>Club</th><th>Rank</th><th>EGF GoR</th>"+
+                  "<th>IGS nick</th><th>KGS nick</th></tr>\n");
         for( Iterator i = list.iterator(); i.hasNext(); )
         {            
             sb.append("<tr>\n");
@@ -434,6 +449,21 @@ public class GoRankAggregator
             sb.append("<td align=center>"+printRank(ui.m_rank)+"</td>");
             sb.append("<td align=center>"+((ui.m_egfRank > 0) ? ""+ui.m_egfRank : "?")+"</td>");
 
+            //
+            //  Servers
+            //
+
+            String igsnick = ui.getNick("igs");
+            String kgsnick = ui.getNick("kgs");
+
+            if( kgsnick != null && kgsurl != null )
+            {
+                kgsnick = "<a href=\""+TextUtil.replaceString(kgsurl,"%n",kgsnick)+"\">"+kgsnick+"</a>";
+            }
+
+            sb.append("<td>"+ ((igsnick != null) ? igsnick : "&nbsp;") + "</td>\n");
+            sb.append("<td>"+ ((kgsnick != null) ? kgsnick : "&nbsp;") + "</td>\n");
+
             sb.append("</tr>\n");
 
             ++counter;
@@ -459,9 +489,21 @@ public class GoRankAggregator
         public int    m_rank;
         public int    m_egfRank = 0;
 
+        protected HashMap m_nicks = new HashMap();
+
         public String toString()
         {
             return m_lastName+","+m_firstName+": "+m_rank;
+        }
+
+        public void addNick( String server, String nick )
+        {
+            m_nicks.put( server.trim(), nick.trim() );
+        }
+
+        public String getNick( String server )
+        {
+            return (String) m_nicks.get( server.trim().toLowerCase() );
         }
     }
 
