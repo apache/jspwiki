@@ -639,6 +639,8 @@ public class WikiEngine
         if( m_provider == null ) 
             return;
 
+        text = TextUtil.normalizePostData(text);
+
         // Hook into cross reference collection.
         m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
 
@@ -656,6 +658,8 @@ public class WikiEngine
         {
             return;
         }
+
+        text = TextUtil.normalizePostData(text);
 
         // Error protection or if the user info has been disabled.
         if( request == null || m_saveUserInfo == false ) 
