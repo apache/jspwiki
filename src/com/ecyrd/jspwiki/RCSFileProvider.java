@@ -50,8 +50,8 @@ public class RCSFileProvider
 {
     private String m_checkinCommand  = "ci -q -m\"author=%u\" -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
-    private String m_logCommand      = "rlog -h %s";
-    private String m_fullLogCommand  = "rlog %s";
+    private String m_logCommand      = "rlog -zLT -h %s";
+    private String m_fullLogCommand  = "rlog -zLT %s";
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
     
     private static final Category   log = Category.getInstance(RCSFileProvider.class);
@@ -216,12 +216,12 @@ public class RCSFileProvider
 
         ArrayList list = new ArrayList();        
 
-        SimpleDateFormat rcsdatefmt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat rcsdatefmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         try
         {
             Pattern revpattern  = compiler.compile("^revision \\d+\\.(\\d+)");
-            Pattern datepattern = compiler.compile("^date:\\s*(.*);");
+            Pattern datepattern = compiler.compile("^date:\\s*(.*)[\\+\\-;]\\d+;");
             Pattern userpattern = compiler.compile("^\"author=(.*)\"");
 
             String[] env = new String[0];
