@@ -1,3 +1,10 @@
+2004-01-21  Erik Bunn  <ebu@spamicide.basen.net>
+
+	* v2.1.92
+
+	* Modified all IteratorTag classes to use WikiContext.clone()
+	instead of creating a new one. This preserves the context info.
+
 2004-01-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.91.
