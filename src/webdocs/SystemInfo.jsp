@@ -102,6 +102,13 @@
            </td>
         </td>
 
+        <tr>
+           <td valign="top"><b>Additional plugin search path is</b></td>
+           <td>
+             <%=wiki.getPluginSearchPath()%>
+           </td>
+        </td>
+
       </table>
 
       <P>
