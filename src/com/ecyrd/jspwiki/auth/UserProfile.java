@@ -98,7 +98,7 @@ public class UserProfile
     {
         UserProfile prof = new UserProfile();
 
-        if( res != null )
+        if( res != null && res.length() > 0 )
         {
             //
             //  Not all browsers or containers do proper cookie
@@ -108,7 +108,7 @@ public class UserProfile
             //
             res = TextUtil.urlDecodeUTF8( res );
             StringTokenizer tok = new StringTokenizer( res, " ,=" );
-
+            
             while( tok.hasMoreTokens() )
             {
                 String param = tok.nextToken();
