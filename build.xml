@@ -1,5 +1,5 @@
 <!--
-    Copyright (C) Janne Jalkanen 2001.
+    Copyright (C) Janne Jalkanen 2001-2004.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.34 2003-09-21 21:03:10 jalkanen Exp $
+    $Id: build.xml,v 1.35 2004-06-02 22:05:48 jalkanen Exp $
 -->    
        
 <!--   
@@ -226,7 +226,7 @@
     <javadoc sourcepath="${code.src}"
              destdir="${docs.javadoc}"
              use="yes"
-             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment,com.ecyrd.jspwiki.acl,com.ecyrd.jspwiki.auth,com.ecyrd.jspwiki.auth.modules,com.ecyrd.jspwiki.filters,com.ecyrd.jspwiki.util,com.ecyrd.jspwiki.auth.permissions">
+             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment,com.ecyrd.jspwiki.acl,com.ecyrd.jspwiki.auth,com.ecyrd.jspwiki.auth.modules,com.ecyrd.jspwiki.filters,com.ecyrd.jspwiki.util,com.ecyrd.jspwiki.auth.permissions,com.ecyrd.jspwiki.atom">
       <classpath refid="path.base" />
     </javadoc>
              
