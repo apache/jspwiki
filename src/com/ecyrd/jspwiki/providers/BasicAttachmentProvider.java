@@ -64,6 +64,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *             
  *  </PRE>
  *
+ *  The names of the directories will be URLencoded.
+ *  <p>
  *  "attachment.properties" consists of the following items:
  *  <UL>
  *   <LI>1.author = author name for version 1 (etc)
@@ -78,7 +80,8 @@ public class BasicAttachmentProvider
     public static final String PROPERTY_FILE   = "attachment.properties";
 
     public static final String DIR_EXTENSION   = "-att";
-
+    public static final String ATTDIR_EXTENSION = "-dir";
+    
     static final Category log = Category.getInstance( BasicAttachmentProvider.class );
 
     public void initialize( Properties properties ) 
@@ -96,7 +99,7 @@ public class BasicAttachmentProvider
     private File findPageDir( String wikipage )
         throws ProviderException
     {
-        wikipage = TextUtil.urlEncodeUTF8( wikipage );
+        wikipage = mangleName( wikipage );
 
         File f = new File( m_storageDir, wikipage+DIR_EXTENSION );
 
@@ -108,6 +111,18 @@ public class BasicAttachmentProvider
         return f;
     }
 
+    private static String mangleName( String wikiname )
+    {
+        String res = TextUtil.urlEncodeUTF8( wikiname );
+
+        return res;
+    }
+
+    private static String unmangleName( String filename )
+    {
+        return TextUtil.urlDecodeUTF8( filename );
+    }
+    
     /**
      *  Finds the dir in which the attachment lives.
      */
@@ -115,7 +130,7 @@ public class BasicAttachmentProvider
         throws ProviderException
     {
         File f = new File( findPageDir(att.getParentName()), 
-                           TextUtil.urlEncodeUTF8(att.getFileName()) );
+                           mangleName(att.getFileName()+ATTDIR_EXTENSION) );
 
         return f;
     }
@@ -179,7 +194,7 @@ public class BasicAttachmentProvider
         int dot = filename.lastIndexOf('.');
         if( dot >= 0 && dot < filename.length()-1 )
         {
-            fileExt = TextUtil.urlEncodeUTF8( filename.substring( dot+1 ) );
+            fileExt = mangleName( filename.substring( dot+1 ) );
         }
 
         return fileExt;
@@ -339,8 +354,13 @@ public class BasicAttachmentProvider
 
                     if( f.isDirectory() )
                     {
-                        String attachmentName = TextUtil.urlDecodeUTF8( attachments[i] );
+                        String attachmentName = unmangleName( attachments[i] );
 
+                        if( attachmentName.endsWith( ATTDIR_EXTENSION ) )
+                        {
+                            attachmentName = attachmentName.substring( 0, attachmentName.length()-ATTDIR_EXTENSION.length() );
+                        }
+                        
                         Attachment att = getAttachmentInfo( page, attachmentName,
                                                             WikiProvider.LATEST_VERSION );
 
@@ -408,7 +428,7 @@ public class BasicAttachmentProvider
         throws ProviderException
     {
         File dir = new File( findPageDir( page.getName() ), 
-                             TextUtil.urlEncodeUTF8(name) );
+                             mangleName(name)+ATTDIR_EXTENSION );
 
         if( !dir.exists() )
         {
