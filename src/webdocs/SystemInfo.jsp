@@ -34,8 +34,8 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%>: SystemInfo</TITLE>
-  <%@ include file="cssinclude.js" %>
+  <TITLE><wiki:ApplicationName />: SystemInfo</TITLE>
+  <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
@@ -44,9 +44,9 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/LeftMenu.jsp" %>
+       <%@ include file="templates/default/LeftMenu.jsp" %>
        <P>
-       <%@ include file="templates/LeftMenuFooter.jsp" %>
+       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
@@ -56,7 +56,7 @@
       <table border="1" cellspacing="4">
         <tr>
           <td><b>Application name<b></td>
-          <td><%=wiki.getApplicationName()%></td>
+          <td><wiki:ApplicationName /></td>
         </tr>
 
         <tr>
