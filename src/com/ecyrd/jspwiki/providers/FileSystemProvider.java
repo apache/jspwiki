@@ -100,7 +100,7 @@ public class FileSystemProvider
     protected String mangleName( String pagename )
     {
         // FIXME: Horrible kludge, very slow, etc.
-        if( "UTF-8".equals( m_encoding ) )
+        if( "UTF-8".equalsIgnoreCase( m_encoding ) )
             return TextUtil.urlEncodeUTF8( pagename );
 
         return java.net.URLEncoder.encode( pagename );
@@ -112,7 +112,7 @@ public class FileSystemProvider
     protected String unmangleName( String filename )
     {
         // FIXME: Horrible kludge, very slow, etc.
-        if( "UTF-8".equals( m_encoding ) )
+        if( "UTF-8".equalsIgnoreCase( m_encoding ) )
             return TextUtil.urlDecodeUTF8( filename );
 
         return java.net.URLDecoder.decode( filename );
