@@ -574,7 +574,15 @@ public class BasicAttachmentProvider
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
-        // FIXME: Does nothing yet.
+        File dir = findAttachmentDir( att );
+        String[] files = dir.list();
+
+        for( int i = 0; i < files.length; i++ )
+        {
+            File file = new File( dir.getAbsolutePath() + "/" + files[i] );
+            file.delete();
+        }
+        dir.delete();
     }
 
 
