@@ -489,6 +489,7 @@ public class TranslatorReader extends Reader
                     catch( PluginException e )
                     {
                         log.error( "Failed to insert plugin", e );
+                        log.error( "Root cause:",e.getRootThrowable() );
                         included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
                     }
                             
