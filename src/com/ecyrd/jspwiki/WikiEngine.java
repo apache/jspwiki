@@ -2,7 +2,8 @@ package com.ecyrd.jspwiki;
 
 import java.io.*;
 import java.util.*;
-import org.apache.log4j.Category;
+import org.apache.log4j.*;
+import javax.servlet.*;
 
 public class WikiEngine
 {
@@ -11,6 +12,50 @@ public class WikiEngine
     private String m_pagelocation = "/home/jalkanen/Projects/JSPWiki/src/wikipages";
 
     public static final String FILE_EXT = ".txt";
+    public static final String PROP_PAGEDIR = "jspwiki.wikiFiles";
+
+    private static boolean c_configured = false;
+
+    public WikiEngine( ServletContext context )
+    {
+        String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
+
+        Properties props = new Properties();
+
+        try
+        {
+            props.load( new FileInputStream(propertyFile) );
+
+            m_pagelocation = getRequiredProperty( props, PROP_PAGEDIR );
+
+            //
+            //  Initialized log4j.  However, make sure that
+            //  we don't initialize it multiple times.
+            //
+            if( !c_configured )
+            {
+                PropertyConfigurator.configure( props );
+                c_configured = true;
+            }
+
+            log.info("WikiEngine configured.");
+            log.debug("files at "+m_pagelocation );
+        }
+        catch( Exception e )
+        {
+            context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile );
+        }
+    }
+
+    private static String getRequiredProperty( Properties props, String key )
+    {
+        String value = props.getProperty(key);
+
+        if( value == null )
+            throw new IllegalArgumentException( "Property "+key+" is required" );
+
+        return value;
+    }
 
     private File findPage( String page )
     {
@@ -191,7 +236,7 @@ public class WikiEngine
                 {
                     String wikiname = wikipages[i].getName();
 
-                    int cutpoint = wikiname.lastIndexOf(".txt");
+                    int cutpoint = wikiname.lastIndexOf( FILE_EXT );
                     v.add( wikiname.substring(0,cutpoint) );
                 }
             }
@@ -218,7 +263,7 @@ public class WikiEngine
     {
         public boolean accept( File dir, String name )
         {
-            return name.endsWith(".txt");
+            return name.endsWith( FILE_EXT );
         }
     }
 }
