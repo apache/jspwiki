@@ -41,13 +41,10 @@
     //
     int version          = -1;
     String rev           = request.getParameter("version");
-    String pageReference = "this page";
-    String versionInfo   = "";
 
     if( rev != null )
     {
         version = Integer.parseInt( rev );
-        pageReference = "current version";
     }
 
     WikiPage wikipage = wiki.getPage( pagereq, version );
