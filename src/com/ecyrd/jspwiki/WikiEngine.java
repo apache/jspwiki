@@ -346,6 +346,7 @@ public class WikiEngine
         try
         {
             Collection pages = m_pageManager.getAllPages();
+            pages.addAll( m_attachmentManager.getAllAttachments() );
 
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
@@ -358,10 +359,26 @@ public class WikiEngine
             while( it.hasNext() )
             {
                 WikiPage page  = (WikiPage)it.next();
-                String content = m_pageManager.getPageText( page.getName(), 
-                                                            WikiPageProvider.LATEST_VERSION );
-                m_referenceManager.updateReferences( page.getName(), 
-                                                     scanWikiLinks( content ) );
+
+                if( page instanceof Attachment )
+                {
+                    // We cannot build a reference list from the contents
+                    // of attachments, so we skip them.
+                }
+                else
+                {
+                    String content = m_pageManager.getPageText( page.getName(), 
+                                                                WikiPageProvider.LATEST_VERSION );
+                    Collection links = scanWikiLinks( content );
+                    Collection attachments = m_attachmentManager.listAttachments( page );
+
+                    for( Iterator atti = attachments.iterator(); atti.hasNext(); )
+                    {
+                        links.add( ((Attachment)(atti.next())).getName() );
+                    }
+
+                    m_referenceManager.updateReferences( page.getName(), links );
+                }
             }
         }
         catch( ProviderException e )
@@ -933,27 +950,42 @@ public class WikiEngine
         return( localCollector.getLinks() );
     }
 
-
     /**
-     *  Helper method for combining simple  textToHTML() and scanWikiLinks().
+     *  Just convert WikiText to HTML.
      */
+
     public String textToHTML( WikiContext context, 
                               String pagedata, 
                               StringTransmutator localLinkHook,
                               StringTransmutator extLinkHook )
     {
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null );
+    }
+
+/**
+ *  Helper method for combining simple  textToHTML() and scanWikiLinks().
+ */
+
+    private String textToHTML( WikiContext context,
+                               String pagedata,
+                               StringTransmutator localLinkHook,
+                               StringTransmutator extLinkHook,
+                               StringTransmutator attLinkHook )
+    {
         String result = "";
 
-        if( pagedata == null ) 
+        if( pagedata == null )
         {
             log.error("NULL pagedata to textToHTML()");
             return null;
         }
 
-        TranslatorReader in = new TranslatorReader( context, 
-                                                    new StringReader( pagedata ) );
+        TranslatorReader in = new TranslatorReader( context,
+                                                new StringReader( pagedata ) );
+        
         in.addLocalLinkHook( localLinkHook );
         in.addExternalLinkHook( extLinkHook );
+        in.addAttachmentLinkHook( attLinkHook );
         result = translatePageText( in );
 
         return( result );

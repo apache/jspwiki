@@ -181,13 +181,15 @@ public class AttachmentManager
 
     /**
      *  Returns the list of attachments associated with a given wiki page.
+     *
+     *  @returns a valid collection of attachments.
      */
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
     {
         if( m_provider == null )
         {
-            return( null );
+            return new ArrayList();
         }
         
         return m_provider.listAttachments( wikipage );

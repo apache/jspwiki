@@ -87,6 +87,7 @@ public class TranslatorReader extends Reader
     /** Optionally stores internal wikilinks */
     private ArrayList      m_localLinkMutatorChain    = new ArrayList();
     private ArrayList      m_externalLinkMutatorChain = new ArrayList();
+    private ArrayList      m_attachmentLinkMutatorChain = new ArrayList();
 
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
@@ -205,7 +206,14 @@ public class TranslatorReader extends Reader
         m_pluginsEnabled = expand;
     }
 
-
+    /**
+     * Returns the access rules that have been collected when the 
+     * wiki text was parsed (read()).
+     */
+    public AccessRuleSet getAccessRules()
+    {
+        return( m_accessRules );
+    }
 
     /**
      *  Adds a hook for processing link texts.  This hook is called
@@ -252,20 +260,22 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     * Returns the access rules that have been collected when the 
-     * wiki text was parsed (read()).
+     *  Adds a hook for processing attachment links.
+     *
+     *  @param mutator The hook to call.  Null is safe.
      */
-    public AccessRuleSet getAccessRules()
+    public void addAttachmentLinkHook( StringTransmutator mutator )
     {
-        return( m_accessRules );
+        if( mutator != null )
+        {
+            m_attachmentLinkMutatorChain.add( mutator );
+        }
     }
-
 
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
      */
-
     protected static Collection getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
@@ -807,6 +817,8 @@ public class TranslatorReader extends Reader
             String attachment = findAttachment( reallink );
             if( attachment != null )
             {
+                callMutatorChain( m_attachmentLinkMutatorChain, attachment );
+
                 if( isImageLink( reallink ) )
                 {
                     attachment = m_engine.getBaseURL()+"attach?page="+attachment;
