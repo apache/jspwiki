@@ -65,7 +65,7 @@ public class CachingProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
-    private long m_milliSecondsBetweenChecks = 5000;
+    private long m_milliSecondsBetweenChecks = 30000;
 
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
