@@ -9,7 +9,7 @@
 
         * Added SystemInfo.jsp
 
-        * Added interWiki functionality.  Now you can defined in
+        * Added interWiki functionality.  Now you can define links in
         'jspwiki.properties' where a link of the form [WikiXX:PageName]
         should point to.
 
