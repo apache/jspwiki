@@ -1,3 +1,10 @@
+2002-07-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.7.
+
+        * Links to existing pages inside image links now generate an
+        automatic link to that page.  Suggested by Alain Ravet.
+
 2002-07-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.6.
