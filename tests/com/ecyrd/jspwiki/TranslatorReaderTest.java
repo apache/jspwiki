@@ -130,6 +130,15 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHyperlinksCCNonExistant()
+        throws Exception
+    {
+        String src = "This should be a HyperLink.";
+
+        assertEquals( "This should be a <U>HyperLink</U><A HREF=\"Edit.jsp?page=HyperLink\">?</A>.\n",
+                      translate2(src) );
+    }
+
     /**
      *  Check if the CC hyperlink translator gets confused with
      *  unorthodox bracketed links.
