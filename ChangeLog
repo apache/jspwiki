@@ -1,5 +1,7 @@
 2001-10-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Bumped version to 1.4.2-cvs.
+
         * Wiki.jsp changed with respect to handling of old page versions.
         It no longer displays the "edit current version".
 
