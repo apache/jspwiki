@@ -127,37 +127,45 @@ public class FileSystemProvider
 
     public String getPageText( String page )
     {
-        String result = null;
+        String result  = null;
         InputStream in = null;
 
         File pagedata = findPage( page );
 
-        if( pagedata.exists() && pagedata.canRead() )
+        if( pagedata.exists() )
         {
-            try
-            {          
-                in = new FileInputStream( pagedata );
-                result = FileUtil.readContents( in, m_encoding );
-            }
-            catch( IOException e )
-            {
-                log.error("Failed to read", e);
-            }
-            finally
+            if( pagedata.canRead() )
             {
                 try
-                {
-                    if( in  != null ) in.close();
+                {          
+                    in = new FileInputStream( pagedata );
+                    result = FileUtil.readContents( in, m_encoding );
                 }
-                catch( Exception e ) 
+                catch( IOException e )
                 {
-                    log.fatal("Closing failed",e);
+                    log.error("Failed to read", e);
                 }
+                finally
+                {
+                    try
+                    {
+                        if( in  != null ) in.close();
+                    }
+                    catch( Exception e ) 
+                    {
+                        log.fatal("Closing failed",e);
+                    }
+                }
+            }
+            else
+            {
+                log.warn("Failed to read page '"+page+"' from '"+pagedata.getAbsolutePath()+"', possibly a permissions problem");
             }
         }
         else
         {
-            log.warn("Failed to load page '"+page+"' from '"+pagedata.getAbsolutePath()+"'");
+            // This is okay.
+            log.info("New page '"+page+"'");
         }
 
         return result;
