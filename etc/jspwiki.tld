@@ -165,4 +165,10 @@
     </attribute>
   </tag>
 
+  <tag>
+    <name>Translate</name>
+    <tagclass>com.ecyrd.jspwiki.tags.TranslateTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+  </tag>
+
 </taglib>
