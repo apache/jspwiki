@@ -177,12 +177,17 @@ The Image plugin allows one to have finer control over the layout of images than
 * __width__ = ''integer''.  Force the width of the image.
 * __alt__ = ''alt text''.   The alt text of an image.  This is very useful when doing pages that can be navigated with text-only browsers.
 * __caption__ = ''caption text''.  The text that should be shown as a caption under the image.
+* __link__ = ''hyperlink''.  A hyperlink (http://...).  In the future, you can also use [WikiPages].
+* __border__ = ''integer''.  Size of the image border.
+* __style__ = ''style info''.  Any style markup you would like to apply to the table surrounding the image.
+* __class__ = ''class name''.  Redefine the default class for this
+ image, which is "imageplugin".
 
 !Example
 
-[[{Image src='SandBox/test.png' caption='Testing image'}].
+[[{Image src='SandBox/test.png' caption='Testing image' style='font-size: 120%; color: green;'}].
 
-Shows the attachment SandBox/test.png with the caption "Testing image" underneath it.
+Shows the attachment SandBox/test.png with the caption "Testing image" underneath it.  The text is 120% in height and will be rendered in green color.
 
 !CSS
 

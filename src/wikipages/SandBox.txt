@@ -1,7 +1,9 @@
+[{WeblogPlugin}]
+
 This is a playground - do whatever you want.
 
 gkerogkerpo gperk pgkre pwgkwepr gpewk rpgokewp rgkpåwekr gpokwreg 
-[{Image src='IMG_0014.JPG' height=150 align=right caption='Two happy people doing strange stuff with alcoholic beverages.'}] 
+[{Image style='font-size: 200%; color:red; margin: 20px; border-width: 5px;' src='IMG_0014.JPG' height='150' align=right caption='Two happy people doing strange stuff with alcoholic beverages.'}] 
 Huomaa, että välittömästi kuvan jälkeen olevat kommentit tulevat kuvan oikealle puolelle.  Tripla-backslash (\) katkaisee ja aloittaa siististi uudelta riviltä.
 
 __Parametrit__
