@@ -1,80 +1,13 @@
 
 This is a full release of JSPWiki.
 
-Major changes since the last stable (1.6.0) release are:
+Major changes since the last stable (1.7.0) release are:
 
-- Table support.  See TextFormattingRules on how that works.
-
-- Added XML-RPC interface, both strict XML-RPC and one where all
-  strings are returned in UTF-8.  See web.xml on ideas how to
-  configure them.
-
-- Added CachingProvider based on an idea and sample code by Chris
-  Brooking.  Especially when used with RCSFileProvider, this should
-  speed up your RecentChanges list considerably.
-
-- Added a VersioningFileProvider for people who don't want to use RCS.
-  However, it is currently only for testing - it has not yet been
-  tested properly.
-
-- Added ReferenceManager. This object is initialized statically by 
-  each WikiEngine, and it keeps track of all WikiPage cross references
-  within that WE. This is an unoptimized, in-memory solution, at least
-  initially: the WE scans through ALL existing WikiPages when it is 
-  created, asks the RM to update itself, and thereafter updates the 
-  RM every time a page is saved. 
-
-- New plugin system:  You can now embed any plugin class that
-  implements the com.ecyrd.jspwiki.plugin.WikiPlugin interface onto a
-  Wiki page just simply by using the command
-
-  [{INSERT <plugin class> WHERE <param1=value1>,<param2=value2>,...}]
-
-  For example, RecentChanges, UnusedPages, UndefinedPages are all done
-  this way.
-
-- new property: jspwiki.baseURL for those cases where you need to
-  tunnel your Wiki through a firewall or something, using some sort of
-  URL rewriting scheme.
-
-- Some UI shortcuts (click on the last modification date to see the
-  latest modification, for example).  Also, the layout of the default
-  Wiki page has been changed a bit.
-
-- Possibly fixed some problems with RCS and Windows.
-
-- diffs are now colorized for easier reading.  They no longer flow off
-  the edge, either. :-)
-
+- Preview capability in Edit.jsp
 
 UPGRADE NOTES
 =============
 
-- If updating manually (from v1.6.0).
-  - copy all JSP files
+- If updating manually (from v1.7.0):
 
-  - remove the extra special page entries from jspwiki.properties -
-    the only ones you should be left with are "SystemInfo" and "FindPage"
-    (except if you have some of your own defined).
-
-  - If you want to use the new XML-RPC interface, make sure you have it
-    enabled in your web.xml (see the included web.xml for an example).
-
-  - Remove RecentChanges.jsp - it is no longer required.
-
-  - Copy the new JSPWiki sample pages (LeftMenuFooter, RecentChanges,
-    UndefinedPages, UnusedPages are new) into your wiki page repository.
-
-  - Copy all JAR files from WEB-INF/lib to your own WEB-INF/lib
-
-  - Remove your WEB-INF/classes subdirectory.  All classes are now
-    contained within JSPWiki.jar in the WEB-INF/lib -directory.
-
-  - Consider moving to use CachingProvider.  See included
-    jspwiki.properties.
-
-  - Update the default pages also:
-     * TextFormattingRules
-
-
-
+  * New JSP page "Preview.jsp" must be copied.
