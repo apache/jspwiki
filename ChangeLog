@@ -1,3 +1,9 @@
+2003-08-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.55.
+
+        * ReferenceManager is now a PageFilter.
+
 2003-08-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.54.
