@@ -51,6 +51,7 @@ public class RCSFileProvider
     private String m_checkinCommand  = "ci -q -mx -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
     private String m_logCommand      = "rlog -h %s";
+    private String m_fullLogCommand  = "rlog %s";
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
     
     private static final Category   log = Category.getInstance(RCSFileProvider.class);
@@ -58,6 +59,7 @@ public class RCSFileProvider
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";
     public static final String    PROP_CHECKOUT = "jspwiki.rcsFileProvider.checkoutCommand";
     public static final String    PROP_LOG      = "jspwiki.rcsFileProvider.logCommand";
+    public static final String    PROP_FULLLOG  = "jspwiki.rcsFileProvider.fullLogCommand";
     public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
     
     public void initialize( Properties props )
@@ -69,6 +71,7 @@ public class RCSFileProvider
         m_checkinCommand = props.getProperty( PROP_CHECKIN, m_checkinCommand );
         m_checkoutCommand = props.getProperty( PROP_CHECKOUT, m_checkoutCommand );
         m_logCommand     = props.getProperty( PROP_LOG, m_logCommand );
+        m_fullLogCommand = props.getProperty( PROP_FULLLOG, m_fullLogCommand );
         m_checkoutVersionCommand = props.getProperty( PROP_CHECKOUTVERSION, m_checkoutVersionCommand );
         
         File rcsdir = new File( getPageDirectory(), "RCS" );
@@ -79,6 +82,7 @@ public class RCSFileProvider
         log.debug("checkin="+m_checkinCommand);
         log.debug("checkout="+m_checkoutCommand);
         log.debug("log="+m_logCommand);
+        log.debug("fulllog="+m_fullLogCommand);
         log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
@@ -198,6 +202,7 @@ public class RCSFileProvider
         }
     }
 
+    // FIXME: Put the rcs date formats into properties as well.
     public Collection getVersionHistory( String page )
     {
         PatternMatcher matcher = new Perl5Matcher();
@@ -217,7 +222,9 @@ public class RCSFileProvider
 
             String[] env = new String[0];
 
-            String cmd = "rlog "+mangleName(page)+FILE_EXT;
+            String cmd = TranslatorReader.replaceString( m_fullLogCommand,
+                                                         "%s",
+                                                         mangleName(page)+FILE_EXT );
             
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
 
