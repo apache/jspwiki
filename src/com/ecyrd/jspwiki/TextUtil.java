@@ -175,6 +175,42 @@ public class TextUtil
     }
 
     /**
+     * Provides encoded version of string depending on encoding.
+     * Encoding may be UTF-8 or ISO-8859-1 (default).
+     *
+     * <p>This implementation is the same as in 
+     * FileSystemProvider.mangleName().
+     */
+    public static String urlEncode( String data, String encoding )
+    {
+        // Presumably, the same caveats apply as in FileSystemProvider.
+        // Don't see why it would be horribly kludgy, though. 
+        if( "UTF-8".equals( encoding ) )
+            return( TextUtil.urlEncodeUTF8( data ) );
+        else
+            return( TextUtil.urlEncode( data.getBytes() ) );
+    }
+
+    /**
+     * Provides decoded version of string depending on encoding.
+     * Encoding may be UTF-8 or ISO-8859-1 (default).
+     *
+     * <p>This implementation is the same as in 
+     * FileSystemProvider.unmangleName().
+     */
+    public static String urlDecode( String data, String encoding )
+        throws UnsupportedEncodingException,
+               IllegalArgumentException
+    {
+        // Presumably, the same caveats apply as in FileSystemProvider.
+        // Don't see why it would be horribly kludgy, though. 
+        if( "UTF-8".equals( encoding ) )
+            return( TextUtil.urlDecodeUTF8( data ) );
+        else
+            return( TextUtil.urlDecode( data.getBytes() ) );
+    }
+
+    /**
      *  Replaces the relevant entities inside the String.
      *  All &gt;, &lt; and &quot; are replaced by their
      *  respective names.
