@@ -1,3 +1,14 @@
+2004-10-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.116
+
+        * Added patch to fix WikiDatabase initialization problems.
+        Thanks to Steffen Stundzig!
+
+        * XMLRPC and InsertPage now also check for page permissions.
+        Since there is no way to do XML-RPC user auth (at the
+        moment), XML-RPC always assumes the user is a "Guest".
+
 2004-10-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.115
