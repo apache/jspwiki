@@ -1,3 +1,11 @@
+2003-05-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.20.
+
+        * TranslatorReader now understands the SET directive.  It is thus
+        now possible to set arbitrary attributes for pages which get
+        stored in the WikiPage.
+
 2003-05-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.19.
