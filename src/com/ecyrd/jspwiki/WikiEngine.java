@@ -438,11 +438,11 @@ public class WikiEngine
         try
         {
             m_pageManager       = new PageManager( this, props );
-            m_filterManager     = new FilterManager( this, props );
             m_pluginManager     = new PluginManager( props );
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
+            m_filterManager     = new FilterManager( this, props );
 
             //
             //  ReferenceManager has the side effect of loading all
