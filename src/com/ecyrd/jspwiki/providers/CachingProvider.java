@@ -355,11 +355,24 @@ public class CachingProvider
         return m_provider.getVersionHistory( page );
     }
 
-    public String getProviderInfo()
+    public synchronized String getProviderInfo()
     {              
+        int cachedPages = 0;
+        
+        for( Iterator i = m_cache.values().iterator(); i.hasNext(); )
+        {
+            CacheItem item = (CacheItem) i.next();
+
+            if( item.m_text.get() != null )
+            {
+                cachedPages++;
+            }
+        }
+
         return("Real provider: "+m_provider.getClass().getName()+
-               "<BR />Cache misses: "+m_cacheMisses+
-               "<BR />Cache hits: "+m_cacheHits);
+               "<br />Cache misses: "+m_cacheMisses+
+               "<br />Cache hits: "+m_cacheHits+
+               "<br />Cached pages: "+cachedPages);
     }
 
     public void deleteVersion( String pageName, int version )
