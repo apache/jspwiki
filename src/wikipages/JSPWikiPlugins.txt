@@ -1,0 +1,67 @@
+Since v1.6.3 you can now define your own plugins.  These are just
+simply Java classes that implement the
+''com.ecyrd.jspwiki.plugin.WikiPlugin'' interface and can be found from
+somewhere in your class path.  The plugins work so that when you write
+a special code on the Wiki page, the plugins are invoked and their
+output is inserted into the page, verbatim.
+
+The form is:
+
+  [{INSERT <plugin class> WHERE <param1=value1>,<param2=value2>,...}]
+
+Here are some sample plugins included in the archive:
+
+!!com.ecyrd.jspwiki.plugin.RecentChangesPlugin
+
+Inserts the latest changes in order. 
+
+!Parameters: 
+* __since__=''n'' : show changes from the last n days.
+* __format__=''(full|compact)'' : if "full", then display a long
+  version with all possible info.  If "compact", then be as compact as possible.
+
+!Example:
+{{{
+[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=5, format=compact}]
+}}}
+
+Inserts the changes from the past 5 days in a compact format.  You
+might use this to make an automatical list of changes to the [LeftMenu], or [LeftMenuFooter], for example.
+
+  
+!!com.ecyrd.jspwiki.plugin.UnusedPagesPlugin
+
+Lists all pages that are not currently referred to by any other page, thus meaning they are inaccessible through any other means.
+
+!Parameters
+
+None.
+
+!Example:
+
+See [UnusedPages].
+
+!!com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin
+
+Lists all pages that are referred to, but not yet created.
+
+!Parameters
+
+None.
+
+!Example:
+
+See [UndefinedPages].
+
+!!com.ecyrd.jspwiki.plugin.ReferringPagesPlugin
+
+Finds and lists all pages that refer to the current page.
+
+!Parameters 
+
+* __max__=''n'' : How many pages to list.  Default is 10. Some pages might create very long lists, so it's a good idea to limit the list size.
+
+!Example
+
+See [LeftMenuFooter].
+
