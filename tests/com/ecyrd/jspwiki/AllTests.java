@@ -45,7 +45,6 @@ public class AllTests extends TestCase
         suite.addTest( PageManagerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TranslatorReaderTest.suite() );
-        suite.addTest( UserProfileTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
@@ -53,6 +52,8 @@ public class AllTests extends TestCase
         suite.addTest( com.ecyrd.jspwiki.xmlrpc.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.providers.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.acl.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
 
         return suite;
     }
