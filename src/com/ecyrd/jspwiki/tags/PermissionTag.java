@@ -66,7 +66,7 @@ public class PermissionTag
             }
             if( wup == null )
             {
-                log.error( "No user profile found. Should be impossible." );
+                // May happen when strict login policy is used.
                 return SKIP_BODY;
             }
 
