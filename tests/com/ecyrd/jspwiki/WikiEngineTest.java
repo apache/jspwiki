@@ -148,6 +148,34 @@ public class WikiEngineTest extends TestCase
         assertEquals( "item 1", result[1], "ThisIsALink" );
     }
 
+    public void testBeautifyTitle()
+    {
+        String src = "WikiNameThingy";
+
+        assertEquals("Wiki Name Thingy", engine.beautifyTitle( src ) );
+    }
+
+    /**
+     *  Acronyms should be treated wisely.
+     */
+    /* // FIXME: Must add later on.
+    public void testBeautifyTitleAcronym()
+    {
+        String src = "JSPWikiPage";
+
+        assertEquals("JSP Wiki Page", engine.beautifyTitle( src ) );
+    }
+    */
+    /**
+     *  English articles too.
+     */
+    public void testBeautifyTitleArticle()
+    {
+        String src = "ThisIsAPage";
+
+        assertEquals("This Is A Page", engine.beautifyTitle( src ) );
+    }
+
     /**
      *  Tries to find an existing class.
      */
