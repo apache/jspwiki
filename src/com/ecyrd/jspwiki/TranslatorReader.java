@@ -392,6 +392,15 @@ public class TranslatorReader extends Reader
         return m_renderer.makeLink( type, link, text );
     }
 
+    private String makeLink( int type, String link, String text, String sectref )
+    {
+        if( text == null ) text = link;
+
+        text = callMutatorChain( m_linkMutators, text );
+
+        return m_renderer.makeLink( type, link, text, sectref );
+    }
+
 
     /**
      *  Cleans a Wiki name.
@@ -944,8 +953,8 @@ public class TranslatorReader extends Reader
                 String matchedLink;
                 if( (matchedLink = linkExists( reallink )) != null )
                 {
-                    matchedLink += "#section-"+matchedLink+"-"+namedSection;
-                    sb.append( makeLink( READ, matchedLink, link ) );
+                    String sectref = "section-"+matchedLink+"-"+namedSection;
+                    sb.append( makeLink( READ, matchedLink, link, sectref ) );
                 }
                 else
                 {
@@ -1463,15 +1472,7 @@ public class TranslatorReader extends Reader
                  for( ; m_genlistlevel < numBullets; m_genlistlevel++ )
                  {
                      // bullets are growing, get from new bullet list
-                     chBullet = strBullets.charAt(m_genlistlevel);
-
-                     if( chBullet == '#' )
-                         buf.append("<ol>\n");
-                     else if( chBullet == '*' )
-                         buf.append("<ul>\n");
-                     else
-                         log.info(cStrShortName + " Warning: unknown bullet character '" + chBullet + "' at (+)"
-                                 );
+                     buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel)) );
                  }
              }
              else if( numBullets < m_genlistlevel )
@@ -1479,15 +1480,7 @@ public class TranslatorReader extends Reader
                  for( ; m_genlistlevel > numBullets; m_genlistlevel-- )
                  {
                      // bullets are shrinking, get from old bullet list
-                     chBullet = m_genlistBulletBuffer.charAt(m_genlistlevel - 1);
-
-                     if( chBullet == '#' )
-                         buf.append("</ol>\n");
-                     else if( chBullet == '*' )
-                         buf.append("</ul>\n");
-                     else
-                         log.info(cStrShortName + " Warning: unknown bullet character '" + chBullet + "' at (-)"
-                                 );
+                     buf.append( m_renderer.closeList(m_genlistBulletBuffer.charAt(m_genlistlevel - 1)) );
                  }
              }
          }
@@ -1515,41 +1508,13 @@ public class TranslatorReader extends Reader
              //unwind
              for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
              {
-                 chBullet = m_genlistBulletBuffer.charAt(m_genlistlevel - 1);
-
-                 if(chBullet == '#')
-                 {
-                     buf.append("</ol>\n");
-                 }
-                 else if (chBullet == '*')
-                 {
-                     buf.append("</ul>\n");
-                 }
-                 else
-                 {
-                     //FIXME unknown character -> error
-                     log.info(cStrShortName + " Warning: unknown character in unwind '" + chBullet + "'" );
-                 }
-
+                 buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
              }
 
              //rewind
              for(int i = numEqualBullets; i < numBullets; i++)
              {
-                 chBullet = strBullets.charAt(i);
-                 if(chBullet == '#')
-                 {
-                     buf.append("<ol>");
-                 }
-                 else if (chBullet == '*')
-                 {
-                     buf.append("<ul>");
-                 }
-                 else
-                 {
-                     //FIXME unknown character -> error
-                     log.info(cStrShortName + " Warning: unknown character in rewind '" + chBullet + "'" );
-                 }
+                 buf.append( m_renderer.openList( strBullets.charAt(i) ) );
              }
              m_genlistlevel = numBullets;
          }
@@ -1577,22 +1542,7 @@ public class TranslatorReader extends Reader
         //unwind
         for( ; m_genlistlevel > 0; m_genlistlevel-- )
         {
-            bulletCh = m_genlistBulletBuffer.charAt(m_genlistlevel - 1);
-
-            if(bulletCh == '#')
-            {
-                buf.append("</ol>\n");
-            }
-            else if (bulletCh == '*')
-            {
-                buf.append("</ul>\n");
-            }
-            else
-            {
-                //FIXME unknown character -> error
-                log.info(cStrShortName + " Warning: unknown character in unwind '" + bulletCh + "'");
-            }
-
+            buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
         }
 
         m_genlistBulletBuffer.setLength(0);
@@ -2263,7 +2213,9 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  All HTML output stuff is here.
+     *  All HTML output stuff is here.  This class is a helper class, and will
+     *  be spawned later on with a proper API of its own so that we can have
+     *  different kinds of renderers.
      */
 
     // FIXME: Not everything is yet, and in the future this class will be spawned
@@ -2273,18 +2225,33 @@ public class TranslatorReader extends Reader
         public static final int HEADING_SMALL  = 1;
         public static final int HEADING_MEDIUM = 2;
         public static final int HEADING_LARGE  = 3;
+
+        /**
+         *  Write a HTMLized link depending on its type.
+         *
+         *  <p>This jsut calls makeLink() with "section" set to null.
+         */
+        public String makeLink( int type, String link, String text )
+        {
+            return makeLink( type, link, text, null );
+        }
+
         /**
          *  Write a HTMLized link depending on its type.
          *
          *  @param type Type of the link.
          *  @param link The actual link.
          *  @param text The user-visible text for the link.
+         *  @param section Which named anchor to point to.  This may not have any
+         *         effect on certain link types.  If null, will ignore it.
          */
-        public String makeLink( int type, String link, String text )
+        public String makeLink( int type, String link, String text, String section )
         {
             String result;
 
             if( text == null ) text = link;
+
+            section = (section != null) ? ("#"+section) : "";
 
             // Make sure we make a link name that can be accepted
             // as a valid URL.
@@ -2299,7 +2266,7 @@ public class TranslatorReader extends Reader
             switch(type)
             {
               case READ:
-                result = "<a class=\"wikipage\" href=\""+m_engine.getViewURL(link)+"\">"+text+"</a>";
+                result = "<a class=\"wikipage\" href=\""+m_engine.getViewURL(link)+section+"\">"+text+"</a>";
                 break;
 
               case EDIT:
@@ -2349,11 +2316,11 @@ public class TranslatorReader extends Reader
                 break;
 
               case EXTERNAL:
-                result = "<a class=\"external\" href=\""+link+"\">"+text+"</a>";
+                result = "<a class=\"external\" href=\""+link+section+"\">"+text+"</a>";
                 break;
                 
               case INTERWIKI:
-                result = "<a class=\"interwiki\" href=\""+link+"\">"+text+"</a>";
+                result = "<a class=\"interwiki\" href=\""+link+section+"\">"+text+"</a>";
                 break;
 
               case ATTACHMENT:
@@ -2394,6 +2361,7 @@ public class TranslatorReader extends Reader
             return "<a name=\"section-"+baseName+"-"+m_engine.encodeName(title)+"\">";
         }
 
+        
         /**
          *  Returns XHTML for the start of the heading.  Also sets the
          *  line-end emitter.
@@ -2421,6 +2389,49 @@ public class TranslatorReader extends Reader
                 res = "<h2>"+makeHeadingAnchor( pageName, title );
                 m_closeTag = "</a></h2>";
                 break;
+            }
+
+            return res;
+        }
+
+        /**
+         *  @param bullet A character detailing which kind of a list
+         *  we are dealing with here.  Options are '#' and '*'.
+         */
+        public String openList( char bullet )
+        {
+            String res = "";
+
+            if( bullet == '#' )
+                res = "<ol>\n";
+            else if( bullet == '*' )
+                res = "<ul>\n";
+            else
+                log.info("Warning: unknown bullet character '" + bullet + "' at (+)" );
+
+            return res;
+        }
+
+        /**
+         *  @param bullet A character detailing which kind of a list
+         *  we are dealing with here.  Options are '#' and '*'.
+         */
+        public String closeList( char bullet )
+        {
+            String res = "";
+
+            if( bullet == '#' )
+            {
+                res = "</ol>\n";
+            }
+            else if( bullet == '*' )
+            {
+                res = "</ul>\n";
+            }
+            else
+            {
+                //FIXME unknown character -> error
+                log.info("Warning: unknown character in unwind '" + bullet + "'" );
             }
 
             return res;
