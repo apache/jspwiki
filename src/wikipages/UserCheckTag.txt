@@ -31,6 +31,8 @@ The possible values of "status" are:
                   if the user is not validated (i.e. he could have a cookie,
                   but has not been authenticated.)
 
+In 2.0 there was an attribute called "exists".  This is now deprecated, but it is still recognized.  See below.
+
 !Example
 {{{
     <wiki:UserCheck status="known">
@@ -46,7 +48,7 @@ Displays a greeting, if the user has either set a cookie or logged in; else disp
 
 !Notes
 
-The behavior of this tag was changed in 2.2.  The old tag had the parameter "exists", which corresponds to the status parameter as follows:
+The behavior of this tag was significantly enhanced in 2.2.  The old tag had the parameter "exists", which corresponds to the status parameter as follows:
 
 __OLD__
 {{{
