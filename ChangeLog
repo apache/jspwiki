@@ -2,6 +2,9 @@
 
         * v1.9.39.
 
+        * DiffLink now fails gracefully if page does not exist.  Reported
+        by Jeremy C.
+        
         * Fixed ~ -escaping of CamelCase links.
 
         * Added patch from Kabe Robichaux to fix a problem with older RCS
