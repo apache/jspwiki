@@ -1610,11 +1610,13 @@ public class TranslatorReader extends Reader
                 //
                 // Anything else stops.
                 //
+                /*
                 if( m_isOpenParagraph ) 
                 { 
                     sb.append("</p>\n"); 
                     m_isOpenParagraph=false; 
                 }
+                */
                 sb.append( "\n</div>\n" );
 
                 return sb.toString();
