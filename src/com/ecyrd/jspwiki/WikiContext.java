@@ -47,6 +47,7 @@ public class WikiContext
     WikiPage   m_page;
     WikiEngine m_engine;
     String     m_requestContext = VIEW;
+    String     m_template       = "default";
 
     Map        m_variableMap = new HashMap();
 
@@ -88,13 +89,16 @@ public class WikiContext
      *  @param engine The WikiEngine that is handling the request.
      *  @param pagename The name of the page.  A new WikiPage is
      *         created.
+     *  @deprecated
      */
-    public WikiContext( WikiEngine engine, String pagename )
+
+    // Changed to private - nobody should ever call this method.
+    private WikiContext( WikiEngine engine, String pagename )
     {
         m_page   = new WikiPage( pagename );
         m_engine = engine;
     }
-
+    
     /**
      *  Create a new WikiContext for the given WikiPage.
      *
@@ -217,5 +221,23 @@ public class WikiContext
     public HttpServletRequest getHttpRequest()
     {
         return m_request;
+    }
+
+    /**
+     *  Sets the template to be used for this request.
+     *  @since 2.1.15.
+     */
+    public void setTemplate( String dir )
+    {
+        m_template = dir;
+    }
+
+    /**
+     *  Gets the template that is to be used throughout this request.
+     *  @since 2.1.15.
+     */
+    public String getTemplate()
+    {
+        return m_template;
     }
 }
