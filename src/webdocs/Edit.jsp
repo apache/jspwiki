@@ -36,11 +36,13 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
-    WikiPage wikipage = wiki.getPage( pagereq, version );
+    WikiPage wikipage      = wiki.getPage( pagereq, version );
+    WikiPage latestversion = wiki.getPage( pagereq );
 
     if( wikipage == null )
     {
         wikipage = new WikiPage( pagereq );
+        latestversion = wikipage;
     }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
@@ -72,7 +74,8 @@
         //  is the best place to show errors, though.
        
         long pagedate   = Long.parseLong(request.getParameter("edittime"));
-        Date change     = wikipage.getLastModified();
+
+        Date change = latestversion.getLastModified();
 
         if( change != null && change.getTime() != pagedate )
         {
@@ -102,10 +105,13 @@
     log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
 
     //
-    //  If the page does not exist, we'll get a null here.
+    //  Determine and store the date the latest version was changed.  Since
+    //  the newest version is the one that is changed, we need to track
+    //  that instead of the edited version.
     //
     long lastchange = 0;
-    Date d = wikipage.getLastModified();
+    
+    Date d = latestversion.getLastModified();
     if( d != null ) lastchange = d.getTime();
 
     pageContext.setAttribute( "lastchange",
