@@ -73,6 +73,10 @@
     <attribute>
        <name>format</name>
     </attribute>
+    <attribute>
+       <name>version</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>  
 
 
