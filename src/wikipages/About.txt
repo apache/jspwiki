@@ -9,4 +9,4 @@ Most of the [editing markers|TextFormattingRules] have been styled according to 
 
 Unlike most Wikis, not everyone can edit this.  You need a user account/password if you want to contribute.  This is mainly done because I don't want to lose any data...
 
-If you have any ideas or wish to participate, please [contact me|mailto:jalkanen+jspwiki@regex.fi].
+If you have any ideas or wish to participate, please [contact me|mailto:jalkanen+jspwiki@ecyrd.com].
