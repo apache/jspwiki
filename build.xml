@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.17 2002-07-03 20:39:08 jalkanen Exp $
+    $Id: build.xml,v 1.18 2002-07-04 09:14:37 jalkanen Exp $
 -->    
        
 <!--   
@@ -366,6 +366,36 @@
            </fileset>
         </batchtest>
      </junit>
+
+  </target>
+
+
+  <target name="report" depends="compile, compiletests">
+
+    <mkdir dir="${tests.reports}/html" />
+    <junit printsummary="yes" haltonfailure="no" fork="no">
+        <classpath>
+           <path refid="path.tests" />
+           <pathelement path="${tests.build}" />
+           <pathelement path="${java.class.path}" />
+        </classpath>
+
+        <formatter type="xml" />
+
+        <batchtest todir="${tests.reports}">
+           <fileset dir="${tests.src}">
+                <include name="**/*Test.java" />
+                <exclude name="**/AllTest*java" />
+           </fileset>
+        </batchtest>
+     </junit>
+
+     <junitreport todir="${tests.reports}/html">
+        <fileset dir="${tests.reports}">
+           <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${tests.reports}/html"/>
+     </junitreport>
 
   </target>
 
