@@ -1,5 +1,11 @@
 2002-12-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.3.
+
+        * Redirected all references to Wiki.jsp or Edit.jsp through
+        WikiEngine for future configurability.  Requested by Bart
+        Selders.
+
         * Running tests now puts test pages into /tmp/testrepository.  Too
         many false alerts due to wrong files in /tmp/...
 
