@@ -153,7 +153,7 @@ public class TranslatorReader extends Reader
      *  These characters constitute word separators when trying
      *  to find CamelCase links.
      */
-    private static final String    WORD_SEPARATORS = ",.|:;+=&";
+    private static final String    WORD_SEPARATORS = ",.|;+=&()";
 
     /**
      *  @param engine The WikiEngine this reader is attached to.  Is
@@ -622,7 +622,6 @@ public class TranslatorReader extends Reader
             int end   = res.endOffset(2);
 
             String link = res.group(2);
-            String matchedLink;
 
             if( res.group(1) != null )
             {
@@ -666,6 +665,32 @@ public class TranslatorReader extends Reader
         return link;
     }
 
+    private String makeDirectURILink( String url )
+    {
+        String last = "";
+        String result;
+
+        if( url.endsWith(",") || url.endsWith(".") )
+        {
+            last = url.substring( url.length()-1 );
+            url  = url.substring( 0, url.length()-1 );
+        }
+
+        callMutatorChain( m_externalLinkMutatorChain, url );
+
+        if( isImageLink( url ) )
+        {
+            result = handleImageLink( url, url, false );
+        }
+        else
+        {
+            result = makeLink( EXTERNAL, url, url ) + outlinkImage();
+        }
+
+        result += last;
+
+        return result;
+    }
 
     /**
      *  Image links are handled differently:
@@ -1546,7 +1571,7 @@ public class TranslatorReader extends Reader
 
     /**
      *  Reads the stream until it meets one of the specified
-     *  ending characters, or stream end.  The ending character will not be left
+     *  ending characters, or stream end.  The ending character will be left
      *  in the stream.
      */
     private String readUntil( String endChars )
@@ -1569,6 +1594,7 @@ public class TranslatorReader extends Reader
             {
                 if( endChars.indexOf((char)ch) != -1 )
                 {
+                    pushBack( ch );
                     break;
                 }
             }
@@ -1785,42 +1811,9 @@ public class TranslatorReader extends Reader
                     //  Check for the end of the word.
                     //
 
-                    if( ch == ':' )
-                    {
-                        word.append( (char) ch );
-
-                        if( isExternalLink( word.toString() ) )
-                        {
-                            // How much text we've already put into the buffer?
-                            int protocolLen = word.length();
-
-                            ch = nextToken();
-                            while( !Character.isWhitespace( (char)ch ) &&
-                                   ch != ',' && ch != ';' && ch != -1 )
-                            {
-                                word.append( (char)ch );
-                                ch = nextToken();
-                            }
-
-                            String url = word.toString();
-                            if( url.endsWith(".") ) url = url.substring(0,url.length()-1);
-
-                            log.debug("Detected URI "+word);
-
-                            String link = makeLink(EXTERNAL,
-                                                   url,
-                                                   word.toString());
-
-                            start = buf.length()-protocolLen+1;
-                            buf.replace( start, start + protocolLen,
-                                         link );
-
-                            word = null;
-                        }
-                    }
-                    else if( Character.isWhitespace( (char)ch ) || 
-                             ch == -1 ||
-                             WORD_SEPARATORS.indexOf( (char) ch ) != -1 )
+                    if( Character.isWhitespace( (char)ch ) || 
+                        ch == -1 ||
+                        WORD_SEPARATORS.indexOf( (char) ch ) != -1 )
                     {
                         String potentialLink = word.toString();
 
@@ -1837,6 +1830,26 @@ public class TranslatorReader extends Reader
                                         makeCamelCaseLink(camelCase) );
 
                             // System.out.println("  Resulting with "+buf);
+                        }
+                        else
+                        {
+                            // System.out.println("Checking for potential URI: "+potentialLink);
+                            if( isExternalLink( potentialLink ) )
+                            {
+                                start = buf.toString().lastIndexOf( potentialLink );
+
+                                String link = readUntil(" \t()[]{}!\"'");
+
+                                link = potentialLink + (char)ch + link; // Do not forget the start.
+
+                                buf.replace( start,
+                                             start + potentialLink.length(),
+                                             makeDirectURILink( link ) );
+
+                                // System.out.println("Resulting with "+buf);
+
+                                ch = nextToken();
+                            }
                         }
 
                         // We've ended a word boundary, so time to reset.
