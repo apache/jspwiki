@@ -1,3 +1,7 @@
+2002-03-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.0.  Finally :-).
+
 2002-03-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Added VersioningFileProvider.  The VersioningFileProvider is
