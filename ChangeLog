@@ -1,3 +1,8 @@
+2003-01-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added CalendarTag.  It's still in its very infancy, so it might
+        not be very useful to others.
+
 2003-01-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.12.

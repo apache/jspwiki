@@ -76,12 +76,12 @@ public class CalendarTag
             
             if( engine.pageExists( pagename ) )
             {
-                return "<a href=\""+engine.getViewURL( pagename )+"\">"+
-                       day.get( Calendar.DATE )+"</a>";
+                return "<td class=\"link\"><a href=\""+engine.getViewURL( pagename )+"\">"+
+                       day.get( Calendar.DATE )+"</a></td>";
             }
         }
 
-        return Integer.toString( day.get(Calendar.DATE) );
+        return "<td>"+day.get(Calendar.DATE)+"</td>";
     }
 
     public final int doWikiStartTag()
@@ -97,12 +97,12 @@ public class CalendarTag
 
         out.write( "<table class=\"calendar\">\n" );
 
-        out.write( "<tr><td colspan=7>"+monthfmt.format( cal.getTime() )+"</td>" );
+        out.write( "<tr><td colspan=7 class=\"month\">"+monthfmt.format( cal.getTime() )+"</td>" );
 
         int month = cal.get( Calendar.MONTH );
         cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY ); // Then, find the first day of the week.
 
-        out.write( "<tr><td>Mon</td><td>Tue</td><td>Wed</td><td>Thu</td><td>Fri</td><td>Sat</td><td>Sun</td></tr>\n" );
+        out.write( "<tr class=\"weekdays\"><td>Mon</td><td>Tue</td><td>Wed</td><td>Thu</td><td>Fri</td><td>Sat</td><td>Sun</td></tr>\n" );
 
         boolean noMoreDates = false;
         while( !noMoreDates )
@@ -116,16 +116,12 @@ public class CalendarTag
 
                 if( mth != month )
                 {
-                    out.write("<td class=\"othermonth\">");
+                    out.write("<td class=\"othermonth\">"+cal.get(Calendar.DATE)+"</td>");
                 }
                 else
                 {
-                    out.write("<td>");
+                    out.write( getDayLink(cal) );
                 }
-
-                out.write( getDayLink(cal) );
-
-                out.write("</td>");
 
                 cal.add( Calendar.DATE, 1 );
             }
