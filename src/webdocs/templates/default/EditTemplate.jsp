@@ -11,11 +11,11 @@
 </head>
 
 <wiki:CheckRequestContext context="edit">
-  <body class="edit" bgcolor="#D9E8FF" onLoad="document.forms[1].text.focus()">
+  <body class="edit" bgcolor="#D9E8FF" onLoad="document.editForm.text.focus()">
 </wiki:CheckRequestContext>
 
 <wiki:CheckRequestContext context="comment">
-  <body class="comment" bgcolor="#EEEEEE" onLoad="document.forms[1].text.focus()">
+  <body class="comment" bgcolor="#EEEEEE" onLoad="document.commentForm.text.focus()">
 </wiki:CheckRequestContext>
 
 <table border="0" cellspacing="8">
