@@ -152,7 +152,7 @@ public class PluginManager
                       case StreamTokenizer.TT_NUMBER:
                         s = Integer.toString( new Double(tok.nval).intValue() );
                         break;
-                      case '"':
+                      case '\'':
                         s = tok.sval;
                         break;
                       default:
@@ -174,6 +174,8 @@ public class PluginManager
                             value = s;
                             
                             arglist.put( param, value );
+                            
+                            log.debug("ARG: "+param+"="+value);
                             param = null;
                         }
                     }
