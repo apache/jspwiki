@@ -29,7 +29,7 @@ package com.ecyrd.jspwiki;
  *  @author Janne Jalkanen
  */
 public class NoRequiredPropertyException
-    extends Exception
+    extends WikiException
 {
     /**
      *  Constructs an exception.
