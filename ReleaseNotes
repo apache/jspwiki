@@ -5,9 +5,19 @@ Major changes since the last stable (1.7.0) release are:
 
 - Preview capability in Edit.jsp
 
+- Pages are now normalized - i.e. they are all saved in the same
+  format regardless of the operating system or browser.
+
+- Added new page, "UserPreferences".
+
+- support for images as hyperlinks.
+
+- RSS feed.
+
 UPGRADE NOTES
 =============
 
 - If updating manually (from v1.7.0):
 
-  * New JSP page "Preview.jsp" must be copied.
+  * New JSP pages "Preview.jsp" and "UserPreferences.jsp" must be
+    copied.
