@@ -1,3 +1,12 @@
+2002-12-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.4.
+
+        * Bug fix: Restoring previous versions from archive did not work.
+
+        * Bug fix: Attempting to upload a non-existing file would cause a
+        crash.  Reported by Alain Ravet and Paul Downes.
+
 2002-12-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.3.
