@@ -49,37 +49,7 @@
 
       <hr />
 
-      <wiki:CheckRequestContext context="view">
-         <wiki:Include page="PageContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="diff">
-         <wiki:Include page="DiffContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="info">
-         <wiki:Include page="InfoContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="preview">
-         <wiki:Include page="PreviewContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="conflict">
-         <wiki:Include page="ConflictContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="find">
-         <wiki:Include page="FindContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="prefs">
-         <wiki:Include page="PreferencesContent.jsp" />
-      </wiki:CheckRequestContext>
-
-      <wiki:CheckRequestContext context="error">
-         <wiki:Include page="DisplayMessage.jsp" />
-      </wiki:CheckRequestContext>
+      <wiki:Content/>
 
     </td>
   </tr>
