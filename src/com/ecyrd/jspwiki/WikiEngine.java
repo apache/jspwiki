@@ -739,9 +739,13 @@ public class WikiEngine
     {
         String result = getPureText( page, version );
 
-        result = TextUtil.replaceEntities( result );
-
+        //
+        //  Replace ampersand first, or else all quotes and stuff
+        //  get replaced as well with &quot; etc.
+        //
         result = TextUtil.replaceString( result, "&", "&amp;" );
+
+        result = TextUtil.replaceEntities( result );
 
         return result;
     }
