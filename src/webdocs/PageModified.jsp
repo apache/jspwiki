@@ -18,21 +18,24 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
-    String headerTitle = "Concurrent modification of ";
+    String skin = wiki.getTemplateDir();
 
     if( pagereq == null )
     {
         throw new ServletException("No page defined");
     }
 
-    String pageurl = wiki.encodeName( pagereq );
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
+
     String usertext = wiki.safeGetParameter( request, "text" );
 
     WikiPage wikipage = wiki.getPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    wikiContext.setRequestContext( WikiContext.CONFLICT );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext );
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
@@ -40,84 +43,28 @@
     usertext = TextUtil.replaceString( usertext, ">", "&gt;" );
     usertext = TextUtil.replaceString( usertext, "\n", "<BR />" );
 
+    pageContext.setAttribute( "usertext",
+                              usertext,
+                              PageContext.REQUEST_SCOPE );
+    
     String conflicttext = wiki.getText(pagereq);
 
     conflicttext = TextUtil.replaceString( conflicttext, "<", "&lt;" );
     conflicttext = TextUtil.replaceString( conflicttext, ">", "&gt;" );
     conflicttext = TextUtil.replaceString( conflicttext, "\n", "<BR />" );
 
+    pageContext.setAttribute( "conflicttext",
+                              conflicttext,
+                              PageContext.REQUEST_SCOPE );
+
     log.info("Page concurrently modified "+pagereq);
+
+    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
 
-<HTML>
+<wiki:Include page="<%=contentPage%>" />
 
-<HEAD>
-  <TITLE><wiki:ApplicationName/> Error - Concurrent modification of <wiki:PageName/></TITLE>
-  <META NAME="ROBOTS" CONTENT="NOINDEX">
-  <%@ include file="templates/default/cssinclude.js" %>
-</HEAD>
-
-<BODY BGCOLOR="#FFFFFF">
-
-<TABLE BORDER="0" CELLSPACING="8">
-
-  <TR>
-    <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/default/LeftMenu.jsp" %>
-       <BR><BR>
-       <P>
-       Go edit <wiki:EditLink><wiki:PageName/></wiki:EditLink>.
-       </P>
-       <P>
-       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
-       </P>
-    </TD>
-    <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <%@ include file="templates/default/PageHeader.jsp" %>
-
-      <P>
-      <B>Oops!  Someone modified the page while you were editing it!</B>
-      </P>
-
-      <P>Since I am stupid and can't figure out what the difference
-      between those pages is, you will need to do that for me.  I've
-      printed here the text (in Wiki) of the new page, and the
-      modifications you made.  You'll now need to copy the text onto a
-      scratch pad (Notepad or emacs will do just fine), and then edit
-      the page again.</P>
-
-      <P>Note that when you go back into the editing mode, someone might have
-      changed the page again.  So be quick.</P>
-
-      <P><font color="#0000FF">Here is the modified text (by someone else):</FONT></P>
-
-      <P><HR></P>
-
-      <TT>
-        <%=conflicttext%>
-      </TT>      
-
-      <P><HR></P>
-
-      <P><FONT COLOR="#0000FF">And here's your text:</FONT></P>
-
-      <TT>
-        <%=usertext%>
-      </TT>
-
-      <P><HR></P>
-
-      <P>
-       <I>Go edit <wiki:EditLink><wiki:PageName /></wiki:EditLink>.</I>
-      </P>
-
-    </TD>
-  </TR>
-
-</TABLE>
-
-</BODY>
-
-</HTML>
+<%
+    NDC.pop();
+    NDC.remove();
+%>
