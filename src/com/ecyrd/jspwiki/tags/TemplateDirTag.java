@@ -20,21 +20,33 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Returns the currently used template.  For example
- *  "default"
+ *  "default".
  *
  *  @author Janne Jalkanen
- *  @since 2.1.15.
+ *  @since 2.0.50.
  */
 public class TemplateDirTag
     extends WikiTagBase
 {
+    //
+    //  This is a hacked version of the one in 2.1.x.  Do not expect much
+    //  development here.
+    //
     public final int doWikiStartTag()
         throws IOException
     {
-        String template = m_wikiContext.getTemplate();
+        WikiEngine engine = m_wikiContext.getEngine();
+        
+        String template = engine.safeGetParameter( m_wikiContext.getHttpRequest(), "skin" );
+ 
+        if( template == null || template.length() == 0 )
+        {
+            template = engine.getTemplateDir();
+        }
 
         pageContext.getOut().print( template );
 
