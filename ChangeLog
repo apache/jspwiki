@@ -1,4 +1,4 @@
-2001-11-25    <Janne.Jalkanen@ecyrd.com>
+2001-11-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added new property: jspwiki.baseURL to define protection against
         URL rewriting gateways.  Requested by Kim Holviala.
@@ -10,7 +10,7 @@
         RecentChangesPlugin, UnusedPagesPlugin, UndefinedPagesPlugin,
         ReferringPagesPlugin.
 
-2001-11-23    <Janne.Jalkanen@regex.fi>
+2001-11-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Moved TranslatorReader.replaceString() to TextUtil, since it is
         a more logical place.
