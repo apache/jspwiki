@@ -70,7 +70,7 @@ public class PageInfoLinkTag
             switch( m_format )
             {
               case ANCHOR:
-                out.print("<A HREF=\""+url+"\">");
+                out.print("<a class=\"pageinfo\" href=\""+url+"\">");
                 break;
               case URL:
                 out.print( url );

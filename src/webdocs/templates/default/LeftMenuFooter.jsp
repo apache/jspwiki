@@ -5,20 +5,20 @@
 <P>
     <wiki:InsertPage page="LeftMenuFooter" />
     <wiki:NoSuchPage page="LeftMenuFooter">
-        <HR><P>
-        <P ALIGN="center">
-        <I>No LeftMenuFooter!</I><BR>
-        <wiki:EditLink page="LeftMenuFooter">Please make one.</wiki:EditLink><BR>
-        </P>
-        <P><HR>
+        <p><hr /></p>
+        <p align="center">
+        <i>No LeftMenuFooter!</i><br />
+        <wiki:EditLink page="LeftMenuFooter">Please make one.</wiki:EditLink><br />
+        </p>
+        <p><hr></p>
     </wiki:NoSuchPage>
-</P>
+</p>
 
 <!-- End of automatically generated page -->
 
-   <BR><BR><BR>
-   <DIV ALIGN="left" CLASS="small">
+   <br /><br /><br />
+   <div align="left" class="small">
    <%=Release.APPNAME%> v<%=Release.VERSTR%>
-   </DIV>
+   </div>
 
 

@@ -75,7 +75,7 @@ public abstract class WikiLinkTag
         {
             if( m_format == ANCHOR )
             {
-                pageContext.getOut().print("</A>");
+                pageContext.getOut().print("</a>");
             }
         }
         catch( IOException e )

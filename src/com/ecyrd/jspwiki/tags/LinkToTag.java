@@ -100,7 +100,7 @@ public class LinkToTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<A CLASS=\""+linkclass+"\" HREF=\""+url+"\">");
+            out.print("<a class=\""+linkclass+"\" href=\""+url+"\">");
             break;
           case URL:
             out.print( url );

@@ -1,33 +1,33 @@
-<H3 CLASS="leftmenuheading"><A HREF="<wiki:LinkTo page="SystemInfo" format="url"/>"><wiki:Variable var="ApplicationName" /></A></H3>
+<h3 class="leftmenuheading"><a href="<wiki:LinkTo page="SystemInfo" format="url"/>"><wiki:Variable var="ApplicationName" /></a></h3>
 
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
-<P>
+<p>
     <wiki:InsertPage page="LeftMenu" />
     <wiki:NoSuchPage page="LeftMenu">
-        <HR><P>
-        <P ALIGN="center">
-        <I>No LeftMenu!</I><BR>
-        <wiki:EditLink page="LeftMenu">Please make one.</wiki:EditLink><BR>
-        </P>
-        <P><HR>
+        <hr><p>
+        <p align="center">
+        <i>No LeftMenu!</i><br />
+        <wiki:EditLink page="LeftMenu">Please make one.</wiki:EditLink><br />
+        </p>
+        <p><hr /></p>
     </wiki:NoSuchPage>
-</P>
-<P>
-<DIV ALIGN="center" CLASS="username">
+</p>
+<p>
+<div align="center" class="username">
 
     <wiki:UserCheck exists="true">
-        <B>G'day,</B><BR>
+        <b>G'day,</b><br />
         <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
     </wiki:UserCheck>
 
     <wiki:UserCheck exists="false">
-        <TT> 
-        Set your name in<BR>
+        <tt> 
+        Set your name in<br />
         <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
-        </TT>    
+        </tt>    
     </wiki:UserCheck>
-</DIV>
+</div>
 
 <!-- End of automatically generated page -->
 
