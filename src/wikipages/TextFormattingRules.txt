@@ -120,6 +120,27 @@ You may use __bold__ text or ''italic'' text, by using two underscores (_) and t
 
 If you want to add preformatted text (like code) just use three consecutive braces ({) to open a block, and three consecutive braces (}) to close a block. Edit this page for an example.
 
+!Tables
+
+You can do simple tables by using using pipe signs ('|').  Use double pipe
+signs to start the heading of a table, and single pipe signs to then
+write the rows of the table.  End with a line that is not a table.
+
+For example:
+
+{{{
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar
+| [Main]     | [SandBox]
+}}}
+
+gives you the following table.  Note how you can use links also inside tables.
+
+|| Heading 1 || Heading 2
+| ''Gobble'' | Bar
+| [Main]     | [SandBox]
+
+
 !Conflicts
 
 If someone happens to edit the same page as you at the same time, JSPWiki will prevent you from doing changes and show a conflict page instead. Sorry to say, but the first one to make changes wins...
