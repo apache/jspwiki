@@ -1,3 +1,24 @@
+2003-07-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.48.
+
+        * It is now possible to set the CachingProvider cache check
+        interval.  Use "jspwiki.cachingProvider.cacheCheckInterval" to set
+        it.  The value is in milliseconds.
+        
+        * InsertPageTag now only calls pageExists() OR getPage(),
+        depending on the situation.  This should speed up performance a
+        bit.  Reported by Mark Griffith.
+
+        * FileSystemProvider (and by extension, RCSFileProvider and
+        VersioningFileProvider) also creates the page repository if it
+        does not exist.  Let us hope that this decreases the complaints a
+        bit, but it is quite probable now that some people will experience
+        JSPWiki creating unwanted directories :-).
+
+        * BasicAttachmentProvider now creates the attachment repository if
+        it does not exist.
+
 2003-06-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.47
