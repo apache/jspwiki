@@ -1,5 +1,8 @@
 2003-04-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added "style", "border", and "class" -attributes to the Image
+        plugin.  Suggested by Foster Schucker.
+
         * v2.1.6.
 
 2003-04-08  Erik Bunn  <Erik.Bunn@no_spam.ecyrd.com>
