@@ -94,7 +94,7 @@
 
 <head>
   <title><wiki:Variable var="applicationname"/> login</title>
-  <%@ include file="templates/default/header.jsp" %>
+  <%@ include file="templates/default/commonheader.jsp" %>
   <meta name="robots" content="noindex,nofollow">
 </head>
 
