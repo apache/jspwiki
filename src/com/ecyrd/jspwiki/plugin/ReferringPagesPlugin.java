@@ -47,6 +47,7 @@ public class ReferringPagesPlugin
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         Collection       links  = refmgr.findReferrers( context.getPage().getName() );
+        String           wikitext;
 
         super.initialize( context, params );
 
@@ -60,13 +61,20 @@ public class ReferringPagesPlugin
         log.debug( "Fetching referring pages for "+context.getPage().getName()+
                    " with a max of "+items);
         
-        String wikitext = wikitizeCollection( links, "\\\\", items );
-
-        if( items < links.size() && items > 0 )
+        if( links != null && links.size() > 0 )
         {
-            extras = TextUtil.replaceString( extras, "%d", 
+            wikitext = wikitizeCollection( links, "\\\\", items );
+
+            if( items < links.size() && items > 0 )
+            {
+                extras = TextUtil.replaceString( extras, "%d", 
                                              ""+(links.size()-items) );
-            wikitext += extras;
+                wikitext += extras;
+            }
+        }
+        else
+        {
+            wikitext = "...nobody";
         }
 
         return makeHTML( context, wikitext );
