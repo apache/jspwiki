@@ -41,15 +41,12 @@ public abstract class WikiBodyTag extends BodyTagSupport
     protected WikiContext m_wikiContext;
     static    Logger    log = Logger.getLogger( WikiBodyTag.class );
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.Tag#doStartTag()
-     */
     public int doStartTag() throws JspException
     {
         try
         {
             m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                                                                      PageContext.REQUEST_SCOPE );
+                                                                    PageContext.REQUEST_SCOPE );
 
             if( m_wikiContext == null )
             {
@@ -65,5 +62,12 @@ public abstract class WikiBodyTag extends BodyTagSupport
         }
     }
 
+    /**
+     * A local stub for doing tags.  This is just called after the local variables
+     * have been set.
+     * @return As doStartTag()
+     * @throws JspException
+     * @throws IOException
+     */
     public abstract int doWikiStartTag() throws JspException, IOException;   
 }
