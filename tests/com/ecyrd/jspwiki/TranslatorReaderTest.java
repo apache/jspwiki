@@ -1377,6 +1377,24 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHeadingHyperlinks2()
+        throws Exception
+    {
+        String src="!!![Hello|http://www.google.com/]";
+
+        assertEquals( "<h2><a name=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/\">Hello</a></a></h2>",
+                      translate(src) );
+    }
+
+    public void testHeadingHyperlinks3()
+        throws Exception
+    {
+        String src="![Hello|http://www.google.com/?p=a&c=d]";
+
+        assertEquals( "<h4><a name=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a></a></h4>",
+                      translate(src) );
+    }
+
     /**
      *  in 2.0.0, this one throws OutofMemoryError.
      */
