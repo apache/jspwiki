@@ -3,7 +3,10 @@
         * v2.1.51.
 
         * WebLogPlugin now attempts to guess the number of comments on the
-        comment page, and displays them with the "Comments?" text.
+        comment page, and displays them with the "Comments?" text.  It
+        also appends the number of comments to the URL, so that the user's
+        browser would show that the link contents have changed since last
+        visit. 
 
 2003-07-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
