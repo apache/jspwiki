@@ -35,15 +35,15 @@ public class Release
     /** This should be empty when doing a release - otherwise
         keep it as "cvs" so that whenever someone checks out the code,
         they know it is a bleeding-edge version. */
-    private static final String    POSTFIX       = "";
+    private static final String    POSTFIX       = "-cvs";
 
     /**
      *  This should be increased every time you do a release.
      */
-    public static final String     RELEASE       = "R6";
+    public static final String     RELEASE       = "R7";
 
     public static final int        VERSION       = 1;
-    public static final int        REVISION      = 8;
+    public static final int        REVISION      = 9;
     public static final int        MINORREVISION = 0;
 
     /**
