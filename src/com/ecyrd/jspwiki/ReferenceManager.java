@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi),
+    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi),
                             Erik Bunn (ebu@memecry.net)
 
     This program is free software; you can redistribute it and/or modify
@@ -248,7 +248,7 @@ public class ReferenceManager
             
             File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
 
-            in = new ObjectInputStream( new FileInputStream(f) );
+            in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
 
             saved        = in.readLong();
             m_refersTo   = (Map) in.readObject();
@@ -282,7 +282,7 @@ public class ReferenceManager
             
             File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
 
-            out = new ObjectOutputStream( new FileOutputStream(f) );
+            out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
 
             out.writeLong( System.currentTimeMillis() ); // Timestamp
             out.writeObject( m_refersTo );
