@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
+import org.apache.oro.text.perl.Perl5Util;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
@@ -233,7 +234,6 @@ public class WikiEngine
         m_baseURL        = props.getProperty( PROP_BASEURL, "" );
 
         m_beautifyTitle  = "true".equals( props.getProperty( PROP_BEAUTIFYTITLE, "false" ) );
-
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -509,8 +509,11 @@ public class WikiEngine
 
                 result.append( title.charAt(i) );
             }
-
             return result.toString();
+            /*
+            Perl5Util util = new Perl5Util();
+            return util.substitute("s/[:upper:]{1,2}/foo/",title);
+            */
         }
 
         return title;
@@ -1077,6 +1080,13 @@ public class WikiEngine
     {
         String page1 = getPureText( page, version1 );
         String page2 = getPureText( page, version2 );
+
+        // Kludge to make diffs for new pages to work this way.
+
+        if( version1 == -1 )
+        {
+            page1 = "";
+        }
 
         String diff  = m_differenceEngine.makeDiff( page1, page2 );
 
