@@ -100,7 +100,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a [link|http://www.haxored.com/\" onMouseOver=\"alert('Hahhaa');\"]";
 
-        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.haxored.com/%22 onMouseOver=%22alert('Hahhaa');%22\">link</A>\n",
+        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.haxored.com/&quot; onMouseOver=&quot;alert('Hahhaa');&quot;\">link</A>\n",
                       translate(src) );
     }
 
@@ -276,6 +276,14 @@ public class TranslatorReaderTest extends TestCase
         String src = "<P>";
 
         assertEquals( "&lt;P&gt;\n", translate(src) );
+    }
+
+    public void testQuotes()
+        throws Exception
+    {
+        String src = "\"Test\"\"";
+
+        assertEquals( "&quot;Test&quot;&quot;\n", translate(src) );
     }
 
     public void testItalicAcrossLinebreak()
