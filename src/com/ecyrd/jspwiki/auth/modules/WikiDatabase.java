@@ -85,7 +85,7 @@ public class WikiDatabase
     /**
      *  List contains a bunch of Strings to denote members of this group.
      */
-    private void updateGroup( String groupName, List memberList )
+    protected void updateGroup( String groupName, List memberList )
     {
         WikiGroup group = (WikiGroup)m_principals.get( groupName );
 
@@ -122,7 +122,7 @@ public class WikiDatabase
         m_principals.put( groupName, group );
     }
 
-    private void initUserDatabase()
+    protected void initUserDatabase()
     {
         log.info("Initializing user database from wiki pages...");
 
