@@ -52,7 +52,9 @@ import java.util.*;
 // FIXME: Add "entries" param as an alternative to "days".
 // FIXME: Entries arrive in wrong order.
 
-public class WeblogPlugin implements WikiPlugin
+public class WeblogPlugin 
+    implements WikiPlugin,
+               InitializablePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
 
@@ -84,6 +86,14 @@ public class WeblogPlugin implements WikiPlugin
     public static String makeEntryPage( String pageName, String date )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
+    }
+
+    /**
+     *  Just sets the "I am a weblog" mark.
+     */
+    public void initialize( WikiContext context, Map params )
+    {
+        context.getPage().setAttribute(ATTR_ISWEBLOG, "true");
     }
 
     public String execute( WikiContext context, Map params )
