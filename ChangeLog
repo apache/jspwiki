@@ -1,5 +1,10 @@
 2001-11-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.5.6
+
+        * Possibly fixed a problem with readContents() throwing an
+        IOException: "invalid mark" by increasing buffer size.
+
         * RCS commands now inherit the parent environment.  This might
         help with some Windows-related issues.
 
