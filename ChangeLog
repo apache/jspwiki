@@ -1,4 +1,23 @@
-2002-12-11  Erik Bunn  <Erik.Bunn@basen.net>
+2002-12-14  Erik Bunn  <Erik.Bunn@no.spam.memecry.net.>
+
+        * Fixed Edit.jsp, which did not get default rules when creating 
+        new pages.
+
+2002-12-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.1.
+
+        * Attachments are now sent back using Content-Disposition: inline
+        instead of Content-Disposition: attachment.  This means that they
+        should now be opened automatically by browsers.  Suggested by
+        Torsten Hildebrandt.
+
+        * Interwiki references that lead out of the wiki are now also
+        tagged with the outlink image.  Reported by Alain Ravet.
+
+        * Outlink images are now on by default.
+
+2002-12-11  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
 
         * If no authorizer is specified in jspwiki.properties, 
         we revert to good old unrestricted wikism. 
@@ -10,7 +29,7 @@
         'participant' group for cookie-named people, name-group 
         for authenticated people (user 'frobozz' belongs to group 'frobozz').
 
-2002-12-10  Erik Bunn  <Erik.Bunn@basen.net>
+2002-12-10  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
 
         * v2.0.0-alpha-auth, a branch of Janne's V2 alpha
         with rudimentary but functional authentication and
@@ -26,7 +45,7 @@
         * Moved GoRankAggregator and GoDiagram plugins into their own,
         separate project. 
 
-2002-12-09  Erik Bunn  <Erik.Bunn@basen.net>
+2002-12-09  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
 
         * v1.9.50.
         
@@ -46,7 +65,7 @@
         basically contains the wiki markup that should be used to separate
         the entires.  Suggested by Jeremy Cowgar.
 
-2002-12-08  Erik Bunn  <Erik.Bunn@basen.net>
+2002-12-08  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
 
         * Modified exception classes to inherit WikiException
         (with the exception of InternalWikiException =).
