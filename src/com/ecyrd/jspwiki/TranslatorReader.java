@@ -45,15 +45,16 @@ import com.ecyrd.jspwiki.plugin.PluginException;
 //        is to move away from a line-based system into a pure stream-based system.
 public class TranslatorReader extends Reader
 {
-    public  static final int              READ  = 0;
-    public  static final int              EDIT  = 1;    
-    private static final int              EMPTY = 2;  // Empty message
-    private static final int              LOCAL = 3;
-    private static final int              LOCALREF = 4;
-    private static final int              IMAGE = 5;
-    private static final int              EXTERNAL = 6;
-    private static final int              INTERWIKI = 7;
-    private static final int              IMAGELINK = 8;
+    public  static final int              READ          = 0;
+    public  static final int              EDIT          = 1;
+    private static final int              EMPTY         = 2;  // Empty message
+    private static final int              LOCAL         = 3;
+    private static final int              LOCALREF      = 4;
+    private static final int              IMAGE         = 5;
+    private static final int              EXTERNAL      = 6;
+    private static final int              INTERWIKI     = 7;
+    private static final int              IMAGELINK     = 8;
+    private static final int              IMAGEWIKILINK = 9;
 
     private BufferedReader m_in;
 
@@ -368,6 +369,11 @@ public class TranslatorReader extends Reader
             result = "<A HREF=\""+text+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\"></A>";
             break;
 
+          case IMAGEWIKILINK:
+            String pagelink = m_engine.getBaseURL()+"Wiki.jsp?page="+text;
+            result = "<A CLASS=\"wikipage\" HREF=\""+pagelink+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\"></A>";
+            break;
+
           case EXTERNAL:
             result = "<A CLASS=\"external\" HREF=\""+link+"\">"+text+"</A>";
             break;
@@ -605,15 +611,29 @@ public class TranslatorReader extends Reader
                     if( isImageLink( reallink ) )
                     {
                         //
-                        // Image links are handled differently.  If the text is
-                        // an external link, then it is inlined.  Otherwise it becomes
-                        // an ALT text.
+                        // Image links are handled differently:
+                        // 1. If the text is a WikiName of an existing page,
+                        //    it gets linked.
+                        // 2. If the text is an external link, then it is inlined.  
+                        // 3. Otherwise it becomes an ALT text.
                         //
+
+                        String possiblePage = cleanLink( link );
+                        String matchedLink;
 
                         if( isExternalLink( link ) && (cutpoint != -1) )
                         {
                             line = TextUtil.replaceString( line, start, end+1,
                                                            makeLink( IMAGELINK, reallink, link ) );
+                        }
+                        else if( (matchedLink = linkExists( possiblePage )) != null &&
+                                 (cutpoint != -1) )
+                        {
+                            // System.out.println("Orig="+link+", Matched: "+matchedLink);
+                            callMutatorChain( m_localLinkMutatorChain, possiblePage );
+
+                            line = TextUtil.replaceString( line, start, end+1,
+                                                           makeLink( IMAGEWIKILINK, reallink, link ) );
                         }
                         else
                         {
