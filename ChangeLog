@@ -1,3 +1,11 @@
+2004-06-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.99.
+
+        * Fixed a long-standing problem with hyperlinks inside headers
+        causing strange behaviour with generated section names.  Reported
+        by Foster Schucker.
+
 2004-05-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.98.
