@@ -27,6 +27,8 @@
     String pageurl = wiki.encodeName( pagereq );
 
     String action = request.getParameter("action");
+    String ok = request.getParameter("ok");
+    String preview = request.getParameter("preview");
 
     //
     //  Set the response type before we branch.
@@ -36,8 +38,9 @@
 
     log.debug("Request character encoding="+request.getCharacterEncoding());
     log.debug("Request content type+"+request.getContentType());
+    log.debug("preview="+preview+", ok="+ok);
 
-    if( action != null && action.equals("save") )
+    if( ok != null )
     {
         log.info("Saving page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
 
@@ -66,6 +69,11 @@
 
         response.sendRedirect(wiki.getBaseURL()+"Wiki.jsp?page="+pageurl);
         return;
+    }
+    else if( preview != null )
+    {
+        log.debug("Previewing "+pagereq);
+        pageContext.forward( "Preview.jsp" );
     }
 
     log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
@@ -115,6 +123,8 @@
 
       <P>
       <input type="submit" name="ok" value="Save" />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="submit" name="preview" value="Preview" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">Cancel</A>
       <P>
