@@ -58,11 +58,27 @@ public class FileSystemProvider
 
     private static final String DEFAULT_ENCODING = "ISO-8859-1";
 
+    /**
+     *  @throw FileNotFoundException If the specified page directory does not exist.
+     *  @throw IOException In case the specified page directory is a file, not a directory.
+     */
     public void initialize( Properties properties )
-        throws NoRequiredPropertyException
+        throws NoRequiredPropertyException,
+               IOException
     {
         log.debug("Initing FileSystemProvider");
         m_pageDirectory = WikiEngine.getRequiredProperty( properties, PROP_PAGEDIR );
+
+        File f = new File(m_pageDirectory);
+
+        if( !f.exists() )
+        {
+            throw new FileNotFoundException("Page directory does not exist: "+m_pageDirectory);
+        }
+        else if( !f.isDirectory() )
+        {
+            throw new IOException("Page directory is not a directory: "+m_pageDirectory);
+        }
 
         m_encoding      = properties.getProperty( WikiEngine.PROP_ENCODING, 
                                                   DEFAULT_ENCODING );
