@@ -40,6 +40,9 @@
             <TD align="left"><H1 CLASS="pagename"><wiki:PageName/></H1></TD>
             <TD align="right"><%@ include file="SearchBox.jsp" %></TD>
          </TR>
+         <tr>
+            <td colspan="2" class="breadcrumbs">Your trail: <wiki:Breadcrumbs /></td>
+         </tr>
       </TABLE>
 
       <HR /><P>
