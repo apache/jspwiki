@@ -364,13 +364,46 @@ public class TranslatorReaderTest extends TestCase
         String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
 
         assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
-                      "<THEAD>\n"+
-                      "<TR><TD> heading <TD> heading2 </TR>\n"+
-                      "</THEAD>\n"+
-                      "<TBODY>\n"+
+                      "<TR><TD CLASS=\"tablehead\"> heading <TD CLASS=\"tablehead\"> heading2 </TR>\n"+
                       "<TR><TD> Cell 1 <TD> Cell 2 </TR>\n"+
                       "<TR><TD> Cell 3 <TD> Cell 4</TR>\n"+
-                      "</TBODY>\n"+
+                      "</TABLE><P>\n",
+                      translate(src) );
+    }
+
+    public void testTable2()
+        throws Exception
+    {
+        String src="||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
+
+        assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
+                      "<TR><TD CLASS=\"tablehead\">heading<TD CLASS=\"tablehead\">heading2</TR>\n"+
+                      "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
+                      "<TR><TD> Cell 3 <TD>Cell 4</TR>\n"+
+                      "</TABLE><P>\n",
+                      translate(src) );
+    }
+
+    public void testTable3()
+        throws Exception
+    {
+        String src="|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
+
+        assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
+                      "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
+                      "<TR><TD> Cell 3 <TD>Cell 4</TR>\n"+
+                      "</TABLE><P>\n",
+                      translate(src) );
+    }
+
+    public void testTableLink()
+        throws Exception
+    {
+        String src="|Cell 1| Cell 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
+
+        assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
+                      "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
+                      "<TR><TD><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ReallyALink\">Cell 3</A><TD>Cell 4</TR>\n"+
                       "</TABLE><P>\n",
                       translate(src) );
     }
