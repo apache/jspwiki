@@ -50,16 +50,28 @@ public class AuthorizationManager
 
         AclEntryImpl ae = new AclEntryImpl();
 
+        //
+        //  Default set of permissions for everyone:
+        //  ALLOW: View, Edit
+        //  DENY:  Delete
+        //
+
         WikiGroup allGroup = new AllGroup();
         allGroup.setName("All");
         ae.setPrincipal( allGroup );
         ae.addPermission( new ViewPermission() );
         ae.addPermission( new EditPermission() );
 
+        AclEntryImpl aeneg = new AclEntryImpl();
+        aeneg.setPrincipal( allGroup );
+        aeneg.setNegativePermissions();
+        aeneg.addPermission( new DeletePermission() );
+
         try
         {
             m_defaultPermissions = new AclImpl();
             m_defaultPermissions.addEntry( null, ae );
+            m_defaultPermissions.addEntry( null, aeneg );
         }
         catch( NotOwnerException e )
         {
@@ -99,7 +111,16 @@ public class AuthorizationManager
                                     UserProfile wup, 
                                     WikiPermission permission )
     {
-        int res = AccessControlList.NONE;
+        int         res         = AccessControlList.NONE;
+        UserManager userManager = m_engine.getUserManager();
+
+        //
+        //  Yup, superusers can do anything.
+        //
+        if( userManager.isAdministrator( wup ) )
+        {
+            return true;
+        }
 
         AccessControlList acl = page.getAcl();
 
@@ -129,7 +150,7 @@ public class AuthorizationManager
 
                 try
                 {
-                    List list = m_engine.getUserManager().getGroupsForPrincipal( wup );
+                    List list = userManager.getGroupsForPrincipal( wup );
 
                     for( Iterator i = list.iterator(); i.hasNext(); )
                     {
