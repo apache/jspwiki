@@ -22,6 +22,7 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String skin    = wiki.safeGetParameter( request, "skin" );
     String verstr  = request.getParameter("version");
     int    version = WikiProvider.LATEST_VERSION;
 
@@ -35,7 +36,10 @@
         throw new ServletException("No page defined");
     }
 
-    String skin = wiki.getTemplateDir();
+    if( skin == null )
+    {
+        skin = wiki.getTemplateDir();
+    }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
@@ -94,9 +98,9 @@
     //
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    response.addHeader( "Cache-control", "max-age=0" );
-    response.addDateHeader( "Expires", new Date().getTime() );
-    response.addDateHeader( "Last-Modified", new Date().getTime() );
+    response.setHeader( "Cache-control", "max-age=0" );
+    response.setDateHeader( "Expires", new Date().getTime() );
+    response.setDateHeader( "Last-Modified", new Date().getTime() );
 
     //log.debug("Request character encoding="+request.getCharacterEncoding());
     //log.debug("Request content type+"+request.getContentType());

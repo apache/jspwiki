@@ -20,10 +20,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
-
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Root class for different internal wiki links.  Cannot be used directly,

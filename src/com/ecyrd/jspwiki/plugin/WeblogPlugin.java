@@ -23,9 +23,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import org.apache.log4j.Category;
 
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.text.ParsePosition;
 import java.text.ParseException;
 import java.util.*;
 
@@ -196,8 +194,11 @@ public class WeblogPlugin implements WikiPlugin
                     sb.append( "<a href=\""+engine.getViewURL(commentPageName)+"\">View Comments</a>" );
                 }
 
-                sb.append( "&nbsp;&nbsp;" );
-                sb.append( "<a href=\""+engine.getEditURL(commentPageName)+"&comment=true\">Comment this entry</a>" );
+                if( hasComments )
+                {
+                    sb.append( "&nbsp;&nbsp;" );
+                    sb.append( "<a href=\""+engine.getEditURL(commentPageName)+"&comment=true\">Comment this entry</a>" );
+                }
 
                 sb.append("</div>");
             }

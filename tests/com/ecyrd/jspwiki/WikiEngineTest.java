@@ -426,8 +426,6 @@ public class WikiEngineTest extends TestCase
       However, doing this in a relatively sane timeframe can be a problem.
     */
 
-    /*
-      // REMOVED for stable release, enable back in dev branch.
     public void testAttachmentRefs2()
         throws Exception
     {
@@ -480,7 +478,6 @@ public class WikiEngineTest extends TestCase
             m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
-    */
 
     /** 
      *  Checks, if ReferenceManager is informed if a link to an attachment is added.

@@ -2,17 +2,15 @@
 package com.ecyrd.jspwiki.xmlrpc;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import junit.framework.*;
-import java.io.*;
 import java.util.*;
-import org.apache.log4j.*;
 import org.apache.xmlrpc.*;
 
-import com.ecyrd.jspwiki.providers.*;
 
 public class RPCHandlerTest extends TestCase
 {
-    WikiEngine m_engine;
+    TestEngine m_engine;
     RPCHandler m_handler;
     Properties m_props;
 
@@ -29,26 +27,16 @@ public class RPCHandlerTest extends TestCase
         m_props = new Properties();
         m_props.load( TestEngine.findTestProperties() );
 
-        deleteTempFiles();
-
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
         m_handler.initialize( m_engine );
     }
 
-    private void deleteTempFiles()
-    {
-        String files = m_props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-
-        f.delete();
-    }
-
     public void tearDown()
     {
-        deleteTempFiles();
+        m_engine.deletePage( NAME1 );
+        m_engine.deleteAttachments( NAME1 );
     }
 
     public void testNonexistantPage()
@@ -71,6 +59,37 @@ public class RPCHandlerTest extends TestCase
         String pageName = NAME1;
 
         m_engine.saveText( pageName, text );
+
+        WikiPage directInfo = m_engine.getPage( NAME1 );
+
+        Date modDate = directInfo.getLastModified();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( modDate );
+        cal.add( Calendar.MINUTE, -1 );
+
+        // Go to UTC
+        cal.add( Calendar.MILLISECOND, 
+                 -(cal.get( Calendar.ZONE_OFFSET )+
+                  (cal.getTimeZone().inDaylightTime( modDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+        
+
+        Vector v = m_handler.getRecentChanges( cal.getTime() );
+
+        assertEquals( "wrong number of changes", 1, v.size() );
+    }
+
+    public void testRecentChangesWithAttachments()
+        throws Exception
+    {
+        String text = "Foo";
+        String pageName = NAME1;
+
+        m_engine.saveText( pageName, text );
+
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
 
         WikiPage directInfo = m_engine.getPage( NAME1 );
 

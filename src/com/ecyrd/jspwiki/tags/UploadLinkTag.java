@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes a link to the upload page.  Body of the link becomes the actual text.

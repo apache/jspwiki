@@ -1,7 +1,6 @@
 
 package com.ecyrd.jspwiki;
 import java.util.Properties;
-import javax.servlet.*;
 import java.io.*;
 
 import org.apache.log4j.Category;
@@ -67,7 +66,8 @@ public class TestEngine extends WikiEngine
     }
 
     /**
-     *  Removes a page.
+     *  Removes a page, but not any auxiliary information.  Works only
+     *  with FileSystemProvider.
      */
     public void deletePage( String name )
     {
@@ -85,6 +85,28 @@ public class TestEngine extends WikiEngine
         }
     }
 
+    /**
+     *  Deletes all attachments related to the given page.
+     */
+    public void deleteAttachments( String page )
+    {
+        try
+        {
+            String files = getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+
+            File f = new File( files, page+BasicAttachmentProvider.DIR_EXTENSION );
+
+            deleteAll( f );
+        }
+        catch( Exception e )
+        {
+            log.error("Could not remove attachments.",e);
+        }
+    }
+
+    /**
+     *  Makes a temporary file with some content, and returns a handle to it.
+     */
     public File makeAttachmentFile()
         throws Exception
     {

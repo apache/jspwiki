@@ -19,7 +19,6 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 import org.apache.log4j.Category;
 import java.io.StreamTokenizer;

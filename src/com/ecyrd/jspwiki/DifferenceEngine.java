@@ -51,10 +51,10 @@ public class DifferenceEngine
 
     private static final char   DIFF_ADDED_SYMBOL    = '+';
     private static final char   DIFF_REMOVED_SYMBOL  = '-';
-    private static final String CSS_DIFF_ADDED       = "<TR><TD BGCOLOR=#99FF99 class=\"diffadd\">";
-    private static final String CSS_DIFF_REMOVED     = "<TR><TD BGCOLOR=#FF9933 class=\"diffrem\">";
-    private static final String CSS_DIFF_UNCHANGED   = "<TR><TD class=\"diff\">";
-    private static final String CSS_DIFF_CLOSE       = "</TD></TR>";
+    private static final String CSS_DIFF_ADDED       = "<tr><td bgcolor=\"#99FF99\" class=\"diffadd\">";
+    private static final String CSS_DIFF_REMOVED     = "<tr><td bgcolor=\"#FF9933\" class=\"diffrem\">";
+    private static final String CSS_DIFF_UNCHANGED   = "<tr><td class=\"diff\">";
+    private static final String CSS_DIFF_CLOSE       = "</td></tr>";
 
     /** Default diff command */
     private String         m_diffCommand     = null; 
@@ -332,7 +332,7 @@ public class DifferenceEngine
         BufferedReader in = new BufferedReader( new StringReader( diffText ) );
         StringBuffer out = new StringBuffer();
 
-        out.append("<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>");
+        out.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
         while( ( line = in.readLine() ) != null )
         {
             stop  = CSS_DIFF_CLOSE;
@@ -361,7 +361,7 @@ public class DifferenceEngine
             out.append( stop + "\n" );
 
         }
-        out.append("</TABLE>");
+        out.append("</table>\n");
         return( out.toString() );
     }
 

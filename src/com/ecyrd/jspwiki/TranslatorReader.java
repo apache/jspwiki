@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
 
 import org.apache.log4j.Category;
 import org.apache.oro.text.*;

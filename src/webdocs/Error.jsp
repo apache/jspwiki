@@ -51,7 +51,11 @@
 
     String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
-<wiki:Include page="<%=contentPage%>" />
+   <div class="messagecontent">
+      <%=pageContext.getAttribute("message",PageContext.REQUEST_SCOPE)%>
+   </div>
+
+   <br clear="all" />
 <%
     NDC.pop();
     NDC.remove();

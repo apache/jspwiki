@@ -1,51 +1,54 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 
-<HTML>
+<html>
 
-<HEAD>
-  <TITLE><wiki:Variable var="applicationname" />: <wiki:PageName /></TITLE>
+<head>
+  <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
   <%@ include file="cssinclude.js" %>
   <wiki:RSSLink />
-</HEAD>
+</head>
 
-<BODY BGCOLOR="#FFFFFF">
+<body bgcolor="#FFFFFF">
 
-<TABLE BORDER="0" CELLSPACING="8" width="95%">
+<table border="0" cellspacing="8" width="95%">
 
-  <TR>
-    <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
+  <tr>
+    <td class="leftmenu" width="10%" valign="top" nowrap="true">
        <%@ include file="LeftMenu.jsp" %>
-       <P>
+       <p>
        <wiki:CheckRequestContext context="view">
           <wiki:Permission permission="edit">
              <wiki:EditLink>Edit this page</wiki:EditLink>
           </wiki:Permission>
        </wiki:CheckRequestContext>
-       </P>
+       </p>
        <%@ include file="LeftMenuFooter.jsp" %>
-       <P>
-           <DIV ALIGN="center">
-           <wiki:RSSImageLink title="Aggregate the RSS feed" /><BR />
+       <p>
+           <div align="center">
+           <wiki:RSSImageLink title="Aggregate the RSS feed" /><br />
            <wiki:RSSUserlandLink title="Aggregate the RSS feed in Radio Userland!" />
-           </DIV>
-       </P>
-    </TD>
+           </div>
+       </p>
+    </td>
 
-    <TD CLASS="page" WIDTH="85%" VALIGN="top">
+    <td class="page" width="85%" valign="top">
 
-      <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0">
-         <TR>
-            <TD align="left"><H1 CLASS="pagename"><wiki:PageName/></H1></TD>
-            <TD align="right"><%@ include file="SearchBox.jsp" %></TD>
-         </TR>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td align="left">
+                <h1 class="pagename"><a name="Top"><wiki:PageName/></a></h1>
+            </td>
+            <td align="right"><%@ include file="SearchBox.jsp" %></td>
+         </tr>
          <tr>
             <td colspan="2" class="breadcrumbs">Your trail: <wiki:Breadcrumbs /></td>
          </tr>
-      </TABLE>
+      </table>
 
-      <HR /><P>
+      <hr /><p>
 
       <wiki:CheckRequestContext context="view">
          <wiki:Include page="PageContent.jsp" />
@@ -79,12 +82,12 @@
          <wiki:Include page="DisplayMessage.jsp" />
       </wiki:CheckRequestContext>
 
-    </TD>
-  </TR>
+    </td>
+  </tr>
 
-</TABLE>
+</table>
 
-</BODY>
+</body>
 
-</HTML>
+</html>
 

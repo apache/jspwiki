@@ -31,7 +31,6 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Iterates through tags.

@@ -1,4 +1,4 @@
-<SCRIPT type="text/javascript">
+<script type="text/javascript">
 <!-- Hide script contents from old browsers
 
     var IE4 = (document.all && !document.getElementById) ? true : false;
@@ -29,14 +29,10 @@
     document.write("<link rel=\"stylesheet\" href=\"templates/default/"+sheet+"\">");
 
 // end hiding contents from old browsers -->
-</SCRIPT>
-<NOSCRIPT>
-    <!-- User has no JavaScript support.  Thus, it is unlikely that
-         his stylesheets would work either.  So, no stylesheets. -->
-</NOSCRIPT>
+</script>
 
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=<wiki:ContentEncoding />">
-<LINK REL="search" HREF="<wiki:LinkTo format="url" page="FindPage"/>"            TITLE="Search <wiki:Variable var="ApplicationName" />">
-<LINK REL="help"   HREF="<wiki:LinkTo format="url" page="TextFormattingRules"/>" TITLE="Help">
-<LINK REL="start"  HREF="<wiki:LinkTo format="url" page="Main"/>"                TITLE="Front page">
+<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />">
+<link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />">
+<link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help">
+<link rel="start"  href="<wiki:LinkTo format="url" page="Main"/>"                title="Front page">
 

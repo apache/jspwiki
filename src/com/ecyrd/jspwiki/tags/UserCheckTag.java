@@ -26,7 +26,6 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.UserProfile;
 
-
 /**
  * Includes the content if an user check validates. A UserProfile
  * always exists, and its status is UNKNOWN, NAMED, or VALIDATED.
