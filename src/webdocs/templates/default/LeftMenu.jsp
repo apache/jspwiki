@@ -1,4 +1,6 @@
-<h3 class="leftmenuheading"><a href="<wiki:LinkTo page="SystemInfo" format="url"/>"><wiki:Variable var="ApplicationName" /></a></h3>
+<div align="center">
+    <a href="<wiki:LinkTo page="SystemInfo" format="url"/>" onMouseOver="document.jspwiki_logo.src='images/jspwiki_logo.png'" onMouseOut="document.jspwiki_logo.src='images/jspwiki_logo_s.png'"><img src="images/jspwiki_logo_s.png" border="0" name="jspwiki_logo"/></a><br />
+</div>
 
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
