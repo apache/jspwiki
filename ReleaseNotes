@@ -3,8 +3,46 @@ This is a beta release of JSPWiki.
 
 Major changes since the last stable (1.6.0) release are:
 
+- Added ReferenceManager. This object is initialized statically by 
+  each WikiEngine, and it keeps track of all WikiPage cross references
+  within that WE. This is an unoptimized, in-memory solution, at least
+  initially: the WE scans through ALL existing WikiPages when it is 
+  created, asks the RM to update itself, and thereafter updates the 
+  RM every time a page is saved. 
+
+  RM is queried through a tag library. This is the first tag implemented
+  in JSPWiki (mainly because I needed the practice). To list all references
+  to a given page, you would include the following tag on your JSP page:
+
+     <jspwiki:linklist action="getref" page="<%=aPageName%>" 
+        show="10" linesep="true"/>
+
+  Other actions are "getunref" to search for unreferenced WikiPages, and
+  "getmissing" to find referenced, but non-existant pages. You can drop
+  the show and linesep parameters, and page only applies to action "getref".
+
+  All JSP pages including LeftMenuFooter or using the tag above need to 
+  include the tag library at their beginning: 
+
+          <%@ taglib uri="/WEB-INF/tlds/taglib.tld" prefix="jspwiki" %>
+
+  NOTE: the actual ReferenceManager.java implementation is quick'n'dirty,
+  and may still have synchronization problems. Definitely not ready for
+  release. The TranslatorReader hook to look for WikiLinks is a nasty
+  kludge and should at least be optimized a bit, too.
+
+  //ebu
+
+
 
 
 UPGRADE NOTES
 =============
+
+- If updating manually:
+  - cp -r etc/tlds .../JSPWiki/WEB-INF
+  - copy all JSP files
+  - copy LeftMenu.txt in the wikifiles (or check the changes)
+  - copy the two new special file entries in jspwiki.properties
+  - ant build, cp -r build/com .../JSPWiki/WEB-INF/classes/
 
