@@ -1,3 +1,11 @@
+2004-01-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.91.
+
+        * Plugin errors are now logged as INFO level for convinience.
+        Getting a zillion emails every time someone mistypes a plugin name
+        is NOT good.
+
 2004-01-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.90.
