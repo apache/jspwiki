@@ -45,13 +45,9 @@ public class PageSizeTag
         {
             if( page != null && engine.pageExists(page) )
             {
-                long size = -1;
+                long size = page.getSize();
 
-                if( page instanceof Attachment )
-                {
-                    size = ((Attachment) page).getSize();
-                }
-                else
+                if( size == -1 && !(page instanceof Attachment) )
                 {
                     size = engine.getPureText( page.getName(), page.getVersion() ).length();
                 }
