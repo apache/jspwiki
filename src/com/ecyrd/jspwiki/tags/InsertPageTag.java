@@ -42,7 +42,7 @@ public class InsertPageTag
     public static final int HTML  = 0;
     public static final int PLAIN = 1;
 
-    protected String m_pageName;
+    protected String m_pageName = null;
     private   int    m_mode = HTML;
 
     public void setPage( String page )
