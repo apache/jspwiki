@@ -282,6 +282,15 @@ public class WikiEngine
     }
 
     /**
+     *  Turns a WikiName into something that can be 
+     *  called through using an URL.
+     */
+    public String encodeName( String pagename )
+    {
+        return java.net.URLEncoder.encode( pagename );
+    }
+
+    /**
      *  Returns the unconverted text of a page.
      *
      *  @param page WikiName of the page to fetch.
