@@ -99,6 +99,18 @@ public class VersioningFileProviderTest extends TestCase
         assertEquals( text, res );
     }
 
+    public void testGetByVersion()
+    {
+        String text = "diddo\r\n";
+
+        engine.saveText( NAME1, text );
+
+        WikiPage page = engine.getPage( NAME1, 1 );
+       
+        assertEquals( "name", NAME1, page.getName() );
+        assertEquals( "version", 1, page.getVersion() );
+    }
+
     public void testPageInfo()
     {
         String text = "diddo\r\n";

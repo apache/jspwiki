@@ -105,6 +105,18 @@ public class RCSFileProviderTest extends TestCase
         assertEquals( "fetch by direct version did not work", "foobar", res );
     }
 
+    public void testGetByVersion()
+    {
+        String text = "diddo\r\n";
+
+        engine.saveText( NAME1, text );
+
+        WikiPage page = engine.getPage( NAME1, 1 );
+       
+        assertEquals( "name", NAME1, page.getName() );
+        assertEquals( "version", 1, page.getVersion() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( RCSFileProviderTest.class );
