@@ -1,3 +1,20 @@
+2005-01-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.143.
+
+        * PingWeblogsComFilter now actually accepts a parameter where to ping.
+
+        * All tags and code were moved to the new standard.
+
+        * Had a major revelation and moved the URL generation subroutines from
+        WikiEngine to WikiContext.  This had to be done or else there would be
+        no way to change how the URLs are generated in different contexts, such
+        as RSS generation or XML-RPC.  This also means WikiEngine.getViewURL()
+        is now deprecated (please use WikiContext.getViewURL(), WikiContext.getURL())
+        instead.
+
+        * Added 304 check to atom.jsp as well.
+
 2005-01-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.142.
