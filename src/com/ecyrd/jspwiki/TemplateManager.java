@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
+import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 import com.opensymphony.module.oscache.base.Cache;
@@ -40,6 +41,8 @@ public class TemplateManager
 {
     /** The default directory for the properties. */
     public static final String DIRECTORY    = "templates";
+
+    public static final String DEFAULT_TEMPLATE = "default";
 
     /** Name of the file that contains the properties.*/
 
@@ -84,6 +87,56 @@ public class TemplateManager
         return false;
     }
 
+    /**
+     *  An utility method for finding a JSP page.  It first searches
+     *  the current context, and then attempts to locate the page under
+     *  the default template.
+     */
+    public String findJSP( PageContext pageContext, String name )
+    {
+        ServletContext sContext = pageContext.getServletContext();
+        
+        InputStream is = sContext.getResourceAsStream( name );
+
+        if( is == null )
+        {
+            String defname = makeFullJSPName( DEFAULT_TEMPLATE, name );
+            is = sContext.getResourceAsStream( defname );
+
+            if( is != null )
+                name = defname;
+            else
+                name = null;
+        }
+
+        return name;
+    }
+
+    private final String makeFullJSPName( String template, String name )
+    {
+        return "/"+DIRECTORY+"/"+template+"/"+name;
+    }
+
+    public String findJSP( PageContext pageContext, String template, String name )
+    {
+        ServletContext sContext = pageContext.getServletContext();
+
+        String fullname = makeFullJSPName( template, name );
+        InputStream is = sContext.getResourceAsStream( fullname );
+
+        if( is == null )
+        {
+            String defname = makeFullJSPName( DEFAULT_TEMPLATE, name );
+            is = sContext.getResourceAsStream( defname );
+
+            if( is != null )
+                fullname = defname;
+            else
+                fullname = null;
+        }
+
+        return fullname;
+    }
 
     /**
      *  Returns a property, as defined in the template.  The evaluation
