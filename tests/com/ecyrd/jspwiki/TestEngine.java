@@ -5,6 +5,7 @@ import java.util.Properties;
 public class TestEngine extends WikiEngine
 {
     public TestEngine( Properties props )
+        throws NoRequiredPropertyException
     {
         super( props );
     }
