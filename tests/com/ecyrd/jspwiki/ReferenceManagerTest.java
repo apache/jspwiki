@@ -174,5 +174,67 @@ public class ReferenceManagerTest extends TestCase
         junit.textui.TestRunner.main( new String[] { ReferenceManagerTest.class.getName() } );
     }
     
+    
+    /**
+     * Test method: dumps the contents of  ReferenceManager link lists to stdout.
+     * This method is NOT synchronized, and should be used in testing
+     * with one user, one WikiEngine only.
+     */
+    public static String dumpReferenceManager( ReferenceManager rm )
+    {
+        StringBuffer buf = new StringBuffer();
+        try
+        {
+            buf.append( "================================================================\n" );
+            buf.append( "Referred By list:\n" );
+            Set keys = rm.getReferredBy().keySet();
+            Iterator it = keys.iterator();
+            while( it.hasNext() )
+            {
+                String key = (String) it.next();
+                buf.append( key + " referred by: " );
+                Set refs = (Set)rm.getReferredBy().get( key );
+                Iterator rit = refs.iterator();
+                while( rit.hasNext() )
+                {
+                    String aRef = (String)rit.next();
+                    buf.append( aRef + " " );
+                }
+                buf.append( "\n" );
+            }
+            
+            
+            buf.append( "----------------------------------------------------------------\n" );
+            buf.append( "Refers To list:\n" );
+            keys = rm.getRefersTo().keySet();
+            it = keys.iterator();
+            while( it.hasNext() )
+            {
+                String key = (String) it.next();
+                buf.append( key + " refers to: " );
+                Collection refs = (Collection)rm.getRefersTo().get( key );
+                if(refs != null)
+                {
+                    Iterator rit = refs.iterator();
+                    while( rit.hasNext() )
+                    {
+                        String aRef = (String)rit.next();
+                        buf.append( aRef + " " );
+                    }
+                    buf.append( "\n" );
+                }
+                else
+                    buf.append("(no references)\n");
+            }
+            buf.append( "================================================================\n" );
+        }
+        catch(Exception e)
+        {
+            buf.append("Problem in dump(): " + e + "\n" );
+        }
+        
+        return( buf.toString() );
+    }
+
 }
 
