@@ -10,6 +10,18 @@
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
+
+  <!-- The temporary installation directory where all war-files 
+       are collected, for example -->
+  <property name="install.fulldir" value="${tmpdir}/install" />
+
+  <property name="install.src" value="${tmpdir}/cvssrc" />
+
+  <property name="cvs.root" value=":ext:grey.ecyrd.com:/p/cvs" />
+  <property name="cvs.module" value="JSPWiki" />
+  <property name="cvs.tag" value="HEAD" />
+
+  <property name="release.dir" value="releases" />
   
   <path id="path.base">
      <pathelement path="${code.build}" />
@@ -23,22 +35,29 @@
       <path refid="path.base" />
   </path>
 
+  <!-- ============================================================== -->
+
+  <!-- Initialising, cleaning, etc. -->
+
   <target name="init">
      <mkdir dir="${code.build}" />
      <mkdir dir="${tests.build}" />
      <mkdir dir="${tests.reports}" />
   </target>
 
+  <target name="clean">
+    <delete dir="${tests.build}" />
+    <delete dir="${code.build}" />
+  </target>
+
+
+  <!-- Compilation targets -->
+
   <target name="compile" depends="init">
     <javac srcdir="${code.src}"
            destdir="${code.build}">
       <classpath refid="path.base" />
     </javac>
-  </target>
-
-  <target name="clean">
-    <delete dir="${tests.build}" />
-    <delete dir="${code.build}" />
   </target>
 
   <target name="compiletests">
@@ -48,11 +67,16 @@
     </javac>
   </target>
 
-  <target name="war" depends="compile">
+  <!--  Installation targets -->
 
-    <property name="install.fulldir" value="${tmpdir}" />
-
+  <target name="installinit">
     <mkdir dir="${install.fulldir}" />
+    <delete dir="${install.src}" />    
+    <mkdir dir="${install.src}" />
+    <mkdir dir="${release.dir}" />
+  </target>
+
+  <target name="war" depends="compile,installinit">
 
     <war warfile="${install.fulldir}/${ant.project.name}.war"
          webxml="${code.src}/webdocs/WEB-INF/web.xml">
@@ -64,7 +88,28 @@
 
   </target>
 
+  <target name="srczip" depends="installinit">
 
+    <cvs cvsRoot="${cvs.root}" 
+         dest="${install.src}" 
+         package="${cvs.module}" 
+         command="export" 
+         tag="${cvs.tag}" />
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-src.zip"
+         basedir="${install.src}" />
+
+  </target>
+
+  <target name="dist" depends="war,srczip">
+     <copy file="README" todir="${install.fulldir}" />
+     <copy file="ChangeLog" todir="${install.fulldir}" />
+     <copy file="doc/LICENSE" todir="${install.fulldir}" />
+     <zip zipfile="${release.dir}/${ant.project.name}.zip"
+          basedir="${install.fulldir}" />
+  </target>
+
+  <!-- Running tests -->
 
   <target name="tests" depends="compile,compiletests">
     <junit printsummary="yes" haltonfailure="no" fork="no">
