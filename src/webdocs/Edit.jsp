@@ -15,6 +15,7 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String headerTitle = "Edit page ";
 
     if( pagereq == null )
     {
@@ -100,7 +101,8 @@
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <H1>Edit page <%=pagereq%></H1>
+      <%@ include file="PageHeader.jsp" %>
+      <!-- <H1>Edit page <%=pagereq%></H1> -->
 
       <FORM action="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">

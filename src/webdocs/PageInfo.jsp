@@ -14,6 +14,7 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String headerTitle = "";
 
     if( pagereq == null )
     {
