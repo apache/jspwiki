@@ -1,3 +1,9 @@
+2002-11-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added GoRankAggregator.  Most of you don't probably care.  (I
+        probably should make these a separate distribution or something.)
+        I won't even bother to bump the version number for this one.
+
 2002-11-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.42.
