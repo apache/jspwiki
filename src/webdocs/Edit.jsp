@@ -24,6 +24,8 @@
         throw new ServletException("No page defined");
     }
 
+    String skin = wiki.getTemplateDir();
+
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
     WikiPage wikipage = wiki.getPage( pagereq );
@@ -50,8 +52,8 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    log.debug("Request character encoding="+request.getCharacterEncoding());
-    log.debug("Request content type+"+request.getContentType());
+    //log.debug("Request character encoding="+request.getCharacterEncoding());
+    //log.debug("Request content type+"+request.getContentType());
     log.debug("preview="+preview+", ok="+ok);
 
     if( ok != null )
@@ -99,9 +101,14 @@
     Date d = wiki.pageLastChanged( pagereq );
     if( d != null ) lastchange = d.getTime();
 
+    pageContext.setAttribute( "lastchange",
+                              Long.toString( lastchange ),
+                              PageContext.REQUEST_SCOPE );
+
+    String contentPage = "templates/"+skin+"/EditTemplate.jsp";
 %>
 
-<%@include file="templates/default/EditTemplate.jsp" %>
+<wiki:Include page="<%=contentPage%>" />
 
 <%
     NDC.pop();
