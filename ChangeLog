@@ -1,5 +1,46 @@
 2003-06-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.29.
+
+        * Added to WikiAuthenticator interface: It is now theoretically
+        possible to change passwords as well (though there is no
+        support within JSP for that).
+
+        * UserManager now handles logins/logouts properly.  We now have
+        fully functional login/logout functionality!
+
+        * Creating a WikiContext with WikiEngine.createContext() now
+        actually throws an exception if it sees that WikiEngine has not
+        been configured correctly.  This hopefully removes a bunch of
+        NullPointerExceptions and other nasties that occurred when the
+        jspwiki.properties file was not correct.
+        
+        Unfortunately the error messages are still not very informative,
+        but as long as we create the WikiEngine in the jspInit(), then we
+        have to do it like this...  Any exceptions thrown there get
+        ignored by Tomcat.
+
+        * Deprecated away a bunch of methods from WikiEngine, most notably
+        saveText( String, String ).  Also, findWikiClass() is gone (moved
+        to ClassUtil).
+
+        * VariableManager now recognizes two new variables (or constants,
+        depends on your point of view): "username" and "loginstatus".
+
+        * Added new PriorityList class.
+
+        * Added new "util" -package.
+
+        * Added ClassUtil class so that it is easier to handle class
+        information.  Among other things, this replaces
+        WikiEngine.findWikiClass().
+
+        * UserCheckTag modified: It now has a parameter "status" instead
+        of the old "exists", and it has been considerably enhanced in
+        use.  The old "exists=true" is now replaced with "status=known",
+        and "exists=false" is "status=unknown".  There are also other
+        options available.
+
         * v2.1.28.
 
         * Mental note: when you say "cvs commit", see which directory
