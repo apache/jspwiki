@@ -2,6 +2,9 @@
 
         * v2.0.3.
 
+        * Bug fix: previewing a new page with a footnote would cause a
+        crash. 
+
         * Redirected all references to Wiki.jsp or Edit.jsp through
         WikiEngine for future configurability.  Requested by Bart
         Selders.
