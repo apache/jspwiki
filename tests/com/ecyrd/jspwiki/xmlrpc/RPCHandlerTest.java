@@ -39,6 +39,33 @@ public class RPCHandlerTest extends TestCase
         f.delete();
     }
 
+    public void testRecentChanges()
+        throws Exception
+    {
+        String text = "Foo";
+        String pageName = NAME1;
+
+        m_engine.saveText( pageName, text );
+
+        WikiPage directInfo = m_engine.getPage( NAME1 );
+
+        Date modDate = directInfo.getLastModified();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( modDate );
+        cal.add( Calendar.MINUTE, -1 );
+
+        // Go to UTC
+        cal.add( Calendar.MILLISECOND, 
+                 -(cal.get( Calendar.ZONE_OFFSET )+
+                  (cal.getTimeZone().inDaylightTime( modDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+        
+
+        Vector v = m_handler.getRecentChanges( cal.getTime() );
+
+        assertEquals( "wrong number of changes", 1, v.size() );
+    }
+
     public void testPageInfo()
         throws Exception
     {
