@@ -1,0 +1,32 @@
+JSPWiki has many variables, that can be inserted on pages on-the-fly.  See [TextFormattingRules] how it's done.
+
+!applicationname
+
+TBA
+
+!encoding
+
+TBA
+
+!inlinedimages
+
+!interwikilinks
+
+!jspwikiversion
+
+Inserts the version number of the JSPWiki engine.  For example, this version is [{$jspwikiversion}].
+
+!pagename
+
+Inserts the current page name.  Example: This page is called [{$pagename}].
+
+!pageprovider
+
+!pageproviderdescription
+
+!pluginpath
+
+!totalpages
+
+TBA
+

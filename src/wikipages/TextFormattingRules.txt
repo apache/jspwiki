@@ -173,6 +173,16 @@ Create a link that points to a new (not existing) page using its [WikiName].
 Click that new link, which should now have a question mark (?) suffix and
 you will get an editor for the new page. -- [Asser]
 
+!Inserting variables
+
+There are many possible variables you can insert on a page.  The basic form is:
+
+{{ [[{$variablename}], }}
+
+where ''variablename'' is the name of the variable you want to insert.  Note that variable names are case-insensitive - that is, "pagename" is the same as "paGeNamE" and "PageName".
+
+You can see the list of available of variables at [WikiVariables].
+
 !Inserting plugins
 
 The basic incantation to insert a plugin looks like this:
