@@ -27,13 +27,29 @@ package com.ecyrd.jspwiki;
  */
 public class Release
 {
+    /**
+     *  This is the default application name.
+     */
     public static final String     APPNAME       = "JSPWiki";
 
+    /** This should be empty when doing a release - otherwise
+        keep it as "cvs" so that whenever someone checks out the code,
+        they know it is a bleeding-edge version. */
+    private static final String    POSTFIX       = "-cvs";
+
+    /**
+     *  This should be increased every time you do a release.
+     */
     public static final String     RELEASE       = "R1";
+
     public static final int        VERSION       = 1;
     public static final int        REVISION      = 3;
     public static final int        MINORREVISION = 4;
 
+    /**
+     *  This is the generic version string you should use
+     *  when printing out the version.
+     */
     public static final String     VERSTR        = 
-        VERSION+"."+REVISION+"."+MINORREVISION;
+        VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;
 }
