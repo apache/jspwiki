@@ -80,7 +80,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [hyperlink]";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=Hyperlink\">hyperlink</A>\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=Hyperlink\">hyperlink</A>",
                       translate(src) );
     }
 
@@ -91,7 +91,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [hyperlink too]";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperlinkToo\">hyperlink too</A>\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperlinkToo\">hyperlink too</A>",
                       translate(src) );
     }
 
@@ -102,7 +102,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [HyperLink]";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>",
                       translate(src) );
     }
 
@@ -113,7 +113,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [here|HyperLink]";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">here</A>\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">here</A>",
                       translate(src) );
     }
 
@@ -127,7 +127,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "[DiscussionAboutWiki] [WikiMarkupDevelopment].";
 
-        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=DiscussionAboutWiki\">DiscussionAboutWiki</A> <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=WikiMarkupDevelopment\">WikiMarkupDevelopment</A>.\n",
+        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=DiscussionAboutWiki\">DiscussionAboutWiki</A> <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=WikiMarkupDevelopment\">WikiMarkupDevelopment</A>.",
                       translate(src) );       
     }
 
@@ -139,7 +139,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a HyperLink.";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.",
                       translate(src) );
     }
 
@@ -148,7 +148,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a HyperLink.";
 
-        assertEquals( "This should be a <U>HyperLink</U><A HREF=\"Edit.jsp?page=HyperLink\">?</A>.\n",
+        assertEquals( "This should be a <U>HyperLink</U><A HREF=\"Edit.jsp?page=HyperLink\">?</A>.",
                       translate(src) );
     }
 
@@ -163,7 +163,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [  HyperLink  ].";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">  HyperLink  </A>.\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">  HyperLink  </A>.",
                       translate(src) );
     }
 
@@ -172,7 +172,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a nonHyperLink.";
 
-        assertEquals( "This should be a nonHyperLink.\n",
+        assertEquals( "This should be a nonHyperLink.",
                       translate(src) );
     }
 
@@ -185,7 +185,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a HyperLink, and ThisToo.";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
                       translate(src) );
     }
 
@@ -198,7 +198,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [HyperLink], and ThisToo.";
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
                       translate(src) );
     }
 
@@ -211,7 +211,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "] This ] should be a HyperLink], and ThisToo.";
 
-        assertEquals( "] This ] should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>], and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
+        assertEquals( "] This ] should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>], and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
                       translate(src) );
     }
 
@@ -224,7 +224,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "HyperLink, and ThisToo";
 
-        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>\n",
+        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>",
                       translate(src) );
     }
 
@@ -234,7 +234,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "http://www.foo.bar/ANewHope/";
 
-        assertEquals( "http://www.foo.bar/ANewHope/\n",
+        assertEquals( "http://www.foo.bar/ANewHope/",
                       translate(src) );
     }
 
@@ -243,7 +243,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should not be a ~HyperLink.";
 
-        assertEquals( "This should not be a HyperLink.\n",
+        assertEquals( "This should not be a HyperLink.",
                       translate(src) );
     }
 
@@ -252,7 +252,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "~HyperLinks should not be matched.";
 
-        assertEquals( "HyperLinks should not be matched.\n",
+        assertEquals( "HyperLinks should not be matched.",
                       translate(src) );
     }
 
@@ -261,7 +261,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a [http://www.regex.fi/]";
 
-        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.regex.fi/\">http://www.regex.fi/</A>\n",
+        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.regex.fi/\">http://www.regex.fi/</A>",
                       translate(src) );
     }
 
@@ -270,7 +270,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a [link|http://www.regex.fi/]";
 
-        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.regex.fi/\">link</A>\n",
+        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.regex.fi/\">link</A>",
                       translate(src) );
     }
 
@@ -281,7 +281,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("HyperLink");
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLinks</A>\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLinks</A>",
                       translate(src) );
     }
 
@@ -290,7 +290,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a [HyperLinks]";
 
-        assertEquals( "This should be a <U>HyperLinks</U><A HREF=\"Edit.jsp?page=HyperLinks\">?</A>\n",
+        assertEquals( "This should be a <U>HyperLinks</U><A HREF=\"Edit.jsp?page=HyperLinks\">?</A>",
                       translate(src) );
     }
 
@@ -301,7 +301,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("HyperLinks");
 
-        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLinks\">HyperLink</A>\n",
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLinks\">HyperLink</A>",
                       translate(src) );
     }
 
@@ -311,7 +311,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a [link|http://www.haxored.com/\" onMouseOver=\"alert('Hahhaa');\"]";
 
-        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.haxored.com/&quot; onMouseOver=&quot;alert('Hahhaa');&quot;\">link</A>\n",
+        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.haxored.com/&quot; onMouseOver=&quot;alert('Hahhaa');&quot;\">link</A>",
                       translate(src) );
     }
 
@@ -320,7 +320,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a [link|JSPWiki:HyperLink]";
 
-        assertEquals( "This should be a <A CLASS=\"interwiki\" HREF=\"http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=HyperLink\">link</A>\n",
+        assertEquals( "This should be a <A CLASS=\"interwiki\" HREF=\"http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=HyperLink\">link</A>",
                       translate(src) );
     }
 
@@ -331,7 +331,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should not be a [[HyperLink]";
 
-        assertEquals( "This should not be a [HyperLink]\n",
+        assertEquals( "This should not be a [HyperLink]",
                       translate(src) );
     }
 
@@ -340,7 +340,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should not be a [[[[HyperLink]";
 
-        assertEquals( "This should not be a [[[HyperLink]\n",
+        assertEquals( "This should not be a [[[HyperLink]",
                       translate(src) );
     }
 
@@ -349,7 +349,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "[[HyperLink], and this [[Neither].";
 
-        assertEquals( "[HyperLink], and this [Neither].\n",
+        assertEquals( "[HyperLink], and this [Neither].",
                       translate(src) );
     }
 
@@ -358,7 +358,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "What if this is the last char [";
 
-        assertEquals( "What if this is the last char \n",
+        assertEquals( "What if this is the last char ",
                       translate(src) );
     }
 
@@ -367,7 +367,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "What if this is the last char [[";
 
-        assertEquals( "What if this is the last char [\n",
+        assertEquals( "What if this is the last char [",
                       translate(src) );
     }
 
@@ -378,7 +378,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("Test_page");
 
-        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=Test_page\">test_page</A>\n",
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=Test_page\">test_page</A>",
                      translate(src) );
     }
 
@@ -389,7 +389,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("Test.page");
 
-        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=Test.page\">test.page</A>\n",
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=Test.page\">test.page</A>",
                      translate(src) );
     }
 
@@ -400,7 +400,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage(".testpage_");
 
-        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=.testpage_\">.testpage_</A>\n",
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=.testpage_\">.testpage_</A>",
                      translate(src) );
     }
 
@@ -409,7 +409,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://www.ecyrd.com/test.png]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://www.ecyrd.com/test.png\" ALT=\"test\">\n",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://www.ecyrd.com/test.png\" ALT=\"test\">",
                      translate(src) );
     }
 
@@ -418,7 +418,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://www.ecyrd.com/test.ppm]";
 
-        assertEquals("Link <A CLASS=\"external\" HREF=\"http://www.ecyrd.com/test.ppm\">test</A>\n",
+        assertEquals("Link <A CLASS=\"external\" HREF=\"http://www.ecyrd.com/test.ppm\">test</A>",
                      translate(src) );
     }
 
@@ -427,7 +427,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://images.com/testi]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://images.com/testi\" ALT=\"test\">\n",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://images.com/testi\" ALT=\"test\">",
                      translate(src) );
     }
 
@@ -436,7 +436,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [test|http://foobar.jpg]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"test\">\n",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"test\">",
                      translate(src) );
     }
 
@@ -446,7 +446,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [http://foobar.jpg]";
 
-        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"http://foobar.jpg\">\n",
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"http://foobar.jpg\">",
                      translate(src) );
     }
 
@@ -455,7 +455,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
 
-        assertEquals("Link <A HREF=\"http://link.to/\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\"></A>\n",
+        assertEquals("Link <A HREF=\"http://link.to/\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\"></A>",
                      translate(src) );
     }
 
@@ -466,7 +466,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("SandBox");
 
-        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=SandBox\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"SandBox\"></A>\n",
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=SandBox\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"SandBox\"></A>",
                      translate(src) );
     }
 
@@ -477,7 +477,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("≈‰Test"); // FIXME: Should be capital ≈
 
-        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=%C5%E4Test\">Â‰Test</A>\n",
+        assertEquals("Link <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=%C5%E4Test\">Â‰Test</A>",
                      translate(src));
     }
 
@@ -486,17 +486,26 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1\n\n2\n\n3";
 
-        assertEquals( "1\n<P>\n2\n<P>\n3\n", translate(src) );
+        assertEquals( "1\n<P>\n2\n<P>\n3", translate(src) );
     }
 
+    public void testParagraph2()
+        throws Exception
+    {
+        String src = "[WikiEtiquette]\r\n\r\n[Find page]";
 
+        newPage( "WikiEtiquette" );        
+
+        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</A>\n"+
+                      "<P>\n<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=FindPage\">Find page</A>", translate(src) );
+    }
 
     public void testLinebreak()
         throws Exception
     {
         String src = "1\\\\2";
 
-        assertEquals( "1<BR>2\n", translate(src) );
+        assertEquals( "1<BR>2", translate(src) );
     }
 
     public void testTT()
@@ -504,7 +513,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1{{2345}}6";
 
-        assertEquals( "1<TT>2345</TT>6\n", translate(src) );
+        assertEquals( "1<TT>2345</TT>6", translate(src) );
     }
 
     public void testTTAcrossLines()
@@ -512,7 +521,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1{{\n2345\n}}6";
 
-        assertEquals( "1<TT>\n2345\n</TT>6\n", translate(src) );
+        assertEquals( "1<TT>\n2345\n</TT>6", translate(src) );
     }
 
     public void testTTLinks()
@@ -522,7 +531,7 @@ public class TranslatorReaderTest extends TestCase
 
         newPage("ALink");
 
-        assertEquals( "1<TT>\n2345\n<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ALink\">a link</A>\n</TT>6\n", translate(src) );
+        assertEquals( "1<TT>\n2345\n<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ALink\">a link</A>\n</TT>6", translate(src) );
     }
 
     public void testPre()
@@ -530,7 +539,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1{{{2345}}}6";
 
-        assertEquals( "1<PRE>2345</PRE>6\n", translate(src) );
+        assertEquals( "1<PRE>2345</PRE>6", translate(src) );
     }
 
     public void testPre2()
@@ -538,7 +547,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
 
-        assertEquals( "1 <PRE> {{{ 2345 </PRE> }}} 6\n", translate(src) );
+        assertEquals( "1 <PRE> {{{ 2345 </PRE> }}} 6", translate(src) );
     }
 
     public void testList1()
@@ -572,7 +581,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
 
-        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n<LI> Two\n<LI> Three\n</UL>\nShould be normal.\n", 
+        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n<LI> Two\n<LI> Three\n</UL>\nShould be normal.", 
                       translate(src) );
     }
 
@@ -581,7 +590,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "<B>Test</B>";
 
-        assertEquals( "&lt;B&gt;Test&lt;/B&gt;\n", translate(src) );
+        assertEquals( "&lt;B&gt;Test&lt;/B&gt;", translate(src) );
     }
 
     public void testHTML2()
@@ -589,7 +598,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "<P>";
 
-        assertEquals( "&lt;P&gt;\n", translate(src) );
+        assertEquals( "&lt;P&gt;", translate(src) );
     }
 
     public void testQuotes()
@@ -597,7 +606,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "\"Test\"\"";
 
-        assertEquals( "&quot;Test&quot;&quot;\n", translate(src) );
+        assertEquals( "&quot;Test&quot;&quot;", translate(src) );
     }
 
     public void testItalicAcrossLinebreak()
@@ -605,7 +614,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="''This is a\ntest.''";
 
-        assertEquals( "<I>This is a\ntest.</I>\n", translate(src) );
+        assertEquals( "<I>This is a\ntest.</I>", translate(src) );
     }
 
     public void testBoldAcrossLinebreak()
@@ -613,7 +622,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="__This is a\ntest.__";
 
-        assertEquals( "<B>This is a\ntest.</B>\n", translate(src) );
+        assertEquals( "<B>This is a\ntest.</B>", translate(src) );
     }
 
     public void testBoldItalic()
@@ -621,7 +630,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="__This ''is'' a test.__";
 
-        assertEquals( "<B>This <I>is</I> a test.</B>\n", translate(src) );
+        assertEquals( "<B>This <I>is</I> a test.</B>", translate(src) );
     }
 
     public void testFootnote1()
@@ -629,7 +638,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="Footnote[1]";
 
-        assertEquals( "Footnote<A CLASS=\"footnoteref\" HREF=\"#ref-testpage-1\">[1]</A>\n", 
+        assertEquals( "Footnote<A CLASS=\"footnoteref\" HREF=\"#ref-testpage-1\">[1]</A>", 
                       translate(src) );
     }
 
@@ -638,7 +647,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[#2356] Footnote.";
 
-        assertEquals( "<A CLASS=\"footnote\" NAME=\"ref-testpage-2356\">[#2356]</A> Footnote.\n", 
+        assertEquals( "<A CLASS=\"footnote\" NAME=\"ref-testpage-2356\">[#2356]</A> Footnote.", 
                       translate(src) );
     }
 
@@ -649,7 +658,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n**\n\nB";
 
-        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n</UL>\n</UL>\n<P>\nB\n", 
+        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n</UL>\n</UL>\n<P>\nB", 
                       translate(src) );
     }
 
@@ -658,7 +667,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n##\n\nB";
 
-        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n</OL>\n</OL>\n<P>\nB\n", 
+        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n</OL>\n</OL>\n<P>\nB", 
                       translate(src) );
     }
 
@@ -739,7 +748,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WHERE text=test}]";
 
-        assertEquals( "test\n", translate(src) );
+        assertEquals( "test", translate(src) );
     }
 
     public void testPluginNoInsert()
@@ -747,7 +756,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{SamplePlugin text=test}]";
 
-        assertEquals( "test\n", translate(src) );
+        assertEquals( "test", translate(src) );
     }
 
     public void testPluginInsertJS()
@@ -755,7 +764,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="Today: [{INSERT JavaScriptPlugin}] ''day''.";
 
-        assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <I>day</I>.\n", translate(src) );
+        assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <I>day</I>.", translate(src) );
     }
 
     public void testShortPluginInsert()
@@ -763,7 +772,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT SamplePlugin WHERE text=test}]";
 
-        assertEquals( "test\n", translate(src) );
+        assertEquals( "test", translate(src) );
     }
 
     /**
@@ -774,7 +783,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT SamplePlugin WHERE text=test}] [{INSERT SamplePlugin WHERE text=test2}]";
 
-        assertEquals( "test test2\n", translate(src) );
+        assertEquals( "test test2", translate(src) );
     }
 
     public void testPluginQuotedArgs()
@@ -782,7 +791,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT SamplePlugin WHERE text='test me now'}]";
 
-        assertEquals( "test me now\n", translate(src) );
+        assertEquals( "test me now", translate(src) );
     }
 
     public void testPluginDoublyQuotedArgs()
@@ -790,7 +799,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
 
-        assertEquals( "test 'me too' now\n", translate(src) );
+        assertEquals( "test 'me too' now", translate(src) );
     }
 
     public void testPluginQuotedArgs2()
@@ -798,7 +807,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT SamplePlugin WHERE text=foo}] [{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
 
-        assertEquals( "foo test 'me too' now\n", translate(src) );
+        assertEquals( "foo test 'me too' now", translate(src) );
     }
 
     /**
@@ -809,15 +818,26 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{INSERT SamplePlugin WHERE text=PageContent}]";
 
-        assertEquals( "PageContent\n", translate(src) );
+        assertEquals( "PageContent", translate(src) );
+    }
+
+    /**
+     *  Nor should plugin input be interpreted as wiki text.
+     */
+    public void testPluginWikiText2()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text='----'}]";
+
+        assertEquals( "----", translate(src) );
     }
 
     public void testMultilinePlugin1()
         throws Exception
     {
-        String src="Test [{INSERT SamplePlugin\nWHERE text=PageContent}]";
+        String src="Test [{INSERT SamplePlugin WHERE\n text=PageContent}]";
 
-        assertEquals( "Test PageContent\n", translate(src) );
+        assertEquals( "Test PageContent", translate(src) );
     }
 
     public void testMultilinePluginBodyContent()
@@ -825,7 +845,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n123\n456\n}]";
 
-        assertEquals( "Test PageContent (123+456+)\n", translate(src) );
+        assertEquals( "Test PageContent (123+456+)", translate(src) );
     }
 
     public void testMultilinePluginBodyContent2()
@@ -833,7 +853,26 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n\n123\n456\n}]";
 
-        assertEquals( "Test PageContent (+123+456+)\n", translate(src) );
+        assertEquals( "Test PageContent (+123+456+)", translate(src) );
+    }
+
+    public void testMultilinePluginBodyContent3()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\n\n123\n456\n}]";
+
+        assertEquals( "Test  (123+456+)", translate(src) );
+    }
+
+    /**
+     *  Has an extra space after plugin name.
+     */
+    public void testMultilinePluginBodyContent4()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin \n\n123\n456\n}]";
+
+        assertEquals( "Test  (123+456+)", translate(src) );
     }
 
     public void testVariableInsert()
@@ -841,7 +880,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="[{$pagename}]";
 
-        assertEquals( PAGE_NAME+"\n", translate(src) );
+        assertEquals( PAGE_NAME+"", translate(src) );
     }
 
     public void testTable1()
@@ -853,7 +892,7 @@ public class TranslatorReaderTest extends TestCase
                       "<TR><TH> heading <TH> heading2 </TR>\n"+
                       "<TR><TD> Cell 1 <TD> Cell 2 </TR>\n"+
                       "<TR><TD> Cell 3 <TD> Cell 4</TR>\n"+
-                      "</TABLE><P>\n",
+                      "</TABLE>\n<P>\n",
                       translate(src) );
     }
 
@@ -866,7 +905,7 @@ public class TranslatorReaderTest extends TestCase
                       "<TR><TH>heading<TH>heading2</TR>\n"+
                       "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
                       "<TR><TD> Cell 3 <TD>Cell 4</TR>\n"+
-                      "</TABLE><P>\n",
+                      "</TABLE>\n<P>\n",
                       translate(src) );
     }
 
@@ -878,7 +917,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
                       "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
                       "<TR><TD> Cell 3 <TD>Cell 4</TR>\n"+
-                      "</TABLE><P>\n",
+                      "</TABLE>\n<P>\n",
                       translate(src) );
     }
 
@@ -892,7 +931,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
                       "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
                       "<TR><TD><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ReallyALink\">Cell 3</A><TD>Cell 4</TR>\n"+
-                      "</TABLE><P>\n",
+                      "</TABLE>\n<P>\n",
                       translate(src) );
     }
 
@@ -901,7 +940,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src=";:Foo";
 
-        assertEquals( "<DL>\n<DT></DT><DD>Foo</DD>\n</DL>\n",
+        assertEquals( "<DL>\n<DT></DT><DD>Foo</DD>\n</DL>",
                       translate(src) );
     }
 
@@ -910,7 +949,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src=";Bar:Foo";
 
-        assertEquals( "<DL>\n<DT>Bar</DT><DD>Foo</DD>\n</DL>\n",
+        assertEquals( "<DL>\n<DT>Bar</DT><DD>Foo</DD>\n</DL>",
                       translate(src) );
     }
 
@@ -919,7 +958,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src=";:";
 
-        assertEquals( "<DL>\n<DT></DT><DD></DD>\n</DL>\n",
+        assertEquals( "<DL>\n<DT></DT><DD></DD>\n</DL>",
                       translate(src) );
     }
 
@@ -928,7 +967,79 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="----";
 
-        assertEquals( "<HR />\n",
+        assertEquals( "<HR />",
+                      translate(src) );
+    }
+
+    public void testShortRuler1()
+        throws Exception
+    {
+        String src="-";
+
+        assertEquals( "-",
+                      translate(src) );
+    }
+
+    public void testShortRuler2()
+        throws Exception
+    {
+        String src="--";
+
+        assertEquals( "--",
+                      translate(src) );
+    }
+
+    public void testShortRuler3()
+        throws Exception
+    {
+        String src="---";
+
+        assertEquals( "---",
+                      translate(src) );
+    }
+
+    public void testLongRuler()
+        throws Exception
+    {
+        String src="------";
+
+        assertEquals( "<HR />",
+                      translate(src) );
+    }
+
+    public void testHeading1()
+        throws Exception
+    {
+        String src="!Hello";
+
+        assertEquals( "<H4>Hello</H4>",
+                      translate(src) );
+    }
+
+    public void testHeading2()
+        throws Exception
+    {
+        String src="!!Hello";
+
+        assertEquals( "<H3>Hello</H3>",
+                      translate(src) );
+    }
+
+    public void testHeading3()
+        throws Exception
+    {
+        String src="!!!Hello";
+
+        assertEquals( "<H2>Hello</H2>",
+                      translate(src) );
+    }
+
+    public void testHeadingHyperlinks()
+        throws Exception
+    {
+        String src="!!![Hello]";
+
+        assertEquals( "<H2><U>Hello</U><A HREF=\"Edit.jsp?page=Hello\">?</A></H2>",
                       translate(src) );
     }
 

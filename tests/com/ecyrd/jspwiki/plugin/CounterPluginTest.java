@@ -56,7 +56,7 @@ public class CounterPluginTest extends TestCase
     {
         String src = "[{Counter}], [{Counter}]";
 
-        assertEquals( "1, 2\n",
+        assertEquals( "1, 2",
                       translate(src) );
     }
 
@@ -65,7 +65,7 @@ public class CounterPluginTest extends TestCase
     {
         String src = "[{Counter}], [{Counter}], [{$counter}]";
 
-        assertEquals( "1, 2, 2\n",
+        assertEquals( "1, 2, 2",
                       translate(src) );
     }
 
@@ -74,12 +74,12 @@ public class CounterPluginTest extends TestCase
     {
         String src = "[{Counter}], [{Counter name=aa}], [{$counter-aa}]";
 
-        assertEquals( "1, 1, 1\n",
+        assertEquals( "1, 1, 1",
                       translate(src) );
     }
 
     public static Test suite()
     {
-        return new TestSuite( ReferringPagesPluginTest.class );
+        return new TestSuite( CounterPluginTest.class );
     }
 }
