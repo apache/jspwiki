@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.14 2002-06-17 12:23:01 ebu Exp $
+    $Id: build.xml,v 1.15 2002-06-23 21:06:03 jalkanen Exp $
 -->    
        
 <!--   
@@ -93,7 +93,7 @@
    -->
   <property name="cvs.root" value=":ext:grey.ecyrd.com:/p/cvs" />
   <property name="cvs.module" value="JSPWiki" />
-  <property name="cvs.tag" value="HEAD" />
+  <property name="cvs.tag" value="JSPWIKI_1_8_BRANCH" />
 
   <!-- And finally, the directory where the final .zip-file is put -->
   <property name="release.dir" value="releases" />
