@@ -976,7 +976,7 @@ public class TranslatorReader extends Reader
                 {
                     // Empty away all the rest of the dashes.
                     while( nextToken() == '-' );
-                    return "<HR />";
+                    return "<HR clear=\"all\" />";
                 }
         
                 pushBack( ch3 );
