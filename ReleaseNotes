@@ -1,47 +1,21 @@
 
 This is a full release of JSPWiki.
 
-Major changes since the last stable (1.7.0) release are:
+Major changes since the last stable (1.8.1) release are:
 
-- Preview capability in Edit.jsp
+* Some bug fixes, see ChangeLog.
 
-- Pages are now normalized - i.e. they are all saved in the same
-  format regardless of the operating system or browser.
-
-- Added new page, "UserPreferences".
-
-- support for images as hyperlinks.
-
-- RSS feed, RSS links and RSS autodiscovery.
-
-- Possibility to match English plurals between Wiki words (WikiName =
-  WikiNames, etc) to simplify writing.
-
-- Page titles can now be shown with or without spaces.
-
-- New plugin: CurrentTimePlugin
-
-- No longer needs RCS - has a new provider called
-  VersioningFileProvider and uses also an internal diff routine to
-  show the changes between versions.  This should be good news to all
-  Windows people.
+* Added ability to add providers without package names.
 
 
 UPGRADE NOTES
 =============
 
-- If updating manually (from v1.7.0):
+- If updating manually (from v1.8.1):
 
-  * New JSP pages "Preview.jsp" and "UserPreferences.jsp" must be
-    copied.
+  * Unzip WAR-file, copy JSPWiki.jar into WEB-INF/lib.
 
-  * Nearly all JSP pages have been slightly changed, so you want to
-    probably copy them too.  We apologize for the inconvinience, but
-    hopefully this is the last time ever.
+  * NO NEED to change any JSP-files.
 
-  * If you've set the "jspwiki.diffCommand", please remove it and
-    see if the internal diff routine works for you.
-
-  * Check the RSS feed options in jspwiki.properties.
-
-  * Check also other options in jspwiki.properties.
+- Note that 1.8.0 is exactly the same as 1.8.1, so if you're running
+  that version, you can safely upgrade.
