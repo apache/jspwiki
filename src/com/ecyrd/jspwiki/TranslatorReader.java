@@ -63,6 +63,7 @@ public class TranslatorReader extends Reader
     private boolean        m_iscode       = false;
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
+    private boolean        m_istable      = false;
     private int            m_listlevel    = 0;
     private int            m_numlistlevel = 0;
 
@@ -612,6 +613,12 @@ public class TranslatorReader extends Reader
             m_iscode = false;
         }
 
+        if( m_istable )
+        {
+            buf.append( "</TBODY>\n</TABLE>" );
+            m_istable = false;
+        }
+
         return buf.toString();
     }
 
@@ -747,6 +754,7 @@ public class TranslatorReader extends Reader
         throws IOException
     {
         int pre;
+        String postScript = ""; // Gets added at the end of line.
 
         StringBuffer buf = new StringBuffer();
 
@@ -770,11 +778,31 @@ public class TranslatorReader extends Reader
         if( !m_iscode )
         {
 
-            // Is this an empty line?
-            if( trimmed.length() == 0 )
+            //
+            //  Tables
+            //
+            if( line.startsWith("||") && !m_istable )
             {
-                buf.append( "<P>" );
+                line = TextUtil.replaceString( line, "||", "<TD>" );
+
+                buf.append( "<TABLE CLASS=\"wikitable\">\n<THEAD>\n<TR>" );
+                postScript = "</TR>\n</THEAD>\n<TBODY>";
+
+                m_istable = true;
             }
+            else if( line.startsWith("|") && m_istable )
+            {
+                line = TextUtil.replaceString( line, "| ", "<TD> " );
+
+                buf.append( "<TR>" );
+                postScript = "</TR>";
+            }
+            else if( !line.startsWith("|") && m_istable )
+            {
+                buf.append( "</TBODY>\n</TABLE>" );
+                m_istable = false;
+            }
+
 
             //
             // Make a bulleted list
@@ -855,6 +883,12 @@ public class TranslatorReader extends Reader
             line = setTT( line );
             line = TextUtil.replaceString( line, "\\\\", "<BR>" );
 
+            // Is this an empty line?
+            if( trimmed.length() == 0 )
+            {
+                buf.append( "<P>" );
+            }
+
             if( (pre = line.indexOf("{{{")) != -1 )
             {
                 line = TextUtil.replaceString( line, pre, pre+3, "<PRE>" );
@@ -869,7 +903,9 @@ public class TranslatorReader extends Reader
             m_iscode = false;
         }
 
-        buf.append( line +"\n");
+        buf.append( line );
+        buf.append( postScript );
+        buf.append( "\n" );
         
         m_data = new StringReader( buf.toString() );
     }
