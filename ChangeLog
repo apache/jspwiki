@@ -1,6 +1,14 @@
+2003-06-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.33.
+
+        * The property file was not closed after it was opened.  This
+        tended to cause some problems with WebLogic.  Reported by Mark
+        Griffith. 
+
 2003-06-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-        * v2.0.32.
+        * v2.1.32.
 
         * Moved around some tests in their proper places.
 
@@ -13,7 +21,7 @@
         for non-Windows machines.  Suggested by originally by someone
         whose name I can't recall, and I seem to have lost the mail :-/.
 
-        * v2.0.31.
+        * v2.1.31.
 
         * Added "exists" -attribute back to UserCheckTag, since it seems
         pointless to break down perfectly good templates.  However, it's
