@@ -12,6 +12,8 @@
       <wiki:Translate><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></wiki:Translate>
    </DIV>
 
+   <BR clear="all" />
+
    <P><HR></P>
 
    <DIV class="previewnote">
