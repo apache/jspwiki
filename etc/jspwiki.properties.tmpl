@@ -96,7 +96,7 @@ jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 #  Example:
 #  jspwiki.baseURL = http://www.jspwiki.org/
 #
-#jspwiki.baseURL=
+jspwiki.baseURL=
 
 #  Determines if you need to have relative urls or not.  If the baseURL
 #  is not set, then this has no effect, but if you set the baseURL (which
@@ -149,7 +149,7 @@ jspwiki.translatorReader.allowHTML = false
 #  The working directory is used to cache things like Lucene search
 #  results.
 #
-#jspwiki.workDir = /path/to/your/workdir/
+jspwiki.workDir =
 
 ############################################################################
 #
@@ -269,62 +269,6 @@ jspwiki.plugin.searchPath =
 #
 #jspwiki.filterConfig = /some/path/to/your/filters.xml
 
-#############################################################################
-#
-#  Authentication and authorization
-#
-
-#  JSPWiki supports a plugin-based interface for talking to different
-#  kinds of authentication systems.  In JSPWiki talk, the term
-#  "Authenticator" means a module that basically checks if the
-#  username and password match. An "Authorizer" is a module that 
-#  is able to provide the user's permissions in the wiki.
-#
-#  Define here the WikiAuthorizer and WikiAuthenticator implementations
-#  you want to use. Specify the full classname, or the short names of
-#  implementations provided in the JSPWiki codebase 
-#  (com.ecyrd.jspwiki.auth.modules).
-
-#
-#  PageAuthorizer is a simple default implementation that reads defaults
-#  from a WikiPage called 'DefaultPermissions'. 
-#  PageAuthorizer is used by default.
-#
-# jspwiki.authorizer = PageAuthorizer
-
-#
-#  FileAuthenticator is a simple authorizer that basically reads the 
-#  passwords from a file.
-#
-# jspwiki.authenticator = FileAuthenticator
-
-#
-#  FileAuthenticator supports the following options:
-#
-#  Define where the password file lives.  The password file is simply in
-#  a format "username = password", one entry per line.  This is a required
-#  attribute.
-#
-# jspwiki.fileAuthenticator.fileName = /tmp/mypasswordfile.txt
-
-#
-#  Users are mapped to groups by a UserDatabase. The default UDB is
-#  the WikiDatabase, which looks for group members in page meta-data:
-#  the page name determines the group name, and a [{SET members=...}]
-#  adds members to that group. 
-#  WikiDatabase is used by default.
-#
-#  Override with your own UserDatabase implementation with this property:
-#
-# jspwiki.userdatabase = WikiDatabase
-
-#
-# By default, at least the LoginError page is readable by anyone, and
-# a failed login displays the usual JSPWiki view of that page. If you
-# want to have a completely closed site, with Login.jsp as a kind of
-# cover page, specify strict logins.
-#
-#jspwiki.policy.strictLogins = true
 
 #############################################################################
 #
@@ -357,6 +301,9 @@ jspwiki.interWikiRef.Wikipedia = http://www.wikipedia.com/wiki/%s
 
 #  Google, the ubiquitous search engine.
 jspwiki.interWikiRef.Google = http://www.google.com/search?q=%s
+
+#  JSPWiki documentation (for this release)
+jspwiki.interWikiRef.Doc = http://doc.jspwiki.org/2.2/Wiki.jsp?page=%s
 
 ############################################################################
 #
