@@ -1,5 +1,10 @@
 2001-11-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * TranslatorReader now takes a Reader instead of BufferedReader.
+
+        * Reworked some of the internals of WikiEngine and
+        TranslatorReader, making them easier to read.
+
         * v1.5.7-beta.
 
         * Incorporated fix from Chris Brooking for the URL encoding, a
