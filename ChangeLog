@@ -1,3 +1,11 @@
+2003-01-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.14.
+
+        * SearchResultIteratorTag would crash if you hit "reload".  This
+        was because the counter would never get reset between two
+        consecutive refreshes, and Tomcat 4 pools tags.
+
 2003-01-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.13.
