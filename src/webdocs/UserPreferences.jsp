@@ -34,14 +34,7 @@
         mgr.logout( session );
         String name = wiki.safeGetParameter( request, "username" );
 
-        UserProfile profile = mgr.getUserProfile( TranslatorReader.cleanLink(name) );
-
-        log.debug("Writing profile name: "+profile);
-        Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
-                                   profile.getStringRepresentation() );
-        prefs.setMaxAge( 1001*24*60*60 ); // 1001 days is default.
-
-        response.addCookie( prefs );
+        mgr.setUserCookie( response, name );
 
         response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
     }
