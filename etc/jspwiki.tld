@@ -434,6 +434,7 @@
     <attribute>
        <name>var</name>
        <required>true</required>
+       <rtexprvalue>true</rtexprvalue> 
     </attribute>
     <attribute>
        <name>default</name>
