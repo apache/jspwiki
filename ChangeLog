@@ -1,3 +1,10 @@
+2005-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.157
+
+        * Added patch from  Henning P. Schmiedehausen to fix some issues
+        with the CachingProvider negCache.
+
 2005-03-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Removed some extra imports.  Getting back to speed
