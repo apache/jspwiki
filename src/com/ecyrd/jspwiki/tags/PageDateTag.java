@@ -28,7 +28,12 @@ import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes the modification date of the page, formatted
- *  as specified in the attribute "format"
+ *  as specified in the attribute "format".
+ *
+ *  <UL>
+ *   <LI>format = A string describing which format you want to use.
+ *       This is exactly like in "java.text.SimpleDateFormat".
+ *  </UL>
  *
  *  @author Janne Jalkanen
  *  @since 2.0
