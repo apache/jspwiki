@@ -509,7 +509,7 @@ public class TranslatorReader extends Reader
                         // an ALT text.
                         //
 
-                        if( isExternalLink( link ) )
+                        if( isExternalLink( link ) && (cutpoint != -1) )
                         {
                             line = TextUtil.replaceString( line, start, end+1,
                                                            makeLink( IMAGELINK, reallink, link ) );
