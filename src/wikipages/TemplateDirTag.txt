@@ -1,0 +1,26 @@
+Inserts the currently used WikiTemplate name.
+
+----
+
+!Usage
+
+<wiki:TemplateDir />
+
+!Parameters
+
+''none''
+
+!Example
+
+If the {{jspwiki.templateDir}} has been set to "default", then
+
+{{{
+<script src="templates/<wiki:Template />/myscript.js">
+}}}
+
+would insert
+{{{
+<script src="templates/default/myscript.js">
+}}}
+
+
