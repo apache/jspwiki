@@ -150,6 +150,12 @@
   </tag>  
 
   <tag>
+    <name>Editor</name>
+    <tagclass>com.ecyrd.jspwiki.tags.EditorTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
     <name>FeedDiscovery</name>
     <tagclass>com.ecyrd.jspwiki.tags.FeedDiscoveryTag</tagclass>
     <bodycontent>empty</bodycontent>
