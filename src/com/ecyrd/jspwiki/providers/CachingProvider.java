@@ -93,7 +93,7 @@ public class CachingProvider
     private String           m_luceneDirectory = null;
     private int              m_updateCount = 0;
     private Thread           m_luceneUpdateThread = null;
-    private Vector           m_updates = null; // Vector because multi-threaded.
+    private Vector           m_updates = new Vector(); // Vector because multi-threaded.
 
     /**
      *  Defines, in seconds, the amount of time a text will live in the cache
@@ -288,7 +288,6 @@ public class CachingProvider
 
     private void startLuceneUpdateThread()
     {
-        m_updates = new Vector();
         m_luceneUpdateThread = new Thread(new Runnable()
         {
             public void run()
@@ -446,6 +445,8 @@ public class CachingProvider
                 if( current == null ) 
                 {
                     log.debug("Page "+cached.getName()+" has been removed externally.");
+                    if (m_useLucene)
+                        deleteFromLucene(new WikiPage(cached.getName()));
                     return true;
                 }
 
@@ -487,6 +488,23 @@ public class CachingProvider
     }
 
     /**
+     *  Adds a page-text pair to the lucene update queue.  Safe to call
+     *  always - if lucene is not used, does nothing.
+     */
+    private void addToLuceneQueue( WikiPage page, String text )
+    {
+        if( m_useLucene )
+        {
+            // Add work item to m_updates queue.
+            Object[] pair = new Object[2];
+            pair[0] = page;
+            pair[1] = text;
+            m_updates.add(pair);
+            log.debug("Scheduling page " + page.getName() + " for index update");
+        }
+    }
+
+    /**
      *  @throws RepositoryModifiedException If the page has been externally modified.
      */
     private String getTextFromCache( String page )
@@ -518,6 +536,8 @@ public class CachingProvider
 
             addPage( page, text );
 
+            addToLuceneQueue( new WikiPage(page), text );
+
             m_cacheMisses++;
 
             return text;
@@ -537,6 +557,8 @@ public class CachingProvider
 
                 m_textCache.putInCache( page, text );
 
+                addToLuceneQueue( new WikiPage( page ), text );
+
                 m_cacheMisses++;
 
                 return text;
@@ -555,14 +577,7 @@ public class CachingProvider
     {
         synchronized(this)
         {
-            if( m_useLucene )
-            {
-                // Add work item to m_updates queue.
-                Object[] pair = new Object[2];
-                pair[0] = page;
-                pair[1] = text;
-                m_updates.add(pair);
-            }
+            addToLuceneQueue( page, text );
 
             m_provider.putPageText( page, text );
 
@@ -677,6 +692,8 @@ public class CachingProvider
             if( text != null )
             {
                 m_textCache.putInCache( pageName, text );
+
+                addToLuceneQueue( newpage, text );
             }
 
             m_cache.put( pageName, item );
@@ -735,6 +752,7 @@ public class CachingProvider
             try
             {
                 WikiPage page = (WikiPage) it.next();
+                if (page != null) {
                 String pageName = page.getName();
                 String pageContent = getTextFromCache( pageName );
                 SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
@@ -742,6 +760,7 @@ public class CachingProvider
                 {
                     res.add( comparison );
                 }
+            }
             }
             catch( RepositoryModifiedException rme )
             {
@@ -812,7 +831,16 @@ public class CachingProvider
             {
                 Document doc = hits.doc(curr);
                 String pageName = doc.get(LUCENE_ID);
-                list.add(getPageInfo(pageName, WikiPageProvider.LATEST_VERSION));
+                WikiPage result = getPageInfo(pageName, WikiPageProvider.LATEST_VERSION);
+                if (result != null)
+                {
+                    list.add(result);
+                }
+                else
+                {
+                    log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
+                    deleteFromLucene(new WikiPage(pageName));
+                }
             }
 
             searcher.close();
