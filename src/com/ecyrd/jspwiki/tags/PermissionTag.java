@@ -47,6 +47,7 @@ public class PermissionTag
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
+        AuthorizationManager mgr = engine.getAuthorizationManager();
 
         if( page != null )
         {
@@ -60,6 +61,8 @@ public class PermissionTag
                 if( page.getVersion() == WikiProvider.LATEST_VERSION ||
                     latest.getVersion() == page.getVersion() )
                 {
+                    
+
                     return EVAL_BODY_INCLUDE;
                 }
             }
