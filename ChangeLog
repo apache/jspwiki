@@ -1,6 +1,12 @@
+2005-03-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Added favicon and the corresponding thingy to
+        commonheader.jsp.  I got tired of seeing 404s from all
+        stupid browsers...
+
 2005-03-09  Erik Bunn <ebu@memecry.net>
 
-			  * Added empty array check to FileUtil14.getThrowingMethod()
+        * Added empty array check to FileUtil14.getThrowingMethod()
 
 2005-03-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
