@@ -1229,7 +1229,9 @@ public class TranslatorReader extends Reader
         throws IOException
     {
         StringBuffer buf = new StringBuffer();
-
+	 StringBuffer word = null;
+	 int previousCh = '@';
+	
         boolean quitReading = false;
         boolean newLine     = true; // FIXME: not true if reading starts in middle of buffer
 
@@ -1282,6 +1284,52 @@ public class TranslatorReader extends Reader
                 m_closeTag = null;
             }
 
+	     // If allowing CamelCase and not in a tag needing closure.
+	     if( m_camelCaseLinks && m_closeTag == null )
+	     {
+		 // Quick parse of start of a word, and test if uppercase.
+		 if( ( newLine || ( word == null && previousCh == ' ' ) ) &&
+		     Character.isUpperCase( (char)ch ) )
+		 {
+		     word = new StringBuffer();
+		 }
+
+		 // Are we currently tracking a word?
+		 if( word != null )
+		 {
+		     // If this tests true then we have a full word that at
+		     // least started with a capital letter, and now the end
+		     // of a word has been reached.
+		     if( ( ch == ' ' || ch == '\r' || ch == '\n' || ch   == -1 ) )
+		     {
+			 // setCamelLinks will return the same word or a new linked word.
+                         String camelCase = setCamelCaseLinks(word.toString());
+
+                         // If we did not get the same word back, then we have a camelcase.
+                         // Replace our word in the buffer, and reset!
+                         if( !camelCase.equals(word.toString()) )
+                         {
+		             buf.replace(buf.length() - word.length(),
+                                         buf.length(),
+                                         camelCase);
+                             word = null;
+                         }
+                         else
+                         {
+                             word.append( (char)ch );
+                         }
+		     }
+		     else
+		     {
+		         word.append( (char)ch );
+		     } // if end of word
+		 } // if word's not null
+
+		 // Always set the previous character to test for word starts.
+		 previousCh = ch;
+		 
+	     } // if m_camelCaseLinks
+		 
             //
             //  Now, check the incoming token.
             //
@@ -1445,8 +1493,12 @@ public class TranslatorReader extends Reader
             {
                 buf.append( s );
                 newLine = false;
+
+		  // If we got an "s" then that ruins our camelcase. Reset!
+		  word = null;
             }
-        }
+
+	 }
 
         m_data = new StringReader( buf.toString() );
     }
