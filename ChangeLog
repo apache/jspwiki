@@ -1,3 +1,13 @@
+2004-06-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.101
+
+        * Added "debug" parameter to all plugins.  This is recognized by
+        the JSPWiki engine itself, and if the parameter is specified as
+        "true", JSPWiki will automatically output all parameters and the
+        stack trace to the page itself, if there is an exception.
+        Suggested by Foster Schucker.
+
 2004-06-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.100
