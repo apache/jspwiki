@@ -245,7 +245,7 @@ public class WeblogPlugin implements WikiPlugin
                 //
                 try
                 {
-                    log.debug("Checking: "+pageName);
+                    //log.debug("Checking: "+pageName);
                     int firstScore = pageName.indexOf('_',baseName.length()-1 );
                     if( firstScore != -1 && firstScore+1 < pageName.length() )
                     {
@@ -255,7 +255,7 @@ public class WeblogPlugin implements WikiPlugin
                         {
                             String creationDate = pageName.substring( firstScore+1, secondScore );
 
-                            log.debug("   Creation date: "+creationDate);
+                            //log.debug("   Creation date: "+creationDate);
 
                             Date pageDay = fmt.parse( creationDate );
                 
