@@ -20,17 +20,10 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Category;
-
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.SearchResult;
 
 /**
