@@ -90,7 +90,8 @@ public class WikiContext
     public static final String    FIND     = "find";
 
     public static final String    PREFS    = "prefs";
-
+    public static final String    DELETE   = "del";
+    
     /**
      *  Create a new WikiContext.
      *
