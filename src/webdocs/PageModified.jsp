@@ -28,7 +28,7 @@
     String pageurl = wiki.encodeName( pagereq );
     String usertext = wiki.safeGetParameter( request, "text" );
 
-    WikiPage wikipage = wiki.getPage( pagereq, version );
+    WikiPage wikipage = wiki.getPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
