@@ -73,6 +73,51 @@ public class UserProfileTest extends TestCase
         assertEquals( "name", "Määmöö",p.getName() );
     }
 
+    public void testRoles()
+        throws Exception
+    {
+        UserProfile wup = new UserProfile();
+        wup.setName( "ebu" );
+        wup.setPassword( "xyzzy" );
+        wup.addRole( "role1" );
+        wup.addRole( "role2" );
+
+        assertTrue( wup.hasRole( "role1" ) );
+        assertTrue( wup.hasRole( "role2" ) );
+        assertTrue( !wup.hasRole( "role" ) );
+
+        Iterator it = wup.getRoles();
+        assertTrue( it != null && it.hasNext() );
+    }
+
+
+    public void testPermissions()
+        throws Exception
+    {
+        UserProfile wup = new UserProfile();
+        wup.setName( "ebu" );
+        wup.setPassword( "xyzzy" );
+        wup.addPermission( "perm1" );
+        wup.addPermission( "perm2" );
+
+        assertTrue( wup.hasPermission( "perm1" ) );
+        assertTrue( wup.hasPermission( "perm2" ) );
+        assertTrue( !wup.hasPermission( "perm" ) );
+
+        Iterator it = wup.getPermissions();
+        assertTrue( it != null && it.hasNext() );
+    }
+    
+    public void testInfo()
+        throws Exception
+    {
+        UserProfile wup = new UserProfile();
+        wup.setName( "ebu" );
+        wup.setPassword( "xyzzy" );
+        wup.setInfo( "info1", "42" );
+
+        assertTrue( "42".equals( wup.getInfo( "info1" ) ) );
+    }
 
     public static Test suite()
     {
