@@ -1,3 +1,11 @@
+2002-12-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.8.
+
+        * Bug fix: VersioningFileProvider would mangle old versions of a
+        page if they were in UTF-8 format.  Reported by Torsten
+        Hildebrandt. 
+
 2002-12-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.7.
