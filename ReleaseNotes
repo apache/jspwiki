@@ -5,7 +5,9 @@ Most of the documentation is now contained in jspwiki_samplepages.zip
 
 Major changes since the 2.0 series are:
 
-- Authentication support
+- Much simplified templating (see WikiTemplates)
+
+- Wiki Forms
 
 - Page Filters
 
@@ -30,6 +32,7 @@ Major changes since the 2.0 series are:
 - In-page hyperlinks.
 
 - Multiply nested links now work
+
 
 
 UPGRADE NOTES

@@ -39,7 +39,7 @@ public class Release
      *  values are "-alpha" and "-beta" for alpha and beta versions,
      *  respectively.
      */
-    private static final String    POSTFIX       = "-cvs";
+    private static final String    POSTFIX       = "-alpha";
 
     /**
      *  This should be increased every time you do a release.
