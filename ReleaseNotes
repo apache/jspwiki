@@ -54,12 +54,16 @@ UPGRADE NOTES
   - remove the extra special page entries from jspwiki.properties -
     the only ones you should be left with are "SystemInfo" and "FindPage"
     (except if you have some of your own defined).
+  - If you want to use the new XML-RPC interface, make sure you have it
+    enabled in your web.xml (see the included web.xml for an example).
   - Remove RecentChanges.jsp - it is no longer required.
   - Copy the new JSPWiki sample pages (LeftMenuFooter, RecentChanges,
     UndefinedPages, UnusedPages are new) into your wiki page repository.
   - Copy all JAR files from WEB-INF/lib to your own WEB-INF/lib
   - Remove your WEB-INF/classes subdirectory.  All classes are now
     contained within JSPWiki.jar in the WEB-INF/lib -directory.
+  - Update the default pages also:
+     * TextFormattingRules
 
 
 
