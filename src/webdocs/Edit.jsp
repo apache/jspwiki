@@ -6,7 +6,9 @@
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.EditPermission" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.CreatePermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -37,21 +39,32 @@
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
     WikiPage wikipage = wikiContext.getPage();
+    WikiPermission requiredPermission = null;
     WikiPage latestversion = wiki.getPage( pagereq );
 
     if( latestversion == null )
     {
         latestversion = wikiContext.getPage();
     }
+    if( wiki.pageExists( wikipage ) )
+    {
+        requiredPermission = new EditPermission();
+    }
+    else
+    {
+        requiredPermission = new CreatePermission();
+    }   
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
     UserProfile currentUser  = wikiContext.getCurrentUser();
 
-    if( !mgr.checkPermission( wikiContext.getPage(),
-                              currentUser,
-                              new EditPermission() ) )
+    if( !mgr.checkPermission(  wikiContext.getPage(),
+                               currentUser,
+                               requiredPermission ) )
     {
         log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+        String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
+        wikiContext.setVariable( "msg", msg );
         String pageurl = wiki.encodeName( pagereq );
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
         return;
