@@ -1,5 +1,7 @@
 2001-10-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Edit.jsp now has explains headings, too (thanks Matti).
+
         * Changed the versioning so that whenever you check out a CVS
         copy, you get vX.Y.Z-cvs as the version string.  This was done to
         separate the development version from the actual release version.
