@@ -1327,9 +1327,9 @@ public class TranslatorReaderTest extends TestCase
     public void testHeading1()
         throws Exception
     {
-        String src="!Hello";
+        String src="!Hello\nThis is a test";
 
-        assertEquals( "<h4><a name=\"#section-testpage-Hello\">Hello</a></h4>",
+        assertEquals( "<h4><a name=\"#section-testpage-Hello\">Hello</a></h4>\nThis is a test",
                       translate(src) );
     }
 
