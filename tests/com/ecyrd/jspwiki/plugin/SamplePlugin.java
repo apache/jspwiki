@@ -24,7 +24,12 @@ public class SamplePlugin
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append( (String)params.get("text") );
+        String text = (String) params.get("text");
+
+        if( text != null )
+        {
+            sb.append( text );
+        }
 
         String body = (String)params.get("_body");
         if( body != null )
