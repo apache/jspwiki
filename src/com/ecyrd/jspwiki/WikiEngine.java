@@ -242,6 +242,17 @@ public class WikiEngine
         {
             context.log( Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
         }
+        finally
+        {
+            try
+            {
+                propertyStream.close();
+            }
+            catch( IOException e )
+            {
+                context.log("Unable to close property stream - something must be seriously wrong.");
+            }
+        }
     }
 
     /**
