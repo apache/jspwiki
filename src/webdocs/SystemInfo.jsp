@@ -78,7 +78,7 @@
                {
                    String link = (String) i.next();
                    %>
-                   <%=link%>, <I>links to <%=wiki.getInterWikiURL(link)%></I><BR>
+                   "<%=link%>", <I>links to</I> <%=wiki.getInterWikiURL(link)%><BR>
                    <%
                }
             %>
@@ -100,6 +100,12 @@
         </td>
 
       </table>
+
+      <P>
+      JSPWiki home page is at <A HREF="http://www.ecyrd.com/JSPWiki/">http://www.ecyrd.com/JSPWiki/</A>.  Welcome!
+      <P>
+
+
     </TD>
   </TR>
 
