@@ -1,3 +1,11 @@
+2002-03-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added preview capability to Edit.jsp.  Suggested by many
+        people.
+
+        * Added Preview.jsp.  This is still a very simple preview, which
+        does not allow yo to do a direct publish.
+
 2002-03-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.0.  Finally :-).
