@@ -1,3 +1,10 @@
+2003-05-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.24.
+
+        * CheckLockTag would sometimes throw a NullPointerException.
+        Reported by Romeo Disca. 
+
 2003-05-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.23.
