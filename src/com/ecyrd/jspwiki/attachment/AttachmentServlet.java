@@ -140,6 +140,9 @@ public class AttachmentServlet
         }
         else
         {
+            OutputStream out = null;
+            InputStream  in  = null;
+            
             try 
             {
                 log.debug("Attempting to download att "+page+", version "+version);
@@ -190,8 +193,8 @@ public class AttachmentServlet
 
                     res.addHeader( "Content-Disposition",
                                    "inline; filename=\"" + att.getFileName() + "\";" );
-                    long expires = new Date().getTime() + DEFAULT_EXPIRY;
-                    res.addDateHeader("Expires",expires);
+                    // long expires = new Date().getTime() + DEFAULT_EXPIRY;
+                    // res.addDateHeader("Expires",expires);
                     res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
                     // If a size is provided by the provider, report it.
@@ -201,8 +204,8 @@ public class AttachmentServlet
                         res.setContentLength( (int)att.getSize() );
                     }
 
-                    OutputStream out = res.getOutputStream();
-                    InputStream  in  = mgr.getAttachmentStream( att );
+                    out = res.getOutputStream();
+                    in  = mgr.getAttachmentStream( att );
 
                     int read = 0;
                     byte buffer[] = new byte[8192];
@@ -212,9 +215,6 @@ public class AttachmentServlet
                         out.write( buffer, 0, read );
                     }
                     
-                    in.close();
-                    out.close();
-
                     if(log.isDebugEnabled())
                     {
                         msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteAddr();
@@ -223,7 +223,7 @@ public class AttachmentServlet
                     if( nextPage != null ) res.sendRedirect( nextPage );
 
                     return;
-                }
+                }               
                 else
                 {
                     msg = "Attachment '" + page + "', version " + ver + 
@@ -256,6 +256,11 @@ public class AttachmentServlet
                 res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                                msg );
                 return;
+            }
+            finally
+            {
+                if( in != null ) in.close();
+                if( out != null ) out.close();
             }
         }
     }
