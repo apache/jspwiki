@@ -32,6 +32,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  @author Janne Jalkanen
  *  @since 2.1.4.
  */
+// FIXME: Does not clean things like URLs of quotation marks.
+// FIXME: Does not yet provide hyperlinking capability.
 public class Image
     implements WikiPlugin
 {

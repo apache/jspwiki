@@ -1,5 +1,11 @@
 2003-04-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.4.
+
+        * Added Image plugin, which allows one to have more fine layout
+        control over images.  Suggested by many people, but the code base
+        is all new.
+
         * RecentChangesPlugin now understands about baseURL (oops).  It is
         also now XHTML-compliant.
 
