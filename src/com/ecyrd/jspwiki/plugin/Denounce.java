@@ -176,7 +176,7 @@ public class Denounce implements WikiPlugin
 
         String userAgent = request.getHeader("User-Agent");
 
-        if( matchPattern( c_agentPatterns, userAgent ) )
+        if( userAgent != null && matchPattern( c_agentPatterns, userAgent ) )
         {
             log.debug("Matched user agent "+userAgent+" for denounce.");
             return true;
@@ -188,7 +188,7 @@ public class Denounce implements WikiPlugin
 
         String refererPath = request.getHeader("Referer");
 
-        if( matchPattern( c_refererPatterns, refererPath ) )
+        if( refererPath != null && matchPattern( c_refererPatterns, refererPath ) )
         {
             log.debug("Matched referer "+refererPath+" for denounce.");
             return true;
@@ -200,7 +200,7 @@ public class Denounce implements WikiPlugin
 
         String host = request.getRemoteHost();
 
-        if( matchPattern( c_hostPatterns, host ) )
+        if( host != null && matchPattern( c_hostPatterns, host ) )
         {
             log.debug("Matched host "+host+" for denounce.");
             return true;
