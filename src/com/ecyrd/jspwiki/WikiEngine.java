@@ -70,6 +70,9 @@ public class WikiEngine
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL      = "jspwiki.baseURL";
 
+    /** Property name for the "spaces in titles" -hack. */
+    public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
+
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
 
@@ -112,7 +115,10 @@ public class WikiEngine
     /** Store the ServletContext that we're in.  This may be null if WikiEngine
         is not running inside a servlet container (i.e. when testing). */
     private ServletContext   m_servletContext = null;
-       
+
+    /** If true, all titles will be cleaned. */
+    private boolean          m_beautifyTitle = false;
+
     /**
      *  Gets a WikiEngine related to this servlet.
      */
@@ -204,7 +210,9 @@ public class WikiEngine
 
         m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
         m_baseURL        = props.getProperty( PROP_BASEURL, "" );
-        
+
+        m_beautifyTitle  = "true".equals( props.getProperty( PROP_BEAUTIFYTITLE, "false" ) );
+
         //
         //  Find the page provider
         //
@@ -478,6 +486,34 @@ public class WikiEngine
     }
 
     /**
+     *  Beautifies the title of the page.
+     *
+     *  @since 1.7.11
+     */
+    public String beautifyTitle( String title )
+    {
+        if( m_beautifyTitle )
+        {
+            StringBuffer result = new StringBuffer();
+
+            for( int i = 0; i < title.length(); i++ )
+            {
+                // No space in front of the first line.
+                if( Character.isUpperCase(title.charAt(i)) && i > 0 )
+                {
+                    result.append(' ');
+                }
+
+                result.append( title.charAt(i) );
+            }
+
+            return result.toString();
+        }
+
+        return title;
+    }
+
+    /**
      *  Returns true, if the requested page exists.
      *
      *  @param page WikiName of the page.
@@ -485,9 +521,6 @@ public class WikiEngine
     public boolean pageExists( String page )
     {
         if( getSpecialPageReference(page) != null ) return true;
-
-        // Error cases.
-        if( m_provider == null ) return false;
 
         return m_provider.pageExists( page );
     }
