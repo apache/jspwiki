@@ -36,3 +36,8 @@ TABLE.wikitable { }
 TABLE.wikitable * TD { text-align: left; }
 TABLE.wikitable * TH { }
 
+/* Added in 1.6.13 */
+
+/* This is the Edit.jsp editor style */
+TEXTAREA.editor {}
+
