@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -75,7 +77,25 @@ public interface WikiAttachmentProvider
     public Collection findAttachments( QueryItem[] query );
 
     /**
-     *  Returns info about the attachment.
+     *  Lists changed attachments since given date.  Can also be used to fetch
+     *  a list of all pages.
+     *  <P>
+     *  This is different from WikiPageProvider, where you basically get a list
+     *  of all pages, then sort them locally.  However, since some providers
+     *  can be more efficient in locating recently changed files (like any database) 
+     *  than our non-optimized Java
+     *  code, it makes more sense to fetch the whole list this way.
+     *  <P>
+     *  To get all files, call this with Date(0L);
+     *
+     *  @param timestamp List all files from this date onward.
+     *  @return A List of Attachment objects, in most-recently-changed first order.
+     */
+    public List listAllChanged( Date timestamp )
+        throws ProviderException;
+
+    /**
+     *  Returns info about an attachment.
      */
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException;
