@@ -1,3 +1,11 @@
+2002-02-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Ebu rearranged web.xml to work with Tomcat 4.0, but forgot to
+        mention it here.
+
+        * Added some more default InterWiki references (TWiki,
+        MeatballWiki, Wikipedia).
+
 2002-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * PageInfo and Edit now also include PageHeader.jsp.  Suggested by
