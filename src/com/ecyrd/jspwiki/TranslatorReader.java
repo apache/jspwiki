@@ -1279,7 +1279,7 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '{' )
             {
-                res = m_renderer.openPreformatted( isBlock );
+                res = startBlockLevel()+m_renderer.openPreformatted( isBlock );
                 m_isPre = true;
 		m_isEscaping = true;
             }
@@ -1367,9 +1367,9 @@ public class TranslatorReader extends Reader
                     // Empty away all the rest of the dashes.
                     // Do not forget to return the first non-match back.
                     while( (ch = nextToken()) == '-' );
-
+                    
                     pushBack(ch);
-                    return m_renderer.makeRuler();
+                    return startBlockLevel()+m_renderer.makeRuler();
                 }
         
                 pushBack( ch3 );
@@ -1464,6 +1464,21 @@ public class TranslatorReader extends Reader
     }
 
     /**
+     *  Starts a block level element, therefore closing the
+     *  a potential open paragraph tag.
+     */
+    private String startBlockLevel()
+    {
+        if( m_isOpenParagraph )
+        {
+            m_isOpenParagraph = false;
+            return m_renderer.closeParagraph();
+        }
+
+        return "";
+    }
+
+    /**
      *  Like original handleOrderedList() and handleUnorderedList()
      *  however handles both ordered ('#') and unordered ('*') mixed together.
      */
@@ -1477,11 +1492,7 @@ public class TranslatorReader extends Reader
 
          StringBuffer buf = new StringBuffer();
 
-         if( m_isOpenParagraph )
-         {
-             buf.append( m_renderer.closeParagraph() );
-             m_isOpenParagraph = false;
-         }
+         buf.append( startBlockLevel() );
 
          if( m_genlistlevel > 0 )
          {
@@ -1612,7 +1623,7 @@ public class TranslatorReader extends Reader
 
             m_closeTag = m_renderer.closeDefinitionItem()+m_renderer.closeDefinitionList();
 
-            return m_renderer.openDefinitionList()+m_renderer.openDefinitionTitle();
+            return startBlockLevel()+m_renderer.openDefinitionList()+m_renderer.openDefinitionTitle();
         }
 
         return ";";
@@ -1781,14 +1792,9 @@ public class TranslatorReader extends Reader
 
             // sb.append( newLine ? "<div" : "<span" );
 
+            sb.append( startBlockLevel() );
             sb.append( m_renderer.openDiv( style, clazz ) );
 
-/*
-            sb.append( "<div" );
-            sb.append( style != null ? " style=\""+style+"\"" : "" );
-            sb.append( clazz != null ? " class=\""+clazz+"\"" : "" );
-            sb.append( ">" );
-*/
             return sb.toString();
         }
 
@@ -1811,6 +1817,7 @@ public class TranslatorReader extends Reader
         {
             if( !m_istable )
             {
+                sb.append( startBlockLevel() );
                 sb.append( m_renderer.openTable() );
                 m_istable = true;
             }
@@ -2047,11 +2054,7 @@ public class TranslatorReader extends Reader
                 if( newLine )
                 {
                     // Paragraph change.
-		    if( m_isOpenParagraph )
-                    {
-			buf.append( m_renderer.closeParagraph() );
-                        m_isOpenParagraph = false;
-                    }
+                    buf.append( startBlockLevel() );
 
                     //
                     //  Figure out which elements cannot be enclosed inside
@@ -2061,6 +2064,8 @@ public class TranslatorReader extends Reader
                     if( nextLine.length() == 0 || 
                         (nextLine.length() > 0 &&
                          !nextLine.startsWith("{{{") &&
+                         !nextLine.startsWith("----") &&
+                         !nextLine.startsWith("%%") &&
                          "*#!;".indexOf( nextLine.charAt(0) ) == -1) )
                     {
                         buf.append( m_renderer.openParagraph() );
