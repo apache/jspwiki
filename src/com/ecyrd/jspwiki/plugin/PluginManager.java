@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.FileUtil;
+import com.ecyrd.jspwiki.InternalWikiException;
 
 /**
  *  Manages plugin classes.
@@ -58,7 +59,14 @@ public class PluginManager
      */
     public static final String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
 
-    Vector m_searchPath = new Vector();
+    /**
+     *  The name of the body content.  Current value is "_body".
+     */
+    public static final String PARAM_BODY      = "_body";
+
+    Vector  m_searchPath = new Vector();
+
+    Pattern m_pluginPattern;
 
     /**
      *  Create a new PluginManager.
@@ -81,6 +89,19 @@ public class PluginManager
         //  The default package is always added.
         //
         m_searchPath.add( DEFAULT_PACKAGE );
+
+        PatternCompiler compiler = new Perl5Compiler();
+
+        try
+        {
+            m_pluginPattern = compiler.compile( "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*([^\\}]*)\\}?$" );
+        }
+        catch( MalformedPatternException e )
+        {
+            log.fatal("Internal error: someone messed with pluginmanager patterns.", e );
+            throw new InternalWikiException( "PluginManager patterns are broken" );
+        }
+
     }
 
     /**
@@ -312,7 +333,7 @@ public class PluginManager
 
             if( bodyContent != null )
             {
-                arglist.put( "_body", out.toString() );
+                arglist.put( PARAM_BODY, out.toString() );
             }
         }
         
@@ -329,13 +350,10 @@ public class PluginManager
         throws PluginException
     {
         PatternMatcher  matcher  = new Perl5Matcher();
-        PatternCompiler compiler = new Perl5Compiler();
 
         try
         {
-            Pattern ptrn = compiler.compile( "\\{?(INSERT)?\\s*([\\w\\._]+)\\s*(WHERE)?\\s*([^\\}]*)\\}?$" );
-
-            if( matcher.contains( commandline, ptrn ) )
+            if( matcher.contains( commandline, m_pluginPattern ) )
             {
                 MatchResult res = matcher.getMatch();
 
@@ -345,11 +363,6 @@ public class PluginManager
 
                 return execute( context, plugin, arglist );
             }
-        }
-        catch( MalformedPatternException e )
-        {
-            log.fatal("Internal error: someone messed with pluginmanager patterns.", e );
-            throw new PluginException( "PluginManager patterns are broken", e );
         }
         catch( NoSuchElementException e )
         {
