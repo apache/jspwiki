@@ -13,6 +13,10 @@
 %>
 
 <%
+    String pagereq = wiki.safeGetParameter( request, "page" );
+    if( pagereq == null )
+        pagereq = "SystemInfo";
+    String pageurl = wiki.encodeName( pagereq );
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 
