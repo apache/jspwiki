@@ -1,0 +1,70 @@
+<project name="JSPWiki" default="compile" basedir=".">
+
+  <property name="project.name" value="JSPWiki" />
+
+  <property name="code.src" value="src" />
+  <property name="code.build" value ="build" />
+
+  <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${project.name}" />
+
+  <property name="report.dir" value="reports" />
+  
+  <path id="path.base">
+     <pathelement path="${code.build}" />
+     <fileset dir="lib">
+        <include name="*.jar" />
+     </fileset>
+  </path>
+
+  <target name="compile">
+    <javac srcdir="${code.src}"
+           destdir="${code.build}">
+      <classpath refid="path.base" />
+    </javac>
+  </target>
+
+  <target name="clean">
+  </target>
+
+  <target name="compiletests">
+    <javac srcdir="tests"
+           destdir="tests/build">
+      <classpath refid="path.base" />
+    </javac>
+  </target>
+
+  <target name="war" depends="compile">
+
+    <property name="install.fulldir" value="${tmpdir}" />
+
+    <mkdir dir="${install.fulldir}" />
+
+    <war warfile="${install.fulldir}/${project.name}.war"
+         webxml="${code.src}/webdocs/WEB-INF/web.xml">
+       <lib dir="lib" includes="*.jar" />
+       <classes dir="${code.build}" includes="**/*.class" />
+       <fileset dir="${code.src}/webdocs" includes="**" />
+    </war>
+
+  </target>
+
+
+
+  <target name="tests" depends="compile,compiletests">
+    <junit printsummary="yes" haltonfailure="no" fork="no">
+        <classpath>
+           <path refid="path.base" />
+           <pathelement path="tests/build" />
+           <pathelement path="${java.class.path}" />
+        </classpath>
+        <formatter type="plain" />
+        <batchtest todir="${report.dir}">
+           <fileset dir="tests">
+                <include name="**/*Test.java" />
+                <exclude name="**/AllTest*java" />
+           </fileset>
+        </batchtest>
+     </junit>
+  </target>
+
+</project>

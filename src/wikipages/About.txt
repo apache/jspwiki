@@ -1,0 +1,12 @@
+I created this Wiki because I couldn't find a Wiki that did
+exactly what I wanted.  I needed a Wiki where I could put my own
+code tricks for easy dispersal.
+
+This Wiki is done using [JSP|http://java.sun.com/products/jsp] technology, 
+which hopefully makes it very easy to keep up to date and looking better than most of the Wikis based on the [original one|http://c2.com/cgi/wiki].  A custom bean handles the translation of text into HTML.
+
+Most of the [editing markers|EditingWikiPages] have been styled according to the [Sensei's Library|http://senseis.xmp.net], the best [Go] sites in the Internet.  I find their markup very easy, yet clear.
+
+Unlike most Wikis, not everyone can edit this.  You need a user account/password if you want to contribute.  This is mainly done because I don't want to lose any data...
+
+If you have any ideas or wish to participate, please [contact me|mailto:jalkanen+jspwiki@regex.fi].

@@ -1,0 +1,24 @@
+Testing, one, two three.
+---
+ebu: Just getting my bearings here. (Nothing to see, go back to 
+[main page|Main].) I wonder if there is an easy way of finding
+local page names to link to and return here to add them in...
+
+[JanneJalkanen]: On Wikis you typically just link everything by writing [hyperlinks|Hyperlink].  The [Find pages|http://www.ecyrd.com:8080/JSPWiki/Search.jsp] should be able to give you your bearings.
+
+!!!Really big heading
+Text.
+!! Just a normal heading [with a hyperlink|Main]
+More text.
+!Just a small heading.
+
+This should be __bold__ text.
+
+__more bold text__
+
+__oops, forgot to close
+
+This should be normal.
+
+Now, let's try ''italic text''.
+

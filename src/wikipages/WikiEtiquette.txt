@@ -1,0 +1,30 @@
+When editing pages just keep the following rules in mind:
+
+__General__
+* Be nice - don't be rude or offensive.
+* Write in a way that is easy to understand and avoid local slang or phrases. Many of those who will read your text may not have English as their first language.
+* Don't delete other people's contributions (unless you know what you are doing)
+* Don't use too many acronyms
+* __Avoid the ''"click here"'' phrase!!__ Don't say: "More info about shape can be found [here|BasicLifeShapes]" but use "More info about shape can be found at [Basic Life Shapes]". I'd suggest avoiding it for external links as well.
+
+__About comments__
+
+* You are free to contribute anonymously, but it is preferred that you sign your comments with your name (or handle). It is common to prepend the signature with '--' like this: ''-- [Janne Jalkanen]'' (While you're at it, you are free to create your own wikipage and tell us about yourself.)
+* A good way is also to put your name first, like this: ''[Janne Jalkanen] : I'd like to say that...''
+
+__Creating WikiNames__
+* A good [WikiName] is short and descriptive. If the name is logical and easy many more people will link to it.
+* Although you can take a whole sentence and crunch it up to make a [WikiName], it is better style to restrain it to at most 5 words.
+* Instead, try to use [WikiName]'s like you would use as chapter titles in a book.
+
+__Refactoring pages__
+
+Refactoring is the process where you sum up a page, shortening it, making it more accessible. Anyone who feels up to it may go ahead, but we suggest that you
+leave it up to frequent (experienced) visitors.
+
+* Be objective - both pros and cons have to be represented correctly.
+* Be careful with signed contributions - don't change their meaning.
+* Give credit where credit is due.
+* Use 3rd person or plural instead 1st person singular in your summary.
+
+(Thanks to [Sensei's library|http://senseis.xmp.net/] for this initial text.)
