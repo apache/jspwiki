@@ -338,4 +338,79 @@ public class TextUtil
 
         return sb.toString();
     }
+
+    private static final int EOI   = 0;
+    private static final int LOWER = 1;
+    private static final int UPPER = 2;
+    private static final int DIGIT = 3;
+    private static final int OTHER = 4;
+
+    private static int getCharKind(int c)
+    {
+        if (c==-1)
+        {
+            return EOI;
+        }
+
+        char ch = (char) c;
+
+        if (Character.isLowerCase(ch))
+            return LOWER;
+        else if (Character.isUpperCase(ch))
+            return UPPER;
+        else if (Character.isDigit(ch))
+            return DIGIT;
+        else
+            return OTHER;
+    }
+
+    /**
+     *  Adds spaces in suitable locations of the input string.  This is
+     *  used to transform a WikiName into a more readable format.
+     *
+     *  @param s String to be beautified.
+     *  @return A beautified string.
+     */
+    public static String beautifyString( String s )
+    {
+        StringBuffer result = new StringBuffer();
+
+        if( s == null || s.length() == 0 ) return "";
+
+        int cur     = s.charAt(0);
+        int curKind = getCharKind(cur);
+
+        int prevKind = LOWER;
+        int nextKind = -1;
+
+        int next = -1;
+        int nextPos = 1;
+
+        while( curKind != EOI )
+        {
+            next = (nextPos < s.length()) ? s.charAt(nextPos++) : -1;
+            nextKind = getCharKind( next );
+
+            if( (prevKind == UPPER) && (curKind == UPPER) && (nextKind == LOWER) )
+            {
+                result.append(' ');
+                result.append((char) cur);
+            }
+            else
+            {
+                result.append((char) cur);
+                if( ( (curKind == UPPER) && (nextKind == DIGIT) )
+                    || ( (curKind == LOWER) && ((nextKind == DIGIT) || (nextKind == UPPER)) )
+                    || ( (curKind == DIGIT) && ((nextKind == UPPER) || (nextKind == LOWER)) ))
+                {
+                    result.append(' ');
+                }
+            }
+            prevKind = curKind;
+            cur      = next;
+            curKind  = nextKind;
+        }
+
+        return result.toString();
+    }
 }

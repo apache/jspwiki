@@ -612,26 +612,7 @@ public class WikiEngine
     {
         if( m_beautifyTitle )
         {
-            StringBuffer result = new StringBuffer();
-
-            for( int i = 0; i < title.length(); i++ )
-            {
-                // No space in front of the first line.
-                if( Character.isUpperCase(title.charAt(i)) && i > 0 )
-                {
-                    result.append(' ');
-                }
-
-                result.append( title.charAt(i) );
-            }
-            return result.toString();
-            /*
-              // FIXME: Should really use a nice regexp for translating
-              // JSPWiki into JSP Wiki.
-
-            Perl5Util util = new Perl5Util();
-            return util.substitute("s/[:upper:]{1,2}/foo/",title);
-            */
+            return TextUtil.beautifyString( title );
         }
 
         return title;

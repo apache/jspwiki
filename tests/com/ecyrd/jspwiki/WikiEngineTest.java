@@ -213,7 +213,7 @@ public class WikiEngineTest extends TestCase
     {
         String src = "JSPWikiPage";
 
-        assertEquals("JSPWiki Page", m_engine.beautifyTitle( src ) );
+        assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
     }
 
     /**
@@ -230,7 +230,7 @@ public class WikiEngineTest extends TestCase
     {
         String src = "JSPWikiFAQ";
 
-        assertEquals("JSPWiki FAQ", m_engine.beautifyTitle( src ) );
+        assertEquals("JSP Wiki FAQ", m_engine.beautifyTitle( src ) );
     }
 
     public void testBeautifyTitleNumbers()
@@ -250,6 +250,17 @@ public class WikiEngineTest extends TestCase
         assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
     }
 
+    /**
+     *  English articles too, pathological case...
+     */
+    /*
+    public void testBeautifyTitleArticle2()
+    {
+        String src = "ThisIsAJSPWikiPage";
+
+        assertEquals("This Is A JSP Wiki Page", m_engine.beautifyTitle( src ) );
+    }
+    */
     /**
      *  Tries to find an existing class.
      */

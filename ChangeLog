@@ -1,7 +1,58 @@
-2002-12-14  Erik Bunn  <Erik.Bunn@no.spam.memecry.net.>
+2002-12-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-        * Fixed Edit.jsp, which did not get default rules when creating 
-        new pages.
+        * v2.0.7.
+
+        * Added new title beautifier code from Torsten Hildebrandt.  It's
+        a bit different from what we used to have, but it does now less
+        mistakes.  :-).
+
+2002-12-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.6 - The I Should Really Be Sleeping But Let's See If Killer
+        Can Keep Up With This Pace With His Debian Packages -release.
+
+        * Inspiration continues.  Now ReferenceManager also understands
+        about attachments, so they can now be cross-referenced, be on
+        unused or undefined pages, etc.
+
+2002-12-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.5.
+
+        * RecentChanges now displays also changed attachments.  This added
+        some new APIs in WikiAttachmentProvider and AttachmentManager.
+
+        * v2.0.4.
+
+        * Bug fix: Restoring previous versions from archive did not work.
+
+        * Bug fix: Attempting to upload a non-existing file would cause a
+        crash.  Reported by Alain Ravet and Paul Downes.
+
+2002-12-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.3.
+
+        * Bug fix: previewing a new page with a footnote would cause a
+        crash. 
+
+        * Added WikiAttachments page to the samplepage distro.
+        
+        * Redirected all references to Wiki.jsp or Edit.jsp through
+        WikiEngine for future configurability.  Requested by Bart
+        Selders.
+
+        * Running tests now puts test pages into /tmp/testrepository.  Too
+        many false alerts due to wrong files in /tmp/...
+
+        * v2.0.2.
+
+        * Bug fix: JSPWiki no longer dies horribly with OutOfMemoryError
+        if preformatted code blocks ({{{ }}}) are not closed properly.
+        We simply forgot to check for EOF :-).  Reported by Erik Bunn.
+
+        * Bug fix: CamelCase is no longer recognized inside {{{ÂŽ­}}}
+        blocks. Reported by Torsten Hildebrandt.
 
 2002-12-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
@@ -17,25 +68,6 @@
 
         * Outlink images are now on by default.
 
-2002-12-11  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
-
-        * If no authorizer is specified in jspwiki.properties, 
-        we revert to good old unrestricted wikism. 
-        
-        * DummyAuthorizer and DummyAuthenticator are no more
-        the defaults. Use optionally, but FileAuth* are better.
-
-        * Added features: 'guest' group for unauthenticated people,
-        'participant' group for cookie-named people, name-group 
-        for authenticated people (user 'frobozz' belongs to group 'frobozz').
-
-2002-12-10  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
-
-        * v2.0.0-alpha-auth, a branch of Janne's V2 alpha
-        with rudimentary but functional authentication and
-        authorization. See doc/SampleAccess.config
-        for information and setup instructions.
-
 2002-12-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.0-alpha.
@@ -45,7 +77,7 @@
         * Moved GoRankAggregator and GoDiagram plugins into their own,
         separate project. 
 
-2002-12-09  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
+2002-12-09  Erik Bunn  <Erik.Bunn@basen.net>
 
         * v1.9.50.
         
@@ -65,7 +97,7 @@
         basically contains the wiki markup that should be used to separate
         the entires.  Suggested by Jeremy Cowgar.
 
-2002-12-08  Erik Bunn  <Erik.Bunn@no.spam.memecry.net>
+2002-12-08  Erik Bunn  <Erik.Bunn@basen.net>
 
         * Modified exception classes to inherit WikiException
         (with the exception of InternalWikiException =).
@@ -1046,7 +1078,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VÂŽäŽätÂŽäinen finally managed to
+        * Added support for tables.  Sanna VÂŽäÂŽätÂŽäinen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
