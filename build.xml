@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.11 2001-11-06 15:57:18 jalkanen Exp $
+    $Id: build.xml,v 1.12 2002-01-27 20:06:52 jalkanen Exp $
 -->    
        
 <!--   
@@ -209,6 +209,17 @@
     <mkdir dir="${release.dir}" />
   </target>
 
+  <!--  Builds the jar of all compiled class files -->
+
+  <target name="jar" depends="compile-optimized,installinit">
+      <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
+
+      <jar jarfile="${jarfile}">
+         <fileset dir="${code.build}" includes="**/*.class" />
+      </jar>
+
+  </target>
+
   <!--  Builds a Web Archive - basically a JAR file which
         also contains all of the JSP pages and can be deployed
         as-is. 
@@ -227,7 +238,7 @@
            of the WAR-file.
    -->
 
-  <target name="war" depends="compile-optimized,installinit"
+  <target name="war" depends="compile-optimized,installinit,jar"
           description="Builds the WAR file for installation.">
 
     <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
@@ -237,7 +248,7 @@
     <war warfile="${install.fulldir}/${ant.project.name}.war"
          webxml="etc/web.xml">
        <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar"/>
-       <classes dir="${code.build}" includes="**/*.class" />
+       <lib dir="${code.build}" includes="*.jar" />
        <fileset dir="${code.src}/webdocs" includes="**" />
        <webinf dir="etc" includes="**" />
     </war>
