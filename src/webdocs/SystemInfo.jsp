@@ -54,7 +54,7 @@
         </tr>
 
         <tr>
-          <td><b>Available InterWiki links</b></td>
+          <td valign="top"><b>Available InterWiki links</b></td>
           <td>
             <%
                for( Iterator i = wiki.getAllInterWikiLinks().iterator(); i.hasNext(); )
