@@ -7,7 +7,9 @@
 
         * Bug fix: downloading attachments that have non-ascii names
         should work now.  Uploading does not still work, because of bugs
-        in httpmultipartrequest library.  Reported by Torsten Hildebrandt.
+        in httpmultipartrequest library.  Reported by Torsten
+        Hildebrandt.  In addition UploadTemplate.jsp now explicitly
+        specifies ISO-8859-1 encoding, which seems to work with Mozilla.
 
         * Bug fix: '}' inside plugins no longer stops parsing.  Reported
         by William Morgan, fix courtesy of Torsten Hildebrandt.
