@@ -216,7 +216,7 @@ public class WeblogPlugin implements WikiPlugin
 
     /**
      *  Attempts to locate all pages that correspond to the 
-     *  blog entry pattern.
+     *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
      *
      *  Returns a list of pages with their FIRST revisions.
      */
@@ -238,16 +238,42 @@ public class WeblogPlugin implements WikiPlugin
 
             if( pageName.startsWith( baseName ) )
             {
-                WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
-
-                Date pageDay = firstVersion.getLastModified();
-                
-                if( pageDay != null )
+                //
+                //  Check the creation date from the page name.
+                //  We do this because RCSFileProvider is very slow at getting a
+                //  specific page version.
+                //
+                try
                 {
-                    if( pageDay.after(start) && pageDay.before(end) )
+                    log.debug("Checking: "+pageName);
+                    int firstScore = pageName.indexOf('_',baseName.length()-1 );
+                    if( firstScore != -1 && firstScore+1 < pageName.length() )
                     {
-                        result.add( firstVersion );
+                        int secondScore = pageName.indexOf('_', firstScore+1);
+
+                        if( secondScore != -1 )
+                        {
+                            String creationDate = pageName.substring( firstScore+1, secondScore );
+
+                            log.debug("   Creation date: "+creationDate);
+
+                            Date pageDay = fmt.parse( creationDate );
+                
+                            //
+                            //  Add the first version of the page into the list.  This way
+                            //  the page modified date becomes the page creation date.
+                            //
+                            if( pageDay != null && pageDay.after(start) && pageDay.before(end) )
+                            {
+                                WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
+                                result.add( firstVersion );
+                            }
+                        }
                     }
+                }
+                catch( Exception e )
+                {
+                    log.debug("Page name :"+pageName+" was suspected as a blog entry but it isn't because of parsing errors",e);
                 }
             }
         }
