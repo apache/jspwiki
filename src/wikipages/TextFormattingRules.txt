@@ -165,6 +165,10 @@ gives you the following table.  Note how you can use links also inside tables.
 
 !Styles
 
+%%commentbox
+__Hi there!__\\
+It's actually quite possible to do things like put comment boxes like this directly on your WikiPage.  This sample comment box uses the "commentbox" style, as defined in the included "jspwiki.css" style sheet. To make a box like this, just use {{{%%commentbox <text> %%}}}.
+%%
 In addition to the simple styles represented by the WikiMarkup, we also allow you to put in your own styles.  For example:
 {{{
 %%small

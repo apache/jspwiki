@@ -1,4 +1,23 @@
-JSPWiki has many variables, that can be inserted on pages on-the-fly.  See [TextFormattingRules] how it's done.
+%%commentbox
+__Variable evaluation order__
+
+The variables are evaluated in the following order:
+# 'Preset' variables (or constants), as those listed on this page.
+# 'Context' variables, as those set by plugins and tags.
+# 'Property' variables, like those set in jspwiki.properties.
+# 'Page' variables, like those set using the "SET" directive.
+%%
+In JSPWiki 2.2, the variable system has been enhanced somewhat.  You can use the "SET" -directive on any of your own pages to set a variable that exists only in the page.
+
+For example:
+
+{{{
+[{SET foo='bar'}]
+}}}
+
+creates you a variable called "foo", which has the value of "bar".  You can access this value anywhere on your page by using the shorthand "[[{$foo}]".
+
+JSPWiki also defines all kinds of other variables, and tags and plugins can also add their own variables.  For example, see the [Counter] plugin.  The following variable are preset by JSPWiki:
 
 !applicationname
 
