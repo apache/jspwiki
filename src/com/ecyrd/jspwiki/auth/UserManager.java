@@ -14,6 +14,7 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.HttpUtil;
 
 import com.ecyrd.jspwiki.auth.modules.*;
 
@@ -270,6 +271,17 @@ public class UserManager
         return p;
     }
 
+    /**
+     *  Attempts to perform a login for the given username/password
+     *  combination.  Also sets the attribute UserManager.WIKIUSER in the current session,
+     *  which can then be used to fetch the current UserProfile.  Or you can be lazy and
+     *  just call getUserProfile()...
+     *
+     *  @param username The user name.  This is an user name, not a WikiName.  In most cases
+     *                  they are the same, but in some cases, they might not be.
+     *  @param password The password.
+     *  @return true, if the username/password is valid.
+     */
     public boolean login( String username, String password, HttpSession session )
     {
         if( m_authenticator == null ) return false;
@@ -300,7 +312,9 @@ public class UserManager
     }
 
     /**
-     *  Logs a web user out.
+     *  Logs a web user out, clearing the session.
+     *
+     *  @param session The current HTTP session for this user.
      */
     public void logout( HttpSession session )
     {
@@ -320,6 +334,10 @@ public class UserManager
      *  Gets a UserProfile, either from the request (presumably
      *  authenticated and with auth information) or a new one
      *  (with default permissions).
+     *
+     *  @param request The servlet request for this user.
+     *  @return A valid UserProfile.  Can also return null in case it is not possible
+     *          to get an UserProfile.
      *  @since 2.1.10.
      */
     public UserProfile getUserProfile( HttpServletRequest request )
@@ -373,7 +391,7 @@ public class UserManager
             // 
             //  See if a cookie exists, and create a default account.
             //
-            uid = retrieveCookieValue( request, WikiEngine.PREFS_COOKIE_NAME );
+            uid = HttpUtil.retrieveCookieValue( request, WikiEngine.PREFS_COOKIE_NAME );
 
             log.debug("Stored username="+uid);
 
@@ -427,30 +445,6 @@ public class UserManager
         return wup;
     }
 
-    /**
-     *  Attempts to retrieve the given cookie value from the request.
-     *  Returns the string value (which may or may not be decoded
-     *  correctly, depending on browser!), or null if the cookie is
-     *  not found.
-     */
-    // FIXME: Does not belong here and should be moved elsewhere.  HttpUtil?
-    private String retrieveCookieValue( HttpServletRequest request, String cookieName )
-    {
-        Cookie[] cookies = request.getCookies();
-
-        if( cookies != null )
-        {
-            for( int i = 0; i < cookies.length; i++ )
-            {
-                if( cookies[i].getName().equals( cookieName ) )
-                {
-                    return( cookies[i].getValue() );
-                }
-            }
-        }
-
-        return( null );
-    }
 
     /**
      *  Sets the username cookie.
