@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.11 $
-                             $Date: 2002-03-07 21:08:33 $
+                         $Revision: 1.12 $
+                             $Date: 2002-03-10 09:59:00 $
                            $Author: jalkanen $
 
 What is it?
@@ -244,6 +244,22 @@ The form is:
 
 Check out the JSPWikiPlugins page from the JSPWiki distribution for
 more information.
+
+
+XML-RPC
+-------
+
+JSPWiki comes configured with two XML-RPC interfaces.  The first
+interface, which lives by default in <your-wiki-url>/RPC2, is a fully
+XML-RPC spec compliant version, whereas the other one, which lives at
+<your-wiki-url>/RPCU makes things easier by accepting UTF-8 -format
+strings.
+
+You can configure the URLs and other things from the web.xml file.  By
+default, the XML-RPC interface is NOT enabled.
+
+For more information about the XML-RPC interface, see the
+"WikiRPCInterface" page in the default JSPWiki distribution.
 
 
 Acknowledgements
