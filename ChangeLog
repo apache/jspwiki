@@ -1,3 +1,11 @@
+2002-01-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.6.8-cvs
+
+        * CachingProvider was iterating through the wrong collection.
+        This might fix the NullPointerExceptions that have been coming
+        around lately.
+
 2002-01-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.7-cvs
