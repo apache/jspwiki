@@ -364,7 +364,8 @@ public class UserManager
         }
 
         UserProfile wup = getUserProfile( username );
-        wup.setPassword( password );
+        if( wup != null )
+            wup.setPassword( password );
 
         boolean isValid = m_authenticator.authenticate( wup );
 
@@ -452,10 +453,12 @@ public class UserManager
         if( uid != null )
         {
             wup = getUserProfile( uid );
-            wup.setLoginStatus( UserProfile.CONTAINER );            
-
-            HttpSession session = request.getSession( true );
-            session.setAttribute( WIKIUSER, wup );
+            if( wup != null )
+            {
+                wup.setLoginStatus( UserProfile.CONTAINER );            
+                HttpSession session = request.getSession( true );
+                session.setAttribute( WIKIUSER, wup );
+            }
         }
         else
         {
@@ -469,9 +472,11 @@ public class UserManager
             if( uid != null )
             {
                 wup = UserProfile.parseStringRepresentation( uid );
-
-                log.debug("wup="+wup);
-                wup.setLoginStatus( UserProfile.COOKIE );
+                if( wup != null )
+                {
+                    log.debug("wup="+wup);
+                    wup.setLoginStatus( UserProfile.COOKIE );
+                }
             }
             else
             {
@@ -487,8 +492,18 @@ public class UserManager
                     uid = "unknown"; // FIXME: Magic
                 }
                 wup = getUserProfile( uid );
-                wup.setLoginStatus( UserProfile.NONE );
+                if( wup != null )
+                    wup.setLoginStatus( UserProfile.NONE );
             }
+        }
+
+        // If the UserDatabase declined to give us a UserPrincipal, 
+        // we manufacture one here explicitly. 
+        if( wup == null )
+        {
+            wup = new UserProfile();
+            wup.setName( GROUP_GUEST );
+            wup.setLoginStatus( UserProfile.NONE );
         }
 
         //
