@@ -1,5 +1,8 @@
 2002-06-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * PageModified.jsp now does word wrapping.  It's still not
+        beautiful, but it works.
+
         * Links starting with "file:" are now recognized as external
         links, not interwiki links anymore.
 
