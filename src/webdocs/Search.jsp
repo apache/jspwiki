@@ -66,7 +66,7 @@
                   SearchResult pageref = (SearchResult) i.next();
                   %>
                   <TR>
-                      <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=pageref.getName()%>"><%=pageref.getName()%></A></TD>
+                      <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=wiki.encodeName(pageref.getName())%>"><%=pageref.getName()%></A></TD>
                       <TD><%=pageref.getScore()%></TD>
                   </TR>
                   <%
