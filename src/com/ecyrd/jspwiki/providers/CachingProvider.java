@@ -52,6 +52,8 @@ public class CachingProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
+    private long m_milliSecondsBetweenChecks = 5000;
+
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -143,10 +145,68 @@ public class CachingProvider
         return result;
     }
 
+    /**
+     *  Returns true, if the page has been changed outside of JSPWiki.
+     */
+    private boolean checkIfPageChanged( CacheItem item )
+    {
+        if( item == null ) return false;
+
+        long currentTime = System.currentTimeMillis();
+
+        if( currentTime - item.m_lastChecked > m_milliSecondsBetweenChecks )
+        {
+            try
+            {
+                WikiPage cached  = item.m_page;
+                WikiPage current = m_provider.getPageInfo( cached.getName(),
+                                                           LATEST_VERSION );
+
+                item.m_lastChecked = currentTime;
+
+                long epsilon = 1000L; // FIXME: This should be adjusted according to provider granularity.
+                if( current.getLastModified().getTime() - cached.getLastModified().getTime() > epsilon )
+                {                
+                    log.debug("Page "+current.getName()+" has been externally modified, refreshing contents.");
+                    return true;
+                }
+            }
+            catch( ProviderException e )
+            {
+                log.error("While checking cache, got error: ",e);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *  Removes the page from cache, and attempts to reload all information.
+     */
+    private synchronized void revalidatePage( WikiPage page )
+        throws ProviderException
+    {
+        m_cache.remove( page.getName() );
+        addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
+    }
+
+    /**
+     *  Attempts to fetch text from the cache.
+     */
     private String getTextFromCache( String page )
         throws ProviderException
     {
         CacheItem item = (CacheItem)m_cache.get( page );
+
+        //
+        //  Check if page has been changed externally.  If it has, then
+        //  we need to refresh all of the information.
+        //
+        if( checkIfPageChanged( item ) )
+        {
+            revalidatePage( item.m_page );
+            item = (CacheItem) m_cache.get( page );
+        }
 
         if( item == null )
         {
@@ -193,11 +253,7 @@ public class CachingProvider
         // FIXME: possible race condition here.  Someone might still get
         // the old version.
 
-        synchronized(this)
-        {
-            m_cache.remove( page.getName() );
-            addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
-        }
+        revalidatePage( page );
     }
 
     // FIXME: This MUST be cached somehow.
@@ -356,10 +412,29 @@ public class CachingProvider
     }
 
     public String getProviderInfo()
-    {              
+    {         
+        int cachedPages = 0;
+        long totalSize  = 0;
+
+        for( Iterator i = m_cache.values().iterator(); i.hasNext(); )
+        {
+            CacheItem item = (CacheItem) i.next();
+
+            String text = (String) item.m_text.get();
+            if( text != null )
+            {
+                cachedPages++;
+                totalSize += text.length()*2;
+            }
+        }
+
+        totalSize = (totalSize+512)/1024L;
+
         return("Real provider: "+m_provider.getClass().getName()+
-               "<BR />Cache misses: "+m_cacheMisses+
-               "<BR />Cache hits: "+m_cacheHits);
+               "<br />Cache misses: "+m_cacheMisses+
+               "<br />Cache hits: "+m_cacheHits+
+               "<br />Cached pages: "+cachedPages+
+               "<br />Total cache size (kBytes): "+totalSize);
     }
 
     public void deleteVersion( String pageName, int version )
@@ -414,6 +489,7 @@ public class CachingProvider
     private class CacheItem
     {
         WikiPage      m_page;
+        long          m_lastChecked = 0L;
         SoftReference m_text;
     }
 }
