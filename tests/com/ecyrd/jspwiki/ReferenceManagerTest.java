@@ -61,7 +61,7 @@ public class ReferenceManagerTest extends TestCase
         String first = (String) i.next();
         String second = (String) i.next();
         assertTrue( ( first.equals("Foobar") && second.equals("TestPage") )
-            || ( first.equals("TestPage") && second.equals("Foobar") ));
+                    || ( first.equals("TestPage") && second.equals("Foobar") ));
     }
 
     public void testUncreated()
