@@ -139,6 +139,7 @@ public class FileSystemProvider
      *  does not provide versioning information for now.
      */
     public String getPageText( String page, int version )
+        throws ProviderException
     {
         return getPageText( page );
     }
@@ -192,7 +193,7 @@ public class FileSystemProvider
         return result;
     }
 
-    public void putPageText( WikiPage page, String text )
+    public void putPageText( WikiPage page, String text )        
     {
         File file = findPage( page.getName() );
 
