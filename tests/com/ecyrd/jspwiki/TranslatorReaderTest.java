@@ -41,6 +41,7 @@ public class TranslatorReaderTest extends TestCase
     }
 
     private void newPage( String name )
+        throws WikiException
     {
         testEngine.saveText( name, "<test>" );
 
@@ -664,7 +665,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
 
-        assertEquals("Link <a href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" /></a>",
+        assertEquals("Link <a href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\"/></a>",
                      translate(src) );
     }
 
