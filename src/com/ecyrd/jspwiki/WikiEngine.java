@@ -548,6 +548,16 @@ public class WikiEngine
         return (p != null);
     }
 
+    public boolean pageExists( WikiPage page )
+        throws ProviderException
+    {
+        if( page != null )
+        {
+            return pageExists( page.getName(), page.getVersion() );
+        }
+        return false;
+    }
+
     /**
      *  Turns a WikiName into something that can be 
      *  called through using an URL.
