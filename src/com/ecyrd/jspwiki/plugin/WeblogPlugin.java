@@ -215,7 +215,7 @@ public class WeblogPlugin implements WikiPlugin
                 {
                     if( engine.pageExists(author) )
                     {
-                        author = "<a href=\""+engine.getViewURL( author )+"\">"+author+"</a>";
+                        author = "<a href=\""+engine.getViewURL( author )+"\">"+engine.beautifyTitle(author)+"</a>";
                     }
                 }
                 else
