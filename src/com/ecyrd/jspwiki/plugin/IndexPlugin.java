@@ -33,6 +33,7 @@ import java.util.*;
  *  <P>Parameters</P>
  *  <UL>
  *    <LI>itemsPerLine: How many items should be allowed per line before break.
+ *    If set to zero (the default), will not write breaks.
  *    <LI>include: Include only these pages.
  *    <LI>exclude: Exclude with this pattern.
  *  </UL>
@@ -46,7 +47,7 @@ public class IndexPlugin implements WikiPlugin
     protected static Logger   log = Logger.getLogger(IndexPlugin.class);
 
     public  static final String INITIALS_COLOR                  = "red" ;
-    private static final int    DEFAULT_ITEMS_PER_LINE          = 4     ;
+    private static final int    DEFAULT_ITEMS_PER_LINE          = 0     ;
 
     private static final String PARAM_ITEMS_PER_LINE            = "itemsPerLine";
     private static final String PARAM_INCLUDE                   = "include";
@@ -96,16 +97,25 @@ public class IndexPlugin implements WikiPlugin
         //
         //  Build the page.
         //
-        buildIndexPageHeaderAndBody( allPages, linkProcessor );
+        buildIndexPageHeaderAndBody( i_context, allPages, linkProcessor );
 
-        return  m_headerPart.toString()
-                +   "<br />"
-                +   m_bodyPart.toString();
+        StringBuffer res = new StringBuffer();
+
+        res.append( "<div class=\"index\">\n" );
+        res.append( "<div class=\"header\">\n" );
+        res.append( m_headerPart.toString() );
+        res.append( "</div>\n" );
+        res.append( "<div class=\"body\">\n" );
+        res.append( m_bodyPart.toString() );
+        res.append( "</div>\n</div>\n" );
+    
+        return res.toString();
     }
 
 
-    private void buildIndexPageHeaderAndBody ( final Collection i_allPages , 
-                                               final TranslatorReader i_linkProcessor )
+    private void buildIndexPageHeaderAndBody( WikiContext context, 
+                                              final Collection i_allPages , 
+                                              final TranslatorReader i_linkProcessor )
     {
         PatternMatcher matcher = new Perl5Matcher();
         
@@ -131,7 +141,7 @@ public class IndexPlugin implements WikiPlugin
                         m_previousPageFirstLetter = pageNameFirstLetter;
                     }
 
-                    addPageToIndex( curPage, i_linkProcessor );
+                    addPageToIndex( context, curPage, i_linkProcessor );
                     breakLineIfTooLong();
                 }
             }
@@ -189,26 +199,26 @@ public class IndexPlugin implements WikiPlugin
     }
 
 
-    // FIXME: Should really use <SPAN> instead of <FONT>.
     private void addLetterHeaderWithLine( final String i_firstLetter )
     {
-        m_bodyPart.write("<br /><br />" +
-                         "<a name=\"" + i_firstLetter + "\">" +
-                         "<font color=\""+INITIALS_COLOR+"\">"+i_firstLetter+"</font></a>" +
-                         "<hr />" );
+        m_bodyPart.write("\n<br /><br />" +
+                         "<span class=\"section\">"+
+                         "<a name=\"" + i_firstLetter + "\">"+
+                         i_firstLetter+"</a></span>" +
+                         "<hr />\n" );
     }
 
-    protected void addPageToIndex( WikiPage i_curPage, final TranslatorReader i_linkProcessor )
+    protected void addPageToIndex( WikiContext context, WikiPage i_curPage, final TranslatorReader i_linkProcessor )
     {
         final boolean notFirstPageOnLine = 2 <= m_currentNofPagesOnLine;
 
         if( notFirstPageOnLine ) 
         {
-            m_bodyPart.write(",&nbsp;&nbsp;"); 
+            m_bodyPart.write(",&nbsp; "); 
         }
         m_bodyPart.write( i_linkProcessor.makeLink( TranslatorReader.READ, 
                                                     i_curPage.getName(), 
-                                                    i_curPage.getName () ));
+                                                    context.getEngine().beautifyTitleNoBreak(i_curPage.getName()) ));
     }
 
     protected void breakLineIfTooLong()
@@ -217,7 +227,7 @@ public class IndexPlugin implements WikiPlugin
 
         if( limitReached ) 
         {
-            m_bodyPart.write( "<br />" );
+            m_bodyPart.write( "<br />\n" );
             m_currentNofPagesOnLine = 0;
         }
     }
