@@ -117,7 +117,9 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
-    /** When using CC links, this seems to crash 1.9.2. */
+    //
+    //  Testing CamelCase hyperlinks
+    //
 
     public void testHyperLinks6()
         throws Exception
@@ -276,11 +278,33 @@ public class TranslatorReaderTest extends TestCase
     public void testCCLinkBold()
         throws Exception
     {
+        newPage("BoldHyperLink");
+
+        String src = "__BoldHyperLink__";
+
+        assertEquals( "<B><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=BoldHyperLink\">BoldHyperLink</A></B>",
+                      translate(src) );
+    }
+
+    public void testCCLinkBold2()
+        throws Exception
+    {
         newPage("HyperLink");
 
-        String src = "__HyperLink__";
+        String src = "Let's see, if a bold __HyperLink__ is correct?";
 
-        assertEquals( "<B><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A></B>",
+        assertEquals( "Let's see, if a bold <B><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A></B> is correct?",
+                      translate(src) );
+    }
+
+    public void testCCLinkItalic()
+        throws Exception
+    {
+        newPage("ItalicHyperLink");
+
+        String src = "''ItalicHyperLink''";
+
+        assertEquals( "<I><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ItalicHyperLink\">ItalicHyperLink</A></I>",
                       translate(src) );
     }
 
@@ -289,11 +313,35 @@ public class TranslatorReaderTest extends TestCase
     {
         newPage("HyperLink");
 
-        String src = "Test. HyperLink.";
+        String src = "Test. Punctuation. HyperLink.";
 
-        assertEquals( "Test. <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.",
+        assertEquals( "Test. Punctuation. <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.",
                       translate(src) );
     }
+
+    public void testCCLinkWithPunctuation2()
+        throws Exception
+    {
+        newPage("HyperLink");
+        newPage("ThisToo");
+
+        String src = "Punctuations: HyperLink,ThisToo.";
+
+        assertEquals( "Punctuations: <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>,<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
+                      translate(src) );
+    }
+
+    public void testCCLinkWithScandics()
+        throws Exception
+    {
+        newPage("ÄitiSyöÖljyä");
+
+        String src = "Onko tämä hyperlinkki: ÄitiSyöÖljyä?";
+
+        assertEquals( "Onko tämä hyperlinkki: <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">ÄitiSyöÖljyä</A>?",
+                      translate(src) );
+    }
+
 
     public void testHyperlinksExt()
         throws Exception
@@ -312,6 +360,10 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.regex.fi/\">link</A>",
                       translate(src) );
     }
+
+    //
+    //  Testing various odds and ends about hyperlink matching.
+    //
 
     public void testHyperlinksPluralMatch()
         throws Exception
@@ -619,7 +671,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "A list:\n* One\n* Two\n* Three\n";
 
-        assertEquals( "A list:\n<UL>\n<LI> One\n<LI> Two\n<LI> Three\n</UL>\n", 
+        assertEquals( "A list:\n<UL>\n<LI> One\n</LI>\n<LI> Two\n</LI>\n<LI> Three\n</LI>\n</UL>\n", 
                       translate(src) );
     }
 
@@ -636,7 +688,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
 
-        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n<LI> Two\n<LI> Three\n</UL>\n", 
+        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n</LI>\n<LI> Two\n</LI>\n<LI> Three\n</LI>\n</UL>\n", 
                       translate(src) );
     }
 
@@ -645,7 +697,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
 
-        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n<LI> Two\n<LI> Three\n</UL>\nShould be normal.", 
+        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n</LI>\n<LI> Two\n</LI>\n<LI> Three\n</LI>\n</UL>\nShould be normal.", 
                       translate(src) );
     }
 
@@ -722,7 +774,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n**\n\nB";
 
-        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n</UL>\n</UL>\n<P>\nB", 
+        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n</LI>\n</UL>\n</UL>\n<P>\nB", 
                       translate(src) );
     }
 
@@ -731,7 +783,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n##\n\nB";
 
-        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n</OL>\n</OL>\n<P>\nB", 
+        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n</LI>\n</OL>\n</OL>\n<P>\nB", 
                       translate(src) );
     }
 
