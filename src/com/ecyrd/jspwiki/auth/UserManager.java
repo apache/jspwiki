@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth;
 
 import java.util.*;
@@ -20,6 +39,9 @@ import com.ecyrd.jspwiki.auth.modules.*;
 
 /**
  *  Manages user accounts, logins/logouts, passwords, etc.
+ *
+ *  @author Janne Jalkanen
+ *  @author Erik Bunn
  */
 public class UserManager
 {
@@ -48,6 +70,8 @@ public class UserManager
     public static final String GROUP_NAMEDGUEST  = "NamedGuest";
     public static final String GROUP_KNOWNPERSON = "KnownPerson";
 
+    private static final String DEFAULT_DATABASE = "com.ecyrd.jspwiki.auth.modules.WikiDatabase";
+
     /**
      *  The default administrator group is called "AdminGroup"
      */
@@ -60,6 +84,11 @@ public class UserManager
 
     private String             m_administrator;
 
+    /**
+     *  Creates an UserManager instance for the given WikiEngine and
+     *  the specified set of properties.  All initialization for the
+     *  modules is done here.
+     */
     public UserManager( WikiEngine engine, Properties props )
         throws WikiException
     {
@@ -110,12 +139,8 @@ public class UserManager
             }
         }
 
-        String dbClassName = props.getProperty( PROP_USERDATABASE );
-
-        if( dbClassName == null )
-        {
-            dbClassName = "com.ecyrd.jspwiki.auth.modules.WikiDatabase";
-        }
+        String dbClassName = props.getProperty( PROP_USERDATABASE,
+                                                DEFAULT_DATABASE );
 
         try
         {
@@ -176,6 +201,8 @@ public class UserManager
         //
         WikiGroup superPrincipal = getWikiGroup( m_administrator );
 
+        System.out.println("superprincipal="+superPrincipal);
+
         if( superPrincipal == null )
         {
             log.warn("No supergroup '"+m_administrator+"' exists; you should create one.");
@@ -198,7 +225,8 @@ public class UserManager
      */
     // FIXME: Someone should really check when groups cease to be used,
     //        and release groups that are not being used.
-
+    
+    // FIXME: Error handling is still deficient.
     public WikiGroup getWikiGroup( String name )
     {
         WikiGroup group;
@@ -207,14 +235,19 @@ public class UserManager
         {
             group = (WikiGroup) m_groups.get( name );
 
-            /*
             if( group == null )
             {
-                group = new WikiGroup();
-                group.setName( name );
-                m_groups.put( name, group );
+                WikiPrincipal p = m_database.getPrincipal( name );
+
+                if( !(p instanceof WikiGroup) )
+                {
+                    log.info( name+" is not a group!" );
+                }
+                else
+                {
+                    group = (WikiGroup) p;
+                }
             }
-            */
         }
 
         return group;
@@ -231,7 +264,18 @@ public class UserManager
     public List getGroupsForPrincipal( Principal user )
         throws NoSuchPrincipalException
     {        
-        List list = m_database.getGroupsForPrincipal( user );
+        List list = null;
+
+        //
+        // Add the groups ONLY if the user has been authenticated.
+        //
+        // FIXME: This is probably the wrong place, since this prevents
+        // us from querying stuff later on.
+        
+        if( user instanceof UserProfile && ((UserProfile)user).isAuthenticated() )
+        {
+            list = m_database.getGroupsForPrincipal( user );
+        }
 
         if( list == null ) list = new ArrayList();
 
@@ -261,12 +305,17 @@ public class UserManager
      */
     public Principal getPrincipal( String name )
     {
-        Principal p = null;
-        // Principal p = m_principalist.getPrincipal( name );
+        Principal p = getWikiGroup( name );
 
         if( p == null )
         {
-            p = new UndefinedPrincipal( name );
+            p = getUserProfile( name );
+
+            if( p == null )
+            {
+                log.debug("No such principal defined: "+name+", using UndefinedPrincipal");
+                p = new UndefinedPrincipal( name );
+            }
         }
 
         return p;
