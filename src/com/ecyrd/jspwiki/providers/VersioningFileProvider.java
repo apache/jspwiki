@@ -77,6 +77,11 @@ public class VersioningFileProvider
      */
     private File findOldPageDir( String page )
     {
+        if( page == null )
+        {
+            throw new InternalWikiException("Page may NOT be null in the provider!");
+        }
+
         File oldpages = new File( getPageDirectory(), PAGEDIR );
 
         return new File( oldpages, mangleName(page) );
