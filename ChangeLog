@@ -1,4 +1,14 @@
+2002-02-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * XML-RPC Command prefix is now "wiki" instead of "jspwiki".
+
 2002-02-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * XML-RPC interface no longer relies on overloading of method
+        names: All versioned versions have now "Version" appended.
+
+        * XML-RPC interface now returns an error code of 1, if the
+        requested page does not exist.
 
         * Bug fix: Now tables should finally work with Mozilla.
 
