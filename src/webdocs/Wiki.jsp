@@ -47,7 +47,7 @@
         pageReference = "current version";
     }
 
-    WikiPage wikipage = wiki.getPage( pagereq );
+    WikiPage wikipage = wiki.getPage( pagereq, version );
 
     // In the future, user access permits affect this
     boolean isEditable = (version < 0);
@@ -126,9 +126,9 @@
           <td align="left">
              <% if( isEditable ) { %>
                  <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>.
+                 &nbsp;&nbsp;
              <% } %>
              <% if( wikipage != null ) { %>
-                 &nbsp;&nbsp;
                  <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
              <% } %>
           </td>
@@ -141,10 +141,16 @@
              {
                  java.util.Date lastchange = wikipage.getLastModified();
 
-                 // FIXME: We want to use pageLastChanged(pagereq, version) below...)
-                 %>
-                 <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=wikipage.getAuthor()%>.
-                 <%
+                 if( version == -1 )
+                 {
+                     %>                
+                     <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=wikipage.getAuthor()%>.</I>
+                     <%
+                 } else {
+                     %>
+                     <I>This particular version was published on <%=lastchange%> by <%=wikipage.getAuthor()%></I>.
+                     <%
+                 }
              } else {
                  %>
                  <I>Page not created yet.</I>
