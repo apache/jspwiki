@@ -12,7 +12,6 @@
 	<classpathentry kind="lib" path="lib/oscache.jar"/>
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
-	<classpathentry kind="lib" path="/home/jalkanen/Projects/JSPWiki/lib/servlet.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
