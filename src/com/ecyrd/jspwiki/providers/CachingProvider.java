@@ -394,6 +394,7 @@ public class CachingProvider
                 m_cache.putInCache( name, null );
                 m_textCache.putInCache( name, null );
                 m_historyCache.putInCache( name, null );
+                // We cache a page miss
                 m_negCache.putInCache( name, name );
                 
                 if (m_useLucene)
@@ -409,8 +410,8 @@ public class CachingProvider
                 if( refreshed != null )
                 {
                     // We must now add it
-                    
                     m_cache.putInCache( name, refreshed );
+                    // Requests for this page are now no longer denied
                     m_negCache.putInCache( name, null );
                     
                     throw new RepositoryModifiedException( "Added: "+name, name );
@@ -418,6 +419,7 @@ public class CachingProvider
                 }
                 else
                 {
+                    // Cache page miss
                     m_negCache.putInCache( name, name );
                 }
             }
@@ -427,6 +429,9 @@ public class CachingProvider
                 log.debug("Page "+cached.getName()+" newest version deleted, reloading...");
                 
                 m_cache.putInCache( name, refreshed );
+                // Requests for this page are now no longer denied
+                m_negCache.putInCache( name, null );
+
                 m_textCache.flushEntry( name );
                 m_historyCache.flushEntry( name );
                 
@@ -439,14 +444,19 @@ public class CachingProvider
                 log.info("Page "+cached.getName()+" changed, reloading...");
 
                 m_cache.putInCache( name, refreshed );
+                // Requests for this page are now no longer denied
+                m_negCache.putInCache( name, null );
                 m_textCache.flushEntry( name );
                 m_historyCache.flushEntry( name );
+
                 throw new RepositoryModifiedException( "Modified: "+name, name );
             }
             else
             {
                 // Refresh the cache by putting the same object back
                 m_cache.putInCache( name, cached );
+                // Requests for this page are now no longer denied
+                m_negCache.putInCache( name, null );
             }
             return cached;
         }
@@ -465,6 +475,11 @@ public class CachingProvider
         }
         catch( NeedsRefreshException e )
         {
+            // OSCache 2.1 locks the Entry which leads to a deadlock. We must unlock the entry
+            // if there is no entry yet in there. If you want to use OSCache 2.1, uncomment the
+            // following line.
+            // m_negCache.cancelUpdate(pageName);
+
             // Let's just check if the page exists in the normal way
         }
 
@@ -727,6 +742,8 @@ public class CachingProvider
                     WikiPage p = (WikiPage) i.next();
                     
                     m_cache.putInCache( p.getName(), p );
+                    // Requests for this page are now no longer denied
+                    m_negCache.putInCache( p.getName(), null );
                 }
 
                 m_gotall = true;
@@ -912,6 +929,8 @@ public class CachingProvider
                 if( data != null )
                 {
                     m_cache.putInCache( pageName, data );
+                    // Requests for this page are now no longer denied
+                    m_negCache.putInCache( pageName, null );
                 }
                 return data;
             }
