@@ -36,6 +36,6 @@
 </NOSCRIPT>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=<%=wiki.getContentEncoding()%>">
 <LINK REL="search" HREF="<%=wiki.getBaseURL()%>Search.jsp" TITLE="Search <%=wiki.getApplicationName()%>">
-<LINK REL="help" HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=TextFormattingRules" TITLE="Help"
-<LINK REL="start" HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=Main" TITLE="Front page">
+<LINK REL="help"   HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=TextFormattingRules" TITLE="Help"
+<LINK REL="start"  HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=Main" TITLE="Front page">
 
