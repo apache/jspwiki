@@ -475,4 +475,44 @@ public class TextUtil
         return result.toString();
     }
 
+    /**
+     *  Creates a Property object based on an array which contains alternatively
+     *  a key and a value.  It is useful for generating default mappings.
+     *  For example:
+     *  <pre>
+     *     String[] properties = { "jspwiki.property1", "value1",
+     *                             "jspwiki.property2", "value2 };
+     *
+     *     Properties props = TextUtil.createPropertes( values );
+     *
+     *     System.out.println( props.getProperty("jspwiki.property1") );
+     *  </pre>
+     *  would output "value1".
+     *
+     *  @param values Alternating key and value pairs.
+     *  @return Property object
+     *  @see java.util.Property
+     *  @throws IllegalArgumentException, if the property array is missing
+     *          a value for a key.
+     *  @since 2.2.
+     */
+
+    public static Properties createProperties( String[] values )
+        throws IllegalArgumentException
+    {
+        System.out.println("ADDING: "+values.length);
+
+        if( values.length % 2 != 0 )
+            throw new IllegalArgumentException( "One value is missing.");
+
+        Properties props = new Properties();
+
+        for( int i = 0; i < values.length; i += 2 )
+        {
+            props.setProperty( values[i], values[i+1] );
+            System.out.println("Adding: "+values[i]+"="+values[i+1]);
+        }
+
+        return props;
+    }
 }
