@@ -58,7 +58,7 @@ public class WeblogEntryPlugin implements WikiPlugin
                                                           ""+entryNum );
 
             // FIXME: Generate somehow else.
-            sb.append("<A HREF=\""+engine.getEditURL(blogPage)+"\">New entry</A>");
+            sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
         }
         catch( ProviderException e )
         {

@@ -160,19 +160,19 @@ public class WeblogPlugin implements WikiPlugin
 
             SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
-            sb.append("<DIV CLASS=\"weblog\">\n");
+            sb.append("<div class=\"weblog\">\n");
             for( Iterator i = blogEntries.iterator(); i.hasNext(); )
             {
                 WikiPage p = (WikiPage) i.next();
 
-                sb.append("<DIV CLASS=\"weblogheading\">");
+                sb.append("<div class=\"weblogheading\">");
 
                 Date entryDate = p.getLastModified();
                 sb.append( entryDateFmt.format(entryDate) );
 
-                sb.append("</DIV>\n");
+                sb.append("</div>\n");
 
-                sb.append("<DIV CLASS=\"weblogentry\">");
+                sb.append("<div class=\"weblogentry\">");
 
                 //
                 //  Append the text of the latest version.
@@ -180,7 +180,7 @@ public class WeblogPlugin implements WikiPlugin
                 sb.append( engine.getHTML( context, 
                                            engine.getPage(p.getName()) ) );
                 
-                sb.append("</DIV>\n");
+                sb.append("</div>\n");
 
                 sb.append("<div class=\"weblogpermalink\">");
                 sb.append( "<a href=\""+engine.getViewURL(p.getName())+"\">Permalink</a>" );
@@ -203,7 +203,7 @@ public class WeblogPlugin implements WikiPlugin
                 sb.append("</div>");
             }
             
-            sb.append("</DIV>\n");
+            sb.append("</div>\n");
         }
         catch( ProviderException e )
         {
