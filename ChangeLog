@@ -2,6 +2,9 @@
 
         * v1.6.13-cvs.
 
+        * getRecentChanges() XML-RPC method now hopefully does UTC
+        conversion correctly.
+
         * Search.jsp now offers to search on Google as well after giving
         you the results.
 
