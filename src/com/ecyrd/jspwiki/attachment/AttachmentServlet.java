@@ -59,7 +59,6 @@ public class AttachmentServlet
     public static final String ATTR_MSG        = "msg";
     public static final String ATTR_ATTACHMENT = "attachment";
 
-    private String m_resultPage;
     private String m_tmpDir;
 
     /**
@@ -72,13 +71,11 @@ public class AttachmentServlet
 
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
-            
-        m_resultPage = "/Attachment.jsp";
+
         m_tmpDir     = System.getProperty( "java.io.tmpdir" );
  
         log.debug( "UploadServlet initialized. Using " + 
-                   m_tmpDir + " for temporary storage, directing to " + 
-                   m_resultPage + " after upload." );
+                   m_tmpDir + " for temporary storage." );
     }
 
 
@@ -94,14 +91,16 @@ public class AttachmentServlet
         String name    = req.getParameter( HDR_WIKINAME );
         String page    = req.getParameter( "page" );
         String version = req.getParameter( HDR_VERSION );
+        String nextPage = req.getParameter( "nextpage" );
+
         String msg     = "An error occurred. Ouch.";
-        int    ver     = -1;
+        int    ver     = WikiProvider.LATEST_VERSION;
 
         AttachmentManager mgr = m_engine.getAttachmentManager();
 
-        if( name == null || version == null )
+        if( name == null )
         {
-            msg = "Invalid attachment name/version.";
+            msg = "Invalid attachment name.";
         }
         else
         {
@@ -110,13 +109,24 @@ public class AttachmentServlet
                 //  FIXME: Uses provider I/F directly; should go through
                 //         manager.
 
-                ver = Integer.parseInt( version );
+                if( version != null )
+                {
+                    ver = Integer.parseInt( version );
+                }
 
                 Attachment att = mgr.getAttachmentInfo( new WikiPage(page), name, ver );
 
                 if( att != null )
                 {
-                    res.setContentType( "application/binary" );
+                    String mimetype = getServletConfig().getServletContext().getMimeType( att.getFileName().toLowerCase() );
+
+                    if( mimetype == null )
+                    {
+                        mimetype = "application/binary";
+                    }
+
+                    res.setContentType( mimetype );
+
                     // Won't work, must be "attachement"
                     res.setHeader( "Content-Disposition", 
                                    "attachment; filename=" + name + ";" );
@@ -142,6 +152,8 @@ public class AttachmentServlet
                     msg = "Attachment "+name+" sent to "+req.getRemoteUser()+" on "+req.getRemoteHost();
                     log.debug( msg );
 
+                    res.sendRedirect( nextPage );
+
 		    return;
                 }
                 else
@@ -166,9 +178,7 @@ public class AttachmentServlet
         }
         log.info( msg );
 
-	// Direct back to the Attachment page with informative message.
-        ServletContext ctx   = getServletContext();
-	RequestDispatcher rd = ctx.getRequestDispatcher( m_resultPage );
+        res.sendRedirect( nextPage );
 
         if( msg != null )
         {
@@ -194,40 +204,43 @@ public class AttachmentServlet
         throws IOException, ServletException 
     {
         ServletContext ctx = getServletContext();
-        String msg = "";
 
         String action = req.getParameter( HDR_ACTION );
 
         // Only the one action at this time, but preparing for more.
-        upload( req );
+        String nextPage = upload( req );
 
-        RequestDispatcher rd = ctx.getRequestDispatcher( m_resultPage );
-        log.debug( "Forwarding to " + m_resultPage );
-        rd.forward( req, res );
+        // RequestDispatcher rd = ctx.getRequestDispatcher( nextPage );
+
+        log.debug( "Forwarding to " + nextPage );
+        res.sendRedirect( nextPage );
     }
 
 
 
 
     /**
-     * Uploads a specific mime multipart input set, intercepts exceptions.
+     *  Uploads a specific mime multipart input set, intercepts exceptions.
+     *
+     *  @return The page to which we should go next.
      */
     protected String upload( HttpServletRequest req )
     {
         String msg     = "";
         String attName = "(unknown)";
+        String nextPage = "Error.jsp"; // If something bad happened.
 
         try
         {
             MultipartRequest multi = new ServletMultipartRequest( req, m_tmpDir, Integer.MAX_VALUE );
 
-            //
-            // We expect to get parameters 'user', 'wikiname'
-            //
-            // FIXME: Should be read from standard UserProfile.
-            String user     = multi.getURLParameter( "user" );
+            nextPage        = multi.getURLParameter( "nextpage" );
             String wikipage = multi.getURLParameter( "page" );
+            String user     = m_engine.getValidUserName( req );
 
+            //
+            //  Go through all files being uploaded.
+            //
             Enumeration files = multi.getFileParameterNames();
 
             while( files.hasMoreElements() )
@@ -279,7 +292,7 @@ public class AttachmentServlet
             log.warn( msg + " (attachment: " + attName + ")", e );
         }
 
-        return( msg );
+        return nextPage;
     }
 
 
