@@ -2,7 +2,7 @@
 
 <wiki:PageExists>
 
-   <form action="<wiki:Variable var="baseurl"/>Delete.jsp?page=<wiki:PageName />" method="POST" 
+   <form action="<wiki:Variable var="baseurl"/>Delete.jsp?page=<wiki:PageName />" method="post" 
                  accept-charset="<wiki:ContentEncoding />">
 
    <table cellspacing="4">
@@ -55,7 +55,7 @@
                          <td>
                              <wiki:PageType type="page">
                              <wiki:DiffLink version="latest" 
-                                            newVersion="<%=Integer.toString(currentPage.getVersion())%>">
+                                            newVersion="current">
                                  <wiki:PageDate/>
                              </wiki:DiffLink>
                              </wiki:PageType>
@@ -70,12 +70,12 @@
 
                          <wiki:PageType type="page">
                            <td>
-                              <% if( currentPage.getVersion() > 1 ) { %>
-                                   <wiki:DiffLink version="<%=Integer.toString(currentPage.getVersion())%>" 
-                                                  newVersion="<%=Integer.toString(currentPage.getVersion()-1)%>">
-                                       from version <%=currentPage.getVersion()-1%> to <%=currentPage.getVersion()%>
+                              <wiki:CheckVersion mode="notfirst">
+                                   <wiki:DiffLink version="current" 
+                                                  newVersion="previous">
+                                       from version <wiki:PreviousVersion/> to <wiki:PageVersion/>
                                    </wiki:DiffLink>
-                               <% } %>
+                              </wiki:CheckVersion>
                            </td>
                          </wiki:PageType>
 
@@ -103,7 +103,7 @@
     </wiki:PageType>
     <wiki:PageType type="attachment">
 
-       <form action="<wiki:Variable var="baseurl"/>attach" method="POST" enctype="multipart/form-data">
+       <form action="<wiki:Variable var="baseurl"/>attach" method="post" enctype="multipart/form-data">
 
            <%-- Do NOT change the order of wikiname and content, otherwise the 
                 servlet won't find its parts. --%>
