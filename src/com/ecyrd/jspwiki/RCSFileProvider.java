@@ -95,7 +95,7 @@ public class RCSFileProvider
         {
             String   cmd = m_logCommand;
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
+            cmd = TextUtil.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
             log.debug("Command = '"+cmd+"'");
 
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
@@ -142,8 +142,8 @@ public class RCSFileProvider
         {
             String cmd = m_checkoutVersionCommand;
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
-            cmd = TranslatorReader.replaceString( cmd, "%v", Integer.toString(version ) );
+            cmd = TextUtil.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
+            cmd = TextUtil.replaceString( cmd, "%v", Integer.toString(version ) );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -179,8 +179,8 @@ public class RCSFileProvider
         {
             String cmd = m_checkinCommand;
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
-            cmd = TranslatorReader.replaceString( cmd, "%u", page.getAuthor() );
+            cmd = TextUtil.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
+            cmd = TextUtil.replaceString( cmd, "%u", page.getAuthor() );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -215,9 +215,9 @@ public class RCSFileProvider
             Pattern datepattern = compiler.compile("^date:\\s*(.*)[\\+\\-;]\\d+;");
             Pattern userpattern = compiler.compile("^\"author=(.*)\"");
 
-            String cmd = TranslatorReader.replaceString( m_fullLogCommand,
-                                                         "%s",
-                                                         mangleName(page)+FILE_EXT );
+            String cmd = TextUtil.replaceString( m_fullLogCommand,
+                                                 "%s",
+                                                 mangleName(page)+FILE_EXT );
             
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
