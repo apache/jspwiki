@@ -76,7 +76,8 @@ public class RCSFileProviderTest extends TestCase
         WikiPage pageinfo = engine.getPage( NAME1 );
 
         assertEquals( "wrong version", maxver, pageinfo.getVersion() );
-        assertEquals( "wrong text", maxver, engine.getText(NAME1).length() );
+        // +2 comes from \r\n at the end of each file.
+        assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
     }
 
     public static Test suite()

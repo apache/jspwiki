@@ -47,7 +47,7 @@ public class WikiEngineTest extends TestCase
 
     public void testPutPage()
     {
-        String text = "Foobar.";
+        String text = "Foobar.\r\n";
         String name = NAME1;
 
         engine.saveText( name, text );

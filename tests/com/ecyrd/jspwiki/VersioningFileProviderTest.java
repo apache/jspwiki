@@ -57,12 +57,14 @@ public class VersioningFileProviderTest extends TestCase
         WikiPage pageinfo = engine.getPage( NAME1 );
 
         assertEquals( "wrong version", maxver, pageinfo.getVersion() );
-        assertEquals( "wrong text", maxver, engine.getText(NAME1).length() );
+        
+        // +2 comes from \r\n.
+        assertEquals( "wrong text", maxver+2, engine.getText(NAME1).length() );
     }
 
     public void testCheckin()
     {
-        String text = "diddo";
+        String text = "diddo\r\n";
 
         engine.saveText( NAME1, text );
 
@@ -73,7 +75,7 @@ public class VersioningFileProviderTest extends TestCase
 
     public void testPageInfo()
     {
-        String text = "diddo";
+        String text = "diddo\r\n";
 
         engine.saveText( NAME1, text );
 
@@ -84,9 +86,9 @@ public class VersioningFileProviderTest extends TestCase
 
     public void testGetOldVersion()
     {
-        String text = "diddo";
-        String text2 = "barbar";
-        String text3 = "Barney";
+        String text = "diddo\r\n";
+        String text2 = "barbar\r\n";
+        String text3 = "Barney\r\n";
 
         engine.saveText( NAME1, text );
         engine.saveText( NAME1, text2 );
@@ -108,9 +110,9 @@ public class VersioningFileProviderTest extends TestCase
 
     public void testVersionHistory()
     {
-        String text = "diddo";
-        String text2 = "barbar";
-        String text3 = "Barney";
+        String text = "diddo\r\n";
+        String text2 = "barbar\r\n";
+        String text3 = "Barney\r\n";
 
         engine.saveText( NAME1, text );
         engine.saveText( NAME1, text2 );
