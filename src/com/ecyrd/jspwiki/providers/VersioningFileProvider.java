@@ -449,6 +449,43 @@ public class VersioningFileProvider
         return list;
     }
 
+    /**
+     *  Removes the relevant page directory under "OLD" -directory as well,
+     *  but does not remove any extra subdirectories from it.  It will only
+     *  touch those files that it thinks to be WikiPages.
+     */
+    // FIXME: Should log errors.
+    public void deletePage( String page )
+    {
+        super.deletePage( page );
+
+        File dir = findOldPageDir( page );
+
+        if( dir.exists() && dir.isDirectory() )
+        {
+            File[] files = dir.listFiles( new WikiFileFilter() );
+
+            for( int i = 0; i < files.length; i++ )
+            {
+                files[i].delete();
+            }
+
+            File propfile = new File( dir, PROPERTYFILE );
+
+            if( propfile.exists() )
+            {
+                propfile.delete();
+            }
+
+            dir.delete();
+        }
+    }
+
+    public void deleteVersion( String page, int version )
+    {
+        throw new InternalWikiException("Not supported yet");
+    }
+
     public String getProviderInfo()
     {
         return "";

@@ -45,6 +45,10 @@ import com.ecyrd.jspwiki.*;
  *  means that it provides the pages in the same way.  The only difference
  *  is that it implements the version history commands, and also in each
  *  checkin it writes the page to the RCS repository as well.
+ *  <p>
+ *  If you decide to dabble with the default commands, please make sure
+ *  that you do not check the default archive suffix ",v".  File deletion
+ *  depends on it.
  *
  *  @author Janne Jalkanen
  */
@@ -57,6 +61,7 @@ public class RCSFileProvider
     private String m_logCommand      = "rlog -zLT -r %s";
     private String m_fullLogCommand  = "rlog -zLT %s";
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
+    private String m_deleteVersionCommand = "rcs -o1.%v %s";
     
     private static final Category   log = Category.getInstance(RCSFileProvider.class);
 
@@ -235,6 +240,11 @@ public class RCSFileProvider
 
             process.waitFor();
 
+            // 
+            // FIXME: A problem here: RCS will return the last version if the
+            // version in question does not exist.
+            //
+
             int exitVal = process.exitValue();
             
             log.debug("Done, returned = "+exitVal);
@@ -242,11 +252,19 @@ public class RCSFileProvider
             //
             //  If fetching failed, assume that this is because of the user
             //  has just migrated from FileSystemProvider, and check
-            //  if he's getting version 1.
+            //  if he's getting version 1.  Else he might be trying to find
+            //  a version that has been deleted.
             //
-            if( exitVal != 0 && version == 1 )
+            if( exitVal != 0 )
             {
-                result = super.getPageText( page, version );
+                if( version == 1 )
+                {
+                    result = super.getPageText( page, version );
+                }
+                else
+                {
+                    throw new NoSuchVersionException( "Page: "+page+", version="+version);
+                }
             }
         }
         catch( Exception e )
@@ -381,6 +399,84 @@ public class RCSFileProvider
         }
 
         return list;
+    }
+
+    /**
+     *  Removes the page file and the RCS archive from the repository.
+     *  This method assumes that the page archive ends with ",v".
+     */
+    public void deletePage( String page )
+    {
+        log.debug( "Deleting page "+page );
+        super.deletePage( page );
+
+        File rcsdir  = new File( getPageDirectory(), "RCS" );
+
+        if( rcsdir.exists() && rcsdir.isDirectory() )
+        {
+            File rcsfile = new File( rcsdir, mangleName(page)+FILE_EXT+",v" );
+
+            if( rcsfile.exists() )
+            {
+                if( rcsfile.delete() == false )
+                {
+                    log.warn( "Deletion of RCS file "+rcsfile.getAbsolutePath()+" failed!" );
+                }
+            }
+            else
+            {
+                log.info( "RCS file does not exist for page: "+page );
+            }
+        }
+        else
+        {
+            log.info( "No RCS directory at "+rcsdir.getAbsolutePath() );
+        }
+    }
+
+    public void deleteVersion( String page, int version )
+    {        
+        String         line = "<rcs not run>";
+        BufferedReader stderr;
+        boolean        success = false;
+        String         cmd     = m_deleteVersionCommand;
+
+        log.debug("Deleting version "+version+" of page "+page);
+
+        cmd = TextUtil.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
+        cmd = TextUtil.replaceString( cmd, "%v", Integer.toString( version ) );
+
+        log.debug("Running command "+cmd);
+        try
+        {
+            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
+
+            // 
+            // 'rcs' command outputs to stderr methinks.
+            //
+
+            // FIXME: Should this use encoding as well?
+            
+            stderr = new BufferedReader( new InputStreamReader(process.getErrorStream() ) );
+        
+            while( (line = stderr.readLine()) != null )
+            {
+                log.debug( "LINE="+line );
+                if( line.equals("done") )
+                {
+                    success = true;
+                }
+            }
+        }
+        catch( IOException e )
+        {
+            log.error("Page deletion failed: ",e);
+        }
+
+        if( !success )
+        {
+            log.error("Version deletion failed. Last info from RCS is: "+line);
+        }
     }
 
     /**

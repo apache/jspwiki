@@ -363,12 +363,19 @@ public abstract class AbstractFileProvider
 
     public void deleteVersion( String pageName, int version )
     {
-        // FIXME.
+        if( version == WikiProvider.LATEST_VERSION )
+        {
+            File f = findPage( pageName );
+
+            f.delete();
+        }
     }
 
     public void deletePage( String pageName )
     {
-        // FIXME:
+        File f = findPage( pageName );
+
+        f.delete();
     }
 
     public class WikiFileFilter
