@@ -41,7 +41,7 @@ public class AuthorizationManagerTest extends TestCase
     public void testSimplePermissions()
         throws Exception
     {
-        String src = "[{DENY edit All}] [{ALLOW edit FooBar}]";
+        String src = "[{DENY edit Guest}] [{ALLOW edit FooBar}]";
 
         m_engine.saveText( "Test", src );
 
