@@ -1,3 +1,10 @@
+2004-10-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.115
+
+        * NamedGroup now works.  Some refactoring of Login.jsp to make
+        it more usable.
+
 2004-10-12  Erik Bunn  <Erik.Bunn@memecry.net>
 
         * v2.1.114
