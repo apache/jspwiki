@@ -4,7 +4,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%>: <%=pagereq%><%=versionInfo%></TITLE>
+  <TITLE><wiki:ApplicationName />: <wiki:PageName /></TITLE>
   <%@ include file="../cssinclude.js" %>
   <wiki:RSSLink />
 </HEAD>
@@ -17,9 +17,9 @@
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <% if( isEditable ) { %>
-          <wiki:EditLink>Edit <%=pageReference%></wiki:EditLink>
-       <% } %>
+       <wiki:Permission permission="edit">
+          <wiki:EditLink>Edit this page</wiki:EditLink>
+       </wiki:Permission>
        </P>
        <%@ include file="LeftMenuFooter.jsp" %>
        <P>
@@ -37,7 +37,7 @@
       <% if( version > 0 ) { %>
          <FONT COLOR="red">
             <P CLASS="versionnote">This is version <%=version%>.  It is not the current version,
-            and thus it cannot be edited.  <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">(Back to current version)</A></P> 
+            and thus it cannot be edited.  <wiki:LinkTo>(Back to current version)</wiki:LinkTo></P> 
          </FONT>
       <% } %>
 
@@ -53,10 +53,9 @@
       <table border="0" width="100%">
         <tr>
           <td align="left">
-             <% if( isEditable ) { %>
-                 <wiki:EditLink>Edit <%=pageReference%></wiki:EditLink>
-                 &nbsp;&nbsp;
-             <% } %>
+             <wiki:Permission permission="edit">
+                 <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
+             </wiki:Permission>
              <% if( wikipage != null ) { %>
                  <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
              <% } %>
