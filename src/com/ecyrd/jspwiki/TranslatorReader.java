@@ -70,7 +70,7 @@ public class TranslatorReader extends Reader
 
     /** Allow this many characters to be pushed back in the stream.  In effect,
         this limits the size of a single heading line.  */
-    private static final int              PUSHBACK_BUFFER_SIZE = 512;
+    private static final int              PUSHBACK_BUFFER_SIZE = 10*1024;
     private PushbackReader m_in;
 
     private StringReader   m_data = new StringReader("");
