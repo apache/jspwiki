@@ -1,0 +1,153 @@
+
+This is a snapshot of the [on-line copy of the JSPWiki FAQ|JSPWiki:JSPWikiFAQ].  You should go there for more up-to-date questions and answers.
+
+----
+
+!!How do [WikiAttachments] work ?
+
+Yes, please do see the [wiki attachments] page for more information.
+
+--[JanneJalkanen], 09-Dec-02.
+
+!!How recent are [Recent Changes]?
+
+We just basically look at the modification time of each file, then show them in reversed order.  Currently the cutoff point is at 60 days, but you can see a full list of all changes at [FullRecentChanges].
+
+However, if a page gets modified twice, the change is only marked up once.  This helps to keep the list compact.
+
+!!How do I delete a page?
+
+Simple.  Just put a link to the page [DELETEME] as the first item on your page, and at some point the administration will delete these pages.
+
+!!What happens if two people try to edit and save concurrently? Last one to save wins? 
+
+First one to save wins, the next guy gets a warning and a note telling that you should check what changed and try a re-edit. 
+
+!Where do I find the source code?
+
+You can download the JSPWiki distribution package, including a war-file and the source code from [JSPWiki:JSPWikiDownload].
+
+!!How do I add a new Wiki page?
+
+Create a link that points to a new (not existing) page using its [WikiName]. Click question mark (?) after the new link and you will get an editor for the new page. 
+
+The reason for this is that linking between [WikiPage]s is the way how people
+find to these pages.  If a page is not linked to, nobody can find it and it
+is thus useless.  By forcing people to create a link first, you encourage people to link more and more.
+In fact, whenever you write something that you think someone could write an explanation for, just make it a hyperlink.  Someone will pick it up, someday.
+
+
+!!How does JSPWiki compare to other Java based Wikis?
+
+I am pondering the possibility of installing a Wiki on a site I run. Well, I actually have already decided I will, so now I am looking at different implementations. My hosting provider supports perl, python, php and java, so I can really use anyone. However, since the rest of the site is JSP based I prefer to use a JSP based Wiki if possible. I'd like to know which are the advantages or features of [JSPWiki] as compared to other JSP [WikiWikiWeb:WikiWikiClones]. How easy is it to modify the editing markers, for example? --[VictorJalencas]  PS: BTW, I have just seen all the RPC hooks in the [JSPWikiDevelopment] page... seems like I am almost decided ;)
+
+[MahlenMorris]: I hope you aren't expecting to get some sort of unbiased answer from the people who hang out here. :)
+
+Well, the reasons i chose to use JSPWiki over others were:
+*It's in Java. I'm currently most adept at Java coding, so any modifications i might need to make would be easier in Java. Admittedly, i haven't actually coded any modifications to JSPWiki, but I have tracked down a bug or two.
+*It's under active development. None of the other Java-based Wiki Clones that i could find were. It means you don't have to fix/add every new feature yourself.
+*I like the Wiki syntax of JSPWiki. It hasn't been allowed to get too convoluted, which is important to me, since my user base is somewhat naive and easily bewildered.
+
+Since I adopted it, the XML-RPC server stuff that Janne put in has grabbed my brain and shook it like a wet kitten, inspiring me to start my first [FreeSoftware] project, [Hula]. I haven't even had time to implement some of my wackier ideas using that, but stay tuned.
+
+Plus, hey, Janne's been a joy to intercontinentally work with. So that's why I'm using JSPWiki.
+
+
+!!Which is the proper page to ask for support?
+
+Go to the JSPWiki main site, and ask around in there.
+
+For example:
+
+* [JSPWiki:BugReports] - a good place if you suspect a bug.
+* [JSPWiki:Ideas] - if you have new ideas
+* [JSPWiki:JSPWikiDevelopment] - for a list of all development related pages.
+
+
+!!Why is there a noticeable delay when you first start JSPWiki up?
+
+This is because the ReferenceManager (the piece of software that is responsible for creating the "Referenced by" -list which you can see in the [left menu footer], the [unused pages] -list and [undefined pages] -list, scans all wiki pages on your hard drive for links.  For a large Wiki on a slow machine, this initialization can take a long time.
+
+!!Why is RecentChanges very slow?
+
+Are you using [RCSFileProvider] or [VersioningFileProvider]?  If yes, then the reason is that JSPWiki has to go and find the author for each page separately.  Especially with RCSFileProvider, this can take some time.
+
+The solution is to enable the [CachingFileProvider], which keeps a list of recently used pages and author information in memory.
+
+!!Would creating folders and subfolders for the contents translate into a hierarchy?
+
+No.  JSPWiki uses an entirely flat file structure for pages.  The different PageProviders may use subdirectories, but these are not visible to the user.
+
+This is actually a conscious decision: Wikis are flat by nature, and if you want to have a hierarchy, then what you need to do is to define the pages by hand.  This is actually very useful - for example, see [JSPWikiDevelopment] for a page that contains all pages that have something to do with JSPWiki development.
+
+You can easily "simulate" hierarchies by using dots, but JSPWiki in itself does not limit the structure in any way. --[JanneJalkanen]
+
+!!How do I see an Index of all the pages which exist?
+
+Go to [PageIndex].  It is in fact just a regular WikiPage which has just the IndexPlugin from AlainRavet embedded.
+
+
+!!How do I change the colour of the edit screen to something other than blue?
+
+The background color is determined in three locations:
+
+# Edit the CSS files (jspwiki_ie.css, jspwiki_ns.css, and jspwiki_mac.css) and change the "BODY.edit" color
+# Edit the "EditTemplate.jsp" file
+# Make your own stylesheet, and redefine "BODY.edit" in it, then use your browser's facilities to force that stylesheet.
+
+
+!!How do I change the page layout, modify the presentation or add a logo
+
+From version 1.9.x all pages are now [templates|JSPWikiTemplates], which the administrator can change at will.  The display of many page elements can be modified via the [style sheets|CascadingStyleSheets].
+
+-- [JanneJalkanen]
+
+!!I've written (a new plugin|bug fixes|new functionality)!  How do I contribute it to JSPWiki?
+
+Please see [JSPWiki:ContributingChanges].
+
+!!Username not being shown on modified pages
+
+Q: I keep getting the following message on all pages -\\
+"This page last changed on Wed Nov 13 16:44:27 EST 2002 by unknown."\\
+Why isn't the "unknown" changed to the username I've logged in as ? My username does showup in the left menu as - "G'day vipul"
+
+A: You're not using any of the versioning file providers: RCSFileProvider or VersioningFileProvider. If you use only FileSystemProvider, then the username is not stored with the changes. --[JanneJalkanen], 15-Nov-02
+
+!!Log4j DNS lookups taking lots of time
+
+Some time below, somebody complained about a terribly slowly running
+JSPWiki - I ran into a similar situation: after having successfully
+installed JSPWiki 1.8.2 within a [LiteWebserver|http://www.gefionsoftware.com]
+I observed long delays between an HTTP request and the corresponding response
+from the server (30 seconds and more) - surprisingly, the whole(!) server
+was blocked during that time, i.e., concurrent requests with other URIs (I'm
+using that server for a HTML wrapping facility based on servlets which I
+wrote myself) did not proceed as well!
+
+I then figured out, that the delay might have been caused by problems with
+DNS lookups (the method HttpRequest.getRemoteHost took very long to complete)
+and switching off DNS immediately solved the problem.
+
+Consequence: you may not have to switch off DNS resolution yourself (I just used this
+to verify my assumption), but you may want to change your DNS servers or
+help your system with a local "hosts" file...
+
+Hoping that this remark is of any help...
+
+--[Andreas Rozek|http://www.Andreas-Rozek.de]
+
+You may be right. There should be an option to disable DNS queries (which incidentally, are currently
+only used by the logging routines. Duh. Perhaps I should just disable them completely.)
+
+--[JanneJalkanen]
+
+Hmmm, can I disable logging by {{log4j}} somehow? This package was the one
+which caused most of the trouble when installing JSPWiki on my LiteWebServer...
+
+--[Andreas Rozek|http://www.Andreas-Rozek.de]
+
+Simple: Look at the jspwiki.properties, right at the end. Comment out anything that has anything to do log4j, and you should be set. Unfortunately, since string concatenation is done ''before'' the logging, you'll still get the DNS resolution. Easiest is to remove the offending statements from the JSP pages.
+
+--[JanneJalkanen]
+
