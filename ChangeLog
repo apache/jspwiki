@@ -1,3 +1,10 @@
+2004-11-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.122.
+
+        * Fixed the web.xml security constraints to something more
+        useful.  Suggested by Andrew Jaquith.
+
 2004-11-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.121.
