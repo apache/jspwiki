@@ -268,6 +268,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "http://www.foo.bar/ANewHope/";
 
+        // System.out.println( "EX:"+translate(src) );
         assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>",
                       translate(src) );
     }
@@ -279,6 +280,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "mailto:foo@bar.com";
 
+        // System.out.println( "EX:"+translate(src) );
         assertEquals( "<a class=\"external\" href=\"mailto:foo@bar.com\">mailto:foo@bar.com</a>",
                       translate(src) );
     }
@@ -290,7 +292,20 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "This should be a link: http://www.foo.bar/ANewHope/.  Is it?";
 
-        assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/.</a>  Is it?",
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>.  Is it?",
+                      translate(src) );
+    }
+
+    /** Hyperlinks in brackets. */
+
+    public void testHyperlinksCCURLs4()
+        throws Exception
+    {
+        String src = "This should be a link: (http://www.foo.bar/ANewHope/)  Is it?";
+
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "This should be a link: (<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>)  Is it?",
                       translate(src) );
     }
 
