@@ -141,7 +141,7 @@ public class TranslatorReader extends Reader
 
         Properties props = m_engine.getWikiProperties();
         m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
-        m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" );
+        m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" ) );
     }
 
     /**
