@@ -102,6 +102,17 @@ public class TranslatorReader extends Reader
             clean.append( component );
         }
 
+        //  Remove offending characters that are not allowed inside filenames
+
+        for( int i = 0; i < clean.length(); i++ )
+        {
+            if( !Character.isLetterOrDigit(clean.charAt(i)) )
+            {
+                clean.deleteCharAt(i);
+                --i; // We just shortened this buffer.
+            }
+        }
+
         return clean.toString();
     }
 
