@@ -51,6 +51,7 @@ public class TextUtil
               case '.':
               case '*':
               case '-':
+              case '/':
                 result.append( c );
                 break;
 
