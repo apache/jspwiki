@@ -31,6 +31,12 @@
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     WikiPage    wikipage    = wikiContext.getPage();
     
+    if( wiki.getBaseURL().length() == 0 )
+    {
+        response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate Atom feed" );
+        return;
+    }
+
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
     response.setContentType("text/xml; charset=UTF-8" );
@@ -86,7 +92,7 @@
 
             String encodedName = wiki.encodeName(p.getName());
 
-            String url = wiki.getViewURL(p.getName());
+            String url = wiki.getAbsoluteViewURL(p.getName());
 
             out.println(" <entry>");
 
@@ -131,6 +137,12 @@
 
                 if( maxlen > 0 )
                 {
+                    //
+                    //  Force the TranslatorReader to output absolute URLs
+                    //  regardless of the current settings.
+                    //
+                    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
+
                     pageText = wiki.textToHTML( wikiContext, 
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
@@ -187,7 +199,7 @@
             //  This may be useful later on, once I figure out which <link>-tag to use.
             if( wiki.pageExists(author) )
             {
-                out.println("<homepage>"+wiki.getViewURL(author)+"</homepage>");
+                out.println("<homepage>"+wiki.getAbsoluteViewURL(author)+"</homepage>");
             }
             */
             out.println("  </author>\n");
