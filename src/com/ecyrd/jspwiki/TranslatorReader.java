@@ -63,6 +63,7 @@ public class TranslatorReader extends Reader
     private boolean        m_iscode       = false;
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
+    private boolean        m_isTypedText  = false;
     private boolean        m_istable      = false;
     private int            m_listlevel    = 0;
     private int            m_numlistlevel = 0;
@@ -599,6 +600,12 @@ public class TranslatorReader extends Reader
             m_isitalic = false;
         }
 
+        if( m_isTypedText )
+        {
+            buf.append("</TT>");
+            m_isTypedText = false;
+        }
+
         for( ; m_listlevel > 0; m_listlevel-- )
         {
             buf.append( "</UL>\n" );
@@ -681,18 +688,17 @@ public class TranslatorReader extends Reader
     private String setTT( String line )
     {
         StringBuffer buf = new StringBuffer();
-        boolean      ison = false;
 
         for( int i = 0; i < line.length(); i++ )
         {
-            if( line.charAt(i) == '{' && !ison )
+            if( line.charAt(i) == '{' && !m_isTypedText )
             {
                 int count = countChar( line, i, '{' );
 
                 if( count == 2 )
                 {
                     buf.append( "<TT>" );
-                    ison = true;
+                    m_isTypedText = true;
                 }
                 else 
                 {
@@ -700,14 +706,14 @@ public class TranslatorReader extends Reader
                 }
                 i += count-1;
             }
-            else if( line.charAt(i) == '}' && ison )
+            else if( line.charAt(i) == '}' && m_isTypedText )
             {
                 int count = countChar( line, i, '}' );
 
                 if( count == 2 )
                 {
                     buf.append( "</TT>" );
-                    ison = false;
+                    m_isTypedText = false;
                 }
                 else 
                 {
@@ -719,12 +725,6 @@ public class TranslatorReader extends Reader
             { 
                 buf.append( line.charAt(i) );
             }
-        }
-
-        // Make sure we don't forget it open.
-        if( ison )
-        {
-            buf.append("</TT>");
         }
 
         return buf.toString();
