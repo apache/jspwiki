@@ -12,6 +12,8 @@ public class PageManagerTest extends TestCase
 {
     Properties props = new Properties();
 
+    TestEngine engine;
+
     public PageManagerTest( String s )
     {
         super( s );
@@ -22,6 +24,7 @@ public class PageManagerTest extends TestCase
     {
         props.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(props);
+        engine = new TestEngine(props);
     }
 
     public void tearDown()
@@ -32,7 +35,7 @@ public class PageManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "true" );
-        PageManager m = new PageManager( props );
+        PageManager m = new PageManager( engine, props );
 
         assertTrue( m.getProvider() instanceof CachingProvider );
     }
@@ -41,7 +44,7 @@ public class PageManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( "jspwiki.usePageCache", "false" );
-        PageManager m = new PageManager( props );
+        PageManager m = new PageManager( engine, props );
 
         assertTrue( !(m.getProvider() instanceof CachingProvider) );
     }
