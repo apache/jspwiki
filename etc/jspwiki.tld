@@ -175,6 +175,12 @@
   </tag>  
 
   <tag>
+    <name>IfNoSearchResults</name>
+    <tagclass>com.ecyrd.jspwiki.tags.IfNoSearchResultsTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+  </tag>  
+
+  <tag>
     <name>Include</name>
     <tagclass>com.ecyrd.jspwiki.tags.IncludeTag</tagclass>
     <bodycontent>empty</bodycontent>
@@ -384,10 +390,22 @@
     </attribute>
     <attribute>
        <name>list</name>
-       <required>true</required>
+       <required>false</required>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
 
+  </tag>  
+
+  <tag>
+    <name>SearchResults</name>
+    <tagclass>com.ecyrd.jspwiki.tags.SearchResultsTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+  </tag>  
+
+  <tag>
+    <name>SearchResultsSize</name>
+    <tagclass>com.ecyrd.jspwiki.tags.SearchResultsSizeTag</tagclass>
+    <bodycontent>empty</bodycontent>
   </tag>  
 
   <tag>
