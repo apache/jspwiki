@@ -69,6 +69,7 @@ public class FormOpen
     private static org.apache.log4j.Logger log = 
 	org.apache.log4j.Logger.getLogger( FormOpen.class );
 
+    public static final String PARAM_METHOD = "method";
 
     /**
      */
@@ -84,6 +85,14 @@ public class FormOpen
         if( submitServlet == null )
             submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
 
+        String method = (String)params.get( PARAM_METHOD );
+        if( method == null ) method="post";
+        
+        if( !(method.equalsIgnoreCase("get") || method.equalsIgnoreCase("post")) )
+        {
+            throw new PluginException("Method must be either 'post' or 'get'");
+        }
+        
         FormInfo info = getFormInfo( ctx );
         if( info != null )
         {
@@ -95,8 +104,9 @@ public class FormOpen
                 log.debug( "Previous FormInfo for this form was found in context." );
                 // If the FormInfo exists, and if we're supposed to display on
                 // error only, we need to exit now.
-                if( hide != null && HIDE_SUCCESS.equals( hide ) && 
-		    info.getStatus() == FormInfo.EXECUTED )
+                if( hide != null && 
+                    HIDE_SUCCESS.equals( hide ) && 
+                    info.getStatus() == FormInfo.EXECUTED )
                 {
                     info.setHide( true );
                     return( "<p>(no need to show form open now)" );
@@ -124,7 +134,7 @@ public class FormOpen
         tag.append( "<div class=\"wikiform\">\n" );
         tag.append( "<form action=\"" + submitServlet );
         tag.append( "\" name=\"" + formName );
-        tag.append( "\" method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n" );
+        tag.append( "\" method=\""+method+"\" enctype=\"application/x-www-form-urlencoded\">\n" );
         tag.append( "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN );
         tag.append( "\" value=\"" + formName + "\"/>\n" );
 
