@@ -351,7 +351,8 @@ public class VersioningFileProvider
         WikiPage p = null;
 
         if( version == WikiPageProvider.LATEST_VERSION ||
-            version == latest+1 )
+            version == latest+1 || 
+            (version == 1 && latest == -1) )
         {
             //
             // Yes, we need to talk to the top level directory
