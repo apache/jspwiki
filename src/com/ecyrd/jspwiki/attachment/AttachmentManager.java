@@ -240,7 +240,7 @@ public class AttachmentManager
         //  If the page cannot be determined, we cannot possibly find the 
         //  attachments.
         //
-        if( currentPage == null )
+        if( currentPage == null || currentPage.getName().length() == 0 )
         {
             return null;
         }
