@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.log4j.Category;
 
@@ -85,7 +86,7 @@ public class BasicAttachmentProvider
     }
 
     /**
-     *  Finds storage dir, makes sure it exists.
+     *  Finds storage dir, and if it exists, makes sure that it is valid.
      *
      *  @param wikipage Page to which this attachment is attached.
      */
@@ -94,12 +95,7 @@ public class BasicAttachmentProvider
     {
         File f = new File( m_storageDir, wikipage+DIR_EXTENSION );
 
-        if( !f.exists() )
-        {
-            f.mkdirs();
-        }
-
-        if( !f.isDirectory() )
+        if( f.exists() && !f.isDirectory() )
         {
             throw new ProviderException("Storage dir '"+f.getAbsolutePath()+"' is not a directory!");
         }
@@ -113,7 +109,7 @@ public class BasicAttachmentProvider
     private File findAttachmentDir( Attachment att )
         throws ProviderException
     {
-        File f = new File( findPageDir(att.getName()), att.getFileName() );
+        File f = new File( findPageDir(att.getParentName()), att.getFileName() );
 
         return f;
     }
@@ -131,7 +127,7 @@ public class BasicAttachmentProvider
         // File pageDir = findPageDir( att.getName() );
         File attDir  = findAttachmentDir( att );
 
-        log.debug("Finding pages in "+attDir.getAbsolutePath());
+        // log.debug("Finding pages in "+attDir.getAbsolutePath());
         String[] pages = attDir.list( new AttachmentVersionFilter() );
 
         if( pages == null )
@@ -143,7 +139,7 @@ public class BasicAttachmentProvider
 
         for( int i = 0; i < pages.length; i++ )
         {
-            log.debug("Checking: "+pages[i]);
+            // log.debug("Checking: "+pages[i]);
             int cutpoint = pages[i].indexOf( '.' );
             if( cutpoint > 0 )
             {
@@ -196,7 +192,7 @@ public class BasicAttachmentProvider
 
         properties.store( out, 
                           " JSPWiki page properties for "+
-                          att.getName()+"/"+att.getFileName()+
+                          att.getName()+
                           ". DO NOT MODIFY!" );
 
         out.close();
@@ -248,7 +244,7 @@ public class BasicAttachmentProvider
             File newfile = new File( attDir, versionNumber+"."+
                                      getFileExtension(att.getFileName()) );
 
-            log.info("Uploading attachment "+att.getFileName()+" to page "+att.getName());
+            log.info("Uploading attachment "+att.getFileName()+" to page "+att.getParentName());
             log.info("Saving attachment contents to "+newfile.getAbsolutePath());
             out = new FileOutputStream(newfile);
 
@@ -357,8 +353,7 @@ public class BasicAttachmentProvider
             return null;
         }
 
-        Attachment att = new Attachment( page.getName() );
-        att.setFileName( name );
+        Attachment att = new Attachment( page.getName(), name );
         
         if( version == WikiProvider.LATEST_VERSION )
         {
@@ -378,6 +373,7 @@ public class BasicAttachmentProvider
             File f = findFile( dir, att );
 
             att.setSize( f.length() );
+            att.setLastModified( new Date(f.lastModified()) );
         }
         catch( IOException e )
         {
@@ -389,9 +385,32 @@ public class BasicAttachmentProvider
         return att;
     }
 
-    public Collection getVersionHistory( String wikiname )
+    public Collection getVersionHistory( Attachment att )
     {
-        return null;
+        ArrayList list = new ArrayList();
+
+        try
+        {
+            int latest = findLatestVersion( att );
+
+            for( int i = 1; i <= latest; i++ )
+            {
+                Attachment a = getAttachmentInfo( new WikiPage(att.getParentName()), 
+                                                  att.getFileName(), i );
+
+                if( a != null )
+                {
+                    list.add( a );
+                }
+            }
+        }
+        catch( ProviderException e )
+        {
+            log.error("Getting version history failed for page: "+att,e);
+            // FIXME: SHould this fail?
+        }
+
+        return list;
     }
 
     /**
