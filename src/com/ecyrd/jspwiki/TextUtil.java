@@ -171,4 +171,20 @@ public class TextUtil
         return rs;
     }
 
+    /**
+     *  Replaces the relevant entities inside the String.
+     *  All &gt;, &lt; and &quot; are replaced by their
+     *  respective names.
+     *
+     *  @since 1.6.1
+     */
+    public static String replaceEntities( String src )
+    {
+        src = TranslatorReader.replaceString( src, "<", "&lt;" );
+        src = TranslatorReader.replaceString( src, ">", "&gt;" );
+        src = TranslatorReader.replaceString( src, "\"", "&quot;" );
+
+        return src;
+    }
+
 }
