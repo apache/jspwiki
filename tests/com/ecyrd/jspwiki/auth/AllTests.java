@@ -17,6 +17,7 @@ public class AllTests extends TestCase
         suite.addTest( UserProfileTest.suite() );
         suite.addTest( WikiGroupTest.suite() );
         suite.addTest( AuthorizationManagerTest.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.modules.AllTests.suite() );
 
         return suite;
     }
