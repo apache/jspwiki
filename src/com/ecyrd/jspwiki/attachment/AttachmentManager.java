@@ -416,4 +416,22 @@ public class AttachmentManager
     {
         return m_provider;
     }
+    
+    /**
+     * Deletes the given attachment version.
+     */
+    public void deleteVersion( Attachment att )
+    	throws ProviderException
+    {
+        m_provider.deleteVersion( att );
+    }
+
+    /** 
+     * Deletes all versions of the given attachment.
+     */
+    public void deleteAttachment( Attachment att )
+    	throws ProviderException
+    {
+        m_provider.deleteAttachment( att );
+    }
 }
