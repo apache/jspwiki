@@ -28,6 +28,7 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
  *  content is moved around in Strings, though.
  */
 public class WikiPage
+    implements Cloneable
 {
     private String m_name;
     private Date   m_lastModified;
@@ -82,5 +83,20 @@ public class WikiPage
     public String toString()
     {
         return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+    }
+
+    /**
+     *  Creates a deep clone of a WikiPage.  Strings are not cloned, since
+     *  they're immutable.
+     */
+    public Object clone()
+    {
+        WikiPage p       = new WikiPage(m_name);
+
+        p.m_author       = m_author;
+        p.m_version      = m_version;
+        p.m_lastModified = (Date)m_lastModified.clone();
+
+        return p;
     }
 }
