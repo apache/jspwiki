@@ -17,6 +17,11 @@ public class WikiGroup
     {
     }
 
+    public WikiGroup( String name )
+    {
+        setName( name );
+    }
+
     public boolean addMember(Principal user)
     {
         if( isMember(user) )
@@ -32,19 +37,33 @@ public class WikiGroup
 
     public boolean removeMember(Principal user)
     {
-        if( !isMember(user) )
-        {
-            return false;
-        }
+        user = findMember( user.getName() );
+
+        if( user == null ) return false;
 
         m_members.remove( user );
 
         return true;
     }
 
-    public boolean isMember(Principal member)
+    private Principal findMember( String name )
     {
-        return m_members.contains( member );
+        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        {
+            Principal member = (Principal) i.next();
+
+            if( member.getName().equals( name ) )
+            {
+                return member;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean isMember(Principal principal)
+    {
+        return findMember( principal.getName() ) != null;
     }
 
     public Enumeration members()
@@ -86,6 +105,18 @@ public class WikiGroup
 
     public String toString()
     {
-        return "[Group: "+getName()+"]";
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( "[Group: "+getName()+", members=" );
+
+        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        {
+            sb.append( i.next() );
+            sb.append(", ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }
