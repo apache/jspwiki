@@ -41,6 +41,8 @@
                                   list,
                                   PageContext.REQUEST_SCOPE );
 
+        query = TextUtil.replaceEntities( query );
+
         pageContext.setAttribute( "query",
                                   query,
                                   PageContext.REQUEST_SCOPE );
