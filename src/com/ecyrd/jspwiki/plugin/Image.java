@@ -32,8 +32,9 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  @author Janne Jalkanen
  *  @since 2.1.4.
  */
-// FIXME: Does not clean things like URLs of quotation marks.
-// FIXME: Does not yet provide hyperlinking capability.
+// FIXME: It is not yet possible to do wiki internal links.  In order to
+//        do this cleanly, a TranslatorReader revamp is needed.
+
 public class Image
     implements WikiPlugin
 {
@@ -44,23 +45,42 @@ public class Image
     public static final String PARAM_ALT      = "alt";
     public static final String PARAM_CAPTION  = "caption";
     public static final String PARAM_LINK     = "link";
+    public static final String PARAM_STYLE    = "style";
+    public static final String PARAM_CLASS    = "class";
+    public static final String PARAM_MAP      = "map";
+    public static final String PARAM_BORDER   = "border";
+
+    /**
+     *  This method is used to clean away things like quotation marks which
+     *  a malicious user could use to stop processing and insert javascript.
+     */
+    private static final String getCleanParameter( Map params, String paramId )
+    {
+        return TextUtil.replaceEntities( (String) params.get( paramId ) );
+    }
 
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
-        String src     = (String) params.get( PARAM_SRC );
-        String align   = (String) params.get( PARAM_ALIGN );
-        String ht      = (String) params.get( PARAM_HEIGHT );
-        String wt      = (String) params.get( PARAM_WIDTH );
-        String alt     = (String) params.get( PARAM_ALT );
-        String caption = (String) params.get( PARAM_CAPTION );
-        String link    = (String) params.get( PARAM_LINK );
+        String src     = getCleanParameter( params, PARAM_SRC );
+        String align   = getCleanParameter( params, PARAM_ALIGN );
+        String ht      = getCleanParameter( params, PARAM_HEIGHT );
+        String wt      = getCleanParameter( params, PARAM_WIDTH );
+        String alt     = getCleanParameter( params, PARAM_ALT );
+        String caption = getCleanParameter( params, PARAM_CAPTION );
+        String link    = getCleanParameter( params, PARAM_LINK );
+        String style   = getCleanParameter( params, PARAM_STYLE );
+        String cssclass= getCleanParameter( params, PARAM_CLASS );
+        String map     = getCleanParameter( params, PARAM_MAP );
+        String border  = getCleanParameter( params, PARAM_BORDER );
 
         if( src == null )
         {
             throw new PluginException("Parameter 'src' is required for Image plugin");
         }
+
+        if( cssclass == null ) cssclass = "imageplugin";
 
         try
         {
@@ -79,8 +99,9 @@ public class Image
 
         StringBuffer result = new StringBuffer();
 
-        result.append( "<table border=0 class=\"imageplugin\"" );
+        result.append( "<table border=\"0\" class=\""+cssclass+"\"" );
         if( align != null ) result.append(" align=\""+align+"\"");
+        if( style != null ) result.append(" style=\""+style+"\"");
         result.append( ">\n" );
 
         if( caption != null ) 
@@ -90,16 +111,21 @@ public class Image
 
 
         result.append( "<tr><td>" );
-
-        if( link != null )  result.append("<a href=\""+link+"\">");
+       
+        if( link != null ) 
+        {
+            result.append("<a href=\""+link+"\">");
+        }
 
         result.append( "<img src=\""+src+"\"" );
        
-        if( ht != null )    result.append(" height=\""+ht+"\"");
-        if( wt != null )    result.append(" width=\""+wt+"\"");
-        if( alt != null )   result.append(" alt=\""+alt+"\"");
+        if( ht != null )     result.append(" height=\""+ht+"\"");
+        if( wt != null )     result.append(" width=\""+wt+"\"");
+        if( alt != null )    result.append(" alt=\""+alt+"\"");
+        if( border != null ) result.append(" border=\""+border+"\"");
+        if( map != null )    result.append(" map=\""+map+"\"");
 
-        result.append("/>");
+        result.append(" />");
         if( link != null )  result.append("</a>");
         result.append("</td></tr>\n");
 
