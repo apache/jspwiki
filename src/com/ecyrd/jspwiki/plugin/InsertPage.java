@@ -73,6 +73,7 @@ public class InsertPage
                 AuthorizationManager mgr = engine.getAuthorizationManager();
                 UserProfile currentUser  = context.getCurrentUser();
 
+                /*
                 if( !mgr.checkPermission( page,
                                           currentUser,
                                           new ViewPermission() ) )
@@ -80,7 +81,7 @@ public class InsertPage
                     res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
                     return res.toString();
                 }
-
+                */
                 /**
                  *  We want inclusion to occur within the context of
                  *  its own page, because we need the links to be correct.
