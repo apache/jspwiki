@@ -1,5 +1,9 @@
 2004-06-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Corrected DTD URI in web.xml.  Thanks to Lance Bader.
+
+2004-06-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * v2.1.99.
 
         * Fixed a long-standing problem with hyperlinks inside headers
