@@ -25,12 +25,16 @@ import org.apache.log4j.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.UserManager;
+import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -62,9 +66,6 @@ public class WikiEngine
     /** If true, then the user name will be stored with the page data.*/
     public static final String PROP_STOREUSERNAME= "jspwiki.storeUserName";
 
-    /** If true, logs the IP address of the editor on saving. */
-    public static final String PROP_STOREIPADDRESS= "jspwiki.storeIPAddress";
-
     /** Define the used encoding.  Currently supported are ISO-8859-1 and UTF-8 */
     public static final String PROP_ENCODING     = "jspwiki.encoding";
 
@@ -90,9 +91,6 @@ public class WikiEngine
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
-
-    /** If true, logs the IP address of the editor */
-    private boolean          m_storeIPAddress = true;
 
     /** If true, uses UTF8 encoding for all data */
     private boolean          m_useUTF8      = true;
@@ -121,6 +119,12 @@ public class WikiEngine
 
     /** Stores the Page manager */
     private PageManager      m_pageManager = null;
+
+    /** Stores the authorization manager */
+    private AuthorizationManager m_authorizationManager = null;
+
+    /** Stores the user manager.*/
+    private UserManager      m_userManager = null;
 
     /** Does all our diffs for us. */
     private DifferenceEngine m_differenceEngine;
@@ -265,9 +269,6 @@ public class WikiEngine
         m_saveUserInfo   = TextUtil.getBooleanProperty( props,
                                                         PROP_STOREUSERNAME, 
                                                         m_saveUserInfo );
-        m_storeIPAddress = TextUtil.getBooleanProperty( props,
-                                                        PROP_STOREIPADDRESS, 
-                                                        m_storeIPAddress );
 
         m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
         m_baseURL        = props.getProperty( PROP_BASEURL, "" );
@@ -294,6 +295,8 @@ public class WikiEngine
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
+            m_authorizationManager = new AuthorizationManager( props );
+            m_userManager       = new UserManager( props );
 
             initReferenceManager();            
         }
@@ -368,7 +371,7 @@ public class WikiEngine
                 {
                     String content = m_pageManager.getPageText( page.getName(), 
                                                                 WikiPageProvider.LATEST_VERSION );
-                    Collection links = scanWikiLinks( content );
+                    Collection links = scanWikiLinks( page, content );
                     Collection attachments = m_attachmentManager.listAttachments( page );
 
                     for( Iterator atti = attachments.iterator(); atti.hasNext(); )
@@ -990,11 +993,11 @@ public class WikiEngine
      *  Reads a WikiPageful of data from a String and returns all links
      *  internal to this Wiki in a Collection.
      */
-    protected Collection scanWikiLinks( String pagedata )
+    protected Collection scanWikiLinks( WikiPage page, String pagedata )
     {
         LinkCollector localCollector = new LinkCollector();        
 
-        textToHTML( new WikiContext(this,""),
+        textToHTML( new WikiContext(this,page),
                     pagedata,
                     localCollector,
                     null,
@@ -1068,12 +1071,12 @@ public class WikiEngine
     /**
      *  Updates all references for the given page.
      */
-    public void updateReferences( String pageName )
+    public void updateReferences( WikiPage page )
     {
-        String pageData = getPureText( pageName, WikiProvider.LATEST_VERSION );
+        String pageData = getPureText( page.getName(), WikiProvider.LATEST_VERSION );
 
-        m_referenceManager.updateReferences( pageName,
-                                             scanWikiLinks( pageData ) );
+        m_referenceManager.updateReferences( page.getName(),
+                                             scanWikiLinks( page, pageData ) );
     }
 
     /**
@@ -1082,22 +1085,14 @@ public class WikiEngine
      *
      *  @param page Page name
      *  @param text The Wiki markup for the page.
+     *  @deprecated
      */
+
     public void saveText( String page, String text )
     {
-        text = TextUtil.normalizePostData(text);
+        WikiPage p = new WikiPage( page );
 
-        // Hook into cross reference collection.
-        m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
-
-        try
-        {
-            m_pageManager.putPageText( new WikiPage(page), text );
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to put page", e );
-        }
+        saveText( p, text );
     }
 
     /**
@@ -1114,7 +1109,7 @@ public class WikiEngine
 
         // Hook into cross reference collection.
         m_referenceManager.updateReferences( page.getName(), 
-                                             scanWikiLinks( text ) );
+                                             scanWikiLinks( page, text ) );
 
         try
         {
@@ -1125,6 +1120,7 @@ public class WikiEngine
             log.error( "Unable to put page", e );
         }
     }
+
 
     /**
      *  Retrieves the user name.  It will check if user has been authenticated,
@@ -1140,6 +1136,7 @@ public class WikiEngine
     // FIXME: This is a terrible time waster, parsing the 
     // textual data every time it is used.
 
+    // FIXME: Not used
     public String getUserName( HttpServletRequest request )
     {
         if( request == null )
@@ -1164,7 +1161,7 @@ public class WikiEngine
             {
                 if( cookies[i].getName().equals( PREFS_COOKIE_NAME ) )
                 {
-                    UserProfile p = new UserProfile(cookies[i].getValue());
+                    UserProfile p = m_userManager.getUserProfile(cookies[i].getValue());
 
                     author = p.getName();
 
@@ -1193,21 +1190,10 @@ public class WikiEngine
      *  @return Returns any sort of user name.  Never returns null.
      */
 
+    // FIXME: Not used
     public String getValidUserName( HttpServletRequest request )
     {
-        String user = getUserName( request );
-
-        if( user == null && m_storeIPAddress )
-        {
-            user = request.getRemoteAddr();
-        }
-
-        if( user == null )
-        {
-            user = "unknown"; // FIXME: Magic
-        }
-
-        return user;
+        return m_userManager.getUserProfile(request).getName();
     }
 
 
@@ -1216,7 +1202,7 @@ public class WikiEngine
      *                 transaction.
      *  @since 1.5.1
      */
-    public void saveText( String page, String text, HttpServletRequest request )
+    public void saveText( WikiPage page, String text, HttpServletRequest request )
     {
         text = TextUtil.normalizePostData(text);
 
@@ -1230,17 +1216,16 @@ public class WikiEngine
             // Hook into cross reference collection.
             // Notice that this is definitely after the saveText() call above, 
             // since it can be called externally and we only want this done once.
-            m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
-
-            WikiPage p = new WikiPage( page );
+            m_referenceManager.updateReferences( page.getName(), 
+                                                 scanWikiLinks( page, text ) );
 
             String author = getValidUserName( request );
 
-            p.setAuthor( author );
+            page.setAuthor( author );
 
             try
             {
-                m_pageManager.putPageText( p, text );
+                m_pageManager.putPageText( page, text );
             }
             catch( ProviderException e )
             {
@@ -1556,6 +1541,22 @@ public class WikiEngine
     public AttachmentManager getAttachmentManager()
     {
         return m_attachmentManager;
+    }
+
+    /**
+     *  Returns the currently used authorization manager.
+     */
+    public AuthorizationManager getAuthorizationManager()
+    {
+        return m_authorizationManager;
+    }
+
+    /**
+     *  Returns the currently used user manager.
+     */
+    public UserManager getUserManager()
+    {
+        return m_userManager;
     }
 
     /**
