@@ -1,3 +1,19 @@
+2004-12-12  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.127
+
+        * Fixed IndexPlugin so that it no longer overflows with large
+        page names.  A long-time annoyance, but something easy to do
+        on a flight to Tokyo... :-).  I also added some new CSS to handle
+        how it looks (and made the whole thing output proper XHTML code.)
+
+        * RecentChangesPlugin (and incidentally, all referrer plugins
+        as well) now heed jspwiki.beautifyTitle.  Patch from Foster
+        Schucker (thanks!)
+
+        * Doublewhoops, forgot to add a proper import to the FormOpen,
+        causing a compilation error.  Arg!  Sorry, everyone!
+
 2004-12-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.126
