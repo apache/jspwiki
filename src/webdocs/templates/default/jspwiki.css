@@ -64,18 +64,20 @@ TEXTAREA.editor {}
 
 .weblog { margin-left: 20px; }
 
-.weblogheading { background: #E0E0E0;
-                 font-size: 120%;
-                 font-family: sans-serif; 
-                 margin-top: 2ex; }
+.weblogentry { }
 
-.weblogentry { font-family: sans-serif; 
-               font-size: 85%; 
-               margin-left: 10px; }
+.weblogentryheading { background: #E0E0E0;
+                      font-size: 120%;
+                      font-family: sans-serif; 
+                      margin-top: 2ex; }
 
-.weblogpermalink { font-size: 8px; 
-                   margin-left: 10px;
-                   clear: both; }
+.weblogentrybody { font-family: sans-serif; 
+                   font-size: 85%; 
+                   margin-left: 10px; }
+
+.weblogentryfooter { font-size: 9px; 
+                     margin-left: 10px;
+                     clear: both; }
 
 P.locknote { color: red;
              font-size: 130%;
