@@ -1,3 +1,14 @@
+2001-10-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.3.3 - not released.
+
+        * You can now have multiline list items if you prepend each
+        additional line with a space.
+
+        * Added the ability to specify multiple patterns determining which
+        images are inlined and which are not.  See jspwiki.properties for
+        more information.
+
 2001-10-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * All external links ending with .png are now inlined as images.
