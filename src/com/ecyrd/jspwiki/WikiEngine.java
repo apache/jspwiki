@@ -57,6 +57,13 @@ public class WikiEngine
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
+    /** Determines the command to be used for 'diff'.  This program must
+        be able to output diffs in the unified format. It defaults to
+        'diff -u %s1 %s2'.*/
+    public static final String PROP_DIFFCOMMAND  = "jspwiki.diffCommand";
+
+    private String         m_diffCommand = "diff -u %s1 %s2"; 
+
     private static Hashtable c_engines = new Hashtable();
 
     private static final String NO_PROVIDER_MSG = 
@@ -134,6 +141,12 @@ public class WikiEngine
         }
 
         log.debug("Configuring WikiEngine...");
+
+        m_diffCommand = props.getProperty( PROP_DIFFCOMMAND, m_diffCommand );
+
+        //
+        //  Find the page provider
+        //
 
         String classname = getRequiredProperty( props, PROP_PAGEPROVIDER );
 
@@ -580,7 +593,6 @@ public class WikiEngine
     /**
      *  Makes the diff by calling "diff" program.
      */
-    // FIXME: Should read 'diff' command from properties.
     private String makeDiff( String p1, String p2 )
     {
         File f1 = null, f2 = null;
@@ -591,7 +603,14 @@ public class WikiEngine
             f1 = FileUtil.newTmpFile( p1 );
             f2 = FileUtil.newTmpFile( p2 );
 
-            String output = FileUtil.runSimpleCommand( "diff -u "+f1.getPath()+" "+f2.getPath(), f1.getParent() );
+            String cmd = TranslatorReader.replaceString( m_diffCommand,
+                                                         "%s1",
+                                                         f1.getPath() );
+            cmd = TranslatorReader.replaceString( cmd,
+                                                  "%s2",
+                                                  f2.getPath() );
+
+            String output = FileUtil.runSimpleCommand( cmd, f1.getParent() );
 
             diff = output;
         }
