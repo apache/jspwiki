@@ -1,3 +1,14 @@
+2001-11-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.5.4
+
+        * Now FileSystemProvider and RCSFileProvider default back to
+        ISO-8859-1 if the data is obviously not UTF-8.  This makes
+        upgrading much easier.
+
+        * Oops, diff forgot to use the chosen character encoding, and
+        would assume ISO-8859-1.
+
 2001-11-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.5.3
