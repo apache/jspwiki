@@ -73,7 +73,7 @@
         //  is the best place to show errors, though.
        
         long pagedate   = Long.parseLong(request.getParameter("edittime"));
-        Date change     = wiki.pageLastChanged( pagereq );
+        Date change     = wikipage.getLastModified();
 
         if( change != null && change.getTime() != pagedate )
         {
@@ -106,7 +106,7 @@
     //  If the page does not exist, we'll get a null here.
     //
     long lastchange = 0;
-    Date d = wiki.pageLastChanged( pagereq );
+    Date d = wikipage.getLastModified();
     if( d != null ) lastchange = d.getTime();
 
     pageContext.setAttribute( "lastchange",
