@@ -61,8 +61,8 @@ public class FileSystemProvider
     private static final String DEFAULT_ENCODING = "ISO-8859-1";
 
     /**
-     *  @throw FileNotFoundException If the specified page directory does not exist.
-     *  @throw IOException In case the specified page directory is a file, not a directory.
+     *  @throws FileNotFoundException If the specified page directory does not exist.
+     *  @throws IOException In case the specified page directory is a file, not a directory.
      */
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
