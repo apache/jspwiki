@@ -35,6 +35,7 @@ import java.util.*;
  *
  *  <B>Parameters</B>
  *  <UL>
+ *    <LI>page - which page is used to do the blog; default is the current page.
  *    <LI>days - how many days the weblog aggregator should show.
  *    <LI>pageformat - What the entry pages should look like.
  *    <LI>startDate - Date when to start.  Format is "ddMMyy";
@@ -63,6 +64,7 @@ public class WeblogPlugin implements WikiPlugin
     public static final String  PARAM_DAYS         = "days";
     public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
     public static final String  PARAM_MAXENTRIES   = "maxEntries";
+    public static final String  PARAM_PAGE         = "page";
 
     public static String makeEntryPage( String pageName,
                                         String date,
@@ -84,7 +86,6 @@ public class WeblogPlugin implements WikiPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        String weblogName = context.getPage().getName();
         Calendar   startTime;
         Calendar   stopTime;
         int        numDays;
@@ -93,10 +94,16 @@ public class WeblogPlugin implements WikiPlugin
         //
         //  Parse parameters.
         //
-        String days;
-        String startDay = null;
+        String  days;
+        String  startDay = null;
         boolean hasComments = false;
-        int    maxEntries;
+        int     maxEntries;
+        String  weblogName;
+
+        if( (weblogName = (String) params.get(PARAM_PAGE)) == null )
+        {
+            weblogName = context.getPage().getName();
+        }
 
         if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null )
         {
