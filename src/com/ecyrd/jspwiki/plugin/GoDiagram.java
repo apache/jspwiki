@@ -146,6 +146,9 @@ public class GoDiagram
         return res.toString();
     }
 
+    // FIXME: Parameters should be checked against HTML entities.
+    // FIXME: "label" should be run through parser
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
