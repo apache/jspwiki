@@ -48,7 +48,7 @@
             return;
         }
 
-        wiki.saveText( pagereq, request.getParameter("text") );
+        wiki.saveText( pagereq, request.getParameter("text"), request );
 
         response.sendRedirect("Wiki.jsp?page="+pageurl);
         return;
