@@ -35,6 +35,10 @@ import com.ecyrd.jspwiki.providers.*;
     the page refers to the wikilink page. Hm.
 
   - if a page is deleted, gets very confused.
+
+  - Serialization causes page attributes to be missing, when InitializablePlugins
+    are not executed properly.  Thus, serialization should really also mark whether
+    a page is serializable or not...
  */
 
 
