@@ -28,6 +28,8 @@
     String pageurl = wiki.encodeName( pagereq );    
 
     WikiPage wikipage = wiki.getPage( pagereq );
+    if( wikipage == null )
+        wikipage = new WikiPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
@@ -132,18 +134,14 @@
              </table>
              
              <BR>
-             <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">Back to <%=pagereq%></A>
-
+             <wiki:LinkTo>Back to <%=pagereq%></wiki:LinkTo>
              <%
          }
-         else
-         {
          %>
+         <wiki:NoSuchPage>
              This page does not exist.  Why don't you go and
-             <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">create it</A>?
-         <%
-         }
-      %>
+             <wiki:EditLink>create it</wiki:EditLink>?
+         </wiki:NoSuchPage>
 
       <P><HR>
     </TD>
