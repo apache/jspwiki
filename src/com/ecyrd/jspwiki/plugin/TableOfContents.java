@@ -36,6 +36,8 @@ public class TableOfContents
 {
     private static Logger log = Logger.getLogger( TableOfContents.class );
 
+    public static final String PARAM_TITLE = "title";
+
     StringBuffer m_buf = new StringBuffer();
 
     public void headingAdded( WikiContext context, TranslatorReader.Heading hd )
@@ -69,7 +71,14 @@ public class TableOfContents
         StringBuffer sb = new StringBuffer();
 
         sb.append("<div class=\"toc\">\n");
+
+        String title = (String) params.get(PARAM_TITLE);
         
+        if( title != null )
+        {
+            sb.append("<h2>"+TextUtil.replaceEntities(title)+"</h2>\n");
+        }
+
         try
         {
             String wikiText = engine.getPureText( page );
