@@ -2,6 +2,11 @@
 
         * v1.9.21
 
+        * Bug fix: Two plugins on the same line would not always work as
+        expected.  I had to rewrite the entire
+        TranslatorReader.insertHyperLinks() method... As a nice side
+        effect, it's now like five times faster than before. :-)
+        
 	* Added a simple WeblogPlugin and an accompanying
 	WeblogEntryPlugin.
 
