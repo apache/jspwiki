@@ -39,6 +39,9 @@ public class WikiEngine
 
     private static Hashtable c_engines = new Hashtable();
 
+    private static final String NO_PROVIDER_MSG = 
+        "Internal configuration error: No provider was found.";
+
     /**
      *  Gets a WikiEngine related to this servlet.
      */
@@ -53,6 +56,7 @@ public class WikiEngine
 
         if( engine == null )
         {
+            config.getServletContext().log(" Assigning new log to "+appid);
             engine = new WikiEngine( config.getServletContext() );
 
             c_engines.put( appid, engine );
@@ -182,6 +186,9 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
+        // Error cases.
+        if( m_provider == null ) return false;
+
         return m_provider.pageExists( page );
     }
 
@@ -192,6 +199,9 @@ public class WikiEngine
      */
     public String getText( String page )
     {
+        if( m_provider == null ) 
+            return NO_PROVIDER_MSG;
+
         return m_provider.getPageText( page );
     }
 
@@ -246,11 +256,17 @@ public class WikiEngine
 
     public void saveText( String page, String text )
     {
+        if( m_provider == null ) 
+            return;
+
         m_provider.putPageText( page, text );
     }
 
     public Collection getRecentChanges()
     {
+        if( m_provider == null ) 
+            return null;
+
         Collection pages = m_provider.getAllPages();
 
         TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
@@ -278,6 +294,9 @@ public class WikiEngine
     public Collection findPages( String query )
     {
         StringTokenizer st = new StringTokenizer( query, " \t," );
+
+        if( m_provider == null ) 
+            return null;
 
         QueryItem[] items = new QueryItem[st.countTokens()];
         int word = 0;
@@ -329,11 +348,35 @@ public class WikiEngine
      */
     public Date pageLastChanged( String page )
     {
+        if( m_provider == null ) 
+            return null;
+
         WikiPage p = m_provider.getPageInfo( page );
 
         if( p != null )
             return p.getLastModified();
 
         return null;
+    }
+
+    public int getVersion( String page )
+    {
+        if( m_provider == null ) 
+            return -1;
+
+        WikiPage p = m_provider.getPageInfo( page );
+
+        if( p != null )
+            return p.getVersion();
+
+        return -1;
+    }
+
+    public Collection getVersionHistory( String page )
+    {
+        if( m_provider == null ) 
+            return null;
+
+        return m_provider.getVersionHistory( page );
     }
 }
