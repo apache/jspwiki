@@ -1,0 +1,112 @@
+!WikiForms Form Plugin Example
+
+This page uses the Form plugin to provide parameters to the CurrentTimePlugin,
+and displays the result.
+
+!Giving Defaults
+
+The first item, hidden in normal WikiPage viewing, looks like this:
+{{{
+[{FormSet form='testform' format='EEE, d MMM yyyy HH:mm:ss Z' rd1='r2'}]
+}}}
+[{FormSet form='testform' format='EEE, d MMM yyyy HH:mm:ss Z' rd1='r2'}]
+
+The FormSet plugin is a companion to the Form plugin. It sets the default date format for a form field ''format'' in form ''testform''. (It also sets a radio button default value - just for demonstration, no real functionality.)
+
+!Form Output and Error Messages
+
+The second item, also hidden, looks like this:
+{{{
+[{FormOutput form='testform' handler='CurrentTimePlugin' populate='handler'}]
+}}}
+
+It specifies that the ''CurrentTimePlugin'', which comes in the stock JSPWiki distribution, should be used to generate 
+some output to display here. While the output is usually built in response to a POST from a form called ''testform'', the ''populate'' attribute here hints the plugin that we want default information even if no post has been made. This is
+ what the output looks like:
+
+%%(margin:auto;text-align:center;padding:4px;background:#eee;border:1px inset)
+[{FormOutput element='output' form='testform' handler='CurrentTimePlugin' populate='handler'}]
+%%
+
+
+!Opening the Form
+
+The third element starts the actual HTML form called ''testform'':
+{{{
+[{FormOpen form='testform'}]
+}}}
+[{FormOpen form='testform'}]
+
+
+!Form Fields
+
+We'll use a text field to provide the format of CurrentTimePlugin's output. Notice that the name of this field is ''format'' - the name of CurrentTimePlugin's relevant parameter. This value is passed straight to CurrentTimePlugin on submit:
+{{{
+[{FormInput type='text' name='format'}]
+}}}
+Enter the time format string: [{FormInput type='text' name='format'}]
+
+The rest of the form merely demonstrates some other HTML form elements. The don't work with CurrentTimePlugin, but you'll probably want them in your special form handler plugins.
+
+Checkboxes:
+{{{
+[{Form element='checkbox' name='chk1' value='c1'}] Spam!\\
+[{Form element='checkbox' name='chk2' value='c2'}] Dead parrot.\\
+[{Form element='checkbox' name='chk3' value='c3'}] Lumberjack.\\
+}}}
+
+
+Radio buttons:
+{{{
+[{Form element='radio' name='rd1' value='r1'}] Millennium Falcon\\
+[{Form element='radio' name='rd1' value='r2'}] Agamemnon\\
+[{Form element='radio' name='rd1' value='r3'}] The Anticipation of a New Lover's Arrival\\
+}}}
+
+(Notice that all radio button elements share the same name.)
+
+Select list:
+{{{
+[{FormSelect name='sel1' value='fee;*fie;foe;foo'}]\\
+}}}
+
+(Notice, here, the asterisk; this denotes the default value to select. The separator character and the default character can be overridden - check the JavaDocs of this plugin.)
+
+[{FormSelect name='sel1' value='fee;*fie;foe;foo'}]\\
+
+Textarea:
+{{{
+[{FormTextarea name='area1' value='Write your own text here' rows=8 cols=40}]\\
+}}}
+
+[{FormTextarea name='area1' value='Write your own text here' rows=8 cols=40}]\\
+
+!Submitting
+ 
+Before finishing up, we need to add a submit button:
+{{{
+[{Form element='submit' name='x' value='Update'}]
+}}}
+[{FormInput type='submit' name='x' value='Update'}]
+
+
+!Closing the Form
+And, finally, an invisible closing element to denote that this form has ended:
+{{{
+[{FormClose}]
+}}}
+[{FormClose}]
+
+ 
+----
+
+Go ahead, click on ''Update'', and notice how your format changes and selections are retained.
+
+!Synopsis:
+
+* (Optional) Start with the ''FormSet'', give defaults
+* (Optional) If the form is supposed to give out information, add an ''output''
+* (Mandatory) ''open'' the form
+* (Optional) add any text/radio/checkbox/select elements
+* (Mandatory) add a ''submit''
+* (Mandatory) ''close'' the form
