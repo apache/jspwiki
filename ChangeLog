@@ -1,3 +1,13 @@
+2004-12-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.125
+
+        * Bug fix: Addressing inside editor is now done with names
+        instead of numbers (oops, a really, really old fixme :).  This and
+        the other one reported (and patched) by Uli Heller.
+
+        * Bug fix: Javascript error with Preview.
+
 2004-12-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.124
