@@ -311,7 +311,7 @@ public class TranslatorReader extends Reader
         String relativeurls = (String)m_engine.getVariable( m_context,
                                                             WikiEngine.PROP_REFSTYLE );
 
-        if( !"relative".equals(relativeurls) ) setRequireAbsoluteURLs( true );
+        setRequireAbsoluteURLs( !"relative".equals(relativeurls) );
 
         m_plainUris           = TextUtil.getBooleanProperty( props,
                                                              PROP_PLAINURIS,
