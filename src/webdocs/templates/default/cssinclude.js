@@ -36,7 +36,7 @@
 </NOSCRIPT>
 
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=<wiki:ContentEncoding />">
-<LINK REL="search" HREF="<wiki:LinkTo format="url" page="FindPage"/>"            TITLE="Search <wiki:ApplicationName />">
+<LINK REL="search" HREF="<wiki:LinkTo format="url" page="FindPage"/>"            TITLE="Search <wiki:Variable var="ApplicationName" />">
 <LINK REL="help"   HREF="<wiki:LinkTo format="url" page="TextFormattingRules"/>" TITLE="Help">
 <LINK REL="start"  HREF="<wiki:LinkTo format="url" page="Main"/>"                TITLE="Front page">
 

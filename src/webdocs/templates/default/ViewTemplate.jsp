@@ -5,7 +5,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><wiki:ApplicationName />: <wiki:PageName /></TITLE>
+  <TITLE><wiki:Variable var="applicationname" />: <wiki:PageName /></TITLE>
   <%@ include file="cssinclude.js" %>
   <wiki:RSSLink />
 </HEAD>

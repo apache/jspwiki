@@ -76,7 +76,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%>: User Preferences</TITLE>
+  <TITLE><wiki:Variable var="ApplicationName" />: User Preferences</TITLE>
   <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 

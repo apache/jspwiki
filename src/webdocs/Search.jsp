@@ -48,7 +48,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><wiki:ApplicationName/> Search</TITLE>
+  <TITLE><wiki:Variable var="ApplicationName"/> Search</TITLE>
   <META NAME="ROBOTS" CONTENT="NOINDEX">
   <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>

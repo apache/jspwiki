@@ -5,7 +5,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><wiki:ApplicationName /> Edit: <wiki:PageName /></TITLE>
+  <TITLE><wiki:Variable var="ApplicationName" /> Edit: <wiki:PageName /></TITLE>
   <META NAME="ROBOTS" CONTENT="NOINDEX">
   <%@ include file="cssinclude.js" %>
 </HEAD>

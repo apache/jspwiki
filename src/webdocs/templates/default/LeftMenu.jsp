@@ -1,4 +1,4 @@
-<H3 CLASS="leftmenuheading"><A HREF="<wiki:LinkTo page="SystemInfo" format="url"/>"><wiki:ApplicationName /></A></H3>
+<H3 CLASS="leftmenuheading"><A HREF="<wiki:LinkTo page="SystemInfo" format="url"/>"><wiki:Variable var="ApplicationName" /></A></H3>
 
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
@@ -18,7 +18,7 @@
 
     <wiki:UserCheck exists="true">
         <B>G'day,</B><BR>
-        <wiki:Translate>[<wiki:UserName />]</wiki:Translate>        
+        <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
     </wiki:UserCheck>
 
     <wiki:UserCheck exists="false">
