@@ -1,3 +1,11 @@
+2003-06-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.43.
+
+        * Rudimentary group support added for the three constant groups:
+        All, Named and Known.  Others should work, too, but currently
+        there is no proper way to add groups.
+
 2003-06-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.42.
