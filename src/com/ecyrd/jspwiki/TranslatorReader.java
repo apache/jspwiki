@@ -309,7 +309,16 @@ public class TranslatorReader extends Reader
      */
     private String linkExists( String page )
     {
-        return m_engine.getFinalPageName( page );
+        try
+        {
+            return m_engine.getFinalPageName( page );
+        }
+        catch( ProviderException e )
+        {
+            log.warn("TranslatorReader got a faulty page name!",e);
+
+            return page;  // FIXME: What would be the correct way to go back?
+        }
     }
 
     /**
@@ -716,7 +725,7 @@ public class TranslatorReader extends Reader
                 String roleOrPerm = fieldToks.nextToken( "," ).trim();
                 boolean isNegative = true;
 
-                UserProfile principal = mgr.getUserProfile( roleOrPerm );
+                Principal principal = mgr.getPrincipal( roleOrPerm );
 
                 if( policy.equals("ALLOW") ) isNegative = false;
 
@@ -741,6 +750,8 @@ public class TranslatorReader extends Reader
             }
 
             page.setAcl( acl );
+
+            log.debug( acl.toString() );
         }
         catch( NoSuchElementException nsee )
         {
@@ -758,6 +769,7 @@ public class TranslatorReader extends Reader
 
         return "";
     }
+
 
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
