@@ -27,7 +27,7 @@
          </p>
       </wiki:CheckLock>
 
-      <form action="<wiki:EditLink format="url" />" method="POST" 
+      <form name="editForm" action="<wiki:EditLink format="url" />" method="POST" 
             accept-charset="<wiki:ContentEncoding />">
 
       <p>
