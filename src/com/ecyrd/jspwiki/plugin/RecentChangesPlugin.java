@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import java.util.*;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -115,15 +116,27 @@ public class RecentChangesPlugin
 
                 String pageurl = context.getEngine().encodeName(pageref.getName());
 
+                String link = linkProcessor.makeLink( (pageref instanceof Attachment) ? 
+                                                      TranslatorReader.ATTACHMENT : TranslatorReader.READ,
+                                                      pageref.getName(),
+                                                      pageref.getName() );
+                                                      
                 out.write("<TR>\n");
 
                 out.write("<TD WIDTH=\"30%\">"+
-                          linkProcessor.makeLink( TranslatorReader.READ, pageref.getName(), pageref.getName() )+
+                          link+
                           "</TD>\n");
 
-                out.write("<TD><A HREF=\"Diff.jsp?page="+pageurl+"&r1=-1\">"+
-                          tfmt.format(lastmod)+
-                          "</A></TD>\n");
+                if( pageref instanceof Attachment )
+                {
+                    out.write("<TD>"+tfmt.format(lastmod)+"</TD>");
+                }
+                else
+                {
+                    out.write("<TD><A HREF=\"Diff.jsp?page="+pageurl+"&r1=-1\">"+
+                              tfmt.format(lastmod)+
+                              "</A></TD>\n");
+                }
 
                 //
                 //  Display author information.
