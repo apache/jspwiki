@@ -458,6 +458,13 @@ public class TranslatorReader extends Reader
 
                 int interwikipoint = -1;
 
+                //
+                //  Yes, we now have the components separated.
+                //  link     = the text the link should have
+                //  reallink = the url or page name.
+                //
+                //  In many cases these are the same.  [link|reallink].
+                //  
                 if( PluginManager.isPluginLink( link ) )
                 {
                     String included;
@@ -496,6 +503,8 @@ public class TranslatorReader extends Reader
                 else if( (interwikipoint = reallink.indexOf(":")) != -1 )
                 {
                     // It's an interwiki link
+                    // InterWiki links also get added to external link chain
+                    // after the links have been resolved.
 
                     String extWiki = reallink.substring( 0, interwikipoint );
                     String wikiPage = m_engine.encodeName(reallink.substring( interwikipoint+1 ));
@@ -505,6 +514,8 @@ public class TranslatorReader extends Reader
                     if( urlReference != null )
                     {
                         urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
+                        callMutatorChain( m_externalLinkMutatorChain, urlReference );
+
                         line = TextUtil.replaceString( line, start, end+1,
                                                        makeLink( INTERWIKI, urlReference, link ) );
                     }
