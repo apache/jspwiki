@@ -16,11 +16,18 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String skin    = null;
+
     String headerTitle = "";
 
     if( pagereq == null )
     {
         pagereq = "Main";
+    }
+
+    if( skin == null )
+    {
+        skin = wiki.getTemplateDir();
     }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
@@ -40,9 +47,10 @@
     log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
 
-<%@ include file="templates/default/PageInfoTemplate.jsp" %>
+<wiki:Include page="<%=contentPage%>" />
 
 <%
     NDC.pop();
