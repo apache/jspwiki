@@ -29,13 +29,23 @@
         return;        
     }
 
+    int version = -1;
+    String rev = request.getParameter("version");
+    String pageReference = "this page";
+    String versionInfo = "";
+    if( rev != null )
+    {
+        version = Integer.parseInt( rev );
+        pageReference = "current version";
+        versionInfo = " (version " + rev + ")";
+    }
 
 %>
 
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%>: <%=pagereq%></TITLE>
+  <TITLE><%=wiki.getApplicationName()%>: <%=pagereq%><%=versionInfo%></TITLE>
   <%@ include file="cssinclude.js" %>
 </HEAD>
 
@@ -47,7 +57,7 @@
     <TD WIDTH="10%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="Edit.jsp?page=<%=pagereq%>">Edit this page</A>
+       <A HREF="Edit.jsp?page=<%=pagereq%>">Edit <%=pageReference%></A>
        </P>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
@@ -60,14 +70,24 @@
       <%
          if( wiki.pageExists( pagereq ) )
          {
-             out.println(wiki.getHTML(pagereq));
+             // if version == -1, the current page is returned.
+             out.println(wiki.getHTML(pagereq, version));
          }
          else
          {
-         %>
-             This page does not exist.  Why don't you go and
-             <A HREF="Edit.jsp?page=<%=pagereq%>">create it</A>?
-         <%
+             if(version == -1)
+             {
+             %>
+                This page does not exist.  Why don't you go and
+                <A HREF="Edit.jsp?page=<%=pagereq%>">create it</A>?
+             <%
+             }
+             else
+             {
+             %>
+                This version of the page does not seem to exist.
+             <%
+             }
          }
       %>
 
@@ -75,7 +95,7 @@
       <table border="0" width="100%">
         <tr>
           <td align="left">
-             <A HREF="Edit.jsp?page=<%=pagereq%>">Edit this page</A>.
+             <A HREF="Edit.jsp?page=<%=pagereq%>">Edit <%=pageReference%></A>.
           </td>
           <td align="right">
 	     <%
@@ -83,6 +103,7 @@
 
              if( lastchange != null )
              {
+                // (We want to use pageLastChanged(pagereq, version) below...)
                  %>
                  <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.  
                     <A HREF="PageInfo.jsp?page=<%=pagereq%>">More info...</A></I><BR>
