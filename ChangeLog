@@ -1,3 +1,9 @@
+2003-01-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.15.
+
+        * Added new variable "uptime", and WikiEngine.getStartTime().
+
 2003-01-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.14.
