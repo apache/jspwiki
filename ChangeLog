@@ -2,6 +2,8 @@
 
         * v2.1.21.
 
+        * Preview.jsp didn't compile, oops.
+
         * FileSystemProvider now stores author information as well.  This
         addresses the most-often heard FAQ: "Why is the author information
         not shown?".  To do this and not interfere with RCSFileProvider
