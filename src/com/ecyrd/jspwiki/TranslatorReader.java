@@ -21,9 +21,11 @@ package com.ecyrd.jspwiki;
 
 import java.io.*;
 import java.util.*;
-import org.apache.log4j.Category;
 import java.text.*;
 
+import org.apache.log4j.Category;
+import org.apache.oro.text.*;
+import org.apache.oro.text.regex.*;
 
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
@@ -52,6 +54,23 @@ public class TranslatorReader extends Reader
 
     private WikiEngine     m_engine;
 
+    // By default, include .png files
+
+    private ArrayList      m_inlineImagePatterns;
+
+    private PatternMatcher m_inlineMatcher = new Perl5Matcher();
+
+    /**
+     *  This property defines the inline image pattern.  It's current value
+     *  is jspwiki.translatorReader.inlinePattern
+     */
+    public static final String     PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
+
+    /**
+     *  The default inlining pattern.  Currently "*.png"
+     */
+    public static final String     DEFAULT_INLINEPATTERN = "*.png";
+
     /**
      *  @param engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
@@ -60,6 +79,44 @@ public class TranslatorReader extends Reader
     {
         m_in = in;
         m_engine = engine;
+        PatternCompiler compiler = new GlobCompiler();
+        PatternMatcherInput input;
+
+        log.debug("Getting RCS version history");
+
+        //
+        //  Figure out which image suffixes should be inlined.
+        //
+        Properties props = engine.getWikiProperties();
+        ArrayList  ptrnlist = new ArrayList();
+
+        try
+        {
+            for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+            {
+                String name = (String) e.nextElement();
+
+                if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
+                {
+                    String ptrn = props.getProperty( name );
+
+                    ptrnlist.add( compiler.compile( ptrn ) );
+
+                    log.debug( "Pattern matcher, added: "+ptrn );
+                }
+            }
+
+            if( ptrnlist.size() == 0 )
+            {
+                ptrnlist.add( compiler.compile( DEFAULT_INLINEPATTERN ) );
+            }
+        }
+        catch( MalformedPatternException e )
+        {
+            log.error("Malformed pattern in properties: ", e );
+        }
+
+        m_inlineImagePatterns = ptrnlist;
     }
 
     private boolean linkExists( String link )
@@ -67,6 +124,9 @@ public class TranslatorReader extends Reader
         return m_engine.pageExists( link );
     }
 
+    /**
+     *  Write a HTMLized link depending on its type.
+     */
     private String makeLink( int type, String link, String text )
     {
         String result;
@@ -173,9 +233,20 @@ public class TranslatorReader extends Reader
                link.startsWith("news:");
     }
 
+    /**
+     *  Matches the given link to the list of image name patterns
+     *  to determine whether it should be treated as an inline image
+     *  or not.
+     */
     private boolean isImageLink( String link )
     {
-        return link.endsWith(".png");
+        for( Iterator i = m_inlineImagePatterns.iterator(); i.hasNext(); )
+        {
+            if( m_inlineMatcher.matches( link, (Pattern) i.next() ) )
+                return true;
+        }
+
+        return false;
     }
 
     private String setHyperLinks( String line )
@@ -531,6 +602,10 @@ public class TranslatorReader extends Reader
                 buf.append("<LI>");
                 line = line.substring( i );
             }
+            else if( line.startsWith(" ") && m_listlevel > 0 && trimmed.length() != 0 )
+            {
+                // This is a continuation of a previous line.
+            }
             else
             {
                 // Close all lists down.
@@ -562,6 +637,10 @@ public class TranslatorReader extends Reader
                 
                 buf.append("<LI>");
                 line = line.substring( i );
+            }
+            else if( line.startsWith(" ") && m_numlistlevel > 0 && trimmed.length() != 0 )
+            {
+                // This is a continuation of a previous line.
             }
             else
             {
