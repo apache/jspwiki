@@ -65,17 +65,17 @@ public class FormInput
         }
 
         Map previousValues = info.getSubmission();
-	if( previousValues == null )
-	{
-	    previousValues = new HashMap();
-	}
+        if( previousValues == null )
+        {
+            previousValues = new HashMap();
+        }
 
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped
         // when the handler plugin is executed.
         Input field = new Input( inputType, 
                                  HANDLERPARAM_PREFIX + inputName, 
-				 inputValue );
+                                 inputValue );
 
         if( previousValues != null )
         {
