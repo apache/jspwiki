@@ -117,6 +117,18 @@ public class RCSFileProviderTest extends TestCase
         assertEquals( "version", 1, page.getVersion() );
     }
 
+    public void testGetByLatestVersion()
+    {
+        String text = "diddo\r\n";
+
+        engine.saveText( NAME1, text );
+
+        WikiPage page = engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
+       
+        assertEquals( "name", NAME1, page.getName() );
+        assertEquals( "version", 1, page.getVersion() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( RCSFileProviderTest.class );
