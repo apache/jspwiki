@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Writes a link to a Wiki page.  Body of the link becomes the actual text.
@@ -53,17 +54,22 @@ public class LinkToTag
         m_version = arg;
     }
 
-    public final int doWikiStartTag()
+    public int doWikiStartTag()
         throws IOException
     {
         WikiEngine engine   = m_wikiContext.getEngine();
         String     pageName = m_pageName;
+        boolean    isattachment = false;
 
         if( m_pageName == null )
         {
-            if( m_wikiContext.getPage() != null )
+            WikiPage p = m_wikiContext.getPage();
+
+            if( p != null )
             {
-                pageName = m_wikiContext.getPage().getName();
+                pageName = p.getName();
+
+                isattachment = (p instanceof Attachment);
             }
             else
             {
@@ -73,8 +79,20 @@ public class LinkToTag
 
         JspWriter out = pageContext.getOut();
         String encodedlink = engine.encodeName( pageName );
+        String url;
+        String linkclass;
 
-        String url = engine.getBaseURL()+"Wiki.jsp?page="+encodedlink;
+        if( isattachment )
+        {
+            url = engine.getBaseURL()+"attach?page="+encodedlink;
+            linkclass = "attachment";
+        }
+        else
+        {
+            url = engine.getBaseURL()+"Wiki.jsp?page="+encodedlink;
+            linkclass = "wikipage";
+        }
+
         if( getVersion() != null )
         {
             url += "&version="+getVersion();
@@ -83,7 +101,7 @@ public class LinkToTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<A CLASS=\"wikipage\" HREF=\""+url+"\">");
+            out.print("<A CLASS=\""+linkclass+"\" HREF=\""+url+"\">");
             break;
           case URL:
             out.print( url );

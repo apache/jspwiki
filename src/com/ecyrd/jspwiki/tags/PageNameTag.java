@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Returns the currently requested page name.
@@ -41,7 +42,14 @@ public class PageNameTag
 
         if( page != null )
         {
-            pageContext.getOut().print( engine.beautifyTitle(page.getName()) );
+            if( page instanceof Attachment )
+            {
+                pageContext.getOut().print( ((Attachment)page).getFileName() );
+            }
+            else
+            {
+                pageContext.getOut().print( engine.beautifyTitle(page.getName()) );
+            }
         }
 
         return SKIP_BODY;
