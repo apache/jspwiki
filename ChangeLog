@@ -1,5 +1,27 @@
 2003-07-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.46.
+
+        * Added comment functionality.
+
+        * WeblogPlugin now generates a separate <div> around the entry
+        itself.  This should make it a bit easier to create your own
+        layouts.  Note that the CSS class names were also changed - check
+        out the default template jspwiki.css to see the new names!  (I am
+        bravely changing them because I assume nobody else is using
+        JSPWiki for blogging =).  Comments now also open in a separate
+        frame.
+
+        * Split the default EditTemplate into two parts: EditContent and
+        CommentContent, since they're slightly different.  You might want
+        to take a look at it, since you might want to take some ideas into
+        your own template.
+
+        * Rewrote parts of the access control system - each permission now
+        has to implement implies().
+
+        * Added CommentPermission.
+
         * v2.1.45.
 
         * Added some new search engines to Denounce.
