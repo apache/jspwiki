@@ -157,14 +157,15 @@ public class TextUtil
      */
     public static String urlDecodeUTF8( String utf8 )
     {
-        String rs = java.net.URLDecoder.decode( utf8 );
+        String rs = null;
 
         try
         {
-            rs = urlDecode( rs.getBytes("ISO-8859-1") );
+            rs = urlDecode( utf8.getBytes("ISO-8859-1") );
         }
         catch( UnsupportedEncodingException e )
         {
+            rs = java.net.URLDecoder.decode( utf8 );
         }
 
         return rs;
