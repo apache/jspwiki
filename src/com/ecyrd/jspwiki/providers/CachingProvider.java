@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -497,7 +497,7 @@ public class CachingProvider
         m_cache.remove( page.getName() );
         m_textCache.flushEntry( page.getName() );
         m_historyCache.flushEntry( page.getName() );
-        addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
+        addPage( page, null ); // If fetch fails, we want info to go directly to user
     }
 
     /**
@@ -687,32 +687,54 @@ public class CachingProvider
         return all;
     }
 
+    /**
+     * This method updates an existing page in the cache.
+     * 
+     * @param page
+     * @param text If null, removes the page content from the cache.
+     * @return
+     */
+    private synchronized CacheItem addPage( WikiPage page, String text )
+         throws ProviderException
+    {
+        CacheItem item = null;
+
+        if( page != null )
+        {
+            //
+            // This is to make sure that all mandatory metadata is in place
+            //
+            if( page.getLastModified() == null ) page.setLastModified( new Date() );
+            
+            //
+            //  Add to the page cache, and if it has text, make sure Lucene knows
+            //  about it, too.
+            //
+            item = new CacheItem();
+
+            item.m_page = page;
+
+            if( text != null )
+            {
+                m_textCache.putInCache( page.getName(), text );
+
+                addToLuceneQueue( page, text );
+            }
+
+            m_cache.put( page.getName(), item );
+        }
+
+        return item;
+    }
+    
     // Null text for no page
     // Returns null if no page could be found.
     private synchronized CacheItem addPage( String pageName, String text )
         throws ProviderException
     {
-        CacheItem item = null;
-
         WikiPage newpage = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
-
-        if( newpage != null )
-        {
-            item = new CacheItem();
-
-            item.m_page = newpage;
-
-            if( text != null )
-            {
-                m_textCache.putInCache( pageName, text );
-
-                addToLuceneQueue( newpage, text );
-            }
-
-            m_cache.put( pageName, item );
-        }
-
-        return item;
+        
+        return addPage( newpage, text );
     }
 
     public Collection getAllChangedSince( Date date )
@@ -765,20 +787,22 @@ public class CachingProvider
             try
             {
                 WikiPage page = (WikiPage) it.next();
-                if (page != null) {
-                String pageName = page.getName();
-                String pageContent = getTextFromCache( pageName );
-                SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
-                if( comparison != null )
+                if (page != null) 
                 {
-                    res.add( comparison );
+                    String pageName = page.getName();
+                    String pageContent = getTextFromCache( pageName );
+                    SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
+                    
+                    if( comparison != null )
+                    {
+                        res.add( comparison );
+                    }
                 }
-            }
             }
             catch( RepositoryModifiedException rme )
             {
                 // FIXME: What to do in this case???
-	    }
+            }
             catch( ProviderException pe )
             {
                 log.error( "Unable to retrieve page from cache", pe );
