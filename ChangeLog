@@ -5,7 +5,8 @@
         * Some shuffling of auth-related classes...
 
         * Added protection against faulty cookies that could result
-        in a number of ways.  Reported by many people.
+        in a number of ways.  Reported by many people.  Fixes 
+        BugUserProfileErrorWhenRetrievingACookieWithAnEmptyUsername.
 
 2004-11-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
