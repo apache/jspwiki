@@ -412,18 +412,18 @@ public class FileSystemProvider
     public class SearchResultImpl
         implements SearchResult
     {
-        int    m_score;
-        String m_name;
+        int      m_score;
+        WikiPage m_page;
 
         public SearchResultImpl( String name, int score )
         {
-            m_name = name;
+            m_page  = new WikiPage( name );
             m_score = score;
         }
 
-        public String getName()
+        public WikiPage getPage()
         {
-            return m_name;
+            return m_page;
         }
 
         public int getScore()
