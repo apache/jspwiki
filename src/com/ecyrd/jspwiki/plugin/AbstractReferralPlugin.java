@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
-import java.io.StringWriter;
+import java.io.StringReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -33,8 +34,28 @@ import java.text.SimpleDateFormat;
 public abstract class AbstractReferralPlugin
     implements WikiPlugin
 {
-    public static final int ALL_ITEMS = -1;
-    
+    private static Category log = Category.getInstance( AbstractReferralPlugin.class );
+
+    public static final int    ALL_ITEMS      = -1;
+    public static final String PARAM_MAXWIDTH = "maxwidth";
+
+    protected           int m_maxwidth = Integer.MAX_VALUE;
+
+    /**
+     *  Used to initialize some things.  All plugins must call this first.
+     *
+     *  @since 1.6.4
+     */
+    public void initialize( WikiContext context, Map params )
+        throws PluginException
+    {
+        m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE ); 
+
+        if( m_maxwidth < 0 ) m_maxwidth = 0;
+
+        log.debug( "Requested maximum width is "+m_maxwidth );
+    }
+
     /**
      *  Makes WikiText from a Collection.
      *
@@ -63,4 +84,64 @@ public abstract class AbstractReferralPlugin
         return( output.toString() );
     }
 
+    /**
+     *  Makes HTML with common parameters.
+     *
+     *  @since 1.6.4
+     */
+    protected String makeHTML( WikiContext context, String wikitext )
+    {
+        String result = "";
+        TranslatorReader in = null;
+
+        try
+        {
+            in     = new TranslatorReader( context,
+                                           new StringReader( wikitext ) );
+            in.addLinkTransmutator( new CutMutator(m_maxwidth) );
+
+            result = FileUtil.readContents( in );
+        }
+        catch( IOException e )
+        {
+            log.error("Failed to convert page data to HTML", e);
+        }
+        finally
+        {
+            try
+            {
+                if( in != null ) in.close();
+            }
+            catch( Exception e ) 
+            {
+                log.fatal("Closing failed",e);
+            }
+        }
+
+        return result;
+    }
+    
+    /**
+     *  A simple class that just cuts a String to a maximum
+     *  length, adding three dots after the cutpoint.
+     */
+    private class CutMutator implements StringTransmutator
+    {
+        private int m_length;
+
+        public CutMutator( int length )
+        {
+            m_length = length;
+        }
+
+        public String mutate( WikiContext context, String text )
+        {
+            if( text.length() > m_length )
+            {
+                return text.substring( 0, m_length ) + "...";
+            }
+
+            return text;
+        }
+    }
 }
