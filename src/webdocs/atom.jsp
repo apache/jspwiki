@@ -57,8 +57,8 @@
     
     try
     {
-        channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-        channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+        channelDescription = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+        channelLanguage    = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
     }
     catch( NoRequiredPropertyException e )
     {
