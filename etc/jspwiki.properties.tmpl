@@ -244,31 +244,37 @@ jspwiki.plugin.searchPath =
 #
 #  Authentication and authorization
 #
-#  JSPWiki supports a plugin-based interface for talking to different kinds
-#  of authentication systems.  In JSPWiki talk, the term "Authorizer" means
-#  a module that basically checks if the username and password match.
+
+#  JSPWiki supports a plugin-based interface for talking to different
+#  kinds of authentication systems.  In JSPWiki talk, the term
+#  "Authenticator" means a module that basically checks if the
+#  username and password match. An "Authorizer" is a module that 
+#  is able to provide the user's permissions in the wiki.
 #
-#  Define here the WikiAuthorizer implementation you want to use. 
-#  Specify the full classname, or the short name of one of an authorizer
-#  provided in the com.ecyrd.jspwiki.auth package.
+#  Define here the WikiAuthorizer and WikiAuthenticator implementations
+#  you want to use. Specify the full classname, or the short names of
+#  implementations provided in the JSPWiki codebase.
+
 #
 #  PageAuthorizer is a simple default implementation that reads defaults
-#  from a WikiPage called 'DefaultPermissions'.
+#  from a WikiPage called 'DefaultPermissions'. 
 #
 jspwiki.authorizer = PageAuthorizer
 
+#
+#  FileAuthenticator is a simple authorizer that basically reads the 
+#  passwords from a file.
+#
+# jspwiki.authenticator = FileAuthenticator
 
 #
-#  FileAuthorizer is a simple authorizer that basically reads the passwords
-#  from a file.
-#
-#  FileAuthorizer supports the following options
+#  FileAuthenticator supports the following options:
 #
 #  Define where the password file lives.  The password file is simply in
 #  a format "username = password", one entry per line.  This is a required
 #  attribute.
 #
-#jspwiki.fileAuthorizer.fileName = /tmp/mypasswordfile.txt
+# jspwiki.fileAuthenticator.fileName = /tmp/mypasswordfile.txt
 
 #############################################################################
 #
@@ -440,3 +446,4 @@ log4j.rootCategory=INFO,FileLog
 #log4j.rootCategory=INFO,FileLog,mail
 
 ### End of configuration file.
+
