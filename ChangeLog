@@ -9,7 +9,7 @@
 
         * Added file commands to jspwiki.properties.  Also, removed
         references to my own email address - I kept getting plenty of
-        email from people trying to set up their own Wiki :-).
+        automatic email from people trying to set up their own Wiki :-).
 
         * Removed index.html and rewrote web.xml to automatically grab all
         directory accesses to Wiki.jsp.
