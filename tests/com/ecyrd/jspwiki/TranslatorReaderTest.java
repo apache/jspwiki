@@ -180,6 +180,16 @@ public class TranslatorReaderTest extends TestCase
                      translate(src) );
     }
 
+    // No link text should be just embedded link.
+    public void testInlineImagesLink2()
+        throws Exception
+    {
+        String src = "Link [http://foobar.jpg]";
+
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"http://foobar.jpg\">\n",
+                     translate(src) );
+    }
+
     public void testInlineImagesLink()
         throws Exception
     {
