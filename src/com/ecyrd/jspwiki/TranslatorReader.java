@@ -388,11 +388,16 @@ public class TranslatorReader extends Reader
      *  <P>
      *  [ This is a link ] -&gt; ThisIsALink
      *
+     *  @param link Link to be cleared. Null is safe, and causes this to return null.
+     *  @return A cleaned link.
+     *
      *  @since 2.0
      */
     public static String cleanLink( String link )
     {
         StringBuffer clean = new StringBuffer();
+
+        if( link == null ) return null;
 
         //
         //  Compress away all whitespace and capitalize
