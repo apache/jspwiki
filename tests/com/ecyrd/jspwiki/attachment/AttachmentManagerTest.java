@@ -186,7 +186,7 @@ public class AttachmentManagerTest extends TestCase
 
         Collection c = m_manager.listAttachments( new WikiPage(NAME1) );
 
-        assertEquals( "Length", c.size(), 1 );
+        assertEquals( "Length", 1, c.size() );
 
         Attachment att2 = (Attachment) c.toArray()[0];
 
