@@ -4,6 +4,8 @@
 [Recent Changes]\\
 [WikiEtiquette]
 
-[Find pages|FindPage]
+[Find pages|FindPage]\\
+[Unused pages|UnusedPages]\\
+[Undefined pages|UndefinedPages]
 
 
