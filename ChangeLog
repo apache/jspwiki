@@ -1,3 +1,10 @@
+2003-03-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * JSPWiki license is now the GNU Lesser General Public License, so
+        that people who want to embed JSPWiki as a part of their products,
+        can do so.  It also makes it quite a lot easier to use third-party
+        libraries. 
+
 2003-03-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.33.
