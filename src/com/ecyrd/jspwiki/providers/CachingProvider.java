@@ -52,13 +52,20 @@ public class CachingProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
-    private long m_milliSecondsBetweenChecks = 5000;
+    private int  m_milliSecondsBetweenChecks = 30000;
+
+    public static final String PROP_CACHECHECKINTERVAL = "jspwiki.cachingProvider.cacheCheckInterval";
 
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
         log.debug("Initing CachingProvider");
+
+        m_milliSecondsBetweenChecks = TextUtil.parseIntParameter( properties.getProperty(PROP_CACHECHECKINTERVAL),
+                                                                  m_milliSecondsBetweenChecks );
+
+        log.debug("Cache consistency checks every "+m_milliSecondsBetweenChecks+" ms");
 
         String classname = WikiEngine.getRequiredProperty( properties, 
                                                            PageManager.PROP_PAGEPROVIDER );
