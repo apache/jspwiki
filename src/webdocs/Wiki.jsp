@@ -41,7 +41,7 @@
         {
             log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
             String msg = "Unknown user or password.<br>Please try again.";
-            wikiContext.setVariable( "msg", msg );
+            session.setAttribute( "msg", msg );
             String pageurl = wiki.encodeName( pagereq );
             response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
             return;
