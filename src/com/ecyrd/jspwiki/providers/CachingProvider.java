@@ -82,7 +82,7 @@ public class CachingProvider
     private long             m_historyCacheMisses = 0;
     private long             m_historyCacheHits   = 0;
 
-    private int              m_milliSecondsBetweenChecks = 30000;
+    private int              m_milliSecondsBetweenChecks = 30; // Confusingly - this is in seconds
 
     // FIXME: This MUST be cached somehow.
 
@@ -133,7 +133,8 @@ public class CachingProvider
                                                                    PROP_CACHECHECKINTERVAL,
                                                                    m_milliSecondsBetweenChecks );
 
-        log.debug("Cache consistency checks every "+m_milliSecondsBetweenChecks+" ms");
+        m_milliSecondsBetweenChecks *= 1000; // Make into milliseconds
+        log.debug("Cache consistency checks every "+(m_milliSecondsBetweenChecks/1000)+" s");
 
         //
         //  Text cache capacity
@@ -952,7 +953,7 @@ public class CachingProvider
                "<br />Cache hits: "+m_cacheHits+
                "<br />History cache hits: "+m_historyCacheHits+
                "<br />History cache misses: "+m_historyCacheMisses+
-               "<br />Cache consistency checks: "+m_milliSecondsBetweenChecks+"ms"+
+               "<br />Cache consistency checks: "+(m_milliSecondsBetweenChecks/1000L)+"s"+
                "<br />Lucene enabled: "+(m_useLucene?"yes":"no") );
     }
 
