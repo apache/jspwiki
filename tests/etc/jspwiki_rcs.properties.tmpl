@@ -7,23 +7,12 @@
 #    RCSFileProvider for simple RCS-based file storage
 #    FileSystemProvider for simple pure file storage with no version information
 #
-jspwiki.pageProvider = com.ecyrd.jspwiki.providers.FileSystemProvider
+jspwiki.pageProvider = RCSFileProvider
 
-jspwiki.usePageCache = true
 #
 #  Determines where wiki files are kept.
 #
-jspwiki.fileSystemProvider.pageDir = /tmp/testrepository/
-
-jspwiki.translatorReader.camelCaseLinks = true
-
-jspwiki.breakTitleWithSpaces = true
-
-jspwiki.translatorReader.matchEnglishPlurals = true
-jspwiki.translatorReader.useOutlinkImage = false
-
-jspwiki.attachmentProvider = BasicAttachmentProvider
-jspwiki.basicAttachmentProvider.storageDir = /tmp/testrepository/
+jspwiki.fileSystemProvider.pageDir = @tests.pagedir@
 
 #
 #  Special page references.
@@ -44,8 +33,6 @@ jspwiki.specialPage.FindPage = Search.jsp
 # appear in format : [wiki:wikipage].  
 
 jspwiki.interWikiRef.JSPWiki = http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=%s
-
-jspwiki.rss.generate = false
 
 #
 # Define which image types are inlined.
@@ -77,7 +64,7 @@ jspwiki.translatorReader.inlinePattern.3 = http://images.com/*
 log4j.appender.FileLog = org.apache.log4j.RollingFileAppender
 log4j.appender.FileLog.MaxFileSize    = 10MB
 log4j.appender.FileLog.MaxBackupIndex = 14
-log4j.appender.FileLog.File = /tmp/jspwikitests.log
+log4j.appender.FileLog.File = @tests.logfile@
 log4j.appender.FileLog.layout = org.apache.log4j.PatternLayout
 log4j.appender.FileLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
 

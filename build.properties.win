@@ -13,3 +13,6 @@
 @pagedir@=C:\\\\temp\\\\wikipages
 @logfile@=C:\\\\temp\\\\jspwiki.log
 
+@tests.pagedir@=C:\\\\temp\\\\testrepository
+@tests.logfile@=C:\\\\temp\\\\jspwikitests.log
+
