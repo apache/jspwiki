@@ -70,6 +70,41 @@ public class TextUtilTest extends TestCase
                       TextUtil.urlDecodeUTF8(name) );
     }
 
+    public void testReplaceString1()
+    {
+        String text = "aabacaa";
+
+        assertEquals( "ddbacdd", TextUtil.replaceString( text, "aa", "dd" ) ); 
+    }
+
+    public void testReplaceString4()
+    {
+        String text = "aabacaafaa";
+
+        assertEquals( "ddbacddfdd", TextUtil.replaceString( text, "aa", "dd" ) ); 
+    }
+
+    public void testReplaceString5()
+    {
+        String text = "aaabacaaafaa";
+
+        assertEquals( "dbacdfaa", TextUtil.replaceString( text, "aaa", "d" ) );     
+    }
+
+    public void testReplaceString2()
+    {
+        String text = "abcde";
+
+        assertEquals( "fbcde", TextUtil.replaceString( text, "a", "f" ) ); 
+    }
+
+    public void testReplaceString3()
+    {
+        String text = "ababab";
+
+        assertEquals( "afafaf", TextUtil.replaceString( text, "b", "f" ) ); 
+    }
+
     public static Test suite()
     {
         return new TestSuite( TextUtilTest.class );
