@@ -1,3 +1,14 @@
+2003-05-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.23.
+
+        * rss.jsp is now a part of the main distribution.  It is however,
+        very weblog-specific right now, and shares a bit too much code
+        with the RSSGenerator.
+
+        * RSS generator now outputs the diffs as well, so you can see what
+        actually changed and what did not.
+
 2003-05-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.22.
