@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.19 2002-07-07 12:29:06 jalkanen Exp $
+    $Id: build.xml,v 1.20 2002-07-21 11:47:19 jalkanen Exp $
 -->    
        
 <!--   
@@ -390,7 +390,7 @@
 
   </target>
 
-
+<!--  Commented out since this kills some compiles on grey.
   <target name="report" depends="compile, compiletests">
 
     <mkdir dir="${tests.reports}/html" />
@@ -419,6 +419,7 @@
      </junitreport>
 
   </target>
+-->
 
   <target name="guitests" depends="compile,compiletests"
           description="Runs the tests in a pretty window.">
