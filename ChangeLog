@@ -1,5 +1,12 @@
 2002-02-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * XML-RPC listLinks now returns a the type as a string.  Suggested
+        by Mahlen Morris.
+
+        * XML-RPC listLinks now returns an extra parameter: href.  This
+        contains the actual link text from the HTML page itself.
+        Suggested by Mahlen Morris.
+
         * InterWiki references are now also added to the link of external
         links returned by listLinks().  They are returned as entire URLs,
         resulting from resolving the reference.
@@ -20,9 +27,10 @@
 
         * XML-RPC interface no longer relies on overloading of method
         names: All versioned versions have now "Version" appended.
+        Suggested by Les Orchard.
 
         * XML-RPC interface now returns an error code of 1, if the
-        requested page does not exist.
+        requested page does not exist.  Suggested by Les Orchard.
 
         * Bug fix: Now tables should finally work with Mozilla.
 
