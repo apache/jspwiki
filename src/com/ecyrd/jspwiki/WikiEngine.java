@@ -106,6 +106,15 @@ public class WikiEngine
      */
     public static final String DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
 
+    /**
+     *  Contains the default properties for JSPWiki.
+     */
+    private static final String[] DEFAULT_PROPERTIES = 
+    { "jspwiki.specialPage.Login",           "Login.jsp",
+      "jspwiki.specialPage.UserPreferences", "UserPreferences.jsp",
+      "jspwiki.specialPage.Search",          "Search.jsp",
+      "jspwiki.specialPage.FindPage",        "FindPage.jsp" };
+
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
 
@@ -263,7 +272,7 @@ public class WikiEngine
                 throw new WikiException("Property file cannot be found!"+propertyFile);
             }
 
-            Properties props = new Properties();
+            Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
 
             //
             //  Note: May be null, if JSPWiki has been deployed in a WAR file.
@@ -1703,6 +1712,39 @@ public class WikiEngine
         }
 
         return null;
+    }
+
+    /**
+     *  Figure out to which page we are really going to.  Considers
+     *  special page names from the jspwiki.properties, and possible aliases.
+     *
+     *  @param context The Wiki Context in which the request is being made.
+     *  @return A complete URL to the new page to redirect to
+     *  @since 2.2
+     */
+
+    public String getRedirectURL( WikiContext context )
+    {
+        String pagename = context.getPage().getName();
+        String redirURL = null;
+        
+        redirURL = getSpecialPageReference( pagename );
+
+        if( redirURL == null )
+        {
+            String alias = (String)context.getPage().getAttribute( WikiPage.ALIAS );
+            
+            if( alias != null )
+            {
+                redirURL = getViewURL( alias );
+            }
+            else
+            {
+                redirURL = (String)context.getPage().getAttribute( WikiPage.REDIRECT );
+            }
+        }
+
+        return redirURL;
     }
 
     /**
