@@ -26,6 +26,7 @@ import org.apache.log4j.Category;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
@@ -140,7 +141,9 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
-    private class FixedQueue extends LinkedList
+    private class FixedQueue 
+        extends LinkedList
+        implements Serializable
     {
         private int m_size;
 
