@@ -355,6 +355,15 @@ public class WikiEngine
     }
 
     /**
+     *  @since 1.8.0
+     */
+    public String getPluginSearchPath()
+    {
+        // FIXME: This method should not be here, probably.
+        return m_properties.getProperty( PluginManager.PROP_SEARCHPATH );
+    }
+
+    /**
      *  Returns the base URL.  Always prepend this to any reference
      *  you make.
      *
