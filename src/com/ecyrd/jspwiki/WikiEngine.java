@@ -992,6 +992,32 @@ public class WikiEngine
     }
 
     /**
+     *  If no author name has been set, then use the 
+     *  IP address, if allowed.  If no IP address is allowed,
+     *  then returns a default.
+     *
+     *  @return Returns any sort of user name.  Never returns null.
+     */
+
+    public String getValidUserName( HttpServletRequest request )
+    {
+        String user = getUserName( request );
+
+        if( user == null && m_storeIPAddress )
+        {
+            user = request.getRemoteAddr();
+        }
+
+        if( user == null )
+        {
+            user = "unknown"; // FIXME: Magic
+        }
+
+        return user;
+    }
+
+
+    /**
      *  @param request The HTTP Servlet request associated with this
      *                 transaction.
      *  @since 1.5.1
@@ -1014,21 +1040,9 @@ public class WikiEngine
 
             WikiPage p = new WikiPage( page );
 
-            String author = getUserName( request );
+            String author = getValidUserName( request );
 
-            //
-            //  If no author name has been set, then use the 
-            //  IP address, if allowed.
-            //
-
-            if( author == null && m_storeIPAddress )
-                author = request.getRemoteAddr();
-
-            //  If no author has been defined, then
-            //  use whatever default WikiPage gives us.
-
-            if( author != null )
-                p.setAuthor( author );
+            p.setAuthor( author );
 
             try
             {
@@ -1166,6 +1180,12 @@ public class WikiEngine
         {
             WikiPage p = m_pageManager.getPageInfo( pagereq, 
                                                     WikiPageProvider.LATEST_VERSION );
+
+            if( p == null )
+            {
+                //p = m_attachmentManager.getAttachmentInfo( pagereq,
+                //                                           WikiPageProvider.LATEST_VERSION );
+            }
             return p;
         }
         catch( ProviderException e )
