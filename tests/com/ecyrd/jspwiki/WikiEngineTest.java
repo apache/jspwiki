@@ -582,37 +582,69 @@ public class WikiEngineTest extends TestCase
     }    
 
 
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModification()
+    
+
+    public void testDeletePage()
         throws Exception
     {
-        m_engine.saveText( NAME1, "Foobar" );
-
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
+        m_engine.saveText( NAME1, "Test" );
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-
         File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        assertTrue( "No file!", saved.exists() );
+        assertTrue( "Didn't create it!", saved.exists() );
 
-        FileWriter out = new FileWriter( saved );
-        FileUtil.copyContents( new StringReader("Puppaa"), out );
-        out.close();
+        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
-        // Wait for the caching provider to notice a refresh.
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD );
+        m_engine.deletePage( page.getName() );
 
-        // Trim - engine.saveText() may append a newline.
-        String text = m_engine.getText( NAME1 ).trim();
-        assertEquals( "wrong contents", "Puppaa", text );
+        assertFalse( "Page has not been removed!", saved.exists() );
+    }
+    
+    public void testDeleteVersion()
+        throws Exception
+    {
+        props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
+        
+        TestEngine engine = new TestEngine( props );
+        engine.saveText( NAME1, "Test1" );
+        engine.saveText( NAME1, "Test2" );
+        engine.saveText( NAME1, "Test3" );
+
+        WikiPage page = engine.getPage( NAME1, 3 );
+
+        engine.deleteVersion( page );
+        
+        assertNull( "got page", engine.getPage( NAME1, 3 ) );
+        
+        String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+        
+        assertEquals( "content", "Test2", content.trim() );
     }
 
+    public void testDeleteVersion2()
+        throws Exception
+    {
+        props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
+    
+        TestEngine engine = new TestEngine( props );
+        engine.saveText( NAME1, "Test1" );
+        engine.saveText( NAME1, "Test2" );
+        engine.saveText( NAME1, "Test3" );
 
+        WikiPage page = engine.getPage( NAME1, 1 );
+        
+        engine.deleteVersion( page );
+        
+        assertNull( "got page", engine.getPage( NAME1, 1 ) );
+        
+        String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+        
+        assertEquals( "content", "Test3", content.trim() );
+        
+        assertEquals( "content1", "", engine.getText(NAME1, 1).trim() );
+    }
+    
     /**
      *  Assumes that CachingProvider is in use.
      */
@@ -626,7 +658,7 @@ public class WikiEngineTest extends TestCase
 
         Collection c = refMgr.findUncreated();
         assertTrue( "Non-existent reference not detected by ReferenceManager",
-		    Util.collectionContains( c, "Foobar" ));
+            Util.collectionContains( c, "Foobar" ));
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
@@ -695,20 +727,35 @@ public class WikiEngineTest extends TestCase
         assertEquals( "NEW: uncreated count", 0, c.size() );
     }
 
-    public void testDeletePage()
+    /**
+     *  Assumes that CachingProvider is in use.
+     */
+    public void testExternalModification()
         throws Exception
     {
-        m_engine.saveText( NAME1, "Test" );
+        m_engine.saveText( NAME1, "Foobar" );
+
+        m_engine.getText( NAME1 ); // Ensure that page is cached.
+
+        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
         File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        assertTrue( "Didn't create it!", saved.exists() );
+        assertTrue( "No file!", saved.exists() );
 
-        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
+        FileWriter out = new FileWriter( saved );
+        FileUtil.copyContents( new StringReader("Puppaa"), out );
+        out.close();
 
-        m_engine.deletePage( page.getName() );
+        // Wait for the caching provider to notice a refresh.
+        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD );
 
-        assertFalse( "Page has not been removed!", saved.exists() );
+        // Trim - engine.saveText() may append a newline.
+        String text = m_engine.getText( NAME1 ).trim();
+        assertEquals( "wrong contents", "Puppaa", text );
     }
+
+
 }
