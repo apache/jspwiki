@@ -51,13 +51,102 @@ public class GoDiagram
         return "<TD><IMG SRC=\"images/diagram/"+content+".gif\"></TD>";
     }
 
+    public class DiagramInfo
+    {
+        boolean topSide = false;
+        boolean bottomSide = false;
+        boolean leftSide = false;
+        boolean rightSide = false;
+
+        int numRows = 0;
+        int numCols = 0;
+
+        Object[][] contents;
+    }
+
+    protected DiagramInfo getDiagramInfo( String dia )
+    {
+        DiagramInfo info = new DiagramInfo();
+        StringTokenizer tok = new StringTokenizer( dia.trim(), "\n" );
+
+        ArrayList rows = new ArrayList();
+
+        while( tok.hasMoreTokens() )
+        {
+            String line = tok.nextToken().trim();
+
+            int firstBar = line.indexOf('|');
+            int lastBar  = line.lastIndexOf('|');
+
+            if( firstBar == 0 )
+                info.leftSide = true;
+
+            if( lastBar == (line.length()-1) )
+                info.rightSide = true;
+
+            int firstDash = line.indexOf('-');
+            if( firstDash >= 0 )
+            {
+                // Top or bottom row
+
+                if( info.numRows == 0 )
+                    info.topSide = true;
+                else
+                    info.bottomSide = true;
+            }
+            else
+            {
+                // Actual diagram row.
+                // Gobble it all in, don't bother to parse.
+
+                ArrayList       currentRow = new ArrayList();
+                StringTokenizer st2        = new StringTokenizer( line, " " );
+
+                info.numRows++;
+
+                while( st2.hasMoreTokens() )
+                {
+                    String mark = st2.nextToken();
+
+                    if( mark.equals("|") ) continue;
+
+                    currentRow.add( mark );
+                }
+
+                info.numCols = currentRow.size();
+                rows.add( currentRow );
+            }                        
+        }
+
+        info.contents = new String[info.numRows][info.numCols];
+
+        /*
+        System.out.println("\n");
+        System.out.println( (info.topSide ? "top " : " ")+
+                            (info.bottomSide ? "bottom ": " ")+
+                            (info.leftSide ? "left " : " ")+
+                            (info.rightSide ? "right " : " " ) );
+        */
+
+        for( int i = 0; i < info.numRows; i++ )
+        {
+            for( int j = 0; j < info.numCols; j++ )
+            {
+                info.contents[i][j] = (String) ((ArrayList)rows.get(i)).get(j);
+                //System.out.print( info.contents[i][j] );
+            }
+            //System.out.print("\n");
+        }
+        return info;
+    }
+
     /**
      *  @param first 'b', if black should have the first move, 'w' otherwise.
      */
     private String parseDiagram( String dia, int first )
         throws IOException
     {
-        StringTokenizer tok = new StringTokenizer( dia.trim(), " \t\n-", true );
+        DiagramInfo info = getDiagramInfo( dia );
 
         // System.out.println("dia="+dia);
 
@@ -65,82 +154,84 @@ public class GoDiagram
 
         //res.append("<DIV CLASS=\"diagram\">\n");
         res.append("<TABLE BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
-        res.append("<TR>");
         int type;
 
-        int row = 0;
-        int col = -1;
-
-        while( tok.hasMoreTokens() )
+        if( info.topSide )
         {
-            col++;
-            String item = tok.nextToken();
+            res.append("<TR>");
 
-            if( Character.isDigit(item.charAt(0)) )
+            if( info.leftSide ) res.append( makeImage("ULC") );
+            for( int i = 0; i < info.numCols; i++ )
             {
-                int num = Integer.parseInt( item );
-
-                String which = (num % 2 == first) ? "b" : "w";
-                res.append( makeImage( which+Integer.toString(num) ) );
-                continue;
+                res.append( makeImage("TS") );
             }
+            if( info.rightSide ) res.append( makeImage("URC") );
+            res.append("</TR>\n");
+        }
 
-            switch( item.charAt(0) )
+        res.append("<TR>");
+
+        for( int row = 0; row < info.numRows; row++ )
+        {
+            if( info.leftSide ) res.append( makeImage("LS") );
+
+            for( int col = 0; col < info.numCols; col++ )
             {
-              case '#':
-              case 'X':
-                res.append( makeImage("b") );
-                break;
+                String item = (String)info.contents[row][col];
 
-              case 'O':
-                res.append( makeImage("w") );
-                break;
-
-              case '.':
-                res.append( makeImage("empty") );
-                break;
-
-              case ',':
-                res.append( makeImage("hoshi") );
-                break;
-
-              case '|':
-                res.append( makeImage( (col == 0) ? "LS" : "RS" ) );
-                break;
-
-              case '+':
-                res.append( makeImage( (row == 0 ? "U" : "L") + 
-                                       (col == 0 ? "L" : "R") +
-                                       "C" ) );
-                break;
-
-              case '-':
-                if( col % 2 == 1 )
+                if( Character.isDigit(item.charAt(0)) )
                 {
-                    res.append( makeImage( (row == 0) ? "TS" : "BS" ) );
+                    int num = Integer.parseInt( item );
+
+                    String which = (num % 2 == first) ? "b" : "w";
+                    res.append( makeImage( which+Integer.toString(num) ) );
+                    continue;
                 }
-                break;
 
-              case '\r':
-              case '\n':
-                // res.append("<BR>\n");
-                res.append("</TR>\n<TR>");
-                col = -1;
-                row++;
-                break;
+                switch( item.charAt(0) )
+                {
+                  case '#':
+                  case 'X':
+                    res.append( makeImage("b") );
+                    break;
 
-              case ' ':
-              case '\t':
-                break;
+                  case 'O':
+                    res.append( makeImage("w") );
+                    break;
 
-              default:
-                res.append( makeImage( "lc"+item ) );
-                break;
+                  case '.':
+                    res.append( makeImage("empty") );
+                    break;
+
+                  case ',':
+                    res.append( makeImage("hoshi") );
+                    break;
+
+                  default:
+                    res.append( makeImage( "lc"+item ) );
+                    break;
+                }
+            } // col
+
+            if( info.rightSide ) res.append( makeImage("RS") );
+            res.append("</TR>\n<TR>");
+        } // row
+
+        res.append("</TR>\n");
+
+        if( info.bottomSide )
+        {
+            res.append("<TR>");
+            if( info.leftSide ) res.append( makeImage("LLC") );
+            for( int i = 0; i < info.numCols; i++ )
+            {
+                res.append( makeImage("BS") );
             }
+            if( info.rightSide ) res.append( makeImage("LRC") );
+            res.append("</TR>\n");
         }
 
         //res.append("</DIV>\n");
-        res.append("</TR>\n");
         res.append("</TABLE>");
 
         return res.toString();
