@@ -101,6 +101,7 @@ public class TranslatorReader extends Reader
     private boolean                m_camelCaseLinks      = false;
 
     /** If true, consider URIs that have no brackets as well. */
+    // FIXME: Currently reserved, but not used.
     private boolean                m_plainUris           = false;
 
     private PatternMatcher         m_matcher  = new Perl5Matcher();
@@ -606,7 +607,7 @@ public class TranslatorReader extends Reader
                         }
                             
                         sb.append( included );
-                    }                
+                    }
                     else if( VariableManager.isVariableLink( link ) )
                     {
                         String value;
