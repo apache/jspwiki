@@ -213,6 +213,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "1<TT>2345</TT>6\n", translate(src) );
     }
 
+    public void testTTAcrossLines()
+        throws Exception
+    {
+        String src = "1{{\n2345\n}}6";
+
+        assertEquals( "1<TT>\n2345\n</TT>6\n", translate(src) );
+    }
+
     public void testPre()
         throws Exception
     {
