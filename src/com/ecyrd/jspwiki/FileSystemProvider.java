@@ -39,9 +39,10 @@ import org.apache.log4j.Category;
 public class FileSystemProvider
     implements WikiPageProvider
 {
-
     private static final Category   log = Category.getInstance(FileSystemProvider.class);
     private String m_pageDirectory = "/tmp/";
+
+    private String m_encoding;
 
     /**
      *  Name of the property that defines where page directories are.
@@ -55,12 +56,16 @@ public class FileSystemProvider
      */
     public static final String FILE_EXT = ".txt";
 
+    private static final String DEFAULT_ENCODING = "ISO-8859-1";
 
     public void initialize( Properties properties )
         throws NoRequiredPropertyException
     {
         log.debug("Initing FileSystemProvider");
         m_pageDirectory = WikiEngine.getRequiredProperty( properties, PROP_PAGEDIR );
+
+        m_encoding      = properties.getProperty( WikiEngine.PROP_ENCODING, 
+                                                  DEFAULT_ENCODING );
 
         log.info("Wikipages are read from : "+m_pageDirectory);
     }
@@ -76,6 +81,10 @@ public class FileSystemProvider
      */
     protected String mangleName( String pagename )
     {
+        // FIXME: Horrible kludge, very slow, etc.
+        if( "UTF-8".equals( m_encoding ) )
+            return TextUtil.urlEncodeUTF8( pagename );
+
         return java.net.URLEncoder.encode( pagename );
     }
 
@@ -84,6 +93,10 @@ public class FileSystemProvider
      */
     protected String unmangleName( String filename )
     {
+        // FIXME: Horrible kludge, very slow, etc.
+        if( "UTF-8".equals( m_encoding ) )
+            return TextUtil.urlDecodeUTF8( filename );
+
         return java.net.URLDecoder.decode( filename );
     }
 
@@ -125,7 +138,8 @@ public class FileSystemProvider
 
             try
             {
-                in = new BufferedReader(new FileReader(pagedata) );
+                in = new BufferedReader( new InputStreamReader( new FileInputStream(pagedata), 
+                                                                m_encoding ) );
                 out = new StringWriter();
 
                 int c;
@@ -170,7 +184,8 @@ public class FileSystemProvider
 
         try
         {
-            PrintWriter out = new PrintWriter(new FileWriter( file ));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter( new FileOutputStream( file ),
+                                                                      m_encoding ));
 
             out.print( text );
 
