@@ -19,9 +19,6 @@
     <teiclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
-       <name>page</name>
-    </attribute>
-    <attribute>
        <name>id</name>
     </attribute>
   </tag>  
@@ -88,6 +85,20 @@
        <name>mode</name>
     </attribute>
   </tag>  
+
+<!--
+  <tag>
+    <name>CommentLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.CommentLinkTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>format</name>
+    </attribute>
+  </tag>  
+-->
 
   <tag>
     <name>ContentEncoding</name>
@@ -352,6 +363,12 @@
     </attribute>
 
   </tag>  
+
+  <tag>
+    <name>TemplateDir</name>
+    <tagclass>com.ecyrd.jspwiki.tags.TemplateDirTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
 
   <tag>
     <name>Translate</name>
