@@ -59,7 +59,6 @@
     // In the future, user access permits affect this
     boolean isEditable = (version < 0);
 
-    String rssURL = wiki.getGlobalRSSURL();
     //
     //  Alright, then start responding.
     //
