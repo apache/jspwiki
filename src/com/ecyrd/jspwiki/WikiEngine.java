@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -56,7 +56,7 @@ import com.ecyrd.jspwiki.filters.FilterManager;
  */
 public class WikiEngine
 {
-    private static final Category   log = Category.getInstance(WikiEngine.class);
+    private static final Logger log = Logger.getLogger(WikiEngine.class);
 
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
@@ -442,11 +442,18 @@ public class WikiEngine
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
+
+            //
+            //  ReferenceManager has the side effect of loading all
+            //  pages.  Therefore after this point, all page attributes
+            //  are available.
+            //
+            initReferenceManager();
+
             m_templateManager   = new TemplateManager( this, props );
             m_userManager       = new UserManager( this, props );
             m_authorizationManager = new AuthorizationManager( this, props );
 
-            initReferenceManager();            
         }
         catch( Exception e )
         {
