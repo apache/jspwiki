@@ -1,5 +1,9 @@
 2003-05-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added Release.getVersionString() for those who are annoyed at
+        having to recompile their JSP pages each time they install a new
+        version (like me).
+
         * v2.1.26.
 
         * Made the default templates a bit more XHTML compliant.  There

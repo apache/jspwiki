@@ -58,6 +58,18 @@ public class Release
         VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;
 
     /**
+     *  This method is useful for templates, because hopefully it will
+     *  not be inlined, and thus any change to version number does not
+     *  need recompiling the pages.
+     *
+     *  @since 2.1.26.
+     */
+    public static String getVersionString()
+    {
+        return VERSTR;
+    }
+
+    /**
      *  Executing this class directly from command line prints out
      *  the current version.
      *  <P>Example:
