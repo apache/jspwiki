@@ -1,3 +1,11 @@
+2003-06-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.42.
+
+        * Added patch to list attachments too when asking for links using
+        the listLinks() method for XML-RPC.  Patch kindly donated by
+        Christopher Lenz.
+
 2003-06-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.41.
