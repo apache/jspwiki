@@ -22,11 +22,11 @@
     
     log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
-    String specialpage = wiki.getSpecialPageReference( pagereq );
+    String redirect = wiki.getRedirectURL( wikiContext );
 
-    if( specialpage != null )
+    if( redirect != null )
     {
-        response.sendRedirect( specialpage );
+        response.sendRedirect( redirect );
         return;
     }
 
