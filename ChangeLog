@@ -1,7 +1,9 @@
 2003-04-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.9.
+
         * CachingProvider now also provides information on how many pages
-        are currently in cache.
+        are currently in cache and how big they are.
 
         * TranslatorReader now outputs all tags in lowercase to be
         XHTML-compliant. 
