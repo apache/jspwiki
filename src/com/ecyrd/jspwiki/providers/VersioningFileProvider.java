@@ -300,10 +300,9 @@ public class VersioningFileProvider
 
             if( oldFile != null && oldFile.exists() )
             {
-                BufferedReader in = new BufferedReader( new FileReader( oldFile ) );
+                InputStream in = new BufferedInputStream( new FileInputStream( oldFile ) );
                 File pageFile = new File( pageDir, Integer.toString( versionNumber )+FILE_EXT );
-                PrintWriter out = new PrintWriter(new OutputStreamWriter( new FileOutputStream( pageFile ),
-                                                                          m_encoding ));
+                OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
 
                 FileUtil.copyContents( in, out );
 
