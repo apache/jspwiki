@@ -18,10 +18,10 @@ public class FileAuthenticatorTest
         "# A comment line",
         "# A non-parsed line:", 
         "default READ ALLOW ALL", 
-        "# A user definition:", 
-        "user ebu xyzzy a,b,c,d,e",
+        "# A user definition, password is xyzzy:", 
+        "user ebu oTtKwkqR5Zd4k a,b,c,d,e",
         "# A user definition with extra spaces", 
-        " user\tube\txyzzy     line,with,whitespace "
+        " user\tube\toTtKwkqR5Zd4k     line,with,whitespace "
     };
 
     public static final String testFileName = "authtest.tmp";
@@ -62,14 +62,11 @@ public class FileAuthenticatorTest
 
     public void testPasswordParsing()
     {
-        String passwd = m_auth.parsePassword( "nothing should be found here" );
+        String passwd = m_auth.parseHashedPassword( "nothing should be found here" );
         assertTrue( passwd == null );
 
-        passwd = m_auth.parsePassword( "user foobar\t some,permissions    " );
-        assertTrue( passwd == null );
-        
-        passwd = m_auth.parsePassword( "user passwd should be found here" );
-        assertTrue( "passwd".equals( passwd ) );
+        passwd = m_auth.parseHashedPassword( "user testuser oTtKwkqR5Zd4k passwd,xyzzy,should,match" );
+        assertTrue( Crypt.match( "xyzzy", passwd ) );
     }
 
 
