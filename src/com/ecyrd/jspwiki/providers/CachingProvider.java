@@ -102,7 +102,19 @@ public class CachingProvider
         }
         else
         {
-            result = m_provider.getPageText( page, version );
+            CacheItem item = (CacheItem)m_cache.get( page );
+
+            //
+            //  Or is this the latest version fetched by version number?
+            //
+            if( item != null && item.m_page.getVersion() == version )
+            {
+                result = getTextFromCache( page );
+            }
+            else
+            {
+                result = m_provider.getPageText( page, version );
+            }
         }
 
         return result;
@@ -249,11 +261,14 @@ public class CachingProvider
 
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
-    {
-        if( version == WikiPageProvider.LATEST_VERSION )
-        {
-            CacheItem item = (CacheItem)m_cache.get( page );
+    { 
+        CacheItem item = (CacheItem)m_cache.get( page );
 
+        int latestcached = (item != null) ? item.m_page.getVersion() : Integer.MIN_VALUE;
+       
+        if( version == WikiPageProvider.LATEST_VERSION ||
+            version == latestcached )
+        {
             if( item == null )
             {
                 item = addPage( page, null );
@@ -284,6 +299,15 @@ public class CachingProvider
         return("Real provider: "+m_provider.getClass().getName()+
                "<BR>Cache misses: "+m_cacheMisses+
                "<BR>Cache hits: "+m_cacheHits);
+    }
+
+    /**
+     *  Returns the actual used provider.
+     *  @since 2.0
+     */
+    public WikiPageProvider getRealProvider()
+    {
+        return m_provider;
     }
 
     private class CacheItem
