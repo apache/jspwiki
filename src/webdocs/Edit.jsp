@@ -2,6 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
@@ -17,7 +18,13 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
-    String headerTitle = "Edit page ";
+    String verstr  = request.getParameter("version");
+    int    version = WikiProvider.LATEST_VERSION;
+
+    if( verstr != null )
+    {
+        version = Integer.parseInt(verstr);    
+    }
 
     if( pagereq == null )
     {
@@ -26,9 +33,9 @@
 
     String skin = wiki.getTemplateDir();
 
-    NDC.push( wiki.getApplicationName()+":"+pagereq );
+    NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
-    WikiPage wikipage = wiki.getPage( pagereq );
+    WikiPage wikipage = wiki.getPage( pagereq, version );
 
     if( wikipage == null )
     {
@@ -43,8 +50,8 @@
 
     String pageurl = wiki.encodeName( pagereq );
 
-    String action = request.getParameter("action");
-    String ok = request.getParameter("ok");
+    String action  = request.getParameter("action");
+    String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
 
     //
