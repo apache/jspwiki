@@ -1,3 +1,11 @@
+2003-05-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.19.
+
+        * PageManager is now better protected against null page names.
+
+        * Mass commit of authorization code.
+
 2003-05-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.18.
