@@ -58,6 +58,19 @@ public class BasicAttachmentProviderTest extends TestCase
         return tmpFile;
     }
 
+    private File makeExtraFile( File directory, String name )
+        throws Exception
+    {
+        File tmpFile = new File( directory, name );
+        FileWriter out = new FileWriter( tmpFile );
+        
+        FileUtil.copyContents( new StringReader( c_fileContents ), out );
+
+        out.close();
+        
+        return tmpFile;
+    }
+
 
     public void tearDown()
     {
@@ -161,6 +174,132 @@ public class BasicAttachmentProviderTest extends TestCase
 
         assertEquals( "a1 name", att.getName(), a1.getName() );
         assertEquals( "a2 name", att2.getName(), a2.getName() );
+    }
+
+
+    /**
+     *  Check that the system does not fail if there are extra files in the directory.
+     */
+    public void testListAllExtrafile()
+        throws Exception
+    {
+        File in = makeAttachmentFile();
+
+        File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
+        File extrafile = makeExtraFile( sDir, "foobar.blob" );
+
+        try
+        {
+            Attachment att = new Attachment( NAME1, "test1.txt" );
+
+            m_provider.putAttachmentData( att, new FileInputStream(in) );
+
+            Thread.sleep( 2000L ); // So that we get a bit of granularity.
+
+            Attachment att2 = new Attachment( NAME2, "test2.txt" );
+
+            m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        
+            List res = m_provider.listAllChanged( new Date(0L) );
+
+            assertEquals( "list size", 2, res.size() );
+
+            Attachment a2 = (Attachment) res.get(0);  // Most recently changed
+            Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+
+            assertEquals( "a1 name", att.getName(), a1.getName() );
+            assertEquals( "a2 name", att2.getName(), a2.getName() );
+        }
+        finally
+        {
+            extrafile.delete();
+        }
+    }
+
+    /**
+     *  Check that the system does not fail if there are extra files in the
+     *  attachment directory.
+     */
+    public void testListAllExtrafileInAttachmentDir()
+        throws Exception
+    {
+        File in = makeAttachmentFile();
+
+        File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
+        File attDir = new File( sDir, NAME1+"-att" );
+
+
+        Attachment att = new Attachment( NAME1, "test1.txt" );
+
+        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        
+        File extrafile = makeExtraFile( attDir, "ping.pong" );
+        
+        try
+        {
+            Thread.sleep( 2000L ); // So that we get a bit of granularity.
+
+            Attachment att2 = new Attachment( NAME2, "test2.txt" );
+
+            m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        
+            List res = m_provider.listAllChanged( new Date(0L) );
+
+            assertEquals( "list size", 2, res.size() );
+
+            Attachment a2 = (Attachment) res.get(0);  // Most recently changed
+            Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+
+            assertEquals( "a1 name", att.getName(), a1.getName() );
+            assertEquals( "a2 name", att2.getName(), a2.getName() );
+        }
+        finally
+        {
+            extrafile.delete();
+        }
+    }
+
+    /**
+     *  Check that the system does not fail if there are extra dirs in the
+     *  attachment directory.
+     */
+    public void testListAllExtradirInAttachmentDir()
+        throws Exception
+    {
+        File in = makeAttachmentFile();
+
+        File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
+        File attDir = new File( sDir, NAME1+"-att" );
+
+        Attachment att = new Attachment( NAME1, "test1.txt" );
+
+        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        
+        File extrafile = new File( attDir, "ping.pong" );
+        extrafile.mkdir();
+        
+        try
+        {
+            Thread.sleep( 2000L ); // So that we get a bit of granularity.
+
+            Attachment att2 = new Attachment( NAME2, "test2.txt" );
+
+            m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        
+            List res = m_provider.listAllChanged( new Date(0L) );
+
+            assertEquals( "list size", 2, res.size() );
+
+            Attachment a2 = (Attachment) res.get(0);  // Most recently changed
+            Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+
+            assertEquals( "a1 name", att.getName(), a1.getName() );
+            assertEquals( "a2 name", att2.getName(), a2.getName() );
+        }
+        finally
+        {
+            extrafile.delete();
+        }
     }
 
     public void testListAllNoExtension()
