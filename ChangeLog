@@ -1,3 +1,13 @@
+2001-12-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Wiki.jsp now has a direct link from the last change date to the
+        latest change.
+
+        * PageInfo.jsp can now display differences between a previous
+        version and the current version.
+
+        * Diff.jsp now handles requests for current version as well.
+
 2001-12-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.1-cvs.
