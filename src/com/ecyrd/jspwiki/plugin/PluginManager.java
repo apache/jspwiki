@@ -114,8 +114,6 @@ public class PluginManager
 
     Pattern m_pluginPattern;
 
-    private boolean m_pluginsEnabled = true;
-
     /**
      *  Create a new PluginManager.
      *
@@ -152,24 +150,6 @@ public class PluginManager
             throw new InternalWikiException( "PluginManager patterns are broken" );
         }
 
-    }
-
-    /**
-     * Enables or disables plugin execution.
-     */
-    public void enablePlugins( boolean enabled )
-    {
-        m_pluginsEnabled = enabled;
-    }
-
-    /**
-     * Returns plugin execution status. If false, plugins are not 
-     * executed when they are encountered on a WikiPage, and an
-     * empty string is returned in their place.
-     */
-    public boolean pluginsEnabled()
-    {
-        return( m_pluginsEnabled );
     }
 
 
@@ -274,9 +254,6 @@ public class PluginManager
                            Map params )
         throws PluginException
     {
-        if( !m_pluginsEnabled )
-            return( "" );
-
         try
         {
             Class      pluginClass;
@@ -349,7 +326,6 @@ public class PluginManager
      *
      *  @throws IOException If the parsing fails.
      */
-
     public Map parseArgs( String argstring )
         throws IOException
     {
@@ -462,9 +438,6 @@ public class PluginManager
                            String commandline )
         throws PluginException
     {
-        if( !m_pluginsEnabled )
-            return( "" );
-
         PatternMatcher  matcher  = new Perl5Matcher();
 
         try
