@@ -69,6 +69,9 @@ public class WikiEngine
     /** If true, logs the IP address of the editor on saving. */
     public static final String PROP_STOREIPADDRESS= "jspwiki.storeIPAddress";
 
+    /** Define the used encoding.  Currently supported are ISO-8859-1 and UTF-8 */
+    public static final String PROP_ENCODING     = "jspwiki.encoding";
+
     private String         m_diffCommand = "diff -u %s1 %s2"; 
 
     private static Hashtable c_engines = new Hashtable();
@@ -81,6 +84,10 @@ public class WikiEngine
 
     /** If true, logs the IP address of the editor */
     private boolean        m_storeIPAddress = true;
+
+    /** If true, uses UTF8 encoding for all data */
+
+    private boolean        m_useUTF8      = true;
 
     /**
      *  Gets a WikiEngine related to this servlet.
@@ -160,6 +167,8 @@ public class WikiEngine
         m_saveUserInfo   = "true".equals( props.getProperty( PROP_STOREUSERNAME, "true" ) );
         m_storeIPAddress = "true".equals( props.getProperty( PROP_STOREIPADDRESS, "true" ) );
 
+        m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
+
         //
         //  Find the page provider
         //
@@ -223,6 +232,40 @@ public class WikiEngine
     {
         return m_properties;
     }
+
+    /**
+     *  This is a safe version of the Servlet.Request.getParameter() routine.
+     *  Unfortunately, the default version always assumes that the incoming
+     *  character set is ISO-8859-1, even though it was something else.
+     *  This means that we need to make a new string using the correct
+     *  encoding.
+     *  <P>
+     *  Incidentally, this is almost the same as encodeName(), below.
+     *  I am not yet entirely sure if it's safe to merge the code.
+     *
+     *  @since 1.5.3
+     */
+    public String safeGetParameter( ServletRequest request, String name )
+    {
+        try
+        {
+            String res = request.getParameter( name );
+            if( res != null ) 
+            {
+                res = new String(res.getBytes("ISO-8859-1"),
+                                 getContentEncoding() );
+            }
+
+            return res;
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal( "Unsupported encoding", e );
+            return "";
+        }
+
+    }
+
 
     /**
      *  Returns an URL to some other Wiki that we know.
@@ -318,7 +361,27 @@ public class WikiEngine
      */
     public String encodeName( String pagename )
     {
-        return java.net.URLEncoder.encode( pagename );
+        if( m_useUTF8 )
+            return TextUtil.urlEncodeUTF8( pagename );
+        else
+            return java.net.URLEncoder.encode( pagename );
+    }
+
+    public String decodeName( String pagerequest )
+    {
+        if( m_useUTF8 )
+            return TextUtil.urlDecodeUTF8( pagerequest );
+
+        else
+            return java.net.URLDecoder.decode( pagerequest );
+    }
+
+    public String getContentEncoding()
+    {
+        if( m_useUTF8 ) 
+            return "UTF-8";
+
+        return "ISO-8859-1";
     }
 
     /**
