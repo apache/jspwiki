@@ -92,9 +92,9 @@ public class WeblogPlugin implements WikiPlugin
         String days;
         String startDay = null;
 
-        if( (days = (String) params.get("days")) == null )
+        if( (days = context.getHttpParameter( "weblog.days" )) == null )
         {
-            days = context.getHttpParameter( "weblog.days" );
+            days = (String) params.get("days");
         }
 
         numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
