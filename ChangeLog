@@ -1,3 +1,14 @@
+2002-12-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.2.
+
+        * Bug fix: JSPWiki no longer dies horribly with OutOfMemoryError
+        if preformatted code blocks ({{{ }}}) are not closed properly.
+        We simply forgot to check for EOF :-).
+
+        * Bug fix: CamelCase is no longer recognized inside {{{Он}}}
+        blocks. Reported by Torsten Hildebrandt.
+
 2002-12-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.1.
