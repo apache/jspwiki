@@ -280,6 +280,8 @@ public class WikiEngine
 
     public Collection getRecentChanges()
     {
+        log.debug("Getting recent changes list...");
+
         TreeSet set = new TreeSet( new PageTimeComparator() );
 
         File wikipagedir = new File( m_pagelocation );
@@ -293,8 +295,6 @@ public class WikiEngine
             WikiPage page = new WikiPage( wikiname.substring(0,cutpoint) );
 
             page.setLastModified( new Date(wikipages[i].lastModified()) );
-
-            log.debug("Adding..." +page);
 
             set.add( page );
         }
