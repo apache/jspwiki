@@ -8,14 +8,16 @@ import org.apache.log4j.*;
 
 public class FileUtilTest extends TestCase
 {
-    static
-    {
-        BasicConfigurator.configure();
-    }
-
     public FileUtilTest( String s )
     {
         super( s );
+        Properties props = new Properties();
+        try
+        {
+            props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+            PropertyConfigurator.configure(props);
+        }
+        catch( IOException e ) {}
     }
 
     public void setUp()
