@@ -69,14 +69,45 @@ public class AttachmentManagerTest extends TestCase
     public void testSimpleStore()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1 );
+        Attachment att = new Attachment( NAME1, "test1.txt" );
 
-        att.setFileName( "test1.txt" );
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( new WikiPage(NAME1), "test1.txt" );
+        Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
+                                                                       new WikiPage(NAME1)), 
+                                                       "test1.txt" );
+
+        assertNotNull( "attachment disappeared", att2 );
+        assertEquals( "name", att.getName(), att2.getName() );
+        assertEquals( "author", att.getAuthor(), att2.getAuthor() );
+        assertEquals( "size", c_fileContents.length(), att2.getSize() );
+
+        InputStream in = m_manager.getAttachmentStream( att2 );
+
+        assertNotNull( "stream", in );
+
+        StringWriter sout = new StringWriter();
+        FileUtil.copyContents( new InputStreamReader(in), sout );
+
+        sout.close();
+
+        assertEquals( "contents", c_fileContents, sout.toString() );
+    }
+
+    public void testSimpleStoreByVersion()
+        throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test1.txt" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
+                                                                       new WikiPage(NAME1)), 
+                                                       "test1.txt", 1 );
 
         assertNotNull( "attachment disappeared", att2 );
         assertEquals( "name", att.getName(), att2.getName() );
@@ -98,9 +129,8 @@ public class AttachmentManagerTest extends TestCase
     public void testMultipleStore()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1 );
+        Attachment att = new Attachment( NAME1, "test1.txt" );
 
-        att.setFileName( "test1.txt" );
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
@@ -108,7 +138,9 @@ public class AttachmentManagerTest extends TestCase
         att.setAuthor( "FooBar" );
         m_manager.storeAttachment( att, makeAttachmentFile() );        
 
-        Attachment att2 = m_manager.getAttachmentInfo( new WikiPage(NAME1), "test1.txt" );
+        Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
+                                                                       new WikiPage(NAME1)), 
+                                                       "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
         assertEquals( "name", att.getName(), att2.getName() );
@@ -131,7 +163,10 @@ public class AttachmentManagerTest extends TestCase
         // Check that first author did not disappear
         //
 
-        Attachment att3 = m_manager.getAttachmentInfo( new WikiPage(NAME1), "test1.txt", 1 );
+        Attachment att3 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
+                                                                       new WikiPage(NAME1)), 
+                                                       "test1.txt",
+                                                       1 );
         assertEquals( "version of v1", 1, att3.getVersion() );
         assertEquals( "name of v1", "FirstPost", att3.getAuthor() );
     }
@@ -139,9 +174,8 @@ public class AttachmentManagerTest extends TestCase
     public void testListAttachments()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1 );
+        Attachment att = new Attachment( NAME1, "test1.txt" );
 
-        att.setFileName( "test1.txt" );
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
