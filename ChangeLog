@@ -1,3 +1,11 @@
+2003-09-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.73.
+
+        * RCSFileProvider and FileSystemProvider now support page
+        deletion.  The top-level management interface is still missing,
+        though.
+
 2003-09-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.72.
