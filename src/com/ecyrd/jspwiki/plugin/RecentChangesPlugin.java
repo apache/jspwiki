@@ -58,6 +58,7 @@ public class RecentChangesPlugin
                                                         DEFAULT_DAYS );
         int      spacing  = 4;
         boolean  showAuthor = true;
+        WikiEngine engine = context.getEngine();
 
         //
         //  Which format we want to see?
@@ -76,8 +77,8 @@ public class RecentChangesPlugin
 
         // FIXME: Should really have a since date on the getRecentChanges
         // method.
-        Collection changes = context.getEngine().getRecentChanges();
-        StringWriter out = new StringWriter();
+        Collection   changes = engine.getRecentChanges();
+        StringWriter out     = new StringWriter();
 
         //
         //  This linkProcessor is used to transform links.
@@ -91,7 +92,7 @@ public class RecentChangesPlugin
             SimpleDateFormat fmt  = new SimpleDateFormat( "dd.MM.yyyy" );
             SimpleDateFormat tfmt = new SimpleDateFormat( "HH:mm:ss" );
 
-            out.write("<TABLE border=\"0\" cellpadding=\""+spacing+"\">\n");
+            out.write("<table border=\"0\" cellpadding=\""+spacing+"\">\n");
 
             for( Iterator i = changes.iterator(); i.hasNext(); )
             {
@@ -106,36 +107,36 @@ public class RecentChangesPlugin
                 
                 if( !isSameDay( lastmod, olddate ) )
                 {
-                    out.write("<TR>\n");
-                    out.write("  <TD COLSPAN=\"2\"><B>"+
+                    out.write("<tr>\n");
+                    out.write("  <td colspan=\"2\"><b>"+
                               fmt.format(lastmod)+
-                              "</B></TD>\n");
-                    out.write("</TR>\n");
+                              "</b></td>\n");
+                    out.write("</tr>\n");
                     olddate = lastmod;
                 }
 
-                String pageurl = context.getEngine().encodeName(pageref.getName());
+                String pageurl = engine.encodeName(pageref.getName());
 
                 String link = linkProcessor.makeLink( (pageref instanceof Attachment) ? 
                                                       TranslatorReader.ATTACHMENT : TranslatorReader.READ,
                                                       pageref.getName(),
                                                       pageref.getName() );
                                                       
-                out.write("<TR>\n");
+                out.write("<tr>\n");
 
-                out.write("<TD WIDTH=\"30%\">"+
+                out.write("<td width=\"30%\">"+
                           link+
-                          "</TD>\n");
+                          "</td>\n");
 
                 if( pageref instanceof Attachment )
                 {
-                    out.write("<TD>"+tfmt.format(lastmod)+"</TD>");
+                    out.write("<td>"+tfmt.format(lastmod)+"</td>");
                 }
                 else
                 {
-                    out.write("<TD><A HREF=\"Diff.jsp?page="+pageurl+"&r1=-1\">"+
+                    out.write("<td><a href=\""+engine.getBaseURL()+"Diff.jsp?page="+pageurl+"&r1=-1\">"+
                               tfmt.format(lastmod)+
-                              "</A></TD>\n");
+                              "</a></td>\n");
                 }
 
                 //
@@ -148,7 +149,7 @@ public class RecentChangesPlugin
 
                     if( author != null )
                     {
-                        if( context.getEngine().pageExists(author) )
+                        if( engine.pageExists(author) )
                         {
                             author = linkProcessor.makeLink( TranslatorReader.READ, author, author );
                         }
@@ -158,10 +159,10 @@ public class RecentChangesPlugin
                         author = "unknown";
                     }
 
-                    out.write("<TD>"+author+"</TD>");
+                    out.write("<td>"+author+"</td>");
                 }
 
-                out.write("</TR>\n");
+                out.write("</tr>\n");
             }
 
             out.write("</table>\n");
