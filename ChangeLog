@@ -1,5 +1,12 @@
 2002-07-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.4.
+
+        * Fixed problem with VersioningFileProvider failing if the
+        corresponding history file was not located.  This might have been
+        an issue while upgrading from FileSystemProvider to
+        VersioningFileProvider.
+
         * Moved some heavier stuff from tests to package "stresstests" to
         make running unit tests faster. 
 
