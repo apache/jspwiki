@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.io.IOException;
 import org.apache.log4j.Category;
 
 /**
@@ -48,7 +49,8 @@ public class CachingProvider
     private long m_cacheHits   = 0;
 
     public void initialize( Properties properties )
-        throws NoRequiredPropertyException
+        throws NoRequiredPropertyException,
+               IOException
     {
         log.debug("Initing CachingProvider");
 

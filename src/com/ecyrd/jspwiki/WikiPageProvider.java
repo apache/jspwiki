@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.Date;
+import java.io.IOException;
 
 /**
  *  Each Wiki page provider should implement this interface.
@@ -43,7 +44,9 @@ public interface WikiPageProvider
     /**
      *  Initializes the page provider.
      */
-    public void initialize( Properties properties ) throws NoRequiredPropertyException;
+    public void initialize( Properties properties ) 
+        throws NoRequiredPropertyException,
+               IOException;
 
     /**
      *  Attempts to save the page text for page "page".
