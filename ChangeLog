@@ -1,5 +1,14 @@
 2001-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * This is R3, v1.5.0
+
+        * Rewrote README.
+
+        * The distribution archive now contains a separate archive for all
+        sample wiki pages to help you bootstrap your own Wiki.
+
+        * Added JSPWikiTips page to the sample wiki pages collection.
+
         * Removed the authentication scheme from web.xml - out-of-box
         JSPWiki now allows access to anyone.
 
