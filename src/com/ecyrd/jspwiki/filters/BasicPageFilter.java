@@ -14,25 +14,30 @@ public class BasicPageFilter
     implements PageFilter
 {
     public void initialize( Properties properties )
+        throws FilterException
     {
     }
 
     public String preTranslate( WikiContext wikiContext, String content )
+        throws FilterException
     {
         return content;
     }
 
     public String postTranslate( WikiContext wikiContext, String htmlContent )
+        throws FilterException
     {
         return htmlContent;
     }
 
     public String preSave( WikiContext wikiContext, String content )
+        throws FilterException
     {
         return content;
     }
 
     public void postSave( WikiContext wikiContext, String content )
+        throws FilterException
     {
     }
 }
