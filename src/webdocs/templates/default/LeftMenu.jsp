@@ -16,18 +16,19 @@
 <p>
 <div align="center" class="username">
 
-    <wiki:UserCheck exists="true">
+    <wiki:UserCheck status="known">
         <b>G'day,</b><br />
         <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
     </wiki:UserCheck>
 
-    <wiki:UserCheck exists="false">
-        <tt> 
+    <wiki:UserCheck status="unknown">
+        <tt>
         Set your name in<br />
         <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
         </tt>    
     </wiki:UserCheck>
 </div>
+<wiki:Include page="LoginBox.jsp" />
 </p>
 
 <!-- End of automatically generated page -->
