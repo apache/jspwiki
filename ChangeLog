@@ -12,7 +12,7 @@
         * CachingProvider now checks the cache first when called with
         pageExists().  Suggested by Sulka Haro.
 
-        * Removed a couple of deprecated methods.
+        * Removed a couple of deprecated methods from WikiEngine.
 
 2003-01-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
