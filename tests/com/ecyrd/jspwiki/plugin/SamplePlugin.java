@@ -26,7 +26,7 @@ public class SamplePlugin
 
         sb.append( (String)params.get("text") );
 
-        String body = (String)params.get("body");
+        String body = (String)params.get("_body");
         if( body != null )
         {
             sb.append( " ("+body.replace('\n','+')+")" );
