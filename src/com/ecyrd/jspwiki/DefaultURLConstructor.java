@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 public class DefaultURLConstructor
     implements URLConstructor
 {
-    private WikiEngine m_engine;
+    protected WikiEngine m_engine;
     private String m_viewURLPattern = "%uWiki.jsp?page=%n";
 
     /** Are URL styles relative or absolute? */
-    private boolean          m_useRelativeURLStyle = true;
+    protected boolean          m_useRelativeURLStyle = true;
 
     public void initialize( WikiEngine engine, 
                             Properties properties )
@@ -22,7 +22,7 @@ public class DefaultURLConstructor
                                                                            "relative" ) );
     }
 
-    private final String doReplacement( String baseptrn, String name, boolean absolute )
+    protected final String doReplacement( String baseptrn, String name, boolean absolute )
     {
         String baseurl = "";
 
