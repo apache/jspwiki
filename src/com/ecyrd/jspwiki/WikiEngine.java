@@ -24,6 +24,7 @@ import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Cookie;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 
 /**
@@ -70,6 +71,9 @@ public class WikiEngine
 
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL      = "jspwiki.baseURL";
+
+    /** The name of the cookie that gets stored to the user browser. */
+    public static final String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
 
     private static Hashtable c_engines = new Hashtable();
 
@@ -647,6 +651,42 @@ public class WikiEngine
         m_provider.putPageText( new WikiPage(page), text );
     }
 
+    // FIXME: This is a terrible time waster, parsing the 
+    // textual data every time it is used.
+
+    public String getUserName( HttpServletRequest request )
+    {
+        // Get the user authentication - if he's not been authenticated
+        // we store the IP address.  Unless we've been asked not to.
+
+        String author = request.getRemoteUser();
+
+        //
+        //  Try to fetch something from a cookie.
+        //
+        if( author == null )
+        {
+            Cookie[] cookies = request.getCookies();
+
+            if( cookies != null )
+            {
+                for( int i = 0; i < cookies.length; i++ )
+                {
+                    if( cookies[i].getName().equals( PREFS_COOKIE_NAME ) )
+                    {
+                        UserProfile p = new UserProfile(cookies[i].getValue());
+
+                        author = p.getName();
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        return author;
+    }
+
     /**
      *  @param request The HTTP Servlet request associated with this
      *                 transaction.
@@ -675,10 +715,13 @@ public class WikiEngine
 
             WikiPage p = new WikiPage( page );
 
-            // Get the user authentication - if he's not been authenticated
-            // we store the IP address.  Unless we've been asked not to.
+            String author = getUserName( request );
 
-            String author = request.getRemoteUser();
+            //
+            //  If no author name has been set, then use the 
+            //  IP address, if allowed.
+            //
+
             if( author == null && m_storeIPAddress )
                 author = request.getRemoteAddr();
 
