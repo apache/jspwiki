@@ -25,19 +25,7 @@ public class WikiEngine
 {
     private static final Category   log = Category.getInstance(WikiEngine.class);
 
-    private String m_pagelocation = "/home/jalkanen/Projects/JSPWiki/src/wikipages";
-
-    /**
-     *  All files should have this extension to be recognized as JSPWiki files.
-     *  We default to .txt, because that is probably easiest for Windows users,
-     *  and guarantees correct handling.
-     */
-    public static final String FILE_EXT = ".txt";
-
-    /**
-     *  Name of the property that defines where page directories are.
-     */
-    private static final String PROP_PAGEDIR = "jspwiki.wikiFiles";
+    private WikiPageProvider m_provider = new FileSystemProvider();
 
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
@@ -85,9 +73,6 @@ public class WikiEngine
         throws IllegalArgumentException
     {
         m_properties = props;
-
-        m_pagelocation = getRequiredProperty( props, PROP_PAGEDIR );
-
         //
         //  Initialized log4j.  However, make sure that
         //  we don't initialize it multiple times.
@@ -98,14 +83,17 @@ public class WikiEngine
             c_configured = true;
         }
 
+
+        m_provider.initialize( props );
+
+
         log.info("WikiEngine configured.");
-        log.debug("files at "+m_pagelocation );
     }
 
     /**
      *  Throws an exception if a property is not found.
      */
-    private static String getRequiredProperty( Properties props, String key )
+    static String getRequiredProperty( Properties props, String key )
     {
         String value = props.getProperty(key);
 
@@ -113,14 +101,6 @@ public class WikiEngine
             throw new IllegalArgumentException( "Property "+key+" is required" );
 
         return value;
-    }
-
-    /**
-     *  Finds a Wiki page from the page repository.
-     */
-    private File findPage( String page )
-    {
-        return new File( m_pagelocation, page+FILE_EXT );
     }
 
     /**
@@ -144,9 +124,7 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        File pagefile = findPage( page );
-
-        return pagefile.exists();
+        return m_provider.pageExists( page );
     }
 
     /**
@@ -156,54 +134,7 @@ public class WikiEngine
      */
     public String getText( String page )
     {
-        StringBuffer result = new StringBuffer();
-
-        File pagedata = findPage( page );
-
-        if( pagedata.exists() && pagedata.canRead() )
-        {
-            Reader in = null;
-            StringWriter out = null;
-
-            try
-            {
-                in = new BufferedReader(new FileReader(pagedata) );
-                out = new StringWriter();
-
-                int c;
-
-                while( (c = in.read()) != -1  )
-                {
-                    out.write( c );
-                }
-
-                result.append( out.toString() );
-            }
-            catch( IOException e )
-            {
-                log.error("Failed to read", e);
-            }
-            finally
-            {
-                try
-                {
-                    if( out != null ) out.close();
-                    if( in  != null ) in.close();
-                }
-                catch( Exception e ) 
-                {
-                    log.fatal("Closing failed",e);
-                }
-            }
-        }
-        else
-        {
-            log.warn("Failed to load page '"+page+"' from '"+pagedata.getAbsolutePath()+"'");
-        }
-
-        String res = result.toString();
-
-        return res;
+        return m_provider.getPageText( page );
     }
 
     /**
@@ -214,48 +145,41 @@ public class WikiEngine
     public String getHTML( String page )
     {
         StringBuffer result = new StringBuffer();
+        String pagedata = getText( page );
 
-        File pagedata = findPage( page );
+        Reader in = new StringReader( pagedata );
 
-        if( pagedata.exists() && pagedata.canRead() )
+        StringWriter out = null;
+
+        try
         {
-            Reader in = null;
-            StringWriter out = null;
+            in = new TranslatorReader( this, new BufferedReader(in) );
+            out = new StringWriter();
+            
+            int c;
 
+            while( (c = in.read()) != -1  )
+            {
+                out.write( c );
+            }
+
+            result.append( out.toString() );
+        }
+        catch( IOException e )
+        {
+            log.error("Failed to read", e);
+        }
+        finally
+        {
             try
             {
-                in = new TranslatorReader( this, new BufferedReader(new FileReader(pagedata) ) );
-                out = new StringWriter();
-
-                int c;
-
-                while( (c = in.read()) != -1  )
-                {
-                    out.write( c );
-                }
-
-                result.append( out.toString() );
+                if( out != null ) out.close();
+                if( in  != null ) in.close();
             }
-            catch( IOException e )
+            catch( Exception e ) 
             {
-                log.error("Failed to read", e);
+                log.fatal("Closing failed",e);
             }
-            finally
-            {
-                try
-                {
-                    if( out != null ) out.close();
-                    if( in  != null ) in.close();
-                }
-                catch( Exception e ) 
-                {
-                    log.fatal("Closing failed",e);
-                }
-            }
-        }
-        else
-        {
-            log.warn("Failed to load page '"+page+"' from '"+pagedata.getAbsolutePath()+"'");
         }
 
         return result.toString();
@@ -264,49 +188,13 @@ public class WikiEngine
 
     public void saveText( String page, String text )
     {
-        File file = findPage( page );
-
-        try
-        {
-            PrintWriter out = new PrintWriter(new FileWriter( file ));
-
-            out.print( text );
-
-            out.close();
-        }
-        catch( IOException e )
-        {
-            log.error( "Saving failed" );
-        }
+        m_provider.putPageText( page, text );
     }
 
     public Collection getRecentChanges()
     {
-        log.debug("Getting recent changes list...");
-
-        TreeSet set = new TreeSet( new PageTimeComparator() );
-
-        File wikipagedir = new File( m_pagelocation );
-
-        File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
-
-        for( int i = 0; i < wikipages.length; i++ )
-        {
-            String wikiname = wikipages[i].getName();
-            int cutpoint = wikiname.lastIndexOf( FILE_EXT );
-            WikiPage page = new WikiPage( wikiname.substring(0,cutpoint) );
-
-            page.setLastModified( new Date(wikipages[i].lastModified()) );
-
-            set.add( page );
-        }
-
-        return set;
+        return m_provider.getRecentChanges();
     }
-
-    private static final int REQUIRED = 1;
-    private static final int FORBIDDEN = -1;
-    private static final int REQUESTED = 0;
 
     /**
      *  Parses an incoming search request, then
@@ -325,13 +213,12 @@ public class WikiEngine
     
     public Collection findPages( String query )
     {
-        TreeSet res = new TreeSet( new SearchResultComparator() );
         StringTokenizer st = new StringTokenizer( query, " \t," );
 
-        String[] words = new String[st.countTokens()];
-        int[] required = new int[st.countTokens()];
-
+        QueryItem[] items = new QueryItem[st.countTokens()];
         int word = 0;
+
+        log.debug("Expecting "+items.length+" items");
 
         //
         //  Parse incoming search string
@@ -339,116 +226,37 @@ public class WikiEngine
 
         while( st.hasMoreTokens() )
         {
+            log.debug("Item "+word);
             String token = st.nextToken().toLowerCase();
-            
+
+            items[word] = new QueryItem();
+
             switch( token.charAt(0) )
             {
               case '+':
-                required[word] = REQUIRED;
+                items[word].type = QueryItem.REQUIRED;
                 token = token.substring(1);
                 log.debug("Required word: "+token);
                 break;
                 
               case '-':
-                required[word] = FORBIDDEN;
+                items[word].type = QueryItem.FORBIDDEN;
                 token = token.substring(1);
                 log.debug("Forbidden word: "+token);
                 break;
 
               default:
-                required[word] = REQUESTED;
+                items[word].type = QueryItem.REQUESTED;
                 log.debug("Requested word: "+token);
                 break;
             }
 
-            words[word++] = token;
+            items[word++].word = token;
         }
 
-        //
-        //  Do the find
-        //
-        File wikipagedir = new File( m_pagelocation );
-
-        File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
-
-    nextfile:
-        for( int i = 0; i < wikipages.length; i++ )
-        {
-            String line = null;
-
-            log.debug("Searching page "+wikipages[i].getPath() );
-
-            String filename = wikipages[i].getName();
-            int cutpoint    = filename.lastIndexOf( FILE_EXT );
-            String wikiname = filename.substring(0,cutpoint);
-
-            try
-            {
-                BufferedReader in = new BufferedReader( new FileReader(wikipages[i] ) );
-                int scores[] = new int[ words.length ];
-                
-                while( (line = in.readLine()) != null )
-                {
-                    line = line.toLowerCase();
-
-                    for( int j = 0; j < words.length; j++ )
-                    {
-                        if( line.indexOf( words[j] ) != -1 )
-                        {
-                            log.debug("   Match found for "+words[j] );
-
-                            if( required[j] != FORBIDDEN )
-                            {
-                                scores[j]++; // Mark, found this word n times
-                            }
-                            else
-                            {
-                                // Found something that was forbidden.
-                                continue nextfile;
-                            }
-                        }
-                    }
-                }
-
-                //
-                //  Check that we have all required words.
-                //
-
-                int totalscore = 0;
-
-                for( int j = 0; j < scores.length; j++ )
-                {
-                    // Give five points for each occurrence
-                    // of the word in the wiki name.
-
-                    if( wikiname.toLowerCase().indexOf( words[j] ) != -1 &&
-                        required[j] != FORBIDDEN )
-                        scores[j] += 5;
-
-                    //  Filter out pages if the search word is marked 'required'
-                    //  but they have no score.
-
-                    if( required[j] == REQUIRED && scores[j] == 0 )
-                        continue nextfile;
-
-                    //
-                    //  Count the total score for this page.
-                    //
-                    totalscore += scores[j];
-                }
-
-                if( totalscore > 0 )
-                {
-                    res.add( new SearchResultImpl(wikiname,totalscore) );
-                }
-            }
-            catch( IOException e )
-            {
-                log.error( "Failed to read", e );
-            }
-        }
-
-        return res;
+        Collection results = m_provider.findPages( items );
+        
+        return results;
     }
 
     /**
@@ -456,85 +264,6 @@ public class WikiEngine
      */
     public Date pageLastChanged( String page )
     {
-        File file = findPage( page );
-
-        if( !file.exists() ) return null;
-
-        return new Date( file.lastModified() );
-    }
-
-
-    /**
-     *  Searches return this class.
-     */
-    public class SearchResultImpl
-        implements SearchResult
-    {
-        int    m_score;
-        String m_name;
-
-        public SearchResultImpl( String name, int score )
-        {
-            m_name = name;
-            m_score = score;
-        }
-
-        public String getName()
-        {
-            return m_name;
-        }
-
-        public int getScore()
-        {
-            return m_score;
-        }
-    }
-
-    public class SearchResultComparator
-        implements Comparator
-    {
-        public int compare( Object o1, Object o2 )
-        {
-            SearchResult s1 = (SearchResult)o1;
-            SearchResult s2 = (SearchResult)o2;
-
-            // Bigger scores are first.
-
-            int res = s2.getScore() - s1.getScore();
-
-            if( res == 0 )
-                res = s1.getName().compareTo(s2.getName());
-
-            return res;
-        }
-    }
-
-    public class PageTimeComparator
-        implements Comparator
-    {
-        public int compare( Object o1, Object o2 )
-        {
-            WikiPage w1 = (WikiPage)o1;
-            WikiPage w2 = (WikiPage)o2;
-            
-            // This gets most recent on top
-            int timecomparison = w2.getLastModified().compareTo( w1.getLastModified() );
-
-            if( timecomparison == 0 )
-            {
-                return w1.getName().compareTo( w2.getName() );
-            }
-
-            return timecomparison;
-        }
-    }
-
-    public class WikiFileFilter
-        implements FilenameFilter
-    {
-        public boolean accept( File dir, String name )
-        {
-            return name.endsWith( FILE_EXT );
-        }
+        return m_provider.pageLastChanged(page);
     }
 }
