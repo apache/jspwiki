@@ -1,0 +1,4 @@
+Your edit has been rejected due to the following reason:
+%%(padding: 4px; margin: 3em; border: 1px inset; background: #eeeeee)
+[{$msg}]
+%%
