@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.6 $
-                             $Date: 2001-11-06 21:19:12 $
+                         $Revision: 1.7 $
+                             $Date: 2001-11-20 21:06:43 $
                            $Author: jalkanen $
 
 What is it?
@@ -210,6 +210,11 @@ The FileSystemProvider and RCSFileProvider save the files on the disk
 just as if they were URLs.  This can get really messy with Japanese
 language page names, for example.  You can always check the URL to the
 page, to find how they are named on the disk =).
+
+There are some known issues with UTF-8 support on some older browsers.
+Please check
+http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=JSPWikiBrowserCompatibility
+for more information.
 
 
 Contact
