@@ -3,6 +3,8 @@ This is a beta release of JSPWiki.
 
 Major changes since the last stable (1.6.0) release are:
 
+- Table support
+
 - Added XML-RPC interface.
 
 - Added CachingProvider based on an idea and sample code by Chris

@@ -1,7 +1,8 @@
 2002-02-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Bug fix: RCSFileProvider could hang in certain operations,
-        especially with long revision histories.
+        especially with long revision histories.  A JUnit test was added
+        for this.
 
 2002-02-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
