@@ -104,7 +104,7 @@ public class WikiEngine
     /**
      *  Gets a WikiEngine related to this servlet.
      */
-    public static WikiEngine getInstance( ServletConfig config )
+    public static synchronized WikiEngine getInstance( ServletConfig config )
     {
         ServletContext context = config.getServletContext();        
         String appid = context.getRealPath("/");
@@ -558,52 +558,31 @@ public class WikiEngine
      */
     public String textToHTML( WikiContext context, String pagedata )
     {
-        String result = "";
-
-        if( pagedata == null ) 
-        {
-            log.error("NULL pagedata to textToHTML()");
-            return "ERROR:Empty pagedata";
-        }
-
-        Reader in = null;
-
-        try
-        {
-            in     = new TranslatorReader( context,
-                                           new StringReader( pagedata ) );
-            result = FileUtil.readContents( in );
-        }
-        catch( IOException e )
-        {
-            log.error("Failed to convert page data to HTML", e);
-        }
-        finally
-        {
-            try
-            {
-                if( in != null ) in.close();
-            }
-            catch( Exception e ) 
-            {
-                log.fatal("Closing failed",e);
-            }
-        }
-
-        return result;
+        return textToHTML( context, pagedata, null );
     }
-
-
 
     /**
        Reads a WikiPageful of data from a String and returns all links
        internal to this Wiki in a Collection.
-       
-       FIXME: this is a bit too much like textToHTML(); it just sets a
-       flag in the TranslatorReader and requests for extra info at the
-       end. Time to refactor a bit?
     */
-    private Collection scanWikiLinks( String pagedata )
+    protected Collection scanWikiLinks( String pagedata )
+    {
+        LinkCollector collector = new LinkCollector();
+
+        textToHTML( new WikiContext(this,""),
+                    pagedata,
+                    collector );
+
+        return collector.getLinks();
+    }
+
+
+    /**
+     *  Helper method for combining simple  textToHTML() and scanWikiLinks().
+     */
+    private String textToHTML( WikiContext context, 
+                               String pagedata, 
+                               StringTransmutator localLinkHook )
     {
         String result = "";
 
@@ -618,11 +597,11 @@ public class WikiEngine
 
         try
         {
-            in = new TranslatorReader( new WikiContext(this,""),
+            in = new TranslatorReader( context,
                                        new StringReader( pagedata ) );
-            in.storeInternalLinks();
+
+            in.addLocalLinkHook( localLinkHook );
             result = FileUtil.readContents( in );
-            links = in.getInternalLinks();
         }
         catch( IOException e )
         {
@@ -640,10 +619,30 @@ public class WikiEngine
             }
         }
 
-        return( links );
+        return( result );
     }
 
+    /**
+     *  Just a simple class collecting all of the links
+     *  that come in.
+     */
+    private class LinkCollector
+        implements StringTransmutator
+    {
+        private ArrayList m_items = new ArrayList();
 
+        public Collection getLinks()
+        {
+            return m_items;
+        }
+
+        public String mutate( WikiContext context, String in )
+        {
+            m_items.add( in );
+
+            return in;
+        }
+    }
 
     /**
      *  Writes the WikiText of a page into the
@@ -679,30 +678,31 @@ public class WikiEngine
         if( request == null || m_saveUserInfo == false ) 
         {
             saveText( page, text );
-            return;
         }
+        else
+        {
+            // Hook into cross reference collection.
+            // Notice that this is definitely after the saveText() call above, 
+            // since it can be called externally and we only want this done once.
+            m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
 
-        // Hook into cross reference collection.
-        // Notice that this is definitely after the saveText() call above, 
-        // since it can be called externally and we only want this done once.
-        m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
+            WikiPage p = new WikiPage( page );
 
-        WikiPage p = new WikiPage( page );
+            // Get the user authentication - if he's not been authenticated
+            // we store the IP address.  Unless we've been asked not to.
 
-        // Get the user authentication - if he's not been authenticated
-        // we store the IP address.  Unless we've been asked not to.
+            String author = request.getRemoteUser();
+            if( author == null && m_storeIPAddress )
+                author = request.getRemoteAddr();
 
-        String author = request.getRemoteUser();
-        if( author == null && m_storeIPAddress )
-            author = request.getRemoteAddr();
+            //  If no author has been defined, then
+            //  use whatever default WikiPage gives us.
 
-        //  If no author has been defined, then
-        //  use whatever default WikiPage gives us.
+            if( author != null )
+                p.setAuthor( author );
 
-        if( author != null )
-            p.setAuthor( author );
-
-        m_provider.putPageText( p, text );
+            m_provider.putPageText( p, text );
+        }
     }
 
     /**
