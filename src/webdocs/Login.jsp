@@ -36,10 +36,10 @@
                               PageContext.REQUEST_SCOPE );
 
     String action = request.getParameter("action");
-    String uid    = request.getParameter("uid");
-    String passwd = request.getParameter("passwd");
+    String uid    = wiki.safeGetParameter( request,"uid" );
+    String passwd = wiki.safeGetParameter( request,"passwd" );
 
-    UserManager mgr = wiki.getUserManager();    
+    UserManager mgr = wiki.getUserManager();
 
     session.setAttribute("msg","");
 
@@ -47,21 +47,34 @@
     {
         mgr.setUserCookie( response, uid );
 
-        if( mgr.login( uid, passwd, session ) )
+        try
         {
-            response.sendRedirect( wiki.getViewURL(pagereq) );
-            return;
-        }
-        else
-        {
-            if( passwd.toUpperCase().equals(passwd) )
+            if( mgr.login( uid, passwd, session ) )
             {
-                session.setAttribute("msg", "Invalid login (please check your Caps Lock key)");
+                response.sendRedirect( wiki.getViewURL(pagereq) );
+                return;
             }
             else
             {
-                session.setAttribute("msg", "Not a valid login.");
+                if( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
+                {
+                    session.setAttribute("msg", "Invalid login (please check your Caps Lock key)");
+                }
+                else
+                {
+                    session.setAttribute("msg", "Not a valid login.");
+                }
             }
+        }
+        catch( PasswordExpiredException e )
+        {
+            session.setAttribute("msg", "Your password has expired!  Please enter a new one!");
+            response.sendRedirect( wiki.getViewURL("UserPreferences") );
+            return;
+        }
+        catch( WikiSecurityException e )
+        {
+            session.setAttribute("msg", e.getMessage());            
         }
     }
     else if( "logout".equals(action) )
