@@ -10,6 +10,7 @@
         * The attachment servlet now uses the workdir to put temporary
         files in instead of the java.io.tmpdir.  This is to facilitate
         some ISPs which do not allow you to access a temporary directory.
+        Thanks to Mike Lippold.
 
         * Removed extra parameters from jspwiki.tld - I thought I had done
         it so I ignored bug reports about this.  Oops.  Sorry.  *sheepish
