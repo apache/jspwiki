@@ -1,3 +1,10 @@
+2001-11-23  Erik Bunn  <Erik.Bunn@memecry.net>
+
+        * Added ReferenceManager and utilizing features. JSPWiki can
+        now keep track of unused and undefined pages, and of pages 
+        referring to a given page. Initial version, very unoptimized.
+        See ReferenceManager.java and UnusedPages.jsp.
+
 2001-11-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Now replaces HTML entities correctly also in getText().  Thanks
