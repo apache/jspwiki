@@ -187,6 +187,7 @@ public class AclImpl
         //  Now, if the individual permissions did not match, we'll go through
         //  it again but this time looking at groups.
         //
+
         for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
         {
             AclEntry entry = (AclEntry) e.nextElement();
