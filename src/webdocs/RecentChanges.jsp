@@ -28,6 +28,7 @@
 
     list = wiki.getRecentChanges();
 
+    // This is required by PageHeader.jsp
     String pagereq = "Recent Changes";
 %>
 
@@ -79,7 +80,7 @@
 
               %>
               <TR>
-                  <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=pageref.getName()%>"><%=pageref.getName()%></A></TD>
+                  <TD WIDTH="30%"><A HREF="Wiki.jsp?page=<%=wiki.encodeName(pageref.getName())%>"><%=pageref.getName()%></A></TD>
                   <TD><%=tfmt.format(lastmod)%></TD>
               </TR>
               <%

@@ -22,6 +22,8 @@
         throw new ServletException("No page defined");
     }
 
+    String pageurl = wiki.encodeName( pagereq );    
+
     // FIXME: Should the usertext be removed from the session?
     String usertext = (String)request.getSession().getAttribute("usertext");
 
@@ -52,7 +54,7 @@
        <%@ include file="LeftMenu.jsp" %>
        <BR><BR>
        <P>
-       <A HREF="Edit.jsp?page=<%=pagereq%>">Go edit <%=pagereq%></A>
+       <A HREF="Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A>
        </P>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
@@ -94,7 +96,7 @@
       <P><HR></P>
 
       <P>
-       <I><A HREF="Edit.jsp?page=<%=pagereq%>">Go edit <%=pagereq%></A></I>
+       <I><A HREF="Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A></I>
       </P>
 
     </TD>

@@ -19,6 +19,8 @@
         pagereq = "Main";
     }
 
+    String pageurl = wiki.encodeName( pagereq );    
+
     String srev1 = request.getParameter("r1");
     String srev2 = request.getParameter("r2");
 
@@ -71,7 +73,7 @@
          {
          %>
              This page does not exist.  Why don't you go and
-             <A HREF="Edit.jsp?page=<%=pagereq%>">create it</A>?
+             <A HREF="Edit.jsp?page=<%=pageurl%>">create it</A>?
          <%
          }
       %>

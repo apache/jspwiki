@@ -21,6 +21,8 @@
         throw new ServletException("No page defined");
     }
 
+    String pageurl = wiki.encodeName( pagereq );
+
     String action = request.getParameter("action");
 
     if( action != null && action.equals("save") )
@@ -48,13 +50,13 @@
 
             request.getSession().setAttribute("usertext",request.getParameter("text"));
 
-            response.sendRedirect("PageModified.jsp?page="+pagereq);
+            response.sendRedirect("PageModified.jsp?page="+pageurl);
             return;
         }
 
         wiki.saveText( pagereq, request.getParameter("text") );
 
-        response.sendRedirect("Wiki.jsp?page="+pagereq);
+        response.sendRedirect("Wiki.jsp?page="+pageurl);
         return;
     }
 
@@ -91,7 +93,7 @@
     <TD WIDTH="85%" VALIGN="top">
       <H1>Edit page <%=pagereq%></H1>
 
-      <FORM action="Edit.jsp?page=<%=pagereq%>&action=save" method="POST">
+      <FORM action="Edit.jsp?page=<%=pageurl%>&action=save" method="POST">
 
       <INPUT type="hidden" name="page" value="<%=pagereq%>">
       <INPUT type="hidden" name="action" value="save">
@@ -102,7 +104,7 @@
       <P>
       <input type="submit" name="ok" value="Save" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <A HREF="Wiki.jsp?page=<%=pagereq%>">Cancel</A>
+      <A HREF="Wiki.jsp?page=<%=pageurl%>">Cancel</A>
       <P>
       Here's a short reminder on what elements you have at your disposal:
       
