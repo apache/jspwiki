@@ -8,6 +8,7 @@ Major changes since the last stable (1.8.0) release are:
 
 - Splitting of Wiki pages into "Controller" and "View" pages has begun.
 
+
 UPGRADE NOTES
 =============
 
