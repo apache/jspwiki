@@ -1,3 +1,8 @@
+2002-02-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * XML-RPC interface now hopefully gives out the modification time
+        in UTC, before it used the local timezone.
+
 2002-02-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Unused and undefined pages are now sorted.  Suggested by Mikael
