@@ -404,6 +404,9 @@
     <attribute>
        <name>status</name>
     </attribute>
+    <attribute>
+       <name>exists</name>
+    </attribute>
   </tag>
 
   <tag>

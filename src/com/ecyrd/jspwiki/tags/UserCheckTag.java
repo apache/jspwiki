@@ -26,7 +26,7 @@ import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
  *  Includes the content if an user check validates.  This has
- *  been considerably enhanced for 2.2.
+ *  been considerably enhanced for 2.2.  The possibilities for the "status"-argument are:
  *
  * <ul>
  * <li>"unknown"     - the body of the tag is included 
@@ -43,6 +43,14 @@ import com.ecyrd.jspwiki.auth.UserProfile;
  * <li>"unvalidated" - the body of the tag is included 
  *                     if the user is not validated (i.e. he could have a cookie,
  *                     but has not been authenticated.)
+ * </ul>
+ *
+ *  If the old "exists" -argument is used, it corresponds as follows:
+ *  <p>
+ *  <tt>exists="true" ==> status="known"<br>
+ *  <tt>exists="false" ==> status="unknown"<br>
+ *
+ *  It is NOT a good idea to use BOTH of the arguments.
  *
  *  @author Janne Jalkanen
  *  @author Erik Bunn
@@ -62,6 +70,26 @@ public class UserCheckTag
     {
         m_status = arg;
     }
+
+
+    /**
+     *  Sets the "exists" attribute, which is converted on-the-fly into
+     *  an equivalent "status" -attribute.  This is only for backwards compatibility.
+     *
+     *  @deprecated
+     */
+    public void setExists( String arg )
+    {
+        if("true".equals(arg))
+        {
+            m_status = "known";
+        }
+        else
+        {
+            m_status = "unknown";
+        }
+    }
+
 
     public final int doWikiStartTag()
         throws IOException
