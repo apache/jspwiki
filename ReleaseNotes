@@ -1,5 +1,6 @@
 
-This is a CVS release of JSPWiki.
+This is an ALPHA release of JSPWiki.  Thus it's not really ready for
+prime time, but you can certainly go an test it!
 
 Major changes since the last stable (1.8.2) release are:
 
@@ -8,7 +9,8 @@ Major changes since the last stable (1.8.2) release are:
 
 - Splitting of Wiki pages into "Controller" and "View" pages has
   been done.  The user-modifiable HTML templates can be found in
-  "templates/default" -directory.
+  "templates/default" -directory.  All functionality can now be
+  controlled using JSP tags.
 
 - There is a new addition to WikiLanguage: Definition lists
   ;term;definition.  You can use this to make comments, too, by using
@@ -22,15 +24,23 @@ Major changes since the last stable (1.8.2) release are:
 
 - UserPreferences now checks for username validity. 
 
-- New plugins:
+- CachingProvider is now used by default.
+
+- There is now full attachment support.
+
+- New plugins (which can now be multiline).
    * IndexPlugin (by Alain Ravet)
+   * Counter
+   * WeblogPlugin
+   * WeblogEntryPlugin
+
 
 UPGRADE NOTES
 =============
 
 (NB: These notes are still incomplete).
 
-- If updating manually (from v1.8.0):
+- If updating manually (from v1.8.x):
 
   * Providers now sleep in a different package.  You must change your
     "jspwiki.pageProvider" setting.
@@ -43,3 +53,10 @@ UPGRADE NOTES
 
   * SystemInfo.jsp is gone.  Instead, there is now a page called
     "SystemInfo".
+
+  So, the best way to do the update is to simply save your
+  "jspwiki.properties", and "web.xml" files to some safe location,
+  DELETE your previous installation, and install it again from
+  scratch. However, after this your templates should be easily
+  modifiable, and you never again have to resort to such drastic
+  measures again... We hope.
