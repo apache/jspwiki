@@ -863,6 +863,10 @@ public class TranslatorReader extends Reader
         {
             return att.getName();
         }
+        else if( link.indexOf('/') != -1 )
+        {
+            return link;
+        }
 
         return null;
     }
