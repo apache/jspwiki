@@ -36,7 +36,18 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 
 
 /**
- *  Provides a nice calendar.
+ *  Provides a nice calendar.  Responds to the following HTTP parameters:
+ *  <ul>
+ *  <li>calendar.date - If this parameter exists, then the calendar
+ *  date is taken from the month and year.  The date must be in ddMMyy
+ *  format.
+ *  <li>weblog.startDate - If calendar.date parameter does not exist,
+ *  we then check this date.
+ *  </ul>
+ *
+ *  If neither calendar.date nor weblog.startDate parameters exist,
+ *  then the calendar will default to the current month.
+ *
  *
  *  @author Janne Jalkanen
  *  @since 2.0
