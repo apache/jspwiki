@@ -33,6 +33,11 @@ public class Attachment
 {
     private String m_fileName;
     private long   m_fileSize;
+    private int    m_status = CREATED;
+
+    public static final int CREATED       = 0;
+    public static final int UPLOADING     = 1;
+    public static final int COMPLETE      = 2;
 
     public Attachment( String name )
     {
@@ -44,7 +49,8 @@ public class Attachment
 
     public String toString()
     {
-        return "Attachment ["+getName()+",mod="+getLastModified()+"]";
+        return "Attachment ["+getName()+";mod="+getLastModified()+
+               ";status="+m_status+"]";
     }
 
     public String getFileName()
@@ -65,5 +71,15 @@ public class Attachment
     public void setSize( long size )
     {
         m_fileSize = size;
+    }
+
+    public int getStatus()
+    {
+        return m_status;
+    }
+
+    public void setStatus( int status )
+    {
+        m_status = status;
     }
 }
