@@ -35,7 +35,8 @@
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext );
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
     String pageurl = wiki.encodeName( pagereq );
 
