@@ -65,21 +65,15 @@
         <tr>
           <td align="left">
              <FONT size="-1">
-	     <%
-             if( wikipage != null )
-             {
-                 java.util.Date lastchange = wikipage.getLastModified();
-                 %>
-                 <wiki:CheckVersion mode="latest">
-                     <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <wiki:Author />.</I>
-                 </wiki:CheckVersion>
+             
+             <wiki:CheckVersion mode="latest">
+                 <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><wiki:PageDate/></A> by <wiki:Author />.</I>
+             </wiki:CheckVersion>
 
-                 <wiki:CheckVersion mode="notlatest">
-                     <I>This particular version was published on <%=lastchange%> by <wiki:Author /></I>.
-                 </wiki:CheckVersion>
-                 <%
-             }
-             %>
+             <wiki:CheckVersion mode="notlatest">
+                 <I>This particular version was published on <wiki:PageDate/> by <wiki:Author /></I>.
+             </wiki:CheckVersion>
+ 
              <wiki:NoSuchPage>
                  <I>Page not created yet.</I>
              </wiki:NoSuchPage>
