@@ -35,6 +35,24 @@ public class WeblogEntryPlugin implements WikiPlugin
 {
     private static Category     log = Category.getInstance(WeblogEntryPlugin.class);
     
+    public String getNewEntryPage( WikiEngine engine, String blogName )
+        throws ProviderException
+    {
+        SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
+        String today = fmt.format( new Date() );
+            
+        int entryNum = findFreeEntry( engine.getPageManager(),
+                                      blogName,
+                                      today );
+
+                        
+        String blogPage = WeblogPlugin.makeEntryPage( blogName,
+                                                      today,
+                                                      ""+entryNum );
+
+        return blogPage;
+    }
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -45,17 +63,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         
         try
         {
-            SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
-            String today = fmt.format( new Date() );
-            
-            int entryNum = findFreeEntry( context.getEngine().getPageManager(),
-                                          weblogName,
-                                          today );
-
-                        
-            String blogPage = WeblogPlugin.makeEntryPage( weblogName,
-                                                          today,
-                                                          ""+entryNum );
+            String blogPage = getNewEntryPage( engine, weblogName );
 
             // FIXME: Generate somehow else.
             sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
