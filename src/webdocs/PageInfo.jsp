@@ -87,9 +87,9 @@
                        <table border="1" cellpadding="4">
                            <tr>
                                <th>Version</th>
-                               <th>Date</th>
+                               <th>Date (and differences to current)</th>
                                <th>Author</th>
-                               <th>Diff</th>
+                               <th>Changes from previous</th>
                            </tr>
 
                            <%
@@ -104,11 +104,13 @@
                                    <td>
                                    <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
                                    </td>
-                                   <td><%=p.getLastModified()%></td>
+                                   <td>
+                                   <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=-1&r2=<%=p.getVersion()%>"><%=p.getLastModified()%></A>
+                                   </td>
                                    <td><%=p.getAuthor()%></td>
                                    <td>
                                    <% if( p.getVersion() > 1 ) { %>
-                                       <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=p.getVersion()%>&r2=<%=p.getVersion()-1%>">diff to version <%=p.getVersion()-1%></A>
+                                       <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=p.getVersion()%>&r2=<%=p.getVersion()-1%>">changes from version <%=p.getVersion()-1%> to <%=p.getVersion()%></A>
                                    <% } %>
                                    </td>
                                </tr>
