@@ -37,6 +37,31 @@ import java.net.MalformedURLException;
 /**
  *  Plugin for aggregating go game rankings.  Probably of very little use to anyone,
  *  except perhaps as an example.
+ *  <P>
+ *  Parameters as as follows:
+ *  <DL>
+ *   <DT>pages</dt>
+ *   <dd>A comma separated list of pages from which the ranks are aggregated.</dd>
+ *   <dt>egfurl</dt>
+ *   <dd>An URL from which the EGF rankings can be downloaded.  The format of the file
+ *       is quite specific, see below.</dd>
+ *   <dt>kgsurl</dt>
+ *   <dd>Link to Kisedo Go Server.  Typically this links to either the rank graph or
+ *       the recent games list.  Any occurrence of "%n" is changed to the KGS nick.</dd>
+ *  </DL>
+ *
+ *  The pages that contain the ranks should look as follows:
+ *  <PRE>
+ *  Lastname, Firstname, Rank [,server:nick] [,server:nick]
+ *  </pre>
+ *
+ *  For example:
+ *  <pre>
+ *    Jalkanen, Janne, 7k, kgs:Ecyrd, igs:Ecyrd.
+ *  </pre>
+ *
+ *  The list must come after the last horizontal ruler (----) on the page.  It's also a good
+ *  idea to separate it using the preformatted text marker ({{{), or the list will look a bit odd.
  *
  *  @author Janne Jalkanen
  */
