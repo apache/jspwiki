@@ -83,7 +83,7 @@
     <TD WIDTH="15%" VALIGN="top">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="Wiki.jsp?page=EditingWikiPages">Help on editing</A>
+       <A HREF="Wiki.jsp?page=TextFormattingRules">Help on editing</A>
        </P>
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
