@@ -190,7 +190,7 @@ public class CalendarTag
             String pageName = thePage.getName();
 
             String calendarDate = m_dateFormat.format(day.getTime());
-            String url = engine.getViewURL(pageName) + "&calendar.date="+calendarDate;
+            String url = engine.getViewURL(pageName) + "&amp;calendar.date="+calendarDate;
 
             if ( (queryString != null) && (queryString.length() > 0) )
 	    {
@@ -207,7 +207,9 @@ public class CalendarTag
                 if (pos1 >= 0)
                 {
                     String tmp = queryString.substring(0,pos1);
-                    int pos2 = queryString.indexOf("&",pos1) + 1;   
+                    // FIXME: Will this fail when we use & instead of &amp?
+                    // FIXME: should use some parsing routine
+                    int pos2 = queryString.indexOf("&",pos1) + 1;
                     if ( (pos2 > 0) && (pos2 < queryString.length()) )
                     {
                         tmp = tmp + queryString.substring(pos2);
@@ -217,7 +219,7 @@ public class CalendarTag
 
                 if( queryString != null && queryString.length() > 0 )
                 {
-                    url = url + "&"+queryString;
+                    url = url + "&amp;"+queryString;
                 }
 	    }
             result = "<td><a href=\""+url+"\">"+txt+"</a></td>";
