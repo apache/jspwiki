@@ -1,5 +1,9 @@
 2002-01-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Error output from RCS commands is now visible in the log.
+
+        * Diff.jsp now has links to the actual page and the Page Info.
+
         * Some more refactoring inside WikiEngine: removed redundant
         code.
 
