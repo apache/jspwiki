@@ -4,7 +4,7 @@ The resulting list is wrapped inside a DIV tag, which can be used to create the 
 
 !Parameters
 
-N/A
+;__title__:''string'' : The title for the table of contents.  By default, uses no heading.
 
 !Example
 
@@ -27,7 +27,9 @@ The list that is created is essentially an HTML ul -list.  The generated HTML  m
 </div>
 }}}
 
-The look-and-feel of what it actually looks like on the browser is achieved through the magic of Cascading Style Sheets (CSS).
+The look-and-feel of what it actually looks like on the browser is achieved through the magic of Cascading Style Sheets (CSS).  Take a look at the default template jspwiki.css file for further information.
+
+The title is rendered as a HTML H2 element.
 
 ----
 
