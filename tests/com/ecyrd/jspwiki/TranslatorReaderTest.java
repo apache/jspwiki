@@ -262,6 +262,33 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testCCLinkInList()
+        throws Exception
+    {
+        String src = "*HyperLink";
+
+        assertEquals( "<UL>\n<LI><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A></LI>\n</UL>\n",
+                      translate(src) );
+    }
+
+    public void testCCLinkBold()
+        throws Exception
+    {
+        String src = "__HyperLink__";
+
+        assertEquals( "<B><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A></B>",
+                      translate(src) );
+    }
+
+    public void testCCLinkWithPunctuation()
+        throws Exception
+    {
+        String src = "Test. HyperLink.";
+
+        assertEquals( "Test. <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.",
+                      translate(src) );
+    }
+
     public void testHyperlinksExt()
         throws Exception
     {
