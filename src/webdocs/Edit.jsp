@@ -32,7 +32,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
-    WikiPage wikipage = pageContext.getPage();
+    WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
 
     if( latestversion == null )
