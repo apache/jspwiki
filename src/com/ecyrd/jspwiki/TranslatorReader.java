@@ -192,8 +192,6 @@ public class TranslatorReader extends Reader
                 {
                     // It's an interwiki link
 
-                    System.out.println("Interwiki: "+reallink);
-
                     String extWiki = reallink.substring( 0, interwikipoint );
                     String wikiPage = cleanLink(reallink.substring( interwikipoint+1 ));
 
