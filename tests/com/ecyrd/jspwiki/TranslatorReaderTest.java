@@ -112,6 +112,22 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "1<BR>2\n", translate(src) );
     }
 
+    public void testTT()
+        throws Exception
+    {
+        String src = "1{{2345}}6";
+
+        assertEquals( "1<TT>2345</TT>6\n", translate(src) );
+    }
+
+    public void testPre()
+        throws Exception
+    {
+        String src = "1{{{2345}}}6";
+
+        assertEquals( "1<PRE>2345</PRE>6\n", translate(src) );
+    }
+
     public void testList1()
         throws Exception
     {
