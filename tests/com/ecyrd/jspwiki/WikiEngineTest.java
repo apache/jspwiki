@@ -204,7 +204,7 @@ public class WikiEngineTest extends TestCase
     {
         String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
 
-        Object[] result = m_engine.scanWikiLinks( src ).toArray();
+        Object[] result = m_engine.scanWikiLinks( new WikiPage("Test"), src ).toArray();
         
         assertEquals( "item 0", result[0], "Foobar" );
         assertEquals( "item 1", result[1], "ThisIsALink" );
