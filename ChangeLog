@@ -1,5 +1,14 @@
 2003-06-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.30.
+
+        * CalendarTag enhanced: You can now use monthurlformat parameter
+        to determine where the month-text should go to.  Use "%d" within
+        this instance to get the month length.
+
+        * CalendarTag enhanced: You can now use "%p" to signify the
+        current page name in any of the parameters.
+
         * v2.1.29.
 
         * Added to WikiAuthenticator interface: It is now theoretically
