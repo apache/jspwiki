@@ -40,7 +40,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.servlet.ServletContext;
 import javax.swing.ImageIcon;
 
-import com.keypoint.PngEncoderB;
+//import com.keypoint.PngEncoderB;
 
 /**
  *  Plugin for doing go game diagrams.
@@ -362,6 +362,7 @@ public class GoDiagram
     private void saveImage( WikiContext context, byte[] digest, BufferedImage img )
         throws IOException
     {
+        /*
         FileOutputStream     out = null;
         ByteArrayInputStream in  = null;
 
@@ -383,6 +384,7 @@ public class GoDiagram
             if( in != null )  in.close();
             if( out != null ) out.close();
         }
+        */
     }
 
     /**
