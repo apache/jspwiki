@@ -76,7 +76,8 @@ public abstract class IteratorTag
 
         if( m_iterator.hasNext() )
         {
-            WikiContext context = new WikiContext( engine, (WikiPage)m_iterator.next() );
+            WikiContext context = (WikiContext)m_wikiContext.clone();
+            context.setPage( (WikiPage)m_iterator.next() );
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );
@@ -116,8 +117,8 @@ public abstract class IteratorTag
 
         if( m_iterator.hasNext() )
         {
-            WikiContext context = new WikiContext( m_wikiContext.getEngine(), 
-                                                   (WikiPage)m_iterator.next() );
+            WikiContext context = (WikiContext)m_wikiContext.clone();
+            context.setPage( (WikiPage)m_iterator.next() );
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );

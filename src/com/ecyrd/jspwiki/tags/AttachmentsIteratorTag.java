@@ -86,7 +86,8 @@ public class AttachmentsIteratorTag
                 {
                     Attachment  att = (Attachment) m_iterator.next();
 
-                    WikiContext context = new WikiContext( engine, att );
+                    WikiContext context = (WikiContext)m_wikiContext.clone();
+                    context.setPage( att );
                     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                               context,
                                               PageContext.REQUEST_SCOPE );
@@ -131,8 +132,8 @@ public class AttachmentsIteratorTag
         {
             Attachment att = (Attachment) m_iterator.next();
 
-            WikiContext context = new WikiContext( m_wikiContext.getEngine(), 
-                                                   att );
+            WikiContext context = (WikiContext)m_wikiContext.clone();
+            context.setPage( att );
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );

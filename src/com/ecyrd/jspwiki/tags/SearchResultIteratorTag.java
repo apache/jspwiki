@@ -65,7 +65,8 @@ public class SearchResultIteratorTag
         {
             SearchResult r = (SearchResult) m_iterator.next();
 
-            WikiContext context = new WikiContext( m_wikiContext.getEngine(), r.getPage() );
+            WikiContext context = (WikiContext)m_wikiContext.clone();
+            context.setPage( r.getPage() );
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );
