@@ -1,5 +1,11 @@
 2002-02-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * XML-RPC interface now goes around the UTF-8 problem by giving
+        out Base64-encoded UTF-8 data as page data, and expects all page
+        names to be strings encoded using URL encoding with UTF-8 text.
+        This is regardless of the actual encoding used by the JSPWiki
+        engine.
+
         * ReferringPagesPlugin now has extra parameter: "extras", which
         can be used to note how many pages are still left with references
         to this particular page.
