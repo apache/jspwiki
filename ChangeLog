@@ -1,3 +1,8 @@
+2002-01-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * PageModified.jsp wouldn't compile - I forgot to update the new
+        location for TextUtil.replaceString().  Oops.
+
 2002-01-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * SystemInfo.jsp now shows the used character encoding as well.
