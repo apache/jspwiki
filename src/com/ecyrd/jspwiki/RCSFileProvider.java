@@ -24,6 +24,7 @@ import org.apache.log4j.Category;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 import java.util.Collection;
