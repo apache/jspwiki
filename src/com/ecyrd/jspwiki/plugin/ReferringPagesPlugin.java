@@ -46,38 +46,45 @@ public class ReferringPagesPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection       links  = refmgr.findReferrers( context.getPage().getName() );
-        String           wikitext;
+        WikiPage         page   = context.getPage();
 
-        super.initialize( context, params );
-
-        int items = TextUtil.parseIntParameter( (String)params.get( PARAM_MAX ), ALL_ITEMS );
-        String extras = (String)params.get( PARAM_EXTRAS );
-        if( extras == null )
+        if( page != null )
         {
-            extras = "...and %d more\\\\";
-        }
+            Collection   links  = refmgr.findReferrers( context.getPage().getName() );
+            String       wikitext;
 
-        log.debug( "Fetching referring pages for "+context.getPage().getName()+
-                   " with a max of "+items);
-        
-        if( links != null && links.size() > 0 )
-        {
-            wikitext = wikitizeCollection( links, "\\\\", items );
+            super.initialize( context, params );
 
-            if( items < links.size() && items > 0 )
+            int items = TextUtil.parseIntParameter( (String)params.get( PARAM_MAX ), ALL_ITEMS );
+            String extras = (String)params.get( PARAM_EXTRAS );
+            if( extras == null )
             {
-                extras = TextUtil.replaceString( extras, "%d", 
-                                             ""+(links.size()-items) );
-                wikitext += extras;
+                extras = "...and %d more\\\\";
             }
-        }
-        else
-        {
-            wikitext = "...nobody";
+
+            log.debug( "Fetching referring pages for "+context.getPage().getName()+
+                       " with a max of "+items);
+        
+            if( links != null && links.size() > 0 )
+            {
+                wikitext = wikitizeCollection( links, "\\\\", items );
+
+                if( items < links.size() && items > 0 )
+                {
+                    extras = TextUtil.replaceString( extras, "%d", 
+                                                     ""+(links.size()-items) );
+                    wikitext += extras;
+                }
+            }
+            else
+            {
+                wikitext = "...nobody";
+            }
+
+            return makeHTML( context, wikitext );
         }
 
-        return makeHTML( context, wikitext );
+        return "";
     }
 
 }
