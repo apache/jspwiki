@@ -1,3 +1,15 @@
+2005-04-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.159
+
+        * Removed dependancy on the bmsi difference package, as it
+        was GPL (oops).  I don't know how I missed that, but the dependency
+        is gone now.  Replaced with the Jakarta JRCS-diff package.  Suggested
+        and contributed by Henning Schmiedehausen.
+        
+        * Removed DifferenceEngine and moved the entire diff code into
+        its own package.  Contributed by John Volkar.
+
 2005-04-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.158
