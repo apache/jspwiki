@@ -65,6 +65,7 @@ public class AuthorizationManagerTest extends TestCase
     }
 
     public void testNamedPermissions()
+        throws Exception
     {
         String src = "[{ALLOW edit NamedGuest}] [{DENY edit Guest}] ";
 
@@ -83,6 +84,7 @@ public class AuthorizationManagerTest extends TestCase
     }
 
     public void testAttachmentPermissions()
+        throws Exception
     {
         String src = "[{ALLOW edit NamedGuest}] [{DENY edit Guest}] ";
 
@@ -101,6 +103,7 @@ public class AuthorizationManagerTest extends TestCase
     }
 
     public void testAttachmentPermissions2()
+        throws Exception
     {
         String src = "[{ALLOW upload FooBar}] [{ALLOW view Guest}] ";
 
@@ -123,6 +126,7 @@ public class AuthorizationManagerTest extends TestCase
      *  cookie and be allowed access.
      */
     public void testNamedPermissions2()
+        throws Exception
     {
         String src = "[{ALLOW edit FooBar}] [{DENY edit Guest}] ";
 
@@ -153,6 +157,7 @@ public class AuthorizationManagerTest extends TestCase
      *  cookie and be allowed access (this time with group data).
      */
     public void testNamedPermissions3()
+        throws Exception
     {
         String src = "[{ALLOW edit FooGroup}] [{DENY edit Guest}] ";
 
@@ -184,6 +189,7 @@ public class AuthorizationManagerTest extends TestCase
      *  A superuser should be allowed permissions.
      */
     public void testAdminPermissions()
+        throws Exception
     {
         String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
 
@@ -209,6 +215,7 @@ public class AuthorizationManagerTest extends TestCase
      *  Also, anyone in the supergroup should be allowed all permissions.
      */
     public void testAdminPermissions2()
+        throws Exception
     {
         String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
 
@@ -238,6 +245,7 @@ public class AuthorizationManagerTest extends TestCase
      *  A superuser should be allowed permissions, but not if he's not logged in.
      */
     public void testAdminPermissionsNoLogin()
+        throws Exception
     {
         String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
 
@@ -260,6 +268,7 @@ public class AuthorizationManagerTest extends TestCase
      *  From Paul Downes.
      */
     public void testFunnyPermissions()
+        throws Exception
     {
         String src = "[{DENY edit Guest}]\n[{ALLOW edit NamedGuest}]\n";
 
@@ -281,6 +290,7 @@ public class AuthorizationManagerTest extends TestCase
      *  From Paul Downes.
      */
     public void testFunnyPermissions2()
+        throws Exception
     {
         String src = "[{ALLOW edit Guest}]\n[{DENY edit Guest}]\n";
 
@@ -302,6 +312,7 @@ public class AuthorizationManagerTest extends TestCase
      *  From Paul Downes.
      */
     public void testFunnyPermissions3()
+        throws Exception
     {
         String src = "[{ALLOW edit Guest}]\n[{DENY view Guest}]\n";
 
@@ -322,6 +333,7 @@ public class AuthorizationManagerTest extends TestCase
      *  Returns a string representation of the permissions of the page.
      */
     public static String printPermissions( WikiPage p )
+        throws Exception
     {
         StringBuffer sb = new StringBuffer();
 

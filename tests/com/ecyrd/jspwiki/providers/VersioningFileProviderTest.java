@@ -69,6 +69,7 @@ public class VersioningFileProviderTest extends TestCase
     }
 
     public void testMillionChanges()
+        throws Exception
     {
         String text = "";
         String name = NAME1;
@@ -89,6 +90,7 @@ public class VersioningFileProviderTest extends TestCase
     }
 
     public void testCheckin()
+        throws Exception
     {
         String text = "diddo\r\n";
 
@@ -100,6 +102,7 @@ public class VersioningFileProviderTest extends TestCase
     }
 
     public void testGetByVersion()
+        throws Exception
     {
         String text = "diddo\r\n";
 
@@ -112,6 +115,7 @@ public class VersioningFileProviderTest extends TestCase
     }
 
     public void testPageInfo()
+        throws Exception
     {
         String text = "diddo\r\n";
 
@@ -123,6 +127,7 @@ public class VersioningFileProviderTest extends TestCase
     }
 
     public void testGetOldVersion()
+        throws Exception
     {
         String text = "diddo\r\n";
         String text2 = "barbar\r\n";
@@ -145,6 +150,7 @@ public class VersioningFileProviderTest extends TestCase
      *  2.0.7 and before got this wrong.
      */
     public void testGetOldVersionUTF8()
+        throws Exception
     {
         String text = "åäö\r\n";
         String text2 = "barbaröö\r\n";
@@ -169,6 +175,7 @@ public class VersioningFileProviderTest extends TestCase
     }
 
     public void testVersionHistory()
+        throws Exception
     {
         String text = "diddo\r\n";
         String text2 = "barbar\r\n";

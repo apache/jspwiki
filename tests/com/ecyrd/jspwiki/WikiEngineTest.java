@@ -172,6 +172,7 @@ public class WikiEngineTest extends TestCase
     }
 
     public void testPutPage()
+        throws Exception
     {
         String text = "Foobar.\r\n";
         String name = NAME1;
@@ -188,6 +189,7 @@ public class WikiEngineTest extends TestCase
     }
 
     public void testPutPageEntities()
+        throws Exception
     {
         String text = "Foobar. &quot;\r\n";
         String name = NAME1;
@@ -207,6 +209,7 @@ public class WikiEngineTest extends TestCase
      *  Cgeck that basic " is changed.
      */
     public void testPutPageEntities2()
+        throws Exception
     {
         String text = "Foobar. \"\r\n";
         String name = NAME1;
@@ -223,6 +226,7 @@ public class WikiEngineTest extends TestCase
     }
 
     public void testGetHTML()
+        throws Exception
     {
         String text = "''Foobar.''";
         String name = NAME1;

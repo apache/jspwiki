@@ -66,6 +66,7 @@ public class StressTestRCSProvider extends TestCase
      */
 
     public void testMillionChanges()
+        throws Exception
     {
         String text = "";
         String name = NAME1;

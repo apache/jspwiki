@@ -42,6 +42,7 @@ public class StressTestVersioningProvider extends TestCase
     }
 
     public void testMillionChanges()
+        throws Exception
     {
         String text = "";
         String name = NAME1;

@@ -123,6 +123,7 @@ public class TestEngine extends WikiEngine
     }
 
     public void saveText( String pageName, String content )
+        throws WikiException
     {
         WikiContext context = new WikiContext( this, new WikiPage(pageName) );
 

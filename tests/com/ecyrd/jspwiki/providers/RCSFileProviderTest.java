@@ -66,6 +66,7 @@ public class RCSFileProviderTest extends TestCase
      */
 
     public void testMillionChanges()
+        throws Exception
     {
         String text = "";
         String name = NAME1;
@@ -109,6 +110,7 @@ public class RCSFileProviderTest extends TestCase
     }
 
     public void testGetByVersion()
+        throws Exception
     {
         String text = "diddo\r\n";
 
@@ -121,6 +123,7 @@ public class RCSFileProviderTest extends TestCase
     }
 
     public void testGetByLatestVersion()
+        throws Exception
     {
         String text = "diddo\r\n";
 
