@@ -1101,6 +1101,31 @@ public class WikiEngine
     }
 
     /**
+     *  Writes the WikiText of a page into the
+     *  page repository.
+     *
+     *  @param page Page name
+     *  @param text The Wiki markup for the page.
+     */
+    public void saveText( WikiPage page, String text )
+    {
+        text = TextUtil.normalizePostData(text);
+
+        // Hook into cross reference collection.
+        m_referenceManager.updateReferences( page.getName(), 
+                                             scanWikiLinks( text ) );
+
+        try
+        {
+            m_pageManager.putPageText( page, text );
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to put page", e );
+        }
+    }
+
+    /**
      *  Retrieves the user name.  It will check if user has been authenticated,
      *  or he has a cookie with his username set.  The cookie takes precedence, 
      *  which allows the wiki master to set up a site with a single master
