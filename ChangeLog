@@ -1,5 +1,7 @@
 2003-01-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.18.
+
         * Broke WikiPageProvider by adding deletePage() and
         deleteVersion() methods.
 
