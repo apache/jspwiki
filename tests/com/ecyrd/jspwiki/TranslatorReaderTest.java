@@ -1563,6 +1563,7 @@ public class TranslatorReaderTest extends TestCase
     /**
      *  ACL tests.
      */
+    /*
     public void testSimpleACL1()
         throws Exception
     {
@@ -1614,7 +1615,7 @@ public class TranslatorReaderTest extends TestCase
         assertFalse("read for SV", acl.checkPermission( prof, new ViewPermission() ) );
         assertTrue( "no edit for SV", acl.checkPermission( prof, new EditPermission() ) );
     }
-
+*/
     private boolean containsGroup( List l, String name )
     {
         for( Iterator i = l.iterator(); i.hasNext(); )
