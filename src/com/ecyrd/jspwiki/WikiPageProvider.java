@@ -42,6 +42,8 @@ public interface WikiPageProvider
 
     /**
      *  Return the page text for page "page".
+     *
+     *  @return text content, or null if the page does not exist.
      */
     public String getPageText( String page );
 
