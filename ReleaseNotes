@@ -30,3 +30,6 @@ UPGRADE NOTES
 
   * All HTML code should now go into *Template.jsp instead of Wiki.jsp
     and the other main JSP pages.
+
+  * SystemInfo.jsp is gone.  Instead, there is now a page called
+    "SystemInfo".

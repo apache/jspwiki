@@ -6,7 +6,7 @@
         template system.
         
         * SystemInfo.jsp is now removed.  A page called "SystemInfo" is
-        taking its place.
+        taking its place.  It currently shows garbage, though.
 
         * Creating new pages should work now again.
         
