@@ -143,6 +143,9 @@
                               Long.toString( lastchange ),
                               PageContext.REQUEST_SCOPE );
 
+    //
+    //  Attempt to lock the page.
+    //
     PageLock lock = wiki.getPageManager().lockPage( wikipage, 
                                                     wiki.getValidUserName(request) );
 
