@@ -39,7 +39,53 @@ import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
 
 /**
- *  Manages plugin classes.
+ *  Manages plugin classes.  There exists a single instance of PluginManager
+ *  per each instance of WikiEngine, that is, each JSPWiki instance.
+ *  <P>
+ *  A plugin is defined to have three parts:
+ *  <OL>
+ *    <li>The plugin class
+ *    <li>The plugin parameters
+ *    <li>The plugin body
+ *  </ol>
+ *
+ *  For example, in the following line of code:
+ *  <pre>
+ *  [{INSERT com.ecyrd.jspwiki.plugin.FunnyPlugin  foo='bar'
+ *  blob='goo'
+ *
+ *  abcdefghijklmnopqrstuvw
+ *  01234567890}]
+ *  </pre>
+ *
+ *  The plugin class is "com.ecyrd.jspwiki.plugin.FunnyPlugin", the
+ *  parameters are "foo" and "blob" (having values "bar" and "goo",
+ *  respectively), and the plugin body is then
+ *  "abcdefghijklmnopqrstuvw\n01234567890". 
+ *  <P>
+ *  The class name can be shortened, and marked without the package.
+ *  For example, "FunnyPlugin" would be expanded to
+ *  "com.ecyrd.jspwiki.plugin.FunnyPlugin" automatically.  It is also
+ *  possible to defined other packages, by setting the
+ *  "jspwiki.plugin.searchPath" property.  See the included
+ *  jspwiki.properties file for examples.
+ *  <P>
+ *  Even though the nominal way of writing the plugin is
+ *  <pre>
+ *  [{INSERT pluginclass WHERE param1=value1...}],
+ *  </pre>
+ *  it is possible to shorten this quite a lot, by skipping the
+ *  INSERT, and WHERE words, and dropping the package name.  For
+ *  example:
+ *
+ *  <pre>
+ *  [{INSERT com.ecyrd.jspwiki.plugin.Counter WHERE name='foo'}]
+ *  </pre>
+ *
+ *  is the same as
+ *  <pre>
+ *  [{Counter name='foo'}]
+ *  </pre>
  *
  *  @author Janne Jalkanen
  *  @since 1.6.1
@@ -72,6 +118,8 @@ public class PluginManager
 
     /**
      *  Create a new PluginManager.
+     *
+     *  @param props Contents of a "jspwiki.properties" file.
      */
     public PluginManager( Properties props )
     {
@@ -131,6 +179,9 @@ public class PluginManager
      *  <P>
      *  Currently we just check if the link starts with "{INSERT",
      *  or just plain "{" but not "{$".
+     *
+     *  @param link Link text, i.e. the contents of text between [].
+     *  @return True, if this link seems to be a command to insert a plugin here.
      */
     public static boolean isPluginLink( String link )
     {
@@ -141,6 +192,12 @@ public class PluginManager
     /**
      *  Attempts to locate a plugin class from the class path
      *  set in the property file.
+     *
+     *  @param classname Either a fully fledged class name, or just
+     *  the name of the file (that is,
+     *  "com.ecyrd.jspwiki.plugin.Counter" or just plain "Counter").
+     *
+     *  @return A found class.
      *
      *  @throws ClassNotFoundException if no such class exists.
      */
@@ -197,6 +254,18 @@ public class PluginManager
     /**
      *  Executes a plugin class in the given context.
      *  <P>Used to be private, but is public since 1.9.21.
+     *
+     *  @param context The current WikiContext.
+     *  @param classname The name of the class.  Can also be a
+     *  shortened version without the package name, since the class name is searched from the
+     *  package search path.
+     *
+     *  @param params A parsed map of key-value pairs.
+     *
+     *  @return Whatever the plugin returns.
+     *
+     *  @throws PluginException If the plugin execution failed for
+     *  some reason.
      *
      *  @since 2.0
      */
@@ -267,7 +336,18 @@ public class PluginManager
 
 
     /**
-     *  Parses plugin arguments.  Handles quotes and all other kewl stuff.
+     *  Parses plugin arguments.  Handles quotes and all other kewl
+     *  stuff.
+     *  
+     *  @param argstring The argument string to the plugin.  This is
+     *  typically a list of key-value pairs, using "'" to escape
+     *  spaces in strings, followed by an empty line and then the
+     *  plugin body.
+     *
+     *  @return A parsed list of parameters.  The plugin body is put
+     *  into a special parameter defined by PluginManager.PARAM_BODY.
+     *
+     *  @throws IOException If the parsing fails.
      */
 
     public Map parseArgs( String argstring )
@@ -368,6 +448,15 @@ public class PluginManager
      *  Parses a plugin.  Plugin commands are of the form:
      *  [{INSERT myplugin WHERE param1=value1, param2=value2}]
      *  myplugin may either be a class name or a plugin alias.
+     *  <P>
+     *  This is the main entry point that is used.
+     *
+     *  @param context The current WikiContext.
+     *  @param commandline The full command line, including plugin
+     *  name, parameters and body.
+     *
+     *  @return HTML as returned by the plugin, or possibly an error
+     *  message.
      */
     public String execute( WikiContext context,
                            String commandline )
