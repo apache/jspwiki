@@ -17,8 +17,8 @@ public class FileAuthorizerTest
     private String[] lines = {
         "# A comment line",
         "# default settings:", 
-        "default READ ALLOW ALL", 
-        "default WRITE ALLOW b", 
+        "default ALLOW READ ALL", 
+        "default ALLOW WRITE b", 
         "# A user definition:", 
         "user ebu xyzzy \ta,b, c, d , e ",
         "# A role mapping for role a",
@@ -89,11 +89,14 @@ public class FileAuthorizerTest
         AccessRuleSet defaults = m_auth.getDefaultPermissions();
         UserProfile wup = new UserProfile();
         wup.setName( "ebu" );
-        wup.addRole( "e" );
-
-        // This is based on the fact that the defaults specidy write access 
-        // for role e.
+        wup.addRole( "b" );
         assertTrue( defaults.hasWriteAccess( wup ) );
+
+        wup = new UserProfile();
+        wup.setName( "ebu" );
+        wup.addRole( "c" );
+        assertFalse( defaults.hasWriteAccess( wup ) );
+        assertTrue( defaults.hasReadAccess( wup ) );
     }
 
 

@@ -51,7 +51,7 @@ public class DummyAuthorizerTest
         assertTrue( wup.hasRole( "woo" ) );
         assertTrue( wup.hasPermission( "fee" ) );
         assertTrue( wup.hasPermission( "fie" ) );
-        assertTrue( wup.hasPermission( "foo" ) );
+        assertTrue( wup.hasPermission( "foe" ) );
         assertFalse( wup.hasPermission( "xyzzy" ) );
     }
 

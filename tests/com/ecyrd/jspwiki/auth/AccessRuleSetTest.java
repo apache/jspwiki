@@ -20,6 +20,13 @@ public class AccessRuleSetTest
     public AccessRuleSetTest( String s )
     {
         super( s );
+        Properties props = new Properties();
+        try
+        {
+            props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+            PropertyConfigurator.configure(props);
+        }
+        catch( IOException e ) {}
     }
 
     public void setUp()

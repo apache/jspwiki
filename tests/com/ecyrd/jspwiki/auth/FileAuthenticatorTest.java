@@ -62,10 +62,7 @@ public class FileAuthenticatorTest
 
     public void testPasswordParsing()
     {
-        String passwd = m_auth.parseHashedPassword( "nothing should be found here" );
-        assertTrue( passwd == null );
-
-        passwd = m_auth.parseHashedPassword( "user testuser oTtKwkqR5Zd4k passwd,xyzzy,should,match" );
+        String passwd = m_auth.parseHashedPassword( "testuser oTtKwkqR5Zd4k passwd,xyzzy,should,match" );
         assertTrue( Crypt.match( "xyzzy", passwd ) );
     }
 
