@@ -151,7 +151,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [here|HyperLink#heading]";
 
-        assertEquals( "This should be a <a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">here</a>",
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink#section-HyperLink-heading\">here</a>",
                       translate(src) );
     }
 
@@ -162,7 +162,7 @@ public class TranslatorReaderTest extends TestCase
 
         String src = "This should be a [HyperLink#heading]";
 
-        assertEquals( "This should be a <a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">HyperLink#heading</a>",
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink#section-HyperLink-heading\">HyperLink#heading</a>",
                       translate(src) );
     }
 
