@@ -48,6 +48,7 @@ public class CalendarTag
     private String m_year  = null;
     private String m_month = null;
     private SimpleDateFormat m_pageFormat = null;
+    private SimpleDateFormat m_urlFormat = null;
 
     /*
     public void setYear( String year )
@@ -66,9 +67,15 @@ public class CalendarTag
         m_pageFormat = new SimpleDateFormat(format);
     }
 
+    public void setUrlformat( String format )
+    {
+        m_urlFormat = new SimpleDateFormat(format);
+    }
+
     private String getDayLink( Calendar day )
     {
         WikiEngine engine = m_wikiContext.getEngine();
+        String result = "";
 
         if( m_pageFormat != null )
         {
@@ -76,12 +83,35 @@ public class CalendarTag
             
             if( engine.pageExists( pagename ) )
             {
-                return "<td class=\"link\"><a href=\""+engine.getViewURL( pagename )+"\">"+
-                       day.get( Calendar.DATE )+"</a></td>";
+                if( m_urlFormat != null )
+                {
+                    String url = m_urlFormat.format( day.getTime() );
+
+                    result = "<td class=\"link\"><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";
+                }
+                else
+                {
+                    result = "<td class=\"link\"><a href=\""+engine.getViewURL( pagename )+"\">"+
+                             day.get( Calendar.DATE )+"</a></td>";
+                }
+            }
+            else
+            {
+                result = "<td>"+day.get(Calendar.DATE)+"</td>";
             }
         }
+        else if( m_urlFormat != null )
+        {
+            String url = m_urlFormat.format( day.getTime() );
 
-        return "<td>"+day.get(Calendar.DATE)+"</td>";
+            result = "<td><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";
+        }
+        else
+        {
+            result = "<td>"+day.get(Calendar.DATE)+"</td>";
+        }
+
+        return result;
     }
 
     public final int doWikiStartTag()
