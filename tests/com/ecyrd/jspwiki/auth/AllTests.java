@@ -16,6 +16,7 @@ public class AllTests extends TestCase
 
         suite.addTest( UserProfileTest.suite() );
         suite.addTest( WikiGroupTest.suite() );
+        suite.addTest( AuthorizationManagerTest.suite() );
 
         return suite;
     }
