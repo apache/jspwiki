@@ -1,5 +1,9 @@
 2003-09-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.52.
+
+        * Backported CachingAttachmentProvider from 2.1.
+
         * v2.0.51.
 
         * Backported CachingProvider fixes relating to non-existant pages
