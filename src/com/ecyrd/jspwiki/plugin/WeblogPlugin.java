@@ -144,7 +144,7 @@ public class WeblogPlugin implements WikiPlugin
                                                 startTime.getTime(),
                                                 stopTime.getTime() );
 
-            Collections.sort( blogEntries, new PageNameComparator() );
+            Collections.sort( blogEntries, new PageDateComparator() );
 
             SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
@@ -155,16 +155,18 @@ public class WeblogPlugin implements WikiPlugin
 
                 sb.append("<DIV CLASS=\"weblogheading\">");
 
-                Date entryDate = engine.getPage( p.getName(), 1 ).getLastModified();
+                Date entryDate = p.getLastModified();
                 sb.append( entryDateFmt.format(entryDate) );
 
-                // FIXME: Add permalink here.
-                
                 sb.append("</DIV>\n");
 
                 sb.append("<DIV CLASS=\"weblogentry\">");
 
-                sb.append( engine.getHTML( context, p ) );
+                //
+                //  Append the text of the latest version.
+                //
+                sb.append( engine.getHTML( context, 
+                                           engine.getPage(p.getName()) ) );
                 
                 sb.append("</DIV>\n");
 
@@ -188,6 +190,7 @@ public class WeblogPlugin implements WikiPlugin
      *  Attempts to locate all pages that correspond to the 
      *  blog entry pattern.
      *
+     *  Returns a list of pages with their FIRST revisions.
      */
     public List findBlogEntries( PageManager mgr,
                                  String baseName, Date start, Date end )
@@ -207,26 +210,15 @@ public class WeblogPlugin implements WikiPlugin
 
             if( pageName.startsWith( baseName ) )
             {
-                String entry = pageName.substring( baseName.length() );
+                WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
 
-                int idx = entry.indexOf('_');
-
-                if( idx == -1 )
-                    continue;
-
-                String day = entry.substring( 0, idx );
-
-                //
-                //  Note that we're not interested in the actual modification
-                //  date, we use the page name for the creation date.
-                //
-                Date pageDay = fmt.parse( day, new ParsePosition(0) );
+                Date pageDay = firstVersion.getLastModified();
                 
                 if( pageDay != null )
                 {
                     if( pageDay.after(start) && pageDay.before(end) )
                     {
-                        result.add(p);
+                        result.add( firstVersion );
                     }
                 }
             }
@@ -238,7 +230,7 @@ public class WeblogPlugin implements WikiPlugin
     /**
      *  Reverse comparison.
      */
-    private class PageNameComparator implements Comparator
+    private class PageDateComparator implements Comparator
     {
         public int compare( Object o1, Object o2 )
         {
@@ -250,7 +242,7 @@ public class WeblogPlugin implements WikiPlugin
             WikiPage page1 = (WikiPage)o1;
             WikiPage page2 = (WikiPage)o2;
 
-            return page2.getName().compareTo( page1.getName() );
+            return page2.getLastModified().compareTo( page1.getLastModified() );
         }
     }
 }
