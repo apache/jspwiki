@@ -135,9 +135,10 @@ public class RecentChangesPlugin
 
                     if( author != null )
                     {
-                        int type = context.getEngine().pageExists(author) ? TranslatorReader.READ : TranslatorReader.EDIT;
-
-                        author = linkProcessor.makeLink( type, author, author );
+                        if( context.getEngine().pageExists(author) )
+                        {
+                            author = linkProcessor.makeLink( TranslatorReader.READ, author, author );
+                        }
                     }
                     else
                     {
