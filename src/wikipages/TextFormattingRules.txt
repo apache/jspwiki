@@ -136,6 +136,14 @@ Create a link that points to a new (not existing) page using its [WikiName].
 Click that new link, which should now have a question mark (?) suffix and
 you will get an editor for the new page. -- [Asser]
 
+!Inserting plugins
+
+The basic incantation to insert a plugin looks like this:
+
+[[{INSERT <plugin class> WITH param1=value, param2=value, ...}]
+
+There is more information in [JSPWikiPlugins].
+
 ----
 
 [#1] Here's the footnote I mentioned.
