@@ -18,6 +18,8 @@
     {
         pagereq = "Main";
     }
+
+    String pageurl = wiki.encodeName( pagereq );
     
     log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
@@ -42,9 +44,10 @@
     {
         version = Integer.parseInt( rev );
         pageReference = "current version";
-        versionInfo = " (version " + rev + ")";
     }
 
+    // In the future, user access permits affect this
+    boolean isEditable = (version < 0);
 %>
 
 <HTML>
@@ -62,7 +65,9 @@
     <TD WIDTH="10%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="Edit.jsp?page=<%=pagereq%>">Edit <%=pageReference%></A>
+       <% if( isEditable ) { %>
+          <A HREF="Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>
+       <% } %>
        </P>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
@@ -71,6 +76,11 @@
     <TD WIDTH="85%" VALIGN="top">
 
       <%@ include file="PageHeader.jsp" %>
+
+      <% if( version > 0 ) { %>
+         <P CLASS="versionnote">This is version <%=version%>.  It is not the current version,
+         and thus it cannot be edited.  <A HREF="Wiki.jsp?page=<%=pageurl%>">(Back to current version)</A></P> 
+      <% } %>
 
       <%
          if( wiki.pageExists( pagereq ) )
@@ -84,7 +94,7 @@
              {
              %>
                 This page does not exist.  Why don't you go and
-                <A HREF="Edit.jsp?page=<%=pagereq%>">create it</A>?
+                <A HREF="Edit.jsp?page=<%=pageurl%>">create it</A>?
              <%
              }
              else
@@ -100,7 +110,9 @@
       <table border="0" width="100%">
         <tr>
           <td align="left">
-             <A HREF="Edit.jsp?page=<%=pagereq%>">Edit <%=pageReference%></A>.
+             <% if( isEditable ) { %>
+                 <A HREF="Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>.
+             <% } %>
           </td>
           <td align="right">
 	     <%
@@ -111,7 +123,7 @@
                  // FIXME: We want to use pageLastChanged(pagereq, version) below...)
                  %>
                  <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.  
-                    <A HREF="PageInfo.jsp?page=<%=pagereq%>">More info...</A></I><BR>
+                    <A HREF="PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
                  <%
              } else {
                  %>
