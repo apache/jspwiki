@@ -186,6 +186,16 @@ public class WikiEngine
     }
 
     /**
+     *  Internal method for getting a property.  This is used by the
+     *  TranslatorReader for example.
+     */
+
+    protected Properties getWikiProperties()
+    {
+        return m_properties;
+    }
+
+    /**
      *  Returns an URL to some other Wiki that we know.
      *
      *  @return null, if no such reference was found.
