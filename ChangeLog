@@ -1,5 +1,8 @@
 2002-12-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Running tests now puts test pages into /tmp/testrepository.  Too
+        many false alerts due to wrong files in /tmp/...
+
         * v2.0.2.
 
         * Bug fix: JSPWiki no longer dies horribly with OutOfMemoryError
