@@ -1,3 +1,4 @@
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -17,9 +18,11 @@
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <wiki:Permission permission="edit">
-          <wiki:EditLink>Edit this page</wiki:EditLink>
-       </wiki:Permission>
+       <wiki:CheckRequestContext context="view">
+          <wiki:Permission permission="edit">
+             <wiki:EditLink>Edit this page</wiki:EditLink>
+          </wiki:Permission>
+       </wiki:CheckRequestContext>
        </P>
        <%@ include file="LeftMenuFooter.jsp" %>
        <P>
@@ -32,56 +35,23 @@
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
-      <%@ include file="PageHeader.jsp" %>
+      <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0">
+         <TR>
+            <TD align="left"><H1 CLASS="pagename"><wiki:PageName/></H1></TD>
+            <TD align="right"><%@ include file="SearchBox.jsp" %></TD>
+         </TR>
+      </TABLE>
 
-      <wiki:CheckVersion mode="notlatest">
-         <FONT COLOR="red">
-            <P CLASS="versionnote">This is version <wiki:PageVersion/>.  
-            It is not the current version, and thus it cannot be edited.  
-            <wiki:LinkTo>(Back to current version)</wiki:LinkTo></P> 
-         </FONT>
-      </wiki:CheckVersion>
+      <HR><P>
 
-      <%-- Inserts no text if there is no page. --%>
+      <wiki:CheckRequestContext context="view">
+         <wiki:Include page="PageContent.jsp" />
+      </wiki:CheckRequestContext>
 
-      <wiki:InsertPage />
+      <wiki:CheckRequestContext context="diff">
+         <wiki:Include page="DiffContent.jsp" />
+      </wiki:CheckRequestContext>
 
-      <wiki:NoSuchPage>
-           <!-- FIXME: Should also note when a wrong version has been fetched. -->
-           This page does not exist.  Why don't you go and
-           <wiki:EditLink>create it</wiki:EditLink>?
-      </wiki:NoSuchPage>
-
-      <P><HR>
-      <table border="0" width="100%">
-        <tr>
-          <td align="left">
-             <wiki:Permission permission="edit">
-                 <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
-             </wiki:Permission>
-             <wiki:PageInfoLink>More info...</wiki:PageInfoLink><BR>
-          </td>
-        </tr>
-        <tr>
-          <td align="left">
-             <FONT size="-1">
-             
-             <wiki:CheckVersion mode="latest">
-                 <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><wiki:PageDate/></A> by <wiki:Author />.</I>
-             </wiki:CheckVersion>
-
-             <wiki:CheckVersion mode="notlatest">
-                 <I>This particular version was published on <wiki:PageDate/> by <wiki:Author /></I>.
-             </wiki:CheckVersion>
- 
-             <wiki:NoSuchPage>
-                 <I>Page not created yet.</I>
-             </wiki:NoSuchPage>
-
-             </FONT>
-          </td>
-        </tr>
-      </table>
     </TD>
   </TR>
 
