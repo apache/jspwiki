@@ -35,7 +35,7 @@
              <FONT size="-1">
              
              <wiki:CheckVersion mode="latest">
-                 <I>This page last changed on <wiki:DiffLink version="latest"><wiki:PageDate/></wiki:DiffLink> by <wiki:Author />.</I>
+                 <I>This page last changed on <wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate/></wiki:DiffLink> by <wiki:Author />.</I>
              </wiki:CheckVersion>
 
              <wiki:CheckVersion mode="notlatest">
