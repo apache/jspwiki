@@ -1,3 +1,11 @@
+2004-11-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.123.
+
+        * Fixed BugXSSVulnerabilityInSearch.jsp by making sure Search.jsp
+        applies entity replacement at the proper place.  Reported by Jeremy
+        Bae.
+
 2004-11-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.122.
