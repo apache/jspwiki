@@ -32,6 +32,7 @@ public class Attachment
     extends WikiPage
 {
     private String m_fileName;
+    private String m_parentName;
     private long   m_fileSize;
     private int    m_status = CREATED;
 
@@ -39,9 +40,12 @@ public class Attachment
     public static final int UPLOADING     = 1;
     public static final int COMPLETE      = 2;
 
-    public Attachment( String name )
+    public Attachment( String parentPage, String fileName )
     {
-        super( name );
+        super( parentPage+"/"+fileName );
+
+        m_parentName = parentPage;
+        m_fileName   = fileName;
 
         // -1 for unknown size; anything >= 0 is valid.
         m_fileSize = -1;
@@ -81,5 +85,10 @@ public class Attachment
     public void setStatus( int status )
     {
         m_status = status;
+    }
+
+    public String getParentName()
+    {
+        return m_parentName;
     }
 }
