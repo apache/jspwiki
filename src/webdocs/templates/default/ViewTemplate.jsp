@@ -49,7 +49,7 @@
          </tr>
       </table>
 
-      <hr /><p>
+      <hr />
 
       <wiki:CheckRequestContext context="view">
          <wiki:Include page="PageContent.jsp" />
