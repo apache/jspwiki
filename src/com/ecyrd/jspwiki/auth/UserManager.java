@@ -163,7 +163,7 @@ public class UserManager
 
         if( wup != null )
         {
-            return( wup );
+            return wup;
         }
 
         // Try to get a limited login. This will be inserted into the request.
@@ -171,12 +171,12 @@ public class UserManager
         wup = limitedLogin( request );
         if( wup != null )
         {
-            return( wup );
+            return wup;
         }
 
         log.error( "Unable to get a default UserProfile!" );
 
-        return( null );
+        return null;
     }
 
     /**
@@ -188,38 +188,74 @@ public class UserManager
         UserProfile wup  = null;
         String      role = null;
 
-        // See if a cookie exists, and create a 'preferred guest' account if so.
-        String storedUsername = retrieveCookieValue( request, WikiEngine.PREFS_COOKIE_NAME );
+        //
+        //  First, checks whether container has done authentication for us.
+        //
+        String uid = request.getRemoteUser();
 
-        log.debug("Stored username="+storedUsername);
-
-        if( storedUsername != null )
+        if( uid != null )
         {
-            wup = UserProfile.parseStringRepresentation( storedUsername );
+            wup = getUserProfile( uid );
+            wup.setLoginStatus( UserProfile.CONTAINER );            
 
-            log.debug("wup="+wup);
-            wup.setLoginStatus( UserProfile.COOKIE );
+            HttpSession session = request.getSession( true );
+            session.setAttribute( WIKIUSER, wup );
         }
         else
         {
-            String uid = request.getRemoteUser();
-            if( uid == null && m_storeIPAddress )
+            // 
+            //  See if a cookie exists, and create a default account.
+            //
+            uid = retrieveCookieValue( request, WikiEngine.PREFS_COOKIE_NAME );
+
+            log.debug("Stored username="+uid);
+
+            if( uid != null )
             {
-                uid = request.getRemoteAddr();
+                wup = UserProfile.parseStringRepresentation( uid );
+
+                log.debug("wup="+wup);
+                wup.setLoginStatus( UserProfile.COOKIE );
             }
-            if( uid == null )
+            else
             {
-                uid = "unknown"; // FIXME: Magic
+                //
+                //  No username either, so fall back to the IP address.
+                // 
+                if( m_storeIPAddress )
+                {
+                    uid = request.getRemoteAddr();
+                }
+                if( uid == null )
+                {
+                    uid = "unknown"; // FIXME: Magic
+                }
+                wup = getUserProfile( uid );
+                wup.setLoginStatus( UserProfile.NONE );
             }
-            wup = getUserProfile( uid );
-            wup.setLoginStatus( UserProfile.NONE );
         }
 
-        // Limited login hasn't been authenticated. Just to emphasize the point:
+        //
+        //  FIXME:
+        //
+        //  We cannot store the UserProfile into the session, because of the following:
+        //  Assume that Edit.jsp is protected through container auth.
+        //
+        //  User without a cookie arrives through Wiki.jsp.  A
+        //  UserProfile is created, which essentially contains his IP
+        //  address.  If this is stored in the session, then, when the user
+        //  tries to access the Edit.jsp page and container does auth, he will
+        //  always be then known by his IP address, regardless of what the 
+        //  request.getRemoteUser() says.
+
+        //  So, until this is solved, we create a new UserProfile on each
+        //  access.  Ouch.
+
+        // Limited login hasn't been authenticated. Just to emphasize the point: 
         // wup.setPassword( null );
 
-        HttpSession session = request.getSession( true );
-        session.setAttribute( WIKIUSER, wup );
+        // HttpSession session = request.getSession( true );
+        // session.setAttribute( WIKIUSER, wup );
 
         return wup;
     }
@@ -230,7 +266,7 @@ public class UserManager
      *  correctly, depending on browser!), or null if the cookie is
      *  not found.
      */
-    // FIXME: Does not belong here and should be moved elsewhere.
+    // FIXME: Does not belong here and should be moved elsewhere.  HttpUtil?
     private String retrieveCookieValue( HttpServletRequest request, String cookieName )
     {
         Cookie[] cookies = request.getCookies();
