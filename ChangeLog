@@ -1,8 +1,17 @@
 2002-09-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.20.
+
+        * PageModified.jsp and Preview.jsp are now included in the new
+        template system.
         
-        * Edit.jsp should no longer crash.
+        * SystemInfo.jsp is now removed.  A page called "SystemInfo" is
+        taking its place.
+
+        * Creating new pages should work now again.
+        
+        * Edit.jsp should no longer crash.  It's also been delegated
+        properly into EditTemplate.jsp.
 
         * Added jspwiki.templateDir property.
 
