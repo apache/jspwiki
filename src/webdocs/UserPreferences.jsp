@@ -1,6 +1,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
+<%@ page import="com.ecyrd.jspwiki.auth.UserManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -16,8 +18,8 @@
 <%
     String pagereq = "UserPreferences";
     String    skin = wiki.getTemplateDir();
-    String headerTitle = "";
-
+    UserManager mgr = wiki.getUserManager();
+    
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
     WikiPage wikipage = new WikiPage( pagereq );
@@ -35,11 +37,12 @@
 
     if( ok != null || "save".equals(request.getParameter("action")) )
     {
+        mgr.logout( session );
         String name = wiki.safeGetParameter( request, "username" );
 
-        UserProfile profile = new UserProfile();
-        profile.setName( TranslatorReader.cleanLink(name) );
+        UserProfile profile = mgr.getUserProfile( TranslatorReader.cleanLink(name) );
 
+        log.debug("Writing profile name: "+profile);
         Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
                                    profile.getStringRepresentation() );
         prefs.setMaxAge( 1001*24*60*60 ); // 1001 days is default.
@@ -50,6 +53,7 @@
     }
     else if( clear != null )
     {
+        mgr.logout( session );
         Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, "" );
         prefs.setMaxAge( 0 );
         response.addCookie( prefs );
