@@ -21,9 +21,11 @@
     
     log.info("Request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
-    if( pagereq.equals("RecentChanges") )
+    String specialpage = wiki.getSpecialPageReference( pagereq );
+
+    if( specialpage != null )
     {
-        response.sendRedirect("RecentChanges.jsp");
+        response.sendRedirect( specialpage );
         return;        
     }
 
@@ -46,10 +48,8 @@
        <P>
        <A HREF="Edit.jsp?page=<%=pagereq%>">Edit this page</A>
        </P>
-       <P><BR><BR><BR>
-       <DIV ALIGN="left">
-       <FONT SIZE="-2"><%=Release.APPNAME%> v<%=Release.VERSTR%></FONT>
-       </DIV>
+       <P>
+       <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
     <TD WIDTH="85%" VALIGN="top">
       <H1><%=pagereq%></H1>
@@ -86,3 +86,5 @@
 </BODY>
 
 </HTML>
+
+

@@ -49,8 +49,9 @@
     <TD WIDTH="15%" VALIGN="top">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="Wiki.jsp?page=HelpOnEditing">Help on editing</A>
+       <A HREF="Wiki.jsp?page=EditingWikiPages">Help on editing</A>
        </P>
+       <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
     <TD WIDTH="85%" VALIGN="top">
       <H1>Edit page <%=pagereq%></H1>
@@ -71,7 +72,7 @@
       
       <table cellspacing = "4">
         <tr>
-          <td>---</td><td>Horizontal ruler</td>
+          <td>----</td><td>Horizontal ruler</td>
         </tr>
         <tr>
           <td>{{{, }}}</td><td>Begin/end code block</td>
@@ -93,6 +94,11 @@
           <td>*</td><td>Make a bulleted list (must be in first column).  Use more (**) for 
           deeper indentations.</td>
         </tr>
+
+        <tr>
+          <td>#</td><td>Make a numbered list (must be in first column). Use more (##, ###) for deeper indentations.</td>
+        </tr>
+
         <tr>
           <td>__text__</td><td>Makes text bold</td>
         </tr>
@@ -111,13 +117,6 @@
   </TR>
 
 </TABLE>
-
-
-<DIV ALIGN="right">
-<FONT SIZE="-1">
-  <I>JSPWiki by <A HREF="mailto:jalkanen+jspwiki@regex.fi">Janne Jalkanen</A>
-</FONT>
-</DIV>
 
 </BODY>
 
