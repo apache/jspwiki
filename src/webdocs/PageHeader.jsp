@@ -3,7 +3,7 @@
 
       <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0">
          <TR>
-            <TD align="left"><H1 CLASS="pagename"><%=pagereq%></H1></TD>
+            <TD align="left"><H1 CLASS="pagename"><%=pagereq%><%=versionInfo%></H1></TD>
             <TD align="right">
               <FORM action="Search.jsp">
                <A HREF="Search.jsp">Search Wiki:</A>
