@@ -1,3 +1,10 @@
+2003-07-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.47.
+
+        * It is now possible to set the "remember" -flag to Comment.jsp,
+        who will then write the author info to a cookie.
+
 2003-07-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.46.
