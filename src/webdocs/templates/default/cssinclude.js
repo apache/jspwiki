@@ -1,3 +1,4 @@
+<script type="text/javascript">
 /*
  *  Chooses a suitable stylesheet based on browser.
  */
@@ -9,7 +10,7 @@
     var NS  = NS4 || NS6;
     var Mac = (navigator.platform.indexOf("Mac") == -1) ? false : true;
 
-    var sheet;
+    var sheet = "";
 
     if( NS4 )
     {
@@ -19,11 +20,13 @@
     {
         sheet = "jspwiki_mac.css";
     }
-    else
+    else if( IE )
     {
-        // Let's assume all the rest of the browsers are sane
-        // and standard's compliant.
         sheet = "jspwiki_ie.css";
     }
 
-    document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
+    if( sheet != "" )
+    {
+        document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
+    }
+</script>
