@@ -1,0 +1,9 @@
+[Main page|Main]\\
+[About]\\
+[News]\\
+[Recent Changes]\\
+[WikiEtiquette]
+
+[Find pages|FindPage]
+
+
