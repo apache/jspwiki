@@ -81,6 +81,6 @@ public class WikiPage
 
     public String toString()
     {
-        return "WikiPage ["+m_name+",mod="+m_lastModified+"]";
+        return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
     }
 }
