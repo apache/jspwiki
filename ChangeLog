@@ -1,3 +1,11 @@
+2001-07-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Conversion of {{ is now fixed - it no longer transforms {{{ into
+        {<TT> in certain cases.  Also, multiple {{{s are now handled
+        gracefully.
+
+        * v1.1.1
+
 2001-07-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added a Search box to the header of each page.
