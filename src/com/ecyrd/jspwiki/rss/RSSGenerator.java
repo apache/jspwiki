@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Generates an RSS feed from the recent changes.
@@ -165,7 +166,19 @@ public class RSSGenerator
 
             String encodedName = m_engine.encodeName(page.getName());
 
-            String url = m_engine.getViewURL(page.getName());
+            String url;
+            String type;
+
+            if( page instanceof Attachment )
+            {
+                url  = m_engine.getAttachmentURL( page.getName() );
+                type = "attachment";
+            }
+            else
+            {
+                url  = m_engine.getViewURL(page.getName());
+                type = "page";
+            }
 
             result.append("    <rdf:li rdf:resource=\""+url+"\" />\n");
 
@@ -186,11 +199,11 @@ public class RSSGenerator
 
             if( page.getVersion() != 1 )
             {
-                itemBuffer.append(author+" changed this page on "+page.getLastModified() );
+                itemBuffer.append(author+" changed this "+type+" on "+page.getLastModified() );
             }
             else
             {
-                itemBuffer.append(author+" created this page on "+page.getLastModified() );
+                itemBuffer.append(author+" created this "+type+" on "+page.getLastModified() );
             }
             itemBuffer.append("</description>\n");
 
