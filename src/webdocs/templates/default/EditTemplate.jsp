@@ -37,6 +37,11 @@
 
       <HR><P>
 
+      <wiki:CheckVersion mode="notlatest">
+         <P CLASS="versionnote">You are about to restore version <wiki:PageVersion/>.
+         Click on "Save" to restore.  You may also edit the page before restoring it.
+      </wiki:CheckVersion>
+
       <FORM action="<wiki:EditLink format="url" />" method="POST" 
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
