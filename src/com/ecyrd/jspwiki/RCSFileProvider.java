@@ -101,6 +101,7 @@ public class RCSFileProvider
 
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
 
+            // FIXME: Should this use encoding as well?
             BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
 
             String line;
@@ -135,7 +136,7 @@ public class RCSFileProvider
 
     public String getPageText( String page, int version )
     {
-        StringBuffer result = new StringBuffer();
+        String result = null;
 
         log.debug("Fetching specific version "+version+" of page "+page);
         try
@@ -149,16 +150,8 @@ public class RCSFileProvider
             log.debug("Command = '"+cmd+"'");
 
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
-
-            BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream(),
-                                                                              m_encoding) );
-
-            String line;
-
-            while( (line = stdout.readLine()) != null )
-            { 
-                result.append( line+"\n");
-            }            
+            result = FileUtil.readContents( process.getInputStream(),
+                                            m_encoding );
 
             process.waitFor();
 
@@ -169,7 +162,7 @@ public class RCSFileProvider
             log.error("RCS checkout failed",e);
         }
         
-        return result.toString();
+        return result;
     }
 
     /**
@@ -233,6 +226,7 @@ public class RCSFileProvider
             
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
 
+            // FIXME: Should this use encoding as well?
             BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
 
             String line;

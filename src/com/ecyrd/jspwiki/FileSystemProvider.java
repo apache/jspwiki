@@ -127,29 +127,17 @@ public class FileSystemProvider
 
     public String getPageText( String page )
     {
-        StringBuffer result = new StringBuffer();
+        String result = null;
+        InputStream in = null;
 
         File pagedata = findPage( page );
 
         if( pagedata.exists() && pagedata.canRead() )
         {
-            Reader in = null;
-            StringWriter out = null;
-
             try
-            {
-                in = new BufferedReader( new InputStreamReader( new FileInputStream(pagedata), 
-                                                                m_encoding ) );
-                out = new StringWriter();
-
-                int c;
-
-                while( (c = in.read()) != -1  )
-                {
-                    out.write( c );
-                }
-
-                result.append( out.toString() );
+            {          
+                in = new FileInputStream( pagedata );
+                result = FileUtil.readContents( in, m_encoding );
             }
             catch( IOException e )
             {
@@ -159,7 +147,6 @@ public class FileSystemProvider
             {
                 try
                 {
-                    if( out != null ) out.close();
                     if( in  != null ) in.close();
                 }
                 catch( Exception e ) 
@@ -173,9 +160,7 @@ public class FileSystemProvider
             log.warn("Failed to load page '"+page+"' from '"+pagedata.getAbsolutePath()+"'");
         }
 
-        String res = result.toString();
-
-        return res;
+        return result;
     }
 
     public void putPageText( WikiPage page, String text )
@@ -243,6 +228,7 @@ public class FileSystemProvider
 
             try
             {
+                // FIXME: UTF-8 fixes
                 BufferedReader in = new BufferedReader( new FileReader(wikipages[i] ) );
                 int scores[] = new int[ query.length ];
                 
