@@ -36,7 +36,7 @@ import java.util.*;
  *  <B>Parameters</B>
  *  <UL>
  *    <LI>page - which page is used to do the blog; default is the current page.
- *    <LI>days - how many days the weblog aggregator should show.
+ *    <LI>days - how many days the weblog aggregator should show.  If set to "all", shows all pages.
  *    <LI>pageformat - What the entry pages should look like.
  *    <LI>startDate - Date when to start.  Format is "ddMMyy";
  *    <li>maxEntries - How many entries to show at most.
@@ -110,7 +110,14 @@ public class WeblogPlugin implements WikiPlugin
             days = (String) params.get( PARAM_DAYS );
         }
 
-        numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
+        if( days != null && days.equalsIgnoreCase("all") )
+        {
+            numDays = Integer.MAX_VALUE;
+        }
+        else
+        {
+            numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
+        }
 
 
         if( (startDay = (String)params.get(PARAM_STARTDATE)) == null )
