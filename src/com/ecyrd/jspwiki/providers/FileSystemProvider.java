@@ -76,7 +76,7 @@ public class FileSystemProvider
 
         if( !f.exists() )
         {
-            throw new FileNotFoundException("Page directory does not exist: "+m_pageDirectory);
+            f.mkdirs();
         }
         else if( !f.isDirectory() )
         {
