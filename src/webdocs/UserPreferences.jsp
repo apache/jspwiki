@@ -42,7 +42,7 @@
         profile.setName( TranslatorReader.cleanLink(name) );
         Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
                                    profile.getStringRepresentation() );
-        prefs.setMaxAge( 90*24*60*60 ); // 90 days is default.
+        prefs.setMaxAge( 1001*24*60*60 ); // 1001 days is default.
 
         response.addCookie( prefs );
 

@@ -188,8 +188,6 @@ public class BasicAttachmentProvider
         {
             // log.debug("Checking: "+pages[i]);
             int cutpoint = pages[i].indexOf( '.' );
-            if( cutpoint > 0 )
-            {
                 String pageNum = ( cutpoint > 0 ) ? pages[i].substring( 0, cutpoint ) : pages[i] ;
 
                 try
@@ -203,7 +201,6 @@ public class BasicAttachmentProvider
                 }
                 catch( NumberFormatException e ) {} // It's okay to skip these.
             }
-        }
 
         return version;
     }
@@ -340,11 +337,21 @@ public class BasicAttachmentProvider
             version = findLatestVersion( att );
         }
 
-        File f = new File( dir, version+"."+getFileExtension(att.getFileName()) );
+        String ext = getFileExtension( att.getFileName() );
+        File f = new File( dir, version+"."+ext );
 
         if( !f.exists() )
         {
-            throw new FileNotFoundException("No such file: "+f.getAbsolutePath()+" exists.");
+            if ("bin".equals(ext))
+            {
+                File fOld = new File( dir, version+"." );
+                if (fOld.exists())
+                    f = fOld;
+            }
+            if( !f.exists() )
+            {
+                throw new FileNotFoundException("No such file: "+f.getAbsolutePath()+" exists.");
+            }
         }
 
         return f;
@@ -429,7 +436,7 @@ public class BasicAttachmentProvider
 
         for( int i = 0; i < pagesWithAttachments.length; i++ )
         {
-            String pageId = pagesWithAttachments[i];
+            String pageId = unmangleName( pagesWithAttachments[i] );
             pageId = pageId.substring( 0, pageId.length()-DIR_EXTENSION.length() );
             
             Collection c = listAttachments( new WikiPage(pageId) );
@@ -453,16 +460,14 @@ public class BasicAttachmentProvider
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
-        File dir = new File( findPageDir( page.getName() ), 
-                             mangleName(name)+ATTDIR_EXTENSION );
+        Attachment att = new Attachment( page.getName(), name );
+        File dir = findAttachmentDir( att );
 
         if( !dir.exists() )
         {
             // log.debug("Attachment dir not found - thus no attachment can exist.");
             return null;
         }
-
-        Attachment att = new Attachment( page.getName(), name );
         
         if( version == WikiProvider.LATEST_VERSION )
         {
