@@ -734,7 +734,9 @@ public class WikiEngine
 
             String output = FileUtil.runSimpleCommand( cmd, f1.getParent() );
 
-            diff = output;
+            // FIXME: Should this rely on the system default encoding?
+            diff = new String(output.getBytes("ISO-8859-1"),
+                              getContentEncoding() );
         }
         catch( IOException e )
         {
