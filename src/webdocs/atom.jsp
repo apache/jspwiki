@@ -5,6 +5,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%!
     public void jspInit()
     {
