@@ -91,6 +91,17 @@ public class FileUtilTest extends TestCase
         catch( IOException e ) {}
     }
 
+    public void testReadContentsReader()
+        throws IOException
+    {
+        String data = "ABCDEF";
+
+        String result = FileUtil.readContents( new StringReader( data ) );
+
+        assertEquals( data,
+                      result );
+    }
+
     public static Test suite()
     {
         return new TestSuite( FileUtilTest.class );
