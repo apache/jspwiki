@@ -1,3 +1,12 @@
+2003-06-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.37.
+
+        * Added "template" -parameter to LinkToTag, so you can now
+        generate links directly using a template.
+
+        * Added InsertPage plugin from Scott Hurlbert.  Thanks, Scott!
+
 2003-06-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.36.

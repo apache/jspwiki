@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
  *    <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
+ *    <LI>template - Which template should we link to.
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -95,6 +96,11 @@ public class LinkToTag
         if( getVersion() != null )
         {
             url += "&amp;version="+getVersion();
+        }
+
+        if( getTemplate() != null )
+        {
+            url += "&amp;skin="+getTemplate();
         }
 
         switch( m_format )
