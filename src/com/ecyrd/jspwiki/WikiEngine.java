@@ -379,4 +379,48 @@ public class WikiEngine
 
         return m_provider.getVersionHistory( page );
     }
+
+    public String getDiff( String page, int version1, int version2 )
+    {
+        String page1 = m_provider.getPageText( page, version1 );
+        String page2 = m_provider.getPageText( page, version2 );
+
+        String diff  = makeDiff( page1, page2 );
+
+        diff = TranslatorReader.replaceString( diff, "<", "&lt;" );
+        diff = TranslatorReader.replaceString( diff, ">", "&gt;" );
+
+        return diff;
+    }
+
+    private String makeDiff( String p1, String p2 )
+    {
+        File f1 = null, f2 = null;
+        String diff = null;
+
+        try
+        {
+            f1 = FileUtil.newTmpFile( p1 );
+            f2 = FileUtil.newTmpFile( p2 );
+
+            String output = FileUtil.runSimpleCommand( "diff -u "+f1.getPath()+" "+f2.getPath(), f1.getParent() );
+
+            diff = output;
+        }
+        catch( IOException e )
+        {
+            log.error("Failed to do file diff",e);
+        }
+        catch( InterruptedException e )
+        {
+            log.error("Interrupted",e);
+        }
+        finally
+        {
+            if( f1 != null ) f1.delete();
+            if( f2 != null ) f2.delete();
+        }
+
+        return diff;
+    }
 }
