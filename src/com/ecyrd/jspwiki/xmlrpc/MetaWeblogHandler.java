@@ -106,7 +106,7 @@ public class MetaWeblogHandler
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 
-            url = m_engine.getBaseURL()+"attach?page="+att.getName();
+            url = m_engine.getAttachmentURL(att.getName());
         }
         catch( Exception e )
         {
