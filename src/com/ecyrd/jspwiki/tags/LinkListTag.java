@@ -146,7 +146,7 @@ public class LinkListTag extends TagSupport
                 sep = true;
                 
             String result = wikitizeCollection( links, sep );
-            String converted = we.textToHTML( result );
+            String converted = we.textToHTML( new WikiContext( we, ""), result ); //FIXME
             out.println( converted );
 
 
