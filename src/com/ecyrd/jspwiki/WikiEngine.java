@@ -226,6 +226,15 @@ public class WikiEngine
     }
 
     /**
+     *  Returns a collection of all image types that get inlined.
+     */
+
+    public Collection getAllInlinedImagePatterns()
+    {
+        return TranslatorReader.getImagePatterns( this );
+    }
+
+    /**
      *  If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns null.
      *  <P>
@@ -456,6 +465,9 @@ public class WikiEngine
         return null;
     }
 
+    /**
+     *  Returns the current version of the page.
+     */
     public int getVersion( String page )
     {
         if( m_provider == null ) 
@@ -469,6 +481,10 @@ public class WikiEngine
         return -1;
     }
 
+    /**
+     *  Returns a Collection of WikiPages containing the
+     *  version history of a page.
+     */
     public Collection getVersionHistory( String page )
     {
         if( m_provider == null ) 
@@ -477,6 +493,9 @@ public class WikiEngine
         return m_provider.getVersionHistory( page );
     }
 
+    /**
+     *  Returns a diff of two versions of a page.
+     */
     public String getDiff( String page, int version1, int version2 )
     {
         String page1 = m_provider.getPageText( page, version1 );
@@ -490,6 +509,10 @@ public class WikiEngine
         return diff;
     }
 
+    /**
+     *  Makes the diff by calling "diff" program.
+     */
+    // FIXME: Should read 'diff' command from properties.
     private String makeDiff( String p1, String p2 )
     {
         File f1 = null, f2 = null;
