@@ -155,7 +155,11 @@
 
       </table>
 
-      Don't try to use HTML, since it just won't work.
+      <P>Don't try to use HTML, since it just won't work.</P>
+
+      <P>To embed images, convert them into PNG format, make them
+      accessible on the web, and just use a normal hyperlink
+      reference.  All PNG images are automatically inlined.</P>
 
       </FORM>
 
