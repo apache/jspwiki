@@ -1024,6 +1024,33 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "Test  (123+456+)", translate(src) );
     }
 
+    /**
+     *  Check that plugin end is correctly recognized.
+     */
+    public void testPluginEnd()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin text=']'}]";
+
+        assertEquals( "Test ]", translate(src) );
+    }
+
+    public void testPluginEnd2()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin text='a[]+b'}]";
+
+        assertEquals( "Test a[]+b", translate(src) );
+    }
+
+    public void testPluginEnd3()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\n\na[]+b\n}]";
+
+        assertEquals( "Test  (a[]+b+)", translate(src) );
+    }
+
     public void testVariableInsert()
         throws Exception
     {
