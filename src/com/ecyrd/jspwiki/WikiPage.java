@@ -32,7 +32,7 @@ public class WikiPage
 
     private int    m_version = -1;
 
-    private String m_author = "unknown";
+    private String m_author = null;
 
     public WikiPage( String name )
     {
@@ -69,6 +69,9 @@ public class WikiPage
         m_author = author;
     }
 
+    /**
+     *  Returns author name, or null, if no author has been defined.
+     */
     public String getAuthor()
     {
         return m_author;
