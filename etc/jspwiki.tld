@@ -204,6 +204,19 @@
     <name>Editor</name>
     <tagclass>com.ecyrd.jspwiki.tags.EditorTag</tagclass>
     <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>submit</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>preview</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>cancel</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
   </tag>
 
   <tag>
