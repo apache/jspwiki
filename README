@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.4 $
-                             $Date: 2001-10-18 20:29:54 $
+                         $Revision: 1.5 $
+                             $Date: 2001-11-02 17:54:26 $
                            $Author: jalkanen $
 
 What is it?
@@ -47,6 +47,10 @@ Foundation (EFF), or whichever charity is close to your heart.
 
 The world doesn't need to become a bad place.
 
+Oh yeah, and if you run a Wiki based on this software, let me know.
+I'm always interested in hearing from my users =).
+
+
 Pre-requirements
 ----------------
 
@@ -86,6 +90,9 @@ Edit the WEB-INF/jspwiki.properties file to your liking.  The only
 thing you need to set is the directory where you want your wiki pages
 to be stored.  I recommend a directory that is regularly backed up.
 
+Unzip the contents of jspwiki-samplepages.zip into your newly created
+directory.
+
 (Re)start tomcat.
 
 Point your browser at http://<where your Tomcat is installed>/MyWiki/.
@@ -93,21 +100,47 @@ You should see the Main Wiki page.  See the next section if you want
 to edit the pages =).
 
 
+Upgrading from previous versions
+--------------------------------
 
-Allowing editing
-----------------
+First of all, you should read ReleaseNotes and ChangeLog =).
 
-By default, the access to Edit.jsp is allowed only people who have
-logged in in either the "admin" or the "user" role.  This is
-configured in WEB_INF/web.xml.
+Shut down Tomcat.
 
-If you want to keep this behaviour, then go edit your
-$TOMCAT_HOME/conf/tomcat-users.xml and add people for "user" and
-"admin".
+Unzip the war-file anywhere you like.
 
-If you want to have free-for-all Wiki, then you can just remove
-the lines that specify access restrictions from web.xml.  Don't forget
-to restart Tomcat.
+Copy the contents of WEB-INF/classes into the WEB-INF/classes
+directory of your currently running wiki.
+
+If you've done no changes to the JSP pages, or have done only minor
+changes, then you probably want to copy all of the JSP pages as well.
+If you've done extensive modifications, I recommend that you take a
+good look at the new JSP pages and consider whether the additions are
+worth your while.  JSPWiki should in theory stay backwards compatible
+=).
+
+Check the contents of web.xml as well - there may have been some
+changes.
+
+Restart Tomcat.
+
+
+Setting access controls
+-----------------------
+
+If you don't want everyone to have access to your Wiki, take a look a
+the "web.xml" file.  It contains sample configuration for someone who
+wants a Wiki that's viewable by all, but editable only be few.  By
+default, this is disabled, so your new Wiki is a free-for-all.
+
+Remove the marked comments from web.xml.
+
+Add a user to the "user" role in $TOMCAT_HOME/conf/tomcat-users.xml.
+For example:
+    <user name="wiki" password="wiki" roles="user" /
+adds an user called "wiki" with a password "wiki".
+
+Restart Tomcat.
 
 
 Configuring JSPWiki
