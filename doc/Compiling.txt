@@ -1,0 +1,58 @@
+
+Since you have the source, you'll probably want to know how to compile
+it. 
+
+Some of JSPWiki is in the form of JSP pages, so you don't need to
+compile them: the JSP container will take care of that.  However,
+there are a bunch of Java files, which you'll want to compile.
+
+Requirements
+============
+
+You'll need the following programs:
+
+- J2SDK 1.3 (I use the one from Sun Microsystems; I haven't tested any
+  others.)
+- Jakarta Ant 1.3 (available from http://jakarta.apache.org/ant)
+- servlet API 2.2 (servlet.jar, available from Sun.)
+- JUnit 3.7 (from www.junit.org, required for running tests)
+
+
+Building
+========
+
+Ant is the build system.
+
+Everything should Just Compile, when you say 'ant', assuming you have
+everything in your path.
+
+There are few targets:
+
+ant dist   : builds a full distribution.
+ant javadoc: builds the javadocs into doc/javadoc
+ant compile: just the basic compile, thankyouverymuch
+ant tests  : runs JUnit tests.
+
+
+Directory structure
+===================
+
+'src' contains the source code (under com/ecyrd/jspwiki).
+
+'src/webdocs' contains all the files that are published in the final
+webapps directory, including all of the deployment files under
+WEB-INF.
+
+'src/wikipages' contains a number of ready-made Wikipages.  Feel free
+to use them.
+
+'tests' contains a number of tests which you can run by saying 'ant
+tests'.  If any of them fail, you know you've broken something.
+
+'etc' contains all configuration files.
+
+'lib' contains all libraries that are required to run JSPWiki.  Note,
+however, that to keep the archive size down, I haven't included them
+in the source distribution.  You may need to copy them by hand from
+somewhere, or the binary distribution.
+
