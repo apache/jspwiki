@@ -67,6 +67,36 @@ public class PriorityListTest extends TestCase
         assertEquals( "2: One", "One", p.get(3) );
     }
 
+    public void testInsertSame3()
+    {
+        PriorityList p = new PriorityList();
+
+        p.add( "One", 1 );
+        p.add( "Two", 2 );
+        p.add( "Two2", 2 );
+        p.add( "Two3", 2 );
+        p.add( "Three", 3 );
+        
+        assertEquals( "size", 5, p.size() );
+
+        assertEquals( "Three", "Three", p.get(0) );
+        assertEquals( "Two", "Two", p.get(1) );
+        assertEquals( "Two2", "Two2", p.get(2) );
+        assertEquals( "Two3", "Two3", p.get(3) );
+        assertEquals( "One", "One", p.get(4) );
+
+        p.add( "TwoTwo", 2 );
+
+        assertEquals( "2: size", 6, p.size() );
+
+        assertEquals( "2: Three", "Three", p.get(0) );
+        assertEquals( "2: Two", "Two", p.get(1) );
+        assertEquals( "2: Two2", "Two2", p.get(2) );
+        assertEquals( "2: Two3", "Two3", p.get(3) );
+        assertEquals( "2: TwoTwo", "TwoTwo", p.get(4) );
+        assertEquals( "2: One", "One", p.get(5) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( PriorityListTest.class );
