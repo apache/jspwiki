@@ -45,6 +45,8 @@ To add a new page you just create a link to it from somewhere else. After all, t
 It's allowed to use almost any kind of characters inside a [WikiName], as long
 as they are letters or numbers.
 
+Note also that this Wiki can be configured to support standard CamelCase linking (if it's supported, the word CamelCase should be a link).  It's off by default, but if your friendly administrator has turned it on, then well, CamelCase all you want =).
+
 !Footnotes
 
 These are a special kind of hyperlink.  By using nothing but a number inside
