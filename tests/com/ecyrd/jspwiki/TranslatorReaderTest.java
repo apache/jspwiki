@@ -10,6 +10,9 @@ public class TranslatorReaderTest extends TestCase
 {
     Properties props = new Properties();
 
+    WikiEngine testEngine1;
+    WikiEngine testEngine2;
+
     public TranslatorReaderTest( String s )
     {
         super( s );
@@ -19,6 +22,11 @@ public class TranslatorReaderTest extends TestCase
         throws Exception
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+
+        testEngine1 = new TestEngine( props );
+
+        props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
+        testEngine2 = new TestEngine2( props );
     }
 
     public void tearDown()
@@ -30,7 +38,27 @@ public class TranslatorReaderTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( new TestEngine(props),
+        WikiContext context = new WikiContext( testEngine1,
+                                               "testpage" );
+        Reader r = new TranslatorReader( context, 
+                                         new BufferedReader( new StringReader(src)) );
+        StringWriter out = new StringWriter();
+        int c;
+
+        while( ( c=r.read()) != -1 )
+        {
+            out.write( c );
+        }
+
+        return out.toString();
+    }
+
+    private String translate2( String src )
+        throws IOException,
+               NoRequiredPropertyException,
+               ServletException
+    {
+        WikiContext context = new WikiContext( testEngine2,
                                                "testpage" );
         Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
@@ -98,6 +126,59 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.regex.fi/\">link</A>\n",
                       translate(src) );
     }
+
+    public void testHyperlinksPluralMatch()
+        throws Exception
+    {
+        String src = "This should be a [HyperLinks]";
+
+        testEngine2.saveText( "HyperLink", "foobar" );
+
+        try
+        {
+            assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLinks</A>\n",
+                          translate2(src) );
+        }
+        finally
+        {
+            ((TestEngine2)testEngine2).deletePage( "HyperLink" );
+        }
+    }
+
+    public void testHyperlinksPluralMatch2()
+        throws Exception
+    {
+        String src = "This should be a [HyperLinks]";
+
+        try
+        {
+            assertEquals( "This should be a <U>HyperLinks</U><A HREF=\"Edit.jsp?page=HyperLinks\">?</A>\n",
+                          translate2(src) );
+        }
+        finally
+        {
+            // FIXME
+        }
+    }
+
+    public void testHyperlinksPluralMatch3()
+        throws Exception
+    {
+        String src = "This should be a [HyperLink]";
+
+        testEngine2.saveText( "HyperLinks", "foobar" );
+
+        try
+        {
+            assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLinks\">HyperLink</A>\n",
+                          translate2(src) );
+        }
+        finally
+        {
+            ((TestEngine2)testEngine2).deletePage( "HyperLinks" );
+        }
+    }
+
 
     public void testHyperlinkJS1()
         throws Exception
