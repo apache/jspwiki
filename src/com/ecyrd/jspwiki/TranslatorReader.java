@@ -1690,9 +1690,45 @@ public class TranslatorReader extends Reader
                     //  Check for the end of the word.
                     //
 
-                    if( Character.isWhitespace( (char)ch ) || 
-                        ch == -1 ||
-                        WORD_SEPARATORS.indexOf( (char) ch ) != -1 )
+                    if( ch == ':' )
+                    {
+                        word.append( (char) ch );
+                        // log.debug("Checking "+word);
+                        if( isExternalLink( word.toString() ) )
+                        {
+                            log.debug("Found potential URL starting with: "+word);
+                            // How much text we've already put into the buffer?
+                            int protocolLen = word.length();
+
+                            ch = nextToken();
+                            while( !Character.isWhitespace( (char)ch ) &&
+                                   ch != ',' && ch != ';' && ch != -1 )
+                            {
+                                word.append( (char)ch );
+                                ch = nextToken();
+                            }
+
+                            String url = word.toString();
+                            if( url.endsWith(".") ) url = url.substring(0,url.length()-1);
+
+                            log.debug("Detected URI "+word);
+
+                            String link = makeLink(EXTERNAL,
+                                                   url,
+                                                   word.toString());
+
+                            log.debug("Writing "+link);
+
+                            start = buf.length()-protocolLen+1;
+                            buf.replace( start, start + protocolLen,
+                                         link );
+
+                            word = null;
+                        }
+                    }
+                    else if( Character.isWhitespace( (char)ch ) || 
+                             ch == -1 ||
+                             WORD_SEPARATORS.indexOf( (char) ch ) != -1 )
                     {
                         String potentialLink = word.toString();
 
