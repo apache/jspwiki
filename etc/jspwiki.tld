@@ -26,11 +26,20 @@
   </tag>
 
   <tag>
+    <name>ContentEncoding</name>
+    <tagclass>com.ecyrd.jspwiki.tags.ContentEncodingTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
     <name>EditLink</name>
     <tagclass>com.ecyrd.jspwiki.tags.EditLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
+    </attribute>
+    <attribute>
+       <name>format</name>
     </attribute>
   </tag>  
 
@@ -41,6 +50,9 @@
     <attribute>
        <name>page</name>
     </attribute>
+    <attribute>
+       <name>mode</name>
+    </attribute>
   </tag>  
 
   <tag>
@@ -49,6 +61,9 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
+    </attribute>
+    <attribute>
+       <name>format</name>
     </attribute>
   </tag>  
 
