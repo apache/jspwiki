@@ -1,3 +1,23 @@
+2003-02-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.32.
+
+        * AttachmentServlet now should work with UTF-8 filenames.
+        Suggested by Torsten Hildebrandt.
+
+        * UploadTemplate.jsp now always uses UTF-8 when submitting the
+        form.  Also did slight changes to the outlook.
+
+2003-02-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Removed PageHeader.jsp from the default template since it was
+        not used anywhere.  Reported by George Fairbanks.
+
+        * Added new out.png from George Fairbanks, adding transparency.
+
+        * BreadcrumbsTag now extends the correct class, so that it should
+        no longer output an extra "</a>".  Reported by Santiago Gala.
+
 2003-02-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.31.
