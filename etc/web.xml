@@ -15,8 +15,6 @@
        jalkanen+jspwiki@ecyrd.com
    </description>
 
-
-
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
@@ -98,6 +96,13 @@
    <welcome-file-list>
        <welcome-file>Wiki.jsp</welcome-file>
    </welcome-file-list>
+
+
+  <error-page>
+      <exception-type>org.apache.jasper.JasperException</exception-type>
+      <location>/Error.jsp</location>
+  </error-page>
+
 
    <!--
        Here we define the users which are allowed to access JSPWiki
