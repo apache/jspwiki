@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,9 +19,24 @@
  */
 package com.ecyrd.jspwiki;
 
+/**
+ *  Marks an erroneus jspwiki.properties file.  Certain properties
+ *  have been marked as "required", and if you do not provide
+ *  a good value for a property, you'll see this exception.
+ *  <P>
+ *  Check <TT>jspwiki.properties</TT> for the required properties.
+ *
+ *  @author Janne Jalkanen
+ */
 public class NoRequiredPropertyException
     extends Exception
 {
+    /**
+     *  Constructs an exception.
+     *
+     *  @param msg Message to show
+     *  @param key The key of the property in question.
+     */
     public NoRequiredPropertyException( String msg, String key )
     {
         super(msg+": key="+key);
