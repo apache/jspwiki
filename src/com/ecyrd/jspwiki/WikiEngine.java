@@ -1142,10 +1142,12 @@ public class WikiEngine
         try
         {
             Collection pages = m_pageManager.getAllPages();
+            Collection  atts = m_attachmentManager.getAllAttachments();
 
             TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
 
             sortedPages.addAll( pages );
+            sortedPages.addAll( atts );
 
             return sortedPages;
         }
