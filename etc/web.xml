@@ -60,6 +60,11 @@
        <servlet-class>com.ecyrd.jspwiki.atom.AtomAPIServlet</servlet-class>       
    </servlet>
 
+   <servlet>
+       <servlet-name>WikiServlet</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
+   </servlet>
+
 
    <!--
        Attachment exchange handler.
@@ -101,6 +106,11 @@
    <servlet-mapping>
        <servlet-name>AttachmentServlet</servlet-name>
        <url-pattern>/attach/*</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+       <servlet-name>WikiServlet</servlet-name>
+       <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
 
    <!-- This means that we don't have to use redirection
