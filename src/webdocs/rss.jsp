@@ -55,12 +55,14 @@
     //  Check if nothing has changed, so we can just return a 304
     //
     boolean hasChanged = false;
+    Date    latest     = new Date(0);
 
     for( Iterator i = changed.iterator(); i.hasNext(); )
     {
         WikiPage p = (WikiPage) i.next();
 
         if( !HttpUtil.checkFor304( request, p ) ) hasChanged = true;
+        if( p.getLastModified().after( latest ) ) latest = p.getLastModified();
     }
 
     if( !hasChanged )
@@ -69,6 +71,7 @@
         return;
     }
 
+    response.addDateHeader("Last-Modified",latest.getTime());
 %>
 <oscache:cache time="300">
 
