@@ -146,7 +146,7 @@ public class BasicAttachmentProvider
             int cutpoint = pages[i].indexOf( '.' );
             if( cutpoint > 0 )
             {
-                String pageNum = pages[i].substring( 0, cutpoint );
+                String pageNum = ( cutpoint > 0 ) ? pages[i].substring( 0, cutpoint ) : pages[i] ;
 
                 try
                 {
@@ -432,7 +432,7 @@ public class BasicAttachmentProvider
         return att;
     }
 
-    public Collection getVersionHistory( Attachment att )
+    public List getVersionHistory( Attachment att )
     {
         ArrayList list = new ArrayList();
 
