@@ -1,3 +1,11 @@
+2003-09-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.63.
+
+        * CachingProvider now makes an educated guess about page
+        existence, which should speed things up quite a lot on systems
+        that have slower providers.  Suggested by Niilo Neuvo.
+
 2003-08-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.62.
