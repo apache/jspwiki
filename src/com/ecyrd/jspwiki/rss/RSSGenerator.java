@@ -97,6 +97,18 @@ public class RSSGenerator
     }
 
     /**
+     *  Does the required formatting and entity replacement for XML.
+     */
+    private String format( String s )
+    {
+        s = TextUtil.replaceString( s, "&", "&amp;" );
+        s = TextUtil.replaceString( s, "<", "&lt;" );
+        s = TextUtil.replaceString( s, "]]>", "]]&gt;" );
+
+        return s;
+    }
+
+    /**
      *  Generates the RSS resource.  You probably want to output this
      *  result into a file or something, or serve as output from a servlet.
      */
@@ -127,7 +139,7 @@ public class RSSGenerator
         result.append("  <link>").append(m_engine.getBaseURL()).append("</link>\n");
 
         result.append("  <description>");
-        result.append( m_channelDescription );
+        result.append( format(m_channelDescription) );
         result.append("</description>\n");
         
         result.append("  <language>");
