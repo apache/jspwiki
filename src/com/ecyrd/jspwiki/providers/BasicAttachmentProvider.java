@@ -131,7 +131,7 @@ public class BasicAttachmentProvider
         // File pageDir = findPageDir( att.getName() );
         File attDir  = findAttachmentDir( att );
 
-        System.out.println("Finding pages in "+attDir.getAbsolutePath());
+        log.debug("Finding pages in "+attDir.getAbsolutePath());
         String[] pages = attDir.list( new AttachmentVersionFilter() );
 
         if( pages == null )
@@ -143,7 +143,7 @@ public class BasicAttachmentProvider
 
         for( int i = 0; i < pages.length; i++ )
         {
-            System.out.println("Checking: "+pages[i]);
+            log.debug("Checking: "+pages[i]);
             int cutpoint = pages[i].indexOf( '.' );
             if( cutpoint > 0 )
             {
@@ -239,7 +239,7 @@ public class BasicAttachmentProvider
 
         int latestVersion = findLatestVersion( att );
 
-        System.out.println("Latest version is "+latestVersion);
+        // System.out.println("Latest version is "+latestVersion);
 
         try
         {
