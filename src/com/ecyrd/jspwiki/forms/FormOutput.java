@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.PluginManager;
 import java.util.*;
 
 import com.ecyrd.jspwiki.util.FormUtil;
@@ -100,6 +101,10 @@ public class FormOutput
         // Previous submission info may be available from FormSet
         // plugin - add, don't replace.
         info.addSubmission( handlerParams );
+
+        // Pass the _body parameter from FormOutput on to the handler
+        info.getSubmission().put(PluginManager.PARAM_BODY, 
+                                 params.get(PluginManager.PARAM_BODY)); 
 
         String handlerOutput = null;
         String error = null;
