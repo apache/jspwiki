@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.UserProfile;
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -55,12 +56,20 @@ public class BugReportHandler
         String    title;
         String    description;
         String    version;
+        String    submitter = null;
         SimpleDateFormat format = new SimpleDateFormat( DEFAULT_DATEFORMAT );
 
 
         title       = (String) params.get( TITLE );
         description = (String) params.get( DESCRIPTION );
         version     = (String) params.get( VERSION );
+
+        UserProfile wup = context.getCurrentUser();
+
+        if( wup != null )
+        {
+            submitter = wup.getName();
+        }
 
         if( title == null ) throw new PluginException("Title is required");
         if( title.length() == 0 ) return "";
@@ -87,6 +96,11 @@ public class BugReportHandler
             out.println("|"+mappings.getProperty(TITLE,"Title")+"|"+title);
             out.println("|"+mappings.getProperty("date","Date")+"|"+format.format(d));
             out.println("|"+mappings.getProperty(VERSION,"Version")+"|"+version);
+            if( submitter != null )
+            {
+                out.println("|"+mappings.getProperty("submitter","Submitter")+
+                            "|"+submitter);
+            }
 
             //
             //  Outputting the other parameters added to this.
