@@ -50,10 +50,10 @@ public class WikiEngine
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
     // to run defines where the log goes.  Not what we want.
-    private static boolean c_configured = false;
+    private static boolean   c_configured = false;
 
     /** Stores properties. */
-    private Properties     m_properties;
+    private Properties       m_properties;
 
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
@@ -79,20 +79,20 @@ public class WikiEngine
         "Internal configuration error: No provider was found.";
 
     /** Should the user info be saved with the page data as well? */
-    private boolean        m_saveUserInfo = true;
+    private boolean          m_saveUserInfo = true;
 
     /** If true, logs the IP address of the editor */
-    private boolean        m_storeIPAddress = true;
+    private boolean          m_storeIPAddress = true;
 
     /** If true, uses UTF8 encoding for all data */
-    private boolean        m_useUTF8      = true;
+    private boolean          m_useUTF8      = true;
 
     /** Stores the base URL. */
-    private String         m_baseURL;
+    private String           m_baseURL;
 
     /** Store the file path to the basic URL.  When we're not running as
         a servlet, it defaults to the user's current directory. */
-    private String         m_rootPath = System.getProperty("user.dir");
+    private String           m_rootPath = System.getProperty("user.dir");
 
     /** Stores references between wikipages. */
     private ReferenceManager m_referenceManager = null;
@@ -106,6 +106,10 @@ public class WikiEngine
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
 
+    /** Store the ServletContext that we're in.  This may be null if WikiEngine
+        is not running inside a servlet container (i.e. when testing). */
+    private ServletContext   m_servletContext = null;
+       
     /**
      *  Gets a WikiEngine related to this servlet.
      */
@@ -143,11 +147,13 @@ public class WikiEngine
     /**
      *  Instantiate using this method when you're running as a servlet and
      *  WikiEngine will figure out where to look for the property
-     * file.
+     *  file.
      *  Do not use this method - use WikiEngine.getInstance() instead.
      */
     protected WikiEngine( ServletContext context )
     {
+        m_servletContext = context;
+
         String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
 
         Properties props = new Properties();
@@ -277,76 +283,6 @@ public class WikiEngine
     }
 
     /**
-     *  Runs the RSS generation thread.
-     *  FIXME: MUST be somewhere else, this is not a good place.
-     */
-    private class RSSThread extends Thread
-    {
-        public void run()
-        {
-            try
-            {
-                String fileName = m_properties.getProperty( RSSGenerator.PROP_RSSFILE,
-                                                            "rss.rdf" );
-                int rssInterval = TextUtil.parseIntParameter( m_properties.getProperty( RSSGenerator.PROP_INTERVAL ),
-                                                              3600 );
-
-                log.debug("RSS file will be at "+fileName);
-                log.debug("RSS refresh interval (seconds): "+rssInterval);
-
-                while(true)
-                {
-                    Writer out = null;
-                    Reader in  = null;
-
-                    try
-                    {
-                        //
-                        //  Generate RSS file, output it to
-                        //  default "rss.rdf".
-                        //
-                        log.info("Regenerating RSS feed to "+fileName);
-
-                        String feed = m_rssGenerator.generate();
-
-                        File file = new File( m_rootPath, fileName );
-
-                        in  = new StringReader(feed);
-                        out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
-
-                        FileUtil.copyContents( in, out );
-                    }
-                    catch( IOException e )
-                    {
-                        log.error("Cannot generate RSS feed to "+fileName, e );
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            if( in != null )  in.close();
-                            if( out != null ) out.close();
-                        }
-                        catch( IOException e )
-                        {
-                            log.fatal("Could not close I/O for RSS", e );
-                            break;
-                        }
-                    }
-
-                    Thread.sleep(rssInterval*1000L);
-                } // while
-                
-            }
-            catch(InterruptedException e)
-            {
-                log.error("RSS thread interrupted, no more RSS feeds", e);
-            }
-        }
-    }
-
-
-    /**
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
      */
@@ -418,7 +354,21 @@ public class WikiEngine
     {
         return m_baseURL;
     }
-    
+
+    /**
+     *  Returns the ServletContext that this particular WikiEngine was
+     *  initialized with.  <B>It may return null</B>, if the WikiEngine is not
+     *  running inside a servlet container!
+     *
+     *  @since 1.7.10
+     *  @return ServletContext of the WikiEngine, or null.
+     */
+
+    public ServletContext getServletContext()
+    {
+        return m_servletContext;
+    }
+
     /**
      *  This is a safe version of the Servlet.Request.getParameter() routine.
      *  Unfortunately, the default version always assumes that the incoming
@@ -905,7 +855,10 @@ public class WikiEngine
     // FIXME: does not support phrase searches yet, but for them
     // we need a version which reads the whole page into the memory
     // once.
-    
+
+    //
+    // FIXME: Should also have attributes attached.
+    //
     public Collection findPages( String query )
     {
         StringTokenizer st = new StringTokenizer( query, " \t," );
@@ -1087,4 +1040,74 @@ public class WikiEngine
     {
         return m_pluginManager;
     }
+
+    /**
+     *  Runs the RSS generation thread.
+     *  FIXME: MUST be somewhere else, this is not a good place.
+     */
+    private class RSSThread extends Thread
+    {
+        public void run()
+        {
+            try
+            {
+                String fileName = m_properties.getProperty( RSSGenerator.PROP_RSSFILE,
+                                                            "rss.rdf" );
+                int rssInterval = TextUtil.parseIntParameter( m_properties.getProperty( RSSGenerator.PROP_INTERVAL ),
+                                                              3600 );
+
+                log.debug("RSS file will be at "+fileName);
+                log.debug("RSS refresh interval (seconds): "+rssInterval);
+
+                while(true)
+                {
+                    Writer out = null;
+                    Reader in  = null;
+
+                    try
+                    {
+                        //
+                        //  Generate RSS file, output it to
+                        //  default "rss.rdf".
+                        //
+                        log.info("Regenerating RSS feed to "+fileName);
+
+                        String feed = m_rssGenerator.generate();
+
+                        File file = new File( m_rootPath, fileName );
+
+                        in  = new StringReader(feed);
+                        out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
+
+                        FileUtil.copyContents( in, out );
+                    }
+                    catch( IOException e )
+                    {
+                        log.error("Cannot generate RSS feed to "+fileName, e );
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if( in != null )  in.close();
+                            if( out != null ) out.close();
+                        }
+                        catch( IOException e )
+                        {
+                            log.fatal("Could not close I/O for RSS", e );
+                            break;
+                        }
+                    }
+
+                    Thread.sleep(rssInterval*1000L);
+                } // while
+                
+            }
+            catch(InterruptedException e)
+            {
+                log.error("RSS thread interrupted, no more RSS feeds", e);
+            }
+        }
+    }
+
 }
