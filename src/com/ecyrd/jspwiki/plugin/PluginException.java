@@ -38,5 +38,4 @@ public class PluginException extends Exception
     {
         return m_throwable;
     }
-    
 }

@@ -1,3 +1,25 @@
+2002-06-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.10.
+
+        * Added new property: jspwiki.plugin.searchPath, which allows you
+        to add any package name for searching plugins.  Suggested by Niilo
+        Neuvo.
+
+        * RSS feed was fixed - we now also add the <items> list.  Changed
+        also the dc:contributor field to use the rdf:Description element
+        rather than the direct name, since it would not work with all RSS
+        aggregators.
+
+        * Wiki.jsp now displays the XML sign for easy subscription to the
+        RSS feed.  We also display the Radio coffee mug for easy
+        subscription for Radio Userland users (though this is untested,
+        could any Radio folks test it, please?)
+
+        * We now support RSS autodiscovery, as per the proposed standard
+        at
+        http://diveintomark.org/archives/2002/06/02.html#important_change_to_the_link_tag.
+
 2002-06-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Oops, compiling broke on some systems due to undeclared
