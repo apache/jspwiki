@@ -1,5 +1,15 @@
 2002-11-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Tables now close the <TD> tag correctly with </TD>, thanks to
+        the new TranslatorReader architecture.  Reported by Andreas
+        Rozek.
+
+        * "&" is now translated into "&amp;" when editing, so that you can
+        actually input HTML entities and they stay like that when going
+        into storage.  Reported by Erik Bunn and others.
+
+        * Tilde (~) now escapes bars in tables.
+
         * v1.9.35.
 
         * GoDiagram is now a bit more tolerant towards the kind of markup
