@@ -391,6 +391,10 @@ public class BasicAttachmentProvider
 
             if( attachments != null )
             {
+                //
+                //  We now have a list of all potential attachments in 
+                //  the directory.
+                //
                 for( int i = 0; i < attachments.length; i++ )
                 {
                     File f = new File( dir, attachments[i] );
@@ -399,14 +403,37 @@ public class BasicAttachmentProvider
                     {
                         String attachmentName = unmangleName( attachments[i] );
 
+                        //
+                        //  Is it a new-stylea attachment directory?  If yes,
+                        //  we'll just deduce the name.  If not, however,
+                        //  we'll check if there's a suitable property file
+                        //  in the directory.
+                        //
                         if( attachmentName.endsWith( ATTDIR_EXTENSION ) )
                         {
                             attachmentName = attachmentName.substring( 0, attachmentName.length()-ATTDIR_EXTENSION.length() );
                         }
-                        
+                        else
+                        {
+                            File propFile = new File( f, PROPERTY_FILE );
+
+                            if( !propFile.exists() )
+                            {
+                                //
+                                //  This is not obviously a JSPWiki attachment,
+                                //  so let's just skip it.
+                                //
+                                continue;
+                            }
+                        }
+
                         Attachment att = getAttachmentInfo( page, attachmentName,
                                                             WikiProvider.LATEST_VERSION );
 
+                        //
+                        //  Sanity check - shouldn't really be happening, unless
+                        //  you mess with the repository directly.
+                        //
                         if( att == null )
                         {
                             throw new ProviderException("Attachment disappeared while reading information:"+
