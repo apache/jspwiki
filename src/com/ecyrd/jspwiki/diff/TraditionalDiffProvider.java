@@ -20,9 +20,7 @@
 
 package com.ecyrd.jspwiki.diff;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Properties;
 
 import org.apache.commons.jrcs.diff.AddDelta;
@@ -46,19 +44,16 @@ import com.ecyrd.jspwiki.WikiEngine;
  * @author Janne Jalkanen
  * @author Erik Bunn 
  * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
-
  */
+
 public class TraditionalDiffProvider implements DiffProvider
 {
     private static final Logger log = Logger.getLogger(TraditionalDiffProvider.class);
 
-    
-    private static final char DIFF_ADDED_SYMBOL = '+';
-    private static final char DIFF_REMOVED_SYMBOL = '-';
     private static final String CSS_DIFF_ADDED = "<tr><td bgcolor=\"#99FF99\" class=\"diffadd\">";
     private static final String CSS_DIFF_REMOVED = "<tr><td bgcolor=\"#FF9933\" class=\"diffrem\">";
     private static final String CSS_DIFF_UNCHANGED = "<tr><td class=\"diff\">";
-    private static final String CSS_DIFF_CLOSE = "</td></tr>";
+    private static final String CSS_DIFF_CLOSE = "</td></tr>" + Diff.NL;
 
 
     public TraditionalDiffProvider()
@@ -92,8 +87,8 @@ public class TraditionalDiffProvider implements DiffProvider
 
         try
         {
-            String[] first  = Diff.stringToArray(p1);
-            String[] second = Diff.stringToArray(p2);
+            String[] first  = Diff.stringToArray(TextUtil.replaceEntities(p1));
+            String[] second = Diff.stringToArray(TextUtil.replaceEntities(p2));
             Revision rev = Diff.diff(first, second, new MyersDiff());
             
             if( rev == null || rev.size() == 0 )
@@ -103,18 +98,13 @@ public class TraditionalDiffProvider implements DiffProvider
                 return "";
             }
             
-            StringBuffer ret = new StringBuffer();
-            rev.accept( new RevisionPrint(ret) );
+            StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
 
-            diffResult = ret.toString();
-            
-            diffResult = TextUtil.replaceEntities( diffResult );
-            diffResult = colorizeDiff( diffResult );
-        }
-        catch( IOException e )
-        {
-            diffResult = "makeDiff failed with IOException";
-            log.error(diffResult, e);
+            ret.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
+            rev.accept( new RevisionPrint(ret) );
+            ret.append("</table>\n");
+
+            return ret.toString();
         }
         catch( DifferentiationFailedException e )
         {
@@ -138,94 +128,41 @@ public class TraditionalDiffProvider implements DiffProvider
 
         public void visit(Revision rev)
         {
-            // GNDN ?
+            // GNDN (Goes nowhere, does nothing)
         }
 
         public void visit(AddDelta delta)
         {
             Chunk changed = delta.getRevised();
             print(changed, " added ");
-            changed.toString(m_result, "+ ", Diff.NL);
+            changed.toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
         }
 
         public void visit(ChangeDelta delta)
         {
             Chunk changed = delta.getOriginal();
             print(changed, " changed ");
-            changed.toString(m_result, "- ", Diff.NL);
-            delta.getRevised().toString(m_result, "+ ", Diff.NL);
+            changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
+            delta.getRevised().toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
         }
       
         public void visit(DeleteDelta delta)
         {
             Chunk changed = delta.getOriginal();
             print(changed, " removed ");
-            changed.toString(m_result, "- ", Diff.NL);
+            changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
         }
         
         private void print(Chunk changed, String type)
         {
-            m_result.append("\nAt line ");
+            m_result.append(CSS_DIFF_UNCHANGED);
+            m_result.append("At line ");
             m_result.append(changed.first() + 1);
             m_result.append(type);
             m_result.append(changed.size());
             m_result.append(" line");
             m_result.append((changed.size() == 1) ? "." : "s.");
-            m_result.append("\n");
+            m_result.append(CSS_DIFF_CLOSE);
         }
-
     }
-
-
-    /**
-     * Goes through output provided by a diff command and inserts HTML tags to
-     * make the result more legible. Currently colors lines starting with a +
-     * green, those starting with - reddish (hm, got to think of color blindness
-     * here...).
-     */
-    static String colorizeDiff(String diffText) throws IOException
-    {
-        if (diffText == null)
-            return "Invalid diff - probably something wrong with server setup.";
-
-        String line = null;
-        String start = null;
-        String stop = null;
-
-        BufferedReader in = new BufferedReader(new StringReader(diffText));
-        StringBuffer out = new StringBuffer();
-
-        out.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
-        while (( line = in.readLine() ) != null)
-        {
-            stop = CSS_DIFF_CLOSE;
-
-            if (line.length() > 0)
-            {
-                switch (line.charAt(0))
-                {
-                  case DIFF_ADDED_SYMBOL :
-                    start = CSS_DIFF_ADDED;
-                    break;
-                  case DIFF_REMOVED_SYMBOL :
-                    start = CSS_DIFF_REMOVED;
-                    break;
-                  default :
-                    start = CSS_DIFF_UNCHANGED;
-                }
-            }
-            else
-            {
-                start = CSS_DIFF_UNCHANGED;
-            }
-
-            out.append(start);
-            out.append(line.trim());
-            out.append(stop + "\n");
-        }
-
-        out.append("</table>\n");
-        return ( out.toString() );
-    }
-
 }
