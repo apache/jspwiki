@@ -6,6 +6,7 @@ The ~InsertPage plugins allows you to include the contents of another page into 
 * __style__ = ''CSS definition''.  A style you want to use to include the page with.
 * __maxlength__ = ''integer''.  If the page exceeds this length in characters, it will be truncated and a text "More..." linking to the page will be appended.
 * __section__ = ''integer''.  Inserts only a part of a page.  The sections are separated with "{{{----}}}" and are counted starting from one (1), that is, the first section on a page is number 1.
+* __default__ = ''string''.  If the page does not exist, will insert this default.  If not defined, inserts a suggestion to create the page.
 
 !Example
 {{{
