@@ -308,9 +308,9 @@ public class VariableManager
             // Check if such a context variable exists,
             // returning its string representation.
             //
-            if( (context.getVariable( name )) != null )
+            if( (context.getVariable( varName )) != null )
             {
-                return context.getVariable( name ).toString();
+                return context.getVariable( varName ).toString();
             }
 
             // Next-to-final straw: attempt to fetch using property name
