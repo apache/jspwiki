@@ -53,6 +53,7 @@
     // In the future, user access permits affect this
     boolean isEditable = (version < 0);
 
+    String rssURL = wiki.getGlobalRSSURL();
     //
     //  Alright, then start responding.
     //
@@ -68,6 +69,9 @@
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%>: <%=pagereq%><%=versionInfo%></TITLE>
   <%@ include file="cssinclude.js" %>
+  <%if( rssURL != null ) { %>
+      <link rel="alternate" type="application/rss+xml" title="RSS feed" href="<%=rssURL%>" />
+  <% } %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
@@ -82,8 +86,16 @@
           <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>
        <% } %>
        </P>
-       <P>
        <%@ include file="LeftMenuFooter.jsp" %>
+       <%if(rssURL != null) { %>
+       <P>
+           <DIV ALIGN="center">
+           <A HREF="<%=rssURL%>"><IMG SRC="<%=wiki.getBaseURL()%>images/xml.png" BORDER="0" title="Aggregate the RSS feed!"/></A><BR/>
+           <A HREF="http://127.0.0.1:5335/system/pages/subscriptions/?url=<%=rssURL%>"><IMG SRC="<%=wiki.getBaseURL()%>images/xmlCoffeeCup.png" BORDER="0" title="Aggregate the RSS feed in Radio Userland!"/></A>
+           
+           </DIV>
+       </P>
+       <% } %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
