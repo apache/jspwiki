@@ -2,6 +2,8 @@
 
         * v2.1.142.
 
+        * Added 304 check to rss.jsp
+
         * Implemented IdeaGetWikiInstanceByServletContext by (I lost the 
         email, sorry)
 
