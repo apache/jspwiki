@@ -28,6 +28,12 @@
     <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>  
+  
+  <tag>
+    <name>BaseURL</name>
+    <tagclass>com.ecyrd.jspwiki.tags.BaseURLTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
 
   <tag>
     <name>Breadcrumbs</name>
