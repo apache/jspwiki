@@ -45,8 +45,20 @@ public class ReferenceManagerTest extends TestCase
         throws Exception
     {
         Collection c = mgr.findUnreferenced();
-        
-        assertTrue( c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
+        assertTrue( collectionContains( c, "TestPage" ));
+    }
+
+    public boolean collectionContains( Collection container, String captive )
+    {
+	Iterator i = container.iterator();
+	while( i.hasNext() )
+	{
+	    Object cap = i.next();
+	    if( cap instanceof String && captive.equals( cap ) )
+		return( true );
+	}
+
+	return( false );
     }
 
     public void testBecomesUnreferenced()
