@@ -29,6 +29,23 @@ public class FileUtilTest extends TestCase
     {
     }
 
+    /**
+     *  This test actually checks if your JDK is misbehaving.  On my own Debian
+     *  machine, changing the system to use UTF-8 suddenly broke Java, and I put
+     *  in this test to check for its brokenness.  If your tests suddenly stop
+     *  running, check if this one is failing too.  If it is, your platform is
+     *  broken.  If it's not, seek for the bug in your code.
+     */
+    public void testJDKString()
+        throws Exception
+    {
+        String src = "abcåäö";
+
+        String res = new String( src.getBytes("ISO-8859-1"), "ISO-8859-1" );
+
+        assertEquals( src, res );
+    }
+
     public void testReadContentsLatin1()
         throws Exception
     {
