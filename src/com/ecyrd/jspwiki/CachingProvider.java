@@ -31,6 +31,7 @@ import org.apache.log4j.Category;
  *  @author Janne Jalkanen
  *  @since 1.6.4
  */
+// FIXME: Keeps a list of all WikiPages in memory - should cache them too.
 public class CachingProvider
     implements WikiPageProvider
 {
