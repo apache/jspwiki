@@ -69,7 +69,8 @@ public class RCSFileProvider
     private static final String   RCSFMT_DATE       = "yyyy-MM-dd HH:mm:ss";
 
     public void initialize( Properties props )
-        throws NoRequiredPropertyException
+        throws NoRequiredPropertyException,
+               IOException
     {
         log.debug("Initing RCS");
         super.initialize( props );
