@@ -37,14 +37,39 @@ public class RPCHandler
 {
     private WikiEngine m_engine;
 
+    Category log = Category.getInstance( RPCHandler.class ); 
+
     public RPCHandler( WikiEngine engine )
     {
         m_engine = engine;
     }
 
+    private String toRPCString( String src )
+    {
+        return TextUtil.urlEncodeUTF8( src );
+    }
+
+    private String fromRPCString( String src )
+    {
+        return TextUtil.urlDecodeUTF8( src );
+    }
+
+    private byte[] toRPCBase64( String src )
+    {
+        try
+        {
+            return src.getBytes("UTF-8");
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.warn("Platform does not support UTF-8, reverting to platform default");
+            return src.getBytes();
+        }
+    }
+
     public String getApplicationName()
     {
-        return m_engine.getApplicationName();
+        return toRPCString(m_engine.getApplicationName());
     }
 
     public Vector getAllPages()
@@ -55,7 +80,7 @@ public class RPCHandler
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
-            result.add( ((WikiPage)i.next()).getName() );
+            result.add( toRPCString(((WikiPage)i.next()).getName()) );
         }
 
         return result;
@@ -65,10 +90,16 @@ public class RPCHandler
     {
         Hashtable ht = new Hashtable();
 
-        ht.put( "name", page.getName() );
-        ht.put( "lastModified", page.getLastModified() );
+        ht.put( "name", toRPCString(page.getName()) );
+
+        Date d = page.getLastModified();
+        Calendar cal = Calendar.getInstance(); 
+        cal.setTime( d );
+        cal.setTimeZone( TimeZone.getTimeZone("UTC+00:00") );
+
+        ht.put( "lastModified", cal.getTime() );
         ht.put( "version", new Integer(page.getVersion()) );
-        ht.put( "author", page.getAuthor() );
+        ht.put( "author", toRPCString(page.getAuthor()) );
 
         return ht;
     }
@@ -77,6 +108,10 @@ public class RPCHandler
     {
         Collection pages = m_engine.getRecentChanges();
         Vector result = new Vector();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( since );
+        cal.setTimeZone( TimeZone.getDefault() );
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
@@ -93,31 +128,37 @@ public class RPCHandler
 
     public Hashtable getPageInfo( String pagename )
     {
+        pagename = fromRPCString( pagename );
         return encodeWikiPage( m_engine.getPage(pagename) );
     }
 
     public Hashtable getPageInfo( String pagename, int version )
     {
+        pagename = fromRPCString( pagename );
         return encodeWikiPage( m_engine.getPage( pagename, version ) );
     }
 
-    public String getPage( String pagename )
+    public byte[] getPage( String pagename )
     {
-        return m_engine.getPureText( pagename, -1 );
+        pagename = fromRPCString( pagename );
+        return toRPCBase64( m_engine.getPureText( pagename, -1 ) );
     }
 
-    public String getPage( String pagename, int version )
+    public byte[] getPage( String pagename, int version )
     {
-        return m_engine.getPureText( pagename, version );
+        pagename = fromRPCString( pagename );
+        return toRPCBase64( m_engine.getPureText( pagename, version ) );
     }
 
-    public String getPageHTML( String pagename )
+    public byte[] getPageHTML( String pagename )
     {
-        return m_engine.getHTML( pagename );
+        pagename = fromRPCString( pagename );
+        return toRPCBase64( m_engine.getHTML( pagename ) );
     }
 
-    public String getPageHTML( String pagename, int version )
+    public byte[] getPageHTML( String pagename, int version )
     {
-        return m_engine.getHTML( pagename, version );
+        pagename = fromRPCString( pagename );
+        return toRPCBase64( m_engine.getHTML( pagename, version ) );
     }
 }
