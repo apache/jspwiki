@@ -1,3 +1,25 @@
+2005-01-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.136
+
+        * InfoContent.jsp no longer uses scriptlets to determine previous
+        and next versions; instead, two new tags "PreviousVersionTag" and
+        "NextVersionTag" have been implemented.  This will make migration
+        a lot easier when you can delete intermediate versions (or help
+        a lot if you want to do a SubVersionProvider...)
+
+        * DiffLinkTag now understands a magical version number "current"
+        to refer to the current version.
+
+        * Bug fix: BugIncludeTagUsesDefaultTagOnly should not be fixed with
+        a fix to the ContentTag.
+
+        * CheckVersionTag now supports two additional modes: "notfirst",
+        and "first".
+
+        * CachingProvider cache consistency checks are now in seconds, not
+        milliseconds (which was a stupid idea anyway).
+
 2005-01-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * BugReportHandler ignores now _body (oops) :)
