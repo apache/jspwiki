@@ -904,6 +904,8 @@ public class TranslatorReader extends Reader
         }
         else
         {
+            int hashMark = -1;
+
             //
             //  Internal wiki link, but is it an attachment link?
             //
@@ -920,6 +922,29 @@ public class TranslatorReader extends Reader
                 else
                 {
                     sb.append( makeLink( ATTACHMENT, attachment, link ) );
+                }
+            }
+            else if( (hashMark = reallink.indexOf('#')) != -1 )
+            {
+                // It's an internal Wiki link, but to a named section
+
+                String namedSection = reallink.substring( hashMark+1 );
+                reallink = reallink.substring( 0, hashMark );
+
+                namedSection = cleanLink( namedSection );
+                reallink     = cleanLink( reallink );
+
+                callMutatorChain( m_localLinkMutatorChain, reallink );
+
+                String matchedLink;
+                if( (matchedLink = linkExists( reallink )) != null )
+                {
+                    matchedLink += "#section-"+matchedLink+"-"+namedSection;
+                    sb.append( makeLink( READ, matchedLink, link ) );
+                }
+                else
+                {
+                    sb.append( makeLink( EDIT, reallink, link ) );
                 }
             }
             else
@@ -2197,7 +2222,7 @@ public class TranslatorReader extends Reader
 
         private String makeHeadingAnchor( String baseName, String title )
         {
-            return "<a name=\"#section-"+baseName+"-"+m_engine.encodeName(title)+"\">";
+            return "<a name=\"section-"+baseName+"-"+m_engine.encodeName(title)+"\">";
         }
 
         /**
