@@ -21,6 +21,39 @@ public class TextUtilTest extends TestCase
     {
     }
 
+    public void testEncodeName_1()
+    {
+        String name = "Hello/World";
+
+        assertEquals( "Hello/World",
+                      TextUtil.urlEncode(name,"ISO-8859-1") );
+    }
+
+    public void testEncodeName_2()
+    {
+        String name = "Hello~World";
+
+        assertEquals( "Hello%7EWorld",
+                      TextUtil.urlEncode(name,"ISO-8859-1") );
+    }
+
+    public void testEncodeName_3()
+    {
+        String name = "Hello/World ~";
+
+        assertEquals( "Hello/World+%7E",
+                      TextUtil.urlEncode(name,"ISO-8859-1") );
+    }
+
+    public void testDecodeName_1()
+         throws Exception
+    {
+        String name = "Hello/World+%7E+%2F";
+
+        assertEquals( "Hello/World ~ /",
+                      TextUtil.urlDecode(name,"ISO-8859-1") );
+    }
+
     public void testEncodeNameUTF8_1()
     {
         String name = "\u0041\u2262\u0391\u002E";
@@ -42,6 +75,14 @@ public class TextUtilTest extends TestCase
         String name = "\u65E5\u672C\u8A9E";
 
         assertEquals( "%E6%97%A5%E6%9C%AC%E8%AA%9E",
+                      TextUtil.urlEncodeUTF8(name) );
+    }
+
+    public void testEncodeNameUTF8_4()
+    {
+        String name = "Hello World";
+
+        assertEquals( "Hello+World",
                       TextUtil.urlEncodeUTF8(name) );
     }
 
