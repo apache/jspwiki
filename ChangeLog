@@ -2,6 +2,14 @@
 
         * v2.0.42.
 
+        * CachingProvider now also has the ability to estimate the cache
+        size.
+
+        * CachingProvider now checks if the pages have been externally
+        modified before offering the pages.  However, it may take up to
+        five seconds to notice the change.  This should allow you to run
+        multiple wikis against the same files.
+
         * The out.png was not properly transparent, but should be now.
         Thanks to Paul Downes.
 
