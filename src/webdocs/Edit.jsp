@@ -26,11 +26,12 @@
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
-    String comment = request.getParameter("comment");
+    String append  = request.getParameter("append");
     String author  = wiki.safeGetParameter( request, "author" );
+    String text    = wiki.safeGetParameter( request, "text" );
 
     WikiContext wikiContext = wiki.createContext( request, 
-                                                  comment != null ? WikiContext.COMMENT : WikiContext.EDIT );
+                                                  WikiContext.EDIT );
     String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
@@ -112,29 +113,29 @@
         wikiContext.getPage().setAuthor( currentUser.getName() );        
 
         //
-        //  If this is a comment, then we just append it to the page.
+        //  Figure out the actual page text
+        //
+
+        if( text == null )
+        {
+            throw new ServletException( "No parameter text set!" );
+        }
+
+        //
+        //  If this is an append, then we just append it to the page.
         //  If it is a full edit, then we will replace the previous contents.
         //
-        if( comment != null )
+        if( append != null )
         {
             StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
-            pageText.append( "\n\n----\n\n" );
-            pageText.append( wiki.safeGetParameter( request, "text" ) );
 
-            if( author != null )
-            {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
-
-                pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
-            }
+            pageText.append( text );
 
             wiki.saveText( wikiContext, pageText.toString() );
         }
         else
         {
-            wiki.saveText( wikiContext,
-                           wiki.safeGetParameter( request, "text" ) );
+            wiki.saveText( wikiContext, text );
         }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
