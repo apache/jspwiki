@@ -20,8 +20,10 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Date;
+import java.util.ArrayList;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
+import com.ecyrd.jspwiki.auth.AccessRuleSet;
 
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
@@ -36,9 +38,12 @@ public class WikiPage
 
     private String m_author = null;
 
+    private AccessRuleSet m_accessRules;
+
     public WikiPage( String name )
     {
         m_name = name;
+        m_accessRules = new AccessRuleSet();
     }
 
     public String getName()
@@ -82,5 +87,15 @@ public class WikiPage
     public String toString()
     {
         return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+    }
+
+    public void setAccessRules( AccessRuleSet rules )
+    {
+        m_accessRules = rules;
+    }
+
+    public AccessRuleSet getAccessRules()
+    {
+        return( m_accessRules );
     }
 }
