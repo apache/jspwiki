@@ -741,6 +741,26 @@ public class TranslatorReader extends Reader
         return line;
     }
 
+    private String setDefinitionList( String line )
+    {
+        if( line.startsWith(";") )
+        {
+            int breakIndex = line.indexOf(':');
+
+            if( breakIndex > 0 )
+            {
+                StringBuffer res = new StringBuffer();
+
+                res.append("<DL>\n<DT>"+line.substring(1,breakIndex)+"</DT>");
+                res.append("<DD>"+line.substring(breakIndex+1)+"</DD>");
+                res.append("\n</DL>");
+
+                line = res.toString();
+            }
+        }
+
+        return line;
+    }
     /**
      *  Translates horizontal rulers.
      */
@@ -1156,6 +1176,7 @@ public class TranslatorReader extends Reader
                 line = setCamelCaseLinks( line );
             }
 
+            line = setDefinitionList( line );
             line = setHeadings( line );
             line = setHR( line );
             line = setBold( line );
