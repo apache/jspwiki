@@ -3,6 +3,7 @@
 <%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -25,21 +26,35 @@
 %>
 
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-    if( pagereq == null || pagereq.length() == 0 )
-        pagereq = wiki.getFrontPage();
-    String userName = wiki.getUserName( request );
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName() + ":Login.jsp"  );
-
-    //WikiPage wikipage = wiki.getPage( pagereq );
-
-    WikiContext wikiContext = new WikiContext( wiki, (WikiPage)null );
-    wikiContext.setRequestContext( WikiContext.LOGIN );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
+
+    String action = request.getParameter("action");
+    String uid    = request.getParameter("uid");
+    String passwd = request.getParameter("passwd");
+
+    UserManager mgr = wiki.getUserManager();    
+
+    if( "login".equals(action) )
+    {
+        if( mgr.login( uid, passwd, session ) )
+        {
+            response.sendRedirect( wiki.getViewURL(pagereq) );
+            return;
+        }
+    }
+    else if( "logout".equals(action) )
+    {
+        mgr.logout( session );
+        response.sendRedirect( wiki.getViewURL(pagereq) );
+        return;
+    }
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
@@ -56,36 +71,42 @@
 </head>
 
 <body class="login" bgcolor="#FFFFFF">
-  <BR>
-  <BR>
-  <FORM action="<wiki:Variable var="baseURL"/>Auth.jsp" ACCEPT-CHARSET="ISO-8859-1,UTF-8">
-  <INPUT type="hidden" name="page" value="<%=pagereq%>">
-  <DIV align="center">
-    <TABLE BORDER="0" CELLSPACING="3" CELLPADDING="5" width="35%" BGCOLOR="#efefef"\>
-      <TR>
-        <TD colspan="2" bgcolor="#bfbfff">
-          <DIV align="center">
-            <H3>Welcome to <wiki:Variable var="applicationname"/></H3>
-          </DIV>
-        </TD>
-      </TR>
-      <TR>
-        <TD>Login:</TD>
-        <TD><input type="text" name="uid"></TD>
-      </TR>
-      <TR>
-        <TD>Password:</TD>
-        <TD><input type="password" name="passwd"></TD>
-      </TR>
-      <TR>
-        <TD colspan="2">
-          <DIV align="center">
-            <input type="submit" name="action" value="login">
-          </DIV>
-        </TD>
-      </TR>
-    </TABLE>
-  </DIV>
+  <br />
+  <br />
+  <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="UTF-8" method="POST" />
+  <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+  <div align="center">
+    <table border="0" cellspacing="3" cellpadding="5" width="35%" bgcolor="#efefef" />
+      <tr>
+        <td colspan="2" bgcolor="#bfbfff">
+          <div align="center">
+            <h3>Welcome to <wiki:Variable var="applicationname"/></h3>
+
+            <% if( action != null ) { %>
+            <p>
+            Unknown username or password.  Please try again.
+            </p>
+            <% } %>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Login:</td>
+        <td><input type="text" name="uid" /></td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td><input type="password" name="passwd" /></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div align="center">
+            <input type="submit" name="action" value="login" />
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
 </body>
 
 </html>
