@@ -41,6 +41,8 @@ public class CheckVersionTag
 {
     public static final int LATEST    = 0;
     public static final int NOTLATEST = 1;
+    public static final int FIRST     = 2;
+    public static final int NOTFIRST  = 3;
 
     private int m_mode;
 
@@ -49,6 +51,14 @@ public class CheckVersionTag
         if( "latest".equals(arg) )
         {
             m_mode = LATEST;
+        }
+        else if( "notfirst".equals(arg) )
+        {
+            m_mode = NOTFIRST;
+        }
+        else if( "first".equals(arg) )
+        {
+            m_mode = FIRST;
         }
         else
         {
@@ -81,6 +91,14 @@ public class CheckVersionTag
 
               case NOTLATEST:
                 include = (version > 0) && (latest.getVersion() != version);
+                break;
+
+              case FIRST:
+                include = (version == 1 ) || (version < 0 && latest.getVersion() == 1);
+                break;
+
+              case NOTFIRST:
+                include = (version > 1);
                 break;
             }
 
