@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,12 +19,28 @@
  */
 package com.ecyrd.jspwiki;
 
+/**
+ *  This simple class just fulfils the role of a container
+ *  for searches.  It tells the word and whether it is requested or not.
+ *
+ *  @author Janne Jalkanen
+ */
 public class QueryItem
 {
+    /** The word is required to be in the pages */
     public static final int REQUIRED  = 1;
+
+    /** The word may NOT be in the pages */
     public static final int FORBIDDEN = -1;
+
+    /** The word should be in the pages, but the search engine may
+        use its own discretion. */
     public static final int REQUESTED = 0;
 
+    /** The word that is being searched */
     public String word;
+
+    /** The type of the word.  See above for types.  The default
+        is REQUESTED. */
     public int    type = REQUESTED;
 }

@@ -69,7 +69,6 @@ public interface WikiPageProvider
     /**
      *  Returns all pages.  Each element in the returned
      *  Collection should be a WikiPage.
-     *  @deprecated
      */
 
     public Collection getAllPages();

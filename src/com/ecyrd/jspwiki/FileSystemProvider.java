@@ -125,6 +125,9 @@ public class FileSystemProvider
         return getPageText( page );
     }
 
+    /**
+     *  Read the text directly from the correct file.
+     */
     private String getPageText( String page )
     {
         String result  = null;
@@ -207,6 +210,14 @@ public class FileSystemProvider
 
             WikiPage page = getPageInfo( unmangleName(wikiname.substring(0,cutpoint)),
                                          WikiPageProvider.LATEST_VERSION );
+            if( page == null )
+            {
+                // This should not really happen.
+                // FIXME: Should we throw an exception here?
+                log.error("Page "+wikiname+" was found in directory listing, but could not be located individually.");
+                continue;
+            }
+            
             set.add( page );
         }
 
@@ -330,7 +341,10 @@ public class FileSystemProvider
     {
         File file = findPage( page );
 
-        if( !file.exists() ) return null;
+        if( !file.exists() )
+        {
+            return null;
+        }
 
         WikiPage p = new WikiPage( page );
         p.setLastModified( new Date(file.lastModified()) );

@@ -160,6 +160,7 @@ public class RCSFileProvider
         }
         catch( Exception e )
         {
+            // This also occurs when 'info' was null.
             log.warn("Failed to read RCS info",e);
         }
 
@@ -170,7 +171,8 @@ public class RCSFileProvider
     {
         String result = null;
 
-        // Let parent handle latest fetches.
+        // Let parent handle latest fetches, since the FileSystemProvider
+        // can do the file reading just as well.
 
         if( version == WikiPageProvider.LATEST_VERSION )
             return super.getPageText( page, version );

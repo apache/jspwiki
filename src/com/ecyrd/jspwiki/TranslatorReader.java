@@ -34,6 +34,11 @@ import com.ecyrd.jspwiki.plugin.PluginException;
  *  Handles conversion from Wiki format into fully featured HTML.
  *  This is where all the magic happens.  It is CRITICAL that this
  *  class is tested, or all Wikis might die horribly.
+ *  <P>
+ *  The output of the HTML has not yet been validated against
+ *  the HTML DTD.  However, it is very simple.
+ *
+ *  @author Janne Jalkanen
  */
 // FIXME: Class still has problems with {{{: all conversion on that line where the {{{
 //        appears is done, but after that, conversion is not done.  The only real solution
@@ -120,7 +125,11 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Adds a hook for processing link texts.
+     *  Adds a hook for processing link texts.  This hook is called
+     *  when the link text is written into the output stream, and
+     *  you may use it to modify the text.  It does not affect the
+     *  actual link, only the user-visible text.
+     *
      *  @param mutator The hook to call.  Null is safe.
      */
     public void addLinkTransmutator( StringTransmutator mutator )
@@ -132,7 +141,8 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Adds a hook for processing local links.
+     *  Adds a hook for processing local links.  The engine
+     *  transforms both non-existing and existing page links.
      *
      *  @param mutator The hook to call.  Null is safe.
      */
@@ -175,7 +185,7 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Returns true, if the link exists.
+     *  Returns true, if the link exists.  This is simply a shortcut.
      */
     private boolean linkExists( String link )
     {
@@ -184,6 +194,11 @@ public class TranslatorReader extends Reader
 
     /**
      *  Calls a transmutator chain.
+     *
+     *  @param list Chain to call
+     *  @param text Text that should be passed to the mutate() method
+     *              of each of the mutators in the chain.
+     *  @return The result of the mutation.
      */
 
     private String callMutatorChain( Collection list, String text )
@@ -205,6 +220,10 @@ public class TranslatorReader extends Reader
 
     /**
      *  Write a HTMLized link depending on its type.
+     *
+     *  @param type Type of the link.
+     *  @param link The actual link.
+     *  @param text The user-visible text for the link.
      */
     private String makeLink( int type, String link, String text )
     {
@@ -322,7 +341,8 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Figures out if a link is an off-site link.
+     *  Figures out if a link is an off-site link.  This recognizes
+     *  the most common protocols by checking how it starts.
      */
     private boolean isExternalLink( String link )
     {
@@ -348,7 +368,8 @@ public class TranslatorReader extends Reader
     }
 
     // FIXME: Non-optimal.
-    private boolean isNumber( String s )
+    /*
+    private boolean isNumber2( String s )
     {
         try
         {
@@ -360,7 +381,28 @@ public class TranslatorReader extends Reader
         }
         return true;
     }
+    */
+    /**
+     *  Returns true, if the argument contains a number, otherwise false.
+     *  In a quick test this is roughly the same speed as Integer.parseInt()
+     *  if the argument is a number, and roughly ten times the speed, if
+     *  the argument is NOT a number.
+     */
 
+    private boolean isNumber( String s )
+    {
+        if( s.charAt(0) == '-' && s.length() > 1)
+            s = s.substring(1);
+
+        for( int i = 0; i < s.length(); i++ )
+        {
+            if( !Character.isDigit(s.charAt(i)) )
+                return false;
+        }
+
+        return true;
+    }
+    
     private String setHyperLinks( String line )
     {
         int start, end = 0;

@@ -1,3 +1,8 @@
+2002-02-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Fixed a slow routine in TranslatorReader, shaving off roughly
+	10% of translation time.  Construction Exceptions is truly heavy.
+
 2002-01-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.8-cvs
