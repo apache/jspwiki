@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -32,6 +32,10 @@ import org.apache.log4j.Category;
 
 /**
  *  Generic utilities related to file and stream handling, JDK1.4 version.
+ *  Do not call this directly - go through FileUtil, since it is smart enough
+ *  to decide which version you want to call.
+ *  <p>
+ *  This class contains only JDK1.4 -specific methods.
  */
 // FIXME: It would be so much neater to do a clean subclassing here
 // but since this is a static class, we'd need to do some kind of
