@@ -59,6 +59,8 @@
       <wiki:NoSuchPage page="EditPageHelp">
          Ho hum, it seems that the EditPageHelp<wiki:EditLink page="EditPageHelp">?</wiki:EditLink>
          page is missing.  Someone must've done something to the installation...
+         <br /><br />
+         You can copy the text from the <a href="http://www.jspwiki.org/Wiki.jsp?page=EditPageHelp">EditPageHelp page on jspwiki.org</a>.
       </wiki:NoSuchPage>
       </p>
 
