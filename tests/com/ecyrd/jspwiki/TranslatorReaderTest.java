@@ -1545,15 +1545,17 @@ public class TranslatorReaderTest extends TestCase
             att.setAuthor( "FirstPost" );
             testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
 
-            LinkCollector coll = new LinkCollector();
+            LinkCollector coll        = new LinkCollector();
+            LinkCollector coll_others = new LinkCollector();
+
             String src = "[TestAtt.txt]";
             WikiContext context = new WikiContext( testEngine,
                                                    new WikiPage(PAGE_NAME) );
 
             TranslatorReader r = new TranslatorReader( context, 
                                                        new BufferedReader( new StringReader(src)) );
-            r.addLocalLinkHook( coll );
-            r.addExternalLinkHook( coll );
+            r.addLocalLinkHook( coll_others );
+            r.addExternalLinkHook( coll_others );
             r.addAttachmentLinkHook( coll );
 
             StringWriter out = new StringWriter();
@@ -1565,6 +1567,8 @@ public class TranslatorReaderTest extends TestCase
             assertEquals( "no links found", 1, links.size() );
             assertEquals( "wrong link", PAGE_NAME+"/TestAtt.txt", 
                           links.iterator().next() );
+
+            assertEquals( "wrong links found", 0, coll_others.getLinks().size() );
         }
         finally
         {
