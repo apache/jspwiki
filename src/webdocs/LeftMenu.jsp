@@ -9,7 +9,9 @@
 <% 
     if( wiki.pageExists( LEFTMENU_NAME ) ) 
     {
-        out.println( wiki.getHTML(LEFTMENU_NAME) );
+        WikiContext context       = new WikiContext( wiki, pagereq );
+        WikiPage    requestedpage = new WikiPage( LEFTMENU_NAME );
+        out.println( wiki.getHTML(context,requestedpage) );
     }
     else
     {
@@ -17,7 +19,7 @@
         <HR><P>
         <P ALIGN="center">
         <I>No LeftMenu!</I><BR>
-        <A HREF="Edit.jsp?page=<%=LEFTMENU_NAME%>">Please make one.</A><BR>
+        <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=LEFTMENU_NAME%>">Please make one.</A><BR>
         </P>
         <P><HR>
         <%
