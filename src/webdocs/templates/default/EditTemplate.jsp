@@ -1,3 +1,4 @@
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -23,17 +24,28 @@
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <%@ include file="PageHeader.jsp" %>
+
+      <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0">
+         <TR>
+            <TD align="left">
+                <H1 CLASS="pagename">Edit <wiki:PageName/></H1></TD>
+            <TD align="right">
+                <%@ include file="SearchBox.jsp" %>
+            </TD>
+         </TR>
+      </TABLE>
+
+      <HR><P>
 
       <FORM action="<wiki:EditLink format="url" />" method="POST" 
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
       <%-- These are required parts of this form.  If you do not include these,
-           horrible things will happen. --%>
+           horrible things will happen.  Do not modify them either. --%>
 
-      <INPUT type="hidden" name="page"     value="<%=pagereq%>">
+      <INPUT type="hidden" name="page"     value="<wiki:PageName/>">
       <INPUT type="hidden" name="action"   value="save">
-      <INPUT type="hidden" name="edittime" value="<%=lastchange%>">
+      <INPUT type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>">
 
       <%-- End of required area --%>
 
