@@ -306,6 +306,53 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testNoHyperlink()
+        throws Exception
+    {
+        newPage("HyperLink");
+
+        String src = "This should not be a [[HyperLink]";
+
+        assertEquals( "This should not be a [HyperLink]\n",
+                      translate(src) );
+    }
+
+    public void testNoHyperlink2()
+        throws Exception
+    {
+        String src = "This should not be a [[[[HyperLink]";
+
+        assertEquals( "This should not be a [[[HyperLink]\n",
+                      translate(src) );
+    }
+
+    public void testNoHyperlink3()
+        throws Exception
+    {
+        String src = "[[HyperLink], and this [[Neither].";
+
+        assertEquals( "[HyperLink], and this [Neither].\n",
+                      translate(src) );
+    }
+
+    public void testErroneousHyperlink()
+        throws Exception
+    {
+        String src = "What if this is the last char [";
+
+        assertEquals( "What if this is the last char \n",
+                      translate(src) );
+    }
+
+    public void testErroneousHyperlink2()
+        throws Exception
+    {
+        String src = "What if this is the last char [[";
+
+        assertEquals( "What if this is the last char [\n",
+                      translate(src) );
+    }
+
     public void testExtraPagename1()
         throws Exception
     {
