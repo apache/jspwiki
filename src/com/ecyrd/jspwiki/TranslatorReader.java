@@ -582,6 +582,26 @@ public class TranslatorReader extends Reader
                     line = TextUtil.replaceString( line, start, end+1,
                                                    included );
                 }                
+                else if( VariableManager.isVariableLink( link ) )
+                {
+                    String value;
+
+                    try
+                    {
+                        value = m_engine.getVariableManager().parseAndGetValue( m_context, link );
+                    }
+                    catch( NoSuchVariableException e )
+                    {
+                        value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+                    }
+                    catch( IllegalArgumentException e )
+                    {
+                        value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+                    }
+
+                    line = TextUtil.replaceString( line, start, end+1,
+                                                   value );
+                }
                 else if( isExternalLink( reallink ) )
                 {
                     // It's an external link, out of this Wiki
