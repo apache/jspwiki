@@ -24,6 +24,7 @@ You have some pages set up for you:
 * [JSPWikiPlugins] - The documentation on plugins.
 * [JSPWikiFAQ] - A list of some frequently asked questions.
 * [JSPWikiTags] - A list of tags for those who want to make their own [WikiTemplates].
+* [MultipleWikis] - If you want to run multiple Wikis using the least amount of effort.
 
 !Miscallaneous
 
