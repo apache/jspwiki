@@ -89,6 +89,12 @@ public class TranslatorReader extends Reader
      */
     public static final String     PROP_INLINEIMAGEPTRN  = "jspwiki.translatorReader.inlinePattern";
 
+    /** Property name for the "match english plurals" -hack. */
+    public static final String     PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
+
+    /** If true, we'll also consider english plurals (+s) a match. */
+    private boolean                m_matchEnglishPlurals = true;
+
     /**
      *  The default inlining pattern.  Currently "*.png"
      */
@@ -126,6 +132,8 @@ public class TranslatorReader extends Reader
         }
 
         m_inlineImagePatterns = compiledpatterns;
+
+        m_matchEnglishPlurals = "true".equals( m_engine.getWikiProperties().getProperty( PROP_MATCHPLURALS, "false" ) );
     }
 
     /**
@@ -203,11 +211,27 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Returns true, if the link exists.  This is simply a shortcut.
+     *  Returns link name, if it exists; otherwise it returns null.
      */
-    private boolean linkExists( String link )
+    private String linkExists( String page )
     {
-        return m_engine.pageExists( link );
+        boolean isThere = m_engine.pageExists( page );
+
+        if( !isThere && m_matchEnglishPlurals )
+        {
+            if( page.endsWith("s") )
+            {
+                page = page.substring( 0, page.length()-1 );
+            }
+            else
+            {
+                page += "s";
+            }
+
+            isThere = m_engine.pageExists( page );
+        }
+
+        return isThere ? page : null ;
     }
 
     /**
@@ -578,10 +602,11 @@ public class TranslatorReader extends Reader
 
                     callMutatorChain( m_localLinkMutatorChain, reallink );
 
-                    if( linkExists( reallink ) )
+                    String matchedLink;
+                    if( (matchedLink = linkExists( reallink )) != null )
                     {
                         line = TextUtil.replaceString( line, start, end+1, 
-                                                       makeLink( READ, reallink, link ) );
+                                                       makeLink( READ, matchedLink, link ) );
                     }
                     else
                     {
