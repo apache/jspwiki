@@ -255,4 +255,51 @@ public class TextUtil
         return val;
     }
 
+    /**
+     *  Makes sure that the POSTed data is conforms to certain rules.  These
+     *  rules are:
+     *  <UL>
+     *  <LI>The data always ends with a newline (some browsers, such
+     *      as NS4.x series, does not send a newline at the end, which makes
+     *      the diffs a bit strange sometimes.
+     *  <LI>The CR/LF/CRLF mess is normalized to plain CRLF.
+     *  </UL>
+     *
+     *  The reason why we're using CRLF is that most browser already
+     *  return CRLF since that is the closest thing to a HTTP standard.
+     */
+    public static String normalizePostData( String postData )
+    {
+        StringBuffer sb = new StringBuffer();
+
+        for( int i = 0; i < postData.length(); i++ )
+        {
+            switch( postData.charAt(i) )
+            {
+              case 0x0a: // LF, UNIX
+                sb.append( "\r\n" );
+                break;
+
+              case 0x0d: // CR, either Mac or MSDOS
+                sb.append( "\r\n" );
+                // If it's MSDOS, skip the LF so that we don't add it again.
+                if( i < postData.length()-1 && postData.charAt(i+1) == 0x0a )
+                {
+                    i++;
+                }
+                break;
+
+              default:
+                sb.append( postData.charAt(i) );
+                break;
+            }
+        }
+
+        if( sb.length() < 2 || !sb.substring( sb.length()-2 ).equals("\r\n") )
+        {
+            sb.append( "\r\n" );
+        }
+
+        return sb.toString();
+    }
 }
