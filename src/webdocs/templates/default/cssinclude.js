@@ -26,7 +26,7 @@
         sheet = "jspwiki_ie.css";
     }
 
-    document.write("<link rel=\"stylesheet\" href=\""+sheet+"\">");
+    document.write("<link rel=\"stylesheet\" href=\"templates/default/"+sheet+"\">");
 
 // end hiding contents from old browsers -->
 </SCRIPT>
@@ -34,8 +34,9 @@
     <!-- User has no JavaScript support.  Thus, it is unlikely that
          his stylesheets would work either.  So, no stylesheets. -->
 </NOSCRIPT>
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=<%=wiki.getContentEncoding()%>">
-<LINK REL="search" HREF="<%=wiki.getBaseURL()%>Search.jsp" TITLE="Search <%=wiki.getApplicationName()%>">
-<LINK REL="help"   HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=TextFormattingRules" TITLE="Help"
-<LINK REL="start"  HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=Main" TITLE="Front page">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=<wiki:ContentEncoding />">
+<LINK REL="search" HREF="<wiki:LinkTo format="url" page="FindPage"/>"            TITLE="Search <wiki:ApplicationName />">
+<LINK REL="help"   HREF="<wiki:LinkTo format="url" page="TextFormattingRules"/>" TITLE="Help">
+<LINK REL="start"  HREF="<wiki:LinkTo format="url" page="Main"/>"                TITLE="Front page">
 
