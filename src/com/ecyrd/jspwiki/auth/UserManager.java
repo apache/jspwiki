@@ -4,6 +4,7 @@ import java.util.*;
 import java.security.Principal;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Cookie;
 import java.security.Principal;
 import org.apache.log4j.Category;
@@ -11,6 +12,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 import com.ecyrd.jspwiki.auth.modules.*;
@@ -382,5 +384,21 @@ public class UserManager
         return( null );
     }
 
+    /**
+     *  Sets the username cookie.
+     *
+     *  @since 2.1.47.
+     */
+    public void setUserCookie( HttpServletResponse response, String name )
+    {
+        UserProfile profile = getUserProfile( TranslatorReader.cleanLink(name) );
+
+        Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
+                                   profile.getStringRepresentation() );
+
+        prefs.setMaxAge( 1001*24*60*60 ); // 1001 days is default.
+
+        response.addCookie( prefs );
+    }
 
 }
