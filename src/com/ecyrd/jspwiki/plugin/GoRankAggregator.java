@@ -378,8 +378,8 @@ public class GoRankAggregator
         String     wikiPage = null;
 
         String fullName = ui.m_firstName+ui.m_lastName;
-        String kgsnick  = ui.getNick("kgs");
-        String igsnick  = ui.getNick("igs");
+        String kgsnick  = TranslatorReader.cleanLink(ui.getNick("kgs"));
+        String igsnick  = TranslatorReader.cleanLink(ui.getNick("igs"));
 
         if( engine.pageExists(fullName) )
         {
@@ -477,7 +477,8 @@ public class GoRankAggregator
         int counter = 1;
 
         sb.append("<table border=\"1\">\n");
-        sb.append("<tr><th>Place</th><th>Name</th><th>Club</th><th>Rank</th><th>EGF GoR</th>"+
+        sb.append("<tr><th>Place</th><th>Name</th><th>Club</th><th>Rank</th>"+
+                  "<th><a href=\""+egfurl+"\">EGF GoR</a></th>"+
                   "<th>IGS nick</th><th>KGS nick</th></tr>\n");
         for( Iterator i = list.iterator(); i.hasNext(); )
         {            
