@@ -158,6 +158,7 @@ public class UserManager
      *  which should be allowed access to everything.
      *
      *  @param p Principal to check for administrator access.
+     *  @return true, if the principal is an administrator.
      */
     public boolean isAdministrator( WikiPrincipal p )
     {
@@ -229,7 +230,7 @@ public class UserManager
 
     public List getGroupsForPrincipal( Principal user )
         throws NoSuchPrincipalException
-    {
+    {        
         List list = m_database.getGroupsForPrincipal( user );
 
         if( list == null ) list = new ArrayList();
