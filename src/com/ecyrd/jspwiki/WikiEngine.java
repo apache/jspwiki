@@ -223,8 +223,16 @@ public class WikiEngine
 
         try
         {
-            Class providerclass = Class.forName( classname );
+            Class providerclass;
 
+            try
+            {
+                providerclass = Class.forName( classname );
+            }
+            catch( ClassNotFoundException e )
+            {
+                providerclass = Class.forName( "com.ecyrd.jspwiki."+classname );
+            }
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
             log.debug("Initializing provider class "+m_provider);
@@ -1046,6 +1054,13 @@ public class WikiEngine
     {
         String page1 = getPureText( page, version1 );
         String page2 = getPureText( page, version2 );
+
+        // Kludge to make diffs for new pages to work this way.
+
+        if( version1 == -1 )
+        {
+            page1 = "";
+        }
 
         String diff  = m_differenceEngine.makeDiff( page1, page2 );
 
