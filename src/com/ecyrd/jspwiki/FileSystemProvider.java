@@ -256,7 +256,7 @@ public class FileSystemProvider
         {
             String line = null;
 
-            log.debug("Searching page "+wikipages[i].getPath() );
+            // log.debug("Searching page "+wikipages[i].getPath() );
 
             String filename = wikipages[i].getName();
             int cutpoint    = filename.lastIndexOf( FILE_EXT );
@@ -283,7 +283,7 @@ public class FileSystemProvider
 
                         while( (index = line.indexOf( query[j].word, index+1 )) != -1 )
                         {
-                            log.debug("   Match found for "+query[j].word );
+                            // log.debug("   Match found for "+query[j].word );
 
                             if( query[j].type != QueryItem.FORBIDDEN )
                             {
