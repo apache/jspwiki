@@ -154,13 +154,13 @@ public class WikiEngine
 
         try
         {
-            props.load( new FileInputStream(propertyFile) );
-
-            initialize( props );
-
             m_rootPath = context.getRealPath("/");
 
             log.debug("Root path for this Wiki is: '"+m_rootPath+"'");
+
+            props.load( new FileInputStream(propertyFile) );
+
+            initialize( props );
         }
         catch( Exception e )
         {
@@ -242,6 +242,7 @@ public class WikiEngine
             throw new ServletException( "Unable to start", e );
         }
 
+        // FIXME: I wonder if this should be somewhere else.
         new RSSThread().start();
 
         log.info("WikiEngine configured.");
