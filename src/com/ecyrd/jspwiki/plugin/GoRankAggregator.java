@@ -347,6 +347,37 @@ public class GoRankAggregator
         }
     }
 
+    private String linkTo( WikiContext context, UserInfo ui )
+    {
+        WikiEngine engine = context.getEngine();
+        String     wikiPage = null;
+
+        String fullName = ui.m_firstName+ui.m_lastName;
+        String kgsnick  = ui.getNick("kgs");
+        String igsnick  = ui.getNick("igs");
+
+        if( engine.pageExists(fullName) )
+        {
+            wikiPage = fullName;
+        }
+        else if( kgsnick != null && engine.pageExists( kgsnick ) )
+        {
+            wikiPage = kgsnick;
+        }
+        else if( igsnick != null && engine.pageExists( igsnick ) )
+        {
+            wikiPage = igsnick;
+        }
+
+        if( wikiPage != null )
+        {
+            return "<a href=\""+engine.getBaseURL()+"Wiki.jsp?page="+wikiPage+
+                    "\">"+ui.m_lastName+", "+ui.m_firstName+"</a>";
+        }
+
+        return ui.m_lastName+", "+ui.m_firstName;
+    }
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -429,21 +460,8 @@ public class GoRankAggregator
 
             UserInfo ui = (UserInfo) i.next();
 
-            String potentialWikiPageName = ui.m_firstName+ui.m_lastName;
-
-            String namelink;
-            if( engine.pageExists( potentialWikiPageName ) )
-            {
-                namelink = "<a href=\""+engine.getBaseURL()+"Wiki.jsp?page="+potentialWikiPageName+
-                           "\">"+ui.m_lastName+", "+ui.m_firstName+"</a>";
-            }
-            else
-            {
-                namelink = ui.m_lastName+", "+ui.m_firstName;
-            }
-
             sb.append("<td align=center>"+counter+"</td>");
-            sb.append("<td>"+namelink+"</td>");
+            sb.append("<td>"+linkTo( context, ui )+"</td>");
             sb.append("<td><a href=\""+engine.getBaseURL()+"Wiki.jsp?page="+ui.m_clubPage+"\">"+
                       ui.m_club+"</a></td>");
             sb.append("<td align=center>"+printRank(ui.m_rank)+"</td>");
