@@ -42,7 +42,7 @@ public class FileSystemProvider
     private static final Category   log = Category.getInstance(FileSystemProvider.class);
     private String m_pageDirectory = "/tmp/";
 
-    private String m_encoding;
+    protected String m_encoding;
 
     /**
      *  Name of the property that defines where page directories are.
