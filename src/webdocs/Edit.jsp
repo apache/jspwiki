@@ -164,9 +164,10 @@
 
       <P>Don't try to use HTML, since it just won't work.</P>
 
-      <P>To embed images, convert them into PNG format, make them
-      accessible on the web, and just use a normal hyperlink
-      reference.  All PNG images are automatically inlined.</P>
+      <P>To embed images just put them available on the web using one
+      of the approved formats, and they will get inlined automatically.
+      To see the list of approved formats, go check 
+      <A HREF="Wiki.jsp?page=SystemInfo">SystemInfo</A>.</P>
 
       </FORM>
 
