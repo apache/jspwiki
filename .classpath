@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
+	<classpathentry kind="lib" path="lib/servlet.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
