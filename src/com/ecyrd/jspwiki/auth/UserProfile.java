@@ -17,11 +17,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.auth;
 
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
+import java.security.Principal;
 import org.apache.log4j.Category;
+import com.ecyrd.jspwiki.TextUtil;
 
 /**
  *  Contains user profile information.
@@ -31,6 +33,7 @@ import org.apache.log4j.Category;
  */
 // FIXME: contains magic strings.
 public class UserProfile
+    implements Principal
 {
     private String m_userName;
 
@@ -40,11 +43,12 @@ public class UserProfile
     {
     }
 
+    /*
     public UserProfile( String representation )
     {
         parseStringRepresentation( representation );
     }
-
+    */
     public String getStringRepresentation()
     {
         String res = "username="+TextUtil.urlEncodeUTF8(m_userName);
@@ -62,36 +66,55 @@ public class UserProfile
         m_userName = name;
     }
 
-    public void parseStringRepresentation( String res )
+    public static UserProfile parseStringRepresentation( String res )
+        throws NoSuchElementException
     {
-        try
-        {
-            if( res != null )
-            {
-                //
-                //  Not all browsers or containers do proper cookie
-                //  decoding, which is why we can suddenly get stuff
-                //  like "username=3DJanneJalkanen", so we have to
-                //  do the conversion here.
-                //
-                res = TextUtil.urlDecodeUTF8( res );
-                StringTokenizer tok = new StringTokenizer( res, " ,=" );
+        UserProfile prof = new UserProfile();
 
-                while( tok.hasMoreTokens() )
-                {
-                    String param = tok.nextToken();
-                    String value = tok.nextToken();
+        if( res != null )
+        {
+            //
+            //  Not all browsers or containers do proper cookie
+            //  decoding, which is why we can suddenly get stuff
+            //  like "username=3DJanneJalkanen", so we have to
+            //  do the conversion here.
+            //
+            res = TextUtil.urlDecodeUTF8( res );
+            StringTokenizer tok = new StringTokenizer( res, " ,=" );
+
+            while( tok.hasMoreTokens() )
+            {
+                String param = tok.nextToken();
+                String value = tok.nextToken();
                     
-                    if( param.equals("username") )
-                    {
-                        m_userName = value;
-                    }
+                if( param.equals("username") )
+                {
+                    prof.setName( value );
                 }
             }
         }
-        catch( NoSuchElementException e )
+
+        return prof;
+    }
+
+    public boolean equals( Object o )
+    {
+        // System.out.println(this+".equals("+o+")");
+        if( (o != null) && (o instanceof UserProfile) )
         {
-            log.warn("Missing or broken token in user profile: '"+res+"'");
+            String name = getName();
+
+            if( name != null && name.equals( ((UserProfile)o).getName() ) )
+            {
+                return true;
+            }
         }
+
+        return false;
+    }
+
+    public String toString()
+    {
+        return "[UserProfile: '"+getName()+"']";
     }
 }
