@@ -1203,13 +1203,13 @@ public class WikiEngine
 
     public String getHTML( WikiContext context, WikiPage page )
     {
-	String pagedata = null;
+        String pagedata = null;
 
         pagedata = getPureText( page.getName(), page.getVersion() );
 
         String res = textToHTML( context, pagedata );
 
-	return res;
+        return res;
     }
     
     /**
@@ -1241,7 +1241,7 @@ public class WikiEngine
         
         String res = getHTML( context, page );
 
-	return res;
+        return res;
     }
 
     /**
@@ -1903,7 +1903,23 @@ public class WikiEngine
         return context;
     }
 
-
+    /**
+     *  Deletes a page completely.
+     * 
+     * @param pageName
+     * @throws ProviderException
+     */
+    public void deletePage( String pageName )
+        throws ProviderException
+    {
+        //
+    }
+    
+    public void deleteVersion( WikiPage page )
+    {
+        
+    }
+    
     /**
      *  Returns the URL of the global RSS file.  May be null, if the
      *  RSS file generation is not operational.
