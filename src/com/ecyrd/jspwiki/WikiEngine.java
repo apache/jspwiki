@@ -420,6 +420,27 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the basic URL to a page, without any modifications.
+     *  You may add any parameters to this.
+     *
+     *  @since 2.0.3
+     */
+    public String getViewURL( String pageName )
+    {
+        return m_baseURL+"Wiki.jsp?page="+encodeName(pageName);
+    }
+
+    /**
+     *  Returns the basic URL to an editor.
+     *
+     *  @since 2.0.3
+     */
+    public String getEditURL( String pageName )
+    {
+        return m_baseURL+"Edit.jsp?page="+encodeName(pageName);
+    }
+
+    /**
      *  Returns the default front page, if no page is used.
      */
 

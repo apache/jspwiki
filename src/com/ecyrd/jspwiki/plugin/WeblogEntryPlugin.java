@@ -58,7 +58,7 @@ public class WeblogEntryPlugin implements WikiPlugin
             String blogPage = weblogName + "-" + today + "-" + entryNum;
 
             // FIXME: Generate somehow else.
-            sb.append("<A HREF=\"Edit.jsp?page="+blogPage+"\">New entry</A>");
+            sb.append("<A HREF=\""+engine.getEditURL(blogPage)+"\">New entry</A>");
         }
         catch( ProviderException e )
         {

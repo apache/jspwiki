@@ -55,7 +55,7 @@ public class EditLinkTag
         WikiEngine engine   = m_wikiContext.getEngine();
         WikiPage   page     = null;
         String     versionString = "";
-        String     encodedlink = null;
+        String     pageName = null;
         
         //
         //  Determine the page and the link.
@@ -70,12 +70,12 @@ public class EditLinkTag
             }
             else
             {
-                encodedlink = engine.encodeName( page.getName() );
+                pageName = page.getName();
             }
         }
         else
         {
-            encodedlink = engine.encodeName( m_pageName );
+            pageName = m_pageName;
         }
 
         //
@@ -111,11 +111,11 @@ public class EditLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+versionString+"\">");
+            out.print("<A HREF=\""+engine.getEditURL(pageName)+versionString+"\">");
             break;
 
           case URL:
-            out.print( engine.getBaseURL()+"Edit.jsp?page="+encodedlink+versionString );
+            out.print( engine.getEditURL(pageName)+versionString );
             break;
         }
 
