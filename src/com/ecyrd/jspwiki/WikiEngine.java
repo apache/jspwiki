@@ -228,6 +228,11 @@ public class WikiEngine
             log.error("Illegal access to provider class "+classname,e);
             throw new IllegalArgumentException("illegal provider class");
         }
+        catch( IOException e )
+        {
+            log.error("An I/O exception occurred while trying to create a new page provider: "+classname, e );
+            throw new ServletException("Unable to start page provider: "+e.getMessage());
+        }
 
         //
         //  Initialize the important modules.
