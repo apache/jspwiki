@@ -1,3 +1,12 @@
+2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * GoRankAggregator now also supports 'egfurl' parameter, which
+        fetches country-specific ranking data from persons.  Quite
+        kludgish at the moment.
+
+        * Hopefully fixed GoRankAggregator to allow multiple persons of
+        the same rank.
+
 2002-11-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Added GoRankAggregator.  Most of you don't probably care.  (I
