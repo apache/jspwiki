@@ -1,0 +1,20 @@
+Includes the body if the page exists.  Be warned that some of the tags may fail, unless you wrap them inside the PageExistsTag.
+
+----
+
+!Usage
+
+<wiki:PageExists page="<string>">
+;:''HTML or JSP tags''
+</wiki:PageExists>
+
+!Parameters
+
+;__page__:  WikiName of the page you wish to check for.  If not set, will default to the current page.
+
+!Example
+{{{
+<wiki:PageExists>
+    Page last edited by <wiki:Author />
+</wiki:PageExists>
+}}}

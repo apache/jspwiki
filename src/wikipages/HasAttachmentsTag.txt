@@ -1,0 +1,22 @@
+Includes the body of the tag, if this page has any attachments.
+
+----
+
+!Usage
+
+<wiki:HasAttachments>\\
+;:''more HTML or JSP tags''\\
+</wiki:HasAttachments>
+
+!Parameters
+
+None.
+
+!Example
+{{{
+<wiki:HasAttachments>
+    <i>This page has attachments.</i>
+</wiki:HasAttachments>
+}}}
+
+This puts the text "This page has attachments." on the resulting HTML in italics, if there are attachments for the current page.

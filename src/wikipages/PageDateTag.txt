@@ -1,0 +1,18 @@
+Inserts the date of the last modification of the requested page.
+
+----
+
+!Usage
+
+<wiki:PageDate format="<date format string>" />
+
+!Parameters
+
+;__format__:  A {{java.text.SimpleDateFormat}} -compatible string in which the page date should be output.  See the [javadoc|http://java.sun.com/j2se/1.3/docs/api/java/text/SimpleDateFormat.html] for more information.
+
+!Example
+{{{
+<wiki:PageDate format="MM/dd/yyyy" />
+}}}
+
+Inserts the date of the current page in the US date format (month/day/year).

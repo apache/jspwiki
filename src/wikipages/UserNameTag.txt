@@ -1,0 +1,16 @@
+Returns the current user name, or empty, if the user has not been validated.
+
+----
+
+!Usage
+
+<wiki:UserName />
+
+!Parameters
+
+None.
+
+!Example
+{{{
+<wiki:UserName />
+}}}
