@@ -23,7 +23,7 @@
 
     if( skin == null )
     {
-        skin = "default"; // FIXME: Should really come from settings.
+        skin = wiki.getTemplateDir();
     }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
