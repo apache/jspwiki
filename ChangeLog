@@ -1,3 +1,13 @@
+2002-01-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * The WikiPageProvider interface has been enhanced with new
+        methods.
+
+        * CachingProvider reworked.  The getAllPages() now keeps its own
+        cache, so that it can return the required pages without going
+        through the actual provider.  This should speed things up a lot.
+        A real solution is, however required.
+
 2002-01-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Added CachingProvider, inspired by Chris Brooking (though in a
