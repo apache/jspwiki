@@ -1,13 +1,15 @@
 <project name="JSPWiki" default="compile" basedir=".">
 
-  <property name="project.name" value="JSPWiki" />
-
   <property name="code.src" value="src" />
   <property name="code.build" value ="build" />
 
-  <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${project.name}" />
+  <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${ant.project.name}" />
 
   <property name="report.dir" value="reports" />
+
+  <property name="tests.src" value="tests" />
+  <property name="tests.build" value="tests/build" />
+  <property name="tests.reports" value="tests/reports" />
   
   <path id="path.base">
      <pathelement path="${code.build}" />
@@ -16,8 +18,15 @@
      </fileset>
   </path>
 
+  <path id="path.tests">
+      <pathelement path="${tests.src}/etc" />
+      <path refid="path.base" />
+  </path>
+
   <target name="init">
      <mkdir dir="${code.build}" />
+     <mkdir dir="${tests.build}" />
+     <mkdir dir="${tests.reports}" />
   </target>
 
   <target name="compile" depends="init">
@@ -31,8 +40,8 @@
   </target>
 
   <target name="compiletests">
-    <javac srcdir="tests"
-           destdir="tests/build">
+    <javac srcdir="${tests.src}"
+           destdir="${tests.build}">
       <classpath refid="path.base" />
     </javac>
   </target>
@@ -43,7 +52,7 @@
 
     <mkdir dir="${install.fulldir}" />
 
-    <war warfile="${install.fulldir}/${project.name}.war"
+    <war warfile="${install.fulldir}/${ant.project.name}.war"
          webxml="${code.src}/webdocs/WEB-INF/web.xml">
        <lib dir="lib" includes="*.jar" />
        <classes dir="${code.build}" includes="**/*.class" />
@@ -58,13 +67,13 @@
   <target name="tests" depends="compile,compiletests">
     <junit printsummary="yes" haltonfailure="no" fork="no">
         <classpath>
-           <path refid="path.base" />
-           <pathelement path="tests/build" />
+           <path refid="path.tests" />
+           <pathelement path="${tests.build}" />
            <pathelement path="${java.class.path}" />
         </classpath>
         <formatter type="plain" />
-        <batchtest todir="${report.dir}">
-           <fileset dir="tests">
+        <batchtest todir="${tests.reports}">
+           <fileset dir="${tests.src}">
                 <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
            </fileset>
