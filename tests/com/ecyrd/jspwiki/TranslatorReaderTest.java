@@ -696,7 +696,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1\n\n2\n\n3";
 
-        assertEquals( "1\n<p>\n2\n</p><p>\n3</p>", translate(src) );
+        assertEquals( "1\n<p>2\n</p>\n<p>3</p>\n", translate(src) );
     }
 
     public void testParagraph2()
@@ -707,7 +707,33 @@ public class TranslatorReaderTest extends TestCase
         newPage( "WikiEtiquette" );        
 
         assertEquals( "<a class=\"wikipage\" href=\"Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n"+
-                      "<p>\n<a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
+                      "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find page</a></p>\n", translate(src) );
+    }
+
+    public void testParagraph3()
+        throws Exception
+    {
+        String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
+
+        assertEquals( "<p></p>\n<h4><a name=\"section-testpage-Testi\">Testi</a></h4>\n<p>Foo.</p>\n", 
+                      translate(src) );
+    }
+
+    public void testParagraph4()
+        throws Exception
+    {
+        String src = "\r\n[Recent Changes]\\\\\r\n[WikiEtiquette]\r\n\r\n[Find pages|FindPage]\\\\\r\n[Unused pages|UnusedPages]";
+
+        newPage("WikiEtiquette");
+        newPage("RecentChanges");
+        newPage("FindPage");
+        newPage("UnusedPages");
+
+        assertEquals( "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=RecentChanges\">Recent Changes</a><br />\n"+
+                      "<a class=\"wikipage\" href=\"Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>\n"+
+                      "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find pages</a><br />\n"+
+                      "<a class=\"wikipage\" href=\"Wiki.jsp?page=UnusedPages\">Unused pages</a></p>\n",
+                      translate(src) );
     }
 
     public void testLinebreak()
@@ -916,7 +942,8 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n**\n\nB";
 
-        assertEquals( "A\n<p>\n<ul>\n<ul>\n<li>\n</li>\n</ul>\n</ul>\n</p><p>\nB</p>", 
+        // System.out.println(translate(src));
+        assertEquals( "A\n<ul>\n<ul>\n<li>\n</li>\n</ul>\n</ul>\n<p>B</p>\n", 
                       translate(src) );
     }
 
@@ -925,7 +952,8 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n##\n\nB";
 
-        assertEquals( "A\n<p>\n<ol>\n<ol>\n<li>\n</li>\n</ol>\n</ol>\n</p><p>\nB</p>", 
+        // System.out.println(translate(src));
+        assertEquals( "A\n<ol>\n<ol>\n<li>\n</li>\n</ol>\n</ol>\n<p>B</p>\n", 
                       translate(src) );
     }
 
@@ -1206,7 +1234,7 @@ public class TranslatorReaderTest extends TestCase
                       "<tr><th> heading </th><th> heading2 </th></tr>\n"+
                       "<tr><td> Cell 1 </td><td> Cell 2 </td></tr>\n"+
                       "<tr><td> Cell 3 </td><td> Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n</p>",
+                      "</table>\n<p></p>\n",
                       translate(src) );
     }
 
@@ -1219,7 +1247,7 @@ public class TranslatorReaderTest extends TestCase
                       "<tr><th>heading</th><th>heading2</th></tr>\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n</p>",
+                      "</table>\n<p></p>\n",
                       translate(src) );
     }
 
@@ -1231,7 +1259,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n</p>",
+                      "</table>\n<p></p>\n",
                       translate(src) );
     }
 
@@ -1245,7 +1273,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n</p>",
+                      "</table>\n<p></p>\n",
                       translate(src) );
     }
 
@@ -1259,7 +1287,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
                       "<tr><td>Cell 1</td><td> Cell| 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n</p>",
+                      "</table>\n<p></p>\n",
                       translate(src) );
     }
 
