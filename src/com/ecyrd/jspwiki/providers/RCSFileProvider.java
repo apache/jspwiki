@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
@@ -63,7 +63,7 @@ public class RCSFileProvider
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
     private String m_deleteVersionCommand = "rcs -o1.%v %s";
     
-    private static final Category   log = Category.getInstance(RCSFileProvider.class);
+    private static final Logger   log = Logger.getLogger(RCSFileProvider.class);
 
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";
     public static final String    PROP_CHECKOUT = "jspwiki.rcsFileProvider.checkoutCommand";
@@ -440,6 +440,7 @@ public class RCSFileProvider
      *  This method assumes that the page archive ends with ",v".
      */
     public void deletePage( String page )
+        throws ProviderException
     {
         log.debug( "Deleting page "+page );
         super.deletePage( page );
