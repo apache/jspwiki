@@ -1,3 +1,10 @@
+2003-01-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.23.
+        
+        * WikiSecurityException is now in correct package.  Sorry, no
+        other updates at this time.
+
 2003-01-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.22.
