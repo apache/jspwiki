@@ -25,7 +25,7 @@
          <wiki:AttachmentsIterator id="att">
              <tr>
              <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
-             <td><wiki:PageInfoLink><img src="images/attachment_big.png" alt="Info on <%=att.getFileName()%>"></wiki:PageInfoLink></td>
+             <td><wiki:PageInfoLink><img src="images/attachment_big.png" border="0" alt="Info on <%=att.getFileName()%>"></wiki:PageInfoLink></td>
              <td><%=att.getSize()%> bytes</td>
              </tr>
          </wiki:AttachmentsIterator>
@@ -38,7 +38,7 @@
       <table border="0" width="100%">
       <tr>
         <td>
-           <form action="attach" method="POST" enctype="multipart/form-data" accept-charset="ISO-8859-1">
+           <form action="attach" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
 
            <%-- Do NOT change the order of wikiname and content, otherwise the 
                 servlet won't find its parts. --%>
