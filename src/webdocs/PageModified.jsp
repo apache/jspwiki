@@ -18,23 +18,12 @@
 
 
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-    String skin = wiki.getTemplateDir();
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        throw new ServletException("No page defined");
-    }
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.CONFLICT );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
     String usertext = wiki.safeGetParameter( request, "text" );
-
-    WikiPage wikipage = wiki.getPage( pagereq );
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( WikiContext.CONFLICT );
-    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -62,7 +51,7 @@
 
     log.info("Page concurrently modified "+pagereq);
 
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+    String contentPage = "templates/"+context.getTemplate()+"/ViewTemplate.jsp";
 %>
 
 <wiki:Include page="<%=contentPage%>" />

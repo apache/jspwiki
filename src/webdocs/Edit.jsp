@@ -19,37 +19,6 @@
 
 
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-    String skin    = wiki.safeGetParameter( request, "skin" );
-    String verstr  = request.getParameter("version");
-    int    version = WikiProvider.LATEST_VERSION;
-
-    if( verstr != null )
-    {
-        version = Integer.parseInt(verstr);    
-    }
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        throw new ServletException("No page defined");
-    }
-
-    if( skin == null )
-    {
-        skin = wiki.getTemplateDir();
-    }
-
-    NDC.push( wiki.getApplicationName()+":"+pagereq );    
-
-    WikiPage wikipage      = wiki.getPage( pagereq, version );
-    WikiPage latestversion = wiki.getPage( pagereq );
-
-    if( wikipage == null )
-    {
-        wikipage = new WikiPage( pagereq );
-        latestversion = wikipage;
-    }
-
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
@@ -57,13 +26,19 @@
     String comment = request.getParameter("comment");
     String author  = wiki.safeGetParameter( request, "author" );
 
-    //
-    //  Set up the Wiki Context.
-    //
+    WikiContext wikiContext = wiki.createContext( request, 
+                                                  comment != null ? WikiContext.COMMENT : WikiContext.EDIT );
+    String pagereq = wikiContext.getPage().getName();
 
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( comment != null ? WikiContext.COMMENT : WikiContext.EDIT );
-    wikiContext.setHttpRequest( request );
+    NDC.push( wiki.getApplicationName()+":"+pagereq );    
+
+    WikiPage wikipage = pageContext.getPage();
+    WikiPage latestversion = wiki.getPage( pagereq );
+
+    if( latestversion == null )
+    {
+        latestversion = wikiContext.getPage();
+    }
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -190,7 +165,7 @@
         session.setAttribute( "lock-"+pagereq, lock );
     }
 
-    String contentPage = "templates/"+skin+"/EditTemplate.jsp";
+    String contentPage = "templates/"+wikiContext.getTemplate()+"/EditTemplate.jsp";
 %>
 
 <wiki:Include page="<%=contentPage%>" />

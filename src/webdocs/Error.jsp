@@ -12,26 +12,15 @@
     WikiEngine wiki;
 %>
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-    String skin    = wiki.safeGetParameter( request, "skin" );
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        pagereq = wiki.getFrontPage();
-    }
-
-    if( skin == null )
-    {
-        skin = wiki.getTemplateDir();
-    }
+    WikiContext wikiContext = wiki.createContext( request, 
+                                                  WikiContext.ERROR );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName() + ":" + pagereq );
 
-    WikiContext wikiContext = new WikiContext( wiki, pagereq );
-    wikiContext.setRequestContext( WikiContext.ERROR );
-    wikiContext.setHttpRequest( request );
-
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, 
+                              wikiContext, 
+                              PageContext.REQUEST_SCOPE );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
@@ -48,8 +37,6 @@
     log.debug("Error.jsp exception is: ",exception);
 
     pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
-
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
 
    <h3>JSPWiki has detected an error</h3>

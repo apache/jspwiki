@@ -17,29 +17,11 @@
 %>
 
 
-<%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        pagereq = wiki.getFrontPage();
-    }
-
-    String skin = wiki.getTemplateDir();
+<% 
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.UPLOAD );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName() + ":" + pagereq );
-
-    WikiPage wikipage = wiki.getPage( pagereq );
-
-    if( wikipage == null )
-    {
-        // We can't attach to a page that does not exist
-        throw new ServletException("No such page "+pagereq);
-    }
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( WikiContext.UPLOAD );
-    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -47,7 +29,7 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    String contentPage = "templates/"+skin+"/UploadTemplate.jsp";
+    String contentPage = "templates/"+wikiContext.getTemplate()+"/UploadTemplate.jsp";
 %>
 
 <wiki:Include page="<%=contentPage%>" />

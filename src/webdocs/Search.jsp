@@ -17,21 +17,13 @@
 
 
 <%
-    String pagereq = "FindPage";
-    String skin    = wiki.getTemplateDir();
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
+    String pagereq = wikiContext.getPage().getName();
 
-    NDC.push( wiki.getApplicationName()+": Search" );
-
-    String pageurl = wiki.encodeName( pagereq );    
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
 
     String query = wiki.safeGetParameter( request, "query");
     Collection list = null;
-
-    WikiPage wikipage = new WikiPage( pagereq );
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setHttpRequest( request );
-    wikiContext.setRequestContext( "find" );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -56,7 +48,7 @@
         log.info("Found "+list.size()+" pages");
     }
 
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+    String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
 %>
 
 <wiki:Include page="<%=contentPage%>" />

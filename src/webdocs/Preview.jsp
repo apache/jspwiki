@@ -13,27 +13,10 @@
     WikiEngine wiki;
 %>
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-
-    String skin = wiki.getTemplateDir();
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        throw new ServletException("No page defined");
-    }
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.PREVIEW );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
-
-    WikiPage wikipage = wiki.getPage( pagereq );
-
-    if( wikipage == null )
-    {
-        wikipage = new WikiPage( pagereq );
-    }
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( WikiContext.PREVIEW );
-    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -55,7 +38,7 @@
                               PageContext.REQUEST_SCOPE );
 
 
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+    String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
 %>
 <wiki:Include page="<%=contentPage%>" />
 <%

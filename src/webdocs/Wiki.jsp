@@ -17,18 +17,8 @@
 %>
 
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-    String skin    = wiki.safeGetParameter( request, "skin" );
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        pagereq = wiki.getFrontPage();
-    }
-
-    if( skin == null )
-    {
-        skin = wiki.getTemplateDir();
-    }
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
@@ -42,29 +32,10 @@
         return;        
     }
 
-    //
-    //  Determine requested version.  If version == -1,
-    //  then fetch current version.
-    //
-    int version          = -1;
-    String rev           = request.getParameter("version");
-
-    if( rev != null )
-    {
-        version = Integer.parseInt( rev );
-    }
-
-    WikiPage wikipage = wiki.getPage( pagereq, version );
-
-    if( wikipage == null )
-    {
-        wikipage = new WikiPage( pagereq );
-    }
-
     AuthorizationManager mgr = wiki.getAuthorizationManager();
     UserProfile currentUser  = wiki.getUserManager().getUserProfile( request );
 
-    if( !mgr.checkPermission( wikipage,
+    if( !mgr.checkPermission( wikiContext.getPage(),
                               currentUser,
                               new ViewPermission() ) )
     {
@@ -73,10 +44,6 @@
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
         return;
     }
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( WikiContext.VIEW );
-    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -88,7 +55,7 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+    String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
 %>
 
 <wiki:Include page="<%=contentPage%>" />

@@ -16,18 +16,12 @@
 %>
 
 <%
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
     String pagereq = "UserPreferences";
-    String    skin = wiki.getTemplateDir();
     UserManager mgr = wiki.getUserManager();
     
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    WikiPage wikipage = new WikiPage( pagereq );
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext("prefs");
-    wikiContext.setHttpRequest( request );
-
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
@@ -63,7 +57,7 @@
     else
     {
         response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-        String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+        String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
 %>
 
         <wiki:Include page="<%=contentPage%>" />

@@ -16,30 +16,10 @@
 
 
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-    String skin    = null;
-
-    String headerTitle = "";
-
-    if( pagereq == null || pagereq.length() == 0 )
-    {
-        pagereq = wiki.getFrontPage();
-    }
-
-    if( skin == null )
-    {
-        skin = wiki.getTemplateDir();
-    }
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.INFO );
+    String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
-
-    WikiPage wikipage = wiki.getPage( pagereq );
-    if( wikipage == null )
-        wikipage = new WikiPage( pagereq );
-
-    WikiContext wikiContext = new WikiContext( wiki, wikipage );
-    wikiContext.setRequestContext( WikiContext.INFO );
-    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -48,7 +28,7 @@
     log.debug("Page info request for page '"+pagereq+"' from "+request.getRemoteHost()+" by "+request.getRemoteUser() );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
+    String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
 %>
 
 <wiki:Include page="<%=contentPage%>" />
