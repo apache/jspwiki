@@ -164,6 +164,16 @@ public class RCSFileProvider
                 }
             }
 
+            //
+            //  Especially with certain versions of RCS on Windows,
+            //  process.waitFor() hangs unless you read all of the
+            //  standard output.  So we make sure it's all emptied.
+            //
+
+            while( (line = stdout.readLine()) != null ) 
+            { 
+            }
+
             process.waitFor();
 
         }
