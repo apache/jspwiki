@@ -1,5 +1,9 @@
 2002-08-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.15.
+
+        * Added a couple of new tags.
+
         * Moved all CSS files and cssinclude.js into the templates/default
         directory.
 

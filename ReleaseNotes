@@ -6,7 +6,9 @@ Major changes since the last stable (1.8.0) release are:
 - Support for traditional WikiLinks without square brackets
   (InterCapping, BumpyWords, CamelCase, ...)
 
-- Splitting of Wiki pages into "Controller" and "View" pages has begun.
+- Splitting of Wiki pages into "Controller" and "View" pages has
+  begun.  The user-modifiable HTML templates can be found in
+  "templates/default" -directory.
 
 - There is a new addition to WikiLanguage: Definition lists
   ;term;definition.  You can use this to make comments, too, by using
@@ -26,4 +28,5 @@ UPGRADE NOTES
   * CachingProvider is no longer set explicitly.  You must use the new
     "jspwiki.usePageCache" property instead.
 
-  * All HTML code should now go into ViewTemplate.jsp instead of Wiki.jsp.
+  * All HTML code should now go into *Template.jsp instead of Wiki.jsp
+    and the other main JSP pages.
