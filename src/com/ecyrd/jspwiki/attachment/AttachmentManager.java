@@ -52,6 +52,9 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public class AttachmentManager
 {
+    /**
+     *  The property name for defining the attachment provider class name.
+     */
     public static final String  PROP_PROVIDER = "jspwiki.attachmentProvider";
 
     static Category log = Category.getInstance( AttachmentManager.class );
@@ -61,6 +64,14 @@ public class AttachmentManager
     /**
      *  Creates a new AttachmentManager.  Note that creation will never fail,
      *  but it's quite likely that attachments do not function.
+     *  <p>
+     *  <b>DO NOT CREATE</b> an AttachmentManager on your own, unless you really
+     *  know what you're doing.  Just use WikiEngine.getAttachmentManager() if
+     *  you're making a module for JSPWiki.
+     *
+     *  @param engine The wikiengine that owns this attachment manager.
+     *  @param props  A list of properties from which the AttachmentManager will seek
+     *  its configuration.  Typically this is the "jspwiki.properties".
      */
 
     // FIXME: Perhaps this should fail somehow.
