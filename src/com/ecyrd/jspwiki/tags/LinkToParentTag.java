@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -51,6 +51,24 @@ public class LinkToParentTag
         if( p instanceof Attachment )
         {
             setPage( ((Attachment)p).getParentName() );
+        }
+        else
+        {
+            String name = p.getName();
+
+            int entrystart = name.indexOf("_blogentry_");
+
+            if( entrystart != -1 )
+            {
+                setPage( name.substring( 0, entrystart ) );
+            }
+
+            int commentstart = name.indexOf("_comments_");
+                
+            if( commentstart != -1 )
+            {
+                setPage( name.substring( 0, commentstart ) );
+            }
         }
 
         return super.doWikiStartTag();

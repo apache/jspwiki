@@ -26,7 +26,8 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
- *  Returns the parent of the currently requested page.
+ *  Returns the parent of the currently requested page.  Weblog entries are recognized
+ *  as subpages of the weblog page.
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -48,7 +49,23 @@ public class ParentPageNameTag
             }
             else
             {
-                pageContext.getOut().print( engine.beautifyTitle(page.getName()) );
+                String name = page.getName();
+
+                int entrystart = name.indexOf("_blogentry_");
+
+                if( entrystart != -1 )
+                {
+                    name = name.substring( 0, entrystart );
+                }
+
+                int commentstart = name.indexOf("_comments_");
+
+                if( commentstart != -1 )
+                {
+                    name = name.substring( 0, commentstart );
+                }
+
+                pageContext.getOut().print( engine.beautifyTitle(name) );
             }
         }
 
