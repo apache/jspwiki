@@ -87,6 +87,12 @@ public class CachingProvider
 
     private int              m_expiryPeriod = 30;
     
+    /**
+     *  This can be very long, as normally all modifications are noticed in an earlier
+     *  stage.
+     */
+    private int              m_pageContentExpiryPeriod = 24*60*60;
+    
     // FIXME: This MUST be cached somehow.
 
     private boolean          m_gotall = false;
@@ -375,9 +381,9 @@ public class CachingProvider
         {
             WikiPage cached = (WikiPage)e.getCacheContent();
             
-            int version = (cached != null) ? cached.getVersion() : WikiPageProvider.LATEST_VERSION;
+            // int version = (cached != null) ? cached.getVersion() : WikiPageProvider.LATEST_VERSION;
             
-            WikiPage refreshed = m_provider.getPageInfo( name, version );
+            WikiPage refreshed = m_provider.getPageInfo( name, WikiPageProvider.LATEST_VERSION );
   
             if( refreshed == null && cached != null )
             {
@@ -415,11 +421,22 @@ public class CachingProvider
                     m_negCache.putInCache( name, name );
                 }
             }
+            else if( cached.getVersion() != refreshed.getVersion() )
+            {
+                //  The newest version has been deleted, but older versions still remain
+                log.debug("Page "+cached.getName()+" newest version deleted, reloading...");
+                
+                m_cache.putInCache( name, refreshed );
+                m_textCache.flushEntry( name );
+                m_historyCache.flushEntry( name );
+                
+                return refreshed;
+            }
             else if( Math.abs(refreshed.getLastModified().getTime()-cached.getLastModified().getTime()) > 1000L )
             {
                 //  Yes, the page has been modified externally and nobody told us
          
-                log.info("Page "+cached.getName()+" changed externally, reloading...");
+                log.info("Page "+cached.getName()+" changed, reloading...");
 
                 m_cache.putInCache( name, refreshed );
                 m_textCache.flushEntry( name );
@@ -568,60 +585,57 @@ public class CachingProvider
         throws ProviderException,
                RepositoryModifiedException
     {
-        // FIXME: This is unnecessarily complicated
-        
+        String text;
+
         WikiPage page = getPageInfoFromCache( pageName );
-        
-        if( page == null )
+
+        try
         {
-            // Page has never been seen.
-            // log.debug("Page "+page+" never seen.");
+            text = (String)m_textCache.getFromCache( pageName,
+                                                     m_pageContentExpiryPeriod );
             
-            String text = null;
-            
+            if( text == null )
+            {
+                if( page != null )
+                {
+                    text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
+                
+                    m_textCache.putInCache( pageName, text );
+
+                    addToLuceneQueue( page, text );
+
+                    m_cacheMisses++;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                m_cacheHits++;
+            }
+        }
+        catch( NeedsRefreshException e )
+        {            
             if( pageExists(pageName) )
             {
                 text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
-                page = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
-            
-                m_cache.putInCache( pageName, page );
-                m_textCache.putInCache( pageName, text );
-            
-                addToLuceneQueue( page, text );
-
-                m_cacheMisses++;
-            }
-            
-            return text;
-        }
-        else
-        {
-            String text;
-            try
-            {
-                text = (String)m_textCache.getFromCache( pageName,
-                                                         m_expiryPeriod );
-                
-            }
-            catch( NeedsRefreshException e )
-            {
-                text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
-
+                    
                 m_textCache.putInCache( pageName, text );
 
                 addToLuceneQueue( page, text );
 
                 m_cacheMisses++;
-
-                return text;
             }
-
-            // log.debug("Page "+page+" found in cache.");
-
-            m_cacheHits++;
-
-            return text;
+            else
+            {
+                m_textCache.putInCache( pageName, null );
+                return null; // No page exists
+            }
         }
+        
+        return text;
     }
 
     public void putPageText( WikiPage page, String text )
@@ -636,8 +650,8 @@ public class CachingProvider
             page.setLastModified( new Date() );
             
             // Refresh caches properly
-            m_cache.putInCache( page.getName(), page );
-            m_textCache.putInCache( page.getName(), text );
+            m_cache.flushEntry( page.getName() );
+            m_textCache.flushEntry( page.getName() );
             m_historyCache.flushEntry( page.getName() );
             m_negCache.flushEntry( page.getName() );
         }
@@ -726,59 +740,6 @@ public class CachingProvider
         return all;
     }
 
-    /**
-     * This method updates an existing page in the cache.
-     * 
-     * @param page
-     * @param text If null, removes the page content from the cache.
-     * @return
-     */
-    /*
-    private synchronized CacheItem addPage( WikiPage page, String text )
-         throws ProviderException
-    {
-        CacheItem item = null;
-
-        if( page != null )
-        {
-            //
-            // This is to make sure that all mandatory metadata is in place
-            //
-            if( page.getLastModified() == null ) page.setLastModified( new Date() );
-            
-            //
-            //  Add to the page cache, and if it has text, make sure Lucene knows
-            //  about it, too.
-            //
-            item = new CacheItem();
-
-            item.m_page = page;
-
-            if( text != null )
-            {
-                m_textCache.putInCache( page.getName(), text );
-
-                addToLuceneQueue( page, text );
-            }
-
-            m_cache.put( page.getName(), item );
-        }
-
-        return item;
-    }
-    */
-    
-    // Null text for no page
-    // Returns null if no page could be found.
-/*
-    private synchronized CacheItem addPage( String pageName, String text )
-        throws ProviderException
-    {
-        WikiPage newpage = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
-        
-        return addPage( newpage, text );
-    }
-*/
     public Collection getAllChangedSince( Date date )
     {
         return m_provider.getAllChangedSince( date );
@@ -1021,8 +982,8 @@ public class CachingProvider
                 version == latestcached )
             {
                 m_cache.flushEntry( pageName );
-                m_textCache.flushEntry( pageName );
-                m_historyCache.flushEntry( pageName );
+                m_textCache.putInCache( pageName, null );
+                m_historyCache.putInCache( pageName, null );
             }
 
             m_provider.deleteVersion( pageName, version );
@@ -1042,9 +1003,9 @@ public class CachingProvider
                 deleteFromLucene(getPageInfo(pageName, WikiPageProvider.LATEST_VERSION));
             }
 
-            m_cache.flushEntry( pageName );
-            m_textCache.flushEntry( pageName );
-            m_historyCache.flushEntry( pageName );
+            m_cache.putInCache( pageName, null );
+            m_textCache.putInCache( pageName, null );
+            m_historyCache.putInCache( pageName, null );
             m_negCache.putInCache( pageName, pageName );
             m_provider.deletePage( pageName );
         }
@@ -1058,13 +1019,7 @@ public class CachingProvider
     {
         return m_provider;
     }
-/*
-    private class CacheItem
-    {
-        WikiPage      m_page;
-        long          m_lastChecked = 0L;
-    }
-  */  
+
     /**
      *  This is a simple class that keeps a list of all WikiPages that
      *  we have in memory.  Because the OSCache cannot give us a list
@@ -1100,6 +1055,12 @@ public class CachingProvider
 
         public void cacheEntryRemoved( CacheEntryEvent arg0 )
         {
+            WikiPage item = (WikiPage) arg0.getEntry().getContent();
+
+            if( item != null )
+            {
+                m_allItems.remove( item );
+            }
         }
 
         public void cacheEntryUpdated( CacheEntryEvent arg0 )
