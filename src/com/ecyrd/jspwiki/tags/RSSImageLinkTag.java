@@ -57,7 +57,7 @@ public class RSSImageLinkTag
             JspWriter out = pageContext.getOut();
             out.print("<a href=\""+rssURL+"\">");
             out.print("<img src=\""+engine.getBaseURL()+"images/xml.png\"");
-            out.print("border=\"0\" title=\""+getTitle()+"\"/>");
+            out.print(" alt=\"[RSS]\" border=\"0\" title=\""+getTitle()+"\"/>");
             out.print("</a>");
         }
 
