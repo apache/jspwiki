@@ -633,7 +633,7 @@ public class WikiEngine
      */
     public String getViewURL( String pageName )
     {
-        return m_urlConstructor.makeURL( WikiContext.VIEW, pageName );
+        return m_urlConstructor.makeURL( WikiContext.VIEW, pageName, false, null );
     }
 
     /**
@@ -643,7 +643,7 @@ public class WikiEngine
      */
     public String getEditURL( String pageName )
     {
-        return m_urlConstructor.makeURL( WikiContext.EDIT, pageName );
+        return m_urlConstructor.makeURL( WikiContext.EDIT, pageName, false, null );
     }
 
     /**
@@ -652,7 +652,37 @@ public class WikiEngine
      */
     public String getAttachmentURL( String attName )
     {
-        return m_urlConstructor.makeURL( WikiContext.ATTACH, attName );
+        return m_urlConstructor.makeURL( WikiContext.ATTACH, attName, false, null );
+    }
+
+    public String getURL( String name, boolean absolute )
+    {
+        return m_urlConstructor.makeURL( WikiContext.NONE, name, absolute, null );
+    }
+
+    public String getURL( String context, String pageName )
+    {
+        return m_urlConstructor.makeURL( context, pageName, false, null );
+    }
+
+    public String getURL( String context, String pageName, String params )
+    {
+        return m_urlConstructor.makeURL( context, pageName, false, params );
+    }
+
+    public String getAbsoluteURL( String context, String pageName )
+    {
+        return m_urlConstructor.makeURL( context, pageName, true, null );
+    }
+
+    public String getAbsoluteURL( String context, String pageName, String params )
+    {
+        return m_urlConstructor.makeURL( context, pageName, true, params );
+    }
+
+    public String getURL( String context, String pageName, boolean absolute, String params )
+    {
+        return m_urlConstructor.makeURL( context, pageName, absolute, params );
     }
 
     /**
@@ -1621,6 +1651,25 @@ public class WikiEngine
     public VariableManager getVariableManager()
     {
         return m_variableManager;
+    }
+
+    /**
+     *  Shortcut to getVariableManager().getValue(). However, this method does not 
+     *  throw a NoSuchVariableException, but returns null in case the variable does
+     *  not exist.
+     *
+     *  @since 2.2
+     */
+    public String getVariable( WikiContext context, String name )
+    {
+        try
+        {
+            return m_variableManager.getValue( context, name );
+        }
+        catch( NoSuchVariableException e )
+        {
+            return null;
+        }
     }
 
     /**
