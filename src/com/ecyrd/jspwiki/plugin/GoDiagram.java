@@ -263,7 +263,7 @@ public class GoDiagram
             StringBuffer sb = new StringBuffer();
 
             sb.append("<table border=1 align=left cellpadding=5 style=\"margin: 10px;\">");
-            sb.append("<tr><td>\n");
+            sb.append("<tr><td align=center>\n");
             sb.append( parseDiagram( diagram, 
                                      (first.startsWith("b") ? BLACK_FIRST : WHITE_FIRST )) );
             sb.append("</td></tr>\n");
