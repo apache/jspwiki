@@ -18,7 +18,7 @@
       <h3>Please enter your comments below:</h3>
       </p>
 
-      <form action="<wiki:CommentLink format="url" />" method="POST" 
+      <form name="commentForm" action="<wiki:CommentLink format="url" />" method="POST" 
             accept-charset="<wiki:ContentEncoding />">
 
       <p>
