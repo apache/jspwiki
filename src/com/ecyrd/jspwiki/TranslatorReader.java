@@ -9,6 +9,9 @@ import java.text.*;
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
  */
+// FIXME: Class still has problems with {{{: all conversion on that line where the {{{
+//        appears is done, but after that, conversion is not done.  The only real solution
+//        is to move away from a line-based system into a pure stream-based system.
 public class TranslatorReader extends Reader
 {
     public static final int READ = 0;
@@ -276,6 +279,23 @@ public class TranslatorReader extends Reader
         return buf.toString();
     }
 
+    private int countChar( String line, int startPos, char c )
+    {
+        int count;
+
+        for( count = 0; (startPos+count < line.length()) && (line.charAt(count+startPos) == c); count++ );
+
+        return count;
+    }
+
+    private String repeatChar( char c, int n )
+    {
+        StringBuffer sb = new StringBuffer();
+        for( int i = 0; i < n; i++ ) sb.append(c);
+
+        return sb.toString();
+    }
+
     /**
      *  {{text}} = <TT>text</TT>
      */
@@ -286,28 +306,40 @@ public class TranslatorReader extends Reader
 
         for( int i = 0; i < line.length(); i++ )
         {
-            if( line.charAt(i) == '{' && i < line.length()-2 )
+            if( line.charAt(i) == '{' && !ison )
             {
-                // Don't get confused with {{{text}}}!
-                if( (line.charAt(i+1) == '{') && (line.charAt(i+2) != '{') )
+                int count = countChar( line, i, '{' );
+
+                if( count == 2 )
                 {
                     buf.append( "<TT>" );
                     ison = true;
-                    i++;
                 }
-                else buf.append( "{" );
+                else 
+                {
+                    buf.append( repeatChar( '{', count ) );
+                }
+                i += count-1;
             }
-            else if( line.charAt(i) == '}' && i < line.length()-1 )
+            else if( line.charAt(i) == '}' && ison )
             {
-                if( line.charAt(i+1) == '}' && ison )
+                int count = countChar( line, i, '}' );
+
+                if( count == 2 )
                 {
                     buf.append( "</TT>" );
                     ison = false;
-                    i++;
                 }
-                else buf.append( "}" );
+                else 
+                {
+                    buf.append( repeatChar( '}', count ) );
+                }
+                i += count-1;
             }
-            else buf.append( line.charAt(i) );
+            else
+            { 
+                buf.append( line.charAt(i) );
+            }
         }
 
         // Make sure we don't forget it open.
@@ -351,6 +383,8 @@ public class TranslatorReader extends Reader
     private void fillBuffer()
         throws IOException
     {
+        int pre;
+
         StringBuffer buf = new StringBuffer();
 
         String line = m_in.readLine();
@@ -446,21 +480,20 @@ public class TranslatorReader extends Reader
             line = setBold( line );
             line = setItalic( line );
 
-            if( line.indexOf("{{{") != -1 )
+            line = setTT( line );
+            line = replaceString( line, "\\\\", "<BR>" );
+
+            if( (pre = line.indexOf("{{{")) != -1 )
             {
-                line = replaceString( line, "{{{", "<PRE>" );
+                line = replaceString( line, pre, pre+3, "<PRE>" );
                 m_iscode = true;
             }
 
-            // Needs to be after the pre tag.
-            line = setTT( line );
-            
-            line = replaceString( line, "\\\\", "<BR>" );
         }
             
-        if( line.indexOf("}}}") != -1 )
+        if( (pre = line.indexOf("}}}")) != -1 )
         {
-            line = replaceString( line, "}}}", "</PRE>" );
+            line = replaceString( line, pre, pre+3, "</PRE>" );
             m_iscode = false;
         }
 
@@ -493,6 +526,12 @@ public class TranslatorReader extends Reader
                 for( ; m_numlistlevel > 0; m_numlistlevel-- )
                 {
                     buf.append( "</OL>\n" );
+                }
+
+                if( m_iscode ) 
+                {
+                    buf.append("</PRE>\n");
+                    m_iscode = false;
                 }
 
                 m_data = new StringReader( buf.toString() );
