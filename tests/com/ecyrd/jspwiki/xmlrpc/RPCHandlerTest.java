@@ -25,18 +25,27 @@ public class RPCHandlerTest extends TestCase
     {
         m_props = new Properties();
         m_props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+
+        deleteTempFiles();
+
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler( m_engine );
+
     }
 
-    public void tearDown()
+    private void deleteTempFiles()
     {
         String files = m_props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
         File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
         f.delete();
+    }
+
+    public void tearDown()
+    {
+        deleteTempFiles();
     }
 
     public void testRecentChanges()
