@@ -75,6 +75,68 @@ public class VariableManager
     }
 
     /**
+     *  This method does in-place expansion of any variables.  However,
+     *  the expansion is not done twice, that is, a variable containing text $variable
+     *  will not be expanded.
+     *  <P>
+     *  The variables should be in the same format ({$variablename} as in the web 
+     *  pages.
+     *
+     *  @param context The WikiContext of the current page.
+     *  @param source  The source string.
+     */
+    // FIXME: somewhat slow.
+    public String expandVariables( WikiContext context,
+                                   String      source )
+    {
+        StringBuffer result = new StringBuffer();
+
+        for( int i = 0; i < source.length(); i++ )
+        {
+            if( source.charAt(i) == '{' )
+            {
+                if( i < source.length()-2 && source.charAt(i+1) == '$' )
+                {
+                    int end = source.indexOf( '}', i );
+
+                    if( end != -1 )
+                    {
+                        String varname = source.substring( i+2, end );
+                        String value;
+
+                        try
+                        {
+                            value = getValue( context, varname );
+                        }
+                        catch( NoSuchVariableException e )
+                        {
+                            value = e.getMessage();
+                        }
+                        catch( IllegalArgumentException e )
+                        {
+                            value = e.getMessage();
+                        }
+
+                        result.append( value );
+                        i = end;
+                        continue;
+                    }
+                }
+                else
+                {
+                    result.append( '{' );
+                }
+            }
+            else
+            {
+                result.append( source.charAt(i) );
+            }
+        }
+
+        return result.toString();
+    }
+
+    /**
      *  Returns a value of the named variable.
      *
      *  @param varName Name of the variable.
