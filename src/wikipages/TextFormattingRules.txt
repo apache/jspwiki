@@ -1,0 +1,111 @@
+When you've figured out how the editor works, then you should read
+[WikiEtiquette] so that you would know how to use your newly acquired
+skills...
+
+!Quick reference
+
+{{{
+---- = Make a horizontal ruler. Extra '-' is ignored.
+\\ = force a line break
+[link] = creates a hyperlink to an internal WikiPage called 'Link'.
+[this is also a link] = creates a hyperlink to an internal WikiPage called
+'ThisIsAlsoALink'.
+[click here|link] = creates a hyperlink to an internal WikiPage called
+'Link', but displays the text 'click here' to the
+user instead of 'Link'.
+[[link] = creates text '[link]'.
+!heading = small heading with text 'heading'
+!!heading = medium heading with text 'heading'
+!!!heading = large heading with text 'heading'
+''text'' = prints 'text' in italic.
+__text__ = prints 'text' in bold.
+{{text}} = prints 'text' in monospaced font.
+* text = makes a bulleted list item with 'text'
+# text = makes a numbered list item with 'text'
+}}}
+
+!Hyperlinks
+
+The link can also be a direct URL starting with http:, ftp:, mailto:,
+https:, or news:, in which case the link points to an external
+entity. For example, to point at the java.sun.com home page, use
+[[http://java.sun.com], which becomes [http://java.sun.com/] or [[Java
+home page|http://java.sun.com], which becomes [Java home
+page|http://java.sun.com].
+
+To add a new page you just create a link to it from somewhere
+else. After all, there isn't much point in having a page if you can't
+access it! You'll then see a small question mark after the page name
+when you return to that page. Then click on it and you have created a
+new page!
+
+!Bulleted lists
+
+Use an asterisk (*) in the first column to make bulleted lists. Use
+more asterisks for deeper indentation. Each item must be on a single
+line. For example:
+
+{{{
+* One
+* Two
+* Three
+** Three.One}}}
+
+creates
+* One
+* Two
+* Three
+** Three.One
+
+!Numbered lists
+Just like with bulleted lists, but use a hash (#) instead of the asterisk. Like this:
+{{{
+# One
+# Two
+# Three
+## Three.One
+}}}
+
+creates
+# One
+# Two
+# Three
+## Three.One
+
+
+!Text effects
+
+You may use __bold__ text or ''italic'' text, by using two underscores
+(_) and two single quotes ('), respectively. If you're on a Windows
+computer, make sure that you are using the correct quote sign, as
+there is one that looks the same, but really isn't.
+
+
+!Preformatted text
+
+If you want to add preformatted text (like code) just use three
+consecutive braces ({) to open a block, and three consecutive braces
+(}) to close a block. Edit this page for an example.
+
+!Conflicts
+
+If someone happens to edit the same page as you at the same time,
+JSPWiki will prevent you from doing changes and show a conflict page
+instead. Sorry to say, but the first one to make changes wins...
+
+__A word of warning:__ If you use the Back button of your browser to
+go into the Edit page, you will almost certainly get a conflict. This
+is because the browser thinks its still editing an earlier copy of the
+page.
+
+!Deleting pages
+
+This is not possible. You can, of course, remove all the links to that
+page, which makes it inaccesible. Or you can [email
+me|mailto:jalkanen+jspwiki@regex.fi], and I'll remove the page.
+
+!Adding new pages
+
+Create a link that points to a new (not existing) page using its
+[WikiName].  Click that new link, which should now have a question
+mark (?) suffix and you will get an editor for the new page.
