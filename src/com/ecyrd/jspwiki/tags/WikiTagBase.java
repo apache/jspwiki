@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.tags;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.log4j.Category;
 
@@ -49,7 +50,13 @@ public abstract class WikiTagBase
     {
         try
         {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( ATTR_CONTEXT );
+            m_wikiContext = (WikiContext) pageContext.getAttribute( ATTR_CONTEXT,
+                                                                    PageContext.REQUEST_SCOPE );
+
+            if( m_wikiContext == null )
+            {
+                throw new JspException("WikiContext may not be NULL - serious internal problem!");
+            }
 
             return doWikiStartTag();
         }
@@ -67,6 +74,7 @@ public abstract class WikiTagBase
     public abstract int doWikiStartTag() throws Exception;
 
     public int doEndTag()
+        throws JspException
     {
         return EVAL_PAGE;
     }

@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
@@ -70,8 +71,12 @@ public class InsertDiffTag
             page = engine.getPage( m_pageName );
         }
 
-        Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION );
-        Integer verold = (Integer) pageContext.getAttribute( ATTR_OLDVERSION );
+        Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION,
+                                                             PageContext.REQUEST_SCOPE );
+        Integer verold = (Integer) pageContext.getAttribute( ATTR_OLDVERSION,
+                                                             PageContext.REQUEST_SCOPE );
+
+        log.info("Request diff between version "+verold+" and "+vernew);
 
         if( page != null )
         {

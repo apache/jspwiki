@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
@@ -47,8 +48,8 @@ public class TranslateTag
     {
         try
         {
-            WikiContext context = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT );
-
+            WikiContext context = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
+                                                                          PageContext.REQUEST_SCOPE );
             BodyContent bc = getBodyContent();
             String wikiText = bc.getString();
             bc.clearBody();
