@@ -25,12 +25,17 @@
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <%@ include file="PageHeader.jsp" %>
 
-      <FORM action="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 
+      <FORM action="<wiki:EditLink format="url" />" method="POST" 
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
+
+      <%-- These are required parts of this form.  If you do not include these,
+           horrible things will happen. --%>
 
       <INPUT type="hidden" name="page"     value="<%=pagereq%>">
       <INPUT type="hidden" name="action"   value="save">
       <INPUT type="hidden" name="edittime" value="<%=lastchange%>">
+
+      <%-- End of required area --%>
 
       <TEXTAREA CLASS="editor" wrap="virtual" name="text" rows="25" cols="80" style="width:100%;"><wiki:InsertPage mode="plain" /></TEXTAREA>
 
