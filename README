@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.12 $
-                             $Date: 2002-03-10 09:59:00 $
+                         $Revision: 1.13 $
+                             $Date: 2002-12-09 18:56:25 $
                            $Author: jalkanen $
 
 What is it?
@@ -17,7 +17,7 @@ formatting in JSP files, and uses a custom Java class called
 system.
 
 
-    Copyright (C) 2001 Janne Jalkanen
+    Copyright (C) 2001-2002 Janne Jalkanen
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,7 +63,8 @@ Okay, so you wanna Wiki?  You'll need the following things:
   capabilities.  You'll also need the Java Activation Framework.
 
 * RCS versioning system installed and available in your PATH if you
-  want to use versioning.
+  want to use RCS versioning.  But you can always use the
+  VersioningFileManager...
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
@@ -104,7 +105,9 @@ Installation with Windows
 -------------------------
 
 If you are using a version of Microsoft Windows, you'll find that
-getting the version control functioning may be a bit problematic.
+getting RCS up and running may be a bit problematic, and thus we
+recommend the VersioningFileProvider.
+
 There is some documentation within the samplepages archive, on page
 "WindowsInstall".
 
@@ -113,27 +116,7 @@ There is some documentation within the samplepages archive, on page
 Upgrading from previous versions
 --------------------------------
 
-First of all, you should read ReleaseNotes and ChangeLog =).
-
-Shut down Tomcat.
-
-Unzip the war-file anywhere you like.
-
-Copy the contents of WEB-INF/classes into the WEB-INF/classes
-directory of your currently running wiki.
-
-If you've done no changes to the JSP pages, or have done only minor
-changes, then you probably want to copy all of the JSP pages as well.
-If you've done extensive modifications, I recommend that you take a
-good look at the new JSP pages and consider whether the additions are
-worth your while.  JSPWiki should in theory stay backwards compatible
-=).
-
-Check the contents of web.xml as well - there may have been some
-changes.  It's also a good idea to check "jspwiki.properties" as well
-- there might be some new properties which you might find useful.
-
-Restart Tomcat.
+Please read ReleaseNotes.
 
 
 Setting access controls
@@ -161,6 +144,8 @@ All configuration information is kept in WEB_INF/jspwiki.properties.
 The file is pretty well documented, so I recommend you read it through
 first. 
 
+The other good document to read is doc/Templates.txt, which explains
+how the JSPWiki templating system works.
 
 
 Notes:
@@ -171,6 +156,9 @@ of the Java code, unless you know what you're doing, because otherwise
 the Wiki might stop to work.  Most modern HTML editors are smart
 enough not to mess with the JSP tags (all the stuff between <% and
 %>).
+
+With JSPWiki v2, we have split the functionality from presentation.
+Thus you can, and should edit only the pages under templates/.
 
 While Tomcat is also a fully featured Web server, it is not
 particularly fast.  You might also have a web server already running.
@@ -246,6 +234,14 @@ Check out the JSPWikiPlugins page from the JSPWiki distribution for
 more information.
 
 
+Attachments
+-----------
+
+Version 2 now brings new attachment functionality.  I recommend
+reading the WikiAttachments page.
+
+
+
 XML-RPC
 -------
 
@@ -268,6 +264,12 @@ Acknowledgements
 This product includes software developed by the Apache Software Foundation 
 (http://www.apache.org/).  See doc/LICENCE.Apache for more information.
 
+There have been many contributors so far.  Especially thanks go to
+Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips, and
+Mahlen Morris, who have given me quite a lot of support and/or code.
+There are also a number of other people who have generously given
+their time, and you can find hopefully all of their names in the
+ChangeLog.
 
 
 Contact
