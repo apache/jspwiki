@@ -36,6 +36,7 @@ public class WikiEngine
     private Properties     m_properties;
 
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
+    public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
     private static Hashtable c_engines = new Hashtable();
 
@@ -170,9 +171,29 @@ public class WikiEngine
      *
      *  @return null, if no such reference was found.
      */
-    String getInterWikiURL( String wikiName )
+    public String getInterWikiURL( String wikiName )
     {
-        return m_properties.getProperty("jspwiki.interWikiRef."+wikiName);
+        return m_properties.getProperty(PROP_INTERWIKIREF+wikiName);
+    }
+
+    /**
+     *  Returns a collection of all supported InterWiki links.
+     */
+    public Collection getAllInterWikiLinks()
+    {
+        Vector v = new Vector();
+
+        for( Enumeration i = m_properties.propertyNames(); i.hasMoreElements(); )
+        {
+            String prop = (String) i.nextElement();
+
+            if( prop.startsWith( PROP_INTERWIKIREF ) )
+            {
+                v.add( prop.substring( prop.lastIndexOf(".")+1 ) );
+            }
+        }
+
+        return v;
     }
 
     /**
@@ -185,6 +206,21 @@ public class WikiEngine
         String specialpage = m_properties.getProperty( propname );
 
         return specialpage;
+    }
+
+    /**
+     *  Returns the name of the application.
+     */
+
+    // FIXME: Should use servlet context as a default instead of a constant.
+    public String getApplicationName()
+    {
+        String appName = m_properties.getProperty("jspwiki.applicationName");
+
+        if( appName == null )
+            return Release.APPNAME;
+
+        return appName;
     }
 
     /**
@@ -270,6 +306,23 @@ public class WikiEngine
             return;
 
         m_provider.putPageText( page, text );
+    }
+
+    /**
+     *  Returns the number of pages in this Wiki
+     */
+    public int getPageCount()
+    {
+        return m_provider.getAllPages().size();
+    }
+
+    /**
+     *  Returns the provider name
+     */
+
+    public String getCurrentProvider()
+    {
+        return m_provider.getClass().getName();
     }
 
     public Collection getRecentChanges()
