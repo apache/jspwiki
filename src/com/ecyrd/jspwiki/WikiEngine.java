@@ -1309,60 +1309,15 @@ public class WikiEngine
         }
     }
 
-    /**
-     *  Returns the date the page was last changed.
-     *  If the page does not exist, returns null.
-     *  @deprecated
-     */
-    /*
-    public Date pageLastChanged( String page )
-    {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
-
-            if( p != null )
-                return p.getLastModified();
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to fetch last modification date", e );
-        }
-
-        return null;
-    }
-    */
-
-    /**
-     *  Returns the current version of the page.
-     *  @deprecated
-     */
-    /*
-    public int getVersion( String page )
-    {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
-
-            if( p != null )
-                return p.getVersion();
-        }
-        catch( ProviderException e )
-        {
-            log.error("FIXME");
-        }
-        return -1;
-    }
-    */
 
     /**
      *  Returns a Collection of WikiPages containing the
      *  version history of a page.
      */
-    // FIXME: Should return a List.
-    public Collection getVersionHistory( String page )
+
+    public List getVersionHistory( String page )
     {
-        Collection c = null;
+        List c = null;
 
         try
         {
