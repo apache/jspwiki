@@ -1,3 +1,18 @@
+2005-02-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.152
+
+        * Fixed plenty of failing tests (including the annoying "Cannot
+        start managers: null).  I think I kinda like Eclipse, now that
+        I'm getting used to it.
+
+        * Bug fix: When using ISO-8859-1, attachment URLs would still
+        contain the "%2F".  JSPWiki should now work nicely when a page
+        name contains a slash.
+        
+        * Bug fix: CachingProvider would lose metadata on save. Reported
+        by Andrew Jaquith.
+
 2005-02-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.151
