@@ -464,12 +464,24 @@ public class WikiEngine
 
     /**
      * Returns the unconverted text of the given version of a page,
-     * if it exists.
+     * if it exists.  This method also replaces the HTML entities.
      *
      * @param page WikiName of the page to fetch
      * @param version  Version of the page to fetch
      */
     public String getText( String page, int version )
+    {
+        String result = getPureText( page, version );
+
+        result = TextUtil.replaceEntities( result );
+
+        return result;
+    }
+
+    /**
+     *  Returns the pure text of a page, no conversions.
+     */
+    private String getPureText( String page, int version )
     {
         if( m_provider == null ) 
             return NO_PROVIDER_MSG;
@@ -490,8 +502,6 @@ public class WikiEngine
         if( result == null )
             result = "";
 
-        result = TextUtil.replaceEntities( result );
-
         return result;
     }
 
@@ -504,10 +514,7 @@ public class WikiEngine
     {
 	String pagedata = null;
 
-	if( page.getVersion() >= 0)
-	    pagedata = getText( page.getName(), page.getVersion() );
-	else
-	    pagedata = getText( page.getName() );
+        pagedata = getPureText( page.getName(), page.getVersion() );
 
         String res = textToHTML( context, pagedata );
 
@@ -846,11 +853,16 @@ public class WikiEngine
 
     /**
      *  Returns a diff of two versions of a page.
+     *
+     *  @param page Page to return
+     *  @param version1 Version number of the old page.  If -1, then uses current page.
+     *  @param version2 Version number of the new page.  If -1, then uses current page.
      */
+    // FIXME: Add syntax coloring here.
     public String getDiff( String page, int version1, int version2 )
     {
-        String page1 = m_provider.getPageText( page, version1 );
-        String page2 = m_provider.getPageText( page, version2 );
+        String page1 = getPureText( page, version1 );
+        String page2 = getPureText( page, version2 );
 
         String diff  = makeDiff( page1, page2 );
 
