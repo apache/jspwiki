@@ -1,3 +1,14 @@
+2003-03-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * 2.0.36.  Stable 2.0!  YAY!
+
+        * All of the tags are now documented.
+
+        * Changed slightly DifferenceEngine code to output cleaner html.
+
+        * BreadcrumbsTag did not work correctly with a load-balanced
+        Resin.  Should work now. 
+
 2003-03-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Added some more documentation on tags.
@@ -190,7 +201,7 @@
 
 2003-01-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-	* v2.0.20.
+        * v2.0.20.
 	
         * Fixed a couple of Windows tests failing.  This unfortunately
 	means that all attachments are now renamed in a bit of a different
