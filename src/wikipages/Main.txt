@@ -14,5 +14,4 @@ There are not very many places to see right now.  Use the list below for some mo
 * [JavaScript tips]
 
 
-
 [Here's a list of the regular users|UserList]
