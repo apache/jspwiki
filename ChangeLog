@@ -1,3 +1,11 @@
+2003-10-10    <ebu@erebus>
+
+	* v2.1.77
+
+	* Modified CachingProvider to notify engine of external changes
+	to wikipages. Fixed tests; external modification tests should now
+	work.
+
 2003-10-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.76.
