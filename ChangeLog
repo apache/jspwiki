@@ -2,16 +2,18 @@
 
         * v2.1.159
         
-        * Added some patches to tests to make sure they all run on systems that
-        don't use Latin1 as default... Contributed by Henning Schmiedehausen.
+        * Added some patches to tests to make sure they all run on 
+        systems that don't use Latin1 as default... Contributed by 
+        Henning Schmiedehausen.
         
-        * TextUtil.urlEncode() & urlDecode() no longer assume that the platform
-        default encoding is Latin1.  Contributed by Henning Schmiedehausen.
+        * TextUtil.urlEncode() & urlDecode() no longer assume that
+        the platform default encoding is Latin1.  Contributed by 
+        Henning Schmiedehausen.
 
         * Removed dependancy on the bmsi difference package, as it
-        was GPL (oops).  I don't know how I missed that, but the dependency
-        is gone now.  Replaced with the Jakarta JRCS-diff package.  Suggested
-        and contributed by Henning Schmiedehausen.
+        was GPL (oops).  I don't know how I missed that, but the 
+        dependency is gone now.  Replaced with the Jakarta JRCS-diff 
+        package.  Suggested and contributed by Henning Schmiedehausen.
         
         * Removed DifferenceEngine and moved the entire diff code into
         its own package.  Contributed by John Volkar.
@@ -20,8 +22,8 @@
 
         * v2.1.158
 
-        * Deletion of entire pages works now.  Make sure your Delete.jsp
-        is protected!
+        * Deletion of entire pages works now.  Make sure your 
+        Delete.jsp is protected!
 
         * Added password protection to Install.jsp
 
@@ -29,7 +31,7 @@
 
         * v2.1.157
 
-        * Added patch from  Henning P. Schmiedehausen to fix some issues
+        * Added patch from Henning P. Schmiedehausen to fix some issues
         with the CachingProvider negCache.
 
 2005-03-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
