@@ -15,6 +15,16 @@
        jalkanen+jspwiki@ecyrd.com
    </description>
 
+   <!-- 
+       If you want to extend the timeout of your session, uncomment
+       this and enter the second value. Useful to extend the logout
+       period. 
+
+   <session-config>
+     <session-timeout>86400</session-timeout>
+   </session-config>
+   -->
+
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
