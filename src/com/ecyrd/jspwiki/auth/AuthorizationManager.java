@@ -1,9 +1,12 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.util.Properties;
+import java.util.List;
+import java.util.Iterator;
 import java.security.Permissions;
 import java.security.Permission;
 import java.security.acl.NotOwnerException;
+import java.security.Principal;
 
 import org.apache.log4j.Category;
 
@@ -32,8 +35,12 @@ public class AuthorizationManager
 
     private boolean           m_strictLogins = false;
 
+    private WikiEngine        m_engine;
+
     public AuthorizationManager( WikiEngine engine, Properties properties )
     {
+        m_engine = engine;
+
         m_authorizer = new PageAuthorizer();  // FIXME: Should be settable
         m_authorizer.initialize( engine, properties );
 
@@ -98,6 +105,24 @@ public class AuthorizationManager
             res = acl.findPermission( wup, permission );
         }
 
+        //
+        //  If there as no entry for the user, then try all of his groups
+        //
+
+        if( res == AccessControlList.NONE )
+        {
+            log.debug("Checking groups...");
+
+            List list = m_engine.getUserManager().getGroupsForPrincipal( wup );
+
+            for( Iterator i = list.iterator(); i.hasNext(); )
+            {
+                res = acl.findPermission( (Principal) i.next(), permission );
+
+                if( res != AccessControlList.NONE )
+                    break;
+            }
+        }
 
         //
         //  If there was no result, then query from the default
