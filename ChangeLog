@@ -1,3 +1,17 @@
+2002-03-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.6.13-cvs.
+
+        * Search.jsp now offers to search on Google as well after giving
+        you the results.
+
+        * Added plenty of documentation about the XML-RPC interface to the
+        distribution.
+
+        * Footnotes are now unique across Wiki.  This is accomplished by
+        adding the page name to the anchor name.  Suggested by Mahlen
+        Morris.
+
 2002-03-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Edit.jsp text editor now knows how to adjust its own width
