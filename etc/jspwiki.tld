@@ -143,14 +143,24 @@
   </tag>  
 
   <tag>
-     <name>IsAttachment</name>
-     <tagclass>com.ecyrd.jspwiki.tags.IsAttachmentTag</tagclass>
-     <bodycontent>JSP</bodycontent>
-  </tag>
-
-  <tag>
     <name>LinkTo</name>
     <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>format</name>
+    </attribute>
+    <attribute>
+       <name>version</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+  </tag>  
+
+  <tag>
+    <name>LinkToParent</name>
+    <tagclass>com.ecyrd.jspwiki.tags.LinkToParentTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -189,6 +199,9 @@
     <attribute>
        <name>page</name>
     </attribute>
+    <attribute>
+       <name>format</name>
+    </attribute>
   </tag>
 
   
@@ -211,9 +224,24 @@
   </tag>
 
   <tag>
+    <name>PageType</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageTypeTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>type</name>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>PageVersion</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageVersionTag</tagclass>
     <bodycontent>JSP</bodycontent>
+  </tag>
+
+  <tag>
+    <name>ParentPageName</name>
+    <tagclass>com.ecyrd.jspwiki.tags.ParentPageNameTag</tagclass>
+    <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
