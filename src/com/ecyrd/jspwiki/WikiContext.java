@@ -84,6 +84,8 @@ public class WikiContext
     public static final String    COMMENT  = "comment";
     public static final String    FIND     = "find";
 
+    public static final String    PREFS    = "prefs";
+
     /**
      *  Create a new WikiContext.
      *
