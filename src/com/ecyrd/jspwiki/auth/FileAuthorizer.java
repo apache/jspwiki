@@ -108,7 +108,7 @@ public class FileAuthorizer
         if( testFile.isFile() && testFile.canRead() )
         {
             m_authFile = testFile;
-            log.info( "FileAuthenticator initialized, using " + fileName );
+            log.info( "FileAuthorizer initialized, using " + fileName );
             loadAuthFile();
         }
         else
