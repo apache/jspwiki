@@ -2,6 +2,9 @@
 
 <wiki:PageExists>
 
+   <form action="<wiki:Variable var="baseurl"/>Delete.jsp" method="POST" 
+                 accept-charset="<wiki:ContentEncoding />">
+
    <table cellspacing="4">
        <tr>
            <td><b>Page name</b></td>
@@ -37,6 +40,9 @@
                         <wiki:PageType type="page">                        
                             <th>Changes from previous</th>
                         </wiki:PageType>
+                        <wiki:Permission permission="delete">
+                            <th>Delete</th>
+                        </wiki:Permission>
                    </tr>
                    <wiki:HistoryIterator id="currentPage">
                      <tr>
@@ -72,12 +78,22 @@
                                <% } %>
                            </td>
                          </wiki:PageType>
+
+                         <wiki:Permission permission="delete">
+                             <td>
+                                 <input type="checkbox" name="delete-<%=currentPage.getVersion()%>" />
+                             </td>
+                         </wiki:Permission>
                      </tr>
                    </wiki:HistoryIterator>
                </table>
            </td>
       </tr>
 </table>
+
+    <input type="submit" name="delete" value="Delete marked versions"/>
+
+    </form>
              
     <br />
     <wiki:PageType type="page">
@@ -85,7 +101,7 @@
     </wiki:PageType>
     <wiki:PageType type="attachment">
 
-       <form action="attach" method="POST" enctype="multipart/form-data">
+       <form action="<wiki:Variable var="baseurl"/>attach" method="POST" enctype="multipart/form-data">
 
            <%-- Do NOT change the order of wikiname and content, otherwise the 
                 servlet won't find its parts. --%>

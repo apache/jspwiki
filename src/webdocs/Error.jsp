@@ -36,6 +36,23 @@
 
     log.debug("Error.jsp exception is: ",exception);
 
+    //
+    //  This allows us to get the actual cause of the exception.
+    //  Note the cast; at least Tomcat has two classes called "JspException"
+    //  imported in JSP pages.
+    //
+
+    Throwable realcause = null;
+
+    if( exception instanceof javax.servlet.jsp.JspException )
+    {
+        log.debug("IS JSPEXCEPTION");
+        realcause = ((javax.servlet.jsp.JspException)exception).getRootCause();
+        log.debug("REALCAUSE="+realcause);
+    }
+
+    if( realcause == null ) realcause = exception;    
+
     pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
 %>
 
@@ -47,9 +64,9 @@
          <%=pageContext.getAttribute("message",PageContext.REQUEST_SCOPE)%>
       </dd>      
       <dt><b>Exception</b></dt>
-      <dd><%=exception.getClass().getName()%></dd>
+      <dd><%=realcause.getClass().getName()%></dd>
       <dt><b>Place where detected</b></dt>
-      <dd><%=FileUtil.getThrowingMethod(exception)%></dd>
+      <dd><%=FileUtil.getThrowingMethod(realcause)%></dd>
    </dl>
    <p>
    If you have changed the templates, please do check them.  This error message

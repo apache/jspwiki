@@ -25,6 +25,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
  *  Tells if a page may be edited.  This tag takes care of all possibilities,
@@ -46,33 +47,33 @@ public class PermissionTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
-        AuthorizationManager mgr = engine.getAuthorizationManager();
-
+        WikiEngine  engine         = m_wikiContext.getEngine();
+        WikiPage    page           = m_wikiContext.getPage();
+        AuthorizationManager mgr   = engine.getAuthorizationManager();
+        boolean     got_permission = false;
+        UserProfile userprofile    = m_wikiContext.getCurrentUser();
+        
         if( page != null )
         {
+            //
+            //  Edit tag also checks that we're not trying to edit an
+            //  old version: they cannot be edited.
+            //
             if( "edit".equals(m_permission) )
             {
-                //
-                //  Check if we're at the current version (old versions cannot
-                //  be edited).
-                //
                 WikiPage latest = engine.getPage( page.getName() );
-                if( page.getVersion() == WikiProvider.LATEST_VERSION ||
-                    latest.getVersion() == page.getVersion() )
+                if( page.getVersion() != WikiProvider.LATEST_VERSION &&
+                    latest.getVersion() != page.getVersion() )
                 {
-                    
-
-                    return EVAL_BODY_INCLUDE;
+                    return SKIP_BODY;
                 }
             }
-            else
-            {
-                throw new IOException("Unknown permission requested: "+m_permission);
-            }
+
+            got_permission = mgr.checkPermission( page,
+                                                  userprofile,
+                                                  m_permission );
         }
 
-        return SKIP_BODY;
+        return got_permission ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
 }

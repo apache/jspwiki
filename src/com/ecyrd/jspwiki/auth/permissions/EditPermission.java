@@ -1,5 +1,9 @@
 package com.ecyrd.jspwiki.auth.permissions;
 
+/**
+ *  Represents the permission to edit a page.  Also implies the
+ * permission to comment on a page (CommentPermission).
+ */
 public class EditPermission
     extends WikiPermission
 {

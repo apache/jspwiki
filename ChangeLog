@@ -1,3 +1,23 @@
+2003-08-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+	* v2.1.57.
+
+	* Error.jsp now shows the root cause instead of the JspException.
+	This should make the error messages a bit more comprehensible
+	without dipping into the log files.
+
+	* PermissionTag was amended to work with the new permission
+	system. 
+
+	* Added Delete.jsp and added preliminary support to page removal.
+	Doesn't work yet, though.
+
+	* CachingProvider now bypasses its own search method, if the
+	provider implements the FastSearch interface.  This interface
+	defines no methods.  Those providers where searching can be done
+	very efficiently should benefit a lot from this. Requested by
+	Sulka Haro.
+
 2003-08-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.56.
@@ -1113,7 +1133,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        HirsimBﾂ仕ki for providing with the idea and the image.  Look for
+        HirsimBB仕ki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -2016,7 +2036,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VBBﾂ仕BBﾂ仕tBBﾂ仕inen finally managed to
+        * Added support for tables.  Sanna VBBB仕BBB仕tBBB仕inen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 

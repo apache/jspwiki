@@ -444,6 +444,15 @@ public class CachingProvider
 
     public Collection findPages( QueryItem[] query )
     {
+        //
+        //  If the provider is a fast searcher, then
+        //  just pass this request through.
+        //
+        if( m_provider instanceof FastSearch )
+        {
+            return m_provider.findPages( query );
+        }
+        
         TreeSet res = new TreeSet( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( query );
 

@@ -13,7 +13,8 @@ public abstract class WikiPermission
     private static WikiPermission c_viewPermission = new ViewPermission();
     private static WikiPermission c_editPermission = new EditPermission();
     private static WikiPermission c_commentPermission = new CommentPermission();
-
+    private static WikiPermission c_deletePermission = new DeletePermission();
+    
     /**
      *  This method should return true, if the this permission implies
      *  also the given permission.  For example "Edit" should always imply "Comment" 
@@ -31,7 +32,9 @@ public abstract class WikiPermission
             return c_editPermission;
         else if( representation.equalsIgnoreCase( "comment" ) )
             return c_commentPermission;
-
+        else if( representation.equalsIgnoreCase( "delete" ) )
+            return c_deletePermission;
+        
         throw new IllegalArgumentException("No such permission: "+representation);
     }
 }
