@@ -73,7 +73,6 @@ public class LinkToTag
             }
             else
             {
-		m_isOmitted = true;
                 return SKIP_BODY;
             }
         }
