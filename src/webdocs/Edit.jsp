@@ -63,8 +63,6 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
 
-    String pageurl = wiki.encodeName( pagereq );
-
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
@@ -106,7 +104,7 @@
                        wiki.safeGetParameter( request, "text" ),
                        request );
 
-        response.sendRedirect(wiki.getBaseURL()+"Wiki.jsp?page="+pageurl);
+        response.sendRedirect(wiki.getViewURL(pagereq));
         return;
     }
     else if( preview != null )

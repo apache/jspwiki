@@ -78,18 +78,17 @@ public class LinkToTag
         }
 
         JspWriter out = pageContext.getOut();
-        String encodedlink = engine.encodeName( pageName );
         String url;
         String linkclass;
 
         if( isattachment )
         {
-            url = engine.getBaseURL()+"attach?page="+encodedlink;
+            url = engine.getBaseURL()+"attach?page="+engine.encodeName(pageName);
             linkclass = "attachment";
         }
         else
         {
-            url = engine.getBaseURL()+"Wiki.jsp?page="+encodedlink;
+            url = engine.getViewURL( pageName );
             linkclass = "wikipage";
         }
 

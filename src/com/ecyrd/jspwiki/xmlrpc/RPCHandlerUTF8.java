@@ -220,11 +220,11 @@ public class RPCHandlerUTF8
 
             if( m_engine.pageExists(link) )
             {
-                ht.put( "href", m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(link) );
+                ht.put( "href", m_engine.getViewURL(link) );
             }
             else
             {
-                ht.put( "href", m_engine.getBaseURL()+"Edit.jsp?page="+m_engine.encodeName(link) );
+                ht.put( "href", m_engine.getEditURL(link) );
             }
 
             result.add( ht );

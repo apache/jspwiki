@@ -15,6 +15,7 @@ public class TranslatorReaderTest extends TestCase
 
     TestEngine testEngine;
 
+
     public TranslatorReaderTest( String s )
     {
         super( s );
@@ -666,6 +667,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "1 <PRE> &lt;B&gt; </PRE>", translate(src) );
     }
 
+    public void testCamelCaseInPre()
+        throws Exception
+    {
+        String src = "1 {{{ CamelCase }}}";
+
+        assertEquals( "1 <PRE> CamelCase </PRE>", translate(src) );
+    }
+
     public void testList1()
         throws Exception
     {
@@ -1191,6 +1200,130 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<H2><U>Hello</U><A HREF=\"Edit.jsp?page=Hello\">?</A></H2>",
                       translate(src) );
     }
+
+    /**
+     *  in 2.0.0, this one throws OutofMemoryError.
+     */
+    public void testBrokenPageText()
+        throws Exception
+    {
+        String translation = translate( brokenPageText );
+
+        assertNotNull( translation );
+    }
+
+    /**
+     *  Shortened version of the previous one.
+     */
+    public void testBrokenPageTextShort()
+        throws Exception
+    {
+        String src = "{{{\ncode.}}\n";
+
+        assertEquals( "<PRE>\ncode.}}\n</PRE>\n", translate(src) );
+    }
+
+    /**
+     *  Shortened version of the previous one.
+     */
+    public void testBrokenPageTextShort2()
+        throws Exception
+    {
+        String src = "{{{\ncode.}\n";
+
+        assertEquals( "<PRE>\ncode.}\n</PRE>\n", translate(src) );
+    }
+
+    
+    // This is a random find: the following page text caused an eternal loop in V2.0.x.
+    private static final String brokenPageText = 
+                "Please ''check [RecentChanges].\n" + 
+        "\n" + 
+        "Testing. fewfwefe\n" + 
+        "\n" + 
+        "CHeck [testpage]\n" + 
+        "\n" + 
+        "More testing.\n" + 
+        "dsadsadsa''\n" + 
+        "Is this {{truetype}} or not?\n" + 
+        "What about {{{This}}}?\n" + 
+        "How about {{this?\n" + 
+        "\n" + 
+        "{{{\n" + 
+        "{{text}}\n" + 
+        "}}}\n" + 
+        "goo\n" + 
+        "\n" + 
+        "<B>Not bold</b>\n" + 
+        "\n" + 
+        "motto\n" + 
+        "\n" + 
+        "* This is a list which we\n" + 
+        "shall continue on a other line.\n" + 
+        "* There is a list item here.\n" + 
+        "*  Another item.\n" + 
+        "* More stuff, which continues\n" + 
+        "on a second line.  And on\n" + 
+        "a third line as well.\n" + 
+        "And a fourth line.\n" + 
+        "* Third item.\n" + 
+        "\n" + 
+        "Foobar.\n" + 
+        "\n" + 
+        "----\n" + 
+        "\n" + 
+        "!!!Really big heading\n" + 
+        "Text.\n" + 
+        "!! Just a normal heading [with a hyperlink|Main]\n" + 
+        "More text.\n" + 
+        "!Just a small heading.\n" + 
+        "\n" + 
+        "This should be __bold__ text.\n" + 
+        "\n" + 
+        "__more bold text continuing\n" + 
+        "on the next line.__\n" + 
+        "\n" + 
+        "__more bold text continuing\n" + 
+        "\n" + 
+        "on the next paragraph.__\n" + 
+        "\n" + 
+        "\n" + 
+        "This should be normal.\n" +
+        "\n" + 
+        "Now, let's try ''italic text''.\n" + 
+        "\n" + 
+        "Bulleted lists:\n" + 
+        "* One\n" + 
+        "Or more.\n" + 
+        "* Two\n" + 
+        "\n" + 
+        "** Two.One\n" + 
+        "\n" + 
+        "*** Two.One.One\n" + 
+        "\n" + 
+        "* Three\n" + 
+        "\n" + 
+        "Numbered lists.\n" + 
+        "# One\n" + 
+        "# Two\n" + 
+        "# Three\n" + 
+        "## Three.One\n" + 
+        "## Three.Two\n" + 
+        "## Three.Three\n" + 
+        "### Three.Three.One\n" + 
+        "# Four\n" + 
+        "\n" +
+        "End?\n" + 
+        "\n" + 
+        "No, let's {{break}} things.\\ {{{ {{{ {{text}} }}} }}}\n" +
+        "\n" + 
+        "More breaking.\n" + 
+        "\n" +
+        "{{{\n" + 
+        "code.}}\n" + 
+        "----\n" +
+        "author: [Asser], [Ebu], [JanneJalkanen], [Jarmo|mailto:jarmo@regex.com.au]\n";
+    
 
     public static Test suite()
     {

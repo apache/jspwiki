@@ -354,11 +354,11 @@ public class TranslatorReader extends Reader
         switch(type)
         {
           case READ:
-            result = "<A CLASS=\"wikipage\" HREF=\""+m_engine.getBaseURL()+"Wiki.jsp?page="+encodedlink+"\">"+text+"</A>";
+            result = "<A CLASS=\"wikipage\" HREF=\""+m_engine.getViewURL(link)+"\">"+text+"</A>";
             break;
 
           case EDIT:
-            result = "<U>"+text+"</U><A HREF=\""+m_engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">?</A>";
+            result = "<U>"+text+"</U><A HREF=\""+m_engine.getEditURL(link)+"\">?</A>";
             break;
 
           case EMPTY:
@@ -399,7 +399,7 @@ public class TranslatorReader extends Reader
             break;
 
           case IMAGEWIKILINK:
-            String pagelink = m_engine.getBaseURL()+"Wiki.jsp?page="+text;
+            String pagelink = m_engine.getViewURL(text);
             result = "<A CLASS=\"wikipage\" HREF=\""+pagelink+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\" /></A>";
             break;
 

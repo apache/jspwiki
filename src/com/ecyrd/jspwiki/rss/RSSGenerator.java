@@ -165,7 +165,7 @@ public class RSSGenerator
 
             String encodedName = m_engine.encodeName(page.getName());
 
-            String url = m_engine.getBaseURL()+"Wiki.jsp?page="+encodedName;
+            String url = m_engine.getViewURL(page.getName());
 
             result.append("    <rdf:li rdf:resource=\""+url+"\" />\n");
 
@@ -227,7 +227,7 @@ public class RSSGenerator
             itemBuffer.append("   <rdf:Description");
             if( m_engine.pageExists(author) )
             {
-                itemBuffer.append(" link=\""+m_engine.getBaseURL()+"Wiki.jsp?page="+author+"\"");
+                itemBuffer.append(" link=\""+m_engine.getViewURL(author)+"\"");
             }
             itemBuffer.append(">\n");
             itemBuffer.append("    <rdf:value>"+author+"</rdf:value>\n");
