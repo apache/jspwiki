@@ -20,7 +20,10 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyContent;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -41,12 +44,14 @@ import org.apache.ecs.ConcreteElement;
  *  @since 2.2
  */
 public class EditorTag
-    extends WikiTagBase
+    extends WikiBodyTag
 {
     private String m_submit  = "Save";
     private String m_preview = "Preview";
     private String m_cancel  = "Cancel";
-
+    private String m_formName = "editForm";
+    private String m_action = null;
+    
     public void setSubmit( String s )
     {
         m_submit = s;
@@ -62,6 +67,16 @@ public class EditorTag
         m_cancel = s;
     }
 
+    public void setName( String s )
+    {
+        m_formName = s;
+    }
+    
+    public void setAction( String s )
+    {
+        m_action = s;
+    }
+    
     private GenericElement createInput( String name, String value )
     {
         input in = new input();
@@ -82,24 +97,39 @@ public class EditorTag
         return in;
     }
 
-    private ConcreteElement createSimpleEditor()
+    private form createSimpleEditor()
     {
-        WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
-
-        div d = new div();
-        d.setClass("editor");
-
+        WikiEngine engine = m_wikiContext.getEngine();
+        
         form f = new form();
-        f.setName("editForm");
-        f.setAction( m_wikiContext.getURL( WikiContext.EDIT, page.getName() ) );
-        f.setMethod( "POST" );
+        f.setName(m_formName);
+ 
+        if( m_action != null ) 
+        {
+            f.setAction( m_action );
+        }
+        else if( m_wikiContext.getRequestContext().equals( WikiContext.COMMENT ) ||
+                 "comment".equals(m_wikiContext.getHttpParameter("action")) )
+        {
+            f.setAction( m_wikiContext.getURL( WikiContext.COMMENT, page.getName() ));
+        }
+        else
+        {
+            f.setAction( m_wikiContext.getURL( WikiContext.EDIT, page.getName() ));
+        }
+        
+        f.setMethod( "post" );
         f.setAcceptCharset( engine.getContentEncoding() );
-
-        d.addElement( f );
 
         p para1 = new p();
 
+        // Kludge to get preview working from Comment.jsp
+        if( m_wikiContext.getHttpParameter("author") != null )
+        {
+            para1.addElement( createInput("author", m_wikiContext.getHttpParameter("author")) );
+        }
+        
         f.addElement(para1);
 
         para1.addElement( createInput("page", page.getName() ) );
@@ -112,7 +142,12 @@ public class EditorTag
         {
             para1.addElement( createInput("comment","true") );
         }
+        
+        return f;
+    }
 
+    private ConcreteElement getEditorArea()
+    {
         textarea area = new textarea();
 
         area.setClass("editor");
@@ -124,34 +159,65 @@ public class EditorTag
        
         if( m_wikiContext.getRequestContext().equals("edit") )
         {
-            area.addElement( engine.getText( m_wikiContext, page ) );
+            area.addElement( m_wikiContext.getEngine().getText( m_wikiContext, m_wikiContext.getPage() ) );
         }
-
-        para1.addElement( area );
-
-        //
-        //  The edit buttons block
-        //
-
+ 
+        return area;
+    }
+    /**
+     *  Returns an edit button block.
+     * 
+     * @return
+     */
+    private ConcreteElement getButtons()
+    {
         p para2 = new p();
 
-        f.addElement( para2 );
         para2.addElement( createSubmit( "ok",      m_submit ) );
         para2.addElement( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" );
         para2.addElement( createSubmit( "preview", m_preview ) );
         para2.addElement( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" );
         para2.addElement( createSubmit( "cancel",  m_cancel ) );
 
-        return d;
+        return para2;
     }
-
+    
     public final int doWikiStartTag()
         throws IOException
     {
-        ConcreteElement editor = createSimpleEditor();
+        return EVAL_BODY_TAG;
+    }
+       
+    public int doEndTag() throws JspException
+    {
+        BodyContent bc = getBodyContent();
+        
+        form editor = createSimpleEditor();
+    
+        // 
+        // If there is no body tag content, then we'll assume old
+        // behaviour and append the stuff ourselves.
+        //
+        if( bc == null || bc.getString().length() == 0 )
+        {
+            editor.addElement( getEditorArea() );
 
-        pageContext.getOut().print( editor.toString() );
-
-        return SKIP_BODY;
+            editor.addElement( getButtons() );            
+        }
+        else
+        {
+            editor.addElement( bc.getString() );
+        }
+        
+        try
+        {
+            pageContext.getOut().print( editor.toString() );
+        }
+        catch( IOException e )
+        {
+            throw new JspException("Could not print Editor tag: "+e.getMessage() );
+        }
+        
+        return EVAL_PAGE;
     }
 }
