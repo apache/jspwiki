@@ -38,6 +38,9 @@ import com.ecyrd.jspwiki.WikiProvider;
  *    <LI>newVersion - The newer of these versions.  Can also be "latest", or "previous".  Defaults to "latest".</LI>
  *  </UL>
  *
+ *  If the page does not exist, this tag will fail silently, and not evaluate
+ *  its body contents.
+ *
  *  @author Janne Jalkanen
  *  @since 2.0
  */
@@ -93,6 +96,14 @@ public class DiffLinkTag
 
         int r1 = 0;
         int r2 = 0;
+
+        //
+        //  In case the page does not exist, we fail silently.
+        //
+        if(!engine.pageExists(pageName))
+        {
+            return SKIP_BODY;
+        }
 
         if( VER_LATEST.equals(getVersion()) )
         {
