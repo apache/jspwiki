@@ -1,3 +1,7 @@
+2002-01-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * SystemInfo.jsp now shows the used character encoding as well.
+
 2002-01-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.3-beta.
