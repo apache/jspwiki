@@ -95,10 +95,13 @@
       <%
          if( wiki.pageExists( pagereq ) )
          {
+             String diff = wiki.getDiff( pagereq, ver2, ver1 );
+
+             if( diff.length() == 0 ) diff = "<I>No difference.</I>";
              %>
              Difference between revision <%=versionDescription1%> and <%=versionDescription2%>
              <P>
-<%=wiki.getDiff( pagereq, ver2, ver1 )%>
+<%=diff%>
              <%
          }
          else
