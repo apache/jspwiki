@@ -742,6 +742,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "test\n", translate(src) );
     }
 
+    public void testPluginNoInsert()
+        throws Exception
+    {
+        String src="[{SamplePlugin text=test}]";
+
+        assertEquals( "test\n", translate(src) );
+    }
+
     public void testPluginInsertJS()
         throws Exception
     {
