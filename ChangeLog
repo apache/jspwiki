@@ -1,3 +1,14 @@
+2003-05-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.21.
+
+        * FileSystemProvider now stores author information as well.  This
+        addresses the most-often heard FAQ: "Why is the author information
+        not shown?".  To do this and not interfere with RCSFileProvider
+        and VersioningFileProvider, I created a new class,
+        AbstractFileProvider which stores no metadata, but all file-based
+        providers now extend from it.
+
 2003-05-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.20.
