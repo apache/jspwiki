@@ -822,6 +822,9 @@ public class TranslatorReader extends Reader
 
             if( name.length() > 0 && val.length() > 0 )
             {
+                val = m_engine.getVariableManager().expandVariables( m_context,
+                                                                     val );
+            
                 m_context.getPage().setAttribute( name, val );
             }
         }
