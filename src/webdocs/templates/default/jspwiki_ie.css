@@ -20,8 +20,6 @@ A.wikipage  { }                            /* Normal, internal wiki reference */
 A.external  { }                            /* External reference */
 A.interwiki { }                            /* Interwiki reference */
 
-
-
 /* Added in 1.6.3 */
 TD.diffadd  { background: #99FF99; 
               font-family: monospace; }
@@ -41,3 +39,16 @@ TABLE.wikitable * TH { }
 /* This is the Edit.jsp editor style */
 TEXTAREA.editor {}
 
+/* Added in 1.9.20 */
+
+/* The text how the "This is a preview" comment should be shown. */
+.previewnote { text-align: center; 
+                font-size: 150%; 
+                    color: red; }
+
+/* How the preview content should be shown */
+.previewcontent { background: #E0E0E0; }
+
+/* How the "This page has been modified..." -comment should be shown. */
+
+.conflictnote { }
