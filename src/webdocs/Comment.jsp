@@ -108,9 +108,9 @@
         //  Set author information
         //
 
-        wikiContext.getPage().setAuthor( currentUser.getName() );        
+        wikipage.setAuthor( currentUser.getName() );
 
-        StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+        StringBuffer pageText = new StringBuffer(wiki.getPureText( wikipage ));
 
         log.debug("Page initial contents are "+pageText.length()+" chars");
 
