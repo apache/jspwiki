@@ -14,6 +14,19 @@
   <shortname>jspwiki</shortname>
 
   <tag>
+    <name>AttachmentsIterator</name>
+    <tagclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorTag</tagclass>
+    <teiclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>id</name>
+    </attribute>
+  </tag>  
+
+  <tag>
     <name>Author</name>
     <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
     <bodycontent>empty</bodycontent>
@@ -79,6 +92,11 @@
     </attribute>
   </tag>  
 
+  <tag>
+    <name>HasAttachments</name>
+    <tagclass>com.ecyrd.jspwiki.tags.HasAttachmentsTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+  </tag>  
 
   <tag>
     <name>HistoryIterator</name>
