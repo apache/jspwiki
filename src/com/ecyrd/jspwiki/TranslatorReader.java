@@ -95,11 +95,22 @@ public class TranslatorReader extends Reader
     /** If true, consider CamelCase hyperlinks as well. */
     public static final String     PROP_CAMELCASELINKS   = "jspwiki.translatorReader.camelCaseLinks";
 
+    /** If true, all hyperlinks are translated as well, regardless whether they
+        are surrounded by brackets. */
+    public static final String     PROP_PLAINURIS        = "jspwiki.translatorReader.plainUris";
+
     /** If true, we'll also consider english plurals (+s) a match. */
     private boolean                m_matchEnglishPlurals = true;
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
+
+    /** If true, consider URIs that have no brackets as well. */
+    private boolean                m_plainUris           = false;
+
+    private PatternMatcher         m_matcher  = new Perl5Matcher();
+    private PatternCompiler        m_compiler = new Perl5Compiler();
+    private Pattern                m_camelCasePtrn;
 
     /**
      *  The default inlining pattern.  Currently "*.png"
@@ -110,6 +121,8 @@ public class TranslatorReader extends Reader
      *  @param engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
      */
+
+    // FIXME: TranslatorReaders should be pooled for better performance.
     public TranslatorReader( WikiContext context, Reader in )
     {
         PatternCompiler compiler         = new GlobCompiler();
@@ -139,9 +152,23 @@ public class TranslatorReader extends Reader
 
         m_inlineImagePatterns = compiledpatterns;
 
-        Properties props = m_engine.getWikiProperties();
+        try
+        {
+            m_camelCasePtrn       = m_compiler.compile( "(^|\\W)([A-Z][a-z]+([A-Z][a-z]+)+)" );
+        }
+        catch( MalformedPatternException e )
+        {
+            log.fatal("Internal error: Someone put in a faulty pattern.",e);
+            throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader");
+        }
+
+        //
+        //  Set the properties.
+        //
+        Properties props      = m_engine.getWikiProperties();
         m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
         m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" ) );
+        m_plainUris           = "true".equals( props.getProperty( PROP_PLAINURIS, "false" ) );
     }
 
     /**
@@ -458,63 +485,50 @@ public class TranslatorReader extends Reader
      */
     private String setCamelCaseLinks( String line )
     {
-        PatternMatcher  matcher  = new Perl5Matcher();
-        PatternCompiler compiler = new Perl5Compiler();
         PatternMatcherInput input;
 
-        try
+        input = new PatternMatcherInput( line );
+
+        while( m_matcher.contains( input, m_camelCasePtrn ) )
         {
-            Pattern camelCasePtrn = compiler.compile( "(^|\\W)([A-Z][a-z]+([A-Z][a-z]+)+)" );
-            // Pattern camelCasePtrn = compiler.compile( "(?<![[:alnum:]])(?:[[:upper:]][[:lower:]]+){2,}(?![[:alnum:]])" );
+            //
+            //  Weed out links that will be matched later on.
+            //
 
-            input = new PatternMatcherInput( line );
+            MatchResult res = m_matcher.getMatch();
+            int lastOpen  = line.substring(0,res.endOffset(2)).lastIndexOf('[');
+            int lastClose = line.substring(0,res.endOffset(2)).lastIndexOf(']');
 
-            while( matcher.contains( input, camelCasePtrn ) )
+            if( (lastOpen < lastClose && lastOpen >= 0) || // Links closed ok
+                lastOpen < 0 )                             // No links yet
             {
-                //
-                //  Weed out links that will be matched later on.
-                //
+                int start = res.beginOffset(2);
+                int end   = res.endOffset(2);
 
-                MatchResult res = matcher.getMatch();
-                int lastOpen  = line.substring(0,res.endOffset(2)).lastIndexOf('[');
-                int lastClose = line.substring(0,res.endOffset(2)).lastIndexOf(']');
+                String link = res.group(2);
+                String matchedLink;
 
-                if( (lastOpen < lastClose && lastOpen >= 0) || // Links closed ok
-                    lastOpen < 0 )                             // No links yet
+                // System.out.println("LINE="+line);
+                // System.out.println("  Replacing: "+link);
+                // System.out.println("  open="+lastOpen+", close="+lastClose);
+                if( (matchedLink = linkExists( link )) != null )
                 {
-                    int start = res.beginOffset(2);
-                    int end   = res.endOffset(2);
+                    link = makeLink( READ, matchedLink, link );
+                }
+                else
+                {
+                    link = makeLink( EDIT, link, link );
+                }
 
-                    String link = res.group(2);
-                    String matchedLink;
+                line = TextUtil.replaceString( line, 
+                                               start, 
+                                               end, 
+                                               link );
 
-                    // System.out.println("LINE="+line);
-                    // System.out.println("  Replacing: "+link);
-                    // System.out.println("  open="+lastOpen+", close="+lastClose);
-                    if( (matchedLink = linkExists( link )) != null )
-                    {
-                        link = makeLink( READ, matchedLink, link );
-                    }
-                    else
-                    {
-                        link = makeLink( EDIT, link, link );
-                    }
-
-                    line = TextUtil.replaceString( line, 
-                                                   start, 
-                                                   end, 
-                                                   link );
-
-                    input.setInput( line );
-                    input.setCurrentOffset( start+link.length() );
-                } // if()
-            } // while
-
-        }
-        catch( MalformedPatternException e )
-        {
-            log.error("Wrong pattern with CamelCase", e);
-        }
+                input.setInput( line );
+                input.setCurrentOffset( start+link.length() );
+            } // if()
+        } // while
 
         return line;
     }
