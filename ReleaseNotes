@@ -10,22 +10,6 @@ Major changes since the last stable (1.6.0) release are:
   created, asks the RM to update itself, and thereafter updates the 
   RM every time a page is saved. 
 
-  RM is queried through a tag library. This is the first tag implemented
-  in JSPWiki (mainly because I needed the practice). To list all references
-  to a given page, you would include the following tag on your JSP page:
-
-     <jspwiki:linklist action="getref" page="<%=aPageName%>" 
-        show="10" linesep="true"/>
-
-  Other actions are "getunref" to search for unreferenced WikiPages, and
-  "getmissing" to find referenced, but non-existant pages. You can drop
-  the show and linesep parameters, and page only applies to action "getref".
-
-  All JSP pages including LeftMenuFooter or using the tag above need to 
-  include the tag library at their beginning: 
-
-          <%@ taglib uri="/WEB-INF/tlds/taglib.tld" prefix="jspwiki" %>
-
   NOTE: the actual ReferenceManager.java implementation is quick'n'dirty,
   and may still have synchronization problems. Definitely not ready for
   release. The TranslatorReader hook to look for WikiLinks is a nasty
@@ -37,16 +21,32 @@ Major changes since the last stable (1.6.0) release are:
 
   //ebu
 
+- New plugin system:  You can now embed any plugin class that
+  implements the com.ecyrd.jspwiki.plugin.WikiPlugin interface onto a
+  Wiki page just simply by using the command
 
+  [{INSERT <plugin class> WHERE <param1=value1>,<param2=value2>,...}]
+
+  For example, RecentChanges, UnusedPages, UndefinedPages are all done
+  this way.
+
+- new property: jspwiki.baseURL for those cases where you need to
+  tunnel your Wiki through a firewall or something, using some sort of
+  URL rewriting scheme.
 
 
 UPGRADE NOTES
 =============
 
 - If updating manually:
-  - cp -r etc/tlds .../JSPWiki/WEB-INF
   - copy all JSP files
-  - copy LeftMenu.txt in the wikifiles (or check the changes)
-  - copy the two new special file entries in jspwiki.properties
-  - ant build, cp -r build/com .../JSPWiki/WEB-INF/classes/
+  - remove the extra special page entries from jspwiki.properties -
+    the only ones you should be left with are "SystemInfo" and "FindPage".
+  - Copy the new JSPWiki sample pages (LeftMenuFooter, RecentChanges,
+    UndefinedPages, UnusedPages are new) into your wiki page repository.
+  - ant build; cp -r build/com .../JSPWiki/WEB-INF/classes/
+    OR
+    unzip the contents of the WAR file somewhere and copy the classes
+    from there (far easier).
+
 
