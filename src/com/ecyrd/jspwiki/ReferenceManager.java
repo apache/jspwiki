@@ -197,9 +197,18 @@ public class ReferenceManager
                 {
                     // Skip attachments
                 }
-                else if( page.getLastModified().getTime() > saved )
+                else
                 {
-                    updatePageReferences( page );
+                    // Refresh with the latest copy
+                    page = m_engine.getPage( page.getName() );
+                    if( page.getLastModified() == null )
+                    {
+                        log.fatal( "Provider returns null lastModified.  Please submit a bug report." );
+                    }
+                    else if( page.getLastModified().getTime() > saved )
+                    {
+                        updatePageReferences( page );
+                    }
                 }
             }
             
