@@ -56,7 +56,7 @@ public class FileSystemProviderTest extends TestCase
     public void testScandinavianLetters()
         throws Exception
     {
-        WikiPage page = new WikiPage("≈‰Test");
+        WikiPage page = new WikiPage("\u00c5\u00e4Test");
 
         m_provider.putPageText( page, "test" );
         
@@ -73,9 +73,9 @@ public class FileSystemProviderTest extends TestCase
     public void testScandinavianLettersUTF8()
         throws Exception
     {
-        WikiPage page = new WikiPage("≈‰Test");
+        WikiPage page = new WikiPage("\u00c5\u00e4Test");
 
-        m_providerUTF8.putPageText( page, "test÷" );
+        m_providerUTF8.putPageText( page, "test\u00d6" );
 
         File resultfile = new File( m_pagedir, "%C3%85%C3%A4Test.txt" );
 
@@ -84,7 +84,7 @@ public class FileSystemProviderTest extends TestCase
         String contents = FileUtil.readContents( new FileInputStream(resultfile),
                                                  "UTF-8" );
 
-        assertEquals("Wrong contents", contents, "test÷");
+        assertEquals("Wrong contents", contents, "test\u00d6");
     }
 
     /**
@@ -130,14 +130,14 @@ public class FileSystemProviderTest extends TestCase
     {
         try
         {
-            WikiPage page = new WikiPage("≈‰Test");
-            page.setAuthor("Min‰");
+            WikiPage page = new WikiPage("\u00c5\u00e4Test");
+            page.setAuthor("Min\u00e4");
 
             m_provider.putPageText( page, "test" );
 
-            WikiPage page2 = m_provider.getPageInfo( "≈‰Test", 1 );
+            WikiPage page2 = m_provider.getPageInfo( "\u00c5\u00e4Test", 1 );
 
-            assertEquals( "Min‰", page2.getAuthor() );
+            assertEquals( "Min\u00e4", page2.getAuthor() );
         }
         finally
         {
