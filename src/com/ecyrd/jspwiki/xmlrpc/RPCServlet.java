@@ -68,7 +68,7 @@ public class RPCServlet extends HttpServlet
             out.write( result );
             out.flush();
 
-            log.debug("Result = "+new String(result) );
+            // log.debug("Result = "+new String(result) );
         }
         catch( IOException e )
         {
