@@ -81,7 +81,7 @@
 <TABLE BORDER="0" CELLSPACING="8">
 
   <TR>
-    <TD WIDTH="15%" VALIGN="top">
+    <TD WIDTH="15%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
        <A HREF="Wiki.jsp?page=TextFormattingRules">Help on editing</A>

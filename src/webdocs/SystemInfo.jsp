@@ -23,7 +23,7 @@
 <TABLE BORDER="0" CELLSPACING="8" width="95%">
 
   <TR>
-    <TD WIDTH="10%" VALIGN="top">
+    <TD WIDTH="10%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
