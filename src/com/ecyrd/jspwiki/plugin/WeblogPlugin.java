@@ -266,7 +266,10 @@ public class WeblogPlugin implements WikiPlugin
             start+=4; // Skip this "----"
         }
 
-        return tags;
+        //
+        // The first comment does not get the "----"
+        //
+        return pagedata.length() > 0 ? tags+1 : 0;
     }
 
     /**
