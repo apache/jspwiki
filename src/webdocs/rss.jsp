@@ -117,7 +117,11 @@
 
                 if( maxlen > 0 )
                 {
-                    wikiContext.setVariable( WikiEngine.PROP_URLSTYLE, "absolute" );
+                    //
+                    //  Force the TranslatorReader to output absolute URLs
+                    //  regardless of the current settings.
+                    //
+                    wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
                     pageText = wiki.textToHTML( wikiContext, 
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
