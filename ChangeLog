@@ -1,3 +1,21 @@
+2005-01-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.135
+
+        * Should fix the spurious problem people had trying to attach files
+        with non-ascii names to pages that also had non-ascii names.
+
+        * AttachmentServlet now responds with error codes.
+
+        * Attachment urls are now in the form /attach/foo/bar.txt.  This
+        has several advantages, mostly because all files now look like
+        they were served natively.  Note that the web.xml file has changed
+        to reflect this.  Of course, the old urls still work.
+
+        * Nested lists now generate proper XHTML code.  This removes all
+        known XHTML bugs (but I'm sure there are still some).  The default
+        TextFormattingRules page now validates.
+
 2005-01-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.134
