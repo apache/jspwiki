@@ -15,3 +15,15 @@ The magical incantation in the {{jspwiki.properties}} file is:
 {{{
 jspwiki.interWikiRef.Edit = Edit.jsp?page=%s
 }}}
+
+!!How do I enable the [RSS|http://blogspace.com/rss/] feed?
+
+In your jspwiki.properties -file, you'll need to set the "jspwiki.rss.generate" to "true", and also set the "jspwiki.baseURL" to point at your Wiki.  Otherwise the RSS generator can't figure out how its links should go... :-)
+
+!!I don't like ThingsSquashedTogether in the page titles.  What can I do?
+
+As Finns say, "voe tokkiinsa", meaning "yes, of course".  Just set the "jspwiki.breakTitleWithSpaces" property to "true" in your jspwiki.properties-file.
+
+!!I have a question you have not answered!
+
+Well, the easiest thing to do is go directly to the [JSPWiki main site|JSPWiki:Main] and ask your question there.  Or you could also [email me|About], but it's better for all if you go and publicly post your query.  It does not hurt to take a peek at JSPWiki site anyway, since your question might already be answered there...
