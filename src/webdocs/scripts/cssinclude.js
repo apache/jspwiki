@@ -1,3 +1,4 @@
+<script type="text/javascript">
 /*
  *  Chooses a suitable stylesheet based on browser.
  */
@@ -28,3 +29,4 @@
     {
         document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
     }
+</script>
