@@ -4,9 +4,15 @@ package com.ecyrd.jspwiki;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
+import org.apache.log4j.*;
 
 public class FileUtilTest extends TestCase
 {
+    static
+    {
+        BasicConfigurator.configure();
+    }
+
     public FileUtilTest( String s )
     {
         super( s );
@@ -38,12 +44,51 @@ public class FileUtilTest extends TestCase
     public void testReadContentsLatin1_2()
         throws Exception
     {
-        String src = "abcåäö";
+        String src = "abcåäödef";
 
         String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes("ISO-8859-1") ),
                                             "UTF-8" );
 
         assertEquals( src, res );
+    }
+
+    /**
+       ISO Latin 1 from a pipe.
+
+       Works only on UNIX systems now.
+    */
+    public void testReadContentsFromPipe()
+        throws Exception
+    {
+        String src = "abc\n123456\n\nfoobar.\n";
+
+        // Make a very long string.
+
+        for( int i = 0; i < 10; i++ )
+        {
+            src += src;
+        }
+
+        src += "åäö";
+
+        File f = FileUtil.newTmpFile( src, "ISO-8859-1" );
+
+        String[] envp = {};
+
+        try
+        {
+            Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), 
+                                                         envp, 
+                                                         f.getParentFile() );
+
+            String result = FileUtil.readContents( process.getInputStream(), "UTF-8" );
+
+            f.delete();
+
+            assertEquals( src,
+                          result );
+        }
+        catch( IOException e ) {}
     }
 
     public static Test suite()
