@@ -8,6 +8,10 @@ Major changes since the last stable (1.8.0) release are:
 
 - Splitting of Wiki pages into "Controller" and "View" pages has begun.
 
+- There is a new addition to WikiLanguage: Definition lists
+  ;term;definition.  You can use this to make comments, too, by using
+  an empty 'term': ;:Comment.
+
 - New plugins:
    * IndexPlugin (by Alain Ravet)
 

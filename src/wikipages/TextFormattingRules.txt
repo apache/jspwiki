@@ -26,6 +26,7 @@ __text__   = prints 'text' in bold.
 
 * text     = makes a bulleted list item with 'text'
 # text     = makes a numbered list item with 'text'
+;term:ex   = makes a definition for 'term' with the explanation 'ex'
 }}}
 
 !Writing text
@@ -110,6 +111,19 @@ previous item.  If this sounds complicated, edit this page for an example, below
   We might as well do a third line while we're at it...
   Notice, however, as all these sentences get put inside a single item!
 * The third line is again a single-line item for your convinience.
+
+!Definition lists and comments
+
+A simple way to make definition lists is to use the ';:' -construct:
+
+;__Construct__:''Something you use to do something with''
+
+Another nice use for the ';:' is that you can use it to comment shortly on other people's text, by having an empty 'term' in the definition, like this:
+{{{
+;:''Comment here.''
+}}}
+Which would be seen as
+;:''Comment here.''
 
 !Text effects
 

@@ -21,6 +21,7 @@ Here's a short reminder on what elements you have at your disposal:
 __text__         Makes text bold.
 ''text''         Makes text in italics (notice that these are single quotes ('))
 {{text}}         Makes text in monospaced font.
+;term;def        Defines 'term' with 'def'.  Use this with empty 'term' to make short comments.
 
 |text|more text| Makes a table. Double bars for a table heading.
 }}}

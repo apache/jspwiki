@@ -1,3 +1,9 @@
+2002-07-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added ';term:def' to TextFormattingRules for definition lists.
+        This incidentally also allows you to make comments into someone
+        else's text, if you use an empty 'term' (;:<Comment here>).
+
 2002-07-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
         
         * v1.9.9.
