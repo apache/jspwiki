@@ -12,4 +12,11 @@ P.versionnote { color: red;
 
 /* Added in v1.5.1 */
 H3.leftmenuheading { }
+BODY.edit { background-color: #FFD0FF; } /* Edit.jsp BODY element */
+TD.leftmenu { }                          /* Left menu */
+TD.page { }                              /* Page data area */
+A.wikipage { }                           /* Normal, internal wiki reference */
+A.external { }                           /* External reference */
+A.interwiki { }                          /* Interwiki reference */
+
 
