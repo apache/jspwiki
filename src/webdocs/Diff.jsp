@@ -39,6 +39,8 @@
     // FIXME: There is a set of unnecessary conversions here: InsertDiffTag
     //        does the String->int conversion anyway.
 
+    WikiPage wikipage = wiki.getPage( pagereq );
+
     String srev1 = request.getParameter("r1");
     String srev2 = request.getParameter("r2");
 
@@ -55,15 +57,13 @@
     }
     else
     {
-        int lastver = wiki.getVersion( pagereq );
+        int lastver = wikipage.getVersion();
 
         if( lastver > 1 )
         {
             ver2 = lastver-1;
         }
     }
-
-    WikiPage wikipage = wiki.getPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     wikiContext.setRequestContext( WikiContext.DIFF );
