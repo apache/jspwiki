@@ -1,3 +1,14 @@
+2002-07-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.9.5.
+
+        * Fixed problem with RSS generating illegal XML in certain cases
+        (& and < were not translated to entities properly).
+
+        * Fixed problem with plugin output getting translated by
+        reordering the translator routines.  This may break many things,
+        so please be careful.  Reported by Niilo Neuvo.
+
 2002-07-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.4.
