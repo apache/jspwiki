@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**
@@ -61,9 +62,9 @@ public class UploadLinkTag
         }
 
         JspWriter out = pageContext.getOut();
-        String encodedlink = engine.encodeName( pageName );
 
-        String url = engine.getBaseURL()+"Upload.jsp?page="+encodedlink;
+        String url = engine.getURL( WikiContext.UPLOAD,
+                                    pageName );
 
         switch( m_format )
         {

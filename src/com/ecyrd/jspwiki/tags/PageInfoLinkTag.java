@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
@@ -63,9 +64,8 @@ public class PageInfoLinkTag
         if( engine.pageExists(pageName) )
         {
             JspWriter out = pageContext.getOut();
-            String encodedlink = engine.encodeName( pageName );
 
-            String url = engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink;
+            String url = engine.getURL( WikiContext.INFO, pageName );
 
             switch( m_format )
             {

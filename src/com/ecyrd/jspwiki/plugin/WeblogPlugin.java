@@ -266,10 +266,11 @@ public class WeblogPlugin
                     //
                     sb.append( "&nbsp;&nbsp;" );
                     sb.append( "<a target=\"_blank\" href=\""+
-                               engine.getBaseURL()+
-                               "Comment.jsp?page="+
-                               engine.encodeName(commentPageName)+
-                               "&nc="+numComments+"\">Comments? ("+
+                               engine.getURL(WikiContext.COMMENT,
+                                             commentPageName,
+                                             false,
+                                             "nc="+numComments)+
+                               "\">Comments? ("+
                                numComments+
                                ")</a>" );
                 }

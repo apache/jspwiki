@@ -115,8 +115,6 @@ public class RecentChangesPlugin
                     olddate = lastmod;
                 }
 
-                String pageurl = engine.encodeName(pageref.getName());
-
                 String link = linkProcessor.makeLink( (pageref instanceof Attachment) ? 
                                                       TranslatorReader.ATTACHMENT : TranslatorReader.READ,
                                                       pageref.getName(),
@@ -134,7 +132,10 @@ public class RecentChangesPlugin
                 }
                 else
                 {
-                    out.write("<td><a href=\""+engine.getBaseURL()+"Diff.jsp?page="+pageurl+"&amp;r1=-1\">"+
+                    out.write("<td><a href=\""+engine.getURL(WikiContext.DIFF,
+                                                             pageref.getName(),
+                                                             false,
+                                                             "r1=-1")+"\">"+
                               tfmt.format(lastmod)+
                               "</a></td>\n");
                 }

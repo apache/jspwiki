@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
@@ -151,11 +152,17 @@ public class DiffLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a href=\""+engine.getBaseURL()+"Diff.jsp?page="+encodedlink+"&amp;r1="+r1+"&amp;r2="+r2+"\">");
+            out.print("<a href=\""+engine.getURL( WikiContext.DIFF, 
+                                                  pageName, 
+                                                  false,
+                                                  "r1="+r1+"&amp;r2="+r2)+"\">");
             break;
 
           case URL:
-            out.print( engine.getBaseURL()+"Diff.jsp?page="+encodedlink+"&amp;r1="+r1+"&amp;r2="+r2 );
+            out.print( engine.getURL( WikiContext.DIFF, 
+                                      pageName,
+                                      false,
+                                      "r1="+r1+"&amp;r2="+r2 ) );
             break;
         }
 

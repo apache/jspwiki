@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Writes a comment link.  Body of the link becomes the link text.
@@ -90,7 +91,7 @@ public class CommentLinkTag
     private String getCommentURL( String pageName )
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        return engine.getBaseURL()+"Comment.jsp?page="+engine.encodeName(pageName);
+        return engine.getURL(WikiContext.COMMENT, pageName);
     }
 
 }
