@@ -244,12 +244,13 @@ public class RPCHandler
     {
         pagename = parsePageCheckCondition( pagename );
 
-        String pagedata = m_engine.getPureText( pagename, -1 );
+        WikiPage page = m_engine.getPage( pagename );
+        String pagedata = m_engine.getPureText( page );
 
         LinkCollector localCollector = new LinkCollector();
         LinkCollector extCollector   = new LinkCollector();
 
-        m_engine.textToHTML( new WikiContext(m_engine,pagename),
+        m_engine.textToHTML( new WikiContext(m_engine,page),
                              pagedata,
                              localCollector,
                              extCollector );
