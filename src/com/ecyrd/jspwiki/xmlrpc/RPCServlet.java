@@ -54,6 +54,17 @@ public class RPCServlet extends HttpServlet
 
     Category log = Category.getInstance( RPCServlet.class ); 
 
+    public void initHandler( String prefix, String handlerName )
+        throws ClassNotFoundException,
+               InstantiationException,
+               IllegalAccessException
+    {
+        Class handlerClass = Class.forName( handlerName );
+        WikiRPCHandler rpchandler = (WikiRPCHandler) handlerClass.newInstance();
+        rpchandler.initialize( m_engine );
+        m_xmlrpcServer.addHandler( prefix, rpchandler );
+    }
+
     /**
      *  Initializes the servlet.
      */
@@ -65,15 +76,18 @@ public class RPCServlet extends HttpServlet
         String handlerName = config.getInitParameter( "handler" );
         String prefix      = config.getInitParameter( "prefix" );
 
-        if( handlerName == null ) handlerName = "com.ecyrd.jspwiki.RPCHandler";
+        if( handlerName == null ) handlerName = "com.ecyrd.jspwiki.xmlrpc.RPCHandler";
         if( prefix == null )      prefix = XMLRPC_PREFIX;
 
         try
         {
-            Class handlerClass = Class.forName( handlerName );
-            AbstractRPCHandler rpchandler = (AbstractRPCHandler) handlerClass.newInstance();
-            rpchandler.initialize( m_engine );
-            m_xmlrpcServer.addHandler( prefix, rpchandler );
+            initHandler( prefix, handlerName );
+
+            //
+            // FIXME: The metaweblog API should be possible to turn off.
+            //
+            initHandler( "metaWeblog", 
+                         "com.ecyrd.jspwiki.xmlrpc.MetaWeblogHandler" );
         }
         catch( Exception e )
         {
