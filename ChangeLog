@@ -1,3 +1,9 @@
+2003-04-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.12.
+
+        * Now JSP pages are protected against empty page names.
+
 2003-04-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.11.
