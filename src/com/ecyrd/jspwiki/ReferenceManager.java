@@ -29,6 +29,8 @@ import org.apache.log4j.*;
 
   - if a wikilink is added to a page, then removed, RefMan still thinks that
     the page refers to the wikilink page. Hm.
+
+  - if a page is deleted, gets very confused.
  */
 
 
