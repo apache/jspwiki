@@ -306,8 +306,8 @@ public class WikiEngine
         if( m_provider == null ) 
             return NO_PROVIDER_MSG;
 
-	// (What do we get if the version doesn't exist?)
-	// (Null. Need to implement a check. TODO.)
+	// FIXME: What do we get if the version doesn't exist?
+	// Null. Need to implement a check.
         return m_provider.getPageText( page, version );
     }
 
@@ -389,7 +389,13 @@ public class WikiEngine
         return result.toString();
     }
 
-
+    /**
+     *  Writes the WikiText of a page into the
+     *  page repository.
+     *
+     *  @param page Page name
+     *  @param text The Wiki markup for the page.
+     */
     public void saveText( String page, String text )
     {
         if( m_provider == null ) 
@@ -415,6 +421,10 @@ public class WikiEngine
         return m_provider.getClass().getName();
     }
 
+    /**
+     *  Returns a Collection of WikiPages, sorted in time
+     *  order of last change.
+     */
     public Collection getRecentChanges()
     {
         if( m_provider == null ) 
