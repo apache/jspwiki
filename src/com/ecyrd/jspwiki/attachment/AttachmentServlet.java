@@ -111,70 +111,6 @@ public class AttachmentServlet
     }
 
     /**
-     *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
-     */
-    private boolean checkFor304( HttpServletRequest req,
-                                 Attachment att )
-    {
-
-        Date lastModified = att.getLastModified();
-
-        //
-        //  We'll do some handling for CONDITIONAL GET (and return a 304)
-        //  If the client has set the following headers, do not try for a 304.
-        //
-        //    pragma: no-cache
-        //    cache-control: no-cache
-        //
-
-        if( "no-cache".equalsIgnoreCase(req.getHeader("Pragma"))
-            || "no-cache".equalsIgnoreCase(req.getHeader("cache-control"))) 
-        {
-            log.debug("Client specifically wants a fresh copy of this attachment :" + 
-                     att.getFileName());
-        } 
-        else 
-        {
-            long ifModifiedSince = req.getDateHeader("If-Modified-Since");
-
-            //log.info("ifModifiedSince:"+ifModifiedSince);
-            if( ifModifiedSince != -1 )
-            {
-                long lastModifiedTime = lastModified.getTime();
-
-                //log.info("lastModifiedTime:" + lastModifiedTime);
-                if( lastModifiedTime <= ifModifiedSince )
-                {
-                    return true;
-                }
-            } 
-            else
-            {
-                try 
-                {
-                    String s = req.getHeader("If-Modified-Since");
-
-                    if( s != null ) 
-                    {
-                        Date ifModifiedSinceDate = rfcDateFormat.parse(s);
-                        //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
-                        if( lastModified.before(ifModifiedSinceDate) ) 
-                        {
-                            return true;
-                        }
-                    }
-                } 
-                catch (ParseException e) 
-                {
-                    log.warn(e.getLocalizedMessage(), e);
-                }
-            }
-        }
-         
-        return false;
-    }
-
-    /**
      * Serves a GET with two parameters: 'wikiname' specifying the wikiname
      * of the attachment, 'version' specifying the version indicator.
      */
@@ -232,7 +168,7 @@ public class AttachmentServlet
                     //
                     //  Check if the client already has a version of this attachment.
                     //
-                    if( checkFor304( req, att ) )
+                    if( HttpUtil.checkFor304( req, att ) )
                     {
                         log.debug("Client has latest version already, sending 304...");
                         res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
