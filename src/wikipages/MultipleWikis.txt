@@ -1,0 +1,32 @@
+Sometimes you want to run multiple Wiki instances, for example one for each project you're managing.  The projects have different members and different requirements; perhaps even different access rules.
+
+Here's how you set up multiple wiki-instances:
+
+Let us say that your main wiki instance is called ~GobbleWiki, because your company is called "Gobble Inc", and this is your intranet.  You are using Tomcat, and you have installed it in /opt/tomcat.  You have already set up the ~GobbleWiki directory, and customized your jspwiki.properties.
+
+Now, you have a new project called "Zorp", and you want to establish a "~ZorpWiki" for it.  Do as follows:
+
+Put the following in the /opt/tomcat/conf/server.xml file, within your {{{<Host>}}} -section.
+
+{{{
+     <Context path="/ZorpWiki" docBase="GobbleWiki.war" debug="0">
+          <Parameter name="jspwiki.propertyfile" value="/opt/tomcat/conf/ZorpWiki.properties"
+                     override="false"/>
+     </Context>
+}}}
+
+Take a copy of the {{GobbleWiki/WEB-INF/jspwiki.properties}} -file, and put it in {{/opt/tomcat/conf/ZorpWiki.properties}}.  Then edit it at will.  You definitely want to change the following properties (at least):
+
+* jspwiki.applicationName
+* jspwiki.fileSystemProvider.pageDir (or whichever provider you're using)
+* jspwiki.basicAttachmentProvider.storageDir (or whichever provider you're using)
+* jspwiki.baseURL
+* log4j.appender.~FileLog.File (if you're using log4j file logger)
+
+Restart Tomcat.
+
+!Upgrading to new version of JSPWiki
+
+Just drop the new "JSPWiki.war" into place as "~GobbleWiki.war".  The ~ZorpWiki should then be automatically able to pick it up.
+
+
