@@ -209,7 +209,7 @@
   <tag>
     <name>Editor</name>
     <tagclass>com.ecyrd.jspwiki.tags.EditorTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <bodycontent>JSP</bodycontent>
     <attribute>
        <name>submit</name>
        <rtexprvalue>true</rtexprvalue>
@@ -222,7 +222,14 @@
        <name>cancel</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-
+    <attribute>
+       <name>name</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>action</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>
 
   <tag>
