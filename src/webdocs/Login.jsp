@@ -38,6 +38,9 @@
     String action = request.getParameter("action");
     String uid    = request.getParameter("uid");
     String passwd = request.getParameter("passwd");
+    String msg = (String)wikiContext.getVariable("msg");
+    if( msg == null )
+        wikiContext.setVariable( "msg", "" );
 
     UserManager mgr = wiki.getUserManager();    
 
@@ -81,12 +84,7 @@
         <td colspan="2" bgcolor="#bfbfff">
           <div align="center">
             <h3>Welcome to <wiki:Variable var="applicationname"/></h3>
-
-            <% if( action != null ) { %>
-            <p>
-            Unknown username or password.  Please try again.
-            </p>
-            <% } %>
+            <p><wiki:Variable var="msg" /></p>
           </div>
         </td>
       </tr>
