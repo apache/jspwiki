@@ -45,7 +45,7 @@ import com.ecyrd.jspwiki.auth.modules.*;
  */
 public class UserManager
 {
-    static Category log = Category.getInstance( UserManager.class );
+    static Logger log = Logger.getLogger( UserManager.class );
 
     /** The name the UserProfile is stored in a Session by. */
     public static final String WIKIUSER          = "currentUser";
