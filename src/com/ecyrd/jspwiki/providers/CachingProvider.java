@@ -224,6 +224,7 @@ public class CachingProvider
         throws ProviderException
     {
         m_cache.remove( page.getName() );
+        m_textCache.flushEntry( page.getName() );
         addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
     }
 
