@@ -305,7 +305,27 @@ public class PageManager
             throw new ProviderException("Illegal page name");
         }
 
-        return m_provider.getPageInfo( pageName, version );
+        WikiPage page = null;
+
+        try
+        {
+            page = m_provider.getPageInfo( pageName, version );
+        }
+        catch( RepositoryModifiedException e )
+        {
+            //
+            //  This only occurs with the latest version.
+            //
+            log.info("Repository has been modified externally while fetching info for "+pageName );
+
+            WikiPage p = new WikiPage( pageName );
+            
+            m_engine.updateReferences( p );
+
+            page = m_provider.getPageInfo( pageName, version );
+        }
+
+        return page;
     }
 
     /**
