@@ -351,8 +351,10 @@ public class UserManager
      *                  they are the same, but in some cases, they might not be.
      *  @param password The password.
      *  @return true, if the username/password is valid.
+     *  @throws PasswordException, if password has expired
      */
     public boolean login( String username, String password, HttpSession session )
+        throws WikiSecurityException
     {
         if( m_authenticator == null ) return false;
 
@@ -367,13 +369,26 @@ public class UserManager
         {
             wup.setPassword( password );
 
-            boolean isValid = m_authenticator.authenticate( wup );
+            boolean isValid = false;
+            boolean expired = false;
+
+            try
+            {
+                isValid = m_authenticator.authenticate( wup );
+            }
+            catch( PasswordExpiredException e )
+            {
+                isValid = true;
+                expired = true;
+            }
 
             if( isValid )
             {
                 wup.setLoginStatus( UserProfile.PASSWORD );
                 session.setAttribute( WIKIUSER, wup );
                 log.info("Logged in user "+username);
+
+                if( expired ) throw new PasswordExpiredException(""); //FIXME!
             }
             else
             {
@@ -474,10 +489,17 @@ public class UserManager
 
             if( uid != null )
             {
-                wup = UserProfile.parseStringRepresentation( uid );
-                if( wup != null )
+                try
                 {
-                    wup.setLoginStatus( UserProfile.COOKIE );
+                    wup = UserProfile.parseStringRepresentation( uid );
+                    if( wup != null )
+                    {
+                        wup.setLoginStatus( UserProfile.COOKIE );
+                    }
+                }
+                catch( NoSuchElementException e )
+                {
+                    // We fail silently, as the cookie is invalid.
                 }
             }
         }
