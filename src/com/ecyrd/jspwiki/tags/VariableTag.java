@@ -31,7 +31,8 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
  *
  *  <P><B>Attributes<B></P>
  *  <UL>
- *    <LI>var - Name of the variable.
+ *    <LI>var - Name of the variable.  Required.
+ *    <LI>default - Revert to this value, if the value of "var" is null.
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -40,7 +41,8 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
 public class VariableTag
     extends WikiTagBase
 {
-    private String m_var = null;
+    private String m_var     = null;
+    private String m_default = null;
 
     public String getVar()
     {
@@ -50,6 +52,11 @@ public class VariableTag
     public void setVar( String arg )
     {
         m_var = arg;
+    }
+
+    public void setDefault( String arg )
+    {
+        m_default = arg;
     }
 
     public final int doWikiStartTag()
@@ -63,6 +70,11 @@ public class VariableTag
         {
             String value = engine.getVariableManager().getValue( m_wikiContext,
                                                                  getVar() );
+
+            if( value == null )
+            {
+                value = m_default;
+            }
 
             out.write( value );
         }
