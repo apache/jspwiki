@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,11 +20,10 @@
 package com.ecyrd.jspwiki;
 
 import java.io.UnsupportedEncodingException;
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.io.IOException;
 
-
+/**
+ *  Contains a number of static utility methods.
+ */
 public class TextUtil
 {
     static String HEX_DIGITS =  "0123456789ABCDEF";
