@@ -1,4 +1,17 @@
-2002-04-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2005-04-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.161
+
+        * Refactored TraditionalDiffProvider to be more JSPWiki coding
+        guidelines compliant.
+
+        * Added a functional ContextualDiffProvider (thanks to Henning
+        Schmiedehausen).
+
+        * CachingAttachmentProvider now empties the cache in case
+        the attachment is deleted.  Reported by Raghavan Srinivasa.
+
+2005-04-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Fixed BugCommentBoxStyle.
 
