@@ -25,6 +25,8 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.log4j.Category;
+//import org.apache.commons.fileupload.*;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -38,11 +40,6 @@ import http.utils.multipartrequest.*;
  * a mime/multipart POST message, as sent by an Attachment page, stores it
  * temporarily, figures out what WikiName to use to store it, checks for
  * previously existing versions.
- *
- * <p>For a ready, well thought out library to do this (and much more), take
- * a look at O'Reilly's <A HREF="http://www.servlets.com/cos/index.html">COS package</A>.
- * (Its licensing _might_ suit us, but I really want to keep our source visible, so
- * here, we use our own implementation.)
  *
  * <p>This servlet does not worry about authentication; we leave that to the 
  * container, or a previous servlet that chains to us.
@@ -65,7 +62,6 @@ public class AttachmentServlet
     private String m_resultPage;
     private String m_tmpDir;
 
-
     /**
      * Initializes the servlet from WikiEngine properties.
      */
@@ -77,7 +73,7 @@ public class AttachmentServlet
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
             
-        m_resultPage = m_engine.getBaseURL()+"Attachment.jsp";
+        m_resultPage = "/Attachment.jsp";
         m_tmpDir     = System.getProperty( "java.io.tmpdir" );
  
         log.debug( "UploadServlet initialized. Using " + 
@@ -223,44 +219,52 @@ public class AttachmentServlet
 
         try
         {
-            // System.out.println( "Maximum size: " + Integer.MAX_VALUE );
-            //MultipartRequest multi = new MultipartRequest( req, m_tmpDir, Integer.MAX_VALUE );
             MultipartRequest multi = new ServletMultipartRequest( req, m_tmpDir, Integer.MAX_VALUE );
-
-            if( log.isDebugEnabled() )
-            {
-                debugContentList( multi );
-            }
 
             //
             // We expect to get parameters 'user', 'wikiname'
             //
             // FIXME: Should be read from standard UserProfile.
-            String user       = multi.getURLParameter( "user" );
-            String wikiname   = multi.getURLParameter( "wikiname" );
+            String user     = multi.getURLParameter( "user" );
+            String wikipage = multi.getURLParameter( "page" );
 
             Enumeration files = multi.getFileParameterNames();
 
-            //
-            // We only accept one file for now.
-            //
-            String name = (String)files.nextElement();
-            File   f    = multi.getFile( name );
+            while( files.hasMoreElements() )
+            {
+                String part = (String) files.nextElement();
+                File   f    = multi.getFile( part );
+                InputStream in;
 
-            Attachment att = new Attachment( wikiname );
-            att.setAuthor( user );
-            att.setFileName( name );
+                if( f != null )
+                {
+                    in = new FileInputStream( f );
+                }
+                else
+                {
+                    in = multi.getFileContents( part );
+                }
 
-            m_engine.getAttachmentManager().storeAttachment( att, f );
+                //
+                //  Is a file to be uploaded.
+                //
 
-            // FIXME: If deletion fails, attachment still stored.
-            f.delete();
+                String filename = multi.getFileSystemName( part );
 
-            log.info( "User " + user + " uploaded attachment " + wikiname + 
-                      ", size " + f.length() );
+                Attachment att = new Attachment( wikipage );
+                att.setAuthor( user );
+                att.setFileName( filename );
+
+                m_engine.getAttachmentManager().storeAttachment( att, in );
+
+                log.info( "User " + user + " uploaded attachment to " + wikipage + 
+                          " called "+filename+", size " + multi.getFileSize(part) );
+                
+                f.delete();
+            }
 
             // Inform the JSP page of which file we are handling:
-            req.setAttribute( ATTR_ATTACHMENT, wikiname );
+            // req.setAttribute( ATTR_ATTACHMENT, wikiname );
         }
         catch( ProviderException e )
         {
@@ -282,6 +286,7 @@ public class AttachmentServlet
     /**
      * Produces debug output listing parameters and files.
      */
+    /*
     private void debugContentList( MultipartRequest  multi )
     {
         StringBuffer sb = new StringBuffer();
@@ -319,6 +324,7 @@ public class AttachmentServlet
 
         log.debug( sb.toString() );
     }
+    */
 
 }
 
