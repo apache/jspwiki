@@ -552,7 +552,8 @@ public class WikiEngine
     }
 
     /**
-     *  Beautifies the title of the page.
+     *  Beautifies the title of the page by appending spaces in suitable
+     *  places.
      *
      *  @since 1.7.11
      */
@@ -562,24 +563,25 @@ public class WikiEngine
         {
             StringBuffer result = new StringBuffer();
 
+            char prev  = ' ';
+            char prev2 = ' ';
+
             for( int i = 0; i < title.length(); i++ )
             {
-                // No space in front of the first line.
-                if( Character.isUpperCase(title.charAt(i)) && i > 0 )
+                char ch = title.charAt(i);
+
+                if( (Character.isUpperCase( ch ) || Character.isDigit( ch )) && 
+                    (Character.isLowerCase( prev ) ||
+                     (Character.isUpperCase(prev) && Character.isLowerCase(prev2)) ) )
                 {
                     result.append(' ');
                 }
 
-                result.append( title.charAt(i) );
+                result.append( ch );
+                prev2 = prev;
+                prev  = ch;
             }
             return result.toString();
-            /*
-              // FIXME: Should really use a nice regexp for translating
-              // JSPWiki into JSP Wiki.
-
-            Perl5Util util = new Perl5Util();
-            return util.substitute("s/[:upper:]{1,2}/foo/",title);
-            */
         }
 
         return title;
