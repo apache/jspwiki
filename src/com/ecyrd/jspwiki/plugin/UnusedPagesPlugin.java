@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,9 +41,11 @@ public class UnusedPagesPlugin
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         Collection links = refmgr.findUnreferenced();
 
+        super.initialize( context, params );
+
         String wikitext = wikitizeCollection( links, "\\\\", ALL_ITEMS );
         
-        return context.getEngine().textToHTML( context, wikitext );
+        return makeHTML( context, wikitext );
     }
 
 }
