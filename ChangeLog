@@ -1,3 +1,11 @@
+2002-05-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * PluginManager no longer needs the full package name, if the
+        plugin is a JSPWiki-supplied plugin.  We first try with the class
+        name as given, then prepend "com.ecyrd.jspwiki.plugin" and try
+        again.  This should make putting plugins on your own page a bit
+        simpler.
+
 2002-05-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Added temporary fix for misbehaving, nested #'s and *'s.
