@@ -1,46 +1,12 @@
 This is a playground - do whatever you want.
 
-bliblib.
-
-
-__TÄMÄ GENERAATORI ON KOEKÄYTÖSSÄ JA SYNTAKSI VOI VIELÄ MUUTTUA YLLÄTTÄEN.  ÄLKÄÄ SIIS RIPOTELKO NIITÄ DIAGRAMMEJA IHAN JOKA SIVULLE, TAI JONKUN PITÄÄ SIIVOTA NE SITTEN...__
-
-Puh.  Noin.  Niin, nyt on olemassa diagrammigeneraattori.  Syntaksi on lyhykäisyydessään seuraava:
-
-{{{
-[{GoDiagram  
-label='Tähän jotain tekstiä'
-first='white'
-
-| . . . .
-| 1 . 2 .
-| . X . .
-| . . . .
-+--------
-}]
-
-}}}
-
-josta tulee:
-
-[{GoDiagram  
-label='Tähän jotain tekstiä'
-first='white'
-
-| . . . .
-| 1 . 2 .
-| . X . .
-| . . . .
-+--------
-}]
-
+gkerogkerpo gperk pgkre pwgkwepr gpewk rpgokewp rgkpåwekr gpokwreg 
+[{Image src='IMG_0014.JPG' height=150 align=right caption='Two happy people doing strange stuff with alcoholic beverages.'}] 
 Huomaa, että välittömästi kuvan jälkeen olevat kommentit tulevat kuvan oikealle puolelle.  Tripla-backslash (\) katkaisee ja aloittaa siististi uudelta riviltä.
 
-\\\
+__Parametrit__
 
-!Parametrit:
-
-* __label__ : Teksti joka sijoitetaan kuvan alle.  Valinnainen.  Voi sisältää ihan mitä vaan wikitekstiä, ml. hyperlinkkejä, jne.  Huomaa kuitenkin, että erikoismerkit pitää eristää \-merkillä, esmes \' ==&gt; '.  Samaten jos haluat rivinvaihdon, sinun pitää kirjoittaa neljä '\' -merkkiä :-/.
+* __label__ : Teksti joka sijoitetaan kuvan alle.  Valinnainen.  Voi sisältää ihan mitä vaan wikitekstiä, ml. hyperlinkkejä, jne.  Huomaa kuitenkin, että erikoismerkit pitää eristää \-merkillä, esmes \' ==> '.  Samaten jos haluat rivinvaihdon, sinun pitää kirjoittaa neljä '\' -merkkiä :-/.
 * __first__ : Numeroiduissa siirroissa merkitsee kumpi onpi ensin, musta eli valkoinen.  'white' tarkoittaa sitä, että ykkösellä merkitty siirto on valkoisen.  Tämäkin on valinnainen, ja jos sitä ei ole määritelty, niin silloin ykkönen on mustan siirto.
 
 Merkit:
@@ -62,7 +28,7 @@ Merkit:
 
 ----
 
-Ei myöskään varmaan kannattaisi laittaa giffejä taulukkoon, koska tällöin niiden väliin näyttäisi pystysuunnassa tulevan pieni epäesteettinen rako. Esim. &lt;center&gt;&lt;/center&gt; ja koodiin varmistus että diagrammit päddätään samankokoisiksi sivusuunnassa tyhjillä kuvilla?
+Ei myöskään varmaan kannattaisi laittaa giffejä taulukkoon, koska tällöin niiden väliin näyttäisi pystysuunnassa tulevan pieni epäesteettinen rako. Esim. <center></center> ja koodiin varmistus että diagrammit päddätään samankokoisiksi sivusuunnassa tyhjillä kuvilla?
 
 --[Paavo Pietarila] 08-11-02
 
@@ -90,50 +56,4 @@ Eihän tota marginaali itseasiassa tarvitakkaan kunhan vain laudan värittää. 
 
 --[Kijoe]
 
-Mun mielestä ei värejä, toi mustavalkea on kivan asiallisen tuntuinen. Jos haluaisi hyvännäköisen laudan, niin sitten pitäisi käyttää jotain joka on ainakin yhtä hyvä kuin gGo:ssa (esim KGS:n tai cgobanin setti on minusta liiaksi marmorikuulalelun näköinen). gGo:ssakin se lauta itse näyttää enemmänkin roiskeelta talouspaperissa kuin laudalta. Lyhyesti: Minusta vastaavan &quot;tämä on tehty hyvin&quot;-tuntuman saaminen oikeaa lautaa matkien on liian vaikeaa, paperidiagrammin matkiminen taas on helppoa (ja paperidiagrammit eivät ole oransseja). Tietysti tästä voisi tehdä konffattavan.. (esim. mustavalko / sensei's palette)
-
---[RauliRuohonen]
-
-Jotain hämärää: Koko laudan kuvio vaatii ns. kahdennenkymmenennen pystyviivan, muuten tulee 18x19 lauta. Esimerkkinä kopio [KorkinavaajanOngelma]sta. Ja asian vierestä, Liitä tiedosto ei toiminut NS 7.0:ssa.
-
-
-[{GoDiagram
-label='Korkinavaajan ongelma'
-first='black'
-
-  + - - - - - - - - - - - - - - - - - - - - +
-  | . . O . . . . . . . . . . . . . . . . . |
-  | . O X O . . O . . . O . X . . O . . . . |
-  | . X X O O . . X X O O . X X X X . . . . |
-  | . . . O O O O . O X O . O O O O X X . . |
-  | . . . . X X X X O X . O . . . O O O X . |
-  | . O X . . . . . X . . X . . X . X . . . |
-  | . O O O X . . . . . . X . . . . X . . . |
-  | . . X O . . . . . . . . . . . . . . . . |
-  | . . . X . X . . . . . . . . . . . . . . |
-  | . . X O X . . . . . . . . . . O . . . . |
-  | . O O O . . . X . . . . . . . . . . . . |
-  | . X . . X . X . . . . O . O . . . . . . |
-  | . . . . . . X . . O O . . . O O . . . . |
-  | . O . . X . . . O X . . . X . . . . . . |
-  | . O X . . . X O . X O . O X . O O . . . |
-  | . O O O O O X O . X . O X X . X O . . . |
-  | O X X . X . X O X X X X X O X X O O . . |
-  | . O . X . . . O O . . . . O . . X O . . |
-  | . . . . O . . . . . . . . . . . Ot . . . |
-  + - - - - - - - - - - - - - - - - - - - - +
-
-}]
-
-
--- [Vesa] 21.2.2003
-
-Bjoo, näyttää oudolta.  Katsotaan.  Liitteiden pitäisi kyllä toimia NS7:lla, kun kaikki kehitystyö tehdään Mozillalla.  Tosin "Liitä tiedosto" avaa popup-ikkunan, joten jos ne on kategorisesti kielletty, niin sitten ei toimi.  Pitää kokeilla.
-
--- [JanneJalkanen], 21-02-2003
-
-Fixadeerattu.  Upload-ongelmakin tuli samalla katsottua: oli unohtunut asentaa viime kierroksella yksi pikkufaili =).
-
-(Nin siis, tekninen selitys: Tuossa äskeisessä kuvassa on alalaidassa 'Ot.', mitä välilyöntejä etsimään koulittu softa kuvitteli yhdeksi merkinnäksi.  Sitä on nyt opetettu sopivasti.)
-
--- [JanneJalkanen], 22-02-2003
+Mun mielestä ei värejä, toi mustavalkea on kivan asiallisen tuntuinen. Jos haluaisi hyvännäköisen laudan, niin sitten pitäisi käyttää jotain joka on ainakin yhtä hyvä kuin gGo:ssa (esim KGS:n tai cgobanin setti on minusta liiaksi marmorikuulalelun näköinen). gGo:ssakin se lauta itse näyttää enemmänkin roiskeelta talouspaperissa kuin laudalta. Lyhyesti: Minusta vastaavan 

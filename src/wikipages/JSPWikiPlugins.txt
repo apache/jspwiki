@@ -163,4 +163,29 @@ The current counter value is accessible also as a [WikiVariable].  The name of t
 
 The value of "counter" at the end is [{$counter}] and the value of "counter-aa" is [{$counter-aa}].
 
+----
 
+!!Image
+
+The Image plugin allows one to have finer control over the layout of images than just the simple inling of images.
+
+!Parameters
+
+* __src__ = ''Image source''.  This can either be a full URL (http://...) or a [WikiAttachment] name.  Required.
+* __align__ = ''left|right|center''.  The image alignment.
+* __height__ = ''integer''.  Force the height of the image.
+* __width__ = ''integer''.  Force the width of the image.
+* __alt__ = ''alt text''.   The alt text of an image.  This is very useful when doing pages that can be navigated with text-only browsers.
+* __caption__ = ''caption text''.  The text that should be shown as a caption under the image.
+
+!Example
+
+[[{Image src='SandBox/test.png' caption='Testing image'}].
+
+Shows the attachment SandBox/test.png with the caption "Testing image" underneath it.
+
+!CSS
+
+* {{.imageplugin}} = The table that encompasses the image.  It consists of two undercategories:
+** {{img}} = The IMG tag that gets embedded.
+** {{caption}} = The caption that is embedded.
