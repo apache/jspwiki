@@ -320,6 +320,24 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testEmptySecondLevelList()
+        throws Exception
+    {
+        String src="A\n\n**\n\nB";
+
+        assertEquals( "A\n<P>\n<UL>\n<UL>\n<LI>\n<P></UL>\n</UL>\n\nB\n", 
+                      translate(src) );
+    }
+
+    public void testEmptySecondLevelList2()
+        throws Exception
+    {
+        String src="A\n\n##\n\nB";
+
+        assertEquals( "A\n<P>\n<OL>\n<OL>\n<LI>\n<P></OL>\n</OL>\n\nB\n", 
+                      translate(src) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( TranslatorReaderTest.class );
