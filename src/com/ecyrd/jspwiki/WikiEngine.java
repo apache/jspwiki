@@ -31,6 +31,7 @@ import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -586,7 +587,7 @@ public class WikiEngine
 
     /**
      *  Returns true, if the requested page (or an alias) exists.  Will consider
-     *  any version as existing.
+     *  any version as existing.  Will also consider attachments.
      *
      *  @param page WikiName of the page.
      */
@@ -594,7 +595,23 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        return getFinalPageName( page ) != null;
+        if( getFinalPageName( page ) != null )
+        {
+            return true;
+        }
+
+        Attachment att = null;
+
+        try
+        {
+            att = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page );
+        }
+        catch( ProviderException e )
+        {
+            log.debug("pageExists() failed to find attachments",e);
+        }
+
+        return att != null;
     }
 
     /**
@@ -618,6 +635,18 @@ public class WikiEngine
             //  exists.
             //
             p = m_pageManager.getPageInfo( finalName, version );
+        }
+
+        if( p == null )
+        {
+            try
+            {
+                p = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page, version );
+            }
+            catch( ProviderException e )
+            {
+                log.debug("pageExists() failed to find attachments",e);
+            }
         }
 
         return (p != null);
@@ -1176,24 +1205,7 @@ public class WikiEngine
 
     public WikiPage getPage( String pagereq )
     {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( pagereq, 
-                                                    WikiPageProvider.LATEST_VERSION );
-
-            if( p == null )
-            {
-                //p = m_attachmentManager.getAttachmentInfo( pagereq,
-                //                                           WikiPageProvider.LATEST_VERSION );
-            }
-            return p;
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to fetch page info",e);
-            return null;
-        }
-
+        return getPage( pagereq, WikiProvider.LATEST_VERSION );
     }
 
     /**
@@ -1206,6 +1218,12 @@ public class WikiEngine
         try
         {
             WikiPage p = m_pageManager.getPageInfo( pagereq, version );
+
+            if( p == null )
+            {
+                p = m_attachmentManager.getAttachmentInfo( (WikiContext)null, pagereq );
+            }
+
             return p;
         }
         catch( ProviderException e )
@@ -1220,6 +1238,7 @@ public class WikiEngine
      *  If the page does not exist, returns null.
      *  @deprecated
      */
+    /*
     public Date pageLastChanged( String page )
     {
         try
@@ -1236,11 +1255,13 @@ public class WikiEngine
 
         return null;
     }
+    */
 
     /**
      *  Returns the current version of the page.
      *  @deprecated
      */
+    /*
     public int getVersion( String page )
     {
         try
@@ -1256,6 +1277,7 @@ public class WikiEngine
         }
         return -1;
     }
+    */
 
     /**
      *  Returns a Collection of WikiPages containing the
@@ -1263,16 +1285,23 @@ public class WikiEngine
      */
     public Collection getVersionHistory( String page )
     {
+        Collection c = null;
+
         try
         {
-            return m_pageManager.getVersionHistory( page );
+            c = m_pageManager.getVersionHistory( page );
+
+            if( c == null )
+            {
+                c = m_attachmentManager.getVersionHistory( page );
+            }
         }
         catch( ProviderException e )
         {
             log.error("FIXME");
         }
 
-        return null;
+        return c;
     }
 
     /**
