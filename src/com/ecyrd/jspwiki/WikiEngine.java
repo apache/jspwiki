@@ -393,6 +393,7 @@ public class WikiEngine
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
      */
+    // FIXME: Move to ReferenceManager itself.
     private void initReferenceManager()
     {
         m_pluginManager.enablePlugins( false );
@@ -448,6 +449,8 @@ public class WikiEngine
                   " ms)" );
 
         m_pluginManager.enablePlugins( true );
+
+        addPageFilter( m_referenceManager, -1000 ); // FIXME: Magic number.
     }
 
     public static final String PROP_PAGEFILTER = "jspwiki.pageFilter.";
@@ -462,6 +465,11 @@ public class WikiEngine
         m_pageFilters.add( f, priority );
     }
 
+    //
+    //  FIXME: It is impossible to add more than one pagefilter of the same
+    //         type because of limitations in the property file format.
+    //         we need a proper XML file format for this.
+    //
     private void initPageFilters( Properties props )
     {
         for( Enumeration enum = props.propertyNames(); enum.hasMoreElements(); )
@@ -1231,6 +1239,7 @@ public class WikiEngine
     /**
      *  Updates all references for the given page.
      */
+
     public void updateReferences( WikiPage page )
     {
         String pageData = getPureText( page.getName(), WikiProvider.LATEST_VERSION );
@@ -1311,8 +1320,10 @@ public class WikiEngine
         
         // FIXME: Should really use PageFilters for this functionality!
 
+        /*
         m_referenceManager.updateReferences( page.getName(), 
                                              scanWikiLinks( page, text ) );
+        */
 
         try
         {
