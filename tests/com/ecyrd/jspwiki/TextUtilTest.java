@@ -193,6 +193,63 @@ public class TextUtilTest extends TestCase
 
     }
 
+    public void testGetSection1()
+        throws Exception
+    {
+        String src = "Single page.";
+
+        assertEquals( "section 1", src, TextUtil.getSection(src,1) );
+
+        try
+        {
+            TextUtil.getSection( src, 5 );
+            fail("Did not get exception for 2");
+        }
+        catch( IllegalArgumentException e ) {}
+
+        try
+        {
+            TextUtil.getSection( src, -1 );
+            fail("Did not get exception for -1");
+        }
+        catch( IllegalArgumentException e ) {}
+    }
+
+    public void testGetSection2()
+        throws Exception
+    {
+        String src = "First section\n----\nSecond section\n\n----\n\nThird section";
+
+        assertEquals( "section 1", "First section\n", TextUtil.getSection(src,1) );
+        assertEquals( "section 2", "\nSecond section\n\n", TextUtil.getSection(src,2) );
+        assertEquals( "section 3", "\n\nThird section", TextUtil.getSection(src,3) );
+
+        try
+        {
+            TextUtil.getSection( src, 4 );
+            fail("Did not get exception for section 4");
+        }
+        catch( IllegalArgumentException e ) {}
+    }
+
+    public void testGetSection3()
+        throws Exception
+    {
+        String src = "----\nSecond section\n----";
+
+        
+        assertEquals( "section 1", "", TextUtil.getSection(src,1) );
+        assertEquals( "section 2", "\nSecond section\n", TextUtil.getSection(src,2) );
+        assertEquals( "section 3", "", TextUtil.getSection(src,3) );
+
+        try
+        {
+            TextUtil.getSection( src, 4 );
+            fail("Did not get exception for section 4");
+        }
+        catch( IllegalArgumentException e ) {}
+    }
+
     public static Test suite()
     {
         return new TestSuite( TextUtilTest.class );
