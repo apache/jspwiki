@@ -82,12 +82,12 @@ public class RCSFileProvider
     private SimpleDateFormat m_rcsdatefmt     = new SimpleDateFormat( RCSFMT_DATE );
     private SimpleDateFormat m_rcsdatefmt_utc = new SimpleDateFormat( RCSFMT_DATE_UTC );
 
-    public void initialize( Properties props )
+    public void initialize( WikiEngine engine, Properties props )
         throws NoRequiredPropertyException,
                IOException
     {
         log.debug("Initing RCS");
-        super.initialize( props );
+        super.initialize( engine, props );
 
         m_checkinCommand = props.getProperty( PROP_CHECKIN, m_checkinCommand );
         m_checkoutCommand = props.getProperty( PROP_CHECKOUT, m_checkoutCommand );
