@@ -278,7 +278,6 @@ public class PluginManager
             Class      pluginClass;
             WikiPlugin plugin;
 
-            log.info("DEBUG="+params.get(PARAM_DEBUG));
             boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
 
             pluginClass = findPluginClass( classname );
