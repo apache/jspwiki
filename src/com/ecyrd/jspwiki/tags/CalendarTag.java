@@ -27,8 +27,10 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 
@@ -125,6 +127,61 @@ public class CalendarTag
         return result;
     }
 
+    private String getMonthLink( Calendar day, String txt, String queryString )
+    {
+        String result = "";
+        Calendar nextMonth = Calendar.getInstance();
+        nextMonth.set( Calendar.DATE, 1 );  
+        nextMonth.add( Calendar.DATE, -1);
+        nextMonth.add( Calendar.MONTH, 1 ); // Now move to 1st day of next month
+
+        if ( day.before(nextMonth) )
+	{
+            WikiEngine engine = m_wikiContext.getEngine();
+            WikiPage thePage = m_wikiContext.getPage();
+            String pageName = thePage.getName();
+
+            String calendarDate = m_dateFormat.format(day.getTime());
+            String url = engine.getViewURL(pageName) + "&calendar.date="+calendarDate;
+
+            if ( (queryString != null) && (queryString.length() > 0) )
+	    {
+                //
+                // Ensure that the 'calendar.date=ddMMyy' has been removed 
+                // from the queryString
+                //
+
+                // FIXME: Might be useful to have an entire library of 
+                //        routines for this.  Will fail if it's not calendar.date 
+                //        but something else.
+
+                int pos1 = queryString.indexOf("calendar.date=");
+                if (pos1 >= 0)
+                {
+                    String tmp = queryString.substring(0,pos1);
+                    int pos2 = queryString.indexOf("&",pos1) + 1;   
+                    if ( (pos2 > 0) && (pos2 < queryString.length()) )
+                    {
+                        tmp = tmp + queryString.substring(pos2);
+                    }
+                    queryString = tmp;
+                }
+
+                if( queryString != null && queryString.length() > 0 )
+                {
+                    url = url + "&"+queryString;
+                }
+	    }
+            result = "<td><a href=\""+url+"\">"+txt+"</a></td>";
+        }
+        else
+	{
+            result="<td> </td>";
+        }    
+
+        return result;
+    }
+
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
@@ -133,6 +190,8 @@ public class CalendarTag
         SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM yyyy" );
         JspWriter        out      = pageContext.getOut();
         Calendar         cal      = Calendar.getInstance();
+        Calendar         prevCal  = Calendar.getInstance();
+        Calendar         nextCal  = Calendar.getInstance();
 
         //
         //  Check if there is a parameter in the request to set the date.
@@ -151,6 +210,8 @@ public class CalendarTag
             {
                 Date d = m_dateFormat.parse( calendarDate );
                 cal.setTime( d );
+                prevCal.setTime( d );
+                nextCal.setTime( d );
             }
             catch( ParseException e )
             {
@@ -158,13 +219,25 @@ public class CalendarTag
             }
         }
 
-        cal.set( Calendar.DATE, 1 ); // First, set to first day of month
+        cal.set( Calendar.DATE, 1 );     // First, set to first day of month
+        prevCal.set( Calendar.DATE, 1 );
+        nextCal.set( Calendar.DATE, 1 );
+
+        prevCal.add(Calendar.MONTH, -1); // Now move to first day of previous month
+        nextCal.add(Calendar.MONTH, 1);  // Now move to first day of next month
 
         out.write( "<table class=\"calendar\">\n" );
 
-        out.write( "<tr><td colspan=7 class=\"month\">"+
+        HttpServletRequest httpServletRequest = m_wikiContext.getHttpRequest();
+        String queryString = engine.safeGetQueryString( httpServletRequest );
+        out.write( "<tr>"+
+                   getMonthLink(prevCal,"&lt;&lt;", queryString)+
+                   "<td colspan=5 class=\"month\">"+
                    monthfmt.format( cal.getTime() )+
-                   "</td>\n" );
+                   "</td>"+
+                   getMonthLink(nextCal,"&gt;&gt;", queryString)+ 
+                   "</tr>\n"
+                 );
 
         int month = cal.get( Calendar.MONTH );
         cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY ); // Then, find the first day of the week.
