@@ -180,7 +180,8 @@ public class PageManager
             //
             //  Empty the references and yay, it shall be recalculated
             //
-            WikiPage p = new WikiPage( pageName );
+            //WikiPage p = new WikiPage( pageName );
+            WikiPage p = m_provider.getPageInfo( pageName, version );
             
             m_engine.updateReferences( p );
 
