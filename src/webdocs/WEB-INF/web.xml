@@ -6,21 +6,43 @@
 
 <web-app>
 
+   <display-name>JSPWiki</display-name>
+   <description>
+       JSPWiki is a free JSP-based WikiClone.  It is licenced
+       under the GNU General Public License.
+
+       JSPWiki is maintained by Janne Jalkanen (+others),
+       jalkanen+jspwiki@regex.fi
+   </description>
+
+   <!-- This means that we don't have to use redirection
+        from index.html anymore.  Yay! -->
+   <welcome-file-list>
+       <welcome-file>Wiki.jsp</welcome-file>
+   </welcome-file-list>
+
    <!--
        Here we define the users which are allowed to access JSPWiki
-       editor.  Comment everything out if you want to allow everybody
-       access.
+       editor.
 
-       This default setup needs two roles, "admin" and "user".
+       I'll provide here an example case where you can set up a Wiki
+       which allows everyone read access, but only authenticated
+       users are allowed to edit (i.e. access the Edit.jsp page).
+
+       To enable this, remove the comments signs.
+
+       We setup here two sample roles, "admin" and "user".
        There is no real difference between these two for now.
+
+       You must also add to your $TOMCAT_HOME/conf/tomcat-users.xml
+       the actual user accounts.
    -->
 
+   <!--  START OF ACCESS RESTRICTION
    <security-constraint>
        <web-resource-collection>
            <web-resource-name>Protected Area</web-resource-name>
-           <!-- Define the context-relative URL(s) to be protected -->
            <url-pattern>/Edit.jsp</url-pattern>
-           <!-- If you list http methods, only those methods are protected -->
            <http-method>DELETE</http-method>
            <http-method>GET</http-method>
            <http-method>POST</http-method>
@@ -28,17 +50,16 @@
        </web-resource-collection>
 
        <auth-constraint>
-           <!-- Anyone with one of the listed roles may access this area -->
            <role-name>admin</role-name>
            <role-name>user</role-name>
        </auth-constraint>
    </security-constraint>
 
-
-
    <login-config>
       <auth-method>BASIC</auth-method>
       <realm-name>JSPWiki Editor</realm-name>
    </login-config>
+
+   -->
 
 </web-app>
