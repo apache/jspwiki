@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -71,6 +71,8 @@ public class TranslatorReader extends Reader
     private ArrayList      m_inlineImagePatterns;
 
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
+
+    private ArrayList      m_linkMutators = new ArrayList();
 
     /**
      *  This property defines the inline image pattern.  It's current value
@@ -146,6 +148,11 @@ public class TranslatorReader extends Reader
         return( m_encounteredLinks );
     }
 
+    public void addLinkTransmutator( StringTransmutator mutator )
+    {
+        m_linkMutators.add( mutator );
+    }
+
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
@@ -185,6 +192,27 @@ public class TranslatorReader extends Reader
     }
 
     /**
+     *  Calls a transmutator chain.
+     */
+
+    private String callMutatorChain( Collection list, String text )
+    {
+        if( list == null || list.size() == 0 )
+        {
+            return text;
+        }
+
+        for( Iterator i = list.iterator(); i.hasNext(); )
+        {
+            StringTransmutator m = (StringTransmutator) i.next();
+
+            text = m.mutate( m_context, text );
+        }
+
+        return text;
+    }
+
+    /**
      *  Write a HTMLized link depending on its type.
      */
     private String makeLink( int type, String link, String text )
@@ -202,6 +230,8 @@ public class TranslatorReader extends Reader
         {
             type = EMPTY;
         }
+
+        text = callMutatorChain( m_linkMutators, text );
 
         switch(type)
         {
@@ -516,6 +546,10 @@ public class TranslatorReader extends Reader
         return line;
     }
 
+    /**
+     *  Closes all annoying lists and things that the user might've
+     *  left open.
+     */
     private String closeAll()
     {
         StringBuffer buf = new StringBuffer();
