@@ -43,6 +43,25 @@ import org.apache.ecs.ConcreteElement;
 public class EditorTag
     extends WikiTagBase
 {
+    private String m_submit  = "Submit";
+    private String m_preview = "Preview";
+    private String m_cancel  = "Cancel";
+
+    public void setSubmit( String s )
+    {
+        m_submit = s;
+    }
+
+    public void setPreview( String s )
+    {
+        m_preview = s;
+    }
+
+    public void setCancel( String s )
+    {
+        m_cancel = s;
+    }
+
     private GenericElement createInput( String name, String value )
     {
         input in = new input();
@@ -117,11 +136,11 @@ public class EditorTag
         p para2 = new p();
 
         f.addElement( para2 );
-        para2.addElement( createSubmit( "ok",      "Save" ) );
+        para2.addElement( createSubmit( "ok",      m_submit ) );
         para2.addElement( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" );
-        para2.addElement( createSubmit( "preview", "Preview" ) );
+        para2.addElement( createSubmit( "preview", m_preview ) );
         para2.addElement( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" );
-        para2.addElement( createSubmit( "cancel",  "Cancel" ) );
+        para2.addElement( createSubmit( "cancel",  m_cancel ) );
 
         return d;
     }
