@@ -27,33 +27,7 @@
          </p>
       </wiki:CheckLock>
 
-      <form name="editForm" action="<wiki:EditLink format="url" />" method="POST" 
-            accept-charset="<wiki:ContentEncoding />">
-
-      <p>
-      <%-- These are required parts of this form.  If you do not include these,
-           horrible things will happen.  Do not modify them either. --%>
-
-      <%-- FIXME: This is not required, is it? --%>
-      <input type="hidden" name="page"     value="<wiki:PageName/>" />
-      <input type="hidden" name="action"   value="save" />
-      <input type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>" />
-      <wiki:CheckRequestContext context="comment">
-         <input type="hidden" name="comment" value="true" />
-      </wiki:CheckRequestContext>
-
-      <%-- End of required area --%>
-
-      <textarea class="editor" wrap="virtual" name="text" rows="25" cols="80" style="width:100%;"><wiki:CheckRequestContext context="edit"><wiki:InsertPage mode="plain" /></wiki:CheckRequestContext></textarea>
-
-      <p>      
-      <input type="submit" name="ok" value="Save" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="preview" value="Preview" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="cancel" value="Cancel" />
-      </p>
-      </form>
+      <wiki:Editor />
 
       <p>
       <wiki:NoSuchPage page="EditPageHelp">
