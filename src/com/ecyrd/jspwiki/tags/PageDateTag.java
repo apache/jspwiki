@@ -71,9 +71,19 @@ public class PageDateTag
         {
             Date d = page.getLastModified();
 
-            SimpleDateFormat fmt = new SimpleDateFormat( getFormat() );
+            //
+            //  Date may be null if the page does not exist.
+            //
+            if( d != null )
+            {
+                SimpleDateFormat fmt = new SimpleDateFormat( getFormat() );
 
-            pageContext.getOut().write( fmt.format( d ) );
+                pageContext.getOut().write( fmt.format( d ) );
+            }
+            else
+            {
+                pageContext.getOut().write( "<never>" );
+            }
         }
 
         return SKIP_BODY;
