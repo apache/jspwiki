@@ -20,14 +20,22 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Properties;
+import java.util.Vector;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+
 import org.apache.log4j.Category;
+
+// import org.suigeneris.diff.*;
 
 /**
  *  Provides access to making a 'diff' between two Strings.
+ *  Can be commanded to use a diff program or to use an internal diff.
  *
  *  @author Janne Jalkanen
  *  @author Erik Bunn
@@ -49,9 +57,11 @@ public class DifferenceEngine
     private static final String CSS_DIFF_CLOSE       = "</TD></TR>";
 
     /** Default diff command */
-    private String         m_diffCommand = "diff -u %s1 %s2"; 
+    private String         m_diffCommand     = null; 
 
     private String         m_encoding;
+
+    private boolean        m_useInternalDiff = true;
 
     /**
      *  Creates a new DifferenceEngine.
@@ -61,7 +71,9 @@ public class DifferenceEngine
      */
     public DifferenceEngine( Properties props, String encoding )
     {
-        m_diffCommand = props.getProperty( PROP_DIFFCOMMAND, m_diffCommand );
+        m_diffCommand = props.getProperty( PROP_DIFFCOMMAND );
+        
+        m_useInternalDiff = (m_diffCommand == null);
 
         m_encoding    = encoding;
     }
@@ -79,9 +91,182 @@ public class DifferenceEngine
      */
     public String makeDiff( String p1, String p2 )
     {
-        return makeDiffWithProgram( p1, p2 );
+        if( m_useInternalDiff )
+        {
+            return makeDiffWithBMSI( p1, p2 );
+        }
+        else
+        {
+            return makeDiffWithProgram( p1, p2 );
+        }
+    }
+    /*
+     // Makes a diff with JRCS routines, but BMSI is slightly better.
+    private String makeDiffWithJRCS( String p1, String p2 )        
+    {
+        try
+        {
+            Object[] first  = Diff.stringToArray(p1);
+            Object[] second = Diff.stringToArray(p2);
+
+            Revision diff = Diff.diff( first, second );
+        
+            return diff.toUnifiedString();
+        }
+        catch( DifferentiationFailedException e )
+        {
+            log.error("Diff failed", e);
+        }
+
+        return null;
+    }
+    */
+
+    /**
+     *  Makes a diff using the BMSI utility package.
+     *  We use our own diff printer, which makes things
+     *  easier.
+     */
+    private String makeDiffWithBMSI( String p1, String p2 )        
+    {
+        try
+        {
+            String[] first  = stringToArray(p1);
+            String[] second = stringToArray(p2);
+
+            bmsi.util.Diff diff = new bmsi.util.Diff( first, second );
+
+            bmsi.util.Diff.change script = diff.diff_2(false);
+
+            if( script == null )
+            {
+                // No differences.
+                return "";
+            }
+
+            StringWriter sw = new StringWriter();
+            bmsi.util.DiffPrint.Base p = new WriterPrint( first, second, sw );
+            p.print_script( script );
+            
+            return sw.toString();
+        }
+        catch( IOException e )
+        {
+            log.error("Diff failed", e);
+        }
+
+        return null;
     }
 
+    /**
+     *  Writes a diff in a human-readable form, as opposed to your
+     *  standard average diff.
+     *
+     *  Lifted from org.mahlen.hula.utils.VersionUtil.
+     *  @author Mahlen Morris
+     *  @author Janne Jalkanen
+     */
+    // FIXME: Must somehow add contextual diffs as well.
+    private class WriterPrint extends bmsi.util.DiffPrint.NormalPrint
+    {
+        public WriterPrint( String[] a, String[] b, Writer w )
+        {
+            super( a, b );
+            outfile = new PrintWriter( w );
+        }
+
+        protected void print_range_length( int a, int b )
+        {
+            outfile.print( b-a+1 );
+        }
+
+        /**
+         *  This method no longer emulates any known diff format.
+         */
+        protected void print_hunk(bmsi.util.Diff.change hunk) {
+
+            /* Determine range of line numbers involved in each file.  */
+            analyze_hunk(hunk);
+            if (deletes == 0 && inserts == 0)
+                return;
+
+            /* Print out the line number header for this hunk */
+
+            if( inserts != 0 && deletes == 0 )
+            {
+                outfile.print("At line ");
+                print_number_range('-', first0, last0);
+                outfile.print(" added ");
+                print_range_length(first1, last1);
+                outfile.print(" line" + ((last1-first1 == 0)? "." : "s.") );
+            }
+            else if( deletes != 0 && inserts == 0 )
+            {
+                outfile.print("Removed line"+((last0-first0 == 0)? " " : "s "));
+                print_number_range('-', first0, last0);
+                // outfile.print(" removed ");
+                // print_range_length(first1, last1);                
+                // outfile.print(" line" + ((last1-first1 == 0)? "." : "s.") );
+            }
+            else
+            {
+                if( last0-first0 == 0 )
+                {
+                    outfile.print("Line ");
+                    print_number_range('-', first0, last0);
+                    outfile.print(" was replaced by ");
+                }
+                else
+                {
+                    outfile.print("Lines ");
+                    print_number_range('-', first0, last0);
+                    outfile.print(" were replaced by ");
+                }
+
+                outfile.print( "line"+((last1-first1 == 0) ? " " : "s "));
+
+                print_number_range('-', first1, last1);                
+            }
+
+
+            outfile.println();
+
+            /* Print the lines that the first file has.  */
+            if (deletes != 0)
+                for (int i = first0; i <= last0; i++)
+                    print_1_line("- ", file0[i]);
+
+            /*
+            if (inserts != 0 && deletes != 0)
+                outfile.println("===");
+            */
+
+            /* Print the lines that the second file has.  */
+            if (inserts != 0)
+                for (int i = first1; i <= last1; i++)
+                    print_1_line("+ ", file1[i]);
+        }
+
+    }
+
+    /**
+     *  Again, lifted from org.mahlen.hula.utils.VersionUtil.
+     */
+    private static String[] stringToArray(String str) 
+        throws IOException 
+    {
+        BufferedReader rdr = new BufferedReader(new StringReader(str));
+        Vector s = new Vector();
+        for(;;) 
+        {
+            String line = rdr.readLine();
+            if (line == null) break;
+            s.addElement(line);
+        }
+        String[] a = new String[s.size()];
+        s.copyInto(a);
+        return a;
+    }
     /**
      *  Makes the diff by calling "diff" program.
      */
