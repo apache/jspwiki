@@ -31,12 +31,15 @@ import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.acl.AccessControlList;
 import com.ecyrd.jspwiki.acl.AclEntryImpl;
 import com.ecyrd.jspwiki.acl.AclImpl;
 import com.ecyrd.jspwiki.auth.permissions.*;
+import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -47,7 +50,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class AuthorizationManager
 {
     public static final String PROP_STRICTLOGINS = "jspwiki.policy.strictLogins";
-
+    public static final String PROP_AUTHORIZER   = "jspwiki.authorizer";
+ 
     static Category log = Category.getInstance( AuthorizationManager.class );
 
     private WikiAuthorizer    m_authorizer;
@@ -57,11 +61,18 @@ public class AuthorizationManager
 
     private WikiEngine        m_engine;
 
+    /**
+     * Creates a new AuthorizationManager, owned by engine and initialized
+     * according to the settings in properties. Expects to find property
+     * 'jspwiki.authorizer' with a valid WikiAuthorizer implementation name
+     * to take care of authorization.
+     */
     public AuthorizationManager( WikiEngine engine, Properties properties )
+        throws WikiException
     {
         m_engine = engine;
 
-        m_authorizer = new PageAuthorizer();  // FIXME: Should be settable
+        m_authorizer = getAuthorizerImplementation( properties );
         m_authorizer.initialize( engine, properties );
 
         m_strictLogins = TextUtil.getBooleanProperty( properties,
@@ -140,6 +151,54 @@ public class AuthorizationManager
 
         return acl;
     }
+
+
+    /**
+     * Attempts to locate and initialize a WikiAuthorizer to use with this manager.
+     * Throws a WikiException if no entry is found, or if one fails to initialize.
+     *
+     * @param props jspwiki.properties, containing a 'jpswiki.authorizer' class name
+     * @return a WikiAuthorizer used to get page authorization information
+     * @throws WikiException
+     */
+    private WikiAuthorizer getAuthorizerImplementation( Properties props )
+        throws WikiException
+    {
+        String authClassName = props.getProperty( PROP_AUTHORIZER );
+        WikiAuthorizer impl = null;
+                                                                                
+        if( authClassName != null )
+        {
+            try
+            {
+                // TODO: this should probably look in package ...modules
+                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth", authClassName );
+                impl = (WikiAuthorizer)authClass.newInstance();
+                return( impl );
+            }
+            catch( ClassNotFoundException e )
+            {
+                log.fatal( "Authenticator "+authClassName+" cannot be found", e);
+                throw new WikiException("Authenticator cannot be found");
+            }
+            catch( InstantiationException e )
+            {
+                log.fatal( "Authenticator "+authClassName+" cannot be created",e );
+                throw new WikiException("Authenticator cannot be created");
+            }
+            catch( IllegalAccessException e )
+            {
+                log.fatal( "You are not allowed to access this authenticator class", e );
+                throw new WikiException("You are not allowed to access this authenticator class");
+            }
+        }
+        else
+        {
+            throw new NoRequiredPropertyException( "Unable to find a " + PROP_AUTHORIZER + 
+                                                   " entry in the properties.", PROP_AUTHORIZER );
+        }
+    }
+
 
     /**
      *  Returns true or false, depending on whether this action
