@@ -25,4 +25,12 @@ Here are some strategical figures and other interesting things about this partic
 | __If we do, what's the file name?__ | [{$jspwiki.rss.fileName}]
 | __How often is the RSS updated?__ |  [{$jspwiki.rss.interval}]
 
-JSPWiki home page is at [http://www.ecyrd.com/JSPWiki/]. Welcome!
+----
+
+!Pages currently being edited
+
+[{ListLocksPlugin}]
+
+----
+
+JSPWiki home page is at [http://www.jspwiki.org/]. Welcome!
