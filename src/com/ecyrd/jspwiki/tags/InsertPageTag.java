@@ -89,6 +89,12 @@ public class InsertPageTag
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
+            //
+            //  NB: The page might not really exist if the user is currently
+            //      creating it (i.e. it is not yet in the cache or providers), 
+            //      AND we got the page from the wikiContext.
+            //
+
             if( engine.pageExists( page ) )
             {
                 log.debug("Inserting page "+page);
