@@ -1,5 +1,9 @@
 2001-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * We now use pageContext.forward() to go to the PageModified.jsp
+        when a concurrent modification occurs, instead of using redirect.
+        Thanks to Chris Brooking for this hint.
+
         * Slight cosmetical changes in jspwiki_ns.css
 
         * Added comments around Javascript code in cssinclude.js to better
