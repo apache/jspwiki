@@ -11,7 +11,7 @@ import com.ecyrd.jspwiki.attachment.*;
 public class WikiEngineTest extends TestCase
 {
     public static final String NAME1 = "Test1";
-    public static final long PAGEPROVIDER_RESCAN_PERIOD = 2000L;
+    public static final long PAGEPROVIDER_RESCAN_PERIOD = 2;
 
     Properties props = new Properties();
 
@@ -39,24 +39,14 @@ public class WikiEngineTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-	// We'll need a shorter-than-default consistency check for
-	// the page-changed checks. This will cause additional load
-	// to the file system, though.
-	props.setProperty( CachingProvider.PROP_CACHECHECKINTERVAL, 
-			   Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
+        // We'll need a shorter-than-default consistency check for
+        // the page-changed checks. This will cause additional load
+        // to the file system, though.
+        props.setProperty( CachingProvider.PROP_CACHECHECKINTERVAL, 
+                           Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
 
-        //
-        //  We must make sure that the reference manager cache is cleaned before.
-        //
-        String workDir = props.getProperty( "jspwiki.workDir" );
-
-        if( workDir != null )
-        {
-            File refmgrfile = new File( workDir, "refmgr.ser" );
-            if( refmgrfile.exists() ) refmgrfile.delete();
-        }
-
-        m_engine = new TestEngine(props);
+        TestEngine.emptyWorkDir();
+        m_engine = new TestEngine(props);        
     }
 
     public void tearDown()
@@ -171,7 +161,7 @@ public class WikiEngineTest extends TestCase
         assertEquals( "singular mistake", "Foobars",
                       m_engine.getFinalPageName( "Foobar" ) );
     }
-
+    
     public void testPutPage()
         throws Exception
     {
@@ -614,10 +604,10 @@ public class WikiEngineTest extends TestCase
         FileUtil.copyContents( new StringReader("Puppaa"), out );
         out.close();
 
-	// Wait for the caching provider to notice a refresh.
-        Thread.sleep( 2L*PAGEPROVIDER_RESCAN_PERIOD );
+        // Wait for the caching provider to notice a refresh.
+        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD );
 
-	// Trim - engine.saveText() may append a newline.
+        // Trim - engine.saveText() may append a newline.
         String text = m_engine.getText( NAME1 ).trim();
         assertEquals( "wrong contents", "Puppaa", text );
     }
@@ -650,7 +640,7 @@ public class WikiEngineTest extends TestCase
         FileUtil.copyContents( new StringReader("[Puppaa]"), out );
         out.close();
 
-        Thread.sleep( 5000L ); // Wait five seconds for CachingProvider to wake up.
+        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD ); // Wait five seconds for CachingProvider to wake up.
 
         String text = m_engine.getText( NAME1 );
 
@@ -659,8 +649,8 @@ public class WikiEngineTest extends TestCase
         c = refMgr.findUncreated();
 
         assertTrue( "Non-existent reference after external page change " +
-		    "not detected by ReferenceManager",
-		    Util.collectionContains( c, "Puppaa" ));
+                    "not detected by ReferenceManager",
+                    Util.collectionContains( c, "Puppaa" ));
     }
 
 
@@ -691,7 +681,7 @@ public class WikiEngineTest extends TestCase
 
         assertFalse( "File not deleted!", saved.exists() );
 
-        Thread.sleep( 5000L ); // Wait five seconds for CachingProvider to catch up.
+        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD ); // Wait five seconds for CachingProvider to catch up.
 
         WikiPage p = m_engine.getPage( NAME1 );
 
@@ -704,7 +694,7 @@ public class WikiEngineTest extends TestCase
         c = refMgr.findUncreated();
         assertEquals( "NEW: uncreated count", 0, c.size() );
     }
-    /*
+
     public void testDeletePage()
         throws Exception
     {
@@ -717,9 +707,8 @@ public class WikiEngineTest extends TestCase
 
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
-        m_engine.deletePage( page );
+        m_engine.deletePage( page.getName() );
 
         assertFalse( "Page has not been removed!", saved.exists() );
     }
-    */
 }
