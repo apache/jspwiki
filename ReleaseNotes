@@ -1,48 +1,10 @@
 
-This is a stable (well, hopefully) release of JSPWiki.
+This is a beta release of JSPWiki.
 
-Major changes since the last stable (1.5.0) release are:
-
-- Author information is saved in the RCS files as well.  If the author
-  is not authenticated, then the IP address is saved.
-
-- Document type declarations should now be correct in all JSP files.
-  This should have no effect, but some browsers are known to change
-  rendering modes (such as Mozilla) so there might be some changes to
-  the way things look.
-
-- You can't put Javascript inside links anymore.  Nyah, nyah =).
-
-- PageInfo is no longer in UTC, but the local timezone.
-
-- Full UTF-8 support.  This is settable in the jspwiki.properties.
-  Everything should still fall back to ISO-8859-1 if need be.
-
-- new CSS styles
-
-- Environment is now inherited from parent when running RCS commands.
-  This should help with some Windows-related problems.
-
-- URL encoding scheme has changed slightly to work around a bug in
-  Sun JDKs 1.2 - 1.3.
+Major changes since the last stable (1.6.0) release are:
 
 
 
 UPGRADE NOTES
 =============
-
-- Most JSP pages have changed again, thanks to new CSS styles and the
-  UTF-8 support.  This time the changes have been quite minimal,
-  mostly calling WikiEngine.safeGetParameter() instead of
-  request.getParameter().
-
-- If you upgrade from your existing ISO-8859-1 -based system to UTF-8,
-  note that whenever a page is saved, it is saved as UTF-8.  So
-  basically conversion happens whenever someone edits a page.
-  However, there is no going back to ISO-8859-1 - this is a one-way
-  street (unless you convert everything by hand, of course.)
-
-- Note that not all browsers support UTF-8, most notably old versions
-  of Netscape Navigator.  You may have interesting problems with
-  NS4.x.  I'd recommend at least NS6.1, or with IE, 5.0 or above.
 
