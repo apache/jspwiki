@@ -53,6 +53,7 @@ public class TranslatorReader extends Reader
     private static final int              IMAGE = 5;
     private static final int              EXTERNAL = 6;
     private static final int              INTERWIKI = 7;
+    private static final int              IMAGELINK = 8;
 
     private BufferedReader m_in;
 
@@ -237,12 +238,13 @@ public class TranslatorReader extends Reader
 
     /**
      *  Write a HTMLized link depending on its type.
+     *  The link mutator chain is processed.
      *
      *  @param type Type of the link.
      *  @param link The actual link.
      *  @param text The user-visible text for the link.
      */
-    private String makeLink( int type, String link, String text )
+    public String makeLink( int type, String link, String text )
     {
         String result;
 
@@ -301,6 +303,10 @@ public class TranslatorReader extends Reader
             //
           case IMAGE:
             result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\">";
+            break;
+
+          case IMAGELINK:
+            result = "<A HREF=\""+text+"\"><IMG CLASS=\"inline\" SRC=\""+link+"\"></A>";
             break;
 
           case EXTERNAL:
@@ -497,10 +503,22 @@ public class TranslatorReader extends Reader
 
                     if( isImageLink( reallink ) )
                     {
-                        // Image links are handled differently (most probably
-                        // inlined.
-                        line = TextUtil.replaceString( line, start, end+1,
-                                                       makeLink( IMAGE, reallink, link ) );
+                        //
+                        // Image links are handled differently.  If the text is
+                        // an external link, then it is inlined.  Otherwise it becomes
+                        // an ALT text.
+                        //
+
+                        if( isExternalLink( link ) )
+                        {
+                            line = TextUtil.replaceString( line, start, end+1,
+                                                           makeLink( IMAGELINK, reallink, link ) );
+                        }
+                        else
+                        {
+                            line = TextUtil.replaceString( line, start, end+1,
+                                                           makeLink( IMAGE, reallink, link ) );
+                        }
                     }
                     else
                     {
