@@ -350,7 +350,8 @@ public class PluginManager
      *  @param argstring The argument string to the plugin.  This is
      *  typically a list of key-value pairs, using "'" to escape
      *  spaces in strings, followed by an empty line and then the
-     *  plugin body.
+     *  plugin body.  In case the parameter is null, will return an
+     *  empty parameter list.
      *
      *  @return A parsed list of parameters.  The plugin body is put
      *  into a special parameter defined by PluginManager.PARAM_BODY.
@@ -365,6 +366,11 @@ public class PluginManager
         StringReader    in      = new StringReader(argstring);
         StreamTokenizer tok     = new StreamTokenizer(in);
         int             type;
+
+        //
+        //  Protection against funny users.
+        //
+        if( argstring == null ) return arglist;
 
         String param = null, value = null;
 
