@@ -23,6 +23,7 @@
     }
 
     String ok = request.getParameter("ok");
+    String clear = request.getParameter("clear");
 
     if( ok != null || "save".equals(request.getParameter("action")) )
     {
@@ -47,6 +48,15 @@
 
         response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
     }
+    else if( clear != null )
+    {
+        Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, "" );
+        prefs.setMaxAge( 0 );
+        response.addCookie( prefs );
+
+        // FIXME: Should really redirect to some other place, like this page.
+        response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+    }       
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
@@ -92,6 +102,22 @@
          <INPUT type="submit" name="ok" value="Set my preferences!">
          <INPUT type="hidden" name="action" value="save">
       </FORM>
+
+      <HR/>
+
+      <H3>Removing your preferences</h3>
+
+      <P>In some cases, you may need to remove the above preferences from the computer.
+      Click the button below to do that.  Note that it will remove all preferences
+      you've set up, permanently.  You will need to enter them again.</P>
+
+      <DIV align="center">
+      <FORM action="<%=wiki.getBaseURL()%>UserPreferences.jsp"
+            method="POST"
+            ACCEPT-CHARSET="UTF-8">
+      <INPUT type="submit" name="clear" value="Remove preferences from this computer" />
+      </FORM>
+      </DIV>
 
     </TD>
   </TR>
