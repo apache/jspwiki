@@ -1,3 +1,10 @@
+2003-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.87.
+
+        * Changed the default template to have a better structure w/
+        respect to the cssinclude.js script.
+
 2003-11-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.86.
