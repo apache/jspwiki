@@ -1449,25 +1449,6 @@ public class TranslatorReaderTest extends TestCase
         return false;
     }
 
-    public void testGroup1()
-        throws Exception
-    {
-        String src = "[{MEMBERS FooBar, Alice, Bob}]";
-        WikiPage p = new WikiPage( PAGE_NAME );
-
-        String res = translate( p, src );
-
-        List memberlist = (List) p.getAttribute("_members");
-
-        assertNotNull( "no member list", memberlist );
-        assertEquals( "wrong number of entries", 3, memberlist.size() );
-
-        
-        assertTrue( "Alice", containsGroup( memberlist, "Alice" ) );
-        assertTrue( "FooBar", containsGroup( memberlist, "FooBar" ) );
-        assertTrue( "Bob", containsGroup( memberlist, "Bob" ) );
-    }
-
     /**
      *   Metadata tests
      */
