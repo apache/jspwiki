@@ -19,13 +19,28 @@
  */
 package com.ecyrd.jspwiki.tags;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.UserProfile;
+
 
 /**
- *  Includes the content if an user check validates.
+ * Includes the content if an user check validates. A UserProfile
+ * always exists, and its status is UNKNOWN, NAMED, or VALIDATED.
+ * The value of the <i>exists</i> of this tag may be
+ *
+ * <ul>
+ * <li>"unknown"     - the body of the tag is included if the user is UNKNOWN
+ * <li>"known  "     - the body of the tag is included if the user is not UNKNOWN
+ * <li>"named"       - the body of the tag is included if the user is NAMED or VALIDATED
+ * <li>"validated"   - the body of the tag is included if the user is VALIDATED
+ * <li>"unvalidated" - the body of the tag is included if the user is not VALIDATED
+ * </ul>
+ *
+ * Any other match causes the body to be skipped.
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -33,31 +48,44 @@ import com.ecyrd.jspwiki.WikiPage;
 public class UserCheckTag
     extends WikiTagBase
 {
-    private String m_exists;
+    private String m_status;
 
-    public String getExists()
+    public String getStatus()
     {
-        return m_exists;
+        return( m_status );
     }
 
-    public void setExists( String arg )
+    public void setStatus( String arg )
     {
-        m_exists = arg;
+        m_status = arg;
     }
 
     public final int doWikiStartTag()
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        String user = engine.getUserName( (javax.servlet.http.HttpServletRequest)pageContext.getRequest() );
+        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+        UserProfile wup = engine.getUserProfile( request );
 
-        if( "true".equals(getExists()) && user != null )
+        if( m_status != null )
         {
-            return EVAL_BODY_INCLUDE;
-        }
-        else if( "false".equals(getExists()) && user == null )
-        {
-            return EVAL_BODY_INCLUDE;
+            if( wup == null )
+            {
+                // This should be impossible.
+                log.error( "UserProfile has not been created!" );
+                return( SKIP_BODY );
+            }
+
+            if( "unknown".equals( m_status ) && wup.getStatus() == UserProfile.UNKNOWN )
+                return EVAL_BODY_INCLUDE;
+            else if( "known".equals( m_status ) && wup.getStatus() > UserProfile.UNKNOWN )
+                return EVAL_BODY_INCLUDE;
+            else if( "named".equals( m_status ) && wup.getStatus() == UserProfile.NAMED )
+                return EVAL_BODY_INCLUDE;
+            else if( "validated".equals( m_status ) && wup.getStatus() == UserProfile.VALIDATED )
+                return EVAL_BODY_INCLUDE;
+            else if( "unvalidated".equals( m_status ) && wup.getStatus() != UserProfile.VALIDATED )
+                return EVAL_BODY_INCLUDE;
         }
 
         return SKIP_BODY;
