@@ -129,6 +129,8 @@ public class DiffLinkTag
             WikiPage latest = engine.getPage( pageName,
                                               WikiProvider.LATEST_VERSION );
 
+            if( latest == null ) return SKIP_BODY;
+
             r2 = latest.getVersion();
         }
         else if( VER_PREVIOUS.equals(getNewVersion()) )
