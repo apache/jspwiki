@@ -27,7 +27,7 @@ public class StressTestRCSProvider extends TestCase
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki_rcs.properties") );
 
-        engine = new TestEngine2(props);
+        engine = new TestEngine(props);
     }
 
     public void tearDown()

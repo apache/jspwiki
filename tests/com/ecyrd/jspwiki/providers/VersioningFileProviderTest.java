@@ -28,7 +28,7 @@ public class VersioningFileProviderTest extends TestCase
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki_vers.properties") );
 
-        engine = new TestEngine2(props);
+        engine = new TestEngine(props);
     }
 
     public void tearDown()

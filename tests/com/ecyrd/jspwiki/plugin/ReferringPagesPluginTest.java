@@ -9,7 +9,7 @@ import java.util.*;
 public class ReferringPagesPluginTest extends TestCase
 {
     Properties props = new Properties();
-    TestEngine2 engine;
+    TestEngine engine;
     WikiContext context;
     PluginManager manager;
     
@@ -23,7 +23,7 @@ public class ReferringPagesPluginTest extends TestCase
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
 
-        engine = new TestEngine2(props);
+        engine = new TestEngine(props);
 
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [TestPage]." );

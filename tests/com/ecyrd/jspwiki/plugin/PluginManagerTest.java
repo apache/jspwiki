@@ -28,7 +28,7 @@ public class PluginManagerTest extends TestCase
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
 
-        engine = new TestEngine2(props);
+        engine = new TestEngine(props);
         context = new WikiContext( engine, "testpage" );
         manager = new PluginManager( props );
     }

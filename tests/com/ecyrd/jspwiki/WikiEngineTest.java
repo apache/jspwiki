@@ -25,7 +25,7 @@ public class WikiEngineTest extends TestCase
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
 
-        engine = new TestEngine2(props);
+        engine = new TestEngine(props);
     }
 
     public void tearDown()
@@ -50,7 +50,7 @@ public class WikiEngineTest extends TestCase
 
         try
         {
-            WikiEngine test = new TestEngine2( props );
+            WikiEngine test = new TestEngine( props );
 
             fail( "Wiki did not warn about wrong property." );
         }
@@ -67,7 +67,7 @@ public class WikiEngineTest extends TestCase
 
         try
         {
-            WikiEngine test = new TestEngine2( props );
+            WikiEngine test = new TestEngine( props );
 
             fail( "Wiki did not warn about missing property." );
         }
@@ -131,7 +131,7 @@ public class WikiEngineTest extends TestCase
 
         props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
 
-        WikiEngine engine = new TestEngine2( props );
+        WikiEngine engine = new TestEngine( props );
 
         assertEquals( "A%E2%89%A2%CE%91.",
                       engine.encodeName(name) );
