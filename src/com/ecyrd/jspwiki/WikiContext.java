@@ -21,9 +21,15 @@ package com.ecyrd.jspwiki;
 
 public class WikiContext
 {
-    WikiPage m_page;
+    WikiPage   m_page;
     WikiEngine m_engine;
-    
+    String     m_requestContext = VIEW;
+
+    public static final String    VIEW = "view";
+    public static final String    EDIT = "edit";
+    public static final String    DIFF = "diff";
+    public static final String    INFO = "info";
+
     public WikiContext( WikiEngine engine, String pagename )
     {
         m_page   = new WikiPage( pagename );
@@ -45,4 +51,19 @@ public class WikiContext
     {
         return m_page;
     }
+
+
+    public String getRequestContext()
+    {
+        return m_requestContext;
+    }
+
+    /**
+     *  Sets the request context.
+     */
+    public void setRequestContext( String arg )
+    {
+        m_requestContext = arg;
+    }
+
 }
