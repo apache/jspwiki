@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.providers;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.IOException;
 
 import java.util.Collection;
 
@@ -48,13 +49,16 @@ public interface WikiAttachmentProvider
      *  Put new attachment data.
      */
     public void putAttachmentData( Attachment att, InputStream data )
-        throws ProviderException;
+        throws ProviderException,
+               IOException;
 
     /**
      *  Get attachment data.
      */
 
-    public InputStream getAttachmentData( Attachment att );
+    public InputStream getAttachmentData( Attachment att )
+        throws ProviderException,
+               IOException;
 
     /**
      *  Lists all attachments attached to a page.

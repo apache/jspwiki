@@ -262,12 +262,17 @@ public class AttachmentServlet
             // Inform the JSP page of which file we are handling:
             req.setAttribute( ATTR_ATTACHMENT, wikiname );
         }
+        catch( ProviderException e )
+        {
+            msg = "Upload failed because the provider failed: "+e.getMessage();
+            log.warn( msg + " (attachment: " + attName + ")", e );
+        }
         catch( IOException e )
         {
             // Show the submit page again, but with a bit more 
             // intimidating output.
             msg = "Upload failure: " + e.getMessage();
-            log.debug( msg + " (attachment: " + attName + ")" );
+            log.warn( msg + " (attachment: " + attName + ")", e );
         }
 
         return( msg );
