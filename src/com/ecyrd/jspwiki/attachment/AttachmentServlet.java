@@ -183,7 +183,6 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res ) 
         throws IOException, ServletException 
     {
-        String page     = m_engine.safeGetParameter( req, "page" );
         String version  = m_engine.safeGetParameter( req, HDR_VERSION );
         String nextPage = m_engine.safeGetParameter( req, "nextpage" );
 
@@ -195,15 +194,8 @@ public class AttachmentServlet
 
         UserProfile wup = m_engine.getUserManager().getUserProfile( req );
 
-        if( page == null )
-        {
-            page = HttpUtil.parsePageFromURL( req,
-                                              m_engine.getContentEncoding() );
-            if( page != null )
-            {
-                page = TextUtil.urlDecodeUTF8( page );
-            }
-        }
+        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+        String page = context.getPage().getName();
 
         if( page == null )
         {
