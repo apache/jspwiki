@@ -7,7 +7,7 @@ Major changes since the last stable (1.8.2) release are:
   (InterCapping, BumpyWords, CamelCase, ...)
 
 - Splitting of Wiki pages into "Controller" and "View" pages has
-  begun.  The user-modifiable HTML templates can be found in
+  been done.  The user-modifiable HTML templates can be found in
   "templates/default" -directory.
 
 - There is a new addition to WikiLanguage: Definition lists
@@ -16,11 +16,19 @@ Major changes since the last stable (1.8.2) release are:
 
 - There is a new variable system, documented in WikiVariables.
 
+- Default Edit window background has been changed :-)
+
+- Many pages have had slight changes to the way they look.
+
+- UserPreferences now checks for username validity. 
+
 - New plugins:
    * IndexPlugin (by Alain Ravet)
 
 UPGRADE NOTES
 =============
+
+(NB: These notes are still incomplete).
 
 - If updating manually (from v1.8.0):
 

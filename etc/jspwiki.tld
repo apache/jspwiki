@@ -230,6 +230,29 @@
   </tag>
 
   <tag>
+    <name>SearchResultIterator</name>
+    <tagclass>com.ecyrd.jspwiki.tags.SearchResultIteratorTag</tagclass>
+    <teiclass>com.ecyrd.jspwiki.tags.SearchResultIteratorInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>id</name>
+    </attribute>
+    <attribute>
+       <name>maxItems</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>list</name>
+       <required>true</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
+  </tag>  
+
+  <tag>
     <name>Translate</name>
     <tagclass>com.ecyrd.jspwiki.tags.TranslateTag</tagclass>
     <bodycontent>JSP</bodycontent>
