@@ -1,5 +1,8 @@
 2001-11-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Now replaces HTML entities correctly also in getText().  Thanks
+        to Kim Holviala for pointing this one out.
+
         * This is release v1.6.0.
 
         * Quotes in HTML text is now escaped using &quot;
