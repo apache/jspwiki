@@ -1,6 +1,9 @@
 package bmsi.util;
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.1  2002/05/22 19:24:35  jalkanen
+/* Initial import from BMSI source.
+/*
  * Revision 1.2  2000/03/02  16:59:54  stuart
  * add GPL
  *
@@ -23,16 +26,16 @@ interface UnaryPredicate {
  Copyright (C) 2000 Business Management Systems, Inc.
  <p>
  This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
+ it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation; either version 1, or (at your option)
  any later version.
  <p>
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+ GNU Lesser General Public License for more details.
  <p>
- You should have received a copy of the GNU General Public License
+ You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
