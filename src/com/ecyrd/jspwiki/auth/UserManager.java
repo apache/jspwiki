@@ -1,12 +1,15 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.util.Properties;
+import java.util.HashMap;
+import java.security.Principal;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 import java.security.Principal;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
 
 /**
@@ -25,13 +28,40 @@ public class UserManager
     /** If true, logs the IP address of the editor */
     private boolean            m_storeIPAddress = true;
 
+    private HashMap            m_groups = new HashMap();
+
+    // FIXME: These should probably be localized.
+    public static final String GROUP_GUEST       = "Guest";
+    public static final String GROUP_NAMEDGUEST  = "NamedGuest";
+    public static final String GROUP_KNOWNPERSON = "KnownPerson";
+
+    private WikiAuthenticator  m_authenticator;
+    // private WikiPrincipalist   m_principalist;
+
+    private WikiEngine         m_engine;
 
     public UserManager( WikiEngine engine, Properties props )
+        throws NoRequiredPropertyException
     {
+        m_engine = engine;
+
         m_storeIPAddress = TextUtil.getBooleanProperty( props,
                                                         PROP_STOREIPADDRESS, 
                                                         m_storeIPAddress );
 
+        // FIXME: We probably should set the names for these groups.
+        m_groups.put( GROUP_GUEST,       new AllGroup() );
+        m_groups.put( "All",             new AllGroup() ); // FIXME: Hard-coded.
+        m_groups.put( GROUP_NAMEDGUEST,  new NamedGroup() );
+        m_groups.put( GROUP_KNOWNPERSON, new KnownGroup() );
+
+        //
+        //  FIXME: These should not be hardcoded.
+        //
+        /*
+        m_principalist = new WikiPagePrincipalist();
+        m_principalist.initialize( m_engine, props );
+        */
     }
 
     // FIXME: Should really in the future use a cache of known user profiles,
@@ -46,19 +76,54 @@ public class UserManager
         return wup;
     }
 
-    // FIXME: Ditto
+    /**
+     *  Returns a WikiGroup instance for a given name.  WikiGroups are cached,
+     *  so there is basically a singleton across the Wiki for a group.
+     *  The reason why this class caches them instead of the WikiGroup
+     *  class itself is that it is the business of the User Manager to
+     *  handle such issues.
+     *
+     *  @param name Name of the group.  This is case-sensitive.
+     *  @return A WikiGroup instance.
+     */
+    // FIXME: Someone should really check when groups cease to be used,
+    //        and release groups that are not being used.
+
     public WikiGroup getWikiGroup( String name )
     {
-        WikiGroup group = new WikiGroup();
+        WikiGroup group;
 
-        group.setName( name );
+        synchronized( m_groups )
+        {
+            group = (WikiGroup) m_groups.get( name );
+
+            /*
+            if( group == null )
+            {
+                group = new WikiGroup();
+                group.setName( name );
+                m_groups.put( name, group );
+            }
+            */
+        }
 
         return group;
     }
 
+    /**
+     *  Attempts to find a Principal from the list of known principals.
+     */
     public Principal getPrincipal( String name )
     {
-        return getUserProfile(name); // FIXME: This is a kludge to get things compiling.
+        Principal p = null;
+        // Principal p = m_principalist.getPrincipal( name );
+
+        if( p == null )
+        {
+            p = new UndefinedPrincipal( name );
+        }
+
+        return p;
     }
 
     public void login( String username, String password, HttpSession session )
@@ -78,6 +143,7 @@ public class UserManager
             if( wup != null )
             {
                 log.info( "logged out user " + wup.getName() );
+                wup.setLoginStatus( UserProfile.NONE );
             }
             session.invalidate();
         }
@@ -132,9 +198,7 @@ public class UserManager
             wup = UserProfile.parseStringRepresentation( storedUsername );
 
             log.debug("wup="+wup);
-            // wup.setStatus( UserProfile.NAMED );
-            // JSPWiki special: named readers belong to special group 'participant'
-            // m_authorizer.addRole( wup, Authorizer.AUTH_ROLE_PARTICIPANT );
+            wup.setLoginStatus( UserProfile.COOKIE );
         }
         else
         {
@@ -148,9 +212,7 @@ public class UserManager
                 uid = "unknown"; // FIXME: Magic
             }
             wup = getUserProfile( uid );
-            // wup.setStatus( UserProfile.UNKNOWN );
-            // JSPWiki special: unknown people belong to group 'guest'
-            // m_authorizer.addRole( wup, Authorizer.AUTH_ROLE_GUEST );
+            wup.setLoginStatus( UserProfile.NONE );
         }
 
         // Limited login hasn't been authenticated. Just to emphasize the point:
