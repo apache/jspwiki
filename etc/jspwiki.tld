@@ -345,6 +345,12 @@
   </tag>  
 
   <tag>
+    <name>TemplateDir</name>
+    <tagclass>com.ecyrd.jspwiki.tags.TemplateDirTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
     <name>Translate</name>
     <tagclass>com.ecyrd.jspwiki.tags.TranslateTag</tagclass>
     <bodycontent>JSP</bodycontent>
