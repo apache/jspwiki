@@ -6,7 +6,7 @@
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.EditPermission" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.CommentPermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -16,7 +16,7 @@
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
 
-    Logger log = Category.getLogger("JSPWiki");
+    Logger log = Logger.getLogger("JSPWiki");
     WikiEngine wiki;
 %>
 
@@ -109,31 +109,20 @@
 
         wikiContext.getPage().setAuthor( currentUser.getName() );        
 
-        //
-        //  If this is a comment, then we just append it to the page.
-        //  If it is a full edit, then we will replace the previous contents.
-        //
-        if( comment != null )
+        StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+        pageText.append( wiki.safeGetParameter( request, "text" ) );
+
+        if( author != null )
         {
-            StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
-            pageText.append( "\n\n----\n\n" );
-            pageText.append( wiki.safeGetParameter( request, "text" ) );
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
 
-            if( author != null )
-            {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
-
-                pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
-            }
-
-            wiki.saveText( wikiContext, pageText.toString() );
+            pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
         }
-        else
-        {
-            wiki.saveText( wikiContext,
-                           wiki.safeGetParameter( request, "text" ) );
-        }
+
+        pageText.append( "\n\n----\n\n" );
+
+        wiki.saveText( wikiContext, pageText.toString() );
 
         response.sendRedirect(wiki.getViewURL(pagereq));
         return;
