@@ -1961,10 +1961,10 @@ public class TranslatorReader extends Reader
                         }
                         else
                         {
-                            System.out.println("Checking for potential URI: "+potentialLink);
+                            // System.out.println("Checking for potential URI: "+potentialLink);
                             if( isExternalLink( potentialLink ) )
                             {
-                                System.out.println("buf="+buf);
+                                // System.out.println("buf="+buf);
                                 start = buf.toString().lastIndexOf( potentialLink );
 
                                 if( start >= 0 )
@@ -1973,13 +1973,13 @@ public class TranslatorReader extends Reader
 
                                     link = potentialLink + (char)ch + link; // Do not forget the start.
 
-                                    System.out.println("start="+start+", pl="+potentialLink);
+                                    // System.out.println("start="+start+", pl="+potentialLink);
 
                                     buf.replace( start,
                                                  start + potentialLink.length(),
                                                  makeDirectURILink( link ) );
 
-                                    System.out.println("Resulting with "+buf);
+                                    // System.out.println("Resulting with "+buf);
 
                                     ch = nextToken();
                                 }
