@@ -238,6 +238,24 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHyperlinksCCNegated()
+        throws Exception
+    {
+        String src = "This should not be a ~HyperLink.";
+
+        assertEquals( "This should not be a HyperLink.\n",
+                      translate(src) );
+    }
+
+    public void testHyperlinksCCNegated2()
+        throws Exception
+    {
+        String src = "~HyperLinks should not be matched.";
+
+        assertEquals( "HyperLinks should not be matched.\n",
+                      translate(src) );
+    }
+
     public void testHyperlinksExt()
         throws Exception
     {
