@@ -74,8 +74,8 @@ import com.ecyrd.jspwiki.filters.BasicPageFilter;
  *  first is indexed by WikiPage names and contains a Collection of all
  *  WikiPages the page refers to. (Multiple references are not counted,
  *  naturally.) The second is indexed by WikiPage names and contains 
- *  a HashSet of all pages that refer to the indexing page. (Notice - 
- *  the keys of both HashMaps should be kept in sync.)
+ *  a Set of all pages that refer to the indexing page. (Notice - 
+ *  the keys of both Maps should be kept in sync.)
  *  <P>
  *  When a page is added or edited, its references are parsed, a Collection
  *  is received, and we crudely replace anything previous with this new
@@ -100,12 +100,12 @@ public class ReferenceManager
      *  must contain Strings. The Collection may contain names of non-existing
      *  pages.
      */
-    private HashMap        m_refersTo;
-    /** Maps page wikiname to a HashSet of referring pages. The HashSet must
+    private Map            m_refersTo;
+    /** Maps page wikiname to a Set of referring pages. The Set must
      *  contain Strings. Non-existing pages (a reference exists, but not a file
-     *  for the page contents) may have an empty HashSet in m_referredBy.
+     *  for the page contents) may have an empty Set in m_referredBy.
      */
-    private HashMap        m_referredBy;
+    private Map            m_referredBy;
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
 
@@ -125,7 +125,7 @@ public class ReferenceManager
     public ReferenceManager( WikiEngine engine, Collection pages )
     {
         log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
-        m_refersTo = new HashMap();
+        m_refersTo   = new HashMap();
         m_referredBy = new HashMap();
         m_engine = engine;
 
@@ -176,7 +176,7 @@ public class ReferenceManager
         //
         if( !m_referredBy.containsKey( page ) )
         {
-            m_referredBy.put( page, new HashSet() );
+            m_referredBy.put( page, new TreeSet() );
         }
 
         //
@@ -222,7 +222,7 @@ public class ReferenceManager
         while( it.hasNext() )
         {
             String referredPage = (String)it.next();
-            HashSet oldRefBy = (HashSet)m_referredBy.get( referredPage );
+            Set oldRefBy = (Set)m_referredBy.get( referredPage );
             if( oldRefBy != null )
             {
                 oldRefBy.remove( referrer );
@@ -267,7 +267,7 @@ public class ReferenceManager
             {
                 WikiPage page = (WikiPage)it.next();
                 // We add a non-null entry to referredBy to indicate the referred page exists
-                m_referredBy.put( page.getName(), new HashSet() );
+                m_referredBy.put( page.getName(), new TreeSet() );
                 // Just add a key to refersTo; the keys need to be in sync with referredBy.
                 m_refersTo.put( page.getName(), null );
             }
@@ -295,14 +295,14 @@ public class ReferenceManager
             return;
         }
 
-        HashSet referrers = (HashSet)m_referredBy.get( page );
+        Set referrers = (Set)m_referredBy.get( page );
 
         // Even if 'page' has not been created yet, it can still be referenced.
         // This requires we don't use m_referredBy keys when looking up missing
         // pages, of course. 
         if(referrers == null)
         {
-            referrers = new HashSet();
+            referrers = new TreeSet();
             m_referredBy.put( page, referrers );
         }
         referrers.add( referrer );
@@ -324,8 +324,8 @@ public class ReferenceManager
         while( it.hasNext() )
         {
             String key = (String) it.next();
-            //HashSet refs = (HashSet) m_referredBy.get( key );
-            HashSet refs = getReferenceList( m_referredBy, key );
+            //Set refs = (Set) m_referredBy.get( key );
+            Set refs = getReferenceList( m_referredBy, key );
             if( refs == null || refs.isEmpty() )
             {
                 unref.add( key );
@@ -339,7 +339,7 @@ public class ReferenceManager
     /**
      * Finds all references to non-existant pages. This requires a linear
      * scan through m_refersTo values; each value must have a corresponding
-     * key entry in the reference HashMaps, otherwise such a page has never
+     * key entry in the reference Maps, otherwise such a page has never
      * been created. 
      * <P>
      * Returns a Collection containing Strings of unreferenced page names.
@@ -348,7 +348,7 @@ public class ReferenceManager
      */
     public synchronized Collection findUncreated()
     {
-        HashSet uncreated = new HashSet();
+        TreeSet uncreated = new TreeSet();
 
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
         // We want to reread the code to make sure our HashMaps are in sync...
@@ -382,19 +382,19 @@ public class ReferenceManager
     /**
      *  Searches for the given page in the given Map.
      */
-    private HashSet getReferenceList( Map coll, String pagename )
+    private Set getReferenceList( Map coll, String pagename )
     {
-        HashSet refs = (HashSet)coll.get( pagename );
+        Set refs = (Set)coll.get( pagename );
         
         if( (refs == null || refs.size() == 0) && m_matchEnglishPlurals )
         {
             if( pagename.endsWith("s") )
             {
-                refs = (HashSet)coll.get( pagename.substring(0,pagename.length()-1) );
+                refs = (Set)coll.get( pagename.substring(0,pagename.length()-1) );
             }
             else
             {
-                refs = (HashSet)coll.get( pagename+"s" );
+                refs = (Set)coll.get( pagename+"s" );
             }
         }
 
@@ -408,7 +408,7 @@ public class ReferenceManager
      */
     public synchronized Collection findReferrers( String pagename )
     {
-        HashSet refs = getReferenceList( m_referredBy, pagename );
+        Set refs = getReferenceList( m_referredBy, pagename );
 
         if( refs == null || refs.isEmpty() )
         {
@@ -442,7 +442,7 @@ public class ReferenceManager
             {
                 String key = (String) it.next();
                 System.out.print( key + " referred by: " );
-                HashSet refs = (HashSet)m_referredBy.get( key );
+                Set refs = (Set)m_referredBy.get( key );
                 Iterator rit = refs.iterator();
                 while( rit.hasNext() )
                 {
