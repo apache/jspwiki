@@ -34,3 +34,4 @@
     <!-- User has no JavaScript support.  Thus, it is unlikely that
          his stylesheets would work either.  So, no stylesheets. -->
 </NOSCRIPT>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=<%=wiki.getContentEncoding()%>">
