@@ -1,6 +1,8 @@
 
 package com.ecyrd.jspwiki;
 
+import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.providers.*;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
@@ -1317,6 +1319,102 @@ public class TranslatorReaderTest extends TestCase
         String src = "{{{\ncode.}\n";
 
         assertEquals( "<PRE>\ncode.}\n</PRE>\n", translate(src) );
+    }
+
+
+    /**
+     *  Test collection of links.
+     */
+
+    public void testCollectingLinks()
+        throws Exception
+    {
+        LinkCollector coll = new LinkCollector();
+        String src = "[Test]";
+        WikiContext context = new WikiContext( testEngine,
+                                               PAGE_NAME );
+
+        TranslatorReader r = new TranslatorReader( context, 
+                                                   new BufferedReader( new StringReader(src)) );
+        r.addLocalLinkHook( coll );
+        r.addExternalLinkHook( coll );
+        r.addAttachmentLinkHook( coll );
+
+        StringWriter out = new StringWriter();
+        
+        FileUtil.copyContents( r, out );
+
+        Collection links = coll.getLinks();
+
+        assertEquals( "no links found", 1, links.size() );
+        assertEquals( "wrong link", "Test", links.iterator().next() );
+    }
+
+    public void testCollectingLinks2()
+        throws Exception
+    {
+        LinkCollector coll = new LinkCollector();
+        String src = "["+PAGE_NAME+"/Test.txt]";
+        WikiContext context = new WikiContext( testEngine,
+                                               PAGE_NAME );
+
+        TranslatorReader r = new TranslatorReader( context, 
+                                                   new BufferedReader( new StringReader(src)) );
+        r.addLocalLinkHook( coll );
+        r.addExternalLinkHook( coll );
+        r.addAttachmentLinkHook( coll );
+
+        StringWriter out = new StringWriter();
+        
+        FileUtil.copyContents( r, out );
+
+        Collection links = coll.getLinks();
+
+        assertEquals( "no links found", 1, links.size() );
+        assertEquals( "wrong link", PAGE_NAME+"/Test.txt", 
+                      links.iterator().next() );
+    }
+
+    public void testCollectingLinksAttachment()
+        throws Exception
+    {
+        // First, make an attachment.
+
+        try
+        {
+            Attachment att = new Attachment( PAGE_NAME, "TestAtt.txt" );
+            att.setAuthor( "FirstPost" );
+            testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+
+            LinkCollector coll = new LinkCollector();
+            String src = "[TestAtt.txt]";
+            WikiContext context = new WikiContext( testEngine,
+                                                   PAGE_NAME );
+
+            TranslatorReader r = new TranslatorReader( context, 
+                                                       new BufferedReader( new StringReader(src)) );
+            r.addLocalLinkHook( coll );
+            r.addExternalLinkHook( coll );
+            r.addAttachmentLinkHook( coll );
+
+            StringWriter out = new StringWriter();
+        
+            FileUtil.copyContents( r, out );
+
+            Collection links = coll.getLinks();
+
+            assertEquals( "no links found", 1, links.size() );
+            assertEquals( "wrong link", PAGE_NAME+"/TestAtt.txt", 
+                          links.iterator().next() );
+        }
+        finally
+        {
+            String files = testEngine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+            File storagedir = new File( files, PAGE_NAME+BasicAttachmentProvider.DIR_EXTENSION );
+
+            if( storagedir.exists() && storagedir.isDirectory() )
+                testEngine.deleteAll( storagedir );
+        }
     }
 
     
