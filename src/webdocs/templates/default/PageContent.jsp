@@ -26,6 +26,23 @@
       </wiki:NoSuchPage>
 
       <BR CLEAR="all" />
+
+      <wiki:HasAttachments>
+         <B>Attachments:</B>
+
+         <DIV class="attachments" align="center">
+         <table width="90%">
+         <wiki:AttachmentsIterator id="att">
+             <tr>
+             <td><A HREF="attach?page=<%=att.getName()%>&wikiname=<%=att.getFileName()%>"><img src="images/attachment_big.png" alt="<%=att.getFileName()%>"></A></td>
+             <td><wiki:PageInfoLink><%=att.getFileName()%></wiki:PageInfoLink></td>
+             <td><%=att.getSize()%> bytes</td>
+             </tr>
+         </wiki:AttachmentsIterator>
+         </table>
+         </DIV>
+      </wiki:HasAttachments>
+
       <P><HR />
       <table border="0" width="100%">
         <tr>
@@ -34,8 +51,8 @@
                  <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
              </wiki:Permission>
              <wiki:PageInfoLink>More info...</wiki:PageInfoLink>&nbsp;&nbsp;
-             <!-- <a href="Attachment.jsp?page=<wiki:PageName/>">Attach file...</a> -->
-             <BR>
+             <a href="javascript:window.open('<wiki:UploadLink format="url" />','Upload','width=640,height=480,toolbar=1,menubar=1,scrollbars=1,resizable=1,').focus()">Attach file...</a>
+             <BR />
           </td>
         </tr>
         <tr>
