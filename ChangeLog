@@ -1,3 +1,11 @@
+2001-08-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * WikiEngine now behaves much better if a provider cannot be
+        instantiated.
+
+        * Added rudimentary support for version history in a multitude of
+        places.
+
 2001-08-13  Janne Jalkanen  <jalkanen@kosh.ecyrd.com>
 
 	* Wiki.jsp displayed null date if page did not exist.

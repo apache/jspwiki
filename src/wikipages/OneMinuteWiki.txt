@@ -8,4 +8,4 @@ When editing, you can easily create (and you should create) hyperlinks by just p
 
 WikiNames that contain spaces or underscores are crushed together and capitalized, so that [[This is a link] becomes [[ThisIsALink].
 
-Wiki is and should be simple.  This is why there is no need for complex HTML.  You can get some effects, such as __bold text__ and ''italics'', but nothing very complex.  Layout is the problem of the Wiki itself.  There is more information in [EditingWikiPages].
+Wiki is and should be simple.  This is why there is no need for complex HTML.  You can get some effects, such as __bold text__ and ''italics'', but nothing very complex.  Layout is the problem of the Wiki itself.  There is more information in [TextFormattingRules].
