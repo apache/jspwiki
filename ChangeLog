@@ -1,5 +1,12 @@
 2004-06-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.1.103
+
+        * Major additions to FindContent.jsp - got rid of most of the
+        scriptlets.  Added three new tags to the soup as well, so you
+        can now write around your searchstuff with those.  It is remotely
+        possible that old search code breaks now.
+
         * v2.1.102
 
         * Added ebu's patch against NPEs in UserManager.
