@@ -2161,7 +2161,7 @@ public class TranslatorReader extends Reader
                 String attlink = m_engine.getAttachmentURL( link );
                 result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
                          "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+
-                         "\"><img src=\"images/attachment_small.png\" border=\"0\" /></a>";
+                         "\"><img src=\""+m_engine.getBaseURL()+"images/attachment_small.png\" border=\"0\" /></a>";
                 break;
 
               default:
