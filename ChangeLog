@@ -2,6 +2,15 @@
 
         * v2.1.20.
 
+        * As an example, it is now possible to determine the template on a
+        per-page basis by setting something like this on the page:
+        
+        [{SET jspwiki.templateDir=myTemplate}]
+        
+        However, at the moment the existence of the template directory is
+        not checked, so it is possible to refer to templates that do not
+        exist and get an empty page in return.
+
         * TranslatorReader now understands the SET directive.  It is thus
         now possible to set arbitrary attributes for pages which get
         stored in the WikiPage.

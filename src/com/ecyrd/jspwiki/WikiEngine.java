@@ -1594,11 +1594,6 @@ public class WikiEngine
             pagereq = getFrontPage();
         }
 
-        if( template == null )
-        {
-            template = getTemplateDir();
-        }
-
         int version          = WikiProvider.LATEST_VERSION;
         String rev           = request.getParameter("version");
 
@@ -1612,6 +1607,20 @@ public class WikiEngine
         if( wikipage == null )
         {
             wikipage = new WikiPage( pagereq );
+        }
+
+        if( template == null )
+        {
+            template = (String)wikipage.getAttribute( PROP_TEMPLATEDIR );
+
+            // FIXME: Most definitely this should be checked for
+            //        existence, or else it is possible to create pages that
+            //        cannot be shown.
+
+            if( template == null || template.length() == 0 )
+            {
+                template = getTemplateDir();
+            }
         }
 
         WikiContext context = new WikiContext( this, 
