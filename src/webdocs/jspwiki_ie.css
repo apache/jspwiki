@@ -13,7 +13,7 @@ P.versionnote { color: red;
 /* Added in v1.5.1 */
 
 H3.leftmenuheading { margin-top: 0; }
-BODY.edit   { background-color: #FFD0FF; } /* Edit.jsp BODY element */
+BODY.edit   { background-color: #D9E8FF; } /* Edit.jsp BODY element */
 TD.leftmenu { }                            /* Left menu */
 TD.page     { }                            /* Page data area */
 A.wikipage  { }                            /* Normal, internal wiki reference */
