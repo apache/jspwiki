@@ -109,6 +109,11 @@
          }
       %>
 
+      <P>
+      Back to <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>"><%=pagereq%></A>,
+       or to the <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">Page History</A>.
+       </P>
+
       <P><HR>
     </TD>
   </TR>
