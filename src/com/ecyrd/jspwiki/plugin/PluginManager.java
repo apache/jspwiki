@@ -165,10 +165,12 @@ public class PluginManager
 
             pluginClass = findPluginClass( classname );
 
+            //
+            //   Create...
+            //
             try
             {
                 plugin = (WikiPlugin) pluginClass.newInstance();
-                return plugin.execute( context, params );
             }
             catch( InstantiationException e )
             {
@@ -177,6 +179,18 @@ public class PluginManager
             catch( IllegalAccessException e )
             {
                 throw new PluginException( "Not allowed to access plugin "+classname, e );
+            }
+            catch( Exception e )
+            {
+                throw new PluginException( "Instantiation of plugin "+classname+" failed.", e );
+            }
+
+            //
+            //  ...and launch.
+            //
+            try
+            {
+                return plugin.execute( context, params );
             }
             catch( PluginException e )
             {
