@@ -30,6 +30,7 @@ import java.util.*;
  */
 
 public abstract class AbstractRPCHandler
+    implements WikiRPCHandler
 {
     /** Error code: no such page. */
     public static final int ERR_NOPAGE    = 1;
