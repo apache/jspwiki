@@ -160,23 +160,40 @@ public class PluginManager
     {
         try
         {
+            Class      pluginClass;
             WikiPlugin plugin;
 
-            plugin = (WikiPlugin) findPluginClass( classname ).newInstance();
+            pluginClass = findPluginClass( classname );
 
-            return plugin.execute( context, params );
-        }
-        catch( InstantiationException e )
-        {
-            throw new PluginException( "Cannot instantiate plugin "+classname, e );
+            try
+            {
+                plugin = (WikiPlugin) pluginClass.newInstance();
+                return plugin.execute( context, params );
+            }
+            catch( InstantiationException e )
+            {
+                throw new PluginException( "Cannot instantiate plugin "+classname, e );
+            }
+            catch( IllegalAccessException e )
+            {
+                throw new PluginException( "Not allowed to access plugin "+classname, e );
+            }
+            catch( PluginException e )
+            {
+                // Just pass this exception onward.
+                throw (PluginException) e.fillInStackTrace();
+            }
+            catch( Exception e )
+            {
+                // But all others get captured here.
+                log.warn( "Plugin failed while executing:", e );
+                throw new PluginException( "Plugin failed", e );
+            }
+            
         }
         catch( ClassNotFoundException e )
         {
             throw new PluginException( "Could not find plugin "+classname, e );
-        }
-        catch( IllegalAccessException e )
-        {
-            throw new PluginException( "Not allowed to access plugin "+classname, e );
         }
         catch( ClassCastException e )
         {
