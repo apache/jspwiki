@@ -4,6 +4,8 @@ The menu on the left hand side (over there <--) is just a standard Wiki page, ca
 
 If you (the administrator) don't want anyone else to modify it, you can always edit [LeftMenu], then make the page read-only on the hard drive itself ;-).
 
+The lower part of the left hand side is similarly called [LeftMenuFooter], and it is fully editable as well.
+
 !!Editing pages directly
 
 By setting up an InterWiki link called "Edit" in {{jspwiki.properties}} you can make direct edit links.  For example, this link here (assuming you're using the default configuration from the JSPWiki archive), will take you
