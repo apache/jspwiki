@@ -54,28 +54,26 @@ public class EditLinkTag
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
+        String     pageName = m_pageName;
 
         if( m_pageName == null )
         {
-            page = m_wikiContext.getPage();
-        }
-        else
-        {
-            page = engine.getPage( m_pageName );
-        }
-
-        if( page != null )
-        {
-            JspWriter out = pageContext.getOut();
-            String encodedlink = engine.encodeName( page.getName() );
-
-            out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">");
-
-            return EVAL_BODY_INCLUDE;
+            if( m_wikiContext.getPage() != null )
+            {
+                pageName = m_wikiContext.getPage().getName();
+            }
+            else
+            {
+                return SKIP_BODY;
+            }
         }
 
-        return SKIP_BODY;
+        JspWriter out = pageContext.getOut();
+        String encodedlink = engine.encodeName( pageName );
+
+        out.print("<A HREF=\""+engine.getBaseURL()+"Edit.jsp?page="+encodedlink+"\">");
+
+        return EVAL_BODY_INCLUDE;
     }
 
     public int doEndTag()
