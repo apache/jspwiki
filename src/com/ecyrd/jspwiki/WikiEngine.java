@@ -1104,6 +1104,7 @@ public class WikiEngine
      *  Writes the WikiText of a page into the
      *  page repository.
      *
+     *  @since 2.1.6.
      *  @param page Page name
      *  @param text The Wiki markup for the page.
      */
