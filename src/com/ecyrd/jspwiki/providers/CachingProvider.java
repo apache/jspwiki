@@ -165,7 +165,12 @@ public class CachingProvider
                 item.m_lastChecked = currentTime;
 
                 long epsilon = 1000L; // FIXME: This should be adjusted according to provider granularity.
-                if( current.getLastModified().getTime() - cached.getLastModified().getTime() > epsilon )
+
+                Date currentModified = current.getLastModified();
+                Date cachedModified  = cached.getLastModified();
+
+                if( currentModified != null && cachedModified != null && 
+                    currentModified.getTime() - cachedModified.getTime() > epsilon )
                 {                
                     log.debug("Page "+current.getName()+" has been externally modified, refreshing contents.");
                     return true;
