@@ -224,12 +224,20 @@ public class WeblogPlugin implements WikiPlugin
 
                 if( hasComments )
                 {
+                    int numComments = guessNumberOfComments( engine, commentPageName );
+
+                    //
+                    //  We add the number of comments to the URL so that
+                    //  the user's browsers would realize that the page
+                    //  has changed.
+                    //
                     sb.append( "&nbsp;&nbsp;" );
                     sb.append( "<a target=\"_blank\" href=\""+
                                engine.getBaseURL()+
                                "Comment.jsp?page="+
-                               engine.encodeName(commentPageName)+"\">Comments? ("+
-                               guessNumberOfComments(engine, commentPageName)+
+                               engine.encodeName(commentPageName)+
+                               "&nc="+numComments+"\">Comments? ("+
+                               numComments+
                                ")</a>" );
                 }
                 
