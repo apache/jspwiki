@@ -1,5 +1,14 @@
 2002-05-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added CurrentTimePlugin, which allows you to tell the server
+        time.  Added documentation to JSPWikiPlugins, and also a sample to
+        RecentChanges.
+
+        * PluginManager also now understands quoted parameters, i.e. if
+        you enclose a parameter value in single quotes ('), you can use
+        spaces and other annoying creatures inside the parameter
+        values. This is very handy for the CurrentTimePlugin.
+
         * PluginManager no longer needs the full package name, if the
         plugin is a JSPWiki-supplied plugin.  We first try with the class
         name as given, then prepend "com.ecyrd.jspwiki.plugin" and try
