@@ -1,3 +1,8 @@
+2003-02-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Small addition: The preferences cookie now expires in 1001 days
+        instead of 90 days.  It turned out to be too fast.
+
 2003-02-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.26.
