@@ -86,14 +86,14 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/LeftMenu.jsp" %>
+       <%@ include file="templates/default/LeftMenu.jsp" %>
        <P>
-       <%@ include file="templates/LeftMenuFooter.jsp" %>
+       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
-      <%@ include file="templates/PageHeader.jsp" %>
+      <%@ include file="templates/default/PageHeader.jsp" %>
 
       <P>
       This is a page which allows you to set up all sorts of interesting things.
