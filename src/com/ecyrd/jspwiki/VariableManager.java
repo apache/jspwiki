@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Date;
 import org.apache.log4j.Category;
 
+import com.ecyrd.jspwiki.auth.UserProfile;
+
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
  *  available variables is on a Wiki page called "WikiVariables".
@@ -229,6 +231,32 @@ public class VariableManager
             long days    = secondsRunning /= 24;
 
             return days+"d, "+hours+"h "+minutes+"m "+seconds+"s";
+        }
+        else if( name.equals("loginstatus") )
+        {
+            UserProfile wup = context.getCurrentUser();
+
+            int status = (wup != null) ? wup.getLoginStatus() : UserProfile.NONE;
+
+            switch( status )
+            {
+              case UserProfile.NONE:
+                return "unknown (not logged in)";
+              case UserProfile.COOKIE:
+                return "named (cookie)";
+              case UserProfile.CONTAINER:
+                return "validated (container)";
+              case UserProfile.PASSWORD:
+                return "validated (password)";
+              default:
+                return "ILLEGAL STATUS!";
+            }
+        }
+        else if( name.equals("username") )
+        {
+            UserProfile wup = context.getCurrentUser();
+
+            return wup != null ? wup.getName() : "not logged in";
         }
         else
         {
