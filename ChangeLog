@@ -1,3 +1,14 @@
+2002-01-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * CachingProvider now provides some protection against
+        concurrency, but it is known to fail at occasion.
+
+        * Fixed a NullPointerException in Wiki.jsp, if the page did not
+        exist.
+
+        * Changed bottom line ordering in Wiki.jsp so that it takes less
+        vertical screen space.
+
 2002-01-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * SystemInfo.jsp page enhanced with new features.
