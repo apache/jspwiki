@@ -23,6 +23,7 @@ import java.io.*;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  *  Provides handlers for all RPC routines.
@@ -35,6 +36,9 @@ import java.util.*;
 
 public class RPCHandler
 {
+    /** Error code: no such page. */
+    public static final int ERR_NOPAGE = 1;
+
     private WikiEngine m_engine;
 
     /**
@@ -49,16 +53,25 @@ public class RPCHandler
         m_engine = engine;
     }
 
+    /**
+     *  Converts Java string into RPC string.
+     */
     private String toRPCString( String src )
     {
         return TextUtil.urlEncodeUTF8( src );
     }
 
+    /**
+     *  Converts RPC string (UTF-8, url encoded) into Java string.
+     */
     private String fromRPCString( String src )
     {
         return TextUtil.urlDecodeUTF8( src );
     }
 
+    /**
+     *  Transforms a Java string into UTF-8.
+     */
     private byte[] toRPCBase64( String src )
     {
         try
@@ -67,7 +80,12 @@ public class RPCHandler
         }
         catch( UnsupportedEncodingException e )
         {
-            log.warn("Platform does not support UTF-8, reverting to platform default");
+            //
+            //  You shouldn't be running JSPWiki on a platform that does not
+            //  use UTF-8.  We revert to platform default, so that the other
+            //  end might have a chance of getting something.
+            //
+            log.fatal("Platform does not support UTF-8, reverting to platform default");
             return src.getBytes();
         }
     }
@@ -99,6 +117,9 @@ public class RPCHandler
         return result;
     }
 
+    /**
+     *  Encodes a single wiki page info into a Hashtable.
+     */
     private Hashtable encodeWikiPage( WikiPage page )
     {
         Hashtable ht = new Hashtable();
@@ -127,6 +148,7 @@ public class RPCHandler
         return ht;
     }
 
+    // FIXME: It is not certain if date is really UTC?
     public Vector getRecentChanges( Date since )
     {
         Collection pages = m_engine.getRecentChanges();
@@ -149,39 +171,73 @@ public class RPCHandler
         return result;
     }
 
-    public Hashtable getPageInfo( String pagename )
+    /**
+     *  Simple helper method, turns the incoming page name into
+     *  normal Java string, then checks page condition.
+     *
+     *  @param pagename Page Name as an RPC string (URL-encoded UTF-8)
+     *  @return Real page name, as Java string.
+     *  @throws XmlRpcException, if there is something wrong with the page.
+     */
+    private String parsePageCheckCondition( String pagename )
+        throws XmlRpcException
     {
         pagename = fromRPCString( pagename );
+
+        if( !m_engine.pageExists(pagename) )
+        {
+            throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
+        }
+
+        return pagename;
+    }
+
+    public Hashtable getPageInfo( String pagename )
+        throws XmlRpcException
+    {
+        pagename = parsePageCheckCondition( pagename );
         return encodeWikiPage( m_engine.getPage(pagename) );
     }
 
-    public Hashtable getPageInfo( String pagename, int version )
+    public Hashtable getPageInfoVersion( String pagename, int version )
+        throws XmlRpcException
     {
-        pagename = fromRPCString( pagename );
+        pagename = parsePageCheckCondition( pagename );
+
         return encodeWikiPage( m_engine.getPage( pagename, version ) );
     }
 
     public byte[] getPage( String pagename )
+        throws XmlRpcException
     {
-        pagename = fromRPCString( pagename );
-        return toRPCBase64( m_engine.getPureText( pagename, -1 ) );
+        pagename = parsePageCheckCondition( pagename );
+
+        String text = m_engine.getPureText( pagename, -1 );
+
+        return toRPCBase64( text );
     }
 
-    public byte[] getPage( String pagename, int version )
+    public byte[] getPageVersion( String pagename, int version )
+        throws XmlRpcException
     {
-        pagename = fromRPCString( pagename );
+        pagename = parsePageCheckCondition( pagename );
+
         return toRPCBase64( m_engine.getPureText( pagename, version ) );
     }
 
     public byte[] getPageHTML( String pagename )
+        throws XmlRpcException    
     {
-        pagename = fromRPCString( pagename );
+        pagename = parsePageCheckCondition( pagename );
+
         return toRPCBase64( m_engine.getHTML( pagename ) );
     }
 
-    public byte[] getPageHTML( String pagename, int version )
+    public byte[] getPageHTMLVersion( String pagename, int version )
+        throws XmlRpcException
     {
-        pagename = fromRPCString( pagename );
+        pagename = parsePageCheckCondition( pagename );
+
         return toRPCBase64( m_engine.getHTML( pagename, version ) );
     }
 }
