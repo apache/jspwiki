@@ -9,6 +9,8 @@
   <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
   <%@ include file="cssinclude.js" %>
   <script src="templates/<wiki:TemplateDir />/search_highlight.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" media="print" href="templates/<wiki:TemplateDir/>/jspwiki_print.css">
+  <link rel="alternate stylesheet" type="text/css" href="templates/<wiki:TemplateDir/>/jspwiki_print.css" title="Print friendly">
   <wiki:RSSLink />
 </head>
 
