@@ -49,6 +49,7 @@ public class AuthorizationManagerTest extends TestCase
 
         WikiPage p = m_engine.getPage("Test");
         UserProfile wup = new UserProfile();
+        wup.setLoginStatus( UserProfile.PASSWORD );
         wup.setName( "FooBar" );
 
         System.out.println(printPermissions( p ));
@@ -99,6 +100,46 @@ public class AuthorizationManagerTest extends TestCase
         wup.setLoginStatus( UserProfile.COOKIE );
         
         assertFalse( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.CONTAINER );
+
+        assertTrue( "edit 3", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.PASSWORD );
+
+        assertTrue( "edit 4", m_manager.checkPermission( p, wup, new EditPermission() ) );
+    }
+
+    /**
+     *  An user should not be allowed to simply set their name in the 
+     *  cookie and be allowed access (this time with group data).
+     */
+    public void testNamedPermissions3()
+    {
+        String src = "[{ALLOW edit FooGroup}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        m_engine.saveText( "FooGroup", "[{MEMBERS FooBar}]" );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "FooBar" );
+
+        assertFalse( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.COOKIE );
+        
+        assertFalse( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.CONTAINER );
+
+        assertTrue( "edit 3", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.PASSWORD );
+
+        assertTrue( "edit 4", m_manager.checkPermission( p, wup, new EditPermission() ) );
     }
 
     /**
@@ -113,6 +154,7 @@ public class AuthorizationManagerTest extends TestCase
         WikiPage p = m_engine.getPage("Test");
 
         UserProfile wup = new UserProfile();
+        wup.setLoginStatus( UserProfile.CONTAINER );
         wup.setName( "AdminGroup" );
 
         assertTrue( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
@@ -138,6 +180,7 @@ public class AuthorizationManagerTest extends TestCase
         WikiPage p = m_engine.getPage("Test");
 
         UserProfile wup = new UserProfile();
+        wup.setLoginStatus( UserProfile.PASSWORD );
         wup.setName( "FooBar" );
 
         assertTrue( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
@@ -148,6 +191,28 @@ public class AuthorizationManagerTest extends TestCase
         wup.setName( "NobodyHere" );
 
         assertFalse( "view 2", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+    }
+
+    /**
+     *  A superuser should be allowed permissions, but not if he's not logged in.
+     */
+    public void testAdminPermissionsNoLogin()
+    {
+        String src = "[{DENY view Guest}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        m_engine.saveText( "AdminGroup", "[{MEMBERS Hobble}]" );
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "Hobble" );
+
+        assertFalse( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+        assertFalse( "view 1", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+        assertFalse( "delete 1", m_manager.checkPermission( p, wup, new DeletePermission() ) );
+        assertFalse( "comment 1", m_manager.checkPermission( p, wup, new CommentPermission() ) );
     }
 
     /**
