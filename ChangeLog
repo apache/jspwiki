@@ -1,3 +1,12 @@
+2005-01-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.131.
+
+        * Added more intelligence so that <p> tags do not enclose divs,
+        hrs, and pres.  This makes many more pages validate as XHTML.
+        Unfortunately, nested lists still fail XHTML validator - and
+        many browsers render them wrong, if it's compliant.  Annoying.
+
 2005-01-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.130.  (It's amazing what you can do when you're on a long
