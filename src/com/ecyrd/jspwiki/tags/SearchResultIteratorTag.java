@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
@@ -52,6 +54,16 @@ public class SearchResultIteratorTag
 
     public final int doStartTag()
     {
+        //
+        //  Do lazy eval if the search results have not been set.
+        //
+        if( m_iterator == null )
+        {
+            Collection searchresults = (Collection) pageContext.getAttribute( "searchresults",
+                                                                              PageContext.REQUEST_SCOPE );
+            setList( searchresults );
+        }
+
         m_count       = 0;
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
                                                                 PageContext.REQUEST_SCOPE );
@@ -61,7 +73,7 @@ public class SearchResultIteratorTag
 
     private int nextResult()
     {
-        if( m_iterator.hasNext() && m_count++ < m_maxItems )
+        if( m_iterator != null && m_iterator.hasNext() && m_count++ < m_maxItems )
         {
             SearchResult r = (SearchResult) m_iterator.next();
 
@@ -97,5 +109,12 @@ public class SearchResultIteratorTag
         }
 
         return nextResult();
+    }
+
+    public int doEndTag()
+    {
+        m_iterator = null;
+
+        return super.doEndTag();
     }
 }
