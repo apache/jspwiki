@@ -47,6 +47,16 @@ public class PluginManagerTest extends TestCase
                       res );
     }
 
+    public void testSimpleInsertNoPackage()
+        throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{INSERT SamplePlugin WHERE text=foobar}");
+
+        assertEquals( "foobar",
+                      res );
+    }
+
     public void testSimpleInsert2()
         throws Exception
     {
