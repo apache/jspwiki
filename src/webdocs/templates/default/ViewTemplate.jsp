@@ -8,6 +8,7 @@
 <head>
   <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
   <%@ include file="cssinclude.js" %>
+  <script src="templates/default/search_highlight.js" type="text/javascript"></script>
   <wiki:RSSLink />
 </head>
 
