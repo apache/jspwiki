@@ -185,7 +185,7 @@ public class CachingProvider
 
         if( currentTime - item.m_lastChecked > m_milliSecondsBetweenChecks )
         {
-            log.debug("Consistency check: has page "+item.m_page.getName()+" been changed?");
+            // log.debug("Consistency check: has page "+item.m_page.getName()+" been changed?");
 
             try
             {
@@ -209,7 +209,7 @@ public class CachingProvider
                 Date curDate = current.getLastModified();
                 Date cacDate = cached.getLastModified();
 
-                log.debug("cached date = "+cacDate+", current date = "+curDate);                
+                // log.debug("cached date = "+cacDate+", current date = "+curDate);                
 
                 if( curDate != null && cacDate != null &&
                     curDate.getTime() - cacDate.getTime() > epsilon )
@@ -264,7 +264,7 @@ public class CachingProvider
         if( item == null )
         {
             // Page has never been seen.
-            log.debug("Page "+page+" never seen.");
+            // log.debug("Page "+page+" never seen.");
             String text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
 
             addPage( page, text );
@@ -280,7 +280,7 @@ public class CachingProvider
             if( text == null )
             {
                 // Oops, expired already
-                log.debug("Page "+page+" expired.");
+                // log.debug("Page "+page+" expired.");
                 text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
                 item.m_text = new SoftReference( text );
 
@@ -289,7 +289,7 @@ public class CachingProvider
                 return text;
             }
 
-            log.debug("Page "+page+" found in cache.");
+            // log.debug("Page "+page+" found in cache.");
 
             m_cacheHits++;
 
