@@ -131,8 +131,19 @@
        <web-resource-collection>
            <web-resource-name>Protected Area</web-resource-name>
            <url-pattern>/Edit.jsp</url-pattern>
+           <url-pattern>/Upload.jsp</url-pattern>
+           <url-pattern>/Comment.jsp</url-pattern>
            <http-method>DELETE</http-method>
            <http-method>GET</http-method>
+           <http-method>POST</http-method>
+           <http-method>HEAD</http-method>
+           <http-method>PUT</http-method>
+       </web-resource-collection>
+
+       <web-resource-collection>
+           <web-resource-name>Read-only Area</web-resource-name>
+           <url-pattern>/attach</url-pattern>
+           <http-method>DELETE</http-method>
            <http-method>POST</http-method>
            <http-method>PUT</http-method>
        </web-resource-collection>
