@@ -1,3 +1,12 @@
+2002-11-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.31.
+
+        * More attachment support.  Still not functional, but at least now
+        you can see where we're going.
+
+        * Fixed support for multiline plugins.
+
 2002-11-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.30.
