@@ -215,8 +215,7 @@ public class WikiEngine
     public static synchronized WikiEngine getInstance( ServletConfig config )
         throws InternalWikiException
     {
-        Properties props = loadWebAppProps( config.getServletContext() );
-        return( getInstance( config, props ) );
+        return( getInstance( config, null ) );
     }
     
     /**
@@ -224,6 +223,10 @@ public class WikiEngine
      * but does not force the Properties object. This method is just an optional way
      * of initializing a WikiEngine for embedded JSPWiki applications; normally, you
      * should use getInstance(ServletConfig).
+     * 
+     * @param config The ServletConfig of the webapp servlet/JSP calling this method.
+     * @param props  A set of properties, or null, if we are to load JSPWiki's default 
+     *               jspwiki.properties (this is the usual case).
      */
     public static synchronized WikiEngine getInstance( ServletConfig config, Properties props )
     throws InternalWikiException
@@ -240,6 +243,8 @@ public class WikiEngine
         context.log(" Assigning new log to "+appid);
         try
         {
+            if( props == null )
+                props = loadWebAppProps( config.getServletContext() );
             engine = new WikiEngine( config.getServletContext(), appid, props );
         }
         catch( Exception e )
