@@ -962,6 +962,16 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testDescription4()
+        throws Exception
+    {
+        String src=";Bar:Foo :-)";
+
+        assertEquals( "<DL>\n<DT>Bar</DT><DD>Foo :-)</DD>\n</DL>",
+                      translate(src) );
+    }
+
+
     public void testRuler()
         throws Exception
     {
