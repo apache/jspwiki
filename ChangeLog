@@ -1,3 +1,19 @@
+2003-01-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.16.
+
+        * Changed the WikiPageProvider and WikiAttachmentProvider
+        interfaces:  They should now always return a List instead of
+        Collection.  All providers did this anyway, but for some strange
+        reason I never remembered to update the return type.  Logically a
+        List is correct, since the result needs to be ordered.  Sorry to
+        everyone whose custom provider broke!
+
+        * CachingProvider now checks the cache first when called with
+        pageExists().  Suggested by Sulka Haro.
+
+        * Removed a couple of deprecated methods.
+
 2003-01-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.15.
