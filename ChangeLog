@@ -1,3 +1,10 @@
+2002-11-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.37.
+
+        * <BR/> is now <BR />, in order not to confuse some older
+        browsers.
+
 2002-11-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.36.
