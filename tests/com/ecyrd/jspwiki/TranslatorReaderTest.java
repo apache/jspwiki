@@ -343,6 +343,18 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /** Hyperlinks with odd chars. */
+
+    public void testHyperlinksCCURLs6()
+        throws Exception
+    {
+        String src = "This should not be a link: http://''some.server''/wiki/Wiki.jsp\nIs it?";
+
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "This should not be a link: http://<i>some.server</i>/wiki/Wiki.jsp\nIs it?",
+                      translate(src) );
+    }
+
     public void testHyperlinksCCNegated()
         throws Exception
     {
