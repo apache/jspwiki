@@ -31,8 +31,8 @@ TD.diff     { background: #FFFFFF;
               font-family: monospace; }
 
 /* Added in 1.6.9 */
-TABLE.wikitable { }
-TABLE.wikitable TD { text-align: left; }
 
-TABLE.wikitable TD.tablehead { font-weight: bold;
-                               text-align: center; }
+TABLE.wikitable { }
+TABLE.wikitable * TD { text-align: left; }
+TABLE.wikitable * TH { }
+
