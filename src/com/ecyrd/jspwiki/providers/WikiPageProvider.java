@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.util.Properties;
+import java.util.List;
 import java.util.Collection;
 import java.util.Date;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public interface WikiPageProvider
      *  @return A collection of wiki pages.
      */
 
-    public Collection getVersionHistory( String page )
+    public List getVersionHistory( String page )
         throws ProviderException;
 
     /**

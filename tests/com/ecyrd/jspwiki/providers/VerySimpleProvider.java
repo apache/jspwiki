@@ -60,7 +60,7 @@ public class VerySimpleProvider implements WikiPageProvider
         return 1;
     }
 
-    public Collection getVersionHistory( String page )
+    public List getVersionHistory( String page )
     {
         return new Vector();
     }

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
@@ -281,7 +282,7 @@ public class RCSFileProvider
     }
 
     // FIXME: Put the rcs date formats into properties as well.
-    public Collection getVersionHistory( String page )
+    public List getVersionHistory( String page )
     {
         PatternMatcher matcher = new Perl5Matcher();
         PatternCompiler compiler = new Perl5Compiler();
