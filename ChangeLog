@@ -1,3 +1,10 @@
+2004-01-12  Erik Bunn  <ebu@basen.net>
+
+	* Added UserManager.getUserDatabase(), getAuthenticator().
+	These are useful for external user providers.
+
+	* Added WikiGroup.clearMembers(). 
+
 2003-12-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.89.
