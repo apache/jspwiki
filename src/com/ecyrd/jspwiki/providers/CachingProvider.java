@@ -305,14 +305,6 @@ public class CachingProvider
         }        
         else
         {
-            System.out.println("OLD PAGEINFO: "+page+", v="+version);
-            try { 
-                throw new Exception("foo"); 
-            } 
-            catch( Exception e ) { 
-                e.printStackTrace(System.out); 
-            }
-
             // We do not cache old versions.
             return m_provider.getPageInfo( page, version );
         }
