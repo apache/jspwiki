@@ -1008,11 +1008,14 @@ public class TranslatorReader extends Reader
         // Then again, this line-based parsing shouldn't be, either.
         // We simply read stuff in until we encounter the line that closes the
         // plugin. May potentially cause long lines, especially if a close tag 
-        // is missing.   ebu 2002-11-01
+        // is missing.
         //
+
         int pluginStart = -1;
         int pluginEnd = -1;
-        if( (pluginStart = line.indexOf( "[{" )) != -1 && (pluginEnd = line.indexOf( "}]", pluginStart )) == -1 )
+
+        if( (pluginStart = line.indexOf( "[{" )) != -1 && 
+            (pluginEnd = line.indexOf( "}]", pluginStart )) == -1 )
         {
             StringBuffer sb = new StringBuffer( line );
             boolean pluginClosed = false;
@@ -1021,6 +1024,7 @@ public class TranslatorReader extends Reader
                 String additional = m_in.readLine();
                 if( additional != null )
                 {
+                    sb.append( "\n" );
                     sb.append( additional );
                     if( additional.indexOf( "}]" ) != -1 )
                         pluginClosed = true;
