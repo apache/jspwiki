@@ -225,8 +225,8 @@ public class VariableManager
 
             long seconds = secondsRunning % 60;
             long minutes = (secondsRunning /= 60) % 60;
-            long hours   = (secondsRunning /= 60) % 60;
-            long days    = (secondsRunning /= 24) % 24;
+            long hours   = (secondsRunning /= 60) % 24;
+            long days    = secondsRunning /= 24;
 
             return days+"d, "+hours+"h "+minutes+"m "+seconds+"s";
         }
