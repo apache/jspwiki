@@ -4,6 +4,8 @@
 
         * Added maxEntries parameter to the WeblogPlugin.
 
+        * Author name is now shown with the blog entry.
+
         * Bug fix: we didn't set the author on edit, but used the previous
         author.  Oops =).
 
