@@ -1,5 +1,16 @@
 2003-10-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.84.
+
+        * Removed the unused "comment" parameter from Edit.jsp, since we
+        now have the "Comment.jsp" for that kind of stuff.
+
+        * Saving from preview page works now.  Also, added a link for
+        "keep editing" and "cancel" so that it's more user-friendly now.
+        Note that they the content preview "Save" is a CSS hack, and the
+        content preview "Keep editing" is a Javascript hack, so they might
+        not always work.
+
         * v2.1.83.
 
         * All plugins use now log4j Logger instead of Category.
