@@ -6,6 +6,7 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
+import org.apache.xmlrpc.*;
 
 public class RPCHandlerTest extends TestCase
 {
@@ -28,10 +29,9 @@ public class RPCHandlerTest extends TestCase
 
         deleteTempFiles();
 
-        m_engine = new TestEngine( m_props );
+        m_engine = new TestEngine2( m_props );
 
         m_handler = new RPCHandler( m_engine );
-
     }
 
     private void deleteTempFiles()
@@ -46,6 +46,19 @@ public class RPCHandlerTest extends TestCase
     public void tearDown()
     {
         deleteTempFiles();
+    }
+
+    public void testNonexistantPage()
+    {
+        try
+        {
+            byte[] res = m_handler.getPage( "NoSuchPage" );
+            fail("No exception for missing page.");
+        }
+        catch( XmlRpcException e ) 
+        {
+            assertEquals( "Wrong error code.", RPCHandler.ERR_NOPAGE, e.code );
+        }
     }
 
     public void testRecentChanges()
