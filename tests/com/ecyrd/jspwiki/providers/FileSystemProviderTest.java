@@ -121,23 +121,14 @@ public class FileSystemProviderTest extends TestCase
 
         FileSystemProvider test = new FileSystemProvider();
 
-        try
-        {
-            test.initialize( props );
+        test.initialize( props );
 
-            fail( "Wiki did not warn about wrong property." );
-        }
-        catch( IOException e )
-        {
-            if( e instanceof FileNotFoundException )
-            {
-                // This is okay.
-            }
-            else
-            {
-                fail("Wrong exception: "+e);
-            }
-        }
+        File f = new File( newdir );
+
+        assertTrue( "didn't create it", f.exists() );
+        assertTrue( "isn't a dir", f.isDirectory() );
+
+        f.delete();
     }
 
     public void testDirectoryIsFile()

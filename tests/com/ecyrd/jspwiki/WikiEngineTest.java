@@ -59,16 +59,14 @@ public class WikiEngineTest extends TestCase
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            newdir );
 
-        try
-        {
-            WikiEngine test = new TestEngine( props );
+        WikiEngine test = new TestEngine( props );
 
-            fail( "Wiki did not warn about wrong property." );
-        }
-        catch( WikiException e )
-        {
-            // This is okay.
-        }
+        File f = new File( newdir );
+
+        assertTrue( "didn't create it", f.exists() );
+        assertTrue( "isn't a dir", f.isDirectory() );
+
+        f.delete();
     }
 
     public void testNonExistantDirProperty()
@@ -333,12 +331,12 @@ public class WikiEngineTest extends TestCase
 
         WikiEngine engine = new TestEngine( props );
 
-        String p = engine.getHTML( "test", -1 );
+        String p = engine.getHTML( VerySimpleProvider.PAGENAME, -1 );
 
         CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
         VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
 
-        assertEquals( "wrong page", "test", vsp.m_latestReq );
+        assertEquals( "wrong page", VerySimpleProvider.PAGENAME, vsp.m_latestReq );
         assertEquals( "wrong version", -1, vsp.m_latestVers );
     }
 
