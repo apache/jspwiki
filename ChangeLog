@@ -1,3 +1,8 @@
+2001-10-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Added wrap="virtual" to Edit.jsp textarea element to make it
+        also wrap on NS4.
+
 2001-10-25  Erik Bunn  <Erik.Bunn@memecry.net>
 
         * Added the capability to view older versions of a WikiPage. 
