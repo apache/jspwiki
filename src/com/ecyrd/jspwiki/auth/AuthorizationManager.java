@@ -112,14 +112,21 @@ public class AuthorizationManager
             {
                 log.debug("Checking groups...");
 
-                List list = m_engine.getUserManager().getGroupsForPrincipal( wup );
-
-                for( Iterator i = list.iterator(); i.hasNext(); )
+                try
                 {
-                    res = acl.findPermission( (Principal) i.next(), permission );
+                    List list = m_engine.getUserManager().getGroupsForPrincipal( wup );
 
-                    if( res != AccessControlList.NONE )
-                        break;
+                    for( Iterator i = list.iterator(); i.hasNext(); )
+                    {
+                        res = acl.findPermission( (Principal) i.next(), permission );
+
+                        if( res != AccessControlList.NONE )
+                            break;
+                    }
+                }
+                catch( NoSuchPrincipalException e )
+                {
+                    log.warn("Internal trouble: No principal defined for requested user.",e);
                 }
             }
         }
