@@ -95,6 +95,15 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHyperlinkJS1()
+        throws Exception
+    {
+        String src = "This should be a [link|http://www.haxored.com/\" onMouseOver=\"alert('Hahhaa');\"]";
+
+        assertEquals( "This should be a <A CLASS=\"external\" HREF=\"http://www.haxored.com/%22 onMouseOver=%22alert('Hahhaa');%22\">link</A>\n",
+                      translate(src) );
+    }
+
     public void testHyperlinksInterWiki1()
         throws Exception
     {
