@@ -146,7 +146,8 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        pageContext.forward( "Preview.jsp" );
+        if( author == null ) author = "";
+        pageContext.forward( "Preview.jsp?action=comment&author="+author );
     }
     else if( cancel != null )
     {
@@ -178,6 +179,9 @@
                               Long.toString( lastchange ),
                               PageContext.REQUEST_SCOPE );
 
+	//  This is a hack to get the preview to work.
+	pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
+	
     //
     //  Attempt to lock the page.
     //

@@ -16,37 +16,25 @@
 
       <h3>Please enter your comments below:</h3>
 
-      <form name="commentForm" action="<wiki:CommentLink format="url" />" method="post" 
-            accept-charset="<wiki:ContentEncoding />">
+      <wiki:Editor name="commentForm">
 
-      <p>
-      <%-- These are required parts of this form.  If you do not include these,
-           horrible things will happen.  Do not modify them either. --%>
+        <textarea class="editor" wrap="virtual" name="text" rows="15" cols="60"></textarea>
 
-      <%-- FIXME: This is not required, is it? --%>
-      <input type="hidden" name="page"     value="<wiki:PageName/>" />
-      <input type="hidden" name="action"   value="save" />
-      <input type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>" />
+        <p>
+        <label for="authorname">Your name</label>
+        <input type="text" name="author" id="authorname" value="<wiki:UserName/>" />
+        <label for="rememberme">Remember me?</label>
+        <input type="checkbox" name="remember" id="rememberme" />
+        </p>
 
-      <%-- End of required area --%>
-
-      <textarea class="editor" wrap="virtual" name="text" rows="15" cols="60"></textarea>
-
-      <p>
-      <label for="authorname">Your name</label>
-      <input type="text" name="author" id="authorname" value="<wiki:UserName/>" />
-      <label for="rememberme">Remember me?</label>
-      <input type="checkbox" name="remember" id="rememberme" />
-      </p>
-
-      <p>
-      <input type="submit" name="ok" value="Save" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="preview" value="Preview" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="cancel" value="Cancel" />
-      </p>
-      </form>
+        <p>
+        <input type="submit" name="ok" value="Save" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="preview" value="Preview" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Cancel" />
+        </p>
+      </wiki:Editor>
 
       <wiki:NoSuchPage page="EditPageHelp">
          <div class="error">

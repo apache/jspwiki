@@ -24,25 +24,14 @@
 
    <p><hr /></p>
 
-   <form action="<wiki:EditLink format="url" />" method="post" 
-         accept-charset="<wiki:ContentEncoding />" />
-   <p>
+   <wiki:Editor>
+     <textarea rows="4" cols="20" readonly="true" style="display:none" name="text"><%=pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE) %></textarea>
 
-   <%-- These are required parts of this form.  If you do not include these,
-        horrible things will happen.  Do not modify them either. --%>
-
-   <input type="hidden" name="page"     value="<wiki:PageName/>" />
-   <input type="hidden" name="action"   value="save" />
-   <input type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>" />
-   <textarea rows="4" cols="20" readonly="true" style="display:none" name="text"><%=pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE) %></textarea>
-
-   <div id="previewsavebutton" align="center">
-      <input type="button" name="edit" value="Keep editing" onClick="javascript:history.back();"/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="ok" value="Save" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="cancel" value="Cancel" />
-   </div>
-
-   </p>
-   </form>
+     <div id="previewsavebutton" align="center">
+        <input type="button" name="edit" value="Keep editing" onClick="javascript:history.back();"/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="ok" value="Save" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" name="cancel" value="Cancel" />
+     </div>
+    </wiki:Editor>
