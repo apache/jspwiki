@@ -91,7 +91,9 @@
       </tr>
 </table>
 
-    <input type="submit" name="delete" value="Delete marked versions"/>
+    <wiki:Permission permission="delete">
+       <input type="submit" name="delete" value="Delete marked versions"/>
+    </wiki:Permission>
 
     </form>
              
