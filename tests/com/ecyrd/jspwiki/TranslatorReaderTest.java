@@ -1329,25 +1329,25 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!Hello";
 
-        assertEquals( "<h4>Hello</h4>",
+        assertEquals( "<h4><a name=\"#section-testpage-Hello\">Hello</a></h4>",
                       translate(src) );
     }
 
     public void testHeading2()
         throws Exception
     {
-        String src="!!Hello";
+        String src="!!Hello, testing 1, 2, 3";
 
-        assertEquals( "<h3>Hello</h3>",
+        assertEquals( "<h3><a name=\"#section-testpage-HelloTesting123\">Hello, testing 1, 2, 3</a></h3>",
                       translate(src) );
     }
 
     public void testHeading3()
         throws Exception
     {
-        String src="!!!Hello";
+        String src="!!!Hello there, how are you doing?";
 
-        assertEquals( "<h2>Hello</h2>",
+        assertEquals( "<h2><a name=\"#section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?</a></h2>",
                       translate(src) );
     }
 
@@ -1356,7 +1356,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!![Hello]";
 
-        assertEquals( "<h2><u>Hello</u><a href=\"Edit.jsp?page=Hello\">?</a></h2>",
+        assertEquals( "<h2><a name=\"#section-testpage-Hello\"><u>Hello</u><a href=\"Edit.jsp?page=Hello\">?</a></a></h2>",
                       translate(src) );
     }
 
