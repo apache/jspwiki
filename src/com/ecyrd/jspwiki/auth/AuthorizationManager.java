@@ -16,6 +16,11 @@ import com.ecyrd.jspwiki.acl.AclEntryImpl;
 import com.ecyrd.jspwiki.acl.AclImpl;
 import com.ecyrd.jspwiki.auth.permissions.*;
 
+/**
+ *  Manages all access control and authorization.
+ *
+ *  @see UserManager
+ */
 public class AuthorizationManager
 {
     public static final String PROP_STRICTLOGINS = "jspwiki.policy.strictLogins";
@@ -55,6 +60,10 @@ public class AuthorizationManager
         }
     }
 
+    /**
+     *  Returns true, if strict logins are required.  Strict logins
+     *  mean that all pages are accessible only to users who have logged in.
+     */
     public boolean strictLogins()
     {
         return m_strictLogins;

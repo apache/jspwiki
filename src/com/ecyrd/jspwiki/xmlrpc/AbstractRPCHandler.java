@@ -35,8 +35,19 @@ public abstract class AbstractRPCHandler
     /** Error code: no such page. */
     public static final int ERR_NOPAGE    = 1;
 
+    /**
+     *  Link to a local wiki page.
+     */
     public static final String LINK_LOCAL    = "local";
+
+    /**
+     *  Link to an external resource.
+     */
     public static final String LINK_EXTERNAL = "external";
+
+    /**
+     *  This is an inlined image.
+     */
     public static final String LINK_INLINE   = "inline";
 
     protected WikiEngine m_engine;
