@@ -34,7 +34,11 @@ import java.util.*;
 public class WeblogEntryPlugin implements WikiPlugin
 {
     private static Category     log = Category.getInstance(WeblogEntryPlugin.class);
-    
+
+    public static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
+
+    public static final String PARAM_ENTRYTEXT = "entrytext";
+
     public String getNewEntryPage( WikiEngine engine, String blogName )
         throws ProviderException
     {
@@ -60,13 +64,17 @@ public class WeblogEntryPlugin implements WikiPlugin
         WikiEngine engine = context.getEngine();
         
         StringBuffer sb = new StringBuffer();
+
+        String entryText = (String) params.get(PARAM_ENTRYTEXT);
+        if( entryText == null ) entryText = "New entry";
         
         try
         {
             String blogPage = getNewEntryPage( engine, weblogName );
 
             // FIXME: Generate somehow else.
-            sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
+            //sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
+            sb.append("<a href=\""+engine.getBaseURL()+"NewBlogEntry.jsp?page="+engine.encodeName(weblogName)+"\">"+entryText+"</a>");
         }
         catch( ProviderException e )
         {
@@ -110,8 +118,28 @@ public class WeblogEntryPlugin implements WikiPlugin
                 }
             }
         }
+
+        //
+        //  Find the first page that has no page lock.
+        //
+        int idx = max+1;
+
+        while( idx < MAX_BLOG_ENTRIES )
+        {
+            WikiPage page = new WikiPage( WeblogPlugin.makeEntryPage( baseName, 
+                                                                      date, 
+                                                                      Integer.toString(idx) ) );
+            PageLock lock = mgr.getCurrentLock( page );
+
+            if( lock == null )
+            {
+                break;
+            }
+
+            idx++;
+        }
         
-        return max+1;
+        return idx;
     }
     
 }
