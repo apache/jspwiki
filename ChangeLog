@@ -1,3 +1,10 @@
+2003-04-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.40.
+
+        * Backported CalendarTag month navigation from 2.1.x.  Requested
+        by Foster Schucker.
+
 2003-04-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.39.
