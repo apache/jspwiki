@@ -65,7 +65,7 @@ public class TranslatorReader extends Reader
     private WikiContext    m_context;
     
     /** Optionally stores internal wikilinks */
-    private ArrayList      m_encounteredLinks;
+    private ArrayList      m_localLinkMutatorChain = new ArrayList();
 
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
@@ -117,40 +117,31 @@ public class TranslatorReader extends Reader
         }
 
         m_inlineImagePatterns = compiledpatterns;
-        m_encounteredLinks = null;
     }
 
     /**
-       Configure this reader to store encountered internal WikiLinks.
-       This is useful for keeping track of references, etc.
-       
-       If this method is called, the output of this reader is not
-       suitable for presentation; instead, getEncounteredLinks()
-       will return a collection of all suitable links on the page.
-    */
-    public void storeInternalLinks()
-    {
-        // if m_encounteredLinks is non-null, htmlizeLinks will store.
-        m_encounteredLinks = new ArrayList();
-
-        // FIXME: usually, if we're interested in the links, we don't
-        // really want any HTML output from this class -> the current
-        // implementation is needlessly slow and unoptimized. Think 
-        // about better solutions...
-    }
-
-    /**
-       If storeWikiReferences() was called before this page was read, returns the
-       contents of m_encounteredLinks, otherwise returns null.
-    */
-    public Collection getInternalLinks()
-    {
-        return( m_encounteredLinks );
-    }
-
+     *  Adds a hook for processing link texts.
+     *  @param mutator The hook to call.  Null is safe.
+     */
     public void addLinkTransmutator( StringTransmutator mutator )
     {
-        m_linkMutators.add( mutator );
+        if( mutator != null )
+        {
+            m_linkMutators.add( mutator );
+        }
+    }
+
+    /**
+     *  Adds a hook for processing local links.
+     *
+     *  @param mutator The hook to call.  Null is safe.
+     */
+    public void addLocalLinkHook( StringTransmutator mutator )
+    {
+        if( mutator != null )
+        {
+            m_localLinkMutatorChain.add( mutator );
+        }
     }
 
     /**
@@ -475,10 +466,7 @@ public class TranslatorReader extends Reader
                     // It's an internal Wiki link
                     reallink = cleanLink( reallink );
 
-                    // If m_encounteredLink is non-null, we want to store any internal links
-                    // for further use. Store the cleaned link, of course.
-                    if( m_encounteredLinks != null )
-                        m_encounteredLinks.add( reallink );
+                    callMutatorChain( m_localLinkMutatorChain, reallink );
 
                     if( linkExists( reallink ) )
                     {
