@@ -89,7 +89,6 @@
     </attribute>
   </tag>  
 
-<!--
   <tag>
     <name>CommentLink</name>
     <tagclass>com.ecyrd.jspwiki.tags.CommentLinkTag</tagclass>
@@ -101,7 +100,6 @@
        <name>format</name>
     </attribute>
   </tag>  
--->
 
   <tag>
     <name>ContentEncoding</name>
