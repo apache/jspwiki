@@ -30,7 +30,7 @@
 
     long lastchange = 0;
 
-    Date d = wikipage.getLastModified();
+    Date d = wikiContext.getPage().getLastModified();
     if( d != null ) lastchange = d.getTime();
 
     pageContext.setAttribute( "lastchange",
