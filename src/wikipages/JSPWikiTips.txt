@@ -24,6 +24,49 @@ In your jspwiki.properties -file, you'll need to set the "jspwiki.rss.generate" 
 
 As Finns say, "voe tokkiinsa", meaning "yes, of course".  Just set the "jspwiki.breakTitleWithSpaces" property to "true" in your jspwiki.properties-file.
 
+!!Bookmarklets
+
+Bookmarlets are tiny javascript programs stored in a url. (more [here|http://www.bookmarklets.com/tools/categor.html])
+
+They either live 
+* in your browser link toolbar, or
+* in html pages.
+
+To use bookmarklets in jspwiki pages, you first need to add a javascript interWikiRef in ''jspwiki.properties'':
+{{{
+#  javascript, for bookmarklets
+jspwiki.interWikiRef.javascript= javascript:%s
+}}}
+
+You can now start inserting bookmarklets into your page :
+
+!Ex 1 : search in this JSPWiki
+{{{
+[search here for...|javascript:location.href='http:Search.jsp?query='+
+escape(prompt('search for..',''))+'&ok=Find%21'] 
+}}}
+
+!Ex 2 : Calculator
+{{{
+[calculator|javascript:expr=prompt('Formula...(eg:  2*3)','');if(expr){with(Math){evl=parseFloat(eval(expr))};
+if(isNaN(evl)){alert('Not a number!')}else{void(prompt('Result:',evl))}}else{void(null)}]
+}}}
+
+(Everything on one line, of course).
+
+List of [supported functions|http://www.bookmarklets.com/tools/convert/calcFuncts.html]
+
+
+!Ex 3 : is the current page url already stored in the JSPWiki?
+
+Adapt (for ''your'' wiki) this url, and store it in a new url, in your browser toolbar.
+{{{
+javascript:location.href='http://localhost:8080/JSPWiki207/Search.jsp?query='
++escape(location.href)+'&ok=Find%21'
+}}}
+
+''Contributed by Alain Ravet.''
+
 !!I have a question you have not answered!
 
 Well, the easiest thing to do is go directly to the [JSPWiki main site|JSPWiki:Main] and ask your question there.  Or you could also [email me|About], but it's better for all if you go and publicly post your query.  It does not hurt to take a peek at JSPWiki site anyway, since your question might already be answered there...

@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.13 $
-                             $Date: 2002-12-09 18:56:25 $
+                         $Revision: 1.14 $
+                             $Date: 2003-01-03 20:53:47 $
                            $Author: jalkanen $
 
 What is it?
@@ -146,6 +146,17 @@ first.
 
 The other good document to read is doc/Templates.txt, which explains
 how the JSPWiki templating system works.
+
+
+Where to go next?
+-----------------
+
+With this information, you should've gotten the JSPWiki engine
+running.  I now suggest that you extract all of the files in
+jspwiki_samplepages.zip into your page repository directory, and start
+reading the documentation.  Most of the documentation comes in the
+form of Wiki pages, which you can obviously read with a text editor as
+well.
 
 
 Notes:

@@ -1,5 +1,7 @@
 2003-01-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Wrote some new documentation into sample wikipages.
+
         * v2.0.11.
 
         * All boolean type properties in jspwiki.properties recognize now
