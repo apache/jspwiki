@@ -56,7 +56,7 @@ public class WikiEngineTest extends TestCase
     public void testNonExistantDirectory()
         throws Exception
     {
-        String tmpdir = System.getProperties().getProperty("java.tmpdir");
+        String tmpdir = System.getProperties().getProperty("java.io.tmpdir");
         String dirname = "non-existant-directory";
 
         String newdir = tmpdir + File.separator + dirname;
