@@ -823,9 +823,17 @@ public class TranslatorReaderTest extends TestCase
     public void testMultilinePluginBodyContent()
         throws Exception
     {
-        String src="Test [{INSERT SamplePlugin\ntext=PageContent\nbody='123\n456\n'}]";
+        String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n123\n456\n}]";
 
-        assertEquals( "Test PageContent (123+456)\n", translate(src) );
+        assertEquals( "Test PageContent (123+456+)\n", translate(src) );
+    }
+
+    public void testMultilinePluginBodyContent2()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n\n123\n456\n}]";
+
+        assertEquals( "Test PageContent (+123+456+)\n", translate(src) );
     }
 
     public void testVariableInsert()
