@@ -134,15 +134,17 @@ public class RSSGenerator
         result.append( m_channelLanguage );
         result.append("</language>\n");
 
-        // FIXME: add resource list here.
-
-        result.append(" </channel>\n");
-
         //
         //  Now, list items.
         //
 
         Collection changed = m_engine.getRecentChanges();
+
+        //  We need two lists, which is why we gotta make a separate list if
+        //  we want to do just a single pass.
+        StringBuffer itemBuffer = new StringBuffer();
+
+        result.append("  <items>\n   <rdf:Seq>\n");
 
         int items = 0;
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
@@ -153,39 +155,41 @@ public class RSSGenerator
 
             String url = m_engine.getBaseURL()+"Wiki.jsp?page="+encodedName;
 
-            result.append(" <item rdf:about=\""+url+"\">\n");
+            result.append("    <rdf:li rdf:resource=\""+url+"\">\n");
 
-            result.append("  <title>");
-            result.append( page.getName() );
-            result.append("</title>\n");
+            itemBuffer.append(" <item rdf:about=\""+url+"\">\n");
 
-            result.append("  <link>");
-            result.append( url );
-            result.append("</link>\n");
+            itemBuffer.append("  <title>");
+            itemBuffer.append( page.getName() );
+            itemBuffer.append("</title>\n");
 
-            result.append("  <description>");
+            itemBuffer.append("  <link>");
+            itemBuffer.append( url );
+            itemBuffer.append("</link>\n");
+
+            itemBuffer.append("  <description>");
 
             String author = page.getAuthor();
             if( author == null ) author = "An unknown author";
 
             if( page.getVersion() != 1 )
             {
-                result.append(author+" changed this page on "+page.getLastModified() );
+                itemBuffer.append(author+" changed this page on "+page.getLastModified() );
             }
             else
             {
-                result.append(author+" created this page on "+page.getLastModified() );
+                itemBuffer.append(author+" created this page on "+page.getLastModified() );
             }
-            result.append("</description>\n");
+            itemBuffer.append("</description>\n");
 
             if( page.getVersion() != -1 )
             {
-                result.append("  <wiki:version>"+page.getVersion()+"</wiki:version>\n");
+                itemBuffer.append("  <wiki:version>"+page.getVersion()+"</wiki:version>\n");
             }
 
             if( page.getVersion() > 1 )
             {
-                result.append("  <wiki:diff>"+
+                itemBuffer.append("  <wiki:diff>"+
                               m_engine.getBaseURL()+"Diff.jsp?page="+
                               encodedName+
                               "&amp;r1=-1"+
@@ -195,31 +199,45 @@ public class RSSGenerator
             //
             //  Modification date.
             //
-            result.append("  <dc:date>");
+            itemBuffer.append("  <dc:date>");
             Calendar cal = Calendar.getInstance();
             cal.setTime( page.getLastModified() );
             cal.add( Calendar.MILLISECOND, 
                      - (cal.get( Calendar.ZONE_OFFSET ) + 
                         (cal.getTimeZone().inDaylightTime( page.getLastModified() ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
-            result.append( iso8601fmt.format( cal.getTime() ) );
-            result.append("</dc:date>\n");
+            itemBuffer.append( iso8601fmt.format( cal.getTime() ) );
+            itemBuffer.append("</dc:date>\n");
 
             //
             //  Author.
             //
-            result.append("  <dc:contributor>"+author+"</dc:contributor>\n");
+            itemBuffer.append("  <dc:contributor>\n");
+            itemBuffer.append("   <rdf:Description");
+            if( m_engine.pageExists(author) )
+            {
+                itemBuffer.append(" link=\""+m_engine.getBaseURL()+"Wiki.jsp?page="+author+"\"");
+            }
+            itemBuffer.append(">\n");
+            itemBuffer.append("    <rdf:value>"+author+"</rdf:value>\n");
+            itemBuffer.append("   </rdf:Description>\n");
+            itemBuffer.append("  </dc:contributor>\n");
 
 
             //  PageHistory
 
-            result.append("  <wiki:history>");
-            result.append( m_engine.getBaseURL()+"PageInfo.jsp?page="+
+            itemBuffer.append("  <wiki:history>");
+            itemBuffer.append( m_engine.getBaseURL()+"PageInfo.jsp?page="+
                            encodedName );
-            result.append("</wiki:history>\n");
+            itemBuffer.append("</wiki:history>\n");
 
             //  Close up.
-            result.append(" </item>\n");
+            itemBuffer.append(" </item>\n");
         }
+
+        result.append("   </rdf:Seq>\n  </items>\n");
+        result.append(" </channel>\n");
+
+        result.append( itemBuffer );
 
         //
         //  In the end, add a search box for JSPWiki
