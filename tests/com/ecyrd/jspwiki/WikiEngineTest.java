@@ -671,4 +671,22 @@ public class WikiEngineTest extends TestCase
         c = refMgr.findUncreated();
         assertEquals( "NEW: uncreated count", 0, c.size() );
     }
+    /*
+    public void testDeletePage()
+        throws Exception
+    {
+        m_engine.saveText( NAME1, "Test" );
+
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        assertTrue( "Didn't create it!", saved.exists() );
+
+        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
+
+        m_engine.deletePage( page );
+
+        assertFalse( "Page has not been removed!", saved.exists() );
+    }
+    */
 }
