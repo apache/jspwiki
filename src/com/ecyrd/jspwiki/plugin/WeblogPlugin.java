@@ -192,7 +192,22 @@ public class WeblogPlugin implements WikiPlugin
                 
                 sb.append("</div>\n");
 
+                String author = p.getAuthor();
+
+                if( author != null )
+                {
+                    if( engine.pageExists(author) )
+                    {
+                        author = "<a href=\""+engine.getViewURL( author )+"\">"+author+"</a>";
+                    }
+                }
+                else
+                {
+                    author = "AnonymousCoward";
+                }
+
                 sb.append("<div class=\"weblogpermalink\">");
+                sb.append("By "+author+"&nbsp;&nbsp;");
                 sb.append( "<a href=\""+engine.getViewURL(p.getName())+"\">Permalink</a>" );
                 String commentPageName = TextUtil.replaceString( p.getName(),
                                                                  "blogentry",
