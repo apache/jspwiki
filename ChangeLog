@@ -1,3 +1,14 @@
+2002-12-09  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * v1.9.50.
+        
+        * Fixed null reference bug in AttachmentManager when no
+        manager specified in jspwiki.properties.
+        
+        * Added Error.jsp, which displays the message of an 
+        exception using DisplayMessage.jsp (in templates).
+        Added Error.jsp as error page of all top level jsp's.
+
 2002-12-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.49.

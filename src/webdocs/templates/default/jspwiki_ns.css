@@ -55,6 +55,9 @@ TEXTAREA.editor {}
 /* How the preview content should be shown */
 .previewcontent { background: #E0E0E0; }
 
+/* How the system messages should be shown (DisplayMessage.jsp) */
+.messagecontent { background: #E0E0E0; }
+
 /* How the "This page has been modified..." -comment should be shown. */
 
 .conflictnote { }
