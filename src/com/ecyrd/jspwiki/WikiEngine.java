@@ -592,7 +592,7 @@ public class WikiEngine
 
     public String getFinalPageName( String page )
     {
-        boolean isThere = m_pageManager.pageExists( page );
+        boolean isThere = simplePageExists( page );
 
         if( !isThere && m_matchEnglishPlurals )
         {
@@ -605,12 +605,22 @@ public class WikiEngine
                 page += "s";
             }
 
-            isThere = m_pageManager.pageExists( page );
+            isThere = simplePageExists( page );
         }
 
         return isThere ? page : null ;
     }
 
+    /**
+     *  Just queries the existing pages directly from the page manager.
+     *  We also check overridden pages from jspwiki.properties
+     */
+    private boolean simplePageExists( String page )
+    {
+        if( getSpecialPageReference(page) != null ) return true;
+
+        return m_pageManager.pageExists( page );
+    }
 
     /**
      *  Turns a WikiName into something that can be 
