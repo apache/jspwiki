@@ -443,11 +443,11 @@ public class TranslatorReaderTest extends TestCase
     public void testCCLinkWithScandics()
         throws Exception
     {
-        newPage("ÄitiSyöÖljyä");
+        newPage("\u00c4itiSy\u00f6\u00d6ljy\u00e4");
 
-        String src = "Onko tämä hyperlinkki: ÄitiSyöÖljyä?";
+        String src = "Onko t\u00e4m\u00e4 hyperlinkki: \u00c4itiSy\u00f6\u00d6ljy\u00e4?";
 
-        assertEquals( "Onko tämä hyperlinkki: <a class=\"wikipage\" href=\"Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">ÄitiSyöÖljyä</a>?",
+        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
                       translate(src) );
     }
 
@@ -682,11 +682,11 @@ public class TranslatorReaderTest extends TestCase
     public void testScandicPagename1()
         throws Exception
     {
-        String src = "Link [åäTest]";
+        String src = "Link [\u00C5\u00E4Test]";
 
-        newPage("ÅäTest"); // FIXME: Should be capital Å
+        newPage("\u00C5\u00E4Test"); // FIXME: Should be capital 
 
-        assertEquals("Link <a class=\"wikipage\" href=\"Wiki.jsp?page=%C5%E4Test\">åäTest</a>",
+        assertEquals("Link <a class=\"wikipage\" href=\"Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>",
                      translate(src));
     }
 

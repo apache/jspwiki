@@ -226,7 +226,7 @@ public class WikiEngineTest extends TestCase
 
     public void testEncodeNameLatin1()
     {
-        String name = "abcåäö";
+        String name = "abc\u00e5\u00e4\u00f6";
 
         assertEquals( "abc%E5%E4%F6",
                       m_engine.encodeName(name) );
