@@ -1,0 +1,11 @@
+#
+#  This file contains defaults for development.  If you are cross-
+#  developing in multiple environments, just change the defaults
+#  in this file.
+#
+#  Any changes in this file will be reflected in the default
+#  jspwiki.properties-file when it is run.
+#
+@appname@=JSPWiki
+@pagedir@=C:\\temp\\wikipages
+@logfile@=C:\\temp\\

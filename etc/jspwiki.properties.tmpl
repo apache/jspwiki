@@ -12,7 +12,7 @@
 #  the actual web name (http://my.com/mywiki) of the application, but usually
 #  it is the same.
 #
-jspwiki.applicationName = JSPWiki
+jspwiki.applicationName = @appname@
 
 #
 #  Which page provider class to use.  Possibilities are:
@@ -46,7 +46,7 @@ jspwiki.usePageCache = true
 #  
 #  jspwiki.fileSystemProvider.pageDir = C:\\Data\\jspwiki
 #
-jspwiki.fileSystemProvider.pageDir = /p/web/www-data/jspwiki/
+jspwiki.fileSystemProvider.pageDir = @pagedir@
 
 #
 #  ATTACHMENTS:
@@ -69,7 +69,7 @@ jspwiki.attachmentProvider = BasicAttachmentProvider
 #  
 #  jspwiki.basicAttachmentProvider.storageDir = C:\\Data\\jspwiki
 #
-jspwiki.basicAttachmentProvider.storageDir = /p/web/www-data/jspwiki/
+jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 
 
 #
@@ -417,7 +417,7 @@ jspwiki.rss.channelLanguage = en-us
 log4j.appender.FileLog = org.apache.log4j.RollingFileAppender
 log4j.appender.FileLog.MaxFileSize    = 10MB
 log4j.appender.FileLog.MaxBackupIndex = 14
-log4j.appender.FileLog.File = /tmp/jspwiki.log
+log4j.appender.FileLog.File = @logfile@
 log4j.appender.FileLog.layout = org.apache.log4j.PatternLayout
 log4j.appender.FileLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
 

@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.28 2003-06-01 15:35:55 jalkanen Exp $
+    $Id: build.xml,v 1.29 2003-06-03 17:46:54 jalkanen Exp $
 -->    
        
 <!--   
@@ -57,6 +57,11 @@
     the current directory.
 -->    
 <project name="JSPWiki" default="compile" basedir=".">
+
+  <!-- This tells us which build.properties file lies.  By default, we
+       use the CVS version (which is tuned to my environment), but you
+       will probably want to override this from the command line. -->
+  <property name="build.properties" value="build.properties" />
        
   <!-- This denotes the directory where the source code lies. -->
   <property name="code.src" value="src" />
@@ -122,12 +127,20 @@
 
   <!-- Initialising, cleaning, etc. -->
 
-  <target name="init" 
-          description="Initializes everything, creates directories, etc.">
+  <target name="init"
+          description="Initializes everything, creates directories, etc."
+          depends="mkpropertyfile">
      <mkdir dir="${code.build}" />
      <mkdir dir="${tests.build}" />
      <mkdir dir="${tests.reports}" />
      <mkdir dir="${java.io.tmpdir}/testrepository" />
+  </target>
+
+  <target name="mkpropertyfile"
+          description="Builds the correct propertyfile from the build.properties">
+     <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
+     <replace file="etc/jspwiki.properties"
+              replacefilterfile="build.properties" />
   </target>
 
   <!-- Removes the build directory and the tests build directory -->
