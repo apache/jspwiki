@@ -140,6 +140,42 @@ public class GoDiagram
         return info;
     }
 
+    private String insertEmpty( DiagramInfo info, int row, int col )
+    {
+        if( row == 0 && info.topSide )
+        {
+            if( col == 0 && info.leftSide )
+            {
+                return "ULC";
+            }
+            else if( col == info.numCols-1 && info.rightSide )
+            {
+                return "URC";
+            }
+
+            return "TS";
+        }
+        else if( row == info.numRows-1 && info.bottomSide )
+        {
+            if( col == 0 && info.leftSide )
+                return "LLC";
+            else if( col == info.numCols-1 && info.rightSide )
+                return "LRC";
+
+            return "BS";
+        }
+        else if( col == 0 && info.leftSide )
+        {
+            return "LS";
+        }
+        else if( col == info.numCols-1 && info.rightSide )
+        {
+            return "RS";
+        }
+
+        return "empty";
+    }
+
     /**
      *  @param first 'b', if black should have the first move, 'w' otherwise.
      */
@@ -156,24 +192,9 @@ public class GoDiagram
         res.append("<TABLE BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
         int type;
 
-        if( info.topSide )
-        {
-            res.append("<TR>");
-
-            if( info.leftSide ) res.append( makeImage("ULC") );
-            for( int i = 0; i < info.numCols; i++ )
-            {
-                res.append( makeImage("TS") );
-            }
-            if( info.rightSide ) res.append( makeImage("URC") );
-            res.append("</TR>\n");
-        }
-
-        res.append("<TR>");
-
         for( int row = 0; row < info.numRows; row++ )
         {
-            if( info.leftSide ) res.append( makeImage("LS") );
+            res.append("<TR>");
 
             for( int col = 0; col < info.numCols; col++ )
             {
@@ -200,7 +221,8 @@ public class GoDiagram
                     break;
 
                   case '.':
-                    res.append( makeImage("empty") );
+                    res.append( makeImage(insertEmpty( info, row, col )) );
+                    //res.append( makeImage("empty") );
                     break;
 
                   case ',':
@@ -213,23 +235,9 @@ public class GoDiagram
                 }
             } // col
 
-            if( info.rightSide ) res.append( makeImage("RS") );
-            res.append("</TR>\n<TR>");
+            res.append("</TR>\n");
         } // row
 
-        res.append("</TR>\n");
-
-        if( info.bottomSide )
-        {
-            res.append("<TR>");
-            if( info.leftSide ) res.append( makeImage("LLC") );
-            for( int i = 0; i < info.numCols; i++ )
-            {
-                res.append( makeImage("BS") );
-            }
-            if( info.rightSide ) res.append( makeImage("LRC") );
-            res.append("</TR>\n");
-        }
 
         //res.append("</DIV>\n");
         res.append("</TABLE>");
