@@ -23,27 +23,14 @@ import java.io.UnsupportedEncodingException;
 
 public class TextUtil
 {
-    static char[] hex = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' };
+    static String HEX_DIGITS =  "0123456789ABCDEF";
 
     /**
-     *  As java.net.URLEncoder class, but this does it in UTF8 character set.
+     *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
+     *  its functionality.
      */
-    public static String urlEncodeUTF8( String text )
+    protected static String urlEncode( byte[] rs )
     {
-        byte[] rs = {};
-
-        try
-        {
-            rs = text.getBytes("UTF-8");
-            return java.net.URLEncoder.encode( new String( rs, "ISO-8859-1" ) );
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            return java.net.URLEncoder.encode( text );
-        }
-
-        // SLOW version commented out.
-        /*
         StringBuffer result = new StringBuffer();
 
         // Does the URLEncoding.  We could use the java.net one, but
@@ -76,26 +63,105 @@ public class TextUtil
                 else
                 {
                     result.append( '%' );
-                    result.append( hex[(c & 0xF0) >> 4] );
-                    result.append( hex[c & 0x0F] );
+                    result.append( HEX_DIGITS.charAt( (c & 0xF0) >> 4 ) );
+                    result.append( HEX_DIGITS.charAt( c & 0x0F ) );
                 }
             }
 
         } // for
 
         return result.toString();
-        */
-
-        
     }
 
+    /**
+     *  URL encoder does not handle all characters correctly.
+     *  See <A HREF="http://developer.java.sun.com/developer/bugParade/bugs/4257115.html">
+     *  Bug parade, bug #4257115</A> for more information.
+     *  <P>
+     *  Thanks to CJB for this fix.
+     */ 
+    protected static String urlDecode( byte[] bytes )
+        throws UnsupportedEncodingException,
+               IllegalArgumentException
+    {
+        if(bytes == null) 
+        {
+            return null;
+        }
+
+        byte[] decodeBytes   = new byte[bytes.length];
+        int decodedByteCount = 0;
+
+        try 
+        {
+            for( int count = 0; count < bytes.length; count++ ) 
+            {
+                switch( bytes[count] ) 
+                {
+                  case '+':
+                    decodeBytes[decodedByteCount++] = (byte) ' ';
+                    break ;
+
+                  case '%':
+                    decodeBytes[decodedByteCount++] = (byte)((HEX_DIGITS.indexOf(bytes[++count]) << 4) +
+                                                             (HEX_DIGITS.indexOf(bytes[++count])) );
+
+                    break ;
+
+                  default:
+                    decodeBytes[decodedByteCount++] = bytes[count] ;
+                }
+            }
+
+        }
+        catch (IndexOutOfBoundsException ae) 
+        {
+            throw new IllegalArgumentException( "Malformed UTF-8 string?" );
+        }
+
+        String processedPageName = null ;
+
+        try 
+        {
+            processedPageName = new String(decodeBytes, 0, decodedByteCount, "UTF-8") ;
+        } 
+        catch (UnsupportedEncodingException e) 
+        {
+            throw new UnsupportedEncodingException( "UTF-8 encoding not supported on this platform" );
+        }
+
+        return(processedPageName.toString());
+    }
+
+    /**
+     *  As java.net.URLEncoder class, but this does it in UTF8 character set.
+     */
+    public static String urlEncodeUTF8( String text )
+    {
+        byte[] rs = {};
+
+        try
+        {
+            rs = text.getBytes("UTF-8");
+            return urlEncode( rs );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            return java.net.URLEncoder.encode( text );
+        }
+
+    }
+
+    /**
+     *  As java.net.URLDecoder class, but for UTF-8 strings.
+     */
     public static String urlDecodeUTF8( String utf8 )
     {
         String rs = java.net.URLDecoder.decode( utf8 );
 
         try
         {
-            rs = new String( rs.getBytes("ISO-8859-1"), "UTF-8" );
+            rs = urlDecode( rs.getBytes("ISO-8859-1") );
         }
         catch( UnsupportedEncodingException e )
         {
