@@ -22,7 +22,10 @@ package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.util.Iterator;
 import java.util.Date;
-import org.apache.log4j.Category;
+import java.util.List;
+import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.ecyrd.jspwiki.auth.UserProfile;
 
@@ -35,7 +38,10 @@ import com.ecyrd.jspwiki.auth.UserProfile;
  */
 public class VariableManager
 {
-    private static Category log = Category.getInstance( VariableManager.class );
+    private static Logger log = Logger.getLogger( VariableManager.class );
+   
+    public static final String VAR_ERROR = "error";
+    public static final String VAR_MSG   = "msg";
     
     public VariableManager( Properties props )
     {
@@ -273,6 +279,29 @@ public class VariableManager
         {
             return context.getRequestContext();
         }
+        else if( name.equals("pagefilters") )
+        {
+            List filters = context.getEngine().getFilterManager().getFilterList();
+            StringBuffer sb = new StringBuffer();
+
+            for( Iterator i = filters.iterator(); i.hasNext(); )
+            {
+                String f = i.next().getClass().getName();
+
+                //
+                //  Skip some known internal filters.
+                //  FIXME: Quite a klugde.
+                //
+
+                if( f.endsWith("ReferenceManager") || f.endsWith("WikiDatabase$SaveFilter" ) )
+                    continue;
+
+                if( sb.length() > 0 ) sb.append(", ");
+                sb.append( f );
+            }
+
+            return sb.toString();
+        }
         else
         {
             // 
@@ -309,7 +338,35 @@ public class VariableManager
                 if( metadata != null )
                     return( metadata.toString() );
             }
-             
+
+            //
+            //  Well, I guess it wasn't a final straw.  We also allow 
+            //  variables from the session and the request (in this order).
+            //
+
+            HttpServletRequest req = context.getHttpRequest();
+            if( req != null )
+            {
+                HttpSession session = req.getSession();
+
+                try
+                {
+                    if( (res = (String)session.getAttribute( varName )) != null )
+                        return res;
+
+                    if( (res = context.getHttpParameter( varName )) != null )
+                        return res;
+                }
+                catch( ClassCastException e ) {}
+            }
+
+            //
+            //  Final defaults for some known quantities.
+            //
+
+            if( varName.equals( VAR_ERROR ) || varName.equals( VAR_MSG ) )
+                return "";
+  
             throw new NoSuchVariableException( "No variable "+varName+" defined." );
         }
         
