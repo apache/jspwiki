@@ -312,6 +312,8 @@ public class WikiEngine
      */
     private void initReferenceManager()
     {
+        m_pluginManager.enablePlugins( false );
+
         long start = System.currentTimeMillis();
         log.info( "Starting cross reference scan of WikiPages" );
 
@@ -344,6 +346,8 @@ public class WikiEngine
         log.info( "Cross reference scan done (" +
                   (System.currentTimeMillis()-start) +
                   " ms)" );
+
+        m_pluginManager.enablePlugins( true );
     }
 
 
