@@ -146,7 +146,6 @@ public class WeblogPlugin implements WikiPlugin
 
                 String day = entry.substring( 0, idx );
 
-                System.out.println("day="+day);
                 SimpleDateFormat fmt = new SimpleDateFormat("ddMMyy");
                 Date pageDay = fmt.parse( day, new ParsePosition(0) );
                 
