@@ -641,6 +641,17 @@ public class WikiEngine
     }
 
     /**
+     *  Returns plain text (with HTML entities replaced). This should
+     *  be the main entry point for getText().
+     *
+     *  @since 1.9.15.
+     */
+    public String getText( WikiContext context, WikiPage page )
+    {
+        return getText( page.getName(), page.getVersion() );
+    }
+
+    /**
      *  Returns the converted HTML of the page using a different
      *  context than the default context.
      */
