@@ -35,7 +35,7 @@ public class Release
     /** This should be empty when doing a release - otherwise
         keep it as "cvs" so that whenever someone checks out the code,
         they know it is a bleeding-edge version. */
-    private static final String    POSTFIX       = "-cvs";
+    private static final String    POSTFIX       = "-beta";
 
     /**
      *  This should be increased every time you do a release.
@@ -44,7 +44,7 @@ public class Release
 
     public static final int        VERSION       = 1;
     public static final int        REVISION      = 5;
-    public static final int        MINORREVISION = 4;
+    public static final int        MINORREVISION = 5;
 
     /**
      *  This is the generic version string you should use
