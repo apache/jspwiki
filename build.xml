@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.21 2002-11-19 09:50:54 jalkanen Exp $
+    $Id: build.xml,v 1.22 2002-12-01 21:28:13 jalkanen Exp $
 -->    
        
 <!--   
@@ -190,7 +190,7 @@
 
     <javadoc sourcepath="${code.src}"
              destdir="${docs.javadoc}"
-             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc">
+             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment">
       <classpath refid="path.base" />
     </javadoc>
              
