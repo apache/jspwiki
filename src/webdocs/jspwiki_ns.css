@@ -27,21 +27,9 @@ A.external { }                           /* External reference */
 A.interwiki { }                          /* Interwiki reference */
 
 /* Added in 1.6.3 */
-div.diffadd { background: #99FF99; 
-              padding: 0, 0.5em, 0, 0.5em;
-              margin-top: 0;
-              margin-bottom: 0;
-              font-family: monospace;
-              border: none; }
-div.diffrem { background: #FF9933; 
-              padding: 0, 0.5em, 0, 0.5em;
-              margin-top: 0;
-              margin-bottom: 0;
-              font-family: monospace;
-              border: none; }
-div.diff   { background: #FFFFFF; 
-              padding: 0, 0.5em, 0, 0.5em;
-              margin-top: 0;
-              margin-bottom: 0;
-              font-family: monospace;
-              border: none; }
+TD.diffadd  { background: #99FF99; 
+              font-family: monospace; }
+TD.diffrem  { background: #FF9933; 
+              font-family: monospace; }
+TD.diff     { background: #FFFFFF; 
+              font-family: monospace; }
