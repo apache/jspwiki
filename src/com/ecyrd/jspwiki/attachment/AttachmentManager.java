@@ -143,6 +143,11 @@ public class AttachmentManager
                                          int version )
         throws ProviderException
     {
+        if( m_provider == null )
+        {
+            return( null );
+        }
+
         WikiPage currentPage = null;
 
         if( context != null )
@@ -178,6 +183,11 @@ public class AttachmentManager
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
     {
+        if( m_provider == null )
+        {
+            return( null );
+        }
+        
         return m_provider.listAttachments( wikipage );
     }
 
@@ -199,6 +209,11 @@ public class AttachmentManager
         throws IOException,
                ProviderException
     {
+        if( m_provider == null )
+        {
+            return( null );
+        }
+
         return m_provider.getAttachmentData( att );
     }
 
@@ -206,6 +221,11 @@ public class AttachmentManager
         throws IOException,
                ProviderException
     {
+        if( m_provider == null )
+        {
+            return;
+        }
+
         m_provider.putAttachmentData( att, new FileInputStream(source) );
     }
 
@@ -213,12 +233,22 @@ public class AttachmentManager
         throws IOException,
                ProviderException
     {
+        if( m_provider == null )
+        {
+            return;
+        }
+
         m_provider.putAttachmentData( att, in );
     }
 
     public Collection getVersionHistory( String attachmentName )
         throws ProviderException
     {
+        if( m_provider == null )
+        {
+            return( null );
+        }
+        
         Attachment att = getAttachmentInfo( (WikiContext)null, attachmentName );
 
         if( att != null )
