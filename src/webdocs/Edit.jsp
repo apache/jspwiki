@@ -173,7 +173,7 @@
     //  Attempt to lock the page.
     //
     PageLock lock = wiki.getPageManager().lockPage( wikipage, 
-                                                    wiki.getValidUserName(request) );
+                                                    currentUser.getName() );
 
     if( lock != null )
     {
