@@ -1,5 +1,11 @@
 2005-01-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.1.139.
+
+        * Oops: forgot to set the servlet-mapping to conform to the
+        new URI scheme: the URL pattern should be "/attach/*", not
+        "/attach"...
+
         * v2.1.138.
 
         * Fixed BugErrorInDefaultJspwiki.css (reported by Per).
