@@ -26,4 +26,13 @@ public interface UserDatabase
     public List getGroupsForPrincipal( Principal p )
         throws NoSuchPrincipalException;
 
+    /**
+     *  Creates a principal.  This method should return either a WikiGroup
+     *  or a UserProfile (or a subclass, if you need them for your own
+     *  usage.  The returned Principals are cached within UserManager.
+     *  <p>
+     *  Yes, it means that user names and user groups do actually live
+     *  in the same namespace.
+     */
+    public WikiPrincipal getPrincipal( String name );
 }
