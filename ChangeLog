@@ -151,7 +151,7 @@
         at
         http://diveintomark.org/archives/2002/06/02.html#important_change_to_the_link_tag.
 
-2002-06-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2002-06-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Oops, compiling broke on some systems due to undeclared
         exceptions.
@@ -280,7 +280,7 @@
         Having said that, this has not been tested very many times,
         obviously.  Use with care :-).
 
-2002-03-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2002-03-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.1.
 
