@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.File;
 import java.util.Properties;
+import java.util.Collection;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -42,8 +43,6 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class AttachmentManager
 {
     public static final String  PROP_PROVIDER = "jspwiki.attachmentProvider";
-
-    public static final String  PROP = "";
 
     static Category log = Category.getInstance( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
@@ -123,17 +122,38 @@ public class AttachmentManager
         return m_provider.getAttachmentInfo( wikipage, name, version );
     }
 
+    public Collection listAttachments( WikiPage wikipage )
+        throws ProviderException
+    {
+        return m_provider.listAttachments( wikipage );
+    }
+
+    /**
+     *  Returns true, if the page has attachments.
+     */
+    public boolean hasAttachments( WikiPage wikipage )
+    {
+        try
+        {
+            return listAttachments( wikipage ).size() > 0;
+        }
+        catch( Exception e ) {}
+
+        return false;
+    }
+
     public InputStream getAttachmentStream( Attachment att )
-        throws IOException
+        throws IOException,
+               ProviderException
     {
         return m_provider.getAttachmentData( att );
     }
 
     public void storeAttachment( Attachment att, File source )
-        throws IOException
+        throws IOException,
+               ProviderException
     {
-        log.info("Stub: Stored attachment: "+att);
-        // m_provider.putAttachmentData( att, new FileInputStream(source) );
+        m_provider.putAttachmentData( att, new FileInputStream(source) );
     }
 
     public WikiAttachmentProvider getCurrentProvider()
