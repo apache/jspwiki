@@ -32,6 +32,7 @@ In the examples on the plugin documentation pages these forms are used interchan
 * [ListLocksPlugin] - Lists page locks.
 * [RecentChangesPlugin] - Displays the [recent changes].
 * [ReferringPagesPlugin] - Lists pages that refer to this page.
+* [TableOfContents] - Generates a table of contents
 * [UndefinedPagesPlugin] - Lists pages that are missing.
 * [UnusedPagesPlugin] - Lists pages that have been orphaned.
 * [WeblogArchivePlugin] - Displays a list to older weblog entries.
