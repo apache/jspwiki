@@ -654,7 +654,7 @@ public class WikiEngine
      */
     public String getAttachmentURL( String attName )
     {
-        return m_baseURL+"attach?page="+encodeName(attName);
+        return m_baseURL+"attach/"+encodeName(attName);
     }
 
     /**
