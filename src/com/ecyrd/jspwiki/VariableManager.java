@@ -284,7 +284,7 @@ public class VariableManager
                 return context.getVariable( name ).toString();
             }
 
-            // Final straw: attempt to fetch using property name
+            // Next-to-final straw: attempt to fetch using property name
             // We don't allow fetching any other properties than those starting
             // with "jspwiki.".  I know my own code, but I can't vouch for bugs
             // in other people's code... :-)
@@ -300,6 +300,16 @@ public class VariableManager
                 }
             }
             
+            // And the final straw: see if the current page has named metadata.
+            
+            WikiPage pg = context.getPage();
+            if( pg != null )
+            {
+                Object metadata = pg.getAttribute( varName );
+                if( metadata != null )
+                    return( metadata.toString() );
+            }
+             
             throw new NoSuchVariableException( "No variable "+varName+" defined." );
         }
         
