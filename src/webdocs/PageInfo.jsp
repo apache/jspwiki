@@ -32,8 +32,6 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
-    String pageurl = wiki.encodeName( pagereq );    
-
     WikiPage wikipage = wiki.getPage( pagereq );
     if( wikipage == null )
         wikipage = new WikiPage( pagereq );
