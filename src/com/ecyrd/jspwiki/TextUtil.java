@@ -28,12 +28,6 @@ import java.io.IOException;
 public class TextUtil
 {
     static String HEX_DIGITS =  "0123456789ABCDEF";
-    static final char DIFF_ADDED_SYMBOL    = '+';
-    static final char DIFF_REMOVED_SYMBOL  = '-';
-    static final String CSS_DIFF_ADDED     = "<TR><TD BGCOLOR=#99FF99 class=\"diffadd\">";
-    static final String CSS_DIFF_REMOVED   = "<TR><TD BGCOLOR=#FF9933 class=\"diffrem\">";
-    static final String CSS_DIFF_UNCHANGED = "<TR><TD class=\"diff\">";
-    static final String CSS_DIFF_CLOSE     = "</TD></TR>";
 
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
@@ -260,54 +254,6 @@ public class TextUtil
         catch( Exception e ) {}
             
         return val;
-    }
-
-
-    /**
-     * Goes through output provided by a diff command and inserts
-     * HTML tags to make the result more legible.
-     * Currently colors lines starting with a + green,
-     * those starting with - reddish (hm, got to think of
-     * color blindness here...).
-     */
-    public static String colorizeDiff( String diffText )
-        throws IOException
-    {
-        String line = null;
-        String start = null;
-        String stop = null;
-
-        if( diffText == null )
-        {
-            return "Invalid diff - probably something wrong with server setup.";
-        }
-
-        BufferedReader in = new BufferedReader( new StringReader( diffText ) );
-        StringBuffer out = new StringBuffer();
-
-        out.append("<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>");
-        while( ( line = in.readLine() ) != null )
-        {
-            stop  = CSS_DIFF_CLOSE;
-            switch( line.charAt( 0 ) )
-            {
-              case DIFF_ADDED_SYMBOL:
-                start = CSS_DIFF_ADDED;
-                break;
-              case DIFF_REMOVED_SYMBOL:
-                start = CSS_DIFF_REMOVED;
-                break;
-              default:
-                start = CSS_DIFF_UNCHANGED;
-            }
-            
-            out.append( start );
-            out.append( line.trim() );
-            out.append( stop + "\n" );
-
-        }
-        out.append("</TABLE>");
-        return( out.toString() );
     }
 
 }
