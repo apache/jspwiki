@@ -1,3 +1,11 @@
+2003-05-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.13.
+
+        * RCSFileProvider no longer relies on garbage collection to close
+        Process streams.  This may have some effect on the "leaking file
+        handles" problem on Linux.  Testing...
+
 2003-04-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.12.
