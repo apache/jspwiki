@@ -2,7 +2,7 @@
      on the page --%>
 
 <DIV class="searchbox">
-  <FORM action="<wiki:Variable var="jspwiki.baseURL"/>Search.jsp"
+  <FORM action="<wiki:Variable var="baseURL"/>Search.jsp"
       ACCEPT-CHARSET="ISO-8859-1,UTF-8">
     <wiki:LinkTo page="FindPage">Search Wiki:</wiki:LinkTo>
     <INPUT type="text" name="query" size="15">

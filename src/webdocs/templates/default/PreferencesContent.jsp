@@ -5,7 +5,7 @@
       You need to have cookies enabled for this to work, though.
       </P>
 
-      <FORM action="<wiki:Variable var="jspwiki.baseURL"/>UserPreferences.jsp" 
+      <FORM action="<wiki:Variable var="baseURL"/>UserPreferences.jsp" 
             method="POST"
             ACCEPT-CHARSET="UTF-8">
 
@@ -25,7 +25,7 @@
       you've set up, permanently.  You will need to enter them again.</P>
 
       <DIV align="center">
-      <FORM action="<wiki:Variable var="jspwiki.baseURL"/>UserPreferences.jsp"
+      <FORM action="<wiki:Variable var="baseURL"/>UserPreferences.jsp"
             method="POST"
             ACCEPT-CHARSET="UTF-8">
       <INPUT type="submit" name="clear" value="Remove preferences from this computer" />

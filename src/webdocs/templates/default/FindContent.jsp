@@ -53,7 +53,7 @@
 
       <P>
 
-      <FORM action="<wiki:Variable var="jspwiki.baseURL"/>Search.jsp"
+      <FORM action="<wiki:Variable var="baseURL"/>Search.jsp"
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
       Enter your query here:<BR>
