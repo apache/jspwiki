@@ -43,8 +43,8 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=wiki.getApplicationName()%>: Previewing <%=pagereq%></TITLE>
-  <%@ include file="cssinclude.js" %>
+  <TITLE><wiki:ApplicationName />: Previewing <wiki:PageName />></TITLE>
+  <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 
 <BODY CLASS="preview" BGCOLOR="#F0F0F0">
@@ -53,14 +53,14 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/LeftMenu.jsp" %>
+       <%@ include file="templates/default/LeftMenu.jsp" %>
        <P>
-       <%@ include file="templates/LeftMenuFooter.jsp" %>
+       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
-      <%@ include file="templates/PageHeader.jsp" %>
+      <%@ include file="templates/default/PageHeader.jsp" %>
 
       <P>
       <B>This is a preview.  Hit "Back" on your browser to go back to editor.</B>
@@ -68,7 +68,7 @@
 
       <P><HR></P>
 
-      <%=wiki.textToHTML( wikiContext, usertext ) %>
+      <wiki:Translate><%=usertext%></wiki:Translate>
 
       <P><HR>
     </TD>
