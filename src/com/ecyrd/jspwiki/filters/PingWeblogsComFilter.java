@@ -6,6 +6,7 @@ import org.apache.xmlrpc.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Vector;
+import java.util.Hashtable;
 import org.apache.log4j.Category;
 
 /**
@@ -62,6 +63,16 @@ public class PingWeblogsComFilter
                                                               URL url,
                                                               String method )
                                     {
+                                        Hashtable res = (Hashtable) result;
+
+                                        Boolean flerror = (Boolean)res.get("flerror");
+                                        String  msg     = (String)res.get("message");
+
+                                        if( flerror == Boolean.TRUE )
+                                        {
+                                            log.error("Failed to ping: "+msg);
+                                        }
+
                                         log.info("Weblogs.com has been pinged.");
                                     }
                                 }
