@@ -45,10 +45,31 @@ public class UserProfile
     public static final int PASSWORD  = 3;
 
 
-    private String m_password = null;
+    private String m_password  = null;
+    private String m_loginName = null;
 
     public UserProfile()
     {
+    }
+
+    /**
+     *  The login name may be different from your WikiName.  The WikiName
+     *  is typically of type FirstnameLastName (like JanneJalkanen), whereas
+     *  the login name is typically a shorter one, such as "jannej" or something
+     *  similar.
+     */
+    public void setLoginName( String name )
+    {
+        m_loginName = name;
+    }
+
+    /**
+     *  Returns the login name.
+     */
+
+    public String getLoginName()
+    {
+        return m_loginName;
     }
 
     /**
