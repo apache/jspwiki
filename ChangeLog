@@ -1,5 +1,7 @@
 2001-08-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.2.0
+
         * WikiEngine now behaves much better if a provider cannot be
         instantiated.
 
