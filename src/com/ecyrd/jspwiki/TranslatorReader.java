@@ -191,22 +191,19 @@ public class TranslatorReader extends Reader
           //  With the image, external and interwiki types we need to
           //  make sure nobody can put in Javascript or something else
           //  annoying into the links themselves.  We do this by preventing
-          //  a haxor from stopping the link name short with quotes.
-          //  FIXME: Triplicate code, refactor.
+          //  a haxor from stopping the link name short with quotes in 
+          //  fillBuffer().
           //
           case IMAGE:
-            encodedlink = replaceString( link, "\"", "%22" );
-            result = "<IMG CLASS=\"inline\" SRC=\""+encodedlink+"\" ALT=\""+text+"\">";
+            result = "<IMG CLASS=\"inline\" SRC=\""+link+"\" ALT=\""+text+"\">";
             break;
 
           case EXTERNAL:
-            encodedlink = replaceString( link, "\"", "%22" );
-            result = "<A CLASS=\"external\" HREF=\""+encodedlink+"\">"+text+"</A>";
+            result = "<A CLASS=\"external\" HREF=\""+link+"\">"+text+"</A>";
             break;
 
           case INTERWIKI:
-            encodedlink = replaceString( link, "\"", "%22" );
-            result = "<A CLASS=\"interwiki\" HREF=\""+encodedlink+"\">"+text+"</A>";
+            result = "<A CLASS=\"interwiki\" HREF=\""+link+"\">"+text+"</A>";
             break;
 
           default:
@@ -675,8 +672,13 @@ public class TranslatorReader extends Reader
 
         String trimmed = line.trim();
 
+        //
+        //  Replace the most obvious items that could possibly
+        //  break the resulting HTML code.
+        //
         line = replaceString( line, "<", "&lt;" );
         line = replaceString( line, ">", "&gt;" );
+        line = replaceString( line, "\"", "&quot;" );
 
         if( !m_iscode )
         {
