@@ -171,19 +171,24 @@ public class WeblogPlugin implements WikiPlugin
             {
                 WikiPage p = (WikiPage) i.next();
 
-                sb.append("<div class=\"weblogheading\">");
+                sb.append("<div class=\"weblogentry\">\n");
+
+                //
+                //  Heading
+                //
+                sb.append("<div class=\"weblogentryheading\">\n");
 
                 Date entryDate = p.getLastModified();
                 sb.append( entryDateFmt.format(entryDate) );
 
                 sb.append("</div>\n");
 
-                sb.append("<div class=\"weblogentry\">");
-
                 //
                 //  Append the text of the latest version.  Reset the
                 //  context to that page.
                 //
+
+                sb.append("<div class=\"weblogentrybody\">\n");
 
                 WikiContext entryCtx = new WikiContext( engine, p );
 
@@ -191,6 +196,11 @@ public class WeblogPlugin implements WikiPlugin
                                            engine.getPage(p.getName()) ) );
                 
                 sb.append("</div>\n");
+
+                //
+                //  Append footer
+                //
+                sb.append("<div class=\"weblogentryfooter\">\n");
 
                 String author = p.getAuthor();
 
@@ -206,26 +216,24 @@ public class WeblogPlugin implements WikiPlugin
                     author = "AnonymousCoward";
                 }
 
-                sb.append("<div class=\"weblogpermalink\">");
                 sb.append("By "+author+"&nbsp;&nbsp;");
                 sb.append( "<a href=\""+engine.getViewURL(p.getName())+"\">Permalink</a>" );
                 String commentPageName = TextUtil.replaceString( p.getName(),
                                                                  "blogentry",
                                                                  "comments" );
 
-                if( engine.pageExists( commentPageName ) )
-                {
-                    sb.append( "&nbsp;&nbsp;" );
-                    sb.append( "<a href=\""+engine.getViewURL(commentPageName)+"\">View Comments</a>" );
-                }
-
                 if( hasComments )
                 {
                     sb.append( "&nbsp;&nbsp;" );
-                    sb.append( "<a href=\""+engine.getEditURL(commentPageName)+"&comment=true\">Comment this entry</a>" );
+                    sb.append( "<a target=\"_blank\" href=\""+engine.getBaseURL()+"Comment.jsp?page="+engine.encodeName(commentPageName)+"\">Comments?</a>" );
                 }
+                
+                sb.append("</div>\n");
 
-                sb.append("</div>");
+                //
+                //  Done, close
+                //
+                sb.append("</div>\n");
             }
             
             sb.append("</div>\n");
