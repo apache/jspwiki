@@ -1,5 +1,9 @@
 2002-03-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added VersioningFileProvider.  The VersioningFileProvider is
+        STRICTLY ALPHA.  DO NOT USE IT FOR ANY REAL PROJECT.  But please,
+        do test it :-).
+
         * v1.6.13-cvs.
 
         * getRecentChanges() XML-RPC method now hopefully does UTC
