@@ -2,6 +2,8 @@
 #
 #  A very simple installer script which restarts tomcat as well.
 #
+#  This is just a sample.
+#
 
 if [ "$1" = "public" ]
 then
