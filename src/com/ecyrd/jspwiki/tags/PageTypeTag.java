@@ -26,7 +26,12 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
- *  Includes the body, if this page is actually an attachment.
+ *  Includes the body, if the current page is of proper type.
+ *
+ *  <B>Attributes</B>
+ *  <UL>
+ *   <LI>type - either "page" or "attachment".
+ *  </UL>
  *
  *  @author Janne Jalkanen
  *  @since 2.0
