@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
+import com.ecyrd.jspwiki.providers.WikiPageProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -223,7 +225,19 @@ public class WikiEngine
 
         try
         {
-            Class providerclass = Class.forName( classname );
+            Class providerclass;
+
+            //
+            //  Attempt to use a shortcut, if possible.
+            //
+            try
+            {
+                providerclass = Class.forName( classname );
+            }
+            catch( ClassNotFoundException e )
+            {
+                providerclass = Class.forName( "com.ecyrd.jspwiki.providers."+classname );
+            }
 
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
@@ -302,23 +316,30 @@ public class WikiEngine
         long start = System.currentTimeMillis();
         log.info( "Starting cross reference scan of WikiPages" );
 
-        Collection pages = m_provider.getAllPages();
+        try
+        {
+            Collection pages = m_provider.getAllPages();
 
-        // Build a new manager with default key lists.
-        if( m_referenceManager == null )
-        {
-            m_referenceManager = new ReferenceManager( this, pages );
-        }
+            // Build a new manager with default key lists.
+            if( m_referenceManager == null )
+            {
+                m_referenceManager = new ReferenceManager( this, pages );
+            }
         
-        // Scan the existing pages from disk and update references in the manager.
-        Iterator it = pages.iterator();
-        while( it.hasNext() )
+            // Scan the existing pages from disk and update references in the manager.
+            Iterator it = pages.iterator();
+            while( it.hasNext() )
+            {
+                WikiPage page = (WikiPage)it.next();
+                String content = m_provider.getPageText( page.getName(), 
+                                                         WikiPageProvider.LATEST_VERSION );
+                m_referenceManager.updateReferences( page.getName(), 
+                                                     scanWikiLinks( content ) );
+            }
+        }
+        catch( ProviderException e )
         {
-            WikiPage page = (WikiPage)it.next();
-            String content = m_provider.getPageText( page.getName(), 
-                                                     WikiPageProvider.LATEST_VERSION );
-            m_referenceManager.updateReferences( page.getName(), 
-                                                 scanWikiLinks( content ) );
+            log.fatal("PageProvider is unable to list pages: ", e);
         }
 
         log.info( "Cross reference scan done (" +
@@ -330,7 +351,7 @@ public class WikiEngine
     /**
      *  Throws an exception if a property is not found.
      */
-    static String getRequiredProperty( Properties props, String key )
+    public static String getRequiredProperty( Properties props, String key )
         throws NoRequiredPropertyException
     {
         String value = props.getProperty(key);
@@ -611,10 +632,20 @@ public class WikiEngine
 
         String result = null;
 
-        result = m_provider.getPageText( page, version );
+        try
+        {
+            result = m_provider.getPageText( page, version );
 
-        if( result == null )
-            result = "";
+        }
+        catch( ProviderException e )
+        {
+            // FIXME
+        }
+        finally
+        {
+            if( result == null )
+                result = "";
+        }
 
         return result;
     }
@@ -755,7 +786,14 @@ public class WikiEngine
         // Hook into cross reference collection.
         m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
 
-        m_provider.putPageText( new WikiPage(page), text );
+        try
+        {
+            m_provider.putPageText( new WikiPage(page), text );
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to put page", e );
+        }
     }
 
     // FIXME: This is a terrible time waster, parsing the 
@@ -838,7 +876,14 @@ public class WikiEngine
             if( author != null )
                 p.setAuthor( author );
 
-            m_provider.putPageText( p, text );
+            try
+            {
+                m_provider.putPageText( p, text );
+            }
+            catch( ProviderException e )
+            {
+                log.error("Unable to put page: ", e);
+            }
         }
     }
 
@@ -847,7 +892,15 @@ public class WikiEngine
      */
     public int getPageCount()
     {
-        return m_provider.getAllPages().size();
+        try
+        {
+            return m_provider.getAllPages().size();
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to count pages: ",e );
+            return -1;
+        }
     }
 
     /**
@@ -877,13 +930,21 @@ public class WikiEngine
         if( m_provider == null ) 
             return null;
 
-        Collection pages = m_provider.getAllPages();
+        try
+        {
+            Collection pages = m_provider.getAllPages();
 
-        TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
+            TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
 
-        sortedPages.addAll( pages );
+            sortedPages.addAll( pages );
 
-        return sortedPages;
+            return sortedPages;
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to fetch all pages: ",e);
+            return null;
+        }
     }
 
     /**
@@ -964,10 +1025,18 @@ public class WikiEngine
         if( m_provider == null ) 
             return null;
 
-        WikiPage p = m_provider.getPageInfo( pagereq, 
-                                             WikiPageProvider.LATEST_VERSION );
+        try
+        {
+            WikiPage p = m_provider.getPageInfo( pagereq, 
+                                                 WikiPageProvider.LATEST_VERSION );
+            return p;
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to fetch page info",e);
+            return null;
+        }
 
-        return p;
     }
 
     /**
@@ -980,9 +1049,16 @@ public class WikiEngine
         if( m_provider == null )
             return null;
 
-        WikiPage p = m_provider.getPageInfo( pagereq, version );
-
-        return p;
+        try
+        {
+            WikiPage p = m_provider.getPageInfo( pagereq, version );
+            return p;
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to fetch page info",e);
+            return null;
+        }
     }
 
     /**
@@ -995,10 +1071,17 @@ public class WikiEngine
         if( m_provider == null ) 
             return null;
 
-        WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+        try
+        {
+            WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
-        if( p != null )
-            return p.getLastModified();
+            if( p != null )
+                return p.getLastModified();
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to fetch last modification date", e );
+        }
 
         return null;
     }
@@ -1012,11 +1095,17 @@ public class WikiEngine
         if( m_provider == null ) 
             return -1;
 
-        WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+        try
+        {
+            WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
-        if( p != null )
-            return p.getVersion();
-
+            if( p != null )
+                return p.getVersion();
+        }
+        catch( ProviderException e )
+        {
+            log.error("FIXME");
+        }
         return -1;
     }
 
@@ -1029,7 +1118,16 @@ public class WikiEngine
         if( m_provider == null ) 
             return null;
 
-        return m_provider.getVersionHistory( page );
+        try
+        {
+            return m_provider.getVersionHistory( page );
+        }
+        catch( ProviderException e )
+        {
+            log.error("FIXME");
+        }
+
+        return null;
     }
 
     /**
