@@ -560,6 +560,22 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testAttachmentLink()
+        throws Exception
+    {
+        newPage("Test");
+
+        Attachment att = new Attachment( "Test", "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+    
+        String src = "This should be an [attachment link|Test/TestAtt.txt]";
+        
+        assertEquals( "This should be an <a class=\"attachment\" href=\"attach/Test/TestAtt.txt\">attachment link</a>"+
+                      "<a href=\"PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"images/attachment_small.png\" border=\"0\" alt=\"(info)\"/></a>",
+                      translate(src));
+    }
+    
     public void testNoHyperlink()
         throws Exception
     {
