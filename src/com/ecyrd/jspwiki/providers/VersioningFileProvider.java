@@ -56,7 +56,7 @@ import com.ecyrd.jspwiki.*;
  *  @author Janne Jalkanen
  */
 public class VersioningFileProvider
-    extends FileSystemProvider
+    extends AbstractFileProvider
 {
     private static final Category   log = Category.getInstance(VersioningFileProvider.class);
    

@@ -50,7 +50,7 @@ import com.ecyrd.jspwiki.*;
  */
 // FIXME: Not all commands read their format from the property file yet.
 public class RCSFileProvider
-    extends FileSystemProvider
+    extends AbstractFileProvider
 {
     private String m_checkinCommand  = "ci -q -m\"author=%u\" -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
