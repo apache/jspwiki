@@ -43,13 +43,14 @@ public class PageSizeTag
 
         try
         {
-            if( page != null && engine.pageExists(page) )
+            if( page != null )
             {
                 long size = page.getSize();
 
-                if( size == -1 && !(page instanceof Attachment) )
+                if( size == -1 && engine.pageExists(page) ) // should never happen with attachments
                 {
                     size = engine.getPureText( page.getName(), page.getVersion() ).length();
+                    page.setSize( size );
                 }
 
                 pageContext.getOut().write( Long.toString(size) );
