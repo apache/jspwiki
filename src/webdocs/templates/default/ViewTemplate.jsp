@@ -72,6 +72,10 @@
          <wiki:Include page="PreferencesContent.jsp" />
       </wiki:CheckRequestContext>
 
+      <wiki:CheckRequestContext context="error">
+         <wiki:Include page="DisplayMessage.jsp" />
+      </wiki:CheckRequestContext>
+
     </TD>
   </TR>
 
