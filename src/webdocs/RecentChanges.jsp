@@ -18,7 +18,7 @@
                 aa.get( Calendar.DAY_OF_YEAR ) == bb.get( Calendar.DAY_OF_YEAR ) );
     }
 
-    Category log = Category.getInstance("JSPWikiRecentChanges");
+    Category log = Category.getInstance("JSPWiki.RecentChanges");
     WikiEngine wiki;
 %>
 
@@ -34,7 +34,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%> Recent Changes</TITLE>
+  <TITLE><%=wiki.getApplicationName()%> Recent Changes</TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

@@ -1,4 +1,5 @@
-<H3>JSPWiki</H3>
+<%-- Assumes that a variable called 'wiki' exists --%>
+<H3><A HREF="SystemInfo.jsp"><%=wiki.getApplicationName()%></A></H3>
 
 <P>
 <A HREF="Wiki.jsp?page=Main">Main page</A><BR>

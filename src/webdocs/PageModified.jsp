@@ -39,7 +39,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%> Error - Concurrent modification of <%=pagereq%></TITLE>
+  <TITLE><%=wiki.getApplicationName()%> Error - Concurrent modification of <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

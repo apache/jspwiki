@@ -26,7 +26,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%>: Info on <%=pagereq%></TITLE>
+  <TITLE><%=wiki.getApplicationName()%>: Info on <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

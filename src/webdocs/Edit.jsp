@@ -72,7 +72,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%> Edit: <%=pagereq%></TITLE>
+  <TITLE><%=wiki.getApplicationName()%> Edit: <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFD0FF">

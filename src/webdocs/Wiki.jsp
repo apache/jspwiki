@@ -35,7 +35,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%>: <%=pagereq%></TITLE>
+  <TITLE><%=wiki.getApplicationName()%>: <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

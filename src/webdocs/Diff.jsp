@@ -37,7 +37,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%>: Diff <%=pagereq%></TITLE>
+  <TITLE><%=wiki.getApplicationName()%>: Diff <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

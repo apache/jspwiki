@@ -30,7 +30,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE><%=Release.APPNAME%> Search</TITLE>
+  <TITLE><%=wiki.getApplicationName()%> Search</TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
