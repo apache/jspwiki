@@ -16,7 +16,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+*/
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
@@ -32,8 +32,13 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>var - Name of the variable.  Required.
- *    <LI>default - Revert to this value, if the value of "var" is null.
+ *    <LI>default - Revert to this value, if the value of "var" is null. 
+ *                  If left out, this tag will produce a concise error message
+ *                  if the named variable is not found. Set to empty (default="")
+ *                  to hide the message.
  *  </UL>
+ *
+ *  <P>A default value implies <I>failmode='quiet'</I>.
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -41,9 +46,9 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
 public class VariableTag
     extends WikiTagBase
 {
-    private String m_var     = null;
-    private String m_default = null;
-
+    private String m_var      = null;
+    private String m_default  = null;
+    
     public String getVar()
     {
         return m_var;
@@ -58,36 +63,40 @@ public class VariableTag
     {
         m_default = arg;
     }
-
+    
     public final int doWikiStartTag()
         throws JspException,
                IOException
     {
         WikiEngine engine   = m_wikiContext.getEngine();
         JspWriter out = pageContext.getOut();
-
+        String msg = null;
+        String value = null;
+        
         try
         {
-            String value = engine.getVariableManager().getValue( m_wikiContext,
-                                                                 getVar() );
-
-            if( value == null )
-            {
-                value = m_default;
-            }
-
-            out.write( value );
+            value = engine.getVariableManager().getValue( m_wikiContext,
+                                                          getVar() );
         }
         catch( NoSuchVariableException e )
         {
-            throw new JspException("No such variable: "+e.getMessage());
+            msg = "No such variable: "+e.getMessage();
         }
         catch( IllegalArgumentException e )
         {
-            throw new JspException("Incorrect variable name: "+e.getMessage());
+            msg = "Incorrect variable name: "+e.getMessage();
         }
 
-        return SKIP_BODY;
-    }
+        if( value == null )
+        {
+            value = m_default;
+        }
 
+        if( value == null )
+        {
+            value = msg;
+        }
+        out.write( value );
+        return( SKIP_BODY );
+    }
 }
