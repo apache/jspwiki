@@ -6,13 +6,15 @@ JSPWiki handles attachments as a special type of a [WikiPage].  For example, pag
 
 !Usage
 
-<wiki:PageType type="attachment|page">
-;:''HTML or JSP data''
+{{{
+<wiki:PageType type="attachment|page|weblogentry">
+   HTML or JSP data
 </wiki:PageType>
+}}}
 
 !Parameters
 
-;__type__: Either "attachment", or "page".  If "attachment", includes the body if the current page is an attachment; or if "page", includes the body if (and only if) the body is a standard [WikiPage].
+;__type__: Either "attachment", "page", or "weblogentry".  If "attachment", includes the body if the current page is an attachment; or if "page", includes the body if (and only if) the body is a standard [WikiPage].  If it is "weblogentry", then includes the body if and only if the page seems to be a [web log] entry.
 
 !Example
 
