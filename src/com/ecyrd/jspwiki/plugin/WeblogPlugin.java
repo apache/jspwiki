@@ -44,7 +44,8 @@ import java.util.*;
  *
  *  The "days" and "startDate" can also be sent in HTTP parameters,
  *  and the names are "weblog.days" and "weblog.startDate", respectively.
- *
+ *  <p>
+ *  The weblog plugin also adds an attribute to each page it is on: "weblogplugin.isweblog" is set to "true".  This can be used to quickly peruse pages which have weblogs. 
  *  @since 1.9.21
  */
 
@@ -65,6 +66,8 @@ public class WeblogPlugin implements WikiPlugin
     public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
     public static final String  PARAM_MAXENTRIES   = "maxEntries";
     public static final String  PARAM_PAGE         = "page";
+
+    public static final String  ATTR_ISWEBLOG      = "weblogplugin.isweblog";
 
     public static String makeEntryPage( String pageName,
                                         String date,
@@ -154,6 +157,12 @@ public class WeblogPlugin implements WikiPlugin
                 return "Illegal time format: "+startDay;
             }
         }
+
+        //
+        //  Mark this to be a weblog
+        //
+
+        context.getPage().setAttribute(ATTR_ISWEBLOG, "true");
 
         //
         //  We make a wild guess here that nobody can do millisecond
