@@ -1,5 +1,7 @@
 2002-08-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.13.
+
         * JSPWiki now writes a better separator to log when it starts to
         make it easier to see new log entires.  Suggested by Mikael
         Honkala.
