@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.WikiPage;
  *  <P><B>Attributes<B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
- *    <LI>mode - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
+ *    <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -40,6 +40,18 @@ import com.ecyrd.jspwiki.WikiPage;
 public class LinkToTag
     extends WikiLinkTag
 {
+    private String m_version = null;
+
+    public String getVersion()
+    {
+        return m_version;
+    }
+
+    public void setVersion( String arg )
+    {
+        m_version = arg;
+    }
+
     public final int doWikiStartTag()
         throws IOException
     {
@@ -63,13 +75,19 @@ public class LinkToTag
             JspWriter out = pageContext.getOut();
             String encodedlink = engine.encodeName( pageName );
 
+            String url = engine.getBaseURL()+"Wiki.jsp?page="+encodedlink;
+            if( getVersion() != null )
+            {
+                url += "&version="+getVersion();
+            }
+
             switch( m_format )
             {
               case ANCHOR:
-                out.print("<A CLASS=\"wikipage\" HREF=\""+engine.getBaseURL()+"Wiki.jsp?page="+encodedlink+"\">");
+                out.print("<A CLASS=\"wikipage\" HREF=\""+url+"\">");
                 break;
               case URL:
-                out.print( engine.getBaseURL()+"Wiki.jsp?page="+encodedlink );
+                out.print( url );
                 break;
             }
 
