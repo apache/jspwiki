@@ -15,19 +15,23 @@
 </P>
 <P>
 <DIV ALIGN="center" CLASS="username">
+    <%@ include file="AuthBox.jsp" %>
 
-    <wiki:UserCheck exists="true">
+
+    <wiki:UserCheck status="known">
         <B>G'day,</B><BR>
         <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
     </wiki:UserCheck>
 
-    <wiki:UserCheck exists="false">
+    <wiki:UserCheck status="unknown">
         <TT> 
         Set your name in<BR>
         <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
         </TT>    
     </wiki:UserCheck>
+
 </DIV>
+
 
 <!-- End of automatically generated page -->
 
