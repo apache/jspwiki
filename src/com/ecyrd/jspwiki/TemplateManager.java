@@ -88,9 +88,8 @@ public class TemplateManager
     }
 
     /**
-     *  An utility method for finding a JSP page.  It first searches
-     *  the current context, and then attempts to locate the page under
-     *  the default template.
+     *  An utility method for finding a JSP page.  It searches only under
+     *  either current context or by the absolute name.
      */
     public String findJSP( PageContext pageContext, String name )
     {
@@ -100,7 +99,8 @@ public class TemplateManager
 
         if( is == null )
         {
-            String defname = makeFullJSPName( DEFAULT_TEMPLATE, name );
+            String defname = makeFullJSPName( DEFAULT_TEMPLATE, 
+                                              removeTemplatePart(name) );
             is = sContext.getResourceAsStream( defname );
 
             if( is != null )
@@ -109,6 +109,27 @@ public class TemplateManager
                 name = null;
         }
 
+        if( is != null ) try { is.close(); } catch( IOException e ) {}
+
+        return name;
+    }
+
+    /**
+     *  Removes the template part of a name.
+     */
+    private final String removeTemplatePart( String name )
+    {
+        int idx = name.indexOf('/');
+        if( idx != -1 )
+        {
+            idx = name.indexOf('/', idx); // Find second "/"
+
+            if( idx != -1 )
+            {
+                return name.substring( idx+1 );
+            }
+        }
+        
         return name;
     }
 
@@ -117,9 +138,20 @@ public class TemplateManager
         return "/"+DIRECTORY+"/"+template+"/"+name;
     }
 
+    /**
+     *  Attempts to locate a JSP page under the given template.  If that template
+     *  does not exist, or the page does not exist under that template, will
+     *  attempt to locate a similarly named file under the default template.
+     */
     public String findJSP( PageContext pageContext, String template, String name )
     {
         ServletContext sContext = pageContext.getServletContext();
+
+        if( name.charAt(0) == '/' )
+        {
+            // This is already a full path
+            return findJSP( pageContext, name );
+        }
 
         String fullname = makeFullJSPName( template, name );
         InputStream is = sContext.getResourceAsStream( fullname );
@@ -134,6 +166,8 @@ public class TemplateManager
             else
                 fullname = null;
         }
+
+        if( is != null ) try { is.close(); } catch( IOException e ) {}
 
         return fullname;
     }
