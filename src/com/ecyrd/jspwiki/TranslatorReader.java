@@ -134,6 +134,9 @@ public class TranslatorReader extends Reader
         allowable Wiki, unless you are absolutely certain of what you're doing. */
     public static final String     PROP_ALLOWHTML        = "jspwiki.translatorReader.allowHTML";
 
+    /** If set to "true", all external links are tagged with 'rel="nofollow"' */
+    public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
+
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
 
@@ -149,6 +152,8 @@ public class TranslatorReader extends Reader
 
     /** If true, executes plugins; otherwise ignores them. */
     private boolean                m_enablePlugins       = true;
+
+    private boolean                m_useRelNofollow      = false;
 
     /** If true, all links are absolute.  Otherwise uses user preference.  This is required
         for things like RSS generation. */
@@ -317,6 +322,10 @@ public class TranslatorReader extends Reader
         m_allowHTML           = TextUtil.getBooleanProperty( props,
                                                              PROP_ALLOWHTML, 
                                                              m_allowHTML );
+
+        m_useRelNofollow      = TextUtil.getBooleanProperty( props,
+                                                             PROP_USERELNOFOLLOW,
+                                                             m_useRelNofollow );
     }
 
     /**
@@ -2534,7 +2543,9 @@ public class TranslatorReader extends Reader
                 break;
 
               case EXTERNAL:
-                result = "<a class=\"external\" href=\""+link+section+"\">"+text+"</a>";
+                result = "<a class=\"external\" "+
+                         (m_useRelNofollow ? "rel=\"nofollow\" " : "")+
+                         "href=\""+link+section+"\">"+text+"</a>";
                 break;
                 
               case INTERWIKI:
