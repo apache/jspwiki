@@ -379,6 +379,28 @@ public class PageManager
     }
 
     /**
+     *  Deletes only a specific version of a WikiPage.
+     */
+    public void deleteVersion( WikiPage page )
+        throws ProviderException
+    {
+        m_provider.deleteVersion( page.getName(), page.getVersion() );
+
+        // FIXME: Update RefMgr
+    }
+
+    /**
+     *  Deletes an entire page, all versions, all traces.
+     */
+    public void deletePage( WikiPage page )
+        throws ProviderException
+    {
+        m_provider.deletePage( page.getName() );
+
+        // FIXME: Update RefMgr
+    }
+
+    /**
      *  This is a simple reaper thread that runs roughly every minute
      *  or so (it's not really that important, as long as it runs),
      *  and removes all locks that have expired.
