@@ -45,7 +45,7 @@ import java.util.LinkedList;
  * </p>
  * @author Ken Liu ken@kenliu.net
  */
-public class BreadcrumbsTag extends WikiLinkTag
+public class BreadcrumbsTag extends WikiTagBase
 {
     private static final Category log = Category.getInstance(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
