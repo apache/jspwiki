@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.13 2002-06-09 13:30:42 jalkanen Exp $
+    $Id: build.xml,v 1.14 2002-06-17 12:23:01 ebu Exp $
 -->    
        
 <!--   
@@ -254,6 +254,17 @@
     </war>
 
   </target>
+
+
+  <target name="opened-war" depends="war"
+   description="Creates an opened JSPWiki war hierarhcy into the build dir.">
+
+    <mkdir dir="${code.build}/${ant.project.name}" />
+    <unzip src="${install.fulldir}/${ant.project.name}.war"
+           dest="${code.build}/${ant.project.name}" />
+
+  </target>
+
 
   <!--
        Here goes some nice Ant magic...  We build the source
