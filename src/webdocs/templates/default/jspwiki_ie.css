@@ -102,3 +102,12 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
 .imageplugin { margin: 5px 5px 5px 5px; }
 .imageplugin img { border: 0; }
 .imageplugin caption { font-size: 80%; }
+
+/* For the search_highlight.js.  This style defines the how the words that have
+   been found look like.  If you look for "thingy", you will get these following
+   in the results.
+
+   <span class="searchword">thingy</span>
+ */
+.searchword { background-color: #FFFF00; }
+
