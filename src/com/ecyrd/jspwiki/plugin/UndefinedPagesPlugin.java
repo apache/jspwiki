@@ -24,7 +24,11 @@ import com.ecyrd.jspwiki.*;
 import java.util.*;
 
 /**
- *  Parameters: none.
+ *  Parameters: none.<BR>
+ *  From AbstractReferralPlugin:<BR>
+ *  separator: How to separate generated links; default is a wikitext line break,
+ *             producing a vertical list.<BR>
+ *  maxwidth: maximum width, in chars, of generated links.
  *
  *  @author Janne Jalkanen
  */

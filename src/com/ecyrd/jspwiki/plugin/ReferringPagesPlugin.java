@@ -26,8 +26,13 @@ import java.util.*;
 /**
  *  Displays the pages referring to the current page.
  *
- *  Parameters: max: How many items to show.<BR>
- *              extras: How to announce extras.<BR>
+ *  Parameters: <BR>
+ *  max: How many items to show.<BR>
+ *  extras: How to announce extras.<BR>
+ *  From AbstractReferralPlugin:<BR>
+ *  separator: How to separate generated links; default is a wikitext line break,
+ *             producing a vertical list.<BR>
+ *  maxwidth: maximum width, in chars, of generated links.
  *
  *  @author Janne Jalkanen
  */
