@@ -1,5 +1,9 @@
 2002-11-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.39.
+
+        * Fixed ~ -escaping of CamelCase links.
+
         * Added patch from Kabe Robichaux to fix a problem with older RCS
         programs that do not support the -z flag.
 
