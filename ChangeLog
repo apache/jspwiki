@@ -1,3 +1,22 @@
+2002-12-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.43.
+
+        * Bug fix: TranslatorReader did not properly closed down the <img>
+        -tags, as per XHTML specification.  Let's see how many old
+        browsers break this time... :-)
+
+        * Bug fix: Preformatted text was not properly closed down if the
+        user forgot all about it.  Reported by Bob Schulze.
+
+        * Bug fix: Preformatted text ({{{) no longer allows you to input
+        HTML.  Reported by Bob Schulze.
+
+        * New option: jspwiki.translatorReader.useOutlinkImage allows you
+        to mark all outgoing links with a small picture.  Thanks to Teemu
+        Hirsimäki for providing with the idea and the image.  Look for
+        images/out.png, if you want to change it.
+
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * GoRankAggregator now also supports 'egfurl' parameter, which
