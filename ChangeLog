@@ -1,3 +1,9 @@
+2005-01-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.144.
+
+        * Oops, LinkToTag used accidentally ATTACH instead of VIEW...
+
 2005-01-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.143.
