@@ -52,7 +52,9 @@
                  <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
              </wiki:Permission>
              <wiki:PageInfoLink>More info...</wiki:PageInfoLink>&nbsp;&nbsp;
-             <a href="javascript:window.open('<wiki:UploadLink format="url" />','Upload','width=640,height=480,toolbar=1,menubar=1,scrollbars=1,resizable=1,').focus()">Attach file...</a>
+             <wiki:Permission permission="upload">
+                 <a href="javascript:window.open('<wiki:UploadLink format="url" />','Upload','width=640,height=480,toolbar=1,menubar=1,scrollbars=1,resizable=1,').focus()">Attach file...</a>
+             </wiki:Permission>
              <br />
           </td>
         </tr>
