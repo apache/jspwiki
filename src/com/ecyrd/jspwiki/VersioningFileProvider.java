@@ -303,7 +303,12 @@ public class VersioningFileProvider
 
             // FIXME: No rollback available.
             Properties props = getPageProperties( page.getName() );
-            props.setProperty( versionNumber+".author", page.getAuthor() );
+
+            if( page.getAuthor() != null )
+            {
+                props.setProperty( versionNumber+".author", page.getAuthor() );
+            }
+
             putPageProperties( page.getName(), props );
         }
         catch( IOException e )
@@ -378,17 +383,6 @@ public class VersioningFileProvider
                 if( author != null )
                 {
                     p.setAuthor( author );
-                }
-                else
-                {
-                    //
-                    //  This is not really fatal, since it's entirely
-                    //  possible that the user has just upgraded from
-                    //  plain FileSystemProvider.
-                    //
-                    log.info("Wiki page properties are broken!  Page "+
-                             page+", version "+realVersion+" has no author! "+
-                             "(I can work, but you just don't get all the info you want).");
                 }
             }
             catch( IOException e )
