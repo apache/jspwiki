@@ -27,6 +27,8 @@ Major changes since the 2.0 series are:
 
 - Multiple Wikis with a single WAR-file -support.
 
+- In-page hyperlinks.
+
 
 UPGRADE NOTES
 =============
