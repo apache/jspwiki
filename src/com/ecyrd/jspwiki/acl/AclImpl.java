@@ -185,7 +185,8 @@ public class AclImpl
                     }
                     else
                     {
-                        posEntry = true;
+                        return ALLOW;
+                        // posEntry = true;
                     }
                 }
             }
@@ -229,7 +230,8 @@ public class AclImpl
                     else
                     {
                         // System.out.println("    ALLOW");
-                        posEntry = true;
+                        return ALLOW;
+                        //                        posEntry = true;
                     }
                 }
             }
