@@ -1,3 +1,8 @@
+2003-03-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Removed a bunch of extra imports to clean up the code a bit.
+        Thanks to John Volkar for pointing these out.
+
 2003-03-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Branched off 2.1.0 development series.
