@@ -678,35 +678,12 @@ public class WikiEngine
         return m_urlConstructor.makeURL( WikiContext.ATTACH, attName, false, null );
     }
 
-    /*
-    public String getURL( String name, boolean absolute )
-    {
-        return m_urlConstructor.makeURL( WikiContext.NONE, name, absolute, null );
-    }
-
-    public String getURL( String context, String pageName )
-    {
-        return m_urlConstructor.makeURL( context, pageName, false, null );
-    }
-
-    public String getURL( String context, String pageName, String params )
-    {
-        return m_urlConstructor.makeURL( context, pageName, false, params );
-    }
-
-    public String getAbsoluteURL( String context, String pageName )
-    {
-        return m_urlConstructor.makeURL( context, pageName, true, null );
-    }
-
-    public String getAbsoluteURL( String context, String pageName, String params )
-    {
-        return m_urlConstructor.makeURL( context, pageName, true, params );
-    }
-    */
-
     /**
      *  Returns an URL if a WikiContext is not available.
+     *  @param context The WikiContext (VIEW, EDIT, etc...)
+     *  @param pageName Name of the page, as usual
+     *  @param params List of parameters. May be null, if no parameters.
+     *  @param absolute If true, will generate an absolute URL regardless of properties setting.
      */
     public String getURL( String context, String pageName, String params, boolean absolute )
     {
