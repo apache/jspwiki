@@ -56,9 +56,7 @@
              <wiki:Permission permission="edit">
                  <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
              </wiki:Permission>
-             <% if( wikipage != null ) { %>
-                 <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
-             <% } %>
+             <wiki:PageInfoLink>More info...</wiki:PageInfoLink><BR>
           </td>
         </tr>
         <tr>
