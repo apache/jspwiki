@@ -1,3 +1,12 @@
+2004-10-12  Erik Bunn  <Erik.Bunn@memecry.net>
+
+        * v2.1.114
+        
+        * Refactoring: added getInstance(ServletConfig,Properties)
+        to provide WikiEngine with external property set. Useful 
+        mainly in administration of multiple webapps that use 
+        JSPWiki.
+
 2004-10-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.113
