@@ -89,6 +89,9 @@ public class ReferringPagesPluginTest extends TestCase
         }
 
         assertEquals( 5, count );
+
+        assertEquals( "End", "...and 2 more<BR>\n", 
+                      res.substring( res.length()-18 ) );
     }
 
     public void testReferenceWidth()
