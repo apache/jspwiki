@@ -350,7 +350,7 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
-    public void testPluginInserrt()
+    public void testPluginInsert()
         throws Exception
     {
         String src="[{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WHERE text=test}]";
