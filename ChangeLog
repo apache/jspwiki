@@ -1,3 +1,15 @@
+2002-12-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.47.
+
+        * CamelCase links now finally work (or at least all tests run).
+        Thanks to Joonas Iivonen for inspiration, and listening my
+        incoherent explanation about the problem. :-)
+
+        * List items (*, #) are now closed properly as per XHTML spec.
+        We still have paragraphs to go, but otherwise we're nearly XHTML
+        compliant. 
+
 2002-12-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.46.
