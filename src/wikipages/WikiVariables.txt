@@ -24,6 +24,10 @@ Writes HTML code for supported InterWiki links.
 
 Inserts the version number of the JSPWiki engine.  For example, this version is ''[{$jspwikiversion}]''.
 
+!loginstatus
+
+Shows how the current user has logged in.  For example, you are ''[{$loginstatus}]''.
+
 !uptime
 
 Inserts the amount of time since this Wiki has been last restarted.  This wiki has been up for ''[{$uptime}]''.
@@ -40,9 +44,17 @@ The current PageProvider.
 
 A verbose, HTML description about the currently used page provider.
 
+!requestcontext
+
+The current RequestContext.  For example, this is the ''[{$requestcontext}]'' context.
+
 !totalpages
 
 The total number of pages available in this Wiki.
+
+!username
+
+Inserts the current user name: For example, you are now logged in as ''[{$username}]''.
 
 !Inserting JSPWiki properties
 
