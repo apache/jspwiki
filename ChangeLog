@@ -1,9 +1,16 @@
 2001-11-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.5.2
+
+        * Empty list items could cause crashes in parsing.  Now fixed,
+        thanks to Mikael Honkala for reporting this.
+
         * Oops, it was possible to put Javascript inside external or image
         links.  Now fixed - all quotes inside link names are URLEncoded.
 
 2001-11-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+        
+        * v1.5.1
         
         * Added WikiEngine.saveText( String, String, HttpServletRequest )
         so that it can get the author information from the request.  The
