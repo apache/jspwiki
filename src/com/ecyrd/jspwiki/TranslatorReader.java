@@ -1295,10 +1295,16 @@ public class TranslatorReader extends Reader
     {
         StringBuffer sb = new StringBuffer();
         int ch;
+        boolean isPlugin = false;
 
         while( (ch = nextToken()) == '[' )
         {
             sb.append( (char)ch );
+        }
+
+        if( ch == '{' )
+        {
+            isPlugin = true;
         }
 
         pushBack( ch );
@@ -1308,12 +1314,24 @@ public class TranslatorReader extends Reader
             return sb.toString();
         }
 
+        //
+        //  Find end of hyperlink
+        //
         while( true )
         {
             ch = nextToken();
 
             if( ch == -1 || ch == ']' )
-                break;
+            {
+                if( isPlugin && sb.charAt( sb.length()-1 ) != '}' )
+                {
+                    // No change.
+                }
+                else
+                {
+                    break;
+                }
+            }
 
             sb.append( (char) ch );
         }
