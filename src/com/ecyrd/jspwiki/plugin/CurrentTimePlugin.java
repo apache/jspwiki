@@ -26,7 +26,10 @@ import java.text.SimpleDateFormat;
 
 /**
  *  Just displays the current date and time.
+ *  The time format is exactly like in the java.util.SimpleDateFormat class.
  *
+ *  @since 1.7.8
+ *  @see java.util.SimpleDateFormat
  *  @author Janne Jalkanen
  */
 public class CurrentTimePlugin
