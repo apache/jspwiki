@@ -71,11 +71,28 @@ public class FileSystemProvider
     }
 
     /**
+     *  This makes sure that the queried page name
+     *  is still readable by the file system.
+     */
+    protected String mangleName( String pagename )
+    {
+        return java.net.URLEncoder.encode( pagename );
+    }
+
+    /**
+     *  This makes the reverse of mangleName
+     */
+    protected String unmangleName( String filename )
+    {
+        return java.net.URLDecoder.decode( filename );
+    }
+
+    /**
      *  Finds a Wiki page from the page repository.
      */
     private File findPage( String page )
     {
-        return new File( m_pageDirectory, page+FILE_EXT );
+        return new File( m_pageDirectory, mangleName(page)+FILE_EXT );
     }
 
     
@@ -179,7 +196,7 @@ public class FileSystemProvider
         {
             String wikiname = wikipages[i].getName();
             int cutpoint = wikiname.lastIndexOf( FILE_EXT );
-            WikiPage page = new WikiPage( wikiname.substring(0,cutpoint) );
+            WikiPage page = new WikiPage( unmangleName(wikiname.substring(0,cutpoint)) );
 
             page.setLastModified( new Date(wikipages[i].lastModified()) );
 
@@ -206,6 +223,8 @@ public class FileSystemProvider
             String filename = wikipages[i].getName();
             int cutpoint    = filename.lastIndexOf( FILE_EXT );
             String wikiname = filename.substring(0,cutpoint);
+
+            wikiname = unmangleName( wikiname );
 
             try
             {
