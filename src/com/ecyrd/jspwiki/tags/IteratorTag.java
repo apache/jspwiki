@@ -82,11 +82,6 @@ public abstract class IteratorTag
                                                                 PageContext.REQUEST_SCOPE );
         if( m_iterator == null ) return SKIP_BODY;
 
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
-
-        page = m_wikiContext.getPage();
-
         if( m_iterator.hasNext() )
         {
             buildContext();
