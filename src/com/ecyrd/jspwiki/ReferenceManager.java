@@ -189,6 +189,15 @@ public class ReferenceManager
             {
                 oldRefBy.remove( referrer );
             }
+
+            // If the page is referred to by no one AND it doesn't even
+            // exist, we might just as well forget about this entry.
+            // It will be added again elsewhere if new references appear.
+            if( ( ( oldRefBy == null ) || ( oldRefBy.isEmpty() ) ) &&
+                ( m_engine.pageExists( referredPage ) == false ) )
+            {
+                m_referredBy.remove( referredPage );
+            }
         }
         
     }
