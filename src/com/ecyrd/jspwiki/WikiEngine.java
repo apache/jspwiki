@@ -66,6 +66,14 @@ public class WikiEngine
     /** Stores properties. */
     private Properties       m_properties;
 
+    /** The web.xml parameter that defines where the config file is to be found. 
+     *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE. 
+     *  @value jspwiki.propertyfile
+     */
+
+    public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
+
+    /** Property start for any interwiki reference. */
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
     /** If true, then the user name will be stored with the page data.*/
@@ -90,6 +98,11 @@ public class WikiEngine
 
     /** Property name for the default front page. */
     public static final String PROP_FRONTPAGE    = "jspwiki.frontPage";
+
+    /** Path to the default property file. 
+     *  @value /WEB_INF/jspwiki.properties
+     */
+    public static final String DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
 
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
@@ -190,7 +203,7 @@ public class WikiEngine
             }
             catch( Exception e )
             {
-                context.log( "ERROR: Failed to create a Wiki engine" );
+                context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
                 throw new InternalWikiException( "No wiki engine, check logs." );
             }
 
@@ -219,14 +232,33 @@ public class WikiEngine
     protected WikiEngine( ServletContext context )
         throws WikiException
     {
+        InputStream propertyStream = null;
+        String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
+
         m_servletContext = context;
-
-        InputStream propertyStream = context.getResourceAsStream("/WEB-INF/jspwiki.properties");
-
-        Properties props = new Properties();
 
         try
         {
+            //
+            //  Figure out where our properties lie.
+            //
+            if( propertyFile == null )
+            {
+                //  Use the default property file.
+                propertyStream = context.getResourceAsStream(DEFAULT_PROPERTYFILE);
+            }
+            else
+            {
+                propertyStream = new FileInputStream( new File(propertyFile) );
+            }
+
+            if( propertyStream == null )
+            {
+                throw new WikiException("Property file cannot be found!"+propertyFile);
+            }
+
+            Properties props = new Properties();
+
             //
             //  Note: May be null, if JSPWiki has been deployed in a WAR file.
             //
