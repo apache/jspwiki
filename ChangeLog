@@ -1,10 +1,22 @@
+2003-10-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.78.
+
+        * Headings now generate a named anchor.  This enables things like
+        page contents.  The current scheme is
+        '#section-<pagename>-<heading>', where both the <pagename> and
+        <heading> are WikiNames.  The WikiName of the heading is done in
+        exactly the same way as with normal WikiPages.  For more
+        information, see NamedHeadings in the jspwiki_samplepages.zip.
+        Suggested by Paul Downes.
+
 2003-10-10   Erik Bunn <ebu at iki dot fi>
 
-	* v2.1.77
+        * v2.1.77
 
-	* Modified CachingProvider to notify engine of external changes
-	to wikipages. Fixed tests; external modification tests should now
-	work.
+        * Modified CachingProvider to notify engine of external changes
+        to wikipages. Fixed tests; external modification tests should now
+        work.
 
 2003-10-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
