@@ -1,3 +1,10 @@
+2003-04-08  Erik Bunn  <Erik.Bunn@no_spam.ecyrd.com>
+
+        * Modified FileSystemProvider, CachingProvider; added 
+        SearchMatcher. CachingProvider now uses cached pages when
+        searching. Both the cache and SearchMatcher can still be 
+        improved a lot...
+
 2003-04-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.5.
