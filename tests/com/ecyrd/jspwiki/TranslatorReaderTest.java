@@ -180,6 +180,15 @@ public class TranslatorReaderTest extends TestCase
                      translate(src) );
     }
 
+    public void testInlineImagesLink()
+        throws Exception
+    {
+        String src = "Link [http://link.to/|http://foobar.jpg]";
+
+        assertEquals("Link <A HREF=\"http://link.to/\"><IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\"></A>\n",
+                     translate(src) );
+    }
+
     public void testScandicPagename1()
         throws Exception
     {
