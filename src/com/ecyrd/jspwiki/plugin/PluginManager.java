@@ -106,6 +106,8 @@ public class PluginManager
      *  fails.
      */
     public static final String DEFAULT_PACKAGE = "com.ecyrd.jspwiki.plugin";
+ 
+    public static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
 
     /**
      *  The property name defining which packages will be searched for properties.
@@ -148,9 +150,10 @@ public class PluginManager
         }
 
         //
-        //  The default package is always added.
+        //  The default packages are always added.
         //
         m_searchPath.add( DEFAULT_PACKAGE );
+        m_searchPath.add( DEFAULT_FORMS_PACKAGE );
 
         PatternCompiler compiler = new Perl5Compiler();
 
