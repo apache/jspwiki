@@ -45,6 +45,7 @@ import com.ecyrd.jspwiki.auth.UserProfile;
  *  @author Janne Jalkanen
  */
 public class WikiContext
+    implements Cloneable
 {
     WikiPage   m_page;
     WikiEngine m_engine;
@@ -136,6 +137,15 @@ public class WikiContext
         return m_page;
     }
 
+    /**
+     *  Sets the page that is being handled.
+     *
+     *  @since 2.1.37.
+     */
+    public void setPage( WikiPage page )
+    {
+        m_page = page;
+    }
 
     /**
      *  Returns the request context.
@@ -263,5 +273,23 @@ public class WikiContext
     public UserProfile getCurrentUser()
     {
         return m_currentUser;
+    }
+
+    /**
+     *  Returns a shallow clone of the WikiContext.
+     *
+     *  @since 2.1.37.
+     */
+    public Object clone()
+    {
+        WikiContext copy = new WikiContext( m_engine, m_page );
+        
+        copy.m_requestContext = m_requestContext;
+        copy.m_template       = m_template;
+        copy.m_variableMap    = m_variableMap;
+        copy.m_request        = m_request;
+        copy.m_currentUser    = m_currentUser;
+
+        return copy;
     }
 }
