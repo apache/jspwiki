@@ -507,7 +507,7 @@ public class BasicAttachmentProvider
         {
             int latest = findLatestVersion( att );
 
-            for( int i = 1; i <= latest; i++ )
+            for( int i = latest; i >= 1; i-- )
             {
                 Attachment a = getAttachmentInfo( new WikiPage(att.getParentName()), 
                                                   att.getFileName(), i );
