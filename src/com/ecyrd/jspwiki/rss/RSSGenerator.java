@@ -22,30 +22,78 @@ package com.ecyrd.jspwiki.rss;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 import com.ecyrd.jspwiki.*;
 
 /**
  *  Generates an RSS feed from the recent changes.
  *  <P>
- *  We use the 1.0 spec.  We'll add Wiki-specific extensions soon.
+ *  We use the 1.0 spec, including the wiki-specific extensions.  Wiki extensions
+ *  have been defined in <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
  *
  *  @author Janne Jalkanen
  *  @since  1.7.5.
  */
 public class RSSGenerator
 {
-    private String m_channelName;
-    private WikiEngine m_engine;
+    private WikiEngine         m_engine;
+
+    private String             m_channelDescription = "";
+    private String             m_channelLanguage    = "en-us";
+
+    /**
+     *  Defines the property name for the RSS channel description.  Default value for the 
+     *  channel description is an empty string.
+     *  @since 1.7.6.
+     */
+    public static final String PROP_CHANNEL_DESCRIPTION = "jspwiki.rss.channelDescription";
+
+    /**
+     *  Defines the property name for the RSS channel language.  Default value for the
+     *  language is "en-us".
+     *  @since 1.7.6.
+     */
+    public static final String PROP_CHANNEL_LANGUAGE    = "jspwiki.rss.channelLanguage";
+
+    /**
+     *  Defines the property name for the RSS generator main switch.
+     *  @since 1.7.6.
+     */
+    public static final String PROP_GENERATE_RSS        = "jspwiki.rss.generate";
+
+    /**
+     *  Defines the property name for the RSS file that the wiki should generate.
+     *  @since 1.7.6.
+     */
+    public static final String PROP_RSSFILE             = "jspwiki.rss.fileName";
+
+    /**
+     *  Defines the property name for the RSS generation interval in seconds.
+     *  @since 1.7.6.
+     */
+    public static final String PROP_INTERVAL            = "jspwiki.rss.interval";
 
     /**
      *  Initialize the RSS generator.
      */
     public RSSGenerator( WikiEngine engine, Properties properties )
+        throws NoRequiredPropertyException
     {
         m_engine = engine;        
 
-        // FIXME: add check for baseURL - it must exist.
+        // FIXME: This assumes a bit too much.
+        if( engine.getBaseURL() == null || engine.getBaseURL().length() == 0 )
+        {
+            throw new NoRequiredPropertyException( "RSS requires jspwiki.baseURL to be set!",
+                                                   WikiEngine.PROP_BASEURL );
+        }
+
+        m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, 
+                                                       m_channelDescription );
+        m_channelLanguage    = properties.getProperty( PROP_CHANNEL_LANGUAGE,
+                                                       m_channelLanguage );
     }
 
     /**
@@ -55,6 +103,7 @@ public class RSSGenerator
     public String generate()
     {
         StringBuffer result = new StringBuffer();
+        SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         //
         //  Preamble
@@ -78,11 +127,11 @@ public class RSSGenerator
         result.append("  <link>").append(m_engine.getBaseURL()).append("</link>\n");
 
         result.append("  <description>");
-        result.append("FIXME");
+        result.append( m_channelDescription );
         result.append("</description>\n");
         
         result.append("  <language>");
-        result.append("en-us");
+        result.append( m_channelLanguage );
         result.append("</language>\n");
 
         // FIXME: add resource list here.
@@ -100,7 +149,9 @@ public class RSSGenerator
         {
             WikiPage page = (WikiPage) i.next();
 
-            String url = m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(page.getName());
+            String encodedName = m_engine.encodeName(page.getName());
+
+            String url = m_engine.getBaseURL()+"Wiki.jsp?page="+encodedName;
 
             result.append(" <item rdf:about=\""+url+"\">\n");
 
@@ -112,6 +163,61 @@ public class RSSGenerator
             result.append( url );
             result.append("</link>\n");
 
+            result.append("  <description>");
+
+            String author = page.getAuthor();
+            if( author == null ) author = "An unknown author";
+
+            if( page.getVersion() != 1 )
+            {
+                result.append(author+" changed this page on "+page.getLastModified() );
+            }
+            else
+            {
+                result.append(author+" created this page on "+page.getLastModified() );
+            }
+            result.append("</description>\n");
+
+            if( page.getVersion() != -1 )
+            {
+                result.append("  <wiki:version>"+page.getVersion()+"</wiki:version>\n");
+            }
+
+            if( page.getVersion() > 1 )
+            {
+                result.append("  <wiki:diff>"+
+                              m_engine.getBaseURL()+"Diff.jsp?page="+
+                              encodedName+
+                              "?r1="+page.getVersion()+
+                              "</wiki:diff>\n");
+            }
+
+            //
+            //  Modification date.
+            //
+            result.append("  <dc:date>");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime( page.getLastModified() );
+            cal.add( Calendar.MILLISECOND, 
+                     - (cal.get( Calendar.ZONE_OFFSET ) + 
+                        (cal.getTimeZone().inDaylightTime( page.getLastModified() ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
+            result.append( iso8601fmt.format( cal.getTime() ) );
+            result.append("</dc:date>\n");
+
+            //
+            //  Author.
+            //
+            result.append("  <dc:contributor>"+author+"</dc:contributor>\n");
+
+
+            //  PageHistory
+
+            result.append("  <wiki:history>");
+            result.append( m_engine.getBaseURL()+"PageInfo.jsp?page="+
+                           encodedName );
+            result.append("</wiki:history>\n");
+
+            //  Close up.
             result.append(" </item>\n");
         }
 
