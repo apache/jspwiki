@@ -265,6 +265,8 @@ public class TranslatorReaderTest extends TestCase
     public void testCCLinkInList()
         throws Exception
     {
+        newPage("HyperLink");
+
         String src = "*HyperLink";
 
         assertEquals( "<UL>\n<LI><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A></LI>\n</UL>\n",
@@ -274,6 +276,8 @@ public class TranslatorReaderTest extends TestCase
     public void testCCLinkBold()
         throws Exception
     {
+        newPage("HyperLink");
+
         String src = "__HyperLink__";
 
         assertEquals( "<B><A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A></B>",
@@ -283,6 +287,8 @@ public class TranslatorReaderTest extends TestCase
     public void testCCLinkWithPunctuation()
         throws Exception
     {
+        newPage("HyperLink");
+
         String src = "Test. HyperLink.";
 
         assertEquals( "Test. <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.",
