@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.22 2002-12-01 21:28:13 jalkanen Exp $
+    $Id: build.xml,v 1.23 2002-12-08 23:03:30 ebu Exp $
 -->    
        
 <!--   
@@ -134,6 +134,10 @@
           description="Cleans away all generated files.">
     <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
+    <delete>
+      <fileset dir="." includes="**/*~" defaultexcludes="no"/>
+      <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
+    </delete>
   </target>
 
   <!-- ============================================================== -->
