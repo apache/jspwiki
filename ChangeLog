@@ -1,5 +1,8 @@
 2003-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Fixed a bunch of failing tests to conform with the actual code
+        base.
+
         * v2.1.66.
 
         * WeblogPlugin now displays all entries, if parameter "days" is
