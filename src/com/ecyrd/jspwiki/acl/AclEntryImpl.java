@@ -7,6 +7,8 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+
 public class AclEntryImpl
     implements AclEntry
 {
@@ -42,13 +44,13 @@ public class AclEntryImpl
      *  Looks through the permission list and finds a permission that
      *  matches the permission.
      */
-    private Permission findPermission( Permission p )
+    private Permission findPermission( WikiPermission p )
     {
         for( Iterator i = m_permissions.iterator(); i.hasNext(); )
         {
-            Permission pp = (Permission) i.next();
+            WikiPermission pp = (WikiPermission) i.next();
 
-            if( pp.equals( p ) )
+            if( pp.implies( p ) )
             {
                 return pp;
             }
@@ -59,7 +61,7 @@ public class AclEntryImpl
 
     public boolean addPermission(Permission permission)
     {
-        if( findPermission( permission ) != null )
+        if( findPermission( (WikiPermission)permission ) != null )
             return true;
 
         m_permissions.add( permission );
@@ -69,7 +71,7 @@ public class AclEntryImpl
 
     public boolean removePermission(Permission permission)
     {
-        Permission p = findPermission(permission);
+        Permission p = findPermission( (WikiPermission)permission );
 
         if( p != null ) 
         {
@@ -82,7 +84,7 @@ public class AclEntryImpl
 
     public boolean checkPermission(Permission permission)
     {
-        return findPermission( permission ) != null;
+        return findPermission( (WikiPermission)permission ) != null;
     }
 
     public Enumeration permissions()
