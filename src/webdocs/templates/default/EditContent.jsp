@@ -10,7 +10,7 @@
          </tr>
       </table>
 
-      <p><hr></p>
+      <hr />
 
       <wiki:CheckVersion mode="notlatest">
          <p class="versionnote">You are about to restore version <wiki:PageVersion/>.
@@ -29,13 +29,15 @@
 
       <wiki:Editor />
 
-      <p>
       <wiki:NoSuchPage page="EditPageHelp">
+         <div class="error">
          Ho hum, it seems that the EditPageHelp<wiki:EditLink page="EditPageHelp">?</wiki:EditLink>
          page is missing.  Someone must've done something to the installation...
          <br /><br />
          You can copy the text from the <a href="http://www.jspwiki.org/Wiki.jsp?page=EditPageHelp">EditPageHelp page on jspwiki.org</a>.
+         </div>
       </wiki:NoSuchPage>
-      </p>
 
-      <wiki:InsertPage page="EditPageHelp" />
+      <div id="editpagehelp">
+         <wiki:InsertPage page="EditPageHelp" />
+      </div>

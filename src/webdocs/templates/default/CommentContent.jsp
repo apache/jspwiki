@@ -10,15 +10,13 @@
          </tr>
       </table>
 
-      <p><hr></p>
+      <hr />
 
       <wiki:InsertPage/>
 
-      <p>
       <h3>Please enter your comments below:</h3>
-      </p>
 
-      <form name="commentForm" action="<wiki:CommentLink format="url" />" method="POST" 
+      <form name="commentForm" action="<wiki:CommentLink format="url" />" method="post" 
             accept-charset="<wiki:ContentEncoding />">
 
       <p>
@@ -41,7 +39,7 @@
       <input type="checkbox" name="remember" id="rememberme" />
       </p>
 
-      <p>      
+      <p>
       <input type="submit" name="ok" value="Save" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <input type="submit" name="preview" value="Preview" />
@@ -50,12 +48,13 @@
       </p>
       </form>
 
-      <p>
       <wiki:NoSuchPage page="EditPageHelp">
+         <div class="error">
          Ho hum, it seems that the EditPageHelp<wiki:EditLink page="EditPageHelp">?</wiki:EditLink>
          page is missing.  Someone must've done something to the installation...
+         </div>
       </wiki:NoSuchPage>
-      </p>
 
-      <wiki:InsertPage page="EditPageHelp" />
-
+      <div id="editpagehelp">
+         <wiki:InsertPage page="EditPageHelp" />
+      </div>
