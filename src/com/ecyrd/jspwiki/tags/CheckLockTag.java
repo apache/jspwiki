@@ -77,14 +77,10 @@ public class CheckLockTag
 
             PageLock userLock = (PageLock) session.getAttribute("lock-"+page.getName());
 
-            System.out.println("Lock="+lock+", mode="+m_mode);
-
             if( (lock != null && m_mode == LOCKED && lock != userLock ) ||
                 (lock != null && m_mode == OWNED && lock == userLock ) ||
                 (lock == null && m_mode == NOTLOCKED) )
             {
-                System.out.println("...including");
-                
                 String id = getId();
 
                 if( id != null )
@@ -96,7 +92,6 @@ public class CheckLockTag
                 return EVAL_BODY_INCLUDE;
             }
         }
-        System.out.println("...skipping");
 
         return SKIP_BODY;
     }
