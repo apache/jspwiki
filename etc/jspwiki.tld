@@ -25,6 +25,14 @@
     <bodycontent>empty</bodycontent>
   </tag>  
 
+  <tag>
+    <name>CheckRequestContext</name>
+    <tagclass>com.ecyrd.jspwiki.tags.CheckRequestContextTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>context</name>
+    </attribute>
+  </tag>  
 
   <tag>
     <name>CheckVersion</name>
@@ -42,6 +50,26 @@
   </tag>
 
   <tag>
+    <name>DiffLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.DiffLinkTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>format</name>
+    </attribute>
+    <attribute>
+       <name>version</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>newVersion</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>  
+
+  <tag>
     <name>EditLink</name>
     <tagclass>com.ecyrd.jspwiki.tags.EditLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
@@ -50,6 +78,29 @@
     </attribute>
     <attribute>
        <name>format</name>
+    </attribute>
+  </tag>  
+
+
+  <tag>
+    <name>HistoryIterator</name>
+    <tagclass>com.ecyrd.jspwiki.tags.HistoryIteratorTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+    <attribute>
+       <name>id</name>
+    </attribute>
+  </tag>  
+
+  <tag>
+    <name>Include</name>
+    <tagclass>com.ecyrd.jspwiki.tags.IncludeTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>page</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>  
 
@@ -84,6 +135,10 @@
     <attribute>
        <name>format</name>
     </attribute>
+    <attribute>
+       <name>version</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
   </tag>  
 
   <tag>
@@ -169,6 +224,21 @@
     <name>Translate</name>
     <tagclass>com.ecyrd.jspwiki.tags.TranslateTag</tagclass>
     <bodycontent>JSP</bodycontent>
+  </tag>
+
+  <tag>
+    <name>UserName</name>
+    <tagclass>com.ecyrd.jspwiki.tags.UserNameTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>UserCheck</name>
+    <tagclass>com.ecyrd.jspwiki.tags.UserCheckTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>exists</name>
+    </attribute>
   </tag>
 
 </taglib>
