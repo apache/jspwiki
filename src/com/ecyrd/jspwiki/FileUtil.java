@@ -21,12 +21,6 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.CodingErrorAction;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 
 import org.apache.log4j.Category;
 
@@ -45,13 +39,13 @@ public class FileUtil
     {
         try
         {
-            if( Charset.forName( "UTF-8" ) != null )
+            if( java.nio.charset.Charset.forName( "UTF-8" ) != null )
             {
                 log.info("JDK 1.4 detected.  Using NIO library.");
                 c_hasNIO = true;
             }
         }
-        catch( Exception e )
+        catch( Throwable t )
         {
             log.info("Not running under JDK 1.4; not using NIO library.");
         }
@@ -201,7 +195,7 @@ public class FileUtil
     {        
         if( c_hasNIO )
         {
-            return readContents14( input, encoding );
+            return FileUtil14.readContents( input, encoding );
         }
 
         Reader in  = null;
@@ -261,52 +255,6 @@ public class FileUtil
         }
     }
 
-    /**
-     *  JDK 1.4 version of the above.  This version circumvents all kinds
-     *  of problems just by gulping in the entire inputstream to a ByteArray.
-     */
-    private static String readContents14( InputStream input, String encoding )
-        throws IOException
-    {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copyContents( input, out );
-
-        ByteBuffer     bbuf        = ByteBuffer.wrap( out.toByteArray() );
-
-        Charset        cset        = Charset.forName( encoding );
-        CharsetDecoder csetdecoder = cset.newDecoder();
-
-        csetdecoder.onMalformedInput( CodingErrorAction.REPORT );
-        csetdecoder.onUnmappableCharacter( CodingErrorAction.REPORT );
-
-        try
-        {
-            CharBuffer cbuf = csetdecoder.decode( bbuf );
-
-            return cbuf.toString();
-        }
-        catch( CharacterCodingException e )
-        {
-            Charset        latin1    = Charset.forName("ISO-8859-1");
-            CharsetDecoder l1decoder = latin1.newDecoder();
-
-            l1decoder.onMalformedInput( CodingErrorAction.REPORT );
-            l1decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
-
-            try
-            {
-                bbuf = ByteBuffer.wrap( out.toByteArray() );
-
-                CharBuffer cbuf = l1decoder.decode( bbuf );
-
-                return cbuf.toString();
-            }
-            catch( CharacterCodingException ex )
-            {
-                throw (CharacterCodingException) ex.fillInStackTrace();
-            }
-        }
-    }
 
     /**
      *  Returns the full contents of the Reader as a String.
