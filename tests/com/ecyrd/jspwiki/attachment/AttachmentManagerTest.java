@@ -190,6 +190,36 @@ public class AttachmentManagerTest extends TestCase
         assertEquals( "author", att.getAuthor(), att2.getAuthor() );        
     }
 
+    public void testSimpleStoreWithoutExt() throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test1" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
+                                                                       new WikiPage(NAME1)),
+                                                       "test1" );
+
+        assertNotNull( "attachment disappeared", att2 );
+        assertEquals( "name", att.getName(), att2.getName() );
+        assertEquals( "author", "FirstPost", att2.getAuthor() );
+        assertEquals( "size", c_fileContents.length(), att2.getSize() );
+
+        InputStream in = m_manager.getAttachmentStream( att2 );
+
+        assertNotNull( "stream", in );
+
+        StringWriter sout = new StringWriter();
+        FileUtil.copyContents( new InputStreamReader(in), sout );
+
+        sout.close();
+
+        assertEquals( "contents", c_fileContents, sout.toString() );
+    }
+
+
     public static Test suite()
     {
         return new TestSuite( AttachmentManagerTest.class );
