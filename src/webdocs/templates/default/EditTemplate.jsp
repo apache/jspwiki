@@ -68,7 +68,7 @@
       </P>
       <P>
       <wiki:NoSuchPage page="EditPageHelp">
-         Ho hum, it seems that the <wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink>
+         Ho hum, it seems that the EditPageHelp<wiki:EditLink page="EditPageHelp">?</wiki:EditLink>
          page is missing.  Someone must've done something to the installation...
       </wiki:NoSuchPage>
       </P>
