@@ -1,25 +1,19 @@
 
-This is the third stable release of JSPWiki v2.  It contains a few
+This is the fourth stable release of JSPWiki v2.  It contains a few
 bugfixes over the last stable version:
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
-Major changes since the last stable (2.0.39) release are:
+Major changes since the last stable (2.0.45) release are:
 
-* CalendarTag monthly navigation has been backported from 2.1 branch.
+- Now uses the OSCache library for caching pages.  This should result in a big speedup.
 
-* Fixed jspwiki.tld, which was causing problems to a bunch of people.
+- FileSystemProvider, RCSFileProvider and VersioningFileProvider now
+  actually create the directories if they don't exist yet.
 
-* A bunch of bugfixes and enhancements to the RSS Generator.
-  * You can now see the diffs as well.
-  * Attachment URLs were wrong.
-  * RSS generator now separates cleanly between attachments and pages.
+- It is now possible to define multiple wikis using the same set of
+  files.  See instructions in MultipleWikis.
 
-* out.png is now transparent.
-
-* CheckLockTag would sometimes create an NullPointerException.
-
-* Wiki.jsp is a bit more stable against bad pagenames.
 
 
 UPGRADE NOTES
