@@ -31,7 +31,6 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-//import com.ecyrd.jspwiki.PageManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 
@@ -111,7 +110,7 @@ public class CalendarTag
             }
             else
             {
-                result = "<td>"+day.get(Calendar.DATE)+"</td>";
+                result = "<td class=\"days\">"+day.get(Calendar.DATE)+"</td>";
             }
         }
         else if( m_urlFormat != null )
@@ -122,7 +121,7 @@ public class CalendarTag
         }
         else
         {
-            result = "<td>"+day.get(Calendar.DATE)+"</td>";
+            result = "<td class=\"days\">"+day.get(Calendar.DATE)+"</td>";
         }
 
         return result;
@@ -167,12 +166,18 @@ public class CalendarTag
 
         out.write( "<tr><td colspan=7 class=\"month\">"+
                    monthfmt.format( cal.getTime() )+
-                   "</td>" );
+                   "</td>\n" );
 
         int month = cal.get( Calendar.MONTH );
         cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY ); // Then, find the first day of the week.
 
-        out.write( "<tr class=\"weekdays\"><td>Mon</td><td>Tue</td><td>Wed</td><td>Thu</td><td>Fri</td><td>Sat</td><td>Sun</td></tr>\n" );
+        out.write( "<tr><td class=\"weekdays\">Mon</td>"+
+                   "<td class=\"weekdays\">Tue</td>"+
+                   "<td class=\"weekdays\">Wed</td>"+
+                   "<td class=\"weekdays\">Thu</td>"+
+                   "<td class=\"weekdays\">Fri</td>"+
+                   "<td class=\"weekdays\">Sat</td>"+
+                   "<td class=\"weekdays\">Sun</td></tr>\n" );
 
         boolean noMoreDates = false;
         while( !noMoreDates )
