@@ -7,8 +7,6 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import bmsi.util.Diff;
-
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
 
@@ -81,12 +79,14 @@ public class ContextualDiffProvider implements DiffProvider
         //Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
         Object[] alpha = sequence(htmlizedOld);
         Object[] beta = sequence(htmlizedNew);
-
+/*
         Diff diff = new Diff(alpha, beta);
 
         Diff.change changeNode = diff.diff_2(false);
 
         return createMarkup(alpha, beta, changeNode);
+        */
+        return "";
     }
 
 
@@ -147,6 +147,7 @@ public class ContextualDiffProvider implements DiffProvider
      * the names of line0, line1 leave something to be desired, but hey BMSI
      * diff does work nicely!
      */
+    /*
     private String createMarkup(Object[] alphaSequence, Object[] betaSequence, Diff.change changeNode)
     {
         m_changeNumber = 0;
@@ -204,7 +205,7 @@ public class ContextualDiffProvider implements DiffProvider
 
         return markup;
     }
-
+*/
     private StringBuffer allocateMarkupBuffer(Object[] alphaSequence, Object[] betaSequence)
     {
         //This is really rough, but what the heck...
