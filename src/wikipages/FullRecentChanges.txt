@@ -1,0 +1,3 @@
+These are all of the changes made to these pages.  A much shorter list is available in [RecentChanges].
+
+[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin}]
