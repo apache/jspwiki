@@ -738,7 +738,6 @@ public class WikiEngine
         try
         {
             result = m_pageManager.getPageText( page, version );
-
         }
         catch( ProviderException e )
         {
