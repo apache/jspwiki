@@ -109,6 +109,18 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /** When using CC links, this seems to crash 1.9.2. */
+
+    public void testHyperLinks6()
+        throws Exception
+    {
+        String src = "[DiscussionAboutWiki] [WikiMarkupDevelopment].";
+
+        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=DiscussionAboutWiki\">DiscussionAboutWiki</A> <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=WikiMarkupDevelopment\">WikiMarkupDevelopment</A>.\n",
+                      translate(src) );       
+    }
+
+
     public void testHyperlinksCC()
         throws Exception
     {
@@ -159,7 +171,6 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
                       translate(src) );
     }
-
 
     public void testHyperlinksExt()
         throws Exception
