@@ -1,5 +1,7 @@
 2002-01-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.6.7-cvs
+
         * Added new RPC API: getPageInfo( string page ), and getPageInfo(
         string page, int version ).  Also, the struct returned by
         getRecentChanges() and getPageInfo() got enhanced.
