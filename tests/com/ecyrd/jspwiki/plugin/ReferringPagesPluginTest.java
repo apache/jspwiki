@@ -68,7 +68,7 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
-        assertEquals( mkLink( "TestPage" )+"\n<BR/>",
+        assertEquals( mkLink( "TestPage" )+"\n<BR />",
                       res );
     }
 
@@ -90,7 +90,7 @@ public class ReferringPagesPluginTest extends TestCase
 
         assertEquals( 5, count );
 
-        String expected = "...and 2 more<BR/>";
+        String expected = "...and 2 more<BR />";
 
         assertEquals( "End", expected, 
                       res.substring( res.length()-expected.length() ) );
@@ -104,7 +104,7 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
 
-        assertEquals( mkFullLink( "TestP...", "TestPage" )+"\n<BR/>",
+        assertEquals( mkFullLink( "TestP...", "TestPage" )+"\n<BR />",
                       res );        
     }
 
