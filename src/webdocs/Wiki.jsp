@@ -66,7 +66,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 
-<%@ include file="ViewTemplate.jsp" %>
+<%@ include file="templates/ViewTemplate.jsp" %>
 
 <%
     NDC.pop();
