@@ -81,6 +81,29 @@ jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 #jspwiki.attachment.maxsize=100000
 
 #
+#  page Diff Representation
+#
+#  To show differences between page versions, you can define a 
+# difference provider. 
+#  The following choices are available:
+#    * TraditionalDiffProvider - Uses internal (java) diff
+#        to create a list of changes and shows it line by
+#        line colored. This is the default
+#    * ContextualDiffProvider - Uses internal (java) diff
+#        to create changes inline and shows it on a word by
+#        word basis using CSS. This is much superior to the
+#        traditional diff provider, however, it is still quite
+#        new and not much tested. YMMV.
+#    * ExternalDiffProvider - uses a system diff program (which
+#        can be configured using "jspwiki.diffCommand") to 
+#        create an unified (!) diff.
+#
+#        Example for a diff command:
+#        jspwiki.diffCommand = /usr/bin/diff -u %s1 %s2
+#
+jspwiki.diffProvider = TraditionalDiffProvider
+
+#
 #  BaseURL can be used to rewrite all of JSPWiki's internal references.
 #  Sometimes, especially if you're behind a address-rewriting firewall,
 #  relative URLs don't work since the servlet container has no idea
