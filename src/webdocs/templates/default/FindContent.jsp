@@ -34,7 +34,7 @@
 
           <wiki:IfNoSearchResults>
               <tr>
-                  <td width="30%"><b>No results</b></td>
+                  <td colspan="2"><b>No results</b></td>
               </tr>
           </wiki:IfNoSearchResults>
 
