@@ -1136,7 +1136,6 @@ public class TranslatorReader extends Reader
                 line = setCamelCaseLinks( line );
             }
 
-            line = setHyperLinks( line );
             line = setHeadings( line );
             line = setHR( line );
             line = setBold( line );
@@ -1144,6 +1143,8 @@ public class TranslatorReader extends Reader
 
             line = setTT( line );
             line = TextUtil.replaceString( line, "\\\\", "<BR>" );
+
+            line = setHyperLinks( line );
 
             // Is this an empty line?
             if( trimmed.length() == 0 )
