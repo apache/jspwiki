@@ -1193,9 +1193,10 @@ public class WikiEngine
 
     
     /**
-     * Checks whether the WikiPage has permissions loaded.
+     * Checks whether the WikiPage has access rules loaded.
      * If not, does an extra round through the TranslatorReader and
-     * requests the permissions from it, and attaches them to the page object.
+     * requests the rules from it, and attaches them to the page object.
+     * Uses an empty rule set if none other is available.
      * 
      * <P>Permissions are always determined from the LATEST version of the page.
      * 
@@ -1222,8 +1223,16 @@ public class WikiEngine
                 in.enablePlugins( false );
                 String translation = translatePageText( in );
                 AccessRuleSet rules = m_authorizer.getDefaultPermissions();
-                rules.add( in.getAccessRules() );
-                p.setAccessRules( rules );
+
+                if( rules != null )
+                    rules.add( in.getAccessRules() );
+                else
+                    rules = in.getAccessRules();
+
+                if( rules != null )
+                    p.setAccessRules( rules );
+                else
+                    p.setAccessRules( new AccessRuleSet() );
             }
         }
     }
