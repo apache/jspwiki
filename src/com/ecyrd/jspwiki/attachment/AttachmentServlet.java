@@ -25,7 +25,6 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.log4j.Category;
-//import org.apache.commons.fileupload.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
@@ -45,6 +44,9 @@ import http.utils.multipartrequest.*;
  * container, or a previous servlet that chains to us.
  *
  * @author Erik Bunn
+ * @author Janne Jalkanen
+ *
+ * @since 1.9.45.
  */
 public class AttachmentServlet
     extends HttpServlet
@@ -52,12 +54,8 @@ public class AttachmentServlet
     private WikiEngine m_engine;
     private Category log = Category.getInstance( AttachmentServlet.class ); 
 
-
     public static final String HDR_VERSION     = "version";
-    public static final String HDR_WIKINAME    = "wikiname";
-    public static final String HDR_ACTION      = "action";
-    public static final String ATTR_MSG        = "msg";
-    public static final String ATTR_ATTACHMENT = "attachment";
+    public static final String HDR_NAME        = "page";
 
     private String m_tmpDir;
 
@@ -72,7 +70,7 @@ public class AttachmentServlet
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
 
-        m_tmpDir     = System.getProperty( "java.io.tmpdir" );
+        m_tmpDir         = System.getProperty( "java.io.tmpdir" );
  
         log.debug( "UploadServlet initialized. Using " + 
                    m_tmpDir + " for temporary storage." );
@@ -88,17 +86,16 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res ) 
         throws IOException, ServletException 
     {
-        String name    = req.getParameter( HDR_WIKINAME );
-        String page    = req.getParameter( "page" );
-        String version = req.getParameter( HDR_VERSION );
+        String page     = req.getParameter( "page" );
+        String version  = req.getParameter( HDR_VERSION );
         String nextPage = req.getParameter( "nextpage" );
 
-        String msg     = "An error occurred. Ouch.";
-        int    ver     = WikiProvider.LATEST_VERSION;
+        String msg      = "An error occurred. Ouch.";
+        int    ver      = WikiProvider.LATEST_VERSION;
 
         AttachmentManager mgr = m_engine.getAttachmentManager();
 
-        if( name == null )
+        if( page == null )
         {
             msg = "Invalid attachment name.";
         }
@@ -106,15 +103,13 @@ public class AttachmentServlet
         {
             try 
             {
-                //  FIXME: Uses provider I/F directly; should go through
-                //         manager.
-
+                // System.out.println("Attempting to download att "+page+", version "+version);
                 if( version != null )
                 {
                     ver = Integer.parseInt( version );
                 }
 
-                Attachment att = mgr.getAttachmentInfo( new WikiPage(page), name, ver );
+                Attachment att = mgr.getAttachmentInfo( page, ver );
 
                 if( att != null )
                 {
@@ -129,7 +124,7 @@ public class AttachmentServlet
 
                     // Won't work, must be "attachement"
                     res.setHeader( "Content-Disposition", 
-                                   "attachment; filename=" + name + ";" );
+                                   "attachment; filename=" + att.getFileName() + ";" );
 
                     // If a size is provided by the provider, report it. 
                     if( att.getSize() >= 0 )
@@ -149,16 +144,16 @@ public class AttachmentServlet
                     in.close();
                     out.close();
 
-                    msg = "Attachment "+name+" sent to "+req.getRemoteUser()+" on "+req.getRemoteHost();
+                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteHost();
                     log.debug( msg );
 
-                    res.sendRedirect( nextPage );
+                    if( nextPage != null ) res.sendRedirect( nextPage );
 
 		    return;
                 }
                 else
                 {
-                    msg = "Attachment " + name + " version " + ver + 
+                    msg = "Attachment '" + page + "', version " + ver + 
                           " does not exist.";
                 }
                 
@@ -178,12 +173,7 @@ public class AttachmentServlet
         }
         log.info( msg );
 
-        res.sendRedirect( nextPage );
-
-        if( msg != null )
-        {
-            req.setAttribute( ATTR_MSG, msg );
-        }
+        if( nextPage != null ) res.sendRedirect( nextPage );
     }
 
 
@@ -203,20 +193,11 @@ public class AttachmentServlet
     public void doPost( HttpServletRequest  req, HttpServletResponse res ) 
         throws IOException, ServletException 
     {
-        ServletContext ctx = getServletContext();
-
-        String action = req.getParameter( HDR_ACTION );
-
-        // Only the one action at this time, but preparing for more.
         String nextPage = upload( req );
-
-        // RequestDispatcher rd = ctx.getRequestDispatcher( nextPage );
 
         log.debug( "Forwarding to " + nextPage );
         res.sendRedirect( nextPage );
     }
-
-
 
 
     /**
@@ -248,6 +229,7 @@ public class AttachmentServlet
                 String part = (String) files.nextElement();
                 File   f    = multi.getFile( part );
                 InputStream in;
+                AttachmentManager mgr = m_engine.getAttachmentManager();
 
                 if( f != null )
                 {
@@ -264,9 +246,25 @@ public class AttachmentServlet
 
                 String filename = multi.getFileSystemName( part );
 
-                Attachment att = new Attachment( wikipage );
+                //
+                //  Check whether we already have this kind of a page.
+                //  If the "page" parameter already defines an attachment
+                //  name for an update, then we just use that file.
+                //  Otherwise we create a new attachment, and use the
+                //  filename given.  Incidentally, this will also mean
+                //  that if the user uploads a file with the exact
+                //  same name than some other previous attachment,
+                //  then that attachment gains a new version.
+                //
+
+                Attachment att = mgr.getAttachmentInfo( wikipage );
+
+                if( att == null )
+                {
+                    att = new Attachment( wikipage, filename );
+                }
+
                 att.setAuthor( user );
-                att.setFileName( filename );
 
                 m_engine.getAttachmentManager().storeAttachment( att, in );
 
