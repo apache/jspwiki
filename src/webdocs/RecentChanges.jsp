@@ -32,7 +32,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE>JSPWiki Recent Changes</TITLE>
+  <TITLE><%=Release.APPNAME%> Recent Changes</TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

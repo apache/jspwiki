@@ -66,7 +66,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE>JSPWiki Editor</TITLE>
+  <TITLE><%=Release.APPNAME%> Edit: <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFD0FF">

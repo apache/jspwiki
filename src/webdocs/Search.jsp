@@ -30,7 +30,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE>JSPWiki Search</TITLE>
+  <TITLE><%=Release.APPNAME%> Search</TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

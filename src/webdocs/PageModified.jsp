@@ -31,7 +31,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE>JSPWiki Error</TITLE>
+  <TITLE><%=Release.APPNAME%> Error - Concurrent modification of <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">

@@ -35,7 +35,7 @@
 <HTML>
 
 <HEAD>
-  <TITLE>JSPWiki</TITLE>
+  <TITLE><%=Release.APPNAME%>: <%=pagereq%></TITLE>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
