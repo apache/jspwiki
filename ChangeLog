@@ -1,3 +1,13 @@
+2005-01-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.146.
+
+        * Added ShortURLConstructor, though it does not work...  Except for
+        VIEW.
+
+        * Added BaseURL tag (just to make things a bit easier for template
+        writers).
+
 2005-01-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.145.
