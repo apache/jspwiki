@@ -7,6 +7,7 @@ import java.util.*;
  *  Implements a simple plugin that just returns its text.
  *  <P>
  *  Parameters: text - text to return.
+ *  Any _body content gets appended between brackets.
  *
  *  @author Janne Jalkanen
  */
@@ -21,7 +22,17 @@ public class SamplePlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        return (String)params.get("text");
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( (String)params.get("text") );
+
+        String body = (String)params.get("body");
+        if( body != null )
+        {
+            sb.append( " ("+body.replace('\n','+')+")" );
+        }
+
+        return sb.toString();
     }
 
 }
