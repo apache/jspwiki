@@ -66,12 +66,14 @@ public class IncludeTag
         }
         catch( ServletException e )
         {
-            log.fatal( "Including failed", e );
+            log.warn( "Including failed, got a servlet exception from sub-page. "+
+                      "Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
         }
         catch( IOException e )
         {
-            log.fatal( "I/O exception", e );
+            log.warn( "I/O exception - probably the connection was broken. "+
+                      "Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
         }
 
