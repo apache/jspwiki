@@ -1570,7 +1570,7 @@ public class WikiEngine
         {
             wup = new UserProfile( storedProfile );
             wup.setStatus( UserProfile.NAMED );
-            m_authorizer.addRole( wup, Authorizer.AUTH_PARTICIPANT_ROLE );
+            m_authorizer.addRole( wup, Authorizer.AUTH_ROLE_PARTICIPANT );
         }
         else
         {
@@ -1586,9 +1586,7 @@ public class WikiEngine
             wup = new UserProfile();
             wup.setName( uid );
             wup.setStatus( UserProfile.UNKNOWN );
-            log.debug( "XXX " + wup.dump() );
-            log.debug( "XXX adding " + Authorizer.AUTH_GUEST_ROLE + " to " + wup );
-            m_authorizer.addRole( wup, Authorizer.AUTH_GUEST_ROLE );
+            m_authorizer.addRole( wup, Authorizer.AUTH_ROLE_GUEST );
         }
 
         // Limited login hasn't been authenticated. Just to emphasize the point:
