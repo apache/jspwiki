@@ -2,6 +2,10 @@
 
         * v1.5.3
 
+        * Bug fix: the RCSFileProvider used UTC instead of local time.
+        Now fixed.  If you've changed the logcommands in
+        jspwiki.properties, check the new format, or you'll be burned.
+
         * JSPWiki can now handle also non-ISO-8859-1 charsets.  Check
         README for more info.  Thanks to  Chris Brooking for the initial
         code.  This is a heavy-duty change - most of the JSP pages were
