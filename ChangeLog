@@ -1,5 +1,8 @@
 2002-02-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * TextUtil.replaceString() would trash replacements of lengths of
+        two or more.  Oops.
+
         * XML-RPC interface now goes around the UTF-8 problem by giving
         out Base64-encoded UTF-8 data as page data, and expects all page
         names to be strings encoded using URL encoding with UTF-8 text.
