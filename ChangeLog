@@ -1,5 +1,9 @@
 2002-05-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Added temporary fix for misbehaving, nested #'s and *'s.
+        However, this is not a real fix, it just prevents the system from
+        going all wonky.  Reported by Mahlen Morris.
+
         * Fixed problem with XML-RPC interface method listLinks()
         generating incorrect HREF attribute for nonexistant links.
         Reported by Mahlen Morris.
