@@ -1,4 +1,6 @@
-[{WeblogPlugin}]
+[{WeblogPlugin  days=1}]
+
+[{WeblogEntryPlugin}]
 
 This is a playground - do whatever you want.
 

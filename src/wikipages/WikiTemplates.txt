@@ -159,22 +159,6 @@ basically uses all of the tags.  They're not that hard to figure out.
 
 !!A few Frequently Asked Questions
 
-!Problem: Style Sheets
-
-The default template directory contains a small JavaScript file, ''cssinclude.js'', 
-which attempts to load the right CSS definitions for client browsers. Notice
-that this file is __template specific__; you will need to modify it to use
-''your'' template directory, if you have template-specific CSS. Modify this
-line (around 28):
-
-{{{
-document.write("<link rel=\"stylesheet\" href=\"templates/default/"+sheet+"\">");
-}}}
-
-and replace ''default'' with your template dir name.
-
---[ebu]
-
 !Problem: Setting CSS classes to change the appearance of links, etc. on page parts
 
 Something I noticed while playing around with templates: if you want a clear contrast between
