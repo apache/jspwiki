@@ -209,14 +209,30 @@ public class WikiEngineTest extends TestCase
     /**
      *  Acronyms should be treated wisely.
      */
-    /* // FIXME: Must add later on.
     public void testBeautifyTitleAcronym()
     {
         String src = "JSPWikiPage";
 
-        assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
+        assertEquals("JSPWiki Page", m_engine.beautifyTitle( src ) );
     }
-    */
+
+    /**
+     *  Acronyms should be treated wisely.
+     */
+    public void testBeautifyTitleAcronym2()
+    {
+        String src = "DELETEME";
+
+        assertEquals("DELETEME", m_engine.beautifyTitle( src ) );
+    }
+
+    public void testBeautifyTitleNumbers()
+    {
+        String src = "TestPage12";
+
+        assertEquals("Test Page 12", m_engine.beautifyTitle( src ) );
+    }
+
     /**
      *  English articles too.
      */
