@@ -53,7 +53,7 @@ public class AclImpl
         {
             AclEntry e = (AclEntry) i.next();
 
-            if( e.getPrincipal().equals( entry.getPrincipal() ) &&
+            if( e.getPrincipal().getName().equals( entry.getPrincipal().getName() ) &&
                 e.isNegative() == entry.isNegative() )
             {
                 return true;
@@ -146,6 +146,12 @@ public class AclImpl
     {
         boolean posEntry = false;
 
+        /*
+        System.out.println("****");
+        System.out.println( toString() );
+        System.out.println("Checking user="+principal);
+        System.out.println("Checking permission="+permission);
+        */
         for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
         {
             AclEntry entry = (AclEntry) e.nextElement();
@@ -154,6 +160,7 @@ public class AclImpl
             {
                 if( entry.checkPermission( permission ) )
                 {
+                    // System.out.println("  Found person/permission match");
                     if( entry.isNegative() )
                     {
                         return DENY;
@@ -167,6 +174,16 @@ public class AclImpl
         }
 
         //
+        //  In case both positive and negative permissions have been set, 
+        //  we'll err for the negative by quitting immediately if we see
+        //  a match.  For positive, we have to wait until here.
+        //
+
+        if( posEntry ) return ALLOW;
+        
+        // System.out.println("-> groups");
+
+        //
         //  Now, if the individual permissions did not match, we'll go through
         //  it again but this time looking at groups.
         //
@@ -174,18 +191,25 @@ public class AclImpl
         {
             AclEntry entry = (AclEntry) e.nextElement();
 
+            // System.out.println("  Checking entry="+entry);
+
             if( entry.getPrincipal() instanceof Group )
             {
                 Group entryGroup = (Group) entry.getPrincipal();
 
+                // System.out.println("  Checking group="+entryGroup);
+
                 if( entryGroup.isMember( principal ) && entry.checkPermission( permission ) )
                 {
+                    // System.out.println("    ismember&haspermission");
                     if( entry.isNegative() )
                     {
+                        // System.out.println("    DENY");
                         return DENY;
                     }
                     else
                     {
+                        // System.out.println("    ALLOW");
                         posEntry = true;
                     }
                 }
@@ -202,16 +226,32 @@ public class AclImpl
      */
     public String toString()
     {
-        StringBuffer res = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        for( Enumeration enum = entries(); enum.hasMoreElements(); )
         {
-            AclEntry entry = (AclEntry) e.nextElement();
+            AclEntry entry = (AclEntry) enum.nextElement();
 
-            res.append( entry.toString() +"\n" );
-        }        
+            Principal pal = entry.getPrincipal();
 
-        return res.toString();
+            if( pal != null )
+                sb.append("  user = "+pal.getName()+": ");
+            else
+                sb.append("  user = null: ");
+
+            if( entry.isNegative() ) sb.append("NEG");
+
+            sb.append("(");
+            for( Enumeration perms = entry.permissions(); perms.hasMoreElements(); )
+            {
+                Permission perm = (Permission) perms.nextElement();
+                sb.append( perm.toString() );
+            }
+            sb.append(")\n");
+        }
+
+        return sb.toString();
     }
+
 }
     
