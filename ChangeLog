@@ -1,5 +1,18 @@
 2001-11-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Added WikiEngine.saveText( String, String, HttpServletRequest )
+        so that it can get the author information from the request.  The
+        old API is still supported.
+
+        * WikiPageProvider interface changed: putPageText() now takes a
+        WikiPage as an extra argument.
+
+        * RCSFileProvider can now save and retrieve author info as well.
+
+        * Anchor types (i.e. hyperlinks) now have classes so that you can
+        redecorate them in the CSS files.  See the CSS files for more
+        info.
+
         * DTD caused Mozilla to slip into standards-compliant mode.  Fixed
         top-margins in jspwiki_ie.css.
 
