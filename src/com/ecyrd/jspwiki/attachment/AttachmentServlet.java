@@ -199,6 +199,10 @@ public class AttachmentServlet
         {
             page = HttpUtil.parsePageFromURL( req,
                                               m_engine.getContentEncoding() );
+            if( page != null )
+            {
+                page = TextUtil.urlDecodeUTF8( page );
+            }
         }
 
         if( page == null )
