@@ -1436,6 +1436,38 @@ public class TranslatorReaderTest extends TestCase
         assertTrue( "no edit for SV", acl.checkPermission( prof, new EditPermission() ) );
     }
 
+    private boolean containsGroup( List l, String name )
+    {
+        for( Iterator i = l.iterator(); i.hasNext(); )
+        {
+            String group = (String) i.next();
+
+            if( group.equals( name ) )
+                return true;
+        }
+
+        return false;
+    }
+
+    public void testGroup1()
+        throws Exception
+    {
+        String src = "[{MEMBERS FooBar, Alice, Bob}]";
+        WikiPage p = new WikiPage( PAGE_NAME );
+
+        String res = translate( p, src );
+
+        List memberlist = (List) p.getAttribute("_members");
+
+        assertNotNull( "no member list", memberlist );
+        assertEquals( "wrong number of entries", 3, memberlist.size() );
+
+        
+        assertTrue( "Alice", containsGroup( memberlist, "Alice" ) );
+        assertTrue( "FooBar", containsGroup( memberlist, "FooBar" ) );
+        assertTrue( "Bob", containsGroup( memberlist, "Bob" ) );
+    }
+
     /**
      *   Metadata tests
      */
