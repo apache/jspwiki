@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="etc/" output="tests_build" kind="src" path="tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/ecs.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
@@ -12,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
 	<classpathentry kind="lib" path="/home/jalkanen/Projects/JSPWiki/lib/servlet.jar"/>
+	<classpathentry kind="lib" path="tests/etc"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

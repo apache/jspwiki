@@ -61,7 +61,7 @@ public class AttachmentManagerTest extends TestCase
 
         File f = new File( tmpfiles, NAME1+BasicAttachmentProvider.DIR_EXTENSION );
 
-        m_engine.deleteAll( f );
+        TestEngine.deleteAll( f );
     }
 
     public void testEnabled()        

@@ -1,7 +1,5 @@
 package com.ecyrd.jspwiki.providers;
 
-import junit.framework.*;
-import java.io.*;
 import java.util.*;
 
 import org.apache.log4j.*;

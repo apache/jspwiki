@@ -67,7 +67,7 @@ public class WikiEngineTest extends TestCase
         {
             File f = new File( files );
 
-            m_engine.deleteAll( f );
+            TestEngine.deleteAll( f );
         }
 
     }
@@ -438,7 +438,7 @@ public class WikiEngineTest extends TestCase
         { 
             // do cleanup
             String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
 
@@ -511,7 +511,7 @@ public class WikiEngineTest extends TestCase
         { 
             // do cleanup
             String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
 
@@ -548,7 +548,7 @@ public class WikiEngineTest extends TestCase
         { 
             // do cleanup
             String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
     
@@ -585,7 +585,7 @@ public class WikiEngineTest extends TestCase
         { 
             // do cleanup
             String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+            TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
             new File( files, "TestPage2"+FileSystemProvider.FILE_EXT ).delete();
         }
     }    

@@ -81,39 +81,39 @@ public class BasicAttachmentProviderTest extends TestCase
 
         File f = new File( tmpfiles, NAME1+BasicAttachmentProvider.DIR_EXTENSION );
 
-        m_engine.deleteAll( f );
+        TestEngine.deleteAll( f );
 
         f = new File( tmpfiles, NAME2+BasicAttachmentProvider.DIR_EXTENSION );
 
-        m_engine.deleteAll( f );
+        TestEngine.deleteAll( f );
     }
 
     public void testExtension()
     {
         String s = "test.png";
 
-        assertEquals( m_provider.getFileExtension(s), "png" );
+        assertEquals( BasicAttachmentProvider.getFileExtension(s), "png" );
     }
 
     public void testExtension2()
     {
         String s = ".foo";
 
-        assertEquals( "foo", m_provider.getFileExtension(s) );
+        assertEquals( "foo", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     public void testExtension3()
     {
         String s = "test.png.3";
 
-        assertEquals( "3", m_provider.getFileExtension(s) );
+        assertEquals( "3", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     public void testExtension4()
     {
         String s = "testpng";
 
-        assertEquals( "bin", m_provider.getFileExtension(s) );
+        assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
     }
 
 
@@ -121,14 +121,14 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         String s = "test.";
 
-        assertEquals( "bin", m_provider.getFileExtension(s) );
+        assertEquals( "bin", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     public void testExtension6()
     {
         String s = "test.a";
 
-        assertEquals( "a", m_provider.getFileExtension(s) );
+        assertEquals( "a", BasicAttachmentProvider.getFileExtension(s) );
     }
 
     /**

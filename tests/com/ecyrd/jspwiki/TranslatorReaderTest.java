@@ -1783,7 +1783,7 @@ public class TranslatorReaderTest extends TestCase
             File storagedir = new File( files, PAGE_NAME+BasicAttachmentProvider.DIR_EXTENSION );
 
             if( storagedir.exists() && storagedir.isDirectory() )
-                testEngine.deleteAll( storagedir );
+                TestEngine.deleteAll( storagedir );
         }
     }
 

@@ -2,9 +2,6 @@
 package com.ecyrd.jspwiki.util;
 
 import junit.framework.*;
-import java.util.*;
-
-import org.apache.log4j.*;
 
 public class ClassUtilTest extends TestCase
 {

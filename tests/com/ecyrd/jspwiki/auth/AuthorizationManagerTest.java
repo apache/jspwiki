@@ -2,9 +2,7 @@
 package com.ecyrd.jspwiki.auth;
 
 import junit.framework.*;
-import java.io.*;
 import java.util.*;
-import org.apache.log4j.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.permissions.*;
 import com.ecyrd.jspwiki.attachment.*;

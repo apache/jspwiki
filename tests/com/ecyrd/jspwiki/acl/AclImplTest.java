@@ -1,7 +1,6 @@
 package com.ecyrd.jspwiki.acl;
 
 import junit.framework.*;
-import java.util.*;
 
 import java.security.acl.*;
 
