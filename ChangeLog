@@ -1,5 +1,10 @@
 2005-02-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.1.151
+
+        * ShortURLConstructor now works in all cases except special
+        pages.
+        
         * v2.1.150
         
         * RSSGenerator now has a bit more verbose RSS generation for
