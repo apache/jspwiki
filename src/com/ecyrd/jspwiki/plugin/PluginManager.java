@@ -50,7 +50,10 @@ public class PluginManager
     {
         return link.startsWith("{INSERT");
     }
-    
+
+    /**
+     *  Executes a plugin class in the given context.
+     */
     private String execute( WikiContext context,
                             String classname,
                             Map params )
@@ -76,11 +79,15 @@ public class PluginManager
         {
             throw new PluginException( "Not allowed to access plugin "+classname, e );
         }
+        catch( ClassCastException e )
+        {
+            throw new PluginException( "Class "+classname+" is not a Wiki plugin.", e );
+        }
     }
     
     /**
      *  Parses a plugin.  Plugin commands are of the form:
-     *  [{INSERT myplugin WITH param1=value1, param2=value2}]
+     *  [{INSERT myplugin WHERE param1=value1, param2=value2}]
      *  myplugin may either be a class name or a plugin alias.
      */
     public String execute( WikiContext context,
@@ -92,7 +99,7 @@ public class PluginManager
 
         try
         {
-            Pattern ptrn = compiler.compile( "\\{?INSERT\\s*([\\w\\._]+)\\s*(WITH)?\\s*([^\\}]*)\\}?$" );
+            Pattern ptrn = compiler.compile( "\\{?INSERT\\s*([\\w\\._]+)\\s*(WHERE)?\\s*([^\\}]*)\\}?$" );
 
             if( matcher.contains( commandline, ptrn ) )
             {
