@@ -741,6 +741,8 @@ public class WikiEngine
 
         result = TextUtil.replaceEntities( result );
 
+        result = TextUtil.replaceString( result, "&", "&amp;" );
+
         return result;
     }
 
