@@ -1,3 +1,15 @@
+2002-06-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Branched off 1.9.x, which is to be 2.0.  This means that it's
+        quite likely that anything from CVS is no longer functioning =).
+
+        * You can now specify the used page provider without the package
+        name in the jspwiki.properties file.
+
+        * Major change: All WikiPageProviders now live in their own, neat
+        little package.  This means that all jspwiki property files just
+        broke, unfortunately.
+
 2002-06-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.8.0.
