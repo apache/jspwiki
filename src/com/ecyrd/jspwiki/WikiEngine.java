@@ -160,7 +160,7 @@ public class WikiEngine
         throws InternalWikiException
     {
         ServletContext context = config.getServletContext();        
-        String appid = context.getRealPath("/");
+        String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
 
         config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
 
