@@ -238,15 +238,15 @@ public class RSSGenerator
 
             String url;
 
-            // FIXME: No longer use absolute URLS!!!
-
             if( page instanceof Attachment )
             {
-                url  = m_engine.getAttachmentURL( page.getName() );
+                url = m_engine.getAbsoluteURL( WikiContext.ATTACH, 
+                                               page.getName() );
             }
             else
             {
-                url  = m_engine.getViewURL(page.getName());
+                url = m_engine.getAbsoluteURL( WikiContext.VIEW, 
+                                               page.getName() );
             }
 
             result.append("    <rdf:li rdf:resource=\""+url+"\" />\n");
@@ -275,10 +275,11 @@ public class RSSGenerator
             if( page.getVersion() > 1 )
             {
                 itemBuffer.append("  <wiki:diff>"+
-                              m_engine.getBaseURL()+"Diff.jsp?page="+
-                              encodedName+
-                              "&amp;r1=-1"+
-                              "</wiki:diff>\n");
+                                  m_engine.getURL(WikiContext.DIFF,
+                                                  page.getName(),
+                                                  true,
+                                                  "r1=-1")+
+                                  "</wiki:diff>\n");
             }
 
             //
@@ -301,7 +302,7 @@ public class RSSGenerator
             itemBuffer.append("   <rdf:Description");
             if( m_engine.pageExists(author) )
             {
-                itemBuffer.append(" link=\""+m_engine.getViewURL(author)+"\"");
+                itemBuffer.append(" link=\""+m_engine.getAbsoluteURL(WikiContext.VIEW,author)+"\"");
             }
             itemBuffer.append(">\n");
             itemBuffer.append("    <rdf:value>"+author+"</rdf:value>\n");
@@ -312,8 +313,8 @@ public class RSSGenerator
             //  PageHistory
 
             itemBuffer.append("  <wiki:history>");
-            itemBuffer.append( m_engine.getBaseURL()+"PageInfo.jsp?page="+
-                           encodedName );
+            itemBuffer.append( m_engine.getAbsoluteURL(WikiContext.INFO,
+                                                       page.getName()) );
             itemBuffer.append("</wiki:history>\n");
 
             //  Close up.
@@ -353,6 +354,7 @@ public class RSSGenerator
     /**
      *  Generates an RSS/RDF 1.0 feed.  Each item should be an instance of the RSSItem class.
      */
+    // FIXME: Does not work.
     public String generateRSS( WikiContext wikiContext, List items, int limit )
     {
         StringBuffer result = new StringBuffer();
