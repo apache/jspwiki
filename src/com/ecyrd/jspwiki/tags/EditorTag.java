@@ -44,7 +44,7 @@ import org.apache.ecs.ConcreteElement;
 public class EditorTag
     extends WikiTagBase
 {
-    private String m_submit  = "Submit";
+    private String m_submit  = "Save";
     private String m_preview = "Preview";
     private String m_cancel  = "Cancel";
 
