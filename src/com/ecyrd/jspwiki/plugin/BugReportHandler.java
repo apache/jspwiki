@@ -113,7 +113,8 @@ public class BugReportHandler
                     entry.getKey().equals( DESCRIPTION ) ||
                     entry.getKey().equals( VERSION ) ||
                     entry.getKey().equals( MAPPINGS ) ||
-                    entry.getKey().equals( PAGE ) )
+                    entry.getKey().equals( PAGE ) ||
+                    entry.getKey().equals( PluginManager.PARAM_BODY ) )
                 {
                     // Ignore this
                 }
