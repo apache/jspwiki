@@ -43,6 +43,7 @@ public class Image
     public static final String PARAM_WIDTH    = "width";
     public static final String PARAM_ALT      = "alt";
     public static final String PARAM_CAPTION  = "caption";
+    public static final String PARAM_LINK     = "link";
 
     public String execute( WikiContext context, Map params )
         throws PluginException
@@ -54,6 +55,7 @@ public class Image
         String wt      = (String) params.get( PARAM_WIDTH );
         String alt     = (String) params.get( PARAM_ALT );
         String caption = (String) params.get( PARAM_CAPTION );
+        String link    = (String) params.get( PARAM_LINK );
 
         if( src == null )
         {
@@ -88,13 +90,18 @@ public class Image
 
 
         result.append( "<tr><td>" );
+
+        if( link != null )  result.append("<a href=\""+link+"\">");
+
         result.append( "<img src=\""+src+"\"" );
        
         if( ht != null )    result.append(" height=\""+ht+"\"");
         if( wt != null )    result.append(" width=\""+wt+"\"");
         if( alt != null )   result.append(" alt=\""+alt+"\"");
 
-        result.append("/></td></tr>\n");
+        result.append("/>");
+        if( link != null )  result.append("</a>");
+        result.append("</td></tr>\n");
 
         result.append("</table>\n");
 
