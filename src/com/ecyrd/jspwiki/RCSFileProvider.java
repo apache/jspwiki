@@ -48,7 +48,7 @@ import java.text.SimpleDateFormat;
 public class RCSFileProvider
     extends FileSystemProvider
 {
-    private String m_checkinCommand  = "ci -q -mx -l -t-none %s";
+    private String m_checkinCommand  = "ci -q -m\"author=%u\" -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
     private String m_logCommand      = "rlog -h %s";
     private String m_fullLogCommand  = "rlog %s";
@@ -86,6 +86,7 @@ public class RCSFileProvider
         log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
+    // FIXME: Does not get user.
     public WikiPage getPageInfo( String page )
     {
         WikiPage info = super.getPageInfo( page );
@@ -174,8 +175,9 @@ public class RCSFileProvider
      *  Puts the page into RCS and makes sure there is a fresh copy in
      *  the directory as well.
      */
-    public void putPageText( String page, String text )
+    public void putPageText( WikiPage page, String text )
     {
+        String pagename = page.getName();
         // Writes it in the dir.
         super.putPageText( page, text );
 
@@ -186,7 +188,8 @@ public class RCSFileProvider
             String cmd = m_checkinCommand;
             String[] env = new String[0];
 
-            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(page)+FILE_EXT );
+            cmd = TranslatorReader.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
+            cmd = TranslatorReader.replaceString( cmd, "%u", page.getAuthor() );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -219,6 +222,7 @@ public class RCSFileProvider
         {
             Pattern revpattern  = compiler.compile("^revision \\d+\\.(\\d+)");
             Pattern datepattern = compiler.compile("^date:\\s*(.*);");
+            Pattern userpattern = compiler.compile("^\"author=(.*)\"");
 
             String[] env = new String[0];
 
@@ -254,6 +258,13 @@ public class RCSFileProvider
                     Date d = rcsdatefmt.parse( result.group(1) );
 
                     info.setLastModified( d );
+                }
+
+                if( matcher.contains( line, userpattern ) )
+                {
+                    MatchResult result = matcher.getMatch();
+
+                    info.setAuthor( result.group(1) );
                 }
             }
 
