@@ -369,9 +369,13 @@ public class TranslatorReader extends Reader
 
 
     /**
-     *  [ This is a link ] -> ThisIsALink
+     *  Cleans a Wiki name.
+     *  <P>
+     *  [ This is a link ] -&gt; ThisIsALink
+     *
+     *  @since 2.0
      */
-    private String cleanLink( String link )
+    public static String cleanLink( String link )
     {
         StringBuffer clean = new StringBuffer();
 
