@@ -1,0 +1,40 @@
+Just displays the current server time.
+
+!Parameters
+
+* __format__=''format string'' : How the date and time should be formatted.  If you omit this, a default format will be used. The following characters are available to you:
+
+{{{
+ Symbol   Meaning                 Presentation        Example
+ ------   -------                 ------------        -------
+ G        era designator          (Text)              AD
+ y        year                    (Number)            1996
+ M        month in year           (Text & Number)     July & 07
+ d        day in month            (Number)            10
+ h        hour in am/pm (1~12)    (Number)            12
+ H        hour in day (0~23)      (Number)            0
+ m        minute in hour          (Number)            30
+ s        second in minute        (Number)            55
+ S        millisecond             (Number)            978
+ E        day in week             (Text)              Tuesday
+ D        day in year             (Number)            189
+ F        day of week in month    (Number)            2 (2nd Wed in July)
+ w        week in year            (Number)            27
+ W        week in month           (Number)            2
+ a        am/pm marker            (Text)              PM
+ k        hour in day (1~24)      (Number)            24
+ K        hour in am/pm (0~11)    (Number)            0
+ z        time zone               (Text)              Pacific Standard Time
+ \'       escape for text         (Delimiter)
+ \''      single quote            (Literal)           '
+}}}
+
+For example, two 'y':s give you the year using two digits.  Four 'y':s give you the year in four digits.  Three 'M':s give you the month in letters, whereas two 'M':s give just the month number.
+
+(Yes, these are exactly the Java [SimpleDateFormat|http://java.sun.com/j2se/1.3/docs/api/java/text/SimpleDateFormat.html] arguments.  Sorry for copying them in.)
+
+!Example
+
+Using [[{INSERT CurrentTimePlugin format='yyyy.MM.dd G \'at\' hh:mm:ss z'}] would give you:
+
+[{INSERT CurrentTimePlugin format='yyyy.MM.dd G \'at\' hh:mm:ss z'}]

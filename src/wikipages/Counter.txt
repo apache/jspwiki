@@ -1,0 +1,19 @@
+A simple counter that starts counting at 1 at the top of the page, and each time it is invoked, will increase its value by one.   These counters are transient, and relative to the current page view only - i.e. two persons viewing the same page at the same time get their own counters.
+
+The current counter value is accessible also as a [WikiVariable].  The name of the variable is "counter", or "counter-<name>", if you have defined a counter name.
+
+!Parameters
+
+* __name__ = ''counter name''.  You may define as many counters per page as you want; you just need to separate them with the ''counter name''
+
+!Example
+
+[[{Counter}], [[{Counter}], [[{Counter}], [[{Counter name='aa'}] produces
+
+[{Counter}], [{Counter}], [{Counter}], [{Counter name='aa'}].
+
+The value of "counter" at the end is [{$counter}] and the value of "counter-aa" is [{$counter-aa}].
+
+----
+
+Back to [JSPWikiPlugins].
