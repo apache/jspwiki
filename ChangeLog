@@ -1,5 +1,21 @@
 2002-11-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.42.
+
+        * Fixed a near-fatal bug in UserPreferences.jsp - we wrote the
+        page contents into the stream and then did a redirect.  Oops.
+
+        * Radical change warning: If you are running a Wiki with that has
+        authentication turned on, note that from now on the username set
+        in UserPreferences is the one that gets put in page change
+        history, not the name the user used to authenticate himself.  This
+        was done so that it would be easier to maintain a wiki that has
+        only a single username/password combination and still track the
+        users.   I believe this is more in line with WikiNature.
+        
+        You can still see the name the user used to authenticate in the
+        log file that JSPWiki generates.
+
         * v1.9.41.
 
         * Fixed EditTemplate.jsp to show the link to EditPageHelp in a
