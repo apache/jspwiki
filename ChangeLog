@@ -1,3 +1,10 @@
+2002-04-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.160
+        
+        * Removed the Expires-header from AttachmentServlet for
+        now; checking if that helps with BugStaleAttachments.
+
 2005-04-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.159
