@@ -121,12 +121,11 @@ public class RecentChangesPlugin
                 // FIXME: The following code does not really work.
                 // Problem is that the WikiPageProvider interface does not really
                 // work well with versioning.
-                /*
+
                 if( showAuthor )
                 {
                     out.write("<TD>"+pageref.getAuthor()+"</TD>");
                 }
-                */
 
                 out.write("</TR>\n");
             }
