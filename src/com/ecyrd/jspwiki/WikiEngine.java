@@ -99,6 +99,8 @@ public class WikiEngine
     /** Property name for the default front page. */
     public static final String PROP_FRONTPAGE    = "jspwiki.frontPage";
 
+    private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
+
     /** Path to the default property file. 
      *  @value /WEB_INF/jspwiki.properties
      */
@@ -789,7 +791,7 @@ public class WikiEngine
      */
     public String getSpecialPageReference( String original )
     {
-        String propname = "jspwiki.specialPage."+original;
+        String propname = PROP_SPECIALPAGE+original;
         String specialpage = m_properties.getProperty( propname );
 
         return specialpage;
@@ -1664,6 +1666,43 @@ public class WikiEngine
     }
 
     /**
+     *  Parses the given path and attempts to match it against the list
+     *  of specialpages to see if this path exists.  It is used to map things
+     *  like "UserPreferences.jsp" to page "User Preferences".
+     *
+     *  @return WikiName, or null if a match could not be found.
+     */
+    private String matchSpecialPagePath( String path )
+    {
+        //
+        //  Remove servlet root marker.
+        //
+        if( path.startsWith("/") )
+        {
+            path = path.substring(1);
+        }
+
+        for( Iterator i = m_properties.entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+           
+            String key = (String)entry.getKey();
+
+            if( key.startsWith( PROP_SPECIALPAGE ) )
+            {
+                String value = (String)entry.getValue();
+
+                if( value.equals( path ) )
+                {                    
+                    return key.substring( PROP_SPECIALPAGE.length() );
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      *  Shortcut to create a WikiContext from the Wiki page.
      *
      *  @since 2.1.15.
@@ -1681,9 +1720,24 @@ public class WikiEngine
         String pagereq  = safeGetParameter( request, "page" );
         String template = safeGetParameter( request, "skin" );
 
+        //
+        //  Figure out the page name.
+        //  We also check the list of special pages, which incidentally
+        //  allows us to localize them, too.
+        //
+
         if( pagereq == null || pagereq.length() == 0 )
         {
-            pagereq = getFrontPage();
+            String servlet = request.getServletPath();
+            log.debug("Servlet path is: "+servlet);
+
+            pagereq = matchSpecialPagePath( servlet );
+
+            log.debug("Mapped to "+pagereq);
+            if( pagereq == null )
+            {
+                pagereq = getFrontPage();
+            }
         }
 
         int version          = WikiProvider.LATEST_VERSION;
