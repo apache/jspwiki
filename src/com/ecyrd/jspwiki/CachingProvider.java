@@ -89,10 +89,21 @@ public class CachingProvider
 
     public String getPageText( String page, int version )
     {
-        return m_provider.getPageText( page, version );
+        String result;
+
+        if( version == WikiPageProvider.LATEST_VERSION )
+        {
+            result = getTextFromCache( page );
+        }
+        else
+        {
+            result = m_provider.getPageText( page, version );
+        }
+
+        return result;
     }
 
-    public String getPageText( String page )
+    private String getTextFromCache( String page )
     {
         CacheItem item = (CacheItem)m_cache.get( page );
 
@@ -100,7 +111,7 @@ public class CachingProvider
         {
             // Page has never been seen.
             log.debug("Page "+page+" never seen.");
-            String text = m_provider.getPageText( page );
+            String text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
 
             addPage( page, text );
 
@@ -116,7 +127,7 @@ public class CachingProvider
             {
                 // Oops, expired already
                 log.debug("Page "+page+" expired.");
-                text = m_provider.getPageText( page );
+                text = m_provider.getPageText( page, WikiPageProvider.LATEST_VERSION );
                 item.m_text = new SoftReference( text );
 
                 m_cacheMisses++;
@@ -191,7 +202,7 @@ public class CachingProvider
     private synchronized CacheItem addPage( String pageName, String text )
     {
         CacheItem item = new CacheItem();
-        item.m_page = m_provider.getPageInfo( pageName );
+        item.m_page = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
         item.m_text = new SoftReference( text );
 
         m_cache.put( pageName, item );
@@ -214,16 +225,24 @@ public class CachingProvider
         return m_provider.findPages( query );
     }
 
-    public WikiPage getPageInfo( String page )
-    {        
-        CacheItem item = (CacheItem)m_cache.get( page );
-
-        if( item == null )
+    public WikiPage getPageInfo( String page, int version )
+    {
+        if( version == WikiPageProvider.LATEST_VERSION )
         {
-            item = addPage( page, null );
-        }
+            CacheItem item = (CacheItem)m_cache.get( page );
 
-        return item.m_page;
+            if( item == null )
+            {
+                item = addPage( page, null );
+            }
+
+            return item.m_page;
+        }        
+        else
+        {
+            // We do not cache old versions.
+            return m_provider.getPageInfo( page, version );
+        }
     }
 
     public Collection getVersionHistory( String page )

@@ -125,7 +125,7 @@ public class FileSystemProvider
         return getPageText( page );
     }
 
-    public String getPageText( String page )
+    private String getPageText( String page )
     {
         String result  = null;
         InputStream in = null;
@@ -205,7 +205,8 @@ public class FileSystemProvider
             String wikiname = wikipages[i].getName();
             int cutpoint = wikiname.lastIndexOf( FILE_EXT );
 
-            WikiPage page = getPageInfo( unmangleName(wikiname.substring(0,cutpoint)) );
+            WikiPage page = getPageInfo( unmangleName(wikiname.substring(0,cutpoint)),
+                                         WikiPageProvider.LATEST_VERSION );
             set.add( page );
         }
 
@@ -321,7 +322,11 @@ public class FileSystemProvider
         return res;
     }
 
-    public WikiPage getPageInfo( String page )
+    /**
+     *  Always returns the latest version, since FileSystemProvider
+     *  does not support versioning.
+     */
+    public WikiPage getPageInfo( String page, int version )
     {
         File file = findPage( page );
 
@@ -340,7 +345,7 @@ public class FileSystemProvider
     {
         ArrayList list = new ArrayList();
 
-        list.add( getPageInfo( page ) );
+        list.add( getPageInfo( page, WikiPageProvider.LATEST_VERSION ) );
 
         return list;
     }
