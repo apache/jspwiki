@@ -1,3 +1,21 @@
+2002-07-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.6.
+
+        * Started the (painful) move to JSP tags.  Sigh.  I couldn't
+        really figure out a better way - unfortunately we now have to
+        stand with the performance penalty that JSP tags give us.  This
+        includes new WikiTagBase class, which contains some helpers.
+
+        * Split Wiki.jsp into Wiki.jsp and ViewTemplate.jsp.  All HTML
+        code should go to the latter one.
+
+        * Incorporated fix from 1.8.2: UserProfiles might be broken on
+        some containers.  Reported by Kalle Kivimaa.
+
+        * Incorporated fix from 1.8.2: new page diffs are now shown
+        properly.  Reported by Niilo Neuvo.
+
 2002-07-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.5.
