@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki;
 import java.util.*;
 import org.apache.log4j.Category;
 
+// FIXME: Does not implement equals().
 public class PageTimeComparator
     implements Comparator
 {

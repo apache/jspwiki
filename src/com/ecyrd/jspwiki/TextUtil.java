@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 /**
  *  Contains a number of static utility methods.
@@ -289,6 +290,33 @@ public class TextUtil
         catch( Exception e ) {}
             
         return val;
+    }
+
+    /**
+     *  Gets a boolean property from a standard Properties list.
+     *  Returns the default value, in case the key has not been set.
+     *  <P>
+     *  The possible values for the property are "true"/"false", "yes"/"no", or
+     *  "on"/"off".  Any value not recognized is always defined as "false".
+     *
+     *  @param props   A list of properties to search.
+     *  @param key     The property key.
+     *  @param defval  The default value to return.
+     *
+     *  @return True, if the property "key" was set to "true", "on", or "yes".
+     *
+     *  @since 2.0.11
+     */
+    public static boolean getBooleanProperty( Properties props, 
+                                              String key, 
+                                              boolean defval )
+    {
+        String val = props.getProperty( key );
+
+        if( val == null ) return defval;
+
+        return ( val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
+                 val.equalsIgnoreCase("yes") );
     }
 
     /**

@@ -1,12 +1,52 @@
+2003-01-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.12.
+
+        * Diff.jsp did not use the templateDir property correctly.  Oops.
+        Reported by Steven Noels, I think.
+
+        * Added Expires, Last-Modified, and Cache-Control headers to
+        Edit.jsp responses - this should allow certain versions of
+        Internet Explorer to use Preview correctly.  Suggested by Richard
+        Donkin.
+
+        * Implemented page "locking".  When you now start to edit a page,
+        the page is marked as being under editing, and the next guy will
+        get a warning about that.  To facilitate this, Edit.jsp was
+        changed.  Also, check out the new tags in "EditTemplate.jsp", and
+        note also that the "Cancel" is now a button instead of a link.
+        Suggested by Olli Lounela.
+
+2003-01-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Wrote some new documentation into sample wikipages.
+
+        * v2.0.11.
+
+        * All boolean type properties in jspwiki.properties recognize now
+        "on" and "yes" as "true" as well.
+
+        * It is now possible to allow raw HTML on WikiPages.  Beware, this
+        is a very dangerous option, since it will allow people OTHER THAN
+        THE ADMINISTRATOR to make wikis that can hurt users.  Requested
+        (very loudly and many times :-) by Alain Ravet.
+
+        * v2.0.10.
+
+        * WeblogPlugin changed entry formats.  Beware, if you've been
+        using it so far. 
+
+        * WikiPage now implements Cloneable.  I have no idea why.
+
 2002-12-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-	* v2.0.9.
+        * v2.0.9.
 
-	* Added permalinks to WeblogPlugin.
+        * Added permalinks to WeblogPlugin.
 
-	* IndexPlugin enhanced to have parameters "include" and "exclude",
-	which can be used to include or exclude pages using standard glob
-	wild card expressions (*, ?, etc).
+        * IndexPlugin enhanced to have parameters "include" and "exclude",
+        which can be used to include or exclude pages using standard glob
+        wild card expressions (*, ?, etc).
 
 2002-12-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
@@ -69,7 +109,7 @@
         if preformatted code blocks ({{{ }}}) are not closed properly.
         We simply forgot to check for EOF :-).  Reported by Erik Bunn.
 
-        * Bug fix: CamelCase is no longer recognized inside {{{BŽ-}}}
+        * Bug fix: CamelCase is no longer recognized inside {{{ }}}
         blocks. Reported by Torsten Hildebrandt.
 
 2002-12-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -193,7 +233,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        Hirsimdki for providing with the idea and the image.  Look for
+        HirsimÂŽäki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -504,20 +544,20 @@
         TranslatorReader.insertHyperLinks() method... As a nice side
         effect, it's now like five times faster than before. :-)
         
-	* Added a simple WeblogPlugin and an accompanying
-	WeblogEntryPlugin.
+        * Added a simple WeblogPlugin and an accompanying
+        WeblogEntryPlugin.
 
-	* It is now possible to add jspwiki.properties properties as
-	WikiVariables. 
+        * It is now possible to add jspwiki.properties properties as
+        WikiVariables. 
 
-	* Documented WikiVariables.
+        * Documented WikiVariables.
 
 2002-09-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-	* Added new tag "Plugin", which allows you to run any JSPWiki
-	plugin from a JSP page directly.
+        * Added new tag "Plugin", which allows you to run any JSPWiki
+        plugin from a JSP page directly.
 
-	* Fixed the last failing RCSFileProvider test case.
+        * Fixed the last failing RCSFileProvider test case.
 
 2002-09-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
@@ -1096,7 +1136,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VBŽdBŽdtBŽdinen finally managed to
+        * Added support for tables.  Sanna VBÂŽdBÂŽdtBÂŽdinen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 
@@ -1123,7 +1163,7 @@
 2002-02-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Fixed a slow routine in TranslatorReader, shaving off roughly
-	10% of translation time.  Construction Exceptions is truly heavy.
+        10% of translation time.  Construction Exceptions is truly heavy.
 
 2002-01-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
@@ -1579,7 +1619,7 @@
 
 2001-08-13  Janne Jalkanen  <jalkanen@nospam.kosh.ecyrd.com>
 
-	* Wiki.jsp displayed null date if page did not exist.
+        * Wiki.jsp displayed null date if page did not exist.
 
 2001-07-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
@@ -1618,7 +1658,7 @@
 
 2001-07-15    <Janne.Jalkanen@nospam.regex.fi>
 
-	* Added rudimentary page locking.
+        * Added rudimentary page locking.
 
 2001-07-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 

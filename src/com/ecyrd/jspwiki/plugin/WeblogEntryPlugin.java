@@ -47,15 +47,17 @@ public class WeblogEntryPlugin implements WikiPlugin
         
         try
         {
-            SimpleDateFormat fmt = new SimpleDateFormat("ddMMyy");
+            SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
             String today = fmt.format( new Date() );
             
             int entryNum = findFreeEntry( context.getEngine().getPageManager(),
                                           weblogName,
                                           today );
 
-            
-            String blogPage = weblogName + "-" + today + "-" + entryNum;
+                        
+            String blogPage = WeblogPlugin.makeEntryPage( weblogName,
+                                                          today,
+                                                          ""+entryNum );
 
             // FIXME: Generate somehow else.
             sb.append("<A HREF=\""+engine.getEditURL(blogPage)+"\">New entry</A>");
@@ -77,7 +79,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         Collection everyone = mgr.getAllPages();
         int max = 0;
 
-        String startString = baseName+"-"+date+"-";
+        String startString = WeblogPlugin.makeEntryPage( baseName, date, "" );
         
         for( Iterator i = everyone.iterator(); i.hasNext(); )
         {

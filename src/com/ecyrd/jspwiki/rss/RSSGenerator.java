@@ -249,7 +249,7 @@ public class RSSGenerator
         result.append("   </rdf:Seq>\n  </items>\n");
         result.append(" </channel>\n");
 
-        result.append( itemBuffer );
+        result.append( itemBuffer.toString() );
 
         //
         //  In the end, add a search box for JSPWiki

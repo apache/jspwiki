@@ -274,15 +274,24 @@ public class WikiEngine
 
         log.debug("Configuring WikiEngine...");
 
-        m_saveUserInfo   = "true".equals( props.getProperty( PROP_STOREUSERNAME, "true" ) );
-        m_storeIPAddress = "true".equals( props.getProperty( PROP_STOREIPADDRESS, "true" ) );
+        m_saveUserInfo   = TextUtil.getBooleanProperty( props,
+                                                        PROP_STOREUSERNAME, 
+                                                        m_saveUserInfo );
+        m_storeIPAddress = TextUtil.getBooleanProperty( props,
+                                                        PROP_STOREIPADDRESS, 
+                                                        m_storeIPAddress );
 
         m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
         m_baseURL        = props.getProperty( PROP_BASEURL, "" );
 
-        m_beautifyTitle  = "true".equals( props.getProperty( PROP_BEAUTIFYTITLE, "false" ) );
+        m_beautifyTitle  = TextUtil.getBooleanProperty( props,
+                                                        PROP_BEAUTIFYTITLE, 
+                                                        m_beautifyTitle );
 
-        m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
+        m_matchEnglishPlurals = TextUtil.getBooleanProperty( props,
+                                                             PROP_MATCHPLURALS, 
+                                                             m_matchEnglishPlurals );
+
         m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
         m_frontPage      = props.getProperty( PROP_FRONTPAGE,   "Main" );
 
@@ -314,7 +323,9 @@ public class WikiEngine
         //
         try
         {
-            if( props.getProperty( RSSGenerator.PROP_GENERATE_RSS, "false" ).equalsIgnoreCase("true") )
+            if( TextUtil.getBooleanProperty( props, 
+                                             RSSGenerator.PROP_GENERATE_RSS, 
+                                             false ) )
             {
                 m_rssGenerator = new RSSGenerator( this, props );
             }
@@ -717,7 +728,7 @@ public class WikiEngine
      *
      *  @since 2.0
      *  @param page Page name.
-     *  @return The rewritten page name.
+     *  @return The rewritten page name, or null, if the page does not exist.
      */
 
     public String getFinalPageName( String page )

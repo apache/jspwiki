@@ -30,10 +30,14 @@ import java.util.*;
 
 /**
  *  Builds a simple weblog.
+ *  <P>
+ *  The pageformat can use the following params:<br>
+ *  %p - Page name<br>
  *
  *  <B>Parameters</B>
  *  <UL>
  *    <LI>days - how many days the weblog aggregator should show.
+ *    <LI>pageformat - What the entries should look like.
  *  </UL>
  *  @since 1.9.21
  */
@@ -46,7 +50,27 @@ public class WeblogPlugin implements WikiPlugin
     private static Category     log = Category.getInstance(WeblogPlugin.class);
 
     public static final int     DEFAULT_DAYS = 7;
-    
+    public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
+
+    public static final String  DEFAULT_DATEFORMAT = "ddMMyy";
+
+    public static String makeEntryPage( String pageName,
+                                        String date,
+                                        String entryNum )
+    {
+        return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date+"_"+entryNum;
+    }
+
+    public static String makeEntryPage( String pageName )
+    {
+        return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName);
+    }
+
+    public static String makeEntryPage( String pageName, String date )
+    {
+        return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
+    }
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -66,10 +90,12 @@ public class WeblogPlugin implements WikiPlugin
         
         try
         {
-            Collection blogEntries = findBlogEntries( context.getEngine().getPageManager(),
-                                                      weblogName,
-                                                      startTime.getTime(),
-                                                      stopTime.getTime() );
+            List blogEntries = findBlogEntries( context.getEngine().getPageManager(),
+                                                weblogName,
+                                                startTime.getTime(),
+                                                stopTime.getTime() );
+
+            Collections.sort( blogEntries, new PageNameComparator() );
 
             SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
@@ -109,47 +135,73 @@ public class WeblogPlugin implements WikiPlugin
         return sb.toString();
     }
 
-    private Collection findBlogEntries( PageManager mgr,
-                                        String baseName, Date start, Date end )
+    /**
+     *  Attempts to locate all pages that correspond to the 
+     *  blog entry pattern.
+     *
+     */
+    public List findBlogEntries( PageManager mgr,
+                                 String baseName, Date start, Date end )
         throws ProviderException
     {
         Collection everyone = mgr.getAllPages();
         ArrayList  result = new ArrayList();
-        
+
+        baseName = makeEntryPage( baseName );
+        SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
+ 
         for( Iterator i = everyone.iterator(); i.hasNext(); )
         {
             WikiPage p = (WikiPage)i.next();
 
-            StringTokenizer tok = new StringTokenizer(p.getName(),"-");
+            String pageName = p.getName();
 
-            if( tok.countTokens() < 3 )
-                continue;
-            
-            try
+            if( pageName.startsWith( baseName ) )
             {
-                String name = tok.nextToken();
+                String entry = pageName.substring( baseName.length() );
 
-                if( !name.equals(baseName) ) continue;
-                
-                String day  = tok.nextToken();
+                int idx = entry.indexOf('_');
 
-                SimpleDateFormat fmt = new SimpleDateFormat("ddMMyy");
+                if( idx == -1 )
+                    continue;
+
+                String day = entry.substring( 0, idx );
+
+                //
+                //  Note that we're not interested in the actual modification
+                //  date, we use the page name for the creation date.
+                //
                 Date pageDay = fmt.parse( day, new ParsePosition(0) );
-
-                if( pageDay.after(start) && pageDay.before(end) )
+                
+                if( pageDay != null )
                 {
-                    result.add(p);
+                    if( pageDay.after(start) && pageDay.before(end) )
+                    {
+                        result.add(p);
+                    }
                 }
             }
-            catch( NoSuchElementException e )
-            {
-                // Nope, something odd.
-            }
-            
-
         }
         
         return result;
     }
-    
+
+    /**
+     *  Reverse comparison.
+     */
+    private class PageNameComparator implements Comparator
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            if( o1 == null || o2 == null ) 
+            { 
+                return 0; 
+            }
+            
+            WikiPage page1 = (WikiPage)o1;
+            WikiPage page2 = (WikiPage)o2;
+
+            return page2.getName().compareTo( page1.getName() );
+        }
+    }
 }

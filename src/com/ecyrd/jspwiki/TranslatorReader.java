@@ -112,6 +112,11 @@ public class TranslatorReader extends Reader
     /** If true, all outward links (external links) have a small link image appended. */
     public static final String     PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
 
+    /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
+        this is a VERY dangerous option to set - never turn this on in a publicly
+        allowable Wiki, unless you are absolutely certain of what you're doing. */
+    public static final String     PROP_ALLOWHTML        = "jspwiki.translatorReader.allowHTML";
+
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
 
@@ -121,6 +126,9 @@ public class TranslatorReader extends Reader
 
     /** If true, all outward links use a small link image. */
     private boolean                m_useOutlinkImage     = true;
+
+    /** If true, allows raw HTML. */
+    private boolean                m_allowHTML           = false;
 
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
@@ -193,9 +201,18 @@ public class TranslatorReader extends Reader
         //
         Properties props      = m_engine.getWikiProperties();
 
-        m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" ) );
-        m_plainUris           = "true".equals( props.getProperty( PROP_PLAINURIS, "false" ) );
-        m_useOutlinkImage     = "true".equals( props.getProperty( PROP_USEOUTLINKIMAGE, "true" ) );
+        m_camelCaseLinks      = TextUtil.getBooleanProperty( props,
+                                                             PROP_CAMELCASELINKS, 
+                                                             m_camelCaseLinks );
+        m_plainUris           = TextUtil.getBooleanProperty( props,
+                                                             PROP_PLAINURIS,
+                                                             m_plainUris );
+        m_useOutlinkImage     = TextUtil.getBooleanProperty( props,
+                                                             PROP_USEOUTLINKIMAGE, 
+                                                             m_useOutlinkImage );
+        m_allowHTML           = TextUtil.getBooleanProperty( props,
+                                                             PROP_ALLOWHTML, 
+                                                             m_allowHTML );
     }
 
     /**
@@ -1672,16 +1689,17 @@ public class TranslatorReader extends Reader
                 break;
 
               case '<':
-                s = "&lt;";
+                s = m_allowHTML ? "<" : "&lt;";
                 break;
 
               case '>':
-                s = "&gt;";
+                s = m_allowHTML ? ">" : "&gt;";
                 break;
 
               case '\"':
-                s = "&quot;";
+                s = m_allowHTML ? "\"" : "&quot;";
                 break;
+
                 /*
               case '&':
                 s = "&amp;";

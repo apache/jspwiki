@@ -20,3 +20,8 @@ Q: Is anything in brackets with a dot in the name considered an attachment name?
 
 A: Nope.  We make as little assumptions as possible about the attachment name.  We use a slash as a separator, but we always search through the attachment name space first, then the wikipage space.  If the link cannot be found from either, it's assumed to be a standard WikiName.  For example: [sampledocument.rtf] is assumed to be a WikiPage, since it does not exist as an attachment of this page.
 
+----
+
+Q: I am using Apache with some JSP container, but for some strange reason, the attachments do not work.
+
+A: Please check carefully that you have the /attach/ -URL added in your mod_jk.conf file as one of those URLs that get forwarded to the JSP container.
