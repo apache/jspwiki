@@ -5,26 +5,63 @@ import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
 
+/**
+ *  Provides Wiki services to the JSP page.
+ *
+ *  There are some problems with this class:
+ *  <UL>
+ *   <LI>There is no synchronization of pages: we rely on the filesystem
+ *       synchronization.
+ *   <LI>There is a separate instance of this class for every JSP page, which
+ *       means that we can't use synchronized methods.  There should really
+ *       be a single class per <I>application</I>, which is a bit more
+ *       problematic.
+ *   <LI>If we have a single class per JVM, then we can't have multiple
+ *       page repositories, or multiple page names.
+ *  </UL>
+ *  @author Janne Jalkanen
+ */
 public class WikiEngine
 {
     private static final Category   log = Category.getInstance(WikiEngine.class);
 
     private String m_pagelocation = "/home/jalkanen/Projects/JSPWiki/src/wikipages";
 
+    /**
+     *  All files should have this extension to be recognized as JSPWiki files.
+     *  We default to .txt, because that is probably easiest for Windows users,
+     *  and guarantees correct handling.
+     */
     public static final String FILE_EXT = ".txt";
-    public static final String PROP_PAGEDIR = "jspwiki.wikiFiles";
 
+    /**
+     *  Name of the property that defines where page directories are.
+     */
+    private static final String PROP_PAGEDIR = "jspwiki.wikiFiles";
+
+    /** True, if log4j has been configured. */
+    // FIXME: If you run multiple applications, the first application
+    // to run defines where the log goes.  Not what we want.
     private static boolean c_configured = false;
 
+    /** Stores properties. */
     private Properties     m_properties;
 
+    /**
+     *  Instantiate the WikiEngine using a given set of properties.
+     */
     public WikiEngine( Properties properties )
         throws IllegalArgumentException
     {
         initialize( properties );
     }
 
+    /**
+     *  Instantiate using this method when you're running as a servlet and
+     *  WikiEngine will figure out where to look for the property file.
+     */
     public WikiEngine( ServletContext context )
+        throws ServletException
     {
         String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
 
@@ -39,9 +76,14 @@ public class WikiEngine
         catch( Exception e )
         {
             context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile );
+
+            throw new ServletException( "Failed to load properties", e );
         }
     }
 
+    /**
+     *  Does all the real initialization.
+     */
     private void initialize( Properties props )
         throws IllegalArgumentException
     {
@@ -63,6 +105,9 @@ public class WikiEngine
         log.debug("files at "+m_pagelocation );
     }
 
+    /**
+     *  Throws an exception if a property is not found.
+     */
     private static String getRequiredProperty( Properties props, String key )
     {
         String value = props.getProperty(key);
@@ -73,6 +118,9 @@ public class WikiEngine
         return value;
     }
 
+    /**
+     *  Finds a Wiki page from the page repository.
+     */
     private File findPage( String page )
     {
         return new File( m_pagelocation, page+FILE_EXT );
@@ -259,10 +307,25 @@ public class WikiEngine
         return set;
     }
 
-    public static final int REQUIRED = 1;
-    public static final int FORBIDDEN = -1;
-    public static final int REQUESTED = 0;
+    private static final int REQUIRED = 1;
+    private static final int FORBIDDEN = -1;
+    private static final int REQUESTED = 0;
 
+    /**
+     *  Parses an incoming search request, then
+     *  does a search.
+     *  <P>
+     *  Search language is simple: prepend a word
+     *  with a + to force a word to be included (all files
+     *  not containing that word are automatically rejected),
+     *  '-' to cause the rejection of all those files that contain
+     *  that word.
+     */
+
+    // FIXME: does not support phrase searches yet, but for them
+    // we need a version which reads the whole page into the memory
+    // once.
+    
     public Collection findPages( String query )
     {
         TreeSet res = new TreeSet( new SearchResultComparator() );
@@ -391,6 +454,9 @@ public class WikiEngine
         return res;
     }
 
+    /**
+     *  Returns the date the page was last changed.
+     */
     public Date pageLastChanged( String page )
     {
         File file = findPage( page );
