@@ -1,3 +1,29 @@
+2005-03-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.156
+
+        * Disabled all auth tests.  In fact, for the first time,
+        all tests now run (on my platform, there are still some
+        char coding issues on some others.  Stupid me.)
+
+        * Added page deletion support to WikiEngine.
+
+        * Major refactoring of both CachingProvider (=speed!) and
+        VersioningFileProvider(=now actually supports deleting
+        versions of a page).
+
+2005-03-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Fixed issues with a number of tests.
+        
+        * Added the "Search" plugin.
+        
+        * Some bug fixes and sanity checks to ReferenceManager.
+        
+        * Turned off old auth code by default.  Set the property
+        "jspwiki.auth.useOldAuth" to "true" in your jspwiki.properties
+        if you want to keep using it.
+
 2005-03-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.155
