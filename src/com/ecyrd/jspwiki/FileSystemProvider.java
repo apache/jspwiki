@@ -256,6 +256,18 @@ public class FileSystemProvider
         return p;
     }
 
+    /**
+     *  The FileSystemProvider provides only one version.
+     */
+    public Collection getVersionHistory( String page )
+    {
+        ArrayList list = new ArrayList();
+
+        list.add( getPageInfo( page ) );
+
+        return list;
+    }
+
     public class WikiFileFilter
         implements FilenameFilter
     {
