@@ -22,9 +22,11 @@ public class DefaultURLConstructor
                                                                            "relative" ) );
     }
 
-    private final String doReplacement( String baseptrn, String name )
+    private final String doReplacement( String baseptrn, String name, boolean absolute )
     {
-        String baseurl = (m_useRelativeURLStyle ? "" : m_engine.getBaseURL() );
+        String baseurl = "";
+
+        if( absolute || !m_useRelativeURLStyle ) baseurl = m_engine.getBaseURL();
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );
@@ -34,23 +36,36 @@ public class DefaultURLConstructor
     }
 
     /**
-     *  Constructs the URL.
+     *  Constructs the actual URL based on the context.
      */
-    public String makeURL( String context,
-                           String name )
+    private String makeURL( String context,
+                            String name,
+                            boolean absolute )
     {
         if( context.equals(WikiContext.VIEW) )
         {
-            if( name == null ) return makeURL("%uWiki.jsp",""); // FIXME
-            return doReplacement( m_viewURLPattern, name );
+            if( name == null ) return makeURL("%uWiki.jsp","",absolute); // FIXME
+            return doReplacement( m_viewURLPattern, name, absolute );
         }
         else if( context.equals(WikiContext.EDIT) )
         {
-            return doReplacement( "%uEdit.jsp?page=%n", name );
+            return doReplacement( "%uEdit.jsp?page=%n", name, absolute );
         }
         else if( context.equals(WikiContext.ATTACH) )
         {
-            return doReplacement( "%uattach/%n", name );
+            return doReplacement( "%uattach/%n", name, absolute );
+        }
+        else if( context.equals(WikiContext.INFO) )
+        {
+            return doReplacement( "%uPageInfo.jsp?page=%n", name, absolute );
+        }
+        else if( context.equals(WikiContext.DIFF) )
+        {
+            return doReplacement( "%uDiff.jsp?page=%n", name, absolute );
+        }
+        else if( context.equals(WikiContext.NONE) )
+        {
+            return doReplacement( "%u%n", name, absolute );
         }
         throw new InternalWikiException("Requested unsupported context "+context);
     }
@@ -60,13 +75,22 @@ public class DefaultURLConstructor
      */
     public String makeURL( String context,
                            String name,
+                           boolean absolute,
                            String parameters )
     {
-        if( context.equals(WikiContext.ATTACH) )
-        {
-            return makeURL( context, name )+"?"+parameters;
+        if( parameters != null )
+        {            
+            if( context.equals(WikiContext.ATTACH) )
+            {
+                parameters = "?"+parameters;
+            }
+            parameters = "&amp;"+parameters;
         }
-        return makeURL( context, name )+"&amp;"+parameters;
+        else
+        {
+            parameters = "";
+        }
+        return makeURL( context, name, absolute )+parameters;
     }
 
     /**
