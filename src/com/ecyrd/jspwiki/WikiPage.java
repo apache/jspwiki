@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki;
 
 import java.util.Date;
 
+import com.ecyrd.jspwiki.providers.WikiPageProvider;
+
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
@@ -30,7 +32,7 @@ public class WikiPage
     private String m_name;
     private Date   m_lastModified;
 
-    private int    m_version = -1;
+    private int    m_version = WikiPageProvider.LATEST_VERSION;
 
     private String m_author = null;
 
@@ -49,7 +51,7 @@ public class WikiPage
         return m_lastModified;
     }
 
-    protected void setLastModified( Date date )
+    public void setLastModified( Date date )
     {
         m_lastModified = date;
     }
