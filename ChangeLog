@@ -1,3 +1,8 @@
+2002-02-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Bug fix: RCSFileProvider could hang in certain operations,
+        especially with long revision histories.
+
 2002-02-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.10-cvs
