@@ -11,7 +11,7 @@
         * DiffLinkTag now understands a magical version number "current"
         to refer to the current version.
 
-        * Bug fix: BugIncludeTagUsesDefaultTagOnly should not be fixed with
+        * Bug fix: BugIncludeTagUsesDefaultTagOnly should now be fixed with
         a fix to the ContentTag.
 
         * CheckVersionTag now supports two additional modes: "notfirst",
