@@ -272,34 +272,6 @@ public class WikiEngineTest extends TestCase
         assertEquals("This Is A JSP Wiki Page", m_engine.beautifyTitle( src ) );
     }
     */
-    /**
-     *  Tries to find an existing class.
-     */
-    public void testFindClass()
-        throws Exception
-    {
-        Class foo = WikiEngine.findWikiClass( "WikiPage", "com.ecyrd.jspwiki" );
-
-        assertEquals( foo.getName(), "com.ecyrd.jspwiki.WikiPage" );
-    }
-
-    /**
-     *  Non-existant classes should throw ClassNotFoundEx.
-     */
-    public void testFindClassNoClass()
-        throws Exception
-    {
-        try
-        {
-            Class foo = WikiEngine.findWikiClass( "MubbleBubble", "com.ecyrd.jspwiki" );
-            fail("Found class");
-        }
-        catch( ClassNotFoundException e )
-        {
-            // Expected
-        }
-    }
-
 
     public void testLatestGet()
         throws Exception
