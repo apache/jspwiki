@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.23 2002-12-08 23:03:30 ebu Exp $
+    $Id: build.xml,v 1.24 2002-12-09 19:08:16 jalkanen Exp $
 -->    
        
 <!--   
@@ -208,8 +208,9 @@
        for building the installation package. -->
   <target name="installinit">
     <mkdir dir="${install.fulldir}" />
-    <delete dir="${install.src}" />    
+    <delete dir="${install.src}" />
     <mkdir dir="${install.src}" />
+    <delete dir="${release.dir}" />
     <mkdir dir="${release.dir}" />
   </target>
 
@@ -300,7 +301,7 @@
          command="export" 
          tag="${cvs.tag}" />
 
-    <zip zipfile="${install.fulldir}/${ant.project.name}-src.zip">
+    <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
         <zipfileset dir="${install.src}" />
     </zip>
 
@@ -319,12 +320,12 @@
        Note that if you don't have CVS access set up, you 
        probably can't run this.
     -->
-  <target name="dist" depends="war,srczip"
+  <target name="dist" depends="installinit,srczip,war"
           description="Builds the entire distribution archive.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
-     <copy file="doc/LICENSE" todir="${install.fulldir}" />
+     <copy file="doc/LICENSE" todir="${install.fulldir}" />     
 
      <zip zipfile="${release.dir}/${ant.project.name}.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
