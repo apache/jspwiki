@@ -14,6 +14,27 @@
   <shortname>jspwiki</shortname>
 
   <tag>
+    <name>ApplicationName</name>
+    <tagclass>com.ecyrd.jspwiki.tags.ApplicationNameTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>PageName</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>Permission</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PermissionTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>permission</name>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>RSSLink</name>
     <tagclass>com.ecyrd.jspwiki.tags.RSSLinkTag</tagclass>
     <bodycontent>empty</bodycontent>
