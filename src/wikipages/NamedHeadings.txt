@@ -6,7 +6,7 @@ For example, if the heading on this page is called
 }}}
 The resulting HTML code would look like
 {{{
-<h3><a name="#section-NamedHeadings-ThisIsMyHeading">This is my heading</a></h3>
+<h3><a name="section-NamedHeadings-ThisIsMyHeading">This is my heading</a></h3>
 }}}
 
 This allows you to refer to the heading from a different wiki page.  And you can use it from WikiMarkup as well!  For example, saying [TextFormattingRules#PreformattedText] refers to the "Preformatted text" -section of the page [TextFormattingRules].
