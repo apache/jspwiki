@@ -92,7 +92,10 @@ public class WikiContext
     public static final String    PREFS    = "prefs";
     public static final String    DELETE   = "del";
     public static final String    ATTACH   = "att";
-    
+    public static final String    RSS      = "rss";
+
+    public static final String    NONE     = "";  // This is not a JSPWiki context, use it to access static files
+
     /**
      *  Create a new WikiContext.
      *
