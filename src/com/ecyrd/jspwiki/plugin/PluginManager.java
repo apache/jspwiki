@@ -28,6 +28,10 @@ import java.io.StringReader;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Map;
+import java.util.Vector;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.HashMap;
 import com.ecyrd.jspwiki.WikiContext;
 
@@ -47,8 +51,31 @@ public class PluginManager
      */
     public static final String DEFAULT_PACKAGE = "com.ecyrd.jspwiki.plugin";
 
-    public PluginManager()
+    /**
+     *  The property name defining which packages will be searched for properties.
+     */
+    public static final String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
+
+    Vector m_searchPath = new Vector();
+
+    public PluginManager( Properties props )
     {
+        String packageNames = props.getProperty( PROP_SEARCHPATH );
+
+        if( packageNames != null )
+        {
+            StringTokenizer tok = new StringTokenizer( packageNames, "," );
+
+            while( tok.hasMoreTokens() )
+            {
+                m_searchPath.add( tok.nextToken() );
+            }
+        }
+
+        //
+        //  The default package is always added.
+        //
+        m_searchPath.add( DEFAULT_PACKAGE );
     }
 
     /**
@@ -58,6 +85,35 @@ public class PluginManager
     public static boolean isPluginLink( String link )
     {
         return link.startsWith("{INSERT");
+    }
+
+    private Class findPluginClass( String classname )
+        throws ClassNotFoundException
+    {
+        ClassLoader loader = getClass().getClassLoader();
+
+        try
+        {
+            return loader.loadClass( classname );
+        }
+        catch( ClassNotFoundException e )
+        {
+            for( Iterator i = m_searchPath.iterator(); i.hasNext(); )
+            {
+                String packageName = (String)i.next();
+
+                try
+                {
+                    return loader.loadClass( packageName + "." + classname );
+                }
+                catch( ClassNotFoundException ex )
+                {
+                    // This is okay, we go to the next package.
+                }
+            }
+        }
+
+        throw new ClassNotFoundException("Plugin not in "+PROP_SEARCHPATH);
     }
 
     /**
@@ -70,22 +126,9 @@ public class PluginManager
     {
         try
         {
-            ClassLoader loader = getClass().getClassLoader();
             WikiPlugin plugin;
 
-            //
-            //  Attempt to instantiate new plugin, trying first with explicit
-            //  class name, and then with the JSPWiki default plugin package.
-            //
-            try
-            {
-                plugin = (WikiPlugin)loader.loadClass( classname ).newInstance();
-            }
-            catch( ClassNotFoundException e )
-            {
-                log.debug("Did not find class "+classname+", trying with default.");
-                plugin = (WikiPlugin)loader.loadClass( DEFAULT_PACKAGE+"."+classname ).newInstance();
-            }
+            plugin = (WikiPlugin) findPluginClass( classname ).newInstance();
 
             return plugin.execute( context, params );
         }
