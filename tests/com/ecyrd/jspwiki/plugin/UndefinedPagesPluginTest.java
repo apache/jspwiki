@@ -33,8 +33,8 @@ public class UndefinedPagesPluginTest extends TestCase
 
     public void tearDown()
     {
-        engine.deletePage( "TestPage" );
-        engine.deletePage( "Foobar" );
+        engine.deleteTestPage( "TestPage" );
+        engine.deleteTestPage( "Foobar" );
         TestEngine.emptyWorkDir();
     }
 

@@ -33,8 +33,8 @@ public class PageAuthorizerTest
 
     public void tearDown()
     {
-        m_engine.deletePage( "DefaultPermissions" );
-        m_engine.deletePage( "TestPage" );
+        m_engine.deleteTestPage( "DefaultPermissions" );
+        m_engine.deleteTestPage( "TestPage" );
     }
 
      // TODO: Fix this test

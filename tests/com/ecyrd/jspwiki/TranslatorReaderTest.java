@@ -54,7 +54,7 @@ public class TranslatorReaderTest extends TestCase
         {
             String name = (String) i.next();
 
-            testEngine.deletePage(name);
+            testEngine.deleteTestPage(name);
         }
 
         created.clear();
