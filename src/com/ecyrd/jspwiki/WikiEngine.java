@@ -24,8 +24,6 @@ import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -39,8 +37,6 @@ import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 
-import com.ecyrd.jspwiki.util.PriorityList;
-import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -200,6 +196,7 @@ public class WikiEngine
     private String           m_appid = "";
 
     private boolean          m_isConfigured = false; // Flag.
+    
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -218,31 +215,45 @@ public class WikiEngine
     public static synchronized WikiEngine getInstance( ServletConfig config )
         throws InternalWikiException
     {
-        ServletContext context = config.getServletContext();        
-        String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
+        Properties props = loadWebAppProps( config.getServletContext() );
+        return( getInstance( config, props ) );
+    }
+    
+    /**
+     * Gets a WikiEngine related to the servlet. Works like getInstance(ServletConfig),
+     * but does not force the Properties object. This method is just an optional way
+     * of initializing a WikiEngine for embedded JSPWiki applications; normally, you
+     * should use getInstance(ServletConfig).
+     */
+    public static synchronized WikiEngine getInstance( ServletConfig config, Properties props )
+    throws InternalWikiException
+{
+    ServletContext context = config.getServletContext();        
+    String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
 
-        config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
+    config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
 
-        WikiEngine engine = (WikiEngine) c_engines.get( appid );
+    WikiEngine engine = (WikiEngine) c_engines.get( appid );
 
-        if( engine == null )
+    if( engine == null )
+    {
+        context.log(" Assigning new log to "+appid);
+        try
         {
-            context.log(" Assigning new log to "+appid);
-            try
-            {
-                engine = new WikiEngine( config.getServletContext(), appid );
-            }
-            catch( Exception e )
-            {
-                context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
-                throw new InternalWikiException( "No wiki engine, check logs." );
-            }
-
-            c_engines.put( appid, engine );            
+            engine = new WikiEngine( config.getServletContext(), appid, props );
+        }
+        catch( Exception e )
+        {
+            context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
+            throw new InternalWikiException( "No wiki engine, check logs." );
         }
 
-        return engine;
+        c_engines.put( appid, engine );            
     }
+
+    return engine;
+}
+    
 
     /**
      *  Instantiate the WikiEngine using a given set of properties.
@@ -255,19 +266,16 @@ public class WikiEngine
     }
 
     /**
-     *  Instantiate using this method when you're running as a servlet and
-     *  WikiEngine will figure out where to look for the property
-     *  file.
-     *  Do not use this method - use WikiEngine.getInstance() instead.
+     * Loads the webapp properties based on servlet context information.
+     * Returns a Properties object containing the settings, or null if unable
+     * to load it. (The default file is WEB-INF/jspwiki.properties, and can
+     * be overridden by setting PARAM_PROPERTYFILE in the server or webapp
+     * configuration.)
      */
-    protected WikiEngine( ServletContext context, String appid )
-        throws WikiException
+    private static Properties loadWebAppProps( ServletContext context )
     {
-        InputStream propertyStream = null;
         String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
-
-        m_servletContext = context;
-        m_appid          = appid;
+        InputStream propertyStream = null;
 
         try
         {
@@ -292,17 +300,8 @@ public class WikiEngine
             }
 
             Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
-
-            //
-            //  Note: May be null, if JSPWiki has been deployed in a WAR file.
-            //
-            m_rootPath = context.getRealPath("/");
-
             props.load( propertyStream );
-
-            initialize( props );
-
-            log.info("Root path for this Wiki is: '"+m_rootPath+"'");
+            return( props );
         }
         catch( Exception e )
         {
@@ -318,6 +317,39 @@ public class WikiEngine
             {
                 context.log("Unable to close property stream - something must be seriously wrong.");
             }
+        }
+
+        return( null );
+    }
+
+    
+    /**
+     *  Instantiate using this method when you're running as a servlet and
+     *  WikiEngine will figure out where to look for the property
+     *  file.
+     *  Do not use this method - use WikiEngine.getInstance() instead.
+     */
+    protected WikiEngine( ServletContext context, String appid, Properties props )
+        throws WikiException
+    {
+        InputStream propertyStream = null;
+        String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
+
+        m_servletContext = context;
+        m_appid          = appid;
+
+        try
+        {
+            //
+            //  Note: May be null, if JSPWiki has been deployed in a WAR file.
+            //
+            m_rootPath = context.getRealPath("/");
+            initialize( props );
+            log.info("Root path for this Wiki is: '"+m_rootPath+"'");
+        }
+        catch( Exception e )
+        {
+            context.log( Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
         }
     }
 
