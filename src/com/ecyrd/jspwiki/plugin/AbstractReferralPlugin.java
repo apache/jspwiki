@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 import java.io.StringReader;
@@ -31,7 +32,8 @@ import java.io.IOException;
  *  <p>Parameters:<br>
  *  maxwidth: maximum width of generated links<br>
  *  separator: separator between generated links (wikitext)<br>
- *
+ *  after: output after the link
+ *  before: output before the link
  *  @author Janne Jalkanen
  */
 public abstract class AbstractReferralPlugin
@@ -42,10 +44,14 @@ public abstract class AbstractReferralPlugin
     public static final int    ALL_ITEMS       = -1;
     public static final String PARAM_MAXWIDTH  = "maxwidth";
     public static final String PARAM_SEPARATOR = "separator";
-
-    protected           int    m_maxwidth = Integer.MAX_VALUE;
-    protected           String m_separator = "\\\\";
-
+    public static final String PARAM_AFTER     = "after";
+    public static final String PARAM_BEFORE    = "before";
+ 
+    protected           int      m_maxwidth = Integer.MAX_VALUE;
+    protected           String   m_before = ""; // null not blank
+    protected           String   m_separator = ""; // null not blank 
+    protected           String   m_after = "\\\\";
+    
     protected           WikiEngine m_engine;
 
     /**
@@ -58,15 +64,33 @@ public abstract class AbstractReferralPlugin
     {
         m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE ); 
+        if( m_maxwidth < 0 ) m_maxwidth = 0;
+
         String s = (String) params.get( PARAM_SEPARATOR );
 
         if( s != null )
         {
             m_separator = s;
+            // pre-2.1.145 there was a separator at the end of the list
+            // if they set the parameters, we use the new format of 
+            // before Item1 after separator before Item2 after separator before Item3 after
+            m_after = "";
         }
 
-        if( m_maxwidth < 0 ) m_maxwidth = 0;
+        s = (String) params.get( PARAM_BEFORE );
+        
+        if( s != null )
+        {
+            m_before = s;
+        }
 
+        s = (String) params.get( PARAM_AFTER );
+        
+        if( s != null )
+        {
+            m_after = s;
+        }
+        
         // log.debug( "Requested maximum width is "+m_maxwidth );
     }
 
@@ -79,7 +103,7 @@ public abstract class AbstractReferralPlugin
      */
     protected String wikitizeCollection( Collection links, String separator, int numItems )
     {
-        if(links == null || links.isEmpty() )
+        if( links == null || links.isEmpty() )
             return( "" );
 
         StringBuffer output = new StringBuffer();
@@ -87,14 +111,31 @@ public abstract class AbstractReferralPlugin
         Iterator it     = links.iterator();
         int      count  = 0;
         
+        //
+        //  The output will be B Item[1] A S B Item[2] A S B Item[3] A
+        //
         while( it.hasNext() && ( (count < numItems) || ( numItems == ALL_ITEMS ) ) )
         {
             String value = (String)it.next();
+
+            if( count > 0 )
+            {
+                output.append( m_after );
+                output.append( m_separator );
+            }
+            
+            output.append( m_before );
+            
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + m_engine.beautifyTitle(value) + "]" + separator +"\n");
+            output.append( "[" + m_engine.beautifyTitle(value) + "]" );
             count++;
         }
 
+        // 
+        //  Output final item - if there have been none, no "after" is printed
+        //
+        if( count > 0 ) output.append( m_after );
+        
         return( output.toString() );
     }
 
