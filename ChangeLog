@@ -1,5 +1,7 @@
 2002-02-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Bug fix: Now tables should finally work with Mozilla.
+
         * Added Google search as an Interwiki link.
 
         * Diff.jsp now shows if there has been no difference.
