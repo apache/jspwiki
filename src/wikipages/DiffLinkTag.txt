@@ -14,8 +14,8 @@ Why would you use this instead of a standard anchor?  The LinkToTag automaticall
 
 ;__page__: Page name to link to. If not set, uses the current page.
 ;__format__: If "anchor", creates the full hyperlink (<a href="...">link text</a>); if "url", outputs only the URL.
-;__version__: The older version of the page.  Can be "latest" to refer to the latest version; or "previous" to link to the previous version.
-;__newVersion__: The newer version of the page.  Can be "latest" to refer to the latest version; or "previous" to link to the previous version.
+;__version__: The older version of the page.  Can be "latest" to refer to the latest version; or "current" to refer to the current version; or "previous" to link to the previous version.
+;__newVersion__: The newer version of the page.  Can be "latest" to refer to the latest version; or "current" to refer to the current version; or "previous" to link to the previous version.
 
 !Example
 {{{

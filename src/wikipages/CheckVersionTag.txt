@@ -8,7 +8,7 @@ Does a version check on the page.  If the page does not exist, the body is never
 
 !Parameters
 
-;__mode__: If 'latest', will include the body if the current page is the latest version.  If 'notlatest', will include the body only if the current page is not the latest version.
+;__mode__: If 'latest', will include the body if the current page is the latest version.  If 'notlatest', will include the body only if the current page is not the latest version. If "first", includes the body if and only if the current page is the first revision, and if it's "notfirst", includes only if it's not the first version.
 
 !Example
 {{{
