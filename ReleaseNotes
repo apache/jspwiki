@@ -3,6 +3,9 @@ This is a CVS release of JSPWiki.
 
 Major changes since the last stable (1.8.0) release are:
 
+- Support for traditional WikiLinks without square brackets
+  (InterCapping, BumpyWords, CamelCase, ...)
+
 UPGRADE NOTES
 =============
 
