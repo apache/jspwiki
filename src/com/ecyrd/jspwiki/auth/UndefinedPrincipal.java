@@ -21,6 +21,11 @@ public class UndefinedPrincipal
 
     public String toString()
     {
-        return "[Undefine: "+getName()+"]";
+        return "[Undefined: "+getName()+"]";
+    }
+
+    public boolean equals( Object o )
+    {
+        return o != null && o instanceof WikiPrincipal && ((WikiPrincipal)o).getName().equals( getName());
     }
 }
