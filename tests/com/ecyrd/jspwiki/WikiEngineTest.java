@@ -306,6 +306,7 @@ public class WikiEngineTest extends TestCase
     {
         props.setProperty( "jspwiki.pageProvider", 
                            "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+        props.setProperty( "jspwiki.usePageCache", "false" );
 
         WikiEngine engine = new TestEngine( props );
 
@@ -322,6 +323,7 @@ public class WikiEngineTest extends TestCase
     {
         props.setProperty( "jspwiki.pageProvider", 
                            "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+        props.setProperty( "jspwiki.usePageCache", "false" );
 
         WikiEngine engine = new TestEngine( props );
 
@@ -338,6 +340,7 @@ public class WikiEngineTest extends TestCase
     {
         props.setProperty( "jspwiki.pageProvider", 
                            "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+        props.setProperty( "jspwiki.usePageCache", "false" );
 
         WikiEngine engine = new TestEngine( props );
 
@@ -554,4 +557,108 @@ public class WikiEngineTest extends TestCase
         }
     }    
 
+
+    /**
+     *  Assumes that CachingProvider is in use.
+     */
+    public void testExternalModification()
+        throws Exception
+    {
+        m_engine.saveText( NAME1, "Foobar" );
+
+        m_engine.getText( NAME1 ); // Ensure that page is cached.
+
+        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
+
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        assertTrue( "No file!", saved.exists() );
+
+        FileWriter out = new FileWriter( saved );
+        FileUtil.copyContents( new StringReader("Puppaa"), out );
+        out.close();
+
+        Thread.sleep( 5000L );
+
+        String text = m_engine.getText( NAME1 );
+
+        assertEquals( "wrong contents", "Puppaa", text );
+    }
+
+
+    /**
+     *  Assumes that CachingProvider is in use.
+     */
+    public void testExternalModificationRefs()
+        throws Exception
+    {
+        ReferenceManager refMgr = m_engine.getReferenceManager();
+
+        m_engine.saveText( NAME1, "[Foobar]" );
+        m_engine.getText( NAME1 ); // Ensure that page is cached.
+
+        Collection c = refMgr.findUncreated();
+        assertEquals( "uncreated count", 1, c.size() );
+        assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
+
+        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
+
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        assertTrue( "No file!", saved.exists() );
+
+        FileWriter out = new FileWriter( saved );
+        FileUtil.copyContents( new StringReader("[Puppaa]"), out );
+        out.close();
+
+        Thread.sleep( 5000L ); // Wait five seconds for CachingProvider to wake up.
+
+        String text = m_engine.getText( NAME1 );
+
+        assertEquals( "wrong contents", "[Puppaa]", text );
+
+        c = refMgr.findUncreated();
+        assertEquals( "NEW: uncreated count", 1, c.size() );
+        assertEquals( "NEW: wrong referenced page", "Puppaa", (String)c.iterator().next() );
+    }
+
+
+    /**
+     *  Assumes that CachingProvider is in use.
+     */
+    public void testExternalModificationRefsDeleted()
+        throws Exception
+    {
+        ReferenceManager refMgr = m_engine.getReferenceManager();
+
+        m_engine.saveText( NAME1, "[Foobar]" );
+        m_engine.getText( NAME1 ); // Ensure that page is cached.
+
+        Collection c = refMgr.findUncreated();
+        assertEquals( "uncreated count", 1, c.size() );
+        assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
+
+        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
+
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        assertTrue( "No file!", saved.exists() );
+
+        saved.delete();
+
+        Thread.sleep( 5000L ); // Wait five seconds for CachingProvider to wake up.
+
+        String text = m_engine.getText( NAME1 );
+
+        assertEquals( "wrong contents", "", text );
+
+        c = refMgr.findUncreated();
+        assertEquals( "NEW: uncreated count", 0, c.size() );
+    }
 }
