@@ -140,6 +140,33 @@ public class TranslatorReaderTest extends TestCase
                      translate(src) );
     }
 
+    public void testInlineImages2()
+        throws Exception
+    {
+        String src = "Link [test|http://www.ecyrd.com/test.ppm]";
+
+        assertEquals("Link <A HREF=\"http://www.ecyrd.com/test.ppm\">test</A>\n",
+                     translate(src) );
+    }
+
+    public void testInlineImages3()
+        throws Exception
+    {
+        String src = "Link [test|http://images.com/testi]";
+
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://images.com/testi\" ALT=\"test\">\n",
+                     translate(src) );
+    }
+
+    public void testInlineImages4()
+        throws Exception
+    {
+        String src = "Link [test|http://foobar.jpg]";
+
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://foobar.jpg\" ALT=\"test\">\n",
+                     translate(src) );
+    }
+
     /*
     public void testScandicPagename1()
     {
@@ -197,6 +224,32 @@ public class TranslatorReaderTest extends TestCase
         String src = "A list:\n* One\n* Two\n* Three\n";
 
         assertEquals( "A list:\n<UL>\n<LI> One\n<LI> Two\n<LI> Three\n</UL>\n", 
+                      translate(src) );
+    }
+
+    /** Plain multi line testing:
+        <pre>
+        * One
+          continuing
+        * Two
+        * Three
+        </pre>
+     */
+    public void testMultilineList1()
+        throws Exception
+    {
+        String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
+
+        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n<LI> Two\n<LI> Three\n</UL>\n", 
+                      translate(src) );
+    }
+
+    public void testMultilineList2()
+        throws Exception
+    {
+        String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
+
+        assertEquals( "A list:\n<UL>\n<LI> One\n continuing.\n<LI> Two\n<LI> Three\n</UL>\nShould be normal.\n", 
                       translate(src) );
     }
 
