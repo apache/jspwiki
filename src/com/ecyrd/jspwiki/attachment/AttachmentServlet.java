@@ -124,7 +124,7 @@ public class AttachmentServlet
 
                     // Won't work, must be "attachement"
                     res.setHeader( "Content-Disposition", 
-                                   "attachment; filename=" + att.getFileName() + ";" );
+                                   "inline; filename=" + att.getFileName() + ";" );
 
                     // If a size is provided by the provider, report it. 
                     if( att.getSize() >= 0 )
