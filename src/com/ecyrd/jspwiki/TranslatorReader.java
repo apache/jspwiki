@@ -1534,6 +1534,7 @@ public class TranslatorReader extends Reader
             if( ch == '(' )
             {                
                 style = readUntil( ")" );
+                nextToken(); // Pop the ) from the list, too.
             }
             else if( Character.isLetter( (char) ch ) )
             {
