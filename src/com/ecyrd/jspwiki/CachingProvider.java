@@ -23,6 +23,9 @@ import java.lang.ref.SoftReference;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.apache.log4j.Category;
 
 /**
@@ -146,9 +149,49 @@ public class CachingProvider
 
     // FIXME: This MUST be cached somehow.
 
+    private boolean m_gotall = false;
+
     public Collection getAllPages()
     {
-        return m_provider.getAllPages();
+        Collection all;
+
+        if( m_gotall == false )
+        {
+            all = m_provider.getAllPages();
+            m_gotall = true;
+
+            // FIXME: This has the unfortunate side effect of clearing
+            // the cache.
+
+            for( Iterator i = m_cache.keySet().iterator(); i.hasNext(); )
+            {
+                CacheItem item = new CacheItem();
+                item.m_page = (WikiPage) i.next();
+                item.m_text = new SoftReference( null );
+
+                m_cache.put( item.m_page.getName(), item );
+            }
+        }
+        else
+        {
+            all = new ArrayList();
+            for( Iterator i = m_cache.values().iterator(); i.hasNext(); )
+            {
+                all.add( ((CacheItem)i.next()).m_page );
+            }
+        }
+
+        return all;
+    }
+
+    public Collection getAllChangedSince( Date date )
+    {
+        return m_provider.getAllChangedSince( date );
+    }
+
+    public int getPageCount()
+    {
+        return m_provider.getPageCount();
     }
 
     public Collection findPages( QueryItem[] query )
@@ -174,8 +217,14 @@ public class CachingProvider
 
     public Collection getVersionHistory( String page )
     {
-        log.debug("Cache misses = "+m_cacheMisses+", hits="+m_cacheHits);
         return m_provider.getVersionHistory( page );
+    }
+
+    public String getProviderInfo()
+    {              
+        return("Real provider: "+m_provider.getClass().getName()+
+               "<BR>Cache misses: "+m_cacheMisses+
+               "<BR>Cache hits: "+m_cacheHits);
     }
 
     private class CacheItem
