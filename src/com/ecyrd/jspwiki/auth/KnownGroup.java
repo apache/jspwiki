@@ -10,6 +10,11 @@ import java.security.Principal;
 public class KnownGroup
     extends AllGroup
 {
+    public KnownGroup()
+    {
+        setName( UserManager.GROUP_KNOWNPERSON );
+    }
+
     public boolean isMember( Principal user )
     {
         if( user instanceof UserProfile )

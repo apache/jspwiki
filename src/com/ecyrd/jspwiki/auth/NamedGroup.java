@@ -10,6 +10,11 @@ import java.security.Principal;
 public class NamedGroup
     extends AllGroup
 {
+    public NamedGroup()
+    {
+        setName( UserManager.GROUP_NAMEDGUEST );
+    }
+
     public boolean isMember( Principal user )
     {
         if( user instanceof UserProfile )
