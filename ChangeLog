@@ -1,5 +1,22 @@
 2001-10-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Wiki.jsp changed with respect to handling of old page versions.
+        It no longer displays the "edit current version".
+
+        * TextFormattingRules now has plenty of more explanations.
+
+        * Added support for arbitrary letters in WikiNames.  Now it's
+        possible to use any character set.
+
+        * Added support for links within a document ("footnotes").  Use
+        [#1] to create a footnote and [1] to link to it.
+
+        * Empty links no longer generate a hyperlink.
+
+        * FileSystemProvider and RCSFileProvider now know how to handle
+        WikiNames that contain illegal characters.  At the moment they use
+        simply the java.net.URLEncoder class to make the conversion.
+
         * Added wrap="virtual" to Edit.jsp textarea element to make it
         also wrap on NS4.
 
