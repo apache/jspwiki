@@ -28,12 +28,17 @@ import com.ecyrd.jspwiki.WikiPage;
 
 import org.apache.ecs.xhtml.*;
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.ConcreteElement;
 
 /**
- *  Writes the author name of the current page.
+ *  Creates an editor component with all the necessary parts
+ *  to get it working.
+ *  <p>
+ *  In the future, this component should be expanded to provide
+ *  a customized version of the editor according to user preferences.
  *
  *  @author Janne Jalkanen
- *  @since 2.0
+ *  @since 2.2
  */
 public class EditorTag
     extends WikiTagBase
@@ -58,8 +63,7 @@ public class EditorTag
         return in;
     }
 
-    public final int doWikiStartTag()
-        throws IOException
+    private ConcreteElement createSimpleEditor()
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
@@ -119,7 +123,15 @@ public class EditorTag
         para2.addElement( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" );
         para2.addElement( createSubmit( "cancel",  "Cancel" ) );
 
-        pageContext.getOut().print( d.toString() );
+        return d;
+    }
+
+    public final int doWikiStartTag()
+        throws IOException
+    {
+        ConcreteElement editor = createSimpleEditor();
+
+        pageContext.getOut().print( editor.toString() );
 
         return SKIP_BODY;
     }
