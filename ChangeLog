@@ -1,5 +1,11 @@
 2003-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.67.
+
+        * BasicAttachmentProvider no longer fails if there are extraneous
+        directories in the attachment repository.  Reported by someone
+        whom I can't recall...
+
         * Fixed a bunch of failing tests to conform with the actual code
         base.
 
