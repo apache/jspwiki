@@ -29,6 +29,11 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
  */
+
+// FIXME: We need to rethink how metadata is being used - probably the 
+//        author, date, etc. should also be part of the metadata.  We also
+//        need to figure out the metadata lifecycle.
+
 public class WikiPage
     implements Cloneable
 {
@@ -70,11 +75,17 @@ public class WikiPage
         return m_attributes.get( key );
     }
 
+    /**
+     *  Sets an metadata attribute.
+     */
     public void setAttribute( String key, Object attribute )
     {
         m_attributes.put( key, attribute );
     }
 
+    /**
+     *  Returns the date when this page was last modified.
+     */
     public Date getLastModified()
     {
         return m_lastModified;
@@ -90,11 +101,19 @@ public class WikiPage
         m_version = version;
     }
 
+    /**
+     *  Returns the version that this WikiPage instance represents.
+     */
     public int getVersion()
     {
         return m_version;
     }
 
+    /**
+     *  Returns the AccessControlList for this page.  May return null, 
+     *  in case there is no ACL defined for this page, or it has not
+     *  yet been received.
+     */
     public AccessControlList getAcl()
     {
         return m_accessList;
@@ -116,6 +135,31 @@ public class WikiPage
     public String getAuthor()
     {
         return m_author;
+    }
+
+    /**
+     *  This method will remove all metadata from the page.
+     */
+    public void invalidateMetadata()
+    {        
+        m_hasMetadata = false;
+        setAcl( null );
+        m_attributes.clear();
+    }
+
+    private boolean m_hasMetadata = false;
+
+    /**
+     *  Returns true, if the page has valid metadata, i.e. it has been parsed.
+     */
+    public boolean hasMetadata()
+    {
+        return m_hasMetadata;
+    }
+
+    public void setHasMetadata()
+    {
+        m_hasMetadata = true;
     }
 
     public String toString()
