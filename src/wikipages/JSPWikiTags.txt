@@ -12,9 +12,11 @@ Here is an alphabetical list of all the tags that the site administrator can use
 * [CheckRequestContextTag]
 * [CheckVersionTag]
 * [CommentLinkTag]
+* [ContentTag]
 * [ContentEncodingTag]
 * [DiffLinkTag]
 * [EditLinkTag]
+* [EditorTag]
 * [HasAttachmentsTag]
 * [HistoryIteratorTag]
 * [IfNoSearchResultsTag]
@@ -56,6 +58,7 @@ Here is an alphabetical list of all the tags that the site administrator can use
 * [AttachmentsIteratorTag]
 * [AuthorTag]
 * [CommentLinkTag]
+* [ContentTag]
 * [DiffLinkTag]
 * [EditLinkTag]
 * [InsertDiffTag]
@@ -98,6 +101,7 @@ Here is an alphabetical list of all the tags that the site administrator can use
 !Miscallaneous
 
 * [ContentEncodingTag]
+* [EditorTag]
 * [HistoryIteratorTag]
 * [PluginTag]
 * [RSSCoffeeCupLinkTag]
