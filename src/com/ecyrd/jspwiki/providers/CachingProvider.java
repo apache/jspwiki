@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.io.IOException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -56,7 +56,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 public class CachingProvider
     implements WikiPageProvider
 {
-    private static final Category   log = Category.getInstance(CachingProvider.class);
+    private static final Logger log = Logger.getLogger(CachingProvider.class);
 
     private WikiPageProvider m_provider;
 
@@ -65,13 +65,21 @@ public class CachingProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
-    private long m_milliSecondsBetweenChecks = 30000;
+    private int  m_milliSecondsBetweenChecks = 30000;
+
+    public static final String PROP_CACHECHECKINTERVAL = "jspwiki.cachingProvider.cacheCheckInterval";
 
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
         log.debug("Initing CachingProvider");
+
+        m_milliSecondsBetweenChecks = TextUtil.getIntegerProperty( properties,
+                                                                   PROP_CACHECHECKINTERVAL,
+                                                                   m_milliSecondsBetweenChecks );
+
+        log.debug("Cache consistency checks every "+m_milliSecondsBetweenChecks+" ms");
 
         String classname = WikiEngine.getRequiredProperty( properties, 
                                                            PageManager.PROP_PAGEPROVIDER );
