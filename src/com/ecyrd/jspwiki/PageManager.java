@@ -32,6 +32,7 @@ import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 
 /**
  *  Manages the WikiPages.  This class functions as an unified interface towards
@@ -56,6 +57,8 @@ public class PageManager
 
     private HashMap m_pageLocks = new HashMap();
 
+    private WikiEngine m_engine;
+
     /**
      *  The expiry time.  Default is 60 minutes.
      */
@@ -65,10 +68,12 @@ public class PageManager
      *  Creates a new PageManager.
      *  @throws WikiException If anything goes wrong, you get this.
      */
-    public PageManager( Properties props )
+    public PageManager( WikiEngine engine, Properties props )
         throws WikiException
     {
         String classname;
+
+        m_engine = engine;
 
         boolean useCache = "true".equals(props.getProperty( PROP_USECACHE ));
 
@@ -143,6 +148,11 @@ public class PageManager
         return m_provider.getAllPages();
     }
 
+    /**
+     *  Fetches the page text from the repository.  This method also does some sanity checks,
+     *  like checking for the pageName validity, etc.  Also, if the page repository has been
+     *  modified externally, it is smart enough to handle such occurrences.
+     */
     public String getPageText( String pageName, int version )
         throws ProviderException
     {
@@ -150,7 +160,28 @@ public class PageManager
         {
             throw new ProviderException("Illegal page name");
         }
-        return m_provider.getPageText( pageName, version );
+
+        String text = null;
+
+        try
+        {
+            text = m_provider.getPageText( pageName, version );
+        }
+        catch( RepositoryModifiedException e )
+        {
+            //
+            //  This only occurs with the latest version.
+            //
+            log.info("Repository has been modified externally while fetching page "+pageName );
+
+            WikiPage p = new WikiPage( pageName );
+            
+            m_engine.updateReferences( p );
+
+            text = m_provider.getPageText( pageName, version );
+        }
+
+        return text;
     }
 
     public void putPageText( WikiPage page, String content )
