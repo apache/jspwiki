@@ -46,6 +46,11 @@ public class WikiGroup
         return true;
     }
 
+    public void clearMembers()
+    {
+	m_members.clear();
+    }
+
     private Principal findMember( String name )
     {
         for( Iterator i = m_members.iterator(); i.hasNext(); )
