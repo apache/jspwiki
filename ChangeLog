@@ -1,5 +1,19 @@
 2001-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Removed the authentication scheme from web.xml - out-of-box
+        JSPWiki now allows access to anyone.
+
+        * Default, out-of-the-box Page Provider is now
+        FileSystemProvider.  This should make building your first Wiki a
+        bit simpler.
+
+        * Added file commands to jspwiki.properties.  Also, removed
+        references to my own email address - I kept getting plenty of
+        email from people trying to set up their own Wiki :-).
+
+        * Removed index.html and rewrote web.xml to automatically grab all
+        directory accesses to Wiki.jsp.
+
         * We now use pageContext.forward() to go to the PageModified.jsp
         when a concurrent modification occurs, instead of using redirect.
         Thanks to Chris Brooking for this hint.
