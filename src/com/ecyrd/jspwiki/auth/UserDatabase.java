@@ -29,10 +29,15 @@ public interface UserDatabase
     /**
      *  Creates a principal.  This method should return either a WikiGroup
      *  or a UserProfile (or a subclass, if you need them for your own
-     *  usage.  The returned Principals are cached within UserManager.
+     *  usage. 
      *  <p>
-     *  Yes, it means that user names and user groups do actually live
+     *  It is the responsibility of the UserDatabase to implement appropriate
+     *  caching of UserProfiles and other principals. 
+     *  <p>
+     *  Yes, all this means that user names and user groups do actually live
      *  in the same namespace.
+     *  <p>
+     *  FIX: UserDatabase currently requires that getPrincipal() never return null.
      */
     public WikiPrincipal getPrincipal( String name );
 }
