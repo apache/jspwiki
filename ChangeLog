@@ -2,6 +2,8 @@
 
         * v2.0.42.
 
+        * Wiki.jsp is now protected against empty page names.
+
         * CachingProvider now also has the ability to estimate the cache
         size.
 
