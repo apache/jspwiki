@@ -37,7 +37,7 @@ public class BasicAttachmentProviderTest extends TestCase
         m_engine  = new TestEngine(props);
 
         m_provider = new BasicAttachmentProvider();
-        m_provider.initialize( props );
+        m_provider.initialize( m_engine, props );
 
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAME2, "Foobar2" );

@@ -30,7 +30,7 @@ public class CounterProvider
     String defaultText = "[Foo], [Bar], [Blat], [Blah]";
 
 
-    public void initialize( Properties props )
+    public void initialize( WikiEngine engine, Properties props )
     {
         m_initCalls++;
     }

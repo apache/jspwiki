@@ -25,7 +25,7 @@ public class VerySimpleProvider implements WikiPageProvider
      */
     public static final String AUTHOR   = "default-author";
 
-    public void initialize( Properties props )
+    public void initialize( WikiEngine engine, Properties props )
     {
     }
 

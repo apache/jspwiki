@@ -15,6 +15,8 @@ public class FileSystemProviderTest extends TestCase
     String             m_pagedir;
     Properties props  = new Properties();
 
+    TestEngine         m_engine;
+
     public FileSystemProviderTest( String s )
     {
         super( s );
@@ -33,9 +35,11 @@ public class FileSystemProviderTest extends TestCase
         props2.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(props2);
         
+        m_engine = new TestEngine(props);
+
         m_provider = new FileSystemProvider();
 
-        m_provider.initialize( props );
+        m_provider.initialize( m_engine, props );
     }
 
     public void tearDown()
@@ -121,7 +125,7 @@ public class FileSystemProviderTest extends TestCase
 
         FileSystemProvider test = new FileSystemProvider();
 
-        test.initialize( props );
+        test.initialize( m_engine, props );
 
         File f = new File( newdir );
 
@@ -149,7 +153,7 @@ public class FileSystemProviderTest extends TestCase
 
             try
             {
-                test.initialize( props );
+                test.initialize( m_engine, props );
 
                 fail( "Wiki did not warn about wrong property." );
             }
