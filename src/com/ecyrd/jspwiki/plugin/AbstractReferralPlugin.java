@@ -36,10 +36,12 @@ public abstract class AbstractReferralPlugin
 {
     private static Category log = Category.getInstance( AbstractReferralPlugin.class );
 
-    public static final int    ALL_ITEMS      = -1;
-    public static final String PARAM_MAXWIDTH = "maxwidth";
+    public static final int    ALL_ITEMS       = -1;
+    public static final String PARAM_MAXWIDTH  = "maxwidth";
+    public static final String PARAM_SEPARATOR = "separator";
 
-    protected           int m_maxwidth = Integer.MAX_VALUE;
+    protected           int    m_maxwidth = Integer.MAX_VALUE;
+    protected           String m_separator = "\\\\";
 
     /**
      *  Used to initialize some things.  All plugins must call this first.
@@ -50,6 +52,12 @@ public abstract class AbstractReferralPlugin
         throws PluginException
     {
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE ); 
+        String s = (String) params.get( PARAM_SEPARATOR );
+
+        if( s != null )
+        {
+            m_separator = s;
+        }
 
         if( m_maxwidth < 0 ) m_maxwidth = 0;
 
@@ -77,7 +85,7 @@ public abstract class AbstractReferralPlugin
         {
             String value = (String)it.next();
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + value + "]\n" + separator );
+            output.append( "[" + value + "]" + separator +"\n");
             count++;
         }
 

@@ -67,7 +67,7 @@ public class ReferringPagesPlugin
         
             if( links != null && links.size() > 0 )
             {
-                wikitext = wikitizeCollection( links, "\\\\", items );
+                wikitext = wikitizeCollection( links, m_separator, items );
 
                 if( items < links.size() && items > 0 )
                 {
