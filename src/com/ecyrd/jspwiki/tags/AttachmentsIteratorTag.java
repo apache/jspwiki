@@ -77,6 +77,7 @@ public class AttachmentsIteratorTag
 
                 if( atts == null )
                 {
+                    log.debug("No attachments to display.");
                     // There are no attachments included
                     return SKIP_BODY;
                 }
@@ -86,6 +87,11 @@ public class AttachmentsIteratorTag
                 if( m_iterator.hasNext() )
                 {
                     Attachment  att = (Attachment) m_iterator.next();
+
+                    WikiContext context = new WikiContext( engine, att );
+                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                              context,
+                                              PageContext.REQUEST_SCOPE );
 
                     pageContext.setAttribute( getId(), att );
                 }
@@ -126,6 +132,12 @@ public class AttachmentsIteratorTag
         if( m_iterator != null && m_iterator.hasNext() )
         {
             Attachment att = (Attachment) m_iterator.next();
+
+            WikiContext context = new WikiContext( m_wikiContext.getEngine(), 
+                                                   att );
+            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                      context,
+                                      PageContext.REQUEST_SCOPE );
 
             pageContext.setAttribute( getId(), att );
 
