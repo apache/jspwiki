@@ -77,6 +77,8 @@ public class HistoryIteratorTag
                     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                               context,
                                               PageContext.REQUEST_SCOPE );
+                    pageContext.setAttribute( getId(),
+                                              context.getPage() );
                 }
             }
 
@@ -125,6 +127,8 @@ public class HistoryIteratorTag
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( getId(),
+                                      context.getPage() );
             return EVAL_BODY_TAG;
         }
         else
