@@ -36,6 +36,7 @@ public class AuthorizationManagerTest extends TestCase
 
     public void tearDown()
     {
+        m_engine.deletePage("Test");
     }
 
     public void testSimplePermissions()
@@ -45,25 +46,58 @@ public class AuthorizationManagerTest extends TestCase
 
         m_engine.saveText( "Test", src );
 
-        try
-        {
-            WikiPage p = m_engine.getPage("Test");
-            UserProfile wup = new UserProfile();
-            wup.setName( "FooBar" );
+        WikiPage p = m_engine.getPage("Test");
+        UserProfile wup = new UserProfile();
+        wup.setName( "FooBar" );
 
-            System.out.println(printPermissions( p ));
+        System.out.println(printPermissions( p ));
 
-            assertTrue( "read 1", m_manager.checkPermission( p, wup, new ViewPermission() ) );
-            assertTrue( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+        assertTrue( "read 1", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+        assertTrue( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
             
-            wup.setName( "GobbleBlat" );
-            assertTrue( "read 2", m_manager.checkPermission( p, wup, new ViewPermission() ) );
-            assertFalse( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
-        }
-        finally
-        {
-            m_engine.deletePage( "Test" );
-        }
+        wup.setName( "GobbleBlat" );
+        assertTrue( "read 2", m_manager.checkPermission( p, wup, new ViewPermission() ) );
+        assertFalse( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
+    }
+
+    public void testNamedPermissions()
+    {
+        String src = "[{ALLOW edit NamedGuest}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "FooBar" );
+
+        assertFalse( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.COOKIE );
+        
+        assertTrue( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
+    }
+
+    /**
+     *  An user should not be allowed to simply set their name in the 
+     *  cookie and be allowed access.
+     */
+    public void testNamedPermissions2()
+    {
+        String src = "[{ALLOW edit FooBar}] [{DENY edit Guest}] ";
+
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage("Test");
+
+        UserProfile wup = new UserProfile();
+        wup.setName( "FooBar" );
+
+        assertFalse( "edit 1", m_manager.checkPermission( p, wup, new EditPermission() ) );
+
+        wup.setLoginStatus( UserProfile.COOKIE );
+        
+        assertFalse( "edit 2", m_manager.checkPermission( p, wup, new EditPermission() ) );
     }
 
     /**
