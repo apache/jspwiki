@@ -21,17 +21,17 @@ If a parameter contains spaces, you can use single quotes (') around the paramet
 
 !!List of plugins included with JSPWiki
 
-* [Counter]
-* [CurrentTimePlugin]
-* [Denounce]
-* [Image]
-* [IndexPlugin]
-* [InsertPage]
-* [ListLocksPlugin]
-* [RecentChangesPlugin]
-* [ReferringPagesPlugin]
-* [UndefinedPagesPlugin]
-* [UnusedPagesPlugin]
-* [WeblogArchivePlugin]
-* [WeblogEntryPlugin]
-* [WeblogPlugin]
+* [Counter] - Insert a simple counter on a page.
+* [CurrentTimePlugin] - Show the current time.
+* [Denounce] - Denounce a link.
+* [Image] - Have deep control over how an image is placed on the page.
+* [IndexPlugin] - Index of all pages.
+* [InsertPage] - Inserts a portion of another page.
+* [ListLocksPlugin] - Lists page locks.
+* [RecentChangesPlugin] - Displays the [recent changes].
+* [ReferringPagesPlugin] - Lists pages that refer to this page.
+* [UndefinedPagesPlugin] - Lists pages that are missing.
+* [UnusedPagesPlugin] - Lists pages that have been orphaned.
+* [WeblogArchivePlugin] - Displays a list to older weblog entries.
+* [WeblogEntryPlugin] - Makes a "new entry" link.
+* [WeblogPlugin] - Builds a [weblog].

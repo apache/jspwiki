@@ -1,6 +1,17 @@
+This page has [{VotePlugin value='yes'}] positive and [{VotePlugin value='no'}] negative votes.
+
+[Vote yes|http://192.168.0.10:8080/JSPWiki/Vote.jsp?page=SandBox&vote=yes].
+
+
+[Vote no|http://192.168.0.10:8080/JSPWiki/Vote.jsp?page=SandBox&vote=no].
+
 %%(color:red;font-size:200%;)
 Testing
 %%
+
+[jspwiki_logo.png]
+
+[jspwiki_logo.png]
 
 [{Denounce link='http://www.ecyrd.com'}]
 
@@ -14,5 +25,4 @@ Testing
 [{WeblogEntryPlugin entrytext='Put in a new entry'}]
 
 [{SET jspwiki.translatorReader.camelCaseLinks=true}]
-
 
