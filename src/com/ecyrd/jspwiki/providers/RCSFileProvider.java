@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import org.apache.log4j.Category;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
@@ -65,11 +66,16 @@ public class RCSFileProvider
     public static final String    PROP_FULLLOG  = "jspwiki.rcsFileProvider.fullLogCommand";
     public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
 
-    private static final String   PATTERN_DATE      = "^date:\\s*(.*)[\\+\\-;]\\d+;";
+    private static final String   PATTERN_DATE      = "^date:\\s*(.*\\d);";
     private static final String   PATTERN_AUTHOR    = "^\"?author=([\\w\\.\\s\\+\\.\\%]*)\"?";
     private static final String   PATTERN_REVISION  = "^revision \\d+\\.(\\d+)";
 
     private static final String   RCSFMT_DATE       = "yyyy-MM-dd HH:mm:ss";
+    private static final String   RCSFMT_DATE_UTC   = "yyyy/MM/dd HH:mm:ss";
+
+    // Date format parsers, placed here to save on object creation
+    private SimpleDateFormat m_rcsdatefmt     = new SimpleDateFormat( RCSFMT_DATE );
+    private SimpleDateFormat m_rcsdatefmt_utc = new SimpleDateFormat( RCSFMT_DATE_UTC );
 
     public void initialize( Properties props )
         throws NoRequiredPropertyException,
@@ -124,7 +130,6 @@ public class RCSFileProvider
             // quotation marks, but on Windows, it does not.
             Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
             Pattern datepattern = compiler.compile( PATTERN_DATE );
-            SimpleDateFormat rcsdatefmt = new SimpleDateFormat( RCSFMT_DATE );
             boolean found = false;
 
             while( (line = stdout.readLine()) != null )
@@ -143,8 +148,7 @@ public class RCSFileProvider
                 else if( matcher.contains( line, datepattern ) && found )
                 {
                     MatchResult result = matcher.getMatch();
-
-                    Date d = rcsdatefmt.parse( result.group(1) );
+                    Date d = parseDate( result.group(1) );
 
                     if( d != null )
                     {
@@ -287,8 +291,6 @@ public class RCSFileProvider
 
         ArrayList list = new ArrayList();        
 
-        SimpleDateFormat rcsdatefmt = new SimpleDateFormat( RCSFMT_DATE );
-
         try
         {
             Pattern revpattern  = compiler.compile( PATTERN_REVISION );
@@ -327,7 +329,7 @@ public class RCSFileProvider
                 {
                     MatchResult result = matcher.getMatch();
 
-                    Date d = rcsdatefmt.parse( result.group(1) );
+                    Date d = parseDate( result.group(1) );
 
                     info.setLastModified( d );
                 }
@@ -349,5 +351,29 @@ public class RCSFileProvider
         }
 
         return list;
+    }
+
+    /**
+     *  util method to parse a date string in Local and UTC formats
+     */
+    private Date parseDate( String str )
+    {
+        Date d = null;
+
+        try
+        {
+            d = m_rcsdatefmt.parse( str );
+            return d;
+        }
+        catch ( ParseException pe ) { }
+
+        try
+        {
+            d = m_rcsdatefmt_utc.parse( str );
+            return d;
+        }
+        catch ( ParseException pe ) { }
+
+        return d;
     }
 }
