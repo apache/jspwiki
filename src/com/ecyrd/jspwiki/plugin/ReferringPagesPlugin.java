@@ -34,7 +34,7 @@ import java.util.*;
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
 {
-    private static Logger log = Logger.getLoggerx( ReferringPagesPlugin.class );
+    private static Logger log = Logger.getLogger( ReferringPagesPlugin.class );
 
     public static final String PARAM_MAX      = "max";
     public static final String PARAM_EXTRAS   = "extras";

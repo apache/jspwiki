@@ -2,6 +2,8 @@
 
         * v2.1.83.
 
+        * All plugins use now log4j Logger instead of Category.
+
         * Added WeblogArchivePlugin.
 
 2003-10-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
