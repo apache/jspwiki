@@ -1,5 +1,7 @@
 2002-04-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Fixed BugCommentBoxStyle.
+
         * v2.1.160
         
         * Removed the Expires-header from AttachmentServlet for
