@@ -1,3 +1,11 @@
+2005-01-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.132.
+
+        * Now transmits the _body parameter from FormOutput plugin to the
+        actual plugin taking care of the form submission.  Suggested by 
+        John Volkar.
+
 2005-01-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.131.
