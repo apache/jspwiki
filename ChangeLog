@@ -5,6 +5,8 @@
         * Bug fix: previewing a new page with a footnote would cause a
         crash. 
 
+        * Added WikiAttachments page to the samplepage distro.
+        
         * Redirected all references to Wiki.jsp or Edit.jsp through
         WikiEngine for future configurability.  Requested by Bart
         Selders.
