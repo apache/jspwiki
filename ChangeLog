@@ -2,6 +2,9 @@
 
         * v1.9.16.
 
+        * Non-existing pages would crash both Wiki.jsp and Edit.jsp.  Now
+        fixed.  Reported by Alain Ravet.
+
         * ViewTemplate.jsp is now done totally in tags.
 
         * Diff.jsp is now done totally in tags.
