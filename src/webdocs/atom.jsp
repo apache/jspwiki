@@ -127,7 +127,7 @@
             if( firstLine > 0 )
             {
                 int maxlen = pageText.length();
-                if( maxlen > 1000 ) maxlen = 1000; // Assume 112 bytes of growth.
+                // if( maxlen > 1000 ) maxlen = 1000; // Assume 112 bytes of growth.
 
                 if( maxlen > 0 )
                 {
@@ -135,7 +135,7 @@
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
                     out.print( pageText );
-                    if( maxlen == 1000 ) out.print( "..." );
+                    // if( maxlen == 1000 ) out.print( "..." );
                 }
                 else
                 {
