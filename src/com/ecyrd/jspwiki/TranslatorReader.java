@@ -517,6 +517,9 @@ public class TranslatorReader extends Reader
                 // System.out.println("LINE="+line);
                 // System.out.println("  Replacing: "+link);
                 // System.out.println("  open="+lastOpen+", close="+lastClose);
+
+                callMutatorChain( m_localLinkMutatorChain, link );
+
                 if( (matchedLink = linkExists( link )) != null )
                 {
                     link = makeLink( READ, matchedLink, link );
