@@ -1,3 +1,24 @@
+2004-10-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.112
+
+        * Developers be aware: FilterManager now throws a lot more
+        exceptions...  So does WikiEngine.saveText().
+
+        * VariableManager now also outputs variables from the HTTP
+        Session and the Servlet Request Parameters (assuming they are
+        Strings.)
+
+        * VariableManager has now a new variable: $pagefilters, which
+        lists all the filters currently in use.
+
+        * Added FilterException and RedirectException.  Filters can now
+        throw a RedirectException upon preSave() and postSave() to change
+        the place to which the user is redirected after an edit.  Also
+        changed the PageFilter interface to match.
+
+        * Added SpamFilter
+
 2004-09-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.111
