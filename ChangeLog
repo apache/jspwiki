@@ -1,4 +1,11 @@
+2003-04-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added new jspwiki.org home page information to different files.
+
 2003-03-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * If the user name was received from container, JSPWiki would get
+        confused if it contained spaces.  Reported by Foster Schucker.
 
         * v2.1.2.
 

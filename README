@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.17 $
-                             $Date: 2003-03-23 09:40:59 $
+                         $Revision: 1.18 $
+                             $Date: 2003-04-02 21:25:04 $
                            $Author: jalkanen $
 
 What is it?
@@ -230,7 +230,7 @@ page, to find how they are named on the disk =).
 
 There are some known issues with UTF-8 support on some older browsers.
 Please check
-http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=JSPWikiBrowserCompatibility
+http://www.jspwiki.org/Wiki.jsp?page=JSPWikiBrowserCompatibility
 for more information.
 
 
@@ -297,7 +297,7 @@ JSPWiki was written by Janne Jalkanen.  You may send email to me at
 Janne.Jalkanen@nospam.ecyrd.com.  (Remove the nospam from the
 address).  Feel free to send me patches, suggestions, whatever.
 
-JSPWiki is available at http://www.iki.fi/~jalkanen/JSPWiki/
+JSPWiki is available at http://www.jspwiki.org/
 
 My PGP key is below.
 
