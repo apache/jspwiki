@@ -1,5 +1,7 @@
 2002-07-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.8. (The afternoon version.)
+
         * Moved ViewTemplate.jsp into templates/
 
         * Added AuthorTag.
