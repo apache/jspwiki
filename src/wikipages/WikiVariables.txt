@@ -4,6 +4,10 @@ JSPWiki has many variables, that can be inserted on pages on-the-fly.  See [Text
 
 This is the name of this Wiki.  It has been set by the administrator in "jspwiki.properties". This Wiki is called ''[{$applicationname}]''.
 
+!baseurl
+
+The base URL address for this wiki.
+
 !encoding
 
 Describes the character encoding used in this Wiki. An encoding of "UTF-8" means that the Wiki accepts any character, including Chinese, Japanese, etc.  Encoding "ISO-8859-1" means that only western languages are supported.  This wiki uses the ''[{$encoding}]'' encoding.
