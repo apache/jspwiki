@@ -177,13 +177,10 @@ public class FileAuthorizer
      */
     private void refresh()
     {
-        log.debug( "ZZZ refresh called" );
         if( System.currentTimeMillis() - m_lastLoadTime > m_refreshTime )
         {
-            log.debug( "ZZZ refresh time has lapsed" );
             if( m_authFile.lastModified() > m_lastAccessTime )
             {
-                log.debug( "ZZZ file has changed, reloading" );
                 loadAuthFile();
             }
         }
