@@ -1007,7 +1007,6 @@ public class TranslatorReader extends Reader
                 String namedSection = reallink.substring( hashMark+1 );
                 reallink = reallink.substring( 0, hashMark );
 
-                namedSection = cleanLink( namedSection );
                 reallink     = cleanLink( reallink );
 
                 callMutatorChain( m_localLinkMutatorChain, reallink );
@@ -1015,7 +1014,7 @@ public class TranslatorReader extends Reader
                 String matchedLink;
                 if( (matchedLink = linkExists( reallink )) != null )
                 {
-                    String sectref = "section-"+matchedLink+"-"+namedSection;
+                    String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
                     sb.append( makeLink( READ, matchedLink, link, sectref ) );
                 }
                 else
@@ -2533,7 +2532,8 @@ public class TranslatorReader extends Reader
             hd.m_titleText = title;
             title = cleanLink( title );
             hd.m_titleSection = m_engine.encodeName(title);
-            hd.m_titleAnchor = "section-"+baseName+"-"+hd.m_titleSection;
+            hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
+                               "-"+hd.m_titleSection;            
             return "<a name=\""+hd.m_titleAnchor+"\">";
         }
 
