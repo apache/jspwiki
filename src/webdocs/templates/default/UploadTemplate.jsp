@@ -8,7 +8,7 @@
 
 <head>
   <title><wiki:Variable var="applicationname"/>: Add Attachment</title>
-  <%@ include file="cssinclude.js" %>
+  <%@ include file="header.jsp" %>
   <META NAME="ROBOTS" CONTENT="NOINDEX">
 </head>
 

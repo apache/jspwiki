@@ -1,8 +1,6 @@
-<link rel="stylesheet" href="templates/<wiki:TemplateDir/>/jspwiki.css" />
-
-<script type="text/javascript">
-<!-- Hide script contents from old browsers
-
+/*
+ *  Chooses a suitable stylesheet based on browser.
+ */
     var IE4 = (document.all && !document.getElementById) ? true : false;
     var NS4 = (document.layers) ? true : false;
     var IE5 = (document.all && document.getElementById) ? true : false;
@@ -29,12 +27,3 @@
     }
 
     document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
-
-// end hiding contents from old browsers -->
-</script>
-
-<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
-<link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
-<link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
-<link rel="start"  href="<wiki:LinkTo format="url" page="Main"/>"                title="Front page" />
-

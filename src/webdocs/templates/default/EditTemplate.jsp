@@ -7,7 +7,7 @@
 <head>
   <title><wiki:Variable var="ApplicationName" /> Edit: <wiki:PageName /></title>
   <meta name="ROBOTS" content="NOINDEX">
-  <%@ include file="cssinclude.js" %>
+  <%@ include file="header.jsp" %>
 </head>
 
 <wiki:CheckRequestContext context="edit">

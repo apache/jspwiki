@@ -25,7 +25,7 @@
    <p><hr /></p>
 
    <form action="<wiki:EditLink format="url" />" method="POST" 
-         ACCEPT-CHARSET="<wiki:ContentEncoding />">
+         ACCEPT-CHARSET="<wiki:ContentEncoding />" />
    <p>
 
    <%-- These are required parts of this form.  If you do not include these,
