@@ -42,6 +42,20 @@ public class AclEntryImplTest
         assertTrue( "no viewpermission", m_ae.checkPermission( new ViewPermission() ) );
     }
 
+    public void testAddPermission3()
+    {
+        m_ae.addPermission( new CommentPermission() );
+
+        assertFalse( "has editpermission", m_ae.checkPermission( new EditPermission() ) );
+    }
+
+    public void testAddPermission4()
+    {
+        m_ae.addPermission( new EditPermission() );
+
+        assertTrue( "has not commentpermission", m_ae.checkPermission( new CommentPermission() ) );
+    }
+
     public void testRemPermission()
     {
         m_ae.addPermission( new ViewPermission() );
