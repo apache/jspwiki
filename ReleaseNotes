@@ -5,7 +5,9 @@ Major changes since the last stable (1.6.0) release are:
 
 - Table support
 
-- Added XML-RPC interface.
+- Added XML-RPC interface, both strict XML-RPC and one where all
+  strings are returned in UTF-8.  See web.xml on ideas how to
+  configure them.
 
 - Added CachingProvider based on an idea and sample code by Chris
   Brooking.
