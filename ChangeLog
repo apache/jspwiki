@@ -1,3 +1,15 @@
+2002-01-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * All referral plugins (UnusedPages, UndefinedPages,
+        ReferringPages) now recognize a "maxwidth" parameter, which can be
+        used to limit the size of the written links.  This is very useful
+        in the context of putting an automatic referral list to the
+        LeftMenu, which might otherwise grow too wide.  The default
+        LeftMenuFooter now reflects this.
+
+        * Added the ability to modify the written link to the
+        TranslatorReader by hooking in a StringTransmutator callback.
+
 2002-01-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * PageModified.jsp wouldn't compile - I forgot to update the new
