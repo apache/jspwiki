@@ -114,3 +114,12 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
  */
 .searchword { background-color: #FFFF00; }
 
+/* For the weblogarchive plugin. */
+
+.weblogarchive { }
+.archiveyear { }
+.weblogarchive ul { margin-top: 0px;
+                    padding: 4px; }
+.weblogarchive li { display: block; 
+                    list-style-type: none; 
+                    }
