@@ -5,8 +5,15 @@
    <table cellspacing="4">
        <tr>
            <td><B>Page name</B></td>
-           <td><wiki:PageName /></td>
+           <td><wiki:LinkTo><wiki:PageName /></wiki:LinkTo></td>
        </tr>
+
+       <wiki:IsAttachment>
+           <tr>
+              <td><B>Parent page</B></td>
+              <td>FIXME</td>
+           </tr>
+       </wiki:IsAttachment>
 
        <tr>
            <td><B>Page last modified</B></td>
@@ -26,6 +33,7 @@
                         <th>Version</th>
                         <th>Date (and differences to current)</th>
                         <th>Author</th>
+                        <th>Size</th>
                         <th>Changes from previous</th>
                    </tr>
                    <wiki:HistoryIterator id="currentPage">
@@ -44,11 +52,12 @@
                          </td>
 
                          <td><wiki:Author /></td>
+                         <td><wiki:PageSize /></td>
                          <td>
                               <% if( currentPage.getVersion() > 1 ) { %>
                                    <wiki:DiffLink version="<%=Integer.toString(currentPage.getVersion())%>" 
                                                   newVersion="<%=Integer.toString(currentPage.getVersion()-1)%>">
-                                       changes from version <%=currentPage.getVersion()-1%> to <%=currentPage.getVersion()%>
+                                       from version <%=currentPage.getVersion()-1%> to <%=currentPage.getVersion()%>
                                    </wiki:DiffLink>
                                <% } %>
                          </td>
