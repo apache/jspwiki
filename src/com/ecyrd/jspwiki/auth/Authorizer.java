@@ -31,13 +31,41 @@ import com.ecyrd.jspwiki.UserProfile;
 
 
 /**
- * Authorizer acts as a unified interface and simplified loader of 
+ * Authorizer retrieves access authorities for UserProfiles.
+ *
+ * <P>Authorizer acts as a unified interface and simplified loader of 
  * a dynamically defined WikiAuthorizer object. Also provides 
  * utility methods for building authorization rules and comparing
  * them agains a WikiUserPrincipal's permissions. 
  *
+ * <P>Authorizer also takes care of the special case where no
+ * custom WikiAuthorizer has been defined in <i>jspwiki.properties</i>.
+ * In this case, access is always allowed. 
  *  
- * Authorizer specifies the following special roles:
+ *
+ * <p>JSPWiki authorization features users, roles, and permissions.
+ * Users are validated against a password, and, if successful, their
+ * roles and permissions are loaded into a UserProfile. These can
+ * then be compared to per-page access restrictions.
+ *
+ * <p><i>Roles</i> are, essentially, groups that a user can belong to.
+ * Pages may be restricted to/from certain roles with the ALLOW and
+ * DENY directives.
+ *
+ * <p><i>Permissions</i> offer a more fine-grained access system:
+ * roles can be further mapped to any number of permissions. This
+ * may be useful with a large user base. Pages may be restricted
+ * to/from permissions with the REQUIRE directive. 
+ * 
+ * <p>As an example, you might have user <i>quibble</i> with password
+ * <i>frobozz</i> (hopefully encrypted in storage), who belongs to 
+ * groups <i>users</i> and <i>editors</i>; <i>users</i> may specify
+ * permissions <i>read-user-data</i>, editors <i>read-all</i> and
+ * <i>write-user-data</i>. Quibble would thus have access to pages
+ * restricted to groups users and editors, and to those pages that
+ * require permissions read-user-data, read-all, or write-user-data.
+ * 
+ * <P>Authorizer specifies the following special roles:
  * <ul>
  * <li> <i>guest</i> (AUTH_ROLE_GUEST) - the role given to casual 
  *      visitors who haven't been authenticated or recognized in
@@ -78,26 +106,38 @@ public class Authorizer
     /** Special role identifier for uninhibited access. */
     public static final String AUTH_ROLE_ADMIN = "admin";
 
+    private AccessRuleSet m_openAccess;
+
+
     /**
      * Creates a new Authorizer, using the class defined in the
      * properties (jspwiki.properties file). If none is defined, 
-     * uses the default DummyAuthorizer.
+     * full access is always allowed.
      */
     public Authorizer( Properties props )
         throws WikiException, NoRequiredPropertyException
     {
+        // Special case: open access if no authorizer is used. 
+        // The following could be optimized with a TrivialAccessRuleSet. FIX!
+        m_openAccess = new AccessRuleSet();
+        m_openAccess.addRule( "ALLOW READ ALL" );
+        m_openAccess.addRule( "ALLOW WRITE ALL" );
+
         String classname = null;
         try
         {
             classname = props.getProperty( PROP_AUTHORIZER );
             if( classname == null )
             {
-                log.warn( PROP_AUTHORIZER + " not defined; using DummyAuthorizer." );
-                classname = "DummyAuthorizer";
+                log.warn( PROP_AUTHORIZER + " not defined; open access mode is used." );
+                m_authorizer = null;
             }
-            Class authClass = WikiEngine.findWikiClass( classname, "com.ecyrd.jspwiki.auth" );
-            m_authorizer = (WikiAuthorizer)authClass.newInstance();
-            m_authorizer.initialize( props );
+            else
+            {
+                Class authClass = WikiEngine.findWikiClass( classname, "com.ecyrd.jspwiki.auth" );
+                m_authorizer = (WikiAuthorizer)authClass.newInstance();
+                m_authorizer.initialize( props );
+            }
         }
         catch( ClassNotFoundException e )
         {
@@ -124,6 +164,16 @@ public class Authorizer
 
 
     /**
+     * Returns true if a WikiAuthorizer has been initialized and is used for 
+     * authorization, false if not. 
+     */
+    public boolean usePageRules()
+    {
+        return( m_authorizer != null );
+    }
+
+
+    /**
      * Calls the current authorizer's loadPermissions() method.
      * (This should be renamed to loadAccessInfo, or something,
      * since it loads roles as well as permissions. FIX!)
@@ -136,7 +186,9 @@ public class Authorizer
         }
         else
         {
-            log.warn( "No authorizer has been initialized!" );
+            // Open access mode, nothing needs to be done. 
+            log.debug( "No Authorizer defined in jspwiki.properties. " +
+                       wup.getName() + " has full access." );
         }
     }
 
@@ -151,7 +203,9 @@ public class Authorizer
         }
         else
         {
-            log.warn( "No authorizer has been initialized!" );
+            // Open access mode, nothing is done. 
+            log.debug( "No Authorizer defined in jspwiki.properties - role " + roleName + 
+                       " not added for " + wup.getName() + "." );
         }
     }
 
@@ -166,7 +220,9 @@ public class Authorizer
         }
         else
         {
-            log.warn( "No authorizer has been initialized!" );
+            // Open access mode, nothing is done.
+            log.debug( "No Authorizer defined in jspwiki.properties - perm " + permName + 
+                       " not added for " + wup.getName() + "." );
         }
     }
 
@@ -185,14 +241,16 @@ public class Authorizer
         }
         else
         {
-            log.warn( "No authorizer has been initialized!" );
+            // No authorizer defined, open access.
+            log.debug( "XXX Providing default rules: " + m_openAccess );
+            return( m_openAccess );
         }
-
-       return( new AccessRuleSet() );
      }
 
     /**
      * Returns the Authorizer in use.
+     * A null value means that no authorizer is in use and access is 
+     * always allowed.
      */
     public WikiAuthorizer getAuthorizer()
     {
