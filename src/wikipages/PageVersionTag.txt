@@ -1,0 +1,20 @@
+Writes the version of the current page. If this is marked as the current version, then includes body as text instead of version number.
+
+----
+
+!Usage
+
+<wiki:PageVersion>
+;:''HTML''
+</wiki:PageVersion>
+
+!Parameters
+
+None.
+
+!Example
+{{{
+<wiki:PageVersion>viimeisin versio</wiki:PageVersion>
+}}}
+
+Writes the page version, or if the current page is the latest one, writes "viimeisin versio", which is Finnish for "the latest version."

@@ -1,0 +1,22 @@
+Inserts the encoding as set in jspwiki.properties.
+
+----
+
+!Usage
+
+<wiki:ContentEncoding />
+
+!Parameters
+
+None.
+
+!Example
+{{{
+In jspwiki.properties:
+jspwiki.encoding = UTF-8
+...
+On a JSP page:
+<wiki:ContentEncoding />
+}}}
+
+Inserts "UTF-8"

@@ -1,0 +1,20 @@
+Inserts any of the [WikiVariable]s.
+
+----
+
+!Usage
+
+<wiki:Variable var="<variable name>" default="<default value>" />
+
+!Parameters
+
+;__var__: The name of the variable to insert.  Required.
+;__default__: If the variable does not exist, then inserts this value.  Optional.
+
+!Example
+{{{
+<wiki:Variable var="applicationname" />
+}}}
+
+inserts the "applicationname" [WikiVariable].
+
