@@ -81,9 +81,12 @@ public class TranslatorReader extends Reader
     private boolean        m_isTypedText  = false;
     private boolean        m_istable      = false;
     private boolean        m_isPre        = false;
+    private boolean        m_isPreSpan    = false;
+    private boolean        m_isEscaping   = false;
     private boolean        m_isdefinition = false;
     private int            m_listlevel    = 0;
     private int            m_numlistlevel = 0;
+    private boolean        m_isOpenParagraph = false;
 
     /** Tag that gets closed at EOL. */
     private String         m_closeTag     = null; 
@@ -1076,7 +1079,15 @@ public class TranslatorReader extends Reader
         if( m_isPre ) 
         {
             buf.append("</pre>\n");
+	    m_isEscaping   = false;
             m_isPre = false;
+        }
+
+        if( m_isPreSpan ) 
+        {
+            buf.append("</span>");
+	    m_isEscaping   = false;
+            m_isPreSpan = false;
         }
 
         if( m_istable )
@@ -1084,6 +1095,12 @@ public class TranslatorReader extends Reader
             buf.append( "</table>" );
             m_istable = false;
         }
+
+	if( m_isOpenParagraph )
+	{
+	    buf.append("</p>");
+	    m_isOpenParagraph = false;
+	}
 
         return buf.toString();
     }
@@ -1198,7 +1215,7 @@ public class TranslatorReader extends Reader
         return res;
     }
 
-    private String handleOpenbrace()
+    private String handleOpenbrace( boolean isBlock )
         throws IOException
     {
         int ch = nextToken();
@@ -1210,8 +1227,17 @@ public class TranslatorReader extends Reader
 
             if( ch2 == '{' )
             {
-                res = "<pre>";
-                m_isPre = true;
+                if( isBlock )
+                {
+                    res = "<pre>";
+                    m_isPre = true;
+                }
+                else
+                {
+                    res = "<span style=\"font-family:monospace; whitespace:pre;\">";
+                    m_isPreSpan = true;
+                }
+		m_isEscaping = true;
             }
             else
             {
@@ -1248,7 +1274,14 @@ public class TranslatorReader extends Reader
                 if( m_isPre )
                 {
                     m_isPre = false;
+		    m_isEscaping = false;
                     res = "</pre>";
+                }
+		else if( m_isPreSpan )
+                {
+                    m_isPreSpan = false;
+		    m_isEscaping = false;
+                    res = "</span>";
                 }
                 else
                 {
@@ -1259,7 +1292,7 @@ public class TranslatorReader extends Reader
             {
                 pushBack( ch3 );
 
-                if( !m_isPre )
+                if( !m_isEscaping )
                 {
                     res = "</tt>";
                     m_isTypedText = false;
@@ -1599,7 +1632,7 @@ public class TranslatorReader extends Reader
             //  Check if we're actually ending the preformatted mode.
             //  We still must do an entity transformation here.
             //
-            if( m_isPre )
+            if( m_isEscaping )
             {
                 if( ch == '}' )
                 {
@@ -1612,6 +1645,10 @@ public class TranslatorReader extends Reader
                 else if( ch == '>' )
                 {
                     buf.append("&gt;");
+                }
+                else if( ch == '&' )
+                {
+                    buf.append("&amp;");
                 }
                 else if( ch == -1 )
                 {
@@ -1743,8 +1780,11 @@ public class TranslatorReader extends Reader
                 if( newLine )
                 {
                     // Paragraph change.
+		    if( m_isOpenParagraph )
+			buf.append("</p>");
 
                     buf.append("<p>\n");
+		    m_isOpenParagraph = true;
                 }
                 else
                 {
@@ -1767,7 +1807,7 @@ public class TranslatorReader extends Reader
                 break;
 
               case '{':
-                s = handleOpenbrace();
+                s = handleOpenbrace( newLine );
                 break;
 
               case '}':
