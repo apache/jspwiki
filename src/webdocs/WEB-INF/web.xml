@@ -29,7 +29,7 @@
 
    <login-config>
       <auth-method>BASIC</auth-method>
-      <realm-name>Basic Authentication Area</realm-name>
+      <realm-name>JSPWiki Editor</realm-name>
    </login-config>
 
 </web-app>
