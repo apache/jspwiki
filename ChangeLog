@@ -1,3 +1,17 @@
+2003-02-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.31.
+
+        * Also added a bunch of tests.
+
+        * '/' in a link is now recognized to form an attachment link.
+
+        * Worked on some attachment-referencemanager related bugs.  Now
+        attachments are recognized and reference better in some cases, but
+        problems still remain:  If you create a link to an attachment
+        first, but create the attachment later, the reference lists may
+        not notice this.  This is a subtle problem.
+
 2003-02-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.30.
