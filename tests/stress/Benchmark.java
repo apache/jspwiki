@@ -20,6 +20,14 @@ public class Benchmark
     }
 
     /**
+     *  Returns duration in milliseconds.
+     */
+    public long getDurationMs()
+    {
+        return m_stop-m_start;
+    }
+
+    /**
      *  Returns seconds.
      */
     public String toString()
