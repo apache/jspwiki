@@ -227,11 +227,13 @@ public class WikiEngine
             throw new IllegalArgumentException("illegal provider class");
         }
 
+        //
+        //  Initialize the important modules.
+        //
         try
         {
             m_pluginManager    = new PluginManager();
             m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
-            m_rssGenerator     = new RSSGenerator( this, props );
 
             initReferenceManager();            
         }
@@ -242,8 +244,27 @@ public class WikiEngine
             throw new ServletException( "Unable to start", e );
         }
 
+        //
+        //  Initialize the good-to-have-but-not-fatal modules.
+        //
+        try
+        {
+            if( props.getProperty( RSSGenerator.PROP_GENERATE_RSS, "true" ).equalsIgnoreCase("true") )
+            {
+                m_rssGenerator = new RSSGenerator( this, props );
+            }
+        }
+        catch( Exception e )
+        {
+            log.error( "Unable to start RSS generator - JSPWiki will still work, "+
+                       "but there will be no RSS feed.", e );
+        }
+
         // FIXME: I wonder if this should be somewhere else.
-        new RSSThread().start();
+        if( m_rssGenerator != null )
+        {
+            new RSSThread().start();
+        }
 
         log.info("WikiEngine configured.");
     }
@@ -258,6 +279,14 @@ public class WikiEngine
         {
             try
             {
+                String fileName = m_properties.getProperty( RSSGenerator.PROP_RSSFILE,
+                                                            "rss.rdf" );
+                int rssInterval = TextUtil.parseIntParameter( m_properties.getProperty( RSSGenerator.PROP_INTERVAL ),
+                                                              3600 );
+
+                log.debug("RSS file will be at "+fileName);
+                log.debug("RSS refresh interval (seconds): "+rssInterval);
+
                 while(true)
                 {
                     Writer out = null;
@@ -269,11 +298,11 @@ public class WikiEngine
                         //  Generate RSS file, output it to
                         //  default "rss.rdf".
                         //
-                        log.info("Regenerating RSS feed.");
+                        log.info("Regenerating RSS feed to "+fileName);
 
                         String feed = m_rssGenerator.generate();
 
-                        File file = new File(m_rootPath,"rss.rdf"); // FIXME: magic
+                        File file = new File( m_rootPath, fileName );
 
                         in  = new StringReader(feed);
                         out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
@@ -282,7 +311,7 @@ public class WikiEngine
                     }
                     catch( IOException e )
                     {
-                        log.error("Cannot generate RSS feed", e );
+                        log.error("Cannot generate RSS feed to "+fileName, e );
                     }
                     finally
                     {
@@ -298,9 +327,7 @@ public class WikiEngine
                         }
                     }
 
-                    // FIXME: Magic number, should be user settable.
-                    // Currently generates RSS at startup and then every hour.
-                    Thread.sleep(60*60*1000L);
+                    Thread.sleep(rssInterval*1000L);
                 } // while
                 
             }
