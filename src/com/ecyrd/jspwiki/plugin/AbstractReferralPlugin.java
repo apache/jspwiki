@@ -46,6 +46,8 @@ public abstract class AbstractReferralPlugin
     protected           int    m_maxwidth = Integer.MAX_VALUE;
     protected           String m_separator = "\\\\";
 
+    protected           WikiEngine m_engine;
+
     /**
      *  Used to initialize some things.  All plugins must call this first.
      *
@@ -54,6 +56,7 @@ public abstract class AbstractReferralPlugin
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
+        m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE ); 
         String s = (String) params.get( PARAM_SEPARATOR );
 
@@ -88,7 +91,7 @@ public abstract class AbstractReferralPlugin
         {
             String value = (String)it.next();
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + value + "]" + separator +"\n");
+            output.append( "[" + m_engine.beautifyTitle(value) + "]" + separator +"\n");
             count++;
         }
 
