@@ -1,4 +1,4 @@
-<H3 CLASS="leftmenuheading"><A HREF="SystemInfo.jsp"><wiki:ApplicationName /></A></H3>
+<H3 CLASS="leftmenuheading"><A HREF="<wiki:LinkTo page="SystemInfo" format="url"/>"><wiki:ApplicationName /></A></H3>
 
 <!-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" -->
 
