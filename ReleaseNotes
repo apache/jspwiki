@@ -1,16 +1,21 @@
 
-This is a beta release of JSPWiki.
+This is a full release of JSPWiki.
 
 Major changes since the last stable (1.6.0) release are:
 
-- Table support
+- Table support.  See TextFormattingRules on how that works.
 
 - Added XML-RPC interface, both strict XML-RPC and one where all
   strings are returned in UTF-8.  See web.xml on ideas how to
   configure them.
 
 - Added CachingProvider based on an idea and sample code by Chris
-  Brooking.
+  Brooking.  Especially when used with RCSFileProvider, this should
+  speed up your RecentChanges list considerably.
+
+- Added a VersioningFileProvider for people who don't want to use RCS.
+  However, it is currently only for testing - it has not yet been
+  tested properly.
 
 - Added ReferenceManager. This object is initialized statically by 
   each WikiEngine, and it keeps track of all WikiPage cross references
@@ -33,7 +38,8 @@ Major changes since the last stable (1.6.0) release are:
   URL rewriting scheme.
 
 - Some UI shortcuts (click on the last modification date to see the
-  latest modification, for example).
+  latest modification, for example).  Also, the layout of the default
+  Wiki page has been changed a bit.
 
 - Possibly fixed some problems with RCS and Windows.
 
@@ -44,7 +50,7 @@ Major changes since the last stable (1.6.0) release are:
 UPGRADE NOTES
 =============
 
-- If updating manually:
+- If updating manually (from v1.6.0).
   - copy all JSP files
 
   - remove the extra special page entries from jspwiki.properties -
@@ -65,7 +71,7 @@ UPGRADE NOTES
     contained within JSPWiki.jar in the WEB-INF/lib -directory.
 
   - Consider moving to use CachingProvider.  See included
-    jspwiki.properties, where it's on by default.
+    jspwiki.properties.
 
   - Update the default pages also:
      * TextFormattingRules
