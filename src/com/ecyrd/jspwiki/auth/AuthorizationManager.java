@@ -51,6 +51,8 @@ public class AuthorizationManager
     public static final String PROP_AUTHORIZER   = "jspwiki.authorizer";
     public static final String DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.modules.PageAuthorizer";
  
+    protected static final String PROP_USEOLDAUTH = "jspwiki.auth.useOldAuth";
+    
     static Category log = Category.getInstance( AuthorizationManager.class );
 
     private WikiAuthorizer    m_authorizer;
@@ -58,6 +60,9 @@ public class AuthorizationManager
 
     private boolean           m_strictLogins = false;
 
+    /** If true, allows the old auth system to be used. */
+    private boolean           m_useAuth = false;
+    
     private WikiEngine        m_engine;
 
     /**
@@ -71,12 +76,18 @@ public class AuthorizationManager
     {
         m_engine = engine;
 
-        m_authorizer = getAuthorizerImplementation( properties );
-        m_authorizer.initialize( engine, properties );
-
+        m_useAuth = TextUtil.getBooleanProperty( properties,
+                                                 PROP_USEOLDAUTH,
+                                                 false );
+        
         m_strictLogins = TextUtil.getBooleanProperty( properties,
                                                       PROP_STRICTLOGINS,
                                                       false );
+
+        if( !m_useAuth ) return;
+        
+        m_authorizer = getAuthorizerImplementation( properties );
+        m_authorizer.initialize( engine, properties );
 
         AclEntryImpl ae = new AclEntryImpl();
 
@@ -217,7 +228,7 @@ public class AuthorizationManager
 
     /**
      *  Returns true or false, depending on whether this action
-     *  is allowed.
+     *  is allowed.  This method returns true for 2.2.
      */
     public boolean checkPermission( WikiPage page, 
                                     UserProfile wup, 
@@ -231,6 +242,11 @@ public class AuthorizationManager
         //
         if( wup == null ) return false;
 
+        //
+        //  If auth is turned off, return immediately for speed
+        //
+        if( !m_useAuth ) return true;
+        
         //
         //  Yup, superusers can do anything.
         //

@@ -80,6 +80,8 @@ public class UserManager
 
     private String             m_administrator;
 
+    private boolean            m_useAuth = false;
+    
     /**
      *  Creates an UserManager instance for the given WikiEngine and
      *  the specified set of properties.  All initialization for the
@@ -97,6 +99,12 @@ public class UserManager
         m_administrator  = props.getProperty( PROP_ADMINISTRATOR,
                                               DEFAULT_ADMINISTRATOR );
 
+        m_useAuth = TextUtil.getBooleanProperty( props,
+                                                 AuthorizationManager.PROP_USEOLDAUTH,
+                                                 false );
+        
+        if( !m_useAuth ) return;
+        
         WikiGroup all = new AllGroup();
         all.setName( "All" );
         m_groups.put( GROUP_GUEST,       new AllGroup() );
@@ -184,7 +192,7 @@ public class UserManager
      */
     public UserDatabase getUserDatabase()
     {
-	return( m_database );
+        return( m_database );
     }
 
     /**
@@ -192,7 +200,7 @@ public class UserManager
      */
     public WikiAuthenticator getAuthenticator()
     {
-	return( m_authenticator );
+        return( m_authenticator );
     }
 
     /**
@@ -289,7 +297,8 @@ public class UserManager
         
         if( user instanceof UserProfile && ((UserProfile)user).isAuthenticated() )
         {
-            list = m_database.getGroupsForPrincipal( user );
+            if( m_database != null )
+                list = m_database.getGroupsForPrincipal( user );
         }
 
         if( list == null ) list = new ArrayList();
