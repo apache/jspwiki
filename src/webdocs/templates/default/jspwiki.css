@@ -117,9 +117,16 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
 /* For the weblogarchive plugin. */
 
 .weblogarchive { }
-.archiveyear { }
+
 .weblogarchive ul { margin-top: 0px;
-                    padding: 4px; }
-.weblogarchive li { display: block; 
-                    list-style-type: none; 
-                    }
+                    padding: 0px; }
+
+.weblogarchive li { display: block;
+                    list-style-type: none;
+                    margin-left: 1em; }
+
+.archiveyear { font-weight: bold;
+               text-decoration: none;
+               margin-left: 0px !important; }
+.archiveyear:after { content: " AD" }
+
