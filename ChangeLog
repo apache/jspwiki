@@ -1,5 +1,9 @@
 2003-04-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Demoted log messages in IncludeTag to WARN level from FATAL.  It
+        seems that including can fail on so many occasions that it does
+        not make sens to call them as FATAL.  Reported by John Volkar.
+
         * Added new jspwiki.org home page information to different files.
 
 2003-03-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
