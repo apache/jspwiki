@@ -684,7 +684,7 @@ public class WikiEngine
 
         // Hook into cross reference collection.
         // Notice that this is definitely after the saveText() call above, 
-        // since it can be caclled externally and we only want this done once.
+        // since it can be called externally and we only want this done once.
         m_referenceManager.updateReferences( page, scanWikiLinks( text ) );
 
         WikiPage p = new WikiPage( page );
