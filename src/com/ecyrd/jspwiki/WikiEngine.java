@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -62,12 +63,24 @@ public class WikiEngine
         'diff -u %s1 %s2'.*/
     public static final String PROP_DIFFCOMMAND  = "jspwiki.diffCommand";
 
+    /** If true, then the user name will be stored with the page data.*/
+    public static final String PROP_STOREUSERNAME= "jspwiki.storeUserName";
+
+    /** If true, logs the IP address of the editor on saving. */
+    public static final String PROP_STOREIPADDRESS= "jspwiki.storeIPAddress";
+
     private String         m_diffCommand = "diff -u %s1 %s2"; 
 
     private static Hashtable c_engines = new Hashtable();
 
     private static final String NO_PROVIDER_MSG = 
         "Internal configuration error: No provider was found.";
+
+    /** Should the user info be saved with the page data as well? */
+    private boolean        m_saveUserInfo = true;
+
+    /** If true, logs the IP address of the editor */
+    private boolean        m_storeIPAddress = true;
 
     /**
      *  Gets a WikiEngine related to this servlet.
@@ -143,6 +156,9 @@ public class WikiEngine
         log.debug("Configuring WikiEngine...");
 
         m_diffCommand = props.getProperty( PROP_DIFFCOMMAND, m_diffCommand );
+
+        m_saveUserInfo   = "true".equals( props.getProperty( PROP_STOREUSERNAME, "true" ) );
+        m_storeIPAddress = "true".equals( props.getProperty( PROP_STOREIPADDRESS, "true" ) );
 
         //
         //  Find the page provider
@@ -425,7 +441,44 @@ public class WikiEngine
         if( m_provider == null ) 
             return;
 
-        m_provider.putPageText( page, text );
+        m_provider.putPageText( new WikiPage(page), text );
+    }
+
+    /**
+     *  @param request The HTTP Servlet request associated with this
+     *                 transaction.
+     *  @since 1.5.1
+     */
+    public void saveText( String page, String text, HttpServletRequest request )
+    {
+        if( m_provider == null )
+        {
+            return;
+        }
+
+        // Error protection or if the user info has been disabled.
+        if( request == null || m_saveUserInfo == false ) 
+        {
+            saveText( page, text );
+            return;
+        }
+
+        WikiPage p = new WikiPage( page );
+
+        // Get the user authentication - if he's not been authenticated
+        // we store the IP address.  Unless we've been asked not to.
+
+        String author = request.getRemoteUser();
+        if( author == null && m_storeIPAddress )
+            author = request.getRemoteAddr();
+
+        //  If no author has been defined, then
+        //  use whatever default WikiPage gives us.
+
+        if( author != null )
+            p.setAuthor( author );
+
+        m_provider.putPageText( p, text );
     }
 
     /**
