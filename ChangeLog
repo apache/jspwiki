@@ -1,3 +1,8 @@
+2003-02-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added Jason Pell's MultipartRequestLibrary v1.30b3, which should
+        fix plenty of problems related with uploads.
+
 2003-02-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.25.
