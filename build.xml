@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.24 2002-12-09 19:08:16 jalkanen Exp $
+    $Id: build.xml,v 1.25 2002-12-09 19:08:41 jalkanen Exp $
 -->    
        
 <!--   
@@ -327,7 +327,7 @@
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
      <copy file="doc/LICENSE" todir="${install.fulldir}" />     
 
-     <zip zipfile="${release.dir}/${ant.project.name}.zip">
+     <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
      </zip>
 
