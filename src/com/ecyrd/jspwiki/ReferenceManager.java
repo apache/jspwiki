@@ -88,8 +88,15 @@ import org.apache.log4j.*;
 */
 public class ReferenceManager
 {
+    /** Maps page wikiname to a Collection of pages it refers to. The Collection 
+        must contain Strings. The Collection may contain names of non-existing
+        pages. */
     private HashMap m_refersTo;
+    /** Maps page wikiname to a HashSet of referring pages. The HashSet must
+        contain Strings. Non-existing pages (a reference exists, but not a file
+        for the page contents) may have an empty HashSet in m_referredBy. */
     private HashMap m_referredBy;
+    /** The WikiEngine that owns this object. */
     private WikiEngine m_engine;
 
     /**
@@ -232,8 +239,15 @@ public class ReferenceManager
         if( page.equals( referrer ) )
             return;
         HashSet referrers = (HashSet)m_referredBy.get( page );
-        if( referrers == null )
-            return;
+
+        // Even if 'page' has not been created yet, it can still be referenced.
+        // This requires we don't use m_referredBy keys when looking up missing
+        // pages, of course. 
+        if(referrers == null)
+        {
+            referrers = new HashSet();
+            m_referredBy.put( page, referrers );
+        }
         referrers.add( referrer );
     }
 
