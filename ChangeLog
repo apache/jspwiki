@@ -1,3 +1,11 @@
+2003-04-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * CachingProvider now also provides information on how many pages
+        are currently in cache.
+
+        * TranslatorReader now outputs all tags in lowercase to be
+        XHTML-compliant. 
+
 2003-04-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.8.
