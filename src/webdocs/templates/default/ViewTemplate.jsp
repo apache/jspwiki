@@ -64,6 +64,14 @@
          <wiki:Include page="ConflictContent.jsp" />
       </wiki:CheckRequestContext>
 
+      <wiki:CheckRequestContext context="find">
+         <wiki:Include page="FindContent.jsp" />
+      </wiki:CheckRequestContext>
+
+      <wiki:CheckRequestContext context="prefs">
+         <wiki:Include page="PreferencesContent.jsp" />
+      </wiki:CheckRequestContext>
+
     </TD>
   </TR>
 
