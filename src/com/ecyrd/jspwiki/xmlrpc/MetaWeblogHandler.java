@@ -67,6 +67,8 @@ public class MetaWeblogHandler
             WikiPage entryPage = new WikiPage( pageName );
             entryPage.setAuthor( username );
 
+            WikiContext context = new WikiContext( m_engine, entryPage );
+
             StringBuffer text = new StringBuffer();
             text.append( "!"+content.get("title") );
             text.append( "\n\n" );
@@ -74,7 +76,7 @@ public class MetaWeblogHandler
 
             log.debug("Writing entry: "+text);
 
-            m_engine.saveText( entryPage, text.toString() );
+            m_engine.saveText( context, text.toString() );
         }
         catch( Exception e )
         {

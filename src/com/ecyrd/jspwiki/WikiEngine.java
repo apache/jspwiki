@@ -36,6 +36,11 @@ import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.UserProfile;
 
+import com.ecyrd.jspwiki.filters.PageFilter;
+
+import com.ecyrd.jspwiki.util.PriorityList;
+import com.ecyrd.jspwiki.util.ClassUtil;
+
 /**
  *  Provides Wiki services to the JSP page.
  *
@@ -150,6 +155,8 @@ public class WikiEngine
 
     /** The time when this engine was started. */
     private Date             m_startTime;
+
+    private PriorityList m_pageFilters = new PriorityList();
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -298,6 +305,7 @@ public class WikiEngine
             m_authorizationManager = new AuthorizationManager( this, props );
             m_userManager       = new UserManager( this, props );
 
+            initPageFilters( props );
             initReferenceManager();            
         }
         catch( Exception e )
@@ -395,6 +403,56 @@ public class WikiEngine
         m_pluginManager.enablePlugins( true );
     }
 
+    public static final String PROP_PAGEFILTER = "jspwiki.pageFilter.";
+
+    private void initPageFilters( Properties props )
+    {
+        for( Enumeration enum = props.propertyNames(); enum.hasMoreElements(); )
+        {
+            String name = (String) enum.nextElement();
+
+            if( name.startsWith( PROP_PAGEFILTER ) )
+            {
+                String className = props.getProperty( name );
+                try
+                {
+                    String pr = name.substring( PROP_PAGEFILTER.length() );
+               
+                    int priority = Integer.parseInt( pr );
+
+                    Class cl = ClassUtil.findClass( "com.ecyrd.jspwiki.filters",
+                                                    className );
+
+                    PageFilter filter = (PageFilter)cl.newInstance();
+
+                    filter.initialize( props );
+
+                    m_pageFilters.add( filter, priority );
+                    log.info("Added page filter "+cl.getName()+" with priority "+priority);
+                }
+                catch( NumberFormatException e )
+                {
+                    log.error("Priority must be an integer: "+name);                   
+                }
+                catch( ClassNotFoundException e )
+                {
+                    log.error("Unable to find the filter class: "+className);
+                }
+                catch( InstantiationException e )
+                {
+                    log.error("Cannot create filter class: "+className);
+                }
+                catch( IllegalAccessException e )
+                {
+                    log.error("You are not allowed to access class: "+className);
+                }
+                catch( ClassCastException e )
+                {
+                    log.error("Suggested class is not a PageFilter: "+className);
+                }
+            }
+        }
+    }
 
     /**
      *  Throws an exception if a property is not found.
@@ -481,6 +539,9 @@ public class WikiEngine
 
         return srcString;
      */
+        if( pageName == null )
+            return m_baseURL+"Wiki.jsp";
+
         return m_baseURL+"Wiki.jsp?page="+encodeName(pageName);
     }
 
@@ -1042,9 +1103,8 @@ public class WikiEngine
     }
 
     /**
-     *  Helper method for combining simple  textToHTML() and scanWikiLinks().
+     *  Helper method for doing the HTML translation.
      */
-
     private String textToHTML( WikiContext context, 
                                String pagedata, 
                                StringTransmutator localLinkHook,
@@ -1065,6 +1125,8 @@ public class WikiEngine
 
         try
         {
+            pagedata = doPreTranslateFiltering( context, pagedata );
+
             in = new TranslatorReader( context,
                                        new StringReader( pagedata ) );
 
@@ -1074,6 +1136,8 @@ public class WikiEngine
 
             if( !parseAccessRules ) in.disableAccessRules();
             result = FileUtil.readContents( in );
+
+            result = doPostTranslateFiltering( context, result );
         }
         catch( IOException e )
         {
@@ -1105,33 +1169,73 @@ public class WikiEngine
                                              scanWikiLinks( page, pageData ) );
     }
 
-    /**
-     *  Writes the WikiText of a page into the
-     *  page repository.
-     *
-     *  @param page Page name
-     *  @param text The Wiki markup for the page.
-     *  @deprecated
-     */
-
-    public void saveText( String page, String text )
+    private String doPreTranslateFiltering( WikiContext context, String pageData )
     {
-        WikiPage p = new WikiPage( page );
+        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        {
+            PageFilter f = (PageFilter) i.next();
 
-        saveText( p, text );
+            pageData = f.preTranslate( context, pageData );
+        }
+
+        return pageData;
+    }
+
+    private String doPostTranslateFiltering( WikiContext context, String pageData )
+    {
+        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        {
+            PageFilter f = (PageFilter) i.next();
+
+            pageData = f.postTranslate( context, pageData );
+        }
+
+        return pageData;
+    }
+
+    private String doPreSaveFiltering( WikiContext context, String pageData )
+    {
+        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        {
+            PageFilter f = (PageFilter) i.next();
+
+            pageData = f.preSave( context, pageData );
+        }
+
+        return pageData;
+    }
+
+    private void doPostSaveFiltering( WikiContext context, String pageData )
+    {
+        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        {
+            PageFilter f = (PageFilter) i.next();
+
+            f.postSave( context, pageData );
+        }
     }
 
     /**
      *  Writes the WikiText of a page into the
      *  page repository.
      *
-     *  @since 2.1.6.
-     *  @param page Page name
-     *  @param text The Wiki markup for the page.
+     *  @since 2.1.28
+     *  @param context The current WikiContext
+     *  @param text    The Wiki markup for the page.
      */
-    public void saveText( WikiPage page, String text )
+    public void saveText( WikiContext context, String text )
     {
+        WikiPage page = context.getPage();
+
+        if( page.getAuthor() == null )
+        {
+            UserProfile wup = context.getCurrentUser();
+
+            if( wup != null ) page.setAuthor( wup.getName() );
+        }
+
         text = TextUtil.normalizePostData(text);
+        text = doPreSaveFiltering( context, text );
 
         // Hook into cross reference collection.
         m_referenceManager.updateReferences( page.getName(), 
@@ -1140,6 +1244,8 @@ public class WikiEngine
         try
         {
             m_pageManager.putPageText( page, text );
+
+            doPostSaveFiltering( context, text );
         }
         catch( ProviderException e )
         {
@@ -1161,7 +1267,7 @@ public class WikiEngine
      */
     // FIXME: This is a terrible time waster, parsing the 
     // textual data every time it is used.
-
+    /*
     // FIXME: Not used
     public String getUserName( HttpServletRequest request )
     {
@@ -1207,7 +1313,7 @@ public class WikiEngine
 
         return author;
     }
-
+    */
     /**
      *  If no author name has been set, then use the 
      *  IP address, if allowed.  If no IP address is allowed,
@@ -1217,17 +1323,20 @@ public class WikiEngine
      */
 
     // FIXME: Not used
+    /*
     public String getValidUserName( HttpServletRequest request )
     {
         return m_userManager.getUserProfile(request).getName();
     }
-
+    */
 
     /**
      *  @param request The HTTP Servlet request associated with this
      *                 transaction.
      *  @since 1.5.1
+     *  @deprecated
      */
+    /*
     public void saveText( WikiPage page, String text, HttpServletRequest request )
     {
         text = TextUtil.normalizePostData(text);
@@ -1259,6 +1368,7 @@ public class WikiEngine
             }
         }
     }
+    */
 
     /**
      *  Returns the number of pages in this Wiki
@@ -1637,6 +1747,9 @@ public class WikiEngine
         context.setRequestContext( requestContext );
         context.setHttpRequest( request );
         context.setTemplate( template );
+
+        UserProfile user = getUserManager().getUserProfile( request );
+        context.setCurrentUser( user );
 
         return context;
     }

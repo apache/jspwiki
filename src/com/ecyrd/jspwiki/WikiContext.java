@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.auth.UserProfile;
+
 /**
  *  Provides state information throughout the processing of a page.  A
  *  WikiContext is born when the JSP pages that are the main entry
@@ -52,6 +54,8 @@ public class WikiContext
     Map        m_variableMap = new HashMap();
 
     HttpServletRequest m_request = null;
+
+    UserProfile m_currentUser;
 
     /** The VIEW context - the user just wants to view the page
         contents. */
@@ -242,5 +246,22 @@ public class WikiContext
     public String getTemplate()
     {
         return m_template;
+    }
+
+    /**
+     *  Sets the current user.
+     */
+    public void setCurrentUser( UserProfile wup )
+    {
+        m_currentUser = wup;
+    }
+
+    /**
+     *  Gets the current user.  May return null, in case the current
+     *  user has not yet been determined; or this is an internal system.
+     */
+    public UserProfile getCurrentUser()
+    {
+        return m_currentUser;
     }
 }

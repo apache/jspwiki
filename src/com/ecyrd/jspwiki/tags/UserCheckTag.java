@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
  *  Includes the content if an user check validates.
@@ -48,7 +49,7 @@ public class UserCheckTag
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        String user = engine.getUserName( (javax.servlet.http.HttpServletRequest)pageContext.getRequest() );
+        UserProfile user  = m_wikiContext.getCurrentUser();
 
         if( "true".equals(getExists()) && user != null )
         {

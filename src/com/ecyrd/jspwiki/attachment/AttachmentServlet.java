@@ -27,6 +27,7 @@ import java.io.*;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 // multipartrequest.jar imports:
@@ -228,7 +229,9 @@ public class AttachmentServlet
 
             nextPage        = multi.getURLParameter( "nextpage" );
             String wikipage = multi.getURLParameter( "page" );
-            String user     = m_engine.getValidUserName( req );
+
+            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+            UserProfile user    = context.getCurrentUser();
 
             //
             //  Go through all files being uploaded.
@@ -292,7 +295,10 @@ public class AttachmentServlet
                     att = new Attachment( wikipage, filename );
                 }
 
-                att.setAuthor( user );
+                if( user != null )
+                {
+                    att.setAuthor( user.getName() );
+                }
 
                 m_engine.getAttachmentManager().storeAttachment( att, in );
 

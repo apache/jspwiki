@@ -36,6 +36,7 @@ import java.util.HashMap;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
+import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -203,51 +204,7 @@ public class PluginManager
     private Class findPluginClass( String classname )
         throws ClassNotFoundException
     {
-        ClassLoader loader = getClass().getClassLoader();
-
-        try
-        {
-            return loader.loadClass( classname );
-        }
-        catch( ClassNotFoundException e )
-        {
-            for( Iterator i = m_searchPath.iterator(); i.hasNext(); )
-            {
-                String packageName = (String)i.next();
-
-                try
-                {
-                    return loader.loadClass( packageName + "." + classname );
-                }
-                catch( ClassNotFoundException ex )
-                {
-                    // This is okay, we go to the next package.
-                }
-            }
-
-            //
-            //  Nope, it wasn't on the normal plugin path.  Let's try tags.
-            //  We'll only accept tags that implement the WikiPluginTag
-            //
-            /*
-              FIXME: Not functioning, need to create a PageContext
-            try
-            {
-                Class c = loader.loadClass( "com.ecyrd.jspwiki.tags."+classname );
-
-                if( c instanceof WikiPluginTag )
-                {
-                    return new TagPlugin( c );
-                }
-            }
-            catch( ClassNotFoundException exx )
-            {
-                // Just fall through, and let the execution end with stuff.
-            }
-            */
-        }
-
-        throw new ClassNotFoundException("Plugin not in "+PROP_SEARCHPATH);
+        return ClassUtil.findClass( m_searchPath, classname );
     }
 
     /**

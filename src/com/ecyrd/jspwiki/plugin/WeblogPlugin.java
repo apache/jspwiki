@@ -151,7 +151,7 @@ public class WeblogPlugin implements WikiPlugin
         
         try
         {
-            List blogEntries = findBlogEntries( context.getEngine().getPageManager(),
+            List blogEntries = findBlogEntries( engine.getPageManager(),
                                                 weblogName,
                                                 startTime.getTime(),
                                                 stopTime.getTime() );
@@ -175,9 +175,13 @@ public class WeblogPlugin implements WikiPlugin
                 sb.append("<div class=\"weblogentry\">");
 
                 //
-                //  Append the text of the latest version.
+                //  Append the text of the latest version.  Reset the
+                //  context to that page.
                 //
-                sb.append( engine.getHTML( context, 
+
+                WikiContext entryCtx = new WikiContext( engine, p );
+
+                sb.append( engine.getHTML( entryCtx, 
                                            engine.getPage(p.getName()) ) );
                 
                 sb.append("</div>\n");
