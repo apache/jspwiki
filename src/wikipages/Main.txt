@@ -27,6 +27,7 @@ You have some pages set up for you:
 * [MultipleWikis] - If you want to run multiple Wikis using the least amount of effort.
 * [Page aliases] and redirecting.
 * [PageFilters] - for more complex processing.
+* [WikiForms] - for putting interactivity in your pages
 
 !Miscallaneous
 
