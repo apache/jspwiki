@@ -122,4 +122,10 @@ public class TestEngine extends WikiEngine
         return tmpFile;
     }
 
+    public void saveText( String pageName, String content )
+    {
+        WikiContext context = new WikiContext( this, new WikiPage(pageName) );
+
+        saveText( context, content );
+    }
 }
