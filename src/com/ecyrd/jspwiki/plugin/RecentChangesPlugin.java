@@ -120,7 +120,7 @@ public class RecentChangesPlugin
                 String link = linkProcessor.makeLink( (pageref instanceof Attachment) ? 
                                                       TranslatorReader.ATTACHMENT : TranslatorReader.READ,
                                                       pageref.getName(),
-                                                      pageref.getName() );
+                                                      engine.beautifyTitle(pageref.getName()) );
                                                       
                 out.write("<tr>\n");
 
