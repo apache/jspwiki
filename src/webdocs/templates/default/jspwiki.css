@@ -146,9 +146,12 @@ div.index .section { color:red; }
 /*  Table of contents plugin */
 
 .toc {
-     background: #d0d0ff;
+     background: #e0e0ff;
      border: 1px;
      padding: 8px;
+}
+
+.toc h4 {
 }
 
 .toc ul {
