@@ -335,14 +335,14 @@
   <tag>
     <name>Plugin</name>
     <tagclass>com.ecyrd.jspwiki.tags.PluginTag</tagclass>
-    <bodycontent>empty</bodycontent>
+    <bodycontent>JSP</bodycontent>
     <attribute>
        <name>plugin</name>
        <required>true</required>
     </attribute>
     <attribute>
        <name>args</name>
-       <required>true</required>
+       <required>false</required>
     </attribute>
   </tag>
 
