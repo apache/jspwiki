@@ -10,7 +10,7 @@ then
     private=0
 else
     echo "Installing in private"
-    TOMCAT_HOME=$HOME/jakarta-tomcat-3.2.3
+    TOMCAT_HOME=$HOME/jakarta-tomcat-3.2.2
     private=1
 fi
 
@@ -20,7 +20,7 @@ ant clean
 ant war
 
 rm -rf $TOMCAT_HOME/webapps/JSPWiki
-cp /tmp/jalkanen/JSPWiki/*.war $TOMCAT_HOME/webapps
+cp /tmp/jalkanen/JSPWiki/install/*.war $TOMCAT_HOME/webapps
 
 cd $TOMCAT_HOME/webapps
 rm -rf JSPWiki
