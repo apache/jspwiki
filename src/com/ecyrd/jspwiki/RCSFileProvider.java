@@ -50,12 +50,16 @@ public class RCSFileProvider
 {
     private String m_checkinCommand  = "ci -q -mx -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
-
+    private String m_logCommand      = "rlog -h %s";
+    private String m_checkoutVersionCommand = "co -p -r1.%v %s";
+    
     private static final Category   log = Category.getInstance(RCSFileProvider.class);
 
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";
     public static final String    PROP_CHECKOUT = "jspwiki.rcsFileProvider.checkoutCommand";
-
+    public static final String    PROP_LOG      = "jspwiki.rcsFileProvider.logCommand";
+    public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
+    
     public void initialize( Properties props )
         throws NoRequiredPropertyException
     {
@@ -64,14 +68,18 @@ public class RCSFileProvider
 
         m_checkinCommand = props.getProperty( PROP_CHECKIN, m_checkinCommand );
         m_checkoutCommand = props.getProperty( PROP_CHECKOUT, m_checkoutCommand );
-
+        m_logCommand     = props.getProperty( PROP_LOG, m_logCommand );
+        m_checkoutVersionCommand = props.getProperty( PROP_CHECKOUTVERSION, m_checkoutVersionCommand );
+        
         File rcsdir = new File( getPageDirectory(), "RCS" );
 
         if( !rcsdir.exists() )
             rcsdir.mkdirs();
 
-        log.info("checkin="+m_checkinCommand);
-        log.info("checkout="+m_checkoutCommand);
+        log.debug("checkin="+m_checkinCommand);
+        log.debug("checkout="+m_checkoutCommand);
+        log.debug("log="+m_logCommand);
+        log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
     public WikiPage getPageInfo( String page )
@@ -80,8 +88,10 @@ public class RCSFileProvider
 
         try
         {
-            String cmd = "rlog -h "+page+FILE_EXT;
+            String   cmd = m_logCommand;
             String[] env = new String[0];
+
+            cmd = TranslatorReader.replaceString( cmd, "%s", page+FILE_EXT );
             log.debug("Command = '"+cmd+"'");
 
             Process process = Runtime.getRuntime().exec( cmd, env, new File(getPageDirectory()) );
@@ -125,10 +135,11 @@ public class RCSFileProvider
         log.debug("Fetching specific version "+version+" of page "+page);
         try
         {
-            String cmd = m_checkinCommand;
+            String cmd = m_checkoutVersionCommand;
             String[] env = new String[0];
 
-            cmd = "co -p -r1."+version+" "+page+FILE_EXT;
+            cmd = TranslatorReader.replaceString( cmd, "%s", page+FILE_EXT );
+            cmd = TranslatorReader.replaceString( cmd, "%v", Integer.toString(version ) );
 
             log.debug("Command = '"+cmd+"'");
 
@@ -149,7 +160,7 @@ public class RCSFileProvider
         }
         catch( Exception e )
         {
-            log.error("RCS checkin failed",e);
+            log.error("RCS checkout failed",e);
         }
         
         return result.toString();
