@@ -1,3 +1,11 @@
+2004-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.117
+
+        * Patch from Paul Wagland to fix issues with Lucene and
+        CachingProvider (it would not notice external modifications of pages).
+        Thanks!
+
 2004-10-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.116
