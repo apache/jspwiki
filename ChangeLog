@@ -2,6 +2,9 @@
 
         * v2.1.74.
 
+        * Bug fix: RCSFileProvider would erroneusly report fetching as
+        failed in certain rare conditions.
+
         * ReferenceManager now keeps its lists sorted.  This has the
         effect of having backlink lists (referred-by), Unreferenced pages,
         etc.  sorted as well.  Requested by John Volkar.
