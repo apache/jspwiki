@@ -2,6 +2,8 @@
 
         * v2.1.58.
 
+        * InsertPage plugin now supports "class" parameter.
+
         * WeblogPlugin now also supports the "page" parameter.
 
 2003-08-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
