@@ -46,6 +46,13 @@ public interface WikiPageProvider
      */
 
     public Collection getAllPages();
+
+    /**
+     *  Returns version history.  Each element should be
+     *  a WikiPage.
+     */
+
+    public Collection getVersionHistory( String page );
 }
 
 
