@@ -1,3 +1,10 @@
+2004-10-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.113
+
+        * Bug fix: 304 check in AttachmentServlet was wrong.  Reported by 
+        Yogesh Patel.
+
 2004-10-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.112
