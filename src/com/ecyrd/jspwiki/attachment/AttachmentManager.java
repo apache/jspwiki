@@ -24,29 +24,51 @@ import java.util.Properties;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 
+/**
+ *  Provides facilities for handling attachments.
+ *  
+ *  @author Janne Jalkanen
+ *  @since 1.9.28
+ */
 public class AttachmentManager
 {
     public static final String  PROP_PROVIDER = "jspwiki.attachmentProvider";
 
     static Category log = Category.getInstance( AttachmentManager.class );
-    private AttachmentProvider m_provider;
+    private WikiAttachmentProvider m_provider;
 
     /**
      *  Creates a new AttachmentManager.  Note that creation will never fail,
      *  but it's quite likely that attachments do not function.
      */
+
+    // FIXME: Perhaps this should fail somehow.
     public AttachmentManager( Properties props )
     {
         String classname = props.getProperty( PROP_PROVIDER );
 
+        //
+        //  If no class defined, then will just simply fail.
+        //
+        if( classname == null )
+        {
+            log.info( "No attachment provider defined - disabling attachment support." );
+            return;
+        }
+
+        //
+        //  Create and initialize the provider.
+        //
         try
         {
             Class providerclass = WikiEngine.findWikiClass( classname, 
                                                             "com.ecyrd.jspwiki.providers" );
 
-            m_provider = (AttachmentProvider)providerclass.newInstance();
+            m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
             m_provider.initialize( props );
         }
@@ -86,12 +108,12 @@ public class AttachmentManager
     {
     }
 
-    public Attachment getAttachment( String id )
+    public Attachment getAttachmentInfo( String name )
     {
-        return null; // FIXME:
+        return m_provider.getAttachmentInfo( name, WikiProvider.LATEST_VERSION );
     }
 
-    public AttachmentProvider getCurrentProvider()
+    public WikiAttachmentProvider getCurrentProvider()
     {
         return m_provider;
     }
