@@ -26,6 +26,7 @@ You have some pages set up for you:
 * [JSPWikiTags] - A list of tags for those who want to make their own [WikiTemplates].
 * [MultipleWikis] - If you want to run multiple Wikis using the least amount of effort.
 * [Page aliases] and redirecting.
+* [PageFilters] - for more complex processing.
 
 !Miscallaneous
 

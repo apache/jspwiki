@@ -1,3 +1,12 @@
+2003-11-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.88.
+
+        * Implemented a completely new PageFilter initialization
+        system. Please see the new PageFilters page in the documentation.
+        NB: The Filter interface did not change, but any setup
+        instructions did.
+
 2003-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.87.
