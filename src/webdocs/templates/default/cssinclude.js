@@ -26,7 +26,8 @@
         sheet = "jspwiki_ie.css";
     }
 
-    document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\">");
+    document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/jspwiki.css\" />");
+    document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
 
 // end hiding contents from old browsers -->
 </script>
