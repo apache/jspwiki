@@ -44,10 +44,19 @@ public class UserProfile
     public static final int CONTAINER = 2;  // Container has done auth for us.
     public static final int PASSWORD  = 3;
 
+
     private String m_password = null;
 
     public UserProfile()
     {
+    }
+
+    /**
+     *  Returns true, if the user has been authenticated properly.
+     */
+    public boolean isAuthenticated()
+    {
+        return m_loginStatus >= CONTAINER;
     }
 
     /*
