@@ -206,6 +206,8 @@ public class RPCHandlerUTF8
 
         Vector result = new Vector();
 
+        // FIXME: Contains far too much common with RPCHandler.  Refactor!
+
         //
         //  Add local links.
         //
@@ -215,7 +217,15 @@ public class RPCHandlerUTF8
             Hashtable ht = new Hashtable();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(link) );
+
+            if( m_engine.pageExists(link) )
+            {
+                ht.put( "href", m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(link) );
+            }
+            else
+            {
+                ht.put( "href", m_engine.getBaseURL()+"Edit.jsp?page="+m_engine.encodeName(link) );
+            }
 
             result.add( ht );
         }

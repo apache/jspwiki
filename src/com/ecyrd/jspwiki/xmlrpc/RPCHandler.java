@@ -260,7 +260,26 @@ public class RPCHandler
             Hashtable ht = new Hashtable();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(link) );
+
+            //
+            //  FIXME: This is a kludge.  The link format should really be queried
+            //  from the TranslatorReader itself.  Also, the link format should probably
+            //  have information on whether the page exists or not.
+            //
+
+            //
+            //  FIXME: The current link collector interface is not very good, since
+            //  it causes this.
+            //
+
+            if( m_engine.pageExists(link) )
+            {
+                ht.put( "href", m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(link) );
+            }
+            else
+            {
+                ht.put( "href", m_engine.getBaseURL()+"Edit.jsp?page="+m_engine.encodeName(link) );
+            }
 
             result.add( ht );
         }
