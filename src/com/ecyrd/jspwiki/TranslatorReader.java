@@ -23,8 +23,10 @@ public class TranslatorReader extends Reader
 
     private static Category log = Category.getInstance( TranslatorReader.class );
 
-    private boolean        m_iscode = false;
-    private int            m_listlevel = 0;
+    private boolean        m_iscode       = false;
+    private boolean        m_isbold       = false;
+    private boolean        m_isitalic     = false;
+    private int            m_listlevel    = 0;
     private int            m_numlistlevel = 0;
 
     private WikiEngine     m_engine;
@@ -234,6 +236,9 @@ public class TranslatorReader extends Reader
         return line;
     }
 
+    /**
+     *  Checks if this line is a heading line.
+     */
     private String setHeadings( String line )
     {
         if( line.startsWith("!!!") )
@@ -252,6 +257,9 @@ public class TranslatorReader extends Reader
         return line;
     }
 
+    /**
+     *  Translates horizontal rulers.
+     */
     private String setHR( String line )
     {
         StringBuffer buf = new StringBuffer();
@@ -273,10 +281,47 @@ public class TranslatorReader extends Reader
         return line;
     }
 
+    private String closeAll()
+    {
+        StringBuffer buf = new StringBuffer();
+
+        if( m_isbold )
+        {
+            buf.append("</B>");
+            m_isbold = false;
+        }
+
+        if( m_isitalic )
+        {
+            buf.append("</I>");
+            m_isitalic = false;
+        }
+
+        for( ; m_listlevel > 0; m_listlevel-- )
+        {
+            buf.append( "</UL>\n" );
+        }
+
+        for( ; m_numlistlevel > 0; m_numlistlevel-- )
+        {
+            buf.append( "</OL>\n" );
+        }
+
+        if( m_iscode ) 
+        {
+            buf.append("</PRE>\n");
+            m_iscode = false;
+        }
+
+        return buf.toString();
+    }
+
+    /**
+     *  Sets bold text.
+     */
     private String setBold( String line )
     {
         StringBuffer buf = new StringBuffer();
-        boolean      ison = false;
 
         for( int i = 0; i < line.length(); i++ )
         {
@@ -284,8 +329,8 @@ public class TranslatorReader extends Reader
             {
                 if( line.charAt(i+1) == '_' )
                 {
-                    buf.append( ison ? "</B>" : "<B>" );
-                    ison = !ison;
+                    buf.append( m_isbold ? "</B>" : "<B>" );
+                    m_isbold = !m_isbold;
                     i++;
                 }
                 else buf.append( "_" );
@@ -293,15 +338,15 @@ public class TranslatorReader extends Reader
             else buf.append( line.charAt(i) );
         }
 
-        // Make sure we don't forget it open.
-        if( ison )
-        {
-            buf.append("</B>");
-        }
-
         return buf.toString();
     }
 
+    /**
+     *  Counts how many consecutive characters of a certain type exists on the line.
+     *  @param line String of chars to check.
+     *  @param startPos Position to start reading from.
+     *  @param char Character to check for.
+     */
     private int countChar( String line, int startPos, char c )
     {
         int count;
@@ -311,6 +356,9 @@ public class TranslatorReader extends Reader
         return count;
     }
 
+    /**
+     *  Returns a new String that has char c n times.
+     */
     private String repeatChar( char c, int n )
     {
         StringBuffer sb = new StringBuffer();
@@ -377,7 +425,6 @@ public class TranslatorReader extends Reader
     private String setItalic( String line )
     {
         StringBuffer buf = new StringBuffer();
-        boolean      ison = false;
 
         for( int i = 0; i < line.length(); i++ )
         {
@@ -385,19 +432,13 @@ public class TranslatorReader extends Reader
             {
                 if( line.charAt(i+1) == '\'' )
                 {
-                    buf.append( ison ? "</I>" : "<I>" );
-                    ison = !ison;
+                    buf.append( m_isitalic ? "</I>" : "<I>" );
+                    m_isitalic = !m_isitalic;
                     i++;
                 }
                 else buf.append( "'" );
             }
             else buf.append( line.charAt(i) );
-        }
-
-        // Make sure we don't forget it open.
-        if( ison )
-        {
-            buf.append("</I>");
         }
 
         return buf.toString();
@@ -537,27 +578,7 @@ public class TranslatorReader extends Reader
 
             if( val == -1 )
             {
-                StringBuffer buf = new StringBuffer();
-
-                // close up everything
-
-                for( ; m_listlevel > 0; m_listlevel-- )
-                {
-                    buf.append( "</UL>\n" );
-                }
-
-                for( ; m_numlistlevel > 0; m_numlistlevel-- )
-                {
-                    buf.append( "</OL>\n" );
-                }
-
-                if( m_iscode ) 
-                {
-                    buf.append("</PRE>\n");
-                    m_iscode = false;
-                }
-
-                m_data = new StringReader( buf.toString() );
+                m_data = new StringReader( closeAll() );
 
                 val = m_data.read();
             }
