@@ -4,6 +4,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
+<%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 
 <%!
     public void jspInit()
@@ -13,6 +14,7 @@
 
     Category log = Category.getInstance("JSPWiki");
     WikiEngine wiki;
+    static int MAX_CHARACTERS = 4000;
 %>
 
 <%
@@ -30,6 +32,8 @@
     String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
     String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
 %>
+<oscache:cache time="300">
+
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns="http://purl.org/rss/1.0/"
          xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -103,7 +107,7 @@
             if( firstLine > 0 )
             {
                 int maxlen = pageText.length();
-                if( maxlen > 1000 ) maxlen = 1000; // Assume 112 bytes of growth.
+                if( maxlen > MAX_CHARACTERS ) maxlen = MAX_CHARACTERS;
 
                 if( maxlen > 0 )
                 {
@@ -111,7 +115,7 @@
                                                 pageText.substring( firstLine+1,
                                                                     maxlen ).trim() );
                     itemBuffer.append( RSSGenerator.format(pageText) );
-                    if( maxlen == 1000 ) itemBuffer.append( "..." );
+                    if( maxlen == MAX_CHARACTERS ) itemBuffer.append( "..." );
                 }
                 else
                 {
@@ -196,6 +200,7 @@
   <link><%=searchURL%></link>
 </textinput>
 </rdf:RDF>
+</oscache:cache>
 
 <%
     NDC.pop();
