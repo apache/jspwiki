@@ -479,7 +479,7 @@ public class TranslatorReader extends Reader
                     // It's an interwiki link
 
                     String extWiki = reallink.substring( 0, interwikipoint );
-                    String wikiPage = cleanLink(reallink.substring( interwikipoint+1 ));
+                    String wikiPage = m_engine.encodeName(reallink.substring( interwikipoint+1 ));
 
                     String urlReference = m_engine.getInterWikiURL( extWiki );
 
@@ -811,11 +811,13 @@ public class TranslatorReader extends Reader
                         {
                             if( i < line.length()-1 && line.charAt(i+1) == '|' )
                             {
+                                // It's a heading.
                                 tableLine.append( "<TD CLASS=\"tablehead\">" );
                                 i++;
                             }
                             else
                             {
+                                // It's a normal thingy.
                                 tableLine.append( "<TD>" );
                             }
                         }
