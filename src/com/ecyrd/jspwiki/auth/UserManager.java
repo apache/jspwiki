@@ -176,6 +176,7 @@ public class UserManager
      */
     public UserProfile getUserProfile( String name )
     {
+        if( m_database == null ) return null;
         WikiPrincipal up = m_database.getPrincipal( name );
 
         if( !(up instanceof UserProfile) )
