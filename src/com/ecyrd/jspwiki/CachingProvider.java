@@ -102,11 +102,7 @@ public class CachingProvider
             log.debug("Page "+page+" never seen.");
             String text = m_provider.getPageText( page );
 
-            item = new CacheItem();
-            item.m_page = m_provider.getPageInfo( page );
-            item.m_text = new SoftReference( text );
-
-            m_cache.put( page, item );
+            addPage( page, text );
 
             m_cacheMisses++;
 
@@ -144,7 +140,11 @@ public class CachingProvider
         // FIXME: possible race condition here.  Someone might still get
         // the old version.
 
-        m_cache.remove( page.getName() );
+        synchronized(this)
+        {
+            m_cache.remove( page.getName() );
+            addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
+        }
     }
 
     // FIXME: This MUST be cached somehow.
@@ -165,11 +165,14 @@ public class CachingProvider
 
             for( Iterator i = m_cache.keySet().iterator(); i.hasNext(); )
             {
-                CacheItem item = new CacheItem();
-                item.m_page = (WikiPage) i.next();
-                item.m_text = new SoftReference( null );
+                synchronized(this)
+                {
+                    CacheItem item = new CacheItem();
+                    item.m_page = (WikiPage) i.next();
+                    item.m_text = new SoftReference( null );
 
-                m_cache.put( item.m_page.getName(), item );
+                    m_cache.put( item.m_page.getName(), item );
+                }
             }
         }
         else
@@ -182,6 +185,18 @@ public class CachingProvider
         }
 
         return all;
+    }
+
+    // Null text for no page
+    private synchronized CacheItem addPage( String pageName, String text )
+    {
+        CacheItem item = new CacheItem();
+        item.m_page = m_provider.getPageInfo( pageName );
+        item.m_text = new SoftReference( text );
+
+        m_cache.put( pageName, item );
+
+        return item;
     }
 
     public Collection getAllChangedSince( Date date )
@@ -205,11 +220,7 @@ public class CachingProvider
 
         if( item == null )
         {
-            item = new CacheItem();
-            item.m_page = m_provider.getPageInfo( page );
-            item.m_text = new SoftReference( null );
-
-            m_cache.put( page, item );
+            item = addPage( page, null );
         }
 
         return item.m_page;
