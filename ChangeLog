@@ -2,6 +2,9 @@
 
         * v2.1.64.
 
+        * Added two new variables: $attachmentProvider and
+        $attachmentProviderDescription to match the pageprovider ones.
+        
         * Fixed problem with AclImpl returning late - if we use implies()
         we must return at the first matching check.
 
