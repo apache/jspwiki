@@ -2,12 +2,17 @@
 
 <%-- Inserts page content. --%>
 
+      <%-- If the page is an older version, then offer a note and a possibility
+           to restore this version as the latest one. --%>
+
       <wiki:CheckVersion mode="notlatest">
          <FONT COLOR="red">
             <P CLASS="versionnote">This is version <wiki:PageVersion/>.  
-            It is not the current version, and thus it cannot be edited.  
-            <wiki:LinkTo>(Back to current version)</wiki:LinkTo></P> 
+            It is not the current version, and thus it cannot be edited.<BR/>
+            <wiki:LinkTo>[Back to current version]</wiki:LinkTo>&nbsp;&nbsp;
+            <wiki:EditLink version="this">[Restore this version]</wiki:EditLink></P>
          </FONT>
+         <HR />
       </wiki:CheckVersion>
 
       <%-- Inserts no text if there is no page. --%>
