@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  *  Provides state information throughout the processing of a page.  A
  *  WikiContext is born when the JSP pages that are the main entry
@@ -47,6 +49,8 @@ public class WikiContext
     String     m_requestContext = VIEW;
 
     Map        m_variableMap = new HashMap();
+
+    HttpServletRequest m_request = null;
 
     /** The VIEW context - the user just wants to view the page
         contents. */
@@ -163,4 +167,53 @@ public class WikiContext
         m_variableMap.put( key, data );
     }
 
+    /**
+     *  This method will safely return any HTTP parameters that 
+     *  might have been defined.  You should use this method instead
+     *  of peeking directly into the result of getHttpRequest(), since 
+     *  this method is smart enough to do all of the right things,
+     *  figure out UTF-8 encoded parameters, etc.
+     *
+     *  @since 2.0.13.
+     *  @param paramName Parameter name to look for.
+     *  @return HTTP parameter, or null, if no such parameter existed.
+     */
+    public String getHttpParameter( String paramName )
+    {
+        String result = null;
+
+        if( m_request != null )
+        {
+            result = m_engine.safeGetParameter( m_request, paramName );
+        }
+
+        return result;
+    }
+
+    /**
+     *  If the request originated from a HTTP server,
+     *  the HTTP request is stored here.
+     *
+     *  @param req The HTTP servlet request.
+     *
+     *  @since 2.0.13.
+     */
+    public void setHttpRequest( HttpServletRequest req )
+    {
+        m_request = req;
+    }
+
+    /**
+     *  If the request did originate from a HTTP request,
+     *  then the HTTP request can be fetched here.  However, it the request
+     *  did NOT originate from a HTTP request, then this method will
+     *  return null, and YOU SHOULD CHECK FOR IT!
+     *
+     *  @return Null, if no HTTP request was done.
+     *  @since 2.0.13.
+     */
+    public HttpServletRequest getHttpRequest()
+    {
+        return m_request;
+    }
 }

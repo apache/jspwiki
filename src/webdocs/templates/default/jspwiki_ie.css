@@ -82,3 +82,14 @@ P.locknote { color: red;
              padding: 12px 12px 12px 12px;
              }
 
+/* For the CalendarTag */
+TABLE.calendar  { font-size: 80%; }
+TABLE.calendar TD { text-align: center; }
+
+TABLE.calendar TD.othermonth { color: #707070; }
+
+TABLE.calendar TD.link { background: #E0E0E0; }
+
+TABLE.calendar TR.month { font-size: 120%;
+                          font-family: sans-serif; }
+TABLE.calendar TR.weekdays { font-color: #FF0000; }

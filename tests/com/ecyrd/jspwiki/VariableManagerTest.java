@@ -133,6 +133,38 @@ public class VariableManagerTest extends TestCase
         assertEquals( PAGE_NAME, res );
     }
 
+    public void testExpand1()
+        throws Exception
+    {
+        String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}..." );
+
+        assertEquals( "Testing "+PAGE_NAME+"...", res );
+    }
+
+    public void testExpand2()
+        throws Exception
+    {
+        String res = m_variableManager.expandVariables( m_context, "{$pagename} tested..." );
+
+        assertEquals( PAGE_NAME+" tested...", res );
+    }
+
+    public void testExpand3()
+        throws Exception
+    {
+        String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}, {$applicationname}" );
+
+        assertEquals( "Testing "+PAGE_NAME+", JSPWiki", res );
+    }
+
+    public void testExpand4()
+        throws Exception
+    {
+        String res = m_variableManager.expandVariables( m_context, "Testing {}, {{{}" );
+
+        assertEquals( "Testing {}, {{{}", res );
+    }
+
     public static Test suite()
     {
         return new TestSuite( VariableManagerTest.class );

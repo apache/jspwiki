@@ -73,6 +73,7 @@
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     wikiContext.setRequestContext( WikiContext.VIEW );
+    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,

@@ -33,6 +33,18 @@
   </tag>  
 
   <tag>
+    <name>Calendar</name>
+    <tagclass>com.ecyrd.jspwiki.tags.CalendarTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>pageformat</name>
+    </attribute>
+    <attribute>
+       <name>urlformat</name>
+    </attribute>
+  </tag>  
+
+  <tag>
     <name>CheckLock</name>
     <tagclass>com.ecyrd.jspwiki.tags.CheckLockTag</tagclass>
     <teiclass>com.ecyrd.jspwiki.tags.CheckLockInfo</teiclass>

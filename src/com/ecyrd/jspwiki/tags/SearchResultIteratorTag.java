@@ -59,27 +59,30 @@ public class SearchResultIteratorTag
 
     public final int doStartTag()
     {
+        m_count       = 0;
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
                                                                 PageContext.REQUEST_SCOPE );
 
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
+        return nextResult();
+    }
 
-        page = m_wikiContext.getPage();
-
+    private int nextResult()
+    {
         if( m_iterator.hasNext() && m_count++ < m_maxItems )
         {
             SearchResult r = (SearchResult) m_iterator.next();
 
-            WikiContext context = new WikiContext( engine, r.getPage() );
+            WikiContext context = new WikiContext( m_wikiContext.getEngine(), r.getPage() );
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(),
                                       r );
+
+            return EVAL_BODY_TAG;
         }
 
-        return EVAL_BODY_TAG;
+        return SKIP_BODY;
     }
 
     public int doAfterBody()
@@ -99,22 +102,6 @@ public class SearchResultIteratorTag
             }
         }
 
-        if( m_iterator.hasNext() && m_count++ < m_maxItems )
-        {
-            SearchResult r = (SearchResult) m_iterator.next();
-
-            WikiContext context = new WikiContext( m_wikiContext.getEngine(), 
-                                                   r.getPage() );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(),
-                                      r );
-            return EVAL_BODY_TAG;
-        }
-        else
-        {
-            return SKIP_BODY;
-        }
+        return nextResult();
     }
 }

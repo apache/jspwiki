@@ -1,9 +1,57 @@
+2003-01-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.16.
+
+        * Changed the WikiPageProvider and WikiAttachmentProvider
+        interfaces: getVersionHistory() should now always return a List
+        instead of Collection.  All providers did this anyway, but for
+        some strange reason I never remembered to update the return type.
+        Logically a List is correct, since the result needs to be ordered.
+        Sorry to everyone whose custom provider broke!
+
+        * CachingProvider now checks the cache first when called with
+        pageExists().  Suggested by Sulka Haro.
+
+        * Removed a couple of deprecated methods from WikiEngine.
+
+2003-01-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.15.
+
+        * Added new variable "uptime", and WikiEngine.getStartTime().
+
+2003-01-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.14.
+
+        * SearchResultIteratorTag would crash if you hit "reload".  This
+        was because the counter would never get reset between two
+        consecutive refreshes, and Tomcat 4 pools tags.
+
+2003-01-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.13.
+
+        * WeblogPlugin and CalendarTag enhanced to work even better
+        together: WeblogPlugin supports now the 'startDate' parameter,
+        whereas CalendarTag supports an 'urlformat' parameter.
+
+        * WikiContext now stores the incoming HTTP request as well.  This
+        allows you to write plugins that can read the HTTP parameters as
+        well, for example.  Please see the note in
+        WikiContext.getHttpParameter(). 
+
+2003-01-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Added CalendarTag.  It's still in its very infancy, so it might
+        not be very useful to others.
+
 2003-01-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.12.
 
         * Diff.jsp did not use the templateDir property correctly.  Oops.
-        Reported by Steven Noels, I think.
+        Reported by Robert McGovern.
 
         * Added Expires, Last-Modified, and Cache-Control headers to
         Edit.jsp responses - this should allow certain versions of

@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 import java.io.IOException;
 import org.apache.log4j.Category;
@@ -88,6 +89,27 @@ public class CachingProvider
 
     public boolean pageExists( String page )
     {
+        CacheItem item = (CacheItem)m_cache.get( page );
+
+        //
+        //  A null item means that the page either does not
+        //  exist, or has not yet been cached; a non-null
+        //  means that the page does exist.
+        //
+        if( item != null )
+        {
+            return true;
+        }
+
+        //
+        //  We could add the page to the cache here as well,
+        //  but in order to understand whether that is a
+        //  good thing or not we would need to analyze
+        //  the JSPWiki calling patterns extensively.  Presumably
+        //  it would be a good thing if pageExists() is called
+        //  many times before the first getPageText() is called,
+        //  and the whole page is cached.
+        //
         return m_provider.pageExists( page );
     }
 
@@ -283,12 +305,20 @@ public class CachingProvider
         }        
         else
         {
+            System.out.println("OLD PAGEINFO: "+page+", v="+version);
+            try { 
+                throw new Exception("foo"); 
+            } 
+            catch( Exception e ) { 
+                e.printStackTrace(System.out); 
+            }
+
             // We do not cache old versions.
             return m_provider.getPageInfo( page, version );
         }
     }
 
-    public Collection getVersionHistory( String page )
+    public List getVersionHistory( String page )
         throws ProviderException
     {
         return m_provider.getVersionHistory( page );
@@ -297,8 +327,8 @@ public class CachingProvider
     public String getProviderInfo()
     {              
         return("Real provider: "+m_provider.getClass().getName()+
-               "<BR>Cache misses: "+m_cacheMisses+
-               "<BR>Cache hits: "+m_cacheHits);
+               "<BR />Cache misses: "+m_cacheMisses+
+               "<BR />Cache hits: "+m_cacheHits);
     }
 
     /**

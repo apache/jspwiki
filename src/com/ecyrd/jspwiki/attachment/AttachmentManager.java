@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Collection;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -245,7 +246,7 @@ public class AttachmentManager
         m_provider.putAttachmentData( att, in );
     }
 
-    public Collection getVersionHistory( String attachmentName )
+    public List getVersionHistory( String attachmentName )
         throws ProviderException
     {
         if( m_provider == null )

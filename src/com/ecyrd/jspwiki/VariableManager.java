@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki;
 
 import java.util.Properties;
 import java.util.Iterator;
+import java.util.Date;
 import org.apache.log4j.Category;
 
 /**
@@ -72,6 +73,68 @@ public class VariableManager
         String varName = link.substring(2,link.length()-1);
 
         return getValue( context, varName.trim() );
+    }
+
+    /**
+     *  This method does in-place expansion of any variables.  However,
+     *  the expansion is not done twice, that is, a variable containing text $variable
+     *  will not be expanded.
+     *  <P>
+     *  The variables should be in the same format ({$variablename} as in the web 
+     *  pages.
+     *
+     *  @param context The WikiContext of the current page.
+     *  @param source  The source string.
+     */
+    // FIXME: somewhat slow.
+    public String expandVariables( WikiContext context,
+                                   String      source )
+    {
+        StringBuffer result = new StringBuffer();
+
+        for( int i = 0; i < source.length(); i++ )
+        {
+            if( source.charAt(i) == '{' )
+            {
+                if( i < source.length()-2 && source.charAt(i+1) == '$' )
+                {
+                    int end = source.indexOf( '}', i );
+
+                    if( end != -1 )
+                    {
+                        String varname = source.substring( i+2, end );
+                        String value;
+
+                        try
+                        {
+                            value = getValue( context, varname );
+                        }
+                        catch( NoSuchVariableException e )
+                        {
+                            value = e.getMessage();
+                        }
+                        catch( IllegalArgumentException e )
+                        {
+                            value = e.getMessage();
+                        }
+
+                        result.append( value );
+                        i = end;
+                        continue;
+                    }
+                }
+                else
+                {
+                    result.append( '{' );
+                }
+            }
+            else
+            {
+                result.append( source.charAt(i) );
+            }
+        }
+
+        return result.toString();
     }
 
     /**
@@ -154,6 +217,18 @@ public class VariableManager
         else if( name.equals("baseurl") )
         {
             res = context.getEngine().getBaseURL();
+        }
+        else if( name.equals("uptime") )
+        {
+            Date now = new Date();
+            long secondsRunning = (now.getTime() - context.getEngine().getStartTime().getTime())/1000L;
+
+            long seconds = secondsRunning % 60;
+            long minutes = (secondsRunning /= 60) % 60;
+            long hours   = (secondsRunning /= 60) % 24;
+            long days    = secondsRunning /= 24;
+
+            return days+"d, "+hours+"h "+minutes+"m "+seconds+"s";
         }
         else
         {

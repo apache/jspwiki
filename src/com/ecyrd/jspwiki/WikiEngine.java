@@ -159,7 +159,8 @@ public class WikiEngine
     /** The default flags used when running data through a TranslatorReader. */
     private static final int DEFAULT_TRANSLATION_FLAGS = 0x0;
 
-
+    /** The time when this engine was started. */
+    private Date             m_startTime;
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -252,7 +253,9 @@ public class WikiEngine
     private void initialize( Properties props )
         throws WikiException
     {
+        m_startTime  = new Date();
         m_properties = props;
+
         //
         //  Initialized log4j.  However, make sure that
         //  we don't initialize it multiple times.  Also, if
@@ -462,13 +465,32 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the moment when this engine was started.
+     * 
+     *  @since 2.0.15.
+     */
+
+    public Date getStartTime()
+    {
+        return m_startTime;
+    }
+
+    /**
      *  Returns the basic URL to a page, without any modifications.
      *  You may add any parameters to this.
      *
      *  @since 2.0.3
      */
     public String getViewURL( String pageName )
-    {
+    {/*
+        pageName = encodeName( pageName );
+        String srcString = "%uWiki.jsp?page=%p";
+
+        srcString = TextUtil.replaceString( srcString, "%u", m_baseURL );
+        srcString = TextUtil.replaceString( srcString, "%p", pageName );
+
+        return srcString;
+     */
         return m_baseURL+"Wiki.jsp?page="+encodeName(pageName);
     }
 
@@ -1293,58 +1315,13 @@ public class WikiEngine
 
 
     /**
-     *  Returns the date the page was last changed.
-     *  If the page does not exist, returns null.
-     *  @deprecated
-     */
-    /*
-    public Date pageLastChanged( String page )
-    {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
-
-            if( p != null )
-                return p.getLastModified();
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to fetch last modification date", e );
-        }
-
-        return null;
-    }
-    */
-
-    /**
-     *  Returns the current version of the page.
-     *  @deprecated
-     */
-    /*
-    public int getVersion( String page )
-    {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
-
-            if( p != null )
-                return p.getVersion();
-        }
-        catch( ProviderException e )
-        {
-            log.error("FIXME");
-        }
-        return -1;
-    }
-    */
-
-    /**
      *  Returns a Collection of WikiPages containing the
      *  version history of a page.
      */
-    public Collection getVersionHistory( String page )
+
+    public List getVersionHistory( String page )
     {
-        Collection c = null;
+        List c = null;
 
         try
         {

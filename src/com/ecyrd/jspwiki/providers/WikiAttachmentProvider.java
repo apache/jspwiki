@@ -104,7 +104,7 @@ public interface WikiAttachmentProvider
      *  Returns version history.  Each element should be
      *  an Attachment.
      */
-    public Collection getVersionHistory( Attachment att );
+    public List getVersionHistory( Attachment att );
 }
 
 

@@ -26,6 +26,7 @@ import org.apache.log4j.Category;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -38,7 +39,12 @@ import java.util.*;
  *  <UL>
  *    <LI>days - how many days the weblog aggregator should show.
  *    <LI>pageformat - What the entries should look like.
+ *    <LI>startDate - Date when to start.  Format is "ddMMyy";
  *  </UL>
+ *
+ *  The "days" and "startDate" can also be sent in HTTP parameters,
+ *  and the names are "weblog.days" and "weblog.startDate", respectively.
+ *
  *  @since 1.9.21
  */
 
@@ -77,14 +83,57 @@ public class WeblogPlugin implements WikiPlugin
         String weblogName = context.getPage().getName();
         Calendar   startTime;
         Calendar   stopTime;
+        int        numDays;
         WikiEngine engine = context.getEngine();
-        
-        int numDays = TextUtil.parseIntParameter( (String)params.get("days"),
-                                                  DEFAULT_DAYS );
 
-        stopTime = Calendar.getInstance();
+        //
+        //  Parse parameters.
+        //
+        String days;
+        String startDay = null;
+
+        if( (days = (String) params.get("days")) == null )
+        {
+            days = context.getHttpParameter( "weblog.days" );
+        }
+
+        numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
+
+
+        if( (startDay = (String)params.get("startDate")) == null )
+        {
+            startDay = context.getHttpParameter( "weblog.startDate" );
+        }
+
         startTime = Calendar.getInstance();
+        stopTime  = Calendar.getInstance();
+
+        if( startDay != null )
+        {
+            SimpleDateFormat fmt = new SimpleDateFormat( DEFAULT_DATEFORMAT );
+            try
+            {
+                Date d = fmt.parse( startDay );
+                startTime.setTime( d );
+                stopTime.setTime( d );
+            }
+            catch( ParseException e )
+            {
+                return "Illegal time format: "+startDay;
+            }
+        }
+
+        //
+        //  We make a wild guess here that nobody can do millisecond
+        //  accuracy here.
+        //
         startTime.add( Calendar.DAY_OF_MONTH, -numDays );
+        startTime.set( Calendar.HOUR, 0 );
+        startTime.set( Calendar.MINUTE, 0 );
+        startTime.set( Calendar.SECOND, 0 );
+        stopTime.set( Calendar.HOUR, 23 );
+        stopTime.set( Calendar.MINUTE, 59 );
+        stopTime.set( Calendar.SECOND, 59 );
 
         StringBuffer sb = new StringBuffer();
         

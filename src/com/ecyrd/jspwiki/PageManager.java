@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Category;
 
@@ -240,12 +241,12 @@ public class PageManager
 
     /**
      *  Gets a version history of page.  Each element in the returned
-     *  Collection is a WikiPage.
+     *  List is a WikiPage.
      *  <P>
-     *  @return If the page does not exist, returns null, otherwise a Collection 
+     *  @return If the page does not exist, returns null, otherwise a List
      *          of WikiPages.
      */
-    public Collection getVersionHistory( String pageName )
+    public List getVersionHistory( String pageName )
         throws ProviderException
     {
         if( pageExists( pageName ) )

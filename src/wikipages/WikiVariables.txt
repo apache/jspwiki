@@ -24,6 +24,10 @@ Writes HTML code for supported InterWiki links.
 
 Inserts the version number of the JSPWiki engine.  For example, this version is ''[{$jspwikiversion}]''.
 
+!uptime
+
+Inserts the amount of time since this Wiki has been last restarted.  This wiki has been up for ''[{$uptime}]''.
+
 !pagename
 
 Inserts the current page name.  Example: This page is called ''[{$pagename}]''.
