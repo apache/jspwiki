@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki;
 
 import junit.framework.*;
 import java.util.*;
+import java.io.*;
 
 /**
  *  @author Torsten Hildebrandt.
@@ -24,6 +25,17 @@ public class ReferenceManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true");
 
+        //
+        //  We must make sure that the reference manager cache is cleaned before.
+        //
+        String workDir = props.getProperty( "jspwiki.workDir" );
+
+        if( workDir != null )
+        {
+            File refmgrfile = new File( workDir, "refmgr.ser" );
+            if( refmgrfile.exists() ) refmgrfile.delete();
+        }
+
         engine = new TestEngine(props);
 
         engine.saveText( "TestPage", "Reference to [Foobar]." );
@@ -39,6 +51,7 @@ public class ReferenceManagerTest extends TestCase
         engine.deletePage( "Foobars" );
         engine.deletePage( "Foobar2" );
         engine.deletePage( "Foobar2s" );
+
     }
 
     public void testUnreferenced()

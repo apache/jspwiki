@@ -45,6 +45,17 @@ public class WikiEngineTest extends TestCase
 	props.setProperty( CachingProvider.PROP_CACHECHECKINTERVAL, 
 			   Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
 
+        //
+        //  We must make sure that the reference manager cache is cleaned before.
+        //
+        String workDir = props.getProperty( "jspwiki.workDir" );
+
+        if( workDir != null )
+        {
+            File refmgrfile = new File( workDir, "refmgr.ser" );
+            if( refmgrfile.exists() ) refmgrfile.delete();
+        }
+
         m_engine = new TestEngine(props);
     }
 
