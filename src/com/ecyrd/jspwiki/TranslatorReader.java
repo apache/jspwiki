@@ -692,22 +692,21 @@ public class TranslatorReader extends Reader
             //
             if( line.startsWith("*") )
             {
-                int i;
-                for( i = 0; line.charAt(i) == '*' && i < line.length(); i++ );
+                int numBullets = countChar( line, 0, '*' );
                 
-                if( i > m_listlevel )
+                if( numBullets > m_listlevel )
                 {
-                    for( ; m_listlevel < i; m_listlevel++ )
+                    for( ; m_listlevel < numBullets; m_listlevel++ )
                         buf.append("<UL>\n");
                 }
-                else if( i < m_listlevel )
+                else if( numBullets < m_listlevel )
                 {
-                    for( ; m_listlevel > i; m_listlevel -- )
+                    for( ; m_listlevel > numBullets; m_listlevel-- )
                         buf.append("</UL>\n");
                 }
                 
                 buf.append("<LI>");
-                line = line.substring( i );
+                line = line.substring( numBullets );
             }
             else if( line.startsWith(" ") && m_listlevel > 0 && trimmed.length() != 0 )
             {
@@ -727,23 +726,21 @@ public class TranslatorReader extends Reader
             //
             if( line.startsWith("#") )
             {
-                int i;
-
-                for( i = 0; line.charAt(i) == '#' && i < line.length(); i++ );
+                int numBullets = countChar( line, 0, '#' );
                 
-                if( i > m_numlistlevel )
+                if( numBullets > m_numlistlevel )
                 {
-                    for( ; m_numlistlevel < i; m_numlistlevel++ )
+                    for( ; m_numlistlevel < numBullets; m_numlistlevel++ )
                         buf.append("<OL>\n");
                 }
-                else if( i < m_numlistlevel )
+                else if( numBullets < m_numlistlevel )
                 {
-                    for( ; m_numlistlevel > i; m_numlistlevel -- )
+                    for( ; m_numlistlevel > numBullets; m_numlistlevel -- )
                         buf.append("</OL>\n");
                 }
                 
                 buf.append("<LI>");
-                line = line.substring( i );
+                line = line.substring( numBullets );
             }
             else if( line.startsWith(" ") && m_numlistlevel > 0 && trimmed.length() != 0 )
             {
