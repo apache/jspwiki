@@ -1,3 +1,139 @@
 This is a playground - do whatever you want.
 
 bliblib.
+
+
+__TÄMÄ GENERAATORI ON KOEKÄYTÖSSÄ JA SYNTAKSI VOI VIELÄ MUUTTUA YLLÄTTÄEN.  ÄLKÄÄ SIIS RIPOTELKO NIITÄ DIAGRAMMEJA IHAN JOKA SIVULLE, TAI JONKUN PITÄÄ SIIVOTA NE SITTEN...__
+
+Puh.  Noin.  Niin, nyt on olemassa diagrammigeneraattori.  Syntaksi on lyhykäisyydessään seuraava:
+
+{{{
+[{GoDiagram  
+label='Tähän jotain tekstiä'
+first='white'
+
+| . . . .
+| 1 . 2 .
+| . X . .
+| . . . .
++--------
+}]
+
+}}}
+
+josta tulee:
+
+[{GoDiagram  
+label='Tähän jotain tekstiä'
+first='white'
+
+| . . . .
+| 1 . 2 .
+| . X . .
+| . . . .
++--------
+}]
+
+Huomaa, että välittömästi kuvan jälkeen olevat kommentit tulevat kuvan oikealle puolelle.  Tripla-backslash (\) katkaisee ja aloittaa siististi uudelta riviltä.
+
+\\\
+
+!Parametrit:
+
+* __label__ : Teksti joka sijoitetaan kuvan alle.  Valinnainen.  Voi sisältää ihan mitä vaan wikitekstiä, ml. hyperlinkkejä, jne.  Huomaa kuitenkin, että erikoismerkit pitää eristää \-merkillä, esmes \' ==&gt; '.  Samaten jos haluat rivinvaihdon, sinun pitää kirjoittaa neljä '\' -merkkiä :-/.
+* __first__ : Numeroiduissa siirroissa merkitsee kumpi onpi ensin, musta eli valkoinen.  'white' tarkoittaa sitä, että ykkösellä merkitty siirto on valkoisen.  Tämäkin on valinnainen, ja jos sitä ei ole määritelty, niin silloin ykkönen on mustan siirto.
+
+Merkit:
+* |, +, - = laidat.
+* . = tyhjä
+* , = hoshi
+* X, # = musta
+* O = valkea
+* Xt, Ot = kolmiolla (t for triangle) merkitty mustan tai valkean kivi.
+* 1,2,3,...,99.  Numeroitu siirto.
+* a,b,c,d,...z.  Kirjain.
+
+----
+
+!!Vikaraportteja ja ehdotuksia.
+
+''Tämä on todellakin vasta ensimmäinen iteraatio.  Jos havaitset ongelmia, puutteita, tjms.  kirjaa ne tänne, kiitos!  Jos __fiksaat__ probleemeja, sen parempi!  Koodin saa [täältä|JSPWiki:JSPWikiDownload] tai [suoraan CVS:stä|JSPWiki:AnonymousCVSAccess]... --[JanneJalkanen]''
+
+
+----
+
+Ei myöskään varmaan kannattaisi laittaa giffejä taulukkoon, koska tällöin niiden väliin näyttäisi pystysuunnassa tulevan pieni epäesteettinen rako. Esim. &lt;center&gt;&lt;/center&gt; ja koodiin varmistus että diagrammit päddätään samankokoisiksi sivusuunnassa tyhjillä kuvilla?
+
+--[Paavo Pietarila] 08-11-02
+
+Bjoo, kokeilin sekä siis sitä, että kuvat laitetaan siihen peräkkäin (kuten sun generaattorissasi), mutta se tuntui generoivan vielä enemmän ongelmia kuin tuo taulukko.  Tuo taulukko ei pikaisesti Mozillalla ja Konquerorilla testattuna näyttänyt generoivan ongelmia.  Mikä selain?
+
+--[JanneJalkanen], 08-11-02
+
+''Selain oli Mozilla 1.1. Kotona linuxilla tuli rakoja ja töissä wintoussilla ei.. olikohan hallu? No, voi johtua mistä vaan varmaankin. --[Paavo Pietarila] 08-11-02''
+
+Hm.  Mulla Mozilla toimii pääsääntöisesti ihan oikein, mutta sitten IE 5.5 näyttää täysin satunnaisesti heittelevän sinne tyhjiä rakoja.  Näkeekö joku muu samaa ongelmaa?
+
+--[JanneJalkanen], 09-11-02.
+
+----
+
+Ne diagrammit vois laittaa ihan värillä ja toi laudan reuna paksummalla marginaalilla ?
+
+--[Kijoe]
+
+Mä olen ihan onneton värien kanssa (katsokaa vaikka mitä rutinaa JSPWiki 1.8.2 sai aikaiseksi :-)... Jos joku muu osaisi sanoa mitä värejä minne, se olisi hyvä.
+
+--[JanneJalkanen]
+
+Eihän tota marginaali itseasiassa tarvitakkaan kunhan vain laudan värittää. Väriksi kävisi joku oranssin, oranssin ruskean tai ruskean sävy. 
+
+--[Kijoe]
+
+Mun mielestä ei värejä, toi mustavalkea on kivan asiallisen tuntuinen. Jos haluaisi hyvännäköisen laudan, niin sitten pitäisi käyttää jotain joka on ainakin yhtä hyvä kuin gGo:ssa (esim KGS:n tai cgobanin setti on minusta liiaksi marmorikuulalelun näköinen). gGo:ssakin se lauta itse näyttää enemmänkin roiskeelta talouspaperissa kuin laudalta. Lyhyesti: Minusta vastaavan &quot;tämä on tehty hyvin&quot;-tuntuman saaminen oikeaa lautaa matkien on liian vaikeaa, paperidiagrammin matkiminen taas on helppoa (ja paperidiagrammit eivät ole oransseja). Tietysti tästä voisi tehdä konffattavan.. (esim. mustavalko / sensei's palette)
+
+--[RauliRuohonen]
+
+Jotain hämärää: Koko laudan kuvio vaatii ns. kahdennenkymmenennen pystyviivan, muuten tulee 18x19 lauta. Esimerkkinä kopio [KorkinavaajanOngelma]sta. Ja asian vierestä, Liitä tiedosto ei toiminut NS 7.0:ssa.
+
+
+[{GoDiagram
+label='Korkinavaajan ongelma'
+first='black'
+
+  + - - - - - - - - - - - - - - - - - - - - +
+  | . . O . . . . . . . . . . . . . . . . . |
+  | . O X O . . O . . . O . X . . O . . . . |
+  | . X X O O . . X X O O . X X X X . . . . |
+  | . . . O O O O . O X O . O O O O X X . . |
+  | . . . . X X X X O X . O . . . O O O X . |
+  | . O X . . . . . X . . X . . X . X . . . |
+  | . O O O X . . . . . . X . . . . X . . . |
+  | . . X O . . . . . . . . . . . . . . . . |
+  | . . . X . X . . . . . . . . . . . . . . |
+  | . . X O X . . . . . . . . . . O . . . . |
+  | . O O O . . . X . . . . . . . . . . . . |
+  | . X . . X . X . . . . O . O . . . . . . |
+  | . . . . . . X . . O O . . . O O . . . . |
+  | . O . . X . . . O X . . . X . . . . . . |
+  | . O X . . . X O . X O . O X . O O . . . |
+  | . O O O O O X O . X . O X X . X O . . . |
+  | O X X . X . X O X X X X X O X X O O . . |
+  | . O . X . . . O O . . . . O . . X O . . |
+  | . . . . O . . . . . . . . . . . Ot . . . |
+  + - - - - - - - - - - - - - - - - - - - - +
+
+}]
+
+
+-- [Vesa] 21.2.2003
+
+Bjoo, näyttää oudolta.  Katsotaan.  Liitteiden pitäisi kyllä toimia NS7:lla, kun kaikki kehitystyö tehdään Mozillalla.  Tosin "Liitä tiedosto" avaa popup-ikkunan, joten jos ne on kategorisesti kielletty, niin sitten ei toimi.  Pitää kokeilla.
+
+-- [JanneJalkanen], 21-02-2003
+
+Fixadeerattu.  Upload-ongelmakin tuli samalla katsottua: oli unohtunut asentaa viime kierroksella yksi pikkufaili =).
+
+(Nin siis, tekninen selitys: Tuossa äskeisessä kuvassa on alalaidassa 'Ot.', mitä välilyöntejä etsimään koulittu softa kuvitteli yhdeksi merkinnäksi.  Sitä on nyt opetettu sopivasti.)
+
+-- [JanneJalkanen], 22-02-2003

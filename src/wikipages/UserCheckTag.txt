@@ -1,0 +1,26 @@
+Includes its body, if the user check validates.
+
+----
+
+!Usage
+
+<wiki:UserCheck exists="true|false">
+;:''JSP or HTML content''
+</wiki:UserCheck>
+
+!Parameters
+
+;__exists__: If set to "true", then the content is included if there is a valid username; if set to "false", includes the content when there is no valid username.
+
+!Example
+{{{
+    <wiki:UserCheck exists="true">
+        G'day,<wiki:UserName />
+    </wiki:UserCheck>
+
+    <wiki:UserCheck exists="false">
+        Set your name in <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
+    </wiki:UserCheck>
+}}}
+
+Displays a greeting, if the user has validated; else displays a link to the page UserPreferences.
