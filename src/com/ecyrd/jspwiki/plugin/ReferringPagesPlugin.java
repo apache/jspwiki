@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,8 +22,9 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.io.StringReader;
+import java.io.IOException;
 
 /**
  *  Displays the pages referring to the current page.
@@ -37,30 +38,24 @@ public class ReferringPagesPlugin
 {
     private static Category log = Category.getInstance( ReferringPagesPlugin.class );
 
+    public static final String PARAM_MAX      = "max";
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection links = refmgr.findReferrers( context.getPage().getName() );
+        Collection       links  = refmgr.findReferrers( context.getPage().getName() );
 
-        String itemnum = (String)params.get( "max" );
-        int    items   = ALL_ITEMS;
-        
-        if( itemnum != null )
-        {
-            try
-            {
-                items = Integer.parseInt( itemnum );
-            }
-            catch( Exception e ) {}
-        }
+        super.initialize( context, params );
+
+        int items = TextUtil.parseIntParameter( (String)params.get( PARAM_MAX ), ALL_ITEMS );
 
         log.debug( "Fetching referring pages for "+context.getPage().getName()+
-                   " with a max of "+items );
+                   " with a max of "+items);
         
         String wikitext = wikitizeCollection( links, "\\\\", items );
-        
-        return context.getEngine().textToHTML( context, wikitext );
+
+        return makeHTML( context, wikitext );
     }
 
 }
