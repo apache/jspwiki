@@ -932,35 +932,49 @@ public class WikiEngine
         }
     }
 
+    /**
+     *  Retrieves the user name.  It will check if user has been authenticated,
+     *  or he has a cookie with his username set.  The cookie takes precedence, 
+     *  which allows the wiki master to set up a site with a single master
+     *  password.  Note that this behaviour will be changed in 2.1 or thereabouts.
+     *  Earlier versions than 1.9.42 preferred the authenticated name over
+     *  the cookie name.
+     *
+     *  @param request HttpServletRequest that was called.
+     *  @return The WikiName of the user, or null, if no username was set.
+     */
     // FIXME: This is a terrible time waster, parsing the 
     // textual data every time it is used.
 
     public String getUserName( HttpServletRequest request )
     {
+        if( request == null )
+        {
+            return null;
+        }
+
         // Get the user authentication - if he's not been authenticated
-        // we store the IP address.  Unless we've been asked not to.
+        // we then check from cookies.
 
         String author = request.getRemoteUser();
 
         //
         //  Try to fetch something from a cookie.
         //
-        if( author == null )
+
+        Cookie[] cookies = request.getCookies();
+
+        if( cookies != null )
         {
-            Cookie[] cookies = request.getCookies();
-
-            if( cookies != null )
+            for( int i = 0; i < cookies.length; i++ )
             {
-                for( int i = 0; i < cookies.length; i++ )
+                if( cookies[i].getName().equals( PREFS_COOKIE_NAME ) )
                 {
-                    if( cookies[i].getName().equals( PREFS_COOKIE_NAME ) )
-                    {
-                        UserProfile p = new UserProfile(cookies[i].getValue());
+                    UserProfile p = new UserProfile(cookies[i].getValue());
 
-                        author = p.getName();
+                    author = p.getName();
 
-                        break;
-                    }
+                    break;
                 }
             }
         }
