@@ -1,3 +1,13 @@
+2002-06-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Links starting with "file:" are now recognized as external
+        links, not interwiki links anymore.
+
+        * InterWiki links no longer go through URLEncoder, because URL
+        encoding removes things like slashes.  Which is annoying, and
+        probably not you want.  You'll just now have to be more careful
+        when writing InterWiki links.  Reported by GarethSB.
+
 2002-06-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.10.
