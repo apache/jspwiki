@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="templates/<wiki:TemplateDir/>/jspwiki.css" />
+
 <script type="text/javascript">
 <!-- Hide script contents from old browsers
 
@@ -26,7 +28,6 @@
         sheet = "jspwiki_ie.css";
     }
 
-    document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/jspwiki.css\" />");
     document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
 
 // end hiding contents from old browsers -->
