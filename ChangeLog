@@ -1,5 +1,7 @@
 2001-12-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v1.6.2-cvs.
+
         * Wiki.jsp now has a direct link from the last change date to the
         latest change.
 
