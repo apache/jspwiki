@@ -17,8 +17,8 @@
 <!-- End of automatically generated page -->
 
    <br /><br /><br />
-   <div align="left" class="small">
-   <%=Release.APPNAME%> v<%=Release.VERSTR%>
+   <div align="center" class="small">
+   <%=Release.APPNAME%> v<%=Release.getVersionString()%>
    </div>
 
 
