@@ -1549,8 +1549,9 @@ public class WikiEngine
         if( isValid )
         {
             m_authorizer.loadPermissions( wup );
+            // This is a JSPWiki special: a user always belongs to her name group.
+            wup.addRole( uid );
             session.setAttribute( WIKIUSER, wup );
-            log.debug( "Added WUP " + wup + " for " + uid );
         }
     }
 
@@ -1570,6 +1571,7 @@ public class WikiEngine
         {
             wup = new UserProfile( storedProfile );
             wup.setStatus( UserProfile.NAMED );
+            // JSPWiki special: named readers belong to special group 'participant'
             m_authorizer.addRole( wup, Authorizer.AUTH_ROLE_PARTICIPANT );
         }
         else
@@ -1586,6 +1588,7 @@ public class WikiEngine
             wup = new UserProfile();
             wup.setName( uid );
             wup.setStatus( UserProfile.UNKNOWN );
+            // JSPWiki special: unknown people belong to group 'guest'
             m_authorizer.addRole( wup, Authorizer.AUTH_ROLE_GUEST );
         }
 
