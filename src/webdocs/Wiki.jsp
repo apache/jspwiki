@@ -77,7 +77,20 @@
              <A HREF="Edit.jsp?page=<%=pagereq%>">Edit this page</A>.
           </td>
           <td align="right">
-             <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.</I><BR>
+	     <%
+             java.util.Date lastchange = wiki.pageLastChanged(pagereq);
+
+             if( lastchange != null )
+             {
+                 %>
+                 <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.</I><BR>
+                 <%
+             } else {
+                 %>
+                 <I>Page not created yet.</I>
+                 <%
+             }
+             %>
           </td>
         </tr>
       </table>
