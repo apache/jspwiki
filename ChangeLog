@@ -1,3 +1,22 @@
+2005-01-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.141.
+
+        * You may now set the URLConstructor instance by using
+        jspwiki.urlConstructor parameter.
+
+        * rss.jsp had a typo and would not compile, oops...
+
+        * Almost all hard-coded references to URLs are now handled by an
+        URLGenerator instance.
+
+        * All instances of ServletRequest.getRemoteHost() were replaced with
+        getRemoteAddr() - this means that you no longer get the host names in
+        the logs.  On the other hand, this should be a lot faster if your
+        dns is slow.
+
+        * Bug fix: Context variables were essentially ignored in VariableManager.
+
 2005-01-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.140.
