@@ -66,8 +66,11 @@
         </tr>
 
         <tr>
-          <td><b>Current page provider</b></td>
-          <td><%=wiki.getCurrentProvider()%></td>
+          <td valign="top"><b>Current page provider</b></td>
+          <td>
+             <%=wiki.getCurrentProvider()%><BR><BR>
+             <%=wiki.getCurrentProviderInfo()%>
+          </td>
         </tr>
 
         <tr>
