@@ -29,7 +29,8 @@ import java.io.IOException;
 /**
  *  Displays the pages referring to the current page.
  *
- *  Parameters: max: How many items to show.
+ *  Parameters: max: How many items to show.<BR>
+ *              extras: How to announce extras.<BR>
  *
  *  @author Janne Jalkanen
  */
@@ -39,6 +40,7 @@ public class ReferringPagesPlugin
     private static Category log = Category.getInstance( ReferringPagesPlugin.class );
 
     public static final String PARAM_MAX      = "max";
+    public static final String PARAM_EXTRAS   = "extras";
 
     public String execute( WikiContext context, Map params )
         throws PluginException
@@ -49,11 +51,23 @@ public class ReferringPagesPlugin
         super.initialize( context, params );
 
         int items = TextUtil.parseIntParameter( (String)params.get( PARAM_MAX ), ALL_ITEMS );
+        String extras = (String)params.get( PARAM_EXTRAS );
+        if( extras == null )
+        {
+            extras = "...and %d more\\\\";
+        }
 
         log.debug( "Fetching referring pages for "+context.getPage().getName()+
                    " with a max of "+items);
         
         String wikitext = wikitizeCollection( links, "\\\\", items );
+
+        if( items < links.size() && items > 0 )
+        {
+            extras = TextUtil.replaceString( extras, "%d", 
+                                             ""+(links.size()-items) );
+            wikitext += extras;
+        }
 
         return makeHTML( context, wikitext );
     }
