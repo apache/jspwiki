@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki;
 
 import java.util.Properties;
 import java.util.Iterator;
+import java.util.Date;
 import org.apache.log4j.Category;
 
 /**
@@ -216,6 +217,18 @@ public class VariableManager
         else if( name.equals("baseurl") )
         {
             res = context.getEngine().getBaseURL();
+        }
+        else if( name.equals("uptime") )
+        {
+            Date now = new Date();
+            long secondsRunning = (now.getTime() - context.getEngine().getStartTime().getTime())/1000L;
+
+            long seconds = secondsRunning % 60;
+            long minutes = (secondsRunning /= 60) % 60;
+            long hours   = (secondsRunning /= 60) % 60;
+            long days    = (secondsRunning /= 24) % 24;
+
+            return days+"d, "+hours+"h "+minutes+"m "+seconds+"s";
         }
         else
         {
