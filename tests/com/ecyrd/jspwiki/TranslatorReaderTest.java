@@ -758,6 +758,9 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "test\n", translate(src) );
     }
 
+    /**
+     *  Test two plugins on same row.
+     */
     public void testShortPluginInsert2()
         throws Exception
     {
@@ -799,6 +802,22 @@ public class TranslatorReaderTest extends TestCase
         String src="[{INSERT SamplePlugin WHERE text=PageContent}]";
 
         assertEquals( "PageContent\n", translate(src) );
+    }
+
+    public void testMultilinePlugin1()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\nWHERE text=PageContent}]";
+
+        assertEquals( "Test PageContent\n", translate(src) );
+    }
+
+    public void testMultilinePluginBodyContent()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\ntext=PageContent\nbody='123\n456\n'}]";
+
+        assertEquals( "Test PageContent (123+456)\n", translate(src) );
     }
 
     public void testVariableInsert()
