@@ -9,6 +9,7 @@ import java.security.Principal;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
@@ -176,6 +177,7 @@ public class PageAuthorizer
         if( acl == null )
         {
             WikiContext context = new WikiContext( m_engine, page );
+            context.setVariable( TranslatorReader.PROP_RUNPLUGINS, "false" );
             String html = m_engine.getHTML( context, page );
 
             acl = page.getAcl();
