@@ -1,3 +1,22 @@
+2002-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.32.
+
+        * True multiline plugins that no longer conflict with WikiMarkup
+        are now available!  Yay!
+
+        * MAJOR breakdown!  Rewrote practically everything in
+        TranslatorReader: it is now fully stream-based instead of
+        line-based, which makes many things quite a lot easier.  It should
+        also be quite a lot faster than before.  
+        
+        CamelCase links are TOTALLY broken in this revision, since the
+        stream-based system makes it a bit difficult to run the regexp on
+        them.  We'll see how to get them back running again.
+        
+        Do NOT use this revision for any production work... We have many
+        tests that still fail!
+
 2002-11-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.31.
