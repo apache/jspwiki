@@ -55,6 +55,11 @@
        </init-param>
    </servlet>
 
+   <servlet>
+       <servlet-name>ATOM</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.atom.AtomAPIServlet</servlet-class>       
+   </servlet>
+
 
    <!--
        Attachment exchange handler.
@@ -84,6 +89,11 @@
    <servlet-mapping>
        <servlet-name>XMLRPC-UTF8</servlet-name>
        <url-pattern>/RPCU/</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+       <servlet-name>ATOM</servlet-name>
+       <url-pattern>/atom/*</url-pattern>
    </servlet-mapping>
 
    AND REMOVE ME TOO -->
