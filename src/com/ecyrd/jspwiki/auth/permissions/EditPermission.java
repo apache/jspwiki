@@ -15,7 +15,9 @@ public class EditPermission
 
     public boolean implies( WikiPermission p )
     {
-        return (p instanceof CommentPermission) || (p instanceof EditPermission) ||
+        return (p instanceof CommentPermission) || 
+               (p instanceof EditPermission)    ||
+               (p instanceof CreatePermission)  ||
                (p instanceof UploadPermission);
     }
 
