@@ -1,5 +1,8 @@
 2003-09-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Slight changes to auth code; authentication via cookie no longer
+        considered trustworthy =). 
+
         * Fixed some failing auth tests.
 
         * v2.1.69.
