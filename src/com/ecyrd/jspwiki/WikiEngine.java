@@ -228,36 +228,37 @@ public class WikiEngine
      * @param props  A set of properties, or null, if we are to load JSPWiki's default 
      *               jspwiki.properties (this is the usual case).
      */
-    public static synchronized WikiEngine getInstance( ServletConfig config, Properties props )
-    throws InternalWikiException
-{
-    ServletContext context = config.getServletContext();        
-    String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
-
-    config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
-
-    WikiEngine engine = (WikiEngine) c_engines.get( appid );
-
-    if( engine == null )
+    public static synchronized WikiEngine getInstance( ServletConfig config, 
+                                                       Properties props )
+        throws InternalWikiException
     {
-        context.log(" Assigning new log to "+appid);
-        try
+        ServletContext context = config.getServletContext();        
+        String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
+
+        config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
+
+        WikiEngine engine = (WikiEngine) c_engines.get( appid );
+
+        if( engine == null )
         {
-            if( props == null )
-                props = loadWebAppProps( config.getServletContext() );
-            engine = new WikiEngine( config.getServletContext(), appid, props );
-        }
-        catch( Exception e )
-        {
-            context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
-            throw new InternalWikiException( "No wiki engine, check logs." );
+            context.log(" Assigning new log to "+appid);
+            try
+            {
+                if( props == null )
+                    props = loadWebAppProps( config.getServletContext() );
+                engine = new WikiEngine( config.getServletContext(), appid, props );
+            }
+            catch( Exception e )
+            {
+                context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
+                throw new InternalWikiException( "No wiki engine, check logs." );
+            }
+
+            c_engines.put( appid, engine );            
         }
 
-        c_engines.put( appid, engine );            
+        return engine;
     }
-
-    return engine;
-}
     
 
     /**
@@ -496,7 +497,7 @@ public class WikiEngine
      */
     private void initReferenceManager()
     {
-        m_pluginManager.enablePlugins( false );
+        m_pluginManager.setInitStage( true );
 
         try
         {
@@ -516,7 +517,7 @@ public class WikiEngine
             log.fatal("PageProvider is unable to list pages: ", e);
         }
 
-        m_pluginManager.enablePlugins( true );
+        m_pluginManager.setInitStage( false );
 
         m_filterManager.addPageFilter( m_referenceManager, -1000 ); // FIXME: Magic number.
     }
