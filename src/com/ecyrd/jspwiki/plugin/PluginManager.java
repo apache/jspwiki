@@ -22,7 +22,10 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 import org.apache.log4j.Category;
-import java.util.StringTokenizer;
+//import java.util.StringTokenizer;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Map;
 import java.util.HashMap;
@@ -128,16 +131,52 @@ public class PluginManager
                 String args     = res.group(3);
                 HashMap arglist = new HashMap();
                 
-                //  I am too tired to think of a proper regexp.
+                //
+                //  Go through the whole thing and handle quotes, etc.
+                //
 
-                StringTokenizer tok = new StringTokenizer( args, " ,=" );
+                StreamTokenizer tok = new StreamTokenizer(new StringReader(args));
+                int type;
 
-                while( tok.hasMoreTokens() )
+                String param = null, value = null;
+
+                while( (type = tok.nextToken() ) != StreamTokenizer.TT_EOF )
                 {
-                    String param = tok.nextToken();
-                    String value = tok.nextToken();
-                    
-                    arglist.put( param, value );
+                    String s;
+
+                    switch( type )
+                    {
+                      case StreamTokenizer.TT_WORD:
+                        s = tok.sval;
+                        break;
+                      case StreamTokenizer.TT_NUMBER:
+                        s = Integer.toString( new Double(tok.nval).intValue() );
+                        break;
+                      case '"':
+                        s = tok.sval;
+                        break;
+                      default:
+                        s = null;
+                    }
+
+                    //
+                    //  Assume that alternate words on the line are
+                    //  parameter and value, respectively.
+                    //
+                    if( s != null )
+                    {
+                        if( param == null ) 
+                        {
+                            param = s;
+                        }
+                        else
+                        {
+                            value = s;
+                            
+                            arglist.put( param, value );
+                            param = null;
+                        }
+                    }
                 }
 
                 return execute( context, plugin, arglist );
@@ -151,6 +190,12 @@ public class PluginManager
         catch( NoSuchElementException e )
         {
             String msg =  "Missing parameter in plugin definition: "+commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
+        }
+        catch( IOException e )
+        {
+            String msg = "Zyrf.  Problems with parsing arguments: "+commandline;
             log.warn( msg, e );
             throw new PluginException( msg );
         }
