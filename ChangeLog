@@ -1,3 +1,10 @@
+2001-12-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * cssinclude.js now also sets some basic LINK elements: "start"
+        refers to a page called "Main", "help" directs you to
+        TextFormattingRules, and "search" takes you to Search.jsp.  The
+        bad thing is that now the page names are pretty much fixed.
+
 2001-12-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.6.2-cvs.
