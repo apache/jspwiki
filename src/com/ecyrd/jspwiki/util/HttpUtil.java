@@ -19,8 +19,13 @@
  */
 package com.ecyrd.jspwiki.util;
 
+import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
+
+import org.apache.log4j.Logger;
+
+import com.ecyrd.jspwiki.TextUtil;
 
 /**
  *  Contains useful utilities for some common HTTP tasks.
@@ -30,6 +35,8 @@ import javax.servlet.http.Cookie;
  */
 public class HttpUtil
 {
+    static Logger log = Logger.getLogger( HttpUtil.class );
+
     /**
      *  Attempts to retrieve the given cookie value from the request.
      *  Returns the string value (which may or may not be decoded
@@ -58,4 +65,33 @@ public class HttpUtil
 
         return( null );
     }
+
+    /**
+     *  Takes the name of the page from the request URI.
+     *  The initial slash is also removed.  If there is no page,
+     *  returns null.
+     */
+    public static String parsePageFromURL( HttpServletRequest request,
+                                           String encoding )
+        throws UnsupportedEncodingException
+    {
+        String name = request.getPathInfo();
+
+        log.debug("NAME="+name);
+
+        if( name == null || name.length() <= 1 )
+        {
+            return null;
+        }
+        else if( name.charAt(0) == '/' )
+        {
+            name = name.substring(1);
+        }
+       
+        name = new String(name.getBytes("ISO-8859-1"),
+                          encoding );
+
+        return name;
+    }
+
 }
