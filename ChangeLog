@@ -1,5 +1,8 @@
 2003-02-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Bug fix: '}' inside plugins no longer stops parsing.  Reported
+        by William Morgan, fix courtesy of Torsten Hildebrandt.
+        
         * v2.0.24.
 
         * CalendarTag is now smarter and can adapt itself to the date.
