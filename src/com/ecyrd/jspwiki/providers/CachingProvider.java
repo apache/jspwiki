@@ -323,6 +323,46 @@ public class CachingProvider
                "<BR />Cache hits: "+m_cacheHits);
     }
 
+    public void deleteVersion( String pageName, int version )
+        throws ProviderException
+    {
+        //
+        //  Luckily, this is such a rare operation it is okay
+        //  to synchronize against the whole thing.
+        //
+        synchronized( this )
+        {
+            CacheItem item = (CacheItem)m_cache.get( pageName );
+
+            int latestcached = (item != null) ? item.m_page.getVersion() : Integer.MIN_VALUE;
+        
+            //
+            //  If we have this version cached, remove from cache.
+            //
+            if( version == WikiPageProvider.LATEST_VERSION ||
+                version == latestcached )
+            {
+                m_cache.remove( pageName );
+            }
+
+            m_provider.deleteVersion( pageName, version );
+        }
+    }
+
+    public void deletePage( String pageName )
+        throws ProviderException
+    {
+        //
+        //  See note in deleteVersion().
+        //
+        synchronized(this)
+        {
+            m_cache.remove( pageName );
+
+            m_provider.deletePage( pageName );
+        }
+    }
+
     /**
      *  Returns the actual used provider.
      *  @since 2.0
