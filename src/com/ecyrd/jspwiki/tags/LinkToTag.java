@@ -55,12 +55,18 @@ public class LinkToTag
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
         String     pageName = m_pageName;
 
         if( m_pageName == null )
         {
-            pageName = m_wikiContext.getPage().getName();
+            if( m_wikiContext.getPage() != null )
+            {
+                pageName = m_wikiContext.getPage().getName();
+            }
+            else
+            {
+                return SKIP_BODY;
+            }
         }
 
         if( engine.pageExists(pageName) )
