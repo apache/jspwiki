@@ -43,6 +43,7 @@
       <%-- These are required parts of this form.  If you do not include these,
            horrible things will happen.  Do not modify them either. --%>
 
+      <%-- FIXME: This is not required, is it? --%>
       <INPUT type="hidden" name="page"     value="<wiki:PageName/>">
       <INPUT type="hidden" name="action"   value="save">
       <INPUT type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>">
