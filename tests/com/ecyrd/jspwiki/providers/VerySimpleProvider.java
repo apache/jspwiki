@@ -66,6 +66,7 @@ public class VerySimpleProvider implements WikiPageProvider
         WikiPage p = new WikiPage( page );
         p.setVersion( 5 );
         p.setAuthor( AUTHOR );
+        p.setLastModified( new Date(0L) );
         return p;
     }
 
