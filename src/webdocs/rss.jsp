@@ -4,6 +4,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 
 <%!
@@ -37,6 +38,37 @@
     Properties properties = wiki.getWikiProperties();
     String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
     String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+
+    //
+    //  Now, list items.
+    //
+
+    com.ecyrd.jspwiki.plugin.WeblogPlugin plug = new com.ecyrd.jspwiki.plugin.WeblogPlugin();
+    List changed = plug.findBlogEntries(wiki.getPageManager(), 
+                                        wikipage.getName(),
+                                        new Date(0L),
+                                        new Date());
+
+    Collections.sort( changed, new PageTimeComparator() );
+
+    //
+    //  Check if nothing has changed, so we can just return a 304
+    //
+    boolean hasChanged = false;
+
+    for( Iterator i = changed.iterator(); i.hasNext(); )
+    {
+        WikiPage p = (WikiPage) i.next();
+
+        if( !HttpUtil.checkFor304( request, p ) ) hasChanged = true;
+    }
+
+    if( !hasChanged )
+    {
+        response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+        return;
+    }
+
 %>
 <oscache:cache time="300">
 
@@ -53,18 +85,6 @@
   </description>
   <language><%=channelLanguage%></language>
 <%
-    //
-    //  Now, list items.
-    //
-
-    com.ecyrd.jspwiki.plugin.WeblogPlugin plug = new com.ecyrd.jspwiki.plugin.WeblogPlugin();
-    List changed = plug.findBlogEntries(wiki.getPageManager(), 
-                                        wikipage.getName(),
-                                        new Date(0L),
-                                        new Date());
-
-    Collections.sort( changed, new PageTimeComparator() );
-
     //  We need two lists, which is why we gotta make a separate list if
     //  we want to do just a single pass.
     StringBuffer itemBuffer = new StringBuffer();
