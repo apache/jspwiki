@@ -197,6 +197,28 @@ public class RPCHandlerTest extends TestCase
         assertEquals( "href", "attach?page="+NAME1+"%2FTestAtt.txt", linkinfo.get("href") );
     }
 
+    public void testPermissions()
+        throws Exception
+    {
+        String text ="Blaa. [{DENY view Guest}] [{ALLOW view NamedGuest}]";
+
+        m_engine.saveText( NAME1, text );
+
+        try
+        {
+            Vector links = m_handler.listLinks( NAME1 );
+            fail("Didn't get an exception in listLinks()");
+        }
+        catch( XmlRpcException e ) {}
+
+        try
+        {
+            Hashtable ht = m_handler.getPageInfo( NAME1 );
+            fail("Didn't get an exception in getPageInfo()");
+        }
+        catch( XmlRpcException e ) {}
+    }
+
     public static Test suite()
     {
         return new TestSuite( RPCHandlerTest.class );
