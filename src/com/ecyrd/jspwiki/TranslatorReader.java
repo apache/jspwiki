@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -1898,26 +1898,14 @@ public class TranslatorReader extends Reader
                 if( ch == '}' )
                 {
                     buf.append( handleClosebrace() );
-                }
-                else if( ch == '<' )
-                {
-                    buf.append("&lt;");
-                }
-                else if( ch == '>' )
-                {
-                    buf.append("&gt;");
-                }
-                else if( ch == '&' )
-                {
-                    buf.append("&amp;");
-                }
+                }                
                 else if( ch == -1 )
                 {
                     quitReading = true;
                 }
                 else 
                 {
-                    buf.append( (char)ch );
+                    m_renderer.doChar( buf, (char)ch );
                 }
 
                 continue;
@@ -2299,9 +2287,30 @@ public class TranslatorReader extends Reader
                 m_cleanTranslator = new TranslatorReader( dummyContext, 
                                                           null,
                                                           new TextRenderer() );
+                m_cleanTranslator.m_allowHTML = true;
             }
 
             return m_cleanTranslator;
+        }
+
+        public void doChar( StringBuffer buf, char ch )
+        {
+            if( ch == '<' )
+            {
+                buf.append("&lt;");
+            }
+            else if( ch == '>' )
+            {
+                buf.append("&gt;");
+            }
+            else if( ch == '&' )
+            {
+                buf.append("&amp;");
+            }
+            else
+            {
+                buf.append( ch );
+            }
         }
 
         public String openDiv( String style, String clazz )
@@ -2735,6 +2744,11 @@ public class TranslatorReader extends Reader
      */
     private class TextRenderer
     {
+        public void doChar( StringBuffer buf, char ch )
+        {
+            buf.append( ch );
+        }
+
         public String openDiv( String style, String clazz )
         {
             return "";
