@@ -1,3 +1,12 @@
+2005-04-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.158
+
+        * Deletion of entire pages works now.  Make sure your Delete.jsp
+        is protected!
+
+        * Added password protection to Install.jsp
+
 2005-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.157
