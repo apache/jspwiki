@@ -1,5 +1,5 @@
 
-This is a CVS release of JSPWiki.
+This is a beta release of JSPWiki.
 
 Major changes since the last stable (1.7.0) release are:
 
@@ -14,6 +14,14 @@ Major changes since the last stable (1.7.0) release are:
 
 - RSS feed.
 
+- New plugin: CurrentTimePlugin
+
+- No longer needs RCS - has a new provider called
+  VersioningFileProvider and uses also an internal diff routine to
+  show the changes between versions.  This should be good news to all
+  Windows people.
+
+
 UPGRADE NOTES
 =============
 
@@ -21,3 +29,8 @@ UPGRADE NOTES
 
   * New JSP pages "Preview.jsp" and "UserPreferences.jsp" must be
     copied.
+
+  * If you've set the "jspwiki.diffCommand", please remove it and
+    see if the internal diff routine works for you.
+
+  * Check the RSS feed options in jspwiki.properties.

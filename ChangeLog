@@ -1,3 +1,12 @@
+2002-05-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.9.
+
+        * Hooray - JSPWiki is no longer dependant on RCS in any form.  We
+        now have an internal diff routine courtesy of BMSI.  This means
+        that on Windows you can just use the VersioningFileProvider and
+        you no longer need to do anything with the RCS.
+
 2002-05-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * UserPreferences now allows you to clear the preferences.
