@@ -110,8 +110,20 @@
         wikiContext.getPage().setAuthor( currentUser.getName() );        
 
         StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+
+        log.debug("Page initial contents are "+pageText.length()+" chars");
+
+        //
+        //  Add a line on top only if we need to separate it from the content.
+        //
+        if( pageText.length() > 0 )
+        {
+            pageText.append( "\n\n----\n\n" );
+        }        
+
         pageText.append( wiki.safeGetParameter( request, "text" ) );
 
+        log.debug("Author name ="+author);
         if( author != null && author.length() > 0 )
         {
             Calendar cal = Calendar.getInstance();
@@ -119,8 +131,6 @@
 
             pageText.append("\n\n--"+author+", "+fmt.format(cal.getTime()));
         }
-
-        pageText.append( "\n\n----\n\n" );
 
         wiki.saveText( wikiContext, pageText.toString() );
 
