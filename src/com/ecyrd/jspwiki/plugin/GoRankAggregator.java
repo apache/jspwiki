@@ -60,6 +60,30 @@ public class GoRankAggregator
     {
     }
 
+    // FIXME: Too many string constructors here.
+    private String unscandize( String a )
+    {
+        a = a.replace( 'ä', 'a' );
+        a = a.replace( 'Ä', 'A' );
+        a = a.replace( 'ö', 'o' );
+        a = a.replace( 'Ö', 'O' );
+        a = a.replace( 'å', 'a' );
+        a = a.replace( 'Å', 'A' );
+
+        return a;
+    }
+
+    /**
+     *  Does case insensitive string equals that equals 'a' as 'ä' etc.
+     */
+    protected boolean scandicEquals( String a, String b )
+    {
+        a = unscandize(a);
+        b = unscandize(b);
+
+        return a.equalsIgnoreCase(b);
+    }
+
     /**
      *  Give the input as HTML, and this will parse it, returning a List
      *  of UserInfo nodes.
@@ -109,6 +133,9 @@ public class GoRankAggregator
         return list;
     }
 
+    /**
+     *  Reads and parses the persons ranking list from a given WikiPage.
+     */
     List getPersonsFromPage( WikiContext context, String pageName )
         throws PluginException,
                IOException
@@ -179,6 +206,7 @@ public class GoRankAggregator
             info.m_firstName = firstname.trim();
             info.m_rank      = rank;
             info.m_club      = club;
+            info.m_clubPage  = pageName;
 
             list.add( info );
         }
@@ -186,6 +214,10 @@ public class GoRankAggregator
         return list;
     }
 
+    /**
+     *  Pretty-prints a persons rank.  A negative rank signifies dan grade, a positive
+     *  one signifies kyu grade.
+     */
     String printRank( int rank )
     {
         if( rank < 0 )
@@ -291,8 +323,8 @@ public class GoRankAggregator
             {
                 UserInfo egfinfo = (UserInfo) it.next();
 
-                if( egfinfo.m_lastName.equalsIgnoreCase(info.m_lastName) &&
-                    egfinfo.m_firstName.equalsIgnoreCase(info.m_firstName) )
+                if( scandicEquals(egfinfo.m_lastName,info.m_lastName) &&
+                    scandicEquals(egfinfo.m_firstName,info.m_firstName) )
                 {
                     // Same guy
 
@@ -306,6 +338,7 @@ public class GoRankAggregator
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
+        WikiEngine engine = context.getEngine();
         StringBuffer sb = new StringBuffer();
         StringBuffer errors = new StringBuffer();
 
@@ -380,9 +413,24 @@ public class GoRankAggregator
             sb.append("<tr>\n");
 
             UserInfo ui = (UserInfo) i.next();
+
+            String potentialWikiPageName = ui.m_firstName+ui.m_lastName;
+
+            String namelink;
+            if( engine.pageExists( potentialWikiPageName ) )
+            {
+                namelink = "<a href=\""+engine.getBaseURL()+"Wiki.jsp?page="+potentialWikiPageName+
+                           "\">"+ui.m_lastName+", "+ui.m_firstName+"</a>";
+            }
+            else
+            {
+                namelink = ui.m_lastName+", "+ui.m_firstName;
+            }
+
             sb.append("<td align=center>"+counter+"</td>");
-            sb.append("<td>"+ui.m_lastName+", "+ui.m_firstName+"</td>");
-            sb.append("<td>"+ui.m_club+"</td>");
+            sb.append("<td>"+namelink+"</td>");
+            sb.append("<td><a href=\""+engine.getBaseURL()+"Wiki.jsp?page="+ui.m_clubPage+"\">"+
+                      ui.m_club+"</a></td>");
             sb.append("<td align=center>"+printRank(ui.m_rank)+"</td>");
             sb.append("<td align=center>"+((ui.m_egfRank > 0) ? ""+ui.m_egfRank : "?")+"</td>");
 
@@ -407,6 +455,7 @@ public class GoRankAggregator
         public String m_lastName;
         public String m_firstName;
         public String m_club;
+        public String m_clubPage;
         public int    m_rank;
         public int    m_egfRank = 0;
 
