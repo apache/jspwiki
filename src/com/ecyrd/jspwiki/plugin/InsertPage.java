@@ -38,6 +38,7 @@ public class InsertPage
     public static final String PARAM_PAGENAME  = "page";
     public static final String PARAM_STYLE     = "style";
     public static final String PARAM_MAXLENGTH = "maxlength";
+    public static final String PARAM_CLASS     = "class";
 
     private static final String DEFAULT_STYLE = "";
 
@@ -48,6 +49,7 @@ public class InsertPage
 
         StringBuffer res = new StringBuffer();
 
+        String clazz        = (String) params.get( PARAM_CLASS );
         String includedPage = (String) params.get( PARAM_PAGENAME );
         String style        = (String) params.get( PARAM_STYLE );
         int    maxlen       = TextUtil.parseIntParameter((String) params.get( PARAM_MAXLENGTH ),
@@ -79,7 +81,7 @@ public class InsertPage
                     moreLink = "<p><a href=\""+engine.getViewURL(includedPage)+"\">More...</a></p>";
                 }
 
-                res.append("<div style=\""+style+"\">");
+                res.append("<div style=\""+style+"\""+(clazz != null ? " class=\""+clazz+"\"" : "")+">");
                 res.append( engine.textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
                 res.append("</div>");
