@@ -419,11 +419,15 @@ public class WikiEngine
      *  This means that we need to make a new string using the correct
      *  encoding.
      *  <P>
+     *  For more information, see:
+     *     <A HREF="http://www.jguru.com/faq/view.jsp?EID=137049">JGuru FAQ</A>.
+     *  <P>
      *  Incidentally, this is almost the same as encodeName(), below.
      *  I am not yet entirely sure if it's safe to merge the code.
      *
      *  @since 1.5.3
      */
+
     public String safeGetParameter( ServletRequest request, String name )
     {
         try
