@@ -92,8 +92,14 @@ public class TranslatorReader extends Reader
     /** Property name for the "match english plurals" -hack. */
     public static final String     PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
 
+    /** If true, consider CamelCase hyperlinks as well. */
+    public static final String     PROP_CAMELCASELINKS   = "jspwiki.translatorReader.camelCaseLinks";
+
     /** If true, we'll also consider english plurals (+s) a match. */
     private boolean                m_matchEnglishPlurals = true;
+
+    /** If true, then considers CamelCase links as well. */
+    private boolean                m_camelCaseLinks      = false;
 
     /**
      *  The default inlining pattern.  Currently "*.png"
@@ -133,7 +139,9 @@ public class TranslatorReader extends Reader
 
         m_inlineImagePatterns = compiledpatterns;
 
-        m_matchEnglishPlurals = "true".equals( m_engine.getWikiProperties().getProperty( PROP_MATCHPLURALS, "false" ) );
+        Properties props = m_engine.getWikiProperties();
+        m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
+        m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" );
     }
 
     /**
@@ -422,21 +430,6 @@ public class TranslatorReader extends Reader
         return false;
     }
 
-    // FIXME: Non-optimal.
-    /*
-    private boolean isNumber2( String s )
-    {
-        try
-        {
-            int i = Integer.parseInt( s );
-        }
-        catch( Exception e )
-        {
-            return false;
-        }
-        return true;
-    }
-    */
     /**
      *  Returns true, if the argument contains a number, otherwise false.
      *  In a quick test this is roughly the same speed as Integer.parseInt()
@@ -459,7 +452,76 @@ public class TranslatorReader extends Reader
 
         return true;
     }
-    
+
+    /**
+     *  Attempts to set traditional, CamelCase style WikiLinks.
+     */
+    private String setCamelCaseLinks( String line )
+    {
+        PatternMatcher  matcher  = new Perl5Matcher();
+        PatternCompiler compiler = new Perl5Compiler();
+        PatternMatcherInput input;
+
+        try
+        {
+            Pattern camelCasePtrn = compiler.compile( "(^|\\W)([A-Z][a-z]+([A-Z][a-z]+)+)" );
+            // Pattern camelCasePtrn = compiler.compile( "(?<![[:alnum:]])(?:[[:upper:]][[:lower:]]+){2,}(?![[:alnum:]])" );
+
+            input = new PatternMatcherInput( line );
+
+            while( matcher.contains( input, camelCasePtrn ) )
+            {
+                //
+                //  Weed out links that will be matched later on.
+                //
+
+                MatchResult res = matcher.getMatch();
+                int lastOpen = line.substring(0,res.endOffset(2)).lastIndexOf('[');
+                int lastClose = line.substring(0,res.endOffset(2)).lastIndexOf(']');
+
+                if( lastOpen < lastClose || lastOpen < 0 || 
+                    !(lastOpen >= 0 && lastClose < 0) )
+                {
+                    int start = res.beginOffset(2);
+                    int end   = res.endOffset(2);
+
+                    String link = res.group(2);
+                    String matchedLink;
+
+                    // System.out.println("LINE="+line);
+                    // System.out.println("  Replacing: "+link);
+                    // System.out.println("  open="+lastOpen+", close="+lastClose);
+                    if( (matchedLink = linkExists( link )) != null )
+                    {
+                        link = makeLink( READ, matchedLink, link );
+                    }
+                    else
+                    {
+                        link = makeLink( EDIT, matchedLink, link );
+                    }
+
+                    line = TextUtil.replaceString( line, 
+                                                   start, 
+                                                   end, 
+                                                   link );
+
+                    input.setInput( line );
+                    input.setCurrentOffset( start+link.length() );
+                } // if()
+            } // while
+
+        }
+        catch( MalformedPatternException e )
+        {
+            log.error("Wrong pattern with CamelCase", e);
+        }
+
+        return line;
+    }
+
+    /**
+     *  Gobbles up all hyperlinks that are encased in square brackets.
+     */
     private String setHyperLinks( String line )
     {
         int start, end = 0;
@@ -1054,6 +1116,11 @@ public class TranslatorReader extends Reader
             }
 
             // Do the standard settings
+
+            if( m_camelCaseLinks )
+            {
+                line = setCamelCaseLinks( line );
+            }
 
             line = setHyperLinks( line );
             line = setHeadings( line );
