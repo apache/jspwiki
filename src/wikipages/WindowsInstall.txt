@@ -18,3 +18,5 @@ The RCS executables will not work unless you set:
 * TZ environment variable to a value suitable for your locale (this value must
   be set; I have failed to get it working properly, though)
 * You also may need to set the LOGNAME environment variable.
+
+(Text kindly donated by some anonymous person on [JSPWiki|http://www.ecyrd.com/JSPWiki].)
