@@ -1,3 +1,8 @@
+2002-07-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Moved some heavier stuff from tests to package "stresstests" to
+        make running unit tests faster. 
+
 2002-07-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.3
