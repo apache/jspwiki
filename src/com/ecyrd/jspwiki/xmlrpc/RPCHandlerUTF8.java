@@ -204,11 +204,13 @@ public class RPCHandlerUTF8
 
         LinkCollector localCollector = new LinkCollector();
         LinkCollector extCollector   = new LinkCollector();
+        LinkCollector attCollector   = new LinkCollector();
 
         m_engine.textToHTML( new WikiContext(m_engine,page),
                              pagedata,
                              localCollector,
-                             extCollector );
+                             extCollector,
+                             attCollector );
 
         Vector result = new Vector();
 
@@ -232,6 +234,22 @@ public class RPCHandlerUTF8
             {
                 ht.put( "href", m_engine.getEditURL(link) );
             }
+
+            result.add( ht );
+        }
+
+        //
+        // Add links to inline attachments
+        //
+        for( Iterator i = attCollector.getLinks().iterator(); i.hasNext(); )
+        {
+            String link = (String) i.next();
+
+            Hashtable ht = new Hashtable();
+
+            ht.put( "page", link );
+            ht.put( "type", LINK_LOCAL );
+            ht.put( "href", m_engine.getAttachmentURL(link) );
 
             result.add( ht );
         }
