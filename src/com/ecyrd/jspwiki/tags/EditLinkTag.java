@@ -53,30 +53,48 @@ public class EditLinkTag
         throws IOException
     {
         WikiEngine engine   = m_wikiContext.getEngine();
-        WikiPage   page;
+        WikiPage   page     = null;
         String     versionString = "";
-
+        String     encodedlink = null;
+        
+        //
+        //  Determine the page and the link.
+        //
         if( m_pageName == null )
         {
-            if( m_wikiContext.getPage() != null )
+            page = m_wikiContext.getPage();
+            if( page == null )
             {
-                page = m_wikiContext.getPage();
+                // You can't call this on the page itself anyways.
+                return SKIP_BODY;
             }
             else
             {
-                return SKIP_BODY;
+                encodedlink = engine.encodeName( page.getName() );
             }
         }
         else
         {
-            page = engine.getPage( m_pageName );
+            encodedlink = engine.encodeName( m_pageName );
         }
 
+        //
+        //  Determine the latest version, if the version attribute is "this".
+        //
         if( m_version != null )
         {
             if( "this".equalsIgnoreCase(m_version) )
             {
-                versionString = "&version="+page.getVersion();
+                if( page == null )
+                {
+                    // No page, so go fetch according to page name.
+                    page = engine.getPage( m_pageName );
+                }
+                
+                if( page != null )
+                {
+                    versionString = "&version="+page.getVersion();
+                }
             }
             else
             {
@@ -84,8 +102,11 @@ public class EditLinkTag
             }
         }
 
+        //
+        //  Finally, print out the correct link, according to what
+        //  user commanded.
+        //
         JspWriter out = pageContext.getOut();
-        String encodedlink = engine.encodeName( page.getName() );
 
         switch( m_format )
         {
