@@ -102,6 +102,8 @@ public class ReferenceManager
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
 
+    private static final Category log = Category.getInstance(ReferenceManager.class);
+
     /**
      *  Builds a new ReferenceManager with default (null) entries for
      *  the WikiPages contained in the pages Collection. (This collection
@@ -222,8 +224,7 @@ public class ReferenceManager
         }
         catch( ClassCastException e )
         {
-            //log.info( "" );
-            System.out.println( "Invalid collection entry in ReferenceManager.buildKeyLists()." );
+            log.fatal( "Invalid collection entry in ReferenceManager.buildKeyLists().", e );
         }
     }
 
@@ -337,6 +338,7 @@ public class ReferenceManager
      * This method is NOT synchronized, and should be used in testing
      * with one user, one WikiEngine only.
      */
+    // FIXME: Remove, not good putting debug code in distribution.
     public void dump()
     {
         try
