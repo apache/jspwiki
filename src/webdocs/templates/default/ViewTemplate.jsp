@@ -5,7 +5,7 @@
 
 <HEAD>
   <TITLE><wiki:ApplicationName />: <wiki:PageName /></TITLE>
-  <%@ include file="../../cssinclude.js" %>
+  <%@ include file="cssinclude.js" %>
   <wiki:RSSLink />
 </HEAD>
 
