@@ -4,6 +4,9 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
+<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.EditPermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -38,6 +41,19 @@
     if( latestversion == null )
     {
         latestversion = wikiContext.getPage();
+    }
+
+    AuthorizationManager mgr = wiki.getAuthorizationManager();
+    UserProfile currentUser  = wiki.getUserManager().getUserProfile( request );
+
+    if( !mgr.checkPermission( wikiContext.getPage(),
+                              currentUser,
+                              new EditPermission() ) )
+    {
+        log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+        String pageurl = wiki.encodeName( pagereq );
+        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
+        return;
     }
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
