@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.20 $
-                             $Date: 2003-07-15 11:25:00 $
+                         $Revision: 1.21 $
+                             $Date: 2003-07-16 15:51:24 $
                            $Author: jalkanen $
 
 What is it?
@@ -287,11 +287,12 @@ This product includes software developed by the OpenSymphony Group
 information. 
 
 There have been many contributors so far.  Especially thanks go to
-Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips, and
-Mahlen Morris, who have given me quite a lot of support and/or code.
-There are also a number of other people who have generously given
-their time, and you can find hopefully all of their names in the
-ChangeLog.
+Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips,
+Mahlen Morris, Paul Downes, Michael Gentry, John Volkar, Torsten
+Hildebrandt, and Foster Schucker who have given me quite a lot of
+support and/or code.  There are also a number of other people who have
+generously given their time, and you can find hopefully all of their
+names in the ChangeLog.
 
 
 Contact
