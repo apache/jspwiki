@@ -37,6 +37,8 @@
       <p>
       <label for="authorname">Your name</label>
       <input type="text" name="author" id="authorname" value="<wiki:UserName/>" />
+      <label for="rememberme">Remember me?</label>
+      <input type="checkbox" name="remember" id="rememberme" />
       </p>
 
       <p>      
