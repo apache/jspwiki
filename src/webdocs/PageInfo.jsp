@@ -94,7 +94,7 @@
                                %>
                                <tr>
                                    <td>
-                                   <A HREF="ReadPage.jsp?page=<%=pagereq%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
+                                   <A HREF="Wiki.jsp?page=<%=pagereq%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
                                    </td>
                                    <td><%=p.getLastModified()%></td>
                                    <td><%=p.getAuthor()%></td>
