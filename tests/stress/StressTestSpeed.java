@@ -71,6 +71,32 @@ public class StressTestSpeed extends TestCase
                             mark.getDurationMs()/ITERATIONS+" ms/page)" );
     }
 
+    public void testSpeed2()
+        throws Exception
+    {
+        InputStream is = getClass().getClassLoader().getResourceAsStream("/TestPlugins.txt");
+        Reader      in = new InputStreamReader( is, "ISO-8859-1" );
+        StringWriter out = new StringWriter();
+        Benchmark mark = new Benchmark();
+
+        FileUtil.copyContents( in, out );
+
+        engine.saveText( NAME1, out.toString() );
+
+        mark.start();
+
+        for( int i = 0; i < ITERATIONS; i++ )
+        {
+            String txt = engine.getHTML( NAME1 );
+            assertTrue( 0 != txt.length() );
+        }
+
+        mark.stop();
+
+        System.out.println( ITERATIONS+" plugin pages took "+mark.getDurationMs()+" ms (="+
+                            mark.getDurationMs()/ITERATIONS+" ms/page)" );
+    }
+
     public static Test suite()
     {
         return new TestSuite( StressTestSpeed.class );
