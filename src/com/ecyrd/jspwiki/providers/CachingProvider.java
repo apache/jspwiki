@@ -358,21 +358,27 @@ public class CachingProvider
     public synchronized String getProviderInfo()
     {              
         int cachedPages = 0;
+        long totalSize  = 0;
         
         for( Iterator i = m_cache.values().iterator(); i.hasNext(); )
         {
             CacheItem item = (CacheItem) i.next();
 
-            if( item.m_text.get() != null )
+            String text = (String) item.m_text.get();
+            if( text != null )
             {
                 cachedPages++;
+                totalSize += text.length()*2;
             }
         }
+
+        totalSize = (totalSize+512)/1024L;
 
         return("Real provider: "+m_provider.getClass().getName()+
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits+
-               "<br />Cached pages: "+cachedPages);
+               "<br />Cached pages: "+cachedPages+
+               "<br />Total cache size (kBytes): "+totalSize);
     }
 
     public void deleteVersion( String pageName, int version )
