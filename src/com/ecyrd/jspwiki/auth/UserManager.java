@@ -11,6 +11,8 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Manages user accounts, logins/logouts, passwords, etc.
@@ -24,6 +26,8 @@ public class UserManager
 
     /** If true, logs the IP address of the editor on saving. */
     public static final String PROP_STOREIPADDRESS= "jspwiki.storeIPAddress";
+
+    public static final String PROP_AUTHENTICATOR = "jspwiki.authenticator";
 
     /** If true, logs the IP address of the editor */
     private boolean            m_storeIPAddress = true;
@@ -41,7 +45,7 @@ public class UserManager
     private WikiEngine         m_engine;
 
     public UserManager( WikiEngine engine, Properties props )
-        throws NoRequiredPropertyException
+        throws WikiException
     {
         m_engine = engine;
 
@@ -54,6 +58,37 @@ public class UserManager
         m_groups.put( "All",             new AllGroup() ); // FIXME: Hard-coded.
         m_groups.put( GROUP_NAMEDGUEST,  new NamedGroup() );
         m_groups.put( GROUP_KNOWNPERSON, new KnownGroup() );
+
+        String authClassName = props.getProperty( PROP_AUTHENTICATOR );
+
+        if( authClassName != null )
+        {
+            try
+            {
+                Class authenticatorClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules",
+                                                                authClassName );
+
+                m_authenticator = (WikiAuthenticator)authenticatorClass.newInstance();
+                m_authenticator.initialize( props );
+
+                log.info("Initialized "+authClassName+" for authentication.");
+            }
+            catch( ClassNotFoundException e )
+            {
+                log.fatal( "Authenticator "+authClassName+" cannot be found", e );
+                throw new WikiException("Authenticator cannot be found");
+            }
+            catch( InstantiationException e )
+            {
+                log.fatal( "Authenticator "+authClassName+" cannot be created", e );
+                throw new WikiException("Authenticator cannot be created");
+            }
+            catch( IllegalAccessException e )
+            {
+                log.fatal( "You are not allowed to access this authenticator class", e );
+                throw new WikiException("You are not allowed to access this authenticator class");
+            }
+        }
 
         //
         //  FIXME: These should not be hardcoded.
@@ -126,10 +161,33 @@ public class UserManager
         return p;
     }
 
-    public void login( String username, String password, HttpSession session )
+    public boolean login( String username, String password, HttpSession session )
     {
-        log.info("Logged in user "+username);
-        // FIXME
+        if( m_authenticator == null ) return false;
+
+        if( session == null )
+        {
+            log.error("No session provided, cannot log in.");
+            return false;
+        }
+
+        UserProfile wup = getUserProfile( username );
+        wup.setPassword( password );
+
+        boolean isValid = m_authenticator.authenticate( wup );
+
+        if( isValid )
+        {
+            wup.setLoginStatus( UserProfile.PASSWORD );
+            session.setAttribute( WIKIUSER, wup );
+            log.info("Logged in user "+username);
+        }
+        else
+        {
+            log.info("Username "+username+" attempted to log in with the wrong password.");
+        }
+
+        return isValid;
     }
 
     /**
