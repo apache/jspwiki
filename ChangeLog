@@ -1,3 +1,9 @@
+2001-12-13  Erik Bunn  <Erik.Bunn@memecry.net>
+
+        * Initial hack to make diffs prettier implemented. Relies
+        on CSS, uses lots of DIV tags, and the mac/ie css'es haven't
+        been tested. 
+
 2001-12-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * cssinclude.js now also sets some basic LINK elements: "start"
