@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 
 import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.attachment.*;
 
 public class WikiEngineTest extends TestCase
 {
@@ -13,11 +14,21 @@ public class WikiEngineTest extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine m_engine;
+    TestEngine m_engine;
 
     public WikiEngineTest( String s )
     {
         super( s );
+    }
+
+    public static Test suite()
+    {
+        return new TestSuite( WikiEngineTest.class );
+    }
+
+    public static void main(String[] args)
+    {
+        junit.textui.TestRunner.main(new String[] { WikiEngineTest.class.getName() } );
     }
 
     public void setUp()
@@ -356,10 +367,189 @@ public class WikiEngineTest extends TestCase
         assertEquals( "wrong version", -1, vsp.m_latestVers );
     }
 
-    public static Test suite()
+    /**
+     *  Checks, if ReferenceManager is informed of new attachments.
+     */
+    public void testAttachmentRefs()
+        throws Exception
     {
-        return new TestSuite( WikiEngineTest.class );
+        ReferenceManager refMgr = m_engine.getReferenceManager();
+        AttachmentManager attMgr = m_engine.getAttachmentManager();
+        
+        m_engine.saveText( NAME1, "fooBar");
+
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        attMgr.storeAttachment( att, makeAttachmentFile() );
+
+        try
+        {    
+            // and check post-conditions        
+            Collection c = refMgr.findUncreated();
+            assertTrue("attachment exists: "+c,            
+                       c==null || c.size()==0 );
+    
+            c = refMgr.findUnreferenced();
+            assertEquals( "unreferenced count", c.size(), 2 );
+            Iterator i = c.iterator();
+            String first = (String) i.next();
+            String second = (String) i.next();
+            assertTrue( "unreferenced",            
+                        (first.equals( NAME1 ) && second.equals( NAME1+"/TestAtt.txt"))
+                        || (first.equals( NAME1+"/TestAtt.txt" ) && second.equals( NAME1 )) );
+        }
+        finally
+        { 
+            // do cleanup
+            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+        }
     }
 
+    /**
+     *  Is ReferenceManager updated properly if a page references its own attachments.
+     */
+    public void testAttachmentRefs2()
+        throws Exception
+    {
+        ReferenceManager refMgr = m_engine.getReferenceManager();
+        AttachmentManager attMgr = m_engine.getAttachmentManager();
+        
+        m_engine.saveText( NAME1, "[TestAtt.txt]");
+
+        // check a few pre-conditions
+        
+        Collection c = refMgr.findReferrers( "TestAtt.txt" );
+        assertTrue( "normal, unexisting page", c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
+        
+        c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
+        assertTrue( "no attachment", c==null || c.size()==0 );
+        
+        c = refMgr.findUncreated();
+        assertTrue( "unknown attachment", 
+                    c!=null && 
+                    c.size()==1 && 
+                    ((String)c.iterator().next()).equals( "TestAtt.txt" ) );
+        
+        // now we create the attachment
+            
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        attMgr.storeAttachment( att, makeAttachmentFile() );
+        try
+        {    
+            // and check post-conditions        
+            c = refMgr.findUncreated();
+            assertTrue( 
+                "attachment exists",            
+                c==null || c.size()==0 );
+    
+            c = refMgr.findReferrers( "TestAtt.txt" );
+            assertTrue( "no normal page", c==null || c.size()==0 );
+    
+            c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
+            assertTrue( "attachment exists now", c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
+
+            c = refMgr.findUnreferenced();
+            assertTrue( "unreferenced",            
+                        c.size()==1 && ((String)c.iterator().next()).equals( NAME1 ));
+        }
+        finally
+        { 
+            // do cleanup
+            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+        }
+    }
+
+    /** 
+     *  Checks, if ReferenceManager is informed if a link to an attachment is added.
+     */
+    public void testAttachmentRefs3()
+        throws Exception
+    {
+        ReferenceManager refMgr = m_engine.getReferenceManager();
+        AttachmentManager attMgr = m_engine.getAttachmentManager();
+        
+        m_engine.saveText( NAME1, "fooBar");
+
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        attMgr.storeAttachment( att, makeAttachmentFile() );
+
+        m_engine.saveText( NAME1, " [TestAtt.txt] ");
+
+        try
+        {    
+            // and check post-conditions        
+            Collection c = refMgr.findUncreated();
+            assertTrue( "attachment exists",            
+                        c==null || c.size()==0 );
+    
+            c = refMgr.findUnreferenced();
+            assertEquals( "unreferenced count", c.size(), 1 );
+            assertTrue( "unreferenced",            
+                        ((String)c.iterator().next()).equals( NAME1 ) );
+        }
+        finally
+        { 
+            // do cleanup
+            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+        }
+    }
+    
+    /** 
+     *  Checks, if ReferenceManager is informed if a third page references an attachment.
+     */
+    public void testAttachmentRefs4()
+        throws Exception
+    {
+        ReferenceManager refMgr = m_engine.getReferenceManager();
+        AttachmentManager attMgr = m_engine.getAttachmentManager();
+        
+        m_engine.saveText( NAME1, "[TestPage2]");
+
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        attMgr.storeAttachment( att, makeAttachmentFile() );
+
+        m_engine.saveText( "TestPage2", "["+NAME1+"/TestAtt.txt]");
+
+        try
+        {    
+            // and check post-conditions        
+            Collection c = refMgr.findUncreated();
+            assertTrue( "attachment exists",            
+                        c==null || c.size()==0 );
+    
+            c = refMgr.findUnreferenced();
+            assertEquals( "unreferenced count", c.size(), 1 );
+            assertTrue( "unreferenced",            
+                        ((String)c.iterator().next()).equals( NAME1 ) );
+        }
+        finally
+        { 
+            // do cleanup
+            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            m_engine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
+            new File( files, "TestPage2"+FileSystemProvider.FILE_EXT ).delete();
+        }
+    }    
+
+    private File makeAttachmentFile()
+        throws Exception
+    {
+        File tmpFile = File.createTempFile("test","txt");
+        tmpFile.deleteOnExit();
+
+        FileWriter out = new FileWriter( tmpFile );
+        
+        FileUtil.copyContents( new StringReader( "asdfaäöüdfzbvasdjkfbwfkUg783gqdwog" ), out );
+
+        out.close();
+        
+        return tmpFile;
+    }
 
 }
