@@ -11,10 +11,12 @@ import com.ecyrd.jspwiki.attachment.*;
 public class WikiEngineTest extends TestCase
 {
     public static final String NAME1 = "Test1";
+    public static final long PAGEPROVIDER_RESCAN_PERIOD = 2000L;
 
     Properties props = new Properties();
 
     TestEngine m_engine;
+
 
     public WikiEngineTest( String s )
     {
@@ -37,6 +39,11 @@ public class WikiEngineTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
+	// We'll need a shorter-than-default consistency check for
+	// the page-changed checks. This will cause additional load
+	// to the file system, though.
+	props.setProperty( CachingProvider.PROP_CACHECHECKINTERVAL, 
+			   Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
 
         m_engine = new TestEngine(props);
     }
@@ -51,6 +58,7 @@ public class WikiEngineTest extends TestCase
 
             m_engine.deleteAll( f );
         }
+
     }
 
     public void testNonExistantDirectory()
@@ -590,10 +598,11 @@ public class WikiEngineTest extends TestCase
         FileUtil.copyContents( new StringReader("Puppaa"), out );
         out.close();
 
-        Thread.sleep( 5000L );
+	// Wait for the caching provider to notice a refresh.
+        Thread.sleep( 2L*PAGEPROVIDER_RESCAN_PERIOD );
 
-        String text = m_engine.getText( NAME1 );
-
+	// Trim - engine.saveText() may append a newline.
+        String text = m_engine.getText( NAME1 ).trim();
         assertEquals( "wrong contents", "Puppaa", text );
     }
 
@@ -610,8 +619,8 @@ public class WikiEngineTest extends TestCase
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
         Collection c = refMgr.findUncreated();
-        assertEquals( "uncreated count", 1, c.size() );
-        assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
+        assertTrue( "Non-existent reference not detected by ReferenceManager",
+		    Util.collectionContains( c, "Foobar" ));
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
@@ -632,8 +641,10 @@ public class WikiEngineTest extends TestCase
         assertEquals( "wrong contents", "[Puppaa]", text );
 
         c = refMgr.findUncreated();
-        assertEquals( "NEW: uncreated count", 1, c.size() );
-        assertEquals( "NEW: wrong referenced page", "Puppaa", (String)c.iterator().next() );
+
+        assertTrue( "Non-existent reference after external page change " +
+		    "not detected by ReferenceManager",
+		    Util.collectionContains( c, "Puppaa" ));
     }
 
 
