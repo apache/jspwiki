@@ -1,0 +1,217 @@
+package com.ecyrd.jspwiki.acl;
+
+import java.security.acl.AclEntry;
+import java.security.acl.Acl;
+import java.security.acl.Permission;
+import java.security.acl.Group;
+import java.security.Principal;
+import java.util.Vector;
+import java.util.Enumeration;
+import java.util.Iterator;
+
+/**
+ *  JSPWiki implementation of an Access Control List.
+ *  <p>
+ *  This implementation does not care about owners, and thus all
+ *  actions are allowed by default. 
+ */
+public class AclImpl
+    implements AccessControlList
+{
+    private Vector m_entries = new Vector();
+    private String m_name    = null;
+
+    public boolean addOwner( Principal caller, Principal owner )
+    {
+        return false;
+    }
+
+    public boolean deleteOwner(Principal caller,
+                               Principal owner)
+    {
+        return false;
+    }
+
+    public boolean isOwner(Principal owner)
+    {
+        return true;
+    }
+
+    public void setName( Principal caller, String name )
+    {
+        m_name = name;
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    private boolean hasEntry( AclEntry entry )
+    {
+        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        {
+            AclEntry e = (AclEntry) i.next();
+
+            if( e.getPrincipal().equals( entry.getPrincipal() ) &&
+                e.isNegative() == entry.isNegative() )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean addEntry(Principal caller,
+                            AclEntry entry)
+    {
+        if( hasEntry( entry ) )
+        {
+            return false;
+        }
+        
+        m_entries.add( entry );
+
+        return true;
+    }
+
+    public boolean removeEntry(Principal caller,
+                               AclEntry entry)
+    {
+        return m_entries.remove( entry );
+    }
+
+    // FIXME: Does not understand anything about groups yet.
+    public Enumeration getPermissions(Principal user)
+    {
+        Vector perms = new Vector();
+
+        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        {
+            AclEntry ae = (AclEntry)i.next();
+
+            if( ae.getPrincipal().getName().equals( user.getName() ) )
+            {
+                //
+                //  Principal direct match.
+                //
+
+                for( Enumeration enum = ae.permissions(); enum.hasMoreElements(); )
+                {
+                    perms.add( enum.nextElement() );
+                }
+            }
+        }
+
+        return perms.elements();
+    }
+
+    public Enumeration entries()
+    {
+        return m_entries.elements();
+    }
+
+    public boolean checkPermission(Principal principal,
+                                   Permission permission)
+    {
+        int res = findPermission( principal, permission );
+
+        return (res == ALLOW);
+    }
+
+    public AclEntry getEntry( Principal principal, boolean isNegative )
+    {
+        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        {
+            AclEntry entry = (AclEntry) e.nextElement();
+        
+            if( entry.getPrincipal().getName().equals(principal.getName()) &&
+                entry.isNegative() == isNegative )
+            {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     *  A new kind of an interface, where the possible results are
+     *  either ALLOW, DENY, or NONE.
+     */
+   
+    public int findPermission(Principal principal,
+                              Permission permission)
+    {
+        boolean posEntry = false;
+
+        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        {
+            AclEntry entry = (AclEntry) e.nextElement();
+
+            if( entry.getPrincipal().getName().equals(principal.getName()) )
+            {
+                if( entry.checkPermission( permission ) )
+                {
+                    if( entry.isNegative() )
+                    {
+                        return DENY;
+                    }
+                    else
+                    {
+                        posEntry = true;
+                    }
+                }
+            }
+        }
+
+        //
+        //  Now, if the individual permissions did not match, we'll go through
+        //  it again but this time looking at groups.
+        //
+        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        {
+            AclEntry entry = (AclEntry) e.nextElement();
+
+            if( entry.getPrincipal() instanceof Group )
+            {
+                Group entryGroup = (Group) entry.getPrincipal();
+
+                if( entryGroup.isMember( principal ) && entry.checkPermission( permission ) )
+                {
+                    if( entry.isNegative() )
+                    {
+                        return DENY;
+                    }
+                    else
+                    {
+                        posEntry = true;
+                    }
+                }
+            }
+        }
+
+        if( posEntry ) return ALLOW;
+
+        return NONE;
+    }
+
+    /**
+     *  Returns a string representation of the contents of this Acl.
+     */
+    public String toString()
+    {
+        StringBuffer res = new StringBuffer();
+
+        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        {
+            AclEntry entry = (AclEntry) e.nextElement();
+
+            res.append( entry.toString() +"\n" );
+        }        
+
+        return res.toString();
+    }
+}
+    

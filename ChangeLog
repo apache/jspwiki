@@ -1,3 +1,13 @@
+2003-04-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.10.
+
+        * A mass import of the more stable parts of the new authentication
+        system.  Most notably, there are now new packages for access
+        control lists (com.ecyrd.jspwiki.acl) and permissions.  However,
+        note that mostly everything does NOT work now - even tests don't
+        compile because of some missing files.
+
 2003-04-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * A few fixes to default template to be more XHTML compliant.
