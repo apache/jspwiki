@@ -41,8 +41,10 @@ public class UndefinedPagesPlugin
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         Collection links = refmgr.findUncreated();
 
+        super.initialize( context, params );
+
         String wikitext = wikitizeCollection( links, "\\\\", ALL_ITEMS );
         
-        return context.getEngine().textToHTML( context, wikitext );
+        return makeHTML( context, wikitext );
     }
 }
