@@ -161,6 +161,39 @@ public class TextUtilTest extends TestCase
         assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
     }
 
+    public void testGetBooleanProperty()
+    {
+        Properties props = new Properties();
+
+        props.setProperty("foobar.0", "YES");
+        props.setProperty("foobar.1", "true");
+        props.setProperty("foobar.2", "false");
+        props.setProperty("foobar.3", "no");
+        props.setProperty("foobar.4", "on");
+        props.setProperty("foobar.5", "OFF");
+        props.setProperty("foobar.6", "gewkjoigew");
+
+        assertTrue( "foobar.0", 
+                    TextUtil.getBooleanProperty( props, "foobar.0", false ) );
+        assertTrue( "foobar.1", 
+                    TextUtil.getBooleanProperty( props, "foobar.1", false ) );
+
+        assertFalse( "foobar.2", 
+                     TextUtil.getBooleanProperty( props, "foobar.2", true ) );
+        assertFalse( "foobar.3", 
+                    TextUtil.getBooleanProperty( props, "foobar.3", true ) );
+        assertTrue( "foobar.4", 
+                    TextUtil.getBooleanProperty( props, "foobar.4", false ) );
+
+        assertFalse( "foobar.5", 
+                     TextUtil.getBooleanProperty( props, "foobar.5", true ) );
+
+        assertFalse( "foobar.6", 
+                     TextUtil.getBooleanProperty( props, "foobar.6", true ) );
+
+
+    }
+
     public static Test suite()
     {
         return new TestSuite( TextUtilTest.class );
