@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+                        "http://java.sun.com/dtd/web-jsptaglibrary_1_1.dtd">
+
+<!--
+     JSPWiki tag libraries are defined here.
+
+     Note that we support only the 1.1 spec for now,
+     simply because there is no reason to break compatibility.
+ -->
+<taglib>
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>jspwiki</shortname>
+
+  <tag>
+    <name>HTMLContent</name>
+    <tagclass>com.ecyrd.jspwiki.tags.HTMLContentTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>RSSLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.RSSLinkTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>RSSImageLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.RSSImageLinkTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>title</name>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>RSSUserlandLink</name>
+    <tagclass>com.ecyrd.jspwiki.tags.RSSCoffeeCupLinkTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>title</name>
+    </attribute>
+  </tag>
+
+</taglib>
