@@ -86,21 +86,20 @@ public class LinkToTag
         {
             url = engine.getAttachmentURL(pageName);
             linkclass = "attachment";
+
+            if( getVersion() != null ) url += "?version="+getVersion();
         }
         else
         {
             url = engine.getViewURL( pageName );
             linkclass = "wikipage";
-        }
 
-        if( getVersion() != null )
-        {
-            url += "&amp;version="+getVersion();
-        }
+            if( getVersion() != null ) url += "&amp;version="+getVersion();
 
-        if( getTemplate() != null )
-        {
-            url += "&amp;skin="+getTemplate();
+            if( getTemplate() != null )
+            {
+                url += "&amp;skin="+getTemplate();
+            }
         }
 
         switch( m_format )
