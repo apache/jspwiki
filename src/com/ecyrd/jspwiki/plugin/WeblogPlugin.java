@@ -194,8 +194,11 @@ public class WeblogPlugin implements WikiPlugin
                     sb.append( "<a href=\""+engine.getViewURL(commentPageName)+"\">View Comments</a>" );
                 }
 
-                sb.append( "&nbsp;&nbsp;" );
-                sb.append( "<a href=\""+engine.getEditURL(commentPageName)+"&comment=true\">Comment this entry</a>" );
+                if( hasComments )
+                {
+                    sb.append( "&nbsp;&nbsp;" );
+                    sb.append( "<a href=\""+engine.getEditURL(commentPageName)+"&comment=true\">Comment this entry</a>" );
+                }
 
                 sb.append("</div>");
             }
