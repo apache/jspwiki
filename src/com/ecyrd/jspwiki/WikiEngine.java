@@ -89,7 +89,7 @@ public class WikiEngine
     private String         m_baseURL;
     
     /** Stores references between wikipages. */
-    private ReferenceManager m_referenceManager;
+    private ReferenceManager m_referenceManager = null;
 
     /** Stores the Plugin manager */
     private PluginManager    m_pluginManager;
@@ -124,7 +124,8 @@ public class WikiEngine
      *  Instantiate the WikiEngine using a given set of properties.
      */
     public WikiEngine( Properties properties )
-        throws NoRequiredPropertyException
+        throws NoRequiredPropertyException,
+               ServletException
     {
         initialize( properties );
     }
@@ -155,7 +156,8 @@ public class WikiEngine
      *  Does all the real initialization.
      */
     private void initialize( Properties props )
-        throws NoRequiredPropertyException
+        throws NoRequiredPropertyException,
+               ServletException
     {
         m_properties = props;
         //
@@ -209,11 +211,19 @@ public class WikiEngine
             throw new IllegalArgumentException("illegal provider class");
         }
 
-        m_pluginManager = new PluginManager();
+        try
+        {
+            m_pluginManager    = new PluginManager();
+            m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
 
-        m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
-
-        initReferenceManager();
+            initReferenceManager();            
+        }
+        catch( Exception e )
+        {
+            // RuntimeExceptions may occur here, even if they shouldn't.
+            log.error( "Unable to start.", e );
+            throw new ServletException( "Unable to start", e );
+        }
 
         log.info("WikiEngine configured.");
     }
@@ -893,7 +903,7 @@ public class WikiEngine
         }
         catch( IOException e )
         {
-            log.error("Failed to colorize diff result.");
+            log.error("Failed to colorize diff result.", e);
         }
 
         return diff;
