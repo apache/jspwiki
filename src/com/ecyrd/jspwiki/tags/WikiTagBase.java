@@ -22,7 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 
@@ -41,7 +41,7 @@ public abstract class WikiTagBase
 {
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
-    static    Category    log = Category.getInstance( WikiTagBase.class );
+    static    Logger    log = Logger.getLogger( WikiTagBase.class );
 
     protected WikiContext m_wikiContext;
 
