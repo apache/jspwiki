@@ -1,3 +1,8 @@
+2001-11-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * RCS commands now inherit the parent environment.  This might
+        help with some Windows-related issues.
+
 2001-11-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Prevent robots from caching Edit, Diff, PageInfo and
