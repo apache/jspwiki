@@ -1,3 +1,30 @@
+2003-01-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+	* v2.0.20.
+	
+        * Fixed a couple of Windows tests failing.  This unfortunately
+	means that all attachments are now renamed in a bit of a different
+	way (a -dir) is attached to the attachment name.  You will need to
+	change your old attachment names (mv attachment/
+	attachment-dir/).  However, there is a built-in migration code,
+	but you still should to the change.
+
+        * v2.0.19.
+
+        * Broke WikiAttachmentProvider as well with deletePage() and
+        deleteVersion().
+
+        * Added Breadcrumbs tag from Ken Liu.  The default template now
+        also includes it.
+
+        * v2.0.18.
+
+        * Broke WikiPageProvider by adding deletePage() and
+        deleteVersion() methods.
+
+        * Fixed a multitude of bugs in the tests, courtesy of Torsten
+        Hildebrandt.  For example, "ant guitests" should work now.
+
 2003-01-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.17.
@@ -288,7 +315,7 @@
 
         * New option: jspwiki.translatorReader.useOutlinkImage allows you
         to mark all outgoing links with a small picture.  Thanks to Teemu
-        Hirsimﾂ惹ki for providing with the idea and the image.  Look for
+        HirsimB仕ki for providing with the idea and the image.  Look for
         images/out.png, if you want to change it.
 
 2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
@@ -1191,7 +1218,7 @@
 
         * v1.6.9-cvs
 
-        * Added support for tables.  Sanna VBﾂ仕Bﾂ仕tBﾂ仕inen finally managed to
+        * Added support for tables.  Sanna VBB仕BB仕tBB仕inen finally managed to
         convince me to add them, by pointing out some real deficiences in
         the preformatted-text style tables =).
 

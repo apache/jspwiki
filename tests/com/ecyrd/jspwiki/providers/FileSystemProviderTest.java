@@ -30,7 +30,7 @@ public class FileSystemProviderTest extends TestCase
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            m_pagedir );
 
-        props2.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        props2.load( TestEngine.findTestProperties() );
         PropertyConfigurator.configure(props2);
         
         m_provider = new FileSystemProvider();

@@ -23,7 +23,7 @@ public class StressTestSpeed extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki_rcs.properties") );
+        props.load( TestEngine.findTestProperties("/jspwiki_rcs.properties") );
 
         engine = new TestEngine(props);
     }
@@ -48,7 +48,7 @@ public class StressTestSpeed extends TestCase
     public void testSpeed1()
         throws Exception
     {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("/TextFormattingRules.txt");
+        InputStream is = getClass().getResourceAsStream("/TextFormattingRules.txt");
         Reader      in = new InputStreamReader( is, "ISO-8859-1" );
         StringWriter out = new StringWriter();
         Benchmark mark = new Benchmark();
@@ -74,7 +74,7 @@ public class StressTestSpeed extends TestCase
     public void testSpeed2()
         throws Exception
     {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("/TestPlugins.txt");
+        InputStream is = getClass().getResourceAsStream("/TestPlugins.txt");
         Reader      in = new InputStreamReader( is, "ISO-8859-1" );
         StringWriter out = new StringWriter();
         Benchmark mark = new Benchmark();

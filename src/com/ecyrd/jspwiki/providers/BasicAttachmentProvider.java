@@ -64,6 +64,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *             
  *  </PRE>
  *
+ *  The names of the directories will be URLencoded.
+ *  <p>
  *  "attachment.properties" consists of the following items:
  *  <UL>
  *   <LI>1.author = author name for version 1 (etc)
@@ -78,7 +80,8 @@ public class BasicAttachmentProvider
     public static final String PROPERTY_FILE   = "attachment.properties";
 
     public static final String DIR_EXTENSION   = "-att";
-
+    public static final String ATTDIR_EXTENSION = "-dir";
+    
     static final Category log = Category.getInstance( BasicAttachmentProvider.class );
 
     public void initialize( Properties properties ) 
@@ -96,6 +99,8 @@ public class BasicAttachmentProvider
     private File findPageDir( String wikipage )
         throws ProviderException
     {
+        wikipage = mangleName( wikipage );
+
         File f = new File( m_storageDir, wikipage+DIR_EXTENSION );
 
         if( f.exists() && !f.isDirectory() )
@@ -106,13 +111,26 @@ public class BasicAttachmentProvider
         return f;
     }
 
+    private static String mangleName( String wikiname )
+    {
+        String res = TextUtil.urlEncodeUTF8( wikiname );
+
+        return res;
+    }
+
+    private static String unmangleName( String filename )
+    {
+        return TextUtil.urlDecodeUTF8( filename );
+    }
+    
     /**
      *  Finds the dir in which the attachment lives.
      */
     private File findAttachmentDir( Attachment att )
         throws ProviderException
     {
-        File f = new File( findPageDir(att.getParentName()), att.getFileName() );
+        File f = new File( findPageDir(att.getParentName()), 
+                           mangleName(att.getFileName()+ATTDIR_EXTENSION) );
 
         return f;
     }
@@ -166,15 +184,17 @@ public class BasicAttachmentProvider
 
     /**
      *  Returns the file extension.  For example "test.png" returns "png".
+     *  <p>
+     *  If file has no extension, will return "bin"
      */
     protected static String getFileExtension( String filename )
     {
-        String fileExt = "";
+        String fileExt = "bin";
 
         int dot = filename.lastIndexOf('.');
-        if( dot >= 0 )
+        if( dot >= 0 && dot < filename.length()-1 )
         {
-            fileExt = filename.substring( dot+1 );
+            fileExt = mangleName( filename.substring( dot+1 ) );
         }
 
         return fileExt;
@@ -334,8 +354,23 @@ public class BasicAttachmentProvider
 
                     if( f.isDirectory() )
                     {
-                        Attachment att = getAttachmentInfo( page, attachments[i],
+                        String attachmentName = unmangleName( attachments[i] );
+
+                        if( attachmentName.endsWith( ATTDIR_EXTENSION ) )
+                        {
+                            attachmentName = attachmentName.substring( 0, attachmentName.length()-ATTDIR_EXTENSION.length() );
+                        }
+                        
+                        Attachment att = getAttachmentInfo( page, attachmentName,
                                                             WikiProvider.LATEST_VERSION );
+
+                        if( att == null )
+                        {
+                            throw new ProviderException("Attachment disappeared while reading information:"+
+                                                        " if you did not touch the repository, there is a serious bug somewhere. "+
+                                                        "Attachment = "+attachments[i]+
+                                                        ", decoded = "+attachmentName );
+                        }
 
                         result.add( att );
                     }
@@ -392,7 +427,8 @@ public class BasicAttachmentProvider
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
-        File dir = new File( findPageDir( page.getName() ), name );
+        File dir = new File( findPageDir( page.getName() ), 
+                             mangleName(name)+ATTDIR_EXTENSION );
 
         if( !dir.exists() )
         {
@@ -459,6 +495,20 @@ public class BasicAttachmentProvider
 
         return list;
     }
+
+
+    public void deleteVersion( Attachment att )
+        throws ProviderException
+    {
+        // FIXME: Does nothing yet.
+    }
+
+    public void deleteAttachment( Attachment att )
+        throws ProviderException
+    {
+        // FIXME: Does nothing yet.
+    }
+
 
     /**
      *  Returns only those directories that contain attachments.

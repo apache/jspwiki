@@ -18,7 +18,7 @@ public class UserProfileTest extends TestCase
         Properties props = new Properties();
         try
         {
-            props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+            props.load( TestEngine.findTestProperties() );
             PropertyConfigurator.configure(props);
         }
         catch( IOException e ) {}

@@ -105,6 +105,39 @@ public interface WikiAttachmentProvider
      *  an Attachment.
      */
     public List getVersionHistory( Attachment att );
+
+    /**
+     *  Removes a specific version from the repository.  The implementations
+     *  should really do no more security checks, since that is the domain
+     *  of the AttachmentManager.  Just delete it as efficiently as you can.
+     *
+     *  @since 2.0.19.
+     *
+     *  @param att Attachment to be removed.  The version field is checked, and thus
+     *             only that version is removed.
+     *
+     *  @throws ProviderException If the attachment cannot be removed for some reason.
+     */
+
+    public void deleteVersion( Attachment att )
+        throws ProviderException;
+
+    /**
+     *  Removes an entire page from the repository.  The implementations
+     *  should really do no more security checks, since that is the domain
+     *  of the AttachmentManager.  Just delete it as efficiently as you can.  You should also
+     *  delete any auxiliary files and directories that belong to this attachment, 
+     *  IF they were created
+     *  by this provider.
+     *
+     *  @since 2.0.17.
+     *
+     *  @param att Attachment to delete.
+     *
+     *  @throws ProviderException If the page could not be removed for some reason.
+     */
+    public void deleteAttachment( Attachment att )
+        throws ProviderException;
 }
 
 

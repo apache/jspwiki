@@ -23,7 +23,7 @@ public class WikiEngineTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        props.load( TestEngine.findTestProperties() );
 
         m_engine = new TestEngine(props);
     }

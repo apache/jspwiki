@@ -21,6 +21,16 @@ public class TestEngine extends WikiEngine
         super( props );
     }
 
+    public static final InputStream findTestProperties()
+    {
+        return findTestProperties( "/jspwiki.properties" );
+    }
+
+    public static final InputStream findTestProperties( String properties )
+    {
+        return TestEngine.class.getResourceAsStream( properties );
+    }
+
     /**
      *  Deletes all files under this directory, and does them recursively.
      */

@@ -19,7 +19,7 @@ public class AllTests extends TestCase
         Properties props = new Properties();
         try
         {
-            InputStream pin = AllTests.class.getClassLoader().getResourceAsStream("/jspwiki.properties");
+            InputStream pin = TestEngine.findTestProperties();
             if( pin == null )
             {
                 fail( "No property file found!" );
@@ -45,11 +45,14 @@ public class AllTests extends TestCase
         suite.addTest( PageManagerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TranslatorReaderTest.suite() );
+        suite.addTest( UserProfileTest.suite() );
+        suite.addTest( VariableManagerTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
         suite.addTest( com.ecyrd.jspwiki.plugin.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.xmlrpc.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.providers.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
 
         return suite;
     }

@@ -33,6 +33,20 @@
   </tag>  
 
   <tag>
+    <name>Breadcrumbs</name>
+    <tagclass>com.ecyrd.jspwiki.tags.BreadcrumbsTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>maxpages</name>
+       <required>false</required><!-- the default value is 10 -->
+    </attribute>
+    <attribute>
+       <name>separator</name>
+       <required>false</required><!-- the default value is " | " -->
+    </attribute>
+  </tag>
+
+  <tag>
     <name>Calendar</name>
     <tagclass>com.ecyrd.jspwiki.tags.CalendarTag</tagclass>
     <bodycontent>empty</bodycontent>

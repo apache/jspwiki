@@ -32,7 +32,7 @@ public class BasicAttachmentProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        props.load( TestEngine.findTestProperties() );
 
         m_engine  = new TestEngine(props);
 
@@ -100,7 +100,7 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         String s = "testpng";
 
-        assertEquals( "", m_provider.getFileExtension(s) );
+        assertEquals( "bin", m_provider.getFileExtension(s) );
     }
 
 
@@ -108,7 +108,33 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         String s = "test.";
 
-        assertEquals( "", m_provider.getFileExtension(s) );
+        assertEquals( "bin", m_provider.getFileExtension(s) );
+    }
+
+    public void testExtension6()
+    {
+        String s = "test.a";
+
+        assertEquals( "a", m_provider.getFileExtension(s) );
+    }
+
+    /**
+     *  Can we save attachments with names in UTF-8 range?
+     */
+    public void testPutAttachmentUTF8()
+        throws Exception
+    {
+        File in = makeAttachmentFile();
+
+        Attachment att = new Attachment( NAME1, "\u3072\u3048\u308båäötest.füü" );
+
+        m_provider.putAttachmentData( att, new FileInputStream(in) );
+
+        List res = m_provider.listAllChanged( new Date(0L) );
+
+        Attachment a0 = (Attachment) res.get(0);
+        
+        assertEquals( "name", att.getName(), a0.getName() );
     }
 
     public void testListAll()

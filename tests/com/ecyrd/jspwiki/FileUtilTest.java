@@ -14,7 +14,7 @@ public class FileUtilTest extends TestCase
         Properties props = new Properties();
         try
         {
-            props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+            props.load( TestEngine.findTestProperties() );
             PropertyConfigurator.configure(props);
         }
         catch( IOException e ) {}
@@ -79,7 +79,7 @@ public class FileUtilTest extends TestCase
 
         try
         {
-            Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), 
+            Process process = Runtime.getRuntime().exec( "cat \""+f.getAbsolutePath()+"\"", 
                                                          envp, 
                                                          f.getParentFile() );
 

@@ -23,7 +23,7 @@ public class StressTestVersioningProvider extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki_vers.properties") );
+        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
 
         engine = new TestEngine(props);
     }

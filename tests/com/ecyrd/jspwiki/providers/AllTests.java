@@ -17,6 +17,7 @@ public class AllTests extends TestCase
         suite.addTest( FileSystemProviderTest.suite() );
         suite.addTest( RCSFileProviderTest.suite() );
         suite.addTest( VersioningFileProviderTest.suite() );
+        suite.addTest( BasicAttachmentProviderTest.suite() );
 
         return suite;
     }

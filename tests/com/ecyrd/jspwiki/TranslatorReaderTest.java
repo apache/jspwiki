@@ -24,7 +24,7 @@ public class TranslatorReaderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        props.load( TestEngine.findTestProperties() );
 
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         testEngine = new TestEngine( props );

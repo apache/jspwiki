@@ -393,7 +393,7 @@ public class PluginManager
                     value = s;
                             
                     arglist.put( param, value );
-                            
+
                     // log.debug("ARG: "+param+"="+value);
                     param = null;
                 }

@@ -72,4 +72,12 @@ public class VerySimpleProvider implements WikiPageProvider
 
         return "";
     }
+
+    public void deleteVersion( String page, int version )
+    {
+    }
+
+    public void deletePage( String page )
+    {
+    }
 }

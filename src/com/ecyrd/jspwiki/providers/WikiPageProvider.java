@@ -32,10 +32,16 @@ import com.ecyrd.jspwiki.*;
  *  <P>
  *  You can build whatever page providers based on this, just
  *  leave the unused methods do something useful.
- *
+ *  <P>
+ *  WikiPageProvider uses Strings and ints to refer to pages.  This may
+ *  be a bit odd, since WikiAttachmentProviders all use Attachment
+ *  instead of name/version.  We will perhaps modify these in the
+ *  future.  In the mean time, name/version is quite sufficient.
  *  <P>
  *  FIXME: In reality we should have an AbstractWikiPageProvider,
  *  which would provide intelligent backups for subclasses.
+ *
+ *  @author Janne Jalkanen
  */
 public interface WikiPageProvider
     extends WikiProvider
@@ -98,11 +104,51 @@ public interface WikiPageProvider
 
     /**
      *  Gets a specific version out of the repository.
+     *
+     *  @param page Name of the page to fetch.
+     *  @param version Version of the page to fetch.
      */
 
     public String getPageText( String page, int version )
         throws ProviderException;
 
+    /**
+     *  Removes a specific version from the repository.  The implementations
+     *  should really do no more security checks, since that is the domain
+     *  of the PageManager.  Just delete it as efficiently as you can.
+     *
+     *  @since 2.0.17.
+     *
+     *  @param pageName Name of the page to be removed.
+     *  @param version  Version of the page to be removed.  May be LATEST_VERSION.
+     *
+     *  @throws ProviderException If the page cannot be removed for some reason.
+     */
+
+    public void deleteVersion( String pageName, int version )
+        throws ProviderException;
+
+    /**
+     *  Removes an entire page from the repository.  The implementations
+     *  should really do no more security checks, since that is the domain
+     *  of the PageManager.  Just delete it as efficiently as you can.  You should also
+     *  delete any auxiliary files that belong to this page, IF they were created
+     *  by this provider.
+     *
+     *  <P>The reason why this is named differently from
+     *  deleteVersion() (logically, this method should be an
+     *  overloaded version) is that I want to be absolutely sure I
+     *  don't accidentally use the wrong method.  With overloading
+     *  something like that happens sometimes...
+     *
+     *  @since 2.0.17.
+     *
+     *  @param pageName Name of the page to be removed completely.
+     *
+     *  @throws ProviderException If the page could not be removed for some reason.
+     */
+    public void deletePage( String pageName )
+        throws ProviderException;
 }
 
 

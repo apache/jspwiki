@@ -398,6 +398,16 @@ public class FileSystemProvider
         return "";
     }
 
+    public void deleteVersion( String pageName, int version )
+    {
+        // FIXME.
+    }
+
+    public void deletePage( String pageName )
+    {
+        // FIXME:
+    }
+
     public class WikiFileFilter
         implements FilenameFilter
     {
