@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Provides facilities for handling attachments.
@@ -78,8 +79,8 @@ public class AttachmentManager
         //
         try
         {
-            Class providerclass = WikiEngine.findWikiClass( classname, 
-                                                            "com.ecyrd.jspwiki.providers" );
+            Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
+                                                       classname );
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
@@ -186,7 +187,7 @@ public class AttachmentManager
     /**
      *  Returns the list of attachments associated with a given wiki page.
      *
-     *  @returns a valid collection of attachments.
+     *  @return a valid collection of attachments.
      */
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
