@@ -1493,11 +1493,6 @@ public class TranslatorReader extends Reader
 
          buf.append( startBlockLevel() );
 
-         if( m_genlistlevel > 0 )
-         {
-             buf.append(m_renderer.closeListItem());
-         }
-
          String strBullets = readWhile( "*#" );
          String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
          int numBullets = strBullets.length();
@@ -1524,6 +1519,9 @@ public class TranslatorReader extends Reader
              }
          }
 
+         //
+         //  Check if this is still of the same type
+         //
          if( strBullets.substring(0,Math.min(numBullets,m_genlistlevel)).equals
             (m_genlistBulletBuffer.substring(0,Math.min(numBullets,m_genlistlevel)) ) )
          {
@@ -1531,27 +1529,41 @@ public class TranslatorReader extends Reader
 
              if( numBullets > m_genlistlevel )
              {
+                 buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel++)) );
+
                  for( ; m_genlistlevel < numBullets; m_genlistlevel++ )
                  {
                      // bullets are growing, get from new bullet list
+                     buf.append( m_renderer.openListItem() );
                      buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel)) );
                  }
              }
              else if( numBullets < m_genlistlevel )
              {
+                 //  Close the previous list item.
+                 buf.append( m_renderer.closeListItem() );
+
                  for( ; m_genlistlevel > numBullets; m_genlistlevel-- )
                  {
                      // bullets are shrinking, get from old bullet list
                      buf.append( m_renderer.closeList(m_genlistBulletBuffer.charAt(m_genlistlevel - 1)) );
+                     if( m_genlistlevel > 0 ) buf.append( m_renderer.closeListItem() );
+
                  }
+             }
+             else
+             {
+                 if( m_genlistlevel > 0 ) buf.append( m_renderer.closeListItem() );
              }
          }
          else
          {
+             //
+             //  The pattern has changed, unwind and restart
+             //
              char chBullet;
              int  numEqualBullets;
              int  numCheckBullets;
-             // the pattern has changed, unwind and restart
 
              // find out how much is the same
              numEqualBullets = 0;
@@ -1571,11 +1583,14 @@ public class TranslatorReader extends Reader
              for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
              {
                  buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
+                 if( m_genlistlevel > 0 ) buf.append( m_renderer.closeListItem() );
              }
 
              //rewind
+             buf.append( m_renderer.openList( strBullets.charAt(numEqualBullets++) ) );
              for(int i = numEqualBullets; i < numBullets; i++)
              {
+                 buf.append( m_renderer.openListItem() );
                  buf.append( m_renderer.openList( strBullets.charAt(i) ) );
              }
              m_genlistlevel = numBullets;
@@ -1596,14 +1611,10 @@ public class TranslatorReader extends Reader
         StringBuffer buf = new StringBuffer();
         int bulletCh;
 
-        if( m_genlistlevel > 0 )
-        {
-            buf.append(m_renderer.closeListItem());
-        }
-
         //unwind
         for( ; m_genlistlevel > 0; m_genlistlevel-- )
         {
+            buf.append(m_renderer.closeListItem());
             buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
         }
 
