@@ -150,6 +150,10 @@ public class TranslatorReader extends Reader
     /** If true, executes plugins; otherwise ignores them. */
     private boolean                m_enablePlugins       = true;
 
+    /** If true, all links are absolute.  Otherwise uses user preference.  This is required
+        for things like RSS generation. */
+    private boolean                m_requireAbsoluteURLs = false;
+
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
@@ -222,6 +226,16 @@ public class TranslatorReader extends Reader
     }
 
     /**
+     *  If set to true, then the TranslatorReader will always produce
+     *  absolute URLs (complete with the baseURL value), regardless of the
+     *  user setting.  This is very useful for RSS generation, for example.
+     */
+    public void setRequireAbsoluteURLs( boolean value )
+    {
+        m_requireAbsoluteURLs = value;
+    }
+
+    /**
      *  @param engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
      */
@@ -288,6 +302,11 @@ public class TranslatorReader extends Reader
                                                              PROP_CAMELCASELINKS, 
                                                              m_camelCaseLinks );
         }
+
+        String relativeurls = (String)m_engine.getVariable( m_context,
+                                                            WikiEngine.PROP_REFSTYLE );
+
+        if( !"relative".equals(relativeurls) ) setRequireAbsoluteURLs( true );
 
         m_plainUris           = TextUtil.getBooleanProperty( props,
                                                              PROP_PLAINURIS,
@@ -992,7 +1011,8 @@ public class TranslatorReader extends Reader
 
                 if( isImageLink( reallink ) )
                 {
-                    attachment = m_engine.getAttachmentURL(attachment);
+                    attachment = m_engine.getURL( WikiContext.ATTACH, attachment,
+                                                  m_requireAbsoluteURLs, null );
                     sb.append( handleImageLink( attachment, link, (cutpoint != -1) ) );
                 }
                 else
@@ -2424,6 +2444,14 @@ public class TranslatorReader extends Reader
             return makeLink( type, link, text, null );
         }
 
+        private final String getURL( String context, String link )
+        {
+            return m_engine.getURL( context,
+                                    link,
+                                    m_requireAbsoluteURLs,
+                                    null );
+        }
+
         /**
          *  Write a HTMLized link depending on its type.
          *
@@ -2454,11 +2482,13 @@ public class TranslatorReader extends Reader
             switch(type)
             {
               case READ:
-                result = "<a class=\"wikipage\" href=\""+m_engine.getViewURL(link)+section+"\">"+text+"</a>";
+                result = "<a class=\"wikipage\" href=\""+getURL(WikiContext.VIEW,
+                                                                link)+section+"\">"+text+"</a>";
                 break;
 
               case EDIT:
-                result = "<u>"+text+"</u><a href=\""+m_engine.getEditURL(link)+"\">?</a>";
+                result = "<u>"+text+"</u><a href=\""+getURL(WikiContext.EDIT,
+                                                            link)+"\">?</a>";
                 break;
 
               case EMPTY:
@@ -2499,7 +2529,7 @@ public class TranslatorReader extends Reader
                 break;
 
               case IMAGEWIKILINK:
-                String pagelink = m_engine.getViewURL(text);
+                String pagelink = getURL(WikiContext.VIEW,text);
                 result = "<a class=\"wikipage\" href=\""+pagelink+"\"><img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" /></a>";
                 break;
 
@@ -2512,10 +2542,18 @@ public class TranslatorReader extends Reader
                 break;
 
               case ATTACHMENT:
-                String attlink = m_engine.getAttachmentURL( link );
+                String attlink = getURL( WikiContext.ATTACH,
+                                         link );
+
+                String infolink = getURL( WikiContext.INFO,
+                                          link );
+
+                String imglink = getURL( WikiContext.NONE,
+                                         "images/attachment_small.png" );
+
                 result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
-                         "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+
-                         "\"><img src=\""+m_engine.getBaseURL()+"images/attachment_small.png\" border=\"0\" alt=\"(att)\"/></a>";
+                         "<a href=\""+infolink+
+                         "\"><img src=\""+imglink+"\" border=\"0\" alt=\"(info)\"/></a>";
                 break;
 
               default:
@@ -2730,7 +2768,8 @@ public class TranslatorReader extends Reader
         {
             if( m_useOutlinkImage )
             {
-                return "<img class=\"outlink\" src=\""+m_engine.getBaseURL()+"images/out.png\" alt=\"\" />";
+                return "<img class=\"outlink\" src=\""+
+                       getURL( WikiContext.NONE,"images/out.png" )+"\" alt=\"\" />";
             }
 
             return "";
