@@ -1,5 +1,7 @@
 [{WeblogPlugin  days=1}]
 
+[{DENY view JanneJalkanen}]
+
 [{WeblogEntryPlugin}]
 
 This is a playground - do whatever you want.
