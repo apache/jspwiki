@@ -36,6 +36,7 @@ import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.UserProfile;
 
+import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 
 import com.ecyrd.jspwiki.util.PriorityList;
@@ -1245,6 +1246,10 @@ public class WikiEngine
         {
             log.error("Failed to scan page data: ", e);
         }
+        catch( FilterException e )
+        {
+            // FIXME: Don't yet know what to do
+        }
         finally
         {
             try
@@ -1282,6 +1287,7 @@ public class WikiEngine
      *  @param text    The Wiki markup for the page.
      */
     public void saveText( WikiContext context, String text )
+        throws WikiException
     {
         WikiPage page = context.getPage();
 
@@ -1293,27 +1299,14 @@ public class WikiEngine
         }
 
         text = TextUtil.normalizePostData(text);
+
         text = m_filterManager.doPreSaveFiltering( context, text );
 
         // Hook into cross reference collection.
         
-        // FIXME: Should really use PageFilters for this functionality!
+        m_pageManager.putPageText( page, text );
 
-        /*
-        m_referenceManager.updateReferences( page.getName(), 
-                                             scanWikiLinks( page, text ) );
-        */
-
-        try
-        {
-            m_pageManager.putPageText( page, text );
-
-            m_filterManager.doPostSaveFiltering( context, text );
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to put page", e );
-        }
+        m_filterManager.doPostSaveFiltering( context, text );
     }
 
     /**
@@ -1777,6 +1770,14 @@ public class WikiEngine
         }
 
         return null;
+    }
+
+    /**
+     * @since 2.2
+     */
+    public String getRootPath()
+    {
+        return m_rootPath;
     }
 
     /**
