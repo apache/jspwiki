@@ -1,5 +1,7 @@
 2002-05-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.7.8.
+
         * Added CurrentTimePlugin, which allows you to tell the server
         time.  Added documentation to JSPWikiPlugins, and also a sample to
         RecentChanges.
