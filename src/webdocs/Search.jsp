@@ -93,15 +93,20 @@
            }
           %>
           </table>
+          <P>
+          <A HREF="http://www.google.com/search?q=<%=query%>" TARGET="_blank">Try this same search on Google!</A>
+          </P>
+          <P><HR></P>
       <%
       }
       %>
 
       <P>
-      
+
       <FORM action="<%=wiki.getBaseURL()%>Search.jsp"
             ACCEPT-CHARSET="ISO-8859-1,UTF-8">
 
+      Enter your query here:<BR>
       <INPUT type="text" name="query" size="40">
 
       <P>
