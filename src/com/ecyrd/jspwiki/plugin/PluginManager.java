@@ -38,6 +38,12 @@ public class PluginManager
 {
     private static Category log = Category.getInstance( PluginManager.class );
 
+    /**
+     *  This is the default package to try in case the instantiation
+     *  fails.
+     */
+    public static final String DEFAULT_PACKAGE = "com.ecyrd.jspwiki.plugin";
+
     public PluginManager()
     {
     }
@@ -62,8 +68,21 @@ public class PluginManager
         try
         {
             ClassLoader loader = getClass().getClassLoader();
-            
-            WikiPlugin plugin = (WikiPlugin)loader.loadClass( classname ).newInstance();
+            WikiPlugin plugin;
+
+            //
+            //  Attempt to instantiate new plugin, trying first with explicit
+            //  class name, and then with the JSPWiki default plugin package.
+            //
+            try
+            {
+                plugin = (WikiPlugin)loader.loadClass( classname ).newInstance();
+            }
+            catch( ClassNotFoundException e )
+            {
+                log.debug("Did not find class "+classname+", trying with default.");
+                plugin = (WikiPlugin)loader.loadClass( DEFAULT_PACKAGE+"."+classname ).newInstance();
+            }
 
             return plugin.execute( context, params );
         }
