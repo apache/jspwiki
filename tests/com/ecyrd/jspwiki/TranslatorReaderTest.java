@@ -171,6 +171,30 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "&lt;P&gt;\n", translate(src) );
     }
 
+    public void testItalicAcrossLinebreak()
+        throws Exception
+    {
+        String src="''This is a\ntest.''";
+
+        assertEquals( "<I>This is a\ntest.</I>\n", translate(src) );
+    }
+
+    public void testBoldAcrossLinebreak()
+        throws Exception
+    {
+        String src="__This is a\ntest.__";
+
+        assertEquals( "<B>This is a\ntest.</B>\n", translate(src) );
+    }
+
+    public void testBoldItalic()
+        throws Exception
+    {
+        String src="__This ''is'' a test.__";
+
+        assertEquals( "<B>This <I>is</I> a test.</B>\n", translate(src) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( TranslatorReaderTest.class );
