@@ -1,3 +1,15 @@
+2002-12-11  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * If no authorizer is specified in jspwiki.properties, 
+        we revert to good old unrestricted wikism. 
+        
+        * DummyAuthorizer and DummyAuthenticator are no more
+        the defaults. Use optionally, but FileAuth* are better.
+
+        * Added features: 'guest' group for unauthenticated people,
+        'participant' group for cookie-named people, name-group 
+        for authenticated people (user 'frobozz' belongs to group 'frobozz').
+
 2002-12-10  Erik Bunn  <Erik.Bunn@basen.net>
 
         * v2.0.0-alpha-auth, a branch of Janne's V2 alpha
