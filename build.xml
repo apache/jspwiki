@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.7 2001-10-20 10:01:10 jalkanen Exp $
+    $Id: build.xml,v 1.8 2001-10-20 10:03:36 jalkanen Exp $
 -->    
        
 <!--   
@@ -171,6 +171,7 @@
 
   <!-- Creates javadocs -->
 
+  <!-- FIXME: Must not use constant package name! -->
   <target name="javadoc"
           description="Compiles the javadocs.">
 
