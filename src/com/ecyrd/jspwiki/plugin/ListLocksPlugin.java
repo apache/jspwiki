@@ -68,7 +68,7 @@ public class ListLocksPlugin
             }
         }
 
-        result.append("<table>");
+        result.append("</table>");
 
         return result.toString();
     }
