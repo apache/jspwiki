@@ -144,6 +144,8 @@ public class TranslatorReader extends Reader
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
 
+    private HTMLRenderer           m_renderer = new HTMLRenderer();
+
     /**
      *  The default inlining pattern.  Currently "*.png"
      */
@@ -368,15 +370,6 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Forms an error message.
-     */
-    // FIXME: All errors shoudl now use this instead of <font>
-    private String makeError( String error )
-    {
-        return "<span class=\"error\">"+error+"</span>";
-    }
-
-    /**
      *  Write a HTMLized link depending on its type.
      *  The link mutator chain is processed.
      *
@@ -386,95 +379,11 @@ public class TranslatorReader extends Reader
      */
     public String makeLink( int type, String link, String text )
     {
-        String result;
-
         if( text == null ) text = link;
-
-        // Make sure we make a link name that can be accepted
-        // as a valid URL.
-
-        String encodedlink = m_engine.encodeName( link );
-
-        if( encodedlink.length() == 0 )
-        {
-            type = EMPTY;
-        }
 
         text = callMutatorChain( m_linkMutators, text );
 
-        switch(type)
-        {
-          case READ:
-            result = "<a class=\"wikipage\" href=\""+m_engine.getViewURL(link)+"\">"+text+"</a>";
-            break;
-
-          case EDIT:
-            result = "<u>"+text+"</u><a href=\""+m_engine.getEditURL(link)+"\">?</a>";
-            break;
-
-          case EMPTY:
-            result = "<u>"+text+"</u>";
-            break;
-
-            //
-            //  These two are for local references - footnotes and 
-            //  references to footnotes.
-            //  We embed the page name (or whatever WikiContext gives us)
-            //  to make sure the links are unique across Wiki.
-            //
-          case LOCALREF:
-            result = "<a class=\"footnoteref\" href=\"#ref-"+
-                m_context.getPage().getName()+"-"+
-                link+"\">["+text+"]</a>";
-            break;
-
-          case LOCAL:
-            result = "<a class=\"footnote\" name=\"ref-"+
-                m_context.getPage().getName()+"-"+
-                link.substring(1)+"\">["+text+"]</a>";
-            break;
-
-            //
-            //  With the image, external and interwiki types we need to
-            //  make sure nobody can put in Javascript or something else
-            //  annoying into the links themselves.  We do this by preventing
-            //  a haxor from stopping the link name short with quotes in 
-            //  fillBuffer().
-            //
-          case IMAGE:
-            result = "<img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" />";
-            break;
-
-          case IMAGELINK:
-            result = "<a href=\""+text+"\"><img class=\"inline\" src=\""+link+"\" /></a>";
-            break;
-
-          case IMAGEWIKILINK:
-            String pagelink = m_engine.getViewURL(text);
-            result = "<a class=\"wikipage\" href=\""+pagelink+"\"><img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" /></a>";
-            break;
-
-          case EXTERNAL:
-            result = "<a class=\"external\" href=\""+link+"\">"+text+"</a>";
-            break;
-
-          case INTERWIKI:
-            result = "<a class=\"interwiki\" href=\""+link+"\">"+text+"</a>";
-            break;
-
-          case ATTACHMENT:
-            String attlink = m_engine.getAttachmentURL( link );
-            result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
-                     "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+
-                     "\"><img src=\"images/attachment_small.png\" border=\"0\" /></a>";
-            break;
-
-          default:
-            result = "";
-            break;
-        }
-
-        return result;
+        return m_renderer.makeLink( type, link, text );
     }
 
 
@@ -807,7 +716,7 @@ public class TranslatorReader extends Reader
         catch( NoSuchElementException nsee )
         {
             log.warn( "Invalid access rule: " + ruleLine + " - defaults will be used." );
-            return makeError("Invalid access rule: "+ruleLine);
+            return m_renderer.makeError("Invalid access rule: "+ruleLine);
         }
         catch( NotOwnerException noe )
         {
@@ -815,7 +724,7 @@ public class TranslatorReader extends Reader
         }
         catch( IllegalArgumentException iae )
         {
-            return makeError("Invalid permission type: "+ruleLine);
+            return m_renderer.makeError("Invalid permission type: "+ruleLine);
         }
 
         return "";
@@ -881,7 +790,7 @@ public class TranslatorReader extends Reader
             {
                 log.error( "Failed to insert plugin", e );
                 log.error( "Root cause:",e.getRootThrowable() );
-                included = makeError("Plugin insertion failed: "+e.getMessage());
+                included = m_renderer.makeError("Plugin insertion failed: "+e.getMessage());
             }
                             
             sb.append( included );
@@ -920,11 +829,11 @@ public class TranslatorReader extends Reader
             }
             catch( NoSuchVariableException e )
             {
-                value = "<font color=\"#FF0000\">"+e.getMessage()+"</font>";
+                value = m_renderer.makeError(e.getMessage());
             }
             catch( IllegalArgumentException e )
             {
-                value = "<font color=\"#FF0000\">"+e.getMessage()+"</font>";
+                value = m_renderer.makeError(e.getMessage());
             }
 
             sb.append( value );
@@ -977,7 +886,7 @@ public class TranslatorReader extends Reader
             }
             else
             {
-                sb.append( link+" <font color=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</font>");
+                sb.append( link+" "+m_renderer.makeError("No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)") );
             }
         }
         else if( reallink.startsWith("#") )
@@ -2117,4 +2026,123 @@ public class TranslatorReader extends Reader
     public void close()
     {
     }
+
+    /**
+     *  All HTML output stuff is here.
+     */
+
+    // FIXME: Not everything is yet, and in the future this class will be spawned
+    //        out to be its own class.
+    private class HTMLRenderer
+    {
+        /**
+         *  Write a HTMLized link depending on its type.
+         *  The link mutator chain is processed.
+         *
+         *  @param type Type of the link.
+         *  @param link The actual link.
+         *  @param text The user-visible text for the link.
+         */
+        public String makeLink( int type, String link, String text )
+        {
+            String result;
+
+            if( text == null ) text = link;
+
+            // Make sure we make a link name that can be accepted
+            // as a valid URL.
+
+            String encodedlink = m_engine.encodeName( link );
+
+            if( encodedlink.length() == 0 )
+            {
+                type = EMPTY;
+            }
+
+            switch(type)
+            {
+              case READ:
+                result = "<a class=\"wikipage\" href=\""+m_engine.getViewURL(link)+"\">"+text+"</a>";
+                break;
+
+              case EDIT:
+                result = "<u>"+text+"</u><a href=\""+m_engine.getEditURL(link)+"\">?</a>";
+                break;
+
+              case EMPTY:
+                result = "<u>"+text+"</u>";
+                break;
+
+                //
+                //  These two are for local references - footnotes and 
+                //  references to footnotes.
+                //  We embed the page name (or whatever WikiContext gives us)
+                //  to make sure the links are unique across Wiki.
+                //
+              case LOCALREF:
+                result = "<a class=\"footnoteref\" href=\"#ref-"+
+                m_context.getPage().getName()+"-"+
+                link+"\">["+text+"]</a>";
+                break;
+
+              case LOCAL:
+                result = "<a class=\"footnote\" name=\"ref-"+
+                m_context.getPage().getName()+"-"+
+                link.substring(1)+"\">["+text+"]</a>";
+                break;
+
+                //
+                //  With the image, external and interwiki types we need to
+                //  make sure nobody can put in Javascript or something else
+                //  annoying into the links themselves.  We do this by preventing
+                //  a haxor from stopping the link name short with quotes in 
+                //  fillBuffer().
+                //
+              case IMAGE:
+                result = "<img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" />";
+                break;
+
+              case IMAGELINK:
+                result = "<a href=\""+text+"\"><img class=\"inline\" src=\""+link+"\" /></a>";
+                break;
+
+              case IMAGEWIKILINK:
+                String pagelink = m_engine.getViewURL(text);
+                result = "<a class=\"wikipage\" href=\""+pagelink+"\"><img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" /></a>";
+                break;
+
+              case EXTERNAL:
+                result = "<a class=\"external\" href=\""+link+"\">"+text+"</a>";
+                break;
+                
+              case INTERWIKI:
+                result = "<a class=\"interwiki\" href=\""+link+"\">"+text+"</a>";
+                break;
+
+              case ATTACHMENT:
+                String attlink = m_engine.getAttachmentURL( link );
+                result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
+                         "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+
+                         "\"><img src=\"images/attachment_small.png\" border=\"0\" /></a>";
+                break;
+
+              default:
+                result = "";
+                break;
+            }
+
+            return result;
+        }
+
+        /**
+         *  Writes HTML for error message.
+         */
+
+        public String makeError( String error )
+        {
+            return "<span class=\"error\">"+error+"</span>";
+        }
+
+        
+    } // HTMLRenderer
 }
