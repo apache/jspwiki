@@ -56,7 +56,7 @@ public class UndefinedPagesPluginTest extends TestCase
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin");
 
-        String exp = "[Foobar2]\n\\\\";
+        String exp = "[Foobar2]\\\\\n";
 
         assertEquals( wikitize(exp), res );
     }
