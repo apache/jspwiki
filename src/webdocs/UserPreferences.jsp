@@ -77,7 +77,7 @@
 
 <HEAD>
   <TITLE><%=wiki.getApplicationName()%>: User Preferences</TITLE>
-  <%@ include file="cssinclude.js" %>
+  <%@ include file="templates/default/cssinclude.js" %>
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF">
