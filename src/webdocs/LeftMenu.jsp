@@ -14,18 +14,16 @@
        WikiPage    requestedpage   = new WikiPage( LEFTMENU_NAME );
        out.println( wiki.getHTML(leftMenuContext,requestedpage) );
     }
-    else
-    {
-        %>
+%>
+
+    <wiki:NoSuchPage page="LeftMenu">
         <HR><P>
         <P ALIGN="center">
         <I>No LeftMenu!</I><BR>
         <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=LEFTMENU_NAME%>">Please make one.</A><BR>
         </P>
         <P><HR>
-        <%
-    }
-%>
+    </wiki:NoSuchPage>
 </P>
 <P>
 <DIV ALIGN="center" CLASS="username">
