@@ -34,10 +34,14 @@
    <input type="hidden" name="page"     value="<wiki:PageName/>" />
    <input type="hidden" name="action"   value="save" />
    <input type="hidden" name="edittime" value="<%=pageContext.getAttribute("lastchange", PageContext.REQUEST_SCOPE )%>" />
-   <input type="hidden" name="text"     value="<%=pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE) %>" />
+   <textarea rows="4" cols="20" readonly="true" style="display:none" name="text"><%=pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE) %></textarea>
 
    <div id="previewsavebutton" align="center">
+      <input type="button" name="edit" value="Keep editing" onClick="javascript:back(-1);"/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <input type="submit" name="ok" value="Save" />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="submit" name="cancel" value="Cancel" />
    </div>
 
    </p>
