@@ -16,6 +16,7 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String headerTitle = "Concurrent modification of ";
 
     if( pagereq == null )
     {
@@ -64,7 +65,7 @@
        </P>
     </TD>
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <H1>Concurrent modification of <%=pagereq%></H1>
+      <%@ include file="PageHeader.jsp" %>
 
       <P>
       <B>Oops!  Someone modified the page while you were editing it!</B>
