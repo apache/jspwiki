@@ -1,0 +1,24 @@
+Includes the body, if there were no search results.
+
+----
+
+!Usage
+
+{{{
+<wiki:IfNoSearchResults>
+   HTML or JSP tags
+</wiki:IfNoSearchResults>
+}}}
+
+!Parameters
+
+None.
+
+!Example
+{{{
+<h1>Results of your search</h1>
+
+<wiki:IfNoSearchResults>
+    No results found.
+</wiki:IfNoSearchResults>
+}}}

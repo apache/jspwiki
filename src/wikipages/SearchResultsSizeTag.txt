@@ -1,0 +1,20 @@
+Shows the number of search results.
+
+----
+
+!Usage
+
+{{{
+<wiki:SearchResultsSize />
+}}}
+
+!Parameters
+
+None.
+
+!Example
+{{{
+<h1>Search Results</h1>
+
+Your search got <wiki:SearchResultsSize/> results:
+}}}
