@@ -23,10 +23,7 @@
 
       <%@ include file="PageHeader.jsp" %>
 
-      <%
-         if( wiki.pageExists( pagereq ) )
-         {
-             %>
+      <wiki:PageExists>
              <table cellspacing="4">
                 <tr>
                    <td><B>Page name</B></td>
@@ -35,20 +32,12 @@
 
                 <tr>
                    <td><B>Page last modified</B></td>
-                   <td><%=wiki.pageLastChanged( pagereq ) %></td>
+                   <td><wiki:PageDate /></td>
                 </tr>
 
                 <tr>
                    <td><B>Current page version</B></td>
-                   <td>
-                   <%
-                      int version = wiki.getVersion( pagereq );
-                      if( version == -1 )
-                          out.println("No versioning support.");
-                      else
-                          out.println( version );
-                    %>
-                    </td>
+                   <td><wiki:PageVersion /></td>
                 </tr>
 
                 <tr>
@@ -62,41 +51,37 @@
                                <th>Changes from previous</th>
                            </tr>
 
-                           <%
-                           Collection versions = wiki.getVersionHistory( pagereq );
-
-                           for( Iterator i = versions.iterator(); i.hasNext(); )
-                           {
-                               WikiPage p = (WikiPage) i.next();
-
-                               %>
+                           <wiki:HistoryIterator id="p">
                                <tr>
                                    <td>
-                                   <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>&version=<%=p.getVersion()%>"><%=p.getVersion()%></A>
+                                   <wiki:LinkTo version="<wiki:PageVersion/>">
+                                       <wiki:PageVersion/>
+                                   </wiki:LinkTo>
                                    </td>
                                    <td>
-                                   <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=-1&r2=<%=p.getVersion()%>"><%=p.getLastModified()%></A>
+                                   <wiki:DiffLink version="-1" newVersion="<wiki:PageVersion/>">
+                                       <wiki:PageDate/>
+                                   </wiki:DiffLink>
                                    </td>
-                                   <td><%=p.getAuthor() != null ? p.getAuthor() : "unknown"%></td>
+                                   <td><wiki:Author /></td>
                                    <td>
+                                   <%--
                                    <% if( p.getVersion() > 1 ) { %>
                                        <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=p.getVersion()%>&r2=<%=p.getVersion()-1%>">changes from version <%=p.getVersion()-1%> to <%=p.getVersion()%></A>
                                    <% } %>
+                                   --%>
                                    </td>
                                </tr>
-                               <%
-                           }
-                           %>
+                           </wiki:HistoryIterator>
                        </table>
                    </td>
                 </tr>
              </table>
              
              <BR>
-             <wiki:LinkTo>Back to <%=pagereq%></wiki:LinkTo>
-             <%
-         }
-         %>
+             <wiki:LinkTo>Back to <wiki:PageName/></wiki:LinkTo>
+         </wiki:PageExists>
+
          <wiki:NoSuchPage>
              This page does not exist.  Why don't you go and
              <wiki:EditLink>create it</wiki:EditLink>?

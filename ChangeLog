@@ -1,3 +1,11 @@
+2002-08-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.19.
+
+        * Plenty of changes to the JSP pages: created 8 new tags, shuffled
+        things around.  Everything is still broken, but doc/Templates.txt
+        should explain what we're about to do.
+
 2002-08-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.18.
