@@ -26,6 +26,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 import com.ecyrd.jspwiki.plugin.PluginManager;
+import com.ecyrd.jspwiki.rss.RSSGenerator;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -100,7 +101,10 @@ public class WikiEngine
 
     /** Does all our diffs for us. */
     private DifferenceEngine m_differenceEngine;
-    
+
+    /** Generates RSS feed when requested. */
+    private RSSGenerator     m_rssGenerator;
+
     /**
      *  Gets a WikiEngine related to this servlet.
      */
@@ -219,6 +223,7 @@ public class WikiEngine
         {
             m_pluginManager    = new PluginManager();
             m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
+            m_rssGenerator     = new RSSGenerator( this, props );
 
             initReferenceManager();            
         }
@@ -229,9 +234,73 @@ public class WikiEngine
             throw new ServletException( "Unable to start", e );
         }
 
+        new RSSThread().start();
+
         log.info("WikiEngine configured.");
     }
 
+    /**
+     *  Runs the RSS generation thread.
+     *  FIXME: MUST be somewhere else, this is not a good place.
+     */
+    private class RSSThread extends Thread
+    {
+        public void run()
+        {
+            try
+            {
+                while(true)
+                {
+                    Writer out = null;
+                    Reader in  = null;
+
+                    try
+                    {
+                        //
+                        //  Generate RSS file, output it to
+                        //  default "rss.rdf".
+                        //
+                        log.info("Regenerating RSS feed.");
+
+                        String feed = m_rssGenerator.generate();
+
+                        File file = new File("rss.rdf"); // FIXME: magic
+
+                        in  = new StringReader(feed);
+                        out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
+
+                        FileUtil.copyContents( in, out );
+                    }
+                    catch( IOException e )
+                    {
+                        log.error("Cannot generate RSS feed", e );
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if( in != null )  in.close();
+                            if( out != null ) out.close();
+                        }
+                        catch( IOException e )
+                        {
+                            log.fatal("Could not close I/O for RSS", e );
+                            break;
+                        }
+                    }
+
+                    // FIXME: Magic number, should be user settable.
+                    // Currently generates RSS at startup and then every hour.
+                    Thread.sleep(60*60*1000L);
+                } // while
+                
+            }
+            catch(InterruptedException e)
+            {
+                log.error("RSS thread interrupted, no more RSS feeds", e);
+            }
+        }
+    }
 
 
     /**
