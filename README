@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.3 $
-                             $Date: 2001-08-13 13:23:51 $
+                         $Revision: 1.4 $
+                             $Date: 2001-10-18 20:29:54 $
                            $Author: jalkanen $
 
 What is it?
@@ -47,6 +47,26 @@ Foundation (EFF), or whichever charity is close to your heart.
 
 The world doesn't need to become a bad place.
 
+Pre-requirements
+----------------
+
+Okay, so you wanna Wiki?  You'll need the following things:
+
+* A JSP engine.  I recommend Tomcat from
+  http://jakarta.apache.org/tomcat for a really easy installation.
+
+* JavaMail package from java.sun.com, if you want to use log4j mailing
+  capabilities.  You'll also need the Java Activation Framework.
+
+* RCS versioning system installed and available in your PATH if you
+  want to use versioning.
+
+* Some previous administration experience...  If you've ever installed
+  Apache or any other web server, you should be pretty well off.
+
+* And of course, a server to run the JSP engine on.
+
+
 
 Installation
 ------------
@@ -69,10 +89,13 @@ to be stored.  I recommend a directory that is regularly backed up.
 (Re)start tomcat.
 
 Point your browser at http://<where your Tomcat is installed>/MyWiki/.
-You should see the Main Wiki page.
+You should see the Main Wiki page.  See the next section if you want
+to edit the pages =).
+
+
 
 Allowing editing
-~~~~~~~~~~~~~~~~
+----------------
 
 By default, the access to Edit.jsp is allowed only people who have
 logged in in either the "admin" or the "user" role.  This is
@@ -81,6 +104,19 @@ configured in WEB_INF/web.xml.
 If you want to keep this behaviour, then go edit your
 $TOMCAT_HOME/conf/tomcat-users.xml and add people for "user" and
 "admin".
+
+If you want to have free-for-all Wiki, then you can just remove
+the lines that specify access restrictions from web.xml.  Don't forget
+to restart Tomcat.
+
+
+Configuring JSPWiki
+-------------------
+
+All configuration information is kept in WEB_INF/jspwiki.properties.
+The file is pretty well documented, so I recommend you read it through
+first. 
+
 
 
 Notes:
@@ -100,6 +136,9 @@ http://jakarta.apache.org/ to see how to get Tomcat and Apache talking
 to each other using mod_jk.  (Don't use mod_jserv, it's outdated and
 confusing.)
 
+RCS may be a bit troublesome to set up.  I recommend you just run it
+without RCS at first, then switch over when you understand how Wiki
+works.
 
 
 Files
@@ -112,6 +151,7 @@ WikiEngine.java.  This is ".txt" by default.
 
 There are some default files with the distribution archive.  Feel free
 to use them to bootstrap your own Wiki.
+
 
 
 Contact
