@@ -309,6 +309,18 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /** Hyperlinks end line. */
+
+    public void testHyperlinksCCURLs5()
+        throws Exception
+    {
+        String src = "This should be a link: http://www.foo.bar/ANewHope/\nIs it?";
+
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>\nIs it?",
+                      translate(src) );
+    }
+
     public void testHyperlinksCCNegated()
         throws Exception
     {
