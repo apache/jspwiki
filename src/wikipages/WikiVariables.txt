@@ -2,31 +2,41 @@ JSPWiki has many variables, that can be inserted on pages on-the-fly.  See [Text
 
 !applicationname
 
-TBA
+This is the name of this Wiki.  It has been set by the administrator in "jspwiki.properties". This Wiki is called ''[{$applicationname}]''.
 
 !encoding
 
-TBA
+Describes the character encoding used in this Wiki. An encoding of "UTF-8" means that the Wiki accepts any character, including Chinese, Japanese, etc.  Encoding "ISO-8859-1" means that only western languages are supported.  This wiki uses the ''[{$encoding}]'' encoding.
 
 !inlinedimages
 
+Lets you know which image types are being inlined.
+
 !interwikilinks
+
+Writes HTML code for supported InterWiki links.
 
 !jspwikiversion
 
-Inserts the version number of the JSPWiki engine.  For example, this version is [{$jspwikiversion}].
+Inserts the version number of the JSPWiki engine.  For example, this version is ''[{$jspwikiversion}]''.
 
 !pagename
 
-Inserts the current page name.  Example: This page is called [{$pagename}].
+Inserts the current page name.  Example: This page is called ''[{$pagename}]''.
 
 !pageprovider
 
+The current PageProvider.
+
 !pageproviderdescription
 
-!pluginpath
+A verbose, HTML description about the currently used page provider.
 
 !totalpages
 
-TBA
+The total number of pages available in this Wiki.
 
+!Inserting JSPWiki properties
+
+You can also access some of the JSPWiki properties (that have been defined by the site maintainer) by using their property names directly.  See [SystemInfo] for an example.
+Note that some properties might not be accessible due to security reasons.

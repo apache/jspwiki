@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 import org.apache.log4j.Category;
-//import java.util.StringTokenizer;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.IOException;
@@ -122,6 +121,27 @@ public class PluginManager
                     // This is okay, we go to the next package.
                 }
             }
+
+            //
+            //  Nope, it wasn't on the normal plugin path.  Let's try tags.
+            //  We'll only accept tags that implement the WikiPluginTag
+            //
+            /*
+              FIXME: Not functioning, need to create a PageContext
+            try
+            {
+                Class c = loader.loadClass( "com.ecyrd.jspwiki.tags."+classname );
+
+                if( c instanceof WikiPluginTag )
+                {
+                    return new TagPlugin( c );
+                }
+            }
+            catch( ClassNotFoundException exx )
+            {
+                // Just fall through, and let the execution end with stuff.
+            }
+            */
         }
 
         throw new ClassNotFoundException("Plugin not in "+PROP_SEARCHPATH);
@@ -129,10 +149,13 @@ public class PluginManager
 
     /**
      *  Executes a plugin class in the given context.
+     *  <P>Used to be private, but is public since 1.9.21.
+     *
+     *  @since 2.0
      */
-    private String execute( WikiContext context,
-                            String classname,
-                            Map params )
+    public String execute( WikiContext context,
+                           String classname,
+                           Map params )
         throws PluginException
     {
         try
@@ -160,6 +183,64 @@ public class PluginManager
             throw new PluginException( "Class "+classname+" is not a Wiki plugin.", e );
         }
     }
+
+
+    /**
+     *  Parses plugin arguments.  Handles quotes and all other kewl stuff.
+     */
+
+    public Map parseArgs( String argstring )
+        throws IOException
+    {
+        HashMap         arglist = new HashMap();
+        StreamTokenizer tok     = new StreamTokenizer(new StringReader(argstring));
+        int             type;
+
+        String param = null, value = null;
+                
+        while( (type = tok.nextToken() ) != StreamTokenizer.TT_EOF )
+        {
+            String s;
+
+            switch( type )
+            {
+              case StreamTokenizer.TT_WORD:
+                s = tok.sval;
+                break;
+              case StreamTokenizer.TT_NUMBER:
+                s = Integer.toString( new Double(tok.nval).intValue() );
+                break;
+              case '\'':
+                s = tok.sval;
+                break;
+              default:
+                s = null;
+            }
+
+            //
+            //  Assume that alternate words on the line are
+            //  parameter and value, respectively.
+            //
+            if( s != null )
+            {
+                if( param == null ) 
+                {
+                    param = s;
+                }
+                else
+                {
+                    value = s;
+                            
+                    arglist.put( param, value );
+                            
+                    log.debug("ARG: "+param+"="+value);
+                    param = null;
+                }
+            }
+        }
+        
+        return arglist;
+    }
     
     /**
      *  Parses a plugin.  Plugin commands are of the form:
@@ -183,57 +264,7 @@ public class PluginManager
 
                 String plugin   = res.group(1);                
                 String args     = res.group(3);
-                HashMap arglist = new HashMap();
-                
-                //
-                //  Go through the whole thing and handle quotes, etc.
-                //
-
-                StreamTokenizer tok = new StreamTokenizer(new StringReader(args));
-                int type;
-
-                String param = null, value = null;
-
-                while( (type = tok.nextToken() ) != StreamTokenizer.TT_EOF )
-                {
-                    String s;
-
-                    switch( type )
-                    {
-                      case StreamTokenizer.TT_WORD:
-                        s = tok.sval;
-                        break;
-                      case StreamTokenizer.TT_NUMBER:
-                        s = Integer.toString( new Double(tok.nval).intValue() );
-                        break;
-                      case '\'':
-                        s = tok.sval;
-                        break;
-                      default:
-                        s = null;
-                    }
-
-                    //
-                    //  Assume that alternate words on the line are
-                    //  parameter and value, respectively.
-                    //
-                    if( s != null )
-                    {
-                        if( param == null ) 
-                        {
-                            param = s;
-                        }
-                        else
-                        {
-                            value = s;
-                            
-                            arglist.put( param, value );
-                            
-                            log.debug("ARG: "+param+"="+value);
-                            param = null;
-                        }
-                    }
-                }
+                Map arglist     = parseArgs( args );
 
                 return execute( context, plugin, arglist );
             }
@@ -261,4 +292,25 @@ public class PluginManager
         // to be invisible, then we should return an empty string.
         return commandline;
     }
+
+    /*
+      // FIXME: Not functioning, needs to create or fetch PageContext from somewhere.
+    public class TagPlugin implements WikiPlugin
+    {
+        private Class m_tagClass;
+        
+        public TagPlugin( Class tagClass )
+        {
+            m_tagClass = tagClass;
+        }
+        
+        public String execute( WikiContext context, Map params )
+            throws PluginException
+        {
+            WikiPluginTag plugin = m_tagClass.newInstance();
+
+            
+        }
+    }
+    */
 }

@@ -5,6 +5,8 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.log4j.*;
+
 import com.ecyrd.jspwiki.providers.*;
 
 public class PageManagerTest extends TestCase
@@ -20,6 +22,7 @@ public class PageManagerTest extends TestCase
         throws Exception
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
+        PropertyConfigurator.configure(props);
     }
 
     public void tearDown()

@@ -127,6 +127,16 @@ public class PluginManagerTest extends TestCase
                       res );
     }
 
+    public void testQuotedArgs2()
+        throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{INSERT SamplePlugin WHERE text='this \\'is a\\' space'}");
+
+        assertEquals( "this 'is a' space",
+                      res );
+    }
+
     public void testNumberArgs()
         throws Exception
     {

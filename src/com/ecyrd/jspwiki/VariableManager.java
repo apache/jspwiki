@@ -33,7 +33,7 @@ import org.apache.log4j.Category;
 public class VariableManager
 {
     private static Category log = Category.getInstance( VariableManager.class );
-
+    
     public VariableManager( Properties props )
     {
     }
@@ -77,7 +77,7 @@ public class VariableManager
     /**
      *  Returns a value of the named variable.
      *
-     *  @param name Name of the variable.
+     *  @param varName Name of the variable.
      *
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
@@ -85,17 +85,18 @@ public class VariableManager
     // FIXME: Currently a bit complicated.  Perhaps should use reflection
     //        or something to make an easy way of doing stuff.
     public String getValue( WikiContext context,
-                            String      name )
+                            String      varName )
         throws IllegalArgumentException,
                NoSuchVariableException
     {
-        if( name == null )
+        if( varName == null )
             throw new IllegalArgumentException( "Null variable name." );
 
-        if( name.length() == 0 )
+        if( varName.length() == 0 )
             throw new IllegalArgumentException( "Zero length variable name." );
 
-        name = name.toLowerCase();
+        // Faster than doing equalsIgnoreCase()
+        String name = varName.toLowerCase();
         String res = "";
 
         if( name.equals("pagename") )
@@ -152,9 +153,25 @@ public class VariableManager
         }
         else
         {
-            throw new NoSuchVariableException( "No variable "+name+" defined." );
-        }
+            // Final straw: attempt to fetch using property name
+            // We don't allow fetching any other properties than those starting
+            // with "jspwiki.".  I know my own code, but I can't vouch for bugs
+            // in other people's code... :-)
+            
+            if( varName.startsWith("jspwiki.") )
+            {
+                Properties props = context.getEngine().getWikiProperties();
 
+                res = props.getProperty( varName );
+                if( res != null )
+                {
+                    return res;
+                }
+            }
+            
+            throw new NoSuchVariableException( "No variable "+varName+" defined." );
+        }
+        
         return res;
     }
 }

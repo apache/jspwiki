@@ -192,6 +192,20 @@
   </tag>
 
   <tag>
+    <name>Plugin</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PluginTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>plugin</name>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>args</name>
+       <required>true</required>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>RSSLink</name>
     <tagclass>com.ecyrd.jspwiki.tags.RSSLinkTag</tagclass>
     <bodycontent>empty</bodycontent>

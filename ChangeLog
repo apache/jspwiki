@@ -1,3 +1,20 @@
+2002-09-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+	* Added a simple WeblogPlugin and an accompanying
+	WeblogEntryPlugin.
+
+	* It is now possible to add jspwiki.properties properties as
+	WikiVariables. 
+
+	* Documented WikiVariables.
+
+2002-09-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+	* Added new tag "Plugin", which allows you to run any JSPWiki
+	plugin from a JSP page directly.
+
+	* Fixed the last failing RCSFileProvider test case.
+
 2002-09-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.20.

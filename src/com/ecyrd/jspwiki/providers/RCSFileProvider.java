@@ -218,7 +218,19 @@ public class RCSFileProvider
 
             process.waitFor();
 
-            log.debug("Done, returned = "+process.exitValue());
+            int exitVal = process.exitValue();
+            
+            log.debug("Done, returned = "+exitVal);
+
+            //
+            //  If fetching failed, assume that this is because of the user
+            //  has just migrated from FileSystemProvider, and check
+            //  if he's getting version 1.
+            //
+            if( exitVal != 0 && version == 1 )
+            {
+                result = super.getPageText( page, version );
+            }
         }
         catch( Exception e )
         {

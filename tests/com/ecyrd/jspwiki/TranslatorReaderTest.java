@@ -693,6 +693,38 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "test\n", translate(src) );
     }
 
+    public void testShortPluginInsert2()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text=test}] [{INSERT SamplePlugin WHERE text=test2}]";
+
+        assertEquals( "test test2\n", translate(src) );
+    }
+
+    public void testPluginQuotedArgs()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text='test me now'}]";
+
+        assertEquals( "test me now\n", translate(src) );
+    }
+
+    public void testPluginDoublyQuotedArgs()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
+
+        assertEquals( "test 'me too' now\n", translate(src) );
+    }
+
+    public void testPluginQuotedArgs2()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text=foo}] [{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
+
+        assertEquals( "foo test 'me too' now\n", translate(src) );
+    }
+
     public void testVariableInsert()
         throws Exception
     {

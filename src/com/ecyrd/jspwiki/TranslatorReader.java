@@ -322,13 +322,13 @@ public class TranslatorReader extends Reader
           case LOCALREF:
             result = "<A CLASS=\"footnoteref\" HREF=\"#ref-"+
                 m_context.getPage().getName()+"-"+
-                link+"\">[["+text+"]</A>";
+                link+"\">["+text+"]</A>";
             break;
 
           case LOCAL:
             result = "<A CLASS=\"footnote\" NAME=\"ref-"+
                 m_context.getPage().getName()+"-"+
-                link.substring(1)+"\">[["+text+"]</A>";
+                link.substring(1)+"\">["+text+"]</A>";
             break;
 
             //
@@ -522,7 +522,9 @@ public class TranslatorReader extends Reader
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
-    private String setHyperLinks( String line )
+    /*
+      OBSOLETE
+    private String setHyperLinksOld( String line )
     {
         int start, end = 0;
         
@@ -718,6 +720,213 @@ public class TranslatorReader extends Reader
         }
 
         return line;
+    }
+    */
+    
+    /**
+     *  Gobbles up all hyperlinks that are encased in square brackets.
+     */
+    private String setHyperLinks( String line )
+    {
+        int start, end = 0;
+        StringBuffer sb = new StringBuffer();
+
+        int idx = 0;
+        while( idx < line.length() )
+        {
+            start = line.indexOf('[', end);
+
+            if( start < 0 )
+            {
+                // No more hyperlinks.
+                sb.append( line.substring( idx ) );
+                break;
+            }
+            
+            sb.append( line.substring( idx, start ) );
+            
+            // Words starting with multiple [[s are not hyperlinks.
+            if( line.charAt( start+1 ) == '[' )
+            {
+                for( end = start; end < line.length() && line.charAt(end) == '['; end++ );
+                sb.append( line.substring( start, end ) );
+                
+                continue;
+            }
+
+            end = line.indexOf( ']', start );
+
+            if( end != -1 )
+            {
+                // Everything between these two is a link
+
+                String link = line.substring( start+1, end );
+                String reallink;
+                int cutpoint;
+
+                if( (cutpoint = link.indexOf('|')) != -1 )
+                {                    
+                    reallink = link.substring( cutpoint+1 ).trim();
+                    link = link.substring( 0, cutpoint );
+                }
+                else
+                {
+                    reallink = link.trim();
+                }
+
+                int interwikipoint = -1;
+
+                //
+                //  Yes, we now have the components separated.
+                //  link     = the text the link should have
+                //  reallink = the url or page name.
+                //
+                //  In many cases these are the same.  [link|reallink].
+                //  
+                if( PluginManager.isPluginLink( link ) )
+                {
+                    String included;
+                    try
+                    {
+                        included = m_engine.getPluginManager().execute( m_context, link );
+                    }
+                    catch( PluginException e )
+                    {
+                        log.error( "Failed to insert plugin", e );
+                        log.error( "Root cause:",e.getRootThrowable() );
+                        included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
+                    }
+                            
+                    sb.append( included );
+                }                
+                else if( VariableManager.isVariableLink( link ) )
+                {
+                    String value;
+
+                    try
+                    {
+                        value = m_engine.getVariableManager().parseAndGetValue( m_context, link );
+                    }
+                    catch( NoSuchVariableException e )
+                    {
+                        value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+                    }
+                    catch( IllegalArgumentException e )
+                    {
+                        value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+                    }
+
+                    sb.append( value );
+                }
+                else if( isExternalLink( reallink ) )
+                {
+                    // It's an external link, out of this Wiki
+
+                    callMutatorChain( m_externalLinkMutatorChain, reallink );
+
+                    if( isImageLink( reallink ) )
+                    {
+                        //
+                        // Image links are handled differently:
+                        // 1. If the text is a WikiName of an existing page,
+                        //    it gets linked.
+                        // 2. If the text is an external link, then it is inlined.  
+                        // 3. Otherwise it becomes an ALT text.
+                        //
+
+                        String possiblePage = cleanLink( link );
+                        String matchedLink;
+
+                        if( isExternalLink( link ) && (cutpoint != -1) )
+                        {
+                            sb.append( makeLink( IMAGELINK, reallink, link ) );
+                        }
+                        else if( (matchedLink = linkExists( possiblePage )) != null &&
+                                 (cutpoint != -1) )
+                        {
+                            // System.out.println("Orig="+link+", Matched: "+matchedLink);
+                            callMutatorChain( m_localLinkMutatorChain, possiblePage );
+
+                            sb.append( makeLink( IMAGEWIKILINK, reallink, link ) );
+                        }
+                        else
+                        {
+                            sb.append( makeLink( IMAGE, reallink, link ) );
+                        }
+                    }
+                    else
+                    {
+                        sb.append( makeLink( EXTERNAL, reallink, link ) );
+                    }
+                }
+                else if( (interwikipoint = reallink.indexOf(":")) != -1 )
+                {
+                    // It's an interwiki link
+                    // InterWiki links also get added to external link chain
+                    // after the links have been resolved.
+
+                    // FIXME: There is an interesting issue here:  We probably should
+                    //        URLEncode the wikiPage, but we can't since some of the
+                    //        Wikis use slashes (/), which won't survive URLEncoding.
+                    //        Besides, we don't know which character set the other Wiki
+                    //        is using, so you'll have to write the entire name as it appears
+                    //        in the URL.  Bugger.
+
+                    String extWiki = reallink.substring( 0, interwikipoint );
+                    String wikiPage = reallink.substring( interwikipoint+1 );
+
+                    String urlReference = m_engine.getInterWikiURL( extWiki );
+
+                    if( urlReference != null )
+                    {
+                        urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
+                        callMutatorChain( m_externalLinkMutatorChain, urlReference );
+
+                        sb.append( makeLink( INTERWIKI, urlReference, link ) );
+                    }
+                    else
+                    {
+                        sb.append( link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
+                    }
+                }
+                else if( reallink.startsWith("#") )
+                {
+                    // It defines a local footnote
+                    sb.append( makeLink( LOCAL, reallink, link ) );
+                }
+                else if( isNumber( reallink ) )
+                {
+                    // It defines a reference to a local footnote
+                    sb.append( makeLink( LOCALREF, reallink, link ) );
+                }
+                else
+                {
+                    // It's an internal Wiki link
+                    reallink = cleanLink( reallink );
+
+                    callMutatorChain( m_localLinkMutatorChain, reallink );
+
+                    String matchedLink;
+                    if( (matchedLink = linkExists( reallink )) != null )
+                    {
+                        sb.append( makeLink( READ, matchedLink, link ) );
+                    }
+                    else
+                    {
+                        sb.append( makeLink( EDIT, reallink, link ) );
+                    }
+                }
+            }
+            else
+            {
+                log.error("Unterminated link");
+                break;
+            }
+
+            idx = end+1;
+        }
+
+        return sb.toString();
     }
 
     /**
