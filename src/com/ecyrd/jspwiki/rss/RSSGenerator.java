@@ -238,6 +238,8 @@ public class RSSGenerator
 
             String url;
 
+            // FIXME: No longer use absolute URLS!!!
+
             if( page instanceof Attachment )
             {
                 url  = m_engine.getAttachmentURL( page.getName() );
