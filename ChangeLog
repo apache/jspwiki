@@ -1,5 +1,12 @@
 2004-09-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.109
+
+        * RCSFileProvider now sets the sizes when asked for page history,
+        making it a lot faster.
+
+        * Moved get/setSize() to WikiPage.
+
         * v2.1.108
 
         * CachingProvider now also caches page history.  This helps the
