@@ -14,39 +14,28 @@
 
 <%
     String pagereq = "UserPreferences";
+    String    skin = wiki.getTemplateDir();
     String headerTitle = "";
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    String userName = wiki.getUserName( request );
-    if( userName == null ) 
-    {
-        userName="";
-    }
-
-    WikiPage wikipage = wiki.getPage( pagereq );
+    WikiPage wikipage = new WikiPage( pagereq );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    wikiContext.setRequestContext("prefs");
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext );
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
     String ok = request.getParameter("ok");
     String clear = request.getParameter("clear");
 
     if( ok != null || "save".equals(request.getParameter("action")) )
     {
-        //
-        //  Servlet 2.2 API assumes all incoming data is in ISO-8859-1, so when
-        //  returning UTF-8, you get the right bytes but with the wrong encoding.
-        //
-        //  For more information, see:
-        //    http://www.jguru.com/faq/view.jsp?EID=137049
-        //
-        String name;
-        name = new String( request.getParameter("username").getBytes("ISO-8859-1"), "UTF-8");
+        String name = wiki.safeGetParameter( request, "username" );
 
         UserProfile profile = new UserProfile();
-        profile.setName( name );
+        profile.setName( TranslatorReader.cleanLink(name) );
 
         Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
                                    profile.getStringRepresentation() );
@@ -54,7 +43,7 @@
 
         response.addCookie( prefs );
 
-        response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+        response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
     }
     else if( clear != null )
     {
@@ -62,79 +51,14 @@
         prefs.setMaxAge( 0 );
         response.addCookie( prefs );
 
-        // FIXME: Should really redirect to some other place, like this page.
-        response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+        response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
     }       
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-
+    String contentPage = "templates/"+skin+"/ViewTemplate.jsp";
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-
-<HTML>
-
-<HEAD>
-  <TITLE><wiki:Variable var="ApplicationName" />: User Preferences</TITLE>
-  <%@ include file="templates/default/cssinclude.js" %>
-</HEAD>
-
-<BODY BGCOLOR="#FFFFFF">
-
-<TABLE BORDER="0" CELLSPACING="8" width="95%">
-
-  <TR>
-    <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="templates/default/LeftMenu.jsp" %>
-       <P>
-       <%@ include file="templates/default/LeftMenuFooter.jsp" %>
-    </TD>
-
-    <TD CLASS="page" WIDTH="85%" VALIGN="top">
-
-      <%@ include file="templates/default/PageHeader.jsp" %>
-
-      <P>
-      This is a page which allows you to set up all sorts of interesting things.
-      You need to have cookies enabled for this to work, though.
-      </P>
-
-      <FORM action="<%=wiki.getBaseURL()%>UserPreferences.jsp" 
-            method="POST"
-            ACCEPT-CHARSET="UTF-8">
-
-         <B>User name:</B> <INPUT type="text" name="username" size="30" value="<%=userName%>">
-         <I>This must be a proper WikiName, no punctuation.</I>
-         <BR><BR>
-         <INPUT type="submit" name="ok" value="Set my preferences!">
-         <INPUT type="hidden" name="action" value="save">
-      </FORM>
-
-      <HR/>
-
-      <H3>Removing your preferences</h3>
-
-      <P>In some cases, you may need to remove the above preferences from the computer.
-      Click the button below to do that.  Note that it will remove all preferences
-      you've set up, permanently.  You will need to enter them again.</P>
-
-      <DIV align="center">
-      <FORM action="<%=wiki.getBaseURL()%>UserPreferences.jsp"
-            method="POST"
-            ACCEPT-CHARSET="UTF-8">
-      <INPUT type="submit" name="clear" value="Remove preferences from this computer" />
-      </FORM>
-      </DIV>
-
-    </TD>
-  </TR>
-
-</TABLE>
-
-</BODY>
-
-</HTML>
+<wiki:Include page="<%=contentPage%>" />
 
 <%
     NDC.pop();
