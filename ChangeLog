@@ -1,3 +1,11 @@
+2003-06-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.47
+
+        * It is now possible to define the location of the
+        jspwiki.properties file through a servlet init parameter.  See
+        samplepages.zip and the page "MultipleWikis".
+
 2003-06-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.46.
