@@ -12,6 +12,7 @@ import com.ecyrd.jspwiki.*;
 public class FileSystemProviderTest extends TestCase
 {
     FileSystemProvider m_provider;
+    FileSystemProvider m_providerUTF8;
     String             m_pagedir;
     Properties props  = new Properties();
 
@@ -29,6 +30,7 @@ public class FileSystemProviderTest extends TestCase
 
         Properties props2 = new Properties();
 
+        props.setProperty( PageManager.PROP_PAGEPROVIDER, "FileSystemProvider" );
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            m_pagedir );
 
@@ -40,40 +42,87 @@ public class FileSystemProviderTest extends TestCase
         m_provider = new FileSystemProvider();
 
         m_provider.initialize( m_engine, props );
+        
+        props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
+        m_providerUTF8 = new FileSystemProvider();
+        m_providerUTF8.initialize( m_engine, props );
     }
 
     public void tearDown()
     {
+        TestEngine.deleteAll( new File(m_pagedir) );
     }
 
     public void testScandinavianLetters()
         throws Exception
     {
-        try
-        {
-            WikiPage page = new WikiPage("≈‰Test");
+        WikiPage page = new WikiPage("≈‰Test");
 
-            m_provider.putPageText( page, "test" );
+        m_provider.putPageText( page, "test" );
+        
+        File resultfile = new File( m_pagedir, "%C5%E4Test.txt" );
+        
+        assertTrue("No such file", resultfile.exists());
+        
+        String contents = FileUtil.readContents( new FileInputStream(resultfile),
+                                                 "ISO-8859-1" );
+        
+        assertEquals("Wrong contents", contents, "test");
+    }
 
-            File resultfile = new File( m_pagedir, "%C5%E4Test.txt" );
+    public void testScandinavianLettersUTF8()
+        throws Exception
+    {
+        WikiPage page = new WikiPage("≈‰Test");
 
-            assertTrue("No such file", resultfile.exists());
+        m_providerUTF8.putPageText( page, "test÷" );
 
-            String contents = FileUtil.readContents( new FileInputStream(resultfile),
-                                                     "ISO-8859-1" );
+        File resultfile = new File( m_pagedir, "%C3%85%C3%A4Test.txt" );
 
-            assertEquals("Wrong contents", contents, "test");
-        }
-        finally
-        {
-            File resultfile = new File( m_pagedir,
-                                        "%C5%E4Test.txt" );
-            try
-            {
-                resultfile.delete();
-            }
-            catch(Exception e) {}
-        }
+        assertTrue("No such file", resultfile.exists());
+
+        String contents = FileUtil.readContents( new FileInputStream(resultfile),
+                                                 "UTF-8" );
+
+        assertEquals("Wrong contents", contents, "test÷");
+    }
+
+    /**
+     * This should never happen, but let's check that we're protected anyway.
+     * @throws Exception
+     */
+    public void testSlashesInPageNamesUTF8()
+         throws Exception
+    {
+        WikiPage page = new WikiPage("Test/Foobar");
+
+        m_providerUTF8.putPageText( page, "test" );
+        
+        File resultfile = new File( m_pagedir, "Test%2FFoobar.txt" );
+        
+        assertTrue("No such file", resultfile.exists());
+        
+        String contents = FileUtil.readContents( new FileInputStream(resultfile),
+                                                 "UTF-8" );
+        
+        assertEquals("Wrong contents", contents, "test");
+    }
+
+    public void testSlashesInPageNames()
+         throws Exception
+    {
+        WikiPage page = new WikiPage("Test/Foobar");
+
+        m_provider.putPageText( page, "test" );
+   
+        File resultfile = new File( m_pagedir, "Test%2FFoobar.txt" );
+   
+        assertTrue("No such file", resultfile.exists());
+   
+        String contents = FileUtil.readContents( new FileInputStream(resultfile),
+                                                 "ISO-8859-1" );
+   
+        assertEquals("Wrong contents", contents, "test");
     }
 
     public void testAuthor()
