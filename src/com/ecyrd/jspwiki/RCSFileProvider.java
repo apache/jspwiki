@@ -86,6 +86,8 @@ public class RCSFileProvider
         log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
+    // NB: This is a very slow method.
+
     public WikiPage getPageInfo( String page )
     {
         PatternMatcher  matcher  = new Perl5Matcher();
