@@ -1,3 +1,11 @@
+2001-08-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v1.3.0
+
+        * Added interWiki functionality.  Now you can defined in
+        'jspwiki.properties' where a link of the form [WikiXX:PageName]
+        should point to.
+
 2001-08-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.2.0
