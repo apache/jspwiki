@@ -66,6 +66,7 @@ public class CachingProvider
     private static final Logger log = Logger.getLogger(CachingProvider.class);
 
     private WikiPageProvider m_provider;
+    private WikiEngine       m_engine;
 
     private HashMap          m_cache = new HashMap();
 
@@ -153,6 +154,17 @@ public class CachingProvider
             throw new IllegalArgumentException("illegal provider class");
         }
 
+    }
+
+    public void setWikiEngine( WikiEngine e )
+    {
+        m_engine = e;
+    }
+
+
+    public WikiEngine getWikiEngine()
+    {
+        return( m_engine );
     }
 
     public boolean pageExists( String page )
@@ -302,6 +314,7 @@ public class CachingProvider
         m_cache.remove( page.getName() );
         m_textCache.flushEntry( page.getName() );
         addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
+        m_engine.updateReferences( page );
     }
 
     /**
@@ -422,7 +435,7 @@ public class CachingProvider
         throws ProviderException
     {
         CacheItem item = null;
-        
+
         WikiPage newpage = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
 
         if( newpage != null )
