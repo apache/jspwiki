@@ -392,7 +392,9 @@ public class TranslatorReader extends Reader
 
     private boolean isNumber( String s )
     {
-        if( s.charAt(0) == '-' && s.length() > 1)
+        if( s == null ) return false;
+
+        if( s.length() > 1 && s.charAt(0) == '-' )
             s = s.substring(1);
 
         for( int i = 0; i < s.length(); i++ )
