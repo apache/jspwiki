@@ -99,7 +99,7 @@ public class IndexPlugin implements WikiPlugin
         buildIndexPageHeaderAndBody( allPages, linkProcessor );
 
         return  m_headerPart.toString()
-                +   "<br>"
+                +   "<br />"
                 +   m_bodyPart.toString();
     }
 
@@ -185,7 +185,7 @@ public class IndexPlugin implements WikiPlugin
             m_headerPart.write(" - " );
         }
 
-        m_headerPart.write("<A href=\"#"  + i_firstLetter + "\">" + i_firstLetter + "</A>" );
+        m_headerPart.write("<a href=\"#"  + i_firstLetter + "\">" + i_firstLetter + "</a>" );
     }
 
 
@@ -193,9 +193,9 @@ public class IndexPlugin implements WikiPlugin
     private void addLetterHeaderWithLine( final String i_firstLetter )
     {
         m_bodyPart.write("<br /><br />" +
-                         "<A name=\"" + i_firstLetter + "\">" +
-                         "<font color="+INITIALS_COLOR+">"+i_firstLetter+"</A></font>" +
-                         "<hr>" );
+                         "<a name=\"" + i_firstLetter + "\">" +
+                         "<font color="+INITIALS_COLOR+">"+i_firstLetter+"</a></font>" +
+                         "<hr />" );
     }
 
     protected void addPageToIndex( WikiPage i_curPage, final TranslatorReader i_linkProcessor )
