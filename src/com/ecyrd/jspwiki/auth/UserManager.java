@@ -33,6 +33,8 @@ public class UserManager
     public static final String PROP_AUTHENTICATOR = "jspwiki.authenticator";
     public static final String PROP_USERDATABASE = "jspwiki.userdatabase";
 
+    public static final String PROP_ADMINISTRATOR = "jspwiki.auth.administrator";
+
     /** If true, logs the IP address of the editor */
     private boolean            m_storeIPAddress = true;
 
@@ -45,10 +47,17 @@ public class UserManager
     public static final String GROUP_NAMEDGUEST  = "NamedGuest";
     public static final String GROUP_KNOWNPERSON = "KnownPerson";
 
+    /**
+     *  The default administrator group is called "AdminGroup"
+     */
+    private static final String DEFAULT_ADMINISTRATOR = "AdminGroup";
+
     private WikiAuthenticator  m_authenticator;
     private UserDatabase       m_database;
 
     private WikiEngine         m_engine;
+
+    private String             m_administrator;
 
     public UserManager( WikiEngine engine, Properties props )
         throws WikiException
@@ -58,6 +67,9 @@ public class UserManager
         m_storeIPAddress = TextUtil.getBooleanProperty( props,
                                                         PROP_STOREIPADDRESS, 
                                                         m_storeIPAddress );
+
+        m_administrator  = props.getProperty( PROP_ADMINISTRATOR,
+                                              DEFAULT_ADMINISTRATOR );
 
         WikiGroup all = new AllGroup();
         all.setName( "All" );
@@ -134,6 +146,38 @@ public class UserManager
         wup.setName( name );
 
         return wup;
+    }
+
+    /**
+     *  Returns true, if the user or the group represents a super user,
+     *  which should be allowed access to everything.
+     *
+     *  @param p Principal to check for administrator access.
+     */
+    public boolean isAdministrator( WikiPrincipal p )
+    {
+        //
+        //  Direct name matches are returned always.
+        //
+        if( p.getName().equals( m_administrator ) )
+        {
+            return true;
+        }
+
+        //
+        //  Try to get the super group and check if the user is a part
+        //  of it.
+        //
+        WikiGroup superPrincipal = getWikiGroup( m_administrator );
+
+        if( superPrincipal == null )
+        {
+            log.warn("No supergroup '"+m_administrator+"' exists; you should create one.");
+
+            return false;
+        }
+
+        return superPrincipal.isMember( p );
     }
 
     /**
