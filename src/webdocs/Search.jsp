@@ -59,9 +59,9 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="nowrap">
-       <%@ include file="LeftMenu.jsp" %>
+       <%@ include file="templates/LeftMenu.jsp" %>
        <P>
-       <%@ include file="LeftMenuFooter.jsp" %>
+       <%@ include file="templates/LeftMenuFooter.jsp" %>
     </TD>
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <H1>Find pages</H1>

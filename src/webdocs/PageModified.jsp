@@ -65,17 +65,17 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
-       <%@ include file="LeftMenu.jsp" %>
+       <%@ include file="templates/LeftMenu.jsp" %>
        <BR><BR>
        <P>
        <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Go edit <%=pagereq%></A>
        </P>
        <P>
-       <%@ include file="LeftMenuFooter.jsp" %>
+       <%@ include file="templates/LeftMenuFooter.jsp" %>
        </P>
     </TD>
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <%@ include file="PageHeader.jsp" %>
+      <%@ include file="templates/PageHeader.jsp" %>
 
       <P>
       <B>Oops!  Someone modified the page while you were editing it!</B>

@@ -109,15 +109,15 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
-       <%@ include file="LeftMenu.jsp" %>
+       <%@ include file="templates/LeftMenu.jsp" %>
        <P>
        <wiki:LinkTo page="TextFormattingRules">Help on editing</wiki:LinkTo>
        </P>
-       <%@ include file="LeftMenuFooter.jsp" %>
+       <%@ include file="templates/LeftMenuFooter.jsp" %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
-      <%@ include file="PageHeader.jsp" %>
+      <%@ include file="templates/PageHeader.jsp" %>
       <!-- <H1>Edit page <%=pagereq%></H1> -->
 
       <FORM action="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>&action=save" method="POST" 

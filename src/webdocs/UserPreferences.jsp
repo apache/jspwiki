@@ -1,5 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
     public void jspInit()
@@ -21,6 +23,12 @@
     {
         userName="";
     }
+
+    WikiPage wikipage = wiki.getPage( pagereq );
+
+    WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext );
 
     String ok = request.getParameter("ok");
     String clear = request.getParameter("clear");
@@ -78,14 +86,14 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="LeftMenu.jsp" %>
+       <%@ include file="templates/LeftMenu.jsp" %>
        <P>
-       <%@ include file="LeftMenuFooter.jsp" %>
+       <%@ include file="templates/LeftMenuFooter.jsp" %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
-      <%@ include file="PageHeader.jsp" %>
+      <%@ include file="templates/PageHeader.jsp" %>
 
       <P>
       This is a page which allows you to set up all sorts of interesting things.

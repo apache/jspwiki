@@ -53,14 +53,14 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="LeftMenu.jsp" %>
+       <%@ include file="templates/LeftMenu.jsp" %>
        <P>
-       <%@ include file="LeftMenuFooter.jsp" %>
+       <%@ include file="templates/LeftMenuFooter.jsp" %>
     </TD>
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
-      <%@ include file="PageHeader.jsp" %>
+      <%@ include file="templates/PageHeader.jsp" %>
 
       <%
          if( wiki.pageExists( pagereq ) )

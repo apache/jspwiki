@@ -15,13 +15,13 @@
 
   <TR>
     <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
-       <%@ include file="../LeftMenu.jsp" %>
+       <%@ include file="LeftMenu.jsp" %>
        <P>
        <% if( isEditable ) { %>
           <wiki:EditLink>Edit <%=pageReference%></wiki:EditLink>
        <% } %>
        </P>
-       <%@ include file="../LeftMenuFooter.jsp" %>
+       <%@ include file="LeftMenuFooter.jsp" %>
        <P>
            <DIV ALIGN="center">
            <wiki:RSSImageLink title="Aggregate the RSS feed" /><BR />
@@ -32,7 +32,7 @@
 
     <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
-      <%@ include file="../PageHeader.jsp" %>
+      <%@ include file="PageHeader.jsp" %>
 
       <% if( version > 0 ) { %>
          <FONT COLOR="red">
