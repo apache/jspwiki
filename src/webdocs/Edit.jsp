@@ -106,6 +106,12 @@
         session.removeAttribute( "lock-"+pagereq );
 
         //
+        //  Set author information
+        //
+
+        wikiContext.getPage().setAuthor( currentUser.getName() );        
+
+        //
         //  If this is a comment, then we just append it to the page.
         //  If it is a full edit, then we will replace the previous contents.
         //
