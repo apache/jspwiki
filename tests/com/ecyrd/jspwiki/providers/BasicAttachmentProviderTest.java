@@ -58,6 +58,7 @@ public class BasicAttachmentProviderTest extends TestCase
         return tmpFile;
     }
 
+
     public void tearDown()
     {
         m_engine.deletePage( NAME1 );
@@ -134,6 +135,32 @@ public class BasicAttachmentProviderTest extends TestCase
 
         assertEquals( "a1 name", att.getName(), a1.getName() );
         assertEquals( "a2 name", att2.getName(), a2.getName() );
+    }
+
+    public void testListAllNoExtension()
+        throws Exception
+    {
+        File in = makeAttachmentFile();
+        
+        Attachment att = new Attachment( NAME1, "test1." );
+
+        m_provider.putAttachmentData( att, new FileInputStream(in) );
+
+        Thread.sleep( 2000L ); // So that we get a bit of granularity.
+
+        Attachment att2 = new Attachment( NAME2, "test2." );
+
+        m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        
+        List res = m_provider.listAllChanged( new Date(0L) );
+
+        assertEquals( "list size", 2, res.size() );
+
+        Attachment a2 = (Attachment) res.get(0);  // Most recently changed
+        Attachment a1 = (Attachment) res.get(1);  // Least recently changed
+
+        assertEquals( "a1 name", att.getName(), a1.getName() );
+        assertEquals( "a2 name", att2.getName(), a2.getName() );        
     }
 
     public static Test suite()
