@@ -246,7 +246,8 @@ public class WikiEngine
         while( it.hasNext() )
         {
             WikiPage page = (WikiPage)it.next();
-            String content = m_provider.getPageText( page.getName() );
+            String content = m_provider.getPageText( page.getName(), 
+                                                     WikiPageProvider.LATEST_VERSION );
             m_referenceManager.updateReferences( page.getName(), scanWikiLinks( content ) );
         }
 
@@ -480,6 +481,9 @@ public class WikiEngine
 
     /**
      *  Returns the pure text of a page, no conversions.
+     *
+     *  @version If WikiPageProvider.LATEST_VERSION, then uses the 
+     *  latest version.
      */
     public String getPureText( String page, int version )
     {
@@ -488,16 +492,7 @@ public class WikiEngine
 
         String result = null;
 
-        if( version >= 0 )
-        {
-            // FIXME: What do we get if the version doesn't exist?
-            // Null. Need to implement a check.
-            result = m_provider.getPageText( page, version );
-        }
-        else
-        {
-            result = m_provider.getPageText( page );
-        }
+        result = m_provider.getPageText( page, version );
 
         if( result == null )
             result = "";
@@ -824,7 +819,22 @@ public class WikiEngine
         if( m_provider == null ) 
             return null;
 
-        WikiPage p = m_provider.getPageInfo( pagereq );
+        WikiPage p = m_provider.getPageInfo( pagereq, 
+                                             WikiPageProvider.LATEST_VERSION );
+
+        return p;
+    }
+
+    /**
+     *  Returns specific information about a Wiki page.
+     */
+
+    public WikiPage getPage( String pagereq, int version )
+    {
+        if( m_provider == null )
+            return null;
+
+        WikiPage p = m_provider.getPageInfo( pagereq, version );
 
         return p;
     }
@@ -839,7 +849,7 @@ public class WikiEngine
         if( m_provider == null ) 
             return null;
 
-        WikiPage p = m_provider.getPageInfo( page );
+        WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
         if( p != null )
             return p.getLastModified();
@@ -856,7 +866,7 @@ public class WikiEngine
         if( m_provider == null ) 
             return -1;
 
-        WikiPage p = m_provider.getPageInfo( page );
+        WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
         if( p != null )
             return p.getVersion();
