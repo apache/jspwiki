@@ -32,13 +32,21 @@ import com.ecyrd.jspwiki.*;
 
 /**
  *  Handles all incoming servlet requests for XML-RPC calls.
+ *  <P>
+ *  Uses two initialization parameters:
+ *  <UL>
+ *  <LI><B>handler</B> : the class which is used to handle the RPC calls.
+ *  <LI><B>prefix</B> : The command prefix for that particular handler.
+ *  </UL>
  *  
  *  @author Janne Jalkanen
  *  @since 1.6.6
  */
 public class RPCServlet extends HttpServlet
 {
-    /** This is what is appended to each command. */
+    /** This is what is appended to each command, if the handler has
+        not been specified.  */
+    // FIXME: Should this be $default?
     public static final String XMLRPC_PREFIX = "wiki";
 
     private WikiEngine       m_engine;
@@ -46,15 +54,38 @@ public class RPCServlet extends HttpServlet
 
     Category log = Category.getInstance( RPCServlet.class ); 
 
+    /**
+     *  Initializes the servlet.
+     */
     public void init( ServletConfig config )
+        throws ServletException
     {
         m_engine = WikiEngine.getInstance( config );
 
-        RPCHandler rpchandler = new RPCHandler( m_engine );
+        String handlerName = config.getInitParameter( "handler" );
+        String prefix      = config.getInitParameter( "prefix" );
 
-        m_xmlrpcServer.addHandler( XMLRPC_PREFIX, rpchandler );
+        if( handlerName == null ) handlerName = "com.ecyrd.jspwiki.RPCHandler";
+        if( prefix == null )      prefix = XMLRPC_PREFIX;
+
+        try
+        {
+            Class handlerClass = Class.forName( handlerName );
+            AbstractRPCHandler rpchandler = (AbstractRPCHandler) handlerClass.newInstance();
+            rpchandler.initialize( m_engine );
+            m_xmlrpcServer.addHandler( prefix, rpchandler );
+        }
+        catch( Exception e )
+        {
+            log.fatal("Unable to start RPC interface: ", e);
+            throw new ServletException( "No RPC interface", e );
+        }
     }
 
+    /**
+     *  Handle HTTP POST.  This is an XML-RPC call, and we'll just forward
+     *  the query to an XmlRpcServer.
+     */
     public void doPost( HttpServletRequest request, HttpServletResponse response )
         throws ServletException
     {
@@ -64,9 +95,16 @@ public class RPCServlet extends HttpServlet
         {
             byte[] result = m_xmlrpcServer.execute( request.getInputStream() );
 
-            response.setContentType( "text/xml" );
+            //
+            //  I think it's safe to write the output as UTF-8:
+            //  The XML-RPC standard never creates other than USASCII
+            //  (which is UTF-8 compatible), and our special UTF-8
+            //  hack just creates UTF-8.  So in all cases our butt
+            //  should be covered.
+            //
+            response.setContentType( "text/xml; charset=utf-8" );
             response.setContentLength( result.length );
-        
+
             OutputStream out = response.getOutputStream();
             out.write( result );
             out.flush();
@@ -79,6 +117,10 @@ public class RPCServlet extends HttpServlet
         }
     }
 
+    /**
+     *  Handles HTTP GET.  However, we do not respond to GET requests,
+     *  other than to show an explanatory text.
+     */
     public void doGet( HttpServletRequest request, HttpServletResponse response )
         throws ServletException
     {
