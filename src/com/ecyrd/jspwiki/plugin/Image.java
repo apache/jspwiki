@@ -47,7 +47,7 @@ public class Image
     public static final String PARAM_LINK     = "link";
     public static final String PARAM_STYLE    = "style";
     public static final String PARAM_CLASS    = "class";
-    public static final String PARAM_MAP      = "map";
+    //    public static final String PARAM_MAP      = "map";
     public static final String PARAM_BORDER   = "border";
 
     /**
@@ -72,7 +72,7 @@ public class Image
         String link    = getCleanParameter( params, PARAM_LINK );
         String style   = getCleanParameter( params, PARAM_STYLE );
         String cssclass= getCleanParameter( params, PARAM_CLASS );
-        String map     = getCleanParameter( params, PARAM_MAP );
+        // String map     = getCleanParameter( params, PARAM_MAP );
         String border  = getCleanParameter( params, PARAM_BORDER );
 
         if( src == null )
@@ -123,7 +123,7 @@ public class Image
         if( wt != null )     result.append(" width=\""+wt+"\"");
         if( alt != null )    result.append(" alt=\""+alt+"\"");
         if( border != null ) result.append(" border=\""+border+"\"");
-        if( map != null )    result.append(" map=\""+map+"\"");
+        // if( map != null )    result.append(" map=\""+map+"\"");
 
         result.append(" />");
         if( link != null )  result.append("</a>");
