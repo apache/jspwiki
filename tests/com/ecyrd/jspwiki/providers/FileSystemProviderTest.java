@@ -10,6 +10,7 @@ import com.ecyrd.jspwiki.*;
 public class FileSystemProviderTest extends TestCase
 {
     FileSystemProvider m_provider;
+    String             m_pagedir;
 
     public FileSystemProviderTest( String s )
     {
@@ -19,16 +20,56 @@ public class FileSystemProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
+        m_pagedir = System.getProperties().getProperty("java.io.tmpdir");
+
+        Properties props = new Properties();
+
+        props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
+                           m_pagedir );
+
+        m_provider = new FileSystemProvider();
+
+        m_provider.initialize( props );
     }
 
     public void tearDown()
     {
     }
 
+    public void testScandinavianLetters()
+        throws Exception
+    {
+        try
+        {
+            WikiPage page = new WikiPage("≈‰Test");
+
+            m_provider.putPageText( page, "test" );
+
+            File resultfile = new File( m_pagedir, "%C5%E4Test.txt" );
+
+            assertTrue("No such file", resultfile.exists());
+
+            String contents = FileUtil.readContents( new FileInputStream(resultfile),
+                                                     "ISO-8859-1" );
+
+            assertEquals("Wrong contents", contents, "test");
+        }
+        finally
+        {
+            File resultfile = new File( m_pagedir,
+                                        "%C5%E4Test.txt" );
+            try
+            {
+                resultfile.delete();
+            }
+            catch(Exception e) {}
+        }
+    }
+
     public void testNonExistantDirectory()
         throws Exception
     {
-        String tmpdir = System.getProperties().getProperty("java.tmpdir");
+        String tmpdir = m_pagedir;
         String dirname = "non-existant-directory";
 
         String newdir = tmpdir + File.separator + dirname;
