@@ -13,7 +13,7 @@ public class WikiEngineTest extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    WikiEngine m_engine;
 
     public WikiEngineTest( String s )
     {
@@ -25,7 +25,7 @@ public class WikiEngineTest extends TestCase
     {
         props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
 
-        engine = new TestEngine(props);
+        m_engine = new TestEngine(props);
     }
 
     public void tearDown()
@@ -87,7 +87,7 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "Page already exists",
                       false,
-                      engine.pageExists( pagename ) );
+                      m_engine.pageExists( pagename ) );
     }
 
     /**
@@ -100,7 +100,7 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "Page already exists",
                       false,
-                      engine.pageExists( page ) );
+                      m_engine.pageExists( page ) );
     }
 
     public void testPutPage()
@@ -108,15 +108,15 @@ public class WikiEngineTest extends TestCase
         String text = "Foobar.\r\n";
         String name = NAME1;
 
-        engine.saveText( name, text );
+        m_engine.saveText( name, text );
 
         assertEquals( "page does not exist",
                       true,
-                      engine.pageExists( name ) );
+                      m_engine.pageExists( name ) );
 
         assertEquals( "wrong content",
                       text,
-                      engine.getText( name ) );
+                      m_engine.getText( name ) );
     }
 
     public void testGetHTML()
@@ -124,9 +124,9 @@ public class WikiEngineTest extends TestCase
         String text = "''Foobar.''";
         String name = NAME1;
 
-        engine.saveText( name, text );
+        m_engine.saveText( name, text );
 
-        String data = engine.getHTML( name );
+        String data = m_engine.getHTML( name );
 
         assertEquals( "<I>Foobar.</I>\n",
                        data );
@@ -137,7 +137,7 @@ public class WikiEngineTest extends TestCase
         String name = "abcåäö";
 
         assertEquals( "abc%E5%E4%F6",
-                      engine.encodeName(name) );
+                      m_engine.encodeName(name) );
     }
 
     public void testEncodeNameUTF8()
@@ -158,7 +158,7 @@ public class WikiEngineTest extends TestCase
     {
         String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
 
-        Object[] result = engine.scanWikiLinks( src ).toArray();
+        Object[] result = m_engine.scanWikiLinks( src ).toArray();
         
         assertEquals( "item 0", result[0], "Foobar" );
         assertEquals( "item 1", result[1], "ThisIsALink" );
@@ -168,7 +168,7 @@ public class WikiEngineTest extends TestCase
     {
         String src = "WikiNameThingy";
 
-        assertEquals("Wiki Name Thingy", engine.beautifyTitle( src ) );
+        assertEquals("Wiki Name Thingy", m_engine.beautifyTitle( src ) );
     }
 
     /**
@@ -179,7 +179,7 @@ public class WikiEngineTest extends TestCase
     {
         String src = "JSPWikiPage";
 
-        assertEquals("JSP Wiki Page", engine.beautifyTitle( src ) );
+        assertEquals("JSP Wiki Page", m_engine.beautifyTitle( src ) );
     }
     */
     /**
@@ -189,7 +189,7 @@ public class WikiEngineTest extends TestCase
     {
         String src = "ThisIsAPage";
 
-        assertEquals("This Is A Page", engine.beautifyTitle( src ) );
+        assertEquals("This Is A Page", m_engine.beautifyTitle( src ) );
     }
 
     /**
@@ -220,8 +220,77 @@ public class WikiEngineTest extends TestCase
         }
     }
 
+
+    public void testLatestGet()
+        throws Exception
+    {
+        props.setProperty( "jspwiki.pageProvider", 
+                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+
+        WikiEngine engine = new TestEngine( props );
+
+        WikiPage p = engine.getPage( "test", -1 );
+
+        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+
+        assertEquals( "wrong page", "test", vsp.m_latestReq );
+        assertEquals( "wrong version", -1, vsp.m_latestVers );
+    }
+
+    public void testLatestGet2()
+        throws Exception
+    {
+        props.setProperty( "jspwiki.pageProvider", 
+                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+
+        WikiEngine engine = new TestEngine( props );
+
+        String p = engine.getText( "test", -1 );
+
+        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+
+        assertEquals( "wrong page", "test", vsp.m_latestReq );
+        assertEquals( "wrong version", -1, vsp.m_latestVers );
+    }
+
+    public void testLatestGet3()
+        throws Exception
+    {
+        props.setProperty( "jspwiki.pageProvider", 
+                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+
+        WikiEngine engine = new TestEngine( props );
+
+        String p = engine.getHTML( "test", -1 );
+
+        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+
+        assertEquals( "wrong page", "test", vsp.m_latestReq );
+        assertEquals( "wrong version", -1, vsp.m_latestVers );
+    }
+
+    public void testLatestGet4()
+        throws Exception
+    {
+        props.setProperty( "jspwiki.pageProvider", 
+                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+        props.setProperty( "jspwiki.usePageCache", "true" );
+
+        WikiEngine engine = new TestEngine( props );
+
+        String p = engine.getHTML( "test", -1 );
+
+        CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
+        VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
+
+        assertEquals( "wrong page", "test", vsp.m_latestReq );
+        assertEquals( "wrong version", -1, vsp.m_latestVers );
+    }
+
     public static Test suite()
     {
         return new TestSuite( WikiEngineTest.class );
     }
+
+
 }
