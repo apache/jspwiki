@@ -1,3 +1,8 @@
+2001-09-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Added cssinclude.js and three browser-dependent stylesheet
+        files.  Also, all jsp files now include the cssinclude.js.
+
 2001-08-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Removed a debug statement, some cosmetical changes.
