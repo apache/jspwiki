@@ -3,7 +3,8 @@
         * v2.1.135
 
         * Should fix the spurious problem people had trying to attach files
-        with non-ascii names to pages that also had non-ascii names.
+        with non-ascii names to pages that also had non-ascii names, aka
+        BugThrowsAnExceptionWhenTryingToAttachAFileToAPageWithAFancyNameUTF8.
 
         * AttachmentServlet now responds with error codes.
 
