@@ -95,6 +95,7 @@
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
        <name>format</name>
