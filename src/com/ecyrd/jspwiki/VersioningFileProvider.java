@@ -63,7 +63,8 @@ public class VersioningFileProvider
     public static final String      PROPERTYFILE = "page.properties";
 
     public void initialize( Properties properties )
-        throws NoRequiredPropertyException
+        throws NoRequiredPropertyException,
+               IOException
     {
         super.initialize(properties);
     }
