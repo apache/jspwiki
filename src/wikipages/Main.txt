@@ -6,7 +6,8 @@ You have some pages set up for you:
 
 * For testing things, try the [SandBox].
 * For a quick look on what Wiki is, check out [OneMinuteWiki].
-* For all of the Wiki features, see [TextFormattingRules].
+* For all of the Wiki markup features, see [TextFormattingRules].
+* For tips about [JSPWiki|About], see [JSPWikiTips]
 * For a guideline on good working habits with wiki, see [WikiEtiquette].
 * To see what this particular wiki is about, click on the Wiki name
   on the top left corner of the browser window, or [click here|SystemInfo].
