@@ -92,6 +92,35 @@ public class RPCHandlerUTF8
         return ht;
     }
 
+    public Vector getRecentChanges( Date since )
+    {
+        Collection pages = m_engine.getRecentChanges();
+        Vector result = new Vector();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( since );
+
+        //
+        //  Convert UTC to our time.
+        //
+        cal.add( Calendar.MILLISECOND,
+                 (cal.get( Calendar.ZONE_OFFSET ) +
+                  (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+        since = cal.getTime();
+
+        for( Iterator i = pages.iterator(); i.hasNext(); )
+        {
+            WikiPage page = (WikiPage)i.next();
+
+            if( page.getLastModified().after( since ) )
+            {
+                result.add( encodeWikiPage( page ) );
+            }
+        }
+
+        return result;
+    }
+
     /**
      *  Simple helper method, turns the incoming page name into
      *  normal Java string, then checks page condition.
