@@ -380,7 +380,7 @@ public class TranslatorReaderTest extends TestCase
         String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
 
         assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
-                      "<TR><TD CLASS=\"tablehead\"> heading <TD CLASS=\"tablehead\"> heading2 </TR>\n"+
+                      "<TR><TH> heading <TH> heading2 </TR>\n"+
                       "<TR><TD> Cell 1 <TD> Cell 2 </TR>\n"+
                       "<TR><TD> Cell 3 <TD> Cell 4</TR>\n"+
                       "</TABLE><P>\n",
@@ -393,7 +393,7 @@ public class TranslatorReaderTest extends TestCase
         String src="||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
 
         assertEquals( "<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n"+
-                      "<TR><TD CLASS=\"tablehead\">heading<TD CLASS=\"tablehead\">heading2</TR>\n"+
+                      "<TR><TH>heading<TH>heading2</TR>\n"+
                       "<TR><TD>Cell 1<TD> Cell 2</TR>\n"+
                       "<TR><TD> Cell 3 <TD>Cell 4</TR>\n"+
                       "</TABLE><P>\n",
