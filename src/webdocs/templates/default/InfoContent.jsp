@@ -2,7 +2,7 @@
 
 <wiki:PageExists>
 
-   <form action="<wiki:Variable var="baseurl"/>Delete.jsp" method="POST" 
+   <form action="<wiki:Variable var="baseurl"/>Delete.jsp?page=<wiki:PageName />" method="POST" 
                  accept-charset="<wiki:ContentEncoding />">
 
    <table cellspacing="4">
