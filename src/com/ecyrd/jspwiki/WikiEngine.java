@@ -91,6 +91,10 @@ public class WikiEngine
     /** Property name for the "spaces in titles" -hack. */
     public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
 
+    /** Property name for where the jspwiki work directory should be. 
+        If not specified, reverts to ${java.tmpdir}. */
+    public static final String PROP_WORKDIR      = "jspwiki.workDir";
+
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
 
@@ -116,7 +120,7 @@ public class WikiEngine
     { "jspwiki.specialPage.Login",           "Login.jsp",
       "jspwiki.specialPage.UserPreferences", "UserPreferences.jsp",
       "jspwiki.specialPage.Search",          "Search.jsp",
-      "jspwiki.specialPage.FindPage",        "FindPage.jsp" };
+      "jspwiki.specialPage.FindPage",        "FindPage.jsp"};
 
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
@@ -188,6 +192,12 @@ public class WikiEngine
     /** The time when this engine was started. */
     private Date             m_startTime;
 
+    /** The location where the work directory is. */
+    private String           m_workDir;
+
+    /** Each engine has their own application id. */
+    private String           m_appid = "";
+
     private boolean          m_isConfigured = false; // Flag.
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -219,7 +229,7 @@ public class WikiEngine
             context.log(" Assigning new log to "+appid);
             try
             {
-                engine = new WikiEngine( config.getServletContext() );
+                engine = new WikiEngine( config.getServletContext(), appid );
             }
             catch( Exception e )
             {
@@ -227,7 +237,7 @@ public class WikiEngine
                 throw new InternalWikiException( "No wiki engine, check logs." );
             }
 
-            c_engines.put( appid, engine );
+            c_engines.put( appid, engine );            
         }
 
         return engine;
@@ -249,13 +259,14 @@ public class WikiEngine
      *  file.
      *  Do not use this method - use WikiEngine.getInstance() instead.
      */
-    protected WikiEngine( ServletContext context )
+    protected WikiEngine( ServletContext context, String appid )
         throws WikiException
     {
         InputStream propertyStream = null;
         String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
 
         m_servletContext = context;
+        m_appid          = appid;
 
         try
         {
@@ -338,6 +349,30 @@ public class WikiEngine
         log.info("JSPWiki "+Release.VERSTR+" starting. Whee!");
 
         log.debug("Configuring WikiEngine...");
+
+        //
+        //  Create and find the default working directory.
+        //
+        m_workDir        = props.getProperty( PROP_WORKDIR );
+
+        if( m_workDir == null )
+        {
+            m_workDir = System.getProperty("java.io.tmpdir", ".");
+            m_workDir += File.separator+Release.APPNAME+"-"+m_appid;
+        }
+
+        try
+        {
+            File f = new File( m_workDir );
+            f.mkdirs();
+        }
+        catch( Exception e )
+        {
+            log.fatal("Unable to find or create the working directory: "+m_workDir,e);
+            throw new IllegalArgumentException("Unable to find or create the working dir: "+m_workDir);
+        }
+
+        log.info("JSPWiki working directory is '"+m_workDir+"'");
 
         m_saveUserInfo   = TextUtil.getBooleanProperty( props,
                                                         PROP_STOREUSERNAME, 
@@ -509,6 +544,15 @@ public class WikiEngine
     public Properties getWikiProperties()
     {
         return m_properties;
+    }
+
+    /**
+     *  Returns the JSPWiki working directory.
+     *  @since 2.1.100
+     */
+    public String getWorkDir()
+    {
+        return m_workDir;
     }
 
     /**
