@@ -1,3 +1,8 @@
+2003-04-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * RecentChangesPlugin now understands about baseURL (oops).  It is
+        also now XHTML-compliant.
+
 2003-04-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.3.
