@@ -221,6 +221,9 @@ public class ReferenceManager
         m_refersTo.clear();
         m_referredBy.clear();
 
+        if( pages == null )
+            return;
+
         Iterator it = pages.iterator();
         try
         {
