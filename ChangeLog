@@ -1,3 +1,10 @@
+2003-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.66.
+
+        * WeblogPlugin now displays all entries, if parameter "days" is
+        set to "all".
+
 2003-09-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.65.
