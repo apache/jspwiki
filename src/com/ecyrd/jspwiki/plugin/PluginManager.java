@@ -24,6 +24,7 @@ import org.apache.oro.text.regex.*;
 import org.apache.log4j.Category;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Map;
@@ -32,7 +33,9 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.HashMap;
+
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.FileUtil;
 
 /**
  *  Manages plugin classes.
@@ -226,38 +229,50 @@ public class PluginManager
         throws IOException
     {
         HashMap         arglist = new HashMap();
-        StreamTokenizer tok     = new StreamTokenizer(new StringReader(argstring));
+        StringReader    in      = new StringReader(argstring);
+        StreamTokenizer tok     = new StreamTokenizer(in);
         int             type;
 
         String param = null, value = null;
 
         tok.eolIsSignificant( true );
 
-        boolean isArgumentLine = true; // First line always is.
+        boolean potentialEmptyLine = false;
+        boolean quit               = false;
 
-        while( (type = tok.nextToken() ) != StreamTokenizer.TT_EOF )
+        while( !quit )
         {
             String s;
 
+            type = tok.nextToken();
+
             switch( type )
             {
+              case StreamTokenizer.TT_EOF:
+                quit = true;
+                s = null;
+                break;
+
               case StreamTokenizer.TT_WORD:
                 s = tok.sval;
+                potentialEmptyLine = false;
                 break;
+
               case StreamTokenizer.TT_EOL:
-                isArgumentLine = false; // Let's assume it is.
+                quit = potentialEmptyLine;
+                potentialEmptyLine = true;
                 s = null;
                 break;
+
               case StreamTokenizer.TT_NUMBER:
                 s = Integer.toString( new Double(tok.nval).intValue() );
+                potentialEmptyLine = false;
                 break;
-              case '=':
-                isArgumentLine = true; // Yes, we found a '=' somewhere.
-                s = null;
-                break;
+
               case '\'':
                 s = tok.sval;
                 break;
+
               default:
                 s = null;
             }
@@ -281,6 +296,23 @@ public class PluginManager
                     // log.debug("ARG: "+param+"="+value);
                     param = null;
                 }
+            }
+        }
+
+        //
+        //  Now, we'll check the body.
+        //
+
+        if( potentialEmptyLine )
+        {
+            StringWriter out = new StringWriter();
+            FileUtil.copyContents( in, out );
+
+            String bodyContent = out.toString();
+
+            if( bodyContent != null )
+            {
+                arglist.put( "_body", out.toString() );
             }
         }
         
