@@ -387,6 +387,75 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /**
+     * <pre>
+     *   *Item A
+     *   ##Numbered 1
+     *   ##Numbered 2
+     *   *Item B
+     * </pre>
+     *
+     * would come out as:
+     *<ul>
+     * <li>Item A
+     * </ul>
+     * <ol>
+     * <ol>
+     * <li>Numbered 1
+     * <li>Numbered 2
+     * <ul>
+     * <li></ol>
+     * </ol>
+     * Item B
+     * </ul>
+     *
+     *  (by Mahlen Morris).
+     */
+
+    // FIXME: does not run - code base is too screwed for that.
+
+    public void testMixedList()
+        throws Exception
+    {
+        String src="*Item A\n##Numbered 1\n##Numbered 2\n*Item B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<UL><LI>Item A"+
+                      "<OL><OL><LI>Numbered 1"+
+                      "<LI>Numbered 2"+
+                      "</OL></OL>"+
+                      "<LI>Item B"+
+                      "</UL>",
+                      result );
+    }
+
+    /**
+     *  Like testMixedList() but the list types have been reversed.
+     */
+    // FIXME: does not run - code base is too screwed for that.
+    public void testMixedList2()
+        throws Exception
+    {
+        String src="#Item A\n**Numbered 1\n**Numbered 2\n#Item B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<OL><LI>Item A"+
+                      "<UL><UL><LI>Numbered 1"+
+                      "<LI>Numbered 2"+
+                      "</UL></UL>"+
+                      "<LI>Item B"+
+                      "</OL>",
+                      result );
+    }
+
     public void testPluginInsert()
         throws Exception
     {
