@@ -25,7 +25,8 @@ import java.util.ArrayList;
 /**
  *  Builds a simple, priority-based List implementation.  The list
  *  will be sorted according to the priority.  If two items are
- *  inserted with the same priority, their order is undetermined.
+ *  inserted with the same priority, their order is the insertion order - i.e. the new one
+ *  is appended last in the insertion list.
  *  <p>
  *  Priority is an integer, and the list is sorted in descending order
  *  (that is, 100 is before 10 is before 0 is before -40).
