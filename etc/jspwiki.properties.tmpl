@@ -235,11 +235,11 @@ jspwiki.plugin.searchPath =
 #
 #  Page filters
 #
-#  The format is "jspwiki.pageFilter.XXX = classname", where XXX is a priority.
-#  Those filters with higher priority will be executed first.
+#  Normally, the filter configuration is in your WEB-INF/ directory, so you
+#  do not need to go and specify this.  However, if your filters.xml live somewhere
+#  else, you'll have to specify it here.
 #
-#  Example:
-#jspwiki.pageFilter.100 = ProfanityFilter
+#jspwiki.filterConfig = /some/path/to/your/filters.xml
 
 #############################################################################
 #
