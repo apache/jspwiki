@@ -8,7 +8,10 @@ A.footnoteref { vertical-align: super;
 A.footnote    { color: #0044AA; }
 P.versionnote { color: red;
                 font-size: 130%;
-                text-align: center; }
+                text-align: center; 
+                background: #EAEAEA;
+                padding: 12px 12px 12px 12px;
+                }
 
 /* Added in v1.5.1 */
 
