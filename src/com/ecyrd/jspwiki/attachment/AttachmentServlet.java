@@ -122,9 +122,12 @@ public class AttachmentServlet
 
                     res.setContentType( mimetype );
 
-                    // Won't work, must be "attachement"
+                    //
+                    //  We use 'inline' instead of 'attachment' so that user agents
+                    //  can try to automatically open the file.
+                    //
                     res.setHeader( "Content-Disposition", 
-                                   "attachment; filename=" + att.getFileName() + ";" );
+                                   "inline; filename=" + att.getFileName() + ";" );
 
                     // If a size is provided by the provider, report it. 
                     if( att.getSize() >= 0 )

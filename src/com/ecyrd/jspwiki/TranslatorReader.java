@@ -119,7 +119,7 @@ public class TranslatorReader extends Reader
     private boolean                m_plainUris           = false;
 
     /** If true, all outward links use a small link image. */
-    private boolean                m_useOutlinkImage     = false;
+    private boolean                m_useOutlinkImage     = true;
 
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
@@ -194,7 +194,7 @@ public class TranslatorReader extends Reader
 
         m_camelCaseLinks      = "true".equals( props.getProperty( PROP_CAMELCASELINKS, "false" ) );
         m_plainUris           = "true".equals( props.getProperty( PROP_PLAINURIS, "false" ) );
-        m_useOutlinkImage     = "true".equals( props.getProperty( PROP_USEOUTLINKIMAGE, "false" ) );
+        m_useOutlinkImage     = "true".equals( props.getProperty( PROP_USEOUTLINKIMAGE, "true" ) );
     }
 
     /**
@@ -645,6 +645,19 @@ public class TranslatorReader extends Reader
         return res;
     }
 
+    /**
+     *  If outlink images are turned on, returns a link to the outward
+     *  linking image.
+     */
+    private final String outlinkImage()
+    {
+        if( m_useOutlinkImage )
+        {
+            return "<img class=\"outlink\" src=\""+m_engine.getBaseURL()+"images/out.png\" alt=\"\" />";
+        }
+
+        return "";
+    }
 
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
@@ -738,11 +751,7 @@ public class TranslatorReader extends Reader
             else
             {
                 sb.append( makeLink( EXTERNAL, reallink, link ) );
-
-                if( m_useOutlinkImage )
-                {
-                    sb.append( "<img class=\"outlink\" src=\""+m_engine.getBaseURL()+"images/out.png\" alt=\"\" />" );
-                }
+                sb.append( outlinkImage() );
             }
         }
         else if( (interwikipoint = reallink.indexOf(":")) != -1 )
@@ -767,8 +776,13 @@ public class TranslatorReader extends Reader
             {
                 urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
                 callMutatorChain( m_externalLinkMutatorChain, urlReference );
-                
+
                 sb.append( makeLink( INTERWIKI, urlReference, link ) );
+
+                if( isExternalLink(urlReference) )
+                {
+                    sb.append( outlinkImage() );
+                }
             }
             else
             {
@@ -1399,6 +1413,36 @@ public class TranslatorReader extends Reader
             String s = null;
 
             //
+            //  Check if we're actually ending the preformatted mode.
+            //  We still must do an entity transformation here.
+            //
+            if( m_isPre )
+            {
+                if( ch == '}' )
+                {
+                    buf.append( handleClosebrace() );
+                }
+                else if( ch == '<' )
+                {
+                    buf.append("&lt;");
+                }
+                else if( ch == '>' )
+                {
+                    buf.append("&gt;");
+                }
+                else if( ch == -1 )
+                {
+                    quitReading = true;
+                }
+                else 
+                {
+                    buf.append( (char)ch );
+                }
+
+                continue;
+            }
+
+            //
             //  CamelCase detection, a non-trivial endeavour.
             //  We keep track of all white-space separated entities, which we
             //  hereby refer to as "words".  We then check for an existence
@@ -1461,32 +1505,6 @@ public class TranslatorReader extends Reader
                 previousCh = ch;
 		 
             } // if m_camelCaseLinks
-		 
-            //
-            //  Check if we're actually ending the preformatted mode.
-            //  We still must do an entity transformation here.
-            //
-            if( m_isPre )
-            {
-                if( ch == '}' )
-                {
-                    buf.append( handleClosebrace() );
-                }
-                else if (ch == '<') 
-                {
-                    buf.append("&lt;");
-                }
-                else if (ch == '>') 
-                {
-                    buf.append("&gt;");
-                }
-                else 
-                {
-                    buf.append( (char)ch );
-                }
-
-                continue;
-            }
 
             //
             //  Check if any lists need closing down.
