@@ -52,4 +52,9 @@ public class Release
      */
     public static final String     VERSTR        = 
         VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;
+
+    public static void main( String argv[] )
+    {
+        System.out.println(VERSTR);
+    }
 }
