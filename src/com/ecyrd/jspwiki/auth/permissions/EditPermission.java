@@ -8,6 +8,11 @@ public class EditPermission
         return (p != null) && (p instanceof EditPermission);
     }    
 
+    public boolean implies( WikiPermission p )
+    {
+        return (p instanceof CommentPermission) || (p instanceof EditPermission);
+    }
+
     public String toString()
     {
         return "EditPermission";

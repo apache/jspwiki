@@ -8,6 +8,11 @@ public class ViewPermission
         return (p != null) && (p instanceof ViewPermission);
     }
 
+    public boolean implies( WikiPermission p )
+    {
+        return (p instanceof ViewPermission);
+    }
+
     public String toString()
     {
         return "ViewPermission";
