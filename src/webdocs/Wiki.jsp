@@ -1,12 +1,10 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.ViewPermission" %>
-<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
 <%! 
     public void jspInit()
     {
@@ -14,9 +12,9 @@
     }
     Category log = Category.getInstance("JSPWiki"); 
     WikiEngine wiki;
-%>
 
-<%
+%><%
+
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
     String pagereq = wikiContext.getPage().getName();
 
@@ -29,7 +27,7 @@
     if( specialpage != null )
     {
         response.sendRedirect( specialpage );
-        return;        
+        return;
     }
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
@@ -39,10 +37,26 @@
                               currentUser,
                               new ViewPermission() ) )
     {
-        log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
-        String pageurl = wiki.encodeName( pagereq );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-        return;
+        if( mgr.strictLogins() )
+        {
+            log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+            String pageurl = wiki.encodeName( pagereq );
+            response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
+            return;
+        }
+        else
+        {
+            //
+            //  Do a bit of sanity check here.  FIXME: Should this be somewhere else?
+            //
+            if( pagereq.equals("LoginError") ) 
+            {
+                throw new WikiSecurityException("Looped config detected - you must not prevent view access to page LoginError AND have strictLogins set to true!");
+            }
+
+            log.info("User "+currentUser.getName()+" has no access - displaying message.");
+            response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp?page=LoginError" );
+        }
     }
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
@@ -56,11 +70,9 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     String contentPage = "templates/"+wikiContext.getTemplate()+"/ViewTemplate.jsp";
-%>
 
-<wiki:Include page="<%=contentPage%>" />
+%><wiki:Include page="<%=contentPage%>" /><%
 
-<%
     NDC.pop();
     NDC.remove();
 %>
