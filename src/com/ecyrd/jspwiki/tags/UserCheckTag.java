@@ -71,8 +71,7 @@ public class UserCheckTag
         {
             if( wup == null )
             {
-                // This should be impossible.
-                log.error( "UserProfile has not been created!" );
+                // This may happen when strict login policy is used.
                 return( SKIP_BODY );
             }
 
