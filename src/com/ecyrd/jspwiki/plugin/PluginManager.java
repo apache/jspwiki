@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Map;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.FileUtil;
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -61,7 +63,12 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  The plugin class is "com.ecyrd.jspwiki.plugin.FunnyPlugin", the
  *  parameters are "foo" and "blob" (having values "bar" and "goo",
  *  respectively), and the plugin body is then
- *  "abcdefghijklmnopqrstuvw\n01234567890". 
+ *  "abcdefghijklmnopqrstuvw\n01234567890".   The plugin body is
+ *  accessible via a special parameter called "_body".
+ *  <p>
+ *  If the parameter "debug" is set to "true" for the plugin,
+ *  JSPWiki will output debugging information directly to the page if there
+ *  is an exception.
  *  <P>
  *  The class name can be shortened, and marked without the package.
  *  For example, "FunnyPlugin" would be expanded to
@@ -109,6 +116,11 @@ public class PluginManager
      *  The name of the body content.  Current value is "_body".
      */
     public static final String PARAM_BODY      = "_body";
+
+    /**
+     *  A special name to be used in case you want to see debug output
+     */
+    public static final String PARAM_DEBUG     = "debug";
 
     Vector  m_searchPath = new Vector();
 
@@ -208,6 +220,34 @@ public class PluginManager
     }
 
     /**
+     *  Outputs a HTML-formatted version of a stack trace.
+     */
+    private String stackTrace( Map params, Throwable t )
+    {
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter( sw );
+
+        out.println("<div class=\"debug\">");
+        out.println("Plugin execution failed, stack trace follows:");
+        out.println("<pre>");
+        t.printStackTrace( out );
+        out.println("</pre>");
+        out.println("<b>Parameters to the plugin</b>");
+        out.println("<ul>");
+        for( Iterator i = params.keySet().iterator(); i.hasNext(); )
+        {
+            String key = (String) i.next();
+
+            out.println("  <li>'"+key+"'='"+params.get(key)+"'</li>");
+        }
+        out.println("</ul>");
+        out.println("</div>");
+        out.flush();
+
+        return sw.toString();
+    }
+
+    /**
      *  Executes a plugin class in the given context.
      *  <P>Used to be private, but is public since 1.9.21.
      *
@@ -237,6 +277,9 @@ public class PluginManager
         {
             Class      pluginClass;
             WikiPlugin plugin;
+
+            log.info("DEBUG="+params.get(PARAM_DEBUG));
+            boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
 
             pluginClass = findPluginClass( classname );
 
@@ -269,14 +312,24 @@ public class PluginManager
             }
             catch( PluginException e )
             {
+                if( debug )
+                {
+                    return stackTrace( params, e );
+                }
+
                 // Just pass this exception onward.
                 throw (PluginException) e.fillInStackTrace();
             }
-            catch( Exception e )
+            catch( Throwable t )
             {
                 // But all others get captured here.
-                log.info( "Plugin failed while executing:", e );
-                throw new PluginException( "Plugin failed", e );
+                log.info( "Plugin failed while executing:", t );
+                if( debug )
+                {
+                    return stackTrace( params, t );
+                }
+
+                throw new PluginException( "Plugin failed", t );
             }
             
         }
