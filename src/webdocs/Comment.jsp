@@ -112,7 +112,7 @@
         StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
         pageText.append( wiki.safeGetParameter( request, "text" ) );
 
-        if( author != null )
+        if( author != null && author.length() > 0 )
         {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
