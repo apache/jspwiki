@@ -22,10 +22,8 @@
         throw new ServletException("No page defined");
     }
 
-    String pageurl = wiki.encodeName( pagereq );    
-
-    // FIXME: Should the usertext be removed from the session?
-    String usertext = (String)request.getSession().getAttribute("usertext");
+    String pageurl = wiki.encodeName( pagereq );
+    String usertext = (String) request.getParameter( "text" );
 
     usertext = TranslatorReader.replaceString( usertext, "<", "&lt;" );
     usertext = TranslatorReader.replaceString( usertext, ">", "&gt;" );
