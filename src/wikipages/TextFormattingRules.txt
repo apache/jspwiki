@@ -173,6 +173,10 @@ Create a link that points to a new (not existing) page using its [WikiName].
 Click that new link, which should now have a question mark (?) suffix and
 you will get an editor for the new page. -- [Asser]
 
+!Attaching files
+
+If the administrator of the wiki has configured it, there is a "Attach file..." link at the bottom of every page.  Clicking it allows you to attach files into pages.  For more information, please see [WikiAttachments].
+
 !Inserting variables
 
 There are many possible variables you can insert on a page.  The basic form is:
