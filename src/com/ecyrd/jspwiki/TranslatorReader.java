@@ -104,6 +104,7 @@ public class TranslatorReader extends Reader
     private ArrayList      m_localLinkMutatorChain    = new ArrayList();
     private ArrayList      m_externalLinkMutatorChain = new ArrayList();
     private ArrayList      m_attachmentLinkMutatorChain = new ArrayList();
+    private ArrayList      m_headingListenerChain     = new ArrayList();
 
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
@@ -146,6 +147,9 @@ public class TranslatorReader extends Reader
     /** If true, allows raw HTML. */
     private boolean                m_allowHTML           = false;
 
+    /** If true, executes plugins; otherwise ignores them. */
+    private boolean                m_enablePlugins       = true;
+
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
@@ -167,9 +171,24 @@ public class TranslatorReader extends Reader
     protected static final int ITALIC         = 1;
     protected static final int TYPED          = 2;
     
-    protected static final int HEADING_SMALL  = 1;
-    protected static final int HEADING_MEDIUM = 2;
-    protected static final int HEADING_LARGE  = 3;
+    /**
+     *  This list contains all IANA registered URI protocol
+     *  types as of September 2004 + a few well-known extra types.
+     *
+     *  JSPWiki recognises all of them as external links.
+     */
+    static final String[] c_externalLinks = {
+        "http:", "ftp:", "https:", "mailto:",
+        "news:", "file:", "rtsp:", "mms:", "ldap:",
+        "gopher:", "nntp:", "telnet:", "wais:",
+        "prospero:", "z39.50s", "z39.50r", "vemmi:",
+        "imap:", "nfs:", "acap:", "tip:", "pop:",
+        "dav:", "opaquelocktoken:", "sip:", "sips:",
+        "tel:", "fax:", "modem:", "soap.beep:", "soap.beeps",
+        "xmlrpc.beep", "xmlrpc.beeps", "urn:", "go:",
+        "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
+        "im:", "mtqp", "smb:" };
+
 
     /**
      *  Creates a TranslatorReader using the default HTML renderer.
@@ -349,11 +368,27 @@ public class TranslatorReader extends Reader
         }
     }
 
+    public void addHeadingListener( HeadingListener listener )
+    {
+        if( listener != null )
+        {
+            m_headingListenerChain.add( listener );
+        }
+    }
+
     private boolean m_parseAccessRules = true;
 
     public void disableAccessRules()
     {
         m_parseAccessRules = false;
+    }
+
+    /**
+     *  Can be used to turn on plugin execution on a translator-reader basis
+     */
+    public void enablePlugins( boolean toggle )
+    {
+        m_enablePlugins = toggle;
     }
 
     /**
@@ -429,6 +464,18 @@ public class TranslatorReader extends Reader
         return text;
     }
 
+    private void callHeadingListenerChain( Heading param )
+    {
+        List list = m_headingListenerChain;
+
+        for( Iterator i = list.iterator(); i.hasNext(); )
+        {
+            HeadingListener h = (HeadingListener) i.next();
+            
+            h.headingAdded( m_context, param );
+        }
+    }
+
     /**
      *  Write a HTMLized link depending on its type.
      *  The link mutator chain is processed.
@@ -445,7 +492,10 @@ public class TranslatorReader extends Reader
 
         return m_renderer.makeLink( type, link, text );
     }
-
+    
+    /**
+     *  Just like makeLink, but also adds the section reference (#sect...)
+     */
     private String makeLink( int type, String link, String text, String sectref )
     {
         if( text == null ) text = link;
@@ -519,13 +569,23 @@ public class TranslatorReader extends Reader
      *  Figures out if a link is an off-site link.  This recognizes
      *  the most common protocols by checking how it starts.
      */
+
+    // FIXME: Should really put the external link types to a sorted set,
+    //        then searching for them would be faster.
     private boolean isExternalLink( String link )
     {
-        return link.startsWith("http:") || link.startsWith("ftp:") ||
-            link.startsWith("https:") || link.startsWith("mailto:") ||
-            link.startsWith("news:") || link.startsWith("file:");
+        for( int i = 0; i < c_externalLinks.length; i++ )
+        {
+            if( link.equals( c_externalLinks[i] ) ) return true;
+        }
+
+        return false;
     }
 
+    /**
+     *  Returns true, if the link in question is an access
+     *  rule.
+     */
     private static boolean isAccessRule( String link )
     {
         return link.startsWith("{ALLOW") || link.startsWith("{DENY");
@@ -710,20 +770,6 @@ public class TranslatorReader extends Reader
         return res;
     }
 
-    /**
-     *  If outlink images are turned on, returns a link to the outward
-     *  linking image.
-     */
-    private final String outlinkImage()
-    {
-        if( m_useOutlinkImage )
-        {
-            return "<img class=\"outlink\" src=\""+m_engine.getBaseURL()+"images/out.png\" alt=\"\" />";
-        }
-
-        return "";
-    }
-
     private String handleAccessRule( String ruleLine )
     {
         if( !m_parseAccessRules ) return "";
@@ -808,10 +854,13 @@ public class TranslatorReader extends Reader
 
         if( PluginManager.isPluginLink( link ) )
         {
-            String included;
+            String included = "";
             try
             {
-                included = m_engine.getPluginManager().execute( m_context, link );
+                if( m_enablePlugins )
+                {
+                    included = m_engine.getPluginManager().execute( m_context, link );
+                }
             }
             catch( PluginException e )
             {
@@ -1354,6 +1403,8 @@ public class TranslatorReader extends Reader
 
         int ch  = nextToken();
 
+        Heading hd = new Heading();
+
         if( ch == '!' )
         {
             int ch2 = nextToken();
@@ -1362,22 +1413,24 @@ public class TranslatorReader extends Reader
             {
                 String title = peekAheadLine();
                 
-                buf.append( m_renderer.makeHeading( HEADING_LARGE, title ) );
+                buf.append( m_renderer.makeHeading( Heading.HEADING_LARGE, title, hd) );
             }
             else
             {
                 pushBack( ch2 );
                 String title = peekAheadLine();
-                buf.append( m_renderer.makeHeading( HEADING_MEDIUM, title ) );
+                buf.append( m_renderer.makeHeading( Heading.HEADING_MEDIUM, title, hd ) );
             }
         }
         else
         {
             pushBack( ch );
             String title = peekAheadLine();
-            buf.append( m_renderer.makeHeading( HEADING_SMALL, title ) );
+            buf.append( m_renderer.makeHeading( Heading.HEADING_SMALL, title, hd ) );
         }
-        
+
+        callHeadingListenerChain( hd );
+
         return buf.toString();
     }
 
@@ -2399,7 +2452,7 @@ public class TranslatorReader extends Reader
                 break;
 
               case IMAGELINK:
-                result = "<a href=\""+text+"\"><img class=\"inline\" src=\""+link+"\" /></a>";
+                result = "<a href=\""+text+"\"><img class=\"inline\" src=\""+link+"\" alt=\""+text+"\"/></a>";
                 break;
 
               case IMAGEWIKILINK:
@@ -2419,7 +2472,7 @@ public class TranslatorReader extends Reader
                 String attlink = m_engine.getAttachmentURL( link );
                 result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
                          "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+
-                         "\"><img src=\""+m_engine.getBaseURL()+"images/attachment_small.png\" border=\"0\" /></a>";
+                         "\"><img src=\""+m_engine.getBaseURL()+"images/attachment_small.png\" border=\"0\" alt=\"(att)\"/></a>";
                 break;
 
               default:
@@ -2448,10 +2501,16 @@ public class TranslatorReader extends Reader
             return "<hr />";
         }
 
-        private String makeHeadingAnchor( String baseName, String title )
+        /**
+         *  Modifies the "hd" parameter to contain proper values.
+         */
+        private String makeHeadingAnchor( String baseName, String title, Heading hd )
         {
+            hd.m_titleText = title;
             title = cleanLink( title );
-            return "<a name=\"section-"+baseName+"-"+m_engine.encodeName(title)+"\">";
+            hd.m_titleSection = m_engine.encodeName(title);
+            hd.m_titleAnchor = "section-"+baseName+"-"+hd.m_titleSection;
+            return "<a name=\""+hd.m_titleAnchor+"\">";
         }
 
         
@@ -2459,12 +2518,15 @@ public class TranslatorReader extends Reader
          *  Returns XHTML for the start of the heading.  Also sets the
          *  line-end emitter.
          *  @param level 
+         *  @param headings A List to which heading should be added.
          */ 
-        public String makeHeading( int level, String title )
+        public String makeHeading( int level, String title, Heading hd )
         {
             String res = "";
 
             String pageName = m_context.getPage().getName();
+
+            title = title.trim();
 
             StringWriter outTitle = new StringWriter();
 
@@ -2480,20 +2542,22 @@ public class TranslatorReader extends Reader
                 throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() );
             }
 
+            hd.m_level = level;
+
             switch( level )
             {
-              case HEADING_SMALL:
-                res = "<h4>"+makeHeadingAnchor( pageName, outTitle.toString() );
+              case Heading.HEADING_SMALL:
+                res = "<h4>"+makeHeadingAnchor( pageName, outTitle.toString(), hd );
                 m_closeTag = "</a></h4>";
                 break;
 
-              case HEADING_MEDIUM:
-                res = "<h3>"+makeHeadingAnchor( pageName, outTitle.toString() );
+              case Heading.HEADING_MEDIUM:
+                res = "<h3>"+makeHeadingAnchor( pageName, outTitle.toString(), hd );
                 m_closeTag = "</a></h3>";
                 break;
 
-              case HEADING_LARGE:
-                res = "<h2>"+makeHeadingAnchor( pageName, outTitle.toString() );
+              case Heading.HEADING_LARGE:
+                res = "<h2>"+makeHeadingAnchor( pageName, outTitle.toString(), hd );
                 m_closeTag = "</a></h2>";
                 break;
             }
@@ -2749,25 +2813,32 @@ public class TranslatorReader extends Reader
          *  line-end emitter.
          *  @param level 
          */ 
-        public String makeHeading( int level, String title )
+        public String makeHeading( int level, String title, Heading hd )
         {
             String res = "";
 
             String pageName = m_context.getPage().getName();
 
+            title = title.trim();
+
+            hd.m_level = level;
+            hd.m_titleText = title;
+            hd.m_titleSection = "";
+            hd.m_titleAnchor = "";
+
             switch( level )
             {
-              case HEADING_SMALL:
+              case Heading.HEADING_SMALL:
                 res = title;
                 m_closeTag = "\n\n";
                 break;
 
-              case HEADING_MEDIUM:
+              case Heading.HEADING_MEDIUM:
                 res = title;                
                 m_closeTag = "\n"+TextUtil.repeatString("-",title.length())+"\n\n";
                 break;
 
-              case HEADING_LARGE:
+              case Heading.HEADING_LARGE:
                 res = title.toUpperCase();
                 m_closeTag= "\n"+TextUtil.repeatString("=",title.length())+"\n\n";
                 break;
@@ -2875,4 +2946,19 @@ public class TranslatorReader extends Reader
 
     } // TextRenderer
 
+    /**
+     *  This class is used to store the headings in a manner which
+     *  allow the building of a Table Of Contents.
+     */
+    public class Heading
+    {
+        public static final int HEADING_SMALL  = 1;
+        public static final int HEADING_MEDIUM = 2;
+        public static final int HEADING_LARGE  = 3;
+
+        public int    m_level;
+        public String m_titleText;
+        public String m_titleAnchor;
+        public String m_titleSection;
+    }
 }
