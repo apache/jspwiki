@@ -1,0 +1,16 @@
+Creates a direct link to the RSS image, and the RSS feed, heeding the jspwiki.baseURL property.  If the RSS feed is not enabled, outputs nothing.
+
+----
+
+!Usage
+
+<wiki:RSSImageLinkTag title="<title string>" />
+
+!Parameters
+
+;__title__: Title to be shown when user parks mouse over image.
+
+!Example
+{{{
+<wiki:RSSImageLinkTag title="RSS feed" />
+}}}

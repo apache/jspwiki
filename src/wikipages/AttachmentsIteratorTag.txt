@@ -1,0 +1,44 @@
+Iterates through the attachments of the current page.
+
+The variable that is created is an instance of the Attachment class, which has the following methods:
+
+* String getName() - Returns the fully-fledged WikiName of the attachment.
+* String getFileName() - Returns the filename.
+* long getSize() - Size of the attachment in bytes.
+* String getParentName() - WikiName of the parent page.
+* String getAuthor() - Name of the last author.
+* int getVersion() - Current version.
+* Date getLastModified() - Date of the latest modification.
+
+The current page always becomes the attachment referred to by the variable.
+
+----
+
+!Usage
+
+<wiki:AttachmentsIterator id="<variable name>">
+;:''JSP code''
+</wiki:AttachmentsIterator>
+
+!Parameters
+
+;__id__: Name of the iterator variable to create.
+
+!Example
+{{{
+         <table width="90%">
+         <wiki:AttachmentsIterator id="att">
+             <tr>
+             <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
+             </tr>
+         </wiki:AttachmentsIterator>
+         </table>
+}}}
+
+Lists the attachments.  Note how the [LinkToTag] refers to the currently iterated attachment, so that if you have two attachments (Foobar1 & Foobar2), the list might show up something like this:
+{{{
+<table>
+   <tr><td><a href="attach?page=Foobar1">Foobar1</a></td></tr>
+   <tr><td><a href="attach?page=Foobar2">Foobar2</a></td></tr>
+</table>
+}}}

@@ -1,0 +1,18 @@
+Returns the size of the current page.  If the current page is an attachment (like when this tag is used within the [AttachmentsIteratorTag]), it will return the attachment size.
+
+NOTE: This tag may be quite slow when used with [RCSFileProvider].
+
+----
+
+!Usage
+
+<wiki:PageSize />
+
+!Parameters
+
+None.
+
+!Example
+{{{
+The size of this page is <wiki:PageSize /> bytes.
+}}}

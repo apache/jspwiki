@@ -1,0 +1,18 @@
+Does a version check on the page.  If the page does not exist, the body is never included.
+
+!Usage
+
+<wiki:CheckVersion mode="latest|notlatest">
+;:''JSP or HTML code''
+</wiki:CheckVersion>
+
+!Parameters
+
+;__mode__: If 'latest', will include the body if the current page is the latest version.  If 'notlatest', will include the body only if the current page is not the latest version.
+
+!Example
+{{{
+<wiki:CheckVersion mode="notlatest">
+    <B>Warning: This page is not the latest version.</B>
+</wiki:CheckVersion>
+}}}

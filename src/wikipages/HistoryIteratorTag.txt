@@ -1,0 +1,48 @@
+Iterates through the change history of the page.
+
+The "current page" always becomes the particular version of the page currently in iteration.
+
+----
+
+!Usage
+
+<wiki:HistoryIterator id="<variable name>">
+;:''HTML or JSP''
+</wiki:HistoryIterator>
+
+!Parameters
+
+;__id__: Name of the variable to create.
+
+!Example
+{{{
+<table>
+    <wiki:HistoryIterator id="currentPage">
+        <tr>
+            <td>
+                 <wiki:LinkTo version="<%=Integer.toString(currentPage.getVersion())%>">
+                      <wiki:PageVersion/>
+                 </wiki:LinkTo>
+            </td>
+
+            <td>
+                 <wiki:PageDate/>
+            </td>
+
+            <td><wiki:Author /></td>
+            <td><wiki:PageSize /></td>
+
+            <wiki:PageType type="page">
+                 <td>
+                     <% if( currentPage.getVersion() > 1 ) { %>
+                     <wiki:DiffLink version="<%=Integer.toString(currentPage.getVersion())%>" 
+                                    newVersion="<%=Integer.toString(currentPage.getVersion()-1)%>">
+                        from version <%=currentPage.getVersion()-1%> to <%=currentPage.getVersion()%>
+                     </wiki:DiffLink>
+                     <% } %>
+                 </td>
+             </wiki:PageType>
+        </tr>
+    </wiki:HistoryIterator>
+</table>
+}}}

@@ -1,0 +1,20 @@
+Allows you to insert any of the [JSPWikiPlugin]s directly into the template.
+
+----
+
+!Usage
+
+<wiki:Plugin plugin="<plugin class>" args="<argument string>" />
+
+!Parameters
+
+;__plugin__:  The fully-fledged class name of the plugin.  If the plugin is one of the standard plugins that come with the JSPWiki distribution OR it's package name has been added to jspwiki.properties (see jspwiki.plugin.searchPath), then you can use also the class name directly.
+
+;__args__: The argument string to the plugin, as if you were giving it on the page itself.
+
+!Example
+{{{
+<wiki:Plugin plugin="Counter" args="name='foo'" />
+}}}
+
+Inserts the [CounterPlugin], with its name set to 'foo'.

@@ -1,0 +1,199 @@
+This page describes the Wiki v2 template system, which lets you adjust the 
+appearance of your JSPWiki installation without worrying about losing your
+changes the next time you update JSPWiki.
+
+If you're looking for ready-made templates, please go to [JSPWiki:ContributedTemplates].  If you on the other hand are looking for ideas to implement in your templates, go to [JSPWiki:WantedTemplates].
+
+----
+
+!!TEMPLATES
+
+JSPWiki v2 now supports the concept of "templates" and "skins".  These
+are actually two different things:
+
+* ''Templates'' are set by the site administrator.  They are a core set
+  of HTML and JSP files, that define how your site looks.  All
+  templates are located in the JSPWiki/templates/<template name>
+  directory.
+
+* ''Skins'' are modifications on the basic templates.  Each template may
+  have one or many skins available, and these are chosen by the user.
+  These are based on stylesheets, and some templates might not support
+  any skins at all.
+
+JSPWiki comes currently with a single template, called "default".
+This is also the template that gets used if no template has been
+defined.  Unfortunately, the default template has only one "skin".
+
+
+!!Rolling your own
+
+To make your own template, just make an another subdirectory in
+"templates", copy all the files from the "default" -template, and
+modify them at your will.
+
+To specify which template your site should use, just change the
+definition of "jspwiki.templateDir" in jspwiki.properties.
+
+
+!!More details, aka "OK, here's how it works"
+
+!Main JSP pages: Wiki.jsp, Edit.jsp, Preview.jsp, PageInfo.jsp, etc.
+
+JSPWiki has a bunch of main JSP pages.  These work as the "Controller"
+- they basically control the processing of the request.  They take
+care of saving your document, or making sure that there are no
+concurrent changes, etc.  You can modify these files, if you want -
+they're written as JSP pages to make your modifications easier.
+However, when you upgrade to a new JSPWiki version, you'll need to
+modify these pages again.
+
+The main JSP pages will then figure out which template to use, and
+will include the appropriate template file, which decides what the
+"View" is going to be like.
+
+There are two basic templates: ViewTemplate and EditTemplate.
+ViewTemplate gets all requests from any page that does not have to
+care about changing the page contents, and EditTemplate gets all those
+requests that do.
+
+Each template MUST have both of these files, or else there will be
+trouble.
+
+
+!View pages: ViewTemplate.jsp, EditTemplate.jsp
+
+Basically, all you ever need to do is to modify two files to change the look of your Wiki:
+
+__ViewTemplate.jsp__ gets all requests from Wiki.jsp, Preview.jsp,
+PageInfo.jsp, etc.  Modify this file to change the visual outlook of
+your Wiki site, as your average browsing user would see it.
+
+__EditTemplate.jsp__ on the other hand gets all Edit.jsp requests.  Modify
+this file so that people who edit it get to see stuff.
+
+
+OK.  But we still have a problem: Displaying Page Info is totally
+different from showing the rendered text - yes?  The other one has
+plenty of lists and items, and the other one has nice HTML text.  But
+they are both handled by ViewTemplate.jsp!
+
+Here's where it gets complicated:  The "default" template handles this
+by including different content files depending on the Page Request
+Context.  The Page Request Context basically tells you whether you're
+asking for "info", or "diff", or whatever.  The default template uses
+the CheckRequestContext tag to see which context you're in at the moment,
+and includes then a proper "Content" -file.
+
+For example, in an excerpt from the default template:
+{{{
+      <wiki:CheckRequestContext context="view">
+         <wiki:Include page="PageContent.jsp" />
+      </wiki:CheckRequestContext>
+}}}
+
+This basically means that "if the request context is 'view',
+i.e. someone just wanted to see the rendered HTML content, then
+include a JSP page called 'PageContent.jsp'".  The PageContent.jsp
+then just basically says that:
+{{{
+      <wiki:InsertPage />
+
+      <wiki:NoSuchPage>
+           This page does not exist.  Why don't you go and
+           <wiki:EditLink>create it</wiki:EditLink>?
+      </wiki:NoSuchPage>
+}}}
+
+That is: "insert the page content in HTML.  If there is no such page,
+display a simple note to the user, requesting him to fix this."
+
+So, it's not that difficult.  Take a look at "ViewTemplate.jsp" to see
+what kind of different request contexts there are, and how to handle
+them.
+
+Note that this is just the way the default template does things.  Your own template is free to do anything it wants; as long as you provide EditTemplate.jsp and ViewTemplate.jsp, you should be set.
+
+!"Content" pages
+
+These are the different "content" pages that are included by
+"ViewTemplate.jsp".  For example, "PageContent.jsp" displays HTML,
+"DiffContent.jsp" displays the diff, etc.  You can just easily reuse
+these, or do something else.
+
+!A clarifying picture
+{{{
+
+     Wiki.jsp, PageInfo.jsp, etc.
+        ==>   templates/<name_of_template>/ViewTemplate.jsp
+
+
+     Edit.jsp
+        ==>   templates/<name_of_template>/EditTemplate.jsp
+}}}
+
+!Structure of the "default" template
+{{{
+     ViewTemplate.jsp
+        (Provide basic layout, incl. SearchBox.jsp)
+        (Include proper content page)
+        ==> PageContent.jsp   (If request was for Wiki.jsp)
+        ==> InfoContent.jsp   (If request was for PageInfo.jsp)
+        etc.
+
+     EditTemplate.jsp
+        (Provide edit page layout)
+        (Includes only SearchBox.jsp)
+
+}}}
+
+!!Explanation of the different tags
+
+JSPWiki templates are heavily based on JSP tags.  A full explanation of them is available at [JSPWikiTags].
+
+For further examples, just look at the default template, since it
+basically uses all of the tags.  They're not that hard to figure out.
+
+
+----
+
+!!A few Frequently Asked Questions
+
+!Problem: Style Sheets
+
+The default template directory contains a small JavaScript file, ''cssinclude.js'', 
+which attempts to load the right CSS definitions for client browsers. Notice
+that this file is __template specific__; you will need to modify it to use
+''your'' template directory, if you have template-specific CSS. Modify this
+line (around 28):
+
+{{{
+document.write("<link rel=\"stylesheet\" href=\"templates/default/"+sheet+"\">");
+}}}
+
+and replace ''default'' with your template dir name.
+
+--[ebu]
+
+!Problem: Setting CSS classes to change the appearance of links, etc. on page parts
+
+Something I noticed while playing around with templates: if you want a clear contrast between
+wiki controls (LeftMenu, the top bar...) and page content, you'd want to be able to make text and links
+in various locations use different CSS classes. For example, you might want to render the control areas
+with darkish, earthy tones and light text/links, and normal dark-on-white on the content area.
+
+This doesn't seem like a trivial change at the face of it. How could we indicate what css styles to 
+use in the template files? 
+
+--[ebu]
+
+Trivial.  In the template file, wrap the LeftMenu inside a <div class="leftmenu"> ... </div> block, then use a CSS selector to transform all anchors in that div to something else.  Like thus:
+
+{{{
+DIV.leftmenu A { font-size: 200px }
+}}}
+
+CSS is cool :-).
+
+--JanneJalkanen
+

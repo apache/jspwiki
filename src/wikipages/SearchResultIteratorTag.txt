@@ -1,0 +1,23 @@
+Iterates over a set of search results, with the top scoring result on top.
+
+A "SearchResult" object has the following methods:
+
+* WikiPage getPage() - Gets the current WikiPage
+* int getScore() - Returns the score.  The score is an arbitrary number, which does not necessarily mean
+  anything, except that the best match should always have the highest score.
+
+----
+
+!Usage
+
+<wiki:SearchResultIterator list="<list variable name>" id="<iterator variable name>" maxItems="<integer>">
+
+!Parameters
+
+;__list__: Name of the variable which contains the search results.  Must be a Collection or an Iterator with "SearchResult" -class elements.
+;__id__: Name of the variable to create containing an individual search result.  Will contain a "SearchResult" class object.
+;__maxItems__: How many items to iterate over.
+
+!Example
+
+''Please see "FindContent.jsp"''

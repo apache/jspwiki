@@ -1,0 +1,16 @@
+Inserts the name of the last author of the current page.
+
+----
+
+!Usage
+
+<wiki:Author />
+
+!Parameters
+
+None.
+
+!Example
+{{{
+<wiki:Author />
+}}}
