@@ -1,3 +1,14 @@
+2002-11-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.38.
+
+        * The "&" translation now occurs _before_ other entities, which no
+        longer causes all quotes to be transformed back into "&quot;"
+        while you're editing a page.
+
+        * Integrated camelcase patch from Jeff Phillips.  It is now nearly
+        working - a couple more tests should go through first.
+
 2002-11-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.37.
