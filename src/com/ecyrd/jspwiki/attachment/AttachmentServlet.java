@@ -122,7 +122,7 @@ public class AttachmentServlet
                 long lastModifiedTime = lastModified.getTime();
 
                 //log.info("lastModifiedTime:" + lastModifiedTime);
-                if( lastModifiedTime >= ifModifiedSince )
+                if( lastModifiedTime <= ifModifiedSince )
                 {
                     return true;
                 }
@@ -137,7 +137,7 @@ public class AttachmentServlet
                     {
                         Date ifModifiedSinceDate = rfcDateFormat.parse(s);
                         //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
-                        if( lastModified.after(ifModifiedSinceDate) ) 
+                        if( lastModified.before(ifModifiedSinceDate) ) 
                         {
                             return true;
                         }
