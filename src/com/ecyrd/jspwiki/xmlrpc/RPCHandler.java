@@ -39,8 +39,9 @@ public class RPCHandler
     /** Error code: no such page. */
     public static final int ERR_NOPAGE    = 1;
 
-    public static final int LINK_LOCAL    = 0;
-    public static final int LINK_EXTERNAL = 1;
+    public static final String LINK_LOCAL    = "local";
+    public static final String LINK_EXTERNAL = "external";
+    public static final String LINK_INLINE   = "inline";
 
     private WikiEngine m_engine;
 
@@ -269,7 +270,8 @@ public class RPCHandler
             String link = (String) i.next();
             Hashtable ht = new Hashtable();
             ht.put( "page", toRPCString( link ) );
-            ht.put( "type", new Integer( LINK_LOCAL ) );
+            ht.put( "type", LINK_LOCAL );
+            ht.put( "href", m_engine.getBaseURL()+"Wiki.jsp?page="+m_engine.encodeName(link) );
 
             result.add( ht );
         }
@@ -286,7 +288,8 @@ public class RPCHandler
             Hashtable ht = new Hashtable();
 
             ht.put( "page", link );
-            ht.put( "type", new Integer( LINK_EXTERNAL ) );
+            ht.put( "type", LINK_EXTERNAL );
+            ht.put( "href", link );
 
             result.add( ht );
         }
