@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.PageManager;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -62,7 +63,21 @@ public class AttachmentManager
     {
         m_engine = engine;
 
-        String classname = props.getProperty( PROP_PROVIDER );
+        String classname;
+
+        //
+        //  If user wants to use a cache, then we'll use the CachingProvider.
+        //
+        boolean useCache = "true".equals(props.getProperty( PageManager.PROP_USECACHE ));
+
+        if( useCache )
+        {
+            classname = "com.ecyrd.jspwiki.providers.CachingAttachmentProvider";
+        }
+        else
+        {
+            classname = props.getProperty( PROP_PROVIDER );
+        }
 
         //
         //  If no class defined, then will just simply fail.
@@ -173,7 +188,7 @@ public class AttachmentManager
         //  If the page cannot be determined, we cannot possibly find the 
         //  attachments.
         //
-        if( currentPage == null )
+        if( currentPage == null || currentPage.getName().length() == 0 )
         {
             return null;
         }
