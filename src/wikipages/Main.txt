@@ -23,6 +23,7 @@ You have some pages set up for you:
 * [WikiVariables] - putting things on top of other things.
 * [JSPWikiPlugins] - The documentation on plugins.
 * [JSPWikiFAQ] - A list of some frequently asked questions.
+* [JSPWikiTags] - A list of tags for those who want to make their own [JSPWikiTemplates].
 
 !Miscallaneous
 
