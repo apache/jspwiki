@@ -84,11 +84,12 @@ public class FileUtil
     {
         StringBuffer result = new StringBuffer();        
 
-        log.debug("Running simple command "+command+" in "+directory);
+        log.info("Running simple command "+command+" in "+directory);
 
         Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
 
         BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+        BufferedReader stderr = new BufferedReader( new InputStreamReader(process.getErrorStream()) );
 
         String line;
 
@@ -96,6 +97,17 @@ public class FileUtil
         { 
             result.append( line+"\n");
         }            
+
+        StringBuffer error = new StringBuffer();
+        while( (line = stderr.readLine()) != null )
+        { 
+            error.append( line+"\n");
+        }            
+
+        if( error.length() > 0 )
+        {
+            log.error("Command failed, error stream is: "+error);
+        }
 
         process.waitFor();
         
