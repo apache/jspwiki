@@ -25,7 +25,8 @@ public class TranslatorReaderTest extends TestCase
     }
 
     private String translate( String src )
-        throws IOException
+        throws IOException,
+               NoRequiredPropertyException
     {
         Reader r = new TranslatorReader( new TestEngine( props ), 
                                          new BufferedReader( new StringReader(src)) );
@@ -91,6 +92,15 @@ public class TranslatorReaderTest extends TestCase
         String src = "This should be a [link|http://www.regex.fi/]";
 
         assertEquals( "This should be a <A HREF=\"http://www.regex.fi/\">link</A>\n",
+                      translate(src) );
+    }
+
+    public void testHyperlinksInterWiki1()
+        throws Exception
+    {
+        String src = "This should be a [link|JSPWiki:HyperLink]";
+
+        assertEquals( "This should be a <A HREF=\"http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=HyperLink\">link</A>\n",
                       translate(src) );
     }
 
