@@ -105,6 +105,62 @@ public class TextUtilTest extends TestCase
         assertEquals( "afafaf", TextUtil.replaceString( text, "b", "f" ) ); 
     }
 
+    // Pure UNIX.
+    public void testNormalizePostdata1()
+    {
+        String text = "ab\ncd";
+
+        assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
+    }
+
+    // Pure MSDOS.
+    public void testNormalizePostdata2()
+    {
+        String text = "ab\r\ncd";
+
+        assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
+    }
+
+    // Pure Mac
+    public void testNormalizePostdata3()
+    {
+        String text = "ab\rcd";
+
+        assertEquals( "ab\r\ncd\r\n", TextUtil.normalizePostData( text ) );
+    }
+
+    // Mixed, ending correct.
+    public void testNormalizePostdata4()
+    {
+        String text = "ab\ncd\r\n\r\n\r";
+
+        assertEquals( "ab\r\ncd\r\n\r\n\r\n", TextUtil.normalizePostData( text ) );
+    }
+
+    // Multiple newlines
+    public void testNormalizePostdata5()
+    {
+        String text = "ab\ncd\n\n\n\n";
+
+        assertEquals( "ab\r\ncd\r\n\r\n\r\n\r\n", TextUtil.normalizePostData( text ) );
+    }
+
+    // Empty.
+    public void testNormalizePostdata6()
+    {
+        String text = "";
+
+        assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
+    }
+
+    // Just a newline.
+    public void testNormalizePostdata7()
+    {
+        String text = "\n";
+
+        assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( TextUtilTest.class );
