@@ -54,8 +54,7 @@ public class TranslatorReader extends Reader
 
     private WikiEngine     m_engine;
 
-    // By default, include .png files
-
+    /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
 
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
@@ -77,46 +76,61 @@ public class TranslatorReader extends Reader
      */
     public TranslatorReader( WikiEngine engine, BufferedReader in )
     {
+        PatternCompiler compiler         = new GlobCompiler();
+        ArrayList       compiledpatterns = new ArrayList();
+
         m_in = in;
         m_engine = engine;
-        PatternCompiler compiler = new GlobCompiler();
-        PatternMatcherInput input;
 
-        log.debug("Getting RCS version history");
+        Collection ptrns = getImagePatterns( engine );
 
         //
-        //  Figure out which image suffixes should be inlined.
+        //  Make them into Regexp Patterns.  Unknown patterns
+        //  are ignored.
         //
-        Properties props = engine.getWikiProperties();
+        for( Iterator i = ptrns.iterator(); i.hasNext(); )
+        {
+            try
+            {       
+                compiledpatterns.add( compiler.compile( (String)i.next() ) );
+            }
+            catch( MalformedPatternException e )
+            {
+                log.error("Malformed pattern in properties: ", e );
+            }
+        }
+
+        m_inlineImagePatterns = compiledpatterns;
+    }
+
+    /**
+     *  Figure out which image suffixes should be inlined.
+     *  @return Collection of Strings with patterns.
+     */
+
+    protected static Collection getImagePatterns( WikiEngine engine )
+    {
+        Properties props    = engine.getWikiProperties();
         ArrayList  ptrnlist = new ArrayList();
 
-        try
+        for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
         {
-            for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+            String name = (String) e.nextElement();
+
+            if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
             {
-                String name = (String) e.nextElement();
+                String ptrn = props.getProperty( name );
 
-                if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
-                {
-                    String ptrn = props.getProperty( name );
-
-                    ptrnlist.add( compiler.compile( ptrn ) );
-
-                    log.debug( "Pattern matcher, added: "+ptrn );
-                }
-            }
-
-            if( ptrnlist.size() == 0 )
-            {
-                ptrnlist.add( compiler.compile( DEFAULT_INLINEPATTERN ) );
+                ptrnlist.add( ptrn );
             }
         }
-        catch( MalformedPatternException e )
+
+        if( ptrnlist.size() == 0 )
         {
-            log.error("Malformed pattern in properties: ", e );
+            ptrnlist.add( DEFAULT_INLINEPATTERN );
         }
 
-        m_inlineImagePatterns = ptrnlist;
+        return ptrnlist;
     }
 
     private boolean linkExists( String link )
