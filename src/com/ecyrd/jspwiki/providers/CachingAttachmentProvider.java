@@ -27,13 +27,12 @@ import java.util.List;
 import java.util.Iterator;
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.log4j.Logger;
+import org.apache.log4j.Category;
 
 import com.opensymphony.module.oscache.base.Cache;
 import com.opensymphony.module.oscache.base.NeedsRefreshException;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 
@@ -55,7 +54,7 @@ import com.ecyrd.jspwiki.attachment.AttachmentManager;
 public class CachingAttachmentProvider
     implements WikiAttachmentProvider
 {
-    private static final Logger log = Logger.getLogger(CachingAttachmentProvider.class);
+    private static final Category log = Category.getInstance(CachingAttachmentProvider.class);
 
     private WikiAttachmentProvider m_provider;
 
@@ -92,8 +91,8 @@ public class CachingAttachmentProvider
         
         try
         {            
-            Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
-                                                       classname );
+            Class providerclass = WikiEngine.findWikiClass( classname, 
+                                                            "com.ecyrd.jspwiki.providers" );
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
@@ -138,19 +137,19 @@ public class CachingAttachmentProvider
     public Collection listAttachments( WikiPage page )
         throws ProviderException
     {
-        log.debug("Listing attachments for "+page);
+        //log.debug("Listing attachments for "+page);
         try
         {
             Collection c = (Collection)m_cache.getFromCache( page.getName(), m_refreshPeriod );
 
             if( c != null )
             {
-                log.debug("LIST from cache, "+page.getName()+", size="+c.size());
+                //log.debug("LIST from cache, "+page.getName()+", size="+c.size());
                 m_cacheHits++;
                 return c;
             }
 
-            log.debug("list NOT in cache, "+page.getName());
+            //log.debug("list NOT in cache, "+page.getName());
 
             c = refresh( page );
         }
@@ -166,7 +165,7 @@ public class CachingAttachmentProvider
             }
             catch( ProviderException ex )
             {
-                log.warn("Provider failed, returning cached content");
+                //log.warn("Provider failed, returning cached content");
 
                 return (Collection)nre.getCacheContent();
             }
@@ -226,14 +225,14 @@ public class CachingAttachmentProvider
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
-        log.debug("Getting attachments for "+page+", name="+name+", version="+version);
+        //log.debug("Getting attachments for "+page+", name="+name+", version="+version);
 
         //
         //  We don't cache previous versions
         //
         if( version != WikiProvider.LATEST_VERSION )
         {       
-            log.debug("...we don't cache old versions");
+            //log.debug("...we don't cache old versions");
             return m_provider.getAttachmentInfo( page, name, version );
         }
 
@@ -243,14 +242,14 @@ public class CachingAttachmentProvider
             
             if( c == null )
             {
-                log.debug("...wasn't in the cache");
+                //log.debug("...wasn't in the cache");
                 c = refresh( page );
 
                 if( c == null ) return null; // No such attachment
             }
             else
             {
-                log.debug("...FOUND in the cache");
+                //log.debug("...FOUND in the cache");
                 m_cacheHits++;
             }
 
@@ -259,7 +258,7 @@ public class CachingAttachmentProvider
         }
         catch( NeedsRefreshException nre )
         {
-            log.debug("...needs refresh");
+            //log.debug("...needs refresh");
             Collection c = null;
 
             try
@@ -268,7 +267,7 @@ public class CachingAttachmentProvider
             }
             catch( ProviderException ex )
             {
-                log.warn("Provider failed, returning cached content");
+                //log.warn("Provider failed, returning cached content");
 
                 c = (Collection)nre.getCacheContent();
             }
