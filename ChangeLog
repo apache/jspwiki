@@ -1,3 +1,11 @@
+2002-04-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.5.
+
+        * Added an initial stab at an RSS feed.  Currently it just lists
+        the changed pages, but perhaps in the near future it can do more
+        complex stuff.
+
 2002-04-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.4.
