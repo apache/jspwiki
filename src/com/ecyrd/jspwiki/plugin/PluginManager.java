@@ -96,7 +96,7 @@ public class PluginManager
 
         try
         {
-            m_pluginPattern = compiler.compile( "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*([^\\}]*)\\}?$" );
+            m_pluginPattern = compiler.compile( "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?([^\\}]*)\\}?$" );
         }
         catch( MalformedPatternException e )
         {
@@ -357,7 +357,7 @@ public class PluginManager
 
             if( bodyContent != null )
             {
-                arglist.put( PARAM_BODY, out.toString() );
+                arglist.put( PARAM_BODY, bodyContent );
             }
         }
         
@@ -385,7 +385,9 @@ public class PluginManager
                 MatchResult res = matcher.getMatch();
 
                 String plugin   = res.group(2);                
-                String args     = res.group(4);
+                String args     = commandline.substring(res.begin(4),
+                                                        commandline.length() -
+                                                        (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
                 Map arglist     = parseArgs( args );
 
                 return execute( context, plugin, arglist );
