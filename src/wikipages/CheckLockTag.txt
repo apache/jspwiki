@@ -4,13 +4,15 @@ Checks the existence of a [page lock].  A [page lock] is created when an user st
 
 !Usage
 
-<wiki:CheckLock mode="locked|unlocked" id="<variable>">
+<wiki:CheckLock mode="locked|unlocked|owned" id="<variable>">
 ;:''content''
 </wiki:CheckLock>
 
 !Parameters
 
-;__mode__: If set to "locked", will include the content if the page has been locked; any other value includes if the page is not locked.
+;__mode__: If set to "locked", will include the content if the page has been locked.  If set to "o
+wned", will include only if the page is locked by the current user.  Value "unlocked" includes if
+the page is not locked.
 ;__id__: The JSP variable named in this parameter will be set to an instance of ~PageLock class.
 
 !Example

@@ -1,3 +1,11 @@
+2003-04-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * CheckLockTag was a bit inconsistent: if the page was locked by
+        the current user, it would of course always be "locked".  This
+        means that the value of "unlocked" was essentially useless for
+        Edit pages.  I added a new value for "mode": "owned".  Reported by
+        Rajesh Raheja.
+
 2003-04-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.7.
