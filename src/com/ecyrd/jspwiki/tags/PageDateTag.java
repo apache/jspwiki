@@ -82,7 +82,7 @@ public class PageDateTag
             }
             else
             {
-                pageContext.getOut().write( "<never>" );
+                pageContext.getOut().write( "&lt;never&gt;" );
             }
         }
 
