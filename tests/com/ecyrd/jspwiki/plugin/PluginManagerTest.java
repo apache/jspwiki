@@ -3,7 +3,6 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import junit.framework.*;
-import java.io.*;
 import java.util.*;
 
 public class PluginManagerTest extends TestCase

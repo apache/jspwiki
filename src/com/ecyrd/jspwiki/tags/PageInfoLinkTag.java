@@ -24,7 +24,6 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Writes a link to the Wiki PageInfo.  Body of the link becomes the actual text.

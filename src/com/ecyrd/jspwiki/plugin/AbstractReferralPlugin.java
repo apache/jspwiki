@@ -24,7 +24,6 @@ import com.ecyrd.jspwiki.*;
 import java.util.*;
 import java.io.StringReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
  *  This is a base class for all plugins using referral things.

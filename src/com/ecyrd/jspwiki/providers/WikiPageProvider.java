@@ -19,11 +19,9 @@
  */
 package com.ecyrd.jspwiki.providers;
 
-import java.util.Properties;
 import java.util.List;
 import java.util.Collection;
 import java.util.Date;
-import java.io.IOException;
 
 import com.ecyrd.jspwiki.*;
 

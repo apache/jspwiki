@@ -4,12 +4,9 @@ package com.ecyrd.jspwiki.xmlrpc;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import junit.framework.*;
-import java.io.*;
 import java.util.*;
-import org.apache.log4j.*;
 import org.apache.xmlrpc.*;
 
-import com.ecyrd.jspwiki.providers.*;
 
 public class RPCHandlerTest extends TestCase
 {

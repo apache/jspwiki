@@ -23,9 +23,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import org.apache.log4j.Category;
 
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.text.ParsePosition;
 import java.text.ParseException;
 import java.util.*;
 

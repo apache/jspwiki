@@ -20,11 +20,7 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Properties;
-import java.util.Collection;
-import java.util.Date;
 import java.io.IOException;
-
-import com.ecyrd.jspwiki.*;
 
 /**
  *  A generic Wiki provider for all sorts of things that the Wiki can

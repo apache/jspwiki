@@ -26,7 +26,6 @@ import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

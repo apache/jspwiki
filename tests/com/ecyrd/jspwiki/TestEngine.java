@@ -1,7 +1,6 @@
 
 package com.ecyrd.jspwiki;
 import java.util.Properties;
-import javax.servlet.*;
 import java.io.*;
 
 import org.apache.log4j.Category;

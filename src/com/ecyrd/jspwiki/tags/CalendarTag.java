@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -30,7 +29,6 @@ import java.text.ParseException;
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 

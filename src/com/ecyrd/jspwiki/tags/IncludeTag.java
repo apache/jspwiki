@@ -20,12 +20,9 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**

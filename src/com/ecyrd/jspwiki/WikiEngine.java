@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
-import org.apache.oro.text.perl.Perl5Util;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;

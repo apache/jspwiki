@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Includes the content if an user check validates.

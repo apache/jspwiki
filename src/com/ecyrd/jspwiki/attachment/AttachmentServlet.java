@@ -27,7 +27,6 @@ import java.io.*;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 // multipartrequest.jar imports:

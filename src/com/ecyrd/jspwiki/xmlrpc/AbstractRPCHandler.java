@@ -19,11 +19,8 @@
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
-import java.io.*;
-import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
-import org.apache.xmlrpc.XmlRpcException;
 
 /**
  *  Provides definitions for RPC handler routines.

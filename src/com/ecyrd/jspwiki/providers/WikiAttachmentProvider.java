@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 
 import java.util.Collection;

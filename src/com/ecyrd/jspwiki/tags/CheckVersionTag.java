@@ -20,11 +20,9 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**

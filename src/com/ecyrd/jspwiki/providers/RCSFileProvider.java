@@ -24,14 +24,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import org.apache.log4j.Category;
-import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
