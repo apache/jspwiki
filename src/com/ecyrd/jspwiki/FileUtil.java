@@ -132,6 +132,22 @@ public class FileUtil
         }
     }
 
+    /**
+     *  Just copies all characters from <I>in</I> to <I>out</I>.
+     *
+     *  @since 1.9.31
+     */
+    // FIXME: Could probably be more optimized
+    public static void copyContents( InputStream in, OutputStream out )
+        throws IOException
+    {
+        int c;
+        
+        while( (c = in.read()) != -1  )
+        {
+            out.write( c );
+        }
+    }
 
     /**
      *  Is smart and falls back to ISO-8859-1 if you get exceptions.
