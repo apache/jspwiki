@@ -3,7 +3,7 @@
 <%-- Inserts page content for preview. --%>
 
    <div class="previewnote">
-      <b>This is a PREVIEW!  Hit "back" on your browser to go back to the editor,
+      <b>This is a PREVIEW!  Hit "Keep Editing" to go back to the editor,
       or hit "Save" if you're happy with what you see.</b>
    </div>
 
@@ -18,14 +18,14 @@
    <p><hr /></p>
 
    <div class="previewnote">
-      <b>This is a PREVIEW!  Hit "back" on your browser to go back to the editor,
+      <b>This is a PREVIEW!  Hit "Keep Editing" to go back to the editor,
       or hit "Save" if you're happy with what you see.</b>
    </div>
 
    <p><hr /></p>
 
-   <form action="<wiki:EditLink format="url" />" method="POST" 
-         ACCEPT-CHARSET="<wiki:ContentEncoding />" />
+   <form action="<wiki:EditLink format="url" />" method="post" 
+         accept-charset="<wiki:ContentEncoding />" />
    <p>
 
    <%-- These are required parts of this form.  If you do not include these,
