@@ -21,10 +21,12 @@
 package com.ecyrd.jspwiki;
 
 import java.util.*;
+import java.io.*;
 import org.apache.log4j.*;
 
-import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
+import com.ecyrd.jspwiki.attachment.*;
+import com.ecyrd.jspwiki.providers.*;
 
 /*
   BUGS
@@ -111,20 +113,17 @@ public class ReferenceManager
 
     private boolean        m_matchEnglishPlurals = false;
 
-    private static final Category log = Category.getInstance(ReferenceManager.class);
+    private static Logger log = Logger.getLogger(ReferenceManager.class);
+
+    private static final String SERIALIZATION_FILE = "refmgr.ser";
 
     /**
-     *  Builds a new ReferenceManager with default (null) entries for
-     *  the WikiPages contained in the pages Collection. (This collection
-     *  must be given for subsequent updateReferences() calls to work.)
-     *  <P>
-     *  The collection should contain an entry for all currently existing WikiPages.
+     *  Builds a new ReferenceManager.
      *
-     *  @param pages   a Collection of WikiPages 
+     *  @param engine The WikiEngine to which this is meeting.
      */
-    public ReferenceManager( WikiEngine engine, Collection pages )
+    public ReferenceManager( WikiEngine engine )
     {
-        log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
         m_refersTo   = new HashMap();
         m_referredBy = new HashMap();
         m_engine = engine;
@@ -133,8 +132,176 @@ public class ReferenceManager
                                                              WikiEngine.PROP_MATCHPLURALS, 
                                                              m_matchEnglishPlurals );
 
-        buildKeyLists( pages );
     }
+
+    /**
+     *  Does a full reference update.
+     */
+    private void updatePageReferences( WikiPage page )
+        throws ProviderException
+    {
+        String content = m_engine.getPageManager().getPageText( page.getName(), 
+                                                                WikiPageProvider.LATEST_VERSION );
+        Collection links = m_engine.scanWikiLinks( page, content );
+        Collection attachments = m_engine.getAttachmentManager().listAttachments( page );
+
+        for( Iterator atti = attachments.iterator(); atti.hasNext(); )
+        {
+            links.add( ((Attachment)(atti.next())).getName() );
+        }
+
+        updateReferences( page.getName(), links );
+    }
+
+    /**
+     *  Initializes the entire reference manager with the initial set of pages
+     *  from the collection.
+     *
+     *  @param pages A collection of all pages you want to be included in the reference
+     *               count.
+     *  @since 2.2
+     */
+    public void initialize( Collection pages )
+        throws ProviderException
+    {
+        log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
+        long start = System.currentTimeMillis();
+        log.info( "Starting cross reference scan of WikiPages" );
+
+        //
+        //  First, try to serialize old data from disk.  If that fails,
+        //  we'll go and update the entire reference lists (which'll take
+        //  time)
+        //
+        try
+        {
+            long saved = unserializeFromDisk();
+
+            //
+            //  Now we must check if any of the pages have been changed
+            //  while we were in the electronic la-la-land, and update
+            //  the references for them.
+            //
+            
+            Iterator it = pages.iterator();
+            
+            while( it.hasNext() )
+            {
+                WikiPage page = (WikiPage) it.next();
+
+                if( page instanceof Attachment )
+                {
+                    // Skip attachments
+                }
+                else if( page.getLastModified().getTime() > saved )
+                {
+                    updatePageReferences( page );
+                }
+            }
+            
+        }
+        catch( Exception e )
+        {
+            log.info("Unable to unserialize old refmgr information, rebuilding database: "+e.getMessage());
+            buildKeyLists( pages );
+
+            // Scan the existing pages from disk and update references in the manager.
+            Iterator it = pages.iterator();
+            while( it.hasNext() )
+            {
+                WikiPage page  = (WikiPage)it.next();
+
+                if( page instanceof Attachment )
+                {
+                    // We cannot build a reference list from the contents
+                    // of attachments, so we skip them.
+                }
+                else
+                {
+                    updatePageReferences( page );
+                }
+            }
+
+        }
+
+        log.info( "Cross reference scan done (" +
+                  (System.currentTimeMillis()-start) +
+                  " ms)" );
+    }
+
+    /**
+     *  Reads the serialized data from the disk back to memory.
+     *  Returns the date when the data was last written on disk
+     */
+    private synchronized long unserializeFromDisk()
+        throws IOException,
+               ClassNotFoundException
+    {
+        ObjectInputStream in = null;
+        long saved = 0L;
+
+        try
+        {
+            long start = System.currentTimeMillis();
+            
+            File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
+
+            in = new ObjectInputStream( new FileInputStream(f) );
+
+            saved        = in.readLong();
+            m_refersTo   = (Map) in.readObject();
+            m_referredBy = (Map) in.readObject();
+
+            in.close();
+
+            long finish = System.currentTimeMillis();
+            log.debug("Read serialized data successfully in "+(finish-start)+"ms");
+        }
+        finally
+        {
+            try {
+                if( in != null ) in.close();
+            } catch( IOException ex ) {}
+        }
+
+        return saved;
+    }
+
+    /**
+     *  Serializes hashmaps to disk.  The format is private, don't touch it.
+     */
+    private synchronized void serializeToDisk()
+    {
+        ObjectOutputStream out = null;
+
+        try
+        {
+            long start = System.currentTimeMillis();
+            
+            File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
+
+            out = new ObjectOutputStream( new FileOutputStream(f) );
+
+            out.writeLong( System.currentTimeMillis() ); // Timestamp
+            out.writeObject( m_refersTo );
+            out.writeObject( m_referredBy );
+
+            out.close();
+
+            long finish = System.currentTimeMillis();
+
+            log.debug("serialization done - took "+(finish-start)+"ms");
+        }
+        catch( IOException e )
+        {
+            log.error("Unable to serialize!");
+
+            try {
+                if( out != null ) out.close();
+            } catch( IOException ex ) {}
+        }
+    }
+
 
     /**
      *  After the page has been saved, updates the reference lists.
@@ -146,6 +313,7 @@ public class ReferenceManager
         updateReferences( page.getName(),
                           context.getEngine().scanWikiLinks( page, content ) );
 
+        serializeToDisk();
     }
     
     /**
