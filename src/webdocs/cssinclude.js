@@ -1,4 +1,5 @@
 <SCRIPT type="text/javascript">
+<!-- Hide script contents from old browsers
 
     var IE4 = (document.all && !document.getElementById) ? true : false;
     var NS4 = (document.layers) ? true : false;
@@ -27,6 +28,7 @@
 
     document.write("<link rel=\"stylesheet\" href=\""+sheet+"\">");
 
+// end hiding contents from old browsers -->
 </SCRIPT>
 <NOSCRIPT>
     <!-- User has no JavaScript support.  Thus, it is unlikely that
