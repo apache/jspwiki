@@ -93,9 +93,19 @@ public class RPCHandler
         ht.put( "name", toRPCString(page.getName()) );
 
         Date d = page.getLastModified();
-        Calendar cal = Calendar.getInstance(); 
+
+        //
+        //  Here we reset the DST and TIMEZONE offsets of the
+        //  calendar.  Unfortunately, I haven't thought of a better
+        //  way to ensure that we're getting the proper date
+        //  from the XML-RPC thingy, except to manually adjust the date.
+        //
+
+        Calendar cal = Calendar.getInstance();
         cal.setTime( d );
-        cal.setTimeZone( TimeZone.getTimeZone("UTC+00:00") );
+        cal.set( Calendar.MILLISECOND, 
+                 - (cal.get( Calendar.ZONE_OFFSET ) + 
+                    (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
         ht.put( "lastModified", cal.getTime() );
         ht.put( "version", new Integer(page.getVersion()) );
