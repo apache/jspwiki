@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.plugin;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import org.apache.log4j.Category;
+import org.apache.oro.text.*;
+import org.apache.oro.text.regex.*;
 
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -32,9 +34,12 @@ import java.util.*;
  *  <P>Parameters</P>
  *  <UL>
  *    <LI>itemsPerLine: How many items should be allowed per line before break.
+ *    <LI>include: Include only these pages.
+ *    <LI>exclude: Exclude with this pattern.
  *  </UL>
  *
  *  @author Alain Ravet
+ *  @author Janne Jalkanen
  *  @since 1.9.9
  */
 public class IndexPlugin implements WikiPlugin
@@ -44,26 +49,55 @@ public class IndexPlugin implements WikiPlugin
     public  static final String INITIALS_COLOR                  = "red" ;
     private static final int    DEFAULT_ITEMS_PER_LINE          = 4     ;
 
-    public static final String  PARAM_ITEMS_PER_LINE            = "itemsPerLine";
-
-    protected int               m_currentNofPagesOnLine         = 0     ,
-                                m_itemsPerLine                          ;
-    protected String            m_previousPageFirstLetter       = ""    ;
-    protected StringWriter      m_bodyPart      =   new StringWriter () ,
-                                m_headerPart    =   new StringWriter () ;
-
+    private static final String PARAM_ITEMS_PER_LINE            = "itemsPerLine";
+    private static final String PARAM_INCLUDE                   = "include";
+    private static final String PARAM_EXCLUDE                   = "exclude";
+    
+    private int                 m_currentNofPagesOnLine         = 0;
+    private int                 m_itemsPerLine;
+    protected String            m_previousPageFirstLetter       = "";
+    protected StringWriter      m_bodyPart      =   new StringWriter();
+    protected StringWriter      m_headerPart    =   new StringWriter();
+    private Pattern             m_includePattern;
+    private Pattern             m_excludePattern;
+    
 
     public String execute( WikiContext i_context , Map i_params )
         throws PluginException
     {
+        //
+        //  Parse arguments and create patterns.
+        //
+        PatternCompiler compiler = new GlobCompiler();
         m_itemsPerLine = TextUtil.parseIntParameter( (String) i_params.get(PARAM_ITEMS_PER_LINE),
                                                      DEFAULT_ITEMS_PER_LINE );
+        try
+        {
+            String ptrn = (String) i_params.get(PARAM_INCLUDE);
+            if( ptrn == null ) ptrn = "*";
+            m_includePattern = compiler.compile(ptrn);
 
+            ptrn = (String) i_params.get(PARAM_EXCLUDE);
+            if( ptrn == null ) ptrn = "";
+            m_excludePattern = compiler.compile(ptrn);
+        }
+        catch( MalformedPatternException e )
+        {
+            throw new PluginException("Illegal pattern detected."); // FIXME, make a proper error.
+        }
+        
+        //
+        //  Get pages, then sort.
+        //
+        
         final Collection        allPages      = getAllPagesSortedByName( i_context );
         final TranslatorReader  linkProcessor = new TranslatorReader( i_context, 
                                                                       new java.io.StringReader ( "" ) );
 
-        buildIndexPageHeaderAndBody( allPages , linkProcessor );
+        //
+        //  Build the page.
+        //
+        buildIndexPageHeaderAndBody( allPages, linkProcessor );
 
         return  m_headerPart.toString()
                 +   "<br>"
@@ -74,27 +108,35 @@ public class IndexPlugin implements WikiPlugin
     private void buildIndexPageHeaderAndBody ( final Collection i_allPages , 
                                                final TranslatorReader i_linkProcessor )
     {
+        PatternMatcher matcher = new Perl5Matcher();
+        
         for( Iterator i = i_allPages.iterator (); i.hasNext ();)
         {
             WikiPage curPage = (WikiPage) i.next();
 
-            ++m_currentNofPagesOnLine;
-
-            final String    pageNameFirstLetter           = curPage.getName().substring(0,1).toUpperCase()     ;
-            final boolean   sameFirstLetterAsPreviousPage = m_previousPageFirstLetter.equals(pageNameFirstLetter);
-
-            if( !sameFirstLetterAsPreviousPage ) 
+            if( matcher.matches( curPage.getName(), m_includePattern ) )
             {
-                addLetterToIndexHeader( pageNameFirstLetter );
-                addLetterHeaderWithLine( pageNameFirstLetter );
+                if( !matcher.matches( curPage.getName(), m_excludePattern ) )
+                {
+                    ++m_currentNofPagesOnLine;
+            
+                    String    pageNameFirstLetter           = curPage.getName().substring(0,1).toUpperCase();
+                    boolean   sameFirstLetterAsPreviousPage = m_previousPageFirstLetter.equals(pageNameFirstLetter);
 
-                m_currentNofPagesOnLine   = 1;
-                m_previousPageFirstLetter = pageNameFirstLetter;
+                    if( !sameFirstLetterAsPreviousPage ) 
+                    {
+                        addLetterToIndexHeader( pageNameFirstLetter );
+                        addLetterHeaderWithLine( pageNameFirstLetter );
+
+                        m_currentNofPagesOnLine   = 1;
+                        m_previousPageFirstLetter = pageNameFirstLetter;
+                    }
+
+                    addPageToIndex( curPage, i_linkProcessor );
+                    breakLineIfTooLong();
+                }
             }
-
-            addPageToIndex( curPage, i_linkProcessor );
-            breakLineIfTooLong();
-        }
+        } // for
     }
 
 
@@ -148,9 +190,10 @@ public class IndexPlugin implements WikiPlugin
     }
 
 
+    // FIXME: Should really use <SPAN> instead of <FONT>.
     private void addLetterHeaderWithLine( final String i_firstLetter )
     {
-        m_bodyPart.write("<br><br>" +
+        m_bodyPart.write("<br /><br />" +
                          "<A name=\"" + i_firstLetter + "\">" +
                          "<font color="+INITIALS_COLOR+">"+i_firstLetter+"</A></font>" +
                          "<hr>" );
@@ -162,7 +205,7 @@ public class IndexPlugin implements WikiPlugin
 
         if( notFirstPageOnLine ) 
         {
-            m_bodyPart.write(",&nbsp;&nbsp;");
+            m_bodyPart.write(",&nbsp;&nbsp;"); 
         }
         m_bodyPart.write( i_linkProcessor.makeLink( TranslatorReader.READ, 
                                                     i_curPage.getName(), 
@@ -175,7 +218,7 @@ public class IndexPlugin implements WikiPlugin
 
         if( limitReached ) 
         {
-            m_bodyPart.write( "<br/>" );
+            m_bodyPart.write( "<br />" );
             m_currentNofPagesOnLine = 0;
         }
     }
