@@ -380,7 +380,7 @@ public class WikiEngineTest extends TestCase
 
         Attachment att = new Attachment( NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        attMgr.storeAttachment( att, makeAttachmentFile() );
+        attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
         try
         {    
@@ -390,7 +390,7 @@ public class WikiEngineTest extends TestCase
                        c==null || c.size()==0 );
     
             c = refMgr.findUnreferenced();
-            assertEquals( "unreferenced count", c.size(), 2 );
+            assertEquals( "unreferenced count", 2, c.size() );
             Iterator i = c.iterator();
             String first = (String) i.next();
             String second = (String) i.next();
@@ -407,8 +407,25 @@ public class WikiEngineTest extends TestCase
     }
 
     /**
-     *  Is ReferenceManager updated properly if a page references its own attachments.
+     *  Is ReferenceManager updated properly if a page references 
+     *  its own attachments?
      */
+
+    /*
+      FIXME: This is a deep problem.  The real problem is that the reference
+      manager cannot know when it encounters a link like "testatt.txt" that it
+      is really a link to an attachment IF the link is created before
+      the attachment.  This means that when the attachment is created,
+      the link will stay in the "uncreated" list.
+
+      There are two issues here: first of all, TranslatorReader should
+      able to return the proper attachment references (which I think
+      it does), and second, the ReferenceManager should be able to
+      remove any links that are not referred to, nor they are created.
+
+      However, doing this in a relatively sane timeframe can be a problem.
+    */
+
     public void testAttachmentRefs2()
         throws Exception
     {
@@ -420,7 +437,8 @@ public class WikiEngineTest extends TestCase
         // check a few pre-conditions
         
         Collection c = refMgr.findReferrers( "TestAtt.txt" );
-        assertTrue( "normal, unexisting page", c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
+        assertTrue( "normal, unexisting page", 
+                    c!=null && ((String)c.iterator().next()).equals( NAME1 ) );
         
         c = refMgr.findReferrers( NAME1+"/TestAtt.txt" );
         assertTrue( "no attachment", c==null || c.size()==0 );
@@ -435,14 +453,13 @@ public class WikiEngineTest extends TestCase
             
         Attachment att = new Attachment( NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        attMgr.storeAttachment( att, makeAttachmentFile() );
+        attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
         try
         {    
             // and check post-conditions        
             c = refMgr.findUncreated();
-            assertTrue( 
-                "attachment exists",            
-                c==null || c.size()==0 );
+            assertTrue( "attachment exists: ",            
+                        c==null || c.size()==0 );
     
             c = refMgr.findReferrers( "TestAtt.txt" );
             assertTrue( "no normal page", c==null || c.size()==0 );
@@ -475,9 +492,9 @@ public class WikiEngineTest extends TestCase
 
         Attachment att = new Attachment( NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        attMgr.storeAttachment( att, makeAttachmentFile() );
+        attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
-        m_engine.saveText( NAME1, " [TestAtt.txt] ");
+        m_engine.saveText( NAME1, " ["+NAME1+"/TestAtt.txt] ");
 
         try
         {    
@@ -512,7 +529,7 @@ public class WikiEngineTest extends TestCase
 
         Attachment att = new Attachment( NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        attMgr.storeAttachment( att, makeAttachmentFile() );
+        attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
         m_engine.saveText( "TestPage2", "["+NAME1+"/TestAtt.txt]");
 
@@ -536,20 +553,5 @@ public class WikiEngineTest extends TestCase
             new File( files, "TestPage2"+FileSystemProvider.FILE_EXT ).delete();
         }
     }    
-
-    private File makeAttachmentFile()
-        throws Exception
-    {
-        File tmpFile = File.createTempFile("test","txt");
-        tmpFile.deleteOnExit();
-
-        FileWriter out = new FileWriter( tmpFile );
-        
-        FileUtil.copyContents( new StringReader( "asdfaäöüdfzbvasdjkfbwfkUg783gqdwog" ), out );
-
-        out.close();
-        
-        return tmpFile;
-    }
 
 }
