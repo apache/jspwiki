@@ -135,7 +135,6 @@ public class RPCHandler
         return ht;
     }
 
-    // FIXME: It is not certain if date is really UTC?
     public Vector getRecentChanges( Date since )
     {
         Collection pages = m_engine.getRecentChanges();
@@ -143,7 +142,14 @@ public class RPCHandler
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
-        cal.setTimeZone( TimeZone.getDefault() );
+
+        //
+        //  Convert UTC to our time.
+        //
+        cal.add( Calendar.MILLISECOND,
+                 (cal.get( Calendar.ZONE_OFFSET ) +
+                  (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+        since = cal.getTime();
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
