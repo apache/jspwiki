@@ -1,13 +1,20 @@
+2003-11-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.86.
+
+        * Added the "section" parameter to InsertPage plugin.  Requested
+        by John Volkar.
+
 2003-10-20  Erik Bunn  <ebu@basen.net>
 
-	* v2.1.85
-	
-	* Added CreatePermission, and support for it in WikiPermission,
-	Edit.jsp.
+        * v2.1.85
+        
+        * Added CreatePermission, and support for it in WikiPermission,
+        Edit.jsp.
 
-	* Modified Login.jsp functionality slightly, to support a 'msg'
-	context variable for displaying a friendly message. (This could
-	be changed to include a WikiPage, perhaps.)
+        * Modified Login.jsp functionality slightly, to support a 'msg'
+        context variable for displaying a friendly message. (This could
+        be changed to include a WikiPage, perhaps.)
 
 2003-10-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
