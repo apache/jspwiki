@@ -29,6 +29,7 @@ import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.auth.AccessRuleSet;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -124,10 +125,14 @@ public class TranslatorReader extends Reader
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
 
-    /**
-     *  The default inlining pattern.  Currently "*.png"
-     */
+    /** The default inlining pattern.  Currently "*.png" */
     public static final String     DEFAULT_INLINEPATTERN = "*.png";
+
+    /** Container for AccessRule collection. */
+    private AccessRuleSet m_accessRules;
+
+    /** Flag to disable plugin expansion. */
+    private boolean m_pluginsEnabled = true;
 
     /**
      *  These characters constitute word separators when trying
@@ -150,7 +155,8 @@ public class TranslatorReader extends Reader
                                        PUSHBACK_BUFFER_SIZE );
         m_engine = context.getEngine();
         m_context = context;
-        
+        m_accessRules = new AccessRuleSet();
+
         Collection ptrns = getImagePatterns( m_engine );
 
         //
@@ -190,6 +196,16 @@ public class TranslatorReader extends Reader
         m_plainUris           = "true".equals( props.getProperty( PROP_PLAINURIS, "false" ) );
         m_useOutlinkImage     = "true".equals( props.getProperty( PROP_USEOUTLINKIMAGE, "false" ) );
     }
+
+    /**
+     * Enables or disables plugin expansion. By default, plugins are enabled.
+     */
+    public void enablePlugins( boolean expand )
+    {
+        m_pluginsEnabled = expand;
+    }
+
+
 
     /**
      *  Adds a hook for processing link texts.  This hook is called
@@ -234,6 +250,16 @@ public class TranslatorReader extends Reader
             m_externalLinkMutatorChain.add( mutator );
         }
     }
+
+    /**
+     * Returns the access rules that have been collected when the 
+     * wiki text was parsed (read()).
+     */
+    public AccessRuleSet getAccessRules()
+    {
+        return( m_accessRules );
+    }
+
 
     /**
      *  Figure out which image suffixes should be inlined.
@@ -629,11 +655,19 @@ public class TranslatorReader extends Reader
         String       reallink;
         int          cutpoint;
 
-        //
-        //  Start with plugin links.
-        //
+        // Start with access rules, to get them out of the way of plugins.
+        if( AccessRuleSet.isAccessRule( link ) )
+        {
+            m_accessRules.addRule( link );
+            return( null );
+        }
+
+        // Continue with plugin links. (Anything starting with [{ defaults to a plugin.)
         if( PluginManager.isPluginLink( link ) )
         {
+            if( m_pluginsEnabled == false )
+                return( null );
+
             String included;
             try
             {
