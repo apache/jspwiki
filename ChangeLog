@@ -1,3 +1,11 @@
+2003-09-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.64.
+
+        * Added CachingAttachmentProvider.  It is activated by setting the
+        jspwiki.usePageCache property, the same as with CachingProvider.
+        Suggested by Niilo Neuvo.
+
 2003-09-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.63.
