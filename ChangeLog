@@ -1,3 +1,12 @@
+2004-12-01  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.124
+
+        * Some shuffling of auth-related classes...
+
+        * Added protection against faulty cookies that could result
+        in a number of ways.  Reported by many people.
+
 2004-11-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.123.
