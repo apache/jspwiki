@@ -95,7 +95,7 @@ public class LinkToTag
             if( getVersion() != null ) params.append( "version="+getVersion() );
             if( getTemplate() != null ) params.append( (params.length()>0?"&amp;":"") + "skin="+getTemplate() );
 
-            url = m_wikiContext.getURL( WikiContext.ATTACH, pageName,
+            url = m_wikiContext.getURL( WikiContext.VIEW, pageName,
                                         params.toString() );
             linkclass = "wikipage";
         }
