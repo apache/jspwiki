@@ -33,6 +33,19 @@
   </tag>  
 
   <tag>
+    <name>CheckLock</name>
+    <tagclass>com.ecyrd.jspwiki.tags.CheckLockTag</tagclass>
+    <teiclass>com.ecyrd.jspwiki.tags.CheckLockInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>mode</name>
+    </attribute>
+    <attribute>
+       <name>id</name>
+    </attribute>
+  </tag>  
+
+  <tag>
     <name>CheckRequestContext</name>
     <tagclass>com.ecyrd.jspwiki.tags.CheckRequestContextTag</tagclass>
     <bodycontent>JSP</bodycontent>
