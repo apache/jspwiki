@@ -208,6 +208,10 @@
     <attribute>
        <name>version</name>
        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>template</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>    
   </tag>  
 
