@@ -97,9 +97,7 @@
              %>
              Difference between revision <%=versionDescription1%> and <%=versionDescription2%>
              <P>
-             <PRE>
 <%=wiki.getDiff( pagereq, ver2, ver1 )%>
-             </PRE>
              <%
          }
          else
