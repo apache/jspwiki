@@ -157,6 +157,15 @@ public class VariableManager
         }
         else
         {
+            // 
+            // Check if such a context variable exists,
+            // returning its string representation.
+            //
+            if( (context.getVariable( name )) != null )
+            {
+                return context.getVariable( name ).toString();
+            }
+
             // Final straw: attempt to fetch using property name
             // We don't allow fetching any other properties than those starting
             // with "jspwiki.".  I know my own code, but I can't vouch for bugs
