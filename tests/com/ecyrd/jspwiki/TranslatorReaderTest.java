@@ -3,16 +3,21 @@ package com.ecyrd.jspwiki;
 
 import junit.framework.*;
 import java.io.*;
+import java.util.*;
 
 public class TranslatorReaderTest extends TestCase
 {
+    Properties props = new Properties();
+
     public TranslatorReaderTest( String s )
     {
         super( s );
     }
 
     public void setUp()
+        throws Exception
     {
+        props.load( getClass().getClassLoader().getResourceAsStream("/jspwiki.properties") );
     }
 
     public void tearDown()
@@ -22,7 +27,7 @@ public class TranslatorReaderTest extends TestCase
     private String translate( String src )
         throws IOException
     {
-        Reader r = new TranslatorReader( new TestEngine(), 
+        Reader r = new TranslatorReader( new TestEngine( props ), 
                                          new BufferedReader( new StringReader(src)) );
         StringWriter out = new StringWriter();
         int c;
