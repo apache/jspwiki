@@ -103,24 +103,24 @@ public class AuthorizationManager
             log.debug("Checking for wup: "+wup);
             log.debug("Permission: "+permission);
             res = acl.findPermission( wup, permission );
-        }
 
-        //
-        //  If there as no entry for the user, then try all of his groups
-        //
+            //
+            //  If there as no entry for the user, then try all of his groups
+            //
 
-        if( res == AccessControlList.NONE )
-        {
-            log.debug("Checking groups...");
-
-            List list = m_engine.getUserManager().getGroupsForPrincipal( wup );
-
-            for( Iterator i = list.iterator(); i.hasNext(); )
+            if( res == AccessControlList.NONE )
             {
-                res = acl.findPermission( (Principal) i.next(), permission );
+                log.debug("Checking groups...");
 
-                if( res != AccessControlList.NONE )
-                    break;
+                List list = m_engine.getUserManager().getGroupsForPrincipal( wup );
+
+                for( Iterator i = list.iterator(); i.hasNext(); )
+                {
+                    res = acl.findPermission( (Principal) i.next(), permission );
+
+                    if( res != AccessControlList.NONE )
+                        break;
+                }
             }
         }
 
