@@ -37,38 +37,38 @@ public class AclImplTest
 
         //  User 1
 
-        UserProfile u1 = new UserProfile();
-        u1.setName( "Alice" );
+        UserProfile u_alice = new UserProfile();
+        u_alice.setName( "Alice" );
 
-        UserProfile u2 = new UserProfile();
-        u2.setName( "Bob" );
+        UserProfile u_bob = new UserProfile();
+        u_bob.setName( "Bob" );
         
-        UserProfile u3 = new UserProfile();
-        u3.setName( "Charlie" );
+        UserProfile u_charlie = new UserProfile();
+        u_charlie.setName( "Charlie" );
 
         //  ALLOW VIEW
 
         AclEntry ae = new AclEntryImpl();
         ae.addPermission( new ViewPermission() );
-        ae.setPrincipal( u1 );
+        ae.setPrincipal( u_alice );
 
         //  DENY EDIT
 
         AclEntry ae2 = new AclEntryImpl();
         ae2.addPermission( new EditPermission() );
         ae2.setNegativePermissions();
-        ae2.setPrincipal( u3 );
+        ae2.setPrincipal( u_charlie );
 
         AclEntry ae2b = new AclEntryImpl();
         ae2b.addPermission( new ViewPermission() );
-        ae2b.setPrincipal( u3 );
+        ae2b.setPrincipal( u_charlie );
 
         //  ALLOW VIEW, EDIT
 
         AclEntry ae3 = new AclEntryImpl();
         ae3.addPermission( new ViewPermission() );
         ae3.addPermission( new EditPermission() );
-        ae3.setPrincipal( u2 );
+        ae3.setPrincipal( u_bob );
 
 
         m_acl.addEntry( null, ae );
@@ -79,13 +79,13 @@ public class AclImplTest
         //  Groups
 
         WikiGroup group1 = new WikiGroup();
-        group1.addMember( u1 );
-        group1.addMember( u2 );
+        group1.addMember( u_alice );
+        group1.addMember( u_bob );
         group1.setName( "FooGroup" );
 
         WikiGroup group2 = new WikiGroup();
-        group2.addMember( u2 );
-        group2.addMember( u3 );
+        group2.addMember( u_bob );
+        group2.addMember( u_charlie );
         group2.setName( "BarGroup" );
        
         AclEntry ag1 = new AclEntryImpl();
@@ -172,7 +172,7 @@ public class AclImplTest
 
         wup.setName( "Bob" );
 
-        assertEquals( "deny edit Bob", AclImpl.DENY,
+        assertEquals( "allow edit Bob", AclImpl.ALLOW,
                       m_aclGroup.findPermission( wup, new EditPermission() ) );
         
         assertEquals( "allow view Bob", AclImpl.NONE,
