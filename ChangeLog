@@ -1,3 +1,18 @@
+2003-04-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.39.
+
+        * CheckLockTag was a bit inconsistent: if the page was locked by
+        the current user, it would of course always be "locked".  This
+        means that the value of "unlocked" was essentially useless for
+        Edit pages.  I added a new value for "mode": "owned".
+
+        * Added Image plugin from 2.1.x branch.
+
+        * Bug fix: FileSystemProvider did not close file handles properly.
+        This could use up your available file handles pretty quickly until
+        the next garbage collection.
+
 2003-04-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.38.
