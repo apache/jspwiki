@@ -1051,27 +1051,14 @@ public class WikiEngine
      */
     public String encodeName( String pagename )
     {
-        try
-        {
-            if( m_useUTF8 )
-                return TextUtil.urlEncodeUTF8( pagename );
-            else
-                return java.net.URLEncoder.encode( pagename, "ISO-8859-1" );
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
-        }
+        return TextUtil.urlEncode( pagename, (m_useUTF8 ? "UTF-8" : "ISO-8859-1"));
     }
 
     public String decodeName( String pagerequest )
     {
         try
         {
-            if( m_useUTF8 )
-                return TextUtil.urlDecodeUTF8( pagerequest );
-            else
-                return java.net.URLDecoder.decode( pagerequest, "ISO-8859-1" );
+            return TextUtil.urlDecode( pagerequest, (m_useUTF8 ? "UTF-8" : "ISO-8859-1") );
         }
         catch( UnsupportedEncodingException e )
         {
