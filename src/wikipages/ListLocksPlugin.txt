@@ -1,0 +1,9 @@
+A simple plugin that just lists the pages that are currently being edited.  It's mostly useful to adminstrators.
+
+!Parameters
+
+None.
+
+!Example
+
+Please see [SystemInfo].

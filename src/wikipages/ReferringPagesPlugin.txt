@@ -1,0 +1,14 @@
+Finds and lists all pages that refer to the current page.
+
+!Parameters 
+
+* __max__=''n'' : How many pages to list.  Default is 10. Some pages might create very long lists, so it's a good idea to limit the list size.
+* __maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
+
+!Example
+
+See [LeftMenuFooter].
+
+----
+
+Back to [JSPWikiPlugins].

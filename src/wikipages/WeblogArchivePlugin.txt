@@ -1,0 +1,50 @@
+Creates a weblog archive. It essentially consists of a list that contains hyperlinks to different parts of the archive.
+
+JSPWiki does not keep weblog archives as such, but they are all generated on-the-fly, dynamically.
+
+The [Weblog Archive Plugin] does not generate entries for months that do not have a weblog entry.
+
+!Parameters
+
+* __page__ = The page on which the weblog resides.  If not defined, uses the current page.
+
+!Example
+
+{{{
+__Archive:__\\
+[{WeblogArchivePlugin}]
+}}}
+
+might generate something like this:
+
+__Archive:__\\
+__2003 AD__\\
+[January|Main]\\
+[February|Main]\\
+[March|Main]
+
+!About the generated HTML
+
+The list that is created is essentially an HTML ul -list.  The generated HTML for the above example might look like this:
+{{{
+<div class="weblogarchive">
+  <ul>
+    <li class="archiveyear">2003</li>
+    <li><a href="...">January</a></li>
+    <li><a href="...">February</a></li>
+    <li><a href="...">March</a></li>
+  </ul>
+</div>
+}}}
+
+The look-and-feel of what it actually looks like on the browser is achieved through the magic of Cascading Style Sheets (CSS).
+
+If you wonder where the "AD" comes from, it's been defined in the style sheet file, as a cute example on how to use the :after -pseudoelement.
+
+!See also
+
+[WeblogEntryPlugin], [WeblogPlugin].
+
+----
+
+Back to [JSPWikiPlugins].

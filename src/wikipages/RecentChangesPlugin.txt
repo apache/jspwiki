@@ -1,0 +1,18 @@
+Inserts the latest changes in order. 
+
+!Parameters: 
+* __since__=''n'' : show changes from the last n days.
+* __format__=''(full|compact)'' : if "full", then display a long
+  version with all possible info.  If "compact", then be as compact as possible.
+
+!Example:
+{{{
+[{INSERT RecentChangesPlugin since=5, format=compact}]
+}}}
+
+Inserts the changes from the past 5 days in a compact format.  You
+might use this to make an automatical list of changes to the [LeftMenu], or [LeftMenuFooter], for example.
+
+----
+
+Back to [JSPWikiPlugins].

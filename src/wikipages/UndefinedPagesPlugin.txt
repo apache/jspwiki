@@ -1,0 +1,14 @@
+Lists all pages that are referred to, but not yet created.
+
+!Parameters
+
+* __maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
+
+!Example:
+
+See [UndefinedPages].
+
+----
+
+Back to [JSPWiki Plugins].
+

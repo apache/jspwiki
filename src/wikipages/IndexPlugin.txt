@@ -1,0 +1,12 @@
+Displays all of the pages in this Wiki in alphabetical order.  IndexPlugin has been contributed by AlainRavet.
+
+!Parameters
+* __itemsPerLine__ = ''n''.  Break every 'n' items on line.
+
+!Example
+
+See [PageIndex].
+
+----
+
+Back to [JSPWikiPlugins].
