@@ -10,5 +10,5 @@
   <link rel="stylesheet" type="text/css" media="print" href="templates/<wiki:TemplateDir/>/jspwiki_print.css">
   <link rel="alternate stylesheet" type="text/css" href="templates/<wiki:TemplateDir/>/jspwiki_print.css" title="Print friendly">
   <link rel="alternate stylesheet" type="text/css" href="templates/<wiki:TemplateDir/>/jspwiki.css" title="Standard">
-  <wiki:RSSLink />
+  <wiki:FeedDiscovery />
 
