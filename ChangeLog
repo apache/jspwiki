@@ -1,3 +1,13 @@
+2002-05-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.7.
+
+        * Bug fix: UTF-8 version of XML-RPC client missed
+        getRecentChanges() totally.  Apparently nobody was using it =).
+
+        * Bug fix: RPC.getRecentChanges() would accidentally use local
+        time instead of UTC.  Oops.  Found by Mahlen Morris.
+
 2002-04-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.6.
