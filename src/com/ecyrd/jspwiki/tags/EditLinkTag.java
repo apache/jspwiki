@@ -54,9 +54,6 @@ public class EditLinkTag
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-
-        String rssURL = engine.getGlobalRSSURL();
-
         WikiPage   page;
 
         if( m_pageName == null )
