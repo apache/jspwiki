@@ -78,7 +78,9 @@ public class WikiEngine
     public static final String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
 
     /** Property name for the "match english plurals" -hack. */
-    public static final String     PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
+    public static final String PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
+    /** Property name for the template that is used. */
+    public static final String PROP_TEMPLATEDIR  = "jspwiki.templateDir";
 
     /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
@@ -129,6 +131,9 @@ public class WikiEngine
 
     /** If true, all titles will be cleaned. */
     private boolean          m_beautifyTitle = false;
+
+    /** Stores the template path.  This is relative to "templates". */
+    private String           m_templateDir;
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -243,6 +248,7 @@ public class WikiEngine
         m_beautifyTitle  = "true".equals( props.getProperty( PROP_BEAUTIFYTITLE, "false" ) );
 
         m_matchEnglishPlurals = "true".equals( props.getProperty( PROP_MATCHPLURALS, "false" ) );
+        m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -364,6 +370,16 @@ public class WikiEngine
     {
         // FIXME: This method should not be here, probably.
         return m_properties.getProperty( PluginManager.PROP_SEARCHPATH );
+    }
+
+    /**
+     *  Returns the current template directory.
+     *
+     *  @since 1.9.20
+     */
+    public String getTemplateDir()
+    {
+        return m_templateDir;
     }
 
     /**
