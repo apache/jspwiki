@@ -2037,7 +2037,6 @@ public class TranslatorReader extends Reader
     {
         /**
          *  Write a HTMLized link depending on its type.
-         *  The link mutator chain is processed.
          *
          *  @param type Type of the link.
          *  @param link The actual link.
