@@ -57,21 +57,11 @@ public class CachingProvider
         log.debug("Initing CachingProvider");
 
         String classname = WikiEngine.getRequiredProperty( properties, 
-                                                               "jspwiki.cachingProvider.realProvider" );
+                                                           PageManager.PROP_PAGEPROVIDER );
         
         try
-        {
-            Class providerclass;
-
-            // Try first direct class name, then the shortcut.
-            try
-            {
-                providerclass = Class.forName( classname );
-            }
-            catch( ClassNotFoundException e )
-            {
-                providerclass = Class.forName( "com.ecyrd.jspwiki.providers."+classname );
-            }
+        {            
+            Class providerclass = WikiEngine.findWikiClass( classname, "com.ecyrd.jspwiki.providers" );
 
             m_provider = (WikiPageProvider)providerclass.newInstance();
 
