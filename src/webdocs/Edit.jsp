@@ -110,7 +110,7 @@
           <td>----</td><td>Horizontal ruler</td>
         </tr>
         <tr>
-          <td>{{{, }}}</td><td>Begin/end code block</td>
+          <td>{{{, }}}</td><td>Begin/end code block.  (Recommended that you start on a new line.)</td>
         </tr>
         <tr>
           <td>\\</td><td>Forced line break</td>
