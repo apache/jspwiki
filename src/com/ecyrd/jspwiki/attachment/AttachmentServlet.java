@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.UserProfile;
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 // multipartrequest.jar imports:
@@ -169,6 +170,9 @@ public class AttachmentServlet
         int    ver      = WikiProvider.LATEST_VERSION;
 
         AttachmentManager mgr = m_engine.getAttachmentManager();
+        AuthorizationManager authmgr = m_engine.getAuthorizationManager();
+
+        UserProfile wup = m_engine.getUserManager().getUserProfile( req );
 
         if( page == null )
         {
@@ -188,6 +192,18 @@ public class AttachmentServlet
 
                 if( att != null )
                 {
+                    //
+                    //  Check if the user has permission for this attachment
+                    //
+
+                    if( !authmgr.checkPermission( att, wup, "view" ) )
+                    {
+                        log.debug("User does not have permission for this");
+                        res.sendError( HttpServletResponse.SC_FORBIDDEN );
+                        return;
+                    }
+                                                 
+
                     //
                     //  Check if the client already has a version of this attachment.
                     //
@@ -308,7 +324,7 @@ public class AttachmentServlet
     {
         String msg     = "";
         String attName = "(unknown)";
-        String nextPage = "Error.jsp"; // If something bad happened.
+        String nextPage = m_engine.getBaseURL()+"Error.jsp"; // If something bad happened.
 
         try
         {
@@ -394,16 +410,28 @@ public class AttachmentServlet
                     att = new Attachment( wikipage, filename );
                 }
 
-                if( user != null )
+                //
+                //  Check if we're allowed to do this?
+                //
+
+                if( m_engine.getAuthorizationManager().checkPermission( att,
+                                                                        user,
+                                                                        "upload" ) )
                 {
-                    att.setAuthor( user.getName() );
-                }
-
-                m_engine.getAttachmentManager().storeAttachment( att, in );
-
-                log.info( "User " + user + " uploaded attachment to " + wikipage + 
-                          " called "+filename+", size " + multi.getFileSize(part) );
+                    if( user != null )
+                    {
+                        att.setAuthor( user.getName() );
+                    }
                 
+                    m_engine.getAttachmentManager().storeAttachment( att, in );
+
+                    log.info( "User " + user + " uploaded attachment to " + wikipage + 
+                              " called "+filename+", size " + multi.getFileSize(part) );
+                }
+                else
+                {
+                    log.info("Upload failed due to missing permissions");
+                }
                 f.delete();
             }
 
