@@ -1517,50 +1517,6 @@ public class WikiEngine
     }
 
     /**
-     *  Attempts to locate a Wiki class, defaulting to the defaultPackage
-     *  in case the actual class could not be located.
-     *
-     *  @param className Class to search for.
-     *  @param defaultPackage A default package to try if the class 
-     *                        cannot be directly located.  May be null.
-     *  @throws ClassNotFoundException if the class could not be located.
-     */
-    /*
-    public static Class findWikiClass( String className, String defaultPackage )
-        throws ClassNotFoundException
-    {
-        Class tryClass;
-
-        if( className == null )
-        {
-            throw new ClassNotFoundException("Null className!");
-        }
-
-        //
-        //  Attempt to use a shortcut, if possible.
-        //
-        try
-        {
-            tryClass = Class.forName( className );
-        }
-        catch( ClassNotFoundException e )
-        {
-            // FIXME: This causes "null" names to be searched for twice, which
-            //        is a performance penalty and not very nice.
-            if( defaultPackage == null ) 
-                defaultPackage = "";
-
-            if( !defaultPackage.endsWith(".") )
-                defaultPackage += ".";
-
-            tryClass = Class.forName( defaultPackage+className );
-        }
-
-        return tryClass;
-    }
-    */
-
-    /**
      *  Returns this object's ReferenceManager.
      *  @since 1.6.1
      */
