@@ -94,14 +94,14 @@
 
 <head>
   <title><wiki:Variable var="applicationname"/> login</title>
-  <%@ include file="templates/default/commonheader.jsp" %>
+  <wiki:Include page="commonheader.jsp"/>
   <meta name="robots" content="noindex,nofollow">
 </head>
 
 <body class="login" bgcolor="#FFFFFF">
   <br />
   <br />
-  <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="<wiki:ContentEncoding />" method="POST" />
+  <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="<wiki:ContentEncoding />" method="post" />
   <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
   <div align="center">
     <table border="0" cellspacing="3" cellpadding="5" width="35%" bgcolor="#efefef" />
