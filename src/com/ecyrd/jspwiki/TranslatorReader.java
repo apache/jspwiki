@@ -44,6 +44,7 @@ public class TranslatorReader extends Reader
     private static final int              LOCALREF = 4;
     private static final int              IMAGE = 5;
     private static final int              EXTERNAL = 6;
+    private static final int              INTERWIKI = 7;
 
     private BufferedReader m_in;
 
@@ -165,7 +166,7 @@ public class TranslatorReader extends Reader
         switch(type)
         {
           case READ:
-            result = "<A HREF=\"Wiki.jsp?page="+encodedlink+"\">"+text+"</A>";
+            result = "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page="+encodedlink+"\">"+text+"</A>";
             break;
 
           case EDIT:
@@ -191,7 +192,11 @@ public class TranslatorReader extends Reader
             break;
 
           case EXTERNAL:
-            result = "<A HREF=\""+link+"\">"+text+"</A>";
+            result = "<A CLASS=\"external\" HREF=\""+link+"\">"+text+"</A>";
+            break;
+
+          case INTERWIKI:
+            result = "<A CLASS=\"interwiki\" HREF=\""+link+"\">"+text+"</A>";
             break;
 
           default:
@@ -388,8 +393,8 @@ public class TranslatorReader extends Reader
                     if( urlReference != null )
                     {
                         urlReference = replaceString( urlReference, "%s", wikiPage );
-                        line = replaceString( line, start, end+1, 
-                                              "<A HREF=\""+urlReference+"\">"+link+"</A>" );
+                        line = replaceString( line, start, end+1,
+                                              makeLink( INTERWIKI, urlReference, link ) );
                     }
                     else
                     {
