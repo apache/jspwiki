@@ -47,12 +47,17 @@ public class FeedDiscoveryTag
 
         String rssURL      = engine.getGlobalRSSURL();
         String atomFeedURL = engine.getBaseURL()+"atom.jsp?page="+encodedName;
+        String atomPostURL = engine.getBaseURL()+"atom/"+encodedName;
 
         if( rssURL != null )
         {
             pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for the entire site.\" href=\""+rssURL+"\" />\n");
             pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\""+
                                        TextUtil.replaceEntities(BlogUtil.getSiteName(m_wikiContext))+"\" href=\""+atomFeedURL+"\" />\n");
+
+            pageContext.getOut().print("<link rel=\"service.post\" type=\"application/atom+xml\" title=\""+
+                                       TextUtil.replaceEntities(BlogUtil.getSiteName(m_wikiContext))+"\" href=\""+atomPostURL+"\" />\n");
+
         }
 
         return SKIP_BODY;
