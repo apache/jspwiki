@@ -1,0 +1,22 @@
+A WikiPage can have any number of attachments.  An attachment can be any file, even a file that contains WikiMarkup.  These files are handled very similarly to any email program, i.e. you "Attach a file" (see bottom of this page), etc.
+
+The name of an attachment is of form {{~PageName/attachment name}}, where the ~PageName signifies the "owning" page.  In the future, the access rights of an attachment will be the same as the access rights of the page, and thus we need a sort of a "parent" page for each attachment.  Besides, calling them "attachments" without something to attach them to would be kinda odd, yes? The "attachment name" is the original file name.
+
+You can refer to an attachment simply by putting its name in full form in brackets, just like when referring to any WikiPage.  For example, [[TestPage/testpicture.png] would refer to the "testpicture.png" that has been attached to page "~TestPage".  However, if you're on the same page, then you don't need to name the page, i.e. on this page, [[JSPWikiFileAttachments/test.txt] is the same as referring to [[test.txt].  In case you happen to have a WikiPage and an attachment of the same name, the attachment takes precedence[1].
+
+If the attachment is an image, and that particular image type has been defined for automatic inlining, then the image gets inlined.  This means that you can treat a link to an attachment just like you would treat any link that goes outside this Wiki.
+
+Each attachment (except for inlined images) has a small paperclip icon next to it.  Clicking this icon takes you to the ~PageInfo display, which is very similar to viewing the page info of any normal WikiPage.  In fact, it is actually the same JSP file...  From there, you can download older versions, or upload new versions of that attachment.  If you upload a new version of the attachment, the file name does not need to be the same at all.
+
+If you click on "Attach file..." -link and nothing happens, make sure you have Javascript and popups enabled.  I am experimenting with this simple popup window for uploading, and if it is a problem, then I'll replace it with something else.  However, if we want to do stuff like a upload progress indicator, we really do want them in a separate window.  Besides, if you have a popup disabler software that disables windows that open on explicit clicks, then you probably have a very faulty popup disabler :).
+
+--[JanneJalkanen], 08-Dec-2002.
+
+[#1] This may still change.
+
+----
+
+Q: Is anything in brackets with a dot in the name considered an attachment name?
+
+A: Nope.  We make as little assumptions as possible about the attachment name.  We use a slash as a separator, but we always search through the attachment name space first, then the wikipage space.  If the link cannot be found from either, it's assumed to be a standard WikiName.  For example: [sampledocument.rtf] is assumed to be a WikiPage, since it does not exist as an attachment of this page.
+
