@@ -70,7 +70,8 @@ TEXTAREA.editor { }
                margin-left: 10px; }
 
 .weblogpermalink { font-size: 8px; 
-                   margin-left: 10px; }
+                   margin-left: 10px; 
+                   clear: both; }
 
 P.locknote { color: red;
              font-size: 130%;
