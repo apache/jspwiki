@@ -186,6 +186,8 @@ public class WikiEngine
             c_configured = true;
         }
 
+        log.info("JSPWiki "+Release.VERSTR+" starting. Whee!");
+
         log.debug("Configuring WikiEngine...");
 
         m_saveUserInfo   = "true".equals( props.getProperty( PROP_STOREUSERNAME, "true" ) );
