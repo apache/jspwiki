@@ -53,11 +53,20 @@
 
     if( accessRules.hasWriteAccess( userProfile ) == false )
     {
-        StringBuffer buf = new StringBuffer();
-        buf.append( "<h4>Unable to edit " + pagereq + ".</h4>\n" );
-        buf.append( "You do not have sufficient privileges to edit this page.\n" );
-        buf.append( "Have you logged in?\n" );
-        throw new WikiSecurityException( buf.toString() );
+        if( wiki.useStrictLogin() )
+        {
+            // Need to get a sensible page to send to!
+            String pageurl = wiki.encodeName( pagereq );
+            response.sendRedirect(wiki.getBaseURL()+"Login.jsp?page="+pageurl);
+        }
+        else
+        {
+            StringBuffer buf = new StringBuffer();
+            buf.append( "<h4>Unable to edit " + pagereq + ".</h4>\n" );
+            buf.append( "You do not have sufficient privileges to edit this page.\n" );
+            buf.append( "Have you logged in?\n" );
+            throw new WikiSecurityException( buf.toString() );
+        }
     }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
