@@ -1,0 +1,20 @@
+Inserts a link for creating a new [weblog|WeblogPlugin] entry.
+
+!Parameters
+
+* __entrytext__=''string'' : How the text should look like.  Default is "New entry".
+
+
+!Example
+
+{{{
+[{WeblogEntryPlugin}]
+}}}
+
+!See also
+
+[WeblogPlugin], [WeblogArchivePlugin], [CalendarTag].
+
+----
+
+Back to [JSPWikiPlugins].
