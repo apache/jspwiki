@@ -1,5 +1,7 @@
 2002-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.22.
+
         * SearchResult uses now "WikiPage" instead of a String to the page
         name.  Heed this, if you have your own implementation of a
         provider.
