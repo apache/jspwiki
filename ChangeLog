@@ -1,5 +1,9 @@
 2002-02-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Fixed a serious bug in CachingProvider, which caused null values
+        to be added to the internal page collection.  Thanks to Mahlen
+        Morris for pointing it out.
+
         * New class: InternalWikiException which gets thrown in case
         something really fishy and serious is going on inside Wiki.
 
