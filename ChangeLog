@@ -1,3 +1,10 @@
+2002-03-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.3.
+
+        * Added capability to set your user name via UserPreferences
+        page.  This data is stored as a cookie in your browser.
+
 2002-03-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.2.
