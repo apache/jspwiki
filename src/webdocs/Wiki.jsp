@@ -134,7 +134,7 @@
              {
                  // FIXME: We want to use pageLastChanged(pagereq, version) below...)
                  %>
-                 <I>This page last changed on <%=wiki.pageLastChanged( pagereq )%>.  
+                 <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=wiki.pageLastChanged( pagereq )%></A>.  
                     <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
                  <%
              } else {
