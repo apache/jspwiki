@@ -293,7 +293,7 @@ public class WikiEngine
             m_pageManager       = new PageManager( props );
             m_pluginManager     = new PluginManager( props );
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
-            m_attachmentManager = new AttachmentManager( props );
+            m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
 
             initReferenceManager();            
@@ -1015,6 +1015,17 @@ public class WikiEngine
         }
 
         return( result );
+    }
+
+    /**
+     *  Updates all references for the given page.
+     */
+    public void updateReferences( String pageName )
+    {
+        String pageData = getPureText( pageName, WikiProvider.LATEST_VERSION );
+
+        m_referenceManager.updateReferences( pageName,
+                                             scanWikiLinks( pageData ) );
     }
 
     /**
