@@ -748,7 +748,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src=";:";
 
-        assertEquals( "<DL>\n<DT><STRONG></STRONG></DT><DD></DD>\n</DL>\n",
+        assertEquals( "<DL>\n<DT></DT><DD></DD>\n</DL>\n",
                       translate(src) );
     }
 
