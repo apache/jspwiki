@@ -588,6 +588,11 @@ public class WikiEngine
         return m_templateDir;
     }
 
+    public TemplateManager getTemplateManager()
+    {
+        return m_templateManager;
+    }
+
     /**
      *  Returns the base URL.  Always prepend this to any reference
      *  you make.
@@ -1803,9 +1808,14 @@ public class WikiEngine
         }
         else
         {
-            wikipage = new WikiPage( pagereq );
+            wikipage = getPage( pagereq, version );
         }
 
+        if( wikipage == null ) wikipage = new WikiPage( pagereq );
+
+        //
+        //  Figure out which template we should be using for this page.
+        //
         if( template == null )
         {
             template = (String)wikipage.getAttribute( PROP_TEMPLATEDIR );
