@@ -1,11 +1,75 @@
+<!--
+    Copyright (C) Janne Jalkanen 2001.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-->
+
+<!--
+    This is the Ant build file for the JSPWiki project.
+
+    The verbosity in this file is intentional - it is also
+    an example for those who don't know Ant yet that well
+    and would like to learn it.
+
+    The build file assumes the following directory structure:
+
+    JSPWiki
+    |___build.xml
+    |  
+    |___etc
+    |   |___[jspwiki.properties and other misc files]
+    |          
+    |___src     
+    |   |___webdocs
+    |   |   |___[all .jsp files]
+    |   |   |___WEB-INF
+    |   |       |___web.xml [the deployment file]
+    |   |       
+    |   |___com 
+    |       |___[...and the rest of the source code files]
+    |          
+    |___tests   
+        |___com 
+            |___[...and the rest of the test source code]
+                  
+    $Id: build.xml,v 1.6 2001-10-09 19:55:50 jalkanen Exp $
+-->    
+       
+<!--   
+    First, we define the project.  We assign it a name,
+    and the default action if no action is specified on the
+    command line.  Also, all relative directory references
+    in the rest of the project file should be calculated from
+    the current directory.
+-->    
 <project name="JSPWiki" default="compile" basedir=".">
-
+       
+  <!-- This denotes the directory where the source code lies. -->
   <property name="code.src" value="src" />
+       
+  <!-- The class files are actually put in this directory.  It is
+       a good habit to keep .class -files separate from the .java -files. -->
   <property name="code.build" value ="build" />
-
+       
+  <!-- Define a temporary directory, based on the system temporary directory,
+       the user name, and the project name (defined above) -->
   <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${ant.project.name}" />
 
-  <property name="report.dir" value="reports" />
+  <!-- The following three properties define the location of the
+       test sources, the location of the test .class files and the
+       directory where the test results are written in. -->
 
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
@@ -15,14 +79,24 @@
        are collected, for example -->
   <property name="install.fulldir" value="${tmpdir}/install" />
 
+  <!-- The directory where the CVS sources are checked out. -->
   <property name="install.src" value="${tmpdir}/cvssrc" />
 
+  <!-- Define the CVS properties.  These are used when building the
+       source distribution.  Normally, you shouldn't have to care about these. 
+   -->
   <property name="cvs.root" value=":ext:grey.ecyrd.com:/p/cvs" />
   <property name="cvs.module" value="JSPWiki" />
   <property name="cvs.tag" value="HEAD" />
 
+  <!-- And finally, the directory where the final .zip-file is put -->
   <property name="release.dir" value="releases" />
   
+  <!--  PATH DEFINITIONS -->
+
+  <!-- The base path for compilation.  We include, of course, the
+       already built files in the build-directory, and then we
+       add all the jar files in the "lib" -directory. -->
   <path id="path.base">
      <pathelement path="${code.build}" />
      <fileset dir="lib">
@@ -30,6 +104,9 @@
      </fileset>
   </path>
 
+  <!-- The path used for running tests.  We add the tests/etc directory
+       to the base path defined above, since we put all the relevant
+       .properties-files in tests/etc. -->
   <path id="path.tests">
       <pathelement path="${tests.src}/etc" />
       <path refid="path.base" />
@@ -39,36 +116,59 @@
 
   <!-- Initialising, cleaning, etc. -->
 
-  <target name="init">
+  <target name="init" 
+          description="Initializes everything, creates directories, etc.">
      <mkdir dir="${code.build}" />
      <mkdir dir="${tests.build}" />
      <mkdir dir="${tests.reports}" />
   </target>
 
-  <target name="clean">
+  <!-- Removes the build directory and the tests build directory -->
+  <target name="clean"
+          description="Cleans away all generated files.">
     <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
   </target>
 
+  <!-- ============================================================== -->
 
   <!-- Compilation targets -->
 
-  <target name="compile" depends="init">
+  <!-- In English this means that the "init" -target must be executed
+       first.  After this, the java compiler is invoked with options
+       that compile every .java file in ${code.src} into .class files
+       in directory ${code.build}.  The is no debugging information
+       and the compiler is instructed to optimize the resulting code.
+
+       For the classpath we use the previously defined path called
+       "path.base" -->
+
+  <target name="compile" depends="init"
+          description="Builds the source code.">
     <javac srcdir="${code.src}"
-           destdir="${code.build}">
+           destdir="${code.build}"
+           debug="off"
+           optimize="on">
       <classpath refid="path.base" />
     </javac>
   </target>
 
-  <target name="compiletests">
+  <!-- This is similar to above.  We use this to compile the
+       tests. -->
+  <target name="compiletests" depends="init"
+          description="Builds the test code.">
     <javac srcdir="${tests.src}"
            destdir="${tests.build}">
       <classpath refid="path.base" />
     </javac>
   </target>
 
+  <!-- ============================================================== -->
+
   <!--  Installation targets -->
 
+  <!-- This target makes sure all the necessary directories exist
+       for building the installation package. -->
   <target name="installinit">
     <mkdir dir="${install.fulldir}" />
     <delete dir="${install.src}" />    
@@ -76,7 +176,25 @@
     <mkdir dir="${release.dir}" />
   </target>
 
-  <target name="war" depends="compile,installinit">
+  <!--  Builds a Web Archive - basically a JAR file which
+        also contains all of the JSP pages and can be deployed
+        as-is. 
+        
+        The archive gets put in the ${install.fulldir}.  The 
+        reason for this is that this is just a temporary
+        step when building the entire distribution archive.
+
+        We include the following things:
+
+        1) All .jar -files in the lib-directory.
+        2) All .class-files from the build-directory
+        3) Everything from the src/webdocs -directory
+        4) Everything from the etc-directory go to the WEB-INF -directory
+           of the WAR-file.
+   -->
+
+  <target name="war" depends="compile,installinit"
+          description="Builds the WAR file for installation.">
 
     <war warfile="${install.fulldir}/${ant.project.name}.war"
          webxml="${code.src}/webdocs/WEB-INF/web.xml">
@@ -88,7 +206,20 @@
 
   </target>
 
-  <target name="srczip" depends="installinit">
+  <!--
+       Here goes some nice Ant magic...  We build the source
+       code archive by directly exporting all code from the CVS
+       repository, and then zipping it to the temporary installation
+       directory.
+
+       Note that you must have your CVS set up so that it does
+       not ask for a password when you're checking it out.
+
+       If you don't have CVS access, you can't build a source 
+       zip with this.  Sorry.
+   -->
+  <target name="srczip" depends="installinit"
+          description="Builds source zip.">
 
     <cvs cvsRoot="${cvs.root}" 
          dest="${install.src}" 
@@ -101,7 +232,17 @@
 
   </target>
 
-  <target name="dist" depends="war,srczip">
+  <!-- Builds the entire distribution set.
+
+       We build both the WAR-file and the source zip, then
+       copy in some useful files and zip the whole thing
+       into the release directory.
+
+       Note that if you don't have CVS access set up, you 
+       probably can't run this.
+    -->
+  <target name="dist" depends="war,srczip"
+          description="Builds the entire distribution archive.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="doc/LICENSE" todir="${install.fulldir}" />
@@ -109,16 +250,37 @@
           basedir="${install.fulldir}" />
   </target>
 
+  <!-- ============================================================== -->
+
   <!-- Running tests -->
 
-  <target name="tests" depends="compile,compiletests">
+  <!-- This target runs the JUnit tests that are available
+       under tests/.  It generates the test result files
+       into the ${tests.reports} -directory, one file per
+       each tested class.  The tests are generated in
+       plain text, but you can easily get XML format results
+       as well, just by setting the formatter, below.
+
+       Only tests that end with "*Test.java" are included.
+       This is because then you can also use a manual
+       "AllTests.java" in each directory, as per the JUnit
+       Cookbook.
+
+       This runs the tests in text mode.  If you want the
+       pretty GUI you probably want to write a new target.
+   -->
+  <target name="tests" depends="compile,compiletests"
+          description="Runs the JUnit tests.">
+
     <junit printsummary="yes" haltonfailure="no" fork="no">
         <classpath>
            <path refid="path.tests" />
            <pathelement path="${tests.build}" />
            <pathelement path="${java.class.path}" />
         </classpath>
+
         <formatter type="plain" />
+
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
                 <include name="**/*Test.java" />
@@ -126,6 +288,7 @@
            </fileset>
         </batchtest>
      </junit>
+
   </target>
 
 </project>
