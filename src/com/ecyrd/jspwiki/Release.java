@@ -35,7 +35,7 @@ public class Release
     /** This should be empty when doing a release - otherwise
         keep it as "cvs" so that whenever someone checks out the code,
         they know it is a bleeding-edge version. */
-    private static final String    POSTFIX       = "-cvs";
+    private static final String    POSTFIX       = "-alpha";
 
     /**
      *  This should be increased every time you do a release.
