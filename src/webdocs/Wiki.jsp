@@ -1,6 +1,9 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.ViewPermission" %>
+<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -56,6 +59,19 @@
     if( wikipage == null )
     {
         wikipage = new WikiPage( pagereq );
+    }
+
+    AuthorizationManager mgr = wiki.getAuthorizationManager();
+    UserProfile currentUser  = wiki.getUserManager().getUserProfile( request );
+
+    if( !mgr.checkPermission( wikipage,
+                              currentUser,
+                              new ViewPermission() ) )
+    {
+        log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+        String pageurl = wiki.encodeName( pagereq );
+        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
+        return;
     }
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
