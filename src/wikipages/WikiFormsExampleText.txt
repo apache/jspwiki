@@ -25,7 +25,7 @@ some output to display here. While the output is usually built in response to a 
  what the output looks like:
 
 %%(margin:auto;text-align:center;padding:4px;background:#eee;border:1px inset)
-[{FormOutput element='output' form='testform' handler='CurrentTimePlugin' populate='handler'}]
+[{FormOutput form='testform' handler='CurrentTimePlugin' populate='handler'}]
 %%
 
 
@@ -48,23 +48,6 @@ Enter the time format string: [{FormInput type='text' name='format'}]
 
 The rest of the form merely demonstrates some other HTML form elements. The don't work with CurrentTimePlugin, but you'll probably want them in your special form handler plugins.
 
-Checkboxes:
-{{{
-[{Form element='checkbox' name='chk1' value='c1'}] Spam!\\
-[{Form element='checkbox' name='chk2' value='c2'}] Dead parrot.\\
-[{Form element='checkbox' name='chk3' value='c3'}] Lumberjack.\\
-}}}
-
-
-Radio buttons:
-{{{
-[{Form element='radio' name='rd1' value='r1'}] Millennium Falcon\\
-[{Form element='radio' name='rd1' value='r2'}] Agamemnon\\
-[{Form element='radio' name='rd1' value='r3'}] The Anticipation of a New Lover's Arrival\\
-}}}
-
-(Notice that all radio button elements share the same name.)
-
 Select list:
 {{{
 [{FormSelect name='sel1' value='fee;*fie;foe;foo'}]\\
@@ -85,7 +68,7 @@ Textarea:
  
 Before finishing up, we need to add a submit button:
 {{{
-[{Form element='submit' name='x' value='Update'}]
+[{FormInput type='submit' name='x' value='Update'}]
 }}}
 [{FormInput type='submit' name='x' value='Update'}]
 
@@ -107,6 +90,6 @@ Go ahead, click on ''Update'', and notice how your format changes and selections
 * (Optional) Start with the ''FormSet'', give defaults
 * (Optional) If the form is supposed to give out information, add an ''output''
 * (Mandatory) ''open'' the form
-* (Optional) add any text/radio/checkbox/select elements
+* (Optional) add any text/select elements
 * (Mandatory) add a ''submit''
 * (Mandatory) ''close'' the form
