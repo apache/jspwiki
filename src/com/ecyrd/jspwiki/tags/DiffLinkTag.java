@@ -24,12 +24,18 @@ import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiProvider;
 
 /**
  *  Writes a diff link.  Body of the link becomes the link text.
  *  <P><B>Attributes<B></P>
  *  <UL>
- *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <LI>page - Page name to refer to.  Default is the current page.</LI>
+ *    <LI>version - The older of these versions.  May be an integer to
+ *        signify a version number, or the text "latest" to signify the latest version.
+ *        If not specified, will default to "latest".  May also be "previous" to signify
+ *        a version prior to this particular version.</LI>
+ *    <LI>newVersion - The newer of these versions.  Can also be "latest", or "previous".  Defaults to "latest".</LI>
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -38,10 +44,13 @@ import com.ecyrd.jspwiki.WikiPage;
 public class DiffLinkTag
     extends WikiLinkTag
 {
-    private String m_version;
-    private String m_newVersion;
+    public static final String VER_LATEST   = "latest";
+    public static final String VER_PREVIOUS = "previous";
 
-    public String getVersion()
+    private String m_version    = VER_LATEST;
+    private String m_newVersion = VER_LATEST;
+
+    public final String getVersion()
     {
         return m_version;
     }
@@ -51,7 +60,7 @@ public class DiffLinkTag
         m_version = arg;
     }
 
-    public String getNewVersion()
+    public final String getNewVersion()
     {
         return m_newVersion;
     }
@@ -85,10 +94,38 @@ public class DiffLinkTag
         int r1 = 0;
         int r2 = 0;
 
-        if( getVersion().equals("latest") )
+        if( VER_LATEST.equals(getVersion()) )
         {
-            r1 = m_wikiContext.getPage().getVersion();
-            r2 = (r1 > 1) ? (r1-1) : -1;
+            WikiPage latest = engine.getPage( pageName, 
+                                              WikiProvider.LATEST_VERSION );
+
+            r1 = latest.getVersion();
+        }
+        else if( VER_PREVIOUS.equals(getVersion()) )
+        {
+            r1 = m_wikiContext.getPage().getVersion() - 1;
+            r1 = (r1 < 1 ) ? 1 : r1;
+        }
+        else
+        {
+            r1 = Integer.parseInt( getVersion() );
+        }
+
+        if( VER_LATEST.equals(getNewVersion()) )
+        {
+            WikiPage latest = engine.getPage( pageName,
+                                              WikiProvider.LATEST_VERSION );
+
+            r2 = latest.getVersion();
+        }
+        else if( VER_PREVIOUS.equals(getNewVersion()) )
+        {
+            r2 = m_wikiContext.getPage().getVersion() - 1;
+            r2 = (r2 < 1 ) ? 1 : r2;
+        }
+        else
+        {
+            r2 = Integer.parseInt( getNewVersion() );
         }
 
         switch( m_format )
