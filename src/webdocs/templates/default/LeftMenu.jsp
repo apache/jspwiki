@@ -29,7 +29,6 @@
         </tt>    
     </wiki:UserCheck>
 </div>
-<wiki:Include page="LoginBox.jsp" />
 
 <!-- End of automatically generated page -->
 
