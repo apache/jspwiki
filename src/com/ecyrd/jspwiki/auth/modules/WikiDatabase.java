@@ -11,6 +11,19 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  This implements an user database that is based on WikiPages.
+ *  The name of the page determines the group name (as a convention,
+ *  we suggest the name of the page ends in Group, e.g. EditorGroup).
+ *  By setting attribute 'members' on the page, the named members are
+ *  added to the group:
+ *
+ * <pre>
+ * [{SET members fee fie foe foo}]
+ * </pre>
+ *
+ * <p>The list of members can be separated by commas or spaces.
+ *
+ * <p>TODO: are 'named members' supposed to be usernames, or are
+ *    group names allowed?
  */
 public class WikiDatabase
     implements UserDatabase
@@ -20,6 +33,12 @@ public class WikiDatabase
     static Category log = Category.getInstance( WikiDatabase.class );
 
     private HashMap m_principals = new HashMap();
+
+    /**
+     * The attribute to set on a page - [{SET members ...}] - to define 
+     * members of the group named by that page. 
+     */
+    public static final String ATTR_MEMBERLIST = "members";
 
     public void initialize( WikiEngine engine, Properties props )
     {
@@ -117,7 +136,12 @@ public class WikiDatabase
             {
                 WikiPage p = (WikiPage) i.next();
 
-                List memberList = (List) p.getAttribute("_members");
+                // FIX: if the pages haven't been scanned yet, no attributes.
+                // If the default perms are restrictive, the user can never save
+                // -> groups will not be updated on postSave(), either.
+                // Requires either changed initialization order, or, since this
+                // will fail with lazy-init-systems, something more elaborate..
+                List memberList = (List) p.getAttribute(ATTR_MEMBERLIST);
 
                 if( memberList != null )
                 {
@@ -182,7 +206,7 @@ public class WikiDatabase
 
             m_engine.textToHTML( context, content );
 
-            String members = (String) p.getAttribute("members");            
+            String members = (String) p.getAttribute(ATTR_MEMBERLIST);            
 
             updateGroup( p.getName(), parseMemberList( members ) );
         }
