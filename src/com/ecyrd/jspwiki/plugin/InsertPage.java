@@ -42,6 +42,7 @@ public class InsertPage
     public static final String PARAM_MAXLENGTH = "maxlength";
     public static final String PARAM_CLASS     = "class";
     public static final String PARAM_SECTION   = "section";
+    public static final String PARAM_DEFAULT   = "default";
 
     private static final String DEFAULT_STYLE = "";
 
@@ -55,6 +56,7 @@ public class InsertPage
         String clazz        = (String) params.get( PARAM_CLASS );
         String includedPage = (String) params.get( PARAM_PAGENAME );
         String style        = (String) params.get( PARAM_STYLE );
+        String defaultstr   = (String) params.get( PARAM_DEFAULT );
         int    section      = TextUtil.parseIntParameter((String) params.get( PARAM_SECTION ), 
                                                          -1 );
         int    maxlen       = TextUtil.parseIntParameter((String) params.get( PARAM_MAXLENGTH ),
@@ -119,8 +121,15 @@ public class InsertPage
             }
             else
             {
-                res.append("There is no page called '"+includedPage+"'.  Would you like to ");
-                res.append("<a href=\""+engine.getEditURL( includedPage )+"\">create it?</a>");
+                if( defaultstr != null ) 
+                {
+                    res.append( defaultstr );
+                }
+                else
+                {
+                    res.append("There is no page called '"+includedPage+"'.  Would you like to ");
+                    res.append("<a href=\""+engine.getEditURL( includedPage )+"\">create it?</a>");
+                }
             }
         }
         else
