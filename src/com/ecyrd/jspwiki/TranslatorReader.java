@@ -514,10 +514,11 @@ public class TranslatorReader extends Reader
             String link = res.group(2);
             String matchedLink;
 
+            /*
             System.out.println("WORD="+word);
             System.out.println("  Replacing: "+link);
             System.out.println("  Head="+res.group(1));
-
+            */
             callMutatorChain( m_localLinkMutatorChain, link );
 
             if( "~".equals( res.group(1) ) )
@@ -541,7 +542,7 @@ public class TranslatorReader extends Reader
                                            end, 
                                            link );
 
-            System.out.println("   Result="+word);
+            // System.out.println("   Result="+word);
         } // if match
 
         return word;
@@ -1303,16 +1304,18 @@ public class TranslatorReader extends Reader
 
                         if( !camelCase.equals(word.toString()) )
                         {
+                            /*
                             System.out.println("  Replacing "+buf);
                             System.out.println("  From "+start);
                             System.out.println("  With "+camelCase);
-
+                            */
                             start = buf.length();
                             buf.replace(start-word.length(),
                                         start,
                                         camelCase);
-
+                            /*
                             System.out.println("  Resulting with "+buf);
+                            */
                         }
 
                         // We've ended a word boundary, so time to reset.
