@@ -1,7 +1,6 @@
 package com.ecyrd.jspwiki.auth;
 
-import java.util.Properties;
-import java.util.HashMap;
+import java.util.*;
 import java.security.Principal;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +34,8 @@ public class UserManager
     private HashMap            m_groups = new HashMap();
 
     // FIXME: These should probably be localized.
+    // FIXME: All is used as a catch-all.
+
     public static final String GROUP_GUEST       = "Guest";
     public static final String GROUP_NAMEDGUEST  = "NamedGuest";
     public static final String GROUP_KNOWNPERSON = "KnownPerson";
@@ -53,9 +54,10 @@ public class UserManager
                                                         PROP_STOREIPADDRESS, 
                                                         m_storeIPAddress );
 
-        // FIXME: We probably should set the names for these groups.
+        WikiGroup all = new AllGroup();
+        all.setName( "All" );
         m_groups.put( GROUP_GUEST,       new AllGroup() );
-        m_groups.put( "All",             new AllGroup() ); // FIXME: Hard-coded.
+        m_groups.put( "All",             all );
         m_groups.put( GROUP_NAMEDGUEST,  new NamedGroup() );
         m_groups.put( GROUP_KNOWNPERSON, new KnownGroup() );
 
@@ -143,6 +145,35 @@ public class UserManager
         }
 
         return group;
+    }
+
+    /**
+     *  Returns a list of all WikiGroups this Principal is a member
+     *  of.
+     */
+    // FIXME: This is not a very good solution; UserProfile
+    //        should really cache the information.
+    // FIXME: Should really query the page manager.
+
+    public List getGroupsForPrincipal( Principal user )
+    {
+        ArrayList list = new ArrayList();
+
+        synchronized( m_groups )
+        {
+            for( Iterator i = m_groups.values().iterator(); i.hasNext(); )
+            {
+                WikiGroup g = (WikiGroup) i.next();
+
+                if( g.isMember( user ) )
+                {
+                    log.debug("User "+user.getName()+" is a member of "+g.getName());
+                    list.add( g );
+                }
+            }
+        }
+
+        return list;
     }
 
     /**
