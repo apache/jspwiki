@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -48,7 +48,7 @@ public class Release
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 1;
-    public static final int        MINORREVISION = 106;
+    public static final int        MINORREVISION = 107;
 
     /**
      *  This is the generic version string you should use

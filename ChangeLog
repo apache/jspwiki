@@ -1,3 +1,13 @@
+2004-08-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.107
+
+        * Oof... Apparently java.net.URLEncoder *does* use the default
+        platform encoding.  Fixed it to use either UTF-8 or ISO-8859-1 to
+        make all scandic tests also run on OSX (which defaults to Mac
+        Roman, duh).  Also fixed the tests so that they are now full
+        US-ASCII instead of Latin-1.
+
 2004-08-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.106.
