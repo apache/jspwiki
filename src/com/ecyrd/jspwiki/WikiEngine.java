@@ -452,6 +452,16 @@ public class WikiEngine
 
     public static final String PROP_PAGEFILTER = "jspwiki.pageFilter.";
 
+    /**
+     *  Adds a page filter to the queue.
+     *
+     *  @since 2.1.44.
+     */
+    public void addPageFilter( PageFilter f, int priority )
+    {
+        m_pageFilters.add( f, priority );
+    }
+
     private void initPageFilters( Properties props )
     {
         for( Enumeration enum = props.propertyNames(); enum.hasMoreElements(); )
@@ -474,7 +484,7 @@ public class WikiEngine
 
                     filter.initialize( props );
 
-                    m_pageFilters.add( filter, priority );
+                    addPageFilter( filter, priority );
                     log.info("Added page filter "+cl.getName()+" with priority "+priority);
                 }
                 catch( NumberFormatException e )
