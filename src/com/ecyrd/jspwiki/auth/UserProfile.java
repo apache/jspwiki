@@ -39,10 +39,10 @@ public class UserProfile
 
     private int m_loginStatus = NONE;
 
-    public static final int NONE     = 0;
-    public static final int COOKIE   = 1;
-    public static final int PASSWORD = 2;
-
+    public static final int NONE      = 0;
+    public static final int COOKIE    = 1;
+    public static final int CONTAINER = 2;  // Container has done auth for us.
+    public static final int PASSWORD  = 3;
 
     public UserProfile()
     {
