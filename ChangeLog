@@ -1,3 +1,10 @@
+2003-06-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.39.
+
+        * Bug fix: we didn't set the author on edit, but used the previous
+        author.  Oops =).
+
 2003-06-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.38.
