@@ -1,0 +1,12 @@
+Each heading that you use generates also a "named anchor" into the HTML file.  This allows you to refer to a section of a wiki page.
+
+For example, if the heading on this page is called
+{{{
+!!This is my heading
+}}}
+The resulting HTML code would look like
+{{{
+<h3><a name="#section-NamedHeadings-ThisIsMyHeading">This is my heading</a></h3>
+}}}
+
+This allows you to refer to the heading from a different wiki page.  And you can use it from WikiMarkup as well!  For example, saying [TextFormattingRules#PreformattedText] refers to the "Preformatted text" -section of the page [TextFormattingRules].

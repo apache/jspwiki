@@ -65,15 +65,22 @@ you save your page.
 
 !Adding pictures
 
-For security reasons uploading images is not permitted, but you can embed
-any image in the wiki code by putting the image available somewhere on the web in one of the allowed formats, and then just linking to it.
+You can embed any image in the wiki code by putting the image available somewhere on the web in one of the allowed formats, and then just linking to it.
 For example, this is an inlined [PNG] image: [http://www.ecyrd.com/~jalkanen/test.png].
 
 If you specify a link text ([[this one here|http://example.com/example.png]) it becomes
 the ALT text for those who either can't or don't want to view images.
 
+You can also attach an image, and refer to it as if it were any other page.  See [WikiAttachments] for more information.
+
 The list of accepted image types depends on the Wiki.  See the [SystemInfo]
 page for a list of the different image types.
+
+!Headings
+
+JSPWiki gives you three kinds of headings: A small one (denoted by starting a line with a single exclamation mark '!'), a medium-sized one (two exclamation marks), or a large one (three marks).
+
+All headings also generate a "named anchor", so that you can refer from other wikipages to this wikipage.  See [Named Headings] for more information.
 
 !Bulleted lists
 Use an asterisk (*) in the first column to make bulleted lists. Use more asterisks for deeper indentation. For example:
