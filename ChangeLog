@@ -1,5 +1,14 @@
 2003-02-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.25.
+
+        * BasicAttachmentProvider should now properly migrate from earlier
+        versions of JSPWiki 2.0 beta.
+
+        * Bug fix: downloading attachments that have non-ascii names
+        should work now.  Uploading does not still work, because of bugs
+        in httpmultipartrequest library.  Reported by Torsten Hildebrandt.
+
         * Bug fix: '}' inside plugins no longer stops parsing.  Reported
         by William Morgan, fix courtesy of Torsten Hildebrandt.
         
