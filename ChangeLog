@@ -6,7 +6,8 @@
         and next versions; instead, two new tags "PreviousVersionTag" and
         "NextVersionTag" have been implemented.  This will make migration
         a lot easier when you can delete intermediate versions (or help
-        a lot if you want to do a SubVersionProvider...)
+        a lot if you want to do a SubVersionProvider...)  The tags need to
+        be hooked up to the version history before they're useful, though...
 
         * DiffLinkTag now understands a magical version number "current"
         to refer to the current version.
