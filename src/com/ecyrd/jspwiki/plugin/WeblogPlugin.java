@@ -279,19 +279,7 @@ public class WeblogPlugin implements WikiPlugin
     {
         String pagedata = engine.getPureText( commentpage, WikiProvider.LATEST_VERSION );
 
-        int tags  = 0;
-        int start = 0;
-
-        while( (start = pagedata.indexOf("----",start)) != -1 )
-        {
-            tags++;
-            start+=4; // Skip this "----"
-        }
-
-        //
-        // The first comment does not get the "----"
-        //
-        return pagedata.length() > 0 ? tags+1 : 0;
+        return TextUtil.countSections( pagedata );
     }
 
     /**
