@@ -827,6 +827,7 @@ public class WikiEngine
 
     /**
      *  Returns specific information about a Wiki page.
+     *  @since 1.6.7.
      */
 
     public WikiPage getPage( String pagereq, int version )
