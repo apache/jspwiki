@@ -1,0 +1,18 @@
+
+This is a feature release of JSPWiki.
+
+Major changes since the last release are:
+
+* Page names can now contain also underscores and dots (_ and .)
+
+* You can now specify using regular expressions which images are
+  automatically included in the page when you make a hyperlink to
+  them.  Check out the jspwiki.properties file for examples.
+
+* You can now have list items (for the * and # lists) spanning
+  multiple lines if you align the lines with spaces (like these lines
+  here).
+
+* The sample pages included with this package have been rewritten.
+
+

@@ -1,3 +1,9 @@
+2001-10-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * This is R2 - v1.4.0.
+
+        * Rewrote the included sample pages.
+
 2001-10-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * build.xml can now generate javadocs to docs/javadoc.
