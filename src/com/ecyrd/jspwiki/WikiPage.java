@@ -90,6 +90,16 @@ public class WikiPage
     }
 
     /**
+     *  Removes an attribute from the page, if it exists.
+     *  @return If the attribute existed, returns the object.
+     *  @since 2.1.111
+     */
+    public Object removeAttribute( String key )
+    {
+        return m_attributes.remove( key );
+    }
+
+    /**
      *  Returns the date when this page was last modified.
      */
     public Date getLastModified()
