@@ -6,6 +6,8 @@ Major changes since the last stable (1.8.0) release are:
 - Support for traditional WikiLinks without square brackets
   (InterCapping, BumpyWords, CamelCase, ...)
 
+- Splitting of Wiki pages into "Controller" and "View" pages has begun.
+
 UPGRADE NOTES
 =============
 
@@ -17,3 +19,4 @@ UPGRADE NOTES
   * CachingProvider is no longer set explicitly.  You must use the new
     "jspwiki.usePageCache" property instead.
 
+  * All HTML code should now go into ViewTemplate.jsp instead of Wiki.jsp.
