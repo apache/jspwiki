@@ -1,3 +1,11 @@
+2002-11-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.40.
+
+        * Added plenty of code for attachments.  Storing and retrieving
+        works, as well as listing.  However, uploading still has some
+        problems. 
+
 2002-11-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.39.
