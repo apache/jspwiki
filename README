@@ -4,14 +4,14 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.14 $
-                             $Date: 2003-01-03 20:53:47 $
+                         $Revision: 1.15 $
+                             $Date: 2003-01-03 20:54:36 $
                            $Author: jalkanen $
 
 What is it?
 -----------
 
-JSPWiki is a very simple WikiWiki clone.  It keeps all of its
+JSPWiki is a simple WikiWiki clone.  It keeps all of its
 formatting in JSP files, and uses a custom Java class called
 'com.ecyrd.jspwiki.WikiEngine' to all interfacing with the Wiki
 system.
