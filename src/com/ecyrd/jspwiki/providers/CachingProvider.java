@@ -53,6 +53,8 @@ public class CachingProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
+    private long m_milliSecondsBetweenChecks = 5000;
+
     public void initialize( Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -144,6 +146,51 @@ public class CachingProvider
         return result;
     }
 
+    /**
+     *  Returns true, if the page has been changed outside of JSPWiki.
+     */
+    private boolean checkIfPageChanged( CacheItem item )
+    {
+        if( item == null ) return false;
+
+        long currentTime = System.currentTimeMillis();
+
+        if( currentTime - item.m_lastChecked > m_milliSecondsBetweenChecks )
+        {
+            try
+            {
+                WikiPage cached  = item.m_page;
+                WikiPage current = m_provider.getPageInfo( cached.getName(),
+                                                           LATEST_VERSION );
+
+                item.m_lastChecked = currentTime;
+
+                long epsilon = 1000L; // FIXME: This should be adjusted according to provider granularity.
+                if( current.getLastModified().getTime() - cached.getLastModified().getTime() > epsilon )
+                {                
+                    log.debug("Page "+current.getName()+" has been externally modified, refreshing contents.");
+                    return true;
+                }
+            }
+            catch( ProviderException e )
+            {
+                log.error("While checking cache, got error: ",e);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *  Removes the page from cache, and attempts to reload all information.
+     */
+    private synchronized void revalidatePage( WikiPage page )
+        throws ProviderException
+    {
+        m_cache.remove( page.getName() );
+        addPage( page.getName(), null ); // If fetch fails, we want info to go directly to user
+    }
+
     private String getTextFromCache( String page )
         throws ProviderException
     {
@@ -152,6 +199,16 @@ public class CachingProvider
         synchronized(this)
         {
             item = (CacheItem)m_cache.get( page );
+        }
+
+        //
+        //  Check if page has been changed externally.  If it has, then
+        //  we need to refresh all of the information.
+        //
+        if( checkIfPageChanged( item ) )
+        {
+            revalidatePage( item.m_page );
+            item = (CacheItem) m_cache.get( page );
         }
 
         if( item == null )
@@ -437,6 +494,7 @@ public class CachingProvider
     private class CacheItem
     {
         WikiPage      m_page;
+        long          m_lastChecked = 0L;
         SoftReference m_text;
     }
 }
