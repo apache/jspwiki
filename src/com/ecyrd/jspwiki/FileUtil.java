@@ -34,17 +34,19 @@ public class FileUtil
      *  Makes a new temporary file and writes content into it.
      *
      *  @param content Initial content of the temporary file.
+     *  @param encoding Encoding to use.
      *  @return The handle to the new temporary file
      *  @throws IOException If the content creation failed.
      */
-    public static File newTmpFile( String content )
+    public static File newTmpFile( String content, String encoding )
         throws IOException
     {
         File f = File.createTempFile( "jspwiki", null );
 
         StringReader in = new StringReader( content );
 
-        FileWriter out = new FileWriter( f );
+        Writer out = new OutputStreamWriter( new FileOutputStream( f ),
+                                             encoding );
 
         int c;
 
@@ -56,6 +58,13 @@ public class FileUtil
         out.close();
 
         return f;
+    }
+
+    /** Default encoding is ISO-8859-1 */
+    public static File newTmpFile( String content )
+        throws IOException
+    {
+        return newTmpFile( content, "ISO-8859-1" );
     }
 
     /**
@@ -86,5 +95,66 @@ public class FileUtil
         process.waitFor();
         
         return result.toString();
+    }
+
+    /**
+     *  Is smart and falls back to ISO-8859-1 if you get exceptions.
+     */
+    public static String readContents( InputStream input, String encoding )
+        throws IOException
+    {
+        Reader in  = null;
+        Writer out = null;
+
+        BufferedInputStream realinput = new BufferedInputStream( input );
+
+        realinput.mark( realinput.available() );
+
+        try
+        {
+            in = new BufferedReader( new InputStreamReader( realinput, 
+                                                            encoding ) );
+            out = new StringWriter();
+
+            int c;
+        
+            while( (c = in.read()) != -1  )
+            {
+                out.write( c );
+            }
+
+            return out.toString();
+        }
+        catch( IOException e )
+        {
+            if( !encoding.equals("ISO-8859-1") )
+            {
+                // FIXME: The real exceptions we get in case there is a problem with
+                // encoding are sun.io.MalformedInputExceptions, but they are not
+                // java standard, so we'd better not catch them.
+
+                log.info( "Unable to read stream - odd exception.  Assuming this data is ISO-8859-1 and retrying.\n  "+e.getMessage() );
+                log.debug( "Full exception is", e );
+                
+                // We try again, this time with a more conventional encoding
+                // for backwards compatibility.            
+
+                realinput.reset();
+                return readContents( realinput, "ISO-8859-1" );
+            }
+            else
+            {
+                throw( e );
+            }
+        }
+        finally
+        {
+            try
+            {
+                if( in != null ) in.close();
+                if( out != null ) out.close();
+            }
+            catch( Exception e ) {} // FIXME: Log errors.
+        }
     }
 }
