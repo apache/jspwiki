@@ -1,3 +1,14 @@
+2003-06-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.1.36.
+
+        * Added parameter "entrytext" to WeblogEntryPlugin.
+
+        * Added "NewBlogEntry.jsp", since on a multi-user weblog you would
+        very easily get conflicts with people editing the same page.
+        Also, if you had an old version in the cache, clicking on "New
+        entry" would cause the entry to go to an old date.
+
 2003-06-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.35.
