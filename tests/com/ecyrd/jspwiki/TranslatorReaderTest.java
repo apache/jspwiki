@@ -1220,7 +1220,18 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "{{{\ncode.}}\n";
 
-        assertNotNull( translate(src) );
+        assertEquals( "<PRE>\ncode.}}\n</PRE>\n", translate(src) );
+    }
+
+    /**
+     *  Shortened version of the previous one.
+     */
+    public void testBrokenPageTextShort2()
+        throws Exception
+    {
+        String src = "{{{\ncode.}\n";
+
+        assertEquals( "<PRE>\ncode.}\n</PRE>\n", translate(src) );
     }
 
     
