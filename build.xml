@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.26 2002-12-14 00:38:50 jalkanen Exp $
+    $Id: build.xml,v 1.27 2003-06-01 15:35:13 jalkanen Exp $
 -->    
        
 <!--   
@@ -159,7 +159,8 @@
     <javac srcdir="${code.src}"
            destdir="${code.build}"
            debug="on"
-           optimize="off">
+           optimize="off"
+           deprecation="off">
       <classpath refid="path.base" />
     </javac>
   </target>
@@ -177,10 +178,11 @@
 
   <!-- This is similar to above.  We use this to compile the
        tests. -->
-  <target name="compiletests" depends="init"
+  <target name="compiletests" depends="init,compile"
           description="Builds the test code.">
     <javac srcdir="${tests.src}"
-           destdir="${tests.build}">
+           destdir="${tests.build}"
+           debug="on">
       <classpath refid="path.base" />
     </javac>
   </target>
@@ -195,7 +197,7 @@
 
     <javadoc sourcepath="${code.src}"
              destdir="${docs.javadoc}"
-             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment">
+             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment,com.ecyrd.jspwiki.acl,com.ecyrd.jspwiki.auth,com.ecyrd.jspwiki.auth.modules,com.ecyrd.jspwiki.filters,com.ecyrd.jspwiki.util">
       <classpath refid="path.base" />
     </javadoc>
              
@@ -389,7 +391,7 @@
 
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
-                <include name="**/StressTest*.java" />
+                <include name="**/StressTestSpeed.java" />
            </fileset>
         </batchtest>
      </junit>
