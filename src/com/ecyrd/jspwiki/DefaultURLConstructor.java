@@ -67,6 +67,18 @@ public class DefaultURLConstructor
         {
             return doReplacement( "%u%n", name, absolute );
         }
+        else if( context.equals(WikiContext.UPLOAD) )
+        {
+            return doReplacement( "%uUpload.jsp?page=%n", name, absolute ); 
+        }
+        else if( context.equals(WikiContext.COMMENT) )
+        {
+            return doReplacement( "%uComment.jsp?page=%n", name, absolute ); 
+        }
+        else if( context.equals(WikiContext.ERROR) )
+        {
+            return doReplacement( "%uError.jsp", name, absolute );
+        }
         throw new InternalWikiException("Requested unsupported context "+context);
     }
 
