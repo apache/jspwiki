@@ -648,6 +648,7 @@ public class WikiEngine
     /**
      *  Returns the basic URL to a page, without any modifications.
      *  You may add any parameters to this.
+     *  @deprecated
      *
      *  @since 2.0.3
      */
@@ -658,6 +659,7 @@ public class WikiEngine
 
     /**
      *  Returns the basic URL to an editor.
+     *  @deprecated
      *
      *  @since 2.0.3
      */
@@ -669,12 +671,14 @@ public class WikiEngine
     /**
      *  Returns the basic attachment URL.
      *  @since 2.0.42.
+     *  @deprecated
      */
     public String getAttachmentURL( String attName )
     {
         return m_urlConstructor.makeURL( WikiContext.ATTACH, attName, false, null );
     }
 
+    /*
     public String getURL( String name, boolean absolute )
     {
         return m_urlConstructor.makeURL( WikiContext.NONE, name, absolute, null );
@@ -699,12 +703,15 @@ public class WikiEngine
     {
         return m_urlConstructor.makeURL( context, pageName, true, params );
     }
+    */
 
-    public String getURL( String context, String pageName, boolean absolute, String params )
+    /**
+     *  Returns an URL if a WikiContext is not available.
+     */
+    public String getURL( String context, String pageName, String params, boolean absolute )
     {
         return m_urlConstructor.makeURL( context, pageName, absolute, params );
     }
-
     /**
      *  Returns the default front page, if no page is used.
      */
