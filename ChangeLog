@@ -1,3 +1,12 @@
+2002-04-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.6.
+
+        * RSS feed is now richer.  I also added MANY settings to
+        jspwiki.properties, all starting with "jspwiki.rss".  It should
+        allow you to configure pretty much everything related to the RSS
+        feed.
+
 2002-04-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * RSS feed is now generated in the proper directory.  If you're not
