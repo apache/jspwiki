@@ -1,5 +1,10 @@
 2002-12-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.0.5.
+
+        * RecentChanges now displays also changed attachments.  This added
+        some new APIs in WikiAttachmentProvider and AttachmentManager.
+
         * v2.0.4.
 
         * Bug fix: Restoring previous versions from archive did not work.
