@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.xmlrpc;
 import java.io.*;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import java.util.*;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -51,7 +52,12 @@ public class RPCHandlerUTF8
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
-            result.add( ((WikiPage)i.next()).getName()  );
+            WikiPage p = (WikiPage) i.next();
+
+            if( !(p instanceof Attachment) )
+            {
+                result.add( p.getName() );
+            }
         }
 
         return result;
@@ -112,7 +118,7 @@ public class RPCHandlerUTF8
         {
             WikiPage page = (WikiPage)i.next();
 
-            if( page.getLastModified().after( since ) )
+            if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
             {
                 result.add( encodeWikiPage( page ) );
             }
