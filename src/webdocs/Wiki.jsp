@@ -127,17 +127,23 @@
              <% if( isEditable ) { %>
                  <A HREF="<%=wiki.getBaseURL()%>Edit.jsp?page=<%=pageurl%>">Edit <%=pageReference%></A>.
              <% } %>
+             <% if( wikipage != null ) { %>
+                 &nbsp;&nbsp;
+                 <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
+             <% } %>
           </td>
-          <td align="right">
+        </tr>
+        <tr>
+          <td align="left">
+             <FONT size="-1">
 	     <%
-             java.util.Date lastchange = wikipage.getLastModified();
-
-             if( lastchange != null )
+             if( wikipage != null )
              {
+                 java.util.Date lastchange = wikipage.getLastModified();
+
                  // FIXME: We want to use pageLastChanged(pagereq, version) below...)
                  %>
-                 <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=wikipage.getAuthor()%>.  
-                    <A HREF="<%=wiki.getBaseURL()%>PageInfo.jsp?page=<%=pageurl%>">More info...</A></I><BR>
+                 <I>This page last changed on <A HREF="<%=wiki.getBaseURL()%>Diff.jsp?page=<%=pageurl%>&r1=<%=version%>"><%=lastchange%></A> by <%=wikipage.getAuthor()%>.
                  <%
              } else {
                  %>
@@ -145,6 +151,7 @@
                  <%
              }
              %>
+             </FONT>
           </td>
         </tr>
       </table>
