@@ -104,6 +104,51 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testExtraPagename1()
+        throws Exception
+    {
+        String src = "Link [test_page]";
+
+        assertEquals("Link <A HREF=\"Wiki.jsp?page=Test_page\">test_page</A>\n",
+                     translate(src) );
+    }
+
+    public void testExtraPagename2()
+        throws Exception
+    {
+        String src = "Link [test.page]";
+
+        assertEquals("Link <A HREF=\"Wiki.jsp?page=Test.page\">test.page</A>\n",
+                     translate(src) );
+    }
+
+    public void testExtraPagename3()
+        throws Exception
+    {
+        String src = "Link [.testpage_]";
+
+        assertEquals("Link <A HREF=\"Wiki.jsp?page=.testpage_\">.testpage_</A>\n",
+                     translate(src) );
+    }
+
+    public void testInlineImages()
+        throws Exception
+    {
+        String src = "Link [test|http://www.ecyrd.com/test.png]";
+
+        assertEquals("Link <IMG CLASS=\"inline\" SRC=\"http://www.ecyrd.com/test.png\" ALT=\"test\">\n",
+                     translate(src) );
+    }
+
+    /*
+    public void testScandicPagename1()
+    {
+        String src = "Link [Â‰ˆTest]";
+
+        assertEquals("Link <A HREF=\"Wiki.jsp?page=aaoTest\">Â‰ˆTest</A>\n");
+    }
+    */
+
     public void testParagraph()
         throws Exception
     {

@@ -1,5 +1,11 @@
 2001-10-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * All external links ending with .png are now inlined as images.
+        This is an experiment to see if it actually works.  Don't expect
+        it to last.
+
+        * Page names can now contain _ and . as well.
+
         * Added some cosmetical changes to the JSP pages.
 
 2001-10-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
