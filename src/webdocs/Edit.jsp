@@ -58,7 +58,7 @@
         return;
     }
 
-    log.info("Editing page "+pagereq);
+    log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteHost() );
 
     //
     //  If the page does not exist, we'll get a null here.
@@ -135,11 +135,15 @@
         </tr>
 
         <tr>
-          <td>__text__</td><td>Makes text bold</td>
+          <td>__text__</td><td>Makes text <B>bold</B>.</td>
         </tr>
 
         <tr>
-          <td>''text''</td><td>Makes text in italics</td>
+          <td>''text''</td><td>Makes text in <I>italics</I>.</td>
+        </tr>
+
+        <tr>
+          <td>{{text}}</td><td>Makes text in <TT>monospaced font</TT>.</TD>
         </tr>
 
       </table>
