@@ -20,7 +20,8 @@ ant clean
 ant war
 
 rm -rf $TOMCAT_HOME/webapps/JSPWiki
-cp /tmp/jalkanen/JSPWiki/install/*.war $TOMCAT_HOME/webapps
+USER=`whoami`
+cp /tmp/$USER/JSPWiki/install/*.war $TOMCAT_HOME/webapps
 
 cd $TOMCAT_HOME/webapps
 rm -rf JSPWiki
