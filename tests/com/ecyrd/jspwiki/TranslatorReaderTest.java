@@ -650,6 +650,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "test\n", translate(src) );
     }
 
+    public void testPluginInsertJS()
+        throws Exception
+    {
+        String src="Today: [{INSERT JavaScriptPlugin}] ''day''.";
+
+        assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <I>day</I>.\n", translate(src) );
+    }
+
     public void testShortPluginInsert()
         throws Exception
     {
