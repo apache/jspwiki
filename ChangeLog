@@ -1,5 +1,9 @@
 2002-02-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * ReferringPagesPlugin now has extra parameter: "extras", which
+        can be used to note how many pages are still left with references
+        to this particular page.
+
         * Fixed a serious bug in CachingProvider, which caused null values
         to be added to the internal page collection.  Thanks to Mahlen
         Morris for pointing it out.
