@@ -33,8 +33,6 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     String usertext = wiki.safeGetParameter( request, "text" );
-
-    WikiContext wikiContext = new WikiContext( wiki, pagereq );
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
