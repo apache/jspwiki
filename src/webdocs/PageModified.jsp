@@ -30,11 +30,13 @@
 
     usertext = TextUtil.replaceString( usertext, "<", "&lt;" );
     usertext = TextUtil.replaceString( usertext, ">", "&gt;" );
+    usertext = TextUtil.replaceString( usertext, "\n", "<BR />" );
 
     String conflicttext = wiki.getText(pagereq);
 
     conflicttext = TextUtil.replaceString( conflicttext, "<", "&lt;" );
     conflicttext = TextUtil.replaceString( conflicttext, ">", "&gt;" );
+    conflicttext = TextUtil.replaceString( conflicttext, "\n", "<BR />" );
 
     log.info("Page concurrently modified "+pagereq);
 %>
@@ -85,17 +87,17 @@
 
       <P><HR></P>
 
-      <PRE>
+      <TT>
         <%=conflicttext%>
-      </PRE>      
+      </TT>      
 
       <P><HR></P>
 
       <P><FONT COLOR="#0000FF">And here's your text:</FONT></P>
 
-      <PRE>
+      <TT>
         <%=usertext%>
-      </PRE>
+      </TT>
 
       <P><HR></P>
 
