@@ -5,7 +5,8 @@
         * DefaultPermissions now has a variable: "defaultpermissions",
         which is used to read the permissions in.  The permissions of the
         actual page "DefaultPermissions", and the actual default
-        permissions are now thus separate.
+        permissions are now thus separate.  See the DefaultPermissions
+        page in the distribution for more information.
 
         * Added set/getLoginName() to UserProfile.
 
