@@ -31,7 +31,8 @@ public class RPCHandlerTest extends TestCase
 
         m_engine = new TestEngine2( m_props );
 
-        m_handler = new RPCHandler( m_engine );
+        m_handler = new RPCHandler();
+        m_handler.initialize( m_engine );
     }
 
     private void deleteTempFiles()

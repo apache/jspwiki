@@ -4,6 +4,7 @@ package com.ecyrd.jspwiki;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
+import javax.servlet.*;
 
 public class TranslatorReaderTest extends TestCase
 {
@@ -26,7 +27,8 @@ public class TranslatorReaderTest extends TestCase
 
     private String translate( String src )
         throws IOException,
-               NoRequiredPropertyException
+               NoRequiredPropertyException,
+               ServletException
     {
         WikiContext context = new WikiContext( new TestEngine(props),
                                                "testpage" );
