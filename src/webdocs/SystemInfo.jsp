@@ -69,6 +69,20 @@
           </td>
         </tr>
 
+        <tr>
+           <td valign="top"><b>Inlined images are</b></td>
+           <td>
+             <%
+                for( Iterator i = wiki.getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+                {
+                    %>
+                    <%=i.next()%><BR>
+                    <%
+                }
+             %>
+           </td>
+        </td>
+
       </table>
     </TD>
   </TR>
