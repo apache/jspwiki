@@ -1,3 +1,14 @@
+2004-09-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.110
+
+        * Added the JSPWiki logo to the default distribution.
+
+        * Reworked the default template a bit - there were some brainfarts
+        in it, causing it to fail on more picky browsers like Safari.
+
+        * ReferenceManager serialization is now slightly faster.
+
 2004-09-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.1.109
