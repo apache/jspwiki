@@ -25,10 +25,12 @@ public class WikiContext
     WikiEngine m_engine;
     String     m_requestContext = VIEW;
 
-    public static final String    VIEW = "view";
-    public static final String    EDIT = "edit";
-    public static final String    DIFF = "diff";
-    public static final String    INFO = "info";
+    public static final String    VIEW     = "view";
+    public static final String    EDIT     = "edit";
+    public static final String    DIFF     = "diff";
+    public static final String    INFO     = "info";
+    public static final String    PREVIEW  = "preview";
+    public static final String    CONFLICT = "conflict";
 
     public WikiContext( WikiEngine engine, String pagename )
     {
