@@ -9,6 +9,9 @@ import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
+/**
+ *  This implements an user database that is based on WikiPages.
+ */
 public class WikiDatabase
     implements UserDatabase
 {
@@ -69,7 +72,6 @@ public class WikiDatabase
 
         if( group == null && memberList == null )
         {
-            log.debug("No previous group, and no memberList.  Doing nothing.");
             return;
         }
      
@@ -131,9 +133,9 @@ public class WikiDatabase
         
     }
 
-    public Principal getPrincipal( String name )
+    public WikiPrincipal getPrincipal( String name )
     {
-        return null;
+        return (WikiPrincipal) m_principals.get( name );
     }
 
     /**
@@ -146,6 +148,32 @@ public class WikiDatabase
     public class SaveFilter
         extends BasicPageFilter
     {
+        /**
+         *  Parses through the member list of a page.
+         */
+
+        private List parseMemberList( String memberLine )
+        {
+            if( memberLine == null ) return null;
+
+            log.debug("Parsing member list: "+memberLine);
+
+            StringTokenizer tok = new StringTokenizer( memberLine, ", " );
+
+            ArrayList members = new ArrayList();
+
+            while( tok.hasMoreTokens() )
+            {
+                String uid = tok.nextToken();
+
+                log.debug("  Adding member: "+uid);
+
+                members.add( uid );
+            }
+            
+            return members;
+        }
+
         public void postSave( WikiContext context, String content )
         {
             WikiPage p = context.getPage();
@@ -154,9 +182,9 @@ public class WikiDatabase
 
             m_engine.textToHTML( context, content );
 
-            List members = (List) p.getAttribute("_members");
+            String members = (String) p.getAttribute("members");            
 
-            updateGroup( p.getName(), members );
+            updateGroup( p.getName(), parseMemberList( members ) );
         }
     }
 }
