@@ -1,5 +1,9 @@
 2003-05-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * A bunch of XHTML changes, thanks to an extremely high-quality
+        patch from Lars Schmidt-Thieme.  A lot of the plugins and tags now
+        work better.
+
         * v2.1.25.
 
         * CachingProvider now caches saved page modification dates
