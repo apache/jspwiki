@@ -179,6 +179,22 @@ public class UserManager
     }
 
     /**
+     * Returns the UserDatabase employed by this UserManager.
+     */
+    public UserDatabase getUserDatabase()
+    {
+	return( m_database );
+    }
+
+    /**
+     * Returns the WikiAuthenticator object employed by this UserManager.
+     */
+    public WikiAuthenticator getAuthenticator()
+    {
+	return( m_authenticator );
+    }
+
+    /**
      *  Returns true, if the user or the group represents a super user,
      *  which should be allowed access to everything.
      *
