@@ -37,6 +37,9 @@ public class GoDiagram
 {
     private static Category log = Category.getInstance( GoDiagram.class );
 
+    public static final int BLACK_FIRST = 1;
+    public static final int WHITE_FIRST = 0;
+
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
@@ -44,11 +47,14 @@ public class GoDiagram
 
     private String makeImage( String content )
     {
-        return "<IMG SRC=\"images/diagram/"+content+".gif\">";
-        //return "<TD>"+content+"</TD>";
+        //return "<IMG SRC=\"images/diagram/"+content+".gif\">";
+        return "<TD><IMG SRC=\"images/diagram/"+content+".gif\"></TD>";
     }
 
-    private String parseDiagram( String dia )
+    /**
+     *  @param first 'b', if black should have the first move, 'w' otherwise.
+     */
+    private String parseDiagram( String dia, int first )
         throws IOException
     {
         StringTokenizer tok = new StringTokenizer( dia.trim(), " \t\n-", true );
@@ -57,8 +63,9 @@ public class GoDiagram
 
         StringBuffer res = new StringBuffer();
 
-        res.append("<DIV CLASS=\"diagram\">\n");
-
+        //res.append("<DIV CLASS=\"diagram\">\n");
+        res.append("<TABLE BORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
+        res.append("<TR>");
         int type;
 
         int row = 0;
@@ -73,7 +80,7 @@ public class GoDiagram
             {
                 int num = Integer.parseInt( item );
 
-                String which = (num % 2 == 1) ? "b" : "w";
+                String which = (num % 2 == first) ? "b" : "w";
                 res.append( makeImage( which+Integer.toString(num) ) );
                 continue;
             }
@@ -107,12 +114,17 @@ public class GoDiagram
                                        "C" ) );
                 break;
 
-              case '-':                
-                res.append( makeImage( (row == 0) ? "TS" : "BS" ) );
+              case '-':
+                if( col % 2 == 1 )
+                {
+                    res.append( makeImage( (row == 0) ? "TS" : "BS" ) );
+                }
                 break;
 
+              case '\r':
               case '\n':
-                res.append("<BR>\n");
+                // res.append("<BR>\n");
+                res.append("</TR>\n<TR>");
                 col = -1;
                 row++;
                 break;
@@ -127,7 +139,9 @@ public class GoDiagram
             }
         }
 
-        res.append("</DIV>\n");
+        //res.append("</DIV>\n");
+        res.append("</TR>\n");
+        res.append("</TABLE>");
 
         return res.toString();
     }
@@ -136,15 +150,36 @@ public class GoDiagram
         throws PluginException
     {
         String diagram = (String) params.get( "_body" );
+        String label   = (String) params.get( "label" );
+        String first   = (String) params.get( "first" );
 
         if( diagram == null || diagram.length() == 0 )
         {
             return "<B>No diagram detected.</B>";
         }
 
+        if( first == null || first.length() == 0 || 
+            !(first.startsWith("w") || first.startsWith("W")) )
+        {
+            first = "b";
+        }
+
         try
         {
-            return parseDiagram( diagram );
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("<table border=1 align=left style=\"margin: 10px;\">");
+            sb.append("<tr><td>\n");
+            sb.append( parseDiagram( diagram, 
+                                     (first.startsWith("b") ? BLACK_FIRST : WHITE_FIRST )) );
+            sb.append("</td></tr>\n");
+            if( label != null )
+            {
+                sb.append( "<tr><td class=\"diagramlabel\">Dia: "+label+"</td></tr>\n" );
+            }
+            sb.append("</table>\n");
+
+            return sb.toString();
         }
         catch( IOException e )
         {
