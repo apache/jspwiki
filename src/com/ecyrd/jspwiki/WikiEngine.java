@@ -4,16 +4,16 @@
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
@@ -837,7 +837,7 @@ public class WikiEngine
      */
     public String getText( String page )
     {
-        return getText( page, -1 );
+        return getText( page, WikiPageProvider.LATEST_VERSION );
     }
 
     /**
@@ -924,7 +924,7 @@ public class WikiEngine
      */
     public String getHTML( String page )
     {
-        return getHTML( page, -1 );
+        return getHTML( page, WikiPageProvider.LATEST_VERSION );
     }
 
     /**
@@ -1363,8 +1363,10 @@ public class WikiEngine
      *  Returns a diff of two versions of a page.
      *
      *  @param page Page to return
-     *  @param version1 Version number of the old page.  If -1, then uses current page.
-     *  @param version2 Version number of the new page.  If -1, then uses current page.
+     *  @param version1 Version number of the old page.  If 
+     *         WikiPageProvider.LATEST_VERSION (-1), then uses current page.
+     *  @param version2 Version number of the new page.  If 
+     *         WikiPageProvider.LATEST_VERSION (-1), then uses current page.
      *
      *  @return A HTML-ized difference between two pages.  If there is no difference,
      *          returns an empty string.
@@ -1376,7 +1378,7 @@ public class WikiEngine
 
         // Kludge to make diffs for new pages to work this way.
 
-        if( version1 == -1 )
+        if( version1 == WikiPageProvider.LATEST_VERSION )
         {
             page1 = "";
         }

@@ -4,16 +4,16 @@
     Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
@@ -49,17 +49,17 @@ public class BreadcrumbsTag extends WikiTagBase
 {
     private static final Category log = Category.getInstance(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
-    private int m_maxsize = 10;
+    private int m_maxQueueSize = 11;
     private String m_separator = " | ";
 
     public int getMaxpages()
     {
-        return m_maxsize;
+        return m_maxQueueSize;
     }
 
     public void setMaxpages(int maxpages)
     {
-        m_maxsize = maxpages;
+        m_maxQueueSize = maxpages + 1;
     }
 
     public String getSeparator()
@@ -81,7 +81,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
         if( trail == null )
         {
-            trail = new FixedQueue(m_maxsize);
+            trail = new FixedQueue(m_maxQueueSize);
         }
 
         if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) )
