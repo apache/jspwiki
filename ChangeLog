@@ -1,5 +1,12 @@
 2003-08-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.59.
+
+        * Added the concept of an administrator.  Code exists, but is
+        still subject to bugs in the group code.  Use
+        "jspwiki.auth.administrator" to set the group/username who is the
+        administrator; default is "AdminGroup".
+
         * v2.1.58.
 
         * InsertPage plugin now supports "class" parameter.
@@ -8,23 +15,23 @@
 
 2003-08-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
-	* v2.1.57.
+        * v2.1.57.
 
-	* Error.jsp now shows the root cause instead of the JspException.
-	This should make the error messages a bit more comprehensible
-	without dipping into the log files.
+        * Error.jsp now shows the root cause instead of the JspException.
+        This should make the error messages a bit more comprehensible
+        without dipping into the log files.
 
-	* PermissionTag was amended to work with the new permission
-	system. 
+        * PermissionTag was amended to work with the new permission
+        system. 
 
-	* Added Delete.jsp and added preliminary support to page removal.
-	Doesn't work yet, though.
+        * Added Delete.jsp and added preliminary support to page removal.
+        Doesn't work yet, though.
 
-	* CachingProvider now bypasses its own search method, if the
-	provider implements the FastSearch interface.  This interface
-	defines no methods.  Those providers where searching can be done
-	very efficiently should benefit a lot from this. Requested by
-	Sulka Haro.
+        * CachingProvider now bypasses its own search method, if the
+        provider implements the FastSearch interface.  This interface
+        defines no methods.  Those providers where searching can be done
+        very efficiently should benefit a lot from this. Requested by
+        Sulka Haro.
 
 2003-08-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
