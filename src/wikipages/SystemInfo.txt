@@ -7,7 +7,7 @@ Here are some strategical figures and other interesting things about this partic
 | __Total Number of Pages__          | [{$totalpages}]
 | __Current Uptime__                 | [{$uptime}]
 | __Current Page Provider__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
-| __Current Attachment Provider__    | [{$jspwiki.attachmentProvider}]
+| __Current Attachment Provider__    | [{$attachmentProvider}]\\ \\[{$attachmentProviderDescription}]
 | __Available InterWiki links__      | [{$interwikilinks}]
 | __Inlined images are__             | [{$inlinedimages}]
 | __Additional Plugin Search Path__  | [{$pluginpath}]
