@@ -849,6 +849,23 @@ public class WikiEngine
     }
 
     /**
+     *  Beautifies the title of the page by appending non-breaking spaces 
+     *  in suitable places.  This is really suitable only for HTML output,
+     *  as it uses the &amp;nbsp; -character.
+     *
+     *  @since 2.1.127
+     */
+    public String beautifyTitleNoBreak( String title )
+    {
+        if( m_beautifyTitle )
+        {
+            return TextUtil.beautifyString( title, "&nbsp;" );
+        }
+
+        return title;        
+    }
+
+    /**
      *  Returns true, if the requested page (or an alias) exists.  Will consider
      *  any version as existing.  Will also consider attachments.
      *
