@@ -19,11 +19,16 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WikiContext
 {
     WikiPage   m_page;
     WikiEngine m_engine;
     String     m_requestContext = VIEW;
+
+    Map        m_variableMap = new HashMap();
 
     public static final String    VIEW     = "view";
     public static final String    EDIT     = "edit";
@@ -66,6 +71,24 @@ public class WikiContext
     public void setRequestContext( String arg )
     {
         m_requestContext = arg;
+    }
+
+    /**
+     *  Gets a previously set variable.
+     */
+    public Object getVariable( String key )
+    {
+        return m_variableMap.get( key );
+    }
+
+    /**
+     *  Sets a variable.  The variable is valid while the WikiContext is valid,
+     *  i.e. while page processing continues.  The variable data is discarded
+     *  once the page processing is finished.
+     */
+    public void setVariable( String key, Object data )
+    {
+        m_variableMap.put( key, data );
     }
 
 }
