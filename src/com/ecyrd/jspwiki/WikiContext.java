@@ -55,6 +55,9 @@ public class WikiContext
     /** The EDIT context - the user is editing the page. */
     public static final String    EDIT     = "edit";
 
+    /** User is preparing for a login/authentication. */
+    public static final String    LOGIN    = "login";
+
     /** User is viewing a DIFF between the two versions of the page. */
     public static final String    DIFF     = "diff";
 
@@ -67,6 +70,9 @@ public class WikiContext
     /** User has an internal conflict, and does quite not know what to
         do. Please provide some counseling. */
     public static final String    CONFLICT = "conflict";
+
+    /** An error has been encountered and the user needs to be informed. */
+    public static final String    ERROR    = "error";
 
     public static final String    UPLOAD   = "upload";
 
