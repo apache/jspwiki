@@ -1477,6 +1477,12 @@ public class TranslatorReader extends Reader
 
          StringBuffer buf = new StringBuffer();
 
+         if( m_isOpenParagraph )
+         {
+             buf.append( m_renderer.closeParagraph() );
+             m_isOpenParagraph = false;
+         }
+
          if( m_genlistlevel > 0 )
          {
              buf.append(m_renderer.closeListItem());
@@ -1768,13 +1774,6 @@ public class TranslatorReader extends Reader
                 //
                 // Anything else stops.
                 //
-                /*
-                if( m_isOpenParagraph ) 
-                { 
-                    sb.append("</p>\n"); 
-                    m_isOpenParagraph=false; 
-                }
-                */
                 sb.append( m_renderer.closeDiv() );
 
                 return sb.toString();
@@ -2008,6 +2007,9 @@ public class TranslatorReader extends Reader
 		 
             } // if m_camelCaseLinks
 
+            //
+            //  An empty line stops a list
+            //
             if( newLine && ch != '*' && ch != '#' && ch != ' ' && m_genlistlevel > 0 )
             {
                 buf.append(unwindGeneralList());
@@ -2046,10 +2048,24 @@ public class TranslatorReader extends Reader
                 {
                     // Paragraph change.
 		    if( m_isOpenParagraph )
+                    {
 			buf.append( m_renderer.closeParagraph() );
+                        m_isOpenParagraph = false;
+                    }
 
-                    buf.append( m_renderer.openParagraph() );
-		    m_isOpenParagraph = true;
+                    //
+                    //  Figure out which elements cannot be enclosed inside
+                    //  a <p></p> pair according to XHTML rules.
+                    //
+                    String nextLine = peekAheadLine();
+                    if( nextLine.length() == 0 || 
+                        (nextLine.length() > 0 &&
+                         !nextLine.startsWith("{{{") &&
+                         "*#!;".indexOf( nextLine.charAt(0) ) == -1) )
+                    {
+                        buf.append( m_renderer.openParagraph() );
+                        m_isOpenParagraph = true;
+                    }
                 }
                 else
                 {
@@ -2303,12 +2319,12 @@ public class TranslatorReader extends Reader
 
         public String openParagraph()
         {
-            return "<p>\n";
+            return "<p>";
         }
 
         public String closeParagraph()
         {
-            return "</p>";
+            return "</p>\n";
         }
 
         /**
