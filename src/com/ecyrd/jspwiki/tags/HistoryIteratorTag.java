@@ -75,7 +75,8 @@ public class HistoryIteratorTag
 
                 if( m_iterator.hasNext() )
                 {
-                    WikiContext context = new WikiContext( engine, (WikiPage)m_iterator.next() );
+                    WikiContext context = (WikiContext)m_wikiContext.clone();
+                    context.setPage( (WikiPage)m_iterator.next() );
                     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                               context,
                                               PageContext.REQUEST_SCOPE );
