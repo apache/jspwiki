@@ -162,8 +162,7 @@ public class TranslatorReader extends Reader
 
         try
         {
-            //m_camelCasePtrn = m_compiler.compile( "(^|\\W|\\~)([A-Z][a-z]+([A-Z][a-z]+)+)" );
-            m_camelCasePtrn = m_compiler.compile( "(^|\\W|\\~)([A-Z]+[a-z]+[A-Z]+[a-zA-Z0-9]*)" );
+            m_camelCasePtrn = m_compiler.compile( "^([_'!\\*#]*|\\~)([A-Z]+[a-z]+[A-Z]+[a-zA-Z0-9]*)\\W*$" );
         }
         catch( MalformedPatternException e )
         {
@@ -408,7 +407,11 @@ public class TranslatorReader extends Reader
 
             component.setCharAt(0, Character.toUpperCase( component.charAt(0) ) );
 
-            clean.append( component );
+            //
+            //  We must do this, because otherwise compiling on JDK 1.4 causes
+            //  a downwards incompatibility to JDK 1.3.
+            //
+            clean.append( component.toString() );
         }
 
         //
@@ -485,6 +488,10 @@ public class TranslatorReader extends Reader
 
     /**
      *  Attempts to set traditional, CamelCase style WikiLinks.
+     *
+     *  @param A word to check.
+     *  @return HTML link to a WikiPage; the word stripped from "~", or
+     *  the word, unchanged.
      */
     private String setCamelCaseLinks( String word )
     {
@@ -502,8 +509,9 @@ public class TranslatorReader extends Reader
             String link = res.group(2);
             String matchedLink;
 
-            // System.out.println("WORD="+word);
-            // System.out.println("  Replacing: "+link);
+            System.out.println("WORD="+word);
+            System.out.println("  Replacing: "+link);
+            System.out.println("  Head="+res.group(1));
 
             callMutatorChain( m_localLinkMutatorChain, link );
 
@@ -527,6 +535,8 @@ public class TranslatorReader extends Reader
                                            start, 
                                            end, 
                                            link );
+
+            System.out.println("   Result="+word);
         } // if match
 
         return word;
@@ -1235,7 +1245,8 @@ public class TranslatorReader extends Reader
     {
         StringBuffer buf = new StringBuffer();
         StringBuffer word = null;
-        int previousCh = '@';
+        int previousCh = -2;
+        int start = 0;
 	
         boolean quitReading = false;
         boolean newLine     = true; // FIXME: not true if reading starts in middle of buffer
@@ -1245,6 +1256,75 @@ public class TranslatorReader extends Reader
             int ch = nextToken();
             String s = null;
 
+            //
+            //  Serious problems here:  We cannot track the word
+            //  like this, because we cannot put the replaced hyperlink
+            //  back into the stream in a simple manner.  We cannot
+            //  know what was written into the stream before the link
+            //  is detected, because the detection of camelcase occurs
+            //  at the end of a word.
+            //
+            //  We can't do camelcase detection simply by detecting
+            //  an uppercase character either, because that will break
+            //  things like URLs that might have uppercase/lowercase
+            //  combinations.
+            //
+            if( m_camelCaseLinks )
+            {
+                // Quick parse of start of a word boundary.
+
+                if( word == null &&                    
+                    (Character.isWhitespace( (char)previousCh ) || newLine) &&
+                    !Character.isWhitespace( (char) ch ) )
+                {
+                    word = new StringBuffer();
+                    start = buf.length();
+                }
+
+                // Are we currently tracking a word?
+                if( word != null )
+                {
+                    //
+                    //  Check for the end of the word.
+                    //
+
+                    if( Character.isWhitespace( (char)ch ) || ch == -1 )
+                    {
+                        // setCamelLinks will return the same word or a new linked word.
+                        String camelCase = setCamelCaseLinks(word.toString());
+
+                        // If we did not get the same word back, then we have a camelcase.
+                        // Replace our word in the buffer.
+
+                        if( !camelCase.equals(word.toString()) )
+                        {
+                            System.out.println("  Replacing "+buf);
+                            System.out.println("  From "+start);
+                            System.out.println("  With "+camelCase);
+
+                            start = buf.length();
+                            buf.replace(start-word.length(),
+                                        start,
+                                        camelCase);
+
+                            System.out.println("  Resulting with "+buf);
+                        }
+
+                        // We've ended a word boundary, so time to reset.
+                        word = null;
+                    }
+                    else
+                    {
+                        // This should only be appending letters and digits.
+                        word.append( (char)ch );
+                    } // if end of word
+                } // if word's not null
+
+                // Always set the previous character to test for word starts.
+                previousCh = ch;
+		 
+            } // if m_camelCaseLinks
+		 
             //
             //  Check if we're actually ending the preformatted mode.
             //  We still must do an entity transformation here.
@@ -1298,51 +1378,6 @@ public class TranslatorReader extends Reader
                 m_closeTag = null;
             }
 
-            // If allowing CamelCase and not in a tag needing closure.
-            if( m_camelCaseLinks && m_closeTag == null )
-            {
-                // Quick parse of start of a word, and test if uppercase.
-                if( ( newLine || 
-                      ( word == null && previousCh == ' ' ) ) &&
-                    Character.isUpperCase( (char)ch ) )
-                {
-                    word = new StringBuffer();
-                }
-
-                // Are we currently tracking a word?
-                if( word != null )
-                {
-                    // If this tests true then we have a full word that at
-                    // least started with a capital letter, and now the end
-                    // of a word has been reached.
-                    if( ch == ' ' || ch == '\r' || ch == '\n' || ch == -1 )
-                    {
-                        // setCamelLinks will return the same word or a new linked word.
-                        String camelCase = setCamelCaseLinks(word.toString());
-
-                        // If we did not get the same word back, then we have a camelcase.
-                        // Replace our word in the buffer.
-                        if( !camelCase.equals(word.toString()) )
-                        {
-                            buf.replace(buf.length() - word.length(),
-                                        buf.length(),
-                                        camelCase);
-                        }
-
-                        // We've ended a word boundry, so time to reset.
-                        word = null;
-                    }
-                    else
-                    {
-                        word.append( (char)ch );
-                    } // if end of word
-                } // if word's not null
-
-                // Always set the previous character to test for word starts.
-                previousCh = ch;
-		 
-            } // if m_camelCaseLinks
-		 
             //
             //  Now, check the incoming token.
             //
@@ -1506,9 +1541,6 @@ public class TranslatorReader extends Reader
             {
                 buf.append( s );
                 newLine = false;
-
-		  // If we got an "s" then that ruins our camelcase. Reset!
-		  word = null;
             }
 
 	 }
