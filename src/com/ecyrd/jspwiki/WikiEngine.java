@@ -1612,12 +1612,14 @@ public class WikiEngine
      */
     public void logout( HttpSession session )
     {
-        log.debug( "Logging out." );
-        UserProfile wup = (UserProfile)session.getAttribute( WIKIUSER );
-        if( wup != null )
+        if( session != null )
         {
-            log.debug( "logged out user " + wup.getName() );
-            session.setAttribute( WIKIUSER, null );
+            UserProfile wup = (UserProfile)session.getAttribute( WIKIUSER );
+            if( wup != null )
+            {
+                log.debug( "logged out user " + wup.getName() );
+            }
+            session.invalidate();
         }
     }
 
