@@ -51,7 +51,13 @@ public class UserCheckTag
         WikiEngine engine = m_wikiContext.getEngine();
         UserProfile user  = m_wikiContext.getCurrentUser();
 
-        if( "true".equals(getExists()) && user != null )
+        if( "true".equals(getExists()) && user != null && 
+            user.getLoginStatus() != UserProfile.NONE )
+        {
+            return EVAL_BODY_INCLUDE;
+        }
+        else if( "false".equals(getExists()) && user != null &&
+                 user.getLoginStatus() == UserProfile.NONE )
         {
             return EVAL_BODY_INCLUDE;
         }
