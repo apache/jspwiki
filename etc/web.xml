@@ -21,6 +21,16 @@
        <welcome-file>Wiki.jsp</welcome-file>
    </welcome-file-list>
 
+   <servlet>
+       <servlet-name>XMLRPC</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.xmlrpc.RPCServlet</servlet-class>       
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>XMLRPC</servlet-name>
+       <url-pattern>/RPC2/*</url-pattern>
+   </servlet-mapping>
+
    <!--
        Here we define the users which are allowed to access JSPWiki
        editor.
