@@ -14,12 +14,6 @@
   <shortname>jspwiki</shortname>
 
   <tag>
-    <name>HTMLContent</name>
-    <tagclass>com.ecyrd.jspwiki.tags.HTMLContentTag</tagclass>
-    <bodycontent>empty</bodycontent>
-  </tag>
-
-  <tag>
     <name>RSSLink</name>
     <tagclass>com.ecyrd.jspwiki.tags.RSSLinkTag</tagclass>
     <bodycontent>empty</bodycontent>
@@ -71,6 +65,15 @@
     <name>LinkTo</name>
     <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
     <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+  </tag>  
+
+  <tag>
+    <name>InsertPage</name>
+    <tagclass>com.ecyrd.jspwiki.tags.InsertPageTag</tagclass>
+    <bodycontent>empty</bodycontent>
     <attribute>
        <name>page</name>
     </attribute>
