@@ -1,3 +1,12 @@
+2002-09-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.27.
+
+        * CamelCase links can now be stopped from occurring by prepending
+        it with '~'.  ~CamelCase results in "CamelCase", not a link to a
+        page called CamelCase.  '~' will from now on be a generic negator
+        tool for all sorts of purposes.
+
 2002-09-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.26.
