@@ -30,10 +30,14 @@ import java.util.*;
 
 /**
  *  Builds a simple weblog.
+ *  <P>
+ *  The pageformat can use the following params:<br>
+ *  %p - Page name<br>
  *
  *  <B>Parameters</B>
  *  <UL>
  *    <LI>days - how many days the weblog aggregator should show.
+ *    <LI>pageformat - What the entries should look like.
  *  </UL>
  *  @since 1.9.21
  */
@@ -46,6 +50,7 @@ public class WeblogPlugin implements WikiPlugin
     private static Category     log = Category.getInstance(WeblogPlugin.class);
 
     public static final int     DEFAULT_DAYS = 7;
+    public static final String  DEFAULT_PAGEFORMAT = "%p-blogentry-";
     
     public String execute( WikiContext context, Map params )
         throws PluginException
@@ -109,44 +114,48 @@ public class WeblogPlugin implements WikiPlugin
         return sb.toString();
     }
 
+    /**
+     *  Attempts to locate all pages that correspond to the 
+     *  blog entry pattern.
+     */
     private Collection findBlogEntries( PageManager mgr,
                                         String baseName, Date start, Date end )
         throws ProviderException
     {
         Collection everyone = mgr.getAllPages();
         ArrayList  result = new ArrayList();
-        
+
+        baseName = TextUtil.replaceString( DEFAULT_PAGEFORMAT, "%p", baseName );
+ 
         for( Iterator i = everyone.iterator(); i.hasNext(); )
         {
             WikiPage p = (WikiPage)i.next();
 
-            StringTokenizer tok = new StringTokenizer(p.getName(),"-");
+            String pageName = p.getName();
 
-            if( tok.countTokens() < 3 )
-                continue;
-            
-            try
+            if( pageName.startsWith( baseName ) )
             {
-                String name = tok.nextToken();
+                String entry = pageName.substring( baseName.length() );
 
-                if( !name.equals(baseName) ) continue;
-                
-                String day  = tok.nextToken();
+                int idx = entry.indexOf('-');
 
+                if( idx == -1 )
+                    continue;
+
+                String day = entry.substring( 0, idx );
+
+                System.out.println("day="+day);
                 SimpleDateFormat fmt = new SimpleDateFormat("ddMMyy");
                 Date pageDay = fmt.parse( day, new ParsePosition(0) );
-
-                if( pageDay.after(start) && pageDay.before(end) )
+                
+                if( pageDay != null )
                 {
-                    result.add(p);
+                    if( pageDay.after(start) && pageDay.before(end) )
+                    {
+                        result.add(p);
+                    }
                 }
             }
-            catch( NoSuchElementException e )
-            {
-                // Nope, something odd.
-            }
-            
-
         }
         
         return result;

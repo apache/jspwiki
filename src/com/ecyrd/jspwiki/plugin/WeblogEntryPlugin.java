@@ -55,7 +55,9 @@ public class WeblogEntryPlugin implements WikiPlugin
                                           today );
 
             
-            String blogPage = weblogName + "-" + today + "-" + entryNum;
+            String blogPage = WeblogPlugin.DEFAULT_PAGEFORMAT;
+            blogPage = TextUtil.replaceString( blogPage, "%p", weblogName );
+            blogPage += today + "-" + entryNum;
 
             // FIXME: Generate somehow else.
             sb.append("<A HREF=\""+engine.getEditURL(blogPage)+"\">New entry</A>");
@@ -77,7 +79,8 @@ public class WeblogEntryPlugin implements WikiPlugin
         Collection everyone = mgr.getAllPages();
         int max = 0;
 
-        String startString = baseName+"-"+date+"-";
+        String startString = TextUtil.replaceString( WeblogPlugin.DEFAULT_PAGEFORMAT, "%p", baseName );
+        startString += date + "-";
         
         for( Iterator i = everyone.iterator(); i.hasNext(); )
         {
