@@ -71,7 +71,8 @@ public class Release
 
     /**
      *  Executing this class directly from command line prints out
-     *  the current version.
+     *  the current version.  It is very useful for things like
+     *  different command line tools.
      *  <P>Example:
      *  <PRE>
      *  % java com.ecyrd.jspwiki.Release
