@@ -29,6 +29,7 @@ import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.attachment.AttachmentManager;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -47,8 +48,6 @@ public class WikiEngine
 {
     private static final Category   log = Category.getInstance(WikiEngine.class);
 
-    private WikiPageProvider m_provider;
-
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
     // to run defines where the log goes.  Not what we want.
@@ -57,7 +56,6 @@ public class WikiEngine
     /** Stores properties. */
     private Properties       m_properties;
 
-    public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
     /** If true, then the user name will be stored with the page data.*/
@@ -78,10 +76,8 @@ public class WikiEngine
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiUserProfile";
 
+    /** Stores an internal list of engines per each ServletContext */
     private static Hashtable c_engines = new Hashtable();
-
-    private static final String NO_PROVIDER_MSG = 
-        "Internal configuration error: No provider was found.";
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
@@ -105,6 +101,12 @@ public class WikiEngine
     /** Stores the Plugin manager */
     private PluginManager    m_pluginManager;
 
+    /** Stores the Attachment manager */
+    private AttachmentManager m_attachmentManager = null;
+
+    /** Stores the Page manager */
+    private PageManager      m_pageManager = null;
+
     /** Does all our diffs for us. */
     private DifferenceEngine m_differenceEngine;
 
@@ -122,9 +124,19 @@ public class WikiEngine
     private boolean          m_beautifyTitle = false;
 
     /**
-     *  Gets a WikiEngine related to this servlet.
+     *  Gets a WikiEngine related to this servlet.  Since this method
+     *  is only called from JSP pages (and JspInit()) to be specific,
+     *  we throw a RuntimeException if things don't work.
+     *  
+     *  @throws InternalWikiException in case something fails.  This
+     *          is a RuntimeException, so be prepared for it.
      */
+
+    // FIXME: It seems that this does not work too well, jspInit()
+    // does not react to RuntimeExceptions, or something...
+
     public static synchronized WikiEngine getInstance( ServletConfig config )
+        throws InternalWikiException
     {
         ServletContext context = config.getServletContext();        
         String appid = context.getRealPath("/");
@@ -135,8 +147,16 @@ public class WikiEngine
 
         if( engine == null )
         {
-            config.getServletContext().log(" Assigning new log to "+appid);
-            engine = new WikiEngine( config.getServletContext() );
+            context.log(" Assigning new log to "+appid);
+            try
+            {
+                engine = new WikiEngine( config.getServletContext() );
+            }
+            catch( Exception e )
+            {
+                context.log( "ERROR: Failed to create a Wiki engine" );
+                throw new InternalWikiException( "No wiki engine, check logs." );
+            }
 
             c_engines.put( appid, engine );
         }
@@ -149,8 +169,7 @@ public class WikiEngine
      *  Use this constructor for testing purposes only.
      */
     public WikiEngine( Properties properties )
-        throws NoRequiredPropertyException,
-               ServletException
+        throws WikiException
     {
         initialize( properties );
     }
@@ -162,6 +181,7 @@ public class WikiEngine
      *  Do not use this method - use WikiEngine.getInstance() instead.
      */
     protected WikiEngine( ServletContext context )
+        throws WikiException
     {
         m_servletContext = context;
 
@@ -189,8 +209,7 @@ public class WikiEngine
      *  Does all the real initialization.
      */
     private void initialize( Properties props )
-        throws NoRequiredPropertyException,
-               ServletException
+        throws WikiException
     {
         m_properties = props;
         //
@@ -215,71 +234,25 @@ public class WikiEngine
 
         m_beautifyTitle  = "true".equals( props.getProperty( PROP_BEAUTIFYTITLE, "false" ) );
 
-        //
-        //  Find the page provider
-        //
-
-        String classname = getRequiredProperty( props, PROP_PAGEPROVIDER );
-
-        log.debug("Provider="+classname);
-
-        try
-        {
-            Class providerclass;
-
-            //
-            //  Attempt to use a shortcut, if possible.
-            //
-            try
-            {
-                providerclass = Class.forName( classname );
-            }
-            catch( ClassNotFoundException e )
-            {
-                providerclass = Class.forName( "com.ecyrd.jspwiki.providers."+classname );
-            }
-
-            m_provider = (WikiPageProvider)providerclass.newInstance();
-
-            log.debug("Initializing provider class "+m_provider);
-            m_provider.initialize( props );
-        }
-        catch( ClassNotFoundException e )
-        {
-            log.error("Unable to locate provider class "+classname,e);
-            throw new IllegalArgumentException("no provider class");
-        }
-        catch( InstantiationException e )
-        {
-            log.error("Unable to create provider class "+classname,e);
-            throw new IllegalArgumentException("faulty provider class");
-        }
-        catch( IllegalAccessException e )
-        {
-            log.error("Illegal access to provider class "+classname,e);
-            throw new IllegalArgumentException("illegal provider class");
-        }
-        catch( IOException e )
-        {
-            log.error("An I/O exception occurred while trying to create a new page provider: "+classname, e );
-            throw new ServletException("Unable to start page provider: "+e.getMessage());
-        }
 
         //
-        //  Initialize the important modules.
+        //  Initialize the important modules.  Any exception thrown by the
+        //  managers means that we will not start up.
         //
         try
         {
-            m_pluginManager    = new PluginManager( props );
-            m_differenceEngine = new DifferenceEngine( props, getContentEncoding() );
+            m_pageManager       = new PageManager( props );
+            m_pluginManager     = new PluginManager( props );
+            m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
+            m_attachmentManager = new AttachmentManager( props );
 
             initReferenceManager();            
         }
         catch( Exception e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
-            log.error( "Unable to start.", e );
-            throw new ServletException( "Unable to start", e );
+            log.error( "Failed to start managers.", e );
+            throw new WikiException( "Failed to start managers: "+e.getMessage() );
         }
 
         //
@@ -318,7 +291,7 @@ public class WikiEngine
 
         try
         {
-            Collection pages = m_provider.getAllPages();
+            Collection pages = m_pageManager.getProvider().getAllPages();
 
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
@@ -331,7 +304,7 @@ public class WikiEngine
             while( it.hasNext() )
             {
                 WikiPage page = (WikiPage)it.next();
-                String content = m_provider.getPageText( page.getName(), 
+                String content = m_pageManager.getProvider().getPageText( page.getName(), 
                                                          WikiPageProvider.LATEST_VERSION );
                 m_referenceManager.updateReferences( page.getName(), 
                                                      scanWikiLinks( content ) );
@@ -552,7 +525,7 @@ public class WikiEngine
     {
         if( getSpecialPageReference(page) != null ) return true;
 
-        return m_provider.pageExists( page );
+        return m_pageManager.getProvider().pageExists( page );
     }
 
     /**
@@ -627,14 +600,11 @@ public class WikiEngine
     // FIXME: Should throw an exception on unknown page/version?
     public String getPureText( String page, int version )
     {
-        if( m_provider == null ) 
-            return NO_PROVIDER_MSG;
-
         String result = null;
 
         try
         {
-            result = m_provider.getPageText( page, version );
+            result = m_pageManager.getProvider().getPageText( page, version );
 
         }
         catch( ProviderException e )
@@ -778,9 +748,6 @@ public class WikiEngine
      */
     public void saveText( String page, String text )
     {
-        if( m_provider == null ) 
-            return;
-
         text = TextUtil.normalizePostData(text);
 
         // Hook into cross reference collection.
@@ -788,7 +755,7 @@ public class WikiEngine
 
         try
         {
-            m_provider.putPageText( new WikiPage(page), text );
+            m_pageManager.getProvider().putPageText( new WikiPage(page), text );
         }
         catch( ProviderException e )
         {
@@ -839,11 +806,6 @@ public class WikiEngine
      */
     public void saveText( String page, String text, HttpServletRequest request )
     {
-        if( m_provider == null )
-        {
-            return;
-        }
-
         text = TextUtil.normalizePostData(text);
 
         // Error protection or if the user info has been disabled.
@@ -878,7 +840,7 @@ public class WikiEngine
 
             try
             {
-                m_provider.putPageText( p, text );
+                m_pageManager.getProvider().putPageText( p, text );
             }
             catch( ProviderException e )
             {
@@ -894,7 +856,7 @@ public class WikiEngine
     {
         try
         {
-            return m_provider.getAllPages().size();
+            return m_pageManager.getProvider().getAllPages().size();
         }
         catch( ProviderException e )
         {
@@ -909,7 +871,7 @@ public class WikiEngine
 
     public String getCurrentProvider()
     {
-        return m_provider.getClass().getName();
+        return m_pageManager.getProvider().getClass().getName();
     }
 
     /**
@@ -918,7 +880,7 @@ public class WikiEngine
      */
     public String getCurrentProviderInfo()
     {
-        return m_provider.getProviderInfo();
+        return m_pageManager.getProvider().getProviderInfo();
     }
 
     /**
@@ -927,12 +889,9 @@ public class WikiEngine
      */
     public Collection getRecentChanges()
     {
-        if( m_provider == null ) 
-            return null;
-
         try
         {
-            Collection pages = m_provider.getAllPages();
+            Collection pages = m_pageManager.getProvider().getAllPages();
 
             TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
 
@@ -968,9 +927,6 @@ public class WikiEngine
     public Collection findPages( String query )
     {
         StringTokenizer st = new StringTokenizer( query, " \t," );
-
-        if( m_provider == null ) 
-            return null;
 
         QueryItem[] items = new QueryItem[st.countTokens()];
         int word = 0;
@@ -1011,7 +967,7 @@ public class WikiEngine
             items[word++].word = token;
         }
 
-        Collection results = m_provider.findPages( items );
+        Collection results = m_pageManager.getProvider().findPages( items );
         
         return results;
     }
@@ -1022,12 +978,9 @@ public class WikiEngine
 
     public WikiPage getPage( String pagereq )
     {
-        if( m_provider == null ) 
-            return null;
-
         try
         {
-            WikiPage p = m_provider.getPageInfo( pagereq, 
+            WikiPage p = m_pageManager.getProvider().getPageInfo( pagereq, 
                                                  WikiPageProvider.LATEST_VERSION );
             return p;
         }
@@ -1046,12 +999,9 @@ public class WikiEngine
 
     public WikiPage getPage( String pagereq, int version )
     {
-        if( m_provider == null )
-            return null;
-
         try
         {
-            WikiPage p = m_provider.getPageInfo( pagereq, version );
+            WikiPage p = m_pageManager.getProvider().getPageInfo( pagereq, version );
             return p;
         }
         catch( ProviderException e )
@@ -1068,12 +1018,9 @@ public class WikiEngine
      */
     public Date pageLastChanged( String page )
     {
-        if( m_provider == null ) 
-            return null;
-
         try
         {
-            WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+            WikiPage p = m_pageManager.getProvider().getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
             if( p != null )
                 return p.getLastModified();
@@ -1092,12 +1039,9 @@ public class WikiEngine
      */
     public int getVersion( String page )
     {
-        if( m_provider == null ) 
-            return -1;
-
         try
         {
-            WikiPage p = m_provider.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+            WikiPage p = m_pageManager.getProvider().getPageInfo( page, WikiPageProvider.LATEST_VERSION );
 
             if( p != null )
                 return p.getVersion();
@@ -1115,12 +1059,9 @@ public class WikiEngine
      */
     public Collection getVersionHistory( String page )
     {
-        if( m_provider == null ) 
-            return null;
-
         try
         {
-            return m_provider.getVersionHistory( page );
+            return m_pageManager.getProvider().getVersionHistory( page );
         }
         catch( ProviderException e )
         {
@@ -1163,6 +1104,49 @@ public class WikiEngine
 
         return diff;
     }
+
+    /**
+     *  Attempts to locate a Wiki class, defaulting to the defaultPackage
+     *  in case the actual class could not be located.
+     *
+     *  @param className Class to search for.
+     *  @param defaultPackage A default package to try if the class 
+     *                        cannot be directly located.  May be null.
+     *  @throws ClassNotFoundException if the class could not be located.
+     */
+    public static Class findWikiClass( String className, String defaultPackage )
+        throws ClassNotFoundException
+    {
+        Class tryClass;
+
+        if( className == null )
+        {
+            throw new ClassNotFoundException("Null className!");
+        }
+
+        //
+        //  Attempt to use a shortcut, if possible.
+        //
+        try
+        {
+            tryClass = Class.forName( className );
+        }
+        catch( ClassNotFoundException e )
+        {
+            // FIXME: This causes "null" names to be searched for twice, which
+            //        is a performance penalty and not very nice.
+            if( defaultPackage == null ) 
+                defaultPackage = "";
+
+            if( !defaultPackage.endsWith(".") )
+                defaultPackage += ".";
+
+            tryClass = Class.forName( defaultPackage+className );
+        }
+
+        return tryClass;
+    }
+
 
     /**
      *  Returns this object's ReferenceManager.
