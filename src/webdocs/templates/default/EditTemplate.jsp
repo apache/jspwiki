@@ -53,7 +53,7 @@
       </wiki:CheckLock>
 
       <FORM action="<wiki:EditLink format="url" />" method="POST" 
-            ACCEPT-CHARSET="ISO-8859-1,UTF-8">
+            ACCEPT-CHARSET="<wiki:ContentEncoding />">
 
       <%-- These are required parts of this form.  If you do not include these,
            horrible things will happen.  Do not modify them either. --%>
