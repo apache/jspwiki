@@ -1,3 +1,13 @@
+2002-12-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.44.
+
+        * CamelCase detection changed yet again.  However, this will still
+        fail when you write wikimarkup right next to it: For example
+        __CamelCase__ will result into something totally strange, much
+        like *CamelCase to start a line.  Using whitespace should work,
+        though...  __ CamelCase __ should be quite okay.
+
 2002-12-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.43.
