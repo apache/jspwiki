@@ -35,26 +35,13 @@ import org.apache.xmlrpc.XmlRpcException;
 // show just too many methods to be safe.
 
 public class RPCHandler
+    extends AbstractRPCHandler
 {
-    /** Error code: no such page. */
-    public static final int ERR_NOPAGE    = 1;
-
-    public static final String LINK_LOCAL    = "local";
-    public static final String LINK_EXTERNAL = "external";
-    public static final String LINK_INLINE   = "inline";
-
-    private WikiEngine m_engine;
-
-    /**
-     *  This is the currently implemented JSPWiki XML-RPC code revision.
-     */
-    public static final int RPC_VERSION = 1;
-
     Category log = Category.getInstance( RPCHandler.class ); 
 
-    public RPCHandler( WikiEngine engine )
+    public void initialize( WikiEngine engine )
     {
-        m_engine = engine;
+        super.initialize( engine );
     }
 
     /**
@@ -99,14 +86,6 @@ public class RPCHandler
         return toRPCString(m_engine.getApplicationName());
     }
 
-    /**
-     *  Returns the current supported JSPWiki XML-RPC API.
-     */
-    public int getRPCVersionSupported()
-    {
-        return RPC_VERSION;
-    }
-
     public Vector getAllPages()
     {
         Collection pages = m_engine.getRecentChanges();
@@ -124,7 +103,7 @@ public class RPCHandler
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
-    private Hashtable encodeWikiPage( WikiPage page )
+    protected Hashtable encodeWikiPage( WikiPage page )
     {
         Hashtable ht = new Hashtable();
 
@@ -141,7 +120,7 @@ public class RPCHandler
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( d );
-        cal.set( Calendar.MILLISECOND, 
+        cal.add( Calendar.MILLISECOND, 
                  - (cal.get( Calendar.ZONE_OFFSET ) + 
                     (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
