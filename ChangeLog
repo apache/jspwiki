@@ -1,5 +1,9 @@
 2003-07-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v2.1.49.
+
+        * PageTypeTag now recognizes also weblog entries.
+
         * v2.1.48.
 
         * It is now possible to set the cache consistency checks for
