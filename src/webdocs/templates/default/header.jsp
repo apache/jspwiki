@@ -1,7 +1,5 @@
-<link rel="stylesheet" href="templates/<wiki:TemplateDir/>/jspwiki.css" />
-
-<script src="templates/<wiki:TemplateDir/>/cssinclude.js" type="text/javascript"></script>
-
+<link rel="stylesheet" type="text/css" href="templates/<wiki:TemplateDir/>/jspwiki.css" />
+<%@ include file="cssinclude.js" %>
 <meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
 <link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
 <link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
