@@ -93,12 +93,12 @@ public class EditLinkTag
                 
                 if( page != null )
                 {
-                    versionString = "&version="+page.getVersion();
+                    versionString = "&amp;version="+page.getVersion();
                 }
             }
             else
             {
-                versionString = "&version="+m_version;
+                versionString = "&amp;version="+m_version;
             }
         }
 
@@ -111,7 +111,7 @@ public class EditLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<A HREF=\""+engine.getEditURL(pageName)+versionString+"\">");
+            out.print("<a href=\""+engine.getEditURL(pageName)+versionString+"\">");
             break;
 
           case URL:

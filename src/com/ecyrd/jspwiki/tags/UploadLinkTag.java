@@ -68,7 +68,7 @@ public class UploadLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<A target=\"_new\" CLASS=\"uploadlink\" HREF=\""+url+"\">");
+            out.print("<a target=\"_new\" class=\"uploadlink\" href=\""+url+"\">");
             break;
           case URL:
             out.print( url );

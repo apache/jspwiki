@@ -73,6 +73,7 @@ public class LinkToTag
             }
             else
             {
+		m_isOmitted = true;
                 return SKIP_BODY;
             }
         }
@@ -94,7 +95,7 @@ public class LinkToTag
 
         if( getVersion() != null )
         {
-            url += "&version="+getVersion();
+            url += "&amp;version="+getVersion();
         }
 
         switch( m_format )

@@ -194,7 +194,7 @@ public class IndexPlugin implements WikiPlugin
     {
         m_bodyPart.write("<br /><br />" +
                          "<a name=\"" + i_firstLetter + "\">" +
-                         "<font color="+INITIALS_COLOR+">"+i_firstLetter+"</a></font>" +
+                         "<font color=\""+INITIALS_COLOR+"\">"+i_firstLetter+"</font></a>" +
                          "<hr />" );
     }
 

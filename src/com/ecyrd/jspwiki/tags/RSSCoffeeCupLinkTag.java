@@ -56,10 +56,10 @@ public class RSSCoffeeCupLinkTag
         if( rssURL != null )
         {
             JspWriter out = pageContext.getOut();
-            out.print("<A HREF=\"http://127.0.0.1:5335/system/pages/subscriptions/?url="+rssURL+"\">");
-            out.print("<IMG SRC=\""+engine.getBaseURL()+"images/xmlCoffeeCup.png\"");
-            out.print("BORDER=\"0\" title=\""+getTitle()+"\"/>");
-            out.print("</A>");
+            out.print("<a href=\"http://127.0.0.1:5335/system/pages/subscriptions/?url="+rssURL+"\">");
+            out.print("<img src=\""+engine.getBaseURL()+"images/xmlCoffeeCup.png\"");
+            out.print("border=\"0\" title=\""+getTitle()+"\"/>");
+            out.print("</a>");
         }
 
         return SKIP_BODY;

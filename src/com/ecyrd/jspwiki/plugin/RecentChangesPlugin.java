@@ -134,7 +134,7 @@ public class RecentChangesPlugin
                 }
                 else
                 {
-                    out.write("<td><a href=\""+engine.getBaseURL()+"Diff.jsp?page="+pageurl+"&r1=-1\">"+
+                    out.write("<td><a href=\""+engine.getBaseURL()+"Diff.jsp?page="+pageurl+"&amp;r1=-1\">"+
                               tfmt.format(lastmod)+
                               "</a></td>\n");
                 }

@@ -142,11 +142,11 @@ public class DiffLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a href=\""+engine.getBaseURL()+"Diff.jsp?page="+encodedlink+"&r1="+r1+"&r2="+r2+"\">");
+            out.print("<a href=\""+engine.getBaseURL()+"Diff.jsp?page="+encodedlink+"&amp;r1="+r1+"&amp;r2="+r2+"\">");
             break;
 
           case URL:
-            out.print( engine.getBaseURL()+"Diff.jsp?page="+encodedlink+"&r1="+r1+"&r2="+r2 );
+            out.print( engine.getBaseURL()+"Diff.jsp?page="+encodedlink+"&amp;r1="+r1+"&amp;r2="+r2 );
             break;
         }
 

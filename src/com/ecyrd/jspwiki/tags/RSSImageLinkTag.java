@@ -55,10 +55,10 @@ public class RSSImageLinkTag
         if( rssURL != null )
         {
             JspWriter out = pageContext.getOut();
-            out.print("<A HREF=\""+rssURL+"\">");
-            out.print("<IMG SRC=\""+engine.getBaseURL()+"images/xml.png\"");
-            out.print("BORDER=\"0\" title=\""+getTitle()+"\"/>");
-            out.print("</A>");
+            out.print("<a href=\""+rssURL+"\">");
+            out.print("<img src=\""+engine.getBaseURL()+"images/xml.png\"");
+            out.print("border=\"0\" title=\""+getTitle()+"\"/>");
+            out.print("</a>");
         }
 
         return SKIP_BODY;
