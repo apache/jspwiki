@@ -89,6 +89,16 @@ public class BasicAttachmentProvider
                IOException
     {
         m_storageDir = WikiEngine.getRequiredProperty( properties, PROP_STORAGEDIR );
+
+        //
+        //  Check if the directory exists - if it doesn't, create it.
+        //
+        File f = new File( m_storageDir );
+
+        if( !f.exists() )
+        {
+            f.mkdirs();
+        }
     }
 
     /**
