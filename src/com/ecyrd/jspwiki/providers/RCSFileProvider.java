@@ -93,7 +93,9 @@ public class RCSFileProvider
         File rcsdir = new File( getPageDirectory(), "RCS" );
 
         if( !rcsdir.exists() )
+        {
             rcsdir.mkdirs();
+        }
 
         log.debug("checkin="+m_checkinCommand);
         log.debug("checkout="+m_checkoutCommand);
