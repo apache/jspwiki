@@ -8,7 +8,7 @@
 
         * Bug fix: When using ISO-8859-1, attachment URLs would still
         contain the "%2F".  JSPWiki should now work nicely when a page
-        name contains a slash.
+        name contains a slash.  Fixes BugURLEncoderEncodesAlsoForImages.
         
         * Bug fix: CachingProvider would lose metadata on save. Reported
         by Andrew Jaquith.
