@@ -532,6 +532,22 @@ public class WikiEngine
     }
 
     /**
+     *  Returns true, if the requested page exists with the
+     *  requested version.
+     *
+     *  @param page 
+     */
+    public boolean pageExists( String page, int version )
+        throws ProviderException
+    {
+        if( getSpecialPageReference(page) != null ) return true;
+
+        WikiPage p = m_pageManager.getPageInfo( page, version );
+
+        return (p != null);
+    }
+
+    /**
      *  Turns a WikiName into something that can be 
      *  called through using an URL.
      *
@@ -1168,6 +1184,14 @@ public class WikiEngine
     public PluginManager getPluginManager()
     {
         return m_pluginManager;
+    }
+
+    /**
+     *  Returns the current PageManager.
+     */
+    public PageManager getPageManager()
+    {
+        return m_pageManager;
     }
 
     /**
