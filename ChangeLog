@@ -1,3 +1,16 @@
+2002-04-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.7.4.
+
+        * UserPreferences is now a lot more tolerant towards UTF-8
+        characters.
+
+        * Everything rebuilt to survive a null author information.
+
+        * The text for inline images is now interpreted as a hyperlink, if
+        it starts with the usual http:, ftp:, mailto:, etc.  Suggested by
+        Alain Ravet.
+
 2002-03-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.7.3.
