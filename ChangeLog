@@ -1,5 +1,12 @@
 2002-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * SearchResult uses now "WikiPage" instead of a String to the page
+        name.  Heed this, if you have your own implementation of a
+        provider.
+
+        * VariableTag now has a "default" attribute which gets invoked if
+        the variable in question does not exist.
+
         * The top right search box didn't work - now it does.
 
         * You can now limit the number of hits a search returns - see
