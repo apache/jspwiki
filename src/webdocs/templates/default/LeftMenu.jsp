@@ -21,14 +21,14 @@
     {
         %>
         <B>G'day,</B><BR>
-        <%=wiki.textToHTML( wikiContext, "["+leftMenuUser+"]" )%>
+        <wiki:Translate>[<%=leftMenuUser%>]</wiki:Translate>
         <%
     }
     else
     {
         %><TT>
         Set your name in<BR>
-        <%=wiki.textToHTML( wikiContext, "[UserPreferences]!" )%>
+        <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
         </TT>
         <%
     }
