@@ -1,3 +1,9 @@
+2001-11-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * This is release v1.6.0.
+
+        * Quotes in HTML text is now escaped using &quot;
+
 2001-11-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v1.5.8.

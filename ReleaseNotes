@@ -1,7 +1,5 @@
 
-This is a beta release of JSPWiki.  The documentation is out-of-date,
-the code is buggy and you definitely shouldn't run this on a
-production server.  Wait for the next stable release.
+This is a stable (well, hopefully) release of JSPWiki.
 
 Major changes since the last stable (1.5.0) release are:
 
@@ -29,6 +27,7 @@ Major changes since the last stable (1.5.0) release are:
   Sun JDKs 1.2 - 1.3.
 
 
+
 UPGRADE NOTES
 =============
 
@@ -41,4 +40,9 @@ UPGRADE NOTES
   note that whenever a page is saved, it is saved as UTF-8.  So
   basically conversion happens whenever someone edits a page.
   However, there is no going back to ISO-8859-1 - this is a one-way
-  street!
+  street (unless you convert everything by hand, of course.)
+
+- Note that not all browsers support UTF-8, most notably old versions
+  of Netscape Navigator.  You may have interesting problems with
+  NS4.x.  I'd recommend at least NS6.1, or with IE, 5.0 or above.
+
