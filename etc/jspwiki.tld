@@ -343,7 +343,7 @@
     <tagclass>com.ecyrd.jspwiki.tags.UserCheckTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
-       <name>exists</name>
+       <name>status</name>
     </attribute>
   </tag>
 
