@@ -23,7 +23,17 @@
     <name>Author</name>
     <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
     <bodycontent>empty</bodycontent>
-  </tag>
+  </tag>  
+
+
+  <tag>
+    <name>CheckVersion</name>
+    <tagclass>com.ecyrd.jspwiki.tags.CheckVersionTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>mode</name>
+    </attribute>
+  </tag>  
 
   <tag>
     <name>ContentEncoding</name>
@@ -40,6 +50,15 @@
     </attribute>
     <attribute>
        <name>format</name>
+    </attribute>
+  </tag>  
+
+  <tag>
+    <name>InsertDiff</name>
+    <tagclass>com.ecyrd.jspwiki.tags.InsertDiffTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
     </attribute>
   </tag>  
 
@@ -77,10 +96,13 @@
   </tag>  
 
   <tag>
-    <name>PageName</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
-    <bodycontent>empty</bodycontent>
-  </tag>
+    <name>PageExists</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageExistsTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+    </attribute>
+  </tag>  
 
   <tag>
     <name>PageInfoLink</name>
@@ -89,6 +111,18 @@
     <attribute>
        <name>page</name>
     </attribute>
+  </tag>
+
+  <tag>
+    <name>PageName</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+
+  <tag>
+    <name>PageVersion</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageVersionTag</tagclass>
+    <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
