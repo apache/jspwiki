@@ -195,13 +195,27 @@ public class ReferenceManager
             String referredPageName = (String)it.next();
             updateReferredBy( referredPageName, page );
         }
-
-        // dump();
-
     }
 
+    /**
+     * Returns the refers-to list. For debugging.
+     */
+    protected Map getRefersTo()
+    {
+        return( m_refersTo );
+    }
 
     /**
+     * Returns the referred-by list. For debugging.
+     */
+    protected Map getReferredBy()
+    {
+        return( m_referredBy );
+    }
+
+    /**
+     * Cleans the 'referred by' list, removing references by 'referrer' to
+     * any other page. Called after 'referrer' is removed. 
      */
     private void cleanReferredBy( String referrer, 
                                   Collection oldReferred,
@@ -420,68 +434,4 @@ public class ReferenceManager
         }
     }
 
-
-
-    /**
-     * Test method: dumps the contents of our link lists to stdout.
-     * This method is NOT synchronized, and should be used in testing
-     * with one user, one WikiEngine only.
-     */
-    // FIXME: Remove, not good putting debug code in distribution.
-
-    /*
-    public void dump()
-    {
-        try
-        {
-            System.out.println( "================================================================" );
-            System.out.println( "Referred By list:" );
-            Set keys = m_referredBy.keySet();
-            Iterator it = keys.iterator();
-            while( it.hasNext() )
-            {
-                String key = (String) it.next();
-                System.out.print( key + " referred by: " );
-                Set refs = (Set)m_referredBy.get( key );
-                Iterator rit = refs.iterator();
-                while( rit.hasNext() )
-                {
-                    String aRef = (String)rit.next();
-                    System.out.print( aRef + " " );
-                }
-                System.out.println();
-            }
-            
-            
-            System.out.println( "----------------------------------------------------------------" );
-            System.out.println( "Refers To list:" );
-            keys = m_refersTo.keySet();
-            it = keys.iterator();
-            while( it.hasNext() )
-            {
-                String key = (String) it.next();
-                System.out.print( key + " refers to: " );
-                Collection refs = (Collection)m_refersTo.get( key );
-                if(refs != null)
-                {
-                    Iterator rit = refs.iterator();
-                    while( rit.hasNext() )
-                    {
-                        String aRef = (String)rit.next();
-                        System.out.print( aRef + " " );
-                    }
-                    System.out.println();
-                }
-                else
-                    System.out.println("(no references)");
-            }
-            System.out.println( "================================================================" );
-        }
-        catch(Exception e)
-        {
-            System.out.println("Problem in dump(): " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    */
 }
