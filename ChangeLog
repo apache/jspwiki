@@ -1,3 +1,20 @@
+2004-11-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.118
+
+        * Improved attachment error handling (check UploadTemplate.jsp)
+
+        * It is now possible to limit the size of the attachments that
+        are uploaded by using the "jspwiki.attachments.maxsize" property.
+
+        * The attachment servlet now uses the workdir to put temporary
+        files in instead of the java.io.tmpdir.  This is to facilitate
+        some ISPs which do not allow you to access a temporary directory.
+
+        * Removed extra parameters from jspwiki.tld - I thought I had done
+        it so I ignored bug reports about this.  Oops.  Sorry.  *sheepish
+        grin*.
+
 2004-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.117
