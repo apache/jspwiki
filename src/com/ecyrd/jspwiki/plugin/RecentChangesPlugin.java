@@ -78,6 +78,11 @@ public class RecentChangesPlugin
         Collection changes = context.getEngine().getRecentChanges();
         StringWriter out = new StringWriter();
 
+        //
+        //  This linkProcessor is used to transform links.
+        //
+        TranslatorReader linkProcessor = new TranslatorReader( context, new java.io.StringReader("") );
+
         if( changes != null )
         {
             Date olddate   = new Date(0);
@@ -111,20 +116,35 @@ public class RecentChangesPlugin
                 String pageurl = context.getEngine().encodeName(pageref.getName());
 
                 out.write("<TR>\n");
-                out.write("<TD WIDTH=\"30%\"><A HREF=\""+
-                          context.getEngine().getBaseURL()+
-                          "Wiki.jsp?page="+pageurl+
-                          "\">"+pageref.getName()+"</A></TD>\n");
+
+                out.write("<TD WIDTH=\"30%\">"+
+                          linkProcessor.makeLink( TranslatorReader.READ, pageref.getName(), pageref.getName() )+
+                          "</TD>\n");
+
                 out.write("<TD><A HREF=\"Diff.jsp?page="+pageurl+"&r1=-1\">"+
                           tfmt.format(lastmod)+
                           "</A></TD>\n");
-                // FIXME: The following code does not really work.
-                // Problem is that the WikiPageProvider interface does not really
-                // work well with versioning.
+
+                //
+                //  Display author information.
+                //
 
                 if( showAuthor )
                 {
-                    out.write("<TD>"+pageref.getAuthor()+"</TD>");
+                    String author = pageref.getAuthor();
+
+                    if( author != null )
+                    {
+                        int type = context.getEngine().pageExists(author) ? TranslatorReader.READ : TranslatorReader.EDIT;
+
+                        author = linkProcessor.makeLink( type, author, author );
+                    }
+                    else
+                    {
+                        author = "unknown";
+                    }
+
+                    out.write("<TD>"+author+"</TD>");
                 }
 
                 out.write("</TR>\n");
