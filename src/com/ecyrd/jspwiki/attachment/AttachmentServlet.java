@@ -27,6 +27,7 @@ import java.io.*;
 import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 // multipartrequest.jar imports:
 import http.utils.multipartrequest.*;
@@ -95,6 +96,7 @@ public class AttachmentServlet
         throws IOException, ServletException 
     {
         String name    = req.getParameter( HDR_WIKINAME );
+        String page    = req.getParameter( "page" );
         String version = req.getParameter( HDR_VERSION );
         String msg     = "An error occurred. Ouch.";
         int    ver     = -1;
@@ -114,7 +116,7 @@ public class AttachmentServlet
 
                 ver = Integer.parseInt( version );
 
-                Attachment att = mgr.getAttachmentInfo( name, ver );
+                Attachment att = mgr.getAttachmentInfo( new WikiPage(page), name, ver );
 
                 if( att != null )
                 {
@@ -152,6 +154,10 @@ public class AttachmentServlet
                           " does not exist.";
                 }
                 
+            }
+            catch( ProviderException pe )
+            {
+                msg = "Provider error: "+pe.getMessage();
             }
             catch( NumberFormatException nfe )
             {

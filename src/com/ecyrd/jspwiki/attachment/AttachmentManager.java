@@ -27,9 +27,11 @@ import java.util.Properties;
 import org.apache.log4j.Category;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Provides facilities for handling attachments.
@@ -109,14 +111,16 @@ public class AttachmentManager
         return m_provider != null;
     }
 
-    public Attachment getAttachmentInfo( String name )
+    public Attachment getAttachmentInfo( WikiPage page, String name )
+        throws ProviderException
     {
-        return getAttachmentInfo( name, WikiProvider.LATEST_VERSION );
+        return getAttachmentInfo( page, name, WikiProvider.LATEST_VERSION );
     }
 
-    public Attachment getAttachmentInfo( String name, int version )
+    public Attachment getAttachmentInfo( WikiPage wikipage, String name, int version )
+        throws ProviderException
     {
-        return m_provider.getAttachmentInfo( name, version );
+        return m_provider.getAttachmentInfo( wikipage, name, version );
     }
 
     public InputStream getAttachmentStream( Attachment att )
