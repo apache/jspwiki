@@ -161,7 +161,7 @@ you will get an editor for the new page. -- [Asser]
 
 The basic incantation to insert a plugin looks like this:
 
-[[{INSERT <plugin class> WITH param1=value, param2=value, ...}]
+[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
 
 There is more information in [JSPWikiPlugins].
 
