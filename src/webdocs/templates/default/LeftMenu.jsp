@@ -15,24 +15,18 @@
 </P>
 <P>
 <DIV ALIGN="center" CLASS="username">
-<%
-    String leftMenuUser = wiki.getUserName(request);
-    if( leftMenuUser != null )
-    {
-        %>
+
+    <wiki:UserCheck exists="true">
         <B>G'day,</B><BR>
-        <wiki:Translate>[<%=leftMenuUser%>]</wiki:Translate>
-        <%
-    }
-    else
-    {
-        %><TT>
+        <wiki:Translate>[<wiki:UserName />]</wiki:Translate>        
+    </wiki:UserCheck>
+
+    <wiki:UserCheck exists="false">
+        <TT> 
         Set your name in<BR>
         <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
-        </TT>
-        <%
-    }
-%>
+        </TT>    
+    </wiki:UserCheck>
 </DIV>
 
 <!-- End of automatically generated page -->
