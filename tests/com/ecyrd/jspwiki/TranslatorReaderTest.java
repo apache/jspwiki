@@ -612,7 +612,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1\n\n2\n\n3";
 
-        assertEquals( "1\n<p>\n2\n<p>\n3", translate(src) );
+        assertEquals( "1\n<p>\n2\n</p><p>\n3</p>", translate(src) );
     }
 
     public void testParagraph2()
@@ -623,7 +623,7 @@ public class TranslatorReaderTest extends TestCase
         newPage( "WikiEtiquette" );        
 
         assertEquals( "<a class=\"wikipage\" href=\"Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n"+
-                      "<p>\n<a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find page</a>", translate(src) );
+                      "<p>\n<a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
     }
 
     public void testLinebreak()
@@ -673,7 +673,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1{{{2345}}}6";
 
-        assertEquals( "1<pre>2345</pre>6", translate(src) );
+        assertEquals( "1<span style=\"font-family:monospace; whitespace:pre;\">2345</span>6", translate(src) );
     }
 
     public void testPre2()
@@ -681,23 +681,23 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
 
-        assertEquals( "1 <pre> {{{ 2345 </pre> }}} 6", translate(src) );
+        assertEquals( "1 <span style=\"font-family:monospace; whitespace:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
     }
 
     public void testHTMLInPre()
         throws Exception
     {
-        String src = "1 {{{ <b> }}}";
+        String src = "1\n{{{ <b> }}}";
 
-        assertEquals( "1 <pre> &lt;b&gt; </pre>", translate(src) );
+        assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate(src) );
     }
 
     public void testCamelCaseInPre()
         throws Exception
     {
-        String src = "1 {{{ CamelCase }}}";
+        String src = "1\n{{{ CamelCase }}}";
 
-        assertEquals( "1 <pre> CamelCase </pre>", translate(src) );
+        assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
     }
 
     public void testList1()
@@ -832,7 +832,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n**\n\nB";
 
-        assertEquals( "A\n<p>\n<ul>\n<ul>\n<li>\n</li>\n</ul>\n</ul>\n<p>\nB", 
+        assertEquals( "A\n<p>\n<ul>\n<ul>\n<li>\n</li>\n</ul>\n</ul>\n</p><p>\nB</p>", 
                       translate(src) );
     }
 
@@ -841,7 +841,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="A\n\n##\n\nB";
 
-        assertEquals( "A\n<p>\n<ol>\n<ol>\n<li>\n</li>\n</ol>\n</ol>\n<p>\nB", 
+        assertEquals( "A\n<p>\n<ol>\n<ol>\n<li>\n</li>\n</ol>\n</ol>\n</p><p>\nB</p>", 
                       translate(src) );
     }
 
@@ -1127,7 +1127,7 @@ public class TranslatorReaderTest extends TestCase
                       "<tr><th> heading </th><th> heading2 </th></tr>\n"+
                       "<tr><td> Cell 1 </td><td> Cell 2 </td></tr>\n"+
                       "<tr><td> Cell 3 </td><td> Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n",
+                      "</table>\n<p>\n</p>",
                       translate(src) );
     }
 
@@ -1140,7 +1140,7 @@ public class TranslatorReaderTest extends TestCase
                       "<tr><th>heading</th><th>heading2</th></tr>\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n",
+                      "</table>\n<p>\n</p>",
                       translate(src) );
     }
 
@@ -1152,7 +1152,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n",
+                      "</table>\n<p>\n</p>",
                       translate(src) );
     }
 
@@ -1166,7 +1166,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n",
+                      "</table>\n<p>\n</p>",
                       translate(src) );
     }
 
@@ -1180,7 +1180,7 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
                       "<tr><td>Cell 1</td><td> Cell| 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p>\n",
+                      "</table>\n<p>\n</p>",
                       translate(src) );
     }
 
