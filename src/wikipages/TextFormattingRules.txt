@@ -156,6 +156,28 @@ gives you the following table.  Note how you can use links also inside tables.
 | ''Gobble'' | Bar
 | [Main]     | [SandBox]
 
+!Styles
+
+In addition to the simple styles represented by the WikiMarkup, we also allow you to put in your own styles.  For example:
+{{{
+%%small
+This is small text
+%%
+}}}
+uses the defined CSS style called "small", as defined in the jspwiki.css file.  These may vary from site to site, and it is up to the site administrator to define a style.
+
+You can also define almost any CSS style command:
+{{{
+%%( font-size: 150%; color: red; )
+Hello, world!
+%%
+}}}
+would render as:
+%%( font-size: 150%; color: red; )
+Hello, world!
+%%
+
+__NOTE__ You have to mark the end of the text you want to finish being styled using {{{%%}}}! 
 
 !Conflicts
 
