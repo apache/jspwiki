@@ -39,17 +39,17 @@ import java.util.*;
  */
 public class IndexPlugin implements WikiPlugin
 {
-    private static Category     log = Category.getInstance(IndexPlugin.class);
+    protected static Category   log = Category.getInstance(IndexPlugin.class);
 
-    private static final String INITIALS_COLOR                  = "red" ;
+    public  static final String INITIALS_COLOR                  = "red" ;
     private static final int    DEFAULT_ITEMS_PER_LINE          = 4     ;
 
-    private static final String PARAM_ITEMS_PER_LINE            = "itemsPerLine";
+    public static final String  PARAM_ITEMS_PER_LINE            = "itemsPerLine";
 
-    private int                 m_currentNofPagesOnLine         = 0     ,
+    protected int               m_currentNofPagesOnLine         = 0     ,
                                 m_itemsPerLine                          ;
-    private String              m_previousPageFirstLetter       = ""    ;
-    private StringWriter        m_bodyPart      =   new StringWriter () ,
+    protected String            m_previousPageFirstLetter       = ""    ;
+    protected StringWriter      m_bodyPart      =   new StringWriter () ,
                                 m_headerPart    =   new StringWriter () ;
 
 
@@ -156,7 +156,7 @@ public class IndexPlugin implements WikiPlugin
                          "<hr>" );
     }
 
-    private void addPageToIndex( WikiPage i_curPage, final TranslatorReader i_linkProcessor )
+    protected void addPageToIndex( WikiPage i_curPage, final TranslatorReader i_linkProcessor )
     {
         final boolean notFirstPageOnLine = 2 <= m_currentNofPagesOnLine;
 
@@ -169,7 +169,7 @@ public class IndexPlugin implements WikiPlugin
                                                     i_curPage.getName () ));
     }
 
-    private void breakLineIfTooLong()
+    protected void breakLineIfTooLong()
     {
         final boolean limitReached = (m_itemsPerLine == m_currentNofPagesOnLine);
 
