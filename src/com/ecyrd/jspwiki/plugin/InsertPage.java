@@ -74,6 +74,8 @@ public class InsertPage
                 UserProfile currentUser  = context.getCurrentUser();
 
                 /*
+                  // Disabled, because this seems to fail when used
+                  // to insert something from a weblog entry.
                 if( !mgr.checkPermission( page,
                                           currentUser,
                                           new ViewPermission() ) )
