@@ -812,7 +812,7 @@ public class TranslatorReader extends Reader
                             if( i < line.length()-1 && line.charAt(i+1) == '|' )
                             {
                                 // It's a heading.
-                                tableLine.append( "<TD CLASS=\"tablehead\">" );
+                                tableLine.append( "<TH>" );
                                 i++;
                             }
                             else
