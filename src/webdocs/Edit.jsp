@@ -20,6 +20,7 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String skin    = wiki.safeGetParameter( request, "skin" );
     String verstr  = request.getParameter("version");
     int    version = WikiProvider.LATEST_VERSION;
 
@@ -33,7 +34,10 @@
         throw new ServletException("No page defined");
     }
 
-    String skin = wiki.getTemplateDir();
+    if( skin == null )
+    {
+        skin = wiki.getTemplateDir();
+    }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
