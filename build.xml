@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.8 2001-10-20 10:03:36 jalkanen Exp $
+    $Id: build.xml,v 1.9 2001-10-21 10:50:22 jalkanen Exp $
 -->    
        
 <!--   
@@ -267,6 +267,7 @@
           description="Builds the entire distribution archive.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
+     <copy file="ReleaseNotes" todir="${install.fulldir}" />
      <copy file="doc/LICENSE" todir="${install.fulldir}" />
      <zip zipfile="${release.dir}/${ant.project.name}.zip"
           basedir="${install.fulldir}" />
