@@ -17,7 +17,7 @@
 
     String skin = wiki.getTemplateDir();
 
-    if( pagereq == null )
+    if( pagereq == null || pagereq.length() == 0 )
     {
         throw new ServletException("No page defined");
     }

@@ -21,7 +21,7 @@
 
     String headerTitle = "";
 
-    if( pagereq == null )
+    if( pagereq == null || pagereq.length() == 0 )
     {
         pagereq = wiki.getFrontPage();
     }

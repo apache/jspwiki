@@ -20,7 +20,7 @@
     String pagereq = wiki.safeGetParameter( request, "page" );
     String skin    = wiki.safeGetParameter( request, "skin" );
 
-    if( pagereq == null )
+    if( pagereq == null || pagereq.length() == 0 )
     {
         pagereq = wiki.getFrontPage();
     }
