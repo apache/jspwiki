@@ -84,11 +84,13 @@ public class PluginManager
      *  Returns true if the link is really command to insert
      *  a plugin.
      *  <P>
-     *  Currently we just check if the link starts with "{INSERT".
+     *  Currently we just check if the link starts with "{INSERT",
+     *  or just plain "{" but not "{$".
      */
     public static boolean isPluginLink( String link )
     {
-        return link.startsWith("{INSERT");
+        return link.startsWith("{INSERT") || 
+               (link.startsWith("{") && !link.startsWith("{$"));
     }
 
     /**
@@ -299,14 +301,14 @@ public class PluginManager
 
         try
         {
-            Pattern ptrn = compiler.compile( "\\{?INSERT\\s*([\\w\\._]+)\\s*(WHERE)?\\s*([^\\}]*)\\}?$" );
+            Pattern ptrn = compiler.compile( "\\{?(INSERT)?\\s*([\\w\\._]+)\\s*(WHERE)?\\s*([^\\}]*)\\}?$" );
 
             if( matcher.contains( commandline, ptrn ) )
             {
                 MatchResult res = matcher.getMatch();
 
-                String plugin   = res.group(1);                
-                String args     = res.group(3);
+                String plugin   = res.group(2);                
+                String args     = res.group(4);
                 Map arglist     = parseArgs( args );
 
                 return execute( context, plugin, arglist );
