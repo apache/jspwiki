@@ -34,7 +34,10 @@
         mgr.logout( session );
         String name = wiki.safeGetParameter( request, "username" );
 
-        mgr.setUserCookie( response, name );
+        if( name != null && name.length() > 0 )
+        {
+            mgr.setUserCookie( response, name );
+        }
 
         response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
     }
