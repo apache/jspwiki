@@ -52,13 +52,13 @@
 <TABLE BORDER="0" CELLSPACING="8" width="95%">
 
   <TR>
-    <TD WIDTH="10%" VALIGN="top" NOWRAP="true">
+    <TD CLASS="leftmenu" WIDTH="10%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
 
-    <TD WIDTH="85%" VALIGN="top">
+    <TD CLASS="page" WIDTH="85%" VALIGN="top">
 
       <%@ include file="PageHeader.jsp" %>
 

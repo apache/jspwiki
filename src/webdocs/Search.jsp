@@ -41,12 +41,12 @@
 <TABLE BORDER="0" CELLSPACING="8">
 
   <TR>
-    <TD WIDTH="15%" VALIGN="top" NOWRAP="true">
+    <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="nowrap">
        <%@ include file="LeftMenu.jsp" %>
        <P>
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
-    <TD WIDTH="85%" VALIGN="top">
+    <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <H1>Find pages</H1>
 
       <% if( list != null ) 

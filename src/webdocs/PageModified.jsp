@@ -50,7 +50,7 @@
 <TABLE BORDER="0" CELLSPACING="8">
 
   <TR>
-    <TD WIDTH="15%" VALIGN="top" NOWRAP="true">
+    <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <BR><BR>
        <P>
@@ -60,7 +60,7 @@
        <%@ include file="LeftMenuFooter.jsp" %>
        </P>
     </TD>
-    <TD WIDTH="85%" VALIGN="top">
+    <TD CLASS="page" WIDTH="85%" VALIGN="top">
       <H1>Concurrent modification of <%=pagereq%></H1>
 
       <P>
