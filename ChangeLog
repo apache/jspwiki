@@ -1,3 +1,35 @@
+2005-01-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.130.  (It's amazing what you can do when you're on a long
+        train trip...)
+
+        * Rewrote header.jsp to include proper scripts, and renamed it
+        to "commonheader.jsp".
+
+        * Moved the default scripts from templates/default to /scripts.
+        This allows easier access from different templates.
+
+        * RSSImageLinkTag now has proper alt-tag.
+
+        * The IncludeTag now attempts to find the included page from the
+        default template, if it can't find it from the current template.
+        This essentially allows you to just copy the "ViewTemplate.jsp"
+        file (and the CSS files) into a new subdirectory for really simple
+        templating.
+
+        * The default template now validates as XHTML 1.0 Transitional.
+        (Though there are some pages on which validation still fails, most
+        notably TextFormattingRules - we're working on it... :)
+
+        * TranslatorReader now emits a lot more XHTML-compatible code.  The
+        paragraph handling was faulty on many occasions, mostly resulting
+        in block-level elements to be put inside paragraphs (big no-no).
+
+        * TemplateManager now works (sorta).  All JSP files now use it to
+        figure out how templates work.  This has the nice side effect that
+        if a template file is missing, JSPWiki will use the default template
+        file for that.
+
 2005-01-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.129.
