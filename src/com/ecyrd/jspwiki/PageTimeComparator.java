@@ -20,15 +20,35 @@
 package com.ecyrd.jspwiki;
 
 import java.util.*;
+import org.apache.log4j.Category;
 
 public class PageTimeComparator
     implements Comparator
 {
+    static Category log = Category.getInstance( PageTimeComparator.class ); 
+
     public int compare( Object o1, Object o2 )
     {
         WikiPage w1 = (WikiPage)o1;
         WikiPage w2 = (WikiPage)o2;
-            
+
+        if( w1 == null || w2 == null ) 
+        {
+            log.error( "W1 or W2 is NULL in PageTimeComparator!");
+            return 0; // FIXME: Is this correct?
+        }
+
+        if( w1.getLastModified() == null )
+        {
+            log.error( "NULL MODIFY DATE WITH "+w1.getName() );
+            return 0;
+        }
+        else if( w2.getLastModified() == null )
+        {
+            log.error( "NULL MODIFY DATE WITH "+w2.getName() );
+            return 0;
+        }
+
         // This gets most recent on top
         int timecomparison = w2.getLastModified().compareTo( w1.getLastModified() );
 
