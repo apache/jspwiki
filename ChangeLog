@@ -1,5 +1,16 @@
 2002-06-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.8.0.
+
+        * A second property: jspwiki.matchEnglishPlurals automatically
+        allows you to consider "Thing" and "Things" the same word.
+        Unfortunately, it's not perfect (it can't tell the difference
+        between SandBox and SandBoxes, for example).
+
+        * PageHeader.jsp now splits the title into separate words, if the
+        correct property is set in jspwiki.properties.  Suggested by
+        Steven Owens.
+
         * PageModified.jsp now does word wrapping.  It's still not
         beautiful, but it works.
 

@@ -12,7 +12,12 @@ Major changes since the last stable (1.7.0) release are:
 
 - support for images as hyperlinks.
 
-- RSS feed.
+- RSS feed, RSS links and RSS autodiscovery.
+
+- Possibility to match English plurals between Wiki words (WikiName =
+  WikiNames, etc) to simplify writing.
+
+- Page titles can now be shown with or without spaces.
 
 - New plugin: CurrentTimePlugin
 
@@ -30,7 +35,13 @@ UPGRADE NOTES
   * New JSP pages "Preview.jsp" and "UserPreferences.jsp" must be
     copied.
 
+  * Nearly all JSP pages have been slightly changed, so you want to
+    probably copy them too.  We apologize for the inconvinience, but
+    hopefully this is the last time ever.
+
   * If you've set the "jspwiki.diffCommand", please remove it and
     see if the internal diff routine works for you.
 
   * Check the RSS feed options in jspwiki.properties.
+
+  * Check also other options in jspwiki.properties.
