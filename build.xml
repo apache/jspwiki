@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.10 2001-11-02 17:55:37 jalkanen Exp $
+    $Id: build.xml,v 1.11 2001-11-06 15:57:18 jalkanen Exp $
 -->    
        
 <!--   
@@ -153,11 +153,22 @@
           description="Builds the source code.">
     <javac srcdir="${code.src}"
            destdir="${code.build}"
+           debug="on"
+           optimize="off">
+      <classpath refid="path.base" />
+    </javac>
+  </target>
+
+  <target name="compile-optimized" depends="clean,init"
+          description="Builds the source code for distribution.">
+    <javac srcdir="${code.src}"
+           destdir="${code.build}"
            debug="off"
            optimize="on">
       <classpath refid="path.base" />
     </javac>
   </target>
+
 
   <!-- This is similar to above.  We use this to compile the
        tests. -->
@@ -216,7 +227,7 @@
            of the WAR-file.
    -->
 
-  <target name="war" depends="compile,installinit"
+  <target name="war" depends="compile-optimized,installinit"
           description="Builds the WAR file for installation.">
 
     <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
