@@ -1,5 +1,11 @@
 2003-06-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * Changed the build system somewhat: There is now a
+        "build.properties" -file which allows you to customize the
+        compilation somewhat.  This should help those that are developing
+        on Windows-based systems, since paths can now be set up correctly
+        automatically.
+
         * v2.0.31.
 
         * Added "exists" -attribute back to UserCheckTag, since it seems
