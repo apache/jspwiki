@@ -62,7 +62,9 @@ public class IncludeTag
     {
         try
         {
-            pageContext.include( m_page );
+            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
+                                                                                  m_page );
+            pageContext.include( page );
         }
         catch( ServletException e )
         {
