@@ -343,9 +343,9 @@ public class AuthorizationManagerTest extends TestCase
 
         if( acl != null )
         {
-            for( Enumeration enum = acl.entries(); enum.hasMoreElements(); )
+            for( Enumeration e = acl.entries(); e.hasMoreElements(); )
             {
-                AclEntry entry = (AclEntry) enum.nextElement();
+                AclEntry entry = (AclEntry) e.nextElement();
 
                 sb.append("  user = "+entry.getPrincipal().getName()+": ");
 
