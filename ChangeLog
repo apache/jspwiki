@@ -1,3 +1,15 @@
+2003-03-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.33.
+
+        * FileSystemProvider should now be a bit more verbose in case the
+        page directory is not found.  This should help those who like to
+        end their property entries with spaces :-).
+
+        * BreadcrumbsTag had an off-by-one error: if you set the trail to
+        be 10 in size, it would show only 9.  Patch contributed by Ken
+        Liu.
+
 2003-02-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.32.
