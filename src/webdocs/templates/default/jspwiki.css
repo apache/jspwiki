@@ -130,6 +130,11 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
                margin-left: 0px !important; }
 .archiveyear:after { content: " AD" }
 
+/*  Error handling  (2.2+) */
+
+.error { color: #ff2222; 
+         font-weight: bold; }
+
 /*  Here's a nice style you can use to put comment boxes on pages.  It's used
     on some pages. */
 
