@@ -3,6 +3,11 @@ This is a beta release of JSPWiki.
 
 Major changes since the last stable (1.6.0) release are:
 
+- Added XML-RPC interface.
+
+- Added CachingProvider based on an idea and sample code by Chris
+  Brooking.
+
 - Added ReferenceManager. This object is initialized statically by 
   each WikiEngine, and it keeps track of all WikiPage cross references
   within that WE. This is an unoptimized, in-memory solution, at least
@@ -52,9 +57,9 @@ UPGRADE NOTES
   - Remove RecentChanges.jsp - it is no longer required.
   - Copy the new JSPWiki sample pages (LeftMenuFooter, RecentChanges,
     UndefinedPages, UnusedPages are new) into your wiki page repository.
-  - ant build; cp -r build/com .../JSPWiki/WEB-INF/classes/
-    OR
-    unzip the contents of the WAR file somewhere and copy the classes
-    from there (far easier).
+  - Copy all JAR files from WEB-INF/lib to your own WEB-INF/lib
+  - Remove your WEB-INF/classes subdirectory.  All classes are now
+    contained within JSPWiki.jar in the WEB-INF/lib -directory.
+
 
 
