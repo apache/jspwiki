@@ -492,6 +492,15 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the basic attachment URL.
+     *  @since 2.0.42.
+     */
+    public String getAttachmentURL( String attName )
+    {
+        return m_baseURL+"attach?page="+encodeName(attName);
+    }
+
+    /**
      *  Returns the default front page, if no page is used.
      */
 

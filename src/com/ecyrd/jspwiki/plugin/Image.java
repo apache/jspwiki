@@ -89,7 +89,7 @@ public class Image
 
             if( att != null )
             {
-                src = engine.getBaseURL()+"attach?page="+att.getName();
+                src = engine.getAttachmentURL(att.getName());
             }
         }
         catch( ProviderException e )

@@ -417,9 +417,9 @@ public class TranslatorReader extends Reader
             break;
 
           case ATTACHMENT:
-            result = "<a class=\"attachment\" href=\""+m_engine.getBaseURL()+
-                     "attach?page="+link+"\">"+text+"</a>"+
-                     "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+link+
+            String attlink = m_engine.getAttachmentURL( link );
+            result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
+                     "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+encodedlink+
                      "\"><img src=\"images/attachment_small.png\" border=\"0\" /></a>";
             break;
 
@@ -808,7 +808,7 @@ public class TranslatorReader extends Reader
 
                 if( isImageLink( reallink ) )
                 {
-                    attachment = m_engine.getBaseURL()+"attach?page="+attachment;
+                    attachment = m_engine.getAttachmentURL(attachment);
                     sb.append( handleImageLink( attachment, link, (cutpoint != -1) ) );
                 }
                 else

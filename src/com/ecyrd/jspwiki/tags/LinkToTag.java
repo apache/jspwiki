@@ -83,7 +83,7 @@ public class LinkToTag
 
         if( isattachment )
         {
-            url = engine.getBaseURL()+"attach?page="+engine.encodeName(pageName);
+            url = engine.getAttachmentURL(pageName);
             linkclass = "attachment";
         }
         else
