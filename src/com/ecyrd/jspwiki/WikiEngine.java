@@ -295,8 +295,8 @@ public class WikiEngine
             m_differenceEngine  = new DifferenceEngine( props, getContentEncoding() );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
-            m_authorizationManager = new AuthorizationManager( props );
-            m_userManager       = new UserManager( props );
+            m_authorizationManager = new AuthorizationManager( this, props );
+            m_userManager       = new UserManager( this, props );
 
             initReferenceManager();            
         }
@@ -699,17 +699,18 @@ public class WikiEngine
      */
     public boolean pageExists( String page )
     {
-        if( getSpecialPageReference(page) != null ) return true;
-
-        if( getFinalPageName( page ) != null )
-        {
-            return true;
-        }
 
         Attachment att = null;
 
         try
         {
+            if( getSpecialPageReference(page) != null ) return true;
+
+            if( getFinalPageName( page ) != null )
+            {
+                return true;
+            }
+
             att = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page );
         }
         catch( ProviderException e )
@@ -794,6 +795,7 @@ public class WikiEngine
      */
 
     public String getFinalPageName( String page )
+        throws ProviderException
     {
         boolean isThere = simplePageExists( page );
 
@@ -819,6 +821,7 @@ public class WikiEngine
      *  We also check overridden pages from jspwiki.properties
      */
     private boolean simplePageExists( String page )
+        throws ProviderException
     {
         if( getSpecialPageReference(page) != null ) return true;
 
@@ -923,6 +926,14 @@ public class WikiEngine
     }
 
     /**
+     *  @since 2.1.13.
+     */
+    public String getPureText( WikiPage page )
+    {
+        return getPureText( page.getName(), page.getVersion() );
+    }
+
+    /**
      *  Returns plain text (with HTML entities replaced). This should
      *  be the main entry point for getText().
      *
@@ -966,13 +977,15 @@ public class WikiEngine
      *
      *  @param pagename WikiName of the page to convert.
      *  @param version Version number to fetch
+     *  @deprecated
      */
     public String getHTML( String pagename, int version )
     {
-        WikiContext context = new WikiContext( this,
-                                               pagename );
         WikiPage page = new WikiPage( pagename );
         page.setVersion( version );
+
+        WikiContext context = new WikiContext( this,
+                                               page );
         
         String res = getHTML( context, page );
 
@@ -1557,6 +1570,53 @@ public class WikiEngine
     public UserManager getUserManager()
     {
         return m_userManager;
+    }
+
+    /**
+     *  Shortcut to create a WikiContext from the Wiki page.
+     *
+     *  @since 2.1.15.
+     */
+    // FIXME: We need to have a version which takes a fixed page
+    //        name as well, or check it elsewhere.
+    public WikiContext createContext( HttpServletRequest request,
+                                      String requestContext )
+    {
+        String pagereq  = safeGetParameter( request, "page" );
+        String template = safeGetParameter( request, "skin" );
+
+        if( pagereq == null || pagereq.length() == 0 )
+        {
+            pagereq = getFrontPage();
+        }
+
+        if( template == null )
+        {
+            template = getTemplateDir();
+        }
+
+        int version          = WikiProvider.LATEST_VERSION;
+        String rev           = request.getParameter("version");
+
+        if( rev != null )
+        {
+            version = Integer.parseInt( rev );
+        }
+
+        WikiPage wikipage = getPage( pagereq, version );
+
+        if( wikipage == null )
+        {
+            wikipage = new WikiPage( pagereq );
+        }
+
+        WikiContext context = new WikiContext( this, 
+                                               wikipage );
+        context.setRequestContext( requestContext );
+        context.setHttpRequest( request );
+        context.setTemplate( template );
+
+        return context;
     }
 
     /**
