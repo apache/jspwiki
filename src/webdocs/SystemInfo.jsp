@@ -19,7 +19,7 @@
         pagereq = "SystemInfo";
     String pageurl = wiki.encodeName( pagereq );
 
-    WikiPage wikipage = wiki.getPage( pagereq );
+    WikiPage wikipage = new WikiPage( "SystemInfo" );
 
     WikiContext wikiContext = new WikiContext( wiki, wikipage );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
