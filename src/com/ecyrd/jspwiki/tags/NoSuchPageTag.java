@@ -46,7 +46,7 @@ public class NoSuchPageTag
         return m_pageName;
     }
 
-    public final int doWikiStartTag()
+    public int doWikiStartTag()
         throws IOException,
                ProviderException
     {
