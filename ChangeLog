@@ -1,3 +1,13 @@
+2003-04-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v2.0.41.
+
+        * Removed superfluous "page" attribute from AttachmentIteratorTag
+        in jspwiki.tld, which caused conflicts in WebLogic and WebSphere.
+        Reported by many people, and I thought I had it fixed for 2.0.33,
+        but apparently I hadn't.  Sigh.  First goes the memory, and
+        then...
+
 2003-04-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v2.0.40.
