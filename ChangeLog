@@ -5,7 +5,7 @@
         * Instead of doing ServletContext.getRealPath("/") we now use the
         ServletContext itself as an unique key when creating a
         WikiEngine.  This should resolve problems when running JSPWiki
-        straight from a WAR file.  Reported by Wilfred Springer.
+        straight from a WAR file.  Reported by Oyvind Loekling.
 
         * Added plenty of code for attachments.  Storing and retrieving
         works, as well as listing.  However, uploading still has some
