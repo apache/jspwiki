@@ -676,9 +676,8 @@ public class TranslatorReader extends Reader
         //  Replace the most obvious items that could possibly
         //  break the resulting HTML code.
         //
-        line = replaceString( line, "<", "&lt;" );
-        line = replaceString( line, ">", "&gt;" );
-        line = replaceString( line, "\"", "&quot;" );
+
+        line = TextUtil.replaceEntities( line );
 
         if( !m_iscode )
         {
