@@ -251,6 +251,17 @@ public class WikiEngineTest extends TestCase
     }
 
     /**
+     *  English articles too, pathological case...
+     */
+    /*
+    public void testBeautifyTitleArticle2()
+    {
+        String src = "ThisIsAJSPWikiPage";
+
+        assertEquals("This Is A JSP Wiki Page", m_engine.beautifyTitle( src ) );
+    }
+    */
+    /**
      *  Tries to find an existing class.
      */
     public void testFindClass()
