@@ -13,6 +13,8 @@ public class VerySimpleProvider implements WikiPageProvider
     public String m_latestReq = null;
     /** The version number of the last request is stored here. */
     public int    m_latestVers = -123989;
+    /** Controlling WikiEngine. */
+    private WikiEngine m_engine;
 
     /**
      *  This provider has only a single page, when you ask 
@@ -27,6 +29,16 @@ public class VerySimpleProvider implements WikiPageProvider
 
     public void initialize( Properties props )
     {
+    }
+
+    public void setWikiEngine( WikiEngine e )
+    {
+	m_engine = e;
+    }
+
+    public WikiEngine getWikiEngine()
+    {
+	return( m_engine );
     }
 
     public String getProviderInfo()
