@@ -130,3 +130,15 @@ TABLE.calendar TR.weekdays { font-color: #FF0000; }
                margin-left: 0px !important; }
 .archiveyear:after { content: " AD" }
 
+/*  Here's a nice style you can use to put comment boxes on pages.  It's used
+    on some pages. */
+
+div.commentbox {
+   float:right;
+   width: 20%;
+   border-style: inset;
+   background: #f0f0f0;
+   font-size: 80%;
+   padding: 4px;
+   margin-left: 4px;
+}
