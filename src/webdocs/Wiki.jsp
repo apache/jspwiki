@@ -80,8 +80,10 @@
       <%@ include file="PageHeader.jsp" %>
 
       <% if( version > 0 ) { %>
-         <P CLASS="versionnote">This is version <%=version%>.  It is not the current version,
-         and thus it cannot be edited.  <A HREF="Wiki.jsp?page=<%=pageurl%>">(Back to current version)</A></P> 
+         <FONT COLOR="red">
+            <P CLASS="versionnote">This is version <%=version%>.  It is not the current version,
+            and thus it cannot be edited.  <A HREF="Wiki.jsp?page=<%=pageurl%>">(Back to current version)</A></P> 
+         </FONT>
       <% } %>
 
       <%
