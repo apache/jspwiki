@@ -11,6 +11,9 @@
         not checked, so it is possible to refer to templates that do not
         exist and get an empty page in return.
 
+        Also CamelCase expansion can now be turned off on a page-by-page
+        basis.
+        
         * TranslatorReader now understands the SET directive.  It is thus
         now possible to set arbitrary attributes for pages which get
         stored in the WikiPage.
