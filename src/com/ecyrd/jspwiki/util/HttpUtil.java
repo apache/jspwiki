@@ -19,6 +19,8 @@
  */
 package com.ecyrd.jspwiki.util;
 
+import java.text.*;
+import java.util.Date;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
@@ -26,6 +28,7 @@ import javax.servlet.http.Cookie;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Contains useful utilities for some common HTTP tasks.
@@ -67,32 +70,66 @@ public class HttpUtil
     }
 
     /**
-     *  Takes the name of the page from the request URI.
-     *  The initial slash is also removed.  If there is no page,
-     *  returns null.
+     *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
      */
-    /*
-    public static String parsePageFromURL( HttpServletRequest request,
-                                           String encoding )
-        throws UnsupportedEncodingException
+    public static boolean checkFor304( HttpServletRequest req,
+                                       WikiPage page )
     {
-        String name = request.getPathInfo();
+        DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+        Date lastModified = page.getLastModified();
 
-        log.debug("NAME="+name);
+        //
+        //  We'll do some handling for CONDITIONAL GET (and return a 304)
+        //  If the client has set the following headers, do not try for a 304.
+        //
+        //    pragma: no-cache
+        //    cache-control: no-cache
+        //
 
-        if( name == null || name.length() <= 1 )
+        if( "no-cache".equalsIgnoreCase(req.getHeader("Pragma"))
+            || "no-cache".equalsIgnoreCase(req.getHeader("cache-control"))) 
         {
-            return null;
-        }
-        else if( name.charAt(0) == '/' )
+            // Wants specifically a fresh copy
+        } 
+        else 
         {
-            name = name.substring(1);
-        }
-       
-        name = new String(name.getBytes("ISO-8859-1"),
-                          encoding );
+            long ifModifiedSince = req.getDateHeader("If-Modified-Since");
 
-        return name;
+            //log.info("ifModifiedSince:"+ifModifiedSince);
+            if( ifModifiedSince != -1 )
+            {
+                long lastModifiedTime = lastModified.getTime();
+
+                //log.info("lastModifiedTime:" + lastModifiedTime);
+                if( lastModifiedTime <= ifModifiedSince )
+                {
+                    return true;
+                }
+            } 
+            else
+            {
+                try 
+                {
+                    String s = req.getHeader("If-Modified-Since");
+
+                    if( s != null ) 
+                    {
+                        Date ifModifiedSinceDate = rfcDateFormat.parse(s);
+                        //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
+                        if( lastModified.before(ifModifiedSinceDate) ) 
+                        {
+                            return true;
+                        }
+                    }
+                } 
+                catch (ParseException e) 
+                {
+                    log.warn(e.getLocalizedMessage(), e);
+                }
+            }
+        }
+         
+        return false;
     }
-    */
+
 }
