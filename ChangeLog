@@ -1,3 +1,16 @@
+2002-09-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.26.
+
+        * Added the ability to restore older versions of pages relatively
+        trivially.  This is done by going viewing the old version via
+        PageInfo, then clicking on "Restore this version".  You'll be
+        presented with a edit view to the page.
+        
+        Note: this facility has changed the default template, too, so if
+        you have made your own templates, you probably want to modify them
+        too to allow this facility.
+
 2002-09-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * v1.9.25.
