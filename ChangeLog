@@ -1,5 +1,8 @@
 2001-11-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Prevent robots from caching Edit, Diff, PageInfo and
+        PageModified - not much point in caching those, really.
+
         * v1.5.5-beta.
 
         * Bug fix: Starting a new page no longer results as 'null' as the
