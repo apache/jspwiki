@@ -96,6 +96,8 @@ public class BasicAttachmentProvider
     private File findPageDir( String wikipage )
         throws ProviderException
     {
+        wikipage = TextUtil.urlEncodeUTF8( wikipage );
+
         File f = new File( m_storageDir, wikipage+DIR_EXTENSION );
 
         if( f.exists() && !f.isDirectory() )
@@ -112,7 +114,8 @@ public class BasicAttachmentProvider
     private File findAttachmentDir( Attachment att )
         throws ProviderException
     {
-        File f = new File( findPageDir(att.getParentName()), att.getFileName() );
+        File f = new File( findPageDir(att.getParentName()), 
+                           TextUtil.urlEncodeUTF8(att.getFileName()) );
 
         return f;
     }
@@ -166,15 +169,17 @@ public class BasicAttachmentProvider
 
     /**
      *  Returns the file extension.  For example "test.png" returns "png".
+     *  <p>
+     *  If file has no extension, will return "bin"
      */
     protected static String getFileExtension( String filename )
     {
-        String fileExt = "";
+        String fileExt = "bin";
 
         int dot = filename.lastIndexOf('.');
-        if( dot >= 0 )
+        if( dot >= 0 && dot < filename.length()-1 )
         {
-            fileExt = filename.substring( dot+1 );
+            fileExt = TextUtil.urlEncodeUTF8( filename.substring( dot+1 ) );
         }
 
         return fileExt;
@@ -334,8 +339,18 @@ public class BasicAttachmentProvider
 
                     if( f.isDirectory() )
                     {
-                        Attachment att = getAttachmentInfo( page, attachments[i],
+                        String attachmentName = TextUtil.urlDecodeUTF8( attachments[i] );
+
+                        Attachment att = getAttachmentInfo( page, attachmentName,
                                                             WikiProvider.LATEST_VERSION );
+
+                        if( att == null )
+                        {
+                            throw new ProviderException("Attachment disappeared while reading information:"+
+                                                        " if you did not touch the repository, there is a serious bug somewhere. "+
+                                                        "Attachment = "+attachments[i]+
+                                                        ", decoded = "+attachmentName );
+                        }
 
                         result.add( att );
                     }
@@ -392,7 +407,8 @@ public class BasicAttachmentProvider
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
-        File dir = new File( findPageDir( page.getName() ), name );
+        File dir = new File( findPageDir( page.getName() ), 
+                             TextUtil.urlEncodeUTF8(name) );
 
         if( !dir.exists() )
         {
