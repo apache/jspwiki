@@ -14,11 +14,17 @@
 
 <%
     String pagereq = wiki.safeGetParameter( request, "page" );
+    String skin    = wiki.safeGetParameter( request, "page" );
     String headerTitle = "";
 
     if( pagereq == null )
     {
         pagereq = "Main";
+    }
+
+    if( skin == null || skin.length() == 0 )
+    {
+        skin = "default";
     }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
@@ -63,7 +69,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 %>
 
-<%@ include file="templates/ViewTemplate.jsp" %>
+<%@ include file="templates/default/ViewTemplate.jsp" %>
 
 <%
     NDC.pop();
