@@ -5,7 +5,8 @@
         * CheckLockTag was a bit inconsistent: if the page was locked by
         the current user, it would of course always be "locked".  This
         means that the value of "unlocked" was essentially useless for
-        Edit pages.  I added a new value for "mode": "owned".
+        Edit pages.  I added a new value for "mode": "owned".  Reported by
+        Rajesh Raheja.
 
         * Added Image plugin from 2.1.x branch.
 
