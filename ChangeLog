@@ -1,3 +1,16 @@
+2002-03-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * Included a new version of xmlrpc.jar: this version just has the
+        default charset set to "UTF-8" instead of ISO-Latin-1.
+
+        * RPCServlet now takes two initParams: "handler" to point at the
+        class that is used to handle the XML-RPC call, and "prefix" to
+        determine the XML-RPC command prefix.  We use these to start both
+        the UTF-8 and strict XML-RPC handlers from web.xml.
+
+        * Added AbstractRPCHandler and RPCHandlerUTF8 classes so that we
+        can now also serve XML-RPC using UTF-8 :-).
+
 2002-02-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * XML-RPC listLinks now returns a the type as a string.  Suggested
