@@ -1,4 +1,17 @@
+2002-11-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * v1.9.35.
+
+        * GoDiagram is now a bit more tolerant towards the kind of markup
+        it accepts.
+
+        * Bug fix: godiagram was off-by-one towards the side of the
+        board.  Reported by Paavo Pietarila.
+
 2002-11-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * We now output <BR/> instead of <BR>.  Slowly working towards
+        full XHTML :-).
 
         * Several small bugfixes: ([[ not working, single {'s getting
         destroyed, etc.)
