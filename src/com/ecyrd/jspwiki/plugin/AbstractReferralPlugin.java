@@ -53,7 +53,7 @@ public abstract class AbstractReferralPlugin
 
         if( m_maxwidth < 0 ) m_maxwidth = 0;
 
-        log.debug( "Requested maximum width is "+m_maxwidth );
+        // log.debug( "Requested maximum width is "+m_maxwidth );
     }
 
     /**
