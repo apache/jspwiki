@@ -29,6 +29,9 @@ import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
@@ -53,6 +56,8 @@ public class TranslatorReader extends Reader
     private static final int              INTERWIKI     = 7;
     private static final int              IMAGELINK     = 8;
     private static final int              IMAGEWIKILINK = 9;
+    private static final int              ATTACHMENT    = 10;
+    private static final int              ATTACHMENTIMAGE = 11;
 
     /** Allow this many characters to be pushed back in the stream. */
     private static final int              PUSHBACK_BUFFER_SIZE = 8;
@@ -380,6 +385,13 @@ public class TranslatorReader extends Reader
             result = "<A CLASS=\"interwiki\" HREF=\""+link+"\">"+text+"</A>";
             break;
 
+          case ATTACHMENT:
+            result = "<a class=\"attachment\" href=\""+m_engine.getBaseURL()+
+                     "attach?page="+link+"\">"+text+"</a>"+
+                     "<a href=\""+m_engine.getBaseURL()+"PageInfo.jsp?page="+link+
+                     "\"><img src=\"images/attachment_small.png\" border=\"0\" /></a>";
+            break;
+
           default:
             result = "";
             break;
@@ -565,7 +577,49 @@ public class TranslatorReader extends Reader
 
         return link;
     }
+
+
+    /**
+     *  Image links are handled differently:
+     *  1. If the text is a WikiName of an existing page,
+     *     it gets linked.
+     *  2. If the text is an external link, then it is inlined.  
+     *  3. Otherwise it becomes an ALT text.
+     *
+     *  @param reallink The link to the image.
+     *  @param link     Link text portion, may be a link to somewhere else.
+     *  @param hasLinkText If true, then the defined link had a link text available.
+     *                  This means that the link text may be a link to a wiki page,
+     *                  or an external resource.
+     */
     
+    private String handleImageLink( String reallink, String link, boolean hasLinkText )
+    {
+        String possiblePage = cleanLink( link );
+        String matchedLink;
+        String res = "";
+
+        if( isExternalLink( link ) && hasLinkText )
+        {
+            res = makeLink( IMAGELINK, reallink, link );
+        }
+        else if( (matchedLink = linkExists( possiblePage )) != null &&
+                 hasLinkText )
+        {
+            // System.out.println("Orig="+link+", Matched: "+matchedLink);
+            callMutatorChain( m_localLinkMutatorChain, possiblePage );
+            
+            res = makeLink( IMAGEWIKILINK, reallink, link );
+        }
+        else
+        {
+            res = makeLink( IMAGE, reallink, link );
+        }
+
+        return res;
+    }
+
+
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
@@ -645,33 +699,7 @@ public class TranslatorReader extends Reader
 
             if( isImageLink( reallink ) )
             {
-                //
-                // Image links are handled differently:
-                // 1. If the text is a WikiName of an existing page,
-                //    it gets linked.
-                // 2. If the text is an external link, then it is inlined.  
-                // 3. Otherwise it becomes an ALT text.
-                //
-
-                String possiblePage = cleanLink( link );
-                String matchedLink;
-
-                if( isExternalLink( link ) && (cutpoint != -1) )
-                {
-                    sb.append( makeLink( IMAGELINK, reallink, link ) );
-                }
-                else if( (matchedLink = linkExists( possiblePage )) != null &&
-                         (cutpoint != -1) )
-                {
-                    // System.out.println("Orig="+link+", Matched: "+matchedLink);
-                    callMutatorChain( m_localLinkMutatorChain, possiblePage );
-
-                    sb.append( makeLink( IMAGEWIKILINK, reallink, link ) );
-                }
-                else
-                {
-                    sb.append( makeLink( IMAGE, reallink, link ) );
-                }
+                sb.append( handleImageLink( reallink, link, (cutpoint != -1) ) );
             }
             else
             {
@@ -725,25 +753,72 @@ public class TranslatorReader extends Reader
         }
         else
         {
-            // It's an internal Wiki link
-            reallink = cleanLink( reallink );
-
-            callMutatorChain( m_localLinkMutatorChain, reallink );
-
-            String matchedLink;
-            if( (matchedLink = linkExists( reallink )) != null )
+            //
+            //  Internal wiki link, but is it an attachment link?
+            //
+            String attachment = findAttachment( reallink );
+            if( attachment != null )
             {
-                sb.append( makeLink( READ, matchedLink, link ) );
+                if( isImageLink( reallink ) )
+                {
+                    attachment = m_engine.getBaseURL()+"attach?page="+attachment;
+                    sb.append( handleImageLink( attachment, link, (cutpoint != -1) ) );
+                }
+                else
+                {
+                    sb.append( makeLink( ATTACHMENT, attachment, link ) );
+                }
             }
             else
             {
-                sb.append( makeLink( EDIT, reallink, link ) );
+                // It's an internal Wiki link
+                reallink = cleanLink( reallink );
+
+                callMutatorChain( m_localLinkMutatorChain, reallink );
+
+                String matchedLink;
+                if( (matchedLink = linkExists( reallink )) != null )
+                {
+                    sb.append( makeLink( READ, matchedLink, link ) );
+                }
+                else
+                {
+                    sb.append( makeLink( EDIT, reallink, link ) );
+                }
             }
         }
 
         return sb.toString();
     }
 
+    private String findAttachment( String link )
+    {
+        AttachmentManager mgr = m_engine.getAttachmentManager();
+        WikiPage currentPage = m_context.getPage();
+        Attachment att = null;
+
+        /*
+        System.out.println("Finding attachment of page "+currentPage.getName());
+        System.out.println("With name "+link);
+        */
+
+        try
+        {
+            att = mgr.getAttachmentInfo( m_context, link );
+        }
+        catch( ProviderException e )
+        {
+            log.warn("Finding attachments failed: ",e);
+            return null;
+        }
+
+        if( att != null )
+        {
+            return att.getName();
+        }
+
+        return null;
+    }
 
     /**
      *  Closes all annoying lists and things that the user might've
