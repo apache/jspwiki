@@ -113,6 +113,13 @@
     </attribute>
   </tag>
 
+  
+  <tag>
+    <name>PageDate</name>
+    <tagclass>com.ecyrd.jspwiki.tags.PageDateTag</tagclass>
+    <bodycontent>empty</bodycontent>
+  </tag>
+  
   <tag>
     <name>PageName</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
