@@ -476,6 +476,20 @@ public class BasicAttachmentProvider
         return list;
     }
 
+
+    public void deleteVersion( Attachment att )
+        throws ProviderException
+    {
+        // FIXME: Does nothing yet.
+    }
+
+    public void deleteAttachment( Attachment att )
+        throws ProviderException
+    {
+        // FIXME: Does nothing yet.
+    }
+
+
     /**
      *  Returns only those directories that contain attachments.
      */
