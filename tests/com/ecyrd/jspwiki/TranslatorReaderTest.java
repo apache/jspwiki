@@ -268,7 +268,29 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "http://www.foo.bar/ANewHope/";
 
-        assertEquals( "http://www.foo.bar/ANewHope/",
+        assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>",
+                      translate(src) );
+    }
+
+    /** Hyperlinks inside URIs. */
+
+    public void testHyperlinksCCURLs2()
+        throws Exception
+    {
+        String src = "mailto:foo@bar.com";
+
+        assertEquals( "<a class=\"external\" href=\"mailto:foo@bar.com\">mailto:foo@bar.com</a>",
+                      translate(src) );
+    }
+
+    /** Hyperlinks inside URIs. */
+
+    public void testHyperlinksCCURLs3()
+        throws Exception
+    {
+        String src = "This should be a link: http://www.foo.bar/ANewHope/.  Is it?";
+
+        assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/.</a>  Is it?",
                       translate(src) );
     }
 
