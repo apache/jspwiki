@@ -124,15 +124,26 @@ public class RSSGenerator
     private String getAttachmentDescription( Attachment att )
     {
         String author = getAuthor(att);
-
+        StringBuffer sb = new StringBuffer();
+        
         if( att.getVersion() != 1 )
         {
-            return (author+" uploaded a new version of this attachment on "+att.getLastModified() );
+            sb.append(author+" uploaded a new version of this attachment on "+att.getLastModified() );
         }
         else
         {
-            return (author+" created this attachment on "+att.getLastModified() );
+            sb.append(author+" created this attachment on "+att.getLastModified() );
         }
+        
+        sb.append("<br /><hr /><br />");
+        sb.append( "Parent page: <a href=\""+
+                   m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) +
+                   "\">"+att.getParentName()+"</a><br />" );
+        sb.append( "Info page: <a href=\""+
+                   m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) +
+                   "\">"+att.getName()+"</a>" );
+        
+        return sb.toString();
     }
 
     private String getPageDescription( WikiPage page )
