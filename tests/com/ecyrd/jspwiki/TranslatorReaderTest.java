@@ -172,6 +172,26 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    /** Closing tags only. */
+    public void testHyperlinksCC6()
+        throws Exception
+    {
+        String src = "] This ] should be a HyperLink], and ThisToo.";
+
+        assertEquals( "] This ] should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>], and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
+                      translate(src) );
+    }
+
+    /** First and last words on line. */
+    public void testHyperlinksCCFirstAndLast()
+        throws Exception
+    {
+        String src = "HyperLink, and ThisToo";
+
+        assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>\n",
+                      translate(src) );
+    }
+
     public void testHyperlinksExt()
         throws Exception
     {
