@@ -13,7 +13,7 @@ You'll need the following programs:
 
 - J2SDK 1.3 (I use the one from Sun Microsystems; I haven't tested any
   others.)
-- Jakarta Ant 1.3 (available from http://jakarta.apache.org/ant)
+- Jakarta Ant 1.5 (available from http://jakarta.apache.org/ant)
 - servlet API 2.2 (servlet.jar, available from Sun.)
 - JUnit 3.7 (from www.junit.org, required for running tests)
 
@@ -34,6 +34,17 @@ ant dist   : builds a full distribution.
 ant javadoc: builds the javadocs into doc/javadoc
 ant compile: just the basic compile, thankyouverymuch
 ant tests  : runs JUnit tests.
+ant jar    : builds the JSPWiki.jar into build/
+
+You can customize your compilation by changing the contents of the
+build.properties -file, or better yet, make your own compilation
+script where you override the build.properties-property.  For example,
+to use your own build.properties-file called "my.properties", make a
+small shell script and call it "my_build.sh":
+
+#!/bin/sh
+ant -Dbuild.properties=/path/to/my.properties
+
 
 
 Directory structure
