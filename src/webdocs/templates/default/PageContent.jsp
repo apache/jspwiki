@@ -1,5 +1,4 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
 
 <%-- Inserts page content. --%>
 

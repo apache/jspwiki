@@ -1,3 +1,11 @@
+2003-03-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
+
+        * The default template is now a bit more XHTML-compliant, but
+        there is still a long way to go.  Slowly, slowly...
+
+        * Changed the default template to have a "Go to top" -link at the
+        bottom to ease navigation.  Suggested by Paul Downes.
+
 2003-03-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * 2.1.1.
