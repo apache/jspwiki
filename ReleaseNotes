@@ -15,13 +15,11 @@ Major changes since the 2.0 series are:
 
 - Style support using the %%-directive
 
-- "almost XHTML"
+- The default template now validates as XHTML 1.0 Transitional
 
 - Page variables (see SET-directive), also accessible on pages
 
-- RSS-per-page generation
-
-- Caching attachment provider
+- Caching attachment provider integrated
 
 - OSCache integration
 
@@ -29,9 +27,11 @@ Major changes since the 2.0 series are:
 
 - Multiple Wikis with a single WAR-file -support.
 
-- In-page hyperlinks.
+- In-page hyperlinks and TableOfContents
 
 - Multiply nested links now work
+
+- Much faster startup (after the first one)
 
 
 
@@ -44,3 +44,20 @@ later.
 
 Please visit http://www.jspwiki.org/Wiki.jsp?page=Release2.2Discussion
 for further information.
+
+
+NOTE ABOUT AUTHENTICATION
+=========================
+
+This JSPWiki version includes an unsupported version of Authorization
+and Authentication.  AAA was supposed to be the major feature of the
+2.2 release, but unfortunately it turned out that the solution chosen
+was crappy and the coder (me) did not know what he was doing.  This
+dragged the work for the 2.2 release behind for many months, as I was
+not really interested in doing it.  So I decided to discard the entire
+solution and settle for something simpler.  This work is still
+ongoing, and a new solution is being drafted.
+
+The old auth system is still in place, but it is completely deprecated
+and largely undocumented.  You may use it if you want, but please do
+not report any bugs regarding it.
