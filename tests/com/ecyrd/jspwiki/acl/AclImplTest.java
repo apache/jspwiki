@@ -24,6 +24,7 @@ public class AclImplTest
      *  Alice = may view
      *  Bob   = may view, may edit
      *  Charlie = may view, may NOT edit
+     *  Dave = may view, may NOT edit, may create
      *
      *  groupAcl:
      *  FooGroup = Alice, Bob - may edit
@@ -45,6 +46,10 @@ public class AclImplTest
         
         UserProfile u_charlie = new UserProfile();
         u_charlie.setName( "Charlie" );
+
+        UserProfile u_dave = new UserProfile();
+        u_dave.setName( "Dave" );
+
 
         //  ALLOW VIEW
 
@@ -70,11 +75,24 @@ public class AclImplTest
         ae3.addPermission( new EditPermission() );
         ae3.setPrincipal( u_bob );
 
+	// ALLOW VIEW, CREATE, DENY EDIT
+
+        AclEntry ae4 = new AclEntryImpl();
+        ae4.addPermission( new ViewPermission() );
+        ae4.addPermission( new CreatePermission() );
+        ae4.setPrincipal( u_dave );
+
+        AclEntry ae4b = new AclEntryImpl();
+        ae4b.addPermission( new EditPermission() );
+        ae4b.setNegativePermissions();
+        ae4b.setPrincipal( u_dave );
 
         m_acl.addEntry( null, ae );
         m_acl.addEntry( null, ae2 );
         m_acl.addEntry( null, ae2b );
         m_acl.addEntry( null, ae3 );
+        m_acl.addEntry( null, ae4 );
+        m_acl.addEntry( null, ae4b );
 
         //  Groups
 
@@ -154,6 +172,25 @@ public class AclImplTest
 
         assertEquals( "view allow", AclImpl.ALLOW, 
                       m_acl.findPermission( wup, new ViewPermission() ) );
+
+        assertEquals( "edit deny", AclImpl.DENY, 
+                      m_acl.findPermission( wup, new EditPermission() ) );
+    }
+
+    public void testDave()
+    {
+        UserProfile wup = new UserProfile();
+        wup.setName("Dave");
+
+        assertTrue( "view", m_acl.checkPermission( wup, new ViewPermission() ) );
+        assertTrue( "create", m_acl.checkPermission( wup, new CreatePermission() ) );
+        assertFalse( "edit", m_acl.checkPermission( wup, new EditPermission() ) );
+
+        assertEquals( "view allow", AclImpl.ALLOW, 
+                      m_acl.findPermission( wup, new ViewPermission() ) );
+
+        assertEquals( "create allow", AclImpl.ALLOW, 
+                      m_acl.findPermission( wup, new CreatePermission() ) );
 
         assertEquals( "edit deny", AclImpl.DENY, 
                       m_acl.findPermission( wup, new EditPermission() ) );
