@@ -206,15 +206,18 @@ public class WikiEngine
     {
         m_servletContext = context;
 
-        String propertyFile = context.getRealPath("/WEB-INF/jspwiki.properties");
+        InputStream propertyStream = context.getResourceAsStream("/WEB-INF/jspwiki.properties");
 
         Properties props = new Properties();
 
         try
         {
+            //
+            //  Note: May be null, if JSPWiki has been deployed in a WAR file.
+            //
             m_rootPath = context.getRealPath("/");
 
-            props.load( new FileInputStream(propertyFile) );
+            props.load( propertyStream );
 
             initialize( props );
 
@@ -222,7 +225,7 @@ public class WikiEngine
         }
         catch( Exception e )
         {
-            context.log( Release.APPNAME+": Unable to load and setup properties from "+propertyFile+". "+e.getMessage() );
+            context.log( Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
         }
     }
 
@@ -235,11 +238,17 @@ public class WikiEngine
         m_properties = props;
         //
         //  Initialized log4j.  However, make sure that
-        //  we don't initialize it multiple times.
+        //  we don't initialize it multiple times.  Also, if
+        //  all of the log4j statements have been removed from
+        //  the property file, we do not do any property setting
+        //  either.q
         //
         if( !c_configured )
         {
-            PropertyConfigurator.configure( props );
+            if( props.getProperty("log4j.rootCategory") != null )
+            {
+                PropertyConfigurator.configure( props );
+            }
             c_configured = true;
         }
 
