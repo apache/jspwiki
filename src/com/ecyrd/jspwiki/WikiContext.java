@@ -68,6 +68,8 @@ public class WikiContext
         do. Please provide some counseling. */
     public static final String    CONFLICT = "conflict";
 
+    public static final String    UPLOAD   = "upload";
+
     /**
      *  Create a new WikiContext.
      *
