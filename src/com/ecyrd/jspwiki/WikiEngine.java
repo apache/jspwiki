@@ -1785,6 +1785,13 @@ public class WikiEngine
             }
         }
 
+        int hashMark = pagereq.indexOf('#');
+
+        if( hashMark != -1 )
+        {
+            pagereq = pagereq.substring( 0, hashMark );
+        }
+
         int version          = WikiProvider.LATEST_VERSION;
         String rev           = request.getParameter("version");
 
