@@ -105,6 +105,8 @@ public class Denounce implements WikiPlugin
                     log.error( "Malformed URL pattern in "+PROPERTYFILE+": "+props.getProperty(name), ex );
                 }
             }
+
+            log.debug("Added "+c_refererPatterns.size()+c_agentPatterns.size()+c_hostPatterns.size()+" crawlers to denounce list.");
         }
         catch( IOException e )
         {
