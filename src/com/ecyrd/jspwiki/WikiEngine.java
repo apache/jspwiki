@@ -807,8 +807,23 @@ public class WikiEngine
     }
 
     /**
+     *  Return a bunch of information from the web page.
+     */
+
+    public WikiPage getPage( String pagereq )
+    {
+        if( m_provider == null ) 
+            return null;
+
+        WikiPage p = m_provider.getPageInfo( pagereq );
+
+        return p;
+    }
+
+    /**
      *  Returns the date the page was last changed.
      *  If the page does not exist, returns null.
+     *  @deprecated
      */
     public Date pageLastChanged( String page )
     {
@@ -825,6 +840,7 @@ public class WikiEngine
 
     /**
      *  Returns the current version of the page.
+     *  @deprecated
      */
     public int getVersion( String page )
     {
