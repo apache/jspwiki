@@ -556,6 +556,11 @@ public class TranslatorReader extends Reader
         return false;
     }
 
+    private static boolean isMetadata( String link )
+    {
+        return link.startsWith("{SET");
+    }
+
     /**
      *  Returns true, if the argument contains a number, otherwise false.
      *  In a quick test this is roughly the same speed as Integer.parseInt()
@@ -778,6 +783,35 @@ public class TranslatorReader extends Reader
         return "";
     }
 
+    /**
+     *  Handles metadata setting [{SET foo=bar}]
+     */
+    private String handleMetadata( String link )
+    {
+        try
+        {
+            String args = link.substring( link.indexOf(' '), link.length()-1 );
+            
+            String name = args.substring( 0, args.indexOf('=') );
+            String val  = args.substring( args.indexOf('=')+1, args.length() );
+
+            name = name.trim();
+            val  = val.trim();
+
+            // log.debug("SET name='"+name+"', value='"+val+"'.");
+
+            if( name.length() > 0 && val.length() > 0 )
+            {
+                m_context.getPage().setAttribute( name, val );
+            }
+        }
+        catch( Exception e )
+        {
+            return "<span class=\"error\" Invalid SET found: "+link+"<span>";
+        }
+
+        return "";
+    }
 
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
@@ -791,6 +825,11 @@ public class TranslatorReader extends Reader
         if( isAccessRule( link ) )
         {
             return handleAccessRule( link );
+        }
+
+        if( isMetadata( link ) )
+        {
+            return handleMetadata( link );
         }
 
         if( PluginManager.isPluginLink( link ) )
