@@ -208,6 +208,8 @@ public class AttachmentServlet
      *
      *  @return The page to which we should go next.
      */
+
+    // FIXME: Error reporting is non-existent - the user gets no feedback whatsoever.
     protected String upload( HttpServletRequest req )
     {
         String msg     = "";
@@ -231,9 +233,25 @@ public class AttachmentServlet
             {
                 String part = (String) files.nextElement();
                 File   f    = multi.getFile( part );
-                InputStream in;
                 AttachmentManager mgr = m_engine.getAttachmentManager();
+                InputStream in;
 
+                //
+                //  Is a file to be uploaded.
+                //
+
+                String filename = multi.getFileSystemName( part );
+
+                if( filename == null || filename.trim().length() == 0 )
+                {
+                    log.error("Empty file name given.");
+
+                    return nextPage;
+                }
+
+                //
+                //  Attempt to open the input stream
+                //
                 if( f != null )
                 {
                     in = new FileInputStream( f );
@@ -243,11 +261,12 @@ public class AttachmentServlet
                     in = multi.getFileContents( part );
                 }
 
-                //
-                //  Is a file to be uploaded.
-                //
+                if( in == null )
+                {
+                    log.error("File could not be opened.");
 
-                String filename = multi.getFileSystemName( part );
+                    return nextPage;
+                }
 
                 //
                 //  Check whether we already have this kind of a page.
