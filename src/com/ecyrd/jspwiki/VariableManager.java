@@ -151,6 +151,10 @@ public class VariableManager
 
             res = (res == null) ? "-" : res;
         }
+        else if( name.equals("baseurl") )
+        {
+            res = context.getEngine().getBaseURL();
+        }
         else
         {
             // Final straw: attempt to fetch using property name
