@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 
+import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -104,6 +105,10 @@ public class WikiEngine
 
     /** Property name for the default front page. */
     public static final String PROP_FRONTPAGE    = "jspwiki.frontPage";
+
+    /** Property name for setting the url generator instance */
+
+    public static final String PROP_URLCONSTRUCTOR = "jspwiki.urlConstructor";
 
     private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
@@ -220,9 +225,15 @@ public class WikiEngine
     public static synchronized WikiEngine getInstance( ServletConfig config )
         throws InternalWikiException
     {
-        return( getInstance( config, null ) );
+        return( getInstance( config.getServletContext(), null ) );
     }
     
+    public static synchronized WikiEngine getInstance( ServletConfig config,
+                                                       Properties props )
+    {
+        return( getInstance( config.getServletContext(), null ) );
+    }
+
     /**
      * Gets a WikiEngine related to the servlet. Works like getInstance(ServletConfig),
      * but does not force the Properties object. This method is just an optional way
@@ -233,14 +244,13 @@ public class WikiEngine
      * @param props  A set of properties, or null, if we are to load JSPWiki's default 
      *               jspwiki.properties (this is the usual case).
      */
-    public static synchronized WikiEngine getInstance( ServletConfig config, 
+    public static synchronized WikiEngine getInstance( ServletContext context, 
                                                        Properties props )
         throws InternalWikiException
     {
-        ServletContext context = config.getServletContext();        
         String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
 
-        config.getServletContext().log( "Application "+appid+" requests WikiEngine.");
+        context.log( "Application "+appid+" requests WikiEngine.");
 
         WikiEngine engine = (WikiEngine) c_engines.get( appid );
 
@@ -250,8 +260,8 @@ public class WikiEngine
             try
             {
                 if( props == null )
-                    props = loadWebAppProps( config.getServletContext() );
-                engine = new WikiEngine( config.getServletContext(), appid, props );
+                    props = loadWebAppProps( context );
+                engine = new WikiEngine( context, appid, props );
             }
             catch( Exception e )
             {
@@ -443,7 +453,9 @@ public class WikiEngine
         //
         try
         {
-            m_urlConstructor    = new DefaultURLConstructor();
+            Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki",
+                                                  props.getProperty( PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+            m_urlConstructor = (URLConstructor) urlclass.newInstance();               
             m_urlConstructor.initialize( this, props );
 
             m_pageManager       = new PageManager( this, props );
@@ -468,7 +480,7 @@ public class WikiEngine
         catch( Exception e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
-            log.error( "Failed to start managers.", e );
+            log.fatal( "Failed to start managers.", e );
             throw new WikiException( "Failed to start managers: "+e.getMessage() );
         }
 
