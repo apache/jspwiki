@@ -50,6 +50,7 @@ public class AttachmentManager
 
     static Category log = Category.getInstance( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
+    private WikiEngine             m_engine;
 
     /**
      *  Creates a new AttachmentManager.  Note that creation will never fail,
@@ -57,8 +58,10 @@ public class AttachmentManager
      */
 
     // FIXME: Perhaps this should fail somehow.
-    public AttachmentManager( Properties props )
+    public AttachmentManager( WikiEngine engine, Properties props )
     {
+        m_engine = engine;
+
         String classname = props.getProperty( PROP_PROVIDER );
 
         //
@@ -222,18 +225,29 @@ public class AttachmentManager
         return m_provider.getAttachmentData( att );
     }
 
+    /**
+     *  Stores an attachment that lives in the given file.
+     */
     public void storeAttachment( Attachment att, File source )
         throws IOException,
                ProviderException
-    {
-        if( m_provider == null )
-        {
-            return;
-        }
+    {        
+        FileInputStream in = null;
 
-        m_provider.putAttachmentData( att, new FileInputStream(source) );
+        try 
+        {
+            in = new FileInputStream( source );
+            storeAttachment( att, in );
+        }
+        finally
+        {
+            if( in != null ) in.close();
+        }
     }
 
+    /**
+     *  Stores an attachment directly from a stream.
+     */
     public void storeAttachment( Attachment att, InputStream in )
         throws IOException,
                ProviderException
@@ -244,6 +258,10 @@ public class AttachmentManager
         }
 
         m_provider.putAttachmentData( att, in );
+
+        m_engine.getReferenceManager().updateReferences( att.getName(),
+                                                         new java.util.Vector() );
+        m_engine.updateReferences( att.getParentName() );     
     }
 
     public List getVersionHistory( String attachmentName )
