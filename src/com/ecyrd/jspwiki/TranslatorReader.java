@@ -910,10 +910,36 @@ public class TranslatorReader extends Reader
             }
 
             //
+            //  FIXME: The following two blocks of code are temporary
+            //  solutions for code going all wonky if you do multiple #*:s inside
+            //  each other.
+            //  A real solution is needed - this only closes down the other list
+            //  before the other one gets started.
+            //
+            if( line.startsWith("*") )
+            {
+                for( ; m_numlistlevel > 0; m_numlistlevel-- )
+                {
+                    buf.append("</OL>\n");
+                }
+
+            }
+
+            if( line.startsWith("#") )
+            {
+                for( ; m_listlevel > 0; m_listlevel-- )
+                {
+                    buf.append("</UL>\n");
+                }
+            }
+
+            //
             // Make a bulleted list
             //
             if( line.startsWith("*") )
             {
+                // Close all other lists down.
+
                 int numBullets = countChar( line, 0, '*' );
                 
                 if( numBullets > m_listlevel )
@@ -934,6 +960,10 @@ public class TranslatorReader extends Reader
             {
                 // This is a continuation of a previous line.
             }
+            else if( line.startsWith("#") && m_listlevel > 0 )
+            {
+                // We don't close all things for the other list type.
+            }
             else
             {
                 // Close all lists down.
@@ -948,6 +978,15 @@ public class TranslatorReader extends Reader
             //
             if( line.startsWith("#") )
             {
+                // Close all other lists down.
+                if( m_numlistlevel == 0 )
+                {
+                    for( ; m_listlevel > 0; m_listlevel-- )
+                    {
+                        buf.append("</UL>\n");
+                    }
+                }
+
                 int numBullets = countChar( line, 0, '#' );
                 
                 if( numBullets > m_numlistlevel )
@@ -967,6 +1006,10 @@ public class TranslatorReader extends Reader
             else if( line.startsWith(" ") && m_numlistlevel > 0 && trimmed.length() != 0 )
             {
                 // This is a continuation of a previous line.
+            }
+            else if( line.startsWith("*") && m_numlistlevel > 0 )
+            {
+                // We don't close things for the other list type.
             }
             else
             {
