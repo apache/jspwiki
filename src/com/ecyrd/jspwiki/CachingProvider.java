@@ -175,9 +175,9 @@ public class CachingProvider
             // FIXME: This has the unfortunate side effect of clearing
             // the cache.
 
-            for( Iterator i = all.iterator(); i.hasNext(); )
+            synchronized(this)
             {
-                synchronized(this)
+                for( Iterator i = all.iterator(); i.hasNext(); )
                 {
                     CacheItem item = new CacheItem();
                     item.m_page = (WikiPage) i.next();
@@ -185,9 +185,9 @@ public class CachingProvider
 
                     m_cache.put( item.m_page.getName(), item );
                 }
-            }
 
-            m_gotall = true;
+                m_gotall = true;
+            }
         }
         else
         {
@@ -202,13 +202,22 @@ public class CachingProvider
     }
 
     // Null text for no page
+    // Returns null if no page could be found.
     private synchronized CacheItem addPage( String pageName, String text )
     {
-        CacheItem item = new CacheItem();
-        item.m_page = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
-        item.m_text = new SoftReference( text );
+        CacheItem item = null;
+        
+        WikiPage newpage = m_provider.getPageInfo( pageName, WikiPageProvider.LATEST_VERSION );
 
-        m_cache.put( pageName, item );
+        if( newpage != null )
+        {
+            item = new CacheItem();
+
+            item.m_page = newpage;
+            item.m_text = new SoftReference( text );
+
+            m_cache.put( pageName, item );
+        }
 
         return item;
     }
@@ -237,6 +246,11 @@ public class CachingProvider
             if( item == null )
             {
                 item = addPage( page, null );
+
+                if( item == null )
+                {
+                    return null;
+                }
             }
 
             return item.m_page;
