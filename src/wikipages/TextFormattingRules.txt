@@ -73,6 +73,8 @@ the ALT text for those who either can't or don't want to view images.
 
 You can also attach an image, and refer to it as if it were any other page.  See [WikiAttachments] for more information.
 
+If you need more layout control (or things like captions), check out the [Image] -plugin.  It can do oodles more than just simple embedding.
+
 The list of accepted image types depends on the Wiki.  See the [SystemInfo]
 page for a list of the different image types.
 
