@@ -126,6 +126,12 @@
           hyperlink link.</td>
         </tr>
         <tr>
+          <td>[text|wiki:link]</td>
+          <td>Create a hyperlink where the link text is different from the actual
+          hyperlink link, and the hyperlink points to a named Wiki.
+          This supports interWiki linking.</td>
+        </tr>
+        <tr>
           <td>*</td><td>Make a bulleted list (must be in first column).  Use more (**) for 
           deeper indentations.</td>
         </tr>
