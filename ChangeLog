@@ -1,3 +1,14 @@
+2004-11-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.120
+
+        * Added the WikiForms system in the CVS.  It has been slightly
+        changed from the WikiForms as submitted by ebu.  Documentation
+        to follow (it'll be faster if someone volunteers it :).
+
+        * It's now possible to use SET to copy variables.
+        [{SET var1='{$var2}'}].  Suggested by Reinhard Engel.
+
 2004-11-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.119
