@@ -80,12 +80,12 @@ public class TranslatorReader extends Reader
      *  @param engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
      */
-    public TranslatorReader( WikiEngine engine, BufferedReader in )
+    public TranslatorReader( WikiEngine engine, Reader in )
     {
         PatternCompiler compiler         = new GlobCompiler();
         ArrayList       compiledpatterns = new ArrayList();
 
-        m_in = in;
+        m_in     = new BufferedReader( in );
         m_engine = engine;
 
         Collection ptrns = getImagePatterns( engine );
