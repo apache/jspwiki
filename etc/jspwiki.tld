@@ -167,9 +167,6 @@
     <teiclass>com.ecyrd.jspwiki.tags.HistoryIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
-       <name>page</name>
-    </attribute>
-    <attribute>
        <name>id</name>
     </attribute>
   </tag>  
@@ -377,10 +374,6 @@
     <tagclass>com.ecyrd.jspwiki.tags.SearchResultIteratorTag</tagclass>
     <teiclass>com.ecyrd.jspwiki.tags.SearchResultIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
-    <attribute>
-       <name>page</name>
-       <rtexprvalue>true</rtexprvalue>
-    </attribute>
     <attribute>
        <name>id</name>
     </attribute>
