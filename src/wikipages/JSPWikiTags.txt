@@ -2,7 +2,7 @@ Most of the JSPWiki tags work in the context of the "current page".  In most cas
 
 ----
 
-Here is a list of all the tags that the site administrator can use when he is building his own [JSPWikiTemplate].
+Here is a list of all the tags that the site administrator can use when he is building his own [WikiTemplate].
 
 * [AttachmentsIteratorTag]
 * [AuthorTag]
