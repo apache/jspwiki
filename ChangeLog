@@ -1,5 +1,8 @@
 2002-02-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * Unused and undefined pages are now sorted.  Suggested by Mikael
+        Honkala.
+
         * Using the table directive now causes an explicit "BORDER=1" to
         be output to support older browsers.  Also, reworked some of the
         stylesheets so that IE and Konqueror at least look the same now.
