@@ -70,6 +70,7 @@ public class WikiEngineTest extends TestCase
             TestEngine.deleteAll( f );
         }
 
+        TestEngine.emptyWorkDir();
     }
     
     public void testNonExistantDirectory()

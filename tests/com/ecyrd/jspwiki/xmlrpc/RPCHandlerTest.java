@@ -37,6 +37,7 @@ public class RPCHandlerTest extends TestCase
     {
         m_engine.deletePage( NAME1 );
         m_engine.deleteAttachments( NAME1 );
+        TestEngine.emptyWorkDir();
     }
 
     public void testNonexistantPage()
@@ -66,7 +67,7 @@ public class RPCHandlerTest extends TestCase
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( modDate );
-        cal.add( Calendar.MINUTE, -1 );
+        cal.add( Calendar.HOUR, -1 );
 
         // Go to UTC
         cal.add( Calendar.MILLISECOND, 
@@ -97,7 +98,7 @@ public class RPCHandlerTest extends TestCase
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( modDate );
-        cal.add( Calendar.MINUTE, -1 );
+        cal.add( Calendar.HOUR, -1 );
 
         // Go to UTC
         cal.add( Calendar.MILLISECOND, 

@@ -86,6 +86,8 @@ public class BasicAttachmentProviderTest extends TestCase
         f = new File( tmpfiles, NAME2+BasicAttachmentProvider.DIR_EXTENSION );
 
         TestEngine.deleteAll( f );
+        
+        TestEngine.emptyWorkDir();
     }
 
     public void testExtension()

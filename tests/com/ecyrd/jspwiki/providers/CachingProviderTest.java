@@ -26,6 +26,7 @@ public class CachingProviderTest extends TestCase
 
     public void tearDown()
     {
+        TestEngine.emptyWorkDir();
     }
 
     /**
