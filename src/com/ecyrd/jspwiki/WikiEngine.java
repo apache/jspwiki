@@ -723,6 +723,15 @@ public class WikiEngine
     }
 
     /**
+     *  return information about current provider.
+     *  @since 1.6.4
+     */
+    public String getCurrentProviderInfo()
+    {
+        return m_provider.getProviderInfo();
+    }
+
+    /**
      *  Returns a Collection of WikiPages, sorted in time
      *  order of last change.
      */
