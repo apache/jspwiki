@@ -40,9 +40,7 @@ import com.ecyrd.jspwiki.plugin.PluginException;
  *
  *  @author Janne Jalkanen
  */
-// FIXME: Class still has problems with {{{: all conversion on that line where the {{{
-//        appears is done, but after that, conversion is not done.  The only real solution
-//        is to move away from a line-based system into a pure stream-based system.
+
 public class TranslatorReader extends Reader
 {
     public  static final int              READ          = 0;
@@ -56,7 +54,9 @@ public class TranslatorReader extends Reader
     private static final int              IMAGELINK     = 8;
     private static final int              IMAGEWIKILINK = 9;
 
-    private BufferedReader m_in;
+    /** Allow this many characters to be pushed back in the stream. */
+    private static final int              PUSHBACK_BUFFER_SIZE = 8;
+    private PushbackReader m_in;
 
     private StringReader   m_data = new StringReader("");
 
@@ -67,8 +67,13 @@ public class TranslatorReader extends Reader
     private boolean        m_isitalic     = false;
     private boolean        m_isTypedText  = false;
     private boolean        m_istable      = false;
+    private boolean        m_isPre        = false;
+    private boolean        m_isdefinition = false;
     private int            m_listlevel    = 0;
     private int            m_numlistlevel = 0;
+
+    /** Tag that gets closed at EOL. */
+    private String         m_closeTag     = null; 
 
     private WikiEngine     m_engine;
     private WikiContext    m_context;
@@ -124,7 +129,8 @@ public class TranslatorReader extends Reader
         PatternCompiler compiler         = new GlobCompiler();
         ArrayList       compiledpatterns = new ArrayList();
 
-        m_in     = new BufferedReader( in );
+        m_in     = new PushbackReader( new BufferedReader( in ),
+                                       PUSHBACK_BUFFER_SIZE );
         m_engine = context.getEngine();
         m_context = context;
         
@@ -535,238 +541,168 @@ public class TranslatorReader extends Reader
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
-    private String setHyperLinks( String line )
+    private String handleHyperlinks( String link )
     {
-        int start, end = 0;
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb        = new StringBuffer();
+        String       reallink;
+        int          cutpoint;
 
-        int idx = 0;
-        while( idx < line.length() )
+        link = TextUtil.replaceEntities( link );
+
+        if( (cutpoint = link.indexOf('|')) != -1 )
+        {                    
+            reallink = link.substring( cutpoint+1 ).trim();
+            link = link.substring( 0, cutpoint );
+        }
+        else
         {
-            start = line.indexOf('[', end);
+            reallink = link.trim();
+        }
 
-            // System.out.println(line);
-            // System.out.println("idx="+idx+", start="+start+", end="+end);
-            if( start < 0 || start == line.length() )
+        int interwikipoint = -1;
+
+        //
+        //  Yes, we now have the components separated.
+        //  link     = the text the link should have
+        //  reallink = the url or page name.
+        //
+        //  In many cases these are the same.  [link|reallink].
+        //  
+        if( PluginManager.isPluginLink( link ) )
+        {
+            String included;
+            try
             {
-                // No more hyperlinks.
-                sb.append( line.substring( idx ) );
-                break;
+                included = m_engine.getPluginManager().execute( m_context, link );
             }
-            
-            sb.append( line.substring( idx, start ) );
-            
-            // Words starting with multiple [[s are not hyperlinks.
-            if( start < (line.length()-1) && line.charAt( start+1 ) == '[' )
+            catch( PluginException e )
             {
-                // Find where the neverending roll of '['s stops...
-                for( end = start+1; end < line.length() && line.charAt(end) == '['; end++ );
-
-                sb.append( line.substring( start+1, end ) );
-
-                idx = end;
-
-                continue;
+                log.error( "Failed to insert plugin", e );
+                log.error( "Root cause:",e.getRootThrowable() );
+                included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
             }
-            else
-            {
-                end = line.indexOf( ']', start );
-
-                if( end != -1 )
-                {
-                    // Everything between these two is a link
-
-                    String link = line.substring( start+1, end );
-                    String reallink;
-                    int cutpoint;
-
-                    if( (cutpoint = link.indexOf('|')) != -1 )
-                    {                    
-                        reallink = link.substring( cutpoint+1 ).trim();
-                        link = link.substring( 0, cutpoint );
-                    }
-                    else
-                    {
-                        reallink = link.trim();
-                    }
-
-                    int interwikipoint = -1;
-
-                    //
-                    //  Yes, we now have the components separated.
-                    //  link     = the text the link should have
-                    //  reallink = the url or page name.
-                    //
-                    //  In many cases these are the same.  [link|reallink].
-                    //  
-                    if( PluginManager.isPluginLink( link ) )
-                    {
-                        String included;
-                        try
-                        {
-                            included = m_engine.getPluginManager().execute( m_context, link );
-                        }
-                        catch( PluginException e )
-                        {
-                            log.error( "Failed to insert plugin", e );
-                            log.error( "Root cause:",e.getRootThrowable() );
-                            included = "<FONT COLOR=\"#FF0000\">Plugin insertion failed: "+e.getMessage()+"</FONT>";
-                        }
                             
-                        sb.append( included );
-                    }
-                    else if( VariableManager.isVariableLink( link ) )
-                    {
-                        String value;
+            sb.append( included );
+        }
+        else if( VariableManager.isVariableLink( link ) )
+        {
+            String value;
+            
+            try
+            {
+                value = m_engine.getVariableManager().parseAndGetValue( m_context, link );
+            }
+            catch( NoSuchVariableException e )
+            {
+                value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+            }
+            catch( IllegalArgumentException e )
+            {
+                value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
+            }
 
-                        try
-                        {
-                            value = m_engine.getVariableManager().parseAndGetValue( m_context, link );
-                        }
-                        catch( NoSuchVariableException e )
-                        {
-                            value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
-                        }
-                        catch( IllegalArgumentException e )
-                        {
-                            value = "<FONT COLOR=\"#FF0000\">"+e.getMessage()+"</FONT>";
-                        }
+            sb.append( value );
+        }
+        else if( isExternalLink( reallink ) )
+        {
+            // It's an external link, out of this Wiki
 
-                        sb.append( value );
-                    }
-                    else if( isExternalLink( reallink ) )
-                    {
-                        // It's an external link, out of this Wiki
+            callMutatorChain( m_externalLinkMutatorChain, reallink );
 
-                        callMutatorChain( m_externalLinkMutatorChain, reallink );
+            if( isImageLink( reallink ) )
+            {
+                //
+                // Image links are handled differently:
+                // 1. If the text is a WikiName of an existing page,
+                //    it gets linked.
+                // 2. If the text is an external link, then it is inlined.  
+                // 3. Otherwise it becomes an ALT text.
+                //
 
-                        if( isImageLink( reallink ) )
-                        {
-                            //
-                            // Image links are handled differently:
-                            // 1. If the text is a WikiName of an existing page,
-                            //    it gets linked.
-                            // 2. If the text is an external link, then it is inlined.  
-                            // 3. Otherwise it becomes an ALT text.
-                            //
+                String possiblePage = cleanLink( link );
+                String matchedLink;
 
-                            String possiblePage = cleanLink( link );
-                            String matchedLink;
+                if( isExternalLink( link ) && (cutpoint != -1) )
+                {
+                    sb.append( makeLink( IMAGELINK, reallink, link ) );
+                }
+                else if( (matchedLink = linkExists( possiblePage )) != null &&
+                         (cutpoint != -1) )
+                {
+                    // System.out.println("Orig="+link+", Matched: "+matchedLink);
+                    callMutatorChain( m_localLinkMutatorChain, possiblePage );
 
-                            if( isExternalLink( link ) && (cutpoint != -1) )
-                            {
-                                sb.append( makeLink( IMAGELINK, reallink, link ) );
-                            }
-                            else if( (matchedLink = linkExists( possiblePage )) != null &&
-                                     (cutpoint != -1) )
-                            {
-                                // System.out.println("Orig="+link+", Matched: "+matchedLink);
-                                callMutatorChain( m_localLinkMutatorChain, possiblePage );
-
-                                sb.append( makeLink( IMAGEWIKILINK, reallink, link ) );
-                            }
-                            else
-                            {
-                                sb.append( makeLink( IMAGE, reallink, link ) );
-                            }
-                        }
-                        else
-                        {
-                            sb.append( makeLink( EXTERNAL, reallink, link ) );
-                        }
-                    }
-                    else if( (interwikipoint = reallink.indexOf(":")) != -1 )
-                    {
-                        // It's an interwiki link
-                        // InterWiki links also get added to external link chain
-                        // after the links have been resolved.
-
-                        // FIXME: There is an interesting issue here:  We probably should
-                        //        URLEncode the wikiPage, but we can't since some of the
-                        //        Wikis use slashes (/), which won't survive URLEncoding.
-                        //        Besides, we don't know which character set the other Wiki
-                        //        is using, so you'll have to write the entire name as it appears
-                        //        in the URL.  Bugger.
-
-                        String extWiki = reallink.substring( 0, interwikipoint );
-                        String wikiPage = reallink.substring( interwikipoint+1 );
-
-                        String urlReference = m_engine.getInterWikiURL( extWiki );
-
-                        if( urlReference != null )
-                        {
-                            urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
-                            callMutatorChain( m_externalLinkMutatorChain, urlReference );
-
-                            sb.append( makeLink( INTERWIKI, urlReference, link ) );
-                        }
-                        else
-                        {
-                            sb.append( link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
-                        }
-                    }
-                    else if( reallink.startsWith("#") )
-                    {
-                        // It defines a local footnote
-                        sb.append( makeLink( LOCAL, reallink, link ) );
-                    }
-                    else if( isNumber( reallink ) )
-                    {
-                        // It defines a reference to a local footnote
-                        sb.append( makeLink( LOCALREF, reallink, link ) );
-                    }
-                    else
-                    {
-                        // It's an internal Wiki link
-                        reallink = cleanLink( reallink );
-
-                        callMutatorChain( m_localLinkMutatorChain, reallink );
-
-                        String matchedLink;
-                        if( (matchedLink = linkExists( reallink )) != null )
-                        {
-                            sb.append( makeLink( READ, matchedLink, link ) );
-                        }
-                        else
-                        {
-                            sb.append( makeLink( EDIT, reallink, link ) );
-                        }
-                    }
+                    sb.append( makeLink( IMAGEWIKILINK, reallink, link ) );
                 }
                 else
                 {
-                    log.error("Unterminated link");
-                    break;
+                    sb.append( makeLink( IMAGE, reallink, link ) );
                 }
+            }
+            else
+            {
+                sb.append( makeLink( EXTERNAL, reallink, link ) );
+            }
+        }
+        else if( (interwikipoint = reallink.indexOf(":")) != -1 )
+        {
+            // It's an interwiki link
+            // InterWiki links also get added to external link chain
+            // after the links have been resolved.
+            
+            // FIXME: There is an interesting issue here:  We probably should
+            //        URLEncode the wikiPage, but we can't since some of the
+            //        Wikis use slashes (/), which won't survive URLEncoding.
+            //        Besides, we don't know which character set the other Wiki
+            //        is using, so you'll have to write the entire name as it appears
+            //        in the URL.  Bugger.
+            
+            String extWiki = reallink.substring( 0, interwikipoint );
+            String wikiPage = reallink.substring( interwikipoint+1 );
 
-            } // else
+            String urlReference = m_engine.getInterWikiURL( extWiki );
 
-            idx = end+1;
+            if( urlReference != null )
+            {
+                urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
+                callMutatorChain( m_externalLinkMutatorChain, urlReference );
+                
+                sb.append( makeLink( INTERWIKI, urlReference, link ) );
+            }
+            else
+            {
+                sb.append( link+" <FONT COLOR=\"#FF0000\">(No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)</FONT>");
+            }
+        }
+        else if( reallink.startsWith("#") )
+        {
+            // It defines a local footnote
+            sb.append( makeLink( LOCAL, reallink, link ) );
+        }
+        else if( isNumber( reallink ) )
+        {
+            // It defines a reference to a local footnote
+            sb.append( makeLink( LOCALREF, reallink, link ) );
+        }
+        else
+        {
+            // It's an internal Wiki link
+            reallink = cleanLink( reallink );
 
-        } // while
+            callMutatorChain( m_localLinkMutatorChain, reallink );
+
+            String matchedLink;
+            if( (matchedLink = linkExists( reallink )) != null )
+            {
+                sb.append( makeLink( READ, matchedLink, link ) );
+            }
+            else
+            {
+                sb.append( makeLink( EDIT, reallink, link ) );
+            }
+        }
 
         return sb.toString();
-    }
-
-    /**
-     *  Checks if this line is a heading line.
-     */
-    private String setHeadings( String line )
-    {
-        if( line.startsWith("!!!") )
-        {
-            line = TextUtil.replaceString( line, 0, 3, "<H2>" ) + "</H2>";
-        }
-        else if( line.startsWith("!!") )
-        {
-            line = TextUtil.replaceString( line, 0, 2, "<H3>" ) + "</H3>";
-        }
-        else if( line.startsWith("!") )
-        {
-            line = TextUtil.replaceString( line, 0, 1, "<H4>" ) + "</H4>";
-        }
-        
-        return line;
     }
 
     private String setDefinitionList( String line )
@@ -789,29 +725,7 @@ public class TranslatorReader extends Reader
 
         return line;
     }
-    /**
-     *  Translates horizontal rulers.
-     */
-    private String setHR( String line )
-    {
-        StringBuffer buf = new StringBuffer();
-        int start = line.indexOf("----");
 
-        if( start != -1 )
-        {
-            int i;
-            buf.append( line.substring( 0, start ) );
-            for( i = start; i<line.length() && line.charAt(i) == '-'; i++ )
-            {
-            }
-            buf.append("<HR />");
-            buf.append( line.substring( i ) );
-
-            return buf.toString();
-        }
-
-        return line;
-    }
 
     /**
      *  Closes all annoying lists and things that the user might've
@@ -865,31 +779,6 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Sets bold text.
-     */
-    private String setBold( String line )
-    {
-        StringBuffer buf = new StringBuffer();
-
-        for( int i = 0; i < line.length(); i++ )
-        {
-            if( line.charAt(i) == '_' && i < line.length()-1 )
-            {
-                if( line.charAt(i+1) == '_' )
-                {
-                    buf.append( m_isbold ? "</B>" : "<B>" );
-                    m_isbold = !m_isbold;
-                    i++;
-                }
-                else buf.append( "_" );
-            }
-            else buf.append( line.charAt(i) );
-        }
-
-        return buf.toString();
-    }
-
-    /**
      *  Counts how many consecutive characters of a certain type exists on the line.
      *  @param line String of chars to check.
      *  @param startPos Position to start reading from.
@@ -915,76 +804,615 @@ public class TranslatorReader extends Reader
         return sb.toString();
     }
 
-    /**
-     *  {{text}} = <TT>text</TT>
-     */
-    private String setTT( String line )
+    private int nextToken()
+        throws IOException
     {
-        StringBuffer buf = new StringBuffer();
+        return m_in.read();
+    }
 
-        for( int i = 0; i < line.length(); i++ )
+    /**
+     *  Push back any character to the current input.  Does not
+     *  push back a read EOF, though.
+     */
+    private void pushBack( int c )
+        throws IOException
+    {        
+        if( c != -1 )
         {
-            if( line.charAt(i) == '{' && !m_isTypedText )
-            {
-                int count = countChar( line, i, '{' );
+            m_in.unread( c );
+        }
+    }
 
-                if( count == 2 )
-                {
-                    buf.append( "<TT>" );
-                    m_isTypedText = true;
-                }
-                else 
-                {
-                    buf.append( repeatChar( '{', count ) );
-                }
-                i += count-1;
-            }
-            else if( line.charAt(i) == '}' && m_isTypedText )
-            {
-                int count = countChar( line, i, '}' );
+    private String handleBackslash()
+        throws IOException
+    {
+        int ch = nextToken();
 
-                if( count == 2 )
-                {
-                    buf.append( "</TT>" );
-                    m_isTypedText = false;
-                }
-                else 
-                {
-                    buf.append( repeatChar( '}', count ) );
-                }
-                i += count-1;
+        if( ch == '\\' )
+            return "<BR>";
+
+        pushBack( ch );
+
+        return "\\";
+    }
+
+    private String handleUnderscore()
+        throws IOException
+    {
+        int ch = nextToken();
+        String res = "_";
+
+        if( ch == '_' )
+        {
+            res      = m_isbold ? "</B>" : "<B>";
+            m_isbold = !m_isbold;
+        }
+        else
+        {
+            pushBack( ch );
+        }
+
+        return res;
+    }
+
+    /**
+     *  For example: italics.
+     */
+    private String handleApostrophe()
+        throws IOException
+    {
+        int ch = nextToken();
+        String res = "'";
+
+        if( ch == '\'' )
+        {
+            res        = m_isitalic ? "</I>" : "<I>";
+            m_isitalic = !m_isitalic;
+        }
+        else
+        {
+            m_in.unread( ch );
+        }
+
+        return res;
+    }
+
+    private String handleOpenbrace()
+        throws IOException
+    {
+        int ch = nextToken();
+        String res = "{";
+
+        if( ch == '{' )
+        {
+            int ch2 = nextToken();
+
+            if( ch2 == '{' )
+            {
+                res = "<PRE>";
+                m_isPre = true;
             }
             else
-            { 
-                buf.append( line.charAt(i) );
-            }
+            {
+                pushBack( ch2 );
+                
+                res = "<TT>";
+                m_isTypedText = true;
+           }
         }
 
-        return buf.toString();
+        return res;
     }
 
-    private String setItalic( String line )
+    /**
+     *  Handles both }} and }}}
+     */
+    private String handleClosebrace()
+        throws IOException
+    {
+        String res = "}";
+
+        int ch2 = nextToken();
+
+        if( ch2 == '}' )
+        {
+            int ch3 = nextToken();
+
+            if( ch3 == '}' )
+            {
+                if( m_isPre )
+                {
+                    m_isPre = false;
+                    res = "</PRE>";
+                }
+                else
+                {
+                    res = "}}}";
+                }
+            }
+            else
+            {
+                pushBack( ch3 );
+
+                if( !m_isPre )
+                {
+                    res = "</TT>";
+                    m_isTypedText = false;
+                }
+                else
+                {
+                    pushBack( ch2 );
+                }
+            }
+        }
+        else
+        {
+            pushBack( ch2 );
+        }
+
+        return res;
+    }
+
+    private String handleDash()
+        throws IOException
+    {
+        int ch = nextToken();
+
+        if( ch == '-' )
+        {
+            int ch2 = nextToken();
+
+            if( ch2 == '-' )
+            {
+                int ch3 = nextToken();
+
+                if( ch3 == '-' ) 
+                {
+                    // Empty away all the rest of the dashes.
+                    while( nextToken() == '-' );
+                    return "<HR />";
+                }
+        
+                pushBack( ch3 );
+            }
+            pushBack( ch2 );
+        }
+
+        pushBack( ch );
+
+        return "-";
+    }
+
+    private String handleHeading()
+        throws IOException
     {
         StringBuffer buf = new StringBuffer();
 
-        for( int i = 0; i < line.length(); i++ )
+        int ch  = nextToken();
+
+        if( ch == '!' )
         {
-            if( line.charAt(i) == '\'' && i < line.length()-1 )
+            int ch2 = nextToken();
+
+            if( ch2 == '!' )
             {
-                if( line.charAt(i+1) == '\'' )
-                {
-                    buf.append( m_isitalic ? "</I>" : "<I>" );
-                    m_isitalic = !m_isitalic;
-                    i++;
-                }
-                else buf.append( "'" );
+                buf.append("<H2>");
+                m_closeTag = "</H2>";
             }
-            else buf.append( line.charAt(i) );
+            else
+            {
+                buf.append( "<H3>" );
+                m_closeTag = "</H3>";
+                pushBack( ch2 );
+            }
         }
+        else
+        {
+            buf.append( "<H4>" );
+            m_closeTag = "</H4>";
+            pushBack( ch );
+        }
+        
+        return buf.toString();
+    }
+
+    /**
+     *  Reads the stream until the next EOL or EOF.
+     */
+    private StringBuffer readUntilEOL()
+        throws IOException
+    {
+        int ch;
+        StringBuffer buf = new StringBuffer();
+
+        while( true )
+        {
+            ch = nextToken();
+
+            if( ch == -1 || ch == '\n' )
+                break;
+
+            buf.append( (char) ch );
+        }
+
+        return buf;
+    }
+
+    private int countChars( PushbackReader in, char c )
+        throws IOException
+    {
+        int count = 0;
+        int ch; 
+
+        while( (ch = in.read()) != -1 )
+        {
+            if( (char)ch == c )
+            {
+                count++;
+            }
+            else
+            {
+                in.unread( ch );
+                break;
+            }
+        }
+
+        return count;
+    }
+
+    private String handleUnorderedList()
+        throws IOException
+    {
+        StringBuffer buf = new StringBuffer();
+
+        int numBullets = countChars( m_in, '*' ) + 1;
+                
+        if( numBullets > m_listlevel )
+        {
+            for( ; m_listlevel < numBullets; m_listlevel++ )
+                buf.append("<UL>\n");
+        }
+        else if( numBullets < m_listlevel )
+        {
+            for( ; m_listlevel > numBullets; m_listlevel-- )
+                buf.append("</UL>\n");
+        }
+                
+        buf.append("<LI>");
 
         return buf.toString();
     }
 
+    private String handleOrderedList()
+        throws IOException
+    {
+        StringBuffer buf = new StringBuffer();
+
+        int numBullets = countChars( m_in, '#' ) + 1;
+                
+        if( numBullets > m_numlistlevel )
+        {
+            for( ; m_numlistlevel < numBullets; m_numlistlevel++ )
+                buf.append("<OL>\n");
+        }
+        else if( numBullets < m_numlistlevel )
+        {
+            for( ; m_numlistlevel > numBullets; m_numlistlevel-- )
+                buf.append("</OL>\n");
+        }
+                
+        buf.append("<LI>");
+
+        return buf.toString();
+
+    }
+
+    private String handleDefinitionList()
+        throws IOException
+    {
+        if( !m_isdefinition )
+        {
+            m_isdefinition = true;
+
+            m_closeTag = "</DD>\n</DL>";
+
+            return "<DL>\n<DT>";
+        }
+
+        return ";";
+    }
+
+    private String handleOpenbracket()
+        throws IOException
+    {
+        int ch = nextToken();
+
+        if( ch == '[' )
+        {
+            return "[";
+        }
+
+        pushBack( ch );
+
+        StringBuffer sb = new StringBuffer();
+        while( true )
+        {
+            ch = nextToken();
+
+            if( ch == -1 || ch == ']' )
+                break;
+
+            sb.append( (char) ch );
+        }
+
+        if( ch == -1 )
+        {
+            log.info("Warning: unterminated link detected!");
+            return sb.toString();
+        }
+
+        return handleHyperlinks( sb.toString() );
+    }
+
+    private String handleBar( boolean newLine )
+        throws IOException
+    {
+        StringBuffer sb = new StringBuffer();
+
+        if( !m_istable && !newLine )
+        {
+            return "|";
+        }
+
+        if( newLine )
+        {
+            if( !m_istable )
+            {
+                sb.append("<TABLE CLASS=\"wikitable\" BORDER=\"1\">\n");
+                m_istable = true;
+            }
+
+            sb.append("<TR>");
+            m_closeTag = "</TR>";
+        }
+        
+        int ch = nextToken();
+
+        if( ch == '|' )
+        {
+            sb.append("<TH>");
+        }
+        else
+        {
+            sb.append("<TD>");
+            pushBack( ch );
+        }
+
+        return sb.toString();
+    }
+
+    private void fillBuffer()
+        throws IOException
+    {
+        StringBuffer buf = new StringBuffer();
+
+        boolean quitReading = false;
+        boolean newLine     = true; // FIXME: not true if reading starts in middle of buffer
+
+        while(!quitReading)
+        {
+            int ch = nextToken();
+            String s = null;
+
+            //
+            //  Check if we're actually ending the preformatted mode.
+            //
+            if( m_isPre )
+            {
+                if( ch == '}' )
+                {
+                    buf.append( handleClosebrace() );
+                }
+                else
+                {
+                    buf.append( (char)ch );
+                }
+
+                continue;
+            }
+
+            //
+            //  Check if any lists need closing down.
+            //
+
+            if( newLine && ch != '*' && ch != ' ' && m_listlevel > 0 )
+            {
+                for( ; m_listlevel > 0; m_listlevel-- )
+                {
+                    buf.append("</UL>\n");
+                }
+            }
+
+            if( newLine && ch != '#' && ch != ' ' && m_numlistlevel > 0 )
+            {
+                for( ; m_numlistlevel > 0; m_numlistlevel-- )
+                {
+                    buf.append("</OL>\n");
+                }
+            }
+
+            if( newLine && ch != '|' && m_istable )
+            {
+                buf.append("</TABLE>\n");
+                m_istable = false;
+                m_closeTag = null;
+            }
+
+            //
+            //  Now, check the incoming token.
+            //
+            switch( ch )
+            {
+              case '\r':
+                // DOS linefeeds we forget
+                s = null;
+                break;
+
+              case '\n':
+                //
+                //  Close things like headings, etc.
+                //
+                if( m_closeTag != null ) 
+                {
+                    buf.append( m_closeTag );
+                    m_closeTag = null;
+                }
+
+                m_isdefinition = false;
+
+                if( newLine )
+                {
+                    // Paragraph change.
+
+                    buf.append("<P>\n");
+                }
+                else
+                {
+                    buf.append("\n");
+                    newLine = true;
+                }
+
+                break;
+
+              case '\\':
+                s = handleBackslash();
+                break;
+
+              case '_':
+                s = handleUnderscore();
+                break;
+                
+              case '\'':
+                s = handleApostrophe();
+                break;
+
+              case '{':
+                s = handleOpenbrace();
+                break;
+
+              case '}':
+                s = handleClosebrace();
+                break;
+
+              case '-':
+                s = handleDash();
+                break;
+
+              case '!':
+                if( newLine )
+                {
+                    s = handleHeading();
+                }
+                else
+                {
+                    s = "!";
+                }
+                break;
+
+              case ';':
+                if( newLine )
+                {
+                    s = handleDefinitionList();
+                }
+                else
+                {
+                    s = ";";
+                }
+                break;
+
+              case ':':
+                if( m_isdefinition )
+                {
+                    s = "</DT><DD>";
+                }
+                else
+                {
+                    s = ":";
+                }
+                break;
+
+              case '[':
+                s = handleOpenbracket();
+                break;
+
+              case '*':
+                if( newLine )
+                {
+                    s = handleUnorderedList();
+                }
+                else
+                {
+                    s = "*";
+                }
+                break;
+
+              case '#':
+                if( newLine )
+                {
+                    s = handleOrderedList();
+                }
+                else
+                {
+                    s = "#";
+                }
+                break;
+
+              case '|':
+                s = handleBar( newLine );
+                break;
+
+              case '<':
+                s = "&lt;";
+                break;
+
+              case '>':
+                s = "&gt;";
+                break;
+
+              case '\"':
+                s = "&quot;";
+                break;
+
+              case '&':
+                s = "&amp;";
+                break;
+
+              case -1:
+                if( m_closeTag != null )
+                {
+                    buf.append( m_closeTag );
+                    m_closeTag = null;
+                }
+                quitReading = true;
+                break;
+
+              default:
+                buf.append( (char)ch );
+                newLine = false;
+                break;
+            }
+
+            if( s != null )
+            {
+                buf.append( s );
+                newLine = false;
+            }
+        }
+
+        m_data = new StringReader( buf.toString() );
+    }
+
+    /*
     private void fillBuffer()
         throws IOException
     {
@@ -1275,6 +1703,7 @@ public class TranslatorReader extends Reader
         
         m_data = new StringReader( buf.toString() );
     }
+    */
 
     public int read()
         throws IOException
