@@ -2,6 +2,8 @@
 
 	* v2.0.9.
 
+	* Added permalinks to WeblogPlugin.
+
 	* IndexPlugin enhanced to have parameters "include" and "exclude",
 	which can be used to include or exclude pages using standard glob
 	wild card expressions (*, ?, etc).
