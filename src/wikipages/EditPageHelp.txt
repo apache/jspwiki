@@ -31,3 +31,6 @@ Don't try to use HTML, since it just won't work.
 To embed images just put them available on the web using one of the approved formats, and they will get inlined automatically. To see the list of approved formats, go check [SystemInfo].
 
 To make a code block, use triple {'s to open, and triple }'s to close.
+
+''(Wondering where this text comes from?  It's on a page called [Edit Page Help], which you can edit too!)''
+
