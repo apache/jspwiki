@@ -1,5 +1,18 @@
 2002-12-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
+        * v1.9.48.
+
+        * Tiny little tweaks to attachments all around.
+
+        * PageInfo is now attachment-aware, so you can view older
+        versions, etc. using the standard PageInfo link.
+
+        * If an attachment is an image, then it is automatically inlined.
+
+        * It is now possible to link to attachments as if they were normal
+        Wiki pages.  From the page itself, just use [attachment name],
+        from other pages, use [ParentPage/attachment name].
+
         * v1.9.47.
 
         * CamelCase links now finally work (or at least all tests run).
