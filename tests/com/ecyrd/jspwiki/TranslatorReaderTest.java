@@ -131,8 +131,6 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );       
     }
 
-    /*
-      // TEMPORARILY DISABLED
     public void testHyperlinksCC()
         throws Exception
     {
@@ -152,12 +150,12 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a <U>HyperLink</U><A HREF=\"Edit.jsp?page=HyperLink\">?</A>.",
                       translate(src) );
     }
-    */
+
     /**
      *  Check if the CC hyperlink translator gets confused with
      *  unorthodox bracketed links.
      */
-    /*
+
     public void testHyperlinksCC2()
         throws Exception
     {
@@ -177,10 +175,10 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a nonHyperLink.",
                       translate(src) );
     }
-    */
+
     /** Two links on same line. */
 
-    /*
+
     public void testHyperlinksCC4()
         throws Exception
     {
@@ -192,10 +190,10 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
                       translate(src) );
     }
-    */
+
 
     /** Two mixed links on same line. */
-    /*
+
     public void testHyperlinksCC5()
         throws Exception
     {
@@ -207,10 +205,9 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
                       translate(src) );
     }
-    */
+
     /** Closing tags only. */
 
-    /*
     public void testHyperlinksCC6()
         throws Exception
     {
@@ -222,10 +219,8 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "] This ] should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>], and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.",
                       translate(src) );
     }
-    */
 
     /** First and last words on line. */
-    /*
     public void testHyperlinksCCFirstAndLast()
         throws Exception
     {
@@ -237,7 +232,6 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "<A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>",
                       translate(src) );
     }
-    */
 
     /** Hyperlinks inside URIs. */
 
@@ -250,7 +244,6 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
-    /*
     public void testHyperlinksCCNegated()
         throws Exception
     {
@@ -268,7 +261,6 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "HyperLinks should not be matched.",
                       translate(src) );
     }
-    */
 
     public void testHyperlinksExt()
         throws Exception
