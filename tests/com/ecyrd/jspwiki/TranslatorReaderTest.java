@@ -109,6 +109,58 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHyperlinksCC()
+        throws Exception
+    {
+        String src = "This should be a HyperLink.";
+
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>.\n",
+                      translate(src) );
+    }
+
+    /**
+     *  Check if the CC hyperlink translator gets confused with
+     *  unorthodox bracketed links.
+     */
+    public void testHyperlinksCC2()
+        throws Exception
+    {
+        String src = "This should be a [  HyperLink  ].";
+
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">  HyperLink  </A>.\n",
+                      translate(src) );
+    }
+
+    public void testHyperlinksCC3()
+        throws Exception
+    {
+        String src = "This should be a nonHyperLink.";
+
+        assertEquals( "This should be a nonHyperLink.\n",
+                      translate(src) );
+    }
+
+    /** Two links on same line. */
+    public void testHyperlinksCC4()
+        throws Exception
+    {
+        String src = "This should be a HyperLink, and ThisToo.";
+
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
+                      translate(src) );
+    }
+
+    /** Two mixed links on same line. */
+    public void testHyperlinksCC5()
+        throws Exception
+    {
+        String src = "This should be a [HyperLink], and ThisToo.";
+
+        assertEquals( "This should be a <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=HyperLink\">HyperLink</A>, and <A CLASS=\"wikipage\" HREF=\"Wiki.jsp?page=ThisToo\">ThisToo</A>.\n",
+                      translate(src) );
+    }
+
+
     public void testHyperlinksExt()
         throws Exception
     {
@@ -544,6 +596,14 @@ public class TranslatorReaderTest extends TestCase
         throws Exception
     {
         String src="[{INSERT com.ecyrd.jspwiki.plugin.SamplePlugin WHERE text=test}]";
+
+        assertEquals( "test\n", translate(src) );
+    }
+
+    public void testShortPluginInsert()
+        throws Exception
+    {
+        String src="[{INSERT SamplePlugin WHERE text=test}]";
 
         assertEquals( "test\n", translate(src) );
     }
