@@ -166,6 +166,37 @@ public class RPCHandlerTest extends TestCase
     }
 
 
+    public void testListLinksWithAttachments()
+        throws Exception
+    {
+        String text = "[Foobar] [Test/TestAtt.txt]";
+        String pageName = NAME1;
+
+        m_engine.saveText( pageName, text );
+
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
+
+        // Test.
+
+        Vector links = m_handler.listLinks( pageName );
+
+        assertEquals( "link count", 2, links.size() );
+
+        Hashtable linkinfo = (Hashtable) links.elementAt(0);
+
+        assertEquals( "name", "Foobar", linkinfo.get("page") );
+        assertEquals( "type", "local",  linkinfo.get("type") );
+        assertEquals( "href", "Edit.jsp?page=Foobar", linkinfo.get("href") );
+
+        linkinfo = (Hashtable) links.elementAt(1);
+
+        assertEquals( "name", NAME1+"%2FTestAtt.txt", linkinfo.get("page") );
+        assertEquals( "type", "local", linkinfo.get("type") );
+        assertEquals( "href", "attach?page="+NAME1+"%2FTestAtt.txt", linkinfo.get("href") );
+    }
+
     public static Test suite()
     {
         return new TestSuite( RPCHandlerTest.class );
