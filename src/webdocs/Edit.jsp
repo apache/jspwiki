@@ -1,6 +1,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
     public void jspInit()
@@ -23,6 +25,12 @@
     }
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
+
+    WikiPage wikipage = wiki.getPage( pagereq );
+
+    WikiContext wikiContext = new WikiContext( wiki, wikipage );
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext );
 
     String pageurl = wiki.encodeName( pagereq );
 
@@ -103,7 +111,7 @@
     <TD CLASS="leftmenu" WIDTH="15%" VALIGN="top" NOWRAP="true">
        <%@ include file="LeftMenu.jsp" %>
        <P>
-       <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=TextFormattingRules">Help on editing</A>
+       <wiki:LinkTo page="TextFormattingRules">Help on editing</wiki:LinkTo>
        </P>
        <%@ include file="LeftMenuFooter.jsp" %>
     </TD>
@@ -126,78 +134,18 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <input type="submit" name="preview" value="Preview" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=<%=pageurl%>">Cancel</A>
-      <P>
-      Here's a short reminder on what elements you have at your disposal:
-      
-      <table cellspacing = "4">
-        <tr>
-          <td>----</td><td>Horizontal ruler</td>
-        </tr>
-        <tr>
-          <td>{{{, }}}</td><td>Begin/end code block.  (Recommended that you start on a new line.)</td>
-        </tr>
-        <tr>
-          <td>\\</td><td>Forced line break</td>
-        </tr>
-        <tr>
-          <td>[link]</td><td>Create hyperlink to "link", where "link"
-          can be either an internal <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=WikiName">WikiName</A>
-          or an external link (http://)</td>
-        </tr>
-        <tr>
-          <td>[text|link]</td>
-          <td>Create a hyperlink where the link text is different from the actual
-          hyperlink link.</td>
-        </tr>
-        <tr>
-          <td>[text|wiki:link]</td>
-          <td>Create a hyperlink where the link text is different from the actual
-          hyperlink link, and the hyperlink points to a named Wiki.
-          This supports interWiki linking.</td>
-        </tr>
-        <tr>
-          <td>*</td><td>Make a bulleted list (must be in first column).  Use more (**) for 
-          deeper indentations.</td>
-        </tr>
-
-        <tr>
-          <td>#</td><td>Make a numbered list (must be in first column). Use more (##, ###) for deeper indentations.</td>
-        </tr>
-
-        <tr>
-          <td>!, !!, !!!</td>
-          <td>Start a line with an exclamation mark (!) to make
-          a heading.  More exclamation marks mean bigger headings.
-          </td>
-        </tr>
-
-        <tr>
-          <td>__text__</td><td>Makes text <B>bold</B>.</td>
-        </tr>
-
-        <tr>
-          <td>''text''</td><td>Makes text in <I>italics</I>.</td>
-        </tr>
-
-        <tr>
-          <td>{{text}}</td><td>Makes text in <TT>monospaced font</TT>.</TD>
-        </tr>
-
-        <tr>
-          <td>|text|more text|</td><td>Makes a table.  Double bars for a table heading.</td>
-        </tr>
-
-      </table>
-
-      <P>Don't try to use HTML, since it just won't work.</P>
-
-      <P>To embed images just put them available on the web using one
-      of the approved formats, and they will get inlined automatically.
-      To see the list of approved formats, go check 
-      <A HREF="<%=wiki.getBaseURL()%>Wiki.jsp?page=SystemInfo">SystemInfo</A>.</P>
-
+      <wiki:LinkTo>Cancel</wiki:LinkTo>
       </FORM>
+
+      </P>
+      <P>
+      <wiki:NoSuchPage page="EditPageHelp">
+         Ho hum, it seems that the <wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink>
+         page is missing.  Someone must've done something to the installation...
+      </wiki:NoSuchPage>
+      </P>
+
+      <wiki:InsertPage page="EditPageHelp" />
 
     </TD>
   </TR>
