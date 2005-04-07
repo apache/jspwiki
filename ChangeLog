@@ -1,6 +1,9 @@
 2005-04-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.162
+        
+        * Bug fix: Long values in filter.xml would cause truncation.
+        Patch from Mario.
 
         * Bug fix: DefaultURLConstructor would append both & and ? to
         parameters, causing confusion.  Reported by Jake Vogelaar.
