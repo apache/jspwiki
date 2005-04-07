@@ -217,7 +217,7 @@ public class FilterManager
     private String filterName = null;
     private Properties filterProperties = new Properties();
     private boolean parsingFilters = false;
-    private String lastReadCharacters = null;
+    private String lastReadCharacters = "";
     private String lastReadParamName = null;
     private String lastReadParamValue = null;
 
@@ -255,7 +255,7 @@ public class FilterManager
                 filterName = lastReadCharacters;
             }
             else if( "param".equals(name) )
-            {               
+            {
                 filterProperties.setProperty( lastReadParamName, lastReadParamValue );
             }
             else if( "name".equals(name) )
@@ -267,11 +267,12 @@ public class FilterManager
                 lastReadParamValue = lastReadCharacters;
             }
         }
+        lastReadCharacters = "";
     }
 
     public void characters( char ch[], int start, int length )
     {
-        lastReadCharacters = new String( ch, start, length );
+        lastReadCharacters += new String( ch, start, length );
     }
     
 
