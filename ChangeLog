@@ -3,7 +3,7 @@
         * v2.1.162
         
         * Bug fix: Long values in filter.xml would cause truncation.
-        Patch from Mario.
+        Patch from Mario.  Fixes BugLargeValuesTruncatedInFilters.xml.
 
         * Bug fix: DefaultURLConstructor would append both & and ? to
         parameters, causing confusion.  Reported by Jake Vogelaar.
