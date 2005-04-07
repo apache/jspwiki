@@ -97,7 +97,10 @@ public class DefaultURLConstructor
             {
                 parameters = "?"+parameters;
             }
-            parameters = "&amp;"+parameters;
+            else
+            {
+                parameters = "&amp;"+parameters;
+            }
         }
         else
         {
@@ -147,6 +150,10 @@ public class DefaultURLConstructor
             name = name.substring(1);
         }
        
+        //
+        //  This is required, because by default all URLs are handled
+        //  as Latin1, even if they are really UTF-8.
+        //
         name = new String(name.getBytes("ISO-8859-1"),
                           encoding );
 
