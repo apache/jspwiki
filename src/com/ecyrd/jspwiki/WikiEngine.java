@@ -1891,7 +1891,7 @@ public class WikiEngine
     }
 
     /**
-     *  Deletes a page completely.
+     *  Deletes a page or an attachment completely, including all versions.
      * 
      * @param pageName
      * @throws ProviderException
@@ -1900,13 +1900,34 @@ public class WikiEngine
         throws ProviderException
     {
         WikiPage p = getPage( pageName );
-        m_pageManager.deletePage( p );
+        
+        if( p instanceof Attachment )
+        {
+            m_attachmentManager.deleteAttachment( (Attachment) p );
+        }
+        else
+        {
+            m_pageManager.deletePage( p );
+        }
     }
     
+    /**
+     *  Deletes a specific version of a page or an attachment.
+     * 
+     * @param page
+     * @throws ProviderException
+     */
     public void deleteVersion( WikiPage page )
         throws ProviderException
     {
-        m_pageManager.deleteVersion( page );
+        if( page instanceof Attachment )
+        {
+            m_attachmentManager.deleteVersion( (Attachment) page );
+        }
+        else
+        {
+            m_pageManager.deleteVersion( page );
+        }
     }
     
     /**
