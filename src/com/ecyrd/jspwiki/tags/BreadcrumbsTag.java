@@ -141,7 +141,7 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
-    private class FixedQueue 
+    private static class FixedQueue 
         extends LinkedList
         implements Serializable
     {
