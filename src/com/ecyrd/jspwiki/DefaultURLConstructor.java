@@ -123,8 +123,6 @@ public class DefaultURLConstructor
         if( context.equals(WikiContext.ATTACH) )
         {
             pagereq = parsePageFromURL( request, encoding );
-
-            if( pagereq != null ) pagereq = TextUtil.urlDecodeUTF8(pagereq);
         }
 
         return pagereq;
@@ -154,9 +152,9 @@ public class DefaultURLConstructor
         //  This is required, because by default all URLs are handled
         //  as Latin1, even if they are really UTF-8.
         //
-        name = new String(name.getBytes("ISO-8859-1"),
-                          encoding );
-
+        
+        name = TextUtil.urlDecode( name, encoding );
+        
         return name;
     }
 
