@@ -1,3 +1,14 @@
+2005-04-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.163
+
+        * BreadcrumbsTag.FixedQueue is now static.  This should help
+        with some serialization issues.  Reported by many people,
+        forgotten by me.
+
+        * UTF-8 attachment names would fail (again).  Thanks to Stephan
+        Schiessling.
+
 2005-04-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.162
