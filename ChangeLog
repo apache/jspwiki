@@ -1,6 +1,8 @@
 2005-04-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.163
+        
+        * Attachment deletion works now as well.
 
         * BreadcrumbsTag.FixedQueue is now static.  This should help
         with some serialization issues.  Reported by many people,
