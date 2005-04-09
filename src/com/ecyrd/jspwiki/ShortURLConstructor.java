@@ -145,8 +145,6 @@ public class ShortURLConstructor
         if( pagereq == null )
         {
             pagereq = parsePageFromURL( request, encoding );
-
-            if( pagereq != null ) pagereq = TextUtil.urlDecodeUTF8(pagereq);
         }
 
         return pagereq;
