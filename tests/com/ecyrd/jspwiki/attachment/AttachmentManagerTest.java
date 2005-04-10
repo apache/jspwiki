@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.*;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.*;
 
 public class AttachmentManagerTest extends TestCase
 {
@@ -54,8 +53,8 @@ public class AttachmentManagerTest extends TestCase
 
     public void tearDown()
     {
-        m_engine.deleteTestPage( NAME1 );
-        m_engine.deleteTestPage( NAMEU );
+        TestEngine.deleteTestPage( NAME1 );
+        TestEngine.deleteTestPage( NAMEU );
 
         m_engine.deleteAttachments(NAME1);
         m_engine.deleteAttachments(NAMEU);

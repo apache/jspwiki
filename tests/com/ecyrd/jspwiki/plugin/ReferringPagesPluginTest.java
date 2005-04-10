@@ -40,14 +40,14 @@ public class ReferringPagesPluginTest extends TestCase
 
     public void tearDown()
     {
-        engine.deleteTestPage( "TestPage" );
-        engine.deleteTestPage( "Foobar" );
-        engine.deleteTestPage( "Foobar2" );
-        engine.deleteTestPage( "Foobar3" );
-        engine.deleteTestPage( "Foobar4" );
-        engine.deleteTestPage( "Foobar5" );
-        engine.deleteTestPage( "Foobar6" );
-        engine.deleteTestPage( "Foobar7" );
+        TestEngine.deleteTestPage( "TestPage" );
+        TestEngine.deleteTestPage( "Foobar" );
+        TestEngine.deleteTestPage( "Foobar2" );
+        TestEngine.deleteTestPage( "Foobar3" );
+        TestEngine.deleteTestPage( "Foobar4" );
+        TestEngine.deleteTestPage( "Foobar5" );
+        TestEngine.deleteTestPage( "Foobar6" );
+        TestEngine.deleteTestPage( "Foobar7" );
     }
 
     private String mkLink( String page )

@@ -46,11 +46,11 @@ public class ReferenceManagerTest extends TestCase
 
     public void tearDown()
     {
-        engine.deleteTestPage( "TestPage" );
-        engine.deleteTestPage( "Foobar" );
-        engine.deleteTestPage( "Foobars" );
-        engine.deleteTestPage( "Foobar2" );
-        engine.deleteTestPage( "Foobar2s" );
+        TestEngine.deleteTestPage( "TestPage" );
+        TestEngine.deleteTestPage( "Foobar" );
+        TestEngine.deleteTestPage( "Foobars" );
+        TestEngine.deleteTestPage( "Foobar2" );
+        TestEngine.deleteTestPage( "Foobar2s" );
 
     }
 

@@ -35,9 +35,9 @@ public class AuthorizationManagerTest extends TestCase
 
     public void tearDown()
     {
-        m_engine.deleteTestPage("Test");
-        m_engine.deleteTestPage("AdminGroup");
-        m_engine.deleteTestPage("FooGroup");
+        TestEngine.deleteTestPage("Test");
+        TestEngine.deleteTestPage("AdminGroup");
+        TestEngine.deleteTestPage("FooGroup");
     }
 
     public void testSimplePermissions()

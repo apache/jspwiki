@@ -34,8 +34,8 @@ public class WikiDatabaseTest
 
     public void tearDown()
     {
-        m_engine.deleteTestPage( "TestGroup" );
-        m_engine.deleteTestPage( "TestGroup2" );
+        TestEngine.deleteTestPage( "TestGroup" );
+        TestEngine.deleteTestPage( "TestGroup2" );
     }
 
     private boolean containsGroup( List l, String name )
