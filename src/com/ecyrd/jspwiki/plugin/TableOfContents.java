@@ -94,9 +94,13 @@ public class TableOfContents
 
             FileUtil.readContents( in );
 
+            in.close();
+            
             in = new TranslatorReader( context,
                                        new StringReader( m_buf.toString() ) );
             sb.append(FileUtil.readContents( in ));
+            
+            in.close();
         }
         catch( IOException e )
         {
