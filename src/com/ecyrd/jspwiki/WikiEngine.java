@@ -1230,7 +1230,6 @@ public class WikiEngine
      *
      *  @param pagename WikiName of the page to convert.
      *  @param version Version number to fetch
-     *  @deprecated
      */
     public String getHTML( String pagename, int version )
     {
@@ -1239,6 +1238,7 @@ public class WikiEngine
 
         WikiContext context = new WikiContext( this,
                                                page );
+        context.setRequestContext( WikiContext.NONE );
         
         String res = getHTML( context, page );
 
