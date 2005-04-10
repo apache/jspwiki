@@ -9,6 +9,9 @@
 <head>
   <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
   <wiki:Include page="commonheader.jsp"/>
+  <wiki:CheckVersion mode="notlatest">
+        <meta name="robots" content="noindex,nofollow" />
+  </wiki:CheckVersion>
 </head>
 
 <body bgcolor="#FFFFFF">
