@@ -21,10 +21,12 @@ package com.ecyrd.jspwiki.tags;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import org.apache.log4j.Category;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
+
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -48,7 +50,7 @@ import java.util.LinkedList;
  */
 public class BreadcrumbsTag extends WikiTagBase
 {
-    private static final Category log = Category.getInstance(BreadcrumbsTag.class);
+    private static final Logger log = Logger.getLogger(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
     private String m_separator = " > ";

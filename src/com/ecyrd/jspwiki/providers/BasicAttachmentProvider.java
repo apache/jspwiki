@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Collections;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -82,7 +82,7 @@ public class BasicAttachmentProvider
     public static final String DIR_EXTENSION   = "-att";
     public static final String ATTDIR_EXTENSION = "-dir";
     
-    static final Category log = Category.getInstance( BasicAttachmentProvider.class );
+    static final Logger log = Logger.getLogger( BasicAttachmentProvider.class );
 
     public void initialize( WikiEngine engine, Properties properties ) 
         throws NoRequiredPropertyException,

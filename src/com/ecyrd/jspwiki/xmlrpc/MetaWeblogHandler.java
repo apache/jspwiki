@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.xmlrpc;
 
 import java.io.*;
-import org.apache.log4j.Category;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -28,6 +27,8 @@ import com.ecyrd.jspwiki.plugin.WeblogEntryPlugin;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import java.util.*;
+
+import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 
 /**
@@ -46,7 +47,7 @@ import org.apache.xmlrpc.XmlRpcException;
 public class MetaWeblogHandler
     implements WikiRPCHandler
 {
-    Category log = Category.getInstance( MetaWeblogHandler.class ); 
+    Logger log = Logger.getLogger( MetaWeblogHandler.class ); 
 
     private WikiEngine m_engine;
 

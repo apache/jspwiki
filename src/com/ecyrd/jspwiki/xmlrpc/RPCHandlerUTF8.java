@@ -19,7 +19,8 @@
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.ViewPermission;
@@ -38,7 +39,7 @@ import org.apache.xmlrpc.XmlRpcException;
 public class RPCHandlerUTF8
     extends AbstractRPCHandler
 {
-    Category log = Category.getInstance( RPCHandlerUTF8.class ); 
+    Logger log = Logger.getLogger( RPCHandlerUTF8.class ); 
 
     public String getApplicationName()
     {

@@ -22,14 +22,14 @@ package com.ecyrd.jspwiki;
 
 import java.io.*;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  *  Generic utilities related to file and stream handling.
  */
 public class FileUtil
 {
-    private static final Category   log      = Category.getInstance(FileUtil.class);
+    private static final Logger   log      = Logger.getLogger(FileUtil.class);
     static               boolean    c_hasNIO = false;
 
     private static final int        MINBUFSIZ = 32768; // bytes

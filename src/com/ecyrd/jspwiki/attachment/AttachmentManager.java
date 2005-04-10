@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
@@ -63,7 +63,7 @@ public class AttachmentManager
      */
     public static final String  PROP_MAXSIZE  = "jspwiki.attachment.maxsize";
 
-    static Category log = Category.getInstance( AttachmentManager.class );
+    static Logger log = Logger.getLogger( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
     private WikiEngine             m_engine;
 

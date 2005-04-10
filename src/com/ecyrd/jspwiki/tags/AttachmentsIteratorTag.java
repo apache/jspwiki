@@ -24,7 +24,7 @@ import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
@@ -49,7 +49,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class AttachmentsIteratorTag
     extends IteratorTag
 {
-    static    Category    log = Category.getInstance( AttachmentsIteratorTag.class );
+    static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
 
     public final int doStartTag()
     {

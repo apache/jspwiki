@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.security.acl.NotOwnerException;
 import java.security.Principal;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -53,7 +53,7 @@ public class AuthorizationManager
  
     protected static final String PROP_USEOLDAUTH = "jspwiki.auth.useOldAuth";
     
-    static Category log = Category.getInstance( AuthorizationManager.class );
+    static Logger log = Logger.getLogger( AuthorizationManager.class );
 
     private WikiAuthorizer    m_authorizer;
     private AccessControlList m_defaultPermissions;

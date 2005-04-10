@@ -21,7 +21,8 @@ package com.ecyrd.jspwiki.auth;
 
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.TextUtil;
 
 /**
@@ -34,7 +35,7 @@ import com.ecyrd.jspwiki.TextUtil;
 public class UserProfile
     extends WikiPrincipal
 {
-    private Category log = Category.getInstance( UserProfile.class );
+    private Logger log = Logger.getLogger( UserProfile.class );
 
     private int m_loginStatus = NONE;
 

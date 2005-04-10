@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -53,7 +53,7 @@ public class PageManager
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
 
-    static Category log = Category.getInstance( PageManager.class );
+    static Logger log = Logger.getLogger( PageManager.class );
 
     private WikiPageProvider m_provider;
 

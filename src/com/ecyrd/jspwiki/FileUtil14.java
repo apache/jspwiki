@@ -28,7 +28,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  *  Generic utilities related to file and stream handling, JDK1.4 version.
@@ -42,7 +42,7 @@ import org.apache.log4j.Category;
 // redirection.  For later.
 public class FileUtil14
 {
-    private static final Category   log = Category.getInstance(FileUtil.class);
+    private static final Logger   log = Logger.getLogger(FileUtil.class);
 
     /**
      *  JDK 1.4 version of FileUtil.readContents.  This version circumvents all kinds
