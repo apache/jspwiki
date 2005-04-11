@@ -1954,6 +1954,15 @@ public class WikiEngine
     }
 
     /**
+     * @since 2.1.165
+     * @return
+     */
+    public RSSGenerator getRSSGenerator()
+    {
+        return m_rssGenerator;
+    }
+    
+    /**
      *  Runs the RSS generation thread.
      *  FIXME: MUST be somewhere else, this is not a good place.
      */
