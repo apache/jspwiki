@@ -46,7 +46,6 @@ public class RSSLinkTag
         if( rssURL != null )
         {
             pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed\" href=\""+rssURL+"\" />");
-
         }
 
         return SKIP_BODY;
