@@ -1,8 +1,24 @@
+2005-04-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.166
+
+        * Removed header.jsp from default template (it was not used)
+        
+        * Added "Page feed" section to default template/info.
+
+        * FeedDiscoveryTag now shows all page feeds properly.
+
+        * Page-specific RSS feeds now work (add &mode=wiki to the rss.jsp
+        url).
+
 2005-04-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.165
 
-        * Added the new RSS Generator.
+        * Added classes/oscache.properties (otherwise OSCache tags
+        won't work).
+
+        * Added the new RSS Generator.  Fixes BugRSSFeedWrongDC.
 
 2005-04-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
