@@ -20,11 +20,16 @@
 package com.ecyrd.jspwiki.rss;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Generates an RSS feed from the recent changes.
@@ -35,10 +40,10 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *  @author Janne Jalkanen
  *  @since  1.7.5.
  */
-// FIXME: Merge with rss.jsp
 // FIXME: Limit diff and page content size.
 public class RSSGenerator
 {
+    static Logger              log = Logger.getLogger( RSSGenerator.class );
     private WikiEngine         m_engine;
 
     private String             m_channelDescription = "";
@@ -76,6 +81,8 @@ public class RSSGenerator
      */
     public static final String PROP_INTERVAL            = "jspwiki.rss.interval";
 
+    private static final int MAX_CHARACTERS             = Integer.MAX_VALUE;
+    
     /**
      *  Initialize the RSS generator.
      */
@@ -151,7 +158,7 @@ public class RSSGenerator
         if( page.getVersion() > 1 )
         {
             String diff = m_engine.getDiff( page.getName(),
-                                            page.getVersion()-1,
+                                            page.getVersion()-1, // FIXME: Will fail when non-contiguous versions
                                             page.getVersion() );
 
             buf.append(author+" changed this page on "+page.getLastModified()+":<br /><hr /><br />" );
@@ -420,6 +427,162 @@ public class RSSGenerator
             e.setURL( url );
             e.setTitle( getEntryTitle(page) );
             e.setContent( getEntryDescription(page) );
+            e.setAuthor( getAuthor(page) );
+            
+            feed.addEntry( e );
+        }
+        
+        return feed.getString();
+    }
+
+    public String generatePageRSS( WikiContext wikiContext, List changed )
+    {
+        RSS10Feed feed = new RSS10Feed( wikiContext );
+        
+        feed.setChannelTitle( m_engine.getApplicationName() );
+        feed.setFeedURL( m_engine.getBaseURL() );
+        feed.setChannelLanguage( m_channelLanguage );
+        feed.setChannelDescription( m_channelDescription );
+
+        Collections.sort( changed, new PageTimeComparator() );
+                
+        int items = 0;
+        for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
+        {
+            WikiPage page = (WikiPage) i.next();
+            
+            Entry e = new Entry();
+            
+            e.setPage( page );
+
+            String url;
+
+            if( page instanceof Attachment )
+            {
+                url = m_engine.getURL( WikiContext.ATTACH, 
+                                       page.getName(),
+                                       "version="+page.getVersion(),
+                                       true );
+            }
+            else
+            {
+                url = m_engine.getURL( WikiContext.VIEW, 
+                                       page.getName(),
+                                       "version="+page.getVersion(),
+                                       true );
+            }
+            
+            e.setURL( url );
+            e.setTitle( getEntryTitle(page) );
+            e.setContent( getEntryDescription(page) );
+            e.setAuthor( getAuthor(page) );
+            
+            feed.addEntry( e );
+        }
+        
+        return feed.getString();
+    }
+
+    
+    public String generateBlogRSS( WikiContext wikiContext, List changed )
+        throws ProviderException
+    {
+        RSS10Feed feed = new RSS10Feed( wikiContext );
+        
+        log.debug("Generating RSS for blog, size="+changed.size());
+        
+        feed.setChannelTitle( m_engine.getApplicationName()+":"+wikiContext.getPage().getName() );
+        feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
+        feed.setChannelLanguage( m_channelLanguage );
+        
+        String channelDescription;
+        
+        try
+        {
+            channelDescription = m_engine.getVariableManager().getValue( wikiContext, PROP_CHANNEL_DESCRIPTION );
+            feed.setChannelDescription( format(channelDescription) );
+        }
+        catch( NoSuchVariableException e ) {}
+
+        Collections.sort( changed, new PageTimeComparator() );
+
+        int items = 0;
+        for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
+        {
+            WikiPage page = (WikiPage) i.next();
+            
+            Entry e = new Entry();
+            
+            e.setPage( page );
+
+            String url;
+
+            if( page instanceof Attachment )
+            {
+                url = m_engine.getURL( WikiContext.ATTACH, 
+                                       page.getName(),
+                                       null,
+                                       true );
+            }
+            else
+            {
+                url = m_engine.getURL( WikiContext.VIEW, 
+                                       page.getName(),
+                                       null,
+                                       true );
+            }
+            
+            e.setURL( url );
+            
+            //
+            //  Title
+            //
+            
+            String pageText = m_engine.getText(page.getName());
+            String title = "";
+            int firstLine = pageText.indexOf('\n');
+
+            if( firstLine > 0 )
+            {
+                title = pageText.substring( 0, firstLine );
+            }
+            
+            if( title.trim().length() == 0 ) title = page.getName();
+
+            // Remove wiki formatting
+            while( title.startsWith("!") ) title = title.substring(1);
+            
+            e.setTitle( format(title) );
+            
+            //
+            //  Description
+            //
+            
+            if( firstLine > 0 )
+            {
+                int maxlen = pageText.length();
+                if( maxlen > MAX_CHARACTERS ) maxlen = MAX_CHARACTERS;
+
+                if( maxlen > 0 )
+                {
+                    pageText = m_engine.textToHTML( wikiContext, 
+                                                    pageText.substring( firstLine+1,
+                                                                        maxlen ).trim() );
+                    
+                    if( maxlen == MAX_CHARACTERS ) pageText += "...";
+                    
+                    e.setContent( format(pageText) );
+                }
+                else
+                {
+                    e.setContent( format(title) );
+                }
+            }
+            else
+            {
+                e.setContent( format(title) );
+            }
+
             e.setAuthor( getAuthor(page) );
             
             feed.addEntry( e );
