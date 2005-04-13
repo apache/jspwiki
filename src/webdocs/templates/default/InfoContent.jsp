@@ -38,6 +38,11 @@ function confirmDelete()
        </tr>
 
        <tr>
+           <td><b>Page feed</b></td>
+           <td><a href="<wiki:BaseURL/>rss.jsp?page=<wiki:Variable var="pagename" />&amp;mode=wiki"><img src="<wiki:BaseURL/>images/xml.png" border="0" alt="[RSS]"></a></td>
+       </tr>
+
+       <tr>
            <td valign="top"><b>Page revision history</b></td>
            <td>
                <table border="1" cellpadding="4">
