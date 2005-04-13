@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.util.BlogUtil;
 import com.ecyrd.jspwiki.TextUtil;
 
@@ -45,18 +46,34 @@ public class FeedDiscoveryTag
         String encodedName = engine.encodeName( page.getName() );
 
         String rssURL      = engine.getGlobalRSSURL();
-        String atomFeedURL = engine.getBaseURL()+"atom.jsp?page="+encodedName;
         String atomPostURL = engine.getBaseURL()+"atom/"+encodedName;
-
+        String rssFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName+"&amp;mode=wiki";
+        
         if( rssURL != null )
         {
+            String siteName = BlogUtil.getSiteName(m_wikiContext);
+            siteName = TextUtil.replaceEntities( siteName );
+            
             pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for the entire site.\" href=\""+rssURL+"\" />\n");
-            pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\""+
-                                       TextUtil.replaceEntities(BlogUtil.getSiteName(m_wikiContext))+"\" href=\""+atomFeedURL+"\" />\n");
+            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for page "+siteName+".\" href=\""+rssFeedURL+"\" />\n");
 
+            // TODO: Enable this
+            /*
             pageContext.getOut().print("<link rel=\"service.post\" type=\"application/atom+xml\" title=\""+
-                                       TextUtil.replaceEntities(BlogUtil.getSiteName(m_wikiContext))+"\" href=\""+atomPostURL+"\" />\n");
+                                       siteName+"\" href=\""+atomPostURL+"\" />\n");
+            */
+            // FIXME: This does not work always, as plugins are not initialized until the first fetch
+            if( "true".equals(page.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) )
+            {
+                String blogFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName;
+                String atomFeedURL = engine.getBaseURL()+"atom.jsp?page="+encodedName;
+        
+                pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for weblog "+
+                                           siteName+".\" href=\""+blogFeedURL+"\" />\n");
 
+                pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\""+
+                                           siteName+"\" href=\""+atomFeedURL+"\" />\n");
+            }
         }
 
         return SKIP_BODY;
