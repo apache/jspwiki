@@ -1,3 +1,11 @@
+2005-04-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.1.167
+
+        * Enhanced SpamFilter to have a local ban list.  Also
+        added the ability to do edit choke monitoring: any host
+        doing too many edits/minute will get added to ban list.
+
 2005-04-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.166
