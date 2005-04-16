@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
  *    <li>wordlist - Page name where the regexps are found.  Use [{SET spamwords='regexp list separated with spaces'}] on
  *     that page.  Default is "SpamFilterWordList".
  *    <li>errorpage - The page to which the user is redirected.  Has a special variable $msg which states the reason. Default is "RejectedMessage".
- *    <li>pagechangesinminute - How many page changes are allowed/minute.  Default is 3.
+ *    <li>pagechangesinminute - How many page changes are allowed/minute.  Default is 5.
  *    <li>bantime - How long an IP address stays on the temporary ban list (default is 60 for 60 minutes).
  *  </ul>
  *  @since 2.1.112
