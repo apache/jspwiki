@@ -1,8 +1,7 @@
 2005-04-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
-        * v2.2.0-beta.  Yay!  I don't know whether this version
-        is really ripe, but we just HAVE to get it out at some
-        point.
+        * v2.2.0-beta.  Yay!  I don't know whether this version is really
+        ripe, but we just HAVE to get it out at some point.
 
         * Fixed a small off-by-one error in SpamFilter.
 
@@ -10,9 +9,9 @@
 
         * v2.1.167
 
-        * Enhanced SpamFilter to have a local ban list.  Also
-        added the ability to do edit choke monitoring: any host
-        doing too many edits/minute will get added to ban list.
+        * Enhanced SpamFilter to have a local ban list.  Also added the
+        ability to do edit choke monitoring: any host doing too many
+        edits/minute will get added to ban list.
 
 2005-04-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -31,8 +30,8 @@
 
         * v2.1.165
 
-        * Added classes/oscache.properties (otherwise OSCache tags
-        won't work).
+        * Added classes/oscache.properties (otherwise OSCache tags won't
+        work).
 
         * Added the new RSS Generator.  Fixes BugRSSFeedWrongDC.
 
@@ -46,16 +45,15 @@
         This is one way to combat spam.
 
         * Refactoring: Removed all references to Category, replaced with
-        Logger.  Also cleaned away a number of compiler warnings in
-        tests.
+        Logger.  Also cleaned away a number of compiler warnings in tests.
 
         * v2.1.163
         
         * Attachment deletion works now as well.
 
-        * BreadcrumbsTag.FixedQueue is now static.  This should help
-        with some serialization issues.  Reported by many people,
-        forgotten by me.
+        * BreadcrumbsTag.FixedQueue is now static.  This should help with
+        some serialization issues.  Reported by many people, forgotten by
+        me.
 
         * UTF-8 attachment names would fail (again).  Thanks to Stephan
         Schiessling.
@@ -80,8 +78,8 @@
         * Added a functional ContextualDiffProvider (thanks to Henning
         Schmiedehausen).
 
-        * CachingAttachmentProvider now empties the cache in case
-        the attachment is deleted.  Reported by Raghavan Srinivasa.
+        * CachingAttachmentProvider now empties the cache in case the
+        attachment is deleted.  Reported by Raghavan Srinivasa.
 
 2005-04-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -89,35 +87,35 @@
 
         * v2.1.160
         
-        * Removed the Expires-header from AttachmentServlet for
-        now; checking if that helps with BugStaleAttachments.
+        * Removed the Expires-header from AttachmentServlet for now;
+        checking if that helps with BugStaleAttachments.
 
 2005-04-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.159
         
-        * Added some patches to tests to make sure they all run on 
-        systems that don't use Latin1 as default... Contributed by 
-        Henning Schmiedehausen.
+        * Added some patches to tests to make sure they all run on systems
+        that don't use Latin1 as default... Contributed by Henning
+        Schmiedehausen.
         
-        * TextUtil.urlEncode() & urlDecode() no longer assume that
-        the platform default encoding is Latin1.  Contributed by 
-        Henning Schmiedehausen.
+        * TextUtil.urlEncode() & urlDecode() no longer assume that the
+        platform default encoding is Latin1.  Contributed by Henning
+        Schmiedehausen.
 
-        * Removed dependancy on the bmsi difference package, as it
-        was GPL (oops).  I don't know how I missed that, but the 
-        dependency is gone now.  Replaced with the Jakarta JRCS-diff 
-        package.  Suggested and contributed by Henning Schmiedehausen.
+        * Removed dependancy on the bmsi difference package, as it was GPL
+        (oops).  I don't know how I missed that, but the dependency is
+        gone now.  Replaced with the Jakarta JRCS-diff package.  Suggested
+        and contributed by Henning Schmiedehausen.
         
-        * Removed DifferenceEngine and moved the entire diff code into
-        its own package.  Contributed by John Volkar.
+        * Removed DifferenceEngine and moved the entire diff code into its
+        own package.  Contributed by John Volkar.
 
 2005-04-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.158
 
-        * Deletion of entire pages works now.  Make sure your 
-        Delete.jsp is protected!
+        * Deletion of entire pages works now.  Make sure your Delete.jsp
+        is protected!
 
         * Added password protection to Install.jsp
 
@@ -130,14 +128,13 @@
 
 2005-03-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
-        * Removed some extra imports.  Getting back to speed
-        in development...
+        * Removed some extra imports.  Getting back to speed in
+        development...
 
 2005-03-11  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
-        * Added favicon and the corresponding thingy to
-        commonheader.jsp.  I got tired of seeing 404s from all
-        stupid browsers...
+        * Added favicon and the corresponding thingy to commonheader.jsp.
+        I got tired of seeing 404s from all stupid browsers...
 
 2005-03-09  Erik Bunn <ebu@memecry.net>
 
@@ -147,15 +144,15 @@
 
         * v2.1.156
 
-        * Disabled all auth tests.  In fact, for the first time,
-        all tests now run (on my platform, there are still some
-        char coding issues on some others.  Stupid me.)
+        * Disabled all auth tests.  In fact, for the first time, all tests
+        now run (on my platform, there are still some char coding issues
+        on some others.  Stupid me.)
 
         * Added page deletion support to WikiEngine.
 
         * Major refactoring of both CachingProvider (=speed!) and
-        VersioningFileProvider(=now actually supports deleting
-        versions of a page).
+        VersioningFileProvider(=now actually supports deleting versions of
+        a page).
 
 2005-03-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -166,8 +163,8 @@
         * Some bug fixes and sanity checks to ReferenceManager.
         
         * Turned off old auth code by default.  Set the property
-        "jspwiki.auth.useOldAuth" to "true" in your jspwiki.properties
-        if you want to keep using it.
+        "jspwiki.auth.useOldAuth" to "true" in your jspwiki.properties if
+        you want to keep using it.
 
 2005-03-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -188,8 +185,8 @@
 
         * MAJOR change to CachingProvider: it was getting a bit too
         unwieldy to debug, so I changed it to completely use OSCache.
-        This should hopefully help the caching issues somewhat (I
-        just hope I didn't do any major damage...)
+        This should hopefully help the caching issues somewhat (I just
+        hope I didn't do any major damage...)
 
         * WikiPage is now Comparable.
 
@@ -208,8 +205,8 @@
         what you do.  Thanks to Foster Schucker for the patch.
         
         * Fixed plenty of failing tests (including the annoying "Cannot
-        start managers: null).  I think I kinda like Eclipse, now that
-        I'm getting used to it.
+        start managers: null).  I think I kinda like Eclipse, now that I'm
+        getting used to it.
 
         * Bug fix: When using ISO-8859-1, attachment URLs would still
         contain the "%2F".  JSPWiki should now work nicely when a page
@@ -222,8 +219,7 @@
 
         * v2.1.151
 
-        * ShortURLConstructor now works in all cases except special
-        pages.
+        * ShortURLConstructor now works in all cases except special pages.
         
         * v2.1.150
         
@@ -238,19 +234,19 @@
 
         * v2.1.149
 
-        * New Editortag and corresponding JSP pages now fix 
+        * New Editortag and corresponding JSP pages now fix
         BugCommentPreviewDeletesAllComments.
 
-        * EditorTag now is much smarter than before: you can do things 
-        like put your own editing commands inside the body - the 
-        EditorTag just adds all the required pieces. 
+        * EditorTag now is much smarter than before: you can do things
+        like put your own editing commands inside the body - the EditorTag
+        just adds all the required pieces.
 
 2005-02-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.148
         
-        * Oops, didn't quite fix the problems; the extra <script> tag 
-        turned out to be useful after all... Fixes 
+        * Oops, didn't quite fix the problems; the extra <script> tag
+        turned out to be useful after all... Fixes
         BugCantFindJSPWIKI_MAC.CSS.
         
 2005-02-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
@@ -259,16 +255,16 @@
 
         * Fixed problem with an extra <script> tag inside cssinclude.js
 
-        * Removed several unused imports (testing out Eclipse, now 
-        that it seems that it has proper emacs-like indenting - now 
-        I just need a ChangeLog-plugin...
+        * Removed several unused imports (testing out Eclipse, now that it
+        seems that it has proper emacs-like indenting - now I just need a
+        ChangeLog-plugin...
 
 2005-01-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.146.
 
-        * Added ShortURLConstructor, though it does not work...  Except for
-        VIEW.
+        * Added ShortURLConstructor, though it does not work...  Except
+        for VIEW.
 
         * Added BaseURL tag (just to make things a bit easier for template
         writers).
@@ -292,16 +288,17 @@
 
         * v2.1.143.
 
-        * PingWeblogsComFilter now actually accepts a parameter where to ping.
+        * PingWeblogsComFilter now actually accepts a parameter where to
+        ping.
 
         * All tags and code were moved to the new standard.
 
-        * Had a major revelation and moved the URL generation subroutines from
-        WikiEngine to WikiContext.  This had to be done or else there would be
-        no way to change how the URLs are generated in different contexts, such
-        as RSS generation or XML-RPC.  This also means WikiEngine.getViewURL()
-        is now deprecated (please use WikiContext.getViewURL(), WikiContext.getURL())
-        instead.
+        * Had a major revelation and moved the URL generation subroutines
+        from WikiEngine to WikiContext.  This had to be done or else there
+        would be no way to change how the URLs are generated in different
+        contexts, such as RSS generation or XML-RPC.  This also means
+        WikiEngine.getViewURL() is now deprecated (please use
+        WikiContext.getViewURL(), WikiContext.getURL()) instead.
 
         * Added 304 check to atom.jsp as well.
 
@@ -311,7 +308,7 @@
 
         * Added 304 check to rss.jsp
 
-        * Implemented IdeaGetWikiInstanceByServletContext by (I lost the 
+        * Implemented IdeaGetWikiInstanceByServletContext by (I lost the
         email, sorry)
 
         * v2.1.141.
@@ -324,25 +321,29 @@
         * Almost all hard-coded references to URLs are now handled by an
         URLGenerator instance.
 
-        * All instances of ServletRequest.getRemoteHost() were replaced with
-        getRemoteAddr() - this means that you no longer get the host names in
-        the logs.  On the other hand, this should be a lot faster if your
-        dns is slow.
+        * All instances of ServletRequest.getRemoteHost() were replaced
+        with getRemoteAddr() - this means that you no longer get the host
+        names in the logs.  On the other hand, this should be a lot faster
+        if your dns is slow.
 
-        * Bug fix: Context variables were essentially ignored in VariableManager.
+        * Bug fix: Context variables were essentially ignored in
+        VariableManager.
 
 2005-01-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.140.
 
-        * JSPwiki now supports the Google initiative wiki/blog spam reduction
-        by using rel="nofollow" for any links outside the wiki.  Set
-        "jspwiki.translatorReader.useRelNofollow" to "true" to enable this.
+        * JSPwiki now supports the Google initiative wiki/blog spam
+        reduction by using rel="nofollow" for any links outside the wiki.
+        Set "jspwiki.translatorReader.useRelNofollow" to "true" to enable
+        this.
 
-        * TranslatorReader now completely uses the new URL generation scheme.
+        * TranslatorReader now completely uses the new URL generation
+        scheme.
 
-        * RSS generation now uses absolute URLs regardless of the setting of
-        jspwiki.referenceStyle.  It also uses the new URL generation scheme.
+        * RSS generation now uses absolute URLs regardless of the setting
+        of jspwiki.referenceStyle.  It also uses the new URL generation
+        scheme.
 
         * InsertPage plugin now has a "default" attribute.
 
@@ -350,16 +351,16 @@
 
         * v2.1.139.
 
-        * Oops: forgot to set the servlet-mapping to conform to the
-        new URI scheme: the URL pattern should be "/attach/*", not
+        * Oops: forgot to set the servlet-mapping to conform to the new
+        URI scheme: the URL pattern should be "/attach/*", not
         "/attach"...
 
         * v2.1.138.
 
         * Fixed BugErrorInDefaultJspwiki.css (reported by Per).
 
-        * Added patch to RCSFileProvider and FileUtil to close down
-        a bunch of processes that should fix 
+        * Added patch to RCSFileProvider and FileUtil to close down a
+        bunch of processes that should fix
         BugTooManyFilesOpenWhenUsingRCS.  Contributed by Claas Ruschmeyer.
 
         * Added new parameter: jspwiki.referenceStyle.  This may be set to
@@ -368,8 +369,8 @@
         construct, but it will...  This change also introduced a new
         interface, URLConstructor, which will be pluginizable later on.
         Hopefully it is versatile enough, but so far, please consider it
-        internal.  This change may have broken a lot of things, but it does
-        pave way for short urls.
+        internal.  This change may have broken a lot of things, but it
+        does pave way for short urls.
 
 2005-01-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -387,23 +388,24 @@
         * Added styles for the TableOfContents plugin in the default
         jspwiki.css.
 
-        * Added a "center" style in the default jspwiki.css (which is smart
-        enough to center tables as well on most browsers).
+        * Added a "center" style in the default jspwiki.css (which is
+        smart enough to center tables as well on most browsers).
 
         * v2.1.136
 
         * InfoContent.jsp no longer uses scriptlets to determine previous
         and next versions; instead, two new tags "PreviousVersionTag" and
         "NextVersionTag" have been implemented.  This will make migration
-        a lot easier when you can delete intermediate versions (or help
-        a lot if you want to do a SubVersionProvider...)  The tags need to
-        be hooked up to the version history before they're useful, though...
+        a lot easier when you can delete intermediate versions (or help a
+        lot if you want to do a SubVersionProvider...)  The tags need to
+        be hooked up to the version history before they're useful,
+        though...
 
         * DiffLinkTag now understands a magical version number "current"
         to refer to the current version.
 
-        * Bug fix: BugIncludeTagUsesDefaultTagOnly should now be fixed with
-        a fix to the ContentTag.
+        * Bug fix: BugIncludeTagUsesDefaultTagOnly should now be fixed
+        with a fix to the ContentTag.
 
         * CheckVersionTag now supports two additional modes: "notfirst",
         and "first".
@@ -417,8 +419,9 @@
 
         * v2.1.135
 
-        * Should fix the spurious problem people had trying to attach files
-        with non-ascii names to pages that also had non-ascii names, aka
+        * Should fix the spurious problem people had trying to attach
+        files with non-ascii names to pages that also had non-ascii names,
+        aka
         BugThrowsAnExceptionWhenTryingToAttachAFileToAPageWithAFancyNameUTF8.
 
         * AttachmentServlet now responds with error codes.
@@ -460,7 +463,7 @@
         * v2.1.132.
 
         * Now transmits the _body parameter from FormOutput plugin to the
-        actual plugin taking care of the form submission.  Suggested by 
+        actual plugin taking care of the form submission.  Suggested by
         John Volkar.
 
 2005-01-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
@@ -469,16 +472,16 @@
 
         * Added more intelligence so that <p> tags do not enclose divs,
         hrs, and pres.  This makes many more pages validate as XHTML.
-        Unfortunately, nested lists still fail XHTML validator - and
-        many browsers render them wrong, if it's compliant.  Annoying.
+        Unfortunately, nested lists still fail XHTML validator - and many
+        browsers render them wrong, if it's compliant.  Annoying.
 
 2005-01-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.130.  (It's amazing what you can do when you're on a long
         train trip...)
 
-        * Rewrote header.jsp to include proper scripts, and renamed it
-        to "commonheader.jsp".
+        * Rewrote header.jsp to include proper scripts, and renamed it to
+        "commonheader.jsp".
 
         * Moved the default scripts from templates/default to /scripts.
         This allows easier access from different templates.
@@ -495,14 +498,15 @@
         (Though there are some pages on which validation still fails, most
         notably TextFormattingRules - we're working on it... :)
 
-        * TranslatorReader now emits a lot more XHTML-compatible code.  The
-        paragraph handling was faulty on many occasions, mostly resulting
-        in block-level elements to be put inside paragraphs (big no-no).
+        * TranslatorReader now emits a lot more XHTML-compatible code.
+        The paragraph handling was faulty on many occasions, mostly
+        resulting in block-level elements to be put inside paragraphs (big
+        no-no).
 
         * TemplateManager now works (sorta).  All JSP files now use it to
         figure out how templates work.  This has the nice side effect that
-        if a template file is missing, JSPWiki will use the default template
-        file for that.
+        if a template file is missing, JSPWiki will use the default
+        template file for that.
 
 2005-01-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -533,22 +537,22 @@
         * WeblogPlugin is now an InitializablePlugin.
 
         * Added the InitializablePlugin interface, which can be
-        implemented by plugins if they require any calling during
-        startup.  By default plugins are not called during JSPWiki init to
-        make it a bit faster.
+        implemented by plugins if they require any calling during startup.
+        By default plugins are not called during JSPWiki init to make it a
+        bit faster.
 
 2004-12-12  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.127
 
-        * Fixed IndexPlugin so that it no longer overflows with large
-        page names.  A long-time annoyance, but something easy to do
-        on a flight to Tokyo... :-).  I also added some new CSS to handle
-        how it looks (and made the whole thing output proper XHTML code.)
+        * Fixed IndexPlugin so that it no longer overflows with large page
+        names.  A long-time annoyance, but something easy to do on a
+        flight to Tokyo... :-).  I also added some new CSS to handle how
+        it looks (and made the whole thing output proper XHTML code.)
 
-        * RecentChangesPlugin (and incidentally, all referrer plugins
-        as well) now heed jspwiki.beautifyTitle.  Patch from Foster
-        Schucker (thanks!)
+        * RecentChangesPlugin (and incidentally, all referrer plugins as
+        well) now heed jspwiki.beautifyTitle.  Patch from Foster Schucker
+        (thanks!)
 
         * Doublewhoops, forgot to add a proper import to the FormOpen,
         causing a compilation error.  Arg!  Sorry, everyone!
@@ -563,9 +567,9 @@
 
         * v2.1.125
 
-        * Bug fix: Addressing inside editor is now done with names
-        instead of numbers (oops, a really, really old fixme :).  This and
-        the other one reported (and patched) by Uli Heller.
+        * Bug fix: Addressing inside editor is now done with names instead
+        of numbers (oops, a really, really old fixme :).  This and the
+        other one reported (and patched) by Uli Heller.
 
         * Bug fix: Javascript error with Preview.
 
@@ -575,8 +579,8 @@
 
         * Some shuffling of auth-related classes...
 
-        * Added protection against faulty cookies that could result
-        in a number of ways.  Reported by many people.  Fixes 
+        * Added protection against faulty cookies that could result in a
+        number of ways.  Reported by many people.  Fixes
         BugUserProfileErrorWhenRetrievingACookieWithAnEmptyUsername.
 
 2004-11-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
@@ -586,15 +590,15 @@
         * RCSFileProvider would sometimes throw a NPE.  Fixed.
         
         * Fixed BugXSSVulnerabilityInSearch.jsp by making sure Search.jsp
-        applies entity replacement at the proper place.  Reported by Jeremy
-        Bae.
+        applies entity replacement at the proper place.  Reported by
+        Jeremy Bae.
 
 2004-11-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.122.
 
-        * Fixed the web.xml security constraints to something more
-        useful.  Suggested by Andrew Jaquith.
+        * Fixed the web.xml security constraints to something more useful.
+        Suggested by Andrew Jaquith.
 
 2004-11-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
@@ -610,8 +614,8 @@
         * Added BugReportHandler.
 
         * Added the WikiForms system in the CVS.  It has been slightly
-        changed from the WikiForms as submitted by ebu.  Documentation
-        to follow (it'll be faster if someone volunteers it :).
+        changed from the WikiForms as submitted by ebu.  Documentation to
+        follow (it'll be faster if someone volunteers it :).
 
         * It's now possible to use SET to copy variables.
         [{SET var1='{$var2}'}].  Suggested by Reinhard Engel.
@@ -628,8 +632,8 @@
 
         * Improved attachment error handling (check UploadTemplate.jsp)
 
-        * It is now possible to limit the size of the attachments that
-        are uploaded by using the "jspwiki.attachments.maxsize" property.
+        * It is now possible to limit the size of the attachments that are
+        uploaded by using the "jspwiki.attachments.maxsize" property.
 
         * The attachment servlet now uses the workdir to put temporary
         files in instead of the java.io.tmpdir.  This is to facilitate
@@ -645,41 +649,40 @@
         * v2.1.117
 
         * Patch from Paul Wagland to fix issues with Lucene and
-        CachingProvider (it would not notice external modifications of pages).
-        Thanks!
+        CachingProvider (it would not notice external modifications of
+        pages).  Thanks!
 
 2004-10-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.116
 
-        * Added patch to fix WikiDatabase initialization problems.
-        Thanks to Steffen Stundzig!
+        * Added patch to fix WikiDatabase initialization problems.  Thanks
+        to Steffen Stundzig!
 
         * XMLRPC and InsertPage now also check for page permissions.
-        Since there is no way to do XML-RPC user auth (at the
-        moment), XML-RPC always assumes the user is a "Guest".
+        Since there is no way to do XML-RPC user auth (at the moment),
+        XML-RPC always assumes the user is a "Guest".
 
 2004-10-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.115
 
-        * NamedGroup now works.  Some refactoring of Login.jsp to make
-        it more usable.
+        * NamedGroup now works.  Some refactoring of Login.jsp to make it
+        more usable.
 
 2004-10-12  Erik Bunn  <Erik.Bunn@memecry.net>
 
         * v2.1.114
         
-        * Refactoring: added getInstance(ServletConfig,Properties)
-        to provide WikiEngine with external property set. Useful 
-        mainly in administration of multiple webapps that use 
-        JSPWiki.
+        * Refactoring: added getInstance(ServletConfig,Properties) to
+        provide WikiEngine with external property set. Useful mainly in
+        administration of multiple webapps that use JSPWiki.
 
 2004-10-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.113
 
-        * Bug fix: 304 check in AttachmentServlet was wrong.  Reported by 
+        * Bug fix: 304 check in AttachmentServlet was wrong.  Reported by
         Yogesh Patel.
 
 2004-10-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
@@ -689,9 +692,8 @@
         * Developers be aware: FilterManager now throws a lot more
         exceptions...  So does WikiEngine.saveText().
 
-        * VariableManager now also outputs variables from the HTTP
-        Session and the Servlet Request Parameters (assuming they are
-        Strings.)
+        * VariableManager now also outputs variables from the HTTP Session
+        and the Servlet Request Parameters (assuming they are Strings.)
 
         * VariableManager has now a new variable: $pagefilters, which
         lists all the filters currently in use.
@@ -1835,1997 +1837,4 @@
 2003-03-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
 
         * Branched off 2.1.0 development series.
-
-2003-03-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * 2.0.36.  Stable 2.0!  YAY!
-
-        * All of the tags are now documented.
-
-        * Changed slightly DifferenceEngine code to output cleaner html.
-
-        * BreadcrumbsTag did not work correctly with a load-balanced
-        Resin.  Should work now. 
-
-2003-03-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added some more documentation on tags.
-
-        * default template changed slightly: cssinclude.js no longer uses
-        the <noscript>-tag, and all of the tags were made lower-case for
-        future XHTML compliancy.
-
-2003-03-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Started to write in the documentation of the different tags.
-
-2003-03-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.35.
-
-        * Bug fix: Preview would lose edits with Internet Explorer, IF you
-        had authentication enabled.  Reported by John Volkar.  Fix by
-        Torsten Hildebrandt.
-
-        * Bug fix: XML-RPC code no longer lists attachments when asked for
-        recent changes.  This would cause problems with multiple XML-RPC
-        clients, since they would not know what was a page and what was
-        not.  Reported by Steven Noels.
-
-2003-03-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.34.
-
-        * Just a tiny little code cleanup, binary should not have
-        changed.  (There were a few places where magic numbers were used
-        instead of WikiPageProvider.LATEST_VERSION).
-
-        * JSPWiki license is now the GNU Lesser General Public License, so
-        that people who want to embed JSPWiki as a part of their products,
-        can do so.  It also makes it quite a lot easier to use third-party
-        libraries. 
-
-2003-03-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.33.
-
-        * FileSystemProvider should now be a bit more verbose in case the
-        page directory is not found.  This should help those who like to
-        end their property entries with spaces :-).
-
-        * BreadcrumbsTag had an off-by-one error: if you set the trail to
-        be 10 in size, it would show only 9.  Patch contributed by Ken
-        Liu.
-
-2003-02-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.32.
-
-        * AttachmentServlet now should work with UTF-8 filenames.
-        Suggested by Torsten Hildebrandt.
-
-        * UploadTemplate.jsp now always uses UTF-8 when submitting the
-        form.  Also did slight changes to the outlook.
-
-2003-02-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Removed PageHeader.jsp from the default template since it was
-        not used anywhere.  Reported by George Fairbanks.
-
-        * Added new out.png from George Fairbanks, adding transparency.
-
-        * BreadcrumbsTag now extends the correct class, so that it should
-        no longer output an extra "</a>".  Reported by Santiago Gala.
-
-2003-02-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.31.
-
-        * Also added a bunch of tests.
-
-        * '/' in a link is now recognized to form an attachment link.
-
-        * Worked on some attachment-referencemanager related bugs.  Now
-        attachments are recognized and reference better in some cases, but
-        problems still remain:  If you create a link to an attachment
-        first, but create the attachment later, the reference lists may
-        not notice this.  This is a subtle problem.
-
-2003-02-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.30.
-
-        * Foster Schucker sent some patches so that CalendarTag looks
-        better on Netscape 4.  Thanks!
-
-2003-02-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.29.
-
-        * Fixed a couple of small problems: WikiContext.COMMENT was
-        missing, and a small change in EditTemplate.jsp allows Konqueror
-        3.1 to work correctly with sites using UTF-8.
-
-2003-02-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.28.
-
-        * Incorporated "unterminated plugin causes OutOfMemoryException"
-        fix from Torsten Hildebrandt.
-
-        * Added new attachment icons from Paul Downes.  Thanks heaps!
-
-        * Fixed split imports in Edit.jsp for better compatibility.
-        Reported by Wouter.
-
-        * Attachments version history is now sorted in correct order.
-        Reported by Wouter. 
-
-2003-02-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Checked in a bunch of tests from Torsten Hildebrandt.  Most of
-        them fail, which is not a good thing, but I haven't checked them
-        thoroughly yet.
-
-2003-02-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.27.
-
-        * ListLocksPlugin now properly closes table.  Reported by Michael
-        Gentry. 
-
-2003-02-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Small addition: The preferences cookie now expires in 1001 days
-        instead of 90 days.  It turned out to be too fast.
-
-2003-02-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.26.
-
-        * Bug fix: BasicAttachmentProvider still didn't migrate correctly
-        from earlier versions.  Sigh...  Patch provided by Torsten
-        Hildebrandt.
-
-        * Added Jason Pell's MultipartRequestLibrary v1.30b3, which should
-        fix plenty of problems related with uploads.
-
-2003-02-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.25.
-
-        * BasicAttachmentProvider should now properly migrate from earlier
-        versions of JSPWiki 2.0 beta.
-
-        * Bug fix: downloading attachments that have non-ascii names
-        should work now.  Uploading does not still work, because of bugs
-        in httpmultipartrequest library.  Reported by Torsten
-        Hildebrandt.  In addition UploadTemplate.jsp now explicitly
-        specifies ISO-8859-1 encoding, which seems to work with Mozilla.
-
-        * Bug fix: '}' inside plugins no longer stops parsing.  Reported
-        by William Morgan, fix courtesy of Torsten Hildebrandt.
-        
-        * v2.0.24.
-
-        * CalendarTag is now smarter and can adapt itself to the date.
-
-        * Bug fix: WeblogPlugin would prefer the local parameter instead
-        of the one given in HTTP parameters to decide how many days should
-        be shown.
-
-        * Bug fix: WeblogPlugin would sort entries wrong on month
-        threshold.  Reported by Ebu.
-
-2003-01-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.23.
-        
-        * WikiSecurityException is now in correct package.  Sorry, no
-        other updates at this time.
-
-2003-01-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.22.
-
-        * Added ListLocksPlugin for admins.
-
-        * v2.0.21.
-
-        * Added a JDK1.4 -specific version of the input encoding detector
-        to FileUtil.  This also means that JSPWiki can no longer be
-        compiled using a 1.3 compiler anymore.  It will run on 1.3 systems
-        however, unless something is amiss.
-
-2003-01-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.20.
-	
-        * Fixed a couple of Windows tests failing.  This unfortunately
-	means that all attachments are now renamed in a bit of a different
-	way (a -dir) is attached to the attachment name.  You will need to
-	change your old attachment names (mv attachment/
-	attachment-dir/).  However, there is a built-in migration code,
-	but you still should to the change.
-
-        * v2.0.19.
-
-        * Broke WikiAttachmentProvider as well with deletePage() and
-        deleteVersion().
-
-        * Added Breadcrumbs tag from Ken Liu.  The default template now
-        also includes it.
-
-        * v2.0.18.
-
-        * Broke WikiPageProvider by adding deletePage() and
-        deleteVersion() methods.
-
-        * Fixed a multitude of bugs in the tests, courtesy of Torsten
-        Hildebrandt.  For example, "ant guitests" should work now.
-
-2003-01-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.17.
-
-        * Plugin parsing is now stopped at }] instead of ].  Suggested by
-        Alain Ravet and several other persons.
-
-2003-01-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.16.
-
-        * Changed the WikiPageProvider and WikiAttachmentProvider
-        interfaces: getVersionHistory() should now always return a List
-        instead of Collection.  All providers did this anyway, but for
-        some strange reason I never remembered to update the return type.
-        Logically a List is correct, since the result needs to be ordered.
-        Sorry to everyone whose custom provider broke!
-
-        * CachingProvider now checks the cache first when called with
-        pageExists().  Suggested by Sulka Haro.
-
-        * Removed a couple of deprecated methods from WikiEngine.
-
-2003-01-12  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.15.
-
-        * Added new variable "uptime", and WikiEngine.getStartTime().
-
-2003-01-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.14.
-
-        * SearchResultIteratorTag would crash if you hit "reload".  This
-        was because the counter would never get reset between two
-        consecutive refreshes, and Tomcat 4 pools tags.
-
-2003-01-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.13.
-
-        * WeblogPlugin and CalendarTag enhanced to work even better
-        together: WeblogPlugin supports now the 'startDate' parameter,
-        whereas CalendarTag supports an 'urlformat' parameter.
-
-        * WikiContext now stores the incoming HTTP request as well.  This
-        allows you to write plugins that can read the HTTP parameters as
-        well, for example.  Please see the note in
-        WikiContext.getHttpParameter(). 
-
-2003-01-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added CalendarTag.  It's still in its very infancy, so it might
-        not be very useful to others.
-
-2003-01-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.12.
-
-        * Diff.jsp did not use the templateDir property correctly.  Oops.
-        Reported by Robert McGovern.
-
-        * Added Expires, Last-Modified, and Cache-Control headers to
-        Edit.jsp responses - this should allow certain versions of
-        Internet Explorer to use Preview correctly.  Suggested by Richard
-        Donkin.
-
-        * Implemented page "locking".  When you now start to edit a page,
-        the page is marked as being under editing, and the next guy will
-        get a warning about that.  To facilitate this, Edit.jsp was
-        changed.  Also, check out the new tags in "EditTemplate.jsp", and
-        note also that the "Cancel" is now a button instead of a link.
-        Suggested by Olli Lounela.
-
-2003-01-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Wrote some new documentation into sample wikipages.
-
-        * v2.0.11.
-
-        * All boolean type properties in jspwiki.properties recognize now
-        "on" and "yes" as "true" as well.
-
-        * It is now possible to allow raw HTML on WikiPages.  Beware, this
-        is a very dangerous option, since it will allow people OTHER THAN
-        THE ADMINISTRATOR to make wikis that can hurt users.  Requested
-        (very loudly and many times :-) by Alain Ravet.
-
-        * v2.0.10.
-
-        * WeblogPlugin changed entry formats.  Beware, if you've been
-        using it so far. 
-
-        * WikiPage now implements Cloneable.  I have no idea why.
-
-2002-12-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.9.
-
-        * Added permalinks to WeblogPlugin.
-
-        * IndexPlugin enhanced to have parameters "include" and "exclude",
-        which can be used to include or exclude pages using standard glob
-        wild card expressions (*, ?, etc).
-
-2002-12-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.8.
-
-        * Bug fix: VersioningFileProvider would mangle old versions of a
-        page if they were in UTF-8 format.  Reported by Torsten
-        Hildebrandt. 
-
-2002-12-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.7.
-
-        * Added new title beautifier code from Torsten Hildebrandt.  It's
-        a bit different from what we used to have, but it does now less
-        mistakes.  :-).
-
-2002-12-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.6 - The I Should Really Be Sleeping But Let's See If Killer
-        Can Keep Up With This Pace With His Debian Packages -release.
-
-        * Inspiration continues.  Now ReferenceManager also understands
-        about attachments, so they can now be cross-referenced, be on
-        unused or undefined pages, etc.
-
-2002-12-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.5.
-
-        * RecentChanges now displays also changed attachments.  This added
-        some new APIs in WikiAttachmentProvider and AttachmentManager.
-
-        * v2.0.4.
-
-        * Bug fix: Restoring previous versions from archive did not work.
-
-        * Bug fix: Attempting to upload a non-existing file would cause a
-        crash.  Reported by Alain Ravet and Paul Downes.
-
-2002-12-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.3.
-
-        * Bug fix: previewing a new page with a footnote would cause a
-        crash. 
-
-        * Added WikiAttachments page to the samplepage distro.
-        
-        * Redirected all references to Wiki.jsp or Edit.jsp through
-        WikiEngine for future configurability.  Requested by Bart
-        Selders.
-
-        * Running tests now puts test pages into /tmp/testrepository.  Too
-        many false alerts due to wrong files in /tmp/...
-
-        * v2.0.2.
-
-        * Bug fix: JSPWiki no longer dies horribly with OutOfMemoryError
-        if preformatted code blocks ({{{ }}}) are not closed properly.
-        We simply forgot to check for EOF :-).  Reported by Erik Bunn.
-
-        * Bug fix: CamelCase is no longer recognized inside {{{ }}}
-        blocks. Reported by Torsten Hildebrandt.
-
-2002-12-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.1.
-
-        * Attachments are now sent back using Content-Disposition: inline
-        instead of Content-Disposition: attachment.  This means that they
-        should now be opened automatically by browsers.  Suggested by
-        Torsten Hildebrandt.
-
-        * Interwiki references that lead out of the wiki are now also
-        tagged with the outlink image.  Reported by Alain Ravet.
-
-        * Outlink images are now on by default.
-
-2002-12-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v2.0.0-alpha.
-
-        * Fixed WikiEngine.beautifyTitle() to work better with acronyms.
-
-        * Moved GoRankAggregator and GoDiagram plugins into their own,
-        separate project. 
-
-2002-12-09  Erik Bunn  <Erik.Bunn@spamicide.basen.net>
-
-        * v1.9.50.
-        
-        * Fixed null reference bug in AttachmentManager when no
-        manager specified in jspwiki.properties.
-        
-        * Added Error.jsp, which displays the message of an 
-        exception using DisplayMessage.jsp (in templates).
-        Added Error.jsp as error page of all top level jsp's.
-
-2002-12-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.49.
-
-        * All referral plugins (UnusedPages,UndefinedPages, and
-        ReferringPagesPlugin) now support a parameter "separator", which
-        basically contains the wiki markup that should be used to separate
-        the entires.  Suggested by Jeremy Cowgar.
-
-2002-12-08  Erik Bunn  <Erik.Bunn@spamicide.basen.net>
-
-        * Modified exception classes to inherit WikiException
-        (with the exception of InternalWikiException =).
-        
-        * Added SecurityException in preparation for auth merge.
-
-2002-12-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.48.
-
-        * Tiny little tweaks to attachments all around.
-
-        * PageInfo is now attachment-aware, so you can view older
-        versions, etc. using the standard PageInfo link.
-
-        * If an attachment is an image, then it is automatically inlined.
-
-        * It is now possible to link to attachments as if they were normal
-        Wiki pages.  From the page itself, just use [attachment name],
-        from other pages, use [ParentPage/attachment name].
-
-        * v1.9.47.
-
-        * CamelCase links now finally work (or at least all tests run).
-        Thanks to Joonas Iivonen for inspiration, and listening my
-        incoherent explanation about the problem. :-)
-
-        * List items (*, #) are now closed properly as per XHTML spec.
-        We still have paragraphs to go, but otherwise we're nearly XHTML
-        compliant. 
-
-2002-12-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.46.
-
-        * Major import of all attachments code.  This version is actually
-        able to upload/download attachments, but I wouldn't use this for
-        any real production.  The structure may change and you may face a
-        difficult process to migrate your old attachments to a new
-        system.  
-
-        * Added attachment_big.png, thanks to Tero Tiittanen.
-
-        * v1.9.45.
-
-        * Many changes to GoRankAggregator, which you probably won't care
-        about. 
-
-        * Added fix for JBoss and pure WAR-file deployment from Xyvind
-        Lxkling.
-
-2002-12-05  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.44.
-
-        * CamelCase detection changed yet again.  However, this will still
-        fail when you write wikimarkup right next to it: For example
-        __CamelCase__ will result into something totally strange, much
-        like *CamelCase to start a line.  Using whitespace should work,
-        though...  __ CamelCase __ should be quite okay.
-
-2002-12-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.43.
-
-        * Bug fix: TranslatorReader did not properly closed down the <img>
-        -tags, as per XHTML specification.  Let's see how many old
-        browsers break this time... :-)
-
-        * Bug fix: Preformatted text was not properly closed down if the
-        user forgot all about it.  Reported by Bob Schulze.
-
-        * Bug fix: Preformatted text ({{{) no longer allows you to input
-        HTML.  Reported by Bob Schulze.
-
-        * New option: jspwiki.translatorReader.useOutlinkImage allows you
-        to mark all outgoing links with a small picture.  Thanks to Teemu
-        HirsimBB??dki for providing with the idea and the image.  Look for
-        images/out.png, if you want to change it.
-
-2002-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * GoRankAggregator now also supports 'egfurl' parameter, which
-        fetches country-specific ranking data from persons.  Quite
-        kludgish at the moment.
-
-        * Hopefully fixed GoRankAggregator to allow multiple persons of
-        the same rank.
-
-2002-11-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added GoRankAggregator.  Most of you don't probably care.  (I
-        probably should make these a separate distribution or something.)
-        I won't even bother to bump the version number for this one.
-
-2002-11-26  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.42.
-
-        * Fixed a near-fatal bug in UserPreferences.jsp - we wrote the
-        page contents into the stream and then did a redirect.  Oops.
-
-        * Radical change warning: If you are running a Wiki with that has
-        authentication turned on, note that from now on the username set
-        in UserPreferences is the one that gets put in page change
-        history, not the name the user used to authenticate himself.  This
-        was done so that it would be easier to maintain a wiki that has
-        only a single username/password combination and still track the
-        users.   I believe this is more in line with WikiNature.
-        
-        You can still see the name the user used to authenticate in the
-        log file that JSPWiki generates.
-
-        * v1.9.41.
-
-        * Fixed EditTemplate.jsp to show the link to EditPageHelp in a
-        manner consistent with other edit links.
-
-        * EditLinkTag would crash if the page it was referring to did not
-        exist.  Reported by Torsten Hildebrand.
-
-        * Fixed camelcase patch from Jeff Phillips - thanks Jeff!
-
-2002-11-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.40.
-
-        * Instead of doing ServletContext.getRealPath("/") we now use the
-        ServletContext itself as an unique key when creating a
-        WikiEngine.  This should resolve problems when running JSPWiki
-        straight from a WAR file.  Reported by Oyvind Loekling.
-
-        * Added plenty of code for attachments.  Storing and retrieving
-        works, as well as listing.  However, uploading still has some
-        problems. 
-
-2002-11-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.39.
-
-        * DiffLink now fails gracefully if page does not exist.  Reported
-        by Jeremy C.
-        
-        * Fixed ~ -escaping of CamelCase links.
-
-        * Added patch from Kabe Robichaux to fix a problem with older RCS
-        programs that do not support the -z flag.
-
-        * v1.9.38.
-
-        * The "&" translation now occurs _before_ other entities, which no
-        longer causes all quotes to be transformed back into "&quot;"
-        while you're editing a page.
-
-        * Integrated camelcase patch from Jeff Phillips.  It is now nearly
-        working - a couple more tests should go through first.
-
-2002-11-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.37.
-
-        * <BR/> is now <BR />, in order not to confuse some older
-        browsers.
-
-2002-11-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.36.
-
-        * GoDiagram now uses PNG images.  It also now honors the baseURL
-        setting.
-
-        * Tables now close the <TD> tag correctly with </TD>, thanks to
-        the new TranslatorReader architecture.  Reported by Andreas
-        Rozek.
-
-        * "&" is now translated into "&amp;" when editing, so that you can
-        actually input HTML entities and they stay like that when going
-        into storage.  Reported by Erik Bunn and others.
-
-        * Tilde (~) now escapes bars in tables.
-
-        * v1.9.35.
-
-        * GoDiagram is now a bit more tolerant towards the kind of markup
-        it accepts.
-
-        * Bug fix: godiagram was off-by-one towards the side of the
-        board.  Reported by Paavo Pietarila.
-
-2002-11-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * We now output <BR/> instead of <BR>.  Slowly working towards
-        full XHTML :-).
-
-        * Several small bugfixes: ([[ not working, single {'s getting
-        destroyed, etc.)
-
-        * Removed clear=all from HR, added \\\ to do a <br clear=all>.  HR
-        looked quite odd.
-
-        * ":" after the first no longer breaks description lists.        
-
-        * v1.9.34.
-
-        * ---- aka HR tag now adds 'clear=all' attribute to accommodate
-        aligned images, such as the ones produced by GoDiagram.
-
-        * GoDiagram now works.
-
-2002-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.33.
-
-        * New plugin: GoDiagram.
-
-        * A couple of bugfixes: some EOL issues in multi-line plugins.
-
-2002-11-07  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
-
-        * Added plugin execution disabling, and disabled 
-        their execution during the initial reference manager scan.
-        This is mainly important in wiki's with lots of complex custom
-        plugins.
-        
-2002-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.32.
-
-        * True multiline plugins that no longer conflict with WikiMarkup
-        are now available!  Yay!
-
-        * MAJOR breakdown!  Rewrote practically everything in
-        TranslatorReader: it is now fully stream-based instead of
-        line-based, which makes many things quite a lot easier.  It should
-        also be quite a lot faster than before.  
-        
-        CamelCase links are TOTALLY broken in this revision, since the
-        stream-based system makes it a bit difficult to run the regexp on
-        them.  We'll see how to get them back running again.
-        
-        Do NOT use this revision for any production work... We have many
-        tests that still fail!
-
-2002-11-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.31.
-
-        * More attachment support.  Still not functional, but at least now
-        you can see where we're going.
-
-        * Fixed support for multiline plugins.
-
-2002-11-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.30.
-
-        * The INSERT is no longer required to signify plugins.  It is
-        recommended, but not required.  This at the request of many people
-        who are using an insane amount of plugins :-).
-
-        * New plugin: Counter.
-
-        * Added support to VariableManager to display Context Variables.
-
-        * Added Wiki Context Variables.  These exist solely in the
-        WikiContext class, and allow you to define transient variables on
-        a pageview basis.
-
-        * Added a patch to allow multiline plugins from ebu.
-        Unfortunately, this does not work fully yet - newlines in the
-        middle of arguments break stuff.
-
-2002-10-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.29.
-
-        * Added a new property: "jspwiki.frontPage".  This allows you to
-        easily change the default page name from "Main" into something
-        else.  This is important if you're doing localized installations,
-        for example.
-
-2002-10-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.28.
-
-        * Just incorporated a bit more attachment stuff.  Also fixed the
-        problem of AttachmentManager complaining at startup, if no
-        attachmentProvider was defined.
-
-2002-09-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.27.
-
-        * CamelCase links can now be stopped from occurring by prepending
-        it with '~'.  ~CamelCase results in "CamelCase", not a link to a
-        page called CamelCase.  '~' will from now on be a generic negator
-        tool for all sorts of purposes.
-
-2002-09-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.26.
-
-        * Added the ability to restore older versions of pages relatively
-        trivially.  This is done by going viewing the old version via
-        PageInfo, then clicking on "Restore this version".  You'll be
-        presented with a edit view to the page.
-        
-        Note: this facility has changed the default template, too, so if
-        you have made your own templates, you probably want to modify them
-        too to allow this facility.
-
-2002-09-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.25.
-
-        * Viewing of old versions would not show the "this is version XX"
-        -banner because of an unclosed JSP comment.  Oops.
-
-        * PageInfo now shows "no versions" if there is no version history
-        available instead of an empty string.
-
-        * HistoryIteratorTag would fail if there was no version history
-        (like when you were moving from FileSystemProvider to
-        RCSFileProvider).  Now fixed.
-
-        * CachingProvider now checks if the requested version is cached,
-        and not only when the version is marked as latest.  Combined with
-        the new template system, this bug caused CachingProvider to
-        effectively ignore its own cache.
-
-        * ---- aka HR is now <HR /> as per XHTML spec.
-
-2002-09-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.24.
-
-        * Exceptions from plugins is now clearly separated from WikiEngine
-        internals.  Suggested by Niilo Neuvo.
-
-2002-09-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * JSPWiki repository should now have anonymous CVS access.
-        Everything should now work.
-
-        * v1.9.23.
-
-        * Bug fix: no longer crashes if baseURL is not defined.  Reported
-        by Alain Ravet.
-
-        * Fixed a problem when trying to escape '[' character using '[['.
-
-2002-09-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.22.
-
-        * SearchResult uses now "WikiPage" instead of a String to the page
-        name.  Heed this, if you have your own implementation of a
-        provider.
-
-        * VariableTag now has a "default" attribute which gets invoked if
-        the variable in question does not exist.
-
-        * The top right search box didn't work - now it does.
-
-        * You can now limit the number of hits a search returns - see
-        FindContent.jsp and the maxItems parameter of SearchResultIterator
-        tag.
-
-        * Search.jsp also tagified.
-
-        * UserPreferences now directs you back to the prefs page instead
-        of Wiki.jsp.
-
-        * UserPreferences now check the validity of the given username,
-        and will turn it into a valid WikiName.
-
-        * UserPreferences.jsp is now also tagified (to some extent
-        anyway) and should now work.
-
-2002-09-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.21
-
-        * Bug fix: Two plugins on the same line would not always work as
-        expected.  I had to rewrite the entire
-        TranslatorReader.insertHyperLinks() method... As a nice side
-        effect, it's now like five times faster than before. :-)
-        
-        * Added a simple WeblogPlugin and an accompanying
-        WeblogEntryPlugin.
-
-        * It is now possible to add jspwiki.properties properties as
-        WikiVariables. 
-
-        * Documented WikiVariables.
-
-2002-09-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added new tag "Plugin", which allows you to run any JSPWiki
-        plugin from a JSP page directly.
-
-        * Fixed the last failing RCSFileProvider test case.
-
-2002-09-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.20.
-
-        * Added a new variable system, including an all-new
-        VariableManager.  For example, "applicationname" tag was removed
-        as obsolete.  You may add variables using a [{$foobar}] -notation
-        on wiki pages, and with the wiki:Variable tag on the JSP pages.
-        
-        * PageModified.jsp and Preview.jsp are now included in the new
-        template system.
-        
-        * SystemInfo.jsp is now removed.  A page called "SystemInfo" is
-        taking its place.
-
-        * Creating new pages should work now again.
-        
-        * Edit.jsp should no longer crash.  It's also been delegated
-        properly into EditTemplate.jsp.
-
-        * Added jspwiki.templateDir property.
-
-        * Fixed PageInfo display - it now actually generates correct
-        links. 
-
-        * Fixed DiffLinkTag to actually generate correct links.
-
-2002-08-29  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.19.
-
-        * Plenty of changes to the JSP pages: created 8 new tags, shuffled
-        things around.  Everything is still broken, but doc/Templates.txt
-        should explain what we're about to do.
-
-2002-08-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.18.
-
-        * Moved stuff around, as plural forms of page names were not
-        considered to exist by many of the internal routines, confusing
-        UndefinedPages for example.  Found by Leigh Dodds.
-
-2002-08-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.17.
-
-        * All of the pages should now work.
-
-        * Added Translate tag for writing Wiki content directly from the
-        page.
-
-        * Non-existing pages would crash both Wiki.jsp and Edit.jsp.  Now
-        fixed.  Reported by Alain Ravet.
-
-        * v1.9.16.
-
-        * ViewTemplate.jsp is now done totally in tags.
-
-        * Diff.jsp is now done totally in tags.
-
-        * Added new tags: CheckVersion, InsertDiff, PageExists,
-        PageVersion, PageDate.
-
-2002-08-17  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.15.
-
-        * Added a couple of new tags.
-
-        * Moved all CSS files and cssinclude.js into the templates/default
-        directory.
-
-        * Split Edit.jsp and PageInfo.jsp into a scriptlet page, and a
-        HTML template.  Some pages still do not work yet.
-
-2002-08-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.14.
-
-        * Moved the current view templates to templates/defaults.  This
-        probably broke quite a lot of stuff...
-
-2002-08-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.13.
-
-        * JSPWiki now writes a better separator to log when it starts to
-        make it easier to see new log entires.  Suggested by Mikael
-        Honkala.
-
-2002-08-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.12.
-
-        * Added PageInfoLink tag.
-
-2002-07-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.11.
-
-        * Even more JSP tags added, including a new "Permission" tag.
-
-2002-07-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.10.
-        
-        * Forgot to call link mutators with CamelCase links.  This caused
-        CamelCase links disappearing from things like "Referenced by"
-        -list.  Reported by Alain Ravet.
-
-        * Added ';term:def' to TextFormattingRules for definition lists.
-        This incidentally also allows you to make comments into someone
-        else's text, if you use an empty 'term' (;:<Comment here>).
-
-2002-07-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-        
-        * v1.9.9.
-
-        * Moved LeftMenu, LeftMenuFooter, PageHeader into templates/.
-
-        * Added new WikiPages: PageIndex, EditPageHelp.
-
-        * Moved Edit.jsp embedded help into a WikiPage called
-        "EditPageHelp".
-
-        * Bug fix: In rare occasions VersioningFileProvider would not
-        return correct page information.
-
-        * More JSP tags implemented.
-
-        * Added new plugin "IndexPlugin", by Alain Ravet.
-
-2002-07-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.8. (The afternoon version.)
-
-        * Changed the default Edit.jsp background to something else, since
-        so many people are running with the default.  I told you it was
-        ugly - I am not sure the new version is any better :-).
-
-        * Moved ViewTemplate.jsp into templates/
-
-        * Added AuthorTag.
-
-        * v1.9.7.
-
-        * Links to existing pages inside image links now generate an
-        automatic link to that page.  Suggested by Alain Ravet.
-
-2002-07-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.6.
-
-        * Started the (painful) move to JSP tags.  Sigh.  I couldn't
-        really figure out a better way - unfortunately we now have to
-        stand with the performance penalty that JSP tags give us.  This
-        includes new WikiTagBase class, which contains some helpers.
-
-        * Split Wiki.jsp into Wiki.jsp and ViewTemplate.jsp.  All HTML
-        code should go to the latter one.
-
-        * Incorporated fix from 1.8.2: UserProfiles might be broken on
-        some containers.  Reported by Kalle Kivimaa.
-
-        * Incorporated fix from 1.8.2: new page diffs are now shown
-        properly.  Reported by Niilo Neuvo.
-
-2002-07-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.5.
-
-        * Fixed problem with RSS generating illegal XML in certain cases
-        (& and < were not translated to entities properly).
-
-        * Fixed problem with plugin output getting translated by
-        reordering the translator routines.  This may break many things,
-        so please be careful.  Reported by Niilo Neuvo.
-
-2002-07-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.4.
-
-        * Fixed problem with VersioningFileProvider failing if the
-        corresponding history file was not located.  This might have been
-        an issue while upgrading from FileSystemProvider to
-        VersioningFileProvider.
-
-        * Moved some heavier stuff from tests to package "stresstests" to
-        make running unit tests faster. 
-
-2002-07-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.3
-
-        * Fixed a serious problem with CamelCase links screwing up if you
-        had more than two links on the same line.
-
-2002-07-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.2
-
-        * JSPWiki now supports traditional, CamelCase (or InterCapping)
-        WikiLinks without square brackets.  However, this feature is
-        turned off by default, so you'll have to edit the correct property
-        in the jspwiki.properties file.
-
-2002-06-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.9.1
-
-        * Changed WikiEngine initialization so that it would better
-        integrate with servlets and/or standalone systems.  However, this
-        does not yet work as-expected, if you're using it, you'll see all
-        sorts of annoying NullPointerExceptions if things go wrong.
-
-        * Moved some of the functionality from WikiEngine into a new
-        PageManager class.
-
-        * Integrated some initial parts of the attachment package from
-        ebu.  Does not work yet, though.
-
-        * Did some code cleanup: We now have a proper WikiException (with
-        our own exceptions extending from it).  There is now also a new
-        WikiProvider interface, which WikiPageProvider and
-        AttachmentProvider extend from.
-
-        * You should no longer set CachingProvider directly, but to use
-        jspwiki.usePageCache instead.  I did this change since in many bug
-        reports it turned out that practically nobody was using the page
-        cache - presumably because nobody knew about it :-).
-
-2002-06-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Branched off 1.9.x, which is to be 2.0.  This means that it's
-        quite likely that anything from CVS is no longer functioning =).
-
-        * You can now specify the used page provider without the package
-        name in the jspwiki.properties file.
-
-        * Major change: All WikiPageProviders now live in their own, neat
-        little package.  This means that all jspwiki property files just
-        broke, unfortunately.
-
-2002-06-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.8.0.
-
-        * A second property: jspwiki.matchEnglishPlurals automatically
-        allows you to consider "Thing" and "Things" the same word.
-        Unfortunately, it's not perfect (it can't tell the difference
-        between SandBox and SandBoxes, for example).
-
-        * PageHeader.jsp now splits the title into separate words, if the
-        correct property is set in jspwiki.properties.  Suggested by
-        Steven Owens.
-
-        * PageModified.jsp now does word wrapping.  It's still not
-        beautiful, but it works.
-
-        * Links starting with "file:" are now recognized as external
-        links, not interwiki links anymore.
-
-        * InterWiki links no longer go through URLEncoder, because URL
-        encoding removes things like slashes.  Which is annoying, and
-        probably not you want.  You'll just now have to be more careful
-        when writing InterWiki links.  Reported by GarethSB.
-
-2002-06-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.10.
-
-        * Added new property: jspwiki.plugin.searchPath, which allows you
-        to add any package name for searching plugins.  Suggested by Niilo
-        Neuvo.
-
-        * RSS feed was fixed - we now also add the <items> list.  Changed
-        also the dc:contributor field to use the rdf:Description element
-        rather than the direct name, since it would not work with all RSS
-        aggregators.
-
-        * Wiki.jsp now displays the XML sign for easy subscription to the
-        RSS feed.  We also display the Radio coffee mug for easy
-        subscription for Radio Userland users (though this is untested,
-        could any Radio folks test it, please?)
-
-        * We now support RSS autodiscovery, as per the proposed standard
-        at
-        http://diveintomark.org/archives/2002/06/02.html#important_change_to_the_link_tag.
-
-2002-06-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Oops, compiling broke on some systems due to undeclared
-        exceptions.
-
-2002-06-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Feature: WikiEngine now remembers the ServletContext it was
-        initialized with, and you can get it via
-        WikiEngine.getServletContext().  Requested by Niilo Neuvo.
-
-2002-05-31  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Bug fix: in case the specified page directory does not exist,
-        FileSystemProvider now throws an FileNotFoundException.  Suggested
-        by Niilo Neuvo.
-
-2002-05-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.9.
-
-        * Hooray - JSPWiki is no longer dependant on RCS in any form.  We
-        now have an internal diff routine courtesy of BMSI.  This means
-        that on Windows you can just use the VersioningFileProvider and
-        you no longer need to do anything with the RCS.
-
-2002-05-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * UserPreferences now allows you to clear the preferences.
-        Suggested by Robert McGovern, who kindly sent me a patch for it.
-
-2002-05-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.8.
-
-        * Added CurrentTimePlugin, which allows you to tell the server
-        time.  Added documentation to JSPWikiPlugins, and also a sample to
-        RecentChanges.
-
-        * PluginManager also now understands quoted parameters, i.e. if
-        you enclose a parameter value in single quotes ('), you can use
-        spaces and other annoying creatures inside the parameter
-        values. This is very handy for the CurrentTimePlugin.
-
-        * PluginManager no longer needs the full package name, if the
-        plugin is a JSPWiki-supplied plugin.  We first try with the class
-        name as given, then prepend "com.ecyrd.jspwiki.plugin" and try
-        again.  This should make putting plugins on your own page a bit
-        simpler.
-
-2002-05-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added temporary fix for misbehaving, nested #'s and *'s.
-        However, this is not a real fix, it just prevents the system from
-        going all wonky.  Reported by Mahlen Morris.
-
-        * Fixed problem with XML-RPC interface method listLinks()
-        generating incorrect HREF attribute for nonexistant links.
-        Reported by Mahlen Morris.
-
-2002-05-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.7.
-
-        * Bug fix: UTF-8 version of XML-RPC client missed
-        getRecentChanges() totally.  Apparently nobody was using it =).
-
-        * Bug fix: RPC.getRecentChanges() would accidentally use local
-        time instead of UTC.  Oops.  Found by Mahlen Morris.
-
-2002-04-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.6.
-
-        * RSS feed is now richer.  I also added MANY settings to
-        jspwiki.properties, all starting with "jspwiki.rss".  It should
-        allow you to configure pretty much everything related to the RSS
-        feed.
-
-2002-04-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * RSS feed is now generated in the proper directory.  If you're not
-        running WikiEngine as a servlet, then the value of the "user.dir"
-        system property (the current working directory) is used.
-
-        * v1.7.5.
-
-        * Added an initial stab at an RSS feed.  Currently it just lists
-        the changed pages, but perhaps in the near future it can do more
-        complex stuff.
-
-2002-04-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.4.
-
-        * UserPreferences is now a lot more tolerant towards UTF-8
-        characters.
-
-        * Everything rebuilt to survive a null author information.
-
-        * The text for inline images is now interpreted as a hyperlink, if
-        it starts with the usual http:, ftp:, mailto:, etc.  Suggested by
-        Alain Ravet.
-
-2002-03-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.3.
-
-        * Added capability to set your user name via UserPreferences
-        page.  This data is stored as a cookie in your browser.
-
-2002-03-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.2.
-
-        * When a page is saved, it gets now automatically normalized.
-        This normalizing means that all pages will now end with a newline
-        (some browsers send a newline and some don't), and also that ALL
-        line breaks are now marked with \r\n (CRLF, MS-DOS style).  Why
-        with that obsolete style?  Well, HTTP standard uses CRLF all
-        around, and most of the current JSPWiki installations use CRLF in
-        all of the files.  Also, most UNIX tools are smart enough to
-        understand CRLF, whereas not all Windows tools understand plain
-        CR (Mac style) or plain LF.  Using CRLF should make installing
-        this upgrade totally visible to most users.
-        
-        Having said that, this has not been tested very many times,
-        obviously.  Use with care :-).
-
-2002-03-22  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.1.
-
-        * Edit.jsp had a javascript error, pointing at a wrong form.  It
-        was not fatal, it did not affect the user in any real way, other
-        than being an annoyance.
-
-        * DifferenceEngine no longer crashes if it gets empty lines from
-        diff. 
-
-2002-03-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added preview capability to Edit.jsp.  Suggested by many
-        people.
-
-        * Added Preview.jsp.  This is still a very simple preview, which
-        does not allow you to do a direct publish.
-
-2002-03-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.7.0.  Finally :-).
-
-2002-03-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added VersioningFileProvider.  The VersioningFileProvider is
-        STRICTLY ALPHA.  DO NOT USE IT FOR ANY REAL PROJECT.  But please,
-        do test it :-).
-
-        * v1.6.13-cvs.
-
-        * getRecentChanges() XML-RPC method now hopefully does UTC
-        conversion correctly.
-
-        * Search.jsp now offers to search on Google as well after giving
-        you the results.
-
-        * Added plenty of documentation about the XML-RPC interface to the
-        distribution.
-
-        * Footnotes are now unique across Wiki.  This is accomplished by
-        adding the page name to the anchor name.  Suggested by Mahlen
-        Morris.
-
-2002-03-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Edit.jsp text editor now knows how to adjust its own width
-        according to browser window width, if your browser knows CSS.
-        Thanks to Matthew Simoneau for the tip.
-
-        * Included a new version of xmlrpc.jar: this version just has the
-        default charset set to "UTF-8" instead of ISO-Latin-1.
-
-        * RPCServlet now takes two initParams: "handler" to point at the
-        class that is used to handle the XML-RPC call, and "prefix" to
-        determine the XML-RPC command prefix.  We use these to start both
-        the UTF-8 and strict XML-RPC handlers from web.xml.
-
-        * Added AbstractRPCHandler and RPCHandlerUTF8 classes so that we
-        can now also serve XML-RPC using UTF-8 :-).
-
-2002-02-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * XML-RPC listLinks now returns a the type as a string.  Suggested
-        by Mahlen Morris.
-
-        * XML-RPC listLinks now returns an extra parameter: href.  This
-        contains the actual link text from the HTML page itself.
-        Suggested by Mahlen Morris.
-
-        * InterWiki references are now also added to the link of external
-        links returned by listLinks().  They are returned as entire URLs,
-        resulting from resolving the reference.
-
-2002-02-24  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.12-beta.
-
-        * Added XML-RPC command "listLinks".
-
-        * Did some code reorganization: New class DifferenceEngine now
-        handles all diffs.  This was done in preparation for internal diff
-        handling.  Also, LinkCollector is now a class of its own.
-
-        * XML-RPC Command prefix is now "wiki" instead of "jspwiki".
-
-2002-02-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * XML-RPC interface no longer relies on overloading of method
-        names: All versioned versions have now "Version" appended.
-        Suggested by Les Orchard.
-
-        * XML-RPC interface now returns an error code of 1, if the
-        requested page does not exist.  Suggested by Les Orchard.
-
-        * Bug fix: Now tables should finally work with Mozilla.
-
-        * Added Google search as an Interwiki link.
-
-        * Diff.jsp now shows if there has been no difference.
-
-        * Bug fix: Interwiki links were cleaned accidentally.
-
-2002-02-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Ebu rearranged web.xml to work with Tomcat 4.0, but forgot to
-        mention it here.
-
-        * Added some more default InterWiki references (TWiki,
-        MeatballWiki, Wikipedia).
-
-2002-02-15  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * PageInfo and Edit now also include PageHeader.jsp.  Suggested by
-        Kim Holviala.
-
-        * v1.6.11-beta.
-
-        * XML-RPC interface now supports a new method:
-        getRPCVersionSupported(), which returns which version of API we
-        support.  This is currently 1.
-
-        * Fixed <TT> support: it is now actually possible to write
-        multiple lines using {{ and }}, much like it is with '' and __.
-        Suggested by Sesh Jalagam.
-
-        * Rewrote table support.  The TranslatorReader engine is now a lot
-        smarter about things than it used to be, and now it does not
-        matter how you use the table marker, as long as it's the first
-        character on the line.
-
-2002-02-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Bug fix: RCSFileProvider could hang in certain operations,
-        especially with long revision histories.  A JUnit test was added
-        for this.
-
-2002-02-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.10-cvs
-
-        * XML-RPC interface now hopefully gives out the modification time
-        in UTC, before it used the local timezone.
-
-2002-02-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Unused and undefined pages are now sorted.  Suggested by Mikael
-        Honkala.
-
-        * Using the table directive now causes an explicit "BORDER=1" to
-        be output to support older browsers.  Also, reworked some of the
-        stylesheets so that IE and Konqueror at least look the same now.
-        Mozilla is still having problems with THEAD stylesheets.
-
-2002-02-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.9-cvs
-
-        * Added support for tables.  Sanna VBBB??dBBB??dtBBB??dinen finally managed to
-        convince me to add them, by pointing out some real deficiences in
-        the preformatted-text style tables =).
-
-        * TextUtil.replaceString() would trash replacements of lengths of
-        two or more.  Oops.
-
-        * XML-RPC interface now goes around the UTF-8 problem by giving
-        out Base64-encoded UTF-8 data as page data, and expects all page
-        names to be strings encoded using URL encoding with UTF-8 text.
-        This is regardless of the actual encoding used by the JSPWiki
-        engine.
-
-        * ReferringPagesPlugin now has extra parameter: "extras", which
-        can be used to note how many pages are still left with references
-        to this particular page.
-
-        * Fixed a serious bug in CachingProvider, which caused null values
-        to be added to the internal page collection.  Thanks to Mahlen
-        Morris for pointing it out.
-
-        * New class: InternalWikiException which gets thrown in case
-        something really fishy and serious is going on inside Wiki.
-
-2002-02-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Fixed a slow routine in TranslatorReader, shaving off roughly
-        10% of translation time.  Construction Exceptions is truly heavy.
-
-2002-01-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.8-cvs
-
-        * CachingProvider was iterating through the wrong collection.
-        This might fix the NullPointerExceptions that have been coming
-        around lately.
-
-2002-01-28  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.7-cvs
-
-        * Added new RPC API: getPageInfo( string page ), and getPageInfo(
-        string page, int version ).  Also, the struct returned by
-        getRecentChanges() and getPageInfo() got enhanced.
-
-        * Wiki.jsp now shows the info on old versions properly: before it
-        would show data pertaining to the current version, even if viewing
-        an older version.
-
-        * WikiPageProvider interface reworked slightly: Both getPageInfo()
-        and getPageText() now need the version parameter.  Versionless
-        methods are no longer supported (use LATEST_VERSION as a special
-        tag for version to get the latest.)  I did this to simplify the
-        API so that there would be less methods to implement.
-
-        * RCSFileProvider can now fetch information on old pages
-        correctly. 
-
-2002-01-27  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.6-cvs.
-
-        * Added XML-RPC call system.  See the com.ecyrd.jspwiki.xmlrpc
-        package for more information.
-
-        * Error output from RCS commands is now visible in the log.
-
-        * Diff.jsp now has links to the actual page and the Page Info.
-
-        * Some more refactoring inside WikiEngine: removed redundant
-        code.
-
-        * Refactored TranslatorReader to be more modular.  Provided hooks
-        into the internals, so that links can now be read on-the-fly.
-
-        * WikiEngine.getInstance() is now protected against multiple
-        concurrent invocations.  This should help with startup issues.
-
-2002-01-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * CachingProvider now provides some protection against
-        concurrency, but it is known to fail at occasion.
-
-        * Fixed a NullPointerException in Wiki.jsp, if the page did not
-        exist.
-
-        * Changed bottom line ordering in Wiki.jsp so that it takes less
-        vertical screen space.
-
-2002-01-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * SystemInfo.jsp page enhanced with new features.
-
-        * v1.6.5-cvs
-
-        * The WikiPageProvider interface has been enhanced with new
-        methods.
-
-        * CachingProvider reworked.  The getAllPages() now keeps its own
-        cache, so that it can return the required pages without going
-        through the actual provider.  This should speed things up a lot.
-        A real solution is, however required.
-
-2002-01-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added CachingProvider, inspired by Chris Brooking (though in a
-        far simpler form).
-
-        * v1.6.4-cvs.
-
-        * RecentChanges list now displays author info.
-
-        * All referral plugins (UnusedPages, UndefinedPages,
-        ReferringPages) now recognize a "maxwidth" parameter, which can be
-        used to limit the size of the written links.  This is very useful
-        in the context of putting an automatic referral list to the
-        LeftMenu, which might otherwise grow too wide.  The default
-        LeftMenuFooter now reflects this.
-
-        * Added the ability to modify the written link to the
-        TranslatorReader by hooking in a StringTransmutator callback.
-
-2002-01-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * PageModified.jsp wouldn't compile - I forgot to update the new
-        location for TextUtil.replaceString().  Oops.
-
-2002-01-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * SystemInfo.jsp now shows the used character encoding as well.
-
-2002-01-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.3-beta.
-        
-        * Changed my email address.
-
-        * Slightly changed ebu's hack to colorize diffs to work on all
-        browsers, even those that are CSS-challenged.  Instead of
-        DIV-tags and CSS-files, we now rely on tables.
-
-        * Possibly fixed a problem with Win2k and RCS by rewriting the
-        regular expression used to fetch the author name.  Thanks to Sesh
-        Jalagam for the tip.
-
-2002-01-06  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
-
-        * Fixed bug in referrals; when removing links to non-existant
-        pages, unused pages no longer shows the removed link.
-
-2001-12-13  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
-
-        * Initial hack to make diffs prettier implemented. Relies
-        on CSS, uses lots of DIV tags, and the mac/ie css'es haven't
-        been tested. 
-
-2001-12-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * cssinclude.js now also sets some basic LINK elements: "start"
-        refers to a page called "Main", "help" directs you to
-        TextFormattingRules, and "search" takes you to Search.jsp.  The
-        bad thing is that now the page names are pretty much fixed.
-
-2001-12-03  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.2-cvs.
-
-        * Wiki.jsp now has a direct link from the last change date to the
-        latest change.
-
-        * PageInfo.jsp can now display differences between a previous
-        version and the current version.
-
-        * Diff.jsp now handles requests for current version as well.
-
-2001-12-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.6.1-cvs.
-
-        * Removed last traces of JSP tags.
-
-        * Changed plugin parameter marker to WHERE instead of WITH.
-
-2001-11-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added new property: jspwiki.baseURL to define protection against
-        URL rewriting gateways.  Requested by Kim Holviala.
-
-        * Added the entire plugin system, making many JSP pages obsolete.
-        New classes include PluginManager, taking care of the plugins.
-
-        * Added com.ecyrd.jspwiki.plugin package with new plugin classes:
-        RecentChangesPlugin, UnusedPagesPlugin, UndefinedPagesPlugin,
-        ReferringPagesPlugin.
-
-2001-11-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Moved TranslatorReader.replaceString() to TextUtil, since it is
-        a more logical place.
-
-2001-11-23  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
-
-        * Added ReferenceManager and utilizing features. JSPWiki can
-        now keep track of unused and undefined pages, and of pages 
-        referring to a given page. Initial version, very unoptimized.
-        See ReferenceManager.java and UnusedPages.jsp.
-
-2001-11-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Now replaces HTML entities correctly also in getText().  Thanks
-        to Kim Holviala for pointing this one out.
-
-        * This is release v1.6.0.
-
-        * Quotes in HTML text is now escaped using &quot;
-
-2001-11-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.5.8.
-
-        * Fixed problem with UTF-8 decoding trashing a variable.  Thanks
-        to Chris Brooking.
-
-        * Searching in UTF-8 files now works.
-
-2001-11-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * TranslatorReader now takes a Reader instead of BufferedReader.
-
-        * Reworked some of the internals of WikiEngine and
-        TranslatorReader, making them easier to read.
-
-        * v1.5.7-beta.
-
-        * Incorporated fix from Chris Brooking for the URL encoding, a
-        workaround for JDK bug #4257115.
-
-2001-11-11  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.5.6
-
-        * Added NDC for all major JSP pages to make them simpler to
-        debug. 
-
-        * All pages now also export the META Content-Type information to
-        support older browsers.
-
-        * Possibly fixed a problem with readContents() throwing an
-        IOException: "invalid mark" by increasing buffer size.
-
-        * RCS commands now inherit the parent environment.  This might
-        help with some Windows-related issues.
-
-2001-11-08  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Prevent robots from caching Edit, Diff, PageInfo and
-        PageModified - not much point in caching those, really.
-
-        * v1.5.5-beta.
-
-        * Bug fix: Starting a new page no longer results as 'null' as the
-        initial text.  Oops.
-
-2001-11-07  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.5.4
-
-        * Now FileSystemProvider and RCSFileProvider default back to
-        ISO-8859-1 if the data is obviously not UTF-8.  This makes
-        upgrading much easier.
-
-        * Oops, diff forgot to use the chosen character encoding, and
-        would assume ISO-8859-1.
-
-2001-11-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.5.3
-
-        * Bug fix: the RCSFileProvider used UTC instead of local time.
-        Now fixed.  If you've changed the logcommands in
-        jspwiki.properties, check the new format, or you'll be burned.
-
-        * JSPWiki can now handle also non-ISO-8859-1 charsets.  Check
-        README for more info.  Thanks to  Chris Brooking for the initial
-        code.  This is a heavy-duty change - most of the JSP pages were
-        affected, since they need to decode the page names in a new way.
-
-        * v1.5.2
-
-        * For browsers that do not support CSS, Wiki.jsp now also uses
-        explicit FONT when displaying version information.
-
-        * Empty list items could cause crashes in parsing.  Now fixed,
-        thanks to Mikael Honkala for reporting this.
-
-        * Oops, it was possible to put Javascript inside external or image
-        links.  Now fixed - all quotes inside link names are URLEncoded.
-
-2001-11-04  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-        
-        * v1.5.1
-        
-        * Added WikiEngine.saveText( String, String, HttpServletRequest )
-        so that it can get the author information from the request.  The
-        old API is still supported.
-
-        * WikiPageProvider interface changed: putPageText() now takes a
-        WikiPage as an extra argument.
-
-        * RCSFileProvider can now save and retrieve author info as well.
-
-        * Anchor types (i.e. hyperlinks) now have classes so that you can
-        redecorate them in the CSS files.  See the CSS files for more
-        info.
-
-        * DTD caused Mozilla to slip into standards-compliant mode.  Fixed
-        top-margins in jspwiki_ie.css.
-
-        * Added document type declarations to all JSP files.
-
-2001-11-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * This is R3, v1.5.0
-
-        * Rewrote README.
-
-        * The distribution archive now contains a separate archive for all
-        sample wiki pages to help you bootstrap your own Wiki.
-
-        * Added JSPWikiTips page to the sample wiki pages collection.
-
-        * Removed the authentication scheme from web.xml - out-of-box
-        JSPWiki now allows access to anyone.
-
-        * Default, out-of-the-box Page Provider is now
-        FileSystemProvider.  This should make building your first Wiki a
-        bit simpler.
-
-        * Added file commands to jspwiki.properties.  Also, removed
-        references to my own email address - I kept getting plenty of
-        automatic email from people trying to set up their own Wiki :-).
-
-        * Removed index.html and rewrote web.xml to automatically grab all
-        directory accesses to Wiki.jsp.
-
-        * We now use pageContext.forward() to go to the PageModified.jsp
-        when a concurrent modification occurs, instead of using redirect.
-        Thanks to Chris Brooking for this hint.
-
-        * Slight cosmetical changes in jspwiki_ns.css
-
-        * Added comments around Javascript code in cssinclude.js to better
-        live with old browsers.
-
-2001-11-01  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Bumped version to 1.4.3-cvs.
-
-        * There is now a sample entry in jspwiki.properties demonstrating
-        how to make a direct link to the page editor by using InterWiki
-        linking.  [Edit:Main] redirects you to the page where you can edit
-        the Main page.
-
-        * LeftMenu.jsp now reads its contents dynamically from a Wiki page
-        called "LeftMenu".  Thanks to Mikael Honkala for this idea.
-
-2001-10-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Bumped version to 1.4.2-cvs.
-
-        * Wiki.jsp changed with respect to handling of old page versions.
-        It no longer displays the "edit current version".
-
-        * TextFormattingRules now has plenty of more explanations.
-
-        * Added support for arbitrary letters in WikiNames.  Now it's
-        possible to use any character set.
-
-        * Added support for links within a document ("footnotes").  Use
-        [#1] to create a footnote and [1] to link to it.
-
-        * Empty links no longer generate a hyperlink.
-
-        * FileSystemProvider and RCSFileProvider now know how to handle
-        WikiNames that contain illegal characters.  At the moment they use
-        simply the java.net.URLEncoder class to make the conversion.
-
-        * Added wrap="virtual" to Edit.jsp textarea element to make it
-        also wrap on NS4.
-
-2001-10-25  Erik Bunn  <Erik.Bunn@nospam.memecry.net>
-
-        * Added the capability to view older versions of a WikiPage. 
-        The functionality is accessed from PageInfo.jsp. Wiki.jsp
-        is affected, as well, and WikiEngine.java has new methods
-        (but no actual new functionality).        
-
-2001-10-21  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * This is R2 - v1.4.0.
-
-        * Rewrote the included sample pages.
-
-2001-10-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * build.xml can now generate javadocs to docs/javadoc.
-
-        * Edit.jsp now has explains headings, too (thanks Matti).
-
-        * Changed the versioning so that whenever you check out a CVS
-        copy, you get vX.Y.Z-cvs as the version string.  This was done to
-        separate the development version from the actual release version.
-
-        * Added the list of image inline link patterns to SystemInfo.jsp.
-
-2001-10-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.3.3 - not released.
-
-        * You can now have multiline list items if you prepend each
-        additional line with a space.
-
-        * Added the ability to specify multiple patterns determining which
-        images are inlined and which are not.  See jspwiki.properties for
-        more information.
-
-2001-10-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * All external links ending with .png are now inlined as images.
-        This is an experiment to see if it actually works.  Don't expect
-        it to last.
-
-        * Page names can now contain _ and . as well.
-
-        * Added some cosmetical changes to the JSP pages.
-
-2001-10-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Release v1.3.1 - first official release.
-
-        * Clarified build system.
-
-        * All files should now contain copyright.
-
-        * Added plenty of javadoc commentary.
-
-2001-10-02  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Bold and italic information is now carried across line and
-        paragraph breaks.
-
-2001-09-30  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added cssinclude.js and three browser-dependent stylesheet
-        files.  Also, all jsp files now include the cssinclude.js.
-
-2001-08-25  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Removed a debug statement, some cosmetical changes.
-
-        * v1.3.0
-
-        * Added jspwiki.applicationName property, and support into
-        WikiEngine.
-
-        * Added SystemInfo.jsp
-
-        * Added interWiki functionality.  Now you can define links in
-        'jspwiki.properties' where a link of the form [WikiXX:PageName]
-        should point to.
-
-2001-08-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.2.0
-
-        * WikiEngine now behaves much better if a provider cannot be
-        instantiated.
-
-        * Added rudimentary support for version history in a multitude of
-        places.
-
-2001-08-13  Janne Jalkanen  <jalkanen@nospam.kosh.ecyrd.com>
-
-        * Wiki.jsp displayed null date if page did not exist.
-
-2001-07-23  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * v1.1.2
-
-        * Search engine interface is now cleaner.
-
-        * Separated actual Wiki page serving from the WikiEngine and hid
-        it under the WikiPageProvider interface.
-
-2001-07-20  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Realm name is now "JSPWiki editor" instead of "Basic
-        Authentication Area" or whatever stupid it was.
-
-2001-07-19  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Conversion of {{ is now fixed - it no longer transforms {{{ into
-        {<TT> in certain cases.  Also, multiple {{{s are now handled
-        gracefully.
-
-        * v1.1.1
-
-2001-07-18  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added a Search box to the header of each page.
-
-        * HTML entities are now replaced correctly in PageModified.jsp to
-        prevent arbitrary HTML tags.
-
-        * Added support for <TT> tag with {{text}}.
-
-2001-07-16  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Couldn't edit new pages, oops.
-
-2001-07-15    <Janne.Jalkanen@nospam.regex.fi>
-
-        * Added rudimentary page locking.
-
-2001-07-14  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Appearance of the jsp pages is now slightly more convergent.
-
-        * Improved search engine to accept exclusion/inclusion a la
-        Google.  Scoring now works, too.
-
-        * Added ordered lists (#).
-
-        * Horizontal ruler is now four dashes instead of three to comply
-        with the Wiki standard.
-
-2001-07-13  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added jspwiki.specialPage.XXX redirection.  You can now name
-        special pages that get referred to whichever JSP page you want.
-        For example, you can always refer to RecentChanges.jsp in your
-        Wiki code by using [RecentChanges], with the following property
-        set: 
-        
-        jspwiki.specialPage.RecentChanges = RecentChanges.jsp
-
-        * v1.0.5
-
-2001-07-10  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Removed SkipHTMLIterator because it was a bad idea.  No
-        InterCapped hyperlinks are available.
-
-        * Fixed tests so that they now actually run.  This required a new
-        constructor for WikiEngine.
-
-2001-07-09  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * TranslatorWriter.cleanLink() now removes all non-letters and
-        non-numbers from the link name so that you can use all sorts of
-        punctuation inside a link name.
-
-        * Implemented RecentChanges list by writing RecentChanges.jsp.
-        Wiki.jsp also redirects all requests to a page called
-        'RecentChanges' to RecentChanges.jsp.
-
-2001-07-06  Janne Jalkanen  <Janne.Jalkanen@nospam.ecyrd.com>
-
-        * Added configuration at etc/jspwiki.properties.
-
-        * Added this file.
 
