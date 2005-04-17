@@ -35,7 +35,7 @@ Major changes since the 2.0 series are:
 
 - Much faster startup (after the first one)
 
-
+- Short URLs (/wiki/PageName) with ShortURLConstructor
 
 UPGRADE NOTES
 =============
@@ -51,7 +51,7 @@ for further information.
 KNOWN MAJOR ISSUES
 ==================
 
-* Documentation needs cleanup
+* Documentation needs cleanup; it's out of date, etc.
 * ISO-8859-1 and attachments don't always mix
 * HTTPS and Internet Explorer don't work in Preview
 
