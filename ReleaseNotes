@@ -37,12 +37,24 @@ Major changes since the 2.0 series are:
 
 - Short URLs (/wiki/PageName) with ShortURLConstructor
 
+
 UPGRADE NOTES
 =============
 
-Drop the JSPWiki.war into place.  Modify your template according to
-the new stuff in the default template.  More precise docs to came
-later. 
+Upgrading from 2.0:
+
+* Please reinstall in a new directory.  Then move your modified
+  templates into the new templates/ -directory.  You MUST
+  have the default template in place, else things might not
+  work.
+* Replace jspwiki.properties with your old configuration file.
+  It should run unmodified, though you might want to go through
+  the new file to see new options.
+
+Upgrading from earlier installations:
+
+* Please make a complete reinstall.  Your wiki pages will still be
+  compatible, and the configuration for the most part.
 
 Please visit http://www.jspwiki.org/Wiki.jsp?page=Release2.2Discussion
 for further information.

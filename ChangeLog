@@ -1,3 +1,11 @@
+2005-04-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.0-beta.  Yay!  I don't know whether this version
+        is really ripe, but we just HAVE to get it out at some
+        point.
+
+        * Fixed a small off-by-one error in SpamFilter.
+
 2005-04-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.167
