@@ -59,31 +59,36 @@ public class TranslatorReaderTest extends TestCase
     }
 
     private String translate( String src )
-        throws IOException,
-               NoRequiredPropertyException,
-               ServletException
+    throws IOException,
+           NoRequiredPropertyException,
+           ServletException
     {
-        WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(PAGE_NAME) );
-        Reader r = new TranslatorReader( context, 
-                                         new BufferedReader( new StringReader(src)) );
-        StringWriter out = new StringWriter();
-        int c;
-
-        while( ( c=r.read()) != -1 )
-        {
-            out.write( c );
-        }
-
-        return out.toString();
+        return translate( new WikiPage(PAGE_NAME), src );
     }
 
+    private String translate( WikiEngine e, String src )
+    throws IOException,
+           NoRequiredPropertyException,
+           ServletException
+    {
+        return translate( e, new WikiPage(PAGE_NAME), src );
+    }
+
+
     private String translate( WikiPage p, String src )
+    throws IOException,
+           NoRequiredPropertyException,
+           ServletException
+    {
+        return translate( testEngine, p, src );
+    }
+    
+    private String translate( WikiEngine e, WikiPage p, String src )
         throws IOException,
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( testEngine,
+        WikiContext context = new WikiContext( e,
                                                p );
         Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
@@ -573,7 +578,30 @@ public class TranslatorReaderTest extends TestCase
                       "<a href=\"PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"images/attachment_small.png\" border=\"0\" alt=\"(info)\"/></a>",
                       translate(src));
     }
+
+    public void testAttachmentLink2()
+         throws Exception
+    {
+        props.setProperty( "jspwiki.encoding", "ISO-8859-1" );
+        
+        //TODO
+        TestEngine testEngine2 = new TestEngine( props );
+        
+        testEngine2.saveText( "Test", "foo ");
+        created.addElement( "Test" );
+
+        Attachment att = new Attachment( "Test", "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
     
+        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+
+        String src = "This should be an [attachment link|Test/TestAtt.txt]";
+    
+        assertEquals( "This should be an <a class=\"attachment\" href=\"attach/Test/TestAtt.txt\">attachment link</a>"+
+                      "<a href=\"PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"images/attachment_small.png\" border=\"0\" alt=\"(info)\"/></a>",
+                      translate(testEngine2,src));
+    }
+
     public void testNoHyperlink()
         throws Exception
     {
