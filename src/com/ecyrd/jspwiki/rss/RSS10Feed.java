@@ -61,7 +61,7 @@ public class RSS10Feed extends Feed
             XML item = new XML( "item" );
             item.addAttribute( "rdf:about", url );
             
-            item.addElement( new XML("title").addElement( e.getTitle() ) );
+            item.addElement( new XML("title").addElement( format(e.getTitle()) ) );
 
             item.addElement( new XML("link").addElement( url ) );
 
@@ -140,12 +140,17 @@ public class RSS10Feed extends Feed
         XML channel = new XML( "channel" );
 
         channel.addAttribute("rdf:about", m_feedURL );
-        channel.addElement( new XML("title").addElement( format(m_channelTitle)) );
+        
         channel.addElement( new XML("link").addElement( m_feedURL ) );
         
-        channel.addElement( new XML("description").addElement( format(m_channelDescription)) );
+        if( m_channelTitle != null )
+            channel.addElement( new XML("title").addElement( format(m_channelTitle)) );
         
-        channel.addElement( new XML("dc:language").addElement(m_channelLanguage) );
+        if( m_channelDescription != null )
+            channel.addElement( new XML("description").addElement( format(m_channelDescription)) );
+        
+        if( m_channelLanguage != null )
+            channel.addElement( new XML("dc:language").addElement(m_channelLanguage) );
 
         channel.setPrettyPrint( true );
         

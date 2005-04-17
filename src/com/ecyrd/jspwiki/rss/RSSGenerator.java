@@ -500,7 +500,7 @@ public class RSSGenerator
         try
         {
             channelDescription = m_engine.getVariableManager().getValue( wikiContext, PROP_CHANNEL_DESCRIPTION );
-            feed.setChannelDescription( format(channelDescription) );
+            feed.setChannelDescription( channelDescription );
         }
         catch( NoSuchVariableException e ) {}
 
@@ -552,7 +552,7 @@ public class RSSGenerator
             // Remove wiki formatting
             while( title.startsWith("!") ) title = title.substring(1);
             
-            e.setTitle( format(title) );
+            e.setTitle( title );
             
             //
             //  Description
@@ -571,16 +571,16 @@ public class RSSGenerator
                     
                     if( maxlen == MAX_CHARACTERS ) pageText += "...";
                     
-                    e.setContent( format(pageText) );
+                    e.setContent( pageText );
                 }
                 else
                 {
-                    e.setContent( format(title) );
+                    e.setContent( title );
                 }
             }
             else
             {
-                e.setContent( format(title) );
+                e.setContent( title );
             }
 
             e.setAuthor( getAuthor(page) );
