@@ -154,7 +154,7 @@ public class SpamFilter
                 }
             }
             
-            if( counter > m_limitSinglePageChanges )
+            if( counter >= m_limitSinglePageChanges )
             {
                 Host host = new Host( addr );
                 
