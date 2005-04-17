@@ -1,5 +1,5 @@
 
-This is an ALPHA release of JSPWiki v2.2  
+This is an BETA release of JSPWiki v2.2  
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
@@ -9,11 +9,13 @@ Major changes since the 2.0 series are:
 
 - Wiki Forms
 
-- Page Filters
+- Page Filters (including SpamFilter)
 
 - Muchos enhanced WeblogPlugin
 
 - Style support using the %%-directive
+
+- Easier templates
 
 - The default template now validates as XHTML 1.0 Transitional
 
@@ -46,6 +48,14 @@ Please visit http://www.jspwiki.org/Wiki.jsp?page=Release2.2Discussion
 for further information.
 
 
+KNOWN MAJOR ISSUES
+==================
+
+* Documentation needs cleanup
+* ISO-8859-1 and attachments don't always mix
+* HTTPS and Internet Explorer don't work in Preview
+
+
 NOTE ABOUT AUTHENTICATION
 =========================
 
@@ -60,4 +70,5 @@ ongoing, and a new solution is being drafted.
 
 The old auth system is still in place, but it is completely deprecated
 and largely undocumented.  You may use it if you want, but please do
-not report any bugs regarding it.
+not report any bugs regarding it.  You can enable it by putting
+"jspwiki.auth.useOldAuth=true" in your jspwiki.properties.
