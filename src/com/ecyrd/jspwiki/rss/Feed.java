@@ -99,10 +99,14 @@ public abstract class Feed
      */
     public static String format( String s )
     {
-        s = TextUtil.replaceString( s, "&", "&amp;" );
-        s = TextUtil.replaceString( s, "<", "&lt;" );
-        s = TextUtil.replaceString( s, ">", "&gt;" );
+        if( s != null )
+        {
+            s = TextUtil.replaceString( s, "&", "&amp;" );
+            s = TextUtil.replaceString( s, "<", "&lt;" );
+            s = TextUtil.replaceString( s, ">", "&gt;" );
 
-        return s.trim();
+            return s.trim();
+        }
+        return null;
     }
 }
