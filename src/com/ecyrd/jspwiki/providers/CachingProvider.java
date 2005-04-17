@@ -665,10 +665,18 @@ public class CachingProvider
             page.setLastModified( new Date() );
             
             // Refresh caches properly
+            
             m_cache.flushEntry( page.getName() );
             m_textCache.flushEntry( page.getName() );
             m_historyCache.flushEntry( page.getName() );
             m_negCache.flushEntry( page.getName() );
+            
+            // Refresh caches
+            try
+            {
+                getPageInfoFromCache( page.getName() );
+            }
+            catch(RepositoryModifiedException e) {} // Expected
         }
     }
 
