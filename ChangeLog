@@ -1,3 +1,11 @@
+2005-04-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.1.
+
+        * Bug fix: RSS generation no longer does double encoding.
+
+        * Bug fix: CachingProvider would not notice new files.
+
 2005-04-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.0-beta.  Yay!  I don't know whether this version is really
