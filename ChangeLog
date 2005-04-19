@@ -1,3 +1,11 @@
+2005-04-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.2.
+
+        * CachingProvider does now a bit more sanity checks
+        with the Lucene directory; this was a source of confusion
+        for some people.  It's also more verbose.
+
 2005-04-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.1.
