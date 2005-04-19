@@ -1,3 +1,10 @@
+2005-04-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.3
+        
+        * Added some sanity checks to the startup concerning
+        the work directory.
+
 2005-04-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.2.
