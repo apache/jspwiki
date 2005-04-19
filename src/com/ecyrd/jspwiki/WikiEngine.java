@@ -431,15 +431,23 @@ public class WikiEngine
         {
             File f = new File( m_workDir );
             f.mkdirs();
+            
+            //
+            //  A bunch of sanity checks
+            //
+            if( !f.exists() ) throw new WikiException("Work directory does not exist: "+m_workDir);
+            if( !f.canRead() ) throw new WikiException("No permission to read work directory: "+m_workDir);
+            if( !f.canWrite() ) throw new WikiException("No permission to write to work directory: "+m_workDir);
+            if( !f.isDirectory() ) throw new WikiException("jspwiki.workDir does not point to a directory: "+m_workDir);
         }
-        catch( Exception e )
+        catch( SecurityException e )
         {
             log.fatal("Unable to find or create the working directory: "+m_workDir,e);
             throw new IllegalArgumentException("Unable to find or create the working dir: "+m_workDir);
         }
 
         log.info("JSPWiki working directory is '"+m_workDir+"'");
-
+        
         m_saveUserInfo   = TextUtil.getBooleanProperty( props,
                                                         PROP_STOREUSERNAME, 
                                                         m_saveUserInfo );
