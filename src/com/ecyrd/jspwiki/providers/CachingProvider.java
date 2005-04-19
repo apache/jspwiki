@@ -221,7 +221,20 @@ public class CachingProvider
                     dir.mkdirs();
                 }
 
-                if( dir.list().length == 0 )
+                if( !dir.exists() || !dir.canWrite() || !dir.canRead() )
+                {
+                    log.error("Cannot write to Lucene directory, disabling Lucene: "+dir.getAbsolutePath());
+                    throw new IOException( "Invalid Lucene directory." );
+                }
+                
+                String[] filelist = dir.list();
+                
+                if( filelist == null )
+                {
+                    throw new IOException( "Invalid Lucene directory: cannot produce listing: "+dir.getAbsolutePath());
+                }
+                
+                if( filelist.length == 0 )
                 {  
                     //
                     //  No files? Reindex!
@@ -271,17 +284,17 @@ public class CachingProvider
             }
             catch( NoClassDefFoundError e )
             {
-                log.info("Lucene libraries do not exist - not using Lucene");
+                log.info("Lucene libraries do not exist - not using Lucene.");
                 m_useLucene = false;
             }
             catch ( IOException e )
             {
-                log.error("Problem while creating Lucene index.", e);
+                log.error("Problem while creating Lucene index - not using Lucene.", e);
                 m_useLucene = false;
             }
             catch ( ProviderException e )
             {
-                log.error("Problem reading pages while creating Lucene index.", e);
+                log.error("Problem reading pages while creating Lucene index (JSPWiki won't start.)", e);
                 throw new IllegalArgumentException("unable to create Lucene index");
             }
 
