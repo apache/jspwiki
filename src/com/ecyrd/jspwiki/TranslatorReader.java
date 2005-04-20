@@ -2313,7 +2313,7 @@ public class TranslatorReader extends Reader
             if( m_cleanTranslator == null )
             {
                 WikiContext dummyContext = new WikiContext( m_engine, 
-                                                            new WikiPage("_Dummy"));
+                                                            m_context.getPage() );
                 m_cleanTranslator = new TranslatorReader( dummyContext, 
                                                           null,
                                                           new TextRenderer() );
