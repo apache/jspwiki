@@ -373,7 +373,7 @@ public class WikiEngineTest extends TestCase
         VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
 
         assertEquals( "wrong page", "test", vsp.m_latestReq );
-        assertEquals( "wrong version", -1, vsp.m_latestVers );
+        assertEquals( "wrong version", 5, vsp.m_latestVers );
     }
 
     public void testLatestGet4()
