@@ -2,6 +2,9 @@
 
         * v2.2.4.
         
+        * Bug fix: TableOfContents plugin now properly calculates
+        the page variables.
+        
         * Bug fix: Deleted pages are no longer shown in the
         RecentChanges listings.
 
