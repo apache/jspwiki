@@ -18,7 +18,8 @@ public class AllTests extends TestCase
         suite.addTest( ReferringPagesPluginTest.suite() );
         suite.addTest( CounterPluginTest.suite() );
         suite.addTest( UndefinedPagesPluginTest.suite() );
-
+        suite.addTest( TableOfContentsTest.suite() );
+        
         return suite;
     }
 }
