@@ -49,6 +49,16 @@ jspwiki.usePageCache = true
 jspwiki.fileSystemProvider.pageDir = @pagedir@
 
 #
+#  The JSPWiki working directory.  If not set, a temporary path will
+#  be used.  You can see the location of the workdir in the logs.
+#  It is HIGHLY recommended that you set this.
+#
+#  The working directory is used to cache things like Lucene search
+#  results.
+#
+#jspwiki.workDir =
+
+#
 #  ATTACHMENTS:
 #
 #  Use the following property to define which attachment provider
@@ -165,15 +175,6 @@ jspwiki.encoding = UTF-8
 #
 jspwiki.translatorReader.allowHTML = false
 
-#
-#  The JSPWiki working directory.  If not set, a temporary path will
-#  be used.  You can see the location of the workdir in the logs.
-#
-#  The working directory is used to cache things like Lucene search
-#  results.
-#
-jspwiki.workDir =
-
 ############################################################################
 #
 #  Usability niceties.
@@ -245,6 +246,13 @@ jspwiki.lockExpiryTime = 60
 #  turn it off here.
 #
 #jspwiki.useLucene = true
+
+#
+#  If your wiki's language is something else than English, you might
+#  want to visit jakarta.apache.org/lucene and download a proper Analyzer
+#  for your language.  Default is to use StandardAnalyzer.
+#
+#jspwiki.lucene.analyzer = org.apache.lucene.analysis.standard.StandardAnalyzer
 
 ############################################################################
 #
