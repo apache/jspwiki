@@ -28,10 +28,12 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.search.*;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 
 import com.opensymphony.module.oscache.base.Cache;
 import com.opensymphony.module.oscache.base.NeedsRefreshException;
@@ -121,6 +123,11 @@ public class CachingProvider
     // Lucene properties.
     public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
 
+    /** Which analyzer to use.  Default is StandardAnalyzer. */
+    public static final String PROP_LUCENE_ANALYZER    = "jspwiki.lucene.analyzer";
+    
+    private String m_analyzerClass = "org.apache.lucene.analysis.standard.StandardAnalyzer";
+    
     private static final String LUCENE_DIR             = "lucene";
 
     // Number of page updates before we optimize the index.
@@ -128,6 +135,18 @@ public class CachingProvider
     private static final String LUCENE_ID              = "id";
     private static final String LUCENE_PAGE_CONTENTS   = "contents";
 
+    private Analyzer getLuceneAnalyzer()
+        throws ClassNotFoundException,
+               InstantiationException,
+               IllegalAccessException
+    {
+        Class clazz = ClassUtil.findClass( "", m_analyzerClass );
+            
+        Analyzer analyzer = (Analyzer)clazz.newInstance();
+        
+        return analyzer;
+    }
+    
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -244,14 +263,21 @@ public class CachingProvider
 
                     log.info("Starting Lucene reindexing, this can take a couple minutes...");
 
+                    //
+                    //  Do lock recovery, in case JSPWiki was shut down forcibly
+                    //
+                    Directory luceneDir = FSDirectory.getDirectory(dir,false);
+                    
+                    if( IndexReader.isLocked(luceneDir) )
+                    {
+                        log.info("JSPWiki was shut down while Lucene was indexing - unlocking now.");
+                        IndexReader.unlock( luceneDir );
+                    }
+                    
                     try
                     {
-                        // FIXME: Should smartly use a different analyzer
-                        //        in case the language is something else
-                        //        than English.
-
                         writer = new IndexWriter( m_luceneDirectory, 
-                                                  new StandardAnalyzer(), 
+                                                  getLuceneAnalyzer(), 
                                                   true );
                         Collection allPages = getAllPages();
 
@@ -297,7 +323,17 @@ public class CachingProvider
                 log.error("Problem reading pages while creating Lucene index (JSPWiki won't start.)", e);
                 throw new IllegalArgumentException("unable to create Lucene index");
             }
-
+            catch( ClassNotFoundException e )
+            {
+                log.error("Illegal Analyzer specified:",e);
+                m_useLucene = false;
+            }
+            catch( Exception e )
+            {
+                log.error("Unable to start lucene",e);
+                m_useLucene = false;
+            }
+           
             startLuceneUpdateThread();
         }
     }
@@ -704,7 +740,7 @@ public class CachingProvider
             deleteFromLucene(page);
 
             // Now add back the new version.
-            writer = new IndexWriter(m_luceneDirectory, new StandardAnalyzer(), false);
+            writer = new IndexWriter(m_luceneDirectory, getLuceneAnalyzer(), false);
             luceneIndexPage(page, text, writer);
             m_updateCount++;
             if( m_updateCount >= LUCENE_OPTIMIZE_COUNT )
@@ -716,6 +752,10 @@ public class CachingProvider
         catch ( IOException e )
         {
             log.error("Unable to update page '" + page.getName() + "' from Lucene index", e);
+        }
+        catch( Exception e )
+        {
+            log.error("Unexpected Lucene exception - please check configuration!",e);
         }
         finally
         {
