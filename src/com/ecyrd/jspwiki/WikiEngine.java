@@ -1241,8 +1241,7 @@ public class WikiEngine
      */
     public String getHTML( String pagename, int version )
     {
-        WikiPage page = new WikiPage( pagename );
-        page.setVersion( version );
+        WikiPage page = getPage( pagename, version );
 
         WikiContext context = new WikiContext( this,
                                                page );
