@@ -1,3 +1,14 @@
+2005-04-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.5
+
+        * You can now choose which Lucene analyzer to use
+        with "jspwiki.lucene.analyzer".  Choose it according
+        to the primary language of the wiki.
+        
+        * Lucene can now recover, if the index was locked
+        when JSPWiki was shut down.
+
 2005-04-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.4.
