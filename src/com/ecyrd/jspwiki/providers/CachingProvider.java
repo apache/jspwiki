@@ -1109,7 +1109,29 @@ public class CachingProvider
 
             if( item != null )
             {
+                // Item added or replaced.
                 m_allItems.add( item );
+            }
+            else
+            {
+                // Removed item
+                // FIXME: If the page system is changed during this time, we'll just fail gracefully
+                
+                try
+                {
+                    for( Iterator i = m_allItems.iterator(); i.hasNext(); )
+                    {
+                        WikiPage p = (WikiPage)i.next();
+                    
+                        if( p.getName().equals( arg0.getKey() ) )
+                        {
+                            i.remove();
+                            break;
+                        }
+                    }
+                }
+                catch( Exception e )
+                {}
             }
         }
     }
