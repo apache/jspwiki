@@ -26,6 +26,8 @@ import java.io.*;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.url.DefaultURLConstructor;
+
 /**
  */
 public class WikiServlet
@@ -61,10 +63,9 @@ public class WikiServlet
 
         if( pageName == null ) pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well
         
-        String jspPage = req.getParameter( "do" );
-        if( jspPage == null ) jspPage = "Wiki";
+        String jspPage = m_engine.getURLConstructor().getForwardPage( req );
         
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/"+jspPage+".jsp?page="+m_engine.encodeName(pageName)+"&"+req.getQueryString() );
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/"+jspPage+"?page="+m_engine.encodeName(pageName)+"&"+req.getQueryString() );
 
         dispatcher.forward( req, res );
     }
