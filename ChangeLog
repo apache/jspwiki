@@ -1,3 +1,12 @@
+2005-04-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.6.
+
+        * Added ShortViewURLConstructor and move all 
+        URLConstructors to the url-package.  This makes it
+        possible to have short URLs *and* protect the access
+        to particular JSPs...
+
 2005-04-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.5
