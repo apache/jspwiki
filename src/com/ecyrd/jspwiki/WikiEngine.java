@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 
+import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
 
@@ -473,7 +474,7 @@ public class WikiEngine
         //
         try
         {
-            Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki",
+            Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
                                                   props.getProperty( PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();               
             m_urlConstructor.initialize( this, props );
@@ -1960,6 +1961,15 @@ public class WikiEngine
         return m_rootPath;
     }
 
+    /**
+     * @since 2.2.6
+     * @return
+     */
+    public URLConstructor getURLConstructor()
+    {
+        return m_urlConstructor;
+    }
+    
     /**
      * @since 2.1.165
      * @return
