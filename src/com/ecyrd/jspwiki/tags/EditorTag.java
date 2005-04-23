@@ -148,21 +148,7 @@ public class EditorTag
 
     private ConcreteElement getEditorArea()
     {
-        textarea area = new textarea();
-
-        area.setClass("editor");
-        area.setWrap("virtual");
-        area.setName("text");
-        area.setRows( 25 );
-        area.setCols( 80 );
-        area.setStyle( "width:100%;" );
-       
-        if( m_wikiContext.getRequestContext().equals("edit") )
-        {
-            area.addElement( m_wikiContext.getEngine().getText( m_wikiContext, m_wikiContext.getPage() ) );
-        }
- 
-        return area;
+        return EditorAreaTag.getEditorArea( m_wikiContext );
     }
     /**
      *  Returns an edit button block.
