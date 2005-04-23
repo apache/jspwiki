@@ -1,3 +1,19 @@
+2005-04-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.7
+        
+        * Fixed many issues with ~-escaping.  It should now work with
+        practically all WikiMarkup; you should be able to escape
+        anything.  Fixes Bug Back Slashes In Http String In A File
+        Causes File Not To Load, Bug Line Breaks In The Middle Of Text.
+
+        * Fixed some issues with %%-style generation: it now looks
+        at the rest of the line, and if it contains material, it will
+        emit a <span> instead of a <div>.  This should make it 
+        intuitively pretty logical.  This should fix quite a many
+        complaints relating to styles, including
+        BugLineBreaksWithCSSFormating (partial), BugCSSInTables
+
 2005-04-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.6.
