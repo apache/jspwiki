@@ -2,6 +2,9 @@
 
         * v2.2.8
 
+        * Added 'class="body"' to default template body, as per
+        BugCSSClassForViewTemplate.jspBodyTag
+
         * Added "link" to Comment.jsp; this should be a lot
         smarter now about if you want to use comment functionality
         for the weblog.
