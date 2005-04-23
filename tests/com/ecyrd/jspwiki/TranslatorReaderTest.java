@@ -821,6 +821,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "1<br />2", translate(src) );
     }
 
+    public void testLinebreakEscape()
+    throws Exception
+    {
+        String src = "1~\\\\2";
+
+        assertEquals( "1\\\\2", translate(src) );
+    }
+
     public void testLinebreakClear()
         throws Exception
     {
@@ -861,6 +869,14 @@ public class TranslatorReaderTest extends TestCase
         String src = "1{{{2345}}}6";
 
         assertEquals( "1<span style=\"font-family:monospace; whitespace:pre;\">2345</span>6", translate(src) );
+    }
+
+    public void testPreEscape()
+    throws Exception
+    {
+        String src = "1~{{{2345}}}6";
+
+        assertEquals( "1{{{2345}}}6", translate(src) );
     }
 
     public void testPre2()
@@ -1814,6 +1830,54 @@ public class TranslatorReaderTest extends TestCase
         }
     }
 
+    public void testDivStyle1()
+        throws Exception
+    {
+        String src = "%%foo\ntest\n%%\n";
+        
+        assertEquals( "<div class=\"foo\">\ntest\n</div>\n", translate(src) );
+    }
+
+    public void testDivStyle2()
+    throws Exception
+    {
+        String src = "%%(foo:bar;)\ntest\n%%\n";
+    
+        assertEquals( "<div style=\"foo:bar;\">\ntest\n</div>\n", translate(src) );
+    }
+
+    public void testSpanStyle1()
+        throws Exception
+    {
+        String src = "%%foo test%%\n";
+    
+        assertEquals( "<span class=\"foo\">test</span>\n", translate(src) );
+    }
+
+    public void testSpanStyle2()
+    throws Exception
+    {
+        String src = "%%(foo:bar;)test%%\n";
+        
+        assertEquals( "<span style=\"foo:bar;\">test</span>\n", translate(src) );
+    }
+
+    public void testSpanStyle3()
+    throws Exception
+    {
+        String src = "Johan %%(foo:bar;)test%%\n";
+        
+        assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
+    }
+
+    public void testSpanStyleTable()
+    throws Exception
+    {
+        String src = "|%%(foo:bar;)test%%|no test\n";
+        
+        assertEquals( "<table class=\"wikitable\" border=\"1\">\n<tr><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>\n", 
+                      translate(src) );
+    }
     
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
