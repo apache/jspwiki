@@ -1827,21 +1827,28 @@ public class TranslatorReader extends Reader
 
                 pushBack(ch);
                 
-                Boolean isSpan = (Boolean)m_styleStack.pop();
+                try
+                {
+                    Boolean isSpan = (Boolean)m_styleStack.pop();
                 
-                if( isSpan == null )
-                {
-                    // Fail quietly
+                    if( isSpan == null )
+                    {
+                        // Fail quietly
+                    }
+                    else if( isSpan.booleanValue() )
+                    {
+                        sb.append( m_renderer.closeSpan() );
+                    }
+                    else
+                    {
+                        sb.append( m_renderer.closeDiv() );
+                    }
                 }
-                else if( isSpan.booleanValue() )
+                catch( EmptyStackException e )
                 {
-                    sb.append( m_renderer.closeSpan() );
+                    log.debug("Page '"+m_context.getPage().getName()+"' closes a %%-block that has not been opened.");
                 }
-                else
-                {
-                    sb.append( m_renderer.closeDiv() );
-                }
-
+                
                 return sb.toString();
             }
 
