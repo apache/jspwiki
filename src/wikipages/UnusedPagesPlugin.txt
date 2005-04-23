@@ -2,9 +2,12 @@ Lists all pages that are not currently referred to by any other page, thus meani
 
 !Parameters
 
-* __maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
-* __separator__=''',''' : Sets the separator to use between generated links. The value is WikiText, and the default is a linebreak, which produces a vertical list. (Change to ", " for a horizontal, comma-separated list.)
-
+;__maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
+;__before__='''*''' : This element goes before each generated link. The value is WikiText, and the default is empty. 
+;__separator__=''',''' : Sets the separator to use between generated links. The value is WikiText, and the default is a nothing (Change to ", " for a horizontal, comma-separated list.)
+;__after__='''\n''' : Sets the separator to use after each generated links. The value is WikiText, and the default is a linebreak, which produces a vertical list. 
+;__include__='''pagename''' : a regular expression of pages to include in this list. 
+;__exclude__='''pagename''' : a regular expression of pages to exclude from this list.
 
 !Example:
 

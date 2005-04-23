@@ -1,0 +1,27 @@
+ShortURLConstructor replaces all wiki pages with a reference to the /wiki/ -URL, with a special parameter which tells which action is to be taken.  For example, {{{/Edit.jsp?page=WikiPage}}} gets replaced with {{{/wiki/WikiPage?do=Edit}}}.
+
+ShortURLConstructor will attempt to guess your wiki location from your {{jspwiki.baseURL}} -setting, but if it gets it wrong, you can use the {{jspwiki.shortURLConstructor.prefix}} -setting to point at a different location.
+
+!Note
+
+You should be understand that users can bypass any restrictions in {{web.xml}} if you're using this URLConstructor.  All access to the wiki is controlled through the /wiki/ -servlet.  If you want to limit user access to certain functionalities, you should use the [ShortViewURLConstructor].
+
+!Troubleshooting
+
+If you get a 404 error when you're using this, check that your {{web.xml}} contains the following lines:
+
+{{{
+   <servlet>
+       <servlet-name>WikiServlet</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>WikiServlet</servlet-name>
+       <url-pattern>/wiki/*</url-pattern>
+   </servlet-mapping>
+}}}
+
+----
+
+Back to [URLConstructors].

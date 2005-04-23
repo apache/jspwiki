@@ -1,0 +1,25 @@
+An URL Constructor is a JSPWiki plugin which can be used to control how the different URLs that JSPWiki generates should look like.
+
+!Choosing your URLConstructor
+
+JSPWiki includes three basic URLConstructors for managing link generation:
+
+* [DefaultURLConstructor] - which you're probably using right now.
+* [ShortViewURLConstructor] - replaces "Wiki.jsp" with the ~WikiServlet.
+* [ShortURLConstructor] - replaces all JSP pages with the ~WikiServlet.
+
+!Using a URLConstructor
+
+Edit your jspwiki.properties file, and add the following line:
+{{{
+jspwiki.urlConstructor = <constructor name>
+}}}
+
+For example:
+{{{
+jspwiki.baseURL = http://example.com/
+jspwiki.urlConstructor = ShortURLConstructor
+jspwiki.shortURLConstructor.prefix = /mywiki/
+}}}
+
+would use the ShortURLConstructor with a prefix of "/mywiki/".  All relative URLs would look like "/mywiki/Foobar" and all absolute URLs would look like "http://example.com/mywiki/Foobar".
