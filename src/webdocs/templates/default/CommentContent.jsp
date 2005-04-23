@@ -18,14 +18,17 @@
 
       <wiki:Editor name="commentForm">
 
-        <textarea class="editor" wrap="virtual" name="text" rows="15" cols="60"></textarea>
+        <wiki:EditorArea/>
 
-        <p>
-        <label for="authorname">Your name</label>
-        <input type="text" name="author" id="authorname" value="<wiki:UserName/>" />
-        <label for="rememberme">Remember me?</label>
-        <input type="checkbox" name="remember" id="rememberme" />
-        </p>
+        <table border="0">
+          <tr>
+            <td><label for="authorname">Your name</label></td><td><input type="text" name="author" id="authorname" value="<wiki:UserName/>" /></td>
+            <td><label for="rememberme">Remember me?</label></td><td><input type="checkbox" name="remember" id="rememberme" /></td>
+          </tr>
+          <tr>
+            <td><label for="link">Homepage or email</label></td><td colspan="3"><input type="text" name="link" id="link" value="<%=pageContext.getAttribute("link",PageContext.REQUEST_SCOPE)%>" /></td>
+          </tr>
+        </table>
 
         <p>
         <input type="submit" name="ok" value="Save" />
