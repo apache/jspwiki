@@ -233,6 +233,12 @@
   </tag>
 
   <tag>
+     <name>EditorArea</name>
+     <tagclass>com.ecyrd.jspwiki.tags.EditorAreaTag</tagclass>
+     <bodycontent>empty</bodycontent>
+  </tag>
+  
+  <tag>
     <name>FeedDiscovery</name>
     <tagclass>com.ecyrd.jspwiki.tags.FeedDiscoveryTag</tagclass>
     <bodycontent>empty</bodycontent>
