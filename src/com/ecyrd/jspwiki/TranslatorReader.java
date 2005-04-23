@@ -85,6 +85,9 @@ public class TranslatorReader extends Reader
     private boolean        m_isEscaping   = false;
     private boolean        m_isdefinition = false;
 
+    /** Contains style information, in multiple forms. */
+    private Stack          m_styleStack   = new Stack();
+    
      // general list handling
     private int            m_genlistlevel = 0;
     private StringBuffer   m_genlistBulletBuffer = new StringBuffer();  // stores the # and * pattern
@@ -1299,7 +1302,7 @@ public class TranslatorReader extends Reader
             {
                 res = startBlockLevel()+m_renderer.openPreformatted( isBlock );
                 m_isPre = true;
-		m_isEscaping = true;
+                m_isEscaping = true;
             }
             else
             {
@@ -1757,22 +1760,12 @@ public class TranslatorReader extends Reader
 
         while( ch != -1 )
         {
-            if( ch == '\\' ) 
+            if( endChars.indexOf((char)ch) == -1 )
             {
-                ch = nextToken(); 
-                if( ch == -1 ) 
-                {
-                    break;
-                }
+                pushBack( ch );
+                break;
             }
-            else
-            {
-                if( endChars.indexOf((char)ch) == -1 )
-                {
-                    pushBack( ch );
-                    break;
-                }
-            }
+            
             sb.append( (char) ch );
             ch = nextToken();
         }
@@ -1781,7 +1774,12 @@ public class TranslatorReader extends Reader
     }
 
     
-
+    /**
+     *  Handles constructs of type %%(style) and %%class
+     * @param newLine
+     * @return
+     * @throws IOException
+     */
     private String handleDiv( boolean newLine )
         throws IOException
     {
@@ -1796,6 +1794,8 @@ public class TranslatorReader extends Reader
 
             ch = nextToken();
 
+            boolean isspan = false;
+            
             //
             //  Style or class?
             //
@@ -1808,22 +1808,63 @@ public class TranslatorReader extends Reader
             {
                 pushBack( ch );
                 clazz = readUntil( " \t\n\r" );
+                ch = nextToken();
+                
+                //
+                //  Pop out only spaces, so that the upcoming EOL check does not check the
+                //  next line.
+                //
+                if( ch == '\n' || ch == '\r' )
+                {
+                    pushBack(ch);
+                }
             }
             else
             {
                 //
                 // Anything else stops.
                 //
-                sb.append( m_renderer.closeDiv() );
+
+                pushBack(ch);
+                
+                Boolean isSpan = (Boolean)m_styleStack.pop();
+                
+                if( isSpan == null )
+                {
+                    // Fail quietly
+                }
+                else if( isSpan.booleanValue() )
+                {
+                    sb.append( m_renderer.closeSpan() );
+                }
+                else
+                {
+                    sb.append( m_renderer.closeDiv() );
+                }
 
                 return sb.toString();
             }
 
-            // sb.append( newLine ? "<div" : "<span" );
-
-            sb.append( startBlockLevel() );
-            sb.append( m_renderer.openDiv( style, clazz ) );
-
+            //
+            //  Decide if we should open a div or a span?
+            //
+            String eol = peekAheadLine();
+            
+            if( eol.trim().length() > 0 )
+            {
+                // There is stuff after the class
+                
+                sb.append( m_renderer.openSpan( style, clazz ) );
+                
+                m_styleStack.push( Boolean.TRUE );
+            }
+            else
+            {
+                sb.append( startBlockLevel() );
+                sb.append( m_renderer.openDiv( style, clazz ) );
+                m_styleStack.push( Boolean.FALSE );
+            }
+            
             return sb.toString();
         }
 
@@ -1887,15 +1928,20 @@ public class TranslatorReader extends Reader
     {
         int ch = nextToken();
 
-        if( ch == '|' )
-            return "|";
-
+        if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' || 
+            ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
+            ch == '{' || ch == ']' || ch == '}' )
+        {
+            StringBuffer sb = new StringBuffer();
+            sb.append( (char)ch );
+            sb.append(readWhile( ""+(char)ch ));
+            return sb.toString();
+        }
+        
         if( Character.isUpperCase( (char) ch ) )
         {
             return String.valueOf( (char)ch );
         }
-
-        if( ch == '~' ) return "~"; // Escapes itself.
 
         // No escape.
         pushBack( ch );
@@ -2355,11 +2401,28 @@ public class TranslatorReader extends Reader
             return sb.toString();
         }
 
+        public String openSpan( String style, String clazz )
+        {
+            StringBuffer sb = new StringBuffer();
+
+            sb.append( "<span" );
+            sb.append( style != null ? " style=\""+style+"\"" : "" );
+            sb.append( clazz != null ? " class=\""+clazz+"\"" : "" );
+            sb.append( ">" );
+
+            return sb.toString();
+        }
+
         public String closeDiv()
         {
             return "</div>";
         }
 
+        public String closeSpan()
+        {
+            return "</span>";
+        }
+        
         public String openParagraph()
         {
             return "<p>";
@@ -2805,6 +2868,16 @@ public class TranslatorReader extends Reader
         }
 
         public String closeDiv()
+        {
+            return "";
+        }
+
+        public String openSpan( String style, String clazz )
+        {
+            return "";
+        }
+
+        public String closeSpan()
         {
             return "";
         }
