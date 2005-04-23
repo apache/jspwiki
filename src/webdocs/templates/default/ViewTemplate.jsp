@@ -14,7 +14,7 @@
   </wiki:CheckVersion>
 </head>
 
-<body bgcolor="#FFFFFF">
+<body class="view" bgcolor="#FFFFFF">
 
 <table border="0" cellspacing="8" width="95%">
 
