@@ -130,4 +130,31 @@ public class HttpUtil
         return false;
     }
 
+    /**
+     *  Attempts to form a valid URI based on the string given.  Currently
+     *  it can guess email addresses (mailto:).  If nothing else is given,
+     *  it assumes it to be a http:// url.
+     * 
+     *  @param uri  URI to take a poke at
+     *  @return Possibly a valid URI
+     *  @since 2.2.8
+     */
+    public static String guessValidURI( String uri )
+    {
+        if( uri.indexOf('@') != -1 )
+        {
+            if( !uri.startsWith("mailto:") )
+            {
+                // Assume this is an email address
+            
+                uri = "mailto:"+uri;
+            }
+        }
+        else if( uri.length() > 0 && !((uri.startsWith("http://") || uri.startsWith("https://")) ))
+        {
+            uri = "http://"+uri;
+        }
+        
+        return uri;
+    }
 }
