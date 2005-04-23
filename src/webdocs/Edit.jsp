@@ -30,6 +30,7 @@
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
     String append  = request.getParameter("append");
+    String edit    = request.getParameter("edit");
     String author  = wiki.safeGetParameter( request, "author" );
     String text    = wiki.safeGetParameter( request, "text" );
 
