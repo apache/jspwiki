@@ -602,6 +602,49 @@ public class TranslatorReaderTest extends TestCase
                       translate(testEngine2,src));
     }
 
+    /**
+     * Are attachments parsed correctly also when using gappy text?
+     */
+    public void testAttachmentLink3()
+    throws Exception
+    {
+        TestEngine testEngine2 = new TestEngine( props );
+   
+        testEngine2.saveText( "TestPage", "foo ");
+        created.addElement( "TestPage" );
+
+        Attachment att = new Attachment( "TestPage", "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+
+        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+
+        String src = "[Test page/TestAtt.txt]";
+
+        assertEquals( "<a class=\"attachment\" href=\"attach/TestPage/TestAtt.txt\">Test page/TestAtt.txt</a>"+
+                      "<a href=\"PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"images/attachment_small.png\" border=\"0\" alt=\"(info)\"/></a>",
+                      translate(testEngine2,src));
+    }
+
+    public void testAttachmentLink4()
+    throws Exception
+    {
+        TestEngine testEngine2 = new TestEngine( props );
+   
+        testEngine2.saveText( "TestPage", "foo ");
+        created.addElement( "TestPage" );
+
+        Attachment att = new Attachment( "TestPage", "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+
+        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+
+        String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
+
+        assertEquals( "<a class=\"attachment\" href=\"attach/TestPage/TestAtt.txt\">TestPage/TestAtt.txt</a>"+
+                      "<a href=\"PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"images/attachment_small.png\" border=\"0\" alt=\"(info)\"/></a>",
+                      translate(testEngine2,src));
+    }
+
     public void testNoHyperlink()
         throws Exception
     {
