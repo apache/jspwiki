@@ -41,8 +41,6 @@ import java.util.*;
  * </pre>
  *
  * <p>Mandatory parameters:
- * <br>The <i>element</i> field specifies that this is a form open 
- * invocation.
  * <br>The <i>name</i> field identifies this particular form to the 
  * Form plugin across pages.
  * <br>The <i>handler</i> field is a WikiPlugin name; it will be 
@@ -78,7 +76,7 @@ public class FormOpen
     {
         String formName = (String)params.get( PARAM_FORM );
         if( formName == null )
-            throw new PluginException( "The Form 'open' element is missing the 'name' parameter." ); 
+            throw new PluginException( "The FormOpen element is missing the '"+PARAM_FORM+"' parameter." ); 
         String hide     = (String)params.get( PARAM_HIDEFORM );
         String sourcePage = ctx.getPage().getName();
         String submitServlet = (String)params.get( PARAM_SUBMITHANDLER );
