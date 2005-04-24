@@ -45,6 +45,13 @@ TABLE.wikitable * TH { }
 /* This is the Edit.jsp editor style */
 TEXTAREA.editor {}
 
+pre { 
+      white-space: pre;
+      margin:      1em 2em 1em 2em; 
+      background:  #f0f0f0;
+      border:      1px dotted #3c78b5;  
+     }
+
 /* The text how the "This is a preview" comment should be shown. */
 .previewnote {
                text-align: center;
