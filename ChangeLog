@@ -2,6 +2,9 @@
 
         * v2.2.9.
 
+        * Added missing attribute of PageDate: format to jspwiki.tld.
+        Oops... This one had been missing for quite some time.
+        
         * Changed the default template somewhat.
 
         * UnusedPagesPlugin no longer inlines images.
