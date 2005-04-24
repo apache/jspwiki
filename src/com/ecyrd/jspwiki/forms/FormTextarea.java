@@ -34,7 +34,7 @@ public class FormTextarea
     extends FormElement
 {
     private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormTextarea.class );
+        org.apache.log4j.Logger.getLogger( FormTextarea.class );
 
     public static final String PARAM_ROWS = "rows";
     public static final String PARAM_COLS = "cols";
@@ -53,10 +53,10 @@ public class FormTextarea
         }
 
         Map previousValues = info.getSubmission();
-	if( previousValues == null )
-	{
-	    previousValues = new HashMap();
-	}
+        if( previousValues == null )
+        {
+            previousValues = new HashMap();
+        }
 
         ConcreteElement field = null;
 
@@ -81,17 +81,17 @@ public class FormTextarea
             throw new PluginException( "Textarea element is missing " +
 				       "parameter 'name'." );
 	
-	// In order to isolate posted form elements into their own
-	// map, prefix the variable name here. It will be stripped
-	// when the handler plugin is executed.
+        // In order to isolate posted form elements into their own
+        // map, prefix the variable name here. It will be stripped
+        // when the handler plugin is executed.
         TextArea field = new TextArea( HANDLERPARAM_PREFIX + inputName,
 				       rows, cols);
 	
         if( previousValues != null )
-	{
+        {
             String oldValue = (String)previousValues.get( inputName );
             if( oldValue != null )
-	    {
+            {
                 field.addElement( oldValue );
             }
             else

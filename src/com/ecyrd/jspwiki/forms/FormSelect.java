@@ -34,7 +34,7 @@ public class FormSelect
     extends FormElement
 {
     private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormSelect.class );
+        org.apache.log4j.Logger.getLogger( FormSelect.class );
 
     public String execute( WikiContext ctx, Map params )
         throws PluginException
@@ -50,10 +50,10 @@ public class FormSelect
         }
 
         Map previousValues = info.getSubmission();
-	if( previousValues == null )
-	{
-	    previousValues = new HashMap();
-	}
+        if( previousValues == null )
+        {
+            previousValues = new HashMap();
+        }
 
         ConcreteElement field = null;
 
@@ -76,10 +76,13 @@ public class FormSelect
         String inputName = (String)pluginParams.get( PARAM_INPUTNAME );
         if( inputName == null )
             throw new PluginException( "Select element is missing parameter 'name'." );
+    
         String inputValue = (String)pluginParams.get( PARAM_VALUE );
         String previousValue = (String)ctxValues.get( inputName );
+        //
         // We provide several ways to override the separator, in case
         // some input application the default value.
+        //
         String optionSeparator = (String)pluginParams.get( "separator" );
         if( optionSeparator == null )
             optionSeparator = (String)ctxValues.get( "separator." + inputName);
@@ -87,6 +90,7 @@ public class FormSelect
             optionSeparator = (String)ctxValues.get( "select.separator" );
         if( optionSeparator == null )
             optionSeparator = ";";
+        
         String optionSelector = (String)pluginParams.get( "selector" );
         if( optionSelector == null )
             optionSelector = (String)ctxValues.get( "selector." + inputName );
