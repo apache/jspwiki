@@ -382,6 +382,10 @@
     <name>PageDate</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageDateTag</tagclass>
     <bodycontent>empty</bodycontent>
+    <attribute>
+        <name>format</name>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>
   
   <tag>
