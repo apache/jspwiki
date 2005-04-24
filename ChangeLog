@@ -1,5 +1,11 @@
 2005-04-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.2.9.
+
+        * Changed the default template somewhat.
+
+        * UnusedPagesPlugin no longer inlines images.
+
         * v2.2.8
 
         * Added 'class="body"' to default template body, as per
