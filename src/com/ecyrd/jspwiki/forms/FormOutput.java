@@ -59,7 +59,7 @@ public class FormOutput
         String populator  = (String)params.get( PARAM_POPULATE );
 
         if( submitForm == null || formName == null || 
-	    !formName.equals( submitForm ) )
+            !formName.equals( submitForm ) )
         {
             // No submitForm -> this was not a submission from the
             // generated form.  If populate is specified, we'll go
