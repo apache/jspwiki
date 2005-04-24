@@ -154,7 +154,8 @@ public abstract class AbstractReferralPlugin
             in     = new TranslatorReader( context,
                                            new StringReader( wikitext ) );
             in.addLinkTransmutator( new CutMutator(m_maxwidth) );
-
+            in.enableImageInlining( false );
+            
             result = FileUtil.readContents( in );
         }
         catch( IOException e )
