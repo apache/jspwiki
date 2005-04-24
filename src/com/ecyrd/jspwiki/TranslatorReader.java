@@ -160,6 +160,8 @@ public class TranslatorReader extends Reader
 
     private boolean                m_useRelNofollow      = false;
 
+    private boolean                m_inlineImages        = true;
+    
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
@@ -414,6 +416,18 @@ public class TranslatorReader extends Reader
     }
 
     /**
+     *  Use this to turn on or off image inlining.
+     *  @param toggle If true, images are inlined (as per set in jspwiki.properties)
+     *                If false, then images won't be inlined; instead, they will be
+     *                treated as standard hyperlinks.
+     *  @since 2.2.9
+     */
+    public void enableImageInlining( boolean toggle )
+    {
+        m_inlineImages = toggle;
+    }
+    
+    /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
      */
@@ -620,10 +634,13 @@ public class TranslatorReader extends Reader
      */
     private boolean isImageLink( String link )
     {
-        for( Iterator i = m_inlineImagePatterns.iterator(); i.hasNext(); )
+        if( m_inlineImages )
         {
-            if( m_inlineMatcher.matches( link, (Pattern) i.next() ) )
-                return true;
+            for( Iterator i = m_inlineImagePatterns.iterator(); i.hasNext(); )
+            {
+                if( m_inlineMatcher.matches( link, (Pattern) i.next() ) )
+                    return true;
+            }
         }
 
         return false;
