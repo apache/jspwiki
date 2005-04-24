@@ -1,6 +1,9 @@
 /* Put all generic definitions here. */
 H1,H2,H3,H4 { font-family: Arial, Helvetica, sans-serif }
-    
+
+h2 { border-bottom: 2px grey solid }
+h3 { border-bottom: 1px grey solid }
+
 DIV.small   { font-size: 70%; }
 H1.pagename { margin-top: 0; }
 IMG.inline  {}
@@ -39,20 +42,22 @@ TABLE.wikitable { }
 TABLE.wikitable * TD { text-align: left; }
 TABLE.wikitable * TH { }
 
-/* Added in 1.6.13 */
-
 /* This is the Edit.jsp editor style */
 TEXTAREA.editor {}
 
-/* Added in 1.9.20 */
-
 /* The text how the "This is a preview" comment should be shown. */
-.previewnote { text-align: center; 
-                font-size: 150%; 
-                    color: red; }
+.previewnote {
+               text-align: center;
+               font-size: 100%;
+               background:  #fff0f0;
+               padding: 1em;
+               }
 
 /* How the preview content should be shown */
-.previewcontent { background: #E0E0E0; }
+.previewcontent {
+                  background: #E0E0E0;
+                  padding: 1em;
+                  } 
 
 /* How the system messages should be shown (DisplayMessage.jsp) */
 .messagecontent { background: #E0E0E0; }
