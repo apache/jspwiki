@@ -17,4 +17,5 @@ For an example, please see [WikiFormsExampleText].
 !Included handlers
 
 * [BugReportHandler]
+* [SearchPlugin]
 * ... and most of the [JSPWikiPlugins] can also take input from forms.

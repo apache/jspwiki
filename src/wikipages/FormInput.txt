@@ -1,0 +1,29 @@
+The [FormInput] -element allows you to create different kinds of basic HTML form elements: text, password, button, etc.
+
+!Parameters
+
+* __type__ : The type of the input field.  It can be any of the basic HTML types: "text", "password", "button" or "submit". This is mandatory.
+* __name__ : A name for the input field.  This is optional, but very good to set, if you want your value to be visible in submission...
+* __value__ : A preset value for the field.  You can also set them via the [FormSet] -plugin.
+* __size__ : The size of the input field.
+
+!Examples
+
+{{{
+[{FormOpen form='helloform'}]
+Hello, [{FormInput type='text' name='hellotext'}]
+[{FormInput type='submit' value='Submit, please' name='submit'}]
+[{FormClose}]
+}}}
+
+Would appear like this:
+
+[{FormOpen form='helloform'}]
+Hello, [{FormInput type='text' name='hellotext'}]
+[{FormInput type='submit' value='Submit, please' name='submit'}]
+[{FormClose}]
+
+
+----
+
+Back to [WikiForms].

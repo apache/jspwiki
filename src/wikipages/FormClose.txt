@@ -1,0 +1,15 @@
+[FormClose] functions as a complementary to [FormOpen].  All forms must be closed with [FormClose].
+
+!Parameters
+
+None.
+
+!Example
+
+{{{
+[{FormClose}]
+}}}
+
+----
+
+Back to [WikiForms].
