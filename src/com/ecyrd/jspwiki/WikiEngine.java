@@ -888,7 +888,9 @@ public class WikiEngine
 
     /**
      *  Beautifies the title of the page by appending spaces in suitable
-     *  places.
+     *  places, if the user has so decreed in the properties when constructing
+     *  this WikiEngine.  However, attachment names are not beautified, no
+     *  matter what.
      *
      *  @since 1.7.11
      */
@@ -896,7 +898,17 @@ public class WikiEngine
     {
         if( m_beautifyTitle )
         {
-            return TextUtil.beautifyString( title );
+            try
+            {
+                if(m_attachmentManager.getAttachmentInfo(title) == null)
+                {
+                    return TextUtil.beautifyString( title );
+                }
+            }
+            catch( ProviderException e )
+            {
+                return title;
+            }
         }
 
         return title;
