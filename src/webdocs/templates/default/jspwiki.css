@@ -22,8 +22,9 @@ P.versionnote { color: red;
 
 H3.leftmenuheading { margin-top: 0; }
 BODY.edit   { background-color: #D9E8FF; } /* Edit.jsp BODY element */
-TD.leftmenu { }                            /* Left menu */
-TD.page     { }                            /* Page data area */
+.leftmenu { font-family: arial, helvetica, sans-serif;
+                  font-size: 90%; }  /* Left menu */
+.page     { }                            /* Page data area */
 A.wikipage  { }                            /* Normal, internal wiki reference */
 A.external  { }                            /* External reference */
 A.interwiki { }                            /* Interwiki reference */
@@ -227,3 +228,30 @@ div.commentbox {
 .diff-nextprev 
     { font-size: 60%; vertical-align: super; text-decoration: none; }
 
+
+.zebra-table TH
+    { background:  #e0e0e0;
+    }
+    
+.zebra-table TR.odd TD
+    { background:  #f0f0f0;
+    }
+
+.versionhistory
+    { font-size: 80%;
+      font-family: arial, helvetica, sans-serif;
+    }
+
+.attachments
+    { font-family: arial, helvetica, sans-serif;
+      font-size: 90%;
+    }
+
+.attachments h3
+    { margin-bottom: 0px;
+      padding-bottom: 0px; }
+
+ .versionhistory
+    { font-size: 85%;
+       font-family: arial, helvetica, sans-serif;
+    }
