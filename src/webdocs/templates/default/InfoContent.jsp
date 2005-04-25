@@ -45,7 +45,8 @@ function confirmDelete()
        <tr>
            <td valign="top"><b>Page revision history</b></td>
            <td>
-               <table border="1" cellpadding="4">
+             <div class="zebra-table">
+               <table border="1" cellpadding="4" class="versionhistory">
                    <tr>
                         <th>Version</th>                        
                         <th>Date <wiki:PageType type="page">(and differences to current)</wiki:PageType></th>
@@ -54,9 +55,11 @@ function confirmDelete()
                         <wiki:PageType type="page">                        
                             <th>Changes from previous</th>
                         </wiki:PageType>
+<%--
                         <wiki:Permission permission="delete">
                             <th>Delete</th>
                         </wiki:Permission>
+ --%>
                    </tr>
                    <wiki:HistoryIterator id="currentPage">
                      <tr>
@@ -93,18 +96,23 @@ function confirmDelete()
                            </td>
                          </wiki:PageType>
 
+<%--
                          <wiki:Permission permission="delete">
                              <td>
                                  <input type="checkbox" name="delver-<%=currentPage.getVersion()%>" />
                              </td>
                          </wiki:Permission>
+  --%>
                      </tr>
                    </wiki:HistoryIterator>
                </table>
+               </div>
                <wiki:Permission permission="delete">
                    <br /><br />
+                   <%--
                    <input type="submit" name="delete" value="Delete marked versions only"/>
                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   --%>
                    <input type="submit" name="delete-all" value="Delete entire page"/>
                </wiki:Permission>
            </td>
