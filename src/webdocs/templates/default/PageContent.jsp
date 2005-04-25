@@ -28,9 +28,11 @@
       <br clear="all" />
 
       <wiki:HasAttachments>
-         <b>Attachments:</b>
+         <div class="attachments">
 
-         <div class="attachments" align="center">
+         <h3>Attachments:</h3>
+
+         <div class="zebra-table" align="center">
          <table width="90%">
          <wiki:AttachmentsIterator id="att">
              <tr>
@@ -40,6 +42,7 @@
              </tr>
          </wiki:AttachmentsIterator>
          </table>
+         </div>
          </div>
       </wiki:HasAttachments>
 
