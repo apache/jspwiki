@@ -1730,6 +1730,37 @@ public class TranslatorReader extends Reader
     }
 
     /**
+     *  Reads the stream until the current brace is closed or stream end. 
+     */
+    private String readBraceContent( char opening, char closing )
+        throws IOException
+    {
+        StringBuffer sb = new StringBuffer();
+        int braceLevel = 1;    
+        int ch;        
+        while(( ch = nextToken() ) != -1 )
+        {
+            if( ch == '\\' ) 
+            {
+                continue;
+            }
+            else if ( ch == opening ) 
+            {
+                braceLevel++;
+            }
+            else if ( ch == closing ) 
+            {
+                braceLevel--;
+                if (braceLevel==0) {
+                  break;
+                }
+            }
+            sb.append( (char)ch );
+        }    
+        return sb.toString();
+    }
+
+    /**
      *  Reads the stream until it meets one of the specified
      *  ending characters, or stream end.  The ending character will be left
      *  in the stream.
@@ -1818,8 +1849,7 @@ public class TranslatorReader extends Reader
             //
             if( ch == '(' )
             {                
-                style = readUntil( ")" );
-                nextToken(); // Pop the ) from the list, too.
+                style = readBraceContent('(',')');
             }
             else if( Character.isLetter( (char) ch ) )
             {
