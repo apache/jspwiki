@@ -1,3 +1,10 @@
+2005-04-29  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.10.
+
+        * Added patch from Sebastian Baltes to fix issues with style
+        embedding: %%(color:rgb(1,2,3)) would not work.
+
 2005-04-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.9.
