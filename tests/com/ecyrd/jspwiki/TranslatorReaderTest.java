@@ -1913,6 +1913,14 @@ public class TranslatorReaderTest extends TestCase
         assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
+    public void testSpanNested()
+    throws Exception
+    {
+        String src = "Johan %%(color: rgb(1,2,3);)test%%\n";
+        
+        assertEquals( "Johan <span style=\"color: rgb(1,2,3);\">test</span>\n", translate(src) );
+    }
+
     public void testSpanStyleTable()
     throws Exception
     {
