@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Styles>
+        <Style name="Code" element="pre" />
+        <Style name="Large heading" element="h2" />
+        <Style name="Medium heading" element="h3" />
+        <Style name="Small heading" element="h4" />
+        <Style name="Custom Ruler" element="hr">
+                <Attribute name="size" value="1" />
+                <Attribute name="color" value="#ff0000" />
+        </Style>
+</Styles>
