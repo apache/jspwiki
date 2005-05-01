@@ -9,6 +9,7 @@
   <title><wiki:Variable var="ApplicationName" /> Edit: <wiki:PageName /></title>
   <meta name="ROBOTS" content="NOINDEX" />
   <wiki:Include page="commonheader.jsp"/>
+  <!-- <script type="text/javascript" src="scripts/fckeditor/fckeditor.js"></script> -->
 </head>
 
 <wiki:CheckRequestContext context="edit">
