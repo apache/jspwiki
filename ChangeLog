@@ -1,3 +1,24 @@
+2005-05-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.11.
+
+        * Incorporated the FCK editor for WYSIWYG editing, as well
+        as the XHTML import functionality from Sebastian Baltes.
+        Thanks heaps!
+        
+        This is an experimental feature: you need to turn it explicitly
+        on with "jspwiki.editor=FCK" in your jspwiki.properties,
+        and also uncomment the <script> tag in EditTemplate.jsp.  The
+        editor is known to fail or behave really strangely on occasion,
+        and many of the functionalities do not simply work (like
+        image insertion), so I'm disabling quite a lot of work for now.
+        Check out scripts/fckconfig.js and scripts/fckstyles.xml for
+        examples.
+        
+        The WYSIWYG editor will remain an experimental feature for now.
+        
+        You need to install FCKEditor yourself into scripts/fckeditor.
+
 2005-04-29  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.10.
