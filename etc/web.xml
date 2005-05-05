@@ -65,6 +65,10 @@
        <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
    </servlet>
 
+   <servlet>
+       <servlet-name>DAVServlet</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.dav.WikiDavServlet</servlet-class>
+   </servlet>
 
    <!--
        Attachment exchange handler.
@@ -112,6 +116,13 @@
        <servlet-name>WikiServlet</servlet-name>
        <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
+
+   <!-- Remove to enable WebDav. EXPERIMENTAL FEATURE!
+   <servlet-mapping>
+       <servlet-name>DAVServlet</servlet-name>
+       <url-pattern>/dav/*</url-pattern>
+   </servlet-mapping>
+   -->
 
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->
