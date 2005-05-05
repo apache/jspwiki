@@ -14,6 +14,7 @@ import org.apache.ecs.xhtml.script;
 import org.apache.ecs.xhtml.textarea;
 
 import com.ecyrd.jspwiki.NoSuchVariableException;
+import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
@@ -40,7 +41,9 @@ public class EditorAreaTag extends WikiTagBase
     {
         WikiEngine engine = context.getEngine();
         
-        // FIXME: Does not properly disable plugins
+        // FIXME: Should this change the properties?
+        context.setVariable( WikiEngine.PROP_RUNFILTERS, "false" );
+        context.setVariable( TranslatorReader.PROP_RUNPLUGINS, "false" );
         String pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.textToHTML( context, getText(context) ) );
 
         div container = new div();
