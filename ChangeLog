@@ -1,3 +1,21 @@
+2005-05-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.12
+        
+        * Bug fix: FCK editing now disables plugins and filters 
+        properly.
+        
+        * Bug fix: search hilighting didn't work.
+
+        * JSPWiki is now a WebDAV Class-1 server.  The support is not
+        yet complete, nor are we completely Class-1 compliant, but
+        you can now browse your JSPWiki repository by pointing at your
+        $baseurl/dav/.  Attachment support is forthcoming, as soon
+        as I figure out what's the best approach.  Authoring support
+        will also be enabled soon.
+        
+        (To enable this functionality, check out the new web.xml).
+
 2005-05-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.11.
