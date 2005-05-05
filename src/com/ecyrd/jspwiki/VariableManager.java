@@ -145,6 +145,18 @@ public class VariableManager
         return result.toString();
     }
 
+    public String getValue( WikiContext context, String varName, String defValue )
+    {
+        try
+        {
+            return getValue( context, varName );
+        }
+        catch( NoSuchVariableException e )
+        {
+            return defValue;
+        }
+    }
+    
     /**
      *  Returns a value of the named variable.
      *
