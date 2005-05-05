@@ -60,6 +60,7 @@ function skinSelect(skin)
 function runOnLoad()
 { 
   validateZebraTable();
+  googleSearchHighlight();
 }
 
 window.onload = runOnLoad;
