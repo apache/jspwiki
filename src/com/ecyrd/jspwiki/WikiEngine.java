@@ -117,6 +117,9 @@ public class WikiEngine
 
     private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
+    /** If this property is set to false, all filters are disabled when translating. */
+    public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
+    
     /** Path to the default property file. 
      *  @value /WEB_INF/jspwiki.properties
      */
@@ -1339,9 +1342,12 @@ public class WikiEngine
         TranslatorReader in = null;
         Collection links = null;
 
+        boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
+        
         try
         {
-            pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
+            if( runFilters )
+                pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
             in = new TranslatorReader( context,
                                        new StringReader( pagedata ) );
@@ -1353,7 +1359,8 @@ public class WikiEngine
             if( !parseAccessRules ) in.disableAccessRules();
             result = FileUtil.readContents( in );
 
-            result = m_filterManager.doPostTranslateFiltering( context, result );
+            if( runFilters )
+                result = m_filterManager.doPostTranslateFiltering( context, result );
         }
         catch( IOException e )
         {
