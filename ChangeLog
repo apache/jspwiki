@@ -1,3 +1,17 @@
+2005-05-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.13
+
+        * Bug fix: Empty links no longer generate warnings.
+        
+        * The non-existing page links are now generated without the
+        annoying underline as a proper hyperlink.  You'll probably
+        want to copy the link code from jspwiki.css...
+        
+        * Bug fix: Headings now generate the link anchor at zero
+        length, so that they should no longer confuse people who
+        write CSS.
+
 2005-05-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.12
