@@ -463,7 +463,9 @@ public class TranslatorReader extends Reader
     private String linkExists( String page )
     {
         try
-        {
+		{
+			if( page == null || page.length() == 0 ) return null;
+			
             return m_engine.getFinalPageName( page );
         }
         catch( ProviderException e )
@@ -1068,9 +1070,10 @@ public class TranslatorReader extends Reader
 
                 callMutatorChain( m_localLinkMutatorChain, reallink );
 
-                String matchedLink;
-                if( (matchedLink = linkExists( reallink )) != null )
-                {
+                String matchedLink = linkExists( reallink );
+				
+                if( matchedLink != null )
+				{
                     sb.append( makeLink( READ, matchedLink, link ) );
                 }
                 else
@@ -2602,8 +2605,9 @@ public class TranslatorReader extends Reader
                 break;
 
               case EDIT:
-                result = "<u>"+text+"</u><a href=\""+getURL(WikiContext.EDIT,
-                                                            link)+"\">?</a>";
+                result = "<a class=\"editpage\" title=\"Create '"+link+"'\" href=\""+
+                		  getURL(WikiContext.EDIT, link)+"\">"+
+                		  text+"</a>";
                 break;
 
               case EMPTY:
@@ -2709,7 +2713,7 @@ public class TranslatorReader extends Reader
             hd.m_titleSection = m_engine.encodeName(title);
             hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
                                "-"+hd.m_titleSection;            
-            return "<a name=\""+hd.m_titleAnchor+"\">";
+            return "<a name=\""+hd.m_titleAnchor+"\"/>";
         }
 
         
@@ -2747,17 +2751,17 @@ public class TranslatorReader extends Reader
             {
               case Heading.HEADING_SMALL:
                 res = "<h4>"+makeHeadingAnchor( pageName, outTitle.toString(), hd );
-                m_closeTag = "</a></h4>";
+                m_closeTag = "</h4>";
                 break;
 
               case Heading.HEADING_MEDIUM:
                 res = "<h3>"+makeHeadingAnchor( pageName, outTitle.toString(), hd );
-                m_closeTag = "</a></h3>";
+                m_closeTag = "</h3>";
                 break;
 
               case Heading.HEADING_LARGE:
                 res = "<h2>"+makeHeadingAnchor( pageName, outTitle.toString(), hd );
-                m_closeTag = "</a></h2>";
+                m_closeTag = "</h2>";
                 break;
             }
 
