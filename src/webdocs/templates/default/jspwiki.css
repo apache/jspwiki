@@ -11,7 +11,7 @@ IMG.inline  {}
 A.footnoteref { vertical-align: super; 
                 font-size: 70%; }
 A.footnote    { color: #0044AA; }
-P.versionnote { color: red;
+P.versionnote { color: blue;
                 font-size: 130%;
                 text-align: center; 
                 background: #EAEAEA;
@@ -26,6 +26,11 @@ BODY.edit   { background-color: #D9E8FF; } /* Edit.jsp BODY element */
                   font-size: 90%; }  /* Left menu */
 .page     { }                            /* Page data area */
 A.wikipage  { }                            /* Normal, internal wiki reference */
+A.editpage  { 
+	color: #FF0000;
+ 	text-decoration: none;
+ 	border-bottom: 1px dashed red;
+ 	}
 A.external  { }                            /* External reference */
 A.interwiki { }                            /* Interwiki reference */
 
