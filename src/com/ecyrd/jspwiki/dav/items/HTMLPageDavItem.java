@@ -29,13 +29,9 @@ public class HTMLPageDavItem extends PageDavItem
     public HTMLPageDavItem( WikiEngine engine, WikiPage page )
     {
         super( engine, page );
-        // TODO Auto-generated constructor stub
     }
 
     
-    /* (non-Javadoc)
-     * @see com.ecyrd.jspwiki.dav.DavItem#getHref()
-     */
     public String getHref()
     {
         return m_engine.getURL( WikiContext.NONE,
@@ -43,9 +39,7 @@ public class HTMLPageDavItem extends PageDavItem
                                 null,
                                 true );    
     }
-    /* (non-Javadoc)
-     * @see com.ecyrd.jspwiki.dav.DavItem#getPropertySet()
-     */
+ 
     public Collection getPropertySet()
     {
         Collection set = getCommonProperties();
