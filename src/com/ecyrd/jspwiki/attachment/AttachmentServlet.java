@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.attachment;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,9 @@ import com.ecyrd.jspwiki.util.HttpUtil;
 import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.dav.WebdavServlet;
+import com.ecyrd.jspwiki.dav.methods.DavMethod;
+import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
 import com.ecyrd.jspwiki.filters.RedirectException;
 
 // multipartrequest.jar imports:
@@ -54,7 +58,7 @@ import http.utils.multipartrequest.*;
  * @since 1.9.45.
  */
 public class AttachmentServlet
-    extends HttpServlet
+    extends WebdavServlet
 {
     private WikiEngine m_engine;
     Logger log = Logger.getLogger(this.getClass().getName());
@@ -109,6 +113,21 @@ public class AttachmentServlet
                    m_tmpDir + " for temporary storage." );
     }
 
+	public void doPropFind( HttpServletRequest req, HttpServletResponse res )
+    throws IOException, ServletException
+    {
+        DavMethod dm = new PropFindMethod( m_engine );
+        
+        dm.execute( req, res );
+	}
+
+    protected void doOptions( HttpServletRequest req, HttpServletResponse res )
+    {
+        res.setHeader( "DAV", "1" ); // We support only Class 1
+        res.setHeader( "Allow", "GET, PUT, POST, OPTIONS, PROPFIND, PROPPATCH, MOVE, COPY, DELETE");
+        res.setStatus( HttpServletResponse.SC_OK );
+    }
+	
     /**
      * Serves a GET with two parameters: 'wikiname' specifying the wikiname
      * of the attachment, 'version' specifying the version indicator.
