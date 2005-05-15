@@ -121,11 +121,12 @@ public class EditorAreaTag extends WikiTagBase
 
         area.setClass("editor");
         area.setWrap("virtual");
-        area.setName("text");
+        area.setName("editorarea");
         area.setRows( 25 );
         area.setCols( 80 );
         area.setStyle( "width:100%;" );
-       
+        area.setID( "editorarea" );  // FIXME: Should really be settable in case there are several
+        
         String text = getText( context );
         if( text != null ) area.addElement( text );
         
