@@ -45,6 +45,8 @@ public class InsertPage
 
     private static final String DEFAULT_STYLE = "";
 
+    public static final String ATTR_RECURSE    = "com.ecyrd.jspwiki.plugin.InsertPage.recurseCheck";
+    
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -85,10 +87,33 @@ public class InsertPage
                     return res.toString();
                 }
                 */
+                
+                //
+                //  Check for recursivity
+                //
+                
+                List previousIncludes = (List)context.getVariable( ATTR_RECURSE );
+                
+                if( previousIncludes != null )
+                {
+                    if( previousIncludes.contains( page.getName() ) )
+                    {
+                        return "<span class=\"error\">Error: Circular reference - you can't include a page in itself!";
+                    }
+                }
+                else
+                {
+                    previousIncludes = new ArrayList();
+                }
+               
+                previousIncludes.add( page.getName() );
+                context.setVariable( ATTR_RECURSE, previousIncludes );
+                
                 /**
                  *  We want inclusion to occur within the context of
                  *  its own page, because we need the links to be correct.
                  */
+                
                 WikiContext includedContext = (WikiContext) context.clone();
                 includedContext.setPage( page );
 
