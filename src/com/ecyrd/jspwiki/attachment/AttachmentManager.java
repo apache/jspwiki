@@ -246,6 +246,10 @@ public class AttachmentManager
             parentPage = TranslatorReader.cleanLink( parentPage );
             attachmentname = attachmentname.substring(cutpt+1);
 
+            // If we for some reason have an empty parent page name; 
+            // this can't be an attachment
+            if(parentPage.length() == 0) return null;
+            
             currentPage = m_engine.getPage( parentPage );
         }
 
