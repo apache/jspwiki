@@ -2713,7 +2713,7 @@ public class TranslatorReader extends Reader
             hd.m_titleSection = m_engine.encodeName(title);
             hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
                                "-"+hd.m_titleSection;            
-            return "<a name=\""+hd.m_titleAnchor+"\"/>";
+            return "<a name=\""+hd.m_titleAnchor+"\"></a>";
         }
 
         
