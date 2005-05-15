@@ -3,6 +3,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.tags.EditorAreaTag" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
@@ -130,7 +131,7 @@
             pageText.append( "\n\n----\n\n" );
         }        
 
-        pageText.append( wiki.safeGetParameter( request, "text" ) );
+        pageText.append( wiki.safeGetParameter( request, EditorAreaTag.AREA_NAME ) );
 
         log.debug("Author name ="+author);
         if( author != null && author.length() > 0 )

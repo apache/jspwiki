@@ -3,6 +3,7 @@
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.tags.EditorAreaTag" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
@@ -31,7 +32,7 @@
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
     String author  = wiki.safeGetParameter( request, "author" );
-    String text    = wiki.safeGetParameter( request, "text" );
+    String text    = wiki.safeGetParameter( request, EditorAreaTag.AREA_NAME );
 
     //
     //  Create context and continue
