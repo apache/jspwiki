@@ -19,6 +19,7 @@ public class AllTests extends TestCase
         suite.addTest( CounterPluginTest.suite() );
         suite.addTest( UndefinedPagesPluginTest.suite() );
         suite.addTest( TableOfContentsTest.suite() );
+        suite.addTest( InsertPageTest.suite() );
         
         return suite;
     }
