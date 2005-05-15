@@ -1,3 +1,34 @@
+2005-05-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.1.14
+
+        * Somewhere above Pakistan or Afghanistan...
+        
+        * EditorArea has now an id: "editorarea".  It also has now
+        a class "editorarea", simply because "text" was not really
+        very descriptive.  Thanks to, err, someone, for this -
+        I seem to have been very eager in deleting my email...
+        
+        * Bug fix: No more DAV NPEs with certain systems.  Patch
+        thanks to someone - sorry, I forgot...
+        
+        * Bug fix: no longer throws ConcurrentModificationException
+        in certain conditions upon startup.
+        
+        * Bug fix: InsertPage now detects circular references and it
+        is no longer possible to DoS a wiki by including a page in
+        itself.
+        
+        * Bug fix: Odd pages of format "/foo" are now catched and no
+        longer throw horrendous exceptions.
+        
+        * Fix of a bug fix: The changed heading anchor generation in
+        2.2.13 caused plenty of grief to a lot of people working with
+        CSS - instead of an empty tag we now generate an empty tag
+        pair. <a name="foo"></a> instead of <a name="foo"/>.  It seems
+        that the latter confuses quite a few parsers, even though it's
+        valid XHTML.
+
 2005-05-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.13
