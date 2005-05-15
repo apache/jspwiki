@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.dav.DavContext;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -79,6 +81,69 @@ public class DavItemFactory
         return null;
     }
 
+    private DavItem getAttachmentItem( DavContext dc )
+    {
+        String attname = dc.m_page;
+        
+        if( attname == null || attname.length() == 0 )
+        {
+            // User wants to have a listing of pages
+            
+            DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
+            
+            AttachmentManager mgr = m_engine.getAttachmentManager();
+                
+            try
+            {
+                Collection all = mgr.getAllAttachments();
+                
+                for( Iterator i = all.iterator(); i.hasNext(); )
+                {
+                    Attachment att = (Attachment)i.next();
+                    
+                    DirectoryItem dia = new AttachmentDirectoryItem( m_engine, att.getParentName() );
+           
+                    di.addDavItem( dia );
+                }
+            }
+            catch( ProviderException e )
+            {
+                log.error("Unable to get listing of attachments: ",e);
+            }
+            
+            return di;
+        }
+        else if( attname.indexOf("/") == -1 )
+        {
+            // No attachment; user wants to have a directory of a particular page
+            // FIXME: This does not work for subpages
+            
+            AttachmentDirectoryItem di = new AttachmentDirectoryItem( m_engine, attname );
+            
+            return di;
+        }
+        else
+        {
+            try
+            {
+                Attachment att = m_engine.getAttachmentManager().getAttachmentInfo( attname );
+            
+                if( att != null )
+                {
+                    AttachmentItem ai = new AttachmentItem( m_engine, att );
+                
+                    return ai;
+                }
+            }
+            catch( ProviderException e )
+            {
+                log.error("Unable to get attachment info for "+attname, e );
+            }
+        }
+        
+        return null;
+    }
+    
     private DavItem getHTMLItem( DavContext dc )
     {
         String pagename = dc.m_page;
@@ -128,6 +193,7 @@ public class DavItemFactory
         return null;
     }
 
+    
     public DavItem newItem( DavContext dc )
     {
         if( dc.m_davcontext.length() == 0 )
@@ -142,7 +208,10 @@ public class DavItemFactory
         {
             return getHTMLItem( dc );
         }
-        
+        else if( dc.m_davcontext.equals("attach") )
+        {
+            return getAttachmentItem( dc );
+        }
         return null;
         
     }
