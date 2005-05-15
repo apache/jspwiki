@@ -30,6 +30,8 @@ public class EditorAreaTag extends WikiTagBase
     public static final String EDITOR_PLAIN = "Plain";
     public static final String EDITOR_FCK   = "FCK";
     
+    public static final String AREA_NAME    = "text"; // TODO: Change
+    
     public int doWikiStartTag() throws Exception
     {
         pageContext.getOut().print( getEditorArea( m_wikiContext ).toString() );
@@ -81,7 +83,7 @@ public class EditorAreaTag extends WikiTagBase
         
         if( context.getRequestContext().equals(WikiContext.EDIT) )
         {
-            usertext = context.getHttpParameter("text");
+            usertext = context.getHttpParameter( AREA_NAME );
             if( usertext == null )
             {
                 usertext = context.getEngine().getText( context, context.getPage() );
@@ -89,7 +91,7 @@ public class EditorAreaTag extends WikiTagBase
         }
         else if( context.getRequestContext().equals(WikiContext.COMMENT) )
         {
-            usertext = context.getHttpParameter("text");
+            usertext = context.getHttpParameter( AREA_NAME );
         }
         
         return usertext;
@@ -121,7 +123,7 @@ public class EditorAreaTag extends WikiTagBase
 
         area.setClass("editor");
         area.setWrap("virtual");
-        area.setName("editorarea");
+        area.setName( AREA_NAME );
         area.setRows( 25 );
         area.setCols( 80 );
         area.setStyle( "width:100%;" );
