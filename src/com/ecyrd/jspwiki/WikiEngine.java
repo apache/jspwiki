@@ -546,7 +546,8 @@ public class WikiEngine
 
         try
         {
-            Collection pages = m_pageManager.getAllPages();
+            ArrayList pages = new ArrayList();
+            pages.addAll( m_pageManager.getAllPages() );
             pages.addAll( m_attachmentManager.getAllAttachments() );
 
             // Build a new manager with default key lists.
