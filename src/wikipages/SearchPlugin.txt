@@ -1,0 +1,17 @@
+The "Search" plugin allows you to access the JSPWiki search routines and show the displays in an array on your page.
+
+!Parameters
+
+* __query__ = ''String''.  A standard JSPWiki search query.
+* __max__ = ''Integer''.  How many search results are shown at maximum.
+* __set__ = ''String''.  The JSPWiki context variable that will hold the results of the query.  This allows you to pass your queries to other plugins on the same page as well.
+
+!Example
+
+{{{
+[{Search query='Janne' max=10}]
+}}}
+
+might produce a result somewhat like this:
+
+[{Search query='Janne' max=10}]

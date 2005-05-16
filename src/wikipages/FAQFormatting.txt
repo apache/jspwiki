@@ -1,0 +1,172 @@
+[{TableOfContents}]
+
+!!Coloured Text?
+
+Q: How can I change the colour of text on the screen - do I need a plug in or is there an inbuilt function I can use?
+
+A: Use CSS!
+
+{{{
+%%(color:red)This is red%%
+}}}
+
+Gives you %%(color:red)This is red%%
+
+
+----
+
+!!How do I create anchors and link to them in a Wiki page?
+
+I want to present a Table of Contents section in my page so that the viewer can simply click on the appropriate entry and be brought automatically to that section of the page. I know I could have each TOC entry as a link to a different page but I don't want that!
+
+A: At the moment you have to use the footnotes feature.  However, on 2.2 every heading also generates a named anchor, so you can build a table of contents using that.
+
+!!Print-friendly format?
+
+Q: Does jspwiki support a print-friendly mode? If it can, how do I use it?
+
+A: JSPWiki comes default with a print-friendly CSS.  It should be automatically activated whenever you print.
+
+!!Can we have text alignment?
+
+Q: Can align text in JSPWiki?  I mean for example can titles be centered at their line?
+
+A: In 2.0, you have to enable raw HTML, but this is a security risk.  However, in 2.2 it is already possible to apply any CSS style to any block of text.  For example
+{{{
+%%(text-align:center)
+!This text is centered.
+%%
+}}}
+Would produce centered headline "This text is centered".
+
+!!How do I configure my JSPWiki to handle JPG and GIF inline images?
+
+Testing JSPWiki for the first time, and mapping it against the feature set in UseMod (a popular engine I must now give up), I noticed immediately that GIF and JPG image formats are not supported in inline image linking.  
+
+A: Check out the {{jspwiki.translatorReader.inlinePattern}} -property in jspwiki.properties.  To support inlining of GIF images, you just add 
+{{{
+jspwiki.translatorReader.inlinePattern.gif = *.gif
+}}}
+
+to your jspwiki.properties.  By default, GIF inlining is disabled as an ongoing attempt to discourage people from using it :-).
+
+!!How to change the leftUpper icon to mine own?
+
+Q: I want to put the mine own logo on the leftUpper corner. But, there is always a JSPWiki there. How to deal with this? Or, it must be there?
+
+A: Create your own [WikiTemplate].  You can modify it at will and change it look like anything you'd ever want.
+
+!!Comments?
+
+Q: Is it possible to add a comment to a version when you change something (for pages as well as for attachments) as seen on [wikipedia|http://en.wikipedia.org/wiki/Main_Page]?
+
+A: Not currently, but it would be a nice feature.  If added, it would also be nice to see the comments shown in the recent changes/etc.  --MichaelGentry
+
+!!Is there a way I can dump all the pages to HTML
+
+I would like to set up a Wiki internally but would like to periodically publish its contents on to the Web as plain old HTML pages. Any thoughts on the best approach ?
+
+A: Two possible solutions come to mind:
+
+* Have a spider crawl it all and publish it (for example [wget|Google:wget] might work well)
+* Use [JSPWiki:Hula] by MahlenMorris to fetch the contents of all pages using XML-RPC, then apply them in your own templates.
+
+!!Implicit line breaks
+
+Q: JSPWiki is pretty much perfect for my uses, but one thing I find annoying is having to specify a line break ~\\. I prefer the classic Wiki way of inserting breaks on a newline. Is there any way I can change this?
+
+A: No.
+
+For all intents and purposes it's far better to just leave a blank line between the paragraphs.  The line break character should be used very sparingly.  The resulting WikiMarkup looks far more readable anyway if you use blank lines instead of line breaks.
+
+The other problem is that line breaks are not visible on screen while the user is editing.  This may cause a lot of confusion to newbies, if the lines break at seemingly random places.
+
+If you really, really want it, you can just easily modify TranslatorReader to emit a <br> when it meets a newline.
+
+!!Raw HTML?
+
+Q: How do you allow raw html in wbepages? I've been reading through the help files and the text formatting files and can't find it. I've found references to the fact that it has been added on these pages: WikiMarkupDevelopment and AllowingRawHTML but there is no link to any page telling you how to actually start using raw html...
+
+A: Turn on {{jspwiki.allowHTML}} in jspwiki.properties.
+
+!!Removing the attachment info link?
+
+Q: I want to tweak my wiki page for it to work more the way i want it to.  I have password restricted the edit page but i want to be able to remove the upload a file link from the view page and add it to the edit page.  Also is there any way of removing the paper clip from next to an attachment?\\
+
+A: Yes, replace the images/attachment_small.png with a transparent 1x1 png :-).  You can modify the templates at will, I just recommend that you make your own copy of the "default" template and modify that.
+
+!!Text formatting
+
+Q: Is there a general way to escape the formatting-significant characters? I see that doubled left-square-brackets gives you a literal left square bracket, but what about the others? (Immediate source of the question is this: I'm trying to build a page with an "ls -l" directory listing, where some of the files have 600 permissions, hence runs of four or more dashes, hence I'm seeing (unwanted) HRs in the output). Just getting into JSPWiki, and I apologize in advance if the answer's staring me in the face. Thanks, MarkFrancillon - Sept. 20, 2003.
+
+Three braces (like this: { { {, but no spaces)
+{{{
+    Like this ----  Can do [anything]
+}}}
+allows you to put anything there in between without it being parsed.
+
+-- JanneJalkanen
+
+Thanks. Actually I should have said that I have HTML-interpretation on, and that my text is in the middle of a bunch of HTML markup. But I see that if I get inside that markup, what you say about wrapping in triple-curly-braces still works. Hmm, time to look at TranslatorReader, I think, and see how you're doing all this... - Mark.
+
+The problem with the three braces is that it puts the contents inside a pre tag, which puts it in its own block. I can't see a way to refer to, say, a Windows UNC path (starts with two backslashes) inside a paragraph.
+
+-- LachlanODea
+
+I worked around this and specify paths using &lt;a href=""&gt; and the backslash special character & # 92 ; (no spaces).
+
+Ah, okay.  In 2.1 you can do this, just don't put the three braces as the first ones on the line, since it emits a <span> instead of a <pre>-tag.
+
+-- JanneJalkanen
+
+I don't like the way it works because I always seem to get a linebreak after the }}}. Is there a way to prevent this?
+
+-- ChristophGrimmer
+
+
+That this is because the </pre> HTML tag generates spacing, and then you get the <br> linebreak for the normal paragraphing. You would have to make TranslatorReader more intelligent by making sure it only emitted line breaks if it is not after certain tags. Of course, you could just nest up your Wiki page such as:
+
+{{{
+   A paragraph
+
+   { { {
+   Code
+   } } }Start of next paragraph
+}}}
+
+But I guess not very nice...
+
+-- KieronWilkinson
+
+!!How does one create a nested list structure?
+
+Is there a way, using the current list markup tags, to create nested (and mixed) list structures?  For example:
+{{{
+1. This is the first item
+   * Task
+   * Another Task
+2. This is the second item
+   * Yet Another Task}}}
+This type of nesting is possible with [WikkiTikkiTavi|http://tavi.sourceforge.net/].  See [FormalFormattingRules/Lists|http://tavi.sourceforge.net/FormalFormattingRules/Lists] to see how they handle it.  It might also be nice to specify bullet/numbering styles, too, but the nesting support would be really nice to have before specifying styles.
+
+A: There is nesting support.
+
+* This is a first item.
+## Task
+## Another task
+* This is the second item
+## Yet Another Task
+
+!!Strike-through text?
+
+Is there anyway to strike-through text? Other Wikis use --text-- markup. If not, is there any plans to add it in the future?
+
+A:  Yes, it's possible.  Use CSS:
+
+%%(text-decoration:line-through)
+Striked-through text.
+%%
+
+
+
+

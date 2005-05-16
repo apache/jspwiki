@@ -1,0 +1,39 @@
+[FormSelect] provides you a way to do a drop-down list (HTML &lt;option&gt;).
+
+!Parameters
+
+* __name__ : The element name.
+* __value__ : A list of components, separated with a semicolon (;).  Prefix the one you want to have selected with a star (*).
+* __separator__ : If semicolon (;) is bad for you, then you can use this to select the separator.
+* __selector__ : If selector (*) is bad for you, set this to choose the selector.
+
+!Example
+
+{{{
+[{FormSelect name='criticality' 
+  value='EnhancementRequest;CosmeticBug;*LightBug;MediumBug;BadBug;CriticalBug;FatalBug'}]
+}}}
+
+would produce
+[{FormOpen form='foo'}]
+[{FormSelect name='criticality' value='EnhancementRequest;CosmeticBug;*LightBug;MediumBug;BadBug;CriticalBug;FatalBug'}]
+[{FormClose}]
+
+!Example with the selector and separator changed.
+
+This is essentially the same example as the previous one, but with the separator changed to a comma, and the selector changed to an exclamation mark:
+
+{{{
+[{FormSelect name='criticality' separator=',' selector='!'
+   value='EnhancementRequest,CosmeticBug,!LightBug,MediumBug,BadBug,CriticalBug,FatalBug'}]
+}}}
+
+would produce
+[{FormOpen form='foo'}]
+[{FormSelect name='criticality' separator=',' selector='!'
+   value='EnhancementRequest,CosmeticBug,!LightBug,MediumBug,BadBug,CriticalBug,FatalBug'}]
+[{FormClose}]
+
+----
+
+Back to [WikiForms].

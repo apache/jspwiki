@@ -1,0 +1,64 @@
+The BugReportHandler is a sample [WikiForms] handler which can be used to generate bug reports.  This handler creates a new page based on the parameters passed to it.  The page contents consist of one table, filled with all parameters given, and then finally the "description" parameter.
+
+!Parameters
+
+* __title__ = ''String''.  Title of the bug.  Mandatory.  This should be a full sentence.  The created page name will be constructed from the title.  Mandatory.
+
+The following parameters are optional.
+
+* __description__ = ''String''.  A general description string (which may contain WikiMarkup) which gets added to the end of the report.
+* __version__ = ''String''.  You probably want to tie the bug report to a specific version of the software - this allows you to do that.
+* __page__ = ''String''.  Each created page gets its name by concatenating the "title" parameter to the "page" parameter. Default is "Bug".
+* __map__ = ''String''.  Normally, this plugin would just use the parameter name for the field names in the created table.  You can use the ''map'' parameter to map the field names to longer strings.  The syntax is "<field name>=<a longer string>;<field name 2>=<something else in the way of description;...".
+
+!Example
+
+The following creates a bug report form.  Notice how the submit button value of "x" is mapped to an empty string in the "map" parameter, which makes the BugReportHandler ignore the field completely.
+
+{{{
+[{FormSet form='reportform' status='NewBug' title='' 
+map='container=Servlet Container;java_version=Java version;pageprovider=[PageProvider] used;criticality=[Bug criticality];x;status=[Bug status];browser_version=Browser version;url=URL;os=Operating System'}]
+[{FormOutput form='reportform' handler='BugReportHandler' populate='handler'}]
+
+[{FormOpen form='reportform'}]
+
+|Title of the bug:| [{FormInput type='text' name='title' size=80}]\\''Mandatory. Please try to be brief, use a whole sentence of ten words or less.''
+|JSPWiki version: |[{FormInput type='text' name='version'}]
+|Servlet container: |[{FormInput type='text' name='container' size=40}]
+|Java version: |[{FormInput type='text' name='java_version'}]
+|Browser used: |[{FormInput type='text' name='browser_version'}]
+|Operating system: |[{FormInput type='text' name='os'}]
+|URL that shows the bug: |[{FormInput type='text' name='url' size=60}]\\''or type in a JSPWiki page name''
+|Page Provider: |[{FormInput type='text' name='pageprovider' size=40}]
+|Criticality: |[{FormSelect name='criticality' value='EnhancementRequest;CosmeticBug;*LightBug;MediumBug;BadBug;CriticalBug;FatalBug'}]
+
+Please enter a freeform description here (in WikiMarkup!):\\
+[{FormTextarea name='description' rows=25 cols=80}]
+
+[{FormInput type='submit' name='x' value='Submit report' size=100}]  (Please click only once!)
+[{FormClose}]
+}}}
+
+The result would look like this:
+
+
+[{FormSet form='reportform' status='NewBug' title='' map='container=Servlet Container;java_version=Java version;pageprovider=[PageProvider] used;criticality=[Bug criticality];x;status=[Bug status];browser_version=Browser version;url=URL;os=Operating System'}]
+[{FormOutput form='reportform' handler='BugReportHandler' populate='handler'}]
+
+[{FormOpen form='reportform'}]
+
+|Title of the bug:| [{FormInput type='text' name='title' size=80}]\\''Mandatory. Please try to be brief, use a whole sentence of ten words or less.''
+|JSPWiki version: |[{FormInput type='text' name='version'}]
+|Servlet container: |[{FormInput type='text' name='container' size=40}]
+|Java version: |[{FormInput type='text' name='java_version'}]
+|Browser used: |[{FormInput type='text' name='browser_version'}]
+|Operating system: |[{FormInput type='text' name='os'}]
+|URL that shows the bug: |[{FormInput type='text' name='url' size=60}]\\''or type in a JSPWiki page name''
+|Page Provider: |[{FormInput type='text' name='pageprovider' size=40}]
+|Criticality: |[{FormSelect name='criticality' value='EnhancementRequest;CosmeticBug;*LightBug;MediumBug;BadBug;CriticalBug;FatalBug'}]
+
+Please enter a freeform description here (in WikiMarkup!):\\
+[{FormTextarea name='description' rows=25 cols=80}]
+
+[{FormInput type='submit' name='x' value='Submit report' size=100}]  (Please click only once!)
+[{FormClose}]

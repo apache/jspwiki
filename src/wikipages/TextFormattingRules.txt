@@ -1,6 +1,8 @@
 When you've figured out how the editor works, then you should read [WikiEtiquette] so that you would know how to use your newly acquired skills...
 
-!Quick reference
+[{TableOfContents}]
+
+!!Quick reference
 
 {{{
 ----       = Make a horizontal ruler. Extra '-' is ignored.
@@ -29,39 +31,13 @@ __text__   = prints 'text' in bold.
 ;term:ex   = makes a definition for 'term' with the explanation 'ex'
 }}}
 
-!Writing text
+!!Writing text
 
 You don't need to know anything about the Wiki text formatting rules to use Wiki.  Just write normal text, and then use an empty line to mark a paragraph.
 It's just like writing an email.
 
 You can always Edit this page (look at the left sidebar) to see how the different
 effects on this page are used.
-
-!Hyperlinks
-The link can also be a direct URL starting with http:, ftp:, mailto:, https:, or news:, in which case the link points to an external entity. For example, to point at the java.sun.com home page, use [[http://java.sun.com], which becomes [http://java.sun.com/] or [[Java home page|http://java.sun.com], which becomes [Java home page|http://java.sun.com].
-
-To add a new page you just create a link to it from somewhere else. After all, there isn't much point in having a page if you can't access it! You'll then see a small question mark after the page name when you return to that page. Then click on it and you have created a new page!
-
-It's allowed to use almost any kind of characters inside a [WikiName], as long
-as they are letters or numbers.
-
-Note also that this Wiki can be configured to support standard CamelCase linking (if it's supported, the word CamelCase should be a link).  It's off by default, but if your friendly administrator has turned it on, then well, CamelCase all you want =).
-
-!Footnotes
-
-These are a special kind of hyperlink.  By using nothing but a number inside
-a hyperlink you create a reference to a footnote, like this [[1], which 
-creates a footnote[1].  To make the actual footnote, you just put a [[#1]
-where you want that footnote to point at.  Look below to find the footnote.
-
-You can also make a named footnote, just as if you were doing a normal hyperlink.  For example, this refers to the same footnote[Footnote number 1|1] as the footnote above, but this refers to another footnote[2].
-
-!InterWiki links
-
-You can also do links between different Wikis without knowing the URL.  Just use a link in the form [[Wiki:WikiPage] and JSPWiki will create a link for you.  For example, this link points to the [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Check the [SystemInfo] page for more information on which Wiki links are available.
-
-If an InterWiki link is not supported, you'll get a notification of it on the page when
-you save your page.
 
 !Adding pictures
 
@@ -145,7 +121,38 @@ You may use __bold__ text or ''italic'' text, by using two underscores (_) and t
 
 If you want to add preformatted text (like code) just use three consecutive braces ({) to open a block, and three consecutive braces (}) to close a block. Edit this page for an example.
 
-!Tables
+
+!!Linking around
+
+Links are an integral part of Wikis.
+
+!Linking to a WikiPage
+
+Just type the name of the page within brackets: [[Like this].  This will create automatically a link to a page.
+
+Note also that this Wiki can be configured to support standard CamelCase linking (if it's supported, the word CamelCase should be a link).  It's off by default, but if your friendly administrator has turned it on, then well, CamelCase all you want =).
+
+!Linking to external sites
+
+The link can also be a direct URL starting with http:, ftp:, mailto:, https:, or news:, in which case the link points to an external entity. For example, to point at the java.sun.com home page, use [[http://java.sun.com], which becomes [http://java.sun.com/] or [[Java home page|http://java.sun.com], which becomes [Java home page|http://java.sun.com].
+
+!Footnotes
+
+These are a special kind of hyperlink.  By using nothing but a number inside
+a hyperlink you create a reference to a footnote, like this [[1], which 
+creates a footnote[1].  To make the actual footnote, you just put a [[#1]
+where you want that footnote to point at.  Look below to find the footnote.
+
+You can also make a named footnote, just as if you were doing a normal hyperlink.  For example, this refers to the same footnote[Footnote number 1|1] as the footnote above, but this refers to another footnote[2].
+
+!InterWiki links
+
+You can also do links between different Wikis without knowing the URL.  Just use a link in the form [[Wiki:WikiPage] and JSPWiki will create a link for you.  For example, this link points to the [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Check the [SystemInfo] page for more information on which Wiki links are available.
+
+If an InterWiki link is not supported, you'll get a notification of it on the page when
+you save your page.
+
+!!Tables
 
 You can do simple tables by using using pipe signs ('|').  Use double pipe
 signs to start the heading of a table, and single pipe signs to then
@@ -165,7 +172,7 @@ gives you the following table.  Note how you can use links also inside tables.
 | ''Gobble'' | Bar
 | [Main]     | [SandBox]
 
-!Styles
+!!Styles
 
 %%commentbox
 __Hi there!__\\
@@ -192,6 +199,8 @@ Hello, world!
 
 __NOTE__ You have to mark the end of the text you want to finish being styled using {{{%%}}}! 
 
+!!Managing your Wiki
+
 !Conflicts
 
 If someone happens to edit the same page as you at the same time, JSPWiki will prevent you from doing changes and show a conflict page instead. Sorry to say, but the first one to make changes wins...
@@ -200,17 +209,19 @@ __A word of warning:__ If you use the Back button of your browser to go into the
 
 !Deleting pages
 
-This is not possible. You can, of course, remove all the links to that page, which makes it inaccesible. Or you can email the administrator, and I'll remove the page.
+Every page has a "More Info..." link on the bottom.  If you click on it, you arrive on a page which allows you to, among other things, restore old versions and delete pages.  Note that your administrator may have prevented deleting pages arbitrarily.
 
 !Adding new pages
 
 Create a link that points to a new (not existing) page using its [WikiName].
 Click that new link, which should now have a question mark (?) suffix and
-you will get an editor for the new page. -- [Asser]
+you will get an editor for the new page.
 
 !Attaching files
 
 If the administrator of the wiki has configured it, there is a "Attach file..." link at the bottom of every page.  Clicking it allows you to attach files into pages.  For more information, please see [WikiAttachments].
+
+!!Variables, plugins, forms and other special functions
 
 !Inserting variables
 
@@ -229,6 +240,10 @@ The basic incantation to insert a plugin looks like this:
 [[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
 
 There is more information in [JSPWikiPlugins].
+
+!Inserting forms
+
+Please see [WikiForms].
 
 ----
 

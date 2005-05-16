@@ -1,0 +1,175 @@
+[{TableOfContents}]
+
+!!What are the hardware requirements for JSPWiki?
+
+JSPWiki is really quite modest for a Java-based server.  JSPWiki.org was running several wiki instances with a 266 MHz Pentium II with 512 MB of memory.  The runtime memory consumption is between 80 to 200 MB (Tomcat 4), and CPU utilization is rarely above 15%.  This depends heavily on your choice of JVM and ServletContainer, as well as the JVM options.
+
+The most CPU-intensive part is the initial scan of all pages, which is done only once during startup.  With a slow CPU this can take a while (even minutes) for a large Wiki site.  However, JSPWiki 2.2 does cache this information in your work directory.
+
+!!How are [Bread Crumbs|BreadCrumbsIdea] enabled?
+
+According to the release notes, bread crumbs (a.k.a. Your Trail) functionality was added?  However the "PageHeader.jsp" (template) doesn't include the snippet of code to enable this functionality.
+
+Bread crumbs are displayed only in webdocs\template\default\ViewTemplate.jsp.  It was done this way so the bread crumbs only work when you are viewing a page.  Are you sure you have the latest CVS code?  -- KenLiu
+
+Actually there isn't anything special required to enable the bread crumbs.  They are enabled by default.  My problem was that the new template (jsp) wasn't being picked up by tomcat.  When I updated the timestamp on the jsp file, the jsp was recompiled and everything works.  -- [Niel Eyde]
+
+If however in a fresh installation (under Tomcat 5) the breadcrumbs fail to show, where should one look for the cause and solution of this problem? Could it be cookie- or baseurl related? -- [Bart Breeschoten]
+
+A: They need cookies to be enabled in order to work.  Just make sure your virtual host setup is correct.
+
+!!Why is there a noticeable delay when you first start JSPWiki up?
+
+This is because the ReferenceManager (the piece of software that is responsible for creating the "Referenced by" -list which you can see in the [left menu footer], the [unused pages] -list and [undefined pages] -list, scans all wiki pages on your hard drive for links.  For a large Wiki on a slow machine, this initialization can take a long time.
+
+!!Why are my references all wrong?
+
+A: It could be that you have been modifying the repository while JSPWiki was off.  Try deleting the "refmgr.ser" -file from your {{jspwiki.workDir}} -directory and restarting.
+
+!!How do I change the page layout, modify the presentation or add a logo
+
+A: Since version 1.9.x, all pages are now [templates|JSPWikiTemplates], which the administrator can change at will.  The display of many page elements can be modified via the style sheets.
+
+!!I've written (a new plugin/bug fixes/new functionality)!  How do I contribute it to JSPWiki?
+
+A: Please see [JSPWiki:ContributingChanges].
+
+!!My Wiki does not start!
+
+A: Are you absolutely sure that you have edited the config file as instructed by the README in the download archive, and [JSPWiki:JSPWikiDownload]?
+
+JSPWiki __needs to know where to put all wiki and log files first__, before you can start it.  The configuration file is called "jspwiki.properties" and it can be found in the WEB-INF directory of the WAR.
+
+!!Changes do not appear to pagehistory or to RecentChanges
+
+The probable reason for this is that you have changed the user id under which JSPWiki was running, AND you're using [RCSFileProvider].  RCS locks all files it checks out under the current user id, and does not allow any other user to do a checking.  See [JSPWiki:RCSFileProviderIssues] for more information.
+
+!!$~Id$ gets always expanded
+
+I'm using Id in $ symbols on a Wiki page for explaining a CVS/RCS feature. How can I prevent that this gets expanded by your RCS call? Even triple { don't help.
+
+[JanneJalkanen]: First of all, this is only a RCSFileProvider specific issue.  Other providers (like VersioningFileProvider) do not have this problem. I think you would need to put the following in your jspwiki.properties file:
+
+{{{
+jspwiki.rcsFileProvider.checkoutCommand = co -kk -l %s
+jspwiki.rcsFileProvider.checkoutVersionCommand = co -kk -p -r1.%v %s
+
+}}}
+
+You can also put a '~' before the keyword, which stops the expansion.  However, this may be a bit problematic if you do a cut-n-paste of source code.
+
+For more information about the RCSFileProvider, check RCSFileProviderIssues.
+
+!!How to avoid the port number in the URL?
+
+What is one (are some) way(s) to install JSPWiki so that the Tomcat port # doesn't show in the URL?  Specifically, I'm looking for the way to do this so that the jsp is called right after the domain (e.g.localsite.org/Wiki.jsp?page=Example) just like it is here.
+
+A: Edit Tomcat's {{conf/server.xml}} file and replace port 8080 with port 80 and restart Tomcat.  Note: If you are on Unix, this is a restricted port and you'll have run Tomcat as root.  Also, if you have a web server running, this will produce a conflict.  If you are running Apache, get the Tomcat module for it and configure it and then use Apache to talk to Tomcat to run your JSP applications.
+
+!!How to make JSPWiki faster?
+
+Well, there's always a bit of a penalty when using Java technology, though the modern virtual machines are getting really good.  However, you can use OSCache to cache some of the JSPWiki output: Check out [UsingOSCacheWithJSPWiki] for more info.
+
+
+!!What is this XML-RPC thingy?
+
+XML-RPC stands for "XML- Remote Procedure Call".  It basically allows you to make calls to the Wiki API from remote servers, without resorting to HTTP and having to deal with HTML formatting.  See [WikiRPCInterface], [JSPWiki:NotificationList], and [JSPWiki:Hula] for examples.
+
+
+!!How do I rename pages?
+
+Create a new page, copy stuff from the old page, go and rename all links.
+
+We're working on a better solution, but also take a look at [JSPWiki:RenamePagePatch].
+
+
+!!Can I block WikiSpam?
+
+Q: I've been getting some WikiSpam on my wiki.  Is there any way to prevent this or at least block based on IP address? See [here|http://csx.calvin.edu/JSPWiki/Wiki.jsp?page=TextFormattingRules&version=5] for an example. --[DaveBrondsema]
+
+A: Yep, check out the [SpamFilter].
+
+!!NDC (Nested Diagnostic Context)
+
+Q: What the heck does the variable NDC on Wiki.jsp reference?  That is a new one on me.
+
+A: It is a "Nested Diagnostic Context".  In effect, it's a way to tell [Log4j] which page is currently under handling, and it would allow us to do stuff like write a separate log for each page, or just a subset of pages.  See [Log4j documentation|http://jakarta.apache.org/log4j/docs/manual.html] for more info.
+
+!!Loading time?
+
+;:Q: I've seen it written that JSPWiki takes some time to initially load, but that once it does it runs pretty fast.  What does this mean?  What is loading?  Where is it loading?  --MatthewSimpson
+
+;:A: JSPWiki uses most of the startup time to go through all of the pages and builds a list of all the links on those pages.  This allows the BackLinks feature to work, since then we know which pages link where.  It also allows us to build the [UndefinedPages] and [UnusedPages].  Another thing is that Java and the servlet container (like Tomcat) take a bit of time to start up, too.
+
+;:Q: After doing this once, what would cause this list to be lost?  Does it need to be rebuilt?  How often?  Why?
+
+;:A: The rebuilding of the list only happens when the web server is started (or restarted).  After that, we just track changes to all pages, so things are pretty fast.  BTW, if you're using Tomcat, then it is possible to start just JSPWiki without starting the whole web server, which is a bit faster.  See the [manager app documentation|http://jakarta.apache.org/tomcat/tomcat-4.0-doc/manager-howto.html]. The list is lost when the server is shut down because the current implementation does not save the index. Saving would require a consistency check on restart, otherwise possible manual additions/removals of pages would confuse the indexing.
+
+;:Q: Does all this happen on the server?  (i.e. index is maintained on the server?
+
+;:A: Yes.
+
+
+!!Backup?
+
+Q: I'm running on Linux with Tomcat as the servlet container. If I want to backup my Wiki do I just backup my Wiki directory tree and the Wiki page store? Do I have to backup anything RCS-wise to preserve the integrity of the site if it has to be restored. (I really know nothing about RCS right now and am operating on faith that it is there and doing what its supposed to do.)
+
+A: Yes, just back up all the contents of the page store.  If you want to have a backup copy of the JSPWiki code and your settings, then back up your webapps/<your wiki name> directory as well.
+
+!!"Tag failed, check logs: ..." error in the browser
+
+Q: I edited jspwiki.properties, changed the settings for the page provider/attachment provider/something else, but now I just get an error page (Tag failed, check logs: ...).
+
+A: Check your ''jspwiki.properties'' settings again, and read the log file (defined at the end of ''jspwiki.properties''). This should elucidate matters. A rather common error is to give a mistyped or plain wrong class name for a provider.
+
+One particular source of confusion is the ''jspwiki.attachmentProvider'' setting commentation. The choice of words can be interpreted to mean that you should set the ''value'' to ''nothing'', when what you really want is to leave the value empty (or comment the whole line). (This wording is fixed in future versions.)
+
+!!EditPageHelp?
+
+Q: where to find a template for EditPageHelp.jsp to copy it into my tree? 
+
+A:It's not a JSP page, it's a page called [EditPageHelp] in the {{jspwiki_samplepages.zip}}.
+
+!!Problems setting up a hosted JSPWiki site
+
+Q: I'm having some trouble getting a new wiki up and running at [http://www.hydraphonic.info/GrooveWiki/Wiki.jsp]
+As you can see, there is no left menu, and when you select edit, there is no EditPageHelp (it says "Ho hum, it seems that the EditPageHelp? page is missing. Someone must've done something to the installation... ". 
+
+Furthermore, the contents of Main.txt are not displayed!  It seems as if the application cannot locate my jspwiki.fileSystemProvider.pageDir setting.  If I want to set a relative path, where is it relative from?  The Wiki.asp or the location of the jspwiki.properties file?  If tried it relative from both places (and others) with no joy.
+
+Can anyone tell me what I've done wrong?  --Rob
+
+A: ;:''Umm, why are you specifying it as a relative path and not an absolute? I don't think using relative paths is a good idea even if it might work in theory. -[Killer]''
+
+Initially because I'm on a hosted server, I thought it might be easier.  Since then I've tried various absolute paths also with no success.  Has anyone got this wiki working on a hosted server? 
+
+Is there a JSP script/page I can run that shows the path.  I'm guessing that the path looks different to Tomcat than it does to me.
+
+Also, I've changed the path to be all lower case, in case that was an issue.... --Rob
+
+;:''The server seems to be Linux running Apache and Tomcat. This would mean that the server administrators should be able to tell you the correct absolute path as seen by Tomcat. They might have some chroot-environment set up so that you and Tomcat see the paths differently. Also, Tomcat does not by default like symbolic links, this might also be a problem. -[Killer]''
+
+Hey Killer - it's up and running now.  I'm using a path that I'm ''sure'' I tried before.  I still think the mixed case path may have been a factor.  Anyway, thanks for your help. --Rob
+
+!!Upgrading from FileSystemProvider
+
+Q: Our admin started wiki with FileSystemProvider, which doesn't seem to do versioning or latch the username. I understand VersioningFileProvider is the best one to use for versioning. We have already put a bunch of pages on, and obviously we don't want to retype them in. Is there a way to retrofit versioning to pages already generated by FileSystemProvider?
+
+A: Yes. Just switch the provider into VersioningFileProvider, and it will automatically use any pages already put there by the FileSystemProvider.  No need for any retrofitting.
+
+!!Apache settings?
+
+Q: I'm running with a hosted provider who won't let me access my Apache settings.  If they aren't running the Tomcat container, is there any way I can use jspWiki?  I could probably install Tomcat, but again, I can configure ONLY Tomcat, not Apache.
+
+A: It depends.  My ISP runs Apache, and it sends the request to a Resin application server.  They configure Apache, I configure Resin.  I'd suggest talk/e-mails with the ISP and tell them what you want to do and how they can help set you up.  Most system admins are pretty sharp, they should be able to get you going.  I'm assuming that someone before you has asked for Tomcat before.  If they can't help you out (''plug for my ISP [20after4.net|http://www.20after4.net]'') there are other ISP's out there. -- [FosterSchucker]
+
+Comment:  Hi and Thanks, Foster.  I'm looking into Astrahosting, which if you sign up for 1 year is $4/month and supports Tomcat.  I haven't signed up yet, so I can't comment on their support.  They say they only have telnet, no SSH, which doesn't seem right.
+
+Comment2: I've signed up at astrahosting for other reason than JSP. Then I discovered that they were running tomcat 4.1.3. I decided to test JSPWiki on it. First they say the system deploy file.war every JVM restart : false. Then they map any servlet to yourdomain.com/servlet/YOURSERVLET which lead you to web.xml editing (after deploying JSPWiki by hand on the server). At last the context of you JSP/Servlet are different than php/ftp. i.e : You upload a file to /var/www/html then you refer to it through /var/www/html in you servlet but the path is wrong. As if the virtual server you are into while executing ftp, php etc... is not setup correctly while in tomcat. So You can see the whole redhat server filesystem !!! The thing is their support think I'm a newbie (which by the way is not wrong for JSP/Servlet) but  their system doesn't work !!!! that's for sure...
+
+
+!!Bulk populate wiki pages
+Q:Is there an easy way to bulk populate the Wiki with the samplepages found in the 
+binary zip file? - [AlexMcLintock]
+
+A - Yes.  Just unzip the zip file contents directly into your page repository and restart the web server or the context.

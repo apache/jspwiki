@@ -16,6 +16,7 @@ Here is an alphabetical list of all the tags that the site administrator can use
 * [ContentEncodingTag]
 * [DiffLinkTag]
 * [EditLinkTag]
+* [EditorAreaTag]
 * [EditorTag]
 * [HasAttachmentsTag]
 * [HistoryIteratorTag]
@@ -101,6 +102,7 @@ Here is an alphabetical list of all the tags that the site administrator can use
 !Miscallaneous
 
 * [ContentEncodingTag]
+* [EditorAreaTag]
 * [EditorTag]
 * [HistoryIteratorTag]
 * [PluginTag]
