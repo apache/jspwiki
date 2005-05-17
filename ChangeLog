@@ -1,3 +1,17 @@
+2005-05-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.15
+        
+        * Bug fix: BugReferenceManagerDoesNotFindSingularReferences
+        should now finally be fixed.
+        
+        * Fix of a fix of a bug fix: We no longer generate <a name="foo">
+        tags for headings - instead, we generate an unique "id" for
+        each heading.
+        
+        * Added "overflow: auto" to <pre> tags in jspwiki.css...
+        That makes bug reports far, far more readable.
+
 2005-05-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.1.14
