@@ -492,6 +492,17 @@ public class ReferenceManager
             return;
         }
 
+        // Neither are we interested if plural forms refer to each other.
+        if( m_matchEnglishPlurals )
+        {
+            String p2 = page.endsWith("s") ? page.substring(0,page.length()-1) : page+"s";
+            
+            if( referrer.equals(p2) )
+            {
+                return;
+            }
+        }
+        
         Set referrers = (Set)m_referredBy.get( page );
 
         // Even if 'page' has not been created yet, it can still be referenced.
@@ -583,15 +594,28 @@ public class ReferenceManager
     {
         Set refs = (Set)coll.get( pagename );
         
-        if( (refs == null || refs.size() == 0) && m_matchEnglishPlurals )
+        if( m_matchEnglishPlurals )
         {
+            //
+            //  We'll add also matches from the "other" page.
+            //
+            Set refs2;
+            
             if( pagename.endsWith("s") )
             {
-                refs = (Set)coll.get( pagename.substring(0,pagename.length()-1) );
+                refs2 = (Set)coll.get( pagename.substring(0,pagename.length()-1) );
             }
             else
             {
-                refs = (Set)coll.get( pagename+"s" );
+                refs2 = (Set)coll.get( pagename+"s" );
+            }
+            
+            if( refs2 != null )
+            {
+                if( refs != null )
+                    refs.addAll( refs2 );
+                else
+                    refs = refs2;
             }
         }
 
