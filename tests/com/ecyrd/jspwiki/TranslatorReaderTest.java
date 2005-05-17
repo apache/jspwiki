@@ -835,7 +835,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
 
-        assertEquals( "<p></p>\n<h4><a name=\"section-testpage-Testi\"></a>Testi</h4>\n<p>Foo.</p>\n", 
+        assertEquals( "<p></p>\n<h4 id='section-testpage-Testi'>Testi</h4>\n<p>Foo.</p>\n", 
                       translate(src) );
     }
 
@@ -1563,7 +1563,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!Hello\nThis is a test";
 
-        assertEquals( "<h4><a name=\"section-testpage-Hello\"></a>Hello</h4>\nThis is a test",
+        assertEquals( "<h4 id='section-testpage-Hello'>Hello</h4>\nThis is a test",
                       translate(src) );
     }
 
@@ -1572,7 +1572,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!Hello, testing 1, 2, 3";
 
-        assertEquals( "<h3><a name=\"section-testpage-HelloTesting123\"></a>Hello, testing 1, 2, 3</h3>",
+        assertEquals( "<h3 id='section-testpage-HelloTesting123'>Hello, testing 1, 2, 3</h3>",
                       translate(src) );
     }
 
@@ -1581,7 +1581,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!!Hello there, how are you doing?";
 
-        assertEquals( "<h2><a name=\"section-testpage-HelloThereHowAreYouDoing\"></a>Hello there, how are you doing?</h2>",
+        assertEquals( "<h2 id='section-testpage-HelloThereHowAreYouDoing'>Hello there, how are you doing?</h2>",
                       translate(src) );
     }
 
@@ -1590,7 +1590,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!![Hello]";
 
-        assertEquals( "<h2><a name=\"section-testpage-Hello\"></a><a class=\"editpage\" title=\"Create 'Hello'\" href=\"Edit.jsp?page=Hello\">Hello</a></h2>",
+        assertEquals( "<h2 id='section-testpage-Hello'><a class=\"editpage\" title=\"Create 'Hello'\" href=\"Edit.jsp?page=Hello\">Hello</a></h2>",
                       translate(src) );
     }
 
@@ -1599,7 +1599,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="!!![Hello|http://www.google.com/]";
 
-        assertEquals( "<h2><a name=\"section-testpage-Hello\"></a><a class=\"external\" href=\"http://www.google.com/\">Hello</a></h2>",
+        assertEquals( "<h2 id='section-testpage-Hello'><a class=\"external\" href=\"http://www.google.com/\">Hello</a></h2>",
                       translate(src) );
     }
 
@@ -1608,7 +1608,7 @@ public class TranslatorReaderTest extends TestCase
     {
         String src="![Hello|http://www.google.com/?p=a&c=d]";
 
-        assertEquals( "<h4><a name=\"section-testpage-Hello\"></a><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a></h4>",
+        assertEquals( "<h4 id='section-testpage-Hello'><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a></h4>",
                       translate(src) );
     }
 

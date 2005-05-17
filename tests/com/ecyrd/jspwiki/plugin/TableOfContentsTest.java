@@ -61,7 +61,7 @@ public class TableOfContentsTest extends TestCase
                       "<ul>\n"+
                       "<li> <a class=\"wikipage\" href=\"Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a>\n</li>\n"+
                       "</ul>\n</div>\n\n</p>"+
-                      "\n<h2><a name=\"section-Test-HeadingBar\"></a>Heading bar</h2>\n",
+                      "\n<h2 id='section-Test-HeadingBar'>Heading bar</h2>\n",
                       res );
     }
 
