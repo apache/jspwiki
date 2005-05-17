@@ -55,7 +55,8 @@ pre {
       white-space: pre;
       margin:      1em 2em 1em 2em; 
       background:  #f0f0f0;
-      border:      1px dotted #3c78b5;  
+      border:      1px dotted #3c78b5;
+      overflow: auto;
      }
 
 /* The text how the "This is a preview" comment should be shown. */
