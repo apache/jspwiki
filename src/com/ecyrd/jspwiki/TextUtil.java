@@ -86,7 +86,7 @@ public class TextUtil
      *  <P>
      *  Thanks to CJB for this fix.
      */ 
-    protected static String urlDecode( byte[] bytes )
+    protected static String urlDecode( byte[] bytes, String encoding )
         throws UnsupportedEncodingException,
                IllegalArgumentException
     {
@@ -129,7 +129,7 @@ public class TextUtil
 
         try 
         {
-            processedPageName = new String(decodeBytes, 0, decodedByteCount, "UTF-8") ;
+            processedPageName = new String(decodeBytes, 0, decodedByteCount, encoding) ;
         } 
         catch (UnsupportedEncodingException e) 
         {
@@ -153,7 +153,7 @@ public class TextUtil
         }
         catch( UnsupportedEncodingException e )
         {
-            return java.net.URLEncoder.encode( text );
+            throw new InternalWikiException("UTF-8 not supported!?!");
         }
 
     }
@@ -167,11 +167,11 @@ public class TextUtil
 
         try
         {
-            rs = urlDecode( utf8.getBytes("ISO-8859-1") );
+            rs = urlDecode( utf8.getBytes("ISO-8859-1"), "UTF-8" );
         }
         catch( UnsupportedEncodingException e )
         {
-            rs = java.net.URLDecoder.decode( utf8 );
+            throw new InternalWikiException("UTF-8 or ISO-8859-1 not supported!?!");
         }
 
         return rs;
@@ -198,7 +198,7 @@ public class TextUtil
             }
             catch (UnsupportedEncodingException uee)
             {
-                throw new RuntimeException("Could not encode String into" + encoding);
+                throw new InternalWikiException("Could not encode String into" + encoding);
             }
         }
     }
@@ -222,11 +222,11 @@ public class TextUtil
         {
             try
             {
-                return( TextUtil.urlDecode( data.getBytes(encoding) ) );
+                return( TextUtil.urlDecode( data.getBytes(encoding), encoding ) );
             }
             catch (UnsupportedEncodingException uee)
             {
-                throw new RuntimeException("Could not decode String into" + encoding);
+                throw new InternalWikiException("Could not decode String into" + encoding);
             }
         }
     }
