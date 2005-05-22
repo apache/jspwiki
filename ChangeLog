@@ -1,5 +1,13 @@
 2005-05-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * 2.2.16
+
+        * Major fix to ISO-8859-1 - it didn't work almost at all
+        if you used anything else but the DefaultURLConstructor - 
+        especially attachments didn't work.
+
+2005-05-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * 2.2.15
         
         * Bug fix: BugReferenceManagerDoesNotFindSingularReferences
