@@ -39,7 +39,7 @@
       <table border="0" width="100%">
       <tr>
         <td>
-           <form action="<wiki:BaseURL/>attach" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+           <form action="<wiki:BaseURL/>attach" method="post" enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>">
 
            <%-- Do NOT change the order of wikiname and content, otherwise the 
                 servlet won't find its parts. --%>
