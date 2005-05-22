@@ -4,12 +4,10 @@
  */
 package com.ecyrd.jspwiki.dav.items;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 
 import org.jdom.Element;
 
-import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;

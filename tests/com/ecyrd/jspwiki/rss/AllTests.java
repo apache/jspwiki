@@ -4,9 +4,6 @@
  */
 package com.ecyrd.jspwiki.rss;
 
-import com.ecyrd.jspwiki.util.ClassUtilTest;
-import com.ecyrd.jspwiki.util.PriorityListTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

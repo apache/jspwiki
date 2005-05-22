@@ -7,7 +7,6 @@ package com.ecyrd.jspwiki.dav.items;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.jdom.Element;

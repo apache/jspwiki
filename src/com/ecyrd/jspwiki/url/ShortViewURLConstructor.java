@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 

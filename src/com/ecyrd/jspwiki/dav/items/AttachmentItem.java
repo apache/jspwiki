@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**

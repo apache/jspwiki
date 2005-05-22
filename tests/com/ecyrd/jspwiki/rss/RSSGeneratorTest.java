@@ -15,7 +15,6 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.plugin.WeblogEntryPlugin;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
-import com.ecyrd.jspwiki.util.ClassUtilTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

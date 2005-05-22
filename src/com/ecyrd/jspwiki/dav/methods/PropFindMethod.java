@@ -24,9 +24,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.DavContext;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
 import com.ecyrd.jspwiki.dav.items.DavItem;

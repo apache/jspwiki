@@ -7,8 +7,6 @@ package com.ecyrd.jspwiki.dav.items;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.jdom.Element;

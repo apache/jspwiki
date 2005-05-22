@@ -5,9 +5,6 @@
 package com.ecyrd.jspwiki.dav;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -16,20 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.dav.methods.DavMethod;
 import com.ecyrd.jspwiki.dav.methods.GetMethod;
 import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
 import com.ecyrd.jspwiki.dav.methods.PropPatchMethod;
-import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  @author jalkanen
