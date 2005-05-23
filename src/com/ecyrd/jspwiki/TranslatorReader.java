@@ -1056,6 +1056,7 @@ public class TranslatorReader extends Reader
                 if( (matchedLink = linkExists( reallink )) != null )
                 {
                     String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
+                    sectref = sectref.replace('%', '_');
                     sb.append( makeLink( READ, matchedLink, link, sectref ) );
                 }
                 else
@@ -2704,7 +2705,9 @@ public class TranslatorReader extends Reader
         }
 
         /**
-         *  Modifies the "hd" parameter to contain proper values.
+         *  Modifies the "hd" parameter to contain proper values.  Because
+         *  an "id" tag may only contain [a-zA-Z0-9:_-], we'll replace the
+         *  % after url encoding with '_'.
          */
         private String makeHeadingAnchor( String baseName, String title, Heading hd )
         {
@@ -2712,23 +2715,14 @@ public class TranslatorReader extends Reader
             title = cleanLink( title );
             hd.m_titleSection = m_engine.encodeName(title);
             hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
-                               "-"+hd.m_titleSection;            
+                               "-"+hd.m_titleSection;
+            
+            hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
             return hd.m_titleAnchor;
         }
 
-        
-        /**
-         *  Returns XHTML for the start of the heading.  Also sets the
-         *  line-end emitter.
-         *  @param level 
-         *  @param headings A List to which heading should be added.
-         */ 
-        public String makeHeading( int level, String title, Heading hd )
+        private String makeSectionTitle( String title )
         {
-            String res = "";
-
-            String pageName = m_context.getPage().getName();
-
             title = title.trim();
 
             StringWriter outTitle = new StringWriter();
@@ -2745,22 +2739,39 @@ public class TranslatorReader extends Reader
                 throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() );
             }
 
+            return outTitle.toString();
+        }
+        
+        /**
+         *  Returns XHTML for the start of the heading.  Also sets the
+         *  line-end emitter.
+         *  @param level 
+         *  @param headings A List to which heading should be added.
+         */ 
+        public String makeHeading( int level, String title, Heading hd )
+        {
+            String res = "";
+
+            String pageName = m_context.getPage().getName();
+
+            String outTitle = makeSectionTitle( title );
+
             hd.m_level = level;
 
             switch( level )
             {
               case Heading.HEADING_SMALL:
-                res = "<h4 id='"+makeHeadingAnchor( pageName, outTitle.toString(), hd )+"'>";
+                res = "<h4 id='"+makeHeadingAnchor( pageName, outTitle, hd )+"'>";
                 m_closeTag = "</h4>";
                 break;
 
               case Heading.HEADING_MEDIUM:
-                res = "<h3 id='"+makeHeadingAnchor( pageName, outTitle.toString(), hd )+"'>";
+                res = "<h3 id='"+makeHeadingAnchor( pageName, outTitle, hd )+"'>";
                 m_closeTag = "</h3>";
                 break;
 
               case Heading.HEADING_LARGE:
-                res = "<h2 id='"+makeHeadingAnchor( pageName, outTitle.toString(), hd )+"'>";
+                res = "<h2 id='"+makeHeadingAnchor( pageName, outTitle, hd )+"'>";
                 m_closeTag = "</h2>";
                 break;
             }
