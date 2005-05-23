@@ -1,5 +1,15 @@
 2005-05-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * 2.2.17
+
+        * The HTML fragment identifiers generated for each heading
+        are now XHTML compliant (no more entities).  Unfortunately,
+        this makes them look like crap, but this method should work
+        for CJK languages (unlike dropping non-USASCII).
+        
+        * Bug fix: HTML fragment identifiers didn't work on pages
+        with non-USASCII names.
+        
         * 2.2.16
 
         * Major fix to ISO-8859-1 - it didn't work almost at all
