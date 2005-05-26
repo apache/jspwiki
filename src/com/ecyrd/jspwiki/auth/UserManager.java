@@ -574,14 +574,13 @@ public class UserManager
      */
     public void setUserCookie( HttpServletResponse response, String name )
     {
-        UserProfile profile = getUserProfile( TranslatorReader.cleanLink(name) );
-
-        Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
-                                   profile.getStringRepresentation() );
-
-        prefs.setMaxAge( 1001*24*60*60 ); // 1001 days is default.
-
-        response.addCookie( prefs );
+        UserProfile profile = getUserProfile( name );
+        String uname = null;
+        if( profile != null ) {
+            Cookie prefs = new Cookie( WikiEngine.PREFS_COOKIE_NAME, 
+                                       profile.getStringRepresentation() );
+            prefs.setMaxAge( 1001*24*60*60 ); // 1001 days is default.
+            response.addCookie( prefs );
+        }
     }
-
 }
