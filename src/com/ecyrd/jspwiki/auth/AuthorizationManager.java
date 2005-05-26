@@ -243,6 +243,11 @@ public class AuthorizationManager
         if( wup == null ) return false;
 
         //
+        // Honor strict login requirements. Weak code - should not be permanent.
+        //
+        if( wup.isAuthenticated() == false && m_strictLogins ) return false;
+        
+        //
         //  If auth is turned off, return immediately for speed
         //
         if( !m_useAuth ) return true;
