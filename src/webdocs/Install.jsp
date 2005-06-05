@@ -11,6 +11,21 @@
     String message = null;
     String propertyResult = null;
     
+    public String sanitizePath( String s )
+    {
+        s = TextUtil.replaceString(s, "\\", "\\\\" );
+        return s.trim();
+    }
+    
+    /**
+     *  Simply sanitizes any URL which contains backslashes (sometimes Windows users may have them)
+     */
+    public String sanitizeURL( String s )
+    {
+        s = TextUtil.replaceString(s, "\\", "/" );
+        return s.trim();
+    }
+    
 	public String setProperty( String propertyfile, String key, String value )
 	{
         int idx = 0;
@@ -20,6 +35,7 @@
             int prevret = propertyfile.lastIndexOf("\n",idx);
             if( prevret != -1 )
             {
+                // Commented lines are skipped
                 if( propertyfile.charAt(prevret+1) == '#' ) 
                 {
                     idx += key.length();
@@ -145,11 +161,11 @@
         else
         {
             propertyString = setProperty( propertyString, WikiEngine.PROP_APPNAME, appname );
-            propertyString = setProperty( propertyString, WikiEngine.PROP_BASEURL, baseurl );
-            propertyString = setProperty( propertyString, FileSystemProvider.PROP_PAGEDIR, dir );
-            propertyString = setProperty( propertyString, BasicAttachmentProvider.PROP_STORAGEDIR, dir );
-            propertyString = setProperty( propertyString, WikiEngine.PROP_WORKDIR, workdir );
-            propertyString = setProperty( propertyString, "log4j.appender.FileLog.File", logdir );
+            propertyString = setProperty( propertyString, WikiEngine.PROP_BASEURL, sanitizeURL(baseurl) );
+            propertyString = setProperty( propertyString, FileSystemProvider.PROP_PAGEDIR, sanitizePath(dir) );
+            propertyString = setProperty( propertyString, BasicAttachmentProvider.PROP_STORAGEDIR, sanitizePath(dir) );
+            propertyString = setProperty( propertyString, WikiEngine.PROP_WORKDIR, sanitizePath(workdir) );
+            propertyString = setProperty( propertyString, "log4j.appender.FileLog.File", sanitizePath( logdir ) );
             
             if( password1 != null )
             {
@@ -166,7 +182,7 @@
             try
             {
                 writeProperties( findPropertyFile(getServletContext()), propertyString );
-                message = "Your new properties have been saved.  You can see what was written if you scroll down a bit.";
+                message = "Your new properties have been saved.  Please restart your container (unless this was your first install).  Scroll down a bit to see your new jspwiki.properties.";
             }
             catch( IOException e )
             {
