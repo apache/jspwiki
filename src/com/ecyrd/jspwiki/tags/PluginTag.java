@@ -19,17 +19,16 @@
  */
 package com.ecyrd.jspwiki.tags;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 
 /**
@@ -44,15 +43,13 @@ import com.ecyrd.jspwiki.plugin.PluginManager;
  *  @since 2.0
  */
 public class PluginTag
-    extends BodyTagSupport
+    extends WikiBodyTag
 {
     private String m_plugin;
     private String m_args;
 
-    protected WikiContext m_wikiContext;
-
-    static Logger log = Logger.getLogger( PluginTag.class );
-
+    private boolean m_evaluated = false;
+    
     public void setPlugin( String p )
     {
         m_plugin = p;
@@ -63,35 +60,64 @@ public class PluginTag
         m_args = a;
     }
     
+    public int doWikiStartTag() throws JspException, IOException
+    {
+        return EVAL_BODY_TAG;
+    }
+
+    private String executePlugin( String plugin, String args, String body )
+        throws PluginException, IOException
+    {
+        WikiEngine engine = m_wikiContext.getEngine();
+        PluginManager pm  = engine.getPluginManager();
+
+        m_evaluated = true;
+
+        Map argmap = pm.parseArgs( args );
+        
+        if( body != null ) 
+        {
+            argmap.put( "_body", body );
+        }
+
+        String result = pm.execute( m_wikiContext, plugin, argmap );
+
+        return result;        
+    }
+    
+    public int doEndTag()
+        throws JspException
+    {
+        if( !m_evaluated )
+        {
+            try
+            {
+                pageContext.getOut().write( executePlugin( m_plugin, m_args, null ) );
+            }
+            catch( Exception e )
+            {
+                log.error( "Failed to insert plugin", e );
+                throw new JspException( "Tag failed, check logs: "+e.getMessage() );
+            }
+        }
+        return EVAL_PAGE;
+    }
+    
     public int doAfterBody()
         throws JspException
     {
         try
         {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                    PageContext.REQUEST_SCOPE );
-            WikiEngine engine = m_wikiContext.getEngine();
-
-            PluginManager pm  = engine.getPluginManager();
-
-            Map argmap = pm.parseArgs( m_args );
-            
             BodyContent bc = getBodyContent();
-            if( bc != null ) 
-            {
-                argmap.put( "_body", bc.getString() );
-            }
-
-            String result = pm.execute( m_wikiContext, m_plugin, argmap );
-
-            pageContext.getOut().write( result );
-        
-            return SKIP_BODY;
+            
+            getPreviousOut().write( executePlugin( m_plugin, m_args, ((bc != null) ? bc.getString() : null) ) );
         }
         catch( Exception e )
         {
             log.error( "Failed to insert plugin", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
+        
+        return SKIP_BODY;
     }
 }
