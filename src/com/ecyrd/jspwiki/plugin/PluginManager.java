@@ -385,14 +385,16 @@ public class PluginManager
         throws IOException
     {
         HashMap         arglist = new HashMap();
-        StringReader    in      = new StringReader(argstring);
-        StreamTokenizer tok     = new StreamTokenizer(in);
-        int             type;
 
         //
         //  Protection against funny users.
         //
         if( argstring == null ) return arglist;
+
+        StringReader    in      = new StringReader(argstring);
+        StreamTokenizer tok     = new StreamTokenizer(in);
+        int             type;
+
 
         String param = null, value = null;
 
