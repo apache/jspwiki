@@ -1,0 +1,11 @@
+This is a very simple filter showing how you can remove certain content from the page before it's displayed to the user.
+
+This filter is not really very useful, I'm afraid, as it knows only two dirty words.
+
+!Parameters
+
+None.
+
+!Example
+
+None.

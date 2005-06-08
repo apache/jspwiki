@@ -10,7 +10,7 @@ If you are using any of the [Page Filters] that ship within JSPWiki, then you do
 
 !!2. Tell JSPWiki you want to use this filter
 
-Find the "filters.xml" file in your  {{webapps/''your wiki name''/WEB-INF/lib}} -directory.  If you don't have one, create a new one as per the example below.
+Find the "filters.xml" file in your  {{webapps/''your wiki name''/WEB-INF/classes}} -directory.  If you don't have one, create a new one as per the example below.
 
 !Example configuration file
 

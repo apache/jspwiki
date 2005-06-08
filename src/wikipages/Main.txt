@@ -30,7 +30,7 @@ You have some pages set up for you:
 * [WikiForms] - for putting interactivity in your pages
 * [URLConstructors] - for constructing your URLs.
 
-!Miscallaneous
+!Miscellaneous
 
 * [JSPWikiTips] may help you a bit.
 * To see what this particular wiki is about, click on the Wiki name

@@ -2,6 +2,17 @@ ShortURLConstructor replaces all wiki pages with a reference to the /wiki/ -URL,
 
 ShortURLConstructor will attempt to guess your wiki location from your {{jspwiki.baseURL}} -setting, but if it gets it wrong, you can use the {{jspwiki.shortURLConstructor.prefix}} -setting to point at a different location.
 
+For example, if you changed the path mapping for the WikiServlet in web.xml to /mywiki/* you might do the following:
+
+{{{
+jspwiki.baseURL = http://example.com/
+jspwiki.urlConstructor = ShortURLConstructor
+jspwiki.shortURLConstructor.prefix = /mywiki/
+}}}
+
+All relative URLs would look like "/mywiki/Foobar" and all absolute URLs would look like "http://example.com/mywiki/Foobar".
+
+
 !Note
 
 You should be understand that users can bypass any restrictions in {{web.xml}} if you're using this URLConstructor.  All access to the wiki is controlled through the /wiki/ -servlet.  If you want to limit user access to certain functionalities, you should use the [ShortViewURLConstructor].
