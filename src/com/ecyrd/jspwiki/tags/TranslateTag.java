@@ -50,9 +50,14 @@ public class TranslateTag
             String wikiText = bc.getString();
             bc.clearBody();
 
-            String result = context.getEngine().textToHTML( context, wikiText );
+            if( wikiText != null )
+            {
+                wikiText = wikiText.trim();
+            
+                String result = context.getEngine().textToHTML( context, wikiText );
 
-            getPreviousOut().write( result );
+                getPreviousOut().write( result );
+            }
         }
         catch( Exception e )
         {
