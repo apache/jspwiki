@@ -98,6 +98,37 @@ public class AttachmentManagerTest extends TestCase
         assertEquals( "contents", c_fileContents, sout.toString() );
     }
 
+    public void testSimpleStoreSpace()
+        throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test file.txt" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
+                                                                       new WikiPage(NAME1)), 
+                                                       "test file.txt" );
+
+        assertNotNull( "attachment disappeared", att2 );
+        assertEquals( "name", att.getName(), att2.getName() );
+        assertEquals( "author", att.getAuthor(), att2.getAuthor() );
+        assertEquals( "size", c_fileContents.length(), att2.getSize() );
+
+        InputStream in = m_manager.getAttachmentStream( att2 );
+
+        assertNotNull( "stream", in );
+
+        StringWriter sout = new StringWriter();
+        FileUtil.copyContents( new InputStreamReader(in), sout );
+
+        in.close();
+        sout.close();
+
+        assertEquals( "contents", c_fileContents, sout.toString() );
+    }
+
     public void testSimpleStoreByVersion()
         throws Exception
     {
@@ -249,6 +280,18 @@ public class AttachmentManagerTest extends TestCase
 
         assertTrue( "attachment disappeared", 
                     m_engine.pageExists( att.getName() ) );
+    }
+
+    public void testExistsSpace() throws Exception
+    {
+        Attachment att = new Attachment( NAME1, "test file.bin" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_manager.storeAttachment( att, makeAttachmentFile() );
+
+        assertTrue( "attachment disappeared", 
+                    m_engine.pageExists( NAME1+"/test file.bin" ) );
     }
 
     public void testExistsUTF1() throws Exception
