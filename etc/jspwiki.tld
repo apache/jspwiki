@@ -137,7 +137,7 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-       <name>Find</name>
+       <name>find</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
@@ -146,10 +146,6 @@
     </attribute>
     <attribute>
        <name>error</name>
-       <rtexprvalue>true</rtexprvalue>
-    </attribute>
-    <attribute>
-       <name></name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
