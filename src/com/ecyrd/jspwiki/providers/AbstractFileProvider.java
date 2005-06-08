@@ -65,6 +65,8 @@ public abstract class AbstractFileProvider
 
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
 
+    private boolean m_WindowsHackNeeded = false;
+    
     /**
      *  @throws FileNotFoundException If the specified page directory does not exist.
      *  @throws IOException In case the specified page directory is a file, not a directory.
@@ -90,6 +92,13 @@ public abstract class AbstractFileProvider
         m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, 
                                              DEFAULT_ENCODING );
 
+        String os = System.getProperty( "os.name" ).toLowerCase();
+        
+        if( os.startsWith("windows") || os.equals("nt") )
+        {
+            m_WindowsHackNeeded = true;
+        }
+        
         log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
     }
 
@@ -99,6 +108,12 @@ public abstract class AbstractFileProvider
         return m_pageDirectory;
     }
 
+    private static final String[] WINDOWS_DEVICE_NAMES =
+    {
+        "con", "prn", "nul", "aux", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
+        "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9"
+    };
+    
     /**
      *  This makes sure that the queried page name
      *  is still readable by the file system.
@@ -109,6 +124,18 @@ public abstract class AbstractFileProvider
         
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
 
+        if( m_WindowsHackNeeded )
+        {
+            String pn = pagename.toLowerCase();
+            for( int i = 0; i < WINDOWS_DEVICE_NAMES.length; i++ )
+            {
+                if( WINDOWS_DEVICE_NAMES[i].equals(pn) )
+                {
+                    pagename = "$$$" + pagename;
+                }
+            }
+        }
+        
         return pagename;
     }
 
@@ -120,6 +147,11 @@ public abstract class AbstractFileProvider
         // The exception should never happen.
         try
         {
+            if( m_WindowsHackNeeded && filename.startsWith( "$$$") && filename.length() > 3 )
+            {
+                filename = filename.substring(3);
+            }
+            
             return TextUtil.urlDecode( filename, m_encoding );
         }
         catch( UnsupportedEncodingException e ) 
