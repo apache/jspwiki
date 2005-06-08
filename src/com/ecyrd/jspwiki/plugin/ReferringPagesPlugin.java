@@ -43,13 +43,21 @@ public class ReferringPagesPlugin
 
     public static final String PARAM_MAX      = "max";
     public static final String PARAM_EXTRAS   = "extras";
-
+    public static final String PARAM_PAGE     = "page";
+    
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        WikiPage         page   = context.getPage();
+        String pageName = (String)params.get( PARAM_PAGE );
+        
+        if( pageName == null )
+        {
+            pageName = context.getPage().getName();
+        }
 
+        WikiPage page = context.getEngine().getPage( pageName );
+        
         if( page != null )
         {
             Collection   links  = refmgr.findReferrers( page.getName() );
@@ -63,8 +71,8 @@ public class ReferringPagesPlugin
             {
                 extras = "...and %d more\\\\";
             }
-
-            log.debug( "Fetching referring pages for "+context.getPage().getName()+
+            
+            log.debug( "Fetching referring pages for "+page.getName()+
                        " with a max of "+items);
         
             if( links != null && links.size() > 0 )
