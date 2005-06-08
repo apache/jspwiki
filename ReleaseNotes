@@ -1,5 +1,5 @@
 
-This is an BETA release of JSPWiki v2.2  
+This is the first STABLE release of JSPWiki v2.2  
 
 Most of the documentation is now contained in jspwiki_samplepages.zip
 
@@ -63,10 +63,30 @@ for further information.
 KNOWN MAJOR ISSUES
 ==================
 
-* Documentation needs cleanup; it's out of date, etc.
-* ISO-8859-1 and attachments don't always mix
-* HTTPS and Internet Explorer don't work in Preview
+* Documentation needs cleanup; parts of it are out of date, etc.
 
+
+EXPERIMENTAL FEATURES
+=====================
+
+There are some features in this release which could mostly be considered
+experimental at best.  The following ones are known to work only 
+partially:
+
+* Atom support.  We can give out feeds in Atom 0.3, but it's not really
+  tested properly.  There's also preliminary APP support, but it does 
+  not work.
+  
+* WYSIWYG editing.  You need to install FCK by yourself.  It sort of
+  works, but not quite.
+  
+* Install.jsp.  It's still a bit experimental, though it should work...
+
+* WebDAV support.  This is known to be broken on pretty many levels...
+
+* XHTML -> WikiMarkup translation.  Spotty, but should work for the most
+  part.
+  
 
 NOTE ABOUT AUTHENTICATION
 =========================

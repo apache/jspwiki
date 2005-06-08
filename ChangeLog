@@ -1,5 +1,15 @@
 2005-06-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.2.19.
+
+        * Bug fix: BugPluginTagNotWritingOutput
+
+        * Bug fix: BugJspwiki.tldEmptyTag
+
+        * Bug fix: BugWikiTranslateTagShouldTrimLeadingSpacesOfFirstSentence
+
+2005-06-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * 2.2.18.
 
         * Ebu added a bug fix for oldauth (please specify here...)
