@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 
@@ -62,6 +60,7 @@ public class PluginTag
     
     public int doWikiStartTag() throws JspException, IOException
     {
+        m_evaluated = false;
         return EVAL_BODY_TAG;
     }
 
