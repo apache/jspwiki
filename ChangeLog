@@ -1,4 +1,11 @@
-2005-06-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2005-06-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.20.
+
+        * Small bug fix to PluginTag: it should now work on page
+        refreshes.
+
+2005-06-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.19.
 
