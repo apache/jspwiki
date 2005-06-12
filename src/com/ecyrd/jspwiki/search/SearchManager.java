@@ -143,57 +143,10 @@ public class SearchManager
 
     public Collection findPages( String query )
     {
-        QueryItem[] items = parseQuery(query);
-        return m_engine.getPageManager().getProvider().findPages( items );
+        return m_searchProvider.findPages( query );
     }
 
-    //FIXME: parseQuery should move to the search engine
-    public  QueryItem[] parseQuery(String query)
-    {
-        StringTokenizer st = new StringTokenizer( query, " \t," );
-
-        QueryItem[] items = new QueryItem[st.countTokens()];
-        int word = 0;
-
-        log.debug("Expecting "+items.length+" items");
-
-        //
-        //  Parse incoming search string
-        //
-
-        while( st.hasMoreTokens() )
-        {
-            log.debug("Item "+word);
-            String token = st.nextToken().toLowerCase();
-
-            items[word] = new QueryItem();
-
-            switch( token.charAt(0) )
-            {
-              case '+':
-                items[word].type = QueryItem.REQUIRED;
-                token = token.substring(1);
-                log.debug("Required word: "+token);
-                break;
-
-              case '-':
-                items[word].type = QueryItem.FORBIDDEN;
-                token = token.substring(1);
-                log.debug("Forbidden word: "+token);
-                break;
-
-              default:
-                items[word].type = QueryItem.REQUESTED;
-                log.debug("Requested word: "+token);
-                break;
-            }
-
-            items[word++].word = token;
-        }
-
-        return items;
-    }
-
+ 
     public void deletePage(WikiPage page)
     {
         m_searchProvider.deletePage(page);
@@ -202,11 +155,6 @@ public class SearchManager
     public void addToQueue(WikiPage page, String text)
     {
         m_searchProvider.addToQueue(page, text);
-    }
-
-    public Collection findPages( QueryItem[] query )
-    {
-        return m_searchProvider.findPages(query);
     }
 
 }

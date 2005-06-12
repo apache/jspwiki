@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
@@ -65,7 +66,53 @@ public class BasicSearchProvider implements SearchProvider
         return m_engine.getPageManager().getAllPages();
     }
 
-    public Collection findPages( QueryItem[] query )
+    public  QueryItem[] parseQuery(String query)
+    {
+        StringTokenizer st = new StringTokenizer( query, " \t," );
+
+        QueryItem[] items = new QueryItem[st.countTokens()];
+        int word = 0;
+
+        log.debug("Expecting "+items.length+" items");
+
+        //
+        //  Parse incoming search string
+        //
+
+        while( st.hasMoreTokens() )
+        {
+            log.debug("Item "+word);
+            String token = st.nextToken().toLowerCase();
+
+            items[word] = new QueryItem();
+
+            switch( token.charAt(0) )
+            {
+              case '+':
+                items[word].type = QueryItem.REQUIRED;
+                token = token.substring(1);
+                log.debug("Required word: "+token);
+                break;
+
+              case '-':
+                items[word].type = QueryItem.FORBIDDEN;
+                token = token.substring(1);
+                log.debug("Forbidden word: "+token);
+                break;
+
+              default:
+                items[word].type = QueryItem.REQUESTED;
+                log.debug("Requested word: "+token);
+                break;
+            }
+
+            items[word++].word = token;
+        }
+
+        return items;
+    }
+
+    private Collection findPages( QueryItem[] query )
     {
         TreeSet res = new TreeSet( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( query );
@@ -119,7 +166,7 @@ public class BasicSearchProvider implements SearchProvider
 
     public Collection findPages(String query) 
     {
-        return findPages(m_engine.getSearchManager().parseQuery(query));
+        return findPages(parseQuery(query));
     }
 
     /**

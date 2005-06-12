@@ -39,9 +39,12 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
@@ -351,6 +354,7 @@ public class LuceneSearchProvider implements SearchProvider
      * @param queryTerms
      * @return Collection of WikiPage items for the pages that Lucene claims will match the search.
      */
+    /*
     public Collection search( QueryItem[] queryTerms ) 
         throws ProviderException
     {
@@ -373,17 +377,17 @@ public class LuceneSearchProvider implements SearchProvider
                                 queryTerm.type == QueryItem.REQUIRED,
                                 queryTerm.type == QueryItem.FORBIDDEN);
                     }
-/* Since we're not using Lucene to score, no reason to use PhraseQuery, which removes stop words.
-                    PhraseQuery phraseQ = new PhraseQuery();
-                    StringTokenizer tok = new StringTokenizer(queryTerm.word);
-                    while (tok.hasMoreTokens()) {
-                        String word = tok.nextToken();
-                        phraseQ.add(new Term(LUCENE_PAGE_CONTENTS, word));
-                    }
-                    query.add(phraseQ,
-                            queryTerm.type == QueryItem.REQUIRED,
-                            queryTerm.type == QueryItem.FORBIDDEN);
-*/
+// Since we're not using Lucene to score, no reason to use PhraseQuery, which removes stop words.
+//                    PhraseQuery phraseQ = new PhraseQuery();
+//                    StringTokenizer tok = new StringTokenizer(queryTerm.word);
+//                    while (tok.hasMoreTokens()) {
+//                        String word = tok.nextToken();
+//                        phraseQ.add(new Term(LUCENE_PAGE_CONTENTS, word));
+//                    }
+//                    query.add(phraseQ,
+//                            queryTerm.type == QueryItem.REQUIRED,
+//                            queryTerm.type == QueryItem.FORBIDDEN);
+
                 }
                 else
                 { // single word query
@@ -420,7 +424,7 @@ public class LuceneSearchProvider implements SearchProvider
             return Collections.EMPTY_LIST;
         }
     }
-
+*/
     /**
      *  Adds a page-text pair to the lucene update queue.  Safe to call
      *  always - if lucene is not used, does nothing.
@@ -438,67 +442,103 @@ public class LuceneSearchProvider implements SearchProvider
         }
     }
 
-    public Collection findPages( QueryItem[] query )
+    public Collection findPages( String query )
     {
-        TreeSet res = new TreeSet( new SearchResultComparator() );
-        SearchMatcher matcher = new SearchMatcher( query );
-
-        Collection allPages = null;
+        Searcher  searcher = null;
+        ArrayList list     = null;
+        
         try
         {
-            // basic search returns allPages();
-            allPages = search(query);
-//           To keep the scoring mechanism the same, we'll only use Lucene to determine which pages to score.
-        }
-        catch( ProviderException pe )
-        {
-            log.error( "Unable to retrieve page list", pe );
-            return( null );
-        }
+            QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
+            Query luceneQuery = qp.parse( query );
+            searcher = new IndexSearcher(m_luceneDirectory);
 
-        //FIXME: Move search logic to SearchEngine classes
-        Iterator it = allPages.iterator();
-        while( it.hasNext() )
-        {
-            try
+            Hits hits = searcher.search(luceneQuery);
+
+            list = new ArrayList(hits.length());
+            for ( int curr = 0; curr < hits.length(); curr++ )
             {
-                WikiPage page = (WikiPage) it.next();
-                if (page != null)
+                Document doc = hits.doc(curr);
+                String pageName = doc.get(LUCENE_ID);
+                WikiPage page = m_engine.getPageManager().getPageInfo(pageName, WikiPageProvider.LATEST_VERSION);
+                
+                if(page != null)
                 {
-                    String pageName = page.getName();
-                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION);
-                    SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
-
-                    if( comparison != null )
-                    {
-                        res.add( comparison );
-                    }
+                    int score = (int)(hits.score(curr) * 100);
+                    SearchResult result = new SearchResultImpl( page, score );
+                    list.add(result);
+                }
+                else
+                {
+                    log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
+                    deletePage(new WikiPage(pageName));
                 }
             }
-            catch( RepositoryModifiedException rme )
-            {
-                // FIXME: What to do in this case???
-            }
-            catch( ProviderException pe )
-            {
-                log.error( "Unable to retrieve page from cache", pe );
-            }
-            catch( IOException ioe )
-            {
-                log.error( "Failed to search page", ioe );
-            }
         }
-
-        return( res );
+        catch( IOException e )
+        {
+            log.error("Failed during lucene search",e);
+        }
+        catch( InstantiationException e )
+        {
+            log.error("Unable to get a Lucene analyzer",e);
+        }
+        catch( IllegalAccessException e )
+        {
+            log.error("Unable to get a Lucene analyzer",e);
+        }
+        catch( ClassNotFoundException e )
+        {
+            log.error("Specified Lucene analyzer does not exist",e);
+        }
+        catch( ParseException e )
+        {
+            log.error("Broken query; cannot parse",e);
+        }
+        catch( ProviderException e )
+        {
+            log.error("Unable to get page data while searching",e);
+        }
+        finally
+        {
+            if( searcher != null ) try { searcher.close(); } catch( IOException e ) {}
+        }
+        
+        return list;
     }
 
-    public Collection findPages(String query) 
-    {
-        return findPages(m_engine.getSearchManager().parseQuery(query));
-    }
 
     public String getProviderInfo()
     {
         return "LuceneSearchProvider";
     }
+    
+    // FIXME: This class is dumb; needs to have a better implementation
+    private class SearchResultImpl
+        implements SearchResult
+    {
+        private WikiPage m_page;
+        private int      m_score;
+        
+        public SearchResultImpl( WikiPage page, int score )
+        {
+            m_page  = page;
+            m_score = score;
+        }
+
+        public WikiPage getPage()
+        {
+            return m_page;
+        }
+
+        /* (non-Javadoc)
+         * @see com.ecyrd.jspwiki.SearchResult#getScore()
+         */
+        public int getScore()
+        {
+            return m_score;
+        }
+        
+    }
+        
 }

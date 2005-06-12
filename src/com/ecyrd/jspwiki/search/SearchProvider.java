@@ -31,7 +31,8 @@ import com.ecyrd.jspwiki.WikiProvider;
  *  @author Arent-Jan Banck for Informatica
  *  @since 2.2.21.
  */
-public interface SearchProvider extends WikiProvider{
+public interface SearchProvider extends WikiProvider
+{
     /**
      * Delete a page from the search index
      * @param page Page to remove from search index
@@ -40,13 +41,6 @@ public interface SearchProvider extends WikiProvider{
 
 
     public void addToQueue(WikiPage page, String text);
-
-    /**
-     * Search for pages using an array of query items. Deprecate?
-     * @param query array of query items to search for
-     * @return collection of pages that match query
-     */
-    public Collection findPages( QueryItem[] query );
 
     /**
      * Search for pages matching a search query
