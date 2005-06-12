@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -26,6 +26,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
+import com.ecyrd.jspwiki.search.SearchManager;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -182,7 +183,10 @@ public class WikiEngine
     /** Handlers page filters. */
     private FilterManager    m_filterManager;
 
-    /** Constructs URLs */
+    /** Stores the Search manager */
+    private SearchManager    m_searchManager = null;
+
+	/** Constructs URLs */
     private URLConstructor   m_urlConstructor;
 
     /** Generates RSS feed when requested. */
@@ -488,6 +492,7 @@ public class WikiEngine
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
             m_filterManager     = new FilterManager( this, props );
+            m_searchManager     = new SearchManager( this, props );
 
             //
             //  ReferenceManager has the side effect of loading all
@@ -1504,48 +1509,7 @@ public class WikiEngine
     //
     public Collection findPages( String query )
     {
-        StringTokenizer st = new StringTokenizer( query, " \t," );
-
-        QueryItem[] items = new QueryItem[st.countTokens()];
-        int word = 0;
-
-        log.debug("Expecting "+items.length+" items");
-
-        //
-        //  Parse incoming search string
-        //
-
-        while( st.hasMoreTokens() )
-        {
-            log.debug("Item "+word);
-            String token = st.nextToken().toLowerCase();
-
-            items[word] = new QueryItem();
-
-            switch( token.charAt(0) )
-            {
-              case '+':
-                items[word].type = QueryItem.REQUIRED;
-                token = token.substring(1);
-                log.debug("Required word: "+token);
-                break;
-                
-              case '-':
-                items[word].type = QueryItem.FORBIDDEN;
-                token = token.substring(1);
-                log.debug("Forbidden word: "+token);
-                break;
-
-              default:
-                items[word].type = QueryItem.REQUESTED;
-                log.debug("Requested word: "+token);
-                break;
-            }
-
-            items[word++].word = token;
-        }
-
-        Collection results = m_pageManager.findPages( items );
+        Collection results = m_searchManager.findPages( query );
         
         return results;
     }
@@ -1724,6 +1688,15 @@ public class WikiEngine
     public FilterManager getFilterManager()
     {
         return m_filterManager;
+    }
+
+    /**
+     *  Returns the manager responsible for searching the Wiki.
+     *  @since 2.2.21
+     */
+    public SearchManager getSearchManager()
+    {
+        return m_searchManager;
     }
 
     /**
