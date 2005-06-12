@@ -299,11 +299,6 @@ public class PageManager
         return result;
     }
 
-    public Collection findPages( QueryItem[] query )
-    {
-        return m_provider.findPages( query );
-    }
-
     public WikiPage getPageInfo( String pageName, int version )
         throws ProviderException
     {
