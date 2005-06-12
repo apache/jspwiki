@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki;
 
+// FIXME: Move to the search-package
 public interface SearchResult
 {
     /**

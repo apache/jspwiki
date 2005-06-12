@@ -25,6 +25,7 @@ import java.util.*;
  *  Simple class that decides which search results are more
  *  important than others.
  */
+// FIXME: move to the search package
 public class SearchResultComparator
     implements Comparator
 {
