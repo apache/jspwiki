@@ -1,3 +1,10 @@
+2005-06-12  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.21
+
+        * Moved searching into com.ecyrd.jspwiki.search package,
+        thanks to an excellent patch from Arent-Jan Banck.
+
 2005-06-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.20.
