@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.39 2005-04-11 20:14:36 jalkanen Exp $
+    $Id: build.xml,v 1.40 2005-06-12 20:27:40 jalkanen Exp $
 -->    
        
 <!--   
@@ -295,12 +295,12 @@
 
     <delete file="${warfile}" />
 
-    <war warfile="${install.fulldir}/${ant.project.name}.war"
+    <war warfile="${warfile}"
          webxml="etc/web.xml">
        <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
        <lib dir="${code.build}" includes="*.jar" />
        <fileset dir="${code.src}/webdocs" includes="**" />
-       <webinf dir="etc" includes="**" excludes="**.tmpl" />
+       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml" />
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
