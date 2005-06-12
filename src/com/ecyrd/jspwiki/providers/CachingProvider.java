@@ -538,12 +538,9 @@ public class CachingProvider
         //  If the provider is a fast searcher, then
         //  just pass this request through.
         //
-        if( m_provider instanceof FastSearch )
-        {
-            return m_provider.findPages( query );
-        }
-
-        return m_engine.getSearchManager().findPages(query);         
+        return m_provider.findPages( query );
+        
+        // FIXME: Does not implement fast searching
     }
 
 
