@@ -2,6 +2,13 @@
 
         * v2.2.21
 
+        * Enabled normal Lucene query language if you're using
+        the LuceneSearchProvider.  This, incidentally, also helps
+        a lot if you're using any other language than English, since
+        we now use the same Analyzer for queries than for parsing
+        (which would account to quite a few problems in the past).
+        Unfortunately, I had to break FastSearch (does anyone use it)?
+
         * Moved searching into com.ecyrd.jspwiki.search package,
         thanks to an excellent patch from Arent-Jan Banck.
 
