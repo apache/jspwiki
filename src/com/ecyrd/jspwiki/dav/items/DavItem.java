@@ -4,11 +4,14 @@
  */
 package com.ecyrd.jspwiki.dav.items;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -17,17 +20,23 @@ import com.ecyrd.jspwiki.WikiEngine;
  */
 public abstract class DavItem
 {
-    protected WikiEngine m_engine;
+    protected DavProvider m_provider;
     protected ArrayList  m_items = new ArrayList();
     
-    protected DavItem( WikiEngine engine )
+    protected DavItem( DavProvider provider )
     {
-        m_engine = engine;
+        m_provider = provider;
     }
     
     public abstract Collection getPropertySet();
     
     public abstract String getHref();
+    
+    public abstract InputStream getInputStream();
+    
+    public abstract long getLength();
+    
+    public abstract String getContentType();
     
     public Iterator iterator( int depth )
     {

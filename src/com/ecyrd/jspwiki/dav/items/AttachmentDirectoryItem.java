@@ -4,17 +4,19 @@ import java.util.Collection;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 public class AttachmentDirectoryItem extends DirectoryItem
 {
-    public AttachmentDirectoryItem( WikiEngine engine, String parentpage )
+    public AttachmentDirectoryItem( DavProvider provider, String parentpage )
     {
-        super( engine, parentpage );
+        super( provider, parentpage );
     }
 
     public String getHref()
     {
-        return m_engine.getURL( WikiContext.ATTACH, "", null, true );
+        return "";
+        // return m_provider.getEngine().getURL( WikiContext.ATTACH, "", null, true );
     }
 
     public Collection getPropertySet()

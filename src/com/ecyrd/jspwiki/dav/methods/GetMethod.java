@@ -10,11 +10,15 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.DavContext;
+import com.ecyrd.jspwiki.dav.DavPath;
+import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.DavUtil;
+import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -28,17 +32,18 @@ public class GetMethod extends DavMethod
     /**
      * 
      */
-    public GetMethod( WikiEngine engine )
+    public GetMethod( DavProvider provider )
     {
-        super( engine );
+        super( provider );
     }
-
+/*
     private void returnMainCollection( HttpServletRequest req, HttpServletResponse res )
     throws IOException
     {
         res.getWriter().println("raw");
     }
-    
+*/
+    /*
     private WikiContext createContext( HttpServletRequest req, DavContext dc )
     {
         String pagename = dc.m_page;
@@ -59,7 +64,33 @@ public class GetMethod extends DavMethod
 
         return wc;
     }
+    */
     
+    public void execute( HttpServletRequest req, HttpServletResponse res )
+        throws IOException
+    {
+        DavPath dp = new DavPath( req.getRequestURI() );
+        
+        DavItem di = m_provider.getItem( dp );
+        
+        if( di != null )
+        {
+            String mime = di.getContentType();
+            res.setContentType( mime );
+        
+            long length = di.getLength();
+        
+            if( length >= 0 )
+            {
+                res.setContentLength( (int)di.getLength() );
+            }
+        
+            FileUtil.copyContents( di.getInputStream(), res.getOutputStream() );
+        }
+        // FIXME: Should not fail silently
+    }
+    
+    /*
     public void execute( HttpServletRequest req, HttpServletResponse res )
     throws IOException
     {
@@ -134,5 +165,5 @@ public class GetMethod extends DavMethod
             e.printStackTrace( System.out );
             res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage() );
         }
-    }
+        */
 }

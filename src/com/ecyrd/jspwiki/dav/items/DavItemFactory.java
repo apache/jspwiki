@@ -38,8 +38,9 @@ public class DavItemFactory
         
         if( pagename == null || pagename.length() == 0 )
         {
-            DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
-        
+            // DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
+            DirectoryItem di = new DirectoryItem( null, dc.m_davcontext );
+            
             try
             {
                 Collection c = m_engine.getPageManager().getAllPages();
@@ -48,7 +49,7 @@ public class DavItemFactory
                 {
                     WikiPage p = (WikiPage) i.next();
                     
-                    PageDavItem dip = new PageDavItem( m_engine, p );
+                    PageDavItem dip = new PageDavItem( null, p );
                     
                     di.addDavItem( dip );
                 }
@@ -71,7 +72,7 @@ public class DavItemFactory
                 
                 if( p != null )
                 {
-                    PageDavItem di = new PageDavItem( m_engine, p );
+                    PageDavItem di = new PageDavItem( null, p );
                     
                     return di;
                 }
@@ -89,7 +90,9 @@ public class DavItemFactory
         {
             // User wants to have a listing of pages
             
-            DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
+            // DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
+          
+            DirectoryItem di = new DirectoryItem( null, dc.m_davcontext );
             
             AttachmentManager mgr = m_engine.getAttachmentManager();
                 
@@ -101,7 +104,7 @@ public class DavItemFactory
                 {
                     Attachment att = (Attachment)i.next();
                     
-                    DirectoryItem dia = new AttachmentDirectoryItem( m_engine, att.getParentName() );
+                    DirectoryItem dia = new AttachmentDirectoryItem( null, att.getParentName() );
            
                     di.addDavItem( dia );
                 }
@@ -118,7 +121,7 @@ public class DavItemFactory
             // No attachment; user wants to have a directory of a particular page
             // FIXME: This does not work for subpages
             
-            AttachmentDirectoryItem di = new AttachmentDirectoryItem( m_engine, attname );
+            AttachmentDirectoryItem di = new AttachmentDirectoryItem( null, attname );
             
             return di;
         }
@@ -130,7 +133,7 @@ public class DavItemFactory
             
                 if( att != null )
                 {
-                    AttachmentItem ai = new AttachmentItem( m_engine, att );
+                    AttachmentItem ai = new AttachmentItem( null, att );
                 
                     return ai;
                 }
@@ -150,8 +153,10 @@ public class DavItemFactory
         
         if( pagename == null || pagename.length() == 0 )
         {
-            DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
+        //    DirectoryItem di = new DirectoryItem( m_engine, dc.m_davcontext );
         
+            DirectoryItem di = new DirectoryItem( null, dc.m_davcontext );
+            
             try
             {
                 Collection c = m_engine.getPageManager().getAllPages();
@@ -160,7 +165,7 @@ public class DavItemFactory
                 {
                     WikiPage p = (WikiPage) i.next();
                     
-                    HTMLPageDavItem dip = new HTMLPageDavItem( m_engine, p );
+                    HTMLPageDavItem dip = new HTMLPageDavItem( null, p );
                     
                     di.addDavItem( dip );
                 }
@@ -183,7 +188,7 @@ public class DavItemFactory
                 
                 if( p != null )
                 {
-                    HTMLPageDavItem di = new HTMLPageDavItem( m_engine, p );
+                    HTMLPageDavItem di = new HTMLPageDavItem( null, p );
                     
                     return di;
                 }
@@ -198,7 +203,7 @@ public class DavItemFactory
     {
         if( dc.m_davcontext.length() == 0 )
         {
-            return new TopLevelDavItem( m_engine );
+            return new TopLevelDavItem( null );
         }
         else if( dc.m_davcontext.equals("raw") )
         {

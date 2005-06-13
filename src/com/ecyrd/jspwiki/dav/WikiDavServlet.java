@@ -29,7 +29,8 @@ public class WikiDavServlet extends WebdavServlet
 {
     private WikiEngine m_engine;
     Logger log = Logger.getLogger(this.getClass().getName());
-
+    private DavProvider m_rawProvider;
+    
     public void init( ServletConfig config )
     throws ServletException 
     {
@@ -37,6 +38,8 @@ public class WikiDavServlet extends WebdavServlet
 
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
+        
+        m_rawProvider    = new RawPagesDavProvider( m_engine );
     }
     
     private String parsePage( HttpServletRequest req )
@@ -45,9 +48,9 @@ public class WikiDavServlet extends WebdavServlet
     }
     
     public void doPropFind( HttpServletRequest req, HttpServletResponse res )
-    throws IOException,ServletException
+        throws IOException,ServletException
     {
-        PropFindMethod m = new PropFindMethod( m_engine );
+        PropFindMethod m = new PropFindMethod( m_rawProvider );
         
         m.execute( req, res );
     }
@@ -76,7 +79,7 @@ public class WikiDavServlet extends WebdavServlet
     
     public void doPropPatch( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-        DavMethod dm = new PropPatchMethod( m_engine );
+        DavMethod dm = new PropPatchMethod( m_rawProvider );
         
         dm.execute( request, response );
     }
@@ -115,10 +118,15 @@ public class WikiDavServlet extends WebdavServlet
      * 
      */
     protected void doGet( HttpServletRequest req, HttpServletResponse res ) 
-    throws ServletException, IOException
+        throws ServletException, IOException
     {
-        DavMethod dm = new GetMethod( m_engine );
+        String path = req.getPathInfo();
         
-        dm.execute( req, res );
+        if( path.startsWith("/raw") )
+        {
+            DavMethod dm = new GetMethod( m_rawProvider );
+        
+            dm.execute( req, res );
+        }
     }
 }

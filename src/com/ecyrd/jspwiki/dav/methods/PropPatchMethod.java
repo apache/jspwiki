@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -24,9 +25,9 @@ public class PropPatchMethod
     /**
      * @param engine
      */
-    public PropPatchMethod( WikiEngine engine )
+    public PropPatchMethod( DavProvider provider )
     {
-        super( engine );
+        super( provider );
     }
 
     public void execute( HttpServletRequest req, HttpServletResponse res ) throws ServletException, IOException

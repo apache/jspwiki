@@ -4,6 +4,7 @@
  */
 package com.ecyrd.jspwiki.dav.items;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import org.jdom.Namespace;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -30,9 +32,9 @@ public class PageDavItem extends DavItem
     /**
      * 
      */
-    public PageDavItem( WikiEngine engine, WikiPage page )
+    public PageDavItem( DavProvider provider, WikiPage page )
     {
-        super( engine );
+        super( provider );
         m_page = page;
     }
 
@@ -56,7 +58,7 @@ public class PageDavItem extends DavItem
     {
         Collection set = getCommonProperties();
 
-        String txt = m_engine.getPureText(m_page);
+        String txt = ""; // m_engine.getPureText(m_page);
         
         try
         {
@@ -70,9 +72,38 @@ public class PageDavItem extends DavItem
 
     public String getHref()
     {
+        return "";
+        /*
         return m_engine.getURL( WikiContext.NONE,
                                 "dav/raw/"+m_page.getName()+".txt",
                                 null,
-                                true );
+                                true );*/
+    }
+
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getContentType()
+     */
+    public String getContentType()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getInputStream()
+     */
+    public InputStream getInputStream()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getLength()
+     */
+    public long getLength()
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

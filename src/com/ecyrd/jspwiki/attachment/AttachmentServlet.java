@@ -112,7 +112,7 @@ public class AttachmentServlet
         log.debug( "UploadServlet initialized. Using " + 
                    m_tmpDir + " for temporary storage." );
     }
-
+/*
 	public void doPropFind( HttpServletRequest req, HttpServletResponse res )
     throws IOException, ServletException
     {
@@ -120,7 +120,7 @@ public class AttachmentServlet
         
         dm.execute( req, res );
 	}
-
+*/
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
     {
         res.setHeader( "DAV", "1" ); // We support only Class 1

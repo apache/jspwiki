@@ -9,6 +9,7 @@ import java.util.Collection;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -22,9 +23,9 @@ public class AttachmentItem extends PageDavItem
      * @param engine
      * @param page
      */
-    public AttachmentItem( WikiEngine engine, Attachment att )
+    public AttachmentItem( DavProvider provider, Attachment att )
     {
-        super( engine, att );
+        super( provider, att );
     }
 
    
@@ -40,9 +41,12 @@ public class AttachmentItem extends PageDavItem
      */
     public String getHref()
     {
+        return "";
+        /*
         return m_engine.getURL( WikiContext.NONE,
                                 "dav/raw/"+m_page.getName(),
                                 null,
                                 true );
+                                */
     }
 }

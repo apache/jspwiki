@@ -26,6 +26,7 @@ import org.jdom.xpath.XPath;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.DavContext;
+import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
 import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.dav.items.DavItemFactory;
@@ -46,10 +47,10 @@ public class PropFindMethod
     /**
      * 
      */
-    public PropFindMethod( WikiEngine engine )
+    public PropFindMethod( DavProvider provider )
     {
-        super( engine );
-        m_difactory = new DavItemFactory( m_engine );
+        super( provider );
+       // m_difactory = new DavItemFactory( m_engine );
     }
 
     public void sendMultiResponse( HttpServletResponse res, Element response )

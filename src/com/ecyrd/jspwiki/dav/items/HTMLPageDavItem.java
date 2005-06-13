@@ -11,6 +11,7 @@ import org.jdom.Element;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -24,18 +25,20 @@ public class HTMLPageDavItem extends PageDavItem
      * @param engine
      * @param page
      */
-    public HTMLPageDavItem( WikiEngine engine, WikiPage page )
+    public HTMLPageDavItem( DavProvider provider, WikiPage page )
     {
-        super( engine, page );
+        super( provider, page );
     }
 
     
     public String getHref()
     {
+        return "";
+        /*
         return m_engine.getURL( WikiContext.NONE,
                                 "dav/html/"+m_page.getName()+".html",
                                 null,
-                                true );    
+                                true );*/    
     }
  
     public Collection getPropertySet()

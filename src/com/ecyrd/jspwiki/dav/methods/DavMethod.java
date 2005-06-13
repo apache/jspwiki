@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -19,14 +19,14 @@ import com.ecyrd.jspwiki.WikiEngine;
  */
 public abstract class DavMethod
 {
-    protected WikiEngine m_engine;
+    protected DavProvider m_provider;
     
     /**
      * 
      */
-    public DavMethod( WikiEngine engine )
+    public DavMethod( DavProvider provider )
     {
-        m_engine = engine;
+        m_provider = provider;
     }
 
     public abstract void execute( HttpServletRequest req, HttpServletResponse res )

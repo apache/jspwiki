@@ -5,6 +5,7 @@
 package com.ecyrd.jspwiki.dav.items;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
  *  @author jalkanen
@@ -13,10 +14,10 @@ import com.ecyrd.jspwiki.WikiEngine;
  */
 public class TopLevelDavItem extends DirectoryItem
 {
-    public TopLevelDavItem( WikiEngine engine )
+    public TopLevelDavItem( DavProvider provider )
     {
-        super( engine, "/");
-        addDavItem( new DirectoryItem( engine, "raw") );
-        addDavItem( new DirectoryItem( engine, "html") );
+        super( provider, "/");
+        addDavItem( new DirectoryItem( provider, "raw") );
+        addDavItem( new DirectoryItem( provider, "html") );
     }
 }
