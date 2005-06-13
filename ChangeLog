@@ -1,3 +1,16 @@
+2005-06-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.22
+
+        * Broke the WebDAV API for now; I'm changing to a new
+        model to make additions easier.
+
+        * Bug fix: SearchManager didn't behave nicely; there was
+        a circular reference between it and ReferenceManager.
+        LuceneSearchProvider now does not start indexing until
+        PageManager is surely up and running.  Reported by
+        ajbanck.
+
 2005-06-12  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.21
