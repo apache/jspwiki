@@ -182,10 +182,18 @@ public class PageManager
             //
             //WikiPage p = new WikiPage( pageName );
             WikiPage p = m_provider.getPageInfo( pageName, version );
-            
+
             m_engine.updateReferences( p );
 
-            text = m_provider.getPageText( pageName, version );
+            if( p != null )
+            {
+                text = m_provider.getPageText( pageName, version );
+                m_engine.getSearchManager().addToQueue( p, text );
+            }
+            else
+            {
+                m_engine.getSearchManager().deletePage(new WikiPage(pageName));
+            }
         }
 
         return text;
@@ -200,6 +208,8 @@ public class PageManager
         }
 
         m_provider.putPageText( page, content );
+        
+        m_engine.getSearchManager().addToQueue( page, content );
     }
 
     /**
@@ -385,6 +395,7 @@ public class PageManager
     {
         m_provider.deleteVersion( page.getName(), page.getVersion() );
 
+        // FIXME: If this was the latest, reindex Lucene
         // FIXME: Update RefMgr
     }
 
@@ -395,6 +406,8 @@ public class PageManager
         throws ProviderException
     {
         m_provider.deletePage( page.getName() );
+
+        m_engine.getSearchManager().deletePage( page );
 
         // FIXME: Update RefMgr
     }
