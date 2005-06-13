@@ -54,12 +54,20 @@ public class SearchManager
 
     private String m_analyzerClass = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 
-    public SearchManager(WikiEngine engine, Properties props)
+    public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
     {
-        initialize(engine, props);
+        initialize( engine, properties );
     }
 
+    /**
+     *  This particular method starts off indexing and all sorts of various activities,
+     *  so you need to run this last, after things are done.
+     *   
+     * @param engine
+     * @param properties
+     * @throws WikiException
+     */
     public void initialize(WikiEngine engine, Properties properties)
         throws WikiException
     {
@@ -146,7 +154,10 @@ public class SearchManager
         return m_searchProvider.findPages( query );
     }
 
- 
+    /**
+     *  Removes the page from the search cache (if any).
+     *  @param page  The page to remove
+     */
     public void deletePage(WikiPage page)
     {
         m_searchProvider.deletePage(page);
@@ -156,5 +167,4 @@ public class SearchManager
     {
         m_searchProvider.addToQueue(page, text);
     }
-
 }
