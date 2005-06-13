@@ -97,14 +97,10 @@ public class LuceneSearchProvider implements SearchProvider
     private Thread           m_luceneUpdateThread = null;
     private Vector           m_updates = new Vector(); // Vector because multi-threaded.
 
-
     public void initialize(WikiEngine engine, Properties props)
             throws NoRequiredPropertyException, IOException 
     {
-
         m_engine = engine;
-
-        // Moved from CachingProvider
 
         m_luceneDirectory = engine.getWorkDir()+File.separator+LUCENE_DIR;
 
@@ -134,7 +130,34 @@ public class LuceneSearchProvider implements SearchProvider
             {
                 throw new IOException( "Invalid Lucene directory: cannot produce listing: "+dir.getAbsolutePath());
             }
+        }
+        catch ( IOException e )
+        {
+            log.error("Problem while creating Lucene index - not using Lucene.", e);
+            m_useLucene = false;
+        }
 
+        startLuceneUpdateThread();
+    }
+
+    /**
+     *  Performs a full Lucene reindex, if necessary.
+     *  @throws IOException
+     */
+    private void doFullLuceneReindex()
+        throws IOException
+    {
+        File dir = new File(m_luceneDirectory);
+        
+        String[] filelist = dir.list();
+        
+        if( filelist == null )
+        {
+            throw new IOException( "Invalid Lucene directory: cannot produce listing: "+dir.getAbsolutePath());
+        }
+
+        try
+        {
             if( filelist.length == 0 )
             {
                 //
@@ -161,13 +184,13 @@ public class LuceneSearchProvider implements SearchProvider
                     writer = new IndexWriter( m_luceneDirectory,
                                               getLuceneAnalyzer(),
                                               true );
-                    Collection allPages = engine.getPageManager().getAllPages();
+                    Collection allPages = m_engine.getPageManager().getAllPages();
 
                     for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
                     {
                         WikiPage page = (WikiPage) iterator.next();
-                        String text = engine.getPageManager().getPageText( page.getName(),
-                                                   WikiProvider.LATEST_VERSION );
+                        String text = m_engine.getPageManager().getPageText( page.getName(),
+                                                                             WikiProvider.LATEST_VERSION );
                         luceneIndexPage( page, text, writer );
                     }
                     writer.optimize();
@@ -215,10 +238,9 @@ public class LuceneSearchProvider implements SearchProvider
             log.error("Unable to start lucene",e);
             m_useLucene = false;
         }
-
-        startLuceneUpdateThread();
+        
     }
-
+    
     /*
     public void finalize()
     {
@@ -248,20 +270,29 @@ public class LuceneSearchProvider implements SearchProvider
                 }
                 catch( InterruptedException e ) {}
 
-                while( true )
+                try
                 {
-                    while( m_updates.size() > 0 )
+                    doFullLuceneReindex();
+                    
+                    while( true )
                     {
-                        Object[] pair = ( Object[] ) m_updates.remove(0);
-                        WikiPage page = ( WikiPage ) pair[0];
-                        String text = ( String ) pair[1];
-                        updateLuceneIndex(page, text);
+                        while( m_updates.size() > 0 )
+                        {
+                            Object[] pair = ( Object[] ) m_updates.remove(0);
+                            WikiPage page = ( WikiPage ) pair[0];
+                            String text = ( String ) pair[1];
+                            updateLuceneIndex(page, text);
+                        }
+                        try
+                        {
+                            Thread.sleep(500);
+                        }
+                        catch ( InterruptedException e ) {}
                     }
-                    try
-                    {
-                        Thread.sleep(500);
-                    }
-                    catch ( InterruptedException e ) {}
+                }
+                catch( Exception e )
+                {
+                    log.error("Problem with Lucene indexing - indexing shut down (no searching)",e);
                 }
             }
         });
@@ -350,81 +381,7 @@ public class LuceneSearchProvider implements SearchProvider
         }
     }
 
-    /**
-     * @param queryTerms
-     * @return Collection of WikiPage items for the pages that Lucene claims will match the search.
-     */
-    /*
-    public Collection search( QueryItem[] queryTerms ) 
-        throws ProviderException
-    {
-        try
-        {
-            Searcher searcher = new IndexSearcher(m_luceneDirectory);
 
-            BooleanQuery query = new BooleanQuery();
-            for ( int curr = 0; curr < queryTerms.length; curr++ )
-            {
-                QueryItem queryTerm = queryTerms[curr];
-                if( queryTerm.word.indexOf(' ') >= 0 )
-                {   // this is a phrase search
-                    StringTokenizer tok = new StringTokenizer(queryTerm.word);
-                    while( tok.hasMoreTokens() )
-                    {
-// Just find pages with the words, so that included stop words don't mess up search.
-                        String word = tok.nextToken();
-                        query.add(new TermQuery(new Term(LUCENE_PAGE_CONTENTS, word)),
-                                queryTerm.type == QueryItem.REQUIRED,
-                                queryTerm.type == QueryItem.FORBIDDEN);
-                    }
-// Since we're not using Lucene to score, no reason to use PhraseQuery, which removes stop words.
-//                    PhraseQuery phraseQ = new PhraseQuery();
-//                    StringTokenizer tok = new StringTokenizer(queryTerm.word);
-//                    while (tok.hasMoreTokens()) {
-//                        String word = tok.nextToken();
-//                        phraseQ.add(new Term(LUCENE_PAGE_CONTENTS, word));
-//                    }
-//                    query.add(phraseQ,
-//                            queryTerm.type == QueryItem.REQUIRED,
-//                            queryTerm.type == QueryItem.FORBIDDEN);
-
-                }
-                else
-                { // single word query
-                    query.add(new TermQuery(new Term(LUCENE_PAGE_CONTENTS, queryTerm.word)),
-                            queryTerm.type == QueryItem.REQUIRED,
-                            queryTerm.type == QueryItem.FORBIDDEN);
-                }
-            }
-            Hits hits = searcher.search(query);
-
-            ArrayList list = new ArrayList(hits.length());
-            for ( int curr = 0; curr < hits.length(); curr++ )
-            {
-                Document doc = hits.doc(curr);
-                String pageName = doc.get(LUCENE_ID);
-                WikiPage result = m_engine.getPageManager().getPageInfo(pageName, WikiPageProvider.LATEST_VERSION);
-                if (result != null)
-                {
-                    list.add(result);
-                }
-                else
-                {
-                    log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
-                    deletePage(new WikiPage(pageName));
-                }
-            }
-
-            searcher.close();
-            return list;
-        }
-        catch ( Exception e )
-        {
-            log.error("Failed during Lucene search", e);
-            return Collections.EMPTY_LIST;
-        }
-    }
-*/
     /**
      *  Adds a page-text pair to the lucene update queue.  Safe to call
      *  always - if lucene is not used, does nothing.
