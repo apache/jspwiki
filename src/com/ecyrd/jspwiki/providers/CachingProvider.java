@@ -62,7 +62,6 @@ import com.opensymphony.module.oscache.base.events.CacheEntryEventListener;
  *  @since 1.6.4
  *  @see RepositoryModifiedException
  */
-// FIXME: Keeps a list of all WikiPages in memory - should cache them too.
 // FIXME: Synchronization is a bit inconsistent in places.
 // FIXME: A part of the stuff is now redundant, since we could easily use the text cache
 //        for a lot of things.  RefactorMe.
@@ -222,8 +221,7 @@ public class CachingProvider
                 m_historyCache.putInCache( name, null );
                 // We cache a page miss
                 m_negCache.putInCache( name, name );
-                
-                m_engine.getSearchManager().deletePage(new WikiPage(name));
+
                 throw new RepositoryModifiedException( "Removed: "+name, name );
             }
             else if( cached == null )
@@ -649,7 +647,6 @@ public class CachingProvider
         //
         synchronized(this)
         {
-            m_engine.getSearchManager().deletePage(getPageInfo(pageName, WikiPageProvider.LATEST_VERSION));
             m_cache.putInCache( pageName, null );
             m_textCache.putInCache( pageName, null );
             m_historyCache.putInCache( pageName, null );
