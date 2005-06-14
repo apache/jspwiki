@@ -264,6 +264,10 @@ public class WikiEngine
      *               jspwiki.properties (this is the usual case).
      */
 
+    // FIXME: Potential make-things-easier thingy here: no need to fetch the wikiengine anymore
+    //        Wiki.jsp.jspInit() [really old code]; it's probably even faster to fetch it
+    //        using this method every time than go to pageContext.getAttribute().
+    
     public static synchronized WikiEngine getInstance( ServletContext context, 
                                                        Properties props )
         throws InternalWikiException
