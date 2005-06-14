@@ -49,7 +49,85 @@ public class DavPathTest extends TestCase
         assertEquals( "path", "/", dp.pathPart() );
         assertEquals( "file", "", dp.filePart() );        
     }
+    
+    public void testSubPath()
+    {
+        String src = "/foo/bar/goo/blot";
+        
+        DavPath dp = new DavPath( src );
+        
+        DavPath subdp = dp.subPath( 2 );
+        
+        assertEquals( "goo/blot", subdp.getPath() );
+    }
 
+    public void testSubPath2()
+    {
+        String src = "/foo/bar/goo/blot";
+        
+        DavPath dp = new DavPath( src );
+        
+        DavPath subdp = dp.subPath( 0 );
+        
+        assertEquals( "/foo/bar/goo/blot", subdp.getPath() );
+    }
+
+    public void testSubPath3()
+    {
+        String src = "/foo/bar/goo/blot";
+        
+        DavPath dp = new DavPath( src );
+        
+        DavPath subdp = dp.subPath( 3 );
+        
+        assertEquals( "blot", subdp.getPath() );
+    }
+
+    public void testGetPath()
+    {
+        String src = "/foo/bar/goo/blot";
+        
+        DavPath dp = new DavPath( src );
+                
+        assertEquals( "/foo/bar/goo/blot", dp.getPath() );
+    }
+
+    public void testRoot1()
+    {
+        String src = "";
+        
+        DavPath dp = new DavPath( src );
+                
+        assertTrue( dp.isRoot() );
+    }
+
+    public void testRoot2()
+    {
+        String src = "/";
+        
+        DavPath dp = new DavPath( src );
+                
+        assertTrue( dp.isRoot() );
+    }
+
+    public void testRoot3()
+    {
+        String src = "foo";
+        
+        DavPath dp = new DavPath( src );
+                
+        assertFalse( dp.isRoot() );
+    }
+
+    public void testRoot4()
+    {
+        String src = "/foo";
+        
+        DavPath dp = new DavPath( src );
+                
+        assertFalse( dp.isRoot() );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( DavPathTest.class );
