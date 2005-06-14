@@ -16,6 +16,7 @@ import org.jdom.Namespace;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
@@ -29,7 +30,7 @@ public class DirectoryItem extends DavItem
     
     public DirectoryItem( DavProvider provider, String name )
     {
-        super( provider );
+        super( provider, new DavPath(name) );
         m_name = name;
     }
     
@@ -63,12 +64,11 @@ public class DirectoryItem extends DavItem
 
     public String getHref()
     {
-        String davurl = "dav"+(m_name.equals("/") ? "" : "/") +m_name; //FIXME: Fixed, should determine from elsewhere
+        String davurl = m_name; //FIXME: Fixed, should determine from elsewhere
         
         if( !davurl.endsWith("/") ) davurl+="/";
         
-        return "";
-        // return m_engine.getURL( WikiContext.NONE, davurl, null, true );
+        return m_provider.getURL( davurl );
     }
     
     public void addDavItem( DavItem di )
@@ -76,6 +76,8 @@ public class DirectoryItem extends DavItem
         m_items.add( di );
     }
 
+    
+    
     /* (non-Javadoc)
      * @see com.ecyrd.jspwiki.dav.items.DavItem#getInputStream()
      */

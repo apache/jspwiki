@@ -18,6 +18,6 @@ public class TopLevelDavItem extends DirectoryItem
     {
         super( provider, "/");
         addDavItem( new DirectoryItem( provider, "raw") );
-        addDavItem( new DirectoryItem( provider, "html") );
+        // addDavItem( new DirectoryItem( provider, "html") );
     }
 }

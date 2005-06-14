@@ -9,34 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 
 public class DavContext
 {
-    public String m_davroot = "/";
-    public String m_davcontext = "";
-    public String m_page = null;
-    public int    m_depth = -1;
+    protected int    m_depth = -1;
+    protected DavPath m_path;
     
-    public DavContext( HttpServletRequest req )
+    public DavContext( HttpServletRequest req, DavPath dp )
     {
-        m_davroot = req.getContextPath();
-        
-        String path = req.getPathInfo();
-
-        if (path != null)
-        {
-            if( path.startsWith("/") ) path = path.substring(1);
-        
-            int idx = path.indexOf('/');
-        
-            if( idx != -1 )
-            {
-                m_davcontext = path.substring( 0, idx );
-            
-                m_page = path.substring( idx+1 );
-            }
-            else
-            {
-                m_davcontext = path;
-            }
-        }
+        m_path = dp;
         
         String depth = req.getHeader("Depth");
         
@@ -48,5 +26,21 @@ public class DavContext
         {
             m_depth = Integer.parseInt( depth );
         }
+    }
+
+    /**
+     * @return Returns the m_depth.
+     */
+    public int getDepth()
+    {
+        return m_depth;
+    }
+
+    /**
+     * @return Returns the m_path.
+     */
+    public DavPath getPath()
+    {
+        return m_path;
     }
 }

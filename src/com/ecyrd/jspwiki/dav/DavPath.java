@@ -4,48 +4,97 @@
  */
 package com.ecyrd.jspwiki.dav;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 public class DavPath
 {
-    private String m_filePart = "";
-    private String m_pathPart = "";
+    private ArrayList m_parts = new ArrayList();
+    
+    private boolean   m_isAbsolute = false;
+    
+    private DavPath()
+    {
+    }
     
     public DavPath( String path )
     {
-        int slashIdx = path.lastIndexOf( '/' );
+        if( path == null )
+        {
+            path = "/";
+        }
         
-        if( slashIdx != -1 )
+        StringTokenizer st = new StringTokenizer( path, "/" );
+        
+        while( st.hasMoreTokens() )
         {
-            if( slashIdx < path.length() )
-            {
-                m_filePart = path.substring( slashIdx+1 );
-            }
-            m_pathPart = path.substring( 0, slashIdx+1 );
+            String part = st.nextToken();
+            
+            m_parts.add( part );
         }
-        else
-        {
-            if( path.length() > 0 )
-            {
-                m_pathPart = path;
-            }
-            else
-            {
-                m_pathPart = "/";
-            }
-        }
+        
+        //
+        //  Add an empty path identifier
+        //
+        if( path.endsWith("/") )
+            m_parts.add("");
+        
+        m_isAbsolute = path.startsWith("/") || path.length() == 0;
     }
   
+    public boolean isRoot()
+    {
+        return m_parts.size() == 0 || m_parts.get(0).equals("");
+    }
+    
     public String pathPart()
     {
-        return m_pathPart;
+        StringBuffer result = new StringBuffer( m_isAbsolute ? "/" : "" );
+   
+        for( int i = 0; i < m_parts.size()-1; i++ )
+        {
+            result.append( (String)m_parts.get(i) );
+            result.append( "/" );
+        }
+        
+        return result.toString();
     }
     
     public String filePart()
     {
-        return m_filePart;
+        if( m_parts.size() > 0 )
+            return (String) m_parts.get( m_parts.size()-1 );
+        else
+            return "";
     }
     
     public String getPath()
     {
-        return m_pathPart+"/"+m_filePart;
+        return pathPart()+filePart();
+    }
+    
+    public DavPath subPath( int idx )
+    {
+        DavPath dp = new DavPath();
+        
+        for( int i = idx; i < m_parts.size(); i++ )
+        {
+            dp.m_parts.add( m_parts.get(i) );
+        }
+           
+        // Only full copies are absolute paths
+        dp.m_isAbsolute = (idx == 0); 
+        
+        return dp;
+    }
+    
+    public String get( int idx )
+    {
+        return (String)m_parts.get(idx);
+    }
+    
+    public String toString()
+    {
+        return "DavPath:"+getPath();
     }
 }

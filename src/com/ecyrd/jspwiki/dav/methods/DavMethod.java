@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
@@ -29,6 +30,6 @@ public abstract class DavMethod
         m_provider = provider;
     }
 
-    public abstract void execute( HttpServletRequest req, HttpServletResponse res )
+    public abstract void execute( HttpServletRequest req, HttpServletResponse res, DavPath path )
     throws ServletException, IOException;
 }

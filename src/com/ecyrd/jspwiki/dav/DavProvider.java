@@ -20,4 +20,6 @@ public interface DavProvider
     public DavItem getItem( DavPath path );
     
     public void setItem( DavPath path, DavItem item );
+    
+    public String getURL( String path );
 }

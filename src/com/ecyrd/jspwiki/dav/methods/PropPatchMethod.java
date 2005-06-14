@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
@@ -30,7 +31,7 @@ public class PropPatchMethod
         super( provider );
     }
 
-    public void execute( HttpServletRequest req, HttpServletResponse res ) throws ServletException, IOException
+    public void execute( HttpServletRequest req, HttpServletResponse res, DavPath dp ) throws ServletException, IOException
     {
         res.sendError( HttpServletResponse.SC_UNAUTHORIZED, "JSPWiki is read-only" );
     }

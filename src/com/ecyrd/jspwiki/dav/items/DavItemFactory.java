@@ -31,7 +31,7 @@ public class DavItemFactory
     {
         m_engine = engine;
     }
-
+/*
     private DavItem getRawItem( DavContext dc )
     {
         String pagename = dc.m_page;
@@ -220,4 +220,5 @@ public class DavItemFactory
         return null;
         
     }
+    */
 }

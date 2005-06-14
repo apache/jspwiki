@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 
 /**
@@ -22,16 +23,23 @@ public abstract class DavItem
 {
     protected DavProvider m_provider;
     protected ArrayList  m_items = new ArrayList();
+    protected DavPath     m_path;
     
-    protected DavItem( DavProvider provider )
+    protected DavItem( DavProvider provider, DavPath path )
     {
         m_provider = provider;
+        m_path     = path;
+    }
+    
+    public DavPath getPath()
+    {
+        return m_path;
     }
     
     public abstract Collection getPropertySet();
     
     public abstract String getHref();
-    
+        
     public abstract InputStream getInputStream();
     
     public abstract long getLength();
