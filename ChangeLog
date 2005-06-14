@@ -1,3 +1,11 @@
+2005-06-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.23
+
+        * Quite a lot more WebDAV refactoring; it works now
+        again.  Still having problems with UTF-8 page names...
+        HTML fetching does not work at the moment either.
+
 2005-06-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.22
