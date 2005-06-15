@@ -242,10 +242,10 @@ jspwiki.translatorReader.useOutlinkImage = true
 jspwiki.lockExpiryTime = 60
 
 #
-#  Apache Lucene will be used to speed up search, unless you explicitly
-#  turn it off here.
+#  Search provider used for searching pages and attachments.
+#  Default is LuceneSearchProvider, but you can fall back to BasicSearchProvider
 #
-#jspwiki.useLucene = true
+jspwiki.searchProvider = LuceneSearchProvider
 
 #
 #  If your wiki's language is something else than English, you might
