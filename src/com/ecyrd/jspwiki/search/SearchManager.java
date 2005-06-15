@@ -22,12 +22,9 @@ package com.ecyrd.jspwiki.search;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.StringTokenizer;
-
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.QueryItem;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
@@ -45,14 +42,11 @@ public class SearchManager
 {
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
-    private static      String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.BasicSearchProvider";
+    private static      String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.LuceneSearchProvider";
     public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
-    private WikiEngine m_engine;
     private SearchProvider    m_searchProvider = null;
-
-    private String m_analyzerClass = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 
     public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
@@ -71,7 +65,6 @@ public class SearchManager
     public void initialize(WikiEngine engine, Properties properties)
         throws WikiException
     {
-        m_engine = engine;
         loadSearchProvider(properties);
 
         try 
@@ -162,9 +155,9 @@ public class SearchManager
     {
         m_searchProvider.deletePage(page);
     }
-
-    public void addToQueue(WikiPage page, String text)
+    
+    public void addToQueue(WikiPage page)
     {
-        m_searchProvider.addToQueue(page, text);
+        m_searchProvider.addToQueue(page);
     }
 }
