@@ -18,16 +18,17 @@
           <i>Found <wiki:SearchResultsSize/> hits, here are the top 20.</i>
           </p>
 
-          <table border="0" cellpadding="4">
+          <div class="zebra-table">
+          <table border="0" cellpadding="4" width="80%">
 
           <tr>
-             <th width="30%" align="left">Page</th>
+             <th align="left">Page</th>
              <th align="left">Score</th>
           </tr>
 
           <wiki:SearchResultIterator id="searchref" maxItems="20">
               <tr>
-                  <td width="30%"><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
+                  <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
                   <td><%=searchref.getScore()%></td>
               </tr>
           </wiki:SearchResultIterator>
@@ -39,6 +40,7 @@
           </wiki:IfNoSearchResults>
 
           </table>
+          </div>
           <p>
           <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>
           </p>
