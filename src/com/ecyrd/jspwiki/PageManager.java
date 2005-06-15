@@ -187,8 +187,7 @@ public class PageManager
 
             if( p != null )
             {
-                text = m_provider.getPageText( pageName, version );
-                m_engine.getSearchManager().addToQueue( p, text );
+                m_engine.getSearchManager().addToQueue( p );
             }
             else
             {
@@ -209,7 +208,7 @@ public class PageManager
 
         m_provider.putPageText( page, content );
         
-        m_engine.getSearchManager().addToQueue( page, content );
+        m_engine.getSearchManager().addToQueue( page );
     }
 
     /**

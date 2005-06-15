@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.search;
 
 import java.util.Collection;
 
-import com.ecyrd.jspwiki.QueryItem;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
 
@@ -39,8 +38,14 @@ public interface SearchProvider extends WikiProvider
      */
     public void deletePage(WikiPage page);
 
-
-    public void addToQueue(WikiPage page, String text);
+    /**
+     *  Adds a WikiPage for indexing queue.  This is called a queue, since
+     *  this method is expected to return pretty quickly, and indexing to
+     *  be done in a separate thread.
+     *  
+     *  @param page The WikiPage to be indexed.
+     */
+    public void addToQueue(WikiPage page);
 
     /**
      * Search for pages matching a search query

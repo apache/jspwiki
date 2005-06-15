@@ -422,7 +422,7 @@ public class CachingProvider
                 
                     m_textCache.putInCache( pageName, text );
 
-                    m_engine.getSearchManager().addToQueue( page, text );
+                    m_engine.getSearchManager().addToQueue( page );
 
                     m_cacheMisses++;
                 }
@@ -444,7 +444,7 @@ public class CachingProvider
                     
                 m_textCache.putInCache( pageName, text );
 
-                m_engine.getSearchManager().addToQueue( page, text );
+                m_engine.getSearchManager().addToQueue( page );
 
                 m_cacheMisses++;
             }
@@ -463,8 +463,6 @@ public class CachingProvider
     {
         synchronized(this)
         {
-            m_engine.getSearchManager().addToQueue( page, text );
-
             m_provider.putPageText( page, text );
 
             page.setLastModified( new Date() );
@@ -482,6 +480,8 @@ public class CachingProvider
                 getPageInfoFromCache( page.getName() );
             }
             catch(RepositoryModifiedException e) {} // Expected
+            
+            m_engine.getSearchManager().addToQueue( page );
         }
     }
 
