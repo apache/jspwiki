@@ -35,8 +35,8 @@ import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.SearchResultComparator;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
@@ -58,13 +58,8 @@ public class BasicSearchProvider implements SearchProvider
     }
 
     public void deletePage(WikiPage page) {};
-    
-    public void addToQueue(WikiPage page, String text) {};
-    
-    public Collection search( QueryItem[] queryTerms ) throws ProviderException
-    {
-        return m_engine.getPageManager().getAllPages();
-    }
+
+    public void addToQueue(WikiPage page) {};
 
     public  QueryItem[] parseQuery(String query)
     {
@@ -112,6 +107,31 @@ public class BasicSearchProvider implements SearchProvider
         return items;
     }
 
+    private String attachmentNames(WikiPage page, String seperator)
+    {
+    	if(m_engine.getAttachmentManager().hasAttachments(page))
+    	{
+            Collection attachments;
+			try {
+				attachments = m_engine.getAttachmentManager().listAttachments(page);
+			} catch (ProviderException e) {
+				log.error("Unable to get attachments for page", e);
+				return "";
+			}
+
+            StringBuffer attachmentNames = new StringBuffer();
+            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            {
+                Attachment att = (Attachment) it.next();
+                attachmentNames.append(att.getName());
+                if(it.hasNext())
+                    attachmentNames.append(seperator);
+            }
+            return attachmentNames.toString();
+    	} else {
+    	    return "";
+    	}
+    }
     private Collection findPages( QueryItem[] query )
     {
         TreeSet res = new TreeSet( new SearchResultComparator() );
@@ -120,8 +140,7 @@ public class BasicSearchProvider implements SearchProvider
         Collection allPages = null;
         try
         {
-            // basic search simply returns allPages();
-            allPages = search(query);
+        	allPages = m_engine.getPageManager().getAllPages();
         }
         catch( ProviderException pe )
         {
@@ -138,7 +157,8 @@ public class BasicSearchProvider implements SearchProvider
                 if (page != null)
                 {
                     String pageName = page.getName();
-                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION);
+                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
+                                         attachmentNames(page, " ");
                     SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
 
                     if( comparison != null )
@@ -146,10 +166,6 @@ public class BasicSearchProvider implements SearchProvider
                         res.add( comparison );
                     }
                 }
-            }
-            catch( RepositoryModifiedException rme )
-            {
-                // FIXME: What to do in this case???
             }
             catch( ProviderException pe )
             {
