@@ -1,3 +1,22 @@
+2005-06-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.24
+
+        * Added Arent-Jan Banck's patch to support attachment
+        searching.  I also changed the SearchProvider API (it's
+        not been released in a stable version) slightly - no
+        need to send the text all the way; let the provider worry
+        about it.
+
+        * BasicSearchProvider now searches attachment names
+        as well.
+
+        * LuceneSearchProvider now indexes attachment names and
+        certain text-based attachments as well.  Currently plain
+        text, XML, .ini and HTML files are indexed.  This will
+        change to a better system, once someone figures out how
+        to do proper Lucene Analyzers.
+
 2005-06-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.23
