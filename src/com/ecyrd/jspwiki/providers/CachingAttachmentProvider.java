@@ -146,7 +146,7 @@ public class CachingAttachmentProvider
             {
                 log.debug("LIST from cache, "+page.getName()+", size="+c.size());
                 m_cacheHits++;
-                return c;
+                return cloneCollection(c);
             }
 
             log.debug("list NOT in cache, "+page.getName());
@@ -159,7 +159,7 @@ public class CachingAttachmentProvider
             {
                 Collection c = refresh( page );
 
-                return c;
+                return cloneCollection(c);
             }
             catch( ProviderException ex )
             {
@@ -172,6 +172,15 @@ public class CachingAttachmentProvider
         return new ArrayList();
     }
 
+    private Collection cloneCollection( Collection c )
+    {
+        ArrayList list = new ArrayList();
+        
+        list.addAll( c );
+        
+        return list;
+    }
+    
     public Collection findAttachments( QueryItem[] query )
     {
         return m_provider.findAttachments( query );
