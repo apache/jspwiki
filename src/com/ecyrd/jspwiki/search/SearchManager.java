@@ -42,7 +42,7 @@ public class SearchManager
 {
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
-    private static      String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.LuceneSearchProvider";
+    private static      String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.search.LuceneSearchProvider";
     public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
