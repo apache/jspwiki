@@ -440,6 +440,7 @@ public class LuceneSearchProvider implements SearchProvider
         // title text as well to make sure it gets considered.
         doc.add(Field.Text(LUCENE_PAGE_CONTENTS, 
                            new StringReader(text + " " +
+                                            page.getName()+" "+
                                             TextUtil.beautifyString(page.getName()))));
 
         // Allow searching by page name
