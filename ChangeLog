@@ -1,5 +1,19 @@
 2005-06-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.2.25
+        
+        * Bug fix: LuceneSearchProvider misspelled the default
+        search provider name, causing exceptions at startup...
+
+        * Bug fix: Page names are now also added in the Lucene
+        index in their canonical form, not just beautified form.
+        Suggested by Michael Smith.
+
+        * Bug fix: there were some concurrency issues whenever
+        iterating through the entire list of pages (causing 
+        ConcurrentModificationExceptions).  Fixed by returning
+        a clone of the array in the CachingProvider.
+
         * v2.2.24
 
         * Added Arent-Jan Banck's patch to support attachment
