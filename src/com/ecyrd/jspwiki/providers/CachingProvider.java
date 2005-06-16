@@ -678,9 +678,14 @@ public class CachingProvider
     {
         private TreeSet m_allItems = new TreeSet();
         
+        /**
+         * 
+         * Returns a clone of the set - you cannot manipulate this.
+         * @return
+         */
         public Set getAllItems()
         {
-            return m_allItems;
+            return (Set)m_allItems.clone();
         }
         
         public void cacheEntryAdded( CacheEntryEvent arg0 )
