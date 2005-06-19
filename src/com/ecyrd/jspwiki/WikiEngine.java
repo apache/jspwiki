@@ -1912,6 +1912,15 @@ public class WikiEngine
         }
         else
         {
+            if (m_attachmentManager.hasAttachments( p ))
+            {
+                Collection attachments = m_attachmentManager.listAttachments( p );
+                for( Iterator atti = attachments.iterator(); atti.hasNext(); )
+                {
+                    m_attachmentManager.deleteAttachment( (Attachment)(atti.next()) );
+                }
+                
+            }
             m_pageManager.deletePage( p );
         }
     }
