@@ -1,5 +1,9 @@
 2005-06-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * PageManager didn't correctly return page text if the
+        page was externally modified (I can't understand how this
+        could've worked earlier...)
+
         * v2.2.26
         
         * Renamed methods in Search API to be a bit more consistent.
