@@ -55,8 +55,6 @@ import com.opensymphony.module.oscache.base.events.CacheEntryEventListener;
  *  Heavily based on ideas by Chris Brooking.
  *  <p>
  *  Since 2.1.52 uses the OSCache library from OpenSymphony.
- *  <p>
- *  Since 2.1.100 uses the Apache Lucene library to help in searching.
  *
  *  @author Janne Jalkanen
  *  @since 1.6.4
@@ -422,8 +420,6 @@ public class CachingProvider
                 
                     m_textCache.putInCache( pageName, text );
 
-                    m_engine.getSearchManager().addToQueue( page );
-
                     m_cacheMisses++;
                 }
                 else
@@ -443,8 +439,6 @@ public class CachingProvider
                 text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
                     
                 m_textCache.putInCache( pageName, text );
-
-                m_engine.getSearchManager().addToQueue( page );
 
                 m_cacheMisses++;
             }
@@ -480,8 +474,6 @@ public class CachingProvider
                 getPageInfoFromCache( page.getName() );
             }
             catch(RepositoryModifiedException e) {} // Expected
-            
-            m_engine.getSearchManager().addToQueue( page );
         }
     }
 
