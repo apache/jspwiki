@@ -600,7 +600,35 @@ public class WikiEngineTest extends TestCase
 
         assertFalse( "Page has not been removed!", saved.exists() );
     }
-    
+
+
+    public void testDeletePageAndAttachments()
+        throws Exception
+    {
+        m_engine.saveText( NAME1, "Test" );
+
+        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
+        
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+        File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
+        
+        assertTrue( "Didn't create it!", saved.exists() );
+
+        assertTrue( "Attachment dir does not exist", attfile.exists() );
+        
+        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
+
+        m_engine.deletePage( page.getName() );
+
+        assertFalse( "Page has not been removed!", saved.exists() );
+        assertFalse( "Attachment has not been removed", attfile.exists() );
+    }
+
     public void testDeleteVersion()
         throws Exception
     {
@@ -757,5 +785,35 @@ public class WikiEngineTest extends TestCase
         assertEquals( "wrong contents", "Puppaa", text );
     }
 
+    /**
+     *  Tests BugReadingOfVariableNotWorkingForOlderVersions
+     * @throws Exception
+     */
+    public void testOldVersionVars()
+        throws Exception
+    {   
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties"));
+        
+        props.setProperty( PageManager.PROP_USECACHE, "true" );
+        
+        TestEngine engine = new TestEngine( props );
+        
+        engine.saveText( NAME1, "[{SET foo=bar}]" );
+    
+        engine.saveText( NAME1, "[{SET foo=notbar}]");
+    
+        WikiPage v1 = engine.getPage( NAME1, 1 );
+        
+        WikiPage v2 = engine.getPage( NAME1, 2 );
+        
+        assertEquals( "V1", "bar", v1.getAttribute("foo") );
+        
+        // FIXME: The following must run as well
+        //assertEquals( "V2", "notbar", v2.getAttribute("foo") );
+        
+        engine.deletePage( NAME1 );
+    }
+    
 
 }
