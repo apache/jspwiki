@@ -35,8 +35,6 @@ import com.ecyrd.jspwiki.auth.UserProfile;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
-import com.ecyrd.jspwiki.dav.methods.DavMethod;
-import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
 import com.ecyrd.jspwiki.filters.RedirectException;
 
 // multipartrequest.jar imports:

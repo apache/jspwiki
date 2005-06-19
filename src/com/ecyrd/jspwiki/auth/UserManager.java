@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.HttpUtil;
 

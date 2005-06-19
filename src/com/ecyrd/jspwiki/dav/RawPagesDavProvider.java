@@ -14,7 +14,6 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.items.DavItem;
-import com.ecyrd.jspwiki.dav.items.DavItemFactory;
 import com.ecyrd.jspwiki.dav.items.DirectoryItem;
 import com.ecyrd.jspwiki.dav.items.PageDavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;

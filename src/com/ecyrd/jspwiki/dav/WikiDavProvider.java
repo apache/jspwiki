@@ -4,10 +4,8 @@
  */
 package com.ecyrd.jspwiki.dav;
 
-import java.util.Collection;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.dav.items.DavItem;
 
 public abstract class WikiDavProvider implements DavProvider
 {
