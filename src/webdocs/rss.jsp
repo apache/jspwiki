@@ -30,6 +30,12 @@
         response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate RSS" );
         return;
     }
+    
+    if( wiki.getRSSGenerator() == null )
+    {
+        response.sendError( 404, "RSS feeds are disabled at administrator request" );
+        return;
+    }
 
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
