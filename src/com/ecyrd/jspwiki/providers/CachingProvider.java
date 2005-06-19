@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -30,10 +32,13 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.PageManager;
 import com.ecyrd.jspwiki.QueryItem;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.TranslatorReader;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -533,11 +538,44 @@ public class CachingProvider
         // FIXME: Does not implement fast searching
     }
 
+    //
+    //  FIXME: Kludge: make sure that the page is also parsed and it gets all the
+    //         necessary variables.
+    //
 
+    private void refreshMetadata( WikiPage page )
+    {
+        if( page != null && !page.hasMetadata() )
+        {
+            StringReader in = null;
+            StringWriter out = null;
+                
+            try
+            {
+                in = new StringReader( m_provider.getPageText(page.getName(), page.getVersion()) ); 
+                                                    
+                TranslatorReader tr = new TranslatorReader( new WikiContext(m_engine, page), in );
+                
+                out = new StringWriter();
+                FileUtil.copyContents( tr, out );
+            }
+            catch( Exception ex )
+            {
+                log.debug("Failed to retrieve variables for wikipage "+page);
+            }
+            finally
+            {
+                if( in != null ) in.close();
+                if( out != null ) try { out.close(); } catch( IOException ex ) {};
+            }
+        }
+    }
+    
     public WikiPage getPageInfo( String pageName, int version )
         throws ProviderException,
                RepositoryModifiedException
     {
+        WikiPage page = null;
         WikiPage cached = getPageInfoFromCache( pageName );
         
         int latestcached = (cached != null) ? cached.getVersion() : Integer.MIN_VALUE;
@@ -555,16 +593,23 @@ public class CachingProvider
                     // Requests for this page are now no longer denied
                     m_negCache.putInCache( pageName, null );
                 }
-                return data;
+                page = data;
             }
-
-            return cached;
+            else
+            {
+                page = cached;
+            }
         }        
         else
         {
             // We do not cache old versions.
-            return m_provider.getPageInfo( pageName, version );
+            page = m_provider.getPageInfo( pageName, version );
+            refreshMetadata( page );
         }
+        
+        // refreshMetadata( page );
+        
+        return page;
     }
 
     public List getVersionHistory( String page )
