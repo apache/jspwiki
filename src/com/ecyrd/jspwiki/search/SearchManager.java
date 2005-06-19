@@ -151,13 +151,13 @@ public class SearchManager
      *  Removes the page from the search cache (if any).
      *  @param page  The page to remove
      */
-    public void deletePage(WikiPage page)
+    public void pageRemoved(WikiPage page)
     {
-        m_searchProvider.deletePage(page);
+        m_searchProvider.pageRemoved(page);
     }
     
-    public void addToQueue(WikiPage page)
+    public void reindexPage(WikiPage page)
     {
-        m_searchProvider.addToQueue(page);
+        m_searchProvider.reindexPage(page);
     }
 }

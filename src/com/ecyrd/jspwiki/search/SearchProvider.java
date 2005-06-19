@@ -36,7 +36,7 @@ public interface SearchProvider extends WikiProvider
      * Delete a page from the search index
      * @param page Page to remove from search index
      */
-    public void deletePage(WikiPage page);
+    public void pageRemoved(WikiPage page);
 
     /**
      *  Adds a WikiPage for indexing queue.  This is called a queue, since
@@ -45,7 +45,7 @@ public interface SearchProvider extends WikiProvider
      *  
      *  @param page The WikiPage to be indexed.
      */
-    public void addToQueue(WikiPage page);
+    public void reindexPage(WikiPage page);
 
     /**
      * Search for pages matching a search query

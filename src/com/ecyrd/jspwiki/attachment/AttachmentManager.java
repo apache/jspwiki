@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.Date;
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
@@ -381,7 +378,7 @@ public class AttachmentManager
 
         m_engine.updateReferences( new WikiPage( att.getParentName() ) );
         
-        m_engine.getSearchManager().addToQueue( att );
+        m_engine.getSearchManager().reindexPage( att );
     }
 
     /**
@@ -456,6 +453,6 @@ public class AttachmentManager
     {
         m_provider.deleteAttachment( att );
 
-        m_engine.getSearchManager().deletePage( att );
+        m_engine.getSearchManager().pageRemoved( att );
     }
 }

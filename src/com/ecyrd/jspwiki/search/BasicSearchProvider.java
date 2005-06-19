@@ -57,9 +57,9 @@ public class BasicSearchProvider implements SearchProvider
         m_engine = engine;
     }
 
-    public void deletePage(WikiPage page) {};
+    public void pageRemoved(WikiPage page) {};
 
-    public void addToQueue(WikiPage page) {};
+    public void reindexPage(WikiPage page) {};
 
     public  QueryItem[] parseQuery(String query)
     {

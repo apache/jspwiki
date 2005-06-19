@@ -384,7 +384,7 @@ public class LuceneSearchProvider implements SearchProvider
 
         try
         {
-            deletePage(page);
+            pageRemoved(page);
 
             // Now add back the new version.
             writer = new IndexWriter(m_luceneDirectory, getLuceneAnalyzer(), false);
@@ -475,7 +475,7 @@ public class LuceneSearchProvider implements SearchProvider
         writer.addDocument(doc);
     }
 
-    public void deletePage( WikiPage page )
+    public void pageRemoved( WikiPage page )
     {
         try
         {
@@ -494,7 +494,7 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  Adds a page-text pair to the lucene update queue.  Safe to call always
      */
-    public void addToQueue( WikiPage page )
+    public void reindexPage( WikiPage page )
     {
         if( page != null )
         {
@@ -566,7 +566,7 @@ public class LuceneSearchProvider implements SearchProvider
                 else
                 {
                     log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
-                    deletePage(new WikiPage(pageName));
+                    pageRemoved(new WikiPage(pageName));
                 }
             }
         }
