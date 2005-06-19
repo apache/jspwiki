@@ -1,3 +1,22 @@
+2005-06-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.26
+        
+        * Renamed methods in Search API to be a bit more consistent.
+        Thanks to ajbanck for the suggestion.
+  
+        * ReferenceManager should now notice deleted pages.
+        
+        * rss.jsp now returns a 404, if the RSS generation is disabled.
+        
+        * Bug fix: BugApplicationNameBeGarbledIfThereAreChineseCharactersInIt
+        Install.jsp is now smart enough to mangle the input so that
+        it can be put inside an Latin1 properties file.  Thanks to
+        Dengber for the fix.
+        
+        * Bug fix: BugPageAddedToSearchQueueMultipleTimes. Thanks to
+        ajbanck.
+
 2005-06-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.25
