@@ -188,6 +188,7 @@ public class PageManager
             if( p != null )
             {
                 m_engine.getSearchManager().reindexPage( p );
+                text = m_provider.getPageText( pageName, version );
             }
             else
             {
