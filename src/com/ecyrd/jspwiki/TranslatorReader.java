@@ -322,6 +322,8 @@ public class TranslatorReader extends Reader
         {
             disableAccessRules();
         }   
+        
+        m_context.getPage().setHasMetadata();
     }
 
     /**
