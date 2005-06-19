@@ -1,3 +1,13 @@
+2005-06-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.0.
+
+        * Included the page rename patch from a number of people. Thanks
+        heaps to Chris Lisle, John Volkar, Joerg Luedeker!
+
+        * Branched off JSPWiki 2.2 development to its own branch,
+        this is now the 2.3 development.
+
 2005-06-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.26
