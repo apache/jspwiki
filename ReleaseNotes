@@ -1,7 +1,14 @@
 
-This is the first STABLE release of JSPWiki v2.2  
+This is a BETA release of JSPWiki v2.2  
 
-Most of the documentation is now contained in jspwiki_samplepages.zip
+Major new things since the last stable release:
+
+* Plenty o' bugfixes
+* Enabled Lucene query language (very powerful)
+* Attachment searching (names are always searched, and if the file is
+  of a text file type, it gets also indexed)
+
+
 
 Major changes since the 2.0 series are:
 
