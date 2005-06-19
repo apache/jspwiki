@@ -146,6 +146,26 @@ public class VersioningFileProviderTest extends TestCase
         assertEquals("ver3", text3, engine.getText( NAME1, 3 ) );
     }
 
+    public void testGetOldVersion2()
+        throws Exception
+    {
+        String text = "diddo\r\n";
+        String text2 = "barbar\r\n";
+        String text3 = "Barney\r\n";
+
+        engine.saveText( NAME1, text );
+        engine.saveText( NAME1, text2 );
+        engine.saveText( NAME1, text3 );
+
+        WikiPage res = engine.getPage(NAME1);
+
+        assertEquals("wrong version", 3, res.getVersion() );
+
+        assertEquals("ver1", 1, engine.getPage( NAME1, 1 ).getVersion() );
+        assertEquals("ver2", 2, engine.getPage( NAME1, 2 ).getVersion() );
+        assertEquals("ver3", 3, engine.getPage( NAME1, 3 ).getVersion() );
+}
+
     /**
      *  2.0.7 and before got this wrong.
      */
