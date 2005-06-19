@@ -187,11 +187,11 @@ public class PageManager
 
             if( p != null )
             {
-                m_engine.getSearchManager().addToQueue( p );
+                m_engine.getSearchManager().reindexPage( p );
             }
             else
             {
-                m_engine.getSearchManager().deletePage(new WikiPage(pageName));
+                m_engine.getSearchManager().pageRemoved(new WikiPage(pageName));
             }
         }
 
@@ -208,7 +208,7 @@ public class PageManager
 
         m_provider.putPageText( page, content );
         
-        m_engine.getSearchManager().addToQueue( page );
+        m_engine.getSearchManager().reindexPage( page );
     }
 
     /**
@@ -406,9 +406,9 @@ public class PageManager
     {
         m_provider.deletePage( page.getName() );
 
-        m_engine.getSearchManager().deletePage( page );
+        m_engine.getSearchManager().pageRemoved( page );
 
-        // FIXME: Update RefMgr
+        m_engine.getReferenceManager().pageRemoved( page );
     }
 
     /**
