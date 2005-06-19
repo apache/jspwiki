@@ -646,4 +646,20 @@ public class VersioningFileProvider
         return "";
     }
 
+    public void movePage( String from,
+                          String to )
+        throws ProviderException
+    {
+        // Move the file itself
+        File fromFile = findPage( from );
+        File toFile = findPage( to );
+        
+        fromFile.renameTo( toFile );
+        
+        // Move any old versions
+        File fromOldDir = findOldPageDir( from );
+        File toOldDir = findOldPageDir( to );
+        
+        fromOldDir.renameTo( toOldDir );
+    }
 }

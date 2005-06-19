@@ -136,4 +136,14 @@ public class FileSystemProvider
 
         return p;
     }
+
+    public void movePage( String from,
+                          String to )
+        throws ProviderException
+    {
+        File fromPage = findPage( from );
+        File toPage = findPage( to );
+        
+        fromPage.renameTo( toPage );
+    }
 }

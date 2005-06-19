@@ -130,4 +130,15 @@ public class CounterProvider
     public void deletePage( String page )
     {
     }
+
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.providers.WikiPageProvider#movePage(java.lang.String, java.lang.String)
+     */
+    public void movePage( String from, String to ) throws ProviderException
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    
 }

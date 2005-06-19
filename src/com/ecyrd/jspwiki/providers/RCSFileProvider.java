@@ -573,4 +573,23 @@ public class RCSFileProvider
 
         return d;
     }
+    
+    public void movePage( String from,
+                          String to )
+        throws ProviderException
+    {
+        // XXX: Error checking could be better throughout this method.       
+        File fromFile = findPage( from );
+        File toFile = findPage( to );
+        
+        fromFile.renameTo( toFile );
+
+        String fromRCSName = "RCS/"+mangleName( from )+FILE_EXT+",v";
+        String toRCSName = "RCS/"+mangleName( to )+FILE_EXT+",v";
+        
+        File fromRCSFile = new File( getPageDirectory(), fromRCSName );
+        File toRCSFile = new File( getPageDirectory(), toRCSName );
+    
+        fromRCSFile.renameTo( toRCSFile );
+    } 
 }

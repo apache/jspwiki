@@ -692,6 +692,27 @@ public class CachingProvider
         }
     }
 
+    public void movePage( String from,
+                          String to )
+        throws ProviderException 
+    {
+        m_provider.movePage( from, to );
+        
+        synchronized(this)
+        {
+            // Clear any cached version of the old page
+            log.debug("Removing page "+from+" from cache");
+            m_cache.flushEntry( from );
+        
+            // Clear the cache for the to page, if that page already exists
+            //if ( m_cache.get( to ) != null )
+            //{
+                log.debug("Removing page "+to+" from cache");
+                m_cache.flushEntry( to );
+            //}
+        }
+    }
+
     /**
      *  Returns the actual used provider.
      *  @since 2.0

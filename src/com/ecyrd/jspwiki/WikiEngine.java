@@ -126,6 +126,9 @@ public class WikiEngine
      */
     public static final String DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
 
+    /** Does the work in renaming pages. */
+    private PageRenamer    m_pageRenamer = null;
+
     /**
      *  Contains the default properties for JSPWiki.
      */
@@ -528,6 +531,8 @@ public class WikiEngine
             {
                 m_rssGenerator = new RSSGenerator( this, props );
             }
+            
+            m_pageRenamer       = new PageRenamer( this, props );
         }
         catch( Exception e )
         {
@@ -549,7 +554,7 @@ public class WikiEngine
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
      */
-    private void initReferenceManager()
+    public void initReferenceManager()
     {
         m_pluginManager.setInitStage( true );
 
@@ -2062,4 +2067,25 @@ public class WikiEngine
         }
     }
 
+    /**
+     * Renames, or moves, a wiki page. Can also alter referring wiki
+     * links to point to the renamed page.
+     *
+     * @param renameFrom        Name of the source page.
+     * @param renameTo          Name of the destination page.
+     * @param changeReferrers   If true, then changes any referring links
+     *                          to point to the renamed page.
+     *
+     * @return The name of the page that the source was renamed to.
+     *
+     * @throws WikiException    In the case of an error, such as the destination
+     *                          page already existing.
+     */
+    public String renamePage( String renameFrom, 
+                              String renameTo,
+                              boolean changeReferrers)
+        throws WikiException
+    {
+        return m_pageRenamer.renamePage(renameFrom, renameTo, changeReferrers);
+    }
 }

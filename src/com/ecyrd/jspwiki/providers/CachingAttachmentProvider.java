@@ -29,6 +29,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.apache.log4j.Logger;
 
+import java.io.OutputStream;
+import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+
+
+
 import com.opensymphony.module.oscache.base.Cache;
 import com.opensymphony.module.oscache.base.NeedsRefreshException;
 
@@ -69,6 +78,11 @@ public class CachingAttachmentProvider
     private long m_cacheHits   = 0;
 
     private boolean m_gotall = false;
+    
+    private String m_storageDir;
+    public static final String DIR_EXTENSION   = "-att";
+    public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
+    
 
     // FIXME: Make settable.
     private int  m_refreshPeriod = 60*10; // 10 minutes at the moment
@@ -83,6 +97,8 @@ public class CachingAttachmentProvider
         //  Construct an unlimited cache.
         //
         m_cache = new Cache( true, false );
+
+        m_storageDir = WikiEngine.getRequiredProperty( properties, PROP_STORAGEDIR );
 
         //
         //  Find and initialize real provider.
@@ -331,5 +347,13 @@ public class CachingAttachmentProvider
     public WikiAttachmentProvider getRealProvider()
     {
         return m_provider;
+    }
+    
+
+    public void moveAttachmentsForPage( String oldParent, String newParent )
+        throws ProviderException
+    {
+        m_provider.moveAttachmentsForPage(oldParent, newParent);
+        m_cache.putInCache( newParent, null );
     }
 }

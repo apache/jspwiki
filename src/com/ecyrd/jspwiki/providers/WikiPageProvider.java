@@ -150,6 +150,18 @@ public interface WikiPageProvider
     public void deletePage( String pageName )
         throws ProviderException;
 
+     
+     /**
+      * Move a page
+      *
+      * @param from  Name of the page to move.
+      * @param to    New name of the page.
+      *
+      * @throws ProviderException If the page could not be moved for some reason.
+      */
+     public void movePage(String from, String to)
+         throws ProviderException;
+
 }
 
 

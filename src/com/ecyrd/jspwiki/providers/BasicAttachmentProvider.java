@@ -610,5 +610,25 @@ public class BasicAttachmentProvider
         }
     }
 
+    public void moveAttachmentsForPage( String oldParent, String newParent )
+        throws ProviderException
+    {
+        File srcDir = findPageDir( oldParent );
+        File destDir = findPageDir( newParent );
+
+        log.debug("Trying to move all attachments from "+srcDir+" to "+destDir);
+
+        // If it exists, we're overwriting an old page (this has already been
+        // confirmed at a higher level), so delete any existing attachments.
+        if (destDir.exists())
+        {
+            log.error("Page rename failed because target dirctory "+destDir+" exists");
+        }
+        else
+        {
+            //destDir.getParentFile().mkdir();
+            srcDir.renameTo(destDir);
+        }
+    }
 }
 

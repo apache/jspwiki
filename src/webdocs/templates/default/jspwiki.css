@@ -261,3 +261,36 @@ div.commentbox {
     { font-size: 85%;
        font-family: arial, helvetica, sans-serif;
     }
+    
+#tabmenu {
+        color: #000;
+        border-bottom: 2px solid black;
+        margin: 12px 0px 0px 0px;
+        padding: 0px;
+        z-index: 1;
+        padding-left: 10px;
+}
+
+#tabmenu li {
+        display: inline;
+        overflow: hidden;
+        list-style-type: none;
+}
+
+#tabmenu a, a.active {
+        color: #000000;
+        background: #DDDDDD;
+        font: bold 1em "Trebuchet MS", Arial, sans-serif;
+        border: 2px solid black;
+        padding: 2px 5px 0px 5px;
+        margin: 0px;
+        text-decoration: none; }
+
+#tabmenu a.active {
+        background: #FFFFFF;
+        border-bottom: 4px solid #FFFFFF; }
+ 
+ #infocontent {
+        border: 2px solid black;
+        padding: 4px;
+ }

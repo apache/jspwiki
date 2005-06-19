@@ -137,6 +137,20 @@ public interface WikiAttachmentProvider
      */
     public void deleteAttachment( Attachment att )
         throws ProviderException;
+   
+    /**
+     * Move all the attachments for a given page so that they are attached to a
+     * new page.
+     *
+     * @param oldParent Name of the page we are to move the attachments from.
+     * @param newParent Name of the page we are to move the attachments to.
+     *
+     * @throws ProviderException If the attachments could not be moved for some
+     *                           reason.
+     */
+    public void moveAttachmentsForPage( String oldParent,
+                                        String newParent )
+        throws ProviderException;
 }
 
 

@@ -7,12 +7,33 @@ function confirmDelete()
 
   return reallydelete;
 }
+var currInfo = 'pageinfo';
+
+function switchTo(tab)
+{
+    document.getElementById(currInfo).style.display = "none";
+    document.getElementById('menu-'+currInfo).className = "";
+    
+    document.getElementById(tab).style.display = "";
+    document.getElementById('menu-'+tab).className = "active";
+
+    currInfo = tab;
+}
 </script>
+
+<ul id="tabmenu">
+    <li><a class="active" id="menu-pageinfo" href="#" onclick="switchTo('pageinfo')">Information</a></li>
+    <li><a href="#" id="menu-pagemanagement" onclick="switchTo('pagemanagement')">Management</a></li>
+</ul>
+
+<div id="infocontent">
 
 <wiki:PageExists>
 
-   <form name="deleteForm" action="<wiki:BaseURL/>Delete.jsp?page=<wiki:Variable var="pagename" />" method="post" 
-                 accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
+   <div id="pageinfo">
+
+   <p>This section gives you some basic information on the page.</p>
+
 
    <table cellspacing="4">
        <tr>
@@ -107,23 +128,15 @@ function confirmDelete()
                    </wiki:HistoryIterator>
                </table>
                </div>
-               <wiki:Permission permission="delete">
-                   <br /><br />
-                   <%--
-                   <input type="submit" name="delete" value="Delete marked versions only"/>
-                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                   --%>
-                   <input type="submit" name="delete-all" value="Delete entire page"/>
-               </wiki:Permission>
            </td>
       </tr>
 </table>
 
-    </form>
-             
     <br />
     <wiki:PageType type="page">
-       <wiki:LinkTo>Back to <wiki:PageName/></wiki:LinkTo>
+       <div align="center">
+           <wiki:LinkTo>Back to <wiki:PageName/></wiki:LinkTo>
+       </div>
     </wiki:PageType>
     <wiki:PageType type="attachment">
 
@@ -148,6 +161,44 @@ function confirmDelete()
 
     </wiki:PageType>
 
+    </div>
+    
+    <div id="pagemanagement" style="display:none">
+    
+       <p>This section allows you to do some management tasks with the page.</p>
+    
+       <wiki:PageType type="page">
+       <table cellspacing="4">
+       <tr>
+            <td valign="top"><b>Rename page</b></td>
+            <td>
+                <form action="<wiki:BaseURL/>Rename.jsp" method="POST"  ACCEPT-CHARSET="ISO-8859-1,UTF-8">
+                    <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>">
+                    <input type="text" name="renameto" value="<wiki:Variable var="pagename"/>" size="40"><br />
+                    <input type="checkbox" name="references" checked="checked">Update referrers?<br />
+                    <input type="submit" value="Rename">
+                </form>
+            </td>      
+       </tr>  
+       </table>  
+    </wiki:PageType>
+
+       <form name="deleteForm" action="<wiki:BaseURL/>Delete.jsp?page=<wiki:Variable var="pagename" />" method="post" 
+             accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
+
+
+       <wiki:Permission permission="delete">
+          <br /><br />
+             <%--
+                   <input type="submit" name="delete" value="Delete marked versions only"/>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   --%>
+          <input type="submit" name="delete-all" value="Delete entire page"/>
+       </wiki:Permission>
+
+       </form>    
+    </div>
+
 </wiki:PageExists>
 
 
@@ -156,3 +207,4 @@ function confirmDelete()
     <wiki:EditLink>create it</wiki:EditLink>?
 </wiki:NoSuchPage>
 
+</div> <%-- infocontent --%>
