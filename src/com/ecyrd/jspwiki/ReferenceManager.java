@@ -331,6 +331,13 @@ public class ReferenceManager
         serializeToDisk();
     }
     
+    public synchronized void pageRemoved( WikiPage page )
+    {
+        String pageName = page.getName();
+        
+        m_refersTo.remove( pageName );
+    }
+    
     /**
      *  Updates the referred pages of a new or edited WikiPage. If a refersTo
      *  entry for this page already exists, it is removed and a new one is built
