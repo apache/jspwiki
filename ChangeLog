@@ -1,11 +1,18 @@
 2005-06-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.2.26
+
+        * Added partial fix for 
+        BugReadingOfVariableNotWorkingForOlderVersions.  This is a deep
+        bug.
+
+        * Added patch from Joerg Luedeker to fix 
+        BugDeleteFailsIfPageHasAttachmens.
+        
         * PageManager didn't correctly return page text if the
         page was externally modified (I can't understand how this
-        could've worked earlier...)
+        could've worked earlier...)  This killed an unit test or two.
 
-        * v2.2.26
-        
         * Renamed methods in Search API to be a bit more consistent.
         Thanks to ajbanck for the suggestion.
   
