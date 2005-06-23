@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
