@@ -30,7 +30,6 @@ import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
 import com.ecyrd.jspwiki.dav.items.DavItem;
-import com.ecyrd.jspwiki.dav.items.DavItemFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
