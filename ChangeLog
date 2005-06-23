@@ -1,3 +1,16 @@
+2005-06-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.1
+
+        * Refactoring of FilterManager: now uses XPath and JDOM to parse
+        XML files...
+        
+        * Tiny patch from ajbanck: UserManager no longer complains loudly
+        if something is not a group.
+        
+        * Patch from Joerg Luedecker to delete pages from referencemanager
+        if they're renamed.
+
 2005-06-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.0.
