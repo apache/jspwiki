@@ -29,14 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.apache.log4j.Logger;
 
-import java.io.OutputStream;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-
-
 
 import com.opensymphony.module.oscache.base.Cache;
 import com.opensymphony.module.oscache.base.NeedsRefreshException;
