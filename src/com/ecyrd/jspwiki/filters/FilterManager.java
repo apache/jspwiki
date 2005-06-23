@@ -27,8 +27,12 @@ import java.util.Properties;
 import java.util.Iterator;
 import java.util.List;
 
-import org.xml.sax.*;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -86,7 +90,6 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  @author Janne Jalkanen
  */
 public class FilterManager
-    extends HandlerBase
 {
     private PriorityList     m_pageFilters = new PriorityList();
 
@@ -192,90 +195,59 @@ public class FilterManager
                 log.info("Cannot find property file for filters (this is okay, expected to find it as: '"+ (xmlFile == null ? DEFAULT_XMLFILE : xmlFile ) +"')");
                 return;
             }
-            Parser parser = new uk.co.wilson.xml.MinML(); // FIXME: Should be settable
-
-            parser.setDocumentHandler( this );
-            parser.setErrorHandler( this );
             
-            parser.parse( new InputSource(xmlStream) );
-
+            parseConfigFile( xmlStream );
         }
         catch( IOException e )
         {
             log.error("Unable to read property file", e);
         }
-        catch( SAXException e )
+        catch( JDOMException e )
         {
             log.error("Problem in the XML file",e);
         }
     }
 
-    /*
-     *  The XML parsing part.  We use a simple SAX1 parser; we do not at this
-     *  point need anything more complicated.
+    /**
+     *  Parses the XML filters configuration file.
+     *  
+     * @param xmlStream
+     * @throws JDOMException
+     * @throws IOException
      */
-    private String filterName = null;
-    private Properties filterProperties = new Properties();
-    private boolean parsingFilters = false;
-    private String lastReadCharacters = "";
-    private String lastReadParamName = null;
-    private String lastReadParamValue = null;
-
-    public void startElement( String name, AttributeList atts )
+    private void parseConfigFile( InputStream xmlStream )
+        throws JDOMException,
+               IOException
     {
-        if( "pagefilters".equals(name) )
+        Document doc = new SAXBuilder().build( xmlStream );
+        
+        XPath xpath = XPath.newInstance("/pagefilters/filter");
+    
+        List nodes = xpath.selectNodes( doc );
+        
+        for( Iterator i = nodes.iterator(); i.hasNext(); )
         {
-            parsingFilters = true;
+            Element f = (Element) i.next();
+            
+            String filterClass = f.getChildText("class");
+            
+            List params = f.getChildren("param");
+            
+            Properties props = new Properties();
+            
+            for( Iterator par = params.iterator(); par.hasNext(); )
+            {
+                Element p = (Element) par.next();
+                
+                props.setProperty( p.getChildText("name"), p.getChildText("value") );
+            }
+            
+            initPageFilter( filterClass, props );
         }
-        else if( parsingFilters )
-        {
-            if( "filter".equals(name) )
-            {
-                filterName = null;
-            }
-        }
-    }
-
-
-
-    public void endElement( String name )
-    {
-        if( "pagefilters".equals(name) )
-        {
-            parsingFilters = false;
-        }
-        else if( parsingFilters )
-        {
-            if( "filter".equals(name) )
-            {
-                initPageFilter( filterName, filterProperties );
-            }
-            else if( "class".equals(name) )
-            {
-                filterName = lastReadCharacters;
-            }
-            else if( "param".equals(name) )
-            {
-                filterProperties.setProperty( lastReadParamName, lastReadParamValue );
-            }
-            else if( "name".equals(name) )
-            {
-                lastReadParamName = lastReadCharacters;
-            }
-            else if( "value".equals(name) )
-            {
-                lastReadParamValue = lastReadCharacters;
-            }
-        }
-        lastReadCharacters = "";
-    }
-
-    public void characters( char ch[], int start, int length )
-    {
-        lastReadCharacters += new String( ch, start, length );
+        
     }
     
-
+ 
     /**
      *  Does the filtering before a translation.
      */
