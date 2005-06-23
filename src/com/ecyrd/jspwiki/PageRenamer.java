@@ -9,8 +9,6 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.perl.Perl5Util;
 import org.apache.oro.text.regex.*;
 
-import com.ecyrd.jspwiki.*;
-
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -109,6 +107,9 @@ public class PageRenamer
         // Tell the providers to actually move the data around...
         movePageData( oldName, newNameCleaned );
         moveAttachmentData( oldName, newNameCleaned );
+        
+        m_wikiEngine.getReferenceManager().clearPageEntries(oldName);
+
 
         // Get the collection of pages that the refered to the old name (the From name)...
         Collection referrers = getReferrersCollection( oldName );
