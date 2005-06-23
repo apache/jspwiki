@@ -454,5 +454,8 @@ public class AttachmentManager
         m_provider.deleteAttachment( att );
 
         m_engine.getSearchManager().pageRemoved( att );
+        
+        m_engine.getReferenceManager().clearPageEntries( att.getName() );
+        
     }
 }
