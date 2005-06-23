@@ -274,7 +274,7 @@ public class UserManager
 
                 if( !(p instanceof WikiGroup) )
                 {
-                    log.info( name+" is not a group!" );
+                    log.debug( name+" is not a group!" );
                 }
                 else
                 {
