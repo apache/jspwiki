@@ -1,3 +1,14 @@
+2005-06-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.27
+
+        * Backported patch from 2.3.1: pages were not properly cleaned
+        in ReferenceManager when they were deleted.
+        
+        * Added RSS 2.0 feeds, including podcasting support with 
+        <enclosure>.  This caused some slight API changes (I hope
+        nobody was relying on them).
+
 2005-06-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.26
