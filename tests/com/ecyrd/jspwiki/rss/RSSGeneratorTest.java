@@ -72,7 +72,8 @@ public class RSSGeneratorTest extends TestCase
                                                    new Date(0),
                                                    new Date(Long.MAX_VALUE) );
         
-        String blog = gen.generateBlogRSS( context, entries );
+        Feed feed = new RSS10Feed( context );
+        String blog = gen.generateBlogRSS( context, entries, feed );
         
         assertTrue( "has Foo", blog.indexOf("<description>Foo</description>") != -1 );
         assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
