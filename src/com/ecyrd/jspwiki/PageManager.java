@@ -409,7 +409,7 @@ public class PageManager
 
         m_engine.getSearchManager().pageRemoved( page );
 
-        m_engine.getReferenceManager().pageRemoved( page );
+        m_engine.getReferenceManager().pageRemoved( page );        
     }
 
     /**
