@@ -336,6 +336,7 @@ public class ReferenceManager
         String pageName = page.getName();
         
         m_refersTo.remove( pageName );
+        clearPageEntries( pageName );
     }
     
     /**
@@ -523,6 +524,16 @@ public class ReferenceManager
         referrers.add( referrer );
     }
 
+    
+    /**
+     * Clears the references to a certain page so it's no longer in the map.
+     *
+     * @param pagename  Name of the page to clear references for.
+     */
+    public synchronized void clearPageEntries( String pagename )
+    {
+        m_referredBy.remove(pagename);
+    }
 
 
     /** 
