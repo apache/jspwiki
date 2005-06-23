@@ -19,8 +19,10 @@
 
 <%
     String      mode        = request.getParameter("mode");
+    String      type        = request.getParameter("type");
     
-    if( mode == null || !(mode.equals("blog") || mode.equals("wiki")) ) mode = "blog";
+    if( mode == null || !(mode.equals(RSSGenerator.MODE_BLOG) || mode.equals(RSSGenerator.MODE_WIKI)) ) mode = RSSGenerator.MODE_BLOG;
+    if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20)) ) type = RSSGenerator.RSS10;
     
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     WikiPage    wikipage    = wikiContext.getPage();
@@ -34,6 +36,12 @@
     if( wiki.getRSSGenerator() == null )
     {
         response.sendError( 404, "RSS feeds are disabled at administrator request" );
+        return;
+    }
+
+    if( wikipage == null || !wiki.pageExists(wikipage.getName()) )
+    {
+        response.sendError( 404, "No such page "+wikipage.getName() );
         return;
     }
 
@@ -58,8 +66,6 @@
     //  Now, list items.
     //
     List changed;
-    
-    log.debug("MODE="+mode);
     
     if( mode.equals("blog") )
     {
@@ -98,14 +104,7 @@
 %>
 <%-- <oscache:cache time="300"> --%>
 <%
-if( mode.equals("blog") )
-{
-    out.println(wiki.getRSSGenerator().generateBlogRSS( wikiContext, changed ));
-}
-else
-{
-    out.println(wiki.getRSSGenerator().generatePageRSS( wikiContext, changed ));
-}
+    out.println(wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type ));
 %>
 <%-- </oscache:cache> --%>
 
