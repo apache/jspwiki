@@ -336,6 +336,7 @@ public class ReferenceManager
         String pageName = page.getName();
         
         m_refersTo.remove( pageName );
+        clearPageEntries( pageName );
     }
     
     /**
