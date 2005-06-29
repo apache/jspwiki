@@ -21,7 +21,7 @@ package com.ecyrd.jspwiki;
 
 import java.util.Date;
 import java.util.HashMap;
-import com.ecyrd.jspwiki.acl.AccessControlList;
+import com.ecyrd.jspwiki.auth.acl.Acl;
 
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
@@ -55,7 +55,7 @@ public class WikiPage
 
     public static final String SIZE = "size";
 
-    private AccessControlList m_accessList = null;
+    private Acl m_accessList = null;
 
     public WikiPage( String name )
     {
@@ -143,16 +143,16 @@ public class WikiPage
     }
 
     /**
-     *  Returns the AccessControlList for this page.  May return null, 
+     *  Returns the Acl for this page.  May return null, 
      *  in case there is no ACL defined for this page, or it has not
      *  yet been received.
      */
-    public AccessControlList getAcl()
+    public Acl getAcl()
     {
         return m_accessList;
     }
 
-    public void setAcl( AccessControlList acl )
+    public void setAcl( Acl acl )
     {
         m_accessList = acl;
     }
@@ -183,7 +183,7 @@ public class WikiPage
     private boolean m_hasMetadata = false;
 
     /**
-     *  Returns true, if the page has valid metadata, i.e. it has been parsed.
+     *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed.
      */
     public boolean hasMetadata()
     {

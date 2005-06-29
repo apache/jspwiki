@@ -16,17 +16,39 @@
 </wiki:NoSuchPage>
 
 <div align="center" class="username">
-
-    <wiki:UserCheck status="known">
+    <wiki:UserCheck status="asserted">
         <b>G'day,</b><br />
         <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
     </wiki:UserCheck>
 
-    <wiki:UserCheck status="unknown">
-        <tt>
-        Set your name in<br />
-        <wiki:LinkTo page="UserPreferences">UserPreferences</wiki:LinkTo>
-        </tt>    
+    <wiki:UserCheck status="authenticated">
+        <b>G'day,</b><br />
+        <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
+    </wiki:UserCheck>
+</div>
+
+<div>
+    <wiki:UserCheck status="anonymous">
+        <p>
+        <wiki:LinkTo page="UserPreferences">Set your user name</wiki:LinkTo>
+        <br/>or <a href="Login.jsp">Log in</a>
+        </p>
+    </wiki:UserCheck>
+    
+    <wiki:UserCheck status="asserted">
+      <p>
+      <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
+      <br/>
+      <a href="Logout.jsp">Log out</a>
+      </p>
+    </wiki:UserCheck>
+
+    <wiki:UserCheck status="authenticated">
+      <p>
+      <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
+      <br/>
+      <a href="Logout.jsp">Log out</a>
+      </p>
     </wiki:UserCheck>
 </div>
 

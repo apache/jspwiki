@@ -53,7 +53,6 @@ import java.util.*;
  * that a FormSet invocation only applies to the Form plugins that
  * follow it; any further Forms need new FormSet calls.
  *
- * @see Form
  * @see FormInfo
  * @author ebu
  */

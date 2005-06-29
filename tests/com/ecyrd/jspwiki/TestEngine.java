@@ -2,9 +2,12 @@
 package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.io.*;
+import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.providers.*;
 
 /**
@@ -156,11 +159,20 @@ public class TestEngine extends WikiEngine
         return tmpFile;
     }
 
+    /**
+     * Convenience method that saves a wiki page by constructing a fake
+     * WikiContext and HttpServletRequest. We always want to do this using a
+     * WikiContext whose subject contains Role.ADMIN.
+     * @param pageName
+     * @param content
+     * @throws WikiException
+     */
     public void saveText( String pageName, String content )
         throws WikiException
     {
-        WikiContext context = new WikiContext( this, new WikiPage(pageName) );
-
+        HttpServletRequest request = new TestHttpServletRequest();
+        WikiContext context = new WikiContext( this, request, new WikiPage(pageName) );
+        context.getWikiSession().getSubject().getPrincipals().add(Role.ADMIN);
         saveText( context, content );
     }
 

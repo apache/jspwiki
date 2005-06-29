@@ -1,343 +1,444 @@
 /* 
-    JSPWiki - a JSP-based WikiWiki clone.
+ JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+ Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package com.ecyrd.jspwiki.auth;
 
-import java.util.Properties;
-import java.util.List;
-import java.util.Iterator;
-import java.security.acl.NotOwnerException;
+
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.Permission;
 import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.util.Iterator;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import javax.security.auth.Subject;
 
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.InternalWikiException;
-import com.ecyrd.jspwiki.acl.AccessControlList;
-import com.ecyrd.jspwiki.acl.AclEntryImpl;
-import com.ecyrd.jspwiki.acl.AclImpl;
-import com.ecyrd.jspwiki.auth.permissions.*;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.auth.acl.AclEntry;
+import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
+import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.util.ClassUtil;
-import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
- *  Manages all access control and authorization.
- *
- *  @see UserManager
+ * Manages all access control and authorization; determines what authenticated
+ * users are allowed to do.
+ * @author Andrew Jaquith
+ * @version $Revision: 1.21 $ $Date: 2005-06-29 22:43:17 $
+ * @since 2.3
+ * @see AuthenticationManager
  */
 public class AuthorizationManager
 {
-    public static final String PROP_STRICTLOGINS = "jspwiki.policy.strictLogins";
-    public static final String PROP_AUTHORIZER   = "jspwiki.authorizer";
-    public static final String DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.modules.PageAuthorizer";
- 
-    protected static final String PROP_USEOLDAUTH = "jspwiki.auth.useOldAuth";
-    
     static Logger log = Logger.getLogger( AuthorizationManager.class );
-
-    private WikiAuthorizer    m_authorizer;
-    private AccessControlList m_defaultPermissions;
-
-    private boolean           m_strictLogins = false;
-
-    /** If true, allows the old auth system to be used. */
-    private boolean           m_useAuth = false;
-    
-    private WikiEngine        m_engine;
+    /**
+     * The default external Authorizer is the WebContainerAuthorizer
+     */
+    public static final String                DEFAUT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
 
     /**
-     * Creates a new AuthorizationManager, owned by engine and initialized
-     * according to the settings in properties. Expects to find property
-     * 'jspwiki.authorizer' with a valid WikiAuthorizer implementation name
-     * to take care of authorization.
+     * The property name in jspwiki.properties for specifying the external Authorizer.
      */
-    public AuthorizationManager( WikiEngine engine, Properties properties )
-        throws WikiException
-    {
-        m_engine = engine;
+    public static final String                PROP_AUTHORIZER   = "jspwiki.authorizer";
 
-        m_useAuth = TextUtil.getBooleanProperty( properties,
-                                                 PROP_USEOLDAUTH,
-                                                 false );
-        
-        m_strictLogins = TextUtil.getBooleanProperty( properties,
-                                                      PROP_STRICTLOGINS,
-                                                      false );
+    private Authorizer                        m_authorizer      = null;
 
-        if( !m_useAuth ) return;
-        
-        m_authorizer = getAuthorizerImplementation( properties );
-        m_authorizer.initialize( engine, properties );
-
-        AclEntryImpl ae = new AclEntryImpl();
-
-        //
-        //  Default set of permissions for everyone:
-        //  ALLOW: View, Edit
-        //  DENY:  Delete
-        //
-
-        WikiGroup allGroup = new AllGroup();
-        allGroup.setName("All");
-        ae.setPrincipal( allGroup );
-        ae.addPermission( new ViewPermission() );
-        ae.addPermission( new EditPermission() );
-
-        AclEntryImpl aeneg = new AclEntryImpl();
-        aeneg.setPrincipal( allGroup );
-        aeneg.setNegativePermissions();
-        aeneg.addPermission( new DeletePermission() );
-
-        try
-        {
-            m_defaultPermissions = new AclImpl();
-            m_defaultPermissions.addEntry( null, ae );
-            m_defaultPermissions.addEntry( null, aeneg );
-        }
-        catch( NotOwnerException e )
-        {
-            throw new InternalWikiException("Nobody told me that owners were in use");
-        }
-    }
+    private WikiEngine                        m_engine          = null;
 
     /**
-     *  Returns true, if strict logins are required.  Strict logins
-     *  mean that all pages are accessible only to users who have logged in.
+     * Returns <code>true</code> or <code>false</code>, depending on
+     * whether this action is allowed for this WikiPage. The access control
+     * algorithm works this way:
+     * <ol>
+     * <li>The ACL for the page is obtained</li>
+     * <li>The Subject associated with the current WikiSession is obtained
+     * (this is looked up in the HttpSession associated with the supplied
+     * HttpServletRequest)</li>
+     * <li>If the Subject's principal set includes the Role principal that is
+     * the administrator group, always allow the permission</li>
+     * <li>If there is no ACL at all, check to see if the Permission is allowed
+     * according to the "static" security policy. The security policy speficies
+     * what permissions are available by default</li>
+     * <li>If there is an ACL, get the list of Principals assigned this
+     * permission in the ACL: these will be role, group or user Principals, or
+     * UnresolvedPrincipals (see below). Then iterate through the Subject's
+     * principal set and determine whether the user (Subject) posesses any one
+     * of these specified Roles or Principals. The matching process delegates to
+     * {@link #hasRoleOrPrincipal(WikiContext, Principal)}.
+     * </ol>
+     * <p>
+     * Note that when iterating through the ACL's list of authorized Principals,
+     * it is possible that one or more of the ACL's Principal entries are of
+     * type {@link com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal}. This means
+     * that the last time the Acl was read, the Principal (user, built-in Role,
+     * authorizer Role, or wiki Group) could not be resolved: the Role was not
+     * valid, the user wasn't found in the UserDatabase, or the Group wasn't
+     * known to (e.g., cached) in the GroupManager. If an UnresolvedPrincipal is
+     * encountered, this method will attempt to resolve it first <em>before</em>
+     * checking to see if the Subject possesses this principal, by calling
+     * {@link #resolvePrincipal(String)}. If the (re-)resolution does not
+     * succeed, the access check for the principal will fail by definition 
+     * (the Subject should never contain UnresolvedPrincipals).
+     * </p>
+     * @param context the current wiki context. If null, a synthetic anonymous WikiContext
+     *            containing a {@link com.ecyrd.jspwiki.WikiSession#GUEST_SESSION} is assumed
+     * @param permission the permission being checked
+     * @see #hasRoleOrPrincipal(WikiContext, Principal)
+     * @return the result of the permission check
      */
-    public boolean strictLogins()
+    public boolean checkPermission( WikiContext context, Permission permission )
     {
-        return m_strictLogins;
-    }
-
-    /**
-     *  Attempts to find the ACL of a page.
-     *  If the page has a parent page, then that is tried also.
-     */
-    private AccessControlList getAcl( WikiPage page )
-    {
-        //
-        //  Does the page already have cached ACLs?
-        //
-        AccessControlList acl = page.getAcl();
-
-        if( acl == null )
-        {
-            //
-            //  Nope, check if we can get them from the authorizer
-            //
-
-            acl = m_authorizer.getPermissions( page );
-            
-            //
-            //  If still no go, try the parent.
-            //
-            if( acl == null && page instanceof Attachment )
-            {
-                WikiPage parent = m_engine.getPage( ((Attachment)page).getParentName() );
-
-                acl = getAcl( parent );
-            }
-        }
-
-        return acl;
-    }
-
-
-    /**
-     * Attempts to locate and initialize a WikiAuthorizer to use with this manager.
-     * Throws a WikiException if no entry is found, or if one fails to initialize.
-     *
-     * @param props jspwiki.properties, containing a 'jpswiki.authorizer' class name
-     * @return a WikiAuthorizer used to get page authorization information
-     * @throws WikiException
-     */
-    private WikiAuthorizer getAuthorizerImplementation( Properties props )
-        throws WikiException
-    {
-        String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
-        WikiAuthorizer impl = null;
-                                                                                
-        if( authClassName != null )
-        {
-            try
-            {
-                // TODO: this should probably look in package ...modules
-                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules", authClassName );
-                impl = (WikiAuthorizer)authClass.newInstance();
-                return( impl );
-            }
-            catch( ClassNotFoundException e )
-            {
-                log.fatal( "WikiAuthorizer "+authClassName+" cannot be found", e);
-                throw new WikiException("WikiAuthorizer "+authClassName+" cannot be found");
-            }
-            catch( InstantiationException e )
-            {
-                log.fatal( "Authorizer "+authClassName+" cannot be created", e );
-                throw new WikiException("Authorizer "+authClassName+" cannot be created");
-            }
-            catch( IllegalAccessException e )
-            {
-                log.fatal( "You are not allowed to access this authorizer class", e );
-                throw new WikiException("You are not allowed to access this authorizer class");
-            }
-        }
-        else
-        {
-            throw new NoRequiredPropertyException( "Unable to find a " + PROP_AUTHORIZER + 
-                                                   " entry in the properties.", PROP_AUTHORIZER );
-        }
-    }
-
-
-    /**
-     *  Returns true or false, depending on whether this action
-     *  is allowed for this WikiPage.
-     *
-     *  @param permission Any of the available permissions "view", "edit, "comment", etc.
-     */
-    public boolean checkPermission( WikiPage page,
-                                    UserProfile wup,
-                                    String permission )
-    {
-        return checkPermission( page,
-                                wup,
-                                WikiPermission.newInstance( permission ) );
-    }
-
-
-    /**
-     *  Returns true or false, depending on whether this action
-     *  is allowed.  This method returns true for 2.2.
-     */
-    public boolean checkPermission( WikiPage page, 
-                                    UserProfile wup, 
-                                    WikiPermission permission )
-    {
-        int         res         = AccessControlList.NONE;
-        UserManager userManager = m_engine.getUserManager();
-
         //
         //  A slight sanity check.
         //
-        if( wup == null ) return false;
+        if ( permission == null )
+        {
+            return false;
+        }
 
-        //
-        // Honor strict login requirements. Weak code - should not be permanent.
-        //
-        if( wup.isAuthenticated() == false && m_strictLogins ) return false;
+        // Get the current session and subject
+        WikiSession session = WikiSession.GUEST_SESSION;
+        if ( context != null )
+        {
+            session = WikiSession.getWikiSession( context.getHttpRequest() );
+        }
+        Subject subject = session.getSubject();
         
-        //
-        //  If auth is turned off, return immediately for speed
-        //
-        if( !m_useAuth ) return true;
-        
-        //
-        //  Yup, superusers can do anything.
-        //
-        if( wup.isAuthenticated() && userManager.isAdministrator( wup ) )
+        // Always allow the action if it's the Admin
+        if ( subject.getPrincipals().contains( Role.ADMIN ) )
         {
             return true;
         }
 
-        AccessControlList acl = getAcl( page );
-
-        //
-        //  Does the page in question have an access control list?
-        //
-        if( acl != null )
+        // If this isn't a PagePermission, just check the security policy
+        // and we're done
+        if ( permission instanceof WikiPermission )
         {
-            log.debug("ACL for this page is: "+acl);
-            log.debug("Checking for wup: "+wup);
-            log.debug("Permission: "+permission);
+            return checkStaticPermission( subject, permission );
+        }
 
-            if( wup.isAuthenticated() )
+        //
+        // Does the page in question have an access control list?
+        // If no ACL, we check the security policy to see what the
+        // defaults should be.
+        Acl acl = null;
+        if ( context != null )
+        {
+            WikiPage page = context.getPage();
+            acl = m_engine.getAclManager().getPermissions( page );
+        }
+        if ( acl == null )
+        {
+            return checkStaticPermission( subject, permission );
+        }
+
+        //
+        //  Next, iterate through the Principal objects assigned
+        //  this permission. If the context's subject possesses
+        //  any of these, the action is allowed.
+
+        Principal[] aclPrincipals = acl.findPrincipals( permission );
+
+        log.debug( "Checking ACL entries..." );
+        log.debug( "ACL for this page is: " + acl );
+        log.debug( "Checking for principal: " + aclPrincipals );
+        log.debug( "Permission: " + permission );
+
+        for( int i = 0; i < aclPrincipals.length; i++ )
+        {
+            Principal aclPrincipal = aclPrincipals[i];
+            
+            // If the ACL principal we're looking at is unresolved,
+            // try to resolve it here & correct the ACL
+            if ( aclPrincipal instanceof UnresolvedPrincipal )
             {
-                res = acl.findPermission( wup, permission );
-            }
-
-            //
-            //  If there as no entry for the user, then try all of his groups
-            //
-
-            if( res == AccessControlList.NONE )
-            {
-                log.debug("Checking groups...");
-
-                try
+                AclEntry aclEntry = acl.getEntry( aclPrincipal );
+                aclPrincipal = resolvePrincipal( aclPrincipal.getName() );
+                if ( aclEntry != null && !( aclPrincipal instanceof UnresolvedPrincipal ) )
                 {
-                    List list = userManager.getGroupsForPrincipal( wup );
-
-                    for( Iterator i = list.iterator(); i.hasNext(); )
-                    {
-                        res = acl.findPermission( (Principal) i.next(), permission );
-
-                        if( res != AccessControlList.NONE )
-                            break;
-                    }
-                }
-                catch( NoSuchPrincipalException e )
-                {
-                    log.warn("Internal trouble: No principal defined for requested user.",e);
+                    aclEntry.setPrincipal( aclPrincipal );
                 }
             }
-        }
-
-        //
-        //  If there was no result, then query from the default
-        //  permission set of the authorizer.
-        //
-
-        if( res == AccessControlList.NONE )
-        {
-            log.debug("Page defines no permissions for "+wup.getName()+", checking defaults.");
-
-            acl = m_authorizer.getDefaultPermissions();
-
-            if( acl != null )
+            
+            if ( hasRoleOrPrincipal( context, aclPrincipal ) )
             {
-                res = acl.findPermission( wup, permission );
+                return true;
             }
         }
+        return false;
 
-        //
-        //  If there still is nothing, then query from the Wiki default
-        //  set of permissions.
-        //
-
-        if( res == AccessControlList.NONE )
-        {
-            log.debug("No defaults exist, falling back to hardcoded permissions.");
-            res = m_defaultPermissions.findPermission( wup, permission );
-        }
-
-        log.debug("Permission "+permission+" for user "+wup+" is "+res );
-        
-        if( res == AccessControlList.NONE )
-        {
-            throw new InternalWikiException("No default policy has been defined!");
-        }
-
-        return res == AccessControlList.ALLOW;
     }
+    
+    /**
+     * Determines if the Subject associated with a supplied WikiContext contains
+     * a desired user Principal or built-in Role principal, OR is a member a
+     * Group or external Role. The rules as as follows:
+     * <ul>
+     * <li>If the desired Principal is a built-in Role, the algorithm simply
+     * checks to see if the Subject possesses it in its Principal set</li>
+     * <li>If the desired Principal is a Role but <em>not</em> built-in, the
+     * external Authorizer's <code>isInRole</code> method is called</li>
+     * <li>If the desired principal is a Group, the GroupManager's group
+     * authorizer <code>isInRole</code> method is called</li>
+     * <li>For all other cases, delegate to
+     * {@link #hasUserPrincipal(Subject, Principal)}to determine whether the
+     * Subject posesses the desired Principal in its Principal set.</li>
+     * </ul>
+     * @param context the current wiki context, which must be non-null. If null,
+     *            the result of this method always returns <code>false</code>
+     * @param principal the Principal (role, group, or user principal) to look
+     *            for, which must be non-null. If null, the result of this
+     *            method always returns <code>false</code>
+     * @return <code>true</code> if the Subject supplied with the WikiContext
+     *         posesses the Role, is a member of the Group, or contains the
+     *         desired Principal, <code>false</code> otherwise
+     */
+    protected boolean hasRoleOrPrincipal( WikiContext context, Principal principal )
+    {
+        if (context == null || context.getWikiSession() == null || principal == null)
+        {
+            return false;
+        }
+        Subject subject = context.getWikiSession().getSubject();
+        if ( principal instanceof Role)
+        {
+            Role role = (Role) principal;
+            // If built-in role, check to see if user possesses it.
+            if ( Role.isBuiltInRole( role ) && subject.getPrincipals().contains( role ) )
+            {
+                return true;
+            }
+            // No luck; try the external authorizer (e.g., container)
+            return (m_authorizer.isUserInRole( context, subject, role ) );
+        }
+        else if ( principal instanceof Group )
+        {
+            Group group = (Group) principal;
+            return m_engine.getGroupManager().isUserInRole( context, subject, group );
+        }
+        return hasUserPrincipal( subject, principal );
+    }
+
+    /**
+     * Determines whether any of the user Principals posessed by a Subject have
+     * the same name as a supplied Principal. Principals in the subject's
+     * principal set that are of types Role or Group are <em>not</em>
+     * considered in the comparison, since this would otherwise introduce the
+     * potential for spoofing.
+     * @param subject the Subject whose Principal set will be inspected
+     * @param principal the desired Principal
+     * @return <code>true</code> if any of the Subject's Principals have the
+     *         same name as the supplied Principal, otherwise <code>false</code>
+     */
+    protected boolean hasUserPrincipal( Subject subject, Principal principal )
+    {
+        String principalName = principal.getName();
+        for( Iterator it = subject.getPrincipals().iterator(); it.hasNext(); )
+        {
+            Principal userPrincipal = (Principal) it.next();
+            if ( !( userPrincipal instanceof Role || userPrincipal instanceof Group ) )
+            {
+                if ( userPrincipal.getName().equals( principalName ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Initializes AuthorizationManager with an engine and set of properties.
+     * Expects to find property 'jspwiki.authorizer' with a valid Authorizer
+     * implementation name to take care of group lookup operations.
+     */
+    public void initialize( WikiEngine engine, Properties properties ) throws WikiException
+    {
+        m_engine = engine;
+        m_authorizer = getAuthorizerImplementation( properties );
+    }
+
+    /**
+     * Attempts to locate and initialize a Authorizer to use with this manager.
+     * Throws a WikiException if no entry is found, or if one fails to
+     * initialize.
+     * @param props jspwiki.properties, containing a
+     *            'jspwiki.authorization.provider' class name
+     * @return a Authorizer used to get page authorization information
+     * @throws WikiException
+     */
+    private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
+    {
+        String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAUT_AUTHORIZER );
+        return (Authorizer) locateImplementation( authClassName );
+    }
+
+    private Object locateImplementation( String clazz ) throws WikiException
+    {
+        if ( clazz != null )
+        {
+            try
+            {
+                // TODO: this should probably look in package ...modules
+                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules", clazz );
+                Object impl = authClass.newInstance();
+                return impl;
+            }
+            catch( ClassNotFoundException e )
+            {
+                log.fatal( "Authorizer " + clazz + " cannot be found", e );
+                throw new WikiException( "Authorizer " + clazz + " cannot be found" );
+            }
+            catch( InstantiationException e )
+            {
+                log.fatal( "Authorizer " + clazz + " cannot be created", e );
+                throw new WikiException( "Authorizer " + clazz + " cannot be created" );
+            }
+            catch( IllegalAccessException e )
+            {
+                log.fatal( "You are not allowed to access this authorizer class", e );
+                throw new WikiException( "You are not allowed to access this authorizer class" );
+            }
+        }
+        else
+        {
+            throw new NoRequiredPropertyException( "Unable to find a " + PROP_AUTHORIZER + " entry in the properties.",
+                    PROP_AUTHORIZER );
+        }
+    }
+
+    /**
+     * Determines whether a Subject posesses a given "static" Permission as
+     * defined in the security policy file. This method uses standard Java 2
+     * security calls to do its work. Note that the current access control
+     * context's <code>codeBase</code> is effectively <em>this class</em>,
+     * not that of the caller. Therefore, this method will work best when what
+     * matters in the policy is <em>who</em> makes the permission check, not
+     * what the caller's code source is. Internally, this method works by
+     * excuting <code>Subject.doAsPrivileged</code> with a privileged action
+     * that simply calls {@link java.security.AccessController#checkPermission(Permission)}.
+     * @link AccessController#checkPermission(java.security.Permission). A
+     *       caught exception (or lack thereof) determines whether the privilege
+     *       is absent (or present).
+     * @param subject the Subject whose permission status is being queried
+     * @param permission the Permission the Subject must possess
+     * @return <code>true</code> if the Subject posesses the permission,
+     *         <code>false</code> otherwise
+     */
+    protected static final boolean checkStaticPermission( final Subject subject, final Permission permission )
+    {
+        try
+        {
+            Subject.doAsPrivileged( subject, new PrivilegedAction()
+            {
+                public Object run()
+                {
+                    AccessController.checkPermission( permission );
+                    return null;
+                }
+            }, null );
+            return true;
+        }
+        catch( AccessControlException e )
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * <p>Given a supplied string representing a Principal's name from an ACL, this
+     * method resolves the correct type of Principal (role, group, or user).
+     * This method is guaranteed to always return a Principal.
+     * The algorithm is straightforward:</p>
+     * <ol>
+     * <li>If the name matches one of the built-in {@link com.ecyrd.jspwiki.auth.authorize.Role} names,
+     * return that built-in Role</li>
+     * <li>If the name matches one supplied by the current
+     * {@link com.ecyrd.jspwiki.auth.Authorizer}, return that Role</li>
+     * <li>If the name matches a group managed by the 
+     * current {@link com.ecyrd.jspwiki.auth.authorize.GroupManager}, return that Group</li>
+     * <li>Otherwise, assume that the name represents a user
+     * principal. Using the current {@link com.ecyrd.jspwiki.auth.user.UserDatabase}, find the
+     * first user who matches the supplied name by calling
+     * {@link com.ecyrd.jspwiki.auth.user.UserDatabase#find(String)}.</li>
+     * <li>Finally, if a user cannot be found, manufacture
+     * and return a generic {@link com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal}</li>
+     * </ol>
+     * @param name the name of the Principal to resolve
+     * @return the fully-resolved Principal
+     */
+    public Principal resolvePrincipal( String name ) {
+        
+        // Check built-in Roles first
+        Role role = new Role(name);
+        if (Role.isBuiltInRole(role)) {
+            return role;
+        }
+        
+        // Check Authorizer Roles
+        Principal principal = m_authorizer.findRole( name );
+        if (principal != null) 
+        {
+            return principal;
+        }
+        
+        // Check Groups
+        principal = m_engine.getGroupManager().findRole( name );
+        if (principal != null)
+        {
+            return principal;
+        }
+        
+        // Ok, no luck---this must be a user principal
+        Principal[] principals = null;
+        UserProfile profile = null;
+        UserDatabase db = m_engine.getUserDatabase();
+        try
+        {
+            profile = db.find( name );
+            principals = db.getPrincipals( profile.getLoginName() );
+            for (int i = 0; i < principals.length; i++) 
+            {
+                principal = principals[i];
+                if (principal.getName().equals( name ))
+                {
+                    return principal;
+                }
+            }
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            // We couldn't find the user...
+        }
+        // Ok, no luck---mark this as unresolved and move on
+        return new UnresolvedPrincipal( name );
+    }
+
 }

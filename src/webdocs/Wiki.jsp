@@ -1,7 +1,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.ViewPermission" %>
+<%@ page import="java.security.Principal" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -20,7 +21,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    log.info("Request for page '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
+    log.info("Request for page '"+pagereq+"' from "+request.getRemoteAddr()+" by "+wikiContext.getCurrentUser().getName() );
 
     String redirect = wiki.getRedirectURL( wikiContext );
 
@@ -30,14 +31,14 @@
         return;
     }
 
+    AuthenticationManager authMgr = wiki.getAuthenticationManager();
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    UserProfile currentUser  = wiki.getUserManager().getUserProfile( request );
+    Principal currentUser  = wikiContext.getWikiSession().getUserPrincipal();
 
-    if( !mgr.checkPermission( wikiContext.getPage(),
-                              currentUser,
-                              new ViewPermission() ) )
+    if( !mgr.checkPermission( wikiContext,
+                              new PagePermission( pagereq, "view" ) ) )
     {
-        if( mgr.strictLogins() )
+        if( authMgr.strictLogins() )
         {
             log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
             String msg = "Unknown user or password.<br>Please try again.";

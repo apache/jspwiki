@@ -554,6 +554,16 @@
   </tag>
 
   <tag>
+    <name>UserProfile</name>
+    <tagclass>com.ecyrd.jspwiki.tags.UserProfileTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>property</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>Variable</name>
     <tagclass>com.ecyrd.jspwiki.tags.VariableTag</tagclass>
     <bodycontent>empty</bodycontent>

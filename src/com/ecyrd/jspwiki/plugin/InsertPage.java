@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import java.util.*;
 
 /**
@@ -74,20 +75,14 @@ public class InsertPage
             if( page != null )
             {
                 AuthorizationManager mgr = engine.getAuthorizationManager();
-                UserProfile currentUser  = context.getCurrentUser();
 
-                /*
-                  // Disabled, because this seems to fail when used
-                  // to insert something from a weblog entry.
-                if( !mgr.checkPermission( page,
-                                          currentUser,
-                                          new ViewPermission() ) )
+                if( !mgr.checkPermission( context,
+                                          new PagePermission( page, "view") ) )
                 {
                     res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
                     return res.toString();
                 }
-                */
-                
+                   
                 //
                 //  Check for recursivity
                 //
@@ -109,6 +104,7 @@ public class InsertPage
                 previousIncludes.add( page.getName() );
                 context.setVariable( ATTR_RECURSE, previousIncludes );
                 
+
                 /**
                  *  We want inclusion to occur within the context of
                  *  its own page, because we need the links to be correct.

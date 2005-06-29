@@ -5,8 +5,13 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.*;
 import junit.framework.*;
 import java.io.*;
+import java.security.Principal;
 import java.util.*;
 import javax.servlet.*;
+import com.ecyrd.jspwiki.auth.acl.*;
+import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.permissions.*;
+import com.ecyrd.jspwiki.auth.*;
 
 public class TranslatorReaderTest extends TestCase
 {
@@ -1646,6 +1651,45 @@ public class TranslatorReaderTest extends TestCase
     }
 
     /**
+     * Used by the ACL tests.
+     * @param array
+     * @param key
+     * @return
+     */
+    private boolean inArray( Object[] array, Object key )
+    {
+        for( int i = 0; i < array.length; i++ )
+        {
+            if ( array[i].equals( key ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Used by the ACL tests.
+     * @param array
+     * @param key
+     * @return
+     */
+    private boolean inGroup( Object[] array, Principal key )
+    {
+        for( int i = 0; i < array.length; i++ )
+        {
+            if (array[i] instanceof Group) 
+            {
+                if (((Group)array[i]).isMember(key))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      *  ACL tests.
      */
     /*
@@ -1660,45 +1704,42 @@ public class TranslatorReaderTest extends TestCase
 
         assertEquals("Page text", "Foobar.", res);
 
-        AccessControlList acl = p.getAcl();
+        Acl acl = p.getAcl();
 
-        UserProfile prof = new UserProfile();
-        prof.setName("JanneJalkanen");
+        Principal prof = new WikiPrincipal("JanneJalkanen");
 
-        assertTrue(  "no read", acl.checkPermission( prof, new ViewPermission() ) );
-        assertFalse( "has edit", acl.checkPermission( prof, new EditPermission() ) );
+        assertTrue( "has read", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+        assertFalse( "no edit", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
     }
 
     public void testSimpleACL2()
         throws Exception
     {
         String src = "Foobar.[{ALLOW view JanneJalkanen}]\n"+
-                     "[{DENY view ErikBunn, SuloVilen}]\n"+
                      "[{ALLOW edit JanneJalkanen, SuloVilen}]";
 
         WikiPage p = new WikiPage( PAGE_NAME );
 
         String res = translate( p, src );
 
-        assertEquals("Page text", "Foobar.\n\n", res);
+        assertEquals("Page text", "Foobar.\n", res);
 
-        AccessControlList acl = p.getAcl();
+        Acl acl = p.getAcl();
 
-        UserProfile prof = new UserProfile();
-        prof.setName("JanneJalkanen");
+        // ACL says Janne can read and edit
+        Principal prof = new WikiPrincipal("JanneJalkanen");
+        assertTrue( "read for JJ", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+        assertTrue( "edit for JJ", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
 
-        assertTrue( "no read for JJ", acl.checkPermission( prof, new ViewPermission() ) );
-        assertTrue( "no edit for JJ", acl.checkPermission( prof, new EditPermission() ) );
+        // ACL doesn't say Erik can read or edit
+        prof = new WikiPrincipal("ErikBunn");
+        assertFalse( "no read for BB", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+        assertFalse( "no edit for EB", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
 
-        prof.setName("ErikBunn");
-
-        assertFalse(  "read for EB", acl.checkPermission( prof, new ViewPermission() ) );
-        assertFalse( "has edit for EB", acl.checkPermission( prof, new EditPermission() ) );
-
-        prof.setName("SuloVilen");
-
-        assertFalse("read for SV", acl.checkPermission( prof, new ViewPermission() ) );
-        assertTrue( "no edit for SV", acl.checkPermission( prof, new EditPermission() ) );
+        // ACL says Sulo can edit, but doens't say he can read (though the AuthMgr will tell us it's implied)
+        prof = new WikiPrincipal("SuloVilen");
+        assertFalse( "read for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "view") ), prof ) );
+        assertTrue( "edit for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
     }
 */
     private boolean containsGroup( List l, String name )

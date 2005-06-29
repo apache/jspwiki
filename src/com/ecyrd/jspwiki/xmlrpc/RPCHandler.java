@@ -23,7 +23,7 @@ import java.io.*;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
-import com.ecyrd.jspwiki.auth.permissions.ViewPermission;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import java.util.*;
 import org.apache.xmlrpc.XmlRpcException;
@@ -190,11 +190,10 @@ public class RPCHandler
         }
 
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
-        UserProfile currentUser  = new UserProfile(); // This should be a guest.
+        WikiPage page = m_engine.getPage(pagename);
 
-        if( !mgr.checkPermission( m_engine.getPage(pagename),
-                                  currentUser,
-                                  new ViewPermission() ) )
+        if( !mgr.checkPermission( null,
+                                  new PagePermission( page, "view") ) )
         {
             throw new XmlRpcException( ERR_NOPERMISSION, "No permission to view page "+pagename+", o master");
         }

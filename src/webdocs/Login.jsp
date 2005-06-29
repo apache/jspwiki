@@ -36,45 +36,30 @@
                               PageContext.REQUEST_SCOPE );
 
     String action = request.getParameter("action");
-    String uid    = wiki.safeGetParameter( request,"uid" );
-    String passwd = wiki.safeGetParameter( request,"passwd" );
+    String uid    = wiki.safeGetParameter( request,"j_username" );
+    String passwd = wiki.safeGetParameter( request,"j_password" );
 
-    UserManager mgr = wiki.getUserManager();
+    AuthenticationManager mgr = wiki.getAuthenticationManager();
 
     session.setAttribute("msg","");
 
-    if( "login".equals(action) )
+    if( !mgr.isContainerAuthenticated() && "login".equals(action) )
     {
-        mgr.setUserCookie( response, uid );
-
-        try
+        if( mgr.loginCustom( uid, passwd, request ) )
         {
-            if( mgr.login( uid, passwd, session ) )
+            response.sendRedirect( wiki.getViewURL(pagereq) );
+            return;
+        }
+        else
+        {
+            if( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
             {
-                response.sendRedirect( wiki.getViewURL(pagereq) );
-                return;
+                session.setAttribute("msg", "Invalid login (please check your Caps Lock key)");
             }
             else
             {
-                if( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
-                {
-                    session.setAttribute("msg", "Invalid login (please check your Caps Lock key)");
-                }
-                else
-                {
-                    session.setAttribute("msg", "Not a valid login.");
-                }
+                session.setAttribute("msg", "Not a valid login.");
             }
-        }
-        catch( PasswordExpiredException e )
-        {
-            session.setAttribute("msg", "Your password has expired!  Please enter a new one!");
-            response.sendRedirect( wiki.getViewURL("UserPreferences") );
-            return;
-        }
-        catch( WikiSecurityException e )
-        {
-            session.setAttribute("msg", e.getMessage());            
         }
     }
     else if( "logout".equals(action) )
@@ -85,54 +70,13 @@
     }
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "LoginContent.jsp" );
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+    <wiki:Include page="<%=contentPage%>" />
 
-<html>
-
-<head>
-  <title><wiki:Variable var="applicationname"/> login</title>
-  <wiki:Include page="commonheader.jsp"/>
-  <meta name="robots" content="noindex,nofollow">
-</head>
-
-<body class="login" bgcolor="#FFFFFF">
-  <br />
-  <br />
-  <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="<wiki:ContentEncoding />" method="post" />
-  <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
-  <div align="center">
-    <table border="0" cellspacing="3" cellpadding="5" width="35%" bgcolor="#efefef" />
-      <tr>
-        <td colspan="2" bgcolor="#bfbfff">
-          <div align="center">
-            <h3>Welcome to <wiki:Variable var="applicationname"/></h3>
-            <p style="color:red"><wiki:Variable var="msg" /></p>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>Login:</td>
-        <td><input type="text" name="uid" value="<wiki:Variable var="uid" default="" />" /></td>
-      </tr>
-      <tr>
-        <td>Password:</td>
-        <td><input type="password" name="passwd" /></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <div align="center">
-            <input type="submit" name="action" value="login" />
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
-</body>
-
-</html>
 <%
     NDC.pop();
     NDC.remove();

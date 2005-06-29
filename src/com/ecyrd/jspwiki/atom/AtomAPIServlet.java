@@ -136,7 +136,7 @@ public class AtomAPIServlet extends HttpServlet
             WikiPage entryPage = new WikiPage( pageName );
             entryPage.setAuthor( username );
 
-            WikiContext context = new WikiContext( m_engine, entryPage );
+            WikiContext context = new WikiContext( m_engine, request, entryPage );
 
             StringBuffer text = new StringBuffer();
             text.append( "!"+title.getBody() );

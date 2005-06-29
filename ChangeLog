@@ -1,3 +1,15 @@
+2005-06-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.3
+
+        * Mass merge of JSPWIKI_ARJ_BRANCH
+        
+        * Added Andrew Jaquith's authentication code, replacing the
+        old system completely.  This is likely to break everything.
+        The merge was not as smooth as I would've liked, so THIS
+        VERSION DOES NOT WORK - IT COMPILES, BUT DO NOT USE IT FOR
+        ANYTHING ELSE THAN HACKING.
+
 2005-06-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.2

@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+import java.security.Principal;
 import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
@@ -32,8 +33,12 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
-import com.ecyrd.jspwiki.auth.UserManager;
-import com.ecyrd.jspwiki.auth.UserProfile;
+import com.ecyrd.jspwiki.auth.AuthenticationManager;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.auth.acl.AclManager;
+import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
@@ -72,7 +77,7 @@ public class WikiEngine
 
     /** The web.xml parameter that defines where the config file is to be found. 
      *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE. 
-     *  @value jspwiki.propertyfile
+     *  {@value jspwiki.propertyfile}
      */
 
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
@@ -122,10 +127,15 @@ public class WikiEngine
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
     
     /** Path to the default property file. 
-     *  @value /WEB_INF/jspwiki.properties
+     * {@value /WEB_INF/jspwiki.properties}
      */
     public static final String DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
 
+    private static final String  PROP_USERDATABASE   = "jspwiki.userdatabase";
+    
+    private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
+
+    
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
 
@@ -175,8 +185,17 @@ public class WikiEngine
     /** Stores the authorization manager */
     private AuthorizationManager m_authorizationManager = null;
 
-    /** Stores the user manager.*/
-    private UserManager      m_userManager = null;
+    /** Stores the authentication manager.*/
+    private AuthenticationManager      m_authenticationManager = null;
+    
+    /** Stores the ACL manager. */
+    private AclManager       m_aclManager = null;
+ 
+    /** The user database loads, manages and persists user identities */
+    private UserDatabase     m_database = null;
+    
+    /** The group manager loads, manages and persists wiki groups */
+    private GroupManager     m_groupManager = null;
 
     private TemplateManager  m_templateManager = null;
 
@@ -262,7 +281,7 @@ public class WikiEngine
     /**
      * Gets a WikiEngine related to the servlet. Works just like getInstance( ServletConfig )
      * 
-     * @param config The ServletContext of the webapp servlet/JSP calling this method.
+     * @param context The ServletContext of the webapp servlet/JSP calling this method.
      * @param props  A set of properties, or null, if we are to load JSPWiki's default 
      *               jspwiki.properties (this is the usual case).
      */
@@ -509,9 +528,14 @@ public class WikiEngine
             initReferenceManager();
 
             m_templateManager   = new TemplateManager( this, props );
-            m_userManager       = new UserManager( this, props );
-            m_authorizationManager = new AuthorizationManager( this, props );
-
+            
+            // Initialize the authentication, authorization, group and acl managers
+            m_authenticationManager = new AuthenticationManager();
+            m_authenticationManager.initialize( this, props );
+            m_authorizationManager = new AuthorizationManager();
+            m_authorizationManager.initialize( this, props );
+            m_groupManager = getGroupManager();
+            m_aclManager = getAclManager();
         }
         catch( Exception e )
         {
@@ -1428,7 +1452,7 @@ public class WikiEngine
 
         if( page.getAuthor() == null )
         {
-            UserProfile wup = context.getCurrentUser();
+            Principal wup = context.getCurrentUser();
 
             if( wup != null ) page.setAuthor( wup.getName() );
         }
@@ -1440,6 +1464,11 @@ public class WikiEngine
         // Hook into cross reference collection.
         
         m_pageManager.putPageText( page, text );
+        
+        // ARJ HACK: reload the page so we parse ACLs, among other things
+        page = getPage( page.getName() );
+        context.setPage( page );
+        textToHTML( context, text );
 
         m_filterManager.doPostSaveFiltering( context, text );
     }
@@ -1683,11 +1712,11 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the currently used user manager.
+     *  Returns the currently used authentication manager.
      */
-    public UserManager getUserManager()
+    public AuthenticationManager getAuthenticationManager()
     {
-        return m_userManager;
+        return m_authenticationManager;
     }
 
     /**
@@ -1888,14 +1917,12 @@ public class WikiEngine
             }
         }
 
-        WikiContext context = new WikiContext( this, 
+        WikiContext context = new WikiContext( this,
+                                               request,
                                                wikipage );
         context.setRequestContext( requestContext );
         context.setHttpRequest( request );
         context.setTemplate( template );
-
-        UserProfile user = getUserManager().getUserProfile( request );
-        context.setCurrentUser( user );
 
         return context;
     }
@@ -2088,4 +2115,76 @@ public class WikiEngine
     {
         return m_pageRenamer.renamePage(renameFrom, renameTo, changeReferrers);
     }
+    /**
+     * Returns the UserDatabase employed by this WikiEngine.
+     * The UserDatabase is lazily initialized.
+     * @since 2.3
+     */
+    public UserDatabase getUserDatabase()
+    {
+        if (m_database != null) {
+            return m_database;
+        }
+        
+        String dbClassName = m_properties.getProperty( PROP_USERDATABASE, "foo" );
+        try
+        {
+            Class dbClass = ClassUtil.findClass( "", dbClassName );
+            m_database = (UserDatabase) dbClass.newInstance();
+            m_database.initialize( this, m_properties );
+            log.info("UserDatabase initialized.");
+        }
+        catch( NoRequiredPropertyException e )
+        {
+            log.fatal( "No required property", e );
+            throw new RuntimeException( "UserDatabase cannot be initialized." );
+        }
+        catch( ClassNotFoundException e )
+        {
+            log.fatal( "UserDatabase class " + dbClassName + " cannot be found", e );
+            throw new RuntimeException( "UserDatabase class " + dbClassName + " cannot be found" );
+        }
+        catch( InstantiationException e )
+        {
+            log.fatal( "UserDatabase class " + dbClassName + " cannot be created", e );
+            throw new RuntimeException( "UserDatabase class " + dbClassName + " cannot be created" );
+        }
+        catch( IllegalAccessException e )
+        {
+            log.fatal( "You are not allowed to access this user database class", e );
+            throw new RuntimeException( "You are not allowed to access this user database class" );
+        }
+         return ( m_database );
+    }
+    
+    /**
+     * Returns the GroupManager employed by this WikiEngine.
+     * The GroupManager is lazily initialized.
+     * @since 2.3
+     */
+    public GroupManager getGroupManager()
+    {
+        if (m_groupManager == null) {
+            // TODO: make this pluginizable
+            m_groupManager = new DefaultGroupManager();
+            m_groupManager.initialize( this, m_properties );
+        }
+        return m_groupManager;
+    }
+
+    /**
+     * Returns the AclManager employed by this WikiEngine.
+     * The AclManager is lazily initialized.
+     * @since 2.3
+     */
+    public AclManager getAclManager()
+    {
+        if (m_aclManager == null) {
+            // TODO: make this pluginizable
+            m_aclManager = new DefaultAclManager();
+            m_aclManager.initialize( this, m_properties );
+        }
+        return m_aclManager;
+    }
+
 }

@@ -68,9 +68,15 @@ jspwiki.translatorReader.inlinePattern.2 = *.png
 jspwiki.translatorReader.inlinePattern.3 = http://images.com/*
 
 #
-# Use PageAuthorizer for tests.
+# Security: use standard providers for user/group auth, user management
+# and ACLs. Use a test userdatabase for storing users.
 #
-jspwiki.authorizer = PageAuthorizer
+jspwiki.aclManager          = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
+jspwiki.authorizer          = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
+jspwiki.groupManager        = com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager
+jspwiki.useContainerAuth    = true
+jspwiki.userdatabase        = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
+jspwiki.xmlUserDatabaseFile = tests/etc/userdatabase.xml
 
 #
 #  Configure logs.

@@ -28,6 +28,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 
 import org.apache.ecs.xhtml.*;
 import org.apache.ecs.GenericElement;
@@ -51,6 +52,7 @@ public class EditorTag
     private String m_cancel  = "Cancel";
     private String m_formName = "editForm";
     private String m_action = null;
+    private boolean m_isGroupPage = false;
     
     public void setSubmit( String s )
     {
@@ -149,6 +151,21 @@ public class EditorTag
     private ConcreteElement getEditorArea()
     {
         return EditorAreaTag.getEditorArea( m_wikiContext );
+        
+        // FIXME: ARJ branch has code here for injecting a default ACL list
+        
+        /*
+            // This is a major HACK
+            // If this is a new Group, inject a default ACL and member list
+            if ( "".equals( content ) && m_isGroupPage )
+            {
+                String user = m_wikiContext.getCurrentUser().getName();
+                String page = m_wikiContext.getPage().getName();
+                String group = page.substring(DefaultGroupManager.GROUP_PREFIX.length());
+                content = "[{SET members=" + user + "}]\n"
+                        + "[{ALLOW edit " + group + "}]\n";
+            }
+		*/
     }
     /**
      *  Returns an edit button block.
@@ -171,6 +188,10 @@ public class EditorTag
     public final int doWikiStartTag()
         throws IOException
     {
+    	// ARJ: this is a bit of a hack
+        String pageName = m_wikiContext.getPage().getName();
+        m_isGroupPage = pageName.startsWith( DefaultGroupManager.GROUP_PREFIX );
+    
         return EVAL_BODY_TAG;
     }
        

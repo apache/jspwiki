@@ -51,7 +51,7 @@ public class ContentTag
      *     WikiContext.DIFF,     "DiffContent.jsp", ...
      *  </pre>
      *  A Property object is built using TextUtil.createProperties();
-     *  @see TextUtil.createProperties()
+     *  @see TextUtil#createProperties(String[])
      */
     public static final String[] DEFAULT_JSP_PAGES = {
         WikiContext.VIEW,     "PageContent.jsp",

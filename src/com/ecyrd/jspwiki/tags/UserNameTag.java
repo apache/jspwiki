@@ -20,10 +20,11 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.auth.UserManager;
-import com.ecyrd.jspwiki.auth.UserProfile;
+import com.ecyrd.jspwiki.WikiSession;
 
 /**
  *  Returns the current user name, or empty, if the user has not been
@@ -39,9 +40,9 @@ public class UserNameTag
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        UserManager mgr   = engine.getUserManager();
 
-        UserProfile user = mgr.getUserProfile( (javax.servlet.http.HttpServletRequest)pageContext.getRequest() );
+        WikiSession wikiSession = WikiSession.getWikiSession((HttpServletRequest)pageContext.getRequest());
+        Principal user = wikiSession.getUserPrincipal();
 
         if( user != null )
         {

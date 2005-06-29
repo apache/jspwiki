@@ -21,7 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.auth.UserProfile;
+import java.security.Principal;
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -64,7 +64,7 @@ public class BugReportHandler
         description = (String) params.get( DESCRIPTION );
         version     = (String) params.get( VERSION );
 
-        UserProfile wup = context.getCurrentUser();
+        Principal wup = context.getCurrentUser();
 
         if( wup != null )
         {

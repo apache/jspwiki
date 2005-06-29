@@ -15,7 +15,7 @@
     </p>
     </form>
   </wiki:UserCheck>
-  <wiki:UserCheck status="validated">
+  <wiki:UserCheck status="authenticated">
     <form action="<wiki:Variable var="baseURL"/>Login.jsp" accept-charset="UTF-8">
     <p>
       <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />

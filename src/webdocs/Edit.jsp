@@ -5,11 +5,12 @@
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.tags.EditorAreaTag" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
+<%@ page import="java.security.Permission" %>
+<%@ page import="java.security.Principal" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.EditPermission" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.CreatePermission" %>
 <%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -25,6 +26,13 @@
 
 
 <%
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
+    WikiSession wikiSession = wikiContext.getWikiSession(); 
+    String user = wikiSession.getUserPrincipal().getName();
+    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() )
+    {
+        user  = wiki.safeGetParameter( request, "author" );
+    }
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
@@ -53,7 +61,7 @@
     }
 
     WikiPage wikipage = wikiContext.getPage();
-    WikiPermission requiredPermission = null;
+    Permission requiredPermission = null;
     WikiPage latestversion = wiki.getPage( pagereq );
 
     if( latestversion == null )
@@ -62,21 +70,26 @@
     }
     if( wiki.pageExists( wikipage ) )
     {
-        requiredPermission = new EditPermission();
+        requiredPermission = new PagePermission( pagereq, "edit" );
     }
     else
     {
-        requiredPermission = new CreatePermission();
+    	    if ( pagereq.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
+    	    {
+            requiredPermission = WikiPermission.CREATE_GROUPS;
+    	    }
+    	    else
+    	    {
+            requiredPermission = WikiPermission.CREATE_PAGES;
+        }
     }   
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    UserProfile currentUser  = wikiContext.getCurrentUser();
 
-    if( !mgr.checkPermission(  wikiContext.getPage(),
-                               currentUser,
+    if( !mgr.checkPermission(  wikiContext,
                                requiredPermission ) )
     {
-        log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+        log.info("User "+user+" has no access - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
         wikiContext.setVariable( "msg", msg );
         String pageurl = wiki.encodeName( pagereq );
@@ -103,7 +116,7 @@
 
     if( ok != null )
     {
-        log.info("Saving page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
+        log.info("Saving page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -137,7 +150,7 @@
         //  Set author information
         //
 
-        wikiContext.getPage().setAuthor( currentUser.getName() );        
+        wikiContext.getPage().setAuthor( user );        
 
         //
         //  Figure out the actual page text
@@ -198,7 +211,7 @@
         return;
     }
 
-    log.info("Editing page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
+    log.info("Editing page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
 
     //
     //  Determine and store the date the latest version was changed.  Since
@@ -218,7 +231,7 @@
     //  Attempt to lock the page.
     //
     PageLock lock = wiki.getPageManager().lockPage( wikipage, 
-                                                    currentUser.getName() );
+                                                    user );
 
     if( lock != null )
     {

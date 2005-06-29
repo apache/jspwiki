@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.security.Principal;
 import java.util.Properties;
 import java.util.Iterator;
 import java.util.Date;
@@ -26,8 +27,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
@@ -263,27 +262,12 @@ public class VariableManager
         }
         else if( name.equals("loginstatus") )
         {
-            UserProfile wup = context.getCurrentUser();
-
-            int status = (wup != null) ? wup.getLoginStatus() : UserProfile.NONE;
-
-            switch( status )
-            {
-              case UserProfile.NONE:
-                return "unknown (not logged in)";
-              case UserProfile.COOKIE:
-                return "named (cookie)";
-              case UserProfile.CONTAINER:
-                return "validated (container)";
-              case UserProfile.PASSWORD:
-                return "validated (password)";
-              default:
-                return "ILLEGAL STATUS!";
-            }
+            WikiSession session = context.getWikiSession();
+            return session.getStatus();
         }
         else if( name.equals("username") )
         {
-            UserProfile wup = context.getCurrentUser();
+            Principal wup = context.getCurrentUser();
 
             return wup != null ? wup.getName() : "not logged in";
         }

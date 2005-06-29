@@ -12,12 +12,14 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("auth package tests");
+        TestSuite suite = new TestSuite("AAA package tests");
 
-        suite.addTest( UserProfileTest.suite() );
-        suite.addTest( WikiGroupTest.suite() );
         suite.addTest( AuthorizationManagerTest.suite() );
-        suite.addTest( com.ecyrd.jspwiki.auth.modules.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.acl.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.authorize.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.login.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.permissions.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.user.AllTests.suite() );
 
         return suite;
     }

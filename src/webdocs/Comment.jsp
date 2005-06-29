@@ -6,8 +6,10 @@
 <%@ page import="com.ecyrd.jspwiki.tags.EditorAreaTag" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.CommentPermission" %>
+<%@ page import="java.security.Principal" %>
+<%@ page import="java.security.Permission" %>
+<%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -24,6 +26,12 @@
 
 
 <%
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
+    WikiSession wikiSession = wikiContext.getWikiSession(); 
+    String user = wikiSession.getUserPrincipal().getName();
+    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() ) {
+        user  = wiki.safeGetParameter( request, "user" );
+    }
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
@@ -32,10 +40,6 @@
     String author  = wiki.safeGetParameter( request, "author" );
     String link    = wiki.safeGetParameter( request, "link" );
     String remember = request.getParameter("remember");
-
-    WikiContext wikiContext = wiki.createContext( request, 
-                                                  WikiContext.COMMENT );
-
     String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
@@ -49,13 +53,12 @@
     }
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    UserProfile currentUser  = wikiContext.getCurrentUser();
 
-    if( !mgr.checkPermission( wikiContext.getPage(),
-                              currentUser,
-                              new CommentPermission() ) )
+    Permission requiredPermission = new PagePermission( pagereq, "comment" );
+    if( !mgr.checkPermission( wikiContext,
+                              requiredPermission ) )
     {
-        log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+        log.info("User "+user+" has no access - redirecting to login page.");
         String pageurl = wiki.encodeName( pagereq );
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
         return;
@@ -83,7 +86,7 @@
 
     if( ok != null )
     {
-        log.info("Saving page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
+        log.info("Saving page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -117,7 +120,7 @@
         //  Set author information
         //
 
-        wikipage.setAuthor( currentUser.getName() );
+        wikipage.setAuthor( user );
 
         StringBuffer pageText = new StringBuffer(wiki.getPureText( wikipage ));
 
@@ -162,6 +165,7 @@
                 linkcookie.setMaxAge(1001*24*60*60);
                 response.addCookie( linkcookie );
             }
+            CookieAssertionLoginModule.setUserCookie( response, user );            
         }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
@@ -210,7 +214,7 @@
     //  Attempt to lock the page.
     //
     PageLock lock = wiki.getPageManager().lockPage( wikipage, 
-                                                    currentUser.getName() );
+                                                    user );
 
     if( lock != null )
     {

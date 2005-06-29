@@ -24,6 +24,8 @@ import javax.servlet.http.*;
 
 import java.util.*;
 import java.io.*;
+import java.security.Permission;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
@@ -31,7 +33,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.HttpUtil;
-import com.ecyrd.jspwiki.auth.UserProfile;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
@@ -144,7 +146,6 @@ public class AttachmentServlet
         AttachmentManager mgr = m_engine.getAttachmentManager();
         AuthorizationManager authmgr = m_engine.getAuthorizationManager();
 
-        UserProfile wup = m_engine.getUserManager().getUserProfile( req );
 
         WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
         String page = context.getPage().getName();
@@ -176,7 +177,8 @@ public class AttachmentServlet
                     //  Check if the user has permission for this attachment
                     //
 
-                    if( !authmgr.checkPermission( att, wup, "view" ) )
+                    Permission permission = new PagePermission(att, "view");
+                    if( !authmgr.checkPermission( context, permission ) )
                     {
                         log.debug("User does not have permission for this");
                         res.sendError( HttpServletResponse.SC_FORBIDDEN );
@@ -356,7 +358,7 @@ public class AttachmentServlet
                                              errorPage );
             }
 
-            UserProfile user    = context.getCurrentUser();
+            Principal user    = context.getCurrentUser();
 
             //
             //  Go through all files being uploaded.
@@ -438,9 +440,9 @@ public class AttachmentServlet
                     //  Check if we're allowed to do this?
                     //
 
-                    if( m_engine.getAuthorizationManager().checkPermission( att,
-                                                                            user,
-                                                                            "upload" ) )
+                    Permission permission = new PagePermission(att, "upload");
+                    if( m_engine.getAuthorizationManager().checkPermission( context,
+                                                                            permission ) )
                     {
                         if( user != null )
                         {

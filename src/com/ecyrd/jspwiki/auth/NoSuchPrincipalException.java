@@ -21,6 +21,9 @@ package com.ecyrd.jspwiki.auth;
 
 /**
  *  Thrown in some error situations where a WikiPrincipal object does not exist.
+ *  @author Andrew Jaquith
+ *  @version $Revision: 1.3 $ $Date: 2005-06-29 22:43:17 $
+ *  @since 2.3
  */
 public class NoSuchPrincipalException
     extends WikiSecurityException

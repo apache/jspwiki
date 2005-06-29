@@ -3,6 +3,9 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="java.security.Permission" %>
+<%@ page import="java.security.Principal" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -23,14 +26,15 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
+    AuthenticationManager authMgr = wiki.getAuthenticationManager();
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    UserProfile currentUser  = wiki.getUserManager().getUserProfile( request );
+    Principal currentUser  = wikiContext.getWikiSession().getUserPrincipal();
+    Permission requiredPermission = new PagePermission( pagereq, "view" );
 
-    if( !mgr.checkPermission( wikiContext.getPage(),
-                              currentUser,
-                              WikiPermission.newInstance("view") ) )
+    if( !mgr.checkPermission( wikiContext,
+                              requiredPermission ) )
     {
-        if( mgr.strictLogins() )
+        if( authMgr.strictLogins() )
         {
             log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
             String pageurl = wiki.encodeName( pagereq );

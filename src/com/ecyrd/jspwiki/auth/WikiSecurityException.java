@@ -22,11 +22,12 @@ package com.ecyrd.jspwiki.auth;
 import com.ecyrd.jspwiki.WikiException;
 
 /**
- *  WikiSecurityException is used to provide authentication and authorization
- *  information.
+ *  Indicates an authentication or authorization
+ *  error or exception.
  *
  *  @author Erik Bunn
  *  @since 2.0
+ *  @version $Revision: 1.4 $ $Date: 2005-06-29 22:43:17 $
  */
 public class WikiSecurityException
     extends WikiException

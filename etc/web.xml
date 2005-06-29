@@ -79,6 +79,7 @@
        <servlet-class>com.ecyrd.jspwiki.attachment.AttachmentServlet</servlet-class>
    </servlet>
 
+   <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->
 
    <!--
        And finally, let us tell the servlet container which
@@ -171,6 +172,8 @@
            <url-pattern>/Upload.jsp</url-pattern>
            <url-pattern>/Comment.jsp</url-pattern>
            <url-pattern>/Delete.jsp</url-pattern>
+           <url-pattern>/LoginRedirect.jsp</url-pattern>
+           <url-pattern>/UserPreferences.jsp</url-pattern>
            <http-method>DELETE</http-method>
            <http-method>GET</http-method>
            <http-method>POST</http-method>
@@ -190,13 +193,35 @@
            <role-name>admin</role-name>
            <role-name>user</role-name>
        </auth-constraint>
+
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
    </security-constraint>
 
-   -->
-
    <login-config>
-      <auth-method>BASIC</auth-method>
-      <realm-name>JSPWiki Editor</realm-name>
+     <auth-method>FORM</auth-method>
+     <form-login-config>
+       <form-login-page>/Login.jsp</form-login-page>
+       <form-error-page>/Login.jsp</form-error-page>
+     </form-login-config>
    </login-config>
+
+   <security-role>
+     <description>
+       This logical role includes all authenticated users
+     </description>
+     <role-name>Authenticated</role-name>
+     <role-link>YourRealmsAuthenticatedRoleName</role-link>
+   </security-role>
+
+   <security-role>
+     <description>
+       This logical role includes all administrative users
+     </description>
+     <role-name>Admin</role-name>
+     <role-link>YourRealmsAdminRoleName</role-link>
+   </security-role>
+   -->
 
 </web-app>

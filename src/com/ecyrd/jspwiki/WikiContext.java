@@ -19,30 +19,35 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.auth.UserProfile;
 
 /**
- *  Provides state information throughout the processing of a page.  A
+ *  <p>Provides state information throughout the processing of a page.  A
  *  WikiContext is born when the JSP pages that are the main entry
  *  points, are invoked.  The JSPWiki engine creates the new
  *  WikiContext, which basically holds information about the page, the
  *  handling engine, and in which context (view, edit, etc) the
- *  call was done.
- *  <P>
- *  A WikiContext also provides request-specific variables, which can
+ *  call was done.</p>
+ *  <p>A WikiContext also provides request-specific variables, which can
  *  be used to communicate between plugins on the same page, or
  *  between different instances of the same plugin.  A WikiContext
  *  variable is valid until the processing of the page has ended.  For
- *  an example, please see the Counter plugin.
+ *  an example, please see the Counter plugin.</p>
+ *  <p>When a WikiContext is created, it automatically associates a 
+ *  {@link WikiSession} object with the user's HttpSession. The
+ *  WikiSession contains information about the user's authentication
+ *  status, and is consulted by {@link #getCurrentUser()}.
+ *  object</p>
  *
  *  @see com.ecyrd.jspwiki.plugin.Counter
  *  
  *  @author Janne Jalkanen
+ *  @author Andrew R. Jaquith
  */
 public class WikiContext
     implements Cloneable
@@ -56,7 +61,7 @@ public class WikiContext
 
     HttpServletRequest m_request = null;
 
-    UserProfile m_currentUser;
+    WikiSession m_session = null;
 
     /** The VIEW context - the user just wants to view the page
         contents. */
@@ -97,24 +102,21 @@ public class WikiContext
     public static final String    NONE     = "";  // This is not a JSPWiki context, use it to access static files
 
     /**
-     *  Create a new WikiContext.
-     *
-     *  @param engine The WikiEngine that is handling the request.
-     *  @param pagename The name of the page.  A new WikiPage is
-     *         created.
-     *  @deprecated
+     * Create a new WikiContext. Delegates to
+     * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}. This
+     * constructor is private; nobody should ever call this method.
+     * @param engine The WikiEngine that is handling the request.
+     * @param pagename The name of the page. A new WikiPage is created.
+     * @deprecated
      */
-
-    // Changed to private - nobody should ever call this method.
     private WikiContext( WikiEngine engine, String pagename )
     {
-        m_page   = new WikiPage( pagename );
-        m_engine = engine;
+        this( engine, null, new WikiPage( pagename ));
     }
     
     /**
-     *  Create a new WikiContext for the given WikiPage.
-     *
+     *  Create a new WikiContext for the given WikiPage. Delegates to
+     * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
      *  @param engine The WikiEngine that is handling the request.
      *  @param page   The WikiPage.  If you want to create a
      *  WikiContext for an older version of a page, you must use this
@@ -122,8 +124,41 @@ public class WikiContext
      */
     public WikiContext( WikiEngine engine, WikiPage page )
     {
-        m_page   = page;
-        m_engine = engine;
+      this(engine, null, page);
+    }
+    
+    /**
+     * <p>
+     * Creates a new WikiContext for the given WikiEngine, WikiPage and
+     * HttpServletRequest. This constructor will also look up the HttpSession
+     * associated with the request, and determine if a WikiSession object is
+     * present. If not, a new one is created.
+     * </p>
+     * <p>
+     * After the WikiSession object is obtained, the current authentication
+     * status is checked. If not authenticated, or if the login status reported
+     * by the container has changed, the constructor attempts to log in the user
+     * with
+     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#loginContainer(WikiContext)}.
+     * </p>
+     * @param engine The WikiEngine that is handling the request
+     * @param request The HttpServletRequest that should be associated with this
+     *            context
+     * @param page The WikiPage. If you want to create a WikiContext for an
+     *            older version of a page, you must supply this parameter
+     */
+    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) {
+      m_engine = engine;
+      m_request = request;
+      m_session = WikiSession.getWikiSession(request);
+      m_page   = page;
+      
+      // Associate the wikiSession with this context
+      // and associate a Subject with the session if it isn't there already
+      if ( m_session.isUnknown() || m_session.isContainerStatusChanged( request ) )
+      {
+          engine.getAuthenticationManager().loginContainer( this );
+      }
     }
 
     /**
@@ -264,20 +299,18 @@ public class WikiContext
     }
 
     /**
-     *  Sets the current user.
-     */
-    public void setCurrentUser( UserProfile wup )
-    {
-        m_currentUser = wup;
-    }
-
-    /**
-     *  Gets the current user.  May return null, in case the current
+     *  Convenience method that gets the current user. Delegates the
+     *  lookup to the WikiSession associated with this WikiContect. 
+     *  May return null, in case the current
      *  user has not yet been determined; or this is an internal system.
+     *  If the WikiSession has not been set, <em>always</em> returns null.
      */
-    public UserProfile getCurrentUser()
+    public Principal getCurrentUser()
     {
-        return m_currentUser;
+        if (m_session == null) {
+          return null;
+        }
+        return m_session.getUserPrincipal();
     }
 
     public String getViewURL( String page )
@@ -318,8 +351,23 @@ public class WikiContext
         copy.m_template       = m_template;
         copy.m_variableMap    = m_variableMap;
         copy.m_request        = m_request;
-        copy.m_currentUser    = m_currentUser;
-
+        copy.m_session        = m_session;
         return copy;
     }
+    
+    /**
+     * Returns the WikiSession associated with the context.
+     */  
+    public WikiSession getWikiSession() {
+      return m_session;
+    }
+    
+    /**
+     * Sets the WikiSession assocated with the context.
+     * @param session
+     */
+    public void setWikiSession(WikiSession session) {
+      m_session = session;
+    }
+        
 }

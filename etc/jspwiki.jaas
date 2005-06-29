@@ -1,0 +1,90 @@
+// $Id: jspwiki.jaas,v 1.2 2005-06-29 22:43:17 jalkanen Exp $
+//
+// This file contains the JAAS login configuration for JSPWiki.
+// It provides the rules that govern how users log into
+// the application.
+//
+// If you are running your servlet container with a JAAS
+// login configuration file already, you should simply 
+// append the contents of this file to it. Otherwise, you
+// can simply use this as a stand-alone configuration file.
+//
+// To make this configuration active, you will need to specify 
+// the location of this file by setting the JVM system property
+// 'java.security.auth.login.config' in the command line script you
+// use to start your web container. The file location should
+// be the absolute path to the jspwiki.policy file. For example:
+//
+//   java -jar myservletcontainer.jar -Djava.security.auth.login.config==/path-to/jaas.config
+// 
+// Some servlet containers make this very easy by looking
+// for an environment variable and automatically appending
+// the contents to the 'java' command. For example, Tomcat
+// users just need to set the CATALINA_OPTS variable:
+// 
+//   export CATALINA_OPTS="-Djava.security.auth.login.config==/path-to/jaas.config"
+//
+// In addition, it is typically good practice to store jaas.config
+// in the Tomcat config directory (CATALINA_HOME/conf).
+//
+
+// -----------------------------------------------------------
+// And now, for the Login Configurations...
+//
+// When a user attempts to logs in, one of the following LoginConfiguration
+// policies will be consulted.
+//  -JSPWiki-container
+//  -JSPWiki-custom
+//
+
+// JSPWiki-container 
+//
+// The standard application configuration defaults to using container-managed
+// security as the first potential authenticator via the JAAS 
+// 'WebContainerLoginModule.' The module attempts to authenticate the user
+// by sniffing a Principal object from the HttpServletRequest. If that 
+/  doesn't work, the module will next try to get the 'remote user' property
+// in the servlet request and use that value to look up the user in the 
+// configured JSPWiki user database (which by default persists data to
+// an XML file called userdatabase.xml).
+//
+// If the WebContainerLoginModule is successful, the user will
+// possess the built-in role principal 'Authenticated.'
+//
+// Note if you aren't using container-managed authentication for
+// the JSPWiki webapp, WebContainerLoginModule will ALWAYS fail.
+// By "not using," we mean:
+//  - The <security-containts> section of WEB-INF/web.xml is 
+//    commented out, or
+//  - The servlet container doesn't have a configured authentication
+//    realm for JSPWiki
+//
+// If the WebContainerLoginModule fails, a 'login' is attempted using
+// the CookieAssertionLoginModule. The login succeeds when the user's
+// HTTP request contains a cookie called 'JSPWikiAssertedName'.
+// The value of this cookie will be the user's identity. The user
+// will also possess the built-in role principal 'Asserted.'
+// If you don't want users to be able to assert their identities in
+// this way (and in a security-conscious environment, you don't want
+// this) remove the line from the configuration entry below.
+// 
+// Failure of the CookieAssertionLoginModule triggers the the 
+// AnonymousLoginModule, which always succeeds; the user's name will
+// be the IP address, and will possess the built-in role principal 'Anonymous'.
+
+JSPWiki-container {
+  com.ecyrd.jspwiki.auth.login.WebContainerLoginModule    SUFFICIENT;
+  com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule SUFFICIENT;
+  com.ecyrd.jspwiki.auth.login.AnonymousLoginModule       SUFFICIENT;
+};
+
+// JSPWiki-custom
+//
+// This second application configuration is used when container-managed
+// security is not used---i.e., logins are done via JSPWiki directly
+// using custom authentication. In this case, the authentication
+// is done using the JSPWiki user database.
+
+JSPWiki-custom {
+  com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule    REQUIRED;
+};

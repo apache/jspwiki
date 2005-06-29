@@ -24,6 +24,7 @@ import com.ecyrd.jspwiki.*;
 import java.util.*;
 
 /**
+ *  Plugin that enumerates the pages in the wiki that have not yet been defined.
  *  Parameters: none.<BR>
  *  From AbstractReferralPlugin:<BR>
  *  separator: How to separate generated links; default is a wikitext line break,

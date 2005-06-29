@@ -1,0 +1,112 @@
+Hi everybody---
+
+An experimental JSPWiki branch with the new AAA subsystem is nearing alpha status.
+
+Background
+----------
+Less than 60 days ago, a bunch of us in this fine list bashed out a set of requirements for a new system for authenticating and authorizing users. Although there are too many requirements to list here, some of the primary features include:
+- Continued support for JSPWiki's custom authentication system
+- Full support for container-based authentication and authorization, including container-style roles
+- Flexible, ad hoc "groups" 
+- Wiki-based ACLs
+- Customizable security policies, with simple and sensible defaults
+- New user database for "persistent" user identities
+- Support for standard Java security technologies; notably, J2SE security policies and JAAS authentication
+
+Current status
+--------------
+- Based on 2.1.149
+- Development of core classes done (more or less)
+- Test case coverage partially complete (but not too bad, really)
+- JSP pages have been modified heavily in places, specifically
+  the Login.jsp and UserPreferences.jsp/PreferencesContent.jsp
+
+Development needs
+-----------------
+I need help getting the preceding list of requirements implemented...
+1.9  The standard user database is XML-based. Other user
+     databases (e.g., LDAP, database, AD) not implemented
+     yet. Any takers? The UserDatabase interface specifies
+     how to do it...
+2.7  Access restrictions on searches not implemented yet.
+2.9  Hard-coded "super user" needs to be re-implemented
+     and coded into AuthenticationManager.
+3.3  Groups names are checked at creation time to make
+     sure they aren't the same as a built-in role, but
+     there should be logic in the JSP pages that tells
+     the user they can't do that...
+3.8-3.11 Requirements not implemented yet (these are "nice
+     to have" features anyway)
+4.10 Page restore operation restores previous
+     ACL, not current ACL
+6.2  User registration needs to check for collisions for the
+     login name and/or the wiki name
+6.8  When container-managed authentication is used, the
+     user profile should omit the password field, and make
+     the login name read-only (implemented but not tested)
+6.9  Password re-set not implemented yet (nice-to-have)
+7.1  Embedding permission checks within core wiki classes
+     (e.g., WikiEngine) NOT implemented yet. Examples:
+       - WikiPage.setAcl should check for 'edit'
+7.5  Need to sanity-check configuration files (e.g.,
+     jspwiki.policy) to ensure they implement a common
+     number of use cases that should "just work."
+7.6  No user-facing documentation at the moment...
+Other:
+  -  WikiEngine needs to better plugin-ize the new
+     providers: UserDatabase, GroupManager, AclManager
+  -  Lucene search is b0rked?
+  -  Some of the Javadocs and toString() methods are 
+     a bit ugly
+
+Deployment considerations
+-------------------------
+This version of JSPWiki uses JAAS and J2SE security policies
+to enforce privileges. Therefore, you *must* set two Java
+runtime properties to point to the policy files 
+prior to starting your servlet container:
+- java.security.policy
+- java.security.auth.login.config
+Normally these files should be stored in your servlet
+container's configuration directory, or some other
+safe place (e.g., /etc/tomcat). See the jspwiki.policy 
+and jspwiki.jaas files for more details on how to
+configure the security policy.
+
+In addition, you *must* copy the supplied jspwiki.jks
+key store file to the same directory where your 
+jspwiki.policy file is kept.
+
+Bugs, limitations and errata
+----------------------------
+- Changes to the AAA model ***will*** break your
+  custom template's scriptlet code unless you change
+  JSPs to use the new API calls, in particular
+  AuthorizationManager.checkPermission(). A migration guide 
+  for template developers would be great!
+- Container-based authentication has been unit-tested
+  but not system-tested, so it might not work.
+  But it should...
+- Requirement 1.10 might not be practical. I didn't
+  attempt to implement it.
+- Groups are implemented as wiki pages named Group*
+  rather than as subpages of GroupConfiguration
+- UserPreferences.jsp needs polish and better
+  handling of default values for new users
+- UserPreferences isn't exhibiting correct behavior
+  for existing users: login name and password
+  should not be editable after the initial
+  registration
+
+Differences from the main JSPWiki branch (HEAD)
+-----------------------------------------------
+Primary differences include:
+- New AAA classes, almost all of which are in com.ecyrd.jspwiki.auth.*
+- New <UserProfile> JSP tag
+- New top-level class WikiSession
+- Moderate changes to WikiEngine
+- Minor changes to PageManager and others
+- Minor changes to certain JSPs (e.g., Atom.jsp, rss.jsp)
+
+Requirements
+------------

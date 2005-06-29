@@ -7,6 +7,10 @@
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="java.security.Permission" %>
+<%@ page import="java.security.Principal" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -40,11 +44,14 @@
     }
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    UserProfile currentUser  = wikiContext.getCurrentUser();
+    Principal currentUser  = wikiContext.getCurrentUser();
+    Permission requiredPermission = new PagePermission( pagereq, "delete" );
 
     if( !mgr.checkPermission( wikiContext.getPage(),
                               currentUser,
                               new DeletePermission() ) )
+    if( !mgr.checkPermission( wikiContext,
+                              requiredPermission ) )
     {
         log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
         String pageurl = wiki.encodeName( pagereq );

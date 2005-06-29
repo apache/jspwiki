@@ -15,8 +15,7 @@ Testing
 
 [{Denounce link='http://www.ecyrd.com'}]
 
-[{DENY edit Guest}]
-[{ALLOW edit JanneJalkanen,AdminGroup}]
+[{ALLOW edit JanneJalkanen,Authenticated AdminGroup}]
 
 ----
 
