@@ -13,7 +13,6 @@ public class DefaultURLConstructor
     implements URLConstructor
 {
     protected WikiEngine m_engine;
-    private String m_viewURLPattern = "%uWiki.jsp?page=%n";
 
     /** Are URL styles relative or absolute? */
     protected boolean          m_useRelativeURLStyle = true;
