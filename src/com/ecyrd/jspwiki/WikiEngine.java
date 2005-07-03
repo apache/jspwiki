@@ -1531,21 +1531,15 @@ public class WikiEngine
      *  Parses an incoming search request, then
      *  does a search.
      *  <P>
-     *  Search language is simple: prepend a word
-     *  with a + to force a word to be included (all files
-     *  not containing that word are automatically rejected),
-     *  '-' to cause the rejection of all those files that contain
-     *  that word.
+     *  The query is dependent on the actual chosen search provider - each one of them has
+     *  a language of its own.
      */
-
-    // FIXME: does not support phrase searches yet, but for them
-    // we need a version which reads the whole page into the memory
-    // once.
 
     //
     // FIXME: Should also have attributes attached.
     //
     public Collection findPages( String query )
+        throws ProviderException, IOException
     {
         Collection results = m_searchManager.findPages( query );
         
