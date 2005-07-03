@@ -56,7 +56,8 @@ public abstract class IteratorTag
      */
     public void setList( Collection arg )
     {
-        m_iterator = arg.iterator();
+        if( arg != null )
+            m_iterator = arg.iterator();
     }
 
     /**
