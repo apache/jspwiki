@@ -35,19 +35,25 @@
     {
         log.info("Searching for string "+query);
 
-        list = wiki.findPages( query );
+        try
+        {
+            list = wiki.findPages( query );
 
-        pageContext.setAttribute( "searchresults",
-                                  list,
-                                  PageContext.REQUEST_SCOPE );
-
+            pageContext.setAttribute( "searchresults",
+                                      list,
+                                      PageContext.REQUEST_SCOPE );
+        }
+        catch( Exception e )
+        {
+            pageContext.setAttribute( "err", e.getMessage(), PageContext.REQUEST_SCOPE );
+        }
+        
         query = TextUtil.replaceEntities( query );
 
         pageContext.setAttribute( "query",
                                   query,
                                   PageContext.REQUEST_SCOPE );
 
-        log.info("Found "+list.size()+" pages");
     }
 
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
@@ -60,4 +66,6 @@
 <%
     NDC.pop();
     NDC.remove();
+    
+    log.info("SEARCH COMPLETE");
 %>
