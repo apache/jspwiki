@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.41 2005-06-29 22:43:17 jalkanen Exp $
+    $Id: build.xml,v 1.42 2005-07-03 21:31:13 jalkanen Exp $
 -->    
        
 <!--   
@@ -288,7 +288,7 @@
            of the WAR-file.
    -->
 
-  <target name="war" depends="installinit,jar,sign"
+  <target name="war" depends="installinit,jar"
           description="Builds the WAR file for installation.">
 
     <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
