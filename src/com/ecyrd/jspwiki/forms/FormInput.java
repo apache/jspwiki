@@ -32,9 +32,6 @@ import org.apache.ecs.html.Input;
 public class FormInput
     extends FormElement
 {
-    private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormInput.class );
-
     public static final String PARAM_TYPE  = "type";
     public static final String PARAM_SIZE  = "size";
 
