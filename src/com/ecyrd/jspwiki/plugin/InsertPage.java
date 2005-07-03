@@ -138,6 +138,12 @@ public class InsertPage
                 res.append( engine.textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
                 res.append("</div>");
+                
+                //
+                //  Remove the name from the stack; we're now done with this.
+                //
+                previousIncludes.remove( page.getName() );
+                context.setVariable( ATTR_RECURSE, previousIncludes );
             }
             else
             {
