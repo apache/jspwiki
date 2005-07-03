@@ -50,6 +50,20 @@ public class InsertPageTest extends TestCase
         assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") != -1 );
     }
 
+    public void testMultiInvocation() throws Exception
+    {
+        String src  = "[{InsertPage page='ThisPage2'}] [{InsertPage page='ThisPage2'}]";
+        String src2 = "foo";
+
+        testEngine.saveText("ThisPage",src);
+        testEngine.saveText("ThisPage2",src2);
+
+        assertTrue( "got circ ref", testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1 );
+        
+        assertEquals( "found != 2", "<div style=\"\">foo\n</div> <div style=\"\">foo\n</div>\n", testEngine.getHTML("ThisPage") );
+        
+    }
+    
     public static Test suite()
     {
         return new TestSuite( InsertPageTest.class );
