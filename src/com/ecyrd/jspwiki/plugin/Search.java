@@ -19,6 +19,7 @@
 */
 package com.ecyrd.jspwiki.plugin;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  @author jalkanen
@@ -65,8 +67,15 @@ public class Search implements WikiPlugin
         }
         else
         {
-            results = doBasicQuery( context, queryString );
-            context.setVariable( set, results );
+            try
+            {
+                results = doBasicQuery( context, queryString );
+                context.setVariable( set, results );
+            }
+            catch( Exception e )
+            {
+                return "<div class='error'>"+e.getMessage()+"</div>\n";
+            }
         }
         
         String res = "";
@@ -80,8 +89,9 @@ public class Search implements WikiPlugin
     }
     
     private Collection doBasicQuery( WikiContext context, String query )
+        throws ProviderException, IOException
     {
-        log.info("Searching for string "+query);
+        log.debug("Searching for string "+query);
 
         Collection list = context.getEngine().findPages( query );
 
