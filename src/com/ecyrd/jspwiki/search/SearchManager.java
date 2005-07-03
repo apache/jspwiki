@@ -30,6 +30,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Manages searching the Wiki.
@@ -142,8 +143,17 @@ public class SearchManager
         return m_searchProvider;
     }
 
+    /**
+     *  Sends a search to the current search provider. The query is is whatever native format
+     *  the query engine wants to use.
+     *  
+     * @param query The query.  Null is safe, and is interpreted as an empty query.
+     * @return A collection of WikiPages that matched.
+     */
     public Collection findPages( String query )
+        throws ProviderException, IOException
     {
+        if( query == null ) query = "";
         return m_searchProvider.findPages( query );
     }
 

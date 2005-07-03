@@ -524,10 +524,11 @@ public class LuceneSearchProvider implements SearchProvider
     }
 
     public Collection findPages( String query )
+        throws ProviderException
     {
         Searcher  searcher = null;
         ArrayList list     = null;
-        
+              
         try
         {
             QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
@@ -588,7 +589,9 @@ public class LuceneSearchProvider implements SearchProvider
         }
         catch( ParseException e )
         {
-            log.error("Broken query; cannot parse",e);
+            log.info("Broken query; cannot parse",e);
+            
+            throw new ProviderException("You have entered a query Lucene cannot process: "+e.getMessage());
         }
         finally
         {

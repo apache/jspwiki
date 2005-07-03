@@ -19,10 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package com.ecyrd.jspwiki.search;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
@@ -51,6 +53,8 @@ public interface SearchProvider extends WikiProvider
      * Search for pages matching a search query
      * @param query query to search for
      * @return collection of pages that match query
+     * @throws ProviderException, if the search provider failed.
+     * @throws IOException, if for some reason the query could not be executed.
      */
-    public Collection findPages(String query);
+    public Collection findPages(String query) throws ProviderException, IOException;
 }
