@@ -37,11 +37,24 @@ public class SearchResultsTag
     {
         Collection list = (Collection)pageContext.getAttribute( "searchresults",
                                                                 PageContext.REQUEST_SCOPE );
+        
         if( list != null )
         {
             return EVAL_BODY_INCLUDE;
         }
-
+        else
+        {
+            String message = (String)pageContext.getAttribute( "err",
+                                                               PageContext.REQUEST_SCOPE );
+            
+            if( message != null )
+            {
+                pageContext.getOut().print("<div class='error'>");
+                pageContext.getOut().print( message );
+                pageContext.getOut().println("</div>");
+            }
+        }
+        
         return SKIP_BODY;
     }
 }
