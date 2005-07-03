@@ -51,7 +51,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-07-03 21:26:11 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -87,7 +87,7 @@ public class AuthenticationManager
     public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
-        m_containerAuth = Boolean.getBoolean( props.getProperty( PROP_USE_CMS_AUTH, "true").toLowerCase() );
+        m_containerAuth  = TextUtil.getBooleanProperty( props, PROP_USE_CMS_AUTH, m_containerAuth );
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
     }
     
@@ -101,7 +101,7 @@ public class AuthenticationManager
      */
     public boolean isContainerAuthenticated()
     {
-            return m_containerAuth;
+        return m_containerAuth;
     }
 
     /**
@@ -132,16 +132,20 @@ public class AuthenticationManager
         {
             throw new IllegalArgumentException( "Context may not be null" );
         }
+        
         WikiSession wikiSession = context.getWikiSession();
         HttpServletRequest request = context.getHttpRequest();
+        
         if ( wikiSession == null )
         {
             throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
         }
+        
         if ( request == null )
         {
             throw new IllegalStateException( "Wiki context's HttpRequest may not be null" );
         }
+        
         CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase() );
         return doLogin( wikiSession, handler, LOGIN_CONTAINER );
     }
@@ -161,10 +165,12 @@ public class AuthenticationManager
             log.error( "No Http request provided, cannot log in." );
             return false;
         }
+        
         WikiSession wikiSession = WikiSession.getWikiSession( request );
         Subject subject = wikiSession.getSubject();
         subject.getPrincipals().clear();
         CallbackHandler handler = new WikiCallbackHandler( m_engine.getUserDatabase(), username, password );
+        
         return doLogin( wikiSession, handler, LOGIN_CUSTOM );
     }
     
@@ -264,7 +270,12 @@ public class AuthenticationManager
         catch( LoginException e )
         {
             log.error( "Couldn't log in. Is something wrong with your jaas.config file?\nMessage="
-                    + e.getLocalizedMessage() );
+                       + e.getLocalizedMessage() );
+            return false;
+        }
+        catch( SecurityException e )
+        {
+            log.error( "Could not log in.  Please check that your jaas.config file is found.", e );
             return false;
         }
     }
