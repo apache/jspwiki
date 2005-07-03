@@ -1,3 +1,27 @@
+2005-07-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.4
+
+        * Bug fix: Doing two empty searches in a row would cause the
+        search_highlight.js to loop and kill the browser.
+        Reported by HolgerHoffstätte.
+        
+        * Bug fix: Empty or non-Lucene compliant searches would throw
+        a NullPointerException. Reported by HolgerHoffstätte.
+        Fixes BugSearchAlwaysThrowsNPE.
+        
+        * Bug fix: It was impossible to use the InsertPage plugin to
+        insert the same page twice on a page.  Reported by Murray
+        Altheim (I think - this was not entered in the bug reporting
+        system).
+        
+        * Upgraded to Lucene 1.4.3.
+        
+        * Removed "sign" from build targets to allow decent builds 
+        for now.
+        
+        * Both short url providers now heed the url prefix always...
+        
 2005-06-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.3
