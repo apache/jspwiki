@@ -67,7 +67,7 @@ public class ShortURLConstructor
         String viewurl = m_urlPrefix+"%n";
 
         if( absolute ) 
-            viewurl = "%uwiki/%n";
+            viewurl = "%u"+m_urlPrefix+"%n";
 
         if( context.equals(WikiContext.VIEW) )
         {
