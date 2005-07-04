@@ -1,52 +1,23 @@
 
-This is a BETA release of JSPWiki v2.2  
+This is an unstable, nightly of JSPWiki v2.3
 
-Major new things since the last stable release:
+NEW FEATURES
+============
 
-* Plenty o' bugfixes
-* Enabled Lucene query language (very powerful)
-* Attachment searching (names are always searched, and if the file is
-  of a text file type, it gets also indexed)
-
-
-
-Major changes since the 2.0 series are:
-
-- Much simplified templating (see WikiTemplates)
-
-- Wiki Forms
-
-- Page Filters (including SpamFilter)
-
-- Muchos enhanced WeblogPlugin
-
-- Style support using the %%-directive
-
-- Easier templates
-
-- The default template now validates as XHTML 1.0 Transitional
-
-- Page variables (see SET-directive), also accessible on pages
-
-- Caching attachment provider integrated
-
-- OSCache integration
-
-- Printer-friendly stylesheet for the default template
-
-- Multiple Wikis with a single WAR-file -support.
-
-- In-page hyperlinks and TableOfContents
-
-- Multiply nested links now work
-
-- Much faster startup (after the first one)
-
-- Short URLs (/wiki/PageName) with ShortURLConstructor
+* Authentication and authorization.  Note, however, that this is very experimental
+  at this stage, and does not work with your existing jspwiki.properties file.
+  
+  Make sure that you have all the auth-related definitions from the included
+  jspwiki.properties in your own one, or else you will fall prey to a dozen
+  different failure cases.
 
 
 UPGRADE NOTES
 =============
+
+Upgrading from 2.2:
+
+<nothing yet>
 
 Upgrading from 2.0:
 
@@ -72,6 +43,7 @@ KNOWN MAJOR ISSUES
 
 * Documentation needs cleanup; parts of it are out of date, etc.
 
+* See above for auth notes
 
 EXPERIMENTAL FEATURES
 =====================
