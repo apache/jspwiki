@@ -29,6 +29,8 @@ package com.ecyrd.jspwiki;
  */
 public class InternalWikiException extends RuntimeException
 {
+    private static final long          serialVersionUID = 1L;
+
     public InternalWikiException( String msg )
     {
         super( msg );

@@ -33,9 +33,6 @@ import org.apache.ecs.html.Select;
 public class FormSelect
     extends FormElement
 {
-    private static org.apache.log4j.Logger log = 
-        org.apache.log4j.Logger.getLogger( FormSelect.class );
-
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {
@@ -62,8 +59,8 @@ public class FormSelect
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
             return( field.toString() );
-        else
-            return( "" );
+        
+        return( "" );
     }
 
 

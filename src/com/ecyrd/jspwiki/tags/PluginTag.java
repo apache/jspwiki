@@ -61,7 +61,7 @@ public class PluginTag
     public int doWikiStartTag() throws JspException, IOException
     {
         m_evaluated = false;
-        return EVAL_BODY_TAG;
+        return EVAL_BODY_BUFFERED;
     }
 
     private String executePlugin( String plugin, String args, String body )

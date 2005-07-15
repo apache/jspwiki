@@ -1,3 +1,14 @@
+2005-07-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.5
+
+        * Refactored about 300 minor warnings (unused code,
+        assignment errors, etc)
+
+        * Consolidated routines from FileUtil14.class to
+        FileUtil.class - JSPWiki now requires 1.4, so we can just
+        remove any specifics.
+
 2005-07-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.4

@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.util.Iterator;
 import java.util.Date;
 import java.util.List;
-import org.apache.log4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -37,7 +37,7 @@ import javax.servlet.http.HttpSession;
  */
 public class VariableManager
 {
-    private static Logger log = Logger.getLogger( VariableManager.class );
+    //private static Logger log = Logger.getLogger( VariableManager.class );
    
     public static final String VAR_ERROR = "error";
     public static final String VAR_MSG   = "msg";

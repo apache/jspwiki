@@ -433,13 +433,11 @@ public class XHtmlElementToWikiTranslator
         {
             return null;
         }
-        else
-        {
-            style = style.replace( ';', '\n' ).toLowerCase();
-            LinkedHashMap m = new LinkedHashMap();
-            new PersistentMapDecorator( m ).load( new ByteArrayInputStream( style.getBytes() ) );
-            return m;
-        }
+
+        style = style.replace( ';', '\n' ).toLowerCase();
+        LinkedHashMap m = new LinkedHashMap();
+        new PersistentMapDecorator( m ).load( new ByteArrayInputStream( style.getBytes() ) );
+        return m;
     }
 
     private String trimLink( String ref )

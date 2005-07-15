@@ -84,7 +84,7 @@ public class SearchResultIteratorTag
             pageContext.setAttribute( getId(),
                                       r );
 
-            return EVAL_BODY_TAG;
+            return EVAL_BODY_BUFFERED;
         }
 
         return SKIP_BODY;

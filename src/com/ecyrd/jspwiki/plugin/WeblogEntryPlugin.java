@@ -68,19 +68,11 @@ public class WeblogEntryPlugin implements WikiPlugin
         String entryText = (String) params.get(PARAM_ENTRYTEXT);
         if( entryText == null ) entryText = "New entry";
         
-        try
-        {
-            String blogPage = getNewEntryPage( engine, weblogName );
-
-            // FIXME: Generate somehow else.
-            //sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
-            sb.append("<a href=\""+engine.getBaseURL()+"NewBlogEntry.jsp?page="+engine.encodeName(weblogName)+"\">"+entryText+"</a>");
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Could not locate blog entries", e );
-            throw new PluginException( "Could not locate blog entries: "+e.getMessage() );
-        }
+        String url = context.getURL( WikiContext.NONE, "NewBlogEntry.jsp", "page="+engine.encodeName(weblogName) );
+            
+        //sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
+        //sb.append("<a href=\""+engine.getBaseURL()+"NewBlogEntry.jsp?page="+engine.encodeName(weblogName)+"\">"+entryText+"</a>");
+        sb.append("<a href=\""+url+"\">"+entryText+"</a>");
 
         return sb.toString();
     }

@@ -86,7 +86,7 @@ public abstract class IteratorTag
             buildContext();
         }
 
-        return EVAL_BODY_TAG;
+        return EVAL_BODY_BUFFERED;
     }
 
     /**
@@ -140,11 +140,9 @@ public abstract class IteratorTag
         if( m_iterator != null && m_iterator.hasNext() )
         {
             buildContext();
-            return EVAL_BODY_TAG;
+            return EVAL_BODY_BUFFERED;
         }
-        else
-        {
-            return SKIP_BODY;
-        }
+
+        return SKIP_BODY;
     }
 }

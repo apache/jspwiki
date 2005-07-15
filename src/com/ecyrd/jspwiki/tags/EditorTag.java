@@ -192,7 +192,7 @@ public class EditorTag
         String pageName = m_wikiContext.getPage().getName();
         m_isGroupPage = pageName.startsWith( DefaultGroupManager.GROUP_PREFIX );
     
-        return EVAL_BODY_TAG;
+        return EVAL_BODY_BUFFERED;
     }
        
     public int doEndTag() throws JspException

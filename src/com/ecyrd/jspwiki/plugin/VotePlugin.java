@@ -183,9 +183,7 @@ public class VotePlugin
         {
             return Integer.toString( getYesVotes( context ) );
         }
-        else
-        {
-            return Integer.toString( getNoVotes( context ) );
-        }
+
+        return Integer.toString( getNoVotes( context ) );
     }
 }

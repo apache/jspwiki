@@ -6,7 +6,6 @@ package com.ecyrd.jspwiki.dav.items;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +14,6 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
@@ -104,6 +101,6 @@ public class PageDavItem extends DavItem
     {
         // FIXME: Use getBytes()
         String text = ((WikiDavProvider)m_provider).getEngine().getPureText( m_page );
-        return (long)text.length();
+        return text.length();
     }
 }

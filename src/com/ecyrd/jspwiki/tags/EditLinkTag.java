@@ -69,10 +69,8 @@ public class EditLinkTag
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
-            else
-            {
-                pageName = page.getName();
-            }
+
+            pageName = page.getName();
         }
         else
         {

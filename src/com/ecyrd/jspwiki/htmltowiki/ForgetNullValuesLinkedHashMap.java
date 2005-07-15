@@ -15,9 +15,7 @@ public class ForgetNullValuesLinkedHashMap extends LinkedHashMap
         {
             return super.put( key, value );
         }
-        else
-        {
-            return null;
-        }
+        
+        return null;
     }
 }

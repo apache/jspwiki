@@ -241,11 +241,9 @@ public class CachingProvider
                     throw new RepositoryModifiedException( "Added: "+name, name );
                     // return refreshed;
                 }
-                else
-                {
-                    // Cache page miss
-                    m_negCache.putInCache( name, name );
-                }
+                
+                // Cache page miss
+                m_negCache.putInCache( name, name );
             }
             else if( cached.getVersion() != refreshed.getVersion() )
             {

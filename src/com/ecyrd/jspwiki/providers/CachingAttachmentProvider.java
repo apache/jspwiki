@@ -69,9 +69,6 @@ public class CachingAttachmentProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
-    private boolean m_gotall = false;
-    
-    private String m_storageDir;
     public static final String DIR_EXTENSION   = "-att";
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
     
@@ -89,8 +86,6 @@ public class CachingAttachmentProvider
         //  Construct an unlimited cache.
         //
         m_cache = new Cache( true, false );
-
-        m_storageDir = WikiEngine.getRequiredProperty( properties, PROP_STORAGEDIR );
 
         //
         //  Find and initialize real provider.
@@ -328,9 +323,6 @@ public class CachingAttachmentProvider
 
     public synchronized String getProviderInfo()
     {              
-        int cachedPages = 0;
-        long totalSize  = 0;
-        
         return("Real provider: "+m_provider.getClass().getName()+
                "<br />Cache misses: "+m_cacheMisses+
                "<br />Cache hits: "+m_cacheHits);

@@ -21,6 +21,12 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 
 import org.apache.log4j.Logger;
 
@@ -30,27 +36,6 @@ import org.apache.log4j.Logger;
 public class FileUtil
 {
     private static final Logger   log      = Logger.getLogger(FileUtil.class);
-    static               boolean    c_hasNIO = false;
-
-    private static final int        MINBUFSIZ = 32768; // bytes
-
-
-    static
-    {
-        try
-        {
-            if( java.nio.charset.Charset.forName( "UTF-8" ) != null )
-            {
-                log.info("JDK 1.4 detected.  Using NIO library.");
-                c_hasNIO = true;
-            }
-        }
-        catch( Throwable t )
-        {
-            log.info("Not running under JDK 1.4; not using NIO library.");
-        }
-    }
-
 
     /**
      *  Makes a new temporary file and writes content into it.
@@ -186,80 +171,50 @@ public class FileUtil
      *  This method is smart and falls back to ISO-8859-1 if the input stream does not
      *  seem to be in the specified encoding.
      */
-    // FIXME: There is a bad bug here.  We cannot guarantee that realinput.available()
-    // returns anything sane.  We don't want to read everything into a byte array
-    // either, since that would mean having to go through at it again.  Byte array
-    // does not support mark()/reset().
-    // We get odd exceptions if we don't specify a large enough buffer size.
-    // We assume that if we get a small number from available() the data is buffered
-    // and use a minimum buffer size to compensate.
-    // This may fail in a number of ways, a better way is seriously needed.
-
+ 
+    
     public static String readContents( InputStream input, String encoding )
-        throws IOException
-    {        
-        if( c_hasNIO )
-        {
-            return FileUtil14.readContents( input, encoding );
-        }
+    throws IOException
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        FileUtil.copyContents( input, out );
 
-        Reader in  = null;
-        Writer out = null;
+        ByteBuffer     bbuf        = ByteBuffer.wrap( out.toByteArray() );
 
-        BufferedInputStream realinput = new BufferedInputStream( input );
+        Charset        cset        = Charset.forName( encoding );
+        CharsetDecoder csetdecoder = cset.newDecoder();
 
-        realinput.mark( Math.max( realinput.available() * 2, MINBUFSIZ ) );
+        csetdecoder.onMalformedInput( CodingErrorAction.REPORT );
+        csetdecoder.onUnmappableCharacter( CodingErrorAction.REPORT );
 
         try
         {
-            in = new BufferedReader( new InputStreamReader( realinput, 
-                                                            encoding ) );
-            out = new StringWriter();
+            CharBuffer cbuf = csetdecoder.decode( bbuf );
 
-            copyContents( in, out );
-
-            return out.toString();
+            return cbuf.toString();
         }
-        catch( IOException e )
+        catch( CharacterCodingException e )
         {
-            //
-            //  The reading should fail with an IOException, if the UTF-8 format 
-            //  is damaged, i.e. there is ISO-Latin1 instead of UTF-8.
-            //
+            Charset        latin1    = Charset.forName("ISO-8859-1");
+            CharsetDecoder l1decoder = latin1.newDecoder();
+            
+            l1decoder.onMalformedInput( CodingErrorAction.REPORT );
+            l1decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
 
-            // FIXME: This does NOT work with JDK1.4!
-
-            if( !encoding.equals("ISO-8859-1") )
-            {
-                // FIXME: The real exceptions we get in case there is a problem with
-                // encoding are sun.io.MalformedInputExceptions, but they are not
-                // java standard, so we'd better not catch them.
-
-                log.info( "Unable to read stream - odd exception.  Assuming this data is ISO-8859-1 and retrying.\n  "+e.getMessage() );
-                log.debug( "Full exception is", e );
-                
-                // We try again, this time with a more conventional encoding
-                // for backwards compatibility.            
-
-                realinput.reset();
-                return readContents( realinput, "ISO-8859-1" );
-            }
-            else
-            {
-                throw( e );
-            }
-        }
-        finally
-        {
             try
             {
-                if( in != null ) in.close();
-                if( out != null ) out.close();
+                bbuf = ByteBuffer.wrap( out.toByteArray() );
+
+                CharBuffer cbuf = l1decoder.decode( bbuf );
+
+                return cbuf.toString();
             }
-            catch( Exception e ) {} // FIXME: Log errors.
+            catch( CharacterCodingException ex )
+            {
+                throw (CharacterCodingException) ex.fillInStackTrace();
+            }
         }
     }
-
 
     /**
      *  Returns the full contents of the Reader as a String.
@@ -291,11 +246,17 @@ public class FileUtil
 
     public static String getThrowingMethod( Throwable t )
     {
-        if( c_hasNIO )
-        {
-            return FileUtil14.getThrowingMethod( t );
+        StackTraceElement[] trace = t.getStackTrace();
+        StringBuffer sb = new StringBuffer();
+        
+        if( trace == null || trace.length == 0 ) {
+            sb.append( "[Stack trace not available]" );
+        } else {
+            sb.append( trace[0].isNativeMethod() ? "native method" : "" );
+            sb.append( trace[0].getClassName() );
+            sb.append(".");
+            sb.append(trace[0].getMethodName()+"(), line "+trace[0].getLineNumber());
         }
-
-        return "This information is only available with JDK 1.4";
+        return sb.toString();
     }
 }

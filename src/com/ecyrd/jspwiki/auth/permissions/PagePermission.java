@@ -26,11 +26,12 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * <code>view</code>.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-07-15 08:27:21 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
 {
+    private static final long          serialVersionUID = 1L;
 
     private static final String        COMMENT_ACTION = "comment";
 

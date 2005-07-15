@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiContext;
 
@@ -43,7 +42,6 @@ public class CommentLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine   = m_wikiContext.getEngine();
         WikiPage   page     = null;
         String     pageName = null;
         
@@ -58,10 +56,8 @@ public class CommentLinkTag
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
-            else
-            {
-                pageName = page.getName();
-            }
+
+            pageName = page.getName();
         }
         else
         {

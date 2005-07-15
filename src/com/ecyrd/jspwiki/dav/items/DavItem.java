@@ -5,12 +5,10 @@
 package com.ecyrd.jspwiki.dav.items;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 

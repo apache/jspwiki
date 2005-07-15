@@ -117,7 +117,6 @@ public class RCSFileProvider
     {
         PatternMatcher  matcher  = new Perl5Matcher();
         PatternCompiler compiler = new Perl5Compiler();
-        PatternMatcherInput input;
         BufferedReader  stdout   = null;
 
         WikiPage info = super.getPageInfo( page, version );
@@ -377,7 +376,6 @@ public class RCSFileProvider
     {
         PatternMatcher matcher = new Perl5Matcher();
         PatternCompiler compiler = new Perl5Compiler();
-        PatternMatcherInput input;
         BufferedReader stdout  = null;
 
         log.debug("Getting RCS version history");

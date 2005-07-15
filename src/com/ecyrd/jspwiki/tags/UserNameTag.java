@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 
 /**
@@ -39,8 +38,6 @@ public class UserNameTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-
         WikiSession wikiSession = WikiSession.getWikiSession((HttpServletRequest)pageContext.getRequest());
         Principal user = wikiSession.getUserPrincipal();
 

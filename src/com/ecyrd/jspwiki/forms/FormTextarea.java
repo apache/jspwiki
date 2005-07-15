@@ -33,9 +33,6 @@ import org.apache.ecs.html.TextArea;
 public class FormTextarea
     extends FormElement
 {
-    private static org.apache.log4j.Logger log = 
-        org.apache.log4j.Logger.getLogger( FormTextarea.class );
-
     public static final String PARAM_ROWS = "rows";
     public static final String PARAM_COLS = "cols";
 
@@ -65,8 +62,8 @@ public class FormTextarea
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
             return( field.toString() );
-        else
-            return( "" );
+        
+        return( "" );
     }
 
     private TextArea buildTextArea( Map params,

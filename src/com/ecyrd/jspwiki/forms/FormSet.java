@@ -58,11 +58,7 @@ import java.util.*;
  */
 public class FormSet
     implements WikiPlugin
-{
-    private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormSet.class );
-    
-    
+{    
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {

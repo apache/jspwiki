@@ -214,15 +214,6 @@ public class TemplateManager
         return "/"+DIRECTORY+"/"+template+"/";
     }
 
-    /**
-     *  Check if the property map requires refresh.
-     */
-
-    private boolean checkRefresh( String templateName )
-    {
-        // CacheEntry entry = m_propertyCache.get();
-        return false;
-    }
 
     /**
      *  Always returns a valid property map.

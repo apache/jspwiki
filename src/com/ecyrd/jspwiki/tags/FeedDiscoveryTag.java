@@ -46,7 +46,7 @@ public class FeedDiscoveryTag
         String encodedName = engine.encodeName( page.getName() );
 
         String rssURL      = engine.getGlobalRSSURL();
-        String atomPostURL = engine.getBaseURL()+"atom/"+encodedName;
+        //String atomPostURL = engine.getBaseURL()+"atom/"+encodedName;
         String rssFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName+"&amp;mode=wiki";
         
         if( rssURL != null )

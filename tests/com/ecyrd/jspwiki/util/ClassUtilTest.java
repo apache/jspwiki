@@ -30,7 +30,7 @@ public class ClassUtilTest extends TestCase
         try
         {
             Class foo = ClassUtil.findClass( "com.ecyrd.jspwiki", "MubbleBubble" );
-            fail("Found class");
+            fail("Found class:"+foo);
         }
         catch( ClassNotFoundException e )
         {

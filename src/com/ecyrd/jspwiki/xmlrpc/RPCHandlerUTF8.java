@@ -50,7 +50,6 @@ public class RPCHandlerUTF8
     {
         Collection pages = m_engine.getRecentChanges();
         Vector result = new Vector();
-        int count = 0;
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {

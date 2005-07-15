@@ -33,7 +33,6 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
 
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
@@ -59,7 +58,7 @@ public class TranslatorReader extends Reader
     private static final int              IMAGELINK     = 8;
     private static final int              IMAGEWIKILINK = 9;
     public  static final int              ATTACHMENT    = 10;
-    private static final int              ATTACHMENTIMAGE = 11;
+    // private static final int              ATTACHMENTIMAGE = 11;
 
     /** Lists all punctuation characters allowed in WikiMarkup. These
         will not be cleaned away. */
@@ -698,9 +697,6 @@ public class TranslatorReader extends Reader
         {
             MatchResult res = m_matcher.getMatch();
   
-            int start = res.beginOffset(2);
-            int end   = res.endOffset(2);
-
             String link = res.group(2);
 
             if( res.group(1) != null )
@@ -817,7 +813,7 @@ public class TranslatorReader extends Reader
         if( !m_parseAccessRules ) return "";
         Acl acl;
         WikiPage          page = m_context.getPage();
-        UserDatabase      db = m_context.getEngine().getUserDatabase();
+        // UserDatabase      db = m_context.getEngine().getUserDatabase();
 
         if( ruleLine.startsWith( "{" ) )
             ruleLine = ruleLine.substring( 1 );
@@ -1091,13 +1087,7 @@ public class TranslatorReader extends Reader
     private String findAttachment( String link )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
-        WikiPage currentPage = m_context.getPage();
         Attachment att = null;
-
-        /*
-        System.out.println("Finding attachment of page "+currentPage.getName());
-        System.out.println("With name "+link);
-        */
 
         try
         {
@@ -1183,32 +1173,6 @@ public class TranslatorReader extends Reader
         return buf.toString();
     }
 
-    // FIXME: should remove countChar() as it is unused
-    /**
-     *  Counts how many consecutive characters of a certain type exists on the line.
-     *  @param line String of chars to check.
-     *  @param startPos Position to start reading from.
-     *  @param char Character to check for.
-     */
-    private int countChar( String line, int startPos, char c )
-    {
-        int count;
-
-        for( count = 0; (startPos+count < line.length()) && (line.charAt(count+startPos) == c); count++ );
-
-        return count;
-    }
-
-    /**
-     *  Returns a new String that has char c n times.
-     */
-    private String repeatChar( char c, int n )
-    {
-        StringBuffer sb = new StringBuffer();
-        for( int i = 0; i < n; i++ ) sb.append(c);
-
-        return sb.toString();
-    }
 
     private int nextToken()
         throws IOException
@@ -1531,14 +1495,12 @@ public class TranslatorReader extends Reader
     private String handleGeneralList()
         throws IOException
     {
-         String cStrShortName = "handleGeneralList()";   //put log messages in some context
-
          StringBuffer buf = new StringBuffer();
 
          buf.append( startBlockLevel() );
 
          String strBullets = readWhile( "*#" );
-         String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
+         // String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
          int numBullets = strBullets.length();
 
          // override the beginning portion of bullet pattern to be like the previous
@@ -1569,8 +1531,6 @@ public class TranslatorReader extends Reader
          if( strBullets.substring(0,Math.min(numBullets,m_genlistlevel)).equals
             (m_genlistBulletBuffer.substring(0,Math.min(numBullets,m_genlistlevel)) ) )
          {
-             int chBullet;
-
              if( numBullets > m_genlistlevel )
              {
                  buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel++)) );
@@ -1605,7 +1565,6 @@ public class TranslatorReader extends Reader
              //
              //  The pattern has changed, unwind and restart
              //
-             char chBullet;
              int  numEqualBullets;
              int  numCheckBullets;
 
@@ -1653,7 +1612,6 @@ public class TranslatorReader extends Reader
         // String cStrShortName = "unwindGeneralList()";
 
         StringBuffer buf = new StringBuffer();
-        int bulletCh;
 
         //unwind
         for( ; m_genlistlevel > 0; m_genlistlevel-- )
@@ -1846,8 +1804,6 @@ public class TranslatorReader extends Reader
             String clazz = null;
 
             ch = nextToken();
-
-            boolean isspan = false;
             
             //
             //  Style or class?
@@ -3047,8 +3003,6 @@ public class TranslatorReader extends Reader
         public String makeHeading( int level, String title, Heading hd )
         {
             String res = "";
-
-            String pageName = m_context.getPage().getName();
 
             title = title.trim();
 

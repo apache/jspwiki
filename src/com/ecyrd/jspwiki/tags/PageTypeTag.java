@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
@@ -49,7 +48,6 @@ public class PageTypeTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
         if( page != null )

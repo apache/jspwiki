@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Writes a link to the upload page.  Body of the link becomes the actual text.
@@ -41,12 +40,9 @@ import com.ecyrd.jspwiki.WikiEngine;
 public class UploadLinkTag
     extends WikiLinkTag
 {
-    private String m_version = null;
-
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine   = m_wikiContext.getEngine();
         String     pageName = m_pageName;
 
         if( m_pageName == null )

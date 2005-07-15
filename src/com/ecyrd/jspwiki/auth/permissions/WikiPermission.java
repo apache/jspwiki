@@ -14,11 +14,12 @@ import java.util.Arrays;
  * implies <code>createPages</code>.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.7 $ $Date: 2005-07-15 08:27:21 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
 {
+    private static final long          serialVersionUID = 1L;
 
     private static final String        CREATE_GROUPS_ACTION = "createGroups";
 

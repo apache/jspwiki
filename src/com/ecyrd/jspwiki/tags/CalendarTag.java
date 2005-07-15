@@ -59,8 +59,6 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class CalendarTag
     extends WikiTagBase
 {
-    private String m_year  = null;
-    private String m_month = null;
     private SimpleDateFormat m_pageFormat = null;
     private SimpleDateFormat m_urlFormat = null;
     private SimpleDateFormat m_monthUrlFormat = null;
@@ -185,8 +183,7 @@ public class CalendarTag
         nextMonth.add( Calendar.MONTH, 1 ); // Now move to 1st day of next month
 
         if ( day.before(nextMonth) )
-	{
-            WikiEngine engine = m_wikiContext.getEngine();
+        {
             WikiPage thePage = m_wikiContext.getPage();
             String pageName = thePage.getName();
 
@@ -195,7 +192,7 @@ public class CalendarTag
                                                "calendar.date="+calendarDate );
 
             if ( (queryString != null) && (queryString.length() > 0) )
-	    {
+            {
                 //
                 // Ensure that the 'calendar.date=ddMMyy' has been removed 
                 // from the queryString
@@ -223,11 +220,11 @@ public class CalendarTag
                 {
                     url = url + "&amp;"+queryString;
                 }
-	    }
+            }
             result = "<td><a href=\""+url+"\">"+txt+"</a></td>";
         }
         else
-	{
+        {
             result="<td> </td>";
         }    
 
@@ -308,7 +305,6 @@ public class CalendarTag
             
             for( int i = 0; i < 7; i++ )
             {
-                int day = cal.get( Calendar.DATE );
                 int mth = cal.get( Calendar.MONTH );
 
                 if( mth != month )

@@ -32,9 +32,6 @@ import com.ecyrd.jspwiki.util.FormUtil;
 public class FormOutput
     extends FormElement
 {
-    private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormOutput.class );
-
     /**
      * Executes the FormHandler specified in a Form 'output' plugin,
      * using entries provided in the HttpRequest as FormHandler
@@ -129,8 +126,8 @@ public class FormOutput
 
         if( error != null )
             return( error );
-        else
-            return( handlerOutput != null ? handlerOutput : "" );
+
+        return( handlerOutput != null ? handlerOutput : "" );
     }
 
 }

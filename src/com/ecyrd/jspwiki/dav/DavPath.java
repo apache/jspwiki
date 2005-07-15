@@ -64,8 +64,8 @@ public class DavPath
     {
         if( m_parts.size() > 0 )
             return (String) m_parts.get( m_parts.size()-1 );
-        else
-            return "";
+       
+        return "";
     }
     
     public String getPath()

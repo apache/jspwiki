@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.util.*;
 import java.io.*;
 
 import org.apache.log4j.Logger;
@@ -29,6 +28,11 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.url.DefaultURLConstructor;
 
 /**
+ *  This provides a master servlet for dealing with short urls.  It mostly does
+ *  redirects to the proper JSP pages.
+ *  
+ *  @author Janne Jalkanen
+ *  @since 2.2
  */
 public class WikiServlet
     extends HttpServlet
@@ -42,7 +46,6 @@ public class WikiServlet
         super.init( config );
 
         m_engine         = WikiEngine.getInstance( config );
-        Properties props = m_engine.getWikiProperties();
 
         log.info("WikiServlet initialized.");
     }

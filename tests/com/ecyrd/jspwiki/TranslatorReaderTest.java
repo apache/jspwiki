@@ -8,10 +8,7 @@ import java.io.*;
 import java.security.Principal;
 import java.util.*;
 import javax.servlet.*;
-import com.ecyrd.jspwiki.auth.acl.*;
 import com.ecyrd.jspwiki.auth.authorize.Group;
-import com.ecyrd.jspwiki.auth.permissions.*;
-import com.ecyrd.jspwiki.auth.*;
 
 public class TranslatorReaderTest extends TestCase
 {

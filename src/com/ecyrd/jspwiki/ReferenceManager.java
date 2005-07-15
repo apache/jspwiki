@@ -653,10 +653,9 @@ public class ReferenceManager
         {
             return null;
         }
-        else
-        {
-            return refs;
-        }
+        
+        return refs;
+       
     }
 
 }

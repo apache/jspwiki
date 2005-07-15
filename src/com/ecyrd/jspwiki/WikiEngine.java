@@ -399,9 +399,6 @@ public class WikiEngine
     protected WikiEngine( ServletContext context, String appid, Properties props )
         throws WikiException
     {
-        InputStream propertyStream = null;
-        String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
-
         m_servletContext = context;
         m_appid          = appid;
 
@@ -1379,7 +1376,6 @@ public class WikiEngine
         }
 
         TranslatorReader in = null;
-        Collection links = null;
 
         boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
         

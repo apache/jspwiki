@@ -94,7 +94,6 @@ public class DiffLinkTag
         }
 
         JspWriter out = pageContext.getOut();
-        String encodedlink = engine.encodeName( pageName );
 
         int r1 = 0;
         int r2 = 0;

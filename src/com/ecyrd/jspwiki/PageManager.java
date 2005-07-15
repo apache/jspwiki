@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki;
 
 import java.io.IOException;
-import java.security.Permission;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,8 +30,6 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.auth.AuthorizationManager;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
@@ -265,7 +262,7 @@ public class PageManager
 
         synchronized( m_pageLocks )
         {
-            PageLock old = (PageLock)m_pageLocks.remove( lock.getPage().getName() );
+            m_pageLocks.remove( lock.getPage().getName() );
 
             log.debug( "Unlocked page "+lock.getPage().getName() );
         }

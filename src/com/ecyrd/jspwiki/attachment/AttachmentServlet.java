@@ -26,8 +26,6 @@ import java.util.*;
 import java.io.*;
 import java.security.Permission;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 
 import org.apache.log4j.Logger;
 
@@ -80,7 +78,7 @@ public class AttachmentServlet
     // Not static as DateFormat objects are not thread safe.
     // Used to handle the RFC date format = Sat, 13 Apr 2002 13:23:01 GMT
     //
-    private final DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+    //private final DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     /**
      * Initializes the servlet from WikiEngine properties.
@@ -156,131 +154,125 @@ public class AttachmentServlet
             res.sendError( HttpServletResponse.SC_BAD_REQUEST );
             return;
         }
-        else
-        {
-            OutputStream out = null;
-            InputStream  in  = null;
+
+        OutputStream out = null;
+        InputStream  in  = null;
             
-            try 
+        try 
+        {
+            log.debug("Attempting to download att "+page+", version "+version);
+            if( version != null )
             {
-                log.debug("Attempting to download att "+page+", version "+version);
-                if( version != null )
+                ver = Integer.parseInt( version );
+            }
+
+            Attachment att = mgr.getAttachmentInfo( page, ver );
+
+            if( att != null )
+            {
+                //
+                //  Check if the user has permission for this attachment
+                //
+
+                Permission permission = new PagePermission(att, "view");
+                if( !authmgr.checkPermission( context, permission ) )
                 {
-                    ver = Integer.parseInt( version );
+                    log.debug("User does not have permission for this");
+                    res.sendError( HttpServletResponse.SC_FORBIDDEN );
+                    return;
                 }
-
-                Attachment att = mgr.getAttachmentInfo( page, ver );
-
-                if( att != null )
-                {
-                    //
-                    //  Check if the user has permission for this attachment
-                    //
-
-                    Permission permission = new PagePermission(att, "view");
-                    if( !authmgr.checkPermission( context, permission ) )
-                    {
-                        log.debug("User does not have permission for this");
-                        res.sendError( HttpServletResponse.SC_FORBIDDEN );
-                        return;
-                    }
                                                  
 
-                    //
-                    //  Check if the client already has a version of this attachment.
-                    //
-                    if( HttpUtil.checkFor304( req, att ) )
-                    {
-                        log.debug("Client has latest version already, sending 304...");
-                        res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
-                        return;
-                    }
-
-                    String mimetype = getServletConfig().getServletContext().getMimeType( att.getFileName().toLowerCase() );
-
-                    if( mimetype == null )
-                    {
-                        mimetype = "application/binary";
-                    }
-
-                    res.setContentType( mimetype );
-
-                    //
-                    //  We use 'inline' instead of 'attachment' so that user agents
-                    //  can try to automatically open the file.
-                    //
-
-                    res.addHeader( "Content-Disposition",
-                                   "inline; filename=\"" + att.getFileName() + "\";" );
-                    // long expires = new Date().getTime() + DEFAULT_EXPIRY;
-                    // res.addDateHeader("Expires",expires);
-                    res.addDateHeader("Last-Modified",att.getLastModified().getTime());
-
-                    // If a size is provided by the provider, report it.
-                    if( att.getSize() >= 0 )
-                    {
-                        // log.info("size:"+att.getSize());
-                        res.setContentLength( (int)att.getSize() );
-                    }
-
-                    out = res.getOutputStream();
-                    in  = mgr.getAttachmentStream( att );
-
-                    int read = 0;
-                    byte buffer[] = new byte[8192];
-                    
-                    while( (read = in.read( buffer )) > -1 )
-                    {
-                        out.write( buffer, 0, read );
-                    }
-                    
-                    if(log.isDebugEnabled())
-                    {
-                        msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteAddr();
-                        log.debug( msg );
-                    }
-                    if( nextPage != null ) res.sendRedirect( nextPage );
-
-                    return;
-                }               
-                else
+                //
+                //  Check if the client already has a version of this attachment.
+                //
+                if( HttpUtil.checkFor304( req, att ) )
                 {
-                    msg = "Attachment '" + page + "', version " + ver + 
-                          " does not exist.";
-
-                    log.info( msg );
-                    res.sendError( HttpServletResponse.SC_NOT_FOUND,
-                                   msg );
+                    log.debug("Client has latest version already, sending 304...");
+                    res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
                     return;
                 }
+
+                String mimetype = getServletConfig().getServletContext().getMimeType( att.getFileName().toLowerCase() );
+
+                if( mimetype == null )
+                {
+                    mimetype = "application/binary";
+                }
+
+                res.setContentType( mimetype );
                 
-            }
-            catch( ProviderException pe )
-            {
-                msg = "Provider error: "+pe.getMessage();
-                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                               msg );
+                //
+                //  We use 'inline' instead of 'attachment' so that user agents
+                //  can try to automatically open the file.
+                //
+
+                res.addHeader( "Content-Disposition",
+                               "inline; filename=\"" + att.getFileName() + "\";" );
+
+                res.addDateHeader("Last-Modified",att.getLastModified().getTime());
+
+                // If a size is provided by the provider, report it.
+                if( att.getSize() >= 0 )
+                {
+                    // log.info("size:"+att.getSize());
+                    res.setContentLength( (int)att.getSize() );
+                }
+
+                out = res.getOutputStream();
+                in  = mgr.getAttachmentStream( att );
+
+                int read = 0;
+                byte buffer[] = new byte[8192];
+                    
+                while( (read = in.read( buffer )) > -1 )
+                {
+                    out.write( buffer, 0, read );
+                }
+                    
+                if(log.isDebugEnabled())
+                {
+                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteAddr();
+                    log.debug( msg );
+                }
+                if( nextPage != null ) res.sendRedirect( nextPage );
+
                 return;
-            }
-            catch( NumberFormatException nfe )
-            {
-                msg = "Invalid version number (" + version + ")";
-                res.sendError( HttpServletResponse.SC_BAD_REQUEST,
-                               msg );
-                return;
-            }
-            catch( IOException ioe )
-            {
-                msg = "Error: " + ioe.getMessage();
-                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                               msg );
-                return;
-            }
-            finally
-            {
-                if( in != null ) in.close();
-                if( out != null ) out.close();
-            }
+            }               
+
+            msg = "Attachment '" + page + "', version " + ver + 
+                  " does not exist.";
+
+            log.info( msg );
+            res.sendError( HttpServletResponse.SC_NOT_FOUND,
+                           msg );
+            return;
+        }
+        catch( ProviderException pe )
+        {
+            msg = "Provider error: "+pe.getMessage();
+            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                           msg );
+            return;
+        }
+        catch( NumberFormatException nfe )
+        {
+            msg = "Invalid version number (" + version + ")";
+            res.sendError( HttpServletResponse.SC_BAD_REQUEST,
+                           msg );
+            return;
+        }
+        catch( IOException ioe )
+        {
+            msg = "Error: " + ioe.getMessage();
+            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                           msg );
+            return;
+        }
+        finally
+        {
+            if( in != null ) in.close();
+            if( out != null ) out.close();
         }
     }
 

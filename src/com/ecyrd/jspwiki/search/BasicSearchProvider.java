@@ -112,9 +112,12 @@ public class BasicSearchProvider implements SearchProvider
     	if(m_engine.getAttachmentManager().hasAttachments(page))
     	{
             Collection attachments;
-			try {
+			try 
+            {
 				attachments = m_engine.getAttachmentManager().listAttachments(page);
-			} catch (ProviderException e) {
+			} 
+            catch (ProviderException e) 
+            {
 				log.error("Unable to get attachments for page", e);
 				return "";
 			}
@@ -128,9 +131,9 @@ public class BasicSearchProvider implements SearchProvider
                     attachmentNames.append(seperator);
             }
             return attachmentNames.toString();
-    	} else {
-    	    return "";
     	}
+        
+        return "";
     }
     private Collection findPages( QueryItem[] query )
     {

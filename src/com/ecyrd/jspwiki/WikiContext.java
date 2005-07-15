@@ -100,19 +100,6 @@ public class WikiContext
     public static final String    RSS      = "rss";
 
     public static final String    NONE     = "";  // This is not a JSPWiki context, use it to access static files
-
-    /**
-     * Create a new WikiContext. Delegates to
-     * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}. This
-     * constructor is private; nobody should ever call this method.
-     * @param engine The WikiEngine that is handling the request.
-     * @param pagename The name of the page. A new WikiPage is created.
-     * @deprecated
-     */
-    private WikiContext( WikiEngine engine, String pagename )
-    {
-        this( engine, null, new WikiPage( pagename ));
-    }
     
     /**
      *  Create a new WikiContext for the given WikiPage. Delegates to

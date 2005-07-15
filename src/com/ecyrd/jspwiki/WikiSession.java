@@ -20,7 +20,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.1 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 2.2 $ $Date: 2005-07-15 08:27:20 $
  */
 public class WikiSession
 {
@@ -100,11 +100,14 @@ public class WikiSession
      * This method works with either IPv4 or IPv6 addresses.
      * @return whether the current user's identity is equivalent to an IP address
      */
-    public boolean isAnonymous() {
+    public boolean isAnonymous() 
+    {
         boolean isAddress = false;
-        if ( getUserPrincipal() != null )
+    
+        if( getUserPrincipal() != null )
         {
             byte[] addr = new byte[4];
+          
             try
             {
                 InetAddress ip = InetAddress.getByAddress( getUserPrincipal().getName(), addr );

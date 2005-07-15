@@ -100,7 +100,7 @@ public class AttachmentsIteratorTag
                 }
             }
 
-            return EVAL_BODY_TAG;
+            return EVAL_BODY_BUFFERED;
         }
         catch( ProviderException e )
         {
@@ -140,11 +140,9 @@ public class AttachmentsIteratorTag
 
             pageContext.setAttribute( getId(), att );
 
-            return EVAL_BODY_TAG;
+            return EVAL_BODY_BUFFERED;
         }
-        else
-        {
-            return SKIP_BODY;
-        }
+
+        return SKIP_BODY;
     }
 }

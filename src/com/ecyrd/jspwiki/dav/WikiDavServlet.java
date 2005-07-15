@@ -27,6 +27,8 @@ import com.ecyrd.jspwiki.dav.methods.PropPatchMethod;
  */
 public class WikiDavServlet extends WebdavServlet
 {
+    private static final long          serialVersionUID = 1L;
+
     private WikiEngine m_engine;
     Logger log = Logger.getLogger(this.getClass().getName());
     private DavProvider m_rawProvider;
@@ -38,17 +40,11 @@ public class WikiDavServlet extends WebdavServlet
         super.init( config );
 
         m_engine         = WikiEngine.getInstance( config );
-        Properties props = m_engine.getWikiProperties();
         
         m_rawProvider    = new RawPagesDavProvider( m_engine );
         m_rootProvider   = new WikiRootProvider( m_engine );
     }
-    
-    private String parsePage( HttpServletRequest req )
-    {
-        return req.getContextPath();
-    }
-    
+        
     public void doPropFind( HttpServletRequest req, HttpServletResponse res )
         throws IOException,ServletException
     {

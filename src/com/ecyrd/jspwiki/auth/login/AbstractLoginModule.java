@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  * {@link #logout()} should be sufficient for most purposes, but can be safely
  * over-ridden.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-07-15 08:27:21 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule
@@ -76,10 +76,8 @@ public abstract class AbstractLoginModule implements LoginModule
             m_subject.getPrincipals().addAll( m_principals );
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     /**

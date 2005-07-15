@@ -19,7 +19,6 @@
  */
 package com.ecyrd.jspwiki.tags;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 
 import javax.servlet.http.HttpSession;
@@ -119,7 +118,6 @@ public class BreadcrumbsTag extends WikiTagBase
         JspWriter out     = pageContext.getOut();
         int queueSize     = trail.size();
         String linkclass  = "wikipage";
-        WikiEngine engine = m_wikiContext.getEngine();
         String curPage    = null;
 
         for( int i = 0; i < queueSize - 1; i++ )
@@ -158,9 +156,11 @@ public class BreadcrumbsTag extends WikiTagBase
         {
             add(o);
             if( size() > m_size )
+            {
                 return removeFirst();
-            else
-                return null;
+            }
+            
+            return null;
         }
     }
 

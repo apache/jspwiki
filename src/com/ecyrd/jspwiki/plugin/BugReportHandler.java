@@ -52,7 +52,6 @@ public class BugReportHandler
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        ArrayList otherparams = new ArrayList();
         String    title;
         String    description;
         String    version;

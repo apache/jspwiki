@@ -51,7 +51,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.21 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.22 $ $Date: 2005-07-15 08:27:21 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -327,11 +327,9 @@ public class AuthorizationManager
                 throw new WikiException( "You are not allowed to access this authorizer class" );
             }
         }
-        else
-        {
-            throw new NoRequiredPropertyException( "Unable to find a " + PROP_AUTHORIZER + " entry in the properties.",
-                    PROP_AUTHORIZER );
-        }
+
+        throw new NoRequiredPropertyException( "Unable to find a " + PROP_AUTHORIZER + " entry in the properties.",
+                                               PROP_AUTHORIZER );
     }
 
     /**

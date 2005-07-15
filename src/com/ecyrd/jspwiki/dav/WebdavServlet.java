@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class WebdavServlet extends HttpServlet
 {
+    private static final long          serialVersionUID = 1L;
+
     private static final String METHOD_PROPPATCH = "PROPPATCH";
     private static final String METHOD_PROPFIND  = "PROPFIND";
     private static final String METHOD_MKCOL     = "MKCOL";

@@ -37,6 +37,8 @@ import java.text.SimpleDateFormat;
 public class RecentChangesPlugin
     implements WikiPlugin
 {
+    private static final String PARAM_FORMAT = "format";
+
     /** How many days we show by default. */
     private static final int    DEFAULT_DAYS = 100*365;
 
@@ -63,8 +65,7 @@ public class RecentChangesPlugin
         //
         //  Which format we want to see?
         //
-        String format = (String)params.get("format");
-        if( "compact".equals( params.get("format") ) )
+        if( "compact".equals( params.get(PARAM_FORMAT) ) )
         {
             spacing  = 0;
             showAuthor = false;

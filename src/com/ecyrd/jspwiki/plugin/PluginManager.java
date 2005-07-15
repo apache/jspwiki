@@ -326,10 +326,8 @@ public class PluginManager
                     }
                     return "";
                 }
-                else
-                {
-                    return plugin.execute( context, params );
-                }
+                
+                return plugin.execute( context, params );
             }
             catch( PluginException e )
             {

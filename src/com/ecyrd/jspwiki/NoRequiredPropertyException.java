@@ -31,6 +31,8 @@ package com.ecyrd.jspwiki;
 public class NoRequiredPropertyException
     extends WikiException
 {
+    private static final long          serialVersionUID = 1L;
+
     /**
      *  Constructs an exception.
      *

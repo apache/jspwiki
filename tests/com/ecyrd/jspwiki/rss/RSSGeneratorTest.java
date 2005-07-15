@@ -46,7 +46,7 @@ public class RSSGeneratorTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        TestEngine.deleteAll( new File((String)props.getProperty( FileSystemProvider.PROP_PAGEDIR )) );
+        TestEngine.deleteAll( new File(props.getProperty( FileSystemProvider.PROP_PAGEDIR )) );
     }
 
     public void testBlogRSS()

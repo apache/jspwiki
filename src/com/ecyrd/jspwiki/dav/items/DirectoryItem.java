@@ -5,7 +5,6 @@
 package com.ecyrd.jspwiki.dav.items;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -14,8 +13,6 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 
