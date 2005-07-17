@@ -111,7 +111,7 @@ public class WikiContext
      */
     public WikiContext( WikiEngine engine, WikiPage page )
     {
-      this(engine, null, page);
+        this(engine, null, page);
     }
     
     /**
@@ -134,18 +134,19 @@ public class WikiContext
      * @param page The WikiPage. If you want to create a WikiContext for an
      *            older version of a page, you must supply this parameter
      */
-    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) {
-      m_engine = engine;
-      m_request = request;
-      m_session = WikiSession.getWikiSession(request);
-      m_page   = page;
+    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) 
+    {
+        m_engine = engine;
+        m_request = request;
+        m_session = WikiSession.getWikiSession(request);
+        m_page   = page;
       
-      // Associate the wikiSession with this context
-      // and associate a Subject with the session if it isn't there already
-      if ( m_session.isUnknown() || m_session.isContainerStatusChanged( request ) )
-      {
-          engine.getAuthenticationManager().loginContainer( this );
-      }
+        // Associate the wikiSession with this context
+        // and associate a Subject with the session if it isn't there already
+        if ( m_session.isUnknown() || m_session.isContainerStatusChanged( request ) )
+        {
+            engine.getAuthenticationManager().loginContainer( this );
+        }
     }
 
     /**
@@ -294,8 +295,9 @@ public class WikiContext
      */
     public Principal getCurrentUser()
     {
-        if (m_session == null) {
-          return null;
+        if (m_session == null) 
+        {
+            return null;
         }
         return m_session.getUserPrincipal();
     }
