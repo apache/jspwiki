@@ -13,6 +13,8 @@
  */
 package com.ecyrd.jspwiki.auth;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -51,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.3 $ $Date: 2005-07-03 21:26:11 $
+ * @version $Revision: 1.4 $ $Date: 2005-07-17 08:37:58 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -69,8 +72,6 @@ public class AuthenticationManager
     public static final String                 PROP_USE_CMS_AUTH   = "jspwiki.useContainerAuth";
 
     static Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
-
-    private String                             m_administrator     = null;
     
     private boolean                            m_containerAuth     = true;
 
@@ -79,6 +80,35 @@ public class AuthenticationManager
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
+    private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
+    private static final String                PROP_POLICY_CONFIG  = "java.security.policy";
+    
+    private URL findConfigFile( String name )
+    {
+        URL path = getClass().getClassLoader().getResource("/WEB-INF/"+name);
+        
+        if( path == null )
+            path = getClass().getClassLoader().getResource("/"+name);
+        
+        if( path == null )
+            path = getClass().getClassLoader().getResource(name);
+        
+        if( path == null && m_engine.getServletContext() != null )
+        {
+            try
+            {
+                path = m_engine.getServletContext().getResource("/WEB-INF/"+name);
+            }
+            catch( MalformedURLException e )
+            {
+                // This should never happen unless I screw up
+                log.fatal("Your code is b0rked.  You are a bad person.");
+            }
+        }
+
+        return path;
+    }
+    
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -89,6 +119,69 @@ public class AuthenticationManager
         m_engine = engine;
         m_containerAuth  = TextUtil.getBooleanProperty( props, PROP_USE_CMS_AUTH, m_containerAuth );
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
+
+        //
+        //  Give user some helpful hints.
+        //
+        AppConfigurationEntry[] jspwikiConfig = null;
+        
+        try
+        {
+            Configuration jaasconfig = Configuration.getConfiguration();
+        
+            jspwikiConfig = jaasconfig.getAppConfigurationEntry(LOGIN_CONTAINER);
+        }
+        catch( SecurityException e )
+        {
+            log.info("Unable to get security configuration.  Falling back on default.");
+            log.debug("Exception is",e);
+        }
+        
+        if( jspwikiConfig == null )
+        {
+            log.warn("Your JAAS configuration file does not contain an entry for '"+LOGIN_CONTAINER+
+                     "'. You need to set the "+PROP_JAAS_CONFIG+" system property to point at the jspwiki.jaas -file,"+ 
+                     "or add the entries from jspwiki.jaas to your own JAAS configuration file.");
+            
+            URL guessedJaasPath = findConfigFile( "jspwiki.jaas" );
+            
+            if( guessedJaasPath != null )
+            {
+                log.info("I'm falling back on the default, found in "+guessedJaasPath.toString());
+                System.setProperty( PROP_JAAS_CONFIG, guessedJaasPath.toString() );
+         
+                //
+                //  Set also jspwiki.policy
+                //
+                
+                if( System.getProperty( PROP_POLICY_CONFIG ) == null )
+                {
+                    URL guessedPolicyPath = findConfigFile("jspwiki.policy");
+                
+                    if( guessedPolicyPath != null )
+                    {
+                        log.info("I am also assuming you have not added jspwiki.policy to the path");
+                        log.info("Please set the "+PROP_POLICY_CONFIG+" system property, if you're not happy with the default.");
+                        log.info("Set default to "+guessedPolicyPath.toString());
+                        
+                        System.setProperty( PROP_POLICY_CONFIG, guessedPolicyPath.toString() );
+                    }
+                    else
+                    {
+                        log.warn("I cannot locate your 'jspwiki.policy' file.  Please copy one from the default distribution.");
+                    }
+                }
+                else
+                {
+                    log.warn("It may be that your java.policy is broken - please make sure you have jspwiki properties in your java.policy file");
+                }
+            }
+            else
+            {
+                log.warn("Cannot locate jspwiki.jaas.  Please copy one from the default jspwiki installation.");
+            }
+        }        
+        
     }
     
     /**
