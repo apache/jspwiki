@@ -1,3 +1,19 @@
+2005-07-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.6
+        
+        * Added a bunch of refactorings (including new UserManager class)
+        
+        * AuthenticationManager now attempts to find the jspwiki.jaas
+        and jspwiki.policy files on its own, if the user does not
+        specify them.  JAAS and Java 1.4 suck in this regard - it
+        requires all sorts of trickery with the config files and
+        startup scripts to use built-in authentication.  It makes
+        life very difficult for anyone who deploys the app, as they
+        must have detailed command-line knowledge.  Not to mention the
+        fact that it makes life hard for the developer as well, as they
+        provide no way to do this programmatically...
+
 2005-07-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.5
