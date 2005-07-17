@@ -34,7 +34,8 @@ public class InsertPageTest extends TestCase
         
         // Just check that it contains a proper error message; don't bother do HTML
         // checking.
-        assertTrue( testEngine.getHTML("ThisPage").indexOf("Circular reference") != -1 );
+        String res = testEngine.getHTML("ThisPage");
+        assertTrue( res.indexOf("Circular reference") != -1 );
     }
 
     public void testRecursive2() throws Exception

@@ -47,7 +47,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-07-17 08:38:41 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -66,11 +66,13 @@ public class DefaultGroupManager implements GroupManager
         public void postSave( WikiContext context, String content )
         {
             AuthorizationManager auth = m_engine.getAuthorizationManager();
-            if (auth.checkPermission( context, WikiPermission.CREATE_GROUPS )) {
+            if (auth.checkPermission( context, WikiPermission.CREATE_GROUPS )) 
+            {
                 
                 // Parse groups if name starts with GROUP_PREFIX
                 WikiPage p = context.getPage();
-                if (p.getName().startsWith(DefaultGroupManager.GROUP_PREFIX)) {
+                if (p.getName().startsWith(DefaultGroupManager.GROUP_PREFIX)) 
+                {
                     log.debug( "Skimming through page " + p.getName() + " to see if there are new groups..." );
 
                     m_engine.textToHTML( context, content );

@@ -19,20 +19,20 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
-import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 
 /**
  * Default implementation for representing wiki user information, such as the
  * login name, full name, wiki name, and e-mail address.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-07-17 08:39:56 $
  * @since 2.3
  */
 
 public class DefaultUserProfile implements UserProfile
 {
-    private Category log         = Category.getInstance( DefaultUserProfile.class );
+    private Logger   log         = Logger.getLogger( DefaultUserProfile.class );
 
     private String   m_email     = null;
 
