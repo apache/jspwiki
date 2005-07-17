@@ -11,7 +11,7 @@
     {
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
-    Category log = Category.getInstance("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki"); 
     WikiEngine wiki;
 
 %><%
@@ -21,7 +21,8 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
-    log.info("Request for page '"+pagereq+"' from "+request.getRemoteAddr()+" by "+wikiContext.getCurrentUser().getName() );
+    log.info("Request for page '"+pagereq+"' from "+request.getRemoteAddr()+
+    		 " by "+(wikiContext.getCurrentUser() != null ? wikiContext.getCurrentUser().getName() : "unknown user") );
 
     String redirect = wiki.getRedirectURL( wikiContext );
 
@@ -33,7 +34,7 @@
 
     AuthenticationManager authMgr = wiki.getAuthenticationManager();
     AuthorizationManager mgr = wiki.getAuthorizationManager();
-    Principal currentUser  = wikiContext.getWikiSession().getUserPrincipal();
+    Principal currentUser  = wikiContext.getCurrentUser();
 
     if( !mgr.checkPermission( wikiContext,
                               new PagePermission( pagereq, "view" ) ) )
@@ -44,7 +45,7 @@
             String msg = "Unknown user or password.<br>Please try again.";
             session.setAttribute( "msg", msg );
             String pageurl = wiki.encodeName( pagereq );
-            response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
+            response.sendRedirect( wikiContext.getURL( WikiContext.LOGIN, pageurl ) );
             return;
         }
         else
@@ -57,7 +58,7 @@
                 throw new WikiSecurityException("Looped config detected - you must not prevent view access to page LoginError AND have strictLogins set to true!");
             }
 
-            log.info("User "+currentUser.getName()+" has no access - displaying message.");
+            log.info("User "+currentUser+" has no access - displaying message.");
             response.sendRedirect( wiki.getViewURL("LoginError") );
         }
     }
