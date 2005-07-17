@@ -1,3 +1,22 @@
+/* 
+  JSPWiki - a JSP-based WikiWiki clone.
+
+  Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation; either version 2.1 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 package com.ecyrd.jspwiki.url;
 
 import java.util.Properties;
@@ -9,6 +28,14 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
+/**
+ *  Implements the default URL constructor using links directly to the
+ *  JSP pages.  This is what JSPWiki by default is using.  For example,
+ *  WikiContext.VIEW points at "Wiki.jsp", etc.
+ *  
+ *  @author Janne Jalkanen
+ *  @since 2.2
+ */
 public class DefaultURLConstructor
     implements URLConstructor
 {
@@ -16,6 +43,25 @@ public class DefaultURLConstructor
 
     /** Are URL styles relative or absolute? */
     protected boolean          m_useRelativeURLStyle = true;
+
+    /**
+     *  These are the patterns for each different request context.
+     */
+    private static String[] c_patterns = 
+    {
+     WikiContext.VIEW,   "%uWiki.jsp?page=%n",
+     WikiContext.EDIT,   "%uEdit.jsp?page=%n",
+     WikiContext.ATTACH, "%uattach/%n",
+     WikiContext.INFO,   "%uPageInfo.jsp?page=%n",
+     WikiContext.DIFF,   "%uDiff.jsp?page=%n",
+     WikiContext.NONE,   "%u%n",
+     WikiContext.UPLOAD, "%uUpload.jsp?page=%n",
+     WikiContext.COMMENT,"%uComment.jsp?page=%n",
+     WikiContext.LOGIN,  "%uLogin.jsp?page=%n",
+     WikiContext.ERROR,  "%uError.jsp"
+    };
+                                      
+    private static Properties c_patternList = TextUtil.createProperties(c_patterns);
 
     public void initialize( WikiEngine engine, 
                             Properties properties )
@@ -39,6 +85,7 @@ public class DefaultURLConstructor
         return baseptrn;
     }
 
+    
     /**
      *   Returns the pattern used for each URL style.
      * 
@@ -51,41 +98,14 @@ public class DefaultURLConstructor
         if( context.equals(WikiContext.VIEW) )
         {
             if( name == null ) return "%uWiki.jsp"; // FIXME
-            return "%uWiki.jsp?page=%n";
         }
-        else if( context.equals(WikiContext.EDIT) )
-        {
-            return "%uEdit.jsp?page=%n";
-        }
-        else if( context.equals(WikiContext.ATTACH) )
-        {
-            return "%uattach/%n";
-        }
-        else if( context.equals(WikiContext.INFO) )
-        {
-            return "%uPageInfo.jsp?page=%n";
-        }
-        else if( context.equals(WikiContext.DIFF) )
-        {
-            return "%uDiff.jsp?page=%n";
-        }
-        else if( context.equals(WikiContext.NONE) )
-        {
-            return "%u%n";
-        }
-        else if( context.equals(WikiContext.UPLOAD) )
-        {
-            return "%uUpload.jsp?page=%n"; 
-        }
-        else if( context.equals(WikiContext.COMMENT) )
-        {
-            return "%uComment.jsp?page=%n"; 
-        }
-        else if( context.equals(WikiContext.ERROR) )
-        {
-            return "%uError.jsp";
-        }
-        throw new InternalWikiException("Requested unsupported context "+context);
+        
+        String ptrn = c_patternList.getProperty(context);
+
+        if( ptrn == null )
+            throw new InternalWikiException("Requested unsupported context "+context);
+        
+        return ptrn;
     }
     
     /**
