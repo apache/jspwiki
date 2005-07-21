@@ -1,3 +1,15 @@
+2005-07-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.7
+        
+        * DAV service now offers again the HTML rendered versions of
+        pages under /dav/html/
+        
+        * DAV service now has a two-level structure: pages starting with
+        "a" are in a subdirectory called "a", etc.
+        
+        * Some minor auth refactoring.
+
 2005-07-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.6
