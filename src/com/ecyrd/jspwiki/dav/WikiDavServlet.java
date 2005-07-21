@@ -33,6 +33,7 @@ public class WikiDavServlet extends WebdavServlet
     Logger log = Logger.getLogger(this.getClass().getName());
     private DavProvider m_rawProvider;
     private DavProvider m_rootProvider;
+    private DavProvider m_htmlProvider;
     
     public void init( ServletConfig config )
     throws ServletException 
@@ -43,11 +44,22 @@ public class WikiDavServlet extends WebdavServlet
         
         m_rawProvider    = new RawPagesDavProvider( m_engine );
         m_rootProvider   = new WikiRootProvider( m_engine );
+        m_htmlProvider   = new HTMLPagesDavProvider( m_engine );
     }
         
+    private DavProvider pickProvider( String context )
+    {
+        if( context.equals("raw") ) return m_rawProvider;
+        else if( context.equals("html") ) return m_htmlProvider;
+        
+        return m_rootProvider;
+    }
+    
     public void doPropFind( HttpServletRequest req, HttpServletResponse res )
         throws IOException,ServletException
     {
+        long start = System.currentTimeMillis();
+        
         // Do the "sanitize url" trick
         String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
         
@@ -57,11 +69,17 @@ public class WikiDavServlet extends WebdavServlet
             DavMethod dm = new PropFindMethod( m_rootProvider );
             dm.execute( req, res, path );
         }
-        else if( path.get(0).equals("raw") )
+        else
         {
-            PropFindMethod m = new PropFindMethod( m_rawProvider );
+            String context = path.get(0);
+            
+            PropFindMethod m = new PropFindMethod( pickProvider(context) );
             m.execute( req, res, path.subPath(1) );
-        }        
+        }
+        
+        long end = System.currentTimeMillis();
+        
+        log.debug("Propfind done for path "+path+", took "+(end-start)+" ms");
     }
     
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
@@ -141,9 +159,9 @@ public class WikiDavServlet extends WebdavServlet
             DavMethod dm = new GetMethod( m_rootProvider );
             dm.execute( req, res, path );
         }
-        else if( path.get(0).equals("raw") )
+        else
         {
-            DavMethod dm = new GetMethod( m_rawProvider );
+            DavMethod dm = new GetMethod( pickProvider(path.get(0)) );
         
             dm.execute( req, res, path.subPath(1) );
         }

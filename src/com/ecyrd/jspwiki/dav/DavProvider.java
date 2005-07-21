@@ -21,5 +21,7 @@ public interface DavProvider
     
     public void setItem( DavPath path, DavItem item );
     
+    public DavItem refreshItem( DavItem old, DavPath path );
+    
     public String getURL( String path );
 }

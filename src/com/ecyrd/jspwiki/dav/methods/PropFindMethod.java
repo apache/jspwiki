@@ -7,6 +7,7 @@ package com.ecyrd.jspwiki.dav.methods;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +31,10 @@ import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
 import com.ecyrd.jspwiki.dav.items.DavItem;
+import com.ecyrd.jspwiki.dav.items.PageDavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.opensymphony.module.oscache.base.Cache;
+import com.opensymphony.module.oscache.base.NeedsRefreshException;
 
 /**
  *  @author jalkanen
@@ -41,6 +45,10 @@ public class PropFindMethod
     extends DavMethod
 {
     private static Logger log = Logger.getLogger( PropFindMethod.class );
+ 
+    private Cache m_davItemCache = new Cache(true,false);
+    
+    private int m_refreshPeriod = 30*1000; // In millisseconds
     
     /**
      * 
@@ -77,6 +85,7 @@ public class PropFindMethod
         try
         {
             output.output( el, System.out );
+            System.out.println("");
         }
         catch( IOException e ) {}
     }
@@ -87,9 +96,20 @@ public class PropFindMethod
         
         Namespace davns = Namespace.getNamespace( "DAV:" );
         Element root = new Element("multistatus", davns);
+    
+        DavItem di = null;
         
-        DavItem di = m_provider.getItem( dc.getPath() );
-
+        try
+        {
+            di = (DavItem)m_davItemCache.getFromCache( dc.getPath().getPath(), 
+                                                       m_refreshPeriod );
+        }
+        catch( NeedsRefreshException e )
+        {
+            di = m_provider.refreshItem( (DavItem)e.getCacheContent(), dc.getPath() );
+            m_davItemCache.putInCache( dc.getPath().getPath(), di );
+        }
+        
         for( Iterator i = di.iterator(dc.getDepth()); i.hasNext(); )
         {
             di = (DavItem) i.next();

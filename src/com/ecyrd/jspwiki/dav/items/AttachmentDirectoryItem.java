@@ -4,11 +4,12 @@ import java.util.Collection;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 
 public class AttachmentDirectoryItem extends DirectoryItem
 {
-    public AttachmentDirectoryItem( DavProvider provider, String parentpage )
+    public AttachmentDirectoryItem( DavProvider provider, DavPath parentpage )
     {
         super( provider, parentpage );
     }

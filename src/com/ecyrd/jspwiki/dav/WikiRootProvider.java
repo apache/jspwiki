@@ -33,6 +33,11 @@ public class WikiRootProvider extends WikiDavProvider
         return new TopLevelDavItem(this);
     }
 
+    public DavItem refreshItem( DavItem old, DavPath path )
+    {
+        return new TopLevelDavItem(this);
+    }
+
     public void setItem( DavPath path, DavItem item )
     {
     // TODO Auto-generated method stub

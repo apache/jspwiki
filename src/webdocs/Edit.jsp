@@ -43,10 +43,9 @@
     String text    = wiki.safeGetParameter( request, EditorAreaTag.AREA_NAME );
 
     //
-    //  Create context and continue
+    //  Context is created; continue
     //
-    WikiContext wikiContext = wiki.createContext( request, 
-                                                  WikiContext.EDIT );
+
     String pagereq = wikiContext.getPage().getName();
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
@@ -68,18 +67,23 @@
     {
         latestversion = wikiContext.getPage();
     }
+    
+    //
+    //  Figure out which is the proper permission for this
+    //  particular editing action.
+    //
     if( wiki.pageExists( wikipage ) )
     {
         requiredPermission = new PagePermission( pagereq, "edit" );
     }
     else
     {
-    	    if ( pagereq.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
-    	    {
+        if ( pagereq.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
+    	{
             requiredPermission = WikiPermission.CREATE_GROUPS;
-    	    }
-    	    else
-    	    {
+        }
+        else
+        {
             requiredPermission = WikiPermission.CREATE_PAGES;
         }
     }   

@@ -39,6 +39,11 @@ public class PageDavItem extends DavItem
         m_page = page;
     }
 
+    public WikiPage getPage()
+    {
+        return m_page;
+    }
+    
     protected Collection getCommonProperties()
     {
         ArrayList set = new ArrayList();
@@ -49,7 +54,6 @@ public class PageDavItem extends DavItem
         set.add( new Element("displayname",m_davns).setText(m_page.getName()) );
         
         return set;
-        
     }
     
     /* (non-Javadoc)
@@ -67,7 +71,7 @@ public class PageDavItem extends DavItem
 
     public String getHref()
     {
-        return m_provider.getURL( "dav/raw/"+m_page.getName()+".txt" );
+        return m_provider.getURL( m_page.getName()+".txt" );
     }
 
     /* (non-Javadoc)
@@ -75,7 +79,6 @@ public class PageDavItem extends DavItem
      */
     public String getContentType()
     {
-        // TODO Auto-generated method stub
         return "text/plain; charset=UTF-8";
     }
 

@@ -20,7 +20,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.2 $ $Date: 2005-07-15 08:27:20 $
+ * @version $Revision: 2.3 $ $Date: 2005-07-21 09:26:18 $
  */
 public class WikiSession
 {
@@ -144,14 +144,15 @@ public class WikiSession
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
-            if ( !( currentPrincipal instanceof Role ) )
+            if( !( currentPrincipal instanceof Role ) )
             {
-                if ( currentPrincipal instanceof WikiPrincipal
+                if( currentPrincipal instanceof WikiPrincipal
                      && ( (WikiPrincipal) currentPrincipal ).isCommonName() )
                 {
                     return currentPrincipal;
                 }
-                if ( secondChoice != null )
+              
+                if( secondChoice == null )
                 {
                     secondChoice = currentPrincipal;
                 }

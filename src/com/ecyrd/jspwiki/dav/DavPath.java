@@ -42,9 +42,26 @@ public class DavPath
         m_isAbsolute = path.startsWith("/") || path.length() == 0;
     }
   
+    public void append( DavPath dp )
+    {
+        m_parts.addAll( dp.m_parts );
+    }
+    
+    public void append( String path )
+    {
+        DavPath dp = new DavPath( path );
+        
+        append( dp );
+    }
+    
     public boolean isRoot()
     {
         return m_parts.size() == 0 || m_parts.get(0).equals("");
+    }
+    
+    public boolean isDirectory()
+    {
+        return isRoot() || m_parts.get( m_parts.size()-1 ).equals("");
     }
     
     public String pathPart()
@@ -68,6 +85,14 @@ public class DavPath
         return "";
     }
     
+    public String getName()
+    {
+        if( isRoot() ) return "/";
+        if( !isDirectory() ) return filePart();
+        
+        return (String) m_parts.get( m_parts.size()-2 );
+    }
+    
     public String getPath()
     {
         return pathPart()+filePart();
@@ -88,13 +113,45 @@ public class DavPath
         return dp;
     }
     
+    /**
+     * Returns the 'idx' component of the path, zero being the first component.  
+     * If there is no such component,
+     * it will simply return null.
+     * 
+     * @param idx
+     * @return
+     */
     public String get( int idx )
     {
+        if( idx > size() )
+            return null;
+        
         return (String)m_parts.get(idx);
+    }
+    
+    /**
+     * Exactly equivalent to length().
+     * 
+     * @return  The length of the path.
+     */
+    public int size()
+    {
+        return m_parts.size();
+    }
+    
+    /**
+     * Exactly equivalent to size().  I'm too lazy to remember whether it's length() or size(),
+     * so I'll provide both...
+     * 
+     * @return
+     */
+    public int length()
+    {
+        return m_parts.size();
     }
     
     public String toString()
     {
-        return "DavPath:"+getPath();
+        return "DavPath ["+getPath()+"]";
     }
 }

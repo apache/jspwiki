@@ -23,12 +23,9 @@ import com.ecyrd.jspwiki.dav.DavProvider;
  */
 public class DirectoryItem extends DavItem
 {
-    private String    m_name;
-    
-    public DirectoryItem( DavProvider provider, String name )
+    public DirectoryItem( DavProvider provider, DavPath path )
     {
-        super( provider, new DavPath(name) );
-        m_name = name;
+        super( provider, path );
     }
     
     public String getContentType()
@@ -49,7 +46,7 @@ public class DirectoryItem extends DavItem
         ts.add( new Element("resourcetype",davns).addContent(new Element("collection",davns)) );
         
         Element txt = new Element("displayname",davns);
-        txt.setText( m_name );
+        txt.setText( m_path.getName() );
         ts.add( txt );
 
         ts.add( new Element("getcontentlength",davns).setText("0") );
@@ -61,7 +58,7 @@ public class DirectoryItem extends DavItem
 
     public String getHref()
     {
-        String davurl = m_name; //FIXME: Fixed, should determine from elsewhere
+        String davurl = m_path.getName(); //FIXME: Fixed, should determine from elsewhere
         
         if( !davurl.endsWith("/") ) davurl+="/";
         
@@ -73,7 +70,10 @@ public class DirectoryItem extends DavItem
         m_items.add( di );
     }
 
-    
+    public void addDavItems( Collection c )
+    {
+        m_items.addAll( c );
+    }
     
     /* (non-Javadoc)
      * @see com.ecyrd.jspwiki.dav.items.DavItem#getInputStream()

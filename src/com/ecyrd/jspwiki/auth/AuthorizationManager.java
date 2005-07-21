@@ -51,7 +51,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.22 $ $Date: 2005-07-15 08:27:21 $
+ * @version $Revision: 1.23 $ $Date: 2005-07-21 09:26:18 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -61,7 +61,7 @@ public class AuthorizationManager
     /**
      * The default external Authorizer is the WebContainerAuthorizer
      */
-    public static final String                DEFAUT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
+    public static final String                DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
 
     /**
      * The property name in jspwiki.properties for specifying the external Authorizer.
@@ -296,7 +296,7 @@ public class AuthorizationManager
      */
     private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
     {
-        String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAUT_AUTHORIZER );
+        String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
         return (Authorizer) locateImplementation( authClassName );
     }
 
@@ -306,8 +306,7 @@ public class AuthorizationManager
         {
             try
             {
-                // TODO: this should probably look in package ...modules
-                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.modules", clazz );
+                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", clazz );
                 Object impl = authClass.newInstance();
                 return impl;
             }
@@ -350,7 +349,7 @@ public class AuthorizationManager
      * @return <code>true</code> if the Subject posesses the permission,
      *         <code>false</code> otherwise
      */
-    protected static final boolean checkStaticPermission( final Subject subject, final Permission permission )
+    protected final boolean checkStaticPermission( final Subject subject, final Permission permission )
     {
         try
         {
@@ -392,8 +391,8 @@ public class AuthorizationManager
      * @param name the name of the Principal to resolve
      * @return the fully-resolved Principal
      */
-    public Principal resolvePrincipal( String name ) {
-        
+    public Principal resolvePrincipal( String name ) 
+    {    
         // Check built-in Roles first
         Role role = new Role(name);
         if (Role.isBuiltInRole(role)) {

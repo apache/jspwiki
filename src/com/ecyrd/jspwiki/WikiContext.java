@@ -347,16 +347,18 @@ public class WikiContext
     /**
      * Returns the WikiSession associated with the context.
      */  
-    public WikiSession getWikiSession() {
-      return m_session;
+    public WikiSession getWikiSession() 
+    {
+        return m_session;
     }
     
     /**
      * Sets the WikiSession assocated with the context.
      * @param session
      */
-    public void setWikiSession(WikiSession session) {
-      m_session = session;
+    public void setWikiSession(WikiSession session) 
+    {
+        m_session = session;
     }
         
 }

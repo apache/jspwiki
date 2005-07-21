@@ -54,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.4 $ $Date: 2005-07-17 08:37:58 $
+ * @version $Revision: 1.5 $ $Date: 2005-07-21 09:26:18 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -85,13 +85,15 @@ public class AuthenticationManager
     
     private URL findConfigFile( String name )
     {
-        URL path = getClass().getClassLoader().getResource("/WEB-INF/"+name);
+        ClassLoader cl = AuthenticationManager.class.getClassLoader();
+        
+        URL path = cl.getResource("/WEB-INF/"+name);
         
         if( path == null )
-            path = getClass().getClassLoader().getResource("/"+name);
+            path = cl.getResource("/"+name);
         
         if( path == null )
-            path = getClass().getClassLoader().getResource(name);
+            path = cl.getResource(name);
         
         if( path == null && m_engine.getServletContext() != null )
         {
@@ -107,6 +109,10 @@ public class AuthenticationManager
         }
 
         return path;
+    }
+    
+    static
+    {
     }
     
     /**
@@ -181,7 +187,6 @@ public class AuthenticationManager
                 log.warn("Cannot locate jspwiki.jaas.  Please copy one from the default jspwiki installation.");
             }
         }        
-        
     }
     
     /**
