@@ -17,7 +17,6 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WikiDavProvider;
-import com.sun.rsasign.r;
 
 /**
  *  @author jalkanen
