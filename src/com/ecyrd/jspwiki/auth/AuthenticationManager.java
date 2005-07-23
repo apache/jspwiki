@@ -15,7 +15,6 @@ package com.ecyrd.jspwiki.auth;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Permission;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +27,6 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -54,7 +52,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.6 $ $Date: 2005-07-23 20:55:00 $
+ * @version $Revision: 1.7 $ $Date: 2005-07-23 20:56:53 $
  * @since 2.3
  */
 public class AuthenticationManager
