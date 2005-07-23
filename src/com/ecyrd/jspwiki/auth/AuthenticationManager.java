@@ -54,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.5 $ $Date: 2005-07-21 09:26:18 $
+ * @version $Revision: 1.6 $ $Date: 2005-07-23 20:55:00 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -387,7 +387,7 @@ public class AuthenticationManager
     public static boolean allowsCookieAssertions()
     {
         Configuration loginConfig = Configuration.getConfiguration();
-        AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry("JSPWiki-container");
+        AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
         for ( int i = 0; i < configs.length; i++ )
         {
             AppConfigurationEntry config = configs[i];
