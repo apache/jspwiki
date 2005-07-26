@@ -130,10 +130,10 @@ public class FormUtil
      * WikiContext.getHttpParameter().
      */
     public static Map requestToMap( HttpServletRequest req, 
-				    String filterPrefix )
+                                    String filterPrefix )
     {
         HashMap params = new HashMap();
-
+        
         Enumeration en = req.getParameterNames();
         while( en.hasMoreElements() )
         {

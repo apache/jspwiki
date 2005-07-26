@@ -1,3 +1,22 @@
+2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.29
+        
+        * Bug fix: Attachments might get looping forever, if the page did
+        not exist.  Fixes 
+        BugHasAttachmentsAndAttachmentsIteratorTagsWhenPageDoesntExist
+
+        * Bug fix: You can now set the 'checked' attribute of checkboxes
+ 		in WikiForms with the parameter 'checked=true'.  Reported by JohnV.
+
+        * Bug fix: BugWrongRecognitionOfWikiWords.  A CamelCase
+        WikiWord would not be escaped correctly, if the word would
+        have two capital letters.
+
+        * Bug fix: BugShortViewURLConstructorAndShortURLConstructorProblems
+        ShortViewURLConstructor did not have a default prefix.
+        Reported by Olaf Kock.
+
 2005-07-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.28
