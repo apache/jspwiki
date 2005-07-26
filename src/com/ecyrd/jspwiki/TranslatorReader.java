@@ -275,7 +275,7 @@ public class TranslatorReader extends Reader
 
         try
         {
-            m_camelCasePtrn = m_compiler.compile( "^([[:^alnum:]]*|\\~)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)[[:^alnum:]]*$" );
+            m_camelCasePtrn = m_compiler.compile( "^([[:^alnum:]]*)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)[[:^alnum:]]*$" );
         }
         catch( MalformedPatternException e )
         {
@@ -706,7 +706,7 @@ public class TranslatorReader extends Reader
 
             if( res.group(1) != null )
             {
-                if( res.group(1).equals("~") ||
+                if( res.group(1).endsWith("~") ||
                     res.group(1).indexOf('[') != -1 )
                 {
                     // Delete the (~) from beginning.
@@ -2000,7 +2000,8 @@ public class TranslatorReader extends Reader
         
         if( Character.isUpperCase( (char) ch ) )
         {
-            return String.valueOf( (char)ch );
+            pushBack( ch );
+            return "";
         }
 
         // No escape.
