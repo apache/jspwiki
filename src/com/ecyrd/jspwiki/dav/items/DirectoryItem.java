@@ -58,11 +58,7 @@ public class DirectoryItem extends DavItem
 
     public String getHref()
     {
-        String davurl = m_path.getName(); //FIXME: Fixed, should determine from elsewhere
-        
-        if( !davurl.endsWith("/") ) davurl+="/";
-        
-        return m_provider.getURL( davurl );
+        return m_provider.getURL( m_path );
     }
     
     public void addDavItem( DavItem di )
