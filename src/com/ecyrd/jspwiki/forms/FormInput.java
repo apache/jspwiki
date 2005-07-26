@@ -77,6 +77,7 @@ public class FormInput
                                  HANDLERPARAM_PREFIX + inputName, 
                                  inputValue );
 
+        field.setChecked( TextUtil.isPositive((String) params.get("checked")) );
         if( previousValues != null )
         {
             String oldValue = (String)previousValues.get( inputName );

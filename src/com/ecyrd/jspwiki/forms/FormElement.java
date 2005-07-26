@@ -28,9 +28,6 @@ import com.ecyrd.jspwiki.plugin.WikiPlugin;
 public abstract class FormElement
     implements WikiPlugin
 {
-    private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormElement.class );
-
     /**
      * In order to make the form-to-handler parameter transfer easier,
      * we prefix all user-specified FORM element names with HANDLERPARAM_PREFIX

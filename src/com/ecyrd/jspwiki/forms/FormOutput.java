@@ -46,10 +46,21 @@ public class FormOutput
      * Information for the populator can be given with the FormSet
      * plugin. If 'populate' is not specified, the form is not
      * displayed.
+     * <p>
+     * Should there be no HTTP request associated with this request,
+     * the method will return immediately with an empty string.
      */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {
+        //
+        //  If there is no HTTP request, returns immediately.
+        //
+        if( ctx.getHttpRequest() == null )
+        {
+            return "";
+        }
+        
         // If we are NOT here due to this form being submitted, we do nothing.
         // The submitted form MUST have parameter 'formname' equal to the name
         // parameter of this Form plugin.
@@ -97,7 +108,7 @@ public class FormOutput
         // Sift out all extra parameters, leaving only those submitted
         // in the HTML FORM.
         Map handlerParams = FormUtil.requestToMap( ctx.getHttpRequest(), 
-						   HANDLERPARAM_PREFIX );
+                                                   HANDLERPARAM_PREFIX );
         // Previous submission info may be available from FormSet
         // plugin - add, don't replace.
         info.addSubmission( handlerParams );
