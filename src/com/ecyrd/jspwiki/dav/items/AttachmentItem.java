@@ -6,10 +6,17 @@ package com.ecyrd.jspwiki.dav.items;
 
 import java.util.Collection;
 
+import javax.servlet.ServletContext;
+
+import org.jdom.Element;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
+import com.sun.corba.se.connection.GetEndPointInfoAgainException;
 
 /**
  *  @author jalkanen
@@ -23,17 +30,20 @@ public class AttachmentItem extends PageDavItem
      * @param engine
      * @param page
      */
-    public AttachmentItem( DavProvider provider, Attachment att )
+    public AttachmentItem( AttachmentDavProvider provider, DavPath path, Attachment att )
     {
-        super( provider, att );
+        super( provider, path,  att );
     }
 
    
     public Collection getPropertySet()
     {
-        Collection props = getCommonProperties();
+        Collection set = getCommonProperties();
         
-        return props;
+        set.add( new Element("getcontentlength",m_davns).setText( Long.toString(getLength())) );
+        set.add( new Element("getcontenttype",m_davns).setText( getContentType() ));
+
+        return set;
     }
     
     /* (non-Javadoc)
@@ -41,12 +51,29 @@ public class AttachmentItem extends PageDavItem
      */
     public String getHref()
     {
-        return "";
-        /*
-        return m_engine.getURL( WikiContext.NONE,
-                                "dav/raw/"+m_page.getName(),
-                                null,
-                                true );
-                                */
+        return m_provider.getURL( m_path );
+    }
+    
+    /**
+     *  Returns the content type as defined by the servlet container;
+     *  or if the container cannot be found, returns "application/octet-stream".
+     */
+    public String getContentType()
+    {
+        ServletContext ctx = ((AttachmentDavProvider)m_provider).getEngine().getServletContext();
+        
+        if( ctx != null )
+        {
+            String mimetype = ctx.getMimeType( m_page.getName() );
+            
+            if( mimetype != null ) return mimetype;
+        }
+        
+        return "application/octet-stream"; // FIXME: This is not correct
+    }
+    
+    public long getLength()
+    {
+        return m_page.getSize();
     }
 }
