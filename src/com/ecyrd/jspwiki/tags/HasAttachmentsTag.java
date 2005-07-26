@@ -24,6 +24,7 @@ import java.io.IOException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Includes body if page has attachments.
@@ -41,12 +42,20 @@ public class HasAttachmentsTag
         WikiPage   page   = m_wikiContext.getPage();
         AttachmentManager mgr = engine.getAttachmentManager();
 
-        if( page != null && mgr.attachmentsEnabled() )
+        try
         {
-            if( mgr.hasAttachments(page) )
+            if( page != null && engine.pageExists(page) && mgr.attachmentsEnabled() )
             {
-                return EVAL_BODY_INCLUDE;
+                if( mgr.hasAttachments(page) )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
             }
+        }
+        catch( ProviderException e )
+        {
+            log.fatal("Provider failed while trying to check for attachements",e);
+            // FIXME: THrow something.
         }
 
         return SKIP_BODY;
