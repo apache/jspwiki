@@ -403,6 +403,24 @@ public class TranslatorReaderTest extends TestCase
                       translate(src) );
     }
 
+    public void testHyperlinksCCNegated3()
+    throws Exception
+    {
+        String src = "The page ~ASamplePage is not a hyperlink.";
+
+        assertEquals( "The page ASamplePage is not a hyperlink.",
+                      translate(src) );
+    }
+
+    public void testHyperlinksCCNegated4()
+        throws Exception
+    {
+        String src = "The page \"~ASamplePage\" is not a hyperlink.";
+
+        assertEquals( "The page &quot;ASamplePage&quot; is not a hyperlink.",
+                      translate(src) );
+    }
+
     public void testCCLinkInList()
         throws Exception
     {
