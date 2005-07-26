@@ -33,9 +33,9 @@ public class PageDavItem extends DavItem
     /**
      * 
      */
-    public PageDavItem( DavProvider provider, WikiPage page )
+    public PageDavItem( DavProvider provider, DavPath path, WikiPage page )
     {
-        super( provider, new DavPath(page.getName()) );
+        super( provider, path );
         m_page = page;
     }
 
@@ -64,14 +64,14 @@ public class PageDavItem extends DavItem
         Collection set = getCommonProperties();
         
         set.add( new Element("getcontentlength",m_davns).setText( Long.toString(getLength())) );
-        set.add( new Element("getcontenttype",m_davns).setText("text/plain; charset=\"UTF-8\""));
+        set.add( new Element("getcontenttype",m_davns).setText( getContentType() ));
 
         return set;
     }
 
     public String getHref()
     {
-        return m_provider.getURL( m_page.getName()+".txt" );
+        return m_provider.getURL( m_path );
     }
 
     /* (non-Javadoc)
