@@ -7,16 +7,49 @@ package com.ecyrd.jspwiki.dav;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+/**
+ *  The DavPath represents an abstract path to any resource within the WebDav
+ *  system.  Since the file tree displayed by the DAV storage may be different
+ *  from the actual representation, this component is needed.
+ *  <p>
+ *  You instantiate a new DavPath simply by saying 
+ *  <code>DavPath dp = new DavPath("/path/to/my/object");</code>
+ *  <p>
+ *  If the path ends in a slash, it is understood to be a directory.  If not,
+ *  it represents a file.
+ *  
+ * @author jalkanen
+ *
+ */
 public class DavPath
 {
     private ArrayList m_parts = new ArrayList();
     
     private boolean   m_isAbsolute = false;
     
+    /**
+     * Creates a new, empty path.
+     *
+     */
     private DavPath()
     {
     }
     
+    /**
+     *  Creates a new DavPath from an old one.
+     * @param dp
+     */
+    public DavPath( DavPath dp )
+    {
+        m_parts.addAll( dp.m_parts );
+        m_isAbsolute = dp.m_isAbsolute;
+    }
+    
+    /**
+     *  Creates a new DavPath object.  The path parameter should be
+     *  an arbitrary string with components separated with slashes.
+     * @param path
+     */
     public DavPath( String path )
     {
         if( path == null )
@@ -39,14 +72,25 @@ public class DavPath
         if( path.endsWith("/") )
             m_parts.add("");
         
-        m_isAbsolute = path.startsWith("/") || path.length() == 0;
+        m_isAbsolute = path.startsWith("/");
     }
   
+    /**
+     * Adds another path to the end of this path.
+     * 
+     * @param dp
+     */
     public void append( DavPath dp )
     {
         m_parts.addAll( dp.m_parts );
     }
     
+    /**
+     * Adds another path to the end of this path.  The "path" parameter
+     * may contain a slash-separated path (e.g. "foo/bar/blog.txt").
+     * 
+     * @param path
+     */
     public void append( String path )
     {
         DavPath dp = new DavPath( path );
@@ -54,16 +98,32 @@ public class DavPath
         append( dp );
     }
     
+    /**
+     * Returns true, if the path represents the top-level entity.  This is true,
+     * if the path is "/" or it is empty.
+     * 
+     * @return True or false.
+     */
     public boolean isRoot()
     {
         return m_parts.size() == 0 || m_parts.get(0).equals("");
     }
     
+    /**
+     * Returns true, if the path represents a directory.
+     * 
+     * @return
+     */
     public boolean isDirectory()
     {
         return isRoot() || m_parts.get( m_parts.size()-1 ).equals("");
     }
     
+    /**
+     * Returns the directory part of the DavPath.
+     * 
+     * @return
+     */
     public String pathPart()
     {
         StringBuffer result = new StringBuffer( m_isAbsolute ? "/" : "" );
@@ -77,6 +137,13 @@ public class DavPath
         return result.toString();
     }
     
+    /**
+     * Returns the file part of the DavPath.  The method returns the last component
+     * of the path, unless the path is a directory, in which case it returns an
+     * empty string.
+     * 
+     * @return  File name or empty string.
+     */
     public String filePart()
     {
         if( m_parts.size() > 0 )
@@ -85,6 +152,12 @@ public class DavPath
         return "";
     }
     
+    /**
+     * Returns the name of the last component of the DavPath.  This is either
+     * the name of a directory, or the name of a file.
+     * 
+     * @return
+     */
     public String getName()
     {
         if( isRoot() ) return "/";
@@ -93,11 +166,23 @@ public class DavPath
         return (String) m_parts.get( m_parts.size()-2 );
     }
     
+    /**
+     * Returns the entire path as a String.
+     * @return
+     */
     public String getPath()
     {
         return pathPart()+filePart();
     }
     
+    /**
+     * Returns a new DavPath object that is a sub-path of this path.  E.g. if
+     * the path is "/foo/bar/blog.txt", subPath(1) would return "bar/blog.txt".
+     * Notice that the resulting path is not absolute in this case.
+     * 
+     * @param idx Start from this part.
+     * @return A sub-path of this path.
+     */
     public DavPath subPath( int idx )
     {
         DavPath dp = new DavPath();
@@ -118,8 +203,8 @@ public class DavPath
      * If there is no such component,
      * it will simply return null.
      * 
-     * @param idx
-     * @return
+     * @param idx The component to return. Zero is the first element.
+     * @return A part of the path.
      */
     public String get( int idx )
     {
@@ -150,6 +235,10 @@ public class DavPath
         return m_parts.size();
     }
     
+    /**
+     * Returns a human-readable version of the path.  Please use getPath() instead
+     * of toString(), as this method is only good for debugging purposes.
+     */
     public String toString()
     {
         return "DavPath ["+getPath()+"]";

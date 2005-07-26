@@ -10,18 +10,10 @@ import com.ecyrd.jspwiki.dav.items.DavItem;
 
 public interface DavProvider
 {
-    /**
-     * 
-     * @param path
-     * @return  A collection of files
-     */
-    public Collection listItems( DavPath path );
     
     public DavItem getItem( DavPath path );
     
     public void setItem( DavPath path, DavItem item );
     
-    public DavItem refreshItem( DavItem old, DavPath path );
-    
-    public String getURL( String path );
+    public String getURL( DavPath path );
 }

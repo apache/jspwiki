@@ -18,6 +18,8 @@ import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.dav.items.DirectoryItem;
 import com.ecyrd.jspwiki.dav.items.PageDavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.opensymphony.module.oscache.base.Cache;
+import com.opensymphony.module.oscache.base.NeedsRefreshException;
 
 /**
  *  Implements something for the pages.
@@ -29,6 +31,11 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class RawPagesDavProvider extends WikiDavProvider
 {
     protected static final Logger log = Logger.getLogger( RawPagesDavProvider.class );
+
+    private Cache m_davItemCache = new Cache(true,false);
+    
+    private int m_refreshPeriod = 30*1000; // In millisseconds
+    
     
     public RawPagesDavProvider( WikiEngine engine )
     {
@@ -94,7 +101,10 @@ public class RawPagesDavProvider extends WikiDavProvider
                 
                 if( p.getName().toLowerCase().startsWith(st) )
                 {
-                    DavItem di = new PageDavItem( this, p );
+                    DavPath np = new DavPath( path );
+                    np.append( p.getName()+".txt" );
+                    
+                    DavItem di = new PageDavItem( this, np, p );
                 
                     davItems.add( di );
                 }
@@ -125,7 +135,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         }
     }
 
-    private String getRelativePath( String path )
+    protected String getRelativePath( String path )
     {
         if( path.length() > 0 )
         {
@@ -137,32 +147,54 @@ public class RawPagesDavProvider extends WikiDavProvider
         return "";
     }
     
-    public String getURL( String path )
+    public String getURL( DavPath path )
     {
-        if( path.equals("/") ) path = "";
-        
-        return m_engine.getURL( WikiContext.NONE, "dav/raw/"+path,
+        return m_engine.getURL( WikiContext.NONE, "dav/raw/"+path.getPath(),
                                 null, true );
     }
     
-    public DavItem refreshItem( DavItem old, DavPath path )
+    public DavItem getItem( DavPath dp )
     {
-        if( old instanceof PageDavItem )
+        DavItem di = null;
+    
+        try
         {
-            WikiPage cached = ((PageDavItem)old).getPage();
+            di = (DavItem)m_davItemCache.getFromCache( dp.toString(), 
+                                                       m_refreshPeriod );
             
-            WikiPage current = m_engine.getPage( cached.getName() );
-            
-            if( cached.getLastModified().equals( current.getLastModified() ) )
+            if( di == null )
             {
-                return old;
+                di = getItemNoCache( dp );
             }
         }
-        
-        return getItem( path );
+        catch( NeedsRefreshException e )
+        {
+            DavItem old = (DavItem)e.getCacheContent();
+            
+            if( old != null && old instanceof PageDavItem )
+            {
+                WikiPage cached = ((PageDavItem)old).getPage();
+                
+                WikiPage current = m_engine.getPage( cached.getName() );
+                
+                if( cached != null && 
+                    cached.getLastModified().equals( current.getLastModified() ) )
+                {
+                    di = old;
+                }
+            }
+            else
+            {
+                di = getItemNoCache( dp );
+            }
+        }
+
+        m_davItemCache.putInCache( dp.toString(), di );
+
+        return di;
     }
-    
-    public DavItem getItem( DavPath path )
+
+    protected DavItem getItemNoCache( DavPath path )
     {
         String pname = path.filePart();
         
@@ -202,7 +234,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         
         if( page != null )
         {
-            return new PageDavItem( this, page );
+            return new PageDavItem( this, path, page );
         }
         
         return null;

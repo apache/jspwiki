@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.dav.items.DirectoryItem;
 import com.ecyrd.jspwiki.dav.items.HTMLPageDavItem;
-import com.ecyrd.jspwiki.dav.items.PageDavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class HTMLPagesDavProvider extends RawPagesDavProvider
@@ -36,7 +36,10 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
                 
                 if( p.getName().toLowerCase().startsWith(st) )
                 {
-                    DavItem di = new HTMLPageDavItem( this, p );
+                    DavPath dp = new DavPath( path );
+                    dp.append( p.getName()+".html" );
+                    
+                    DavItem di = new HTMLPageDavItem( this, dp, p );
                 
                     davItems.add( di );
                 }
@@ -50,7 +53,7 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
         return davItems;
     }
 
-    public DavItem getItem( DavPath path )
+    protected DavItem getItemNoCache( DavPath path )
     {
         String pname = path.filePart();
         
@@ -90,9 +93,16 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
         
         if( page != null )
         {
-            return new HTMLPageDavItem( this, page );
+            return new HTMLPageDavItem( this, path, page );
         }
         
         return null;
     }
+    
+    public String getURL( DavPath path )
+    {
+        return m_engine.getURL( WikiContext.NONE, "dav/html/"+path.getPath(),
+                                null, true );
+    }
+
 }

@@ -44,10 +44,9 @@ public class WikiRootProvider extends WikiDavProvider
 
     }
 
-    public String getURL( String path )
+    public String getURL( DavPath path )
     {
-        if( path.equals("/") ) path = "";
-        return m_engine.getURL( WikiContext.NONE, "dav/"+path, null, false );
+        return m_engine.getURL( WikiContext.NONE, "dav/"+path.getPath(), null, false );
     }
 
 }

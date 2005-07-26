@@ -51,7 +51,7 @@ public class WikiDavServlet extends WebdavServlet
     {
         if( context.equals("raw") ) return m_rawProvider;
         else if( context.equals("html") ) return m_htmlProvider;
-        
+
         return m_rootProvider;
     }
     
