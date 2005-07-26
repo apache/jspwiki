@@ -35,7 +35,7 @@ public class ShortURLConstructor
     {
         super.initialize( engine, properties );
         
-        m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, null );
+        m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, "wiki/" );
         
         if( m_urlPrefix == null )
         {
