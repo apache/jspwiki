@@ -34,7 +34,12 @@ import com.ecyrd.jspwiki.util.HttpUtil;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
+import com.ecyrd.jspwiki.dav.DavPath;
+import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
+import com.ecyrd.jspwiki.dav.methods.DavMethod;
+import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
 import com.ecyrd.jspwiki.filters.RedirectException;
 
 // multipartrequest.jar imports:
@@ -69,6 +74,8 @@ public class AttachmentServlet
 
     private String m_tmpDir;
 
+    private DavProvider m_attachmentProvider;
+    
     /**
      *  The maximum size that an attachment can be.
      */
@@ -91,6 +98,7 @@ public class AttachmentServlet
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
 
+        m_attachmentProvider = new AttachmentDavProvider( m_engine );
         m_tmpDir         = m_engine.getWorkDir()+File.separator+"attach-tmp";
  
         m_maxSize        = TextUtil.getIntegerProperty( props, 
@@ -110,15 +118,19 @@ public class AttachmentServlet
         log.debug( "UploadServlet initialized. Using " + 
                    m_tmpDir + " for temporary storage." );
     }
-/*
+
 	public void doPropFind( HttpServletRequest req, HttpServletResponse res )
-    throws IOException, ServletException
+        throws IOException, ServletException
     {
-        DavMethod dm = new PropFindMethod( m_engine );
+        DavMethod dm = new PropFindMethod( m_attachmentProvider );
+
+        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
         
-        dm.execute( req, res );
+        DavPath path = new DavPath( p );
+
+        dm.execute( req, res, path );
 	}
-*/
+
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
     {
         res.setHeader( "DAV", "1" ); // We support only Class 1
