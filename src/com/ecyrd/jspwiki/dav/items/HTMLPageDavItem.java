@@ -15,6 +15,7 @@ import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WikiDavProvider;
 
@@ -31,15 +32,15 @@ public class HTMLPageDavItem extends PageDavItem
      * @param engine
      * @param page
      */
-    public HTMLPageDavItem( DavProvider provider, WikiPage page )
+    public HTMLPageDavItem( DavProvider provider, DavPath path, WikiPage page )
     {
-        super( provider, page );
+        super( provider, path, page );
     }
 
     
     public String getHref()
     {
-        return m_provider.getURL( m_page.getName()+".html" );    
+        return m_provider.getURL( m_path );    
     }
  
     public String getContentType()
