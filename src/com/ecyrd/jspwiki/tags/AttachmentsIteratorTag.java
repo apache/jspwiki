@@ -99,6 +99,10 @@ public class AttachmentsIteratorTag
                     return SKIP_BODY;
                 }
             }
+            else
+            {
+                return SKIP_BODY;
+            }
 
             return EVAL_BODY_BUFFERED;
         }
