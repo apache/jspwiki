@@ -15,7 +15,9 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("DAV tests");
 
         suite.addTest( DavPathTest.suite() );
-
+        suite.addTest( RawPagesDavProviderTest.suite() );
+        suite.addTest( HTMLPagesDavProviderTest.suite() );
+        suite.addTest( AttachmentDavProviderTest.suite() );
         return suite;
     }
 }

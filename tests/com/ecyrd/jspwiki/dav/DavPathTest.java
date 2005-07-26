@@ -46,7 +46,7 @@ public class DavPathTest extends TestCase
         
         DavPath dp = new DavPath( src );
         
-        assertEquals( "path", "/", dp.pathPart() );
+        assertEquals( "path", "", dp.pathPart() );
         assertEquals( "file", "", dp.filePart() );        
     }
     
