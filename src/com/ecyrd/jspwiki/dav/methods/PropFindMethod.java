@@ -46,10 +46,6 @@ public class PropFindMethod
 {
     private static Logger log = Logger.getLogger( PropFindMethod.class );
  
-    private Cache m_davItemCache = new Cache(true,false);
-    
-    private int m_refreshPeriod = 30*1000; // In millisseconds
-    
     /**
      * 
      */
@@ -70,9 +66,9 @@ public class PropFindMethod
         
         XMLOutputter output = new XMLOutputter();
      
-        System.out.println("Returning");
+        // System.out.println("Returning");
         output.setFormat( Format.getPrettyFormat() );
-        output.output( doc, System.out );
+        // output.output( doc, System.out );
         output.output( doc, res.getWriter() );
     }
     
@@ -97,19 +93,8 @@ public class PropFindMethod
         Namespace davns = Namespace.getNamespace( "DAV:" );
         Element root = new Element("multistatus", davns);
     
-        DavItem di = null;
-        
-        try
-        {
-            di = (DavItem)m_davItemCache.getFromCache( dc.getPath().getPath(), 
-                                                       m_refreshPeriod );
-        }
-        catch( NeedsRefreshException e )
-        {
-            di = m_provider.refreshItem( (DavItem)e.getCacheContent(), dc.getPath() );
-            m_davItemCache.putInCache( dc.getPath().getPath(), di );
-        }
-        
+        DavItem di = m_provider.getItem( dc.getPath() );
+
         for( Iterator i = di.iterator(dc.getDepth()); i.hasNext(); )
         {
             di = (DavItem) i.next();
@@ -261,11 +246,11 @@ public class PropFindMethod
 
             Element davresponse = null;
 
-            log.debug("First node is:"+firstnode);
+            // log.debug("First node is:"+firstnode);
             
             System.out.println("Request="+dc.getPath()+" depth="+dc.getDepth());
 
-            debugXML( doc.getRootElement() );
+            // debugXML( doc.getRootElement() );
             
             if( firstnode == null || firstnode.getName().equals("allprop") )
             {
