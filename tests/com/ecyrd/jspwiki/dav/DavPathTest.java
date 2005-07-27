@@ -49,6 +49,16 @@ public class DavPathTest extends TestCase
         assertEquals( "path", "", dp.pathPart() );
         assertEquals( "file", "", dp.filePart() );        
     }
+
+    public void testCreate5()
+    {
+        String src = "/foo//bar///goo";
+        
+        DavPath dp = new DavPath( src );
+        
+        assertEquals( "path", "/foo/bar/", dp.pathPart() );
+        assertEquals( "file", "goo", dp.filePart() );        
+    }
     
     public void testSubPath()
     {
@@ -127,6 +137,25 @@ public class DavPathTest extends TestCase
                 
         assertFalse( dp.isRoot() );
     }
+    
+    public void testAppend1()
+    {
+        DavPath dp = new DavPath("/foo/bar/");
+        
+        dp.append("/zorp");
+        
+        assertEquals( "/foo/bar/zorp", dp.getPath() );
+    }
+
+    public void testAppend2()
+    {
+        DavPath dp = new DavPath("/foo/bar/");
+        
+        dp.append("zorp/grub/");
+        
+        assertEquals( "/foo/bar/zorp/grub/", dp.getPath() );
+    }
+
     
     public static Test suite()
     {
