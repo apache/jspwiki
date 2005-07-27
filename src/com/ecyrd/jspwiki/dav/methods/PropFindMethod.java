@@ -184,7 +184,14 @@ public class PropFindMethod
                         if( askedElement.getNamespaceURI().equals( el.getNamespaceURI() ) &&
                             askedElement.getName().equals( el.getName() ) )
                         {
-                            props.addContent( el );
+                            //
+                            // This protects in case there are multiple elements
+                            // in the request.
+                            //
+                            if( props.indexOf(el) == -1 )
+                            {
+                                props.addContent( el );
+                            }
                             found = true;
                             break;
                         }

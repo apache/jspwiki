@@ -137,7 +137,7 @@ public class AttachmentServlet
         res.setHeader( "Allow", "GET, PUT, POST, OPTIONS, PROPFIND, PROPPATCH, MOVE, COPY, DELETE");
         res.setStatus( HttpServletResponse.SC_OK );
     }
-	
+	    
     /**
      * Serves a GET with two parameters: 'wikiname' specifying the wikiname
      * of the attachment, 'version' specifying the version indicator.
@@ -315,6 +315,44 @@ public class AttachmentServlet
             res.sendRedirect( e.getRedirect() );
         }
     }
+    
+    public void doPut( HttpServletRequest req, HttpServletResponse res )
+        throws IOException, ServletException
+    {
+        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
+
+        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
+        DavPath path = new DavPath( p );
+
+        try
+        {
+            InputStream data = req.getInputStream();
+
+            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+            
+            String wikipage = path.get( 0 );
+            
+            errorPage = context.getURL( WikiContext.UPLOAD,
+                                        wikipage );
+            
+            boolean created = executeUpload( req, data, path.getName(), errorPage, wikipage );
+            
+            if( created )
+                res.sendError( HttpServletResponse.SC_CREATED );
+            else
+                res.sendError( HttpServletResponse.SC_OK );
+        }
+        catch( ProviderException e )
+        {
+            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                           e.getMessage() );
+        }
+        catch( RedirectException e )
+        {
+            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                           e.getMessage() );   
+        }
+    }
 
 
     /**
@@ -351,20 +389,6 @@ public class AttachmentServlet
                                         wikipage );
 
             //
-            //  FIXME: This has the unfortunate side effect that it will receive the
-            //  contents.  But we can't figure out the page to redirect to
-            //  before we receive the file, due to the stupid constructor of MultipartRequest.
-            //
-            if( req.getContentLength() > m_maxSize )
-            {
-                // FIXME: Does not delete the received files.
-                throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
-                                             errorPage );
-            }
-
-            Principal user    = context.getCurrentUser();
-
-            //
             //  Go through all files being uploaded.
             //
             Enumeration files = multi.getFileParameterNames();
@@ -373,31 +397,12 @@ public class AttachmentServlet
             {
                 String part = (String) files.nextElement();
                 File   f    = multi.getFile( part );
-                AttachmentManager mgr = m_engine.getAttachmentManager();
                 InputStream in;
+
+                String filename = multi.getFileSystemName( part );
 
                 try
                 {
-                    //
-                    //  Is a file to be uploaded.
-                    //
-
-                    String filename = multi.getFileSystemName( part );
-
-                    if( filename == null || filename.trim().length() == 0 )
-                    {
-                        log.error("Empty file name given.");
-
-                        throw new RedirectException("Empty file name given.",
-                                                    errorPage);
-                    }
-
-                    //
-                    //  Should help with IE 5.22 on OSX
-                    //
-                    filename = filename.trim();
-
-                    log.debug("file="+filename);
                     //
                     //  Attempt to open the input stream
                     //
@@ -414,55 +419,7 @@ public class AttachmentServlet
                         in = multi.getFileContents( part );
                     }
 
-                    if( in == null )
-                    {
-                        log.error("File could not be opened.");
-
-                        throw new RedirectException("File could not be opened.",
-                                                    errorPage);
-                    }
-
-                    //
-                    //  Check whether we already have this kind of a page.
-                    //  If the "page" parameter already defines an attachment
-                    //  name for an update, then we just use that file.
-                    //  Otherwise we create a new attachment, and use the
-                    //  filename given.  Incidentally, this will also mean
-                    //  that if the user uploads a file with the exact
-                    //  same name than some other previous attachment,
-                    //  then that attachment gains a new version.
-                    //
-
-                    Attachment att = mgr.getAttachmentInfo( wikipage );
-
-                    if( att == null )
-                    {
-                        att = new Attachment( wikipage, filename );
-                    }
-
-                    //
-                    //  Check if we're allowed to do this?
-                    //
-
-                    Permission permission = new PagePermission(att, "upload");
-                    if( m_engine.getAuthorizationManager().checkPermission( context,
-                                                                            permission ) )
-                    {
-                        if( user != null )
-                        {
-                            att.setAuthor( user.getName() );
-                        }
-                
-                        m_engine.getAttachmentManager().storeAttachment( att, in );
-
-                        log.info( "User " + user + " uploaded attachment to " + wikipage + 
-                                  " called "+filename+", size " + multi.getFileSize(part) );
-                    }
-                    else
-                    {
-                        throw new RedirectException("No permission to upload a file",
-                                                    errorPage);
-                    }
+                    executeUpload( req, in, filename, nextPage, wikipage );
                 }
                 finally
                 {
@@ -499,7 +456,114 @@ public class AttachmentServlet
         return nextPage;
     }
 
-
+    
+    /**
+     * 
+     * @param req
+     * @param data
+     * @param filename
+     * @param errorPage The place to which you want to get a redirection
+     * @param parentPage
+     * @return true, if resulted in the creation of a new page
+     * @throws RedirectException
+     * @throws IOException
+     * @throws ProviderException
+     */
+    protected boolean executeUpload( HttpServletRequest req, InputStream data, 
+                                     String filename, String errorPage, String parentPage )
+        throws RedirectException,
+               IOException, ProviderException
+    {
+        boolean created = false;
+        WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+        
+        //
+        //  FIXME: This has the unfortunate side effect that it will receive the
+        //  contents.  But we can't figure out the page to redirect to
+        //  before we receive the file, due to the stupid constructor of MultipartRequest.
+        //
+        if( req.getContentLength() > m_maxSize )
+        {
+            // FIXME: Does not delete the received files.
+            throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
+                                         errorPage );
+        }
+        
+        Principal user    = context.getCurrentUser();
+        
+        AttachmentManager mgr = m_engine.getAttachmentManager();
+        
+        if( filename == null || filename.trim().length() == 0 )
+        {
+            log.error("Empty file name given.");
+            
+            throw new RedirectException("Empty file name given.",
+                                        errorPage);
+        }
+        
+        //
+        //  Should help with IE 5.22 on OSX
+        //
+        filename = filename.trim();
+        
+        log.debug("file="+filename);
+        
+        if( data == null )
+        {
+            log.error("File could not be opened.");
+            
+            throw new RedirectException("File could not be opened.",
+                                        errorPage);
+        }
+        
+        //
+        //  Check whether we already have this kind of a page.
+        //  If the "page" parameter already defines an attachment
+        //  name for an update, then we just use that file.
+        //  Otherwise we create a new attachment, and use the
+        //  filename given.  Incidentally, this will also mean
+        //  that if the user uploads a file with the exact
+        //  same name than some other previous attachment,
+        //  then that attachment gains a new version.
+        //
+        
+        Attachment att = mgr.getAttachmentInfo( context.getPage().getName() );
+        
+        if( att == null )
+        {
+            att = new Attachment( parentPage, filename );
+            created = true;
+        }
+        
+        //
+        //  Check if we're allowed to do this?
+        //
+        
+        Permission permission = new PagePermission(att, "upload");
+        if( m_engine.getAuthorizationManager().checkPermission( context,
+                                                                permission ) )
+        {
+            if( user != null )
+            {
+                att.setAuthor( user.getName() );
+            }
+            
+            m_engine.getAttachmentManager().storeAttachment( att, data );
+            
+            log.info( "User " + user + " uploaded attachment to " + parentPage + 
+                      " called "+filename+", size " + att.getSize() );
+        }
+        else
+        {
+            throw new RedirectException("No permission to upload a file",
+                                        errorPage);
+        }
+        
+        return created;
+    }
+    
+    
+    
     /**
      * Produces debug output listing parameters and files.
      */

@@ -149,7 +149,7 @@ public class RawPagesDavProvider extends WikiDavProvider
     
     public String getURL( DavPath path )
     {
-        return m_engine.getURL( WikiContext.NONE, "dav/raw/"+path.getPath(),
+        return m_engine.getURL( WikiContext.NONE, DavUtil.combineURL("dav/raw/",path.getPath()),
                                 null, true );
     }
     

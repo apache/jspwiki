@@ -83,7 +83,7 @@ public class AttachmentDavProvider implements DavProvider
             {
                 Attachment att = (Attachment) i.next();
             
-                DavPath thisPath = new DavPath( path );
+                DavPath thisPath = new DavPath( "/" );
                 
                 thisPath.append( att.getName() );
             
@@ -149,7 +149,11 @@ public class AttachmentDavProvider implements DavProvider
 
     public String getURL(DavPath path)
     {
-        return m_engine.getURL( WikiContext.ATTACH, path.getPath(), null, true );
+        String p = path.getPath();
+        
+        if( p.startsWith("/") ) p = p.substring( 1 );
+        
+        return m_engine.getURL( WikiContext.ATTACH, p, null, true );
     }
 
 }

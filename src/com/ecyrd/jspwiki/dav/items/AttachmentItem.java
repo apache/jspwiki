@@ -46,9 +46,6 @@ public class AttachmentItem extends PageDavItem
         return set;
     }
     
-    /* (non-Javadoc)
-     * @see com.ecyrd.jspwiki.dav.items.PageDavItem#getHref()
-     */
     public String getHref()
     {
         return m_provider.getURL( m_path );

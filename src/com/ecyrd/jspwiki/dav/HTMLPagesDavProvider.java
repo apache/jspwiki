@@ -101,7 +101,7 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
     
     public String getURL( DavPath path )
     {
-        return m_engine.getURL( WikiContext.NONE, "dav/html/"+path.getPath(),
+        return m_engine.getURL( WikiContext.NONE, DavUtil.combineURL("dav/html",path.getPath()),
                                 null, true );
     }
 

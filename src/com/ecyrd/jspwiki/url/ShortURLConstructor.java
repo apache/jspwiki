@@ -54,7 +54,7 @@ public class ShortURLConstructor
     {
         super.initialize( engine, properties );
         
-        m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, "wiki/" );
+        m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, null );
         
         if( m_urlPrefix == null )
         {
@@ -65,11 +65,12 @@ public class ShortURLConstructor
             
                 String path = url.getPath();
             
-                m_urlPrefix = path+"wiki/";    
+                m_urlPrefix = path+"wiki/";
             }
             catch( MalformedURLException e )
             {
                 log.error( "Malformed base URL!" );
+                m_urlPrefix = "/wiki/"; // Just a guess.
             }
         }
 

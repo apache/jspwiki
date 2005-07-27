@@ -58,5 +58,24 @@ public class DavUtil
         
         res.getWriter().print( txt );
     }
-    
+
+    public static String combineURL( String part1, String part2 )
+    {
+        if( part1.endsWith("/") )
+        {
+            if( part2.startsWith("/") )
+            {
+                part2 = part2.substring(1);
+            }
+        }
+        else
+        {
+            if( !part2.startsWith("/") )
+            {
+                return part1+"/"+part2;
+            }
+        }
+        
+        return part1+part2;
+    }
 }

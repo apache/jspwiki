@@ -25,7 +25,8 @@ public class DavPath
 {
     private ArrayList m_parts = new ArrayList();
     
-    private boolean   m_isAbsolute = false;
+    private boolean   m_isAbsolute  = false;
+    private boolean   m_isDirectory = false;
     
     /**
      * Creates a new, empty path.
@@ -43,6 +44,7 @@ public class DavPath
     {
         m_parts.addAll( dp.m_parts );
         m_isAbsolute = dp.m_isAbsolute;
+        m_isDirectory = dp.m_isDirectory;
     }
     
     /**
@@ -55,6 +57,9 @@ public class DavPath
         if( path == null )
         {
             path = "/";
+            m_isDirectory = true;
+            m_isAbsolute = true;
+            return;
         }
         
         StringTokenizer st = new StringTokenizer( path, "/" );
@@ -63,14 +68,18 @@ public class DavPath
         {
             String part = st.nextToken();
             
-            m_parts.add( part );
+            //
+            // Skip empty components so that // gets transformed to a single /
+            //
+            if( part.length() > 0 )
+                m_parts.add( part );
         }
         
         //
-        //  Add an empty path identifier
+        //  Figure out path attributes
         //
         if( path.endsWith("/") )
-            m_parts.add("");
+            m_isDirectory = true;
         
         m_isAbsolute = path.startsWith("/");
     }
@@ -83,6 +92,7 @@ public class DavPath
     public void append( DavPath dp )
     {
         m_parts.addAll( dp.m_parts );
+        m_isDirectory = dp.m_isDirectory;
     }
     
     /**
@@ -116,7 +126,7 @@ public class DavPath
      */
     public boolean isDirectory()
     {
-        return isRoot() || m_parts.get( m_parts.size()-1 ).equals("");
+        return isRoot() || m_isDirectory;
     }
     
     /**
@@ -128,7 +138,7 @@ public class DavPath
     {
         StringBuffer result = new StringBuffer( m_isAbsolute ? "/" : "" );
    
-        for( int i = 0; i < m_parts.size()-1; i++ )
+        for( int i = 0; i < m_parts.size()-(m_isDirectory ? 0 : 1); i++ )
         {
             result.append( (String)m_parts.get(i) );
             result.append( "/" );
@@ -146,7 +156,7 @@ public class DavPath
      */
     public String filePart()
     {
-        if( m_parts.size() > 0 )
+        if( m_parts.size() > 0 && !m_isDirectory )
             return (String) m_parts.get( m_parts.size()-1 );
        
         return "";
@@ -163,7 +173,7 @@ public class DavPath
         if( isRoot() ) return "/";
         if( !isDirectory() ) return filePart();
         
-        return (String) m_parts.get( m_parts.size()-2 );
+        return (String) m_parts.get( m_parts.size()-1 );
     }
     
     /**
@@ -194,6 +204,7 @@ public class DavPath
            
         // Only full copies are absolute paths
         dp.m_isAbsolute = (idx == 0); 
+        dp.m_isDirectory = m_isDirectory;
         
         return dp;
     }
