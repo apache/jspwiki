@@ -1,5 +1,12 @@
 2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * 2.3.9
+
+        * A bunch of miscallaneous fixes to WebDAV to get paths
+        to function correctly.
+
+2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * 2.3.8
 
         * Merged in fixes from 2.2.29.
