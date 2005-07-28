@@ -10,13 +10,9 @@ import javax.servlet.ServletContext;
 
 import org.jdom.Element;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
 import com.ecyrd.jspwiki.dav.DavPath;
-import com.ecyrd.jspwiki.dav.DavProvider;
-import com.sun.corba.se.connection.GetEndPointInfoAgainException;
 
 /**
  *  @author jalkanen
