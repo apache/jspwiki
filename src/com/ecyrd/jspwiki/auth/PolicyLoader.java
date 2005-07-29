@@ -74,212 +74,230 @@ import com.sun.security.auth.login.ConfigFile;
  * </p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2005-07-23 20:39:38 $
+ * @version $Revision: 1.2 $ $Date: 2005-07-29 14:48:53 $
  * @since 2.3
  */
-public class PolicyLoader {
-
-  /**
-   * Private constructor to prevent direct instantiation.
-   */
-  private PolicyLoader() {
-  }
-
-  /**
-   * <p>
-   * Returns <code>true</code> if the JAAS login configuration exists.
-   * Normally, JAAS is configured by setting the system property
-   * <code>java.security.auth.login.config</code> at JVM startup.
-   * </p>
-   * <p>
-   * This method attempts to perform a highly privileged operation. If the JVM
-   * runs with a SecurityManager, the following permission must be granted to
-   * the codesource containing this class:
-   * </p>
-   * <code><ul>
-   * <li>permission javax.security.auth.AuthPermission,
-   * "getLoginConfiguration"</li>
-   * </ul></code>
-   * 
-   * @return <code>true</code> if
-   *         {@link javax.security.auth.login.Configuration#getConfiguration()}
-   *         is not <code>null</code> ;&nbsp; <code>false</code> otherwise.
-   * @throws SecurityException if the codesource containing this class posesses
-   *           insufficient permmissions when running with a SecurityManager
-   */
-  public static boolean isJaasConfigured() throws SecurityException {
-    Boolean configured = (Boolean) AccessController
+public class PolicyLoader 
+{    
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private PolicyLoader() 
+    {
+    }
+    
+    /**
+     * <p>
+     * Returns <code>true</code> if the JAAS login configuration exists.
+     * Normally, JAAS is configured by setting the system property
+     * <code>java.security.auth.login.config</code> at JVM startup.
+     * </p>
+     * <p>
+     * This method attempts to perform a highly privileged operation. If the JVM
+     * runs with a SecurityManager, the following permission must be granted to
+     * the codesource containing this class:
+     * </p>
+     * <code><ul>
+     * <li>permission javax.security.auth.AuthPermission,
+     * "getLoginConfiguration"</li>
+     * </ul></code>
+     * 
+     * @return <code>true</code> if
+     *         {@link javax.security.auth.login.Configuration#getConfiguration()}
+     *         is not <code>null</code> ;&nbsp; <code>false</code> otherwise.
+     * @throws SecurityException if the codesource containing this class posesses
+     *           insufficient permmissions when running with a SecurityManager
+     */
+    public static boolean isJaasConfigured() throws SecurityException 
+    {
+        Boolean configured = (Boolean) AccessController
         .doPrivileged(new PrivilegedAction() {
-
-          public Object run() {
-            boolean isConfigured = false;
-            try {
-              Configuration config = Configuration.getConfiguration();
-              isConfigured = (config != null);
-            }
-            catch (SecurityException e) {
-            }
-            return (Boolean.valueOf(isConfigured));
-          };
+            
+            public Object run() 
+            {
+                boolean isConfigured = false;
+                try 
+                {
+                    Configuration config = Configuration.getConfiguration();
+                    isConfigured = (config != null);
+                }
+                catch (SecurityException e) {}
+                return (Boolean.valueOf(isConfigured));
+            };
         });
-    return configured.booleanValue();
-  }
-
-  /**
-   * <p>
-   * Returns <code>true</code> if a custom Java security policy configuration
-   * exists. Normally, the Java security policy is configured by setting the
-   * system property <code>java.security.policy</code> at JVM startup.
-   * </p>
-   * <p>
-   * This method attempts to perform a highly privileged operation. If the JVM
-   * runs with a SecurityManager, the following permission must be granted to
-   * the codesource containing this class:
-   * </p>
-   * <code><ul>
-   * <li>permission java.util.PropertyPermission
-   * "java.security.policy", "read"</li>
-   * </ul></code>
-   * 
-   * @return <code>true</code> if the system property
-   *         <code>java.security.policy</code> is not <code>null</code>;
-   *         &nbsp; <code>false</code> otherwise.
-   * @throws SecurityException if the codesource containing this class posesses
-   *           insufficient permmissions when running with a SecurityManager
-   */
-  public static boolean isSecurityPolicyConfigured() throws SecurityException {
-    String policy = (String) AccessController
+        return configured.booleanValue();
+    }
+    
+    /**
+     * <p>
+     * Returns <code>true</code> if a custom Java security policy configuration
+     * exists. Normally, the Java security policy is configured by setting the
+     * system property <code>java.security.policy</code> at JVM startup.
+     * </p>
+     * <p>
+     * This method attempts to perform a highly privileged operation. If the JVM
+     * runs with a SecurityManager, the following permission must be granted to
+     * the codesource containing this class:
+     * </p>
+     * <code><ul>
+     * <li>permission java.util.PropertyPermission
+     * "java.security.policy", "read"</li>
+     * </ul></code>
+     * 
+     * @return <code>true</code> if the system property
+     *         <code>java.security.policy</code> is not <code>null</code>;
+     *         &nbsp; <code>false</code> otherwise.
+     * @throws SecurityException if the codesource containing this class posesses
+     *           insufficient permmissions when running with a SecurityManager
+     */
+    public static boolean isSecurityPolicyConfigured() throws SecurityException 
+    {
+        String policy = (String) AccessController
         .doPrivileged(new PrivilegedAction() {
-
-          public Object run() {
-            return System.getProperty("java.security.policy");
-          }
+            
+            public Object run() 
+            {
+                return System.getProperty("java.security.policy");
+            }
         });
-    return (policy != null);
-  }
-
-  /**
-   * Sets the JAAS login configuration file, overwriting the existing
-   * configuration. If the configuration file pointed to by the URL does not
-   * exist, a SecurityException is thrown.
-   * <p>
-   * This method attempts to perform several highly privileged operations. If
-   * the JVM runs with a SecurityManager, the following permissions must be
-   * granted to the codesource containing this class:
-   * </p>
-   * <code><ul>
-   * <li>permission java.util.PropertyPermission
-   * "java.security.auth.login.config", "write"</li>
-   * <li>permission javax.security.auth.AuthPermission,
-   * "getLoginConfiguration"</li>
-   * <li>permission javax.security.auth.AuthPermission,
-   * "setLoginConfiguration"</li>
-   * </ul></code>
-   * 
-   * @param url the URL of the login configuration file. If the URL contains
-   *          properties such as <code>${java.home}</code>, they will be
-   *          expanded.
-   * @throws SecurityException if:
-   *           <ul>
-   *           <li>the supplied URL is <code>null</code></li>
-   *           <li>properties cannot be expanded</li>
-   *           <li>the codesource containing this class does not posesses
-   *           sufficient permmissions when running with a SecurityManager</li>
-   *           </ul>
-   */
-  public static void setJaasConfiguration(final URL url)
-      throws SecurityException {
-    if (url == null) {
-      throw new SecurityException("URL for JAAS configuration cannot be null.");
+        return (policy != null);
     }
-    final String new_url;
-    try {
-      new_url = PropertyExpander.expand(url.toExternalForm());
+    
+    /**
+     * Sets the JAAS login configuration file, overwriting the existing
+     * configuration. If the configuration file pointed to by the URL does not
+     * exist, a SecurityException is thrown.
+     * <p>
+     * This method attempts to perform several highly privileged operations. If
+     * the JVM runs with a SecurityManager, the following permissions must be
+     * granted to the codesource containing this class:
+     * </p>
+     * <code><ul>
+     * <li>permission java.util.PropertyPermission
+     * "java.security.auth.login.config", "write"</li>
+     * <li>permission javax.security.auth.AuthPermission,
+     * "getLoginConfiguration"</li>
+     * <li>permission javax.security.auth.AuthPermission,
+     * "setLoginConfiguration"</li>
+     * </ul></code>
+     * 
+     * @param url the URL of the login configuration file. If the URL contains
+     *          properties such as <code>${java.home}</code>, they will be
+     *          expanded.
+     * @throws SecurityException if:
+     *           <ul>
+     *           <li>the supplied URL is <code>null</code></li>
+     *           <li>properties cannot be expanded</li>
+     *           <li>the codesource containing this class does not posesses
+     *           sufficient permmissions when running with a SecurityManager</li>
+     *           </ul>
+     */
+    public static void setJaasConfiguration(final URL url)
+    throws SecurityException 
+    {
+        if (url == null) 
+        {
+            throw new SecurityException("URL for JAAS configuration cannot be null.");
+        }
+        
+        final String new_url;
+        try 
+        {
+            new_url = PropertyExpander.expand(url.toExternalForm());
+        }
+        catch (PropertyExpander.ExpandException peee) 
+        {
+            throw new SecurityException("Cannot expand: " + peee.getMessage());
+        }
+        
+        // Now, set the new config
+        AccessController.doPrivileged(new PrivilegedAction() {
+            
+            public Object run() 
+            {
+                System.setProperty("java.security.auth.login.config", new_url);
+                Configuration config = new ConfigFile();
+                Configuration.setConfiguration(config);
+                return null;
+            }
+        });
     }
-    catch (PropertyExpander.ExpandException peee) {
-      throw new SecurityException("Cannot expand: " + peee.getMessage());
+    
+    /**
+     * <p>
+     * Sets the Java security policy, overwriting any custom policy settings. This
+     * method sets the value of the system property
+     * <code>java.security.policy</code> to the supplied URL, then calls
+     * {@link java.security.Policy#setPolicy(java.security.Policy)}&nbsp;with a
+     * newly-instantiated instance of
+     * <code>sun.security.provider.PolicyFile</code> (the J2SE default
+     * implementation). The new Policy, once set, reloads the default system
+     * policies enumerated by the <code>policy.url.<i>n</i></code> entries in
+     * <code><i>JAVA_HOME</i>/lib/security/java.policy</code>, followed by the
+     * user-supplied policy file.
+     * </p>
+     * <p>
+     * This method attempts to perform several highly privileged operations. If
+     * the JVM runs with a SecurityManager, the following permissions must be
+     * granted to the codesource containing this class:
+     * </p>
+     * <code><ul>
+     * <li>permission java.security.SecurityPermission, "getPolicy"
+     * </li>
+     * <li>permission java.security.SecurityPermission, "setPolicy"
+     * </li>
+     * <li>permission java.util.PropertyPermission}
+     * "java.security.policy", "write"</li>
+     * </ul></code>
+     * 
+     * @param url the URL of the security policy file. If the URL contains
+     *          properties such as <code>${java.home}</code>, they will be
+     *          expanded.
+     * @throws SecurityException if:
+     *           <ul>
+     *           <li>the supplied URL is <code>null</code></li>
+     *           <li>properties cannot be expanded</li>
+     *           <li>the codesource containing this class does not posesses
+     *           sufficient permmissions when running with a SecurityManager</li>
+     *           <li>the JVM's current Policy implementation is not of type
+     *           <code>sun.security.provider.PolicyFile</code></li>
+     *           </ul>
+     */
+    public static void setSecurityPolicy(URL url) throws SecurityException 
+    {
+        if (url == null) 
+        {
+            throw new SecurityException("URL for security policy cannot be null.");
+        }
+        
+        final String new_url;
+        try 
+        {
+            new_url = PropertyExpander.expand(url.toExternalForm());
+        }
+        catch (PropertyExpander.ExpandException peee) 
+        {
+            throw new SecurityException("Cannot expand: " + peee.getMessage());
+        }
+        
+        if (!(Policy.getPolicy() instanceof PolicyFile)) 
+        {
+            throw new SecurityException(
+            "Policy implementation must be of type sun.security.provider.PolicyFile.");
+        }
+        
+        // Now, set the new policy
+        AccessController.doPrivileged(new PrivilegedAction() {
+            
+            public Object run() 
+            {
+                Policy.setPolicy(null);
+                System.setProperty("java.security.policy", new_url);
+                Policy policy = new PolicyFile();
+                Policy.setPolicy(policy);
+                return null;
+            }
+        });
     }
-
-    // Now, set the new config
-    AccessController.doPrivileged(new PrivilegedAction() {
-
-      public Object run() {
-        System.setProperty("java.security.auth.login.config", new_url);
-        Configuration config = new ConfigFile();
-        Configuration.setConfiguration(config);
-        return null;
-      }
-    });
-  }
-
-  /**
-   * <p>
-   * Sets the Java security policy, overwriting any custom policy settings. This
-   * method sets the value of the system property
-   * <code>java.security.policy</code> to the supplied URL, then calls
-   * {@link java.security.Policy#setPolicy(java.security.Policy)}&nbsp;with a
-   * newly-instantiated instance of
-   * <code>sun.security.provider.PolicyFile</code> (the J2SE default
-   * implementation). The new Policy, once set, reloads the default system
-   * policies enumerated by the <code>policy.url.<i>n</i></code> entries in
-   * <code><i>JAVA_HOME</i>/lib/security/java.policy</code>, followed by the
-   * user-supplied policy file.
-   * </p>
-   * <p>
-   * This method attempts to perform several highly privileged operations. If
-   * the JVM runs with a SecurityManager, the following permissions must be
-   * granted to the codesource containing this class:
-   * </p>
-   * <code><ul>
-   * <li>permission java.security.SecurityPermission, "getPolicy"
-   * </li>
-   * <li>permission java.security.SecurityPermission, "setPolicy"
-   * </li>
-   * <li>permission java.util.PropertyPermission}
-   * "java.security.policy", "write"</li>
-   * </ul></code>
-   * 
-   * @param url the URL of the security policy file. If the URL contains
-   *          properties such as <code>${java.home}</code>, they will be
-   *          expanded.
-   * @throws SecurityException if:
-   *           <ul>
-   *           <li>the supplied URL is <code>null</code></li>
-   *           <li>properties cannot be expanded</li>
-   *           <li>the codesource containing this class does not posesses
-   *           sufficient permmissions when running with a SecurityManager</li>
-   *           <li>the JVM's current Policy implementation is not of type
-   *           <code>sun.security.provider.PolicyFile</code></li>
-   *           </ul>
-   */
-  public static void setSecurityPolicy(URL url) throws SecurityException {
-    if (url == null) {
-      throw new SecurityException("URL for security policy cannot be null.");
-    }
-    final String new_url;
-    try {
-      new_url = PropertyExpander.expand(url.toExternalForm());
-    }
-    catch (PropertyExpander.ExpandException peee) {
-      throw new SecurityException("Cannot expand: " + peee.getMessage());
-    }
-
-    if (!(Policy.getPolicy() instanceof PolicyFile)) {
-      throw new SecurityException(
-          "Policy implementation must be of type sun.security.provider.PolicyFile.");
-    }
-
-    // Now, set the new policy
-    AccessController.doPrivileged(new PrivilegedAction() {
-
-      public Object run() {
-        Policy.setPolicy(null);
-        System.setProperty("java.security.policy", new_url);
-        Policy policy = new PolicyFile();
-        Policy.setPolicy(policy);
-        return null;
-      }
-    });
-  }
-
+    
 }
