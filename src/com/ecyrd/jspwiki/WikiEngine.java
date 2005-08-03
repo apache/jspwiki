@@ -2108,6 +2108,15 @@ public class WikiEngine
      * @since 2.3
      */
     
+    /**
+     * Returns the UserManager employed by this WikiEngine.
+     * @since 2.3
+     */
+    public UserManager getUserManager()
+    {
+        return m_userManager;
+    }
+    
     // FIXME: Must not throw RuntimeException, but something else.
     public UserDatabase getUserDatabase()
     {
