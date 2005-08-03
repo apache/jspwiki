@@ -29,25 +29,39 @@
 
 <div>
     <wiki:UserCheck status="anonymous">
-        <p>
-        <wiki:LinkTo page="UserPreferences">Set your user name</wiki:LinkTo>
-        <br/>or <a href="Login.jsp">Log in</a>
-        </p>
+      <p>
+        <a href="Register.jsp">Register</a> or 
+        <wiki:UserCheck status="customAuth">
+          <a href="Login.jsp">Log in</a>
+        </wiki:UserCheck>
+        <wiki:UserCheck status="containerAuth">
+          <a href="LoginRedirect.jsp">Log in</a>
+        </wiki:UserCheck>
+      </p>
     </wiki:UserCheck>
-    
+
     <wiki:UserCheck status="asserted">
       <p>
-      <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
-      <br/>
-      <a href="Logout.jsp">Log out</a>
+        <a href="Register.jsp">Register</a> or 
+        <wiki:UserCheck status="customAuth">
+          <a href="Login.jsp">Log in</a>
+        </wiki:UserCheck>
+        <wiki:UserCheck status="containerAuth">
+          <a href="LoginRedirect.jsp">Log in</a>
+        </wiki:UserCheck>
       </p>
     </wiki:UserCheck>
 
     <wiki:UserCheck status="authenticated">
       <p>
-      <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
-      <br/>
-      <a href="Logout.jsp">Log out</a>
+        <wiki:UserProfile property="new">
+          <a href="Register.jsp">Register</a>
+        </wiki:UserProfile>
+        <wiki:UserProfile property="exists">
+          <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
+        </wiki:UserProfile>
+        <br/>
+        <a href="Logout.jsp">Log out</a>
       </p>
     </wiki:UserCheck>
 </div>
