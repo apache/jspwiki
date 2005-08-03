@@ -1,5 +1,7 @@
 package com.ecyrd.jspwiki.auth;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -255,10 +257,6 @@ public class AuthorizationManagerTest extends TestCase
         profile.setWikiName("JanneJalkanen");
         try {
             m_engine.getUserDatabase().save( profile );
-        }
-        catch (DuplicateUserException e)
-        {
-            assertFalse("Duplicate user: " + e.getLocalizedMessage(), true);
         }
         catch (WikiSecurityException e)
         {
