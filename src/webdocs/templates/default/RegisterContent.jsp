@@ -22,30 +22,35 @@
     }
 %>
 
-      <h3>Your <wiki:Variable var="applicationname" /> Profile</h3>
-      <p>Manage your wiki profile here.</p>
+      <h3>Your <wiki:Variable var="applicationname" /> profile</h3>
+      <p>Create your wiki profile here.</p>
       
-      <form action="<wiki:Variable var="baseURL"/>UserPreferences.jsp" 
+      <form action="<wiki:Variable var="baseURL"/>Register.jsp" 
             method="POST"
             accept-charset="UTF-8">
          <table border="0">
-
+         
            <!-- Login name -->
            <tr>
              <td width="15%">
                <b>Login name:</b>
              </td>
              <td>
-               <wiki:UserProfile property='loginname'/>
+               <wiki:UserCheck status="customAuth">
+                 <input type="text" name="loginname" size="30" value="<wiki:UserProfile property="loginname"/>" />
+               </wiki:UserCheck>
+               <wiki:UserCheck status="containerAuth">
+                 <wiki:UserProfile property="loginname"/>
+               </wiki:UserCheck>
              </td>
            </tr>
+
            <tr>
              <td />
              <td colspan="2">
                <wiki:UserCheck status="customAuth">
-                 <i>This is your login id; it cannot be changed.
+                 <i>This is your login id; once set, it cannot be changed.
                     It is only used for authentication, not for page access control.</i>
-                 </i>
                </wiki:UserCheck>
                <wiki:UserCheck status="containerAuth">
                  <i>This is your login id. It was set by the web container and 
@@ -61,13 +66,13 @@
                  <b>Password:</b>
                </td>
                <td>
-                 <input type="password" name="password" size="30" value="" />
+                  <input type="password" name="password" size="30" value="" />
                </td>
              </tr>
              <tr>
                <td />
                <td colspan="2">
-                 <i>Sets your account password. Leave blank if you don't want to change it now.</i>
+                 <i>Sets your account password. It may not be blank.</i>
                </td>
              </tr>
            </wiki:UserCheck>
@@ -78,7 +83,7 @@
                <b>Wiki name:</b>
              </td>
              <td>
-               <wiki:UserProfile property='wikiname'/>
+                <input type="text" name="wikiname" size="30" value="<wiki:UserProfile property="wikiname"/>" />
              </td>
            </tr>
            <tr>
@@ -87,14 +92,14 @@
                <i>This must be a proper WikiName, and cannot contain spaces or punctuation.
              </td>
            </tr>
-
+           
            <!-- Full name -->
            <tr>
              <td width="15%">
                <b>Full name:</b>
              </td>
              <td>
-               <wiki:UserProfile property='fullname'/>
+                <input type="text" name="fullname" size="30" value="<wiki:UserProfile property="fullname"/>" />
              </td>
            </tr>
            <tr>
@@ -122,28 +127,23 @@
            </tr>
            
          </table>
+           
+           <!-- Any errors? -->
+           <%
+           if ( errors != null && errors.size() > 0 )
+           { 
+               out.println("<blockquote><p>Could not save profile:<ul>");
+               for ( Iterator it = errors.iterator(); it.hasNext(); )
+               {
+                   out.println( "<li>" + it.next().toString() + "</li>" );
+               }
+               out.println("</ul></p></blockquote>");
+           }
+           %>
 
-        <!-- Any errors? -->
-        <%
-        if ( errors != null && errors.size() > 0 )
-        { 
-            out.println("<blockquote><p>Could not save profile:<ul>");
-            for ( Iterator it = errors.iterator(); it.hasNext(); )
-            {
-                out.println( "<li>" + it.next().toString() + "</li>" );
-            }
-            out.println("</ul></p></blockquote>");
-        }
-        %>
-
-        <p>Access control lists or wiki groups containing your identity
-           should specify <b><wiki:UserProfile property="wikiname"/></b> or
-           <b><wiki:UserProfile property="fullname"/></b>.</p>
-        <p>Click 'save profile' to change your wiki profile.
-           You created your profile on <wiki:UserProfile property="created"/>,
-           and last saved it on <wiki:UserProfile property="modified"/></p>
-        <input type="submit" name="ok" value="Save profile" />
-        <input type="hidden" name="action" value="save" />
+         <p>Click 'save profile' to change your wiki profile.</p>
+         <input type="submit" name="ok" value="Save profile" />
+         <input type="hidden" name="action" value="save" />
       </form>
 
       <wiki:UserCheck status="assertionsAllowed">
@@ -152,13 +152,4 @@
            requiring additional authentication. To use this feature, your browser
            must accept cookies from this website. When you click 'save profile,'
            the cookie will be saved by your browser.</p>
-        <p>If you want this wiki to "forget" your identity, you will need to remove
-           the user cookie from your browser. Click the 'remove cookie' button
-           to do that.</p>
-        <form action="<wiki:Variable var="baseURL"/>UserPreferences.jsp"
-              method="POST"
-              accept-charset="UTF-8">
-        <input type="submit" name="clear" value="Remove cookie" />
-        </form>
       </wiki:UserCheck>
-
