@@ -20,11 +20,16 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.Properties;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
@@ -144,12 +149,224 @@ public class UserManager
     }
 
     /**
-     *  This is a database that gets used if nothing else is available.  It does
-     *  nothing of note - it just mostly thorws NoSuchPrincipalExceptions
-     *  if someone tries to log in.
-     *  
-     *  @author jalkanen
-     *
+     * Retrieves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the
+     * user in a wiki context. The user may be anonymous, in which case the
+     * UserProfile will be newly initialized. If a UserProfile needs to be
+     * initialized, its {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
+     * method will return <code>true</code>. In addition, its login name will
+     * be set to the name of
+     * {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}. This is so
+     * that the user's login name automatically populates the new profile,
+     * regardless of whether it was "logged in" via the web container, a cookie
+     * login module, or an anonymous login module.
+     * @param context the wiki context, which may not be <code>null</code>
+     * @return the user's profile
+     * @throws WikiSecurityException if the database returns an exception
+     * @throws IllegalStateException if a new UserProfile was created, but its
+     *             {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
+     *             method returns <code>false</code>.
+     */
+    public UserProfile getUserProfile( WikiContext context ) throws WikiSecurityException
+    {
+        // Figure out if this is a new profile
+        Principal user = context.getCurrentUser();
+        UserProfile profile;
+        try
+        {
+            profile = m_database.find( user.getName() );
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            profile = m_database.newProfile();
+            if ( !profile.isNew() )
+            {
+                throw new IllegalStateException(
+                        "New profile should be marked 'new'. Check your UserProfile implementation." );
+            }
+            Principal principal = context.getWikiSession().getLoginPrincipal();
+            profile.setLoginName( principal.getName() );
+        }
+        return profile;
+    }
+
+    /**
+     * Saves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the user in
+     * a wiki context. This method verifies that a user profile to be saved
+     * doesn't collide with existing profiles; that is, the login name, wiki
+     * name or full name is already used by another profile. If the profile
+     * collides, a DuplicateUserException is thrown. After saving the profile,
+     * the user database changes are committed, and the user's credential set is
+     * refreshed.
+     * @param context the wiki context, which may not be <code>null</code>
+     * @param profile the user profile, which may not be <code>null</code>
+     */
+    public void setUserProfile( WikiContext context, UserProfile profile ) throws WikiSecurityException,
+            DuplicateUserException
+    {
+
+        boolean newProfile = profile.isNew();
+        UserProfile oldProfile = getUserProfile( context );
+
+        // User profiles that may already have wikiname, fullname or loginname
+        UserProfile otherProfile;
+        try
+        {
+            otherProfile = m_database.findByLoginName( profile.getLoginName() );
+            if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
+            {
+                throw new DuplicateUserException( "The login name '" + profile.getLoginName() + "' is already taken." );
+            }
+        }
+        catch( NoSuchPrincipalException e )
+        {
+        }
+        try
+        {
+            otherProfile = m_database.findByFullName( profile.getFullname() );
+            if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
+            {
+                throw new DuplicateUserException( "The full name '" + profile.getFullname() + "' is already taken." );
+            }
+        }
+        catch( NoSuchPrincipalException e )
+        {
+        }
+        try
+        {
+            otherProfile = m_database.findByWikiName( profile.getWikiName() );
+            if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
+            {
+                throw new DuplicateUserException( "The wiki name '" + profile.getWikiName() + "' is already taken." );
+            }
+        }
+        catch( NoSuchPrincipalException e )
+        {
+        }
+
+        Date modDate = new Date();
+        if ( newProfile )
+        {
+            profile.setCreated( modDate );
+        }
+        profile.setLastModified( modDate );
+        m_database.save( profile );
+        m_database.commit();
+
+        // Refresh the credential set
+        AuthenticationManager mgr = m_engine.getAuthenticationManager();
+        if ( newProfile )
+        {
+            mgr.loginCustom( profile.getLoginName(), profile.getPassword(), context.getHttpRequest() );
+        }
+        else
+        {
+            mgr.refreshCredentials( context.getWikiSession() );
+        }
+    }
+
+    /**
+     * Extracts user profile parameters from the HTTP request and populates a
+     * new UserProfile with them. For security reasons, the password attribute
+     * is <i>not</i> extracted. Attributes that are not parsed are set to
+     * <code>null</code>.
+     * @param request the current HTTP request
+     * @return a new, populated user profile
+     */
+    public UserProfile parseProfile( WikiContext context )
+    {
+        // TODO:this class is probably the wrong place for this method...
+
+        UserProfile profile = m_database.newProfile();
+        UserProfile existingProfile = null;
+        try
+        {
+            // Look up the existing profile, if it exists
+            existingProfile = getUserProfile( context );
+        }
+        catch( WikiSecurityException e )
+        {
+        }
+        HttpServletRequest request = context.getHttpRequest();
+
+        // Set e-mail to user's supplied value; if null, use existing value
+        String email = request.getParameter( "email" );
+        email = isNotBlank( email ) ? email : existingProfile.getEmail();
+        profile.setEmail( email );
+
+        // Set password to user's supplied value; if null, skip it
+        String password = request.getParameter( "password" );
+        password = isNotBlank( password ) ? password : null;
+
+        // For new profiles, we use what the user supplied for
+        // full name and wiki name
+        String fullname = request.getParameter( "fullname" );
+        String wikiname = request.getParameter( "wikiname" );
+        if ( existingProfile.isNew() )
+        {
+            fullname = isNotBlank( fullname ) ? fullname : null;
+            wikiname = isNotBlank( wikiname ) ? wikiname : null;
+        }
+        else
+        {
+            fullname = existingProfile.getFullname();
+            wikiname = existingProfile.getWikiName();
+        }
+        profile.setFullname( fullname );
+        profile.setWikiName( wikiname );
+
+        // For all profiles, we get the login principal from the looked-up
+        // profile
+        profile.setLoginName( existingProfile.getLoginName() );
+
+        // Always use existing profile's lastModified and Created properties
+        profile.setCreated( existingProfile.getCreated() );
+        profile.setLastModified( existingProfile.getLastModified() );
+
+        return profile;
+    }
+
+    /**
+     * Returns <code>true</code> if a supplied string is null or blank
+     * @param parameter
+     */
+    private static boolean isNotBlank( String parameter )
+    {
+        return ( parameter != null && parameter.length() > 0 );
+    }
+
+    /**
+     * Validates a user profile, and appends any errors to a user-supplied Set
+     * of error strings.
+     * @param profile the supplied UserProfile
+     * @param errors the set of error strings
+     */
+    public void validateProfile( UserProfile profile, boolean isNew, Set errors )
+    {
+        // TODO:this class is probably the wrong place for this method...
+
+        if ( profile.getFullname() == null )
+        {
+            errors.add( "Full name cannot be blank" );
+        }
+        if ( profile.getLoginName() == null )
+        {
+            errors.add( "Login name cannot be blank" );
+        }
+        if ( profile.getWikiName() == null )
+        {
+            errors.add( "Wiki name cannot be blank" );
+        }
+        if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() && isNew && profile.getPassword() == null )
+        {
+            errors.add( "Password cannot be blank" );
+        }
+    }
+
+    /**
+     * This is a database that gets used if nothing else is available. It does
+     * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
+     * someone tries to log in.
+     * @author jalkanen
      */
     public class DummyUserDatabase implements UserDatabase
     {
@@ -198,7 +415,7 @@ public class UserManager
             return new DefaultUserProfile();
         }
 
-        public void save(UserProfile profile) throws WikiSecurityException, DuplicateUserException
+        public void save( UserProfile profile ) throws WikiSecurityException
         {
         }
 
