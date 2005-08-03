@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.AuthenticationManager;
 
 /**
  *  Includes the content if an user check validates.  This has
@@ -29,13 +30,24 @@ import com.ecyrd.jspwiki.WikiSession;
  *
  * <ul>
  * <li>"anonymous"     - the body of the tag is included 
- *                       if the user is completely unknown (no cookie, no password)
+ *                       if the user is completely unknown (no cookie, no password)</li>
  * <li>"asserted"      - the body of the tag is included 
  *                       if the user has either been named by a cookie, but
- *                       not been authenticated.
+ *                       not been authenticated.</li>
  * <li>"authenticated" - the body of the tag is included 
  *                       if the user is validated either through the container,
- *                       or by our own authentication.
+ *                       or by our own authentication.</li>
+ * <li>"assertionsAllowed"
+ *                     - the body of the tag is included 
+ *                       if wiki allows identities to be asserted using cookies.</li>
+ * <li>"assertionsNotAllowed"
+ *                     - the body of the tag is included 
+ *                       if wiki does <i>not</i> allow identities to 
+ *                       be asserted using cookies.</li>
+ * <li>"containerAuth" - the body of the tag is included 
+ *                       if the user is validated through the container.</li>
+ * <li>"customAuth"    - the body of the tag is included 
+ *                       if the user is validated through our own authentication.</li>
  * </ul>
  *
  *  If the old "exists" -argument is used, it corresponds as follows:
@@ -52,6 +64,14 @@ import com.ecyrd.jspwiki.WikiSession;
 public class UserCheckTag
     extends WikiTagBase
 {
+    private static final String ASSERTED = "asserted";
+    private static final String AUTHENTICATED = "authenticated";
+    private static final String ANONYMOUS = "anonymous";
+    private static final String ASSERTIONS_ALLOWED = "assertionsallowed";
+    private static final String ASSERTIONS_NOT_ALLOWED = "assertionsnotallowed";
+    private static final String CONTAINER_AUTH = "containerauth";
+    private static final String CUSTOM_AUTH = "customauth";
+
     private String m_status;
 
     public String getStatus()
@@ -61,7 +81,7 @@ public class UserCheckTag
 
     public void setStatus( String arg )
     {
-        m_status = arg;
+        m_status = arg.toLowerCase();
     }
 
 
@@ -75,11 +95,11 @@ public class UserCheckTag
     {
         if("true".equals(arg))
         {
-            m_status = "authenticated";
+            m_status = AUTHENTICATED;
         }
         else
         {
-            m_status = "anonymous";
+            m_status = ANONYMOUS;
         }
     }
 
@@ -94,23 +114,64 @@ public class UserCheckTag
     {
         WikiSession session = m_wikiContext.getWikiSession();
         String status = session.getStatus();
+        AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
+        boolean containerAuth = mgr.isContainerAuthenticated();
+        boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
 
         if( m_status != null )
         {
-            if ( "anonymous".equals( m_status )) {
-              if (status.equals(WikiSession.ANONYMOUS)) {
-                return EVAL_BODY_INCLUDE;
-              }
-            }
-            else if( "authenticated".equals( m_status )) { 
-              if (status.equals(WikiSession.AUTHENTICATED)) {
-                return EVAL_BODY_INCLUDE;
-              }
-            }
-            else if( "asserted".equals( m_status )) { 
-                if (status.equals(WikiSession.ASSERTED)) {
-                  return EVAL_BODY_INCLUDE;
+            if ( ANONYMOUS.equals( m_status )) 
+            {
+                if (status.equals(WikiSession.ANONYMOUS))
+                {
+                    return EVAL_BODY_INCLUDE;
                 }
+            }
+            else if( AUTHENTICATED.equals( m_status ))
+            { 
+                if (status.equals(WikiSession.AUTHENTICATED)) 
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+            }
+            else if( ASSERTED.equals( m_status )) 
+            { 
+                if (status.equals(WikiSession.ASSERTED)) 
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+            }
+            else if( ASSERTIONS_ALLOWED.equals( m_status ))
+            { 
+                if ( cookieAssertions )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+                return SKIP_BODY;
+            }
+            else if( ASSERTIONS_NOT_ALLOWED.equals( m_status ))
+            { 
+                if ( !cookieAssertions )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+                return SKIP_BODY;
+            }
+            else if( CONTAINER_AUTH.equals( m_status )) 
+            { 
+                if ( containerAuth )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+                return SKIP_BODY;
+            }
+            else if( CUSTOM_AUTH.equals( m_status )) 
+            { 
+                if ( !containerAuth )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+                return SKIP_BODY;
             }
         }
 
