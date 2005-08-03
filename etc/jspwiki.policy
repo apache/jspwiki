@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.2 2005-06-29 22:43:17 jalkanen Exp $
+// $Id: jspwiki.policy,v 1.3 2005-08-03 02:54:06 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -29,54 +29,66 @@
 // In addition, it is typically good practice to store jspwiki.policy
 // in the Tomcat config directory (CATALINA_HOME/conf).
 //
-
+//
 // -----------------------------------------------------------
 // And now, for the security policy
 //
-
-// JSPWiki signs its own JAR files so that the Java security polcicy
-// knows how to resolve our custom Wiki/PagePermissions. The keystore is here:
+//
+// JSPWiki signs its own JAR files so that the Java security polcicy knows how
+// to resolve our custom Wiki/PagePermissions. The keystore is specified here.
+// If the path is not fully qualified, the JRE will assume it's in the same directory
+// as this policy file.
 keystore "jspwiki.jks";
 
 // JSPWiki itself needs some basic privileges in order to operate.
-// Don't change these, because it will b0rk the system if you do.
-grant signedBy "jspwiki" {
-};
+// If you are running JSPWiki with a security manager, don't change these,
+// because it will totally b0rk the system.
+
+//grant signedBy "jspwiki" {
+//    permission java.security.SecurityPermission,   "getPolicy";
+//    permission java.security.SecurityPermission,   "setPolicy";
+//    permission java.util.PropertyPermission        "java.security.auth.login.config", "write";
+//    permission java.util.PropertyPermission        "java.security.policy", "read,write";
+//    permission javax.security.auth.AuthPermission, "getLoginConfiguration";
+//    permission javax.security.auth.AuthPermission, "setLoginConfiguration";
+//};
+
 
 // Unauthenticted users are allowed to view all pages (except group
-// pages. If you don't want anonymous users to be able to view pages,
-// or if you need "strict logins," comment out or delete this entry.
+// pages), and comment on existing ones. If you don't want anonymous 
+// users to be able to view pages or leave comments ("strict logins"),
+// delete the line containing: PagePermission "*", "view,comment"
 
-grant signedBy "jspwiki" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "view,comment";
-};
-
-grant signedBy "jspwiki" principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
+grant signedBy "jspwiki" 
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "view,comment";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "registerUser";
 };
 
 
-// This next policy is pretty loose. It allows 
-// minimally-authenticated users to view and edit any page
+// This next policy is pretty loose. It allows users who claim to
+// be someone (via their cookie) to view and edit any page
 // (including group pages), as well as create new pages, 
 // comment and upload files. If you want to require authentication
 // rather than trusting the users to supply their own identities,
 // comment out or delete this entry. Ditto for "strict logins."
 
-grant signedBy "jspwiki" principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
+grant signedBy "jspwiki"
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "edit";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "Group*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "registerUser";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "createPages";
 };
 
 
 // This next policy feels a bit more like real security. If
-// a user has logged in, he or she can view or edit any page
+// a user has logged in, he or she can view, edit or rename any page
 // (including group pages), as well as create new pages, 
 // comment and upload files.
 
-grant signedBy "jspwiki" principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
+grant signedBy "jspwiki" 
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "edit,rename";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "Group*", "view";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "createPages,createGroups";
@@ -85,7 +97,8 @@ grant signedBy "jspwiki" principal com.ecyrd.jspwiki.auth.authorize.Role "Authen
 
 // Administrators also are allowed to delete any page, and can edit/delete groups.
 
-grant signedBy "jspwiki" principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" {
+grant signedBy "jspwiki" 
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "rename,delete";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "Group*", "rename,delete";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "createPages,createGroups";
