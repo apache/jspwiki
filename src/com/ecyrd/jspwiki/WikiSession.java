@@ -20,7 +20,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.3 $ $Date: 2005-07-21 09:26:18 $
+ * @version $Revision: 2.4 $ $Date: 2005-08-03 03:47:36 $
  */
 public class WikiSession
 {
@@ -121,12 +121,49 @@ public class WikiSession
     }
     
     /**
+     * <p>Returns the Principal used to log in to an authenticated session. The
+     * login principal is determined by examining the Subject's Principal set 
+     * for WikiPrincipals; the first one with type designator 
+     * <code>LOGIN_NAME</code></li> is the login principal. If one is not
+     * found, this method returns the first principal that isn't of type Role.
+     * If neither of these conditions hold, this method returns <code>null</code>.
+     * @return the login Principal
+     */
+    public Principal getLoginPrincipal()
+    {
+        Set principals = m_subject.getPrincipals();
+        Principal secondChoice = null;
+
+        // Take the first WikiPrincipal of type LOGIN_NAME
+        for( Iterator it = principals.iterator(); it.hasNext(); )
+        {
+            Principal currentPrincipal = (Principal) it.next();
+            if( !( currentPrincipal instanceof Role ) )
+            {
+                if( currentPrincipal instanceof WikiPrincipal )
+                {
+                    WikiPrincipal wp = (WikiPrincipal)currentPrincipal;
+                    if ( wp.getType().equals( WikiPrincipal.LOGIN_NAME ) )
+                    {
+                        return currentPrincipal;
+                    }
+                }
+                if( secondChoice == null )
+                {
+                    secondChoice = currentPrincipal;
+                }
+            }
+        }
+        return secondChoice;
+    }
+    
+    /**
      * <p>Returns the primary user Principal associated with this session. The
      * primary user principal is determined as follows:</p>
      * <ol>
      *   <li>If the Subject's Principal set contains WikiPrincipals,
-     *       the first WikiPrincipal whose <code>isCommonName</code> method
-     *       returns <code>true</true> is the primary Principal.</li>
+     *       the first WikiPrincipal with type designator <code>FULL_NAME</code>
+     *       or (alternatively) <code>WIKI_NAME</true> is the primary Principal.</li>
      *   <li>For all other cases, the first Principal in the Subject's principal
      *       collection that that isn't of type Role is the primary.</li>
      * </ol> 
@@ -135,23 +172,28 @@ public class WikiSession
      */
     public Principal getUserPrincipal()
     {
-        // Lazily determine the primary principal, if we can
         Set principals = m_subject.getPrincipals();
         Principal secondChoice = null;
 
-        // Take the first WikiPrincipal with isCommonName as primary
+        // Take the first WikiPrincipal of type FULL_NAME as primary
         // Take the first non-Role as the alternate
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
             if( !( currentPrincipal instanceof Role ) )
             {
-                if( currentPrincipal instanceof WikiPrincipal
-                     && ( (WikiPrincipal) currentPrincipal ).isCommonName() )
+                if( currentPrincipal instanceof WikiPrincipal )
                 {
-                    return currentPrincipal;
+                    WikiPrincipal wp = (WikiPrincipal)currentPrincipal;
+                    if ( wp.getType().equals( WikiPrincipal.FULL_NAME ) )
+                    {
+                        return currentPrincipal;
+                    }
+                    else if ( wp.getType().equals( WikiPrincipal.WIKI_NAME ) )
+                    {
+                        return currentPrincipal;
+                    }
                 }
-              
                 if( secondChoice == null )
                 {
                     secondChoice = currentPrincipal;
