@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-03 03:55:13 $
  * @since 2.3
  */
 public interface UserDatabase
@@ -128,6 +128,8 @@ public interface UserDatabase
 
     /**
      * Factory method that instantiates a new user profile.
+     * The {@link UserProfile#isNew()} method of profiles created using
+     * this method should return <code>true</code>.
      */
     public UserProfile newProfile();
 
@@ -146,6 +148,9 @@ public interface UserDatabase
      * already exists and the password is null, it should retain its previous
      * value, rather than being set to null.
      * </p>
+     * <p>Implementations are not required to time-stamp the creation
+     * or modification fields of the UserProfile; this should be
+     * handled by the calling class (such as UserManager)./p>
      * <p>
      * Calling classes should generally also call
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#refreshCredentials(WikiSession)} after
@@ -154,10 +159,8 @@ public interface UserDatabase
      * </p>
      * @param profile the user profile to save
      * @throws WikiSecurityException if the profile cannot be saved
-     * @throws DuplicateUserException if another user exists with the same login
-     *             name, wiki name, or full name
      */
-    public void save( UserProfile profile ) throws WikiSecurityException, DuplicateUserException;
+    public void save( UserProfile profile ) throws WikiSecurityException;
 
     /**
      * Determines whether a supplied user password is valid, given a login name

@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -66,7 +68,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-03 03:55:13 $
  * @since 2.3
  */
 public class XMLUserDatabase implements UserDatabase
@@ -77,15 +79,21 @@ public class XMLUserDatabase implements UserDatabase
      * the user database.
      */
     public static final String    PROP_USERDATABASE = "jspwiki.xmlUserDatabaseFile";
+    
+    private static final String DEFAULT_USERDATABASE = "userdatabase.xml";
 
+    private static final String CREATED           = "created";
+    
     private static final String EMAIL             = "email";
 
     private static final String FULL_NAME         = "fullName";
 
-    private static final Logger   log               = Logger.getLogger( XMLUserDatabase.class );
+    private static final Logger   log             = Logger.getLogger( XMLUserDatabase.class );
 
     private static final String LOGIN_NAME        = "loginName";
 
+    private static final String LAST_MODIFIED     = "lastModified";
+    
     private static final String PASSWORD          = "password";
 
     private static final String SHA_PREFIX        = "{SHA}";
@@ -95,6 +103,8 @@ public class XMLUserDatabase implements UserDatabase
     private static final String WIKI_NAME         = "wikiName";
 
     private Document            c_dom             = null;
+
+    private DateFormat          c_format          = DateFormat.getDateTimeInstance();
 
     private File                c_file            = null;
 
@@ -111,7 +121,7 @@ public class XMLUserDatabase implements UserDatabase
         // First, neaten up the DOM by adding carriage returns before each
         // element
         Element root = c_dom.getDocumentElement();
-        NodeList nodes = root.getChildNodes();
+        NodeList nodes = root.getChildNodes();  
         for( int i = 0; i < nodes.getLength(); i++ )
         {
             Node node = nodes.item( i );
@@ -307,15 +317,15 @@ public class XMLUserDatabase implements UserDatabase
             ArrayList principals = new ArrayList();
             if ( profile.getLoginName() != null && profile.getLoginName().length() > 0 )
             {
-                principals.add( new WikiPrincipal( profile.getLoginName() ) );
+                principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
             }
             if ( profile.getFullname() != null && profile.getFullname().length() > 0 )
             {
-                principals.add( new WikiPrincipal( profile.getFullname(), true ) );
+                principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
             }
             if ( profile.getWikiName() != null && profile.getWikiName().length() > 0 )
             {
-                principals.add( new WikiPrincipal( profile.getWikiName() ) );
+                principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
             }
             return (Principal[]) principals.toArray( new Principal[principals.size()] );
         }
@@ -331,6 +341,7 @@ public class XMLUserDatabase implements UserDatabase
      * whose key is {@link #PROP_USERDATABASE}.
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
      *      java.util.Properties)
+     * @throws NoRequiredPropertyException if the user database cannot be located, parsed, or opened
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
     {
@@ -338,13 +349,18 @@ public class XMLUserDatabase implements UserDatabase
         String file = props.getProperty( PROP_USERDATABASE );
         if ( file == null )
         {
-            throw new IllegalStateException( "Could not initialize user database; property " + PROP_USERDATABASE
-                    + " not found" );
+            throw new NoRequiredPropertyException( "Could not initialize user database; property " + PROP_USERDATABASE
+                    + " not found", PROP_USERDATABASE );
         }
         c_file = new File( file );
         if ( !c_file.exists() )
         {
-            throw new IllegalArgumentException( "XML user database " + file + " does not exist!" );
+            File defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
+            log.error( "XML user database " + file + " does not exist; trying " + defaultFile );
+            if ( defaultFile.exists() )
+            {
+                c_file = defaultFile;
+            }
         }
 
         // Read DOM
@@ -356,7 +372,7 @@ public class XMLUserDatabase implements UserDatabase
         try
         {
             c_dom = factory.newDocumentBuilder().parse( c_file );
-            log.info( "User database " + file + " successfully initialized." );
+            log.info( "User database " + c_file + " successfully initialized." );
         }
         catch( ParserConfigurationException e )
         {
@@ -424,6 +440,8 @@ public class XMLUserDatabase implements UserDatabase
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
         }
+        setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
+        setAttribute( user, LAST_MODIFIED, c_format.format( profile.getLastModified() ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
         setAttribute( user, WIKI_NAME, profile.getWikiName() );
@@ -500,6 +518,20 @@ public class XMLUserDatabase implements UserDatabase
                 profile.setWikiName( user.getAttribute( WIKI_NAME ) );
                 profile.setPassword( user.getAttribute( PASSWORD ) );
                 profile.setEmail( user.getAttribute( EMAIL ) );
+                String created = user.getAttribute( CREATED );
+                String modified = user.getAttribute( LAST_MODIFIED );
+                try 
+                {
+                    profile.setCreated( c_format.parse( created ) );                  
+                    profile.setLastModified( c_format.parse( modified ) );                  
+                }
+                catch ( ParseException e )
+                {
+                    log.warn("Could not parse 'created' or 'lastModified' "
+                        + "attribute for "
+                        + " profile '" + profile.getLoginName() + "'."
+                        + " It may have been tampered with." );
+                }
                 return profile;
             }
         }
