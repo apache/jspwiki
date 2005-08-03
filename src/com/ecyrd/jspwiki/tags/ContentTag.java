@@ -61,6 +61,7 @@ public class ContentTag
         WikiContext.CONFLICT, "ConflictContent.jsp",
         WikiContext.FIND,     "FindContent.jsp",
         WikiContext.PREFS,    "PreferencesContent.jsp",
+        WikiContext.REGISTER, "RegisterContent.jsp",
         WikiContext.ERROR,    "DisplayMessage.jsp",
         WikiContext.EDIT,     "EditContent.jsp",
         WikiContext.COMMENT,  "CommentContent.jsp"
@@ -106,6 +107,11 @@ public class ContentTag
         m_mappings.setProperty( WikiContext.PREFS, s );
     }
 
+    public void setRegister( String s )
+    {
+        m_mappings.setProperty( WikiContext.REGISTER, s );
+    }
+    
     public void setError( String s )
     {
         m_mappings.setProperty( WikiContext.ERROR, s );
