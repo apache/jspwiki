@@ -15,7 +15,9 @@ package com.ecyrd.jspwiki.auth;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
 import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -52,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.7 $ $Date: 2005-07-23 20:56:53 $
+ * @version $Revision: 1.8 $ $Date: 2005-08-03 03:49:31 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -72,6 +74,9 @@ public class AuthenticationManager
     static Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
     
     private boolean                            m_containerAuth     = true;
+    
+    /** Static Boolean for lazily-initializing the "allows assertions" flag */
+    private static Boolean                     m_allowsAssertions  = null;
 
     private WikiEngine                         m_engine            = null;
 
@@ -80,6 +85,8 @@ public class AuthenticationManager
 
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
     private static final String                PROP_POLICY_CONFIG  = "java.security.policy";
+    private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
+    private static final String                DEFAULT_POLICY      = "jspwiki.policy";    
     
     private URL findConfigFile( String name )
     {
@@ -124,67 +131,37 @@ public class AuthenticationManager
         m_containerAuth  = TextUtil.getBooleanProperty( props, PROP_USE_CMS_AUTH, m_containerAuth );
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
-        //
-        //  Give user some helpful hints.
-        //
-        AppConfigurationEntry[] jspwikiConfig = null;
-        
-        try
+        if (! PolicyLoader.isJaasConfigured() ) 
         {
-            Configuration jaasconfig = Configuration.getConfiguration();
-        
-            jspwikiConfig = jaasconfig.getAppConfigurationEntry(LOGIN_CONTAINER);
-        }
-        catch( SecurityException e )
-        {
-            log.info("Unable to get security configuration.  Falling back on default.");
-            log.debug("Exception is",e);
-        }
-        
-        if( jspwikiConfig == null )
-        {
-            log.warn("Your JAAS configuration file does not contain an entry for '"+LOGIN_CONTAINER+
-                     "'. You need to set the "+PROP_JAAS_CONFIG+" system property to point at the jspwiki.jaas -file,"+ 
-                     "or add the entries from jspwiki.jaas to your own JAAS configuration file.");
-            
-            URL guessedJaasPath = findConfigFile( "jspwiki.jaas" );
-            
-            if( guessedJaasPath != null )
-            {
-                log.info("I'm falling back on the default, found in "+guessedJaasPath.toString());
-                System.setProperty( PROP_JAAS_CONFIG, guessedJaasPath.toString() );
-         
-                //
-                //  Set also jspwiki.policy
-                //
-                
-                if( System.getProperty( PROP_POLICY_CONFIG ) == null )
-                {
-                    URL guessedPolicyPath = findConfigFile("jspwiki.policy");
-                
-                    if( guessedPolicyPath != null )
-                    {
-                        log.info("I am also assuming you have not added jspwiki.policy to the path");
-                        log.info("Please set the "+PROP_POLICY_CONFIG+" system property, if you're not happy with the default.");
-                        log.info("Set default to "+guessedPolicyPath.toString());
-                        
-                        System.setProperty( PROP_POLICY_CONFIG, guessedPolicyPath.toString() );
-                    }
-                    else
-                    {
-                        log.warn("I cannot locate your 'jspwiki.policy' file.  Please copy one from the default distribution.");
-                    }
-                }
-                else
-                {
-                    log.warn("It may be that your java.policy is broken - please make sure you have jspwiki properties in your java.policy file");
-                }
+            URL config = findConfigFile( DEFAULT_JAAS_CONFIG );
+            log.info("JAAS not configured. Installing default configuration: " + config
+                + ". You can set the "+PROP_JAAS_CONFIG+" system property to point to your "
+                + "jspwiki.jaas file, or add the entries from jspwiki.jaas to your own " 
+                + "JAAS configuration file.");
+            try 
+            { 
+                PolicyLoader.setJaasConfiguration( config );
             }
-            else
+            catch ( SecurityException e)
             {
-                log.warn("Cannot locate jspwiki.jaas.  Please copy one from the default jspwiki installation.");
+                log.error("Could not configure JAAS: " + e.getMessage());
             }
-        }        
+        }
+        
+        if (! PolicyLoader.isSecurityPolicyConfigured() )
+        {
+            URL policy = findConfigFile( DEFAULT_POLICY );
+            log.info("Security policy not configured. Installing default policy: " + policy
+                + ". Please set the "+PROP_POLICY_CONFIG+" system property, if you're not happy with the default.");
+            try 
+            { 
+                PolicyLoader.setSecurityPolicy( policy );
+            }
+            catch ( SecurityException e)
+            {
+                log.error("Could not install security policy: " + e.getMessage());
+            }
+        }
     }
     
     /**
@@ -220,8 +197,6 @@ public class AuthenticationManager
      */
     public boolean loginContainer( WikiContext context )
     {
-        // TODO: this should be a privileged action
-
         // If the WikiSession's Subject doesn't have any principals,
         // do a "login".
         if ( context == null )
@@ -350,11 +325,25 @@ public class AuthenticationManager
      * @return the result of the login
      * @throws WikiSecurityException
      */
-    private boolean doLogin( WikiSession wikiSession, CallbackHandler handler, String application )
+    private boolean doLogin( WikiSession wikiSession, final CallbackHandler handler, final String application )
     {
         try
         {
-            LoginContext loginContext = new LoginContext( application, handler );
+            LoginContext loginContext  = (LoginContext)AccessController.doPrivileged(new PrivilegedAction()
+            {
+                public Object run() {
+                    try
+                    {
+                        return new LoginContext( application, handler );
+                    }
+                    catch( LoginException e )
+                    {
+                        log.error( "Couldn't retrieve login configuration.\nMessage="
+                                   + e.getLocalizedMessage() );
+                        return null;
+                    }
+                }
+            });
             loginContext.login();
             Subject subject = loginContext.getSubject();
             wikiSession.setSubject( subject );
@@ -365,7 +354,7 @@ public class AuthenticationManager
         }
         catch( LoginException e )
         {
-            log.error( "Couldn't log in. Is something wrong with your jaas.config file?\nMessage="
+            log.error( "Couldn't log in.\nMessage="
                        + e.getLocalizedMessage() );
             return false;
         }
@@ -384,17 +373,33 @@ public class AuthenticationManager
      */
     public static boolean allowsCookieAssertions()
     {
-        Configuration loginConfig = Configuration.getConfiguration();
-        AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
-        for ( int i = 0; i < configs.length; i++ )
+        // Lazily initialize
+        if ( m_allowsAssertions == null )
         {
-            AppConfigurationEntry config = configs[i];
-            if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
-            {
-                return true;
-            }
+          m_allowsAssertions = Boolean.FALSE;
+          
+          // Figure out whether cookie assertions are allowed
+          Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
+              {
+                  public Object run() {
+                      return Configuration.getConfiguration();
+                  }
+              });
+              
+          if (loginConfig != null)
+          {
+              AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
+              for ( int i = 0; i < configs.length; i++ )
+              {
+                  AppConfigurationEntry config = configs[i];
+                  if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
+                  {
+                      m_allowsAssertions = Boolean.TRUE;
+                  }
+              }
+          }
         }
-        return false;
+        return m_allowsAssertions.booleanValue();
     }
 
     /**
