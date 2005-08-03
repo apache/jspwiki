@@ -19,6 +19,8 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -26,19 +28,23 @@ import org.apache.log4j.Logger;
  * login name, full name, wiki name, and e-mail address.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-07-17 08:39:56 $
+ * @version $Revision: 1.4 $ $Date: 2005-08-03 03:54:07 $
  * @since 2.3
  */
 
 public class DefaultUserProfile implements UserProfile
 {
     private Logger   log         = Logger.getLogger( DefaultUserProfile.class );
+    
+    private Date     m_created   = null;
 
     private String   m_email     = null;
 
     private String   m_fullname  = null;
 
     private String   m_loginName = null;
+    
+    private Date     m_modified  = null;
 
     private String   m_password  = null;
 
@@ -55,6 +61,16 @@ public class DefaultUserProfile implements UserProfile
         }
 
         return false;
+    }
+    
+    /**
+     * Returns the creation date
+     * @return the creation date
+     * @see com.ecyrd.jspwiki.auth.user.UserProfile#getCreated()
+     */
+    public Date getCreated()
+    {
+        return m_created;
     }
 
     /**
@@ -73,6 +89,16 @@ public class DefaultUserProfile implements UserProfile
     public String getFullname()
     {
         return m_fullname;
+    }
+    
+    /**
+     * Returns the last-modified date.
+     * @return the last-modified date
+     * @see com.ecyrd.jspwiki.auth.user.UserProfile#getLastModified()
+     */
+    public Date getLastModified()
+    {
+        return m_modified;
     }
 
     /**
@@ -108,6 +134,27 @@ public class DefaultUserProfile implements UserProfile
     }
 
     /**
+     * Returns <code>true</code> if the user profile is
+     * new. This implementation checks whether 
+     * {@link #getLastModified()} returns <code>null</code>
+     * to determine the status.
+     * @see com.ecyrd.jspwiki.auth.user.UserProfile#isNew()
+     */
+    public boolean isNew()
+    {
+        return ( m_modified == null );
+    }
+    
+    /**
+     * @param date the creation date
+     * @see com.ecyrd.jspwiki.auth.user.UserProfile#setCreated(java.util.Date)
+     */
+    public void setCreated(Date date) 
+    {
+        m_created = date;
+    }
+    
+    /**
      * Sets the user's e-mail address.
      * @param email the e-mail address
      */
@@ -125,6 +172,16 @@ public class DefaultUserProfile implements UserProfile
         m_fullname = arg;
     }
 
+    /**
+     * Sets the last-modified date.
+     * @param date the last-modified date
+     * @see com.ecyrd.jspwiki.auth.user.UserProfile#setLastModified(java.util.Date)
+     */
+    public void setLastModified( Date date ) 
+    {
+        m_modified = date;
+    }
+    
     /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
