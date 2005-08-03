@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.42 2005-07-03 21:31:13 jalkanen Exp $
+    $Id: build.xml,v 1.43 2005-08-03 02:50:15 arj Exp $
 -->    
        
 <!--   
@@ -71,6 +71,9 @@
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
   <property name="code.build" value ="build" />
+  
+  <!-- The location for the JAR file for the core JSPWiki classes -->
+  <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
        
   <!-- Define a temporary directory, based on the system temporary directory,
        the user name, and the project name (defined above) -->
@@ -251,14 +254,27 @@
 
   <!--  Builds the jar of all compiled class files -->
 
-  <target name="jar" depends="compile,installinit">
-      <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
+  <target name="jar" depends="compile,installinit,sign-init,createjks,jkspassword">
 
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
       </jar>
-
+      
+      <echo message="Signing code with this certificate: ${jks.keystore}" />
+      <exec dir="${basedir}" executable="keytool" failonerror="true">
+         <arg line="-list"/>
+         <arg line="-v"/>
+         <arg line="-alias"/>
+         <arg line="${jks.alias}"/>
+         <arg line="-keystore"/>
+         <arg line="${jks.keystore}"/>
+         <arg line="-storepass"/>
+         <arg line="${jks.password}"/>
+      </exec>
+      <signjar jar="${jarfile}" alias="jspwiki" keystore="${jks.keystore}"
+      storepass="${jks.password}" verbose="false"/>
+  
   </target>
 
   <target name="jar-optimized" depends="compile-optimized,installinit">
@@ -389,7 +405,7 @@
        This runs the tests in text mode.  If you want the
        pretty GUI you probably want to write a new target.
    -->
-  <target name="tests" depends="compile,compiletests"
+  <target name="tests" depends="jar,compiletests"
           description="Runs the JUnit tests.">
 
     <junit printsummary="yes" haltonfailure="no" fork="no">
@@ -414,7 +430,7 @@
 
   </target>
 
-  <target name="stresstests" depends="compile,compiletests"
+  <target name="stresstests" depends="jar,compiletests"
           description="Runs the complete stress testing framework.">
 
     <junit printsummary="yes" haltonfailure="no" fork="no">
@@ -472,7 +488,7 @@
   </target>
 -->
 
-  <target name="guitests" depends="compile,compiletests"
+  <target name="guitests" depends="jar,compiletests"
           description="Runs the tests in a pretty window.">
 
      <java classname="junit.swingui.TestRunner"
@@ -655,28 +671,12 @@
     </tar>
   </target>
  
-  <!-- Code signing for enforcing J2SE security policy -->
-  
-  <target name="sign" depends="jar,sign-init,createjks,jkspassword">
-    <echo message="Signing code with this certificate:" />
-    <exec dir="${basedir}" executable="keytool" failonerror="true">
-      <arg line="-list"/>
-      <arg line="-v"/>
-      <arg line="-alias"/>
-      <arg line="${jks.alias}"/>
-      <arg line="-keystore"/>
-      <arg line="${jks.keystore}"/>
-      <arg line="-storepass"/>
-      <arg line="${jks.password}"/>
-    </exec>
-    <signjar jar="${jarfile}" alias="jspwiki" keystore="${basedir}/jspwiki.jks"
-      storepass="${jks.password}" verbose="false"/>
-  </target>
+  <!-- Code signing targets for enforcing J2SE security policy -->
   
   <target name="sign-init">
-    <property name="jks.keystore" value="${basedir}/jspwiki.jks" />
+    <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
     <property name="jks.alias" value="jspwiki" />
-    <available file="${basedir}/jspwiki.jks" property="jks.exists" />
+    <available file="${jks.keystore}" property="jks.exists" />
   </target>
   
   <target name="jkspassword" unless="jks.password">
@@ -696,6 +696,8 @@ or wherever your jspwiki.policy file lives.
 
 If something in this process goes wrong, you can simply delete
 ${jks.keystore} and execute this target again... no harm done.
+To automate the JAR signing processs, you can add the property 
+'jks.password' to your build.properties file.
     </echo>
     <input message="Your name (example: Simon Bar Sinister):" addproperty="jks.cn" />
     <input message="Your organization (example: ecyrd.com):" addproperty="jks.o" />
