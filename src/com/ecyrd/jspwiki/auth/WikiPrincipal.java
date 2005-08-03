@@ -20,13 +20,14 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
+import java.util.Arrays;
 
 /**
  *  A lightweight, immutable Principal class.
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.3 $ $Date: 2005-06-29 22:43:17 $
+ *  @version $Revision: 1.4 $ $Date: 2005-08-03 03:52:22 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
@@ -34,37 +35,53 @@ public final class WikiPrincipal implements Principal
 
     /**
      * Represents an anonymous user. WikiPrincipals may be
-     * created with an optional flag indicating that the
-     * Principal should be marked as representing a user's
-     * common name (first and last name). By default,
-     * this is <code>false</code>.
-     * 
+     * created with an optional type designator: 
+     * LOGIN_NAME, WIKI_NAME, FULL_NAME or UNSPECIFIED.
      */
     public static final Principal GUEST = new WikiPrincipal( "Guest" );
+    public static final String FULL_NAME  = "fullName";
+    public static final String LOGIN_NAME = "loginName";
+    public static final String WIKI_NAME  = "wikiName";
+    public static final String UNSPECIFIED  = "unspecified";
+    
+    private static final String[] validTypes;
+    
+    static
+    {
+        validTypes = new String[] { FULL_NAME, LOGIN_NAME, WIKI_NAME, UNSPECIFIED };
+        Arrays.sort( validTypes );
+    }
 
     private final String          m_name;
-    private final boolean         m_isCommonName;
+    private final String          m_type;
 
     /**
-     * Constructs a new WikiPrincipal with a given name.
+     * Constructs a new WikiPrincipal with a given name and a type of
+     * UNSPECIFIED.
      * @param name the name of the Principal
      */
     public WikiPrincipal( String name )
     {
-        this( name, false );
+        m_name = name;
+        m_type = UNSPECIFIED;
     }
     
     /**
      * Constructs a new WikiPrincipal with a given name
-     * and optional flag indicating that this Principal 
-     * represents a user's common name.
+     * and optional type designator.
      * @param name the name of the Principal
      * @param isUserName whether this principal 
+     * @throws IllegalArgumentException if the type is not FULL_NAME,
+     * LOGIN_NAME, UNSPECIFIED or WIKI_NAME.
      */
-    public WikiPrincipal( String name, boolean isUserName )
+    public WikiPrincipal( String name, String type )
     {
         m_name = name;
-        m_isCommonName = false;
+        if ( Arrays.binarySearch( validTypes, type ) < 0 )
+        {
+            throw new IllegalArgumentException( "Principal type '" + type + "' is invalid.");
+        }
+        m_type = type;
     }
 
     /**
@@ -90,15 +107,11 @@ public final class WikiPrincipal implements Principal
     }
 
     /**
-     * Returns <code>true</code> if this Principal represents a user's
-     * common name.
-     * @return <code>true</code> if this Principal was created
-     * with the "common name" flag set to <code>true</code>;
-     * <code>false</code> otherwise.
+     * Returns the Principal "type": full name, login name, or wiki name.
      */
-    public boolean isCommonName()
+    public String getType()
     {
-        return m_isCommonName;
+        return m_type;
     }
     
     /**
