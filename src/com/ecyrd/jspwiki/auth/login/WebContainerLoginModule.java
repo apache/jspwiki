@@ -43,7 +43,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * Subject. Also, principals {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL}
  * and {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-03 03:53:06 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
@@ -117,7 +117,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
         {
             // If userId exists but isn't found in database,
             // manufacture a synthetic WikiPrincipal
-            m_principals.add( new WikiPrincipal( userId ) );
+            m_principals.add( new WikiPrincipal( userId, WikiPrincipal.LOGIN_NAME ) );
             m_principals.add( Role.AUTHENTICATED );
             m_principals.add( Role.ALL );
             return true;
