@@ -158,7 +158,6 @@
 
         if( remember != null )
         {
-            wiki.getUserManager().setUserCookie( response, author );            
             if( link != null )
             {
                 Cookie linkcookie = new Cookie("link", link);

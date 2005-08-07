@@ -5,7 +5,6 @@
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.UserProfile" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="java.security.Principal" %>
@@ -47,9 +46,6 @@
     Principal currentUser  = wikiContext.getCurrentUser();
     Permission requiredPermission = new PagePermission( pagereq, "delete" );
 
-    if( !mgr.checkPermission( wikiContext.getPage(),
-                              currentUser,
-                              new DeletePermission() ) )
     if( !mgr.checkPermission( wikiContext,
                               requiredPermission ) )
     {
