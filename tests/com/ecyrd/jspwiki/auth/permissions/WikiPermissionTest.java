@@ -51,6 +51,7 @@ public class WikiPermissionTest extends TestCase {
     WikiPermission p2 = new WikiPermission("createPages");
     WikiPermission p3 = new WikiPermission("createGroups");
     WikiPermission p4 = new WikiPermission("registerUser");
+    WikiPermission p5 = new WikiPermission("editPreferences");
     assertTrue(p1.implies(p2));
     assertFalse(p2.implies(p1));
     assertTrue(p1.implies(p3));
@@ -61,6 +62,10 @@ public class WikiPermissionTest extends TestCase {
     // createGroups implies createPages
     assertTrue(p3.implies(p2));
     assertFalse(p2.implies(p3));
+    
+    // editPreferences implies registerUser
+    assertTrue(p5.implies(p4));
+    assertFalse(p4.implies(p5));
   }
 
   /*
