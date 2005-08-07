@@ -29,6 +29,7 @@
 
 <div>
     <wiki:UserCheck status="anonymous">
+      <p>You are <b>anonymous</b>.</p>
       <p>
         <a href="Register.jsp">Register</a> or 
         <wiki:UserCheck status="customAuth">
@@ -41,6 +42,7 @@
     </wiki:UserCheck>
 
     <wiki:UserCheck status="asserted">
+      <p>You are <b>asserted</b>.</p>
       <p>
         <a href="Register.jsp">Register</a> or 
         <wiki:UserCheck status="customAuth">
@@ -53,13 +55,9 @@
     </wiki:UserCheck>
 
     <wiki:UserCheck status="authenticated">
+      <p>You are <b>authenticated</b>.</p>
       <p>
-        <wiki:UserProfile property="new">
-          <a href="Register.jsp">Register</a>
-        </wiki:UserProfile>
-        <wiki:UserProfile property="exists">
-          <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
-        </wiki:UserProfile>
+        <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
         <br/>
         <a href="Logout.jsp">Log out</a>
       </p>
