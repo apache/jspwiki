@@ -11,10 +11,11 @@ import java.util.Arrays;
  * </p>
  * <p>
  * Certain permissions imply others. Currently, <code>createGroups</code>
- * implies <code>createPages</code>.
+ * implies <code>createPages</code>, and <code>editPreferences</code>
+ * implies <code>registerUser</code>.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2005-07-15 08:27:21 $
+ * @version $Revision: 1.8 $ $Date: 2005-08-07 20:16:16 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
@@ -27,18 +28,24 @@ public final class WikiPermission extends Permission
 
     private static final String        REGISTER_ACTION      = "registerUser";
 
+    private static final String        PREFERENCES_ACTION   = "editPreferences";
+    
     protected static final int         CREATE_GROUPS_MASK   = 0x1;
 
     protected static final int         CREATE_PAGES_MASK    = 0x2;
 
     protected static final int         REGISTER_MASK        = 0x4;
 
+    protected static final int         PREFERENCES_MASK     = 0x8;
+    
     public static final WikiPermission CREATE_GROUPS        = new WikiPermission( CREATE_GROUPS_ACTION );
 
     public static final WikiPermission CREATE_PAGES         = new WikiPermission( CREATE_PAGES_ACTION );
 
     public static final WikiPermission REGISTER             = new WikiPermission( REGISTER_ACTION );
 
+    public static final WikiPermission PREFERENCES          = new WikiPermission( PREFERENCES_ACTION );
+    
     private final String               m_actionString;
 
     private final int                  m_mask;
@@ -82,8 +89,8 @@ public final class WikiPermission extends Permission
 
     /**
      * Returns the actions for this permission: "createGroups", "createPages",
-     * or "registerUser". The actions will always be sorted in alphabetic order,
-     * and will always appear in lower case.
+     * "editPreferences" or "registerUser". The actions will always be sorted in 
+     * alphabetic order, and will always appear in lower case.
      * @see java.security.Permission#getActions()
      */
     public final String getActions()
@@ -144,7 +151,8 @@ public final class WikiPermission extends Permission
 
     /**
      * Creates an "implied mask" based on the actions originally assigned: for
-     * example, createGroups implies createPages.
+     * example, createGroups implies createPages and editPreferences implies
+     * registerUser.
      * @param mask the initial mask
      * @return the implied mask
      */
@@ -153,6 +161,10 @@ public final class WikiPermission extends Permission
         if ( ( mask & CREATE_GROUPS_MASK ) > 0 )
         {
             mask |= CREATE_PAGES_MASK;
+        }
+        if ( ( mask & PREFERENCES_MASK ) > 0 )
+        {
+            mask |= REGISTER_MASK;
         }
         return mask;
     }
@@ -181,6 +193,10 @@ public final class WikiPermission extends Permission
             else if ( action.equalsIgnoreCase( CREATE_PAGES_ACTION ) )
             {
                 mask |= CREATE_PAGES_MASK;
+            }
+            else if ( action.equalsIgnoreCase( PREFERENCES_ACTION ) )
+            {
+                mask |= PREFERENCES_MASK;
             }
             else if ( action.equalsIgnoreCase( REGISTER_ACTION ) )
             {
