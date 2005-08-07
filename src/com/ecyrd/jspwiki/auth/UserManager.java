@@ -150,32 +150,46 @@ public class UserManager
 
     /**
      * Retrieves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the
-     * user in a wiki context. The user may be anonymous, in which case the
-     * UserProfile will be newly initialized. If a UserProfile needs to be
-     * initialized, its {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
-     * method will return <code>true</code>. In addition, its login name will
-     * be set to the name of
-     * {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}. This is so
-     * that the user's login name automatically populates the new profile,
-     * regardless of whether it was "logged in" via the web container, a cookie
-     * login module, or an anonymous login module.
+     * user in a wiki context. If the user is authenticated, the UserProfile
+     * returned will be the one stored in the user database; if one does
+     * not exist, a new one will be initialized and returned. If the user is 
+     * anonymous or asserted, the UserProfile will <i>always</i> be newly 
+     * initialized to prevent spoofing of identities. If a UserProfile needs to
+     * be initialized, its {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
+     * method will return <code>true</code>. Note that this method does 
+     * not modify the retrieved (or newly created) profile in ant way; any
+     * and all fields in the user profile may be <code>null</code>.
      * @param context the wiki context, which may not be <code>null</code>
-     * @return the user's profile
+     * @return the user's profile, which will be newly initialized if the
+     * user is anonymous or asserted, or if the user cannot be found in the
+     * user database
      * @throws WikiSecurityException if the database returns an exception
      * @throws IllegalStateException if a new UserProfile was created, but its
      *             {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
-     *             method returns <code>false</code>.
+     *             method returns <code>false</code>. This is meant as a quality
+     *             check for UserDatabase providers; it should only be thrown
+     *             if the implementation is faulty.
      */
     public UserProfile getUserProfile( WikiContext context ) throws WikiSecurityException
     {
-        // Figure out if this is a new profile
-        Principal user = context.getCurrentUser();
-        UserProfile profile;
-        try
-        {
-            profile = m_database.find( user.getName() );
+        boolean needsInitialization = true;
+        UserProfile profile = null;
+        Principal user;
+        
+        // Figure out if this is an existing profile
+        if ( context.getWikiSession().isAuthenticated() ) {
+            user = context.getCurrentUser();
+            try
+            {
+                profile = m_database.find( user.getName() );
+                needsInitialization = false;
+            }
+            catch( NoSuchPrincipalException e )
+            {
+            }
         }
-        catch( NoSuchPrincipalException e )
+        
+        if ( needsInitialization ) 
         {
             profile = m_database.newProfile();
             if ( !profile.isNew() )
@@ -183,8 +197,6 @@ public class UserManager
                 throw new IllegalStateException(
                         "New profile should be marked 'new'. Check your UserProfile implementation." );
             }
-            Principal principal = context.getWikiSession().getLoginPrincipal();
-            profile.setLoginName( principal.getName() );
         }
         return profile;
     }
@@ -196,7 +208,8 @@ public class UserManager
      * name or full name is already used by another profile. If the profile
      * collides, a DuplicateUserException is thrown. After saving the profile,
      * the user database changes are committed, and the user's credential set is
-     * refreshed.
+     * refreshed; if custom authentication is used, this means the user will
+     * be automatically be logged in.
      * @param context the wiki context, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
      */
@@ -254,7 +267,7 @@ public class UserManager
 
         // Refresh the credential set
         AuthenticationManager mgr = m_engine.getAuthenticationManager();
-        if ( newProfile )
+        if ( newProfile && !mgr.isContainerAuthenticated() )
         {
             mgr.loginCustom( profile.getLoginName(), profile.getPassword(), context.getHttpRequest() );
         }
@@ -265,11 +278,29 @@ public class UserManager
     }
 
     /**
+     * <p>
      * Extracts user profile parameters from the HTTP request and populates a
-     * new UserProfile with them. For security reasons, the password attribute
-     * is <i>not</i> extracted. Attributes that are not parsed are set to
-     * <code>null</code>.
-     * @param request the current HTTP request
+     * new UserProfile with them. The UserProfile will either be a copy of the
+     * user's existing profile (if one can be found), or a new profile (if not).
+     * The rules for populating the profile as as follows:
+     * </p>
+     * <ul>
+     * <li>If the <code>email</code> or <code>password</code> parameter
+     * values differ from those in the existing profile, the passed parameters
+     * override the old values.
+     * <li>
+     * <li>For new profiles, the <code>fullname</code> and
+     * <code>wikiname</code> parameters are always used; otherwise they are
+     * ignored.</li>
+     * <li>In all cases, the created/last modified timestamps of the user's
+     * existing/new profile are always used.</li>
+     * <li>If container authentication is used, the login name property of the
+     * profile is set to the name of
+     * {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}. Otherwise,
+     * the value of the <code>loginname</code> parameter is used.
+     * <li>
+     * </ul>
+     * @param context the current wiki context
      * @return a new, populated user profile
      */
     public UserProfile parseProfile( WikiContext context )
@@ -296,6 +327,7 @@ public class UserManager
         // Set password to user's supplied value; if null, skip it
         String password = request.getParameter( "password" );
         password = isNotBlank( password ) ? password : null;
+        profile.setPassword( password );
 
         // For new profiles, we use what the user supplied for
         // full name and wiki name
@@ -314,9 +346,25 @@ public class UserManager
         profile.setFullname( fullname );
         profile.setWikiName( wikiname );
 
-        // For all profiles, we get the login principal from the looked-up
-        // profile
-        profile.setLoginName( existingProfile.getLoginName() );
+        // For all profiles, we use the login name from the looked-up
+        // profile. If the looked-up profile doesn't have a login
+        // name, we either use the one from the session (if container auth)
+        // or the one the user supplies (if custom auth).
+        String loginName = existingProfile.getLoginName();
+        if ( loginName == null )
+        {
+            if ( m_engine.getAuthenticationManager().isContainerAuthenticated() )
+            {
+                Principal principal = context.getWikiSession().getLoginPrincipal();
+                loginName = principal.getName();
+            }
+            else
+            {
+                loginName = request.getParameter( "loginname" );
+                wikiname = isNotBlank( loginName ) ? loginName : null;
+            }
+        }
+        profile.setLoginName( loginName );
 
         // Always use existing profile's lastModified and Created properties
         profile.setCreated( existingProfile.getCreated() );
@@ -336,13 +384,17 @@ public class UserManager
 
     /**
      * Validates a user profile, and appends any errors to a user-supplied Set
-     * of error strings.
+     * of error strings. If the wiki request context is REGISTER, the password
+     * will be checked to make sure it isn't null. Otherwise, the password
+     * is checked.
+     * @param context the current wiki context
      * @param profile the supplied UserProfile
      * @param errors the set of error strings
      */
-    public void validateProfile( UserProfile profile, boolean isNew, Set errors )
+    public void validateProfile( WikiContext context, UserProfile profile, Set errors )
     {
         // TODO:this class is probably the wrong place for this method...
+        boolean isNew = ( WikiContext.REGISTER.equals( context.getRequestContext() ) );
 
         if ( profile.getFullname() == null )
         {
