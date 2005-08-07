@@ -1,3 +1,48 @@
+2005-08-07  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.10
+        
+        * Major fixes to the authentication and authorization codebase.
+        Most outstanding issues with the prior commits have been resolved;
+        it should be ready for prime time.
+        
+        * JSPWiki now installs a default Java 2 security policy and JAAS
+        login configuration, which allows JSPWiki AAA to work "out of the box"
+        without additional customization. Admnistrators can override these
+        defaults using the standard policy/JAAS system properties if desired.
+        
+        * UserPreferences.jsp has been significantly tweaked. It also includes
+        support for standard <template>/PreferencesContent.jsp template pages.
+        
+        * Registration.jsp is a new JSP for registering new users. Includes
+        support for standard <template>/RegisterContent.jsp template pages.
+        
+        * NewGroup.jsp is a new JSP for creating wiki groups. By default,
+        the group is pre-populated with the current user's wiki name.
+        In addition, by default group members are allowed to edit
+        its membership. Includes support for standard 
+        <template>/GroupContent.jsp template pages.
+        
+        * UserProfile class now includes timestamps for creation and
+        modification times. XMLUserDatabase time-stamps profiles
+        when they are created and saved.
+        
+        * UserManager changed significantly to support improvements
+        to the AAA code.
+        
+        * JSP tag <wiki:UserProfile> now includes additional properties
+        for modified/created times and new properties "exists" and "new"
+        which evaluate the tag body if the user has already been
+        registered (or not).
+        
+        * JSP tag <wiki:UserCheck> includes additional properties to return
+        vallues that allow certain aspects of the AAA configuration
+        to be queried.
+        
+        * AAA code now tested using container authentication/authorization
+        in addition to JSPWiki's custom auth. Note that the registration
+        and user preference pages work slightly differently in each case.
+        
 2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.9
