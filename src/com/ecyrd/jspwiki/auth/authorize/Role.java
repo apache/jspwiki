@@ -27,7 +27,7 @@ import java.security.Principal;
  * used by an external {@link com.ecyrd.jspwiki.auth.Authorizer}, such as a web
  * container.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
  * @since 2.3
  */
 public final class Role implements Principal
@@ -61,7 +61,8 @@ public final class Role implements Principal
 
     /**
      * Returns <code>true</code> if a supplied Role is a built-in Role:
-     * ADMIN, ALL, ANONYMOUS, ASSERTED, or AUTHENTICATED.
+     * {@link #ADMIN}, {@link #ALL}, {@link #ANONYMOUS}, {@link #ASSERTED},
+     * or {@link #AUTHENTICATED}.
      * @param role the role to check
      * @return the result of the check
      */
@@ -74,10 +75,12 @@ public final class Role implements Principal
     
     /**
      * Returns <code>true</code> if the supplied name is identical to the name
-     * of a built-in Role; that is, the value returned by <code>getName()</code> for
-     * built-in Roles ADMIN, ALL, ANONYMOUS, ASSERTED, or AUTHENTICATED.
+     * of a built-in Role; that is, the value returned by <code>getName()</code>
+     * for built-in Roles {@link #ADMIN}, {@link #ALL}, {@link #ANONYMOUS},
+     * {@link #ASSERTED}, or {@link #AUTHENTICATED}.
      * @param name the name to be tested
-     * @return <code>true</code> if the name is reserved; <code>false</code> if not
+     * @return <code>true</code> if the name is reserved; <code>false</code>
+     *         if not
      */
     public static final boolean isReservedName(String name)
     {

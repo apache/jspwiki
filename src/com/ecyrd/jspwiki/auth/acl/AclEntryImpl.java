@@ -12,7 +12,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * Implementation of a JSPWiki AclEntry.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
  * @since 2.3
  */
 public class AclEntryImpl implements AclEntry
@@ -21,6 +21,13 @@ public class AclEntryImpl implements AclEntry
     private Vector    m_permissions = new Vector();
     private Principal m_principal;
 
+    /**
+     * Constructs a new AclEntryImpl instance.
+     */
+    public AclEntryImpl()
+    {
+    }
+    
     public boolean addPermission( Permission permission )
     {
         if ( permission instanceof PagePermission && findPermission( permission ) == null )

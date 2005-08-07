@@ -54,21 +54,25 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.8 $ $Date: 2005-08-03 03:49:31 $
+ * @version $Revision: 1.9 $ $Date: 2005-08-07 22:06:09 $
  * @since 2.3
  */
 public class AuthenticationManager
 {
 
+    /** The name of the built-in cookie authentication module */
     public static final String                 COOKIE_MODULE       =  CookieAssertionLoginModule.class.getName();
-    
+
+    /** The JAAS application name for the web container authentication stack. */
     public static final String                 LOGIN_CONTAINER     = "JSPWiki-container";
 
+    /** The JAAS application name for the JSPWiki custom authentication stack. */
     public static final String                 LOGIN_CUSTOM        = "JSPWiki-custom";
 
-    /** If true, logs the IP address of the editor on saving. */
+    /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
 
+    /** The property in jspwiki.properties that determines whether to use container authentication. */
     public static final String                 PROP_USE_CMS_AUTH   = "jspwiki.useContainerAuth";
 
     static Logger                              log                 = Logger.getLogger( AuthenticationManager.class );

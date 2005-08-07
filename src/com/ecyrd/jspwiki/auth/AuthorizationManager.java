@@ -51,7 +51,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.23 $ $Date: 2005-07-21 09:26:18 $
+ * @version $Revision: 1.24 $ $Date: 2005-08-07 22:06:09 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -59,12 +59,12 @@ public class AuthorizationManager
 {
     static Logger log = Logger.getLogger( AuthorizationManager.class );
     /**
-     * The default external Authorizer is the WebContainerAuthorizer
+     * The default external Authorizer is the {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
      */
     public static final String                DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
 
     /**
-     * The property name in jspwiki.properties for specifying the external Authorizer.
+     * The property name in jspwiki.properties for specifying the external {@link Authorizer}.
      */
     public static final String                PROP_AUTHORIZER   = "jspwiki.authorizer";
 
@@ -73,45 +73,54 @@ public class AuthorizationManager
     private WikiEngine                        m_engine          = null;
 
     /**
+     * Constructs a new AuthorizationManager instance.
+     */
+    public AuthorizationManager()
+    {
+    }
+    
+    /**
      * Returns <code>true</code> or <code>false</code>, depending on
      * whether this action is allowed for this WikiPage. The access control
      * algorithm works this way:
      * <ol>
-     * <li>The ACL for the page is obtained</li>
-     * <li>The Subject associated with the current WikiSession is obtained
-     * (this is looked up in the HttpSession associated with the supplied
-     * HttpServletRequest)</li>
-     * <li>If the Subject's principal set includes the Role principal that is
-     * the administrator group, always allow the permission</li>
+     * <li>The {@link com.ecyrd.jspwiki.auth.acl.Acl} for the page is obtained</li>
+     * <li>The Subject associated with the current
+     * {@link com.ecyrd.jspwiki.WikiSession} is obtained (this is looked up in
+     * the HttpSession associated with the supplied HttpServletRequest)</li>
+     * <li>If the Subject's Principal set includes the Role Principal that is
+     * the administrator group, always allow the Permission</li>
      * <li>If there is no ACL at all, check to see if the Permission is allowed
      * according to the "static" security policy. The security policy speficies
      * what permissions are available by default</li>
-     * <li>If there is an ACL, get the list of Principals assigned this
-     * permission in the ACL: these will be role, group or user Principals, or
-     * UnresolvedPrincipals (see below). Then iterate through the Subject's
-     * principal set and determine whether the user (Subject) posesses any one
-     * of these specified Roles or Principals. The matching process delegates to
+     * <li>If there is an Acl, get the list of Principals assigned this
+     * Permission in the Acl: these will be role, group or user Principals, or
+     * {@link com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal}s (see below).
+     * Then iterate through the Subject's Principal set and determine whether
+     * the user (Subject) posesses any one of these specified Roles or
+     * Principals. The matching process delegates to
      * {@link #hasRoleOrPrincipal(WikiContext, Principal)}.
      * </ol>
      * <p>
-     * Note that when iterating through the ACL's list of authorized Principals,
-     * it is possible that one or more of the ACL's Principal entries are of
-     * type {@link com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal}. This means
-     * that the last time the Acl was read, the Principal (user, built-in Role,
-     * authorizer Role, or wiki Group) could not be resolved: the Role was not
-     * valid, the user wasn't found in the UserDatabase, or the Group wasn't
-     * known to (e.g., cached) in the GroupManager. If an UnresolvedPrincipal is
+     * Note that when iterating through the Acl's list of authorized Principals,
+     * it is possible that one or more of the Acl's Principal entries are of
+     * type <code>UnresolvedPrincipal</code>. This means that the last time
+     * the ACL was read, the Principal (user, built-in Role, authorizer Role, or
+     * wiki Group) could not be resolved: the Role was not valid, the user
+     * wasn't found in the UserDatabase, or the Group wasn't known to (e.g.,
+     * cached) in the GroupManager. If an <code>UnresolvedPrincipal</code> is
      * encountered, this method will attempt to resolve it first <em>before</em>
      * checking to see if the Subject possesses this principal, by calling
      * {@link #resolvePrincipal(String)}. If the (re-)resolution does not
-     * succeed, the access check for the principal will fail by definition 
-     * (the Subject should never contain UnresolvedPrincipals).
+     * succeed, the access check for the principal will fail by definition (the
+     * Subject should never contain UnresolvedPrincipals).
      * </p>
-     * @param context the current wiki context. If null, a synthetic anonymous WikiContext
-     *            containing a {@link com.ecyrd.jspwiki.WikiSession#GUEST_SESSION} is assumed
-     * @param permission the permission being checked
+     * @param context the current wiki context. If <code>null</code>, a
+     *            synthetic anonymous WikiContext containing a
+     *            {@link com.ecyrd.jspwiki.WikiSession#GUEST_SESSION} is assumed
+     * @param permission the Permission being checked
      * @see #hasRoleOrPrincipal(WikiContext, Principal)
-     * @return the result of the permission check
+     * @return the result of the Permission check
      */
     public boolean checkPermission( WikiContext context, Permission permission )
     {
@@ -146,7 +155,7 @@ public class AuthorizationManager
 
         //
         // Does the page in question have an access control list?
-        // If no ACL, we check the security policy to see what the
+        // If no Acl, we check the security policy to see what the
         // defaults should be.
         Acl acl = null;
         if ( context != null )
@@ -167,7 +176,7 @@ public class AuthorizationManager
         Principal[] aclPrincipals = acl.findPrincipals( permission );
 
         log.debug( "Checking ACL entries..." );
-        log.debug( "ACL for this page is: " + acl );
+        log.debug( "Acl for this page is: " + acl );
         log.debug( "Checking for principal: " + aclPrincipals );
         log.debug( "Permission: " + permission );
 
@@ -176,7 +185,7 @@ public class AuthorizationManager
             Principal aclPrincipal = aclPrincipals[i];
             
             // If the ACL principal we're looking at is unresolved,
-            // try to resolve it here & correct the ACL
+            // try to resolve it here & correct the Acl
             if ( aclPrincipal instanceof UnresolvedPrincipal )
             {
                 AclEntry aclEntry = acl.getEntry( aclPrincipal );
@@ -370,7 +379,7 @@ public class AuthorizationManager
     }
     
     /**
-     * <p>Given a supplied string representing a Principal's name from an ACL, this
+     * <p>Given a supplied string representing a Principal's name from an Acl, this
      * method resolves the correct type of Principal (role, group, or user).
      * This method is guaranteed to always return a Principal.
      * The algorithm is straightforward:</p>

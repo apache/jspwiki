@@ -43,7 +43,8 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *
+ *  @version $Revision: 1.35 $ $Date: 2005-08-07 22:06:09 $
+ *  @since 2.3
  */
 public class UserManager
 {
@@ -62,10 +63,17 @@ public class UserManager
     private GroupManager     m_groupManager = null;
     
     /**
+     * Constructs a new UserManager instance.
+     */
+    public UserManager()
+    {
+    }
+    
+    /**
      *  Initializes the engine for its nefarious purposes.
      *  
-     * @param engine
-     * @param props
+     * @param engine the current wiki engine
+     * @param props the wiki engine initialization properties
      */
     public void initialize( WikiEngine engine, Properties props )
     {
@@ -206,10 +214,10 @@ public class UserManager
      * a wiki context. This method verifies that a user profile to be saved
      * doesn't collide with existing profiles; that is, the login name, wiki
      * name or full name is already used by another profile. If the profile
-     * collides, a DuplicateUserException is thrown. After saving the profile,
-     * the user database changes are committed, and the user's credential set is
-     * refreshed; if custom authentication is used, this means the user will
-     * be automatically be logged in.
+     * collides, a <code>DuplicateUserException</code> is thrown. After saving
+     * the profile, the user database changes are committed, and the user's
+     * credential set is refreshed; if custom authentication is used, this means
+     * the user will be automatically be logged in.
      * @param context the wiki context, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
      */
@@ -287,8 +295,7 @@ public class UserManager
      * <ul>
      * <li>If the <code>email</code> or <code>password</code> parameter
      * values differ from those in the existing profile, the passed parameters
-     * override the old values.
-     * <li>
+     * override the old values.</li>
      * <li>For new profiles, the <code>fullname</code> and
      * <code>wikiname</code> parameters are always used; otherwise they are
      * ignored.</li>
@@ -297,8 +304,7 @@ public class UserManager
      * <li>If container authentication is used, the login name property of the
      * profile is set to the name of
      * {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}. Otherwise,
-     * the value of the <code>loginname</code> parameter is used.
-     * <li>
+     * the value of the <code>loginname</code> parameter is used.</li>
      * </ul>
      * @param context the current wiki context
      * @return a new, populated user profile

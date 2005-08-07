@@ -17,7 +17,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 /**
  * Default implementation that parses Acls from wiki page markup.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
  * @since 2.3
  */
 public class DefaultAclManager implements AclManager
@@ -28,6 +28,9 @@ public class DefaultAclManager implements AclManager
     private WikiEngine m_engine = null;
     
     /**
+     * Initializes the AclManager with a supplied wiki engine and properties.
+     * @param engine the wiki engine
+     * @param props the initialization properties
      * @see com.ecyrd.jspwiki.auth.acl.AclManager#initialize(com.ecyrd.jspwiki.WikiEngine,
      *      java.util.Properties)
      */

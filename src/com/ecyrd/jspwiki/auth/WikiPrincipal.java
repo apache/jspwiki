@@ -27,7 +27,7 @@ import java.util.Arrays;
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.5 $ $Date: 2005-08-07 21:15:45 $
+ *  @version $Revision: 1.6 $ $Date: 2005-08-07 22:06:09 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
@@ -57,7 +57,7 @@ public final class WikiPrincipal implements Principal
 
     /**
      * Constructs a new WikiPrincipal with a given name and a type of
-     * UNSPECIFIED.
+     * {@link #UNSPECIFIED}.
      * @param name the name of the Principal
      */
     public WikiPrincipal( String name )
@@ -67,14 +67,13 @@ public final class WikiPrincipal implements Principal
     }
     
     /**
-     * Constructs a new WikiPrincipal with a given name
-     * and optional type designator.
+     * Constructs a new WikiPrincipal with a given name and optional type
+     * designator.
      * @param name the name of the Principal
-     * @param type the type for this principal, which may be
-     * {@link #LOGIN_NAME}, {@link #FULL_NAME}, {@link #WIKI_NAME}
-     * or {@link #WIKI_NAME}.
-     * @throws IllegalArgumentException if the type is not FULL_NAME,
-     * LOGIN_NAME, UNSPECIFIED or WIKI_NAME.
+     * @param type the type for this principal, which may be {@link #LOGIN_NAME},
+     *            {@link #FULL_NAME}, {@link #WIKI_NAME} or {@link #WIKI_NAME}.
+     * @throws IllegalArgumentException if the type is not {@link #LOGIN_NAME},
+     *             {@link #FULL_NAME}, {@link #WIKI_NAME} or {@link #WIKI_NAME}
      */
     public WikiPrincipal( String name, String type )
     {
@@ -87,7 +86,7 @@ public final class WikiPrincipal implements Principal
     }
 
     /**
-     *  Returns the WikiName of the Principal.
+     *  Returns the wiki name of the Principal.
      */
     public final String getName()
     {
@@ -95,7 +94,7 @@ public final class WikiPrincipal implements Principal
     }
 
     /**
-     * Two WikiPrincipals are considered equal if their
+     * Two <code>WikiPrincipal</code>s are considered equal if their
      * names are equal (case-sensitive).
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -109,7 +108,8 @@ public final class WikiPrincipal implements Principal
     }
 
     /**
-     * Returns the Principal "type": full name, login name, or wiki name.
+     * Returns the Principal "type": {@link #LOGIN_NAME}, {@link #FULL_NAME},
+     * {@link #WIKI_NAME} or {@link #WIKI_NAME}
      */
     public String getType()
     {

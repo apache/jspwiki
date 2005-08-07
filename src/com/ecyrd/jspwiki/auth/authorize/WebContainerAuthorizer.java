@@ -12,7 +12,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * Authorizes users by delegating role membership checks to the servlet
  * container.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -22,7 +22,13 @@ public class WebContainerAuthorizer implements Authorizer
     // or from parsing the web.xml (yuck)
 
     /**
-     * A fixed set of Roles that the container knows about.
+     * A fixed set of Roles that the container knows about. At present,
+     * these are hard-coded as {@link Role#ADMIN} and {@link Role#AUTHENTICATED}.
+     * This is a horrible hack designed to get around the fact that we have
+     * no way of querying the web container about which roles it manages.
+     * In the future, these hard-coded values will be replaced by a 
+     * method that walks the <code>web.xml</code> DOM and obtains the role 
+     * names dynamically.
      */
     protected static final Role[] CONTAINER_ROLES = new Role[]
                                      { Role.ADMIN, Role.AUTHENTICATED };
