@@ -34,9 +34,8 @@
     boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
     boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
 
-    // User must be authenticated to change the profile
-    if ( false )
-    //if( !authMgr.checkPermission( wikiContext, new WikiPermission("registerUser" ) ) )
+    // User must have permission to register the profile
+    if( !authMgr.checkPermission( wikiContext, WikiPermission.REGISTER ) )
     {
         log.info("User "+wikiContext.getCurrentUser()+" has no access to register - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
@@ -72,7 +71,7 @@
     {
         // Validate the profile
         errors.clear();
-        userMgr.validateProfile( profile, true, errors );
+        userMgr.validateProfile( wikiContext, profile, errors );
         
         // If no errors, save the profile now & refresh the principal set!
         if ( errors.size() == 0 )
@@ -96,10 +95,7 @@
         if ( errors.size() == 0 )
         {
             response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
-        }
-        else
-        {
-            response.sendRedirect( wiki.getBaseURL()+"Register.jsp" );
+		   return;
         }
     }
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
