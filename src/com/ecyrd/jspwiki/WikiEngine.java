@@ -1987,7 +1987,7 @@ public class WikiEngine
 
     /**
      * @since 2.2.6
-     * @return
+     * @return the URL constructor
      */
     public URLConstructor getURLConstructor()
     {
@@ -1996,7 +1996,7 @@ public class WikiEngine
     
     /**
      * @since 2.1.165
-     * @return
+     * @return the RSS generator
      */
     public RSSGenerator getRSSGenerator()
     {

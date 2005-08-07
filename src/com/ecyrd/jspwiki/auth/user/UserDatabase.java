@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-03 03:55:13 $
+ * @version $Revision: 1.4 $ $Date: 2005-08-07 21:15:19 $
  * @since 2.3
  */
 public interface UserDatabase
@@ -59,10 +59,12 @@ public interface UserDatabase
      * Note that if an implememtation wishes to mark one of the returned
      * Principals as representing the user's common name, it should instantiate
      * this Principal using
-     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#WikiPrincipal(String, boolean)}
-     * with the <code>isCommonName</code> set to <code>true</code>. The
-     * method {@link com.ecyrd.jspwiki.WikiSession#getUserPrincipal()} will
-     * return this principal as the "primary" principal.
+     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#WikiPrincipal(String, String)}
+     * with the <code>type</code> parameter set to
+     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#FULL_NAME}. The method
+     * {@link com.ecyrd.jspwiki.WikiSession#getUserPrincipal()} will return this
+     * principal as the "primary" principal. Note that this method can also be
+     * used to mark a WikiPrincipal as a login name or a wiki name.
      * </p>
      * @param identifier the name of the user to retrieve; this corresponds to
      *            value returned by the user profile's

@@ -101,7 +101,7 @@ public class EditorAreaTag extends WikiTagBase
      *  Returns an element for constructing an editor.
      * 
      * @param context Current WikiContext
-     * @return
+     * @return the editor element
      */
     public static ConcreteElement getEditorArea( WikiContext context )
     {

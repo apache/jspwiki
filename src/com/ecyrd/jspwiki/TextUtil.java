@@ -533,7 +533,7 @@ public class TextUtil
     }
 
     /**
-     *  Creates a Property object based on an array which contains alternatively
+     *  Creates a Properties object based on an array which contains alternatively
      *  a key and a value.  It is useful for generating default mappings.
      *  For example:
      *  <pre>
@@ -548,7 +548,7 @@ public class TextUtil
      *
      *  @param values Alternating key and value pairs.
      *  @return Property object
-     *  @see java.util.Property
+     *  @see java.util.Properties
      *  @throws IllegalArgumentException, if the property array is missing
      *          a value for a key.
      *  @since 2.2.
@@ -660,7 +660,7 @@ public class TextUtil
      *  are replaced with \\uXXXX.
      *  
      *  @param s
-     *  @return 
+     *  @return the ASCII string
      */
     public static String native2Ascii(String s)
     {

@@ -68,7 +68,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-03 03:55:13 $
+ * @version $Revision: 1.4 $ $Date: 2005-08-07 21:15:19 $
  * @since 2.3
  */
 public class XMLUserDatabase implements UserDatabase
@@ -302,7 +302,7 @@ public class XMLUserDatabase implements UserDatabase
      * with the supplied identifier, throws a {@link NoSuchPrincipalException}.</p>
      * <p>When this method creates WikiPrincipals, the Principal containing
      * the user's full name is marked as containing the common name (see
-     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#WikiPrincipal(String, boolean)}).
+     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#WikiPrincipal(String, String)}).
      * @param identifier the name of the principal to retrieve; this corresponds to
      *            value returned by the user profile's
      *            {@link UserProfile#getLoginName()}method.
