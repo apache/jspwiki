@@ -6,9 +6,11 @@
 <%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
 <%@ page import="com.ecyrd.jspwiki.auth.NoSuchPrincipalException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.DuplicateUserException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.UserProfile" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
@@ -27,13 +29,14 @@
 <%
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
     AuthenticationManager mgr = wiki.getAuthenticationManager();
+    AuthorizationManager authMgr = wiki.getAuthorizationManager();
     UserManager userMgr = wiki.getUserManager();
     boolean containerAuth = mgr.isContainerAuthenticated();
     boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
     boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
-
-    // User must be authenticated to change the profile
-    if( !isAuthenticated )
+    
+    // User must have permission to change the profile
+    if( !authMgr.checkPermission( wikiContext, WikiPermission.PREFERENCES ) )
     {
         log.info("User "+wikiContext.getCurrentUser()+" has no access to set preferences - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
@@ -42,6 +45,14 @@
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
     }
     
+    // If user doesn't exist, redirect to registration page
+    UserProfile profile = userMgr.getUserProfile( wikiContext );
+    if ( profile.isNew() )
+    {
+        log.info("User profile for "+wikiContext.getCurrentUser()+" doesn't exist; redirecting to registration page.");
+        response.sendRedirect( wiki.getBaseURL()+"Register.jsp" );
+    }
+
     NDC.push( wiki.getApplicationName()+":"+ wikiContext.getPage().getName() );
     
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
@@ -59,10 +70,9 @@
        errors = new HashSet();
        session.setAttribute( "errors", errors );
     }
-
     
     // Extract the user profile and action attributes
-    UserProfile profile = userMgr.parseProfile( wikiContext );
+    profile = userMgr.parseProfile( wikiContext );
     String ok = request.getParameter("ok");
     String clear = request.getParameter("clear");
 
@@ -70,8 +80,8 @@
     {
         // Validate the profile
         errors.clear();
-        userMgr.validateProfile( profile, false, errors );
-        
+        userMgr.validateProfile( wikiContext, profile, errors );
+
         // If no errors, save the profile now & refresh the principal set!
         if ( errors.size() == 0 )
         {
@@ -93,9 +103,9 @@
         }
         if ( errors.size() == 0 )
         {
-            response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+		   response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+		   return;
         }
-        response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
     }
     else if( clear != null )
     {
