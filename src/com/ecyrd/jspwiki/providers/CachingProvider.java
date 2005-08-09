@@ -114,7 +114,7 @@ public class CachingProvider
 
     private static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
 
-    private static final String OSCACHE_ALGORITHM      = "com.opensymphony.module.oscache.base.algorithm.LRUCache";
+    private static final String OSCACHE_ALGORITHM      = new com.opensymphony.module.oscache.base.algorithm.LRUCache().getClass().getName();
 
     
     public void initialize( WikiEngine engine, Properties properties )
