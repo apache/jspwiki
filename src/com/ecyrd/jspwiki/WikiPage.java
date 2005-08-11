@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.HashMap;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 
