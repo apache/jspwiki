@@ -91,6 +91,15 @@ public class WikiPage
     }
 
     /**
+     * Returns the full attributes Map, in case external code needs
+     * to iterate through the attributes.
+     */
+    public Map getAttributes() 
+    {
+        return m_attributes;
+    }
+
+    /**
      *  Removes an attribute from the page, if it exists.
      *  @return If the attribute existed, returns the object.
      *  @since 2.1.111
