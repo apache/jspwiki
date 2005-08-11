@@ -1,3 +1,11 @@
+2005-08-11  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Added WikiPage.getAttributes().
+        This will be useful for external code that wants to 
+        display page attributes; for example, a hypothetical "MetaData.jsp"
+        that would allow editing of page attributes without content-inlined
+        [{SET...}] tags. 
+
 2005-08-07  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.10
