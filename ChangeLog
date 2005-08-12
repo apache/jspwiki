@@ -1,3 +1,35 @@
+2005-08-012  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.11
+        
+        * Changed WebContainerAuthorizer to auto-detect whether
+          web container authorization is used; it does this by looking
+          for certain constraints in web.xml. The effect of this change
+          is to make the out-of-the box configuration default to
+          custom authentication. Also, changing to container auth
+          is now very easy -- just uncomment the constraints and
+          JSPWiki will know what to do without needing to fiddle
+          with jspwiki.properties. Added a unit test and
+          tests/WEB-INF/web.xml sample file also.
+          
+        * Added new "super-template" for administrative pages:
+          AdminTemplate.jsp. This is a peer of ViewTemplate and
+          EditTemplate, and is used by the registration and
+          user preferences pages.
+        
+        * Loosened the default security policy to permit edits
+          by anonymous uses. This is good for getting up and
+          running, but a bad idea for Internet-facing wikis.
+          The adminstrator is suitably forewarned in the policy file.
+          
+        * Added an initialize() method to the Authorizer interface.
+          We probably needed one anyway, and the tweaks to
+          WebContainerAuthorizer forced the issue.
+          
+        * Minor tweak to LeftMenu to replace the geeky 
+          "you are authenticated/asserted" messages with something 
+          more friendly.
+
 2005-08-11  Erik Bunn  <Erik.Bunn@basen.net>
 
         * Added WikiPage.getAttributes().
