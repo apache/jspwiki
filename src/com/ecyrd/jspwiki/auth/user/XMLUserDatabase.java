@@ -68,7 +68,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-08-07 21:15:19 $
+ * @version $Revision: 1.5 $ $Date: 2005-08-12 16:24:47 $
  * @since 2.3
  */
 public class XMLUserDatabase implements UserDatabase
@@ -440,8 +440,12 @@ public class XMLUserDatabase implements UserDatabase
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
         }
-        setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
-        setAttribute( user, LAST_MODIFIED, c_format.format( profile.getLastModified() ) );
+        if ( profile.getCreated() != null ) {
+            setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
+        }
+        if ( profile.getLastModified() != null ) {
+            setAttribute( user, LAST_MODIFIED, c_format.format( profile.getLastModified() ) );
+        }
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
         setAttribute( user, WIKI_NAME, profile.getWikiName() );

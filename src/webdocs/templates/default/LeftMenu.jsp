@@ -18,12 +18,12 @@
 <div align="center" class="username">
     <wiki:UserCheck status="asserted">
         <b>G'day,</b><br />
-        <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
+        <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br/>(not logged in)
     </wiki:UserCheck>
 
     <wiki:UserCheck status="authenticated">
         <b>G'day,</b><br />
-        <wiki:Translate>[<wiki:UserName />]</wiki:Translate>
+        <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br/>(authenticated)
     </wiki:UserCheck>
 </div>
 
@@ -42,7 +42,6 @@
     </wiki:UserCheck>
 
     <wiki:UserCheck status="asserted">
-      <p>You are <b>asserted</b>.</p>
       <p>
         <a href="Register.jsp">Register</a> or 
         <wiki:UserCheck status="customAuth">
@@ -55,7 +54,6 @@
     </wiki:UserCheck>
 
     <wiki:UserCheck status="authenticated">
-      <p>You are <b>authenticated</b>.</p>
       <p>
         <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
         <br/>

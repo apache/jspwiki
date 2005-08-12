@@ -41,6 +41,7 @@
         log.info("User "+wikiContext.getCurrentUser()+" has no access to set preferences - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
         wikiContext.setVariable( "msg", msg );
+        wikiContext.setVariable( "pageName", "Preferences" );
         String pageurl = wiki.encodeName( wikiContext.getPage().getName() );
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
     }
@@ -115,7 +116,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
-                                                            "PreferencesContent.jsp" );
+                                                            "AdminTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
     NDC.pop();
     NDC.remove();

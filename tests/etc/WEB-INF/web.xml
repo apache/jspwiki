@@ -164,7 +164,7 @@
        the actual user accounts.
    -->
 
-   <!--  START OF ACCESS RESTRICTION
+   <!--  START OF ACCESS RESTRICTION -->
    <security-constraint>
        <web-resource-collection>
            <web-resource-name>Protected Area</web-resource-name>
@@ -220,6 +220,6 @@
      </description>
      <role-name>Admin</role-name>
    </security-role>
-   -->
+<!--   -->
 
 </web-app>

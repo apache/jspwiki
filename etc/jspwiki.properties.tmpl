@@ -331,13 +331,10 @@ jspwiki.plugin.searchPath =
 #  authentication services, if present. JSPWiki also can use its own
 #  authentication system, which is separate from the container.
 #  
-#  The following property is used as a "hint" by JSPWiki so that it knows
-#  which authentication system to use. By default, we use container
-#  authentication. If you use container authentication, you must also uncomment
-#  the security constraints in WEB-INF/web.xml.
-
-jspwiki.useContainerAuth    = true
-
+#  JSPWiki will try to detect whether you are using container authentication
+#  To use container authentication, you must uncomment
+#  the <security-constraint> elements in WEB-INF/web.xml.
+#
 #  AUTHORIZATION (EXTERNAL)
 #  For authorization, JSPWiki has a two-tier system. When we want to 
 #  determine whether a user has permission to perform a certain action,

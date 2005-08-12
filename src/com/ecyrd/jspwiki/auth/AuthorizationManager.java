@@ -51,7 +51,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.24 $ $Date: 2005-08-07 22:06:09 $
+ * @version $Revision: 1.25 $ $Date: 2005-08-12 16:24:47 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -292,8 +292,19 @@ public class AuthorizationManager
     {
         m_engine = engine;
         m_authorizer = getAuthorizerImplementation( properties );
+        m_authorizer.initialize( engine, properties );
     }
 
+    /**
+     * Returns the current external {@link Authorizer} in use, which may be 
+     * <code>null<code>.
+     * @return the current Authorizer
+     */
+    public Authorizer getAuthorizer()
+    {
+        return m_authorizer;
+    }
+    
     /**
      * Attempts to locate and initialize a Authorizer to use with this manager.
      * Throws a WikiException if no entry is found, or if one fails to

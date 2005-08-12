@@ -1,15 +1,17 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
+import java.util.Properties;
 
 import javax.security.auth.Subject;
 
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  * Interface for service providers of authorization information.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
+ * @version $Revision: 1.4 $ $Date: 2005-08-12 16:24:47 $
  * @since 2.3
  */
 public interface Authorizer
@@ -24,6 +26,13 @@ public interface Authorizer
      * @return the role Principal
      */
     public Principal findRole( String role );
+
+    /**
+     * Initializes the authorizer for.
+     * @param engine the current wiki engine
+     * @param props the wiki engine initialization properties
+     */
+    public void initialize( WikiEngine engine, Properties props );
 
     /**
      * Determines whether the user represented by a supplied Subject is in a

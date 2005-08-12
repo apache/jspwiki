@@ -1,7 +1,5 @@
 package com.ecyrd.jspwiki.auth;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -29,7 +27,6 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
-import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.providers.ProviderException;
 

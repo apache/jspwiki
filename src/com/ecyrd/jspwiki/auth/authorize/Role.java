@@ -27,7 +27,7 @@ import java.security.Principal;
  * used by an external {@link com.ecyrd.jspwiki.auth.Authorizer}, such as a web
  * container.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
+ * @version $Revision: 1.4 $ $Date: 2005-08-12 16:24:46 $
  * @since 2.3
  */
 public final class Role implements Principal
@@ -89,6 +89,14 @@ public final class Role implements Principal
                 name.equals(AUTHENTICATED.m_name));
     }
     
+    /**
+     * Returns a unique hashcode for the Role.
+     */
+    public final int hashCode()
+    {
+        return m_name.hashCode();
+    }
+
     /**
      * Two Role objects are considered equal if their names are identical.
      * @return <code>true</code> if both objects are of type Role and have identical names

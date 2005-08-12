@@ -16,6 +16,7 @@ package com.ecyrd.jspwiki.auth;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
+import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
 import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
@@ -54,7 +56,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.9 $ $Date: 2005-08-07 22:06:09 $
+ * @version $Revision: 1.10 $ $Date: 2005-08-12 16:24:47 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -72,12 +74,7 @@ public class AuthenticationManager
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
 
-    /** The property in jspwiki.properties that determines whether to use container authentication. */
-    public static final String                 PROP_USE_CMS_AUTH   = "jspwiki.useContainerAuth";
-
     static Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
-    
-    private boolean                            m_containerAuth     = true;
     
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private static Boolean                     m_allowsAssertions  = null;
@@ -132,7 +129,6 @@ public class AuthenticationManager
     public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
-        m_containerAuth  = TextUtil.getBooleanProperty( props, PROP_USE_CMS_AUTH, m_containerAuth );
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
         if (! PolicyLoader.isJaasConfigured() ) 
@@ -171,14 +167,20 @@ public class AuthenticationManager
     /**
      * Returns true if this WikiEngine uses container-managed authentication.
      * This method is used primarily for cosmetic purposes in the JSP tier, and
-     * performs no meaningful security function per se. Defaults to true unless
-     * property {@link #PROP_USE_CMS_AUTH}was set.
+     * performs no meaningful security function per se. Delegates to
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer#isContainerAuthorized()},
+     * if used as the external authorizer; otherwise, returns <code>false</code>.
      * @return <code>true</code> if the wiki's authentication is managed by
      *         the container, <code>false</code> otherwise
      */
     public boolean isContainerAuthenticated()
     {
-        return m_containerAuth;
+        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+        if ( authorizer != null && authorizer instanceof WebContainerAuthorizer )
+        {
+             return ( ( WebContainerAuthorizer )authorizer ).isContainerAuthorized();
+        }
+        return false;
     }
 
     /**
