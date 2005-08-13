@@ -2882,8 +2882,10 @@ public class TranslatorReader extends Reader
      *  A very simple class for outputting plain text with no
      *  formatting.
      */
-    private class TextRenderer
+    public class TextRenderer
     {
+        public TextRenderer() {}
+        
         public void doChar( StringBuffer buf, char ch )
         {
             buf.append( ch );
@@ -3136,7 +3138,7 @@ public class TranslatorReader extends Reader
      *  This class is used to store the headings in a manner which
      *  allow the building of a Table Of Contents.
      */
-    public class Heading
+    public static class Heading
     {
         public static final int HEADING_SMALL  = 1;
         public static final int HEADING_MEDIUM = 2;
