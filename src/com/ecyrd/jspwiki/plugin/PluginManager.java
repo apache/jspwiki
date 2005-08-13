@@ -22,6 +22,10 @@ package com.ecyrd.jspwiki.plugin;
 import org.apache.oro.text.regex.*;
 import org.apache.log4j.Logger;
 import org.apache.ecs.xhtml.*;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -100,6 +104,10 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public class PluginManager
 {
+    public static final String NAMESPACE_RENDER = "http://www.jspwiki.org/ns/render#";
+
+    public static final String DOM_PLUGIN = "plugin";
+
     private static Logger log = Logger.getLogger( PluginManager.class );
 
     /**
@@ -537,6 +545,61 @@ public class PluginManager
         return commandline;
     }
 
+    private Namespace m_jspwikiNameSpace = Namespace.getNamespace( NAMESPACE_RENDER );
+                                                         
+    public Content parsePluginLine( WikiContext context, String commandline )
+        throws PluginException
+    {
+        PatternMatcher  matcher  = new Perl5Matcher();
+
+        try
+        {
+            if( matcher.contains( commandline, m_pluginPattern ) )
+            {
+                MatchResult res = matcher.getMatch();
+
+                String plugin   = res.group(2);                
+                String args     = commandline.substring(res.endOffset(0),
+                                                        commandline.length() -
+                                                        (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
+                Map arglist     = parseArgs( args );
+
+                Element result = new Element( DOM_PLUGIN );
+                
+                result.setAttribute("class",plugin);
+                for( Iterator i = arglist.entrySet().iterator(); i.hasNext(); )
+                {
+                    Map.Entry me = (Map.Entry)i.next();
+                    
+                    Element parm = new Element("param");
+                    parm.addContent( new Element("name").addContent( (String)me.getKey() ) );
+                    parm.addContent( new Element("value").addContent( (String)me.getValue() ) );
+                    result.addContent(parm);
+                }
+                
+                return result;
+            }
+        }
+        catch( ClassCastException e )
+        {
+            log.error( "Invalid type offered in parsing plugin arguments.", e );
+            throw new InternalWikiException("Oops, someone offered !String!");
+        }
+        catch( NoSuchElementException e )
+        {
+            String msg =  "Missing parameter in plugin definition: "+commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
+        }
+        catch( IOException e )
+        {
+            String msg = "Zyrf.  Problems with parsing arguments: "+commandline;
+            log.warn( msg, e );
+            throw new PluginException( msg );
+        }
+
+        return null;
+    }
     /*
       // FIXME: Not functioning, needs to create or fetch PageContext from somewhere.
     public class TagPlugin implements WikiPlugin
