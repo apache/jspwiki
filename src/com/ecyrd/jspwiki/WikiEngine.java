@@ -808,9 +808,9 @@ public class WikiEngine
     public String safeGetQueryString( HttpServletRequest request )
     {
         if (request == null)
-	{
+        {
             return "";
-	}
+        }
 
         try
         {
