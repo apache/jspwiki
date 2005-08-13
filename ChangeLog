@@ -1,4 +1,13 @@
-2005-08-012  Andrew Jaquith <arjaquith@mindspring.com>
+2005-08-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Did a mass commit of the new rendering engine.  It is
+        not enabled yet, but I wanted to save the code to a very
+        safe place :-).  Please look at the code in the new parser
+        and render -packages.  There is still time to change the
+        API...  (No version bump; there is no changes in JSPWiki
+        functionality with this).
+
+2005-08-12  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.11
         
