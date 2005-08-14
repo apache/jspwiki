@@ -836,7 +836,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1\n\n2\n\n3";
         
-        assertEquals( "1\n<p>2\n</p>\n<p>3</p>\n", translate(src) );
+        assertEquals( "1\n<p>2\n</p>\n<p>3</p>", translate(src) );
     }
     
     public void testParagraph2()
@@ -847,7 +847,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         newPage( "WikiEtiquette" );        
         
         assertEquals( "<a class=\"wikipage\" href=\"Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n"+
-                      "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find page</a></p>\n", translate(src) );
+                      "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
     }
     
     public void testParagraph3()
@@ -855,7 +855,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
         
-        assertEquals( "<p></p>\n<h4 id='section-testpage-Testi'>Testi</h4>\n<p>Foo.</p>\n", 
+        assertEquals( "<p></p>\n<h4 id='section-testpage-Testi'>Testi</h4>\n<p>Foo.</p>", 
                       translate(src) );
     }
     
@@ -872,7 +872,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=RecentChanges\">Recent Changes</a><br />\n"+
                       "<a class=\"wikipage\" href=\"Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>\n"+
                       "<p><a class=\"wikipage\" href=\"Wiki.jsp?page=FindPage\">Find pages</a><br />\n"+
-                      "<a class=\"wikipage\" href=\"Wiki.jsp?page=UnusedPages\">Unused pages</a></p>\n",
+                      "<a class=\"wikipage\" href=\"Wiki.jsp?page=UnusedPages\">Unused pages</a></p>",
                       translate(src) );
     }
     
@@ -955,7 +955,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1\n{{{ <b> }}}";
         
-        assertEquals( "1\n<pre> &lt;b&gt; </pre>\n", translate(src) );
+        assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate(src) );
     }
     
     public void testCamelCaseInPre()
@@ -963,7 +963,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1\n{{{ CamelCase }}}";
         
-        assertEquals( "1\n<pre> CamelCase </pre>\n", translate(src) );
+        assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
     }
     
     public void testList1()
@@ -1501,7 +1501,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src=";:Foo";
         
-        assertEquals( "<dl>\n<dt></dt><dd>Foo</dd>\n</dl>",
+        assertEquals( "<dl><dt /><dd>Foo</dd></dl>",
                       translate(src) );
     }
     
@@ -1510,7 +1510,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src=";Bar:Foo";
         
-        assertEquals( "<dl>\n<dt>Bar</dt><dd>Foo</dd>\n</dl>",
+        assertEquals( "<dl><dt>Bar</dt><dd>Foo</dd></dl>",
                       translate(src) );
     }
     
@@ -1519,7 +1519,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src=";:";
         
-        assertEquals( "<dl>\n<dt></dt><dd></dd>\n</dl>",
+        assertEquals( "<dl><dt /><dd /></dl>",
                       translate(src) );
     }
     
@@ -1528,10 +1528,19 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src=";Bar:Foo :-)";
         
-        assertEquals( "<dl>\n<dt>Bar</dt><dd>Foo :-)</dd>\n</dl>",
+        assertEquals( "<dl><dt>Bar</dt><dd>Foo :-)</dd></dl>",
                       translate(src) );
     }
-    
+
+    public void testDescription5()
+    throws Exception
+    {
+        String src=";Bar:Foo :-) ;-) :*]";
+        
+        assertEquals( "<dl><dt>Bar</dt><dd>Foo :-) ;-) :*]</dd></dl>",
+                      translate(src) );
+    }
+  
     
     public void testRuler()
     throws Exception
