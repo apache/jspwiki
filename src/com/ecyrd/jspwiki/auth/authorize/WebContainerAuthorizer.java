@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-08-12 16:24:47 $
+ * @version $Revision: 1.5 $ $Date: 2005-08-14 15:10:41 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -209,6 +209,9 @@ public class WebContainerAuthorizer implements Authorizer
      * @return <code>true</code> if the resource is constrained to the role,
      *         <code>false</code> otherwise
      */
+    
+    // FIXME: This would be quite a lot nicer if done with XPath
+    
     protected boolean isConstrained( Document webxml, String url, Role role )
     {
         // Loop through constraints, looking for our pattern
