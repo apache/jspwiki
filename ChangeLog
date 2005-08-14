@@ -1,3 +1,14 @@
+2005-08-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Some more tweaks of the new renderer.  isExternalLink()
+        is now about 3x faster than it was before (it was the biggest
+        bottleneck so far).  Still not usable (lists don't work).
+        
+        * Change test property files to use BasicSearchProvider
+        (Lucene startup was taking too much time), and TestAuthorizer
+        (WebContainerAuthorizer takes about a second to start each
+        time). 
+
 2005-08-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * Did a mass commit of the new rendering engine.  It is
