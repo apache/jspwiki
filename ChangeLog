@@ -1,5 +1,13 @@
 2005-08-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.3.12
+
+        * Even more tweaks.  It is now possible to test the new
+        rendering engine by setting "jspwiki.newRenderingEngine" to true
+        in your jspwiki.properties (this will be gone in near future;
+        it really is for testing only).  Note, however, that CamelCase
+        does not currently work.
+
         * Some more tweaks of the new renderer.  isExternalLink()
         is now about 3x faster than it was before (it was the biggest
         bottleneck so far).  Still not usable (lists don't work).
