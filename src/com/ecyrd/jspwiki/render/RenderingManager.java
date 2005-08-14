@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.filters.FilterException;
+import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
@@ -22,7 +24,7 @@ import com.opensymphony.module.oscache.base.NeedsRefreshException;
  *  @author jalkanen
  *
  */
-public class RenderingManager
+public class RenderingManager implements PageFilter
 {
     private WikiEngine m_engine;
 
@@ -123,5 +125,34 @@ public class RenderingManager
         }
         
         return null;
+    }
+
+    //
+    //  The following methods are for the PageFilter interface
+    //
+    public void initialize( Properties properties ) throws FilterException
+    {
+    }
+
+    public void postSave( WikiContext wikiContext, String content ) throws FilterException
+    {
+        String pageName = wikiContext.getPage().getName();
+        
+        m_documentCache.flushEntry( pageName );
+    }
+
+    public String postTranslate( WikiContext wikiContext, String htmlContent ) throws FilterException
+    {
+        return htmlContent;
+    }
+
+    public String preSave( WikiContext wikiContext, String content ) throws FilterException
+    {
+        return content;
+    }
+
+    public String preTranslate( WikiContext wikiContext, String content ) throws FilterException
+    {
+        return content;
     }
 }
