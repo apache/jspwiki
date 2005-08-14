@@ -61,6 +61,7 @@ public class JSPWikiMarkupParser
     private boolean        m_isPre        = false;
     private boolean        m_isEscaping   = false;
     private boolean        m_isdefinition = false;
+    private boolean        m_isPreBlock   = false;
 
     /** Contains style information, in multiple forms. */
     private Stack          m_styleStack   = new Stack();
@@ -83,6 +84,9 @@ public class JSPWikiMarkupParser
 
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
+    /** Keeps track of any plain text that gets put in the Text nodes */
+    private StringBuffer   m_plainTextBuf = new StringBuffer();
+    
     private Document       m_document = new Document();
     private Element        m_currentElement;
     
@@ -154,6 +158,9 @@ public class JSPWikiMarkupParser
      *  types as of September 2004 + a few well-known extra types.
      *
      *  JSPWiki recognises all of them as external links.
+     *  
+     *  This array is sorted during class load, so you can just dump
+     *  here whatever you want in whatever order you want.
      */
     static final String[] c_externalLinks = {
         "http:", "ftp:", "https:", "mailto:",
@@ -167,7 +174,17 @@ public class JSPWikiMarkupParser
         "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
         "im:", "mtqp", "smb:" };
 
+    /**
+     *  This Comparator is used to find an external link from c_externalLinks.  It
+     *  checks if the link starts with the other arraythingie.
+     */
+    private static Comparator c_startingComparator = new StartingComparator();
 
+    static
+    {
+        Arrays.sort( c_externalLinks );
+    }
+    
     /**
      *  Creates a markup parser.
      */
@@ -584,15 +601,17 @@ public class JSPWikiMarkupParser
      *  the most common protocols by checking how it starts.
      */
 
-    // FIXME: Should really put the external link types to a sorted set,
-    //        then searching for them would be faster.
     private boolean isExternalLink( String link )
     {
-        for( int i = 0; i < c_externalLinks.length; i++ )
-        {
-            if( link.startsWith( c_externalLinks[i] ) ) return true;
-        }
+        int idx = Arrays.binarySearch( c_externalLinks, link, 
+                                       c_startingComparator );
 
+        //
+        //  We need to check here once again; otherwise we might
+        //  get a match for something like "h".
+        //
+        if( idx >= 0 && link.startsWith(c_externalLinks[idx]) ) return true;
+        
         return false;
     }
 
@@ -1433,11 +1452,10 @@ public class JSPWikiMarkupParser
         return el;
     }
 
-    private String handleOpenbrace( boolean isBlock )
+    private Element handleOpenbrace( boolean isBlock )
         throws IOException
     {
         int ch = nextToken();
-        String res = "{";
 
         if( ch == '{' )
         {
@@ -1445,16 +1463,27 @@ public class JSPWikiMarkupParser
 
             if( ch2 == '{' )
             {
-                res = startBlockLevel()+m_renderer.openPreformatted( isBlock );
+                startBlockLevel();
                 m_isPre = true;
                 m_isEscaping = true;
+                m_isPreBlock = isBlock;
+                
+                if( isBlock )
+                {
+                    return pushElement( new Element("pre") );
+                }
+                else
+                {
+                    return pushElement( new Element("span").setAttribute("style","font-family:monospace; whitespace:pre;") );
+                }
             }
             else
             {
                 pushBack( ch2 );
                 
-                res = m_renderer.openTextEffect(TYPED);
                 m_isTypedText = true;
+                
+                return pushElement( new Element("tt") );
            }
         }
         else
@@ -1462,17 +1491,15 @@ public class JSPWikiMarkupParser
             pushBack( ch );
         }
 
-        return res;
+        return null;
     }
 
     /**
      *  Handles both }} and }}}
      */
-    private String handleClosebrace()
+    private Element handleClosebrace()
         throws IOException
     {
-        String res = "}";
-
         int ch2 = nextToken();
 
         if( ch2 == '}' )
@@ -1484,12 +1511,20 @@ public class JSPWikiMarkupParser
                 if( m_isPre )
                 {
                     m_isPre = false;
-            m_isEscaping = false;
-                    res = m_renderer.closePreformatted();
+                    m_isEscaping = false;
+                    if( m_isPreBlock )
+                    {
+                        return popElement( "pre" );
+                    }
+                    else
+                    {
+                        return popElement( "span" );
+                    }
                 }
                 else
                 {
-                    res = "}}}";
+                    m_plainTextBuf.append("}}}");
+                    return m_currentElement;
                 }
             }
             else
@@ -1498,8 +1533,8 @@ public class JSPWikiMarkupParser
 
                 if( !m_isEscaping )
                 {
-                    res = m_renderer.closeTextEffect(TYPED);
                     m_isTypedText = false;
+                    return popElement("tt");
                 }
                 else
                 {
@@ -1512,7 +1547,7 @@ public class JSPWikiMarkupParser
             pushBack( ch2 );
         }
 
-        return res;
+        return null;
     }
 
     private Element handleDash()
@@ -1626,6 +1661,7 @@ public class JSPWikiMarkupParser
         {
             m_isOpenParagraph = false;
             popElement("p");
+            m_plainTextBuf.append("\n");
         }
 
         return "";
@@ -2029,7 +2065,7 @@ public class JSPWikiMarkupParser
     /**
      *  Generic escape of next character or entity.
      */
-    private String handleTilde()
+    private Element handleTilde()
         throws IOException
     {
         int ch = nextToken();
@@ -2038,26 +2074,23 @@ public class JSPWikiMarkupParser
             ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
             ch == '{' || ch == ']' || ch == '}' )
         {
-            StringBuffer sb = new StringBuffer();
-            sb.append( (char)ch );
-            sb.append(readWhile( ""+(char)ch ));
-            return sb.toString();
+            m_plainTextBuf.append( (char)ch );
+            m_plainTextBuf.append(readWhile( ""+(char)ch ));
+            return m_currentElement;
         }
         
         if( Character.isUpperCase( (char) ch ) )
         {
             pushBack( ch );
-            return "";
+            return m_currentElement;
         }
 
         // No escape.
         pushBack( ch );
 
-        return "~";
+        return null;
     }
-
-    StringBuffer m_plainTextBuf = new StringBuffer();
-    
+   
     private void fillBuffer( Element startElement )
         throws IOException
     {
@@ -2084,15 +2117,15 @@ public class JSPWikiMarkupParser
             {
                 if( ch == '}' )
                 {
-                    m_plainTextBuf.append( handleClosebrace() );
-                }                
+                    if( handleClosebrace() == null ) m_plainTextBuf.append( (char) ch );
+                }
                 else if( ch == -1 )
                 {
                     quitReading = true;
                 }
                 else 
                 {
-                    m_renderer.doChar( m_plainTextBuf, (char)ch );
+                    m_plainTextBuf.append( (char) ch );
                 }
 
                 continue;
@@ -2213,6 +2246,7 @@ public class JSPWikiMarkupParser
               case '\r':
                 // DOS linefeeds we forget
                 s = null;
+                el = m_currentElement;
                 break;
 
               case '\n':
@@ -2279,11 +2313,11 @@ public class JSPWikiMarkupParser
                 break;
 
               case '{':
-                s = handleOpenbrace( newLine );
+                el = handleOpenbrace( newLine );
                 break;
 
               case '}':
-                s = handleClosebrace();
+                el = handleClosebrace();
                 break;
 
               case '-':
@@ -2306,10 +2340,12 @@ public class JSPWikiMarkupParser
                 {
                     el = handleDefinitionList();
                 }
+                /*
                 else
                 {
                     s = ";";
                 }
+                */
                 break;
 
               case ':':
@@ -2319,10 +2355,12 @@ public class JSPWikiMarkupParser
                     el = pushElement( new Element("dd") );
                     m_isdefinition = false;
                 }
+                /*
                 else
                 {
                     s = ":";
                 }
+                */
                 break;
 
               case '[':
@@ -2335,10 +2373,12 @@ public class JSPWikiMarkupParser
                     pushBack('*');
                     s = handleGeneralList();
                 }
+                /*
                 else
                 {
                     s = "*";
                 }
+                */
                 break;
 
               case '#':
@@ -2347,10 +2387,12 @@ public class JSPWikiMarkupParser
                     pushBack('#');
                     s = handleGeneralList();
                 }
+                /*
                 else
                 {
                     s = "#";
                 }
+                */
                 break;
 
               case '|':
@@ -2375,7 +2417,7 @@ public class JSPWikiMarkupParser
                 break;
                 */
               case '~':
-                s = handleTilde();
+                el = handleTilde();
                 break;
 
               case '%':
@@ -2398,6 +2440,15 @@ public class JSPWikiMarkupParser
 */
             }
 
+            //
+            //   The idea is as follows:  If the handler method returns
+            //   an element (el != null), it is assumed that it has been
+            //   added in the stack.  Otherwise the character is added
+            //   as is to the plaintext buffer.
+            //
+            //   For the transition phase, if s != null, it also gets
+            //   added in the plaintext buffer.
+            //
             if( el != null )
             {
                 newLine = false;
@@ -2410,9 +2461,7 @@ public class JSPWikiMarkupParser
             
             if( s != null )
             {
-                m_currentElement.addContent( m_plainTextBuf.toString() );
-                m_plainTextBuf = new StringBuffer();
-                m_currentElement.addContent( s );
+                m_plainTextBuf.append( s );
                 newLine = false;
             }
         }
@@ -2445,7 +2494,6 @@ public class JSPWikiMarkupParser
     private class HTMLRenderer
         extends TextRenderer
     {
-        private boolean m_isPreBlock = false;
         private TranslatorReader m_cleanTranslator;
 
         /*
@@ -2496,68 +2544,6 @@ public class JSPWikiMarkupParser
 
         
 
-        /**
-         *  Writes out a text effect
-         */
-        public String openTextEffect( int effect )
-        {
-            switch( effect )
-            {
-              case BOLD:
-                return "<b>";
-              case ITALIC:
-                return "<i>";
-              case TYPED:
-                return "<tt>";
-            }
-
-            return "";
-        }
-
-        public String closeTextEffect( int effect )
-        {
-            switch( effect )
-            {
-              case BOLD:
-                return "</b>";
-              case ITALIC:
-                return "</i>";
-              case TYPED:
-                return "</tt>";
-            }
-
-            return "";
-        }
-
-        public String openDefinitionItem()
-        {
-            return "<dd>";
-        }
-
-        public String closeDefinitionItem()
-        {
-            return "</dd>\n";
-        }
-
-        public String openDefinitionTitle()
-        {
-            return "<dt>";
-        }
-        public String closeDefinitionTitle()
-        {
-            return "</dt>";
-        }
-
-        public String openDefinitionList()
-        {
-            return "<dl>\n";
-        }
-
-        public String closeDefinitionList()
-        {
-            return "</dl>";
-        }
-        
 
         /**
          *  Write a HTMLized link depending on its type.
@@ -2781,50 +2767,6 @@ public class JSPWikiMarkupParser
         {
             buf.append( ch );
         }
-
-
-        /**
-         *  Writes out a text effect
-         */
-        public String openTextEffect( int effect )
-        {
-            return "";
-        }
-
-        public String closeTextEffect( int effect )
-        {
-            return "";
-        }
-
-        public String openDefinitionItem()
-        {
-            return " : ";
-        }
-
-        public String closeDefinitionItem()
-        {
-            return "\n";
-        }
-
-        public String openDefinitionTitle()
-        {
-            return "";
-        }
-
-        public String closeDefinitionTitle()
-        {
-            return "";
-        }
-
-        public String openDefinitionList()
-        {
-            return "";
-        }
-
-        public String closeDefinitionList()
-        {
-            return "\n";
-        }
         
 
         /**
@@ -2948,6 +2890,37 @@ public class JSPWikiMarkupParser
 
 
     } // TextRenderer
+
+    /**
+     *  Compares two Strings, and if one starts with the other, then
+     *  returns null.  Otherwise just like the normal Comparator
+     *  for strings.
+     *  
+     *  @author jalkanen
+     *
+     *  @since
+     */
+    private static class StartingComparator implements Comparator
+    {
+        public int compare( Object arg0, Object arg1 )
+        {
+            String s1 = (String)arg0;
+            String s2 = (String)arg1;
+            
+            if( s1.length() > s2.length() )
+            {
+                if( s1.startsWith(s2) && s2.length() > 1 ) return 0;
+            }
+            else
+            {
+                if( s2.startsWith(s1) && s1.length() > 1 ) return 0;
+            }
+                
+            return s1.compareTo( s2 );
+        }
+        
+    }
+    
 
 }
 
