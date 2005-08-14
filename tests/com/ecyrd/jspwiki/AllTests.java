@@ -52,14 +52,14 @@ public class AllTests extends TestCase
         suite.addTest( com.ecyrd.jspwiki.xmlrpc.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.providers.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
-        // TODO: Fix these so that they can be added.
-        // suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.util.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.filters.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.rss.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.htmltowiki.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.dav.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.render.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.parser.AllTests.suite() );
         
         return suite;
     }
