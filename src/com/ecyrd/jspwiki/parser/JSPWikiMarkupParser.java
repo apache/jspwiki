@@ -56,7 +56,6 @@ public class JSPWikiMarkupParser
     //private boolean        m_iscode       = false;
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
-    private boolean        m_isTypedText  = false;
     private boolean        m_istable      = false;
     private boolean        m_isPre        = false;
     private boolean        m_isEscaping   = false;
@@ -136,8 +135,6 @@ public class JSPWikiMarkupParser
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
 
-    private TextRenderer           m_renderer;
-
     /**
      *  The default inlining pattern.  Currently "*.png"
      */
@@ -191,18 +188,8 @@ public class JSPWikiMarkupParser
     public JSPWikiMarkupParser( WikiContext context, Reader in )
     {
         super( context, in );
-        initialize( new HTMLRenderer() );
+        initialize();
     }
-
-    /**
-     * @deprecated
-     */
-    public JSPWikiMarkupParser( WikiContext context, Reader in, TextRenderer renderer )
-    {
-        super( context, in );
-        initialize( renderer );
-    }
-
 
     /**
      *  @param engine The WikiEngine this reader is attached to.  Is
@@ -210,12 +197,10 @@ public class JSPWikiMarkupParser
      */
 
     // FIXME: parsers should be pooled for better performance.
-    private void initialize( TextRenderer renderer )
+    private void initialize()
     {
         PatternCompiler compiler         = new GlobCompiler();
         ArrayList       compiledpatterns = new ArrayList();
-
-        m_renderer = renderer;
 
         Collection ptrns = getImagePatterns( m_engine );
 
@@ -286,18 +271,6 @@ public class JSPWikiMarkupParser
         
         m_context.getPage().setHasMetadata();
     }
-
-    /**
-     *  Sets the currently used renderer.  This method is protected because
-     *  we only want to use it internally for now.  The renderer interface
-     *  is not yet set to stone, so it's not expected that third parties
-     *  would use this.
-     */
-    protected void setRenderer( TextRenderer renderer )
-    {
-        m_renderer = renderer;
-    }
-    
 
 
     /**
@@ -387,23 +360,6 @@ public class JSPWikiMarkupParser
         }
     }
 
-    /**
-     *  Write a HTMLized link depending on its type.
-     *  The link mutator chain is processed.
-     *
-     *  @param type Type of the link.
-     *  @param link The actual link.
-     *  @param text The user-visible text for the link.
-     */
-    public String makeLink( int type, String link, String text )
-    {
-        if( text == null ) text = link;
-
-        text = callMutatorChain( m_linkMutators, text );
-
-        return m_renderer.makeLink( type, link, text );
-    }
-    
     private Element makeLink( int type, String link, String text, String section )
     {
         Element el = null;
@@ -698,12 +654,51 @@ public class JSPWikiMarkupParser
         return new Element("span").setAttribute("class","error").addContent(error);
     }
 
+    String WIKIWORD_REGEX = "[[:^alnum:]]*[[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*";
+    
     private void flushPlainText()
     {
         if( m_plainTextBuf.length() > 0 )
         {
-            m_currentElement.addContent( m_plainTextBuf.toString() );
+            //
+            //  We must first empty the buffer because the side effect of 
+            //  calling makeCamelCaseLink() is to call this routine.
+            //
+            String buf = m_plainTextBuf.toString();
             m_plainTextBuf = new StringBuffer();
+            
+            if( m_camelCaseLinks )
+            {            
+                try
+                {
+                    Pattern p = m_compiler.compile( WIKIWORD_REGEX );
+                
+                    PatternMatcherInput input = new PatternMatcherInput(buf);
+                
+                    System.out.println("Buffer="+input.toString());
+                    PatternMatcher matcher  = new Perl5Matcher();
+                    
+                    while( matcher.contains( input, p ) )
+                    {
+                        System.out.println("Got match: "+input.match());
+                    
+                        System.out.println("Split to '"+input.preMatch()+"', and '"+input.postMatch()+"'");
+                        m_currentElement.addContent( input.preMatch() );
+                        makeCamelCaseLink( input.match() );
+                        buf = input.postMatch();
+                    }
+                    
+                    m_currentElement.addContent( buf );
+                }
+                catch( MalformedPatternException e )
+                {
+                    throw new InternalWikiException("Malformed pattern in camelcase: "+e.getMessage());
+                }
+            }
+            else
+            {
+                m_currentElement.addContent( m_plainTextBuf.toString() );
+            }
         }        
     }
     
@@ -1192,7 +1187,7 @@ public class JSPWikiMarkupParser
             else
             {
                 makeLink( EXTERNAL, reallink, link, null );
-                sb.append( m_renderer.outlinkImage() );
+                addElement( outlinkImage() );
             }
         }
         else if( (interwikipoint = reallink.indexOf(":")) != -1 )
@@ -1222,12 +1217,12 @@ public class JSPWikiMarkupParser
 
                 if( isExternalLink(urlReference) )
                 {
-                    sb.append( m_renderer.outlinkImage() );
+                    addElement( outlinkImage() );
                 }
             }
             else
             {
-                sb.append( link+" "+m_renderer.makeError("No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)") );
+                addElement( makeError("No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)") );
             }
         }
         else if( reallink.startsWith("#") )
@@ -1482,8 +1477,6 @@ public class JSPWikiMarkupParser
             {
                 pushBack( ch2 );
                 
-                m_isTypedText = true;
-                
                 return pushElement( new Element("tt") );
            }
         }
@@ -1534,7 +1527,6 @@ public class JSPWikiMarkupParser
 
                 if( !m_isEscaping )
                 {
-                    m_isTypedText = false;
                     return popElement("tt");
                 }
                 else
@@ -2166,7 +2158,7 @@ public class JSPWikiMarkupParser
             //  of a CamelCase format text string inside the "word", and
             //  if one exists, we replace it with a proper link.
             //
-            
+            /*
             if( m_camelCaseLinks )
             {
                 // Quick parse of start of a word boundary.
@@ -2187,9 +2179,7 @@ public class JSPWikiMarkupParser
                     //  Check for the end of the word.
                     //
 
-                    if( Character.isWhitespace( (char)ch ) || 
-                        ch == -1 ||
-                        WORD_SEPARATORS.indexOf( (char) ch ) != -1 )
+                    if( !Character.isLetterOrDigit( (char)ch ) || ch == -1 )
                     {
                         String potentialLink = word.toString();
 
@@ -2197,27 +2187,15 @@ public class JSPWikiMarkupParser
 
                         if( camelCase != null )
                         {
-                            // System.out.println("Buffer is "+buf);
-
-                            // System.out.println("  Replacing "+camelCase+" with proper link.");
                             start = m_plainTextBuf.toString().lastIndexOf( camelCase );
-                            m_plainTextBuf.delete(start, start+camelCase.length() );
+                            m_plainTextBuf.delete(start, start+potentialLink.length() );
                             
                             makeCamelCaseLink( camelCase );
-                            /*
-                            m_plainTextBuf.replace(start,
-                                                   start+camelCase.length(),
-                                                   makeCamelCaseLink(camelCase) );
-                                                   */
-                            // FIXME: This strategy does not work
-                            // System.out.println("  Resulting with "+buf);
                         }
                         else
                         {
-                            // System.out.println("Checking for potential URI: "+potentialLink);
                             if( isExternalLink( potentialLink ) )
                             {
-                                // System.out.println("buf="+buf);
                                 start = m_plainTextBuf.toString().lastIndexOf( potentialLink );
 
                                 if( start >= 0 )
@@ -2225,18 +2203,8 @@ public class JSPWikiMarkupParser
                                     String link = readUntil(" \t()[]{}!\"'\n|");
 
                                     link = potentialLink + (char)ch + link; // Do not forget the start.
-
-                                    // System.out.println("start="+start+", pl="+potentialLink);
-
                                     m_plainTextBuf.delete( start, start+potentialLink.length() );
                                     makeDirectURILink( link );
-                                    /*
-                                     FIXME!
-                                    m_plainTextBuf.replace( start,
-                                                            start + potentialLink.length(),
-                                                            makeDirectURILink( link ) );
-*/
-                                    // System.out.println("Resulting with "+buf);
 
                                     ch = nextToken();
                                 }
@@ -2257,7 +2225,7 @@ public class JSPWikiMarkupParser
                 previousCh = ch;
          
             } // if m_camelCaseLinks
-
+*/
             //
             //  An empty line stops a list
             //
@@ -2515,414 +2483,6 @@ public class JSPWikiMarkupParser
         return d;
     }
     
-
-    /**
-     *  All HTML output stuff is here.  This class is a helper class, and will
-     *  be spawned later on with a proper API of its own so that we can have
-     *  different kinds of renderers.
-     */
-
-    // FIXME: Not everything is yet, and in the future this class will be spawned
-    //        out to be its own class.
-    private class HTMLRenderer
-        extends TextRenderer
-    {
-        private TranslatorReader m_cleanTranslator;
-
-        /*
-           FIXME: It's relatively slow to create two TranslatorReaders each time.
-        */
-        public HTMLRenderer()
-        {
-        }
-
-        /**
-         *  Does a lazy init.  Otherwise, we would get into a situation
-         *  where HTMLRenderer would try and boot a TranslatorReader before
-         *  the TranslatorReader it is contained by is up.
-         */
-        private TranslatorReader getCleanTranslator()
-        {
-            if( m_cleanTranslator == null )
-            {
-                WikiContext dummyContext = new WikiContext( m_engine, 
-                                                            m_context.getPage() );
-                m_cleanTranslator = new TranslatorReader( dummyContext, 
-                                                          null );
-                // m_cleanTranslator.m_allowHTML = true;
-            }
-
-            return m_cleanTranslator;
-        }
-
-        public void doChar( StringBuffer buf, char ch )
-        {
-            if( ch == '<' )
-            {
-                buf.append("&lt;");
-            }
-            else if( ch == '>' )
-            {
-                buf.append("&gt;");
-            }
-            else if( ch == '&' )
-            {
-                buf.append("&amp;");
-            }
-            else
-            {
-                buf.append( ch );
-            }
-        }
-
-        
-
-
-        /**
-         *  Write a HTMLized link depending on its type.
-         *
-         *  <p>This jsut calls makeLink() with "section" set to null.
-         */
-        public String makeLink( int type, String link, String text )
-        {
-            return makeLink( type, link, text, null );
-        }
-
-        private final String getURL( String context, String link )
-        {
-            return m_context.getURL( context,
-                                     link,
-                                     null );
-        }
-
-        /**
-         *  Writes HTML for error message.
-         */
-
-        public String makeError( String error )
-        {
-            return "<span class=\"error\">"+error+"</span>";
-        }
-
-        /**
-         *  Emits a vertical line.
-         */
-
-        public String makeRuler()
-        {
-            return "<hr />";
-        }
-
-        /**
-         *  Modifies the "hd" parameter to contain proper values.  Because
-         *  an "id" tag may only contain [a-zA-Z0-9:_-], we'll replace the
-         *  % after url encoding with '_'.
-         */
-        private String makeHeadingAnchor( String baseName, String title, TranslatorReader.Heading hd )
-        {
-            hd.m_titleText = title;
-            title = cleanLink( title );
-            hd.m_titleSection = m_engine.encodeName(title);
-            hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
-                               "-"+hd.m_titleSection;
-            
-            hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
-            return hd.m_titleAnchor;
-        }
-
-        private String makeSectionTitle( String title )
-        {
-            title = title.trim();
-
-            StringWriter outTitle = new StringWriter();
-
-            try
-            {
-                TranslatorReader read = getCleanTranslator();
-                read.setInputReader( new StringReader(title) );
-                FileUtil.copyContents( read, outTitle );
-            }
-            catch( IOException e )
-            {
-                log.fatal("CleanTranslator not working", e);
-                throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() );
-            }
-
-            return outTitle.toString();
-        }
-        
-        /**
-         *  Returns XHTML for the start of the heading.  Also sets the
-         *  line-end emitter.
-         *  @param level 
-         *  @param headings A List to which heading should be added.
-         */ 
-        public String makeHeading( int level, String title, TranslatorReader.Heading hd )
-        {
-            String res = "";
-
-            String pageName = m_context.getPage().getName();
-
-            String outTitle = makeSectionTitle( title );
-
-            hd.m_level = level;
-
-            switch( level )
-            {
-              case TranslatorReader.Heading.HEADING_SMALL:
-                res = "<h4 id='"+makeHeadingAnchor( pageName, outTitle, hd )+"'>";
-                m_closeTag = "</h4>";
-                break;
-
-              case TranslatorReader.Heading.HEADING_MEDIUM:
-                res = "<h3 id='"+makeHeadingAnchor( pageName, outTitle, hd )+"'>";
-                m_closeTag = "</h3>";
-                break;
-
-              case TranslatorReader.Heading.HEADING_LARGE:
-                res = "<h2 id='"+makeHeadingAnchor( pageName, outTitle, hd )+"'>";
-                m_closeTag = "</h2>";
-                break;
-            }
-
-            return res;
-        }
-
-        /**
-         *  @param bullet A character detailing which kind of a list
-         *  we are dealing with here.  Options are '#' and '*'.
-         */
-        public String openList( char bullet )
-        {
-            String res = "";
-
-            if( bullet == '#' )
-                res = "<ol>\n";
-            else if( bullet == '*' )
-                res = "<ul>\n";
-            else
-                log.info("Warning: unknown bullet character '" + bullet + "' at (+)" );
-
-            return res;
-        }
-
-        public String openListItem()
-        {
-            return "<li>";
-        }
-
-        public String closeListItem()
-        {
-            return "</li>\n";
-        }
-
-        /**
-         *  @param bullet A character detailing which kind of a list
-         *  we are dealing with here.  Options are '#' and '*'.
-         */
-        public String closeList( char bullet )
-        {
-            String res = "";
-
-            if( bullet == '#' )
-            {
-                res = "</ol>\n";
-            }
-            else if( bullet == '*' )
-            {
-                res = "</ul>\n";
-            }
-            else
-            {
-                //FIXME unknown character -> error
-                log.info("Warning: unknown character in unwind '" + bullet + "'" );
-            }
-
-            return res;
-        }
-
-
-        public String openPreformatted( boolean isBlock )
-        {
-            m_isPreBlock = isBlock;
-
-            if( isBlock )
-            {
-                return "<pre>";
-            }
-            
-            return "<span style=\"font-family:monospace; whitespace:pre;\">";
-        }
-
-        public String closePreformatted()
-        {
-            if( m_isPreBlock )
-                return "</pre>\n";
-            
-            return "</span>";
-        }
-
-        /**
-         *  If outlink images are turned on, returns a link to the outward
-         *  linking image.
-         */
-        public String outlinkImage()
-        {
-            if( m_useOutlinkImage )
-            {
-                return "<img class=\"outlink\" src=\""+
-                       getURL( WikiContext.NONE,"images/out.png" )+"\" alt=\"\" />";
-            }
-
-            return "";
-        }
-
-        /**
-         *  @param clear If true, then flushes all thingies.
-         */
-        public String lineBreak( boolean clear )
-        {
-            if( clear )
-                return "<br clear=\"all\" />";
-            
-            return "<br />";
-        }
-
-    } // HTMLRenderer
-
-    /**
-     *  A very simple class for outputting plain text with no
-     *  formatting.
-     */
-    private class TextRenderer
-    {
-        public void doChar( StringBuffer buf, char ch )
-        {
-            buf.append( ch );
-        }
-        
-
-        /**
-         *  Write a HTMLized link depending on its type.
-         *
-         *  <p>This jsut calls makeLink() with "section" set to null.
-         */
-        public String makeLink( int type, String link, String text )
-        {
-            return text;
-        }
-
-        public String makeLink( int type, String link, String text, String section )
-        {
-            return text;
-        }
-
-        /**
-         *  Writes HTML for error message.
-         */
-
-        public String makeError( String error )
-        {
-            return "ERROR: "+error;
-        }
-
-        /**
-         *  Emits a vertical line.
-         */
-
-        public String makeRuler()
-        {
-            return "----------------------------------";
-        }
-
-        /**
-         *  Returns XHTML for the start of the heading.  Also sets the
-         *  line-end emitter.
-         *  @param level 
-         */ 
-        public String makeHeading( int level, String title, TranslatorReader.Heading hd )
-        {
-            String res = "";
-
-            title = title.trim();
-
-            hd.m_level = level;
-            hd.m_titleText = title;
-            hd.m_titleSection = "";
-            hd.m_titleAnchor = "";
-
-            switch( level )
-            {
-              case TranslatorReader.Heading.HEADING_SMALL:
-                res = title;
-                m_closeTag = "\n\n";
-                break;
-
-              case TranslatorReader.Heading.HEADING_MEDIUM:
-                res = title;                
-                m_closeTag = "\n"+TextUtil.repeatString("-",title.length())+"\n\n";
-                break;
-
-              case TranslatorReader.Heading.HEADING_LARGE:
-                res = title.toUpperCase();
-                m_closeTag= "\n"+TextUtil.repeatString("=",title.length())+"\n\n";
-                break;
-            }
-
-            return res;
-        }
-
-        /**
-         *  @param bullet A character detailing which kind of a list
-         *  we are dealing with here.  Options are '#' and '*'.
-         */
-        // FIXME: Should really start a different kind of list depending
-        //        on the bullet type
-        public String openList( char bullet )
-        {
-            return "\n";
-        }
-
-        public String openListItem()
-        {
-            return "- "; 
-        }
-
-        public String closeListItem()
-        {
-            return "\n";
-        }
-
-        /**
-         *  @param bullet A character detailing which kind of a list
-         *  we are dealing with here.  Options are '#' and '*'.
-         */
-        public String closeList( char bullet )
-        {
-            return "\n\n";
-        }
-
-        public String openPreformatted( boolean isBlock )
-        {
-            return "";
-        }
-
-        public String closePreformatted()
-        {
-            return "\n";
-        }
-
-        /**
-         *  If outlink images are turned on, returns a link to the outward
-         *  linking image.
-         */
-        public String outlinkImage()
-        {
-            return "";
-        }
-
-
-    } // TextRenderer
 
     /**
      *  Compares two Strings, and if one starts with the other, then
