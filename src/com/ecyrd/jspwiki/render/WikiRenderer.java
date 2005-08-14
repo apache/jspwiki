@@ -24,7 +24,7 @@ public abstract class WikiRenderer
 {
     protected WikiContext     m_context;
     protected WikiDocument    m_document;
-    protected boolean         m_enablePlugins;
+    protected boolean         m_enablePlugins = true;
     
     protected WikiRenderer( WikiContext context, WikiDocument doc )
     {

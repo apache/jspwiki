@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import javax.xml.transform.Result;
 
 import org.apache.log4j.Logger;
-import org.jdom.Document;
+import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.ProcessingInstruction;
 import org.jdom.Text;
@@ -18,13 +18,12 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
-import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.plugin.PluginException;
-import com.ecyrd.jspwiki.plugin.PluginManager;
 
 public class XHTMLRenderer
     extends WikiRenderer 
@@ -34,6 +33,56 @@ public class XHTMLRenderer
     public XHTMLRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
+    }
+
+    private Content executeSinglePlugin( Element el )
+    {
+        String result;
+        
+        try
+        {
+            String name = el.getAttributeValue("class");
+        
+            Map params = new TreeMap();
+
+            for( Iterator p = el.getChildren("param").iterator(); p.hasNext(); )
+            {
+                Element parelm = (Element)p.next();
+            
+                String key = parelm.getChildText("name");
+                String val = parelm.getChildText("value");
+            
+                params.put( key, val );
+            }
+        
+            WikiEngine engine = m_context.getEngine();
+            result = engine.getPluginManager().execute( m_context,
+                                                        name,
+                                                        params );
+        }
+        catch( Exception e )
+        {
+            log.info("Failed to execute plugin",e);
+            return JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage());
+        }
+        return new Text( result );
+    }
+    
+    private Content executeVariable( Element el )
+    {
+        String result;
+        
+        try
+        {
+            String varName = el.getAttributeValue( "name" );
+            result = m_context.getEngine().getVariableManager().parseAndGetValue( m_context, varName );
+        }
+        catch( NoSuchVariableException e )
+        {
+            log.info("Failed to find variable",e);
+            return JSPWikiMarkupParser.makeError("No such variable: "+e.getMessage());            
+        }
+        return new Text( result );
     }
     
     /**
@@ -48,53 +97,35 @@ public class XHTMLRenderer
         
         try
         {
-            XPath xpath = XPath.newInstance("//"+PluginManager.DOM_PLUGIN);
+            XPath xpath = XPath.newInstance("//plugin | //variable");
             
-            List plugins = xpath.selectNodes( m_document );
+            List plugins = xpath.selectNodes( m_document.getDocument() );
             
             for( Iterator i = plugins.iterator(); i.hasNext(); )
             {
                 Element el = (Element) i.next();
                 
-                try
+                Content res = null;
+                    
+                if( el.getName().equals("plugin") )
                 {
-                    String name = el.getAttributeValue("class");
-                    
-                    System.out.println("Executing plugin "+name);
-                    Map params = new TreeMap();
-
-                    for( Iterator p = el.getChildren("param").iterator(); p.hasNext(); )
-                    {
-                        Element parelm = (Element)p.next();
-                        
-                        String key = parelm.getChildText("name");
-                        String val = parelm.getChildText("value");
-                        
-                        params.put( key, val );
-                    }
-                    
-                    String result = engine.getPluginManager().execute( m_context,
-                                                                       name,
-                                                                       params );
-                    
-                    Element parent = el.getParentElement();
-                    int idx = parent.indexOf(el);
-                    parent.removeContent( idx );
-                    
-                    //
-                    // Turn off HTML escaping for plugins
-                    //
-                    parent.addContent( idx++, new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
-                    parent.addContent( idx++, new Text(result) );
-                    parent.addContent( idx++, new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
-
+                    res = executeSinglePlugin( el );
                 }
-                catch( PluginException e )
+                else if( el.getName().equals("variable") )
                 {
-                    log.info( "Failed to insert plugin", e );
-                    log.info( "Root cause:",e.getRootThrowable() );
-                    el.addContent( JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage()) );
+                    res = executeVariable( el );
                 }
+                    
+                Element parent = el.getParentElement();
+                int idx = parent.indexOf(el);
+                parent.removeContent( idx );
+                    
+                //
+                // Turn off HTML escaping for plugins
+                //
+                parent.addContent( idx++, new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
+                parent.addContent( idx++, res );
+                parent.addContent( idx++, new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
             }
         }
         catch( Exception e )
