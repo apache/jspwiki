@@ -36,6 +36,8 @@ jspwiki.filterConfig = @tests.filter@
 
 jspwiki.baseURL = http://localhost/
 jspwiki.referenceStyle = relative
+jspwiki.searchProvider = BasicSearchProvider
+jspwiki.authorizer=com.ecyrd.jspwiki.TestAuthorizer
 
 #
 #  Special page references.
@@ -74,7 +76,7 @@ jspwiki.translatorReader.inlinePattern.3 = http://images.com/*
 # and ACLs. Use a test userdatabase for storing users.
 #
 jspwiki.aclManager          = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
-jspwiki.authorizer          = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
+#jspwiki.authorizer          = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
 jspwiki.groupManager        = com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager
 jspwiki.userdatabase        = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 jspwiki.xmlUserDatabaseFile = tests/etc/userdatabase.xml
