@@ -147,7 +147,7 @@ public class JSPWikiMarkupParser
      *  These characters constitute word separators when trying
      *  to find CamelCase links.
      */
-    private static final String    WORD_SEPARATORS = ",.|;+=&()";
+    private static final String    WORD_SEPARATORS = ",.|;+=&()_'?!";
 
     protected static final int BOLD           = 0;
     protected static final int ITALIC         = 1;
@@ -484,7 +484,7 @@ public class JSPWikiMarkupParser
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
-                el = new Element("a").setAttribute("href",text).setAttribute("class","wikipage").addContent(el);
+                el = new Element("a").setAttribute("class","wikipage").setAttribute("href",pagelink).addContent(el);
                 break;
 
             case EXTERNAL:
@@ -718,9 +718,11 @@ public class JSPWikiMarkupParser
     
     private Element addElement( Content e )
     {
-        flushPlainText();
-        m_currentElement.addContent( e );
-        
+        if( e != null )
+        {
+            flushPlainText();
+            m_currentElement.addContent( e );
+        }
         return m_currentElement;
     }
     
@@ -947,23 +949,36 @@ public class JSPWikiMarkupParser
      *  a proper HTML link for it.  The local link mutator
      *  chain is also called.
      */
-    private String makeCamelCaseLink( String wikiname )
+    private Element makeCamelCaseLink( String wikiname )
     {
         String matchedLink;
-        String link;
 
         callMutatorChain( m_localLinkMutatorChain, wikiname );
 
         if( (matchedLink = linkExists( wikiname )) != null )
         {
-            link = makeLink( READ, matchedLink, wikiname );
+            makeLink( READ, matchedLink, wikiname, null );
         }
         else
         {
-            link = makeLink( EDIT, wikiname, wikiname );
+            makeLink( EDIT, wikiname, wikiname, null );
         }
 
-        return link;
+        return m_currentElement;
+    }
+
+    private Element outlinkImage()
+    {
+        Element el = null;
+        
+        if( m_useOutlinkImage )
+        {
+            el = new Element("img").setAttribute("class", "outlink");
+            el.setAttribute( "src", m_context.getURL( WikiContext.NONE,"images/out.png" ) );
+            el.setAttribute("alt","");
+        }
+
+        return el;
     }
 
     private Element makeDirectURILink( String url )
@@ -985,9 +1000,8 @@ public class JSPWikiMarkupParser
         }
         else
         {
-            result = new Element("span");
-            result.addContent(makeLink( EXTERNAL, url, url,null ));
-            // result.addContent( m_renderer.outlinkImage() );
+            result = makeLink( EXTERNAL, url, url,null );
+            addElement( outlinkImage() );
         }
 
         if( last != null )
@@ -1010,6 +1024,7 @@ public class JSPWikiMarkupParser
      *                  or an external resource.
      */
     
+    // FIXME: isExternalLink() is called twice.
     private Element handleImageLink( String reallink, String link, boolean hasLinkText )
     {
         String possiblePage = cleanLink( link );
@@ -1124,14 +1139,13 @@ public class JSPWikiMarkupParser
             {
                 Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link );
      
-                m_currentElement.addContent( pluginContent );
+                addElement( pluginContent );
             }
             catch( PluginException e )
             {
                 log.info( "Failed to insert plugin", e );
                 log.info( "Root cause:",e.getRootThrowable() );
-                m_currentElement.addContent( makeError("Plugin insertion failed: "+e.getMessage()) );
-                return m_currentElement;
+                return addElement( makeError("Plugin insertion failed: "+e.getMessage()) );
             }
             
             return m_currentElement;
@@ -1160,23 +1174,10 @@ public class JSPWikiMarkupParser
         //  
         if( VariableManager.isVariableLink( link ) )
         {
-            Content value;
-            
-            // FIXME: Must also evaluate lazily
-            try
-            {
-                value = new Text(m_engine.getVariableManager().parseAndGetValue( m_context, link ));
-            }
-            catch( NoSuchVariableException e )
-            {
-                value = makeError(e.getMessage());
-            }
-            catch( IllegalArgumentException e )
-            {
-                value = makeError(e.getMessage());
-            }
+            Element el = new Element("variable");
+            el.setAttribute("name", link);
 
-            m_currentElement.addContent( value );
+            addElement( el );
         }
         else if( isExternalLink( reallink ) )
         {
@@ -1186,7 +1187,7 @@ public class JSPWikiMarkupParser
 
             if( isImageLink( reallink ) )
             {
-                addElement( handleImageLink( reallink, link, (cutpoint != -1) ) );
+                handleImageLink( reallink, link, (cutpoint != -1) );
             }
             else
             {
@@ -1655,18 +1656,28 @@ public class JSPWikiMarkupParser
      *  Starts a block level element, therefore closing the
      *  a potential open paragraph tag.
      */
-    private String startBlockLevel()
+    private void startBlockLevel()
     {
         if( m_isOpenParagraph )
         {
             m_isOpenParagraph = false;
             popElement("p");
-            m_plainTextBuf.append("\n");
+            m_plainTextBuf.append("\n"); // Just small beautification
         }
-
-        return "";
     }
 
+    private static String getListType( char c )
+    {
+        if( c == '*' )
+        {
+            return "ul";
+        }
+        else if( c == '#' )
+        {
+            return "ol";
+        }
+        throw new InternalWikiException("Parser got faulty list type: "+c);
+    }
     /**
      *  Like original handleOrderedList() and handleUnorderedList()
      *  however handles both ordered ('#') and unordered ('*') mixed together.
@@ -1674,12 +1685,10 @@ public class JSPWikiMarkupParser
 
     // FIXME: Refactor this; it's a bit messy.
 
-    private String handleGeneralList()
+    private Element handleGeneralList()
         throws IOException
     {
-         StringBuffer buf = new StringBuffer();
-
-         buf.append( startBlockLevel() );
+         startBlockLevel();
 
          String strBullets = readWhile( "*#" );
          // String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
@@ -1715,31 +1724,45 @@ public class JSPWikiMarkupParser
          {
              if( numBullets > m_genlistlevel )
              {
-                 buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel++)) );
+                 pushElement( new Element( getListType(strBullets.charAt(m_genlistlevel++) ) ) );
+                 // buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel++)) );
 
                  for( ; m_genlistlevel < numBullets; m_genlistlevel++ )
                  {
                      // bullets are growing, get from new bullet list
-                     buf.append( m_renderer.openListItem() );
-                     buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel)) );
+                     pushElement( new Element("li") );
+                     // buf.append( m_renderer.openListItem() );
+                     pushElement( new Element( getListType(strBullets.charAt(m_genlistlevel)) ));
+                     // buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel)) );
                  }
              }
              else if( numBullets < m_genlistlevel )
              {
                  //  Close the previous list item.
-                 buf.append( m_renderer.closeListItem() );
-
+                 // buf.append( m_renderer.closeListItem() );
+                 popElement( "li" );
+                 
                  for( ; m_genlistlevel > numBullets; m_genlistlevel-- )
                  {
                      // bullets are shrinking, get from old bullet list
-                     buf.append( m_renderer.closeList(m_genlistBulletBuffer.charAt(m_genlistlevel - 1)) );
-                     if( m_genlistlevel > 0 ) buf.append( m_renderer.closeListItem() );
+                     // buf.append( m_renderer.closeList(m_genlistBulletBuffer.charAt(m_genlistlevel - 1)) );
+                     
+                     popElement( getListType(m_genlistBulletBuffer.charAt(m_genlistlevel-1)) );
+                     if( m_genlistlevel > 0 ) 
+                     {
+                         // buf.append( m_renderer.closeListItem() );
+                         popElement( "li" );
+                     }
 
                  }
              }
              else
              {
-                 if( m_genlistlevel > 0 ) buf.append( m_renderer.closeListItem() );
+                 if( m_genlistlevel > 0 ) 
+                 {
+                     popElement( "li" );
+                     // buf.append( m_renderer.closeListItem() );
+                 }
              }
          }
          else
@@ -1767,44 +1790,49 @@ public class JSPWikiMarkupParser
              //unwind
              for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
              {
-                 buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
-                 if( m_genlistlevel > 0 ) buf.append( m_renderer.closeListItem() );
+                 popElement( getListType( m_genlistBulletBuffer.charAt(m_genlistlevel-1) ) );
+                 // buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
+                 if( m_genlistlevel > 0 ) 
+                 {
+                     //buf.append( m_renderer.closeListItem() );
+                     popElement("li");
+                 }
              }
 
              //rewind
-             buf.append( m_renderer.openList( strBullets.charAt(numEqualBullets++) ) );
+             // buf.append( m_renderer.openList( strBullets.charAt(numEqualBullets++) ) );
+             pushElement( new Element(getListType( strBullets.charAt(numEqualBullets++) ) ) );
              for(int i = numEqualBullets; i < numBullets; i++)
              {
-                 buf.append( m_renderer.openListItem() );
-                 buf.append( m_renderer.openList( strBullets.charAt(i) ) );
+                 pushElement( new Element("li") );
+                 pushElement( new Element( getListType( strBullets.charAt(i) ) ) );
+                 // buf.append( m_renderer.openListItem() );
+                 // buf.append( m_renderer.openList( strBullets.charAt(i) ) );
              }
              m_genlistlevel = numBullets;
          }
-         buf.append( m_renderer.openListItem() );
-
+         //buf.append( m_renderer.openListItem() );
+         pushElement( new Element("li") );
+         
          // work done, remember the new bullet list (in place of old one)
          m_genlistBulletBuffer.setLength(0);
          m_genlistBulletBuffer.append(strBullets);
 
-         return buf.toString();
+         return m_currentElement;
     }
 
-    private String unwindGeneralList()
+    private Element unwindGeneralList()
     {
-        // String cStrShortName = "unwindGeneralList()";
-
-        StringBuffer buf = new StringBuffer();
-
         //unwind
         for( ; m_genlistlevel > 0; m_genlistlevel-- )
         {
-            buf.append(m_renderer.closeListItem());
-            buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
+            popElement( "li" );
+            popElement( getListType(m_genlistBulletBuffer.charAt(m_genlistlevel-1)) );
         }
 
         m_genlistBulletBuffer.setLength(0);
 
-        return buf.toString();
+        return null;
     }
 
 
@@ -2173,9 +2201,14 @@ public class JSPWikiMarkupParser
 
                             // System.out.println("  Replacing "+camelCase+" with proper link.");
                             start = m_plainTextBuf.toString().lastIndexOf( camelCase );
+                            m_plainTextBuf.delete(start, start+camelCase.length() );
+                            
+                            makeCamelCaseLink( camelCase );
+                            /*
                             m_plainTextBuf.replace(start,
                                                    start+camelCase.length(),
                                                    makeCamelCaseLink(camelCase) );
+                                                   */
                             // FIXME: This strategy does not work
                             // System.out.println("  Resulting with "+buf);
                         }
@@ -2195,6 +2228,8 @@ public class JSPWikiMarkupParser
 
                                     // System.out.println("start="+start+", pl="+potentialLink);
 
+                                    m_plainTextBuf.delete( start, start+potentialLink.length() );
+                                    makeDirectURILink( link );
                                     /*
                                      FIXME!
                                     m_plainTextBuf.replace( start,
@@ -2245,9 +2280,7 @@ public class JSPWikiMarkupParser
             {
               case '\r':
                 // DOS linefeeds we forget
-                s = null;
-                el = m_currentElement;
-                break;
+                continue;
 
               case '\n':
                 //
@@ -2371,7 +2404,7 @@ public class JSPWikiMarkupParser
                 if( newLine )
                 {
                     pushBack('*');
-                    s = handleGeneralList();
+                    el = handleGeneralList();
                 }
                 /*
                 else
@@ -2385,7 +2418,7 @@ public class JSPWikiMarkupParser
                 if( newLine )
                 {
                     pushBack('#');
-                    s = handleGeneralList();
+                    el = handleGeneralList();
                 }
                 /*
                 else
