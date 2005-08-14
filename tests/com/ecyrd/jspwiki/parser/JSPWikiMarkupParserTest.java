@@ -430,7 +430,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         String src = "*HyperLink";
         
-        assertEquals( "<ul>\n<li><a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink\">HyperLink</a></li>\n</ul>\n",
+        assertEquals( "<ul><li><a class=\"wikipage\" href=\"Wiki.jsp?page=HyperLink\">HyperLink</a></li></ul>",
                       translate(src) );
     }
     
@@ -805,7 +805,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
         
-        assertEquals("Link <a href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\"/></a>",
+        assertEquals("Link <a href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a>",
                      translate(src) );
     }
     
@@ -855,7 +855,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
         
-        assertEquals( "<p></p>\n<h4 id='section-testpage-Testi'>Testi</h4>\n<p>Foo.</p>", 
+        assertEquals( "<p />\n<h4 id=\"section-testpage-Testi\">Testi</h4>\n<p>Foo.</p>", 
                       translate(src) );
     }
     
@@ -971,7 +971,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "A list:\n* One\n* Two\n* Three\n";
         
-        assertEquals( "A list:\n<ul>\n<li> One\n</li>\n<li> Two\n</li>\n<li> Three\n</li>\n</ul>\n", 
+        assertEquals( "A list:\n<ul><li> One\n</li><li> Two\n</li><li> Three\n</li></ul>", 
                       translate(src) );
     }
     
@@ -988,7 +988,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
         
-        assertEquals( "A list:\n<ul>\n<li> One\n continuing.\n</li>\n<li> Two\n</li>\n<li> Three\n</li>\n</ul>\n", 
+        assertEquals( "A list:\n<ul><li> One\n continuing.\n</li><li> Two\n</li><li> Three\n</li></ul>", 
                       translate(src) );
     }
     
@@ -997,7 +997,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
         
-        assertEquals( "A list:\n<ul>\n<li> One\n continuing.\n</li>\n<li> Two\n</li>\n<li> Three\n</li>\n</ul>\nShould be normal.", 
+        assertEquals( "A list:\n<ul><li> One\n continuing.\n</li><li> Two\n</li><li> Three\n</li></ul>Should be normal.", 
                       translate(src) );
     }
     
@@ -1100,7 +1100,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="A\n\n**\n\nB";
         
         // System.out.println(translate(src));
-        assertEquals( "A\n<ul>\n<li><ul>\n<li>\n</li>\n</ul>\n</li>\n</ul>\n<p>B</p>\n", 
+        assertEquals( "A\n<ul><li><ul><li>\n</li></ul></li></ul><p>B</p>", 
                       translate(src) );
     }
     
@@ -1110,7 +1110,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="A\n\n##\n\nB";
         
         // System.out.println(translate(src));
-        assertEquals( "A\n<ol>\n<li><ol>\n<li>\n</li>\n</ol>\n</li>\n</ol>\n<p>B</p>\n", 
+        assertEquals( "A\n<ol><li><ol><li>\n</li></ol></li></ol><p>B</p>", 
                       translate(src) );
     }
     
@@ -1435,11 +1435,11 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
+        assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr><th> heading </th><th> heading2 </th></tr>\n"+
                       "<tr><td> Cell 1 </td><td> Cell 2 </td></tr>\n"+
                       "<tr><td> Cell 3 </td><td> Cell 4</td></tr>\n"+
-                      "</table>\n<p></p>\n",
+                      "</table><p />",
                       translate(src) );
     }
     
@@ -1448,11 +1448,11 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
+        assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr><th>heading</th><th>heading2</th></tr>\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p></p>\n",
+                      "</table><p />",
                       translate(src) );
     }
     
@@ -1461,10 +1461,10 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
+        assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p></p>\n",
+                      "</table><p />",
                       translate(src) );
     }
     
@@ -1475,10 +1475,10 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         newPage("ReallyALink");
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
+        assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p></p>\n",
+                      "</table><p />",
                       translate(src) );
     }
     
@@ -1489,10 +1489,10 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         newPage("ReallyALink");
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\">\n"+
+        assertEquals( "<table class=\"wikitable\" border=\"1\">"+
                       "<tr><td>Cell 1</td><td> Cell| 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
-                      "</table>\n<p></p>\n",
+                      "</table><p />",
                       translate(src) );
     }
     
@@ -1669,7 +1669,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "{{{\ncode.}}\n";
         
-        assertEquals( "<pre>\ncode.}}\n</pre>\n", translate(src) );
+        assertEquals( "<pre>\ncode.}}\n</pre>", translate(src) );
     }
     
     /**
@@ -1680,7 +1680,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "{{{\ncode.}\n";
         
-        assertEquals( "<pre>\ncode.}\n</pre>\n", translate(src) );
+        assertEquals( "<pre>\ncode.}\n</pre>", translate(src) );
     }
     
     /**
@@ -2002,7 +2002,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "|%%(foo:bar;)test%%|no test\n";
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\">\n<tr><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>\n", 
+        assertEquals( "<table class=\"wikitable\" border=\"1\"><tr><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>", 
                       translate(src) );
     }
     
