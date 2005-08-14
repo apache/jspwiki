@@ -22,30 +22,36 @@ package com.ecyrd.jspwiki;
 import java.io.*;
 import java.security.Principal;
 import java.util.*;
-import org.apache.log4j.*;
-import javax.servlet.*;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import com.ecyrd.jspwiki.plugin.PluginManager;
-import com.ecyrd.jspwiki.rss.RSSGenerator;
-import com.ecyrd.jspwiki.search.SearchManager;
-import com.ecyrd.jspwiki.providers.WikiPageProvider;
-import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.attachment.AttachmentManager;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import com.ecyrd.jspwiki.attachment.Attachment;
-import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
-import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
-
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
-
+import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.plugin.PluginManager;
+import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.providers.WikiPageProvider;
+import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.rss.RSSGenerator;
+import com.ecyrd.jspwiki.search.SearchManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
-import com.ecyrd.jspwiki.diff.DifferenceManager;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -125,7 +131,7 @@ public class WikiEngine
 
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
-    
+
     /** Path to the default property file. 
      * {@value /WEB_INF/jspwiki.properties}
      */
@@ -199,6 +205,8 @@ public class WikiEngine
 
     private UserManager      m_userManager;
     
+    private RenderingManager m_renderingManager;
+    
 	/** Constructs URLs */
     private URLConstructor   m_urlConstructor;
 
@@ -231,6 +239,10 @@ public class WikiEngine
     private String           m_appid = "";
 
     private boolean          m_isConfigured = false; // Flag.
+
+    /** Just for temporary testing */
+    private boolean m_useNewRenderingEngine = false;
+    private static final String PROP_USERENDERINGMGR = "jspwiki.newRenderingEngine";
     
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -489,6 +501,9 @@ public class WikiEngine
         m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
         m_frontPage      = props.getProperty( PROP_FRONTPAGE,   "Main" );
 
+        m_useNewRenderingEngine = TextUtil.getBooleanProperty( props,
+                                                               PROP_USERENDERINGMGR,
+                                                               m_useNewRenderingEngine );
         //
         //  Initialize the important modules.  Any exception thrown by the
         //  managers means that we will not start up.
@@ -506,6 +521,9 @@ public class WikiEngine
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
             m_filterManager     = new FilterManager( this, props );
+            m_renderingManager  = new RenderingManager();
+            m_renderingManager.initialize( this, props );
+            
             m_searchManager     = new SearchManager( this, props );
 
             m_authenticationManager = new AuthenticationManager();
@@ -1307,6 +1325,30 @@ public class WikiEngine
      */
     public String textToHTML( WikiContext context, String pagedata )
     {
+        String result = "";
+
+        if( m_useNewRenderingEngine )
+        {
+            boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
+        
+            try
+            {
+                if( runFilters )
+                    pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
+
+                result = m_renderingManager.getHTML( context, pagedata );
+
+                if( runFilters )
+                    result = m_filterManager.doPostTranslateFiltering( context, result );
+            }
+            catch( FilterException e )
+            {
+                // FIXME: Don't yet know what to do
+            }
+
+            return( result );
+        }
+        
         return textToHTML( context, pagedata, null, null );
     }
 
@@ -1380,16 +1422,29 @@ public class WikiEngine
             if( runFilters )
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
-            in = new TranslatorReader( context,
-                                       new StringReader( pagedata ) );
+            if( m_useNewRenderingEngine )
+            {
+                MarkupParser mp = m_renderingManager.getParser( context, pagedata );
+                mp.addLocalLinkHook( localLinkHook );
+                mp.addExternalLinkHook( extLinkHook );
+                mp.addAttachmentLinkHook( attLinkHook );
+                if( !parseAccessRules ) mp.disableAccessRules();
 
-            in.addLocalLinkHook( localLinkHook );
-            in.addExternalLinkHook( extLinkHook );
-            in.addAttachmentLinkHook( attLinkHook );
+                result = m_renderingManager.getHTML( context, mp.parse() );
+            }
+            else
+            {
+                in = new TranslatorReader( context,
+                                           new StringReader( pagedata ) );
 
-            if( !parseAccessRules ) in.disableAccessRules();
-            result = FileUtil.readContents( in );
+                in.addLocalLinkHook( localLinkHook );
+                in.addExternalLinkHook( extLinkHook );
+                in.addAttachmentLinkHook( attLinkHook );
 
+                if( !parseAccessRules ) in.disableAccessRules();
+                result = FileUtil.readContents( in );
+            }
+            
             if( runFilters )
                 result = m_filterManager.doPostTranslateFiltering( context, result );
         }
