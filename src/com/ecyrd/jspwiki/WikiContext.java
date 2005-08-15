@@ -53,6 +53,7 @@ public class WikiContext
     implements Cloneable
 {
     WikiPage   m_page;
+    WikiPage   m_realPage;
     WikiEngine m_engine;
     String     m_requestContext = VIEW;
     String     m_template       = "default";
@@ -141,7 +142,8 @@ public class WikiContext
         m_request = request;
         m_session = WikiSession.getWikiSession(request);
         m_page   = page;
-      
+        m_realPage = page;
+        
         // Associate the wikiSession with this context
         // and associate a Subject with the session if it isn't there already
         if ( m_session.isUnknown() || m_session.isContainerStatusChanged( request ) )
@@ -150,6 +152,27 @@ public class WikiContext
         }
     }
 
+    /**
+     *  Sometimes you may want to render the page using some other page's context.
+     *  In those cases, it is highly recommended that you set the setRealPage()
+     *  to point at the real page you are rendering.
+     *  
+     *  @param page  The real page which is being rendered.
+     *  @since 2.3.14
+     *  @return The previous real page
+     */
+    public WikiPage setRealPage( WikiPage page )
+    {
+        WikiPage old = m_realPage;
+        m_realPage = page;
+        return old;
+    }
+    
+    public WikiPage getRealPage()
+    {
+        return m_realPage;
+    }
+    
     /**
      *  Returns the handling engine.
      */
