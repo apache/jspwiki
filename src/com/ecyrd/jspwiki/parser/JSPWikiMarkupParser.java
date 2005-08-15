@@ -6,10 +6,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
-import org.jdom.Content;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Text;
+import org.jdom.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -131,9 +128,7 @@ public class JSPWikiMarkupParser
 
     private boolean                m_useRelNofollow      = false;
 
-    private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
-    // private Pattern                m_camelCasePtrn;
 
     static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@]+))";
     
@@ -146,16 +141,6 @@ public class JSPWikiMarkupParser
      */
     public static final String     DEFAULT_INLINEPATTERN = "*.png";
 
-    /**
-     *  These characters constitute word separators when trying
-     *  to find CamelCase links.
-     */
-    private static final String    WORD_SEPARATORS = ",.|;+=&()_'?!";
-
-    protected static final int BOLD           = 0;
-    protected static final int ITALIC         = 1;
-    protected static final int TYPED          = 2;
-    
     /**
      *  This list contains all IANA registered URI protocol
      *  types as of September 2004 + a few well-known extra types.
@@ -2516,12 +2501,20 @@ public class JSPWikiMarkupParser
     public WikiDocument parse()
         throws IOException
     {
+        WikiDocument d = null;
         Element rootElement = new Element("domroot");
         
         m_document.setRootElement( rootElement );
-        fillBuffer( rootElement );
-        
-        WikiDocument d = new WikiDocument( m_context.getPage(), m_document );
+        try
+        {
+            fillBuffer( rootElement );
+            d = new WikiDocument( m_context.getPage(), m_document );
+        }
+        catch( IllegalDataException e )
+        {
+            log.error("Page "+m_context.getPage().getName()+" contained something that cannot be added in the DOM tree",e);
+            throw new IOException("Illegal page data: "+e.getMessage());
+        }
         
         return d;
     }
