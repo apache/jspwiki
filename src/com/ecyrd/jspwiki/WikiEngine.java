@@ -28,6 +28,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -1331,6 +1332,8 @@ public class WikiEngine
         {
             boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
         
+            StopWatch sw = new StopWatch();
+            sw.start();
             try
             {
                 if( runFilters )
@@ -1345,7 +1348,10 @@ public class WikiEngine
             {
                 // FIXME: Don't yet know what to do
             }
-
+            sw.stop();
+            if( log.isDebugEnabled() )
+                log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
+            
             return( result );
         }
         
@@ -1419,6 +1425,9 @@ public class WikiEngine
         
         try
         {
+            StopWatch sw = new StopWatch();
+            sw.start();
+            
             if( runFilters )
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
@@ -1447,6 +1456,11 @@ public class WikiEngine
             
             if( runFilters )
                 result = m_filterManager.doPostTranslateFiltering( context, result );
+            
+            sw.stop();
+
+            if( log.isDebugEnabled() )
+                log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
         }
         catch( IOException e )
         {
