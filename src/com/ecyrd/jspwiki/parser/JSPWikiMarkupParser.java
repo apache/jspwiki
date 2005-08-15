@@ -133,7 +133,13 @@ public class JSPWikiMarkupParser
 
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
-    private Pattern                m_camelCasePtrn;
+    // private Pattern                m_camelCasePtrn;
+
+    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@]+))";
+    
+    private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
+    private Pattern                m_camelCasePattern;
+    
 
     /**
      *  The default inlining pattern.  Currently "*.png"
@@ -224,7 +230,9 @@ public class JSPWikiMarkupParser
 
         try
         {
-            m_camelCasePtrn = m_compiler.compile( "^([[:^alnum:]]*)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)[[:^alnum:]]*$" );
+            // m_camelCasePtrn = m_compiler.compile( "^([[:^alnum:]]*)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)[[:^alnum:]]*$" );
+            
+            m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX );
         }
         catch( MalformedPatternException e )
         {
@@ -654,8 +662,6 @@ public class JSPWikiMarkupParser
         return new Element("span").setAttribute("class","error").addContent(error);
     }
 
-    String WIKIWORD_REGEX = "[[:^alnum:]]*[[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*";
-    
     private void flushPlainText()
     {
         if( m_plainTextBuf.length() > 0 )
@@ -669,34 +675,75 @@ public class JSPWikiMarkupParser
             
             if( m_camelCaseLinks )
             {            
-                try
+                // System.out.println("Buffer="+buf);
+                    
+                while( m_camelCaseMatcher.contains( buf, m_camelCasePattern ) )
                 {
-                    Pattern p = m_compiler.compile( WIKIWORD_REGEX );
-                
-                    PatternMatcherInput input = new PatternMatcherInput(buf);
-                
-                    System.out.println("Buffer="+input.toString());
-                    PatternMatcher matcher  = new Perl5Matcher();
+                    MatchResult result = m_camelCaseMatcher.getMatch();
+
+                    String firstPart = buf.substring(0,result.beginOffset(0)); 
+                    String prefix = result.group(1);
                     
-                    while( matcher.contains( input, p ) )
+                    if( prefix == null ) prefix = "";
+                    
+                    String camelCase = result.group(2);
+                    String protocol  = result.group(3);
+                    String uri       = protocol+result.group(4);
+                    buf              = buf.substring(result.endOffset(0));
+                    
+                    m_currentElement.addContent( firstPart );
+                    
+                    //
+                    //  Check if the user does not wish to do URL or WikiWord expansion
+                    //
+                    if( prefix.endsWith("~") || prefix.indexOf('[') != -1 )
                     {
-                        System.out.println("Got match: "+input.match());
-                    
-                        System.out.println("Split to '"+input.preMatch()+"', and '"+input.postMatch()+"'");
-                        m_currentElement.addContent( input.preMatch() );
-                        makeCamelCaseLink( input.match() );
-                        buf = input.postMatch();
+                        if( prefix.endsWith("~") ) prefix = prefix.substring(0,prefix.length()-1);
+                        if( camelCase != null )
+                        {
+                            m_currentElement.addContent( prefix+camelCase );
+                        }
+                        else if( protocol != null )
+                        {
+                            m_currentElement.addContent( prefix+uri );
+                        }
+                        continue;
                     }
                     
-                    m_currentElement.addContent( buf );
+                    //
+                    //  Fine, then let's check what kind of a link this was
+                    //  and emit the proper elements
+                    //
+                    if( protocol != null )
+                    {
+                        char c = uri.charAt(uri.length()-1);
+                        if( c == '.' || c == ',' )
+                        {
+                            uri = uri.substring(0,uri.length()-1);
+                            buf = c + buf;
+                        }
+                        // System.out.println("URI match "+uri);
+                        m_currentElement.addContent( prefix );
+                        makeDirectURILink( uri );
+                    }
+                    else
+                    {
+                        // System.out.println("Matched: '"+camelCase+"'");
+                        // System.out.println("Split to '"+firstPart+"', and '"+buf+"'");
+                        // System.out.println("prefix="+prefix);
+                        m_currentElement.addContent( prefix );
+                        
+                        makeCamelCaseLink( camelCase );
+                    }
                 }
-                catch( MalformedPatternException e )
-                {
-                    throw new InternalWikiException("Malformed pattern in camelcase: "+e.getMessage());
-                }
+                
+                m_currentElement.addContent( buf );
             }
             else
             {
+                //
+                //  No camelcase asked for, just add the elements
+                //
                 m_currentElement.addContent( m_plainTextBuf.toString() );
             }
         }        
@@ -909,6 +956,7 @@ public class JSPWikiMarkupParser
      *  @return The match within the phrase.  Returns null, if no CamelCase
      *          hyperlink exists within this phrase.
      */
+    /*
     private String checkForCamelCaseLink( String word )
     {
         PatternMatcherInput input;
@@ -938,7 +986,7 @@ public class JSPWikiMarkupParser
 
         return null;
     }
-
+*/
     /**
      *  When given a link to a WikiName, we just return
      *  a proper HTML link for it.  The local link mutator
@@ -1865,7 +1913,8 @@ public class JSPWikiMarkupParser
 
         if( sb.length() > 0 )
         {
-            return addElement( new Text(sb.toString()) );
+            m_plainTextBuf.append( sb );
+            return m_currentElement;
         }
 
         //
@@ -2098,13 +2147,7 @@ public class JSPWikiMarkupParser
             m_plainTextBuf.append(readWhile( ""+(char)ch ));
             return m_currentElement;
         }
-        
-        if( Character.isUpperCase( (char) ch ) )
-        {
-            pushBack( ch );
-            return m_currentElement;
-        }
-
+ 
         // No escape.
         pushBack( ch );
 
