@@ -1,3 +1,11 @@
+2005-08-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.13
+
+        * Fixed CamelCase parsing.  There are still a few
+        inconsistencies between old TranslatorReader and the new
+        JSPWikiMarkupParser.
+
 2005-08-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.12
