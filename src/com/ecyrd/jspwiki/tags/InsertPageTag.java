@@ -100,6 +100,8 @@ public class InsertPageTag
 
             JspWriter out = pageContext.getOut();
 
+            WikiPage oldPage = m_wikiContext.setRealPage( page );
+            
             switch(m_mode)
             {
               case HTML:
@@ -109,6 +111,8 @@ public class InsertPageTag
                 out.print( engine.getText(m_wikiContext, page) );
                 break;
             }
+            
+            m_wikiContext.setRealPage( oldPage );
         }
 
         return SKIP_BODY;
