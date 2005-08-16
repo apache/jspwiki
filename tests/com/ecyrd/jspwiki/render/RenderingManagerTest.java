@@ -34,7 +34,7 @@ public class RenderingManagerTest extends TestCase
     {
         m_engine.deletePage( "TestPage" );
     }
-    
+        
     /**
      * Tests the relative speed of the DOM cache with respect to
      * page being parsed every single time.
