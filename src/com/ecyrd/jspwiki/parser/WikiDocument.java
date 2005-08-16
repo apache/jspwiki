@@ -2,17 +2,18 @@ package com.ecyrd.jspwiki.parser;
 
 import org.jdom.Document;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 
-public class WikiDocument
+public class WikiDocument extends Document
 {
-    private Document m_document;
     private WikiPage m_page;
     private String   m_wikiText;
+
+    private WikiContext m_context;
     
-    public WikiDocument( WikiPage page, Document doc )
+    public WikiDocument( WikiPage page )
     {
-        m_document = doc;
         m_page     = page;
     }
     
@@ -26,13 +27,18 @@ public class WikiDocument
         return m_wikiText;
     }
     
-    public Document getDocument()
-    {
-        return m_document;
-    }
-    
     public WikiPage getPage()
     {
         return m_page;
+    }
+    
+    public void setContext( WikiContext ctx )
+    {
+        m_context = ctx;
+    }
+    
+    public WikiContext getContext()
+    {
+        return m_context;
     }
 }

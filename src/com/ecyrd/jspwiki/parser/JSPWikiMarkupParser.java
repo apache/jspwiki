@@ -3,6 +3,8 @@ package com.ecyrd.jspwiki.parser;
 import java.io.*;
 import java.util.*;
 
+import javax.xml.transform.Result;
+
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
@@ -83,7 +85,6 @@ public class JSPWikiMarkupParser
     /** Keeps track of any plain text that gets put in the Text nodes */
     private StringBuffer   m_plainTextBuf = new StringBuffer();
     
-    private Document       m_document = new Document();
     private Element        m_currentElement;
     
     /**
@@ -1166,8 +1167,10 @@ public class JSPWikiMarkupParser
             try
             {
                 Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link );
-     
+
+                addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
                 addElement( pluginContent );
+                addElement( new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
             }
             catch( PluginException e )
             {
@@ -1202,10 +1205,11 @@ public class JSPWikiMarkupParser
         //  
         if( VariableManager.isVariableLink( link ) )
         {
-            Element el = new Element("variable");
-            el.setAttribute("name", link);
+            Content el = new VariableElement(link);
 
+            addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
             addElement( el );
+            addElement( new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
         }
         else if( isExternalLink( reallink ) )
         {
@@ -2501,14 +2505,13 @@ public class JSPWikiMarkupParser
     public WikiDocument parse()
         throws IOException
     {
-        WikiDocument d = null;
+        WikiDocument d = new WikiDocument( m_context.getPage() );
         Element rootElement = new Element("domroot");
         
-        m_document.setRootElement( rootElement );
+        d.setRootElement( rootElement );
         try
         {
             fillBuffer( rootElement );
-            d = new WikiDocument( m_context.getPage(), m_document );
         }
         catch( IllegalDataException e )
         {

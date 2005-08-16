@@ -19,30 +19,21 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.oro.text.regex.*;
-import org.apache.log4j.Logger;
+import java.io.*;
+import java.util.*;
+
 import org.apache.ecs.xhtml.*;
+import org.apache.log4j.Logger;
+import org.apache.oro.text.regex.*;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.Map;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.HashMap;
-
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.parser.PluginElement;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -564,18 +555,7 @@ public class PluginManager
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
                 Map arglist     = parseArgs( args );
 
-                Element result = new Element( DOM_PLUGIN );
-                
-                result.setAttribute("class",plugin);
-                for( Iterator i = arglist.entrySet().iterator(); i.hasNext(); )
-                {
-                    Map.Entry me = (Map.Entry)i.next();
-                    
-                    Element parm = new Element("param");
-                    parm.addContent( new Element("name").addContent( (String)me.getKey() ) );
-                    parm.addContent( new Element("value").addContent( (String)me.getValue() ) );
-                    result.addContent(parm);
-                }
+                PluginElement result = new PluginElement( plugin, arglist );
                 
                 return result;
             }
