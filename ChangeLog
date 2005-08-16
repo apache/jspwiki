@@ -1,6 +1,27 @@
 2005-08-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.3.14
+
+        * Fixed plugin and variable evaluation policy: because 
+        using clone() on the entire DOM tree is very expensive,
+        what we do is that we store new, specific elements 
+        PluginContent and VariableContent into the DOM tree,
+        which at evaluation time produce the actual content.
+
         * v2.3.13
+        
+        * RenderingManager cache did not work correctly, because
+        it was relying in WikiContext.getPage() to get the page
+        under which things should be cached.  Of course, if the 
+        wiki template includes any other page using IncludePageTag,
+        the context is always the same, and therefore the cache
+        is never valid.  Fixed this by adding a new getRealPage()
+        in WikiContext, which should always point at the real page
+       	which is being rendered.
+       	
+       	* Added some simple profiling/stopwatch code to rendering.
+       	You can now see the speed results by setting the WikiEngine
+       	log level to DEBUG.
 
         * Fixed CamelCase parsing.  There are still a few
         inconsistencies between old TranslatorReader and the new

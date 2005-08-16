@@ -11,14 +11,14 @@ import org.jdom.Text;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
-public class PluginElement extends Text
+public class PluginContent extends Text
 {
     private static final long serialVersionUID = 1L;
 
     private String m_pluginName;
     private Map    m_params;
     
-    public PluginElement( String pluginName, Map parameters )
+    public PluginContent( String pluginName, Map parameters )
     {
         m_pluginName = pluginName;
         m_params     = parameters;

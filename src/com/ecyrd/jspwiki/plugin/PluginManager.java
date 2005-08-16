@@ -33,7 +33,7 @@ import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.parser.PluginElement;
+import com.ecyrd.jspwiki.parser.PluginContent;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -555,7 +555,7 @@ public class PluginManager
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
                 Map arglist     = parseArgs( args );
 
-                PluginElement result = new PluginElement( plugin, arglist );
+                PluginContent result = new PluginContent( plugin, arglist );
                 
                 return result;
             }

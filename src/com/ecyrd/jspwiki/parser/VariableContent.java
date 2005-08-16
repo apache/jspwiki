@@ -15,13 +15,13 @@ import org.jdom.*;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 
-public class VariableElement extends Text
+public class VariableContent extends Text
 {
     private static final long serialVersionUID = 1L;
 
     private String m_varName;
     
-    public VariableElement( String varName )
+    public VariableContent( String varName )
     {
         m_varName = varName;
     }

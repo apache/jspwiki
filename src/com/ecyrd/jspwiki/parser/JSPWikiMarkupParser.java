@@ -1205,7 +1205,7 @@ public class JSPWikiMarkupParser
         //  
         if( VariableManager.isVariableLink( link ) )
         {
-            Content el = new VariableElement(link);
+            Content el = new VariableContent(link);
 
             addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
             addElement( el );
