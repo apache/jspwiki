@@ -4,6 +4,7 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
@@ -15,7 +16,8 @@
     WikiEngine wiki;
 
 %><%
-
+    StopWatch sw = new StopWatch();
+    sw.start();
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
     String pagereq = wikiContext.getPage().getName();
 
@@ -79,6 +81,8 @@
 
 %><wiki:Include page="<%=contentPage%>" /><%
 
+    sw.stop();
+    if( log.isDebugEnabled() ) log.debug("Total response time from server on page "+pagereq+": "+sw);
     NDC.pop();
     NDC.remove();
 %>
