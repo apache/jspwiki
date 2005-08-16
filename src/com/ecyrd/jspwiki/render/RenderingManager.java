@@ -28,9 +28,15 @@ public class RenderingManager implements PageFilter
 {
     private WikiEngine m_engine;
 
-    private int m_cacheExpiryPeriod = 24*60*60;
+    private int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
     private static Logger log = Logger.getLogger( RenderingManager.class );
     
+    /**
+     *  Creates a new unlimited cache.  A good question is, whether this
+     *  cache should be limited - at the moment it will just keep on growing,
+     *  if the page is never accessed.
+     */
+    // FIXME: Memory leak
     private Cache m_documentCache = new Cache(true,false); 
     
     public void initialize( WikiEngine engine, Properties properties )
