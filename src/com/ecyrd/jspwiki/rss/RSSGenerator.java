@@ -51,6 +51,7 @@ public class RSSGenerator
 
     public static final String RSS10 = "rss10";
     public static final String RSS20 = "rss20";
+    public static final String ATOM  = "atom";
     
     public static final String MODE_BLOG = "blog";
     public static final String MODE_WIKI = "wiki";
@@ -218,13 +219,36 @@ public class RSSGenerator
         return result;
     }
 
+    /**
+     *  @since 2.3.15
+     * @param mode
+     * @return
+     */
+    public static String getContentType( String mode )
+    {
+        if( mode.equals( RSS10 )||mode.equals(RSS20) )
+        {
+            return "application/rss+xml";
+        }
+        else if( mode.equals(ATOM) )
+        {
+            return "application/atom+xml";
+        }
+       
+        return "application/octet-stream"; // Unknown type
+    }
+    
     public String generateFeed( WikiContext wikiContext, List changed, String mode, String type )
         throws ProviderException
     {
         Feed feed = null;
         String res = null;
         
-        if( type.equals( RSS20 ) )
+        if( type.equals( ATOM ) )
+        {
+            feed = new AtomFeed( wikiContext );
+        }
+        else if( type.equals( RSS20 ) )
         {
             feed = new RSS20Feed( wikiContext );
         }
