@@ -27,6 +27,6 @@
 
     if( sheet != "" )
     {
-        document.write("<link rel=\"stylesheet\" href=\"templates/<wiki:TemplateDir />/"+sheet+"\" />");
+        document.write('<link rel="stylesheet" href="templates/<wiki:TemplateDir />/'+sheet+'"' />');
     }
 </script>
