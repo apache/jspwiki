@@ -1,0 +1,183 @@
+package com.ecyrd.jspwiki.rss;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+
+import javax.servlet.ServletContext;
+
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+
+import com.ecyrd.jspwiki.Release;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.providers.ProviderException;
+
+/**
+ *  Provides an Atom 1.0 standard feed, with enclosures.
+ *  
+ * @author jalkanen
+ *
+ */
+public class AtomFeed extends Feed
+{
+    private Namespace m_atomNameSpace = Namespace.getNamespace("http://www.w3.org/2005/Atom");
+    
+    public static final String RFC3339FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
+    
+    public AtomFeed( WikiContext c )
+    {
+        super(c);
+    }
+    
+    /**
+     *   This is a bit complicated right now, as there is no proper metadata
+     *   store in JSPWiki.
+     *   
+     *   @return
+     */
+    private String getFeedID()
+    {
+        return m_wikiContext.getEngine().getBaseURL(); // FIXME: This is not a feed id
+    }
+
+    private String getEntryID( Entry e )
+    {
+        return e.getURL(); // FIXME: Not really a feed id!
+    }
+    
+    private Collection getItems()
+    {
+        ArrayList list = new ArrayList();
+        
+        WikiEngine engine = m_wikiContext.getEngine();
+        ServletContext servletContext = null;
+        
+        if( m_wikiContext.getHttpRequest() != null )
+            servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
+
+        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        {
+            Entry e = (Entry)i.next();
+            
+            WikiPage p = e.getPage();
+            
+            Element entryEl = new Element("entry");
+            
+            //
+            //  Mandatory elements
+            //
+            
+            entryEl.addContent( new Element("id").setText( getEntryID(e)) );
+            entryEl.addContent( new Element("title").setAttribute("type","html").setText( format( e.getTitle() )));
+            entryEl.addContent( new Element("updated").setText( DateFormatUtils.formatUTC(p.getLastModified(),
+                                                                                          RFC3339FORMAT )));
+            //
+            //  Optional elements
+            //
+            
+            entryEl.addContent( new Element("author").addContent( new Element("name").setText( e.getAuthor() )));
+            entryEl.addContent( new Element("link").setAttribute("rel","alternate").setAttribute("href",e.getURL()));
+            entryEl.addContent( new Element("content").setAttribute("type","html").setText(format(e.getContent())));
+            
+            //
+            //  Check for enclosures
+            //
+            
+            if( engine.getAttachmentManager().hasAttachments(p) && servletContext != null )
+            {
+                try
+                {
+                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                
+                    for( Iterator a = c.iterator(); a.hasNext(); )
+                    {
+                        Attachment att = (Attachment) a.next();
+                    
+                        Element attEl = new Element("link");
+                        attEl.setAttribute( "rel","enclosure" );
+                        attEl.setAttribute( "href", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
+                        attEl.setAttribute( "length", Long.toString(att.getSize()) );
+                        attEl.setAttribute( "type", servletContext.getMimeType( att.getFileName() ) );
+                        
+                        entryEl.addContent( attEl );
+                    }
+                }
+                catch( ProviderException ex )
+                {
+                    // FIXME: log.info("Can't get attachment data",ex);
+                }
+            }
+
+            
+            list.add( entryEl );
+        }
+        
+        return list;
+    }
+    
+    public String getString()
+    {
+        Element root = new Element("feed",m_atomNameSpace);
+        
+        Date lastModified = new Date(0L);
+        
+        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        {
+            Entry e = (Entry)i.next();
+            
+            if( e.getPage().getLastModified().after(lastModified) )
+                lastModified = e.getPage().getLastModified();
+        }
+        
+        //
+        //  Mandatory parts
+        //
+        root.addContent( new Element("title").setText( format(getChannelTitle()) ) );
+        root.addContent( new Element("id").setText(getFeedID()) );
+        root.addContent( new Element("updated").setText(DateFormatUtils.formatUTC( lastModified,
+                                                                                   RFC3339FORMAT ) ));
+        
+        //
+        //  Optional
+        //
+        // root.addContent( new Element("author").addContent(new Element("name").setText(format())))
+        root.addContent( new Element("link").setAttribute("href",m_wikiContext.getEngine().getBaseURL()));
+        root.addContent( new Element("generator").setText("JSPWiki "+Release.VERSTR));
+        
+        //
+        //  Items
+        //
+        
+        root.addContent( getItems() );
+        
+        //
+        //  aaand output
+        //
+        XMLOutputter output = new XMLOutputter();
+        
+        output.setFormat( Format.getPrettyFormat() );
+        
+        try
+        {
+            StringWriter res = new StringWriter();
+            output.output( root, res );
+
+            return res.toString();
+        }
+        catch( IOException e )
+        {
+            return null;
+        }
+    }
+
+}
