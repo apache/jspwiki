@@ -1,3 +1,17 @@
+2005-08-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.15
+        
+        * The "Wow, instead of sleep you can code and chat on
+        IRC thanks to WiFi on airplanes" -release.
+
+        * Added patch from Mark Rawlings to get rid of Javascript
+        errors in cssinclude.js
+
+        * Added support for generating Atom 1.0 feeds.  There
+        is still a bit of a problem in generating proper Atom
+        ID's, as our metadata storage does not work too well.
+
 2005-08-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.14
