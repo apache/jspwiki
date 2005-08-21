@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.43 2005-08-03 02:50:15 arj Exp $
+    $Id: build.xml,v 1.44 2005-08-21 01:34:55 arj Exp $
 -->    
        
 <!--   
@@ -74,6 +74,9 @@
   
   <!-- The location for the JAR file for the core JSPWiki classes -->
   <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
+  
+  <!-- The location for the keystore used to sign the JAR; will be created if it doesn't exist. -->
+  <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
        
   <!-- Define a temporary directory, based on the system temporary directory,
        the user name, and the project name (defined above) -->
@@ -124,8 +127,11 @@
        to the base path defined above, since we put all the relevant
        .properties-files in tests/etc. -->
   <path id="path.tests">
-      <pathelement path="${tests.src}/etc" />
-      <path refid="path.base" />
+     <pathelement location="${jarfile}" />
+     <fileset dir="lib">
+        <include name="*.jar" />
+     </fileset>
+     <pathelement path="${tests.src}/etc" />
   </path>
 
   <!-- ============================================================== -->
@@ -274,7 +280,9 @@
       </exec>
       <signjar jar="${jarfile}" alias="jspwiki" keystore="${jks.keystore}"
       storepass="${jks.password}" verbose="false"/>
-  
+      
+      <copy file="${jks.keystore}" toDir="tests/etc" />
+
   </target>
 
   <target name="jar-optimized" depends="compile-optimized,installinit">
@@ -408,7 +416,7 @@
   <target name="tests" depends="jar,compiletests"
           description="Runs the JUnit tests.">
 
-    <junit printsummary="yes" haltonfailure="no" fork="no">
+    <junit printsummary="yes" haltonfailure="no" fork="yes">
         <classpath>
            <path refid="path.tests" />
            <pathelement path="${tests.build}" />
@@ -433,7 +441,7 @@
   <target name="stresstests" depends="jar,compiletests"
           description="Runs the complete stress testing framework.">
 
-    <junit printsummary="yes" haltonfailure="no" fork="no">
+    <junit printsummary="yes" haltonfailure="no" fork="yes">
         <classpath>
            <path refid="path.tests" />
            <pathelement path="${tests.build}" />
@@ -491,8 +499,7 @@
   <target name="guitests" depends="jar,compiletests"
           description="Runs the tests in a pretty window.">
 
-     <java classname="junit.swingui.TestRunner"
-           fork="true">
+     <java classname="junit.swingui.TestRunner" fork="yes">
         <classpath>
            <path refid="path.tests" />
            <pathelement path="${tests.build}" />
@@ -674,7 +681,6 @@
   <!-- Code signing targets for enforcing J2SE security policy -->
   
   <target name="sign-init">
-    <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
     <property name="jks.alias" value="jspwiki" />
     <available file="${jks.keystore}" property="jks.exists" />
   </target>

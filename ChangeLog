@@ -1,3 +1,9 @@
+2005-08-20  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * Minor changes to TestAuthorizer, AuthorizationManagerTest 
+        and build.xml to correct test failures in AuthorizationManagerTest.
+        This also fixes XMLRPC test failures. No version bump.
+
 2005-08-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.15
