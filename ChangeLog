@@ -1,3 +1,19 @@
+2005-08-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.30
+
+        * Added generic null protection to CachingProvider, and
+        also protected against spurious input in RCSFileProvider
+        as a stopgap measure to some probable scaling issues.
+
+        * It was possible to get the authentication master password
+        by inserting simply it on a page as a variable.  Oops.
+        The master password is now saved under a different name
+        (jspwiki-s.auth.masterPassword), which may break existing
+        installations.  Also added a check in the VariableManager
+        to prevent reporting of that variable.
+        Reported by Trevor Yann.
+
 2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.29
