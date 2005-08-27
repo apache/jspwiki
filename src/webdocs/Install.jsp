@@ -11,6 +11,8 @@
     String message = null;
     String propertyResult = null;
     
+    public static final String PROP_MASTERPWD = "jspwiki-s.auth.masterPassword";
+    
     public String sanitizePath( String s )
     {
         s = TextUtil.replaceString(s, "\\", "\\\\" );
@@ -152,7 +154,7 @@
     String password2 = safeGetParameter( request, "password2" );
     String password  = safeGetParameter( request, "password" );
 
-    String oldpassword = props.getProperty( "jspwiki.auth.masterPassword", null );
+    String oldpassword = props.getProperty( PROP_MASTERPWD, null );
     
     if( request.getParameter("submit") != null )
     {
@@ -191,7 +193,7 @@
             
             if( password1 != null )
             {
-                propertyString = setProperty( propertyString, "jspwiki.auth.masterPassword", password1 );
+                propertyString = setProperty( propertyString, PROP_MASTERPWD, password1 );
                 oldpassword = password1;
             }
 
