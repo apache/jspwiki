@@ -196,6 +196,9 @@ public class CachingProvider
         throws ProviderException,
                RepositoryModifiedException
     {
+        // Sanity check; seems to occur sometimes
+        if( name == null ) return null;
+        
         try
         {
             WikiPage item = (WikiPage)m_cache.getFromCache( name, m_expiryPeriod );
@@ -288,6 +291,8 @@ public class CachingProvider
 
     public boolean pageExists( String pageName )
     {
+        if( pageName == null ) return false;
+        
         //
         //  First, check the negative cache if we've seen it before
         //
@@ -376,6 +381,8 @@ public class CachingProvider
     {
         String result = null;
 
+        if( pageName == null ) return null;
+        
         if( version == WikiPageProvider.LATEST_VERSION )
         {
             result = getTextFromCache( pageName );
@@ -410,6 +417,8 @@ public class CachingProvider
     {
         String text;
 
+        if( pageName == null ) return null;
+        
         WikiPage page = getPageInfoFromCache( pageName );
 
         try
@@ -617,6 +626,7 @@ public class CachingProvider
     {
         List history = null;
 
+        if( page == null ) return null;
         try
         {
             history = (List)m_historyCache.getFromCache( page,
