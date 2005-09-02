@@ -28,55 +28,55 @@ public class AclEntryImplTest
 
     public void testAddPermission()
     {
-        m_ae.addPermission( new PagePermission( "view" ) );
+        m_ae.addPermission( PagePermission.VIEW );
 
-        assertTrue( "no permission", m_ae.checkPermission( new PagePermission( "view" ) ) );
-        assertFalse( "permission found", m_ae.checkPermission( new PagePermission( "edit" ) ) );
+        assertTrue( "no permission", m_ae.checkPermission( PagePermission.VIEW ) );
+        assertFalse( "permission found", m_ae.checkPermission( PagePermission.EDIT ) );
     }
 
 
     public void testAddPermission2()
     {
-        m_ae.addPermission( new PagePermission( "view" ) );
-        m_ae.addPermission( new PagePermission( "edit" ) );
+        m_ae.addPermission( PagePermission.VIEW );
+        m_ae.addPermission( PagePermission.EDIT );
 
-        assertTrue( "no editpermission", m_ae.checkPermission( new PagePermission( "edit" ) ) );
-        assertTrue( "no viewpermission", m_ae.checkPermission( new PagePermission( "view" ) ) );
+        assertTrue( "no editpermission", m_ae.checkPermission( PagePermission.EDIT ) );
+        assertTrue( "no viewpermission", m_ae.checkPermission( PagePermission.VIEW ) );
     }
 
     public void testAddPermission3()
     {
-        m_ae.addPermission( new PagePermission( "comment" ) );
+        m_ae.addPermission( PagePermission.COMMENT );
 
-        assertFalse( "has edit permission", m_ae.checkPermission( new PagePermission( "edit" ) ) );
+        assertFalse( "has edit permission", m_ae.checkPermission( PagePermission.EDIT ) );
     }
 
     public void testAddPermission4()
     {
-        m_ae.addPermission( new PagePermission( "edit" ) );
+        m_ae.addPermission( PagePermission.EDIT );
 
-        assertTrue( "has comment permission", m_ae.checkPermission( new PagePermission( "comment" ) ) );
+        assertTrue( "has comment permission", m_ae.checkPermission( PagePermission.COMMENT ) );
     }
     
     public void testAddPermission5() {
-        m_ae.addPermission( new PagePermission( "view" ) );
+        m_ae.addPermission( PagePermission.VIEW );
         
-        assertTrue( "has view all", m_ae.checkPermission( new PagePermission( "view" ) ) );
-        assertTrue( "has view on single page", m_ae.checkPermission( new PagePermission( "SamplePage", "view" ) ) );
+        assertTrue( "has view all", m_ae.checkPermission( PagePermission.VIEW ) );
+        assertTrue( "has view on single page", m_ae.checkPermission( new PagePermission( "mywiki:SamplePage", "view" ) ) );
     }
 
     public void testRemovePermission()
     {
-        m_ae.addPermission( new PagePermission( "view" ) );
-        m_ae.addPermission( new PagePermission( "edit" ) );
+        m_ae.addPermission( PagePermission.VIEW );
+        m_ae.addPermission( PagePermission.EDIT );
 
-        assertTrue( "has edit permission", m_ae.checkPermission( new PagePermission( "edit" ) ) );
-        assertTrue( "has view permission", m_ae.checkPermission( new PagePermission( "view" ) ) );
+        assertTrue( "has edit permission", m_ae.checkPermission( PagePermission.EDIT ) );
+        assertTrue( "has view permission", m_ae.checkPermission( PagePermission.VIEW ) );
 
-        m_ae.removePermission( new PagePermission( "edit" ) );
+        m_ae.removePermission( PagePermission.EDIT );
 
-        assertFalse( "no edit permission", m_ae.checkPermission( new PagePermission( "edit" ) ) );
-        assertTrue( "has view permission", m_ae.checkPermission( new PagePermission( "view" ) ) );
+        assertFalse( "no edit permission", m_ae.checkPermission( PagePermission.EDIT ) );
+        assertTrue( "has view permission", m_ae.checkPermission( PagePermission.VIEW ) );
     }
 
     public void testDefaults()
