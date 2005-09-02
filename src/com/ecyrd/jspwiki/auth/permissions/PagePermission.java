@@ -8,25 +8,36 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 
 /**
  * <p>
- * Permission to perform an operation on a single page or collection of pages.
- * Permission actions include: <code>view</code>,<code>edit</code>,
- * <code>comment</code>,<code>upload</code> and <code>delete</code> and
- * <code>rename</code>.
+ * Permission to perform an operation on a single page or collection of pages in
+ * a given wiki. Permission actions include: <code>view</code>,&nbsp;
+ * <code>edit</code>,&nbsp;<code>comment</code>,&nbsp;
+ * <code>upload</code>,&nbsp;<code>delete</code> and <code>rename</code>.
  * </p>
  * <p>
- * The target of a permission is a single page or collection. Collections may be
- * specified using a wildcard character (*). The wildcard may be a prefix,
- * suffix, or all by itself: for example, *Main, Main* or *.
+ * The target of a permission is a single page or collection in a given wiki.
+ * The syntax for the target is the wiki name, followed by a colon (:) and the
+ * name of the page. "All wikis" can be specified using a wildcard (*). Page
+ * collections may also be specified using a wildcard. For pages, the wildcard
+ * may be a prefix, suffix, or all by itself. Examples of targets include:
  * </p>
+ * <blockquote><code>*:*<br/>
+ * *:JanneJalkanen<br/>
+ * *:Jalkanen<br/>
+ * *:Janne*<br/>
+ * mywiki:JanneJalkanen<br/>
+ * mywiki:*Jalkanen<br/>
+ * mywiki:Janne*</code>
+ * </blockquote>
  * <p>
  * For a given target, certain permissions imply others: <code>delete</code>
- * and <code>rename</code> imply <code>edit</code>; <code>edit</code>
- * implies <code>comment</code>, <code>upload</code>, and
- * <code>view</code>; <code>comment</code> and <code>upload</code> imply
- * <code>view</code>.
+ * and <code>rename</code> imply <code>edit</code> ;&nbsp; <code>edit</code>
+ * implies <code>comment</code> ,&nbsp; <code>upload</code>, and
+ * <code>view</code> ;&nbsp; <code>comment</code> and <code>upload</code>
+ * imply <code>view</code>. Targets that do not include a wiki prefix
+ * <i>never </i> imply others.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-07-15 08:27:21 $
+ * @version $Revision: 1.4 $ $Date: 2005-09-02 23:47:52 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
@@ -69,33 +80,58 @@ public final class PagePermission extends Permission
 
     public static final PagePermission VIEW           = new PagePermission( VIEW_ACTION );
 
+    private static final String        ACTION_SEPARATOR = ",";
+    
+    private static final String        WILDCARD       = "*";
+    
+    private static final String        WIKI_SEPARATOR = ":";
+
     private final String               m_actionString;
 
     private final int                  m_mask;
 
-    private final String               m_target;
+    private final String               m_page;
+
+    private final String               m_wiki;
 
     /**
-     * Convenience constructor that creates a new PagePermission for all pages
-     * (*) and set of actions.
+     * Private convenience constructor that creates a new PagePermission for all wikis and pages
+     * (*:*) and set of actions.
      * @param actions
      */
-    public PagePermission( String actions )
+    private PagePermission( String actions )
     {
-        this( "*", actions );
+        this( WILDCARD + WIKI_SEPARATOR + WILDCARD, actions );
     }
 
     /**
      * Creates a new PagePermission for a specified page name and set of
-     * actions.
-     * @param page
-     * @param actions
+     * actions. Page should include a prepended wiki name followed by a slash.
+     * If the wiki name is not supplied or starts with a colon (:), the page
+     * refers no wiki in particular, and will never imply any other
+     * PagePermission.
+     * @param page the wiki page
+     * @param actions the allowed actions for this page
      */
     public PagePermission( String page, String actions )
     {
         super( page );
-        m_target = page;
-        String pageActions[] = actions.toLowerCase().split( "," );
+
+        // Parse wiki and page (which may include wiki name and page)
+        String pathParams[] = page.split( WIKI_SEPARATOR );
+        if ( pathParams.length >= 2 )
+        {
+            m_wiki = pathParams[0].length() > 0 ? pathParams[0] : null;
+            m_page = pathParams[1];
+        }
+        else
+        {
+            m_wiki = null;
+            m_page = pathParams[0];
+        }
+
+        // Parse actions
+        String pageActions[] = actions.toLowerCase().split( ACTION_SEPARATOR );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         StringBuffer buffer = new StringBuffer();
@@ -104,7 +140,7 @@ public final class PagePermission extends Permission
             buffer.append( pageActions[i] );
             if ( i < ( pageActions.length - 1 ) )
             {
-                buffer.append( "," );
+                buffer.append( ACTION_SEPARATOR );
             }
         }
         m_actionString = buffer.toString();
@@ -115,14 +151,14 @@ public final class PagePermission extends Permission
      * @param page
      * @param actions
      */
-    public PagePermission( WikiPage page, String actions )
+    public PagePermission( String wiki, WikiPage page, String actions )
     {
-        this( page.getName(), actions );
+        this( wiki + WIKI_SEPARATOR + page.getName(), actions );
     }
 
     /**
      * Two PagePermission objects are considered equal if their actions (after
-     * normalization) and target are equal.
+     * normalization), wiki and target are equal.
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public final boolean equals( Object obj )
@@ -132,7 +168,8 @@ public final class PagePermission extends Permission
             return false;
         }
         PagePermission p = (PagePermission) obj;
-        return ( p.m_mask == m_mask && p.m_target.equals( m_target ) );
+        return ( p.m_mask == m_mask && p.m_page.equals( m_page ) 
+                 && p.m_wiki.equals( m_wiki ));
     }
 
     /**
@@ -144,6 +181,25 @@ public final class PagePermission extends Permission
     public final String getActions()
     {
         return m_actionString;
+    }
+    
+    /**
+     * Returns the name of the wiki page represented by this permission.
+     * @return the page name
+     */
+    public final String getPage()
+    {
+        return m_page;
+    }
+    
+    /**
+     * Returns the name of the wiki containing the page represented by
+     * this permission; may return the wildcard string.
+     * @return the wiki
+     */
+    public final String getWiki()
+    {
+        return m_wiki;
     }
 
     /**
@@ -164,19 +220,20 @@ public final class PagePermission extends Permission
     /**
      * <p>
      * PagePermission can only imply other PagePermissions; no other permission
-     * types are implied.
-     * </p>
-     * <p>
-     * One PagePermission implies another if its actions if two conditions are
-     * met:
+     * types are implied. One PagePermission implies another if its actions if
+     * three conditions are met:
      * </p>
      * <ol>
-     * <li>All of other PagePermission's actions are equal to, or a subset of,
-     * those of this permission</li>
+     * <li>The other PagePermission's wiki is equal to, or a subset of, that of
+     * this permission. This permission's wiki is considered a superset of the
+     * other if it contains a matching prefix plus a wildcard, or a wildcard
+     * followed by a matching suffix.</li>
      * <li>The other PagePermission's target is equal to, or a subset of, the
      * target specified by this permission. This permission's target is
      * considered a superset of the other if it contains a matching prefix plus
      * a wildcard, or a wildcard followed by a matching suffix.</li>
+     * <li>All of other PagePermission's actions are equal to, or a subset of,
+     * those of this permission</li>
      * </ol>
      * <p>
      * Note: a significant (hard-coded) exception to the rule occurs with pages
@@ -207,7 +264,22 @@ public final class PagePermission extends Permission
             return false;
         }
 
-        return isSubset( m_target, p.m_target );
+        // See if the tested permission's wiki is implied
+        boolean impliedWiki = isSubset( m_wiki, p.m_wiki );
+
+        // Special case: if this page is "*", the tested permission's
+        // page is implied UNLESS it starts with "Group"
+        boolean impliedPage;
+        if ( m_page.equals( WILDCARD ) && p.m_page.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
+        {
+            impliedPage = false;
+        }
+        else
+        {
+            impliedPage = isSubset( m_page, p.m_page );
+        }
+
+        return ( impliedWiki && impliedPage );
     }
 
     /**
@@ -216,7 +288,8 @@ public final class PagePermission extends Permission
      */
     public final String toString()
     {
-        return "(\"" + this.getClass().getName() + "\",\"" + m_target + "\",\"" + getActions() + "\")";
+        String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_page + "\",\"" + getActions() + "\")";
     }
 
     /**
@@ -259,27 +332,33 @@ public final class PagePermission extends Permission
      */
     protected final boolean isSubset( String superSet, String subSet )
     {
+        // If either is null, return false
+        if ( superSet == null || subSet == null )
+        {
+            return false;
+        }
+
         // If targets are identical, it's a subset
         if ( superSet.equals( subSet ) )
         {
             return true;
         }
 
-        // If super is "*", it's a subset unless its a group page
-        if ( superSet.equals( "*" ) )
+        // If super is "*", it's a subset
+        if ( superSet.equals( WILDCARD ) )
         {
-            return ( !subSet.startsWith( DefaultGroupManager.GROUP_PREFIX ) );
+            return true;
         }
 
         // If super starts with "*", sub must end with everything after the *
-        if ( superSet.startsWith( "*" ) )
+        if ( superSet.startsWith( WILDCARD ) )
         {
             String suffix = superSet.substring( 1 );
             return subSet.endsWith( suffix );
         }
 
         // If super ends with "*", sub must start with everything before *
-        if ( superSet.endsWith( "*" ) )
+        if ( superSet.endsWith( WILDCARD ) )
         {
             String prefix = superSet.substring( 0, superSet.length() - 2 );
             return subSet.startsWith( prefix );
@@ -301,7 +380,7 @@ public final class PagePermission extends Permission
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        String[] actionList = actions.split( "," );
+        String[] actionList = actions.split( ACTION_SEPARATOR );
         for( int i = 0; i < actionList.length; i++ )
         {
             String action = actionList[i];
