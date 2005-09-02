@@ -208,7 +208,7 @@ public class RSSGenerator
      */
     public String generate()
     {
-        WikiContext context = new WikiContext(m_engine,new WikiPage("__DUMMY"));
+        WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
         context.setRequestContext( WikiContext.RSS );
         Feed feed = new RSS10Feed( context );
         

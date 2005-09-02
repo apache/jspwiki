@@ -50,6 +50,8 @@ public abstract class AbstractFileProvider
     private String m_pageDirectory = "/tmp/";
     
     protected String m_encoding;
+    
+    protected WikiEngine m_engine;
 
     /**
      *  Name of the property that defines where page directories are.
@@ -88,6 +90,8 @@ public abstract class AbstractFileProvider
         {
             throw new IOException("Page directory is not a directory: "+m_pageDirectory);
         }
+        
+        m_engine = engine;
 
         m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, 
                                              DEFAULT_ENCODING );
@@ -318,7 +322,7 @@ public abstract class AbstractFileProvider
     {
         File wikipagedir = new File( m_pageDirectory );
         TreeSet res = new TreeSet( new SearchResultComparator() );
-        SearchMatcher matcher = new SearchMatcher( query );
+        SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 
@@ -375,7 +379,7 @@ public abstract class AbstractFileProvider
             return null;
         }
 
-        WikiPage p = new WikiPage( page );
+        WikiPage p = new WikiPage( m_engine, page );
         p.setLastModified( new Date(file.lastModified()) );
 
         return p;

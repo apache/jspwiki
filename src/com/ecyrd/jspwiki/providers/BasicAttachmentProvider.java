@@ -74,7 +74,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class BasicAttachmentProvider
     implements WikiAttachmentProvider
 {
-    private String m_storageDir;
+    private WikiEngine         m_engine;
+    private String             m_storageDir;
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
 
     public static final String PROPERTY_FILE   = "attachment.properties";
@@ -88,6 +89,7 @@ public class BasicAttachmentProvider
         throws NoRequiredPropertyException,
                IOException
     {
+        m_engine = engine;
         m_storageDir = WikiEngine.getRequiredProperty( properties, PROP_STORAGEDIR );
 
         //
@@ -476,7 +478,7 @@ public class BasicAttachmentProvider
             String pageId = unmangleName( pagesWithAttachments[i] );
             pageId = pageId.substring( 0, pageId.length()-DIR_EXTENSION.length() );
             
-            Collection c = listAttachments( new WikiPage(pageId) );
+            Collection c = listAttachments( new WikiPage( m_engine, pageId ) );
 
             for( Iterator it = c.iterator(); it.hasNext(); )
             {
@@ -497,7 +499,7 @@ public class BasicAttachmentProvider
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
-        Attachment att = new Attachment( page.getName(), name );
+        Attachment att = new Attachment( m_engine, page.getName(), name );
         File dir = findAttachmentDir( att );
 
         if( !dir.exists() )
@@ -546,7 +548,7 @@ public class BasicAttachmentProvider
 
             for( int i = latest; i >= 1; i-- )
             {
-                Attachment a = getAttachmentInfo( new WikiPage(att.getParentName()), 
+                Attachment a = getAttachmentInfo( new WikiPage( m_engine, att.getParentName() ), 
                                                   att.getFileName(), i );
 
                 if( a != null )

@@ -567,7 +567,7 @@ public class LuceneSearchProvider implements SearchProvider
                 else
                 {
                     log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
-                    pageRemoved(new WikiPage(pageName));
+                    pageRemoved(new WikiPage( m_engine, pageName ));
                 }
             }
         }

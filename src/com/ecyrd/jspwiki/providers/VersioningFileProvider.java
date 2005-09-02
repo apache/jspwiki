@@ -454,7 +454,7 @@ public class VersioningFileProvider
 
             if( file != null && file.exists() )
             {
-                p = new WikiPage( page );
+                p = new WikiPage( m_engine, page );
 
                 p.setLastModified( new Date(file.lastModified()) );
                 p.setVersion( version );

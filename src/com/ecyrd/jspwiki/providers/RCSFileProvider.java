@@ -407,7 +407,7 @@ public class RCSFileProvider
             { 
                 if( matcher.contains( line, revpattern ) )
                 {
-                    info = new WikiPage( page );
+                    info = new WikiPage( m_engine, page );
 
                     MatchResult result = matcher.getMatch();
 

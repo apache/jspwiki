@@ -138,7 +138,7 @@ public class BasicSearchProvider implements SearchProvider
     private Collection findPages( QueryItem[] query )
     {
         TreeSet res = new TreeSet( new SearchResultComparator() );
-        SearchMatcher matcher = new SearchMatcher( query );
+        SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
         Collection allPages = null;
         try
