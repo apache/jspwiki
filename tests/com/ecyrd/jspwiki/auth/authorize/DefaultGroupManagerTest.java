@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -56,35 +57,61 @@ public class DefaultGroupManagerTest extends TestCase
         }
    }
 
+    public void testGetRoles()
+    {
+        Principal[] roles = m_manager.getRoles();
+        boolean found = false;
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            if ( roles[i].getName().equals( "Test" ) )
+            {
+                found = true;
+            }
+        }
+        assertTrue( "Didn't find group Test", found );
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            if ( roles[i].getName().equals( "Test2" ) )
+            {
+                found = true;
+            }
+        }
+        assertTrue( "Didn't find group Test2", found );
+    }
+
     public void testGroupFormation() throws Exception
     {
         Principal p = new WikiPrincipal( "Alice" );
-        Subject s = new Subject();
+        WikiSession session = WikiSession.guestSession();
+        Subject s = session.getSubject();
         s.getPrincipals().add(p);
-        assertTrue( m_manager.isUserInRole( null, s, new DefaultGroup( "Test" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "Test2" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "NonExistant" ) ) );
+        assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
 
-        s = new Subject();
+        session = WikiSession.guestSession();
+        s = session.getSubject();
         p = new WikiPrincipal( "Bob" );
         s.getPrincipals().add(p);
-        assertTrue( m_manager.isUserInRole( null, s, new DefaultGroup( "Test" ) ) );
-        assertTrue( m_manager.isUserInRole( null, s, new DefaultGroup( "Test2" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "NonExistant" ) ) );
+        assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
+        assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
 
-        s = new Subject();
+        session = WikiSession.guestSession();
+        s = session.getSubject();
         p = new WikiPrincipal( "Charlie" );
         s.getPrincipals().add(p);
-        assertTrue( m_manager.isUserInRole( null, s, new DefaultGroup( "Test" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "Test2" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "NonExistant" ) ) );
+        assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
 
-        s = new Subject();
+        session = WikiSession.guestSession();
+        s = session.getSubject();
         p = new WikiPrincipal( "Biff" );
         s.getPrincipals().add(p);
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "Test" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "Test2" ) ) );
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "NonExistant" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
     }
 
     public void testBadGroupFormation() throws Exception
@@ -92,9 +119,10 @@ public class DefaultGroupManagerTest extends TestCase
         // BadGroup doesn't start with "Group", so there should be no group created for it
         // (Groups must start with the word "Group")
         Principal p = new WikiPrincipal( "Arnold" );
-        Subject s = new Subject();
+        WikiSession session = WikiSession.guestSession();
+        Subject s = session.getSubject();
         s.getPrincipals().add(p);
-        assertFalse( m_manager.isUserInRole( null, s, new DefaultGroup( "BadGroup" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "BadGroup" ) ) );
     }
 
     public static Test suite()

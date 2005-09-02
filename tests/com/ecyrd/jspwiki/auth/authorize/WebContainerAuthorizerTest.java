@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
+import java.security.Principal;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -41,6 +42,28 @@ public class WebContainerAuthorizerTest extends TestCase
         assertTrue( m_authorizer.isConstrained( m_webxml, "/Delete.jsp", Role.AUTHENTICATED ) );
         assertTrue( m_authorizer.isConstrained( m_webxml, "/LoginRedirect.jsp", Role.ADMIN ) );
         assertTrue( m_authorizer.isConstrained( m_webxml, "/UserPreferences.jsp", Role.AUTHENTICATED ) );
+    }
+    
+    public void testGetRoles()
+    {
+        Principal[] roles = m_authorizer.getRoles();
+        boolean found = false;
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            if ( roles[i].equals( Role.AUTHENTICATED ) )
+            {
+                found = true;
+            }
+        }
+        assertTrue( "Didn't find AUTHENTICATED", found );
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            if ( roles[i].equals( Role.ADMIN ) )
+            {
+                found = true;
+            }
+        }
+        assertTrue( "Didn't find ADMIN", found );
     }
     
     public void testRoles()

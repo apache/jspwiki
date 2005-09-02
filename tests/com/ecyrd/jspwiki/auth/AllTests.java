@@ -14,6 +14,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("AAA package tests");
 
+        suite.addTest( AuthenticationManagerTest.suite() );
         suite.addTest( AuthorizationManagerTest.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.acl.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.authorize.AllTests.suite() );
