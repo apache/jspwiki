@@ -16,11 +16,13 @@
 </wiki:NoSuchPage>
 
 <div align="center" class="username">
+    <wiki:UserCheck status="anonymous">
+      <p>You are <b>anonymous</b>.</p>
+    </wiki:UserCheck>
     <wiki:UserCheck status="asserted">
         <b>G'day,</b><br />
         <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br/>(not logged in)
     </wiki:UserCheck>
-
     <wiki:UserCheck status="authenticated">
         <b>G'day,</b><br />
         <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br/>(authenticated)
@@ -28,10 +30,11 @@
 </div>
 
 <div>
-    <wiki:UserCheck status="anonymous">
-      <p>You are <b>anonymous</b>.</p>
+    <wiki:UserCheck status="notAuthenticated">
       <p>
-        <a href="Register.jsp">Register</a> or 
+        <wiki:Permission permission="registerUser">
+          <a href="Register.jsp">Register</a> or 
+        </wiki:Permission>
         <wiki:UserCheck status="customAuth">
           <a href="Login.jsp">Log in</a>
         </wiki:UserCheck>
@@ -40,26 +43,23 @@
         </wiki:UserCheck>
       </p>
     </wiki:UserCheck>
-
-    <wiki:UserCheck status="asserted">
-      <p>
-        <a href="Register.jsp">Register</a> or 
-        <wiki:UserCheck status="customAuth">
-          <a href="Login.jsp">Log in</a>
-        </wiki:UserCheck>
-        <wiki:UserCheck status="containerAuth">
-          <a href="LoginRedirect.jsp">Log in</a>
-        </wiki:UserCheck>
-      </p>
-    </wiki:UserCheck>
+   
+    <p>
+      <wiki:Permission permission="editPreferences">
+        <wiki:LinkTo page="UserPreferences">Edit your profile</wiki:LinkTo>
+      </wiki:Permission>
+      <br/>
+      <wiki:Permission permission="createGroups">
+        <a href="NewGroup.jsp">Create new group</a>
+      </wiki:Permission>
+    </p>
 
     <wiki:UserCheck status="authenticated">
-      <p>
-        <wiki:LinkTo page="UserPreferences">Set your preferences</wiki:LinkTo>
-        <br/>
+      </p>            
         <a href="Logout.jsp">Log out</a>
       </p>
     </wiki:UserCheck>
+    
 </div>
 
 <!-- End of automatically generated page -->

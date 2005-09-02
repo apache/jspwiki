@@ -137,8 +137,11 @@
         %>
 
         <p>Access control lists or wiki groups containing your identity
-           should specify <b><wiki:UserProfile property="wikiname"/></b> or
-           <b><wiki:UserProfile property="fullname"/></b>.</p>
+           should specify <strong><wiki:UserProfile property="wikiname"/></strong> or
+           <b><wiki:UserProfile property="fullname"/></b>.
+           You are also a member of these roles and groups: 
+           <strong><wiki:UserProfile property="roles" /></strong>. 
+           ACLs containing these roles and groups should work, too.</p>
         <p>Click 'save profile' to change your wiki profile.
            You created your profile on <wiki:UserProfile property="created"/>,
            and last saved it on <wiki:UserProfile property="modified"/></p>
