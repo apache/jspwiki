@@ -22,12 +22,14 @@ package com.ecyrd.jspwiki.auth;
 /**
  *  Thrown in some error situations where a WikiPrincipal object does not exist.
  *  @author Andrew Jaquith
- *  @version $Revision: 1.3 $ $Date: 2005-06-29 22:43:17 $
+ *  @version $Revision: 1.4 $ $Date: 2005-09-02 23:53:09 $
  *  @since 2.3
  */
 public class NoSuchPrincipalException
     extends WikiSecurityException
 {
+    private static final long serialVersionUID = 3257849895976186169L;
+
     public NoSuchPrincipalException( String msg )
     {
         super(msg);

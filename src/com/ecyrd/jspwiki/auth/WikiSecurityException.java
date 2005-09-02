@@ -27,11 +27,13 @@ import com.ecyrd.jspwiki.WikiException;
  *
  *  @author Erik Bunn
  *  @since 2.0
- *  @version $Revision: 1.4 $ $Date: 2005-06-29 22:43:17 $
+ *  @version $Revision: 1.5 $ $Date: 2005-09-02 23:53:09 $
  */
 public class WikiSecurityException
     extends WikiException
 {
+    private static final long serialVersionUID = 3617293441285764405L;
+
     /**
      *  Constructs an exception.
      */
