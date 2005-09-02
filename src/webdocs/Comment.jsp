@@ -54,8 +54,8 @@
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
 
-    Permission requiredPermission = new PagePermission( pagereq, "comment" );
-    if( !mgr.checkPermission( wikiContext,
+    Permission requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "comment" );
+    if( !mgr.checkPermission( wikiSession,
                               requiredPermission ) )
     {
         log.info("User "+user+" has no access - redirecting to login page.");

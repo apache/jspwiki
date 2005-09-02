@@ -35,7 +35,7 @@
     boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
 
     // User must have permission to register the profile
-    if( !authMgr.checkPermission( wikiContext, WikiPermission.REGISTER ) )
+    if( !authMgr.checkPermission( wikiContext.getWikiSession(), WikiPermission.REGISTER ) )
     {
         log.info("User "+wikiContext.getCurrentUser()+" has no access to register - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
@@ -79,7 +79,7 @@
         {
             try
             {
-                userMgr.setUserProfile( wikiContext, profile );
+                userMgr.setUserProfile( wikiContext.getWikiSession(), profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getWikiName() );
             }
             catch( DuplicateUserException e )

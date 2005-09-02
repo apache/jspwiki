@@ -29,9 +29,10 @@
     AuthenticationManager authMgr = wiki.getAuthenticationManager();
     AuthorizationManager mgr = wiki.getAuthorizationManager();
     Principal currentUser  = wikiContext.getWikiSession().getUserPrincipal();
-    Permission requiredPermission = new PagePermission( pagereq, "view" );
+    WikiPage wikipage = wikiContext.getPage();
+    Permission requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "view" );
 
-    if( !mgr.checkPermission( wikiContext,
+    if( !mgr.checkPermission( wikiContext.getWikiSession(),
                               requiredPermission ) )
     {
         if( authMgr.strictLogins() )

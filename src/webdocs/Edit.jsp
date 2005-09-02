@@ -74,7 +74,7 @@
     //
     if( wiki.pageExists( wikipage ) )
     {
-        requiredPermission = new PagePermission( pagereq, "edit" );
+        requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "edit" );
     }
     else
     {
@@ -90,7 +90,7 @@
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
 
-    if( !mgr.checkPermission(  wikiContext,
+    if( !mgr.checkPermission(  wikiSession,
                                requiredPermission ) )
     {
         log.info("User "+user+" has no access - redirecting to login page.");

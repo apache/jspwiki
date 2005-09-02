@@ -36,7 +36,7 @@
     String user = wikiContext.getCurrentUser().getName();
 
     // User must be authenticated to create groups
-    if( !authMgr.checkPermission( wikiContext, WikiPermission.CREATE_GROUPS ) )
+    if( !authMgr.checkPermission( wikiContext.getWikiSession(), WikiPermission.CREATE_GROUPS ) )
     {
         log.info("User "+user+" cannot create groups - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
@@ -90,8 +90,7 @@
         if ( errors.size() == 0 )
         {
             String groupPage = "Group" + name;
-            WikiContext groupContext = new WikiContext( wiki, request, new WikiPage( groupPage ) );
-            groupContext.setWikiSession( wikiContext.getWikiSession() );
+            WikiContext groupContext = new WikiContext( wiki, request, new WikiPage( wiki, groupPage ) );
             log.info("Creating group "+groupPage+". User="+user+", host="+request.getRemoteAddr() );
 
             //  Set author information

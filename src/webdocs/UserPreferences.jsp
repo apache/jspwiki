@@ -36,7 +36,7 @@
     boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
     
     // User must have permission to change the profile
-    if( !authMgr.checkPermission( wikiContext, WikiPermission.PREFERENCES ) )
+    if( !authMgr.checkPermission( wikiContext.getWikiSession(), WikiPermission.PREFERENCES ) )
     {
         log.info("User "+wikiContext.getCurrentUser()+" has no access to set preferences - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
@@ -47,7 +47,7 @@
     }
     
     // If user doesn't exist, redirect to registration page
-    UserProfile profile = userMgr.getUserProfile( wikiContext );
+    UserProfile profile = userMgr.getUserProfile( wikiContext.getWikiSession() );
     if ( profile.isNew() )
     {
         log.info("User profile for "+wikiContext.getCurrentUser()+" doesn't exist; redirecting to registration page.");
@@ -88,7 +88,7 @@
         {
             try
             {
-                userMgr.setUserProfile( wikiContext, profile );
+                userMgr.setUserProfile( wikiContext.getWikiSession(), profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getWikiName() );
             }
             catch( DuplicateUserException e )

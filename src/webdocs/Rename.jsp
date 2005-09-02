@@ -32,9 +32,8 @@
         changeReferences = true;
     }
 
-    WikiContext wikiContext = new WikiContext( wiki, wiki.getPage(pagereq) );
+    WikiContext wikiContext = new WikiContext( wiki, request, wiki.getPage(pagereq) );
     wikiContext.setRequestContext( WikiContext.ERROR );
-    wikiContext.setHttpRequest( request );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
 

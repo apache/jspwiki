@@ -45,7 +45,7 @@
 
     if( !mgr.isContainerAuthenticated() && "login".equals(action) )
     {
-        if( mgr.loginCustom( uid, passwd, request ) )
+        if( mgr.login( wikiContext.getWikiSession(), uid, passwd ) )
         {
             response.sendRedirect( wiki.getViewURL(pagereq) );
             return;
