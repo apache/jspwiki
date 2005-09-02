@@ -28,7 +28,7 @@ public class PluginManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         engine = new TestEngine(props);
-        context = new WikiContext( engine, new WikiPage("testpage") );
+        context = new WikiContext( engine, new WikiPage(engine, "testpage") );
         manager = new PluginManager( props );
     }
 

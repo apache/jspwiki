@@ -37,7 +37,7 @@ public class CounterPluginTest extends TestCase
                ServletException
     {
         WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage("TestPage") );
+                                               new WikiPage(testEngine, "TestPage") );
         Reader r = new TranslatorReader( context, 
                                          new BufferedReader( new StringReader(src)) );
         StringWriter out = new StringWriter();

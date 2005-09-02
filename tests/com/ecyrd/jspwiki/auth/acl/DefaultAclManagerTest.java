@@ -50,6 +50,7 @@ public class DefaultAclManagerTest
     public void testGetPermissions()
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
+        String wiki = page.getWiki();
         Acl acl = m_engine.getAclManager().getPermissions( page );
         assertNull( page.getAcl() );
         
@@ -58,17 +59,17 @@ public class DefaultAclManagerTest
         assertNotNull( page.getAcl() );
         
         // Charlie is an editor; reading is therefore implied
-        Principal[] principals = acl.findPrincipals( new PagePermission( page, "view") );
+        Principal[] principals = acl.findPrincipals( new PagePermission( wiki, page, "view") );
         assertEquals( 1, principals.length );
         assertEquals( new UnresolvedPrincipal("Charlie"), principals[0]);
         
         // Charlie should be in the ACL as an editor
-        principals = acl.findPrincipals( new PagePermission( page, "edit") );
+        principals = acl.findPrincipals( new PagePermission( wiki, page, "edit") );
         assertEquals( 1, principals.length );
         assertEquals( new UnresolvedPrincipal("Charlie"), principals[0]);
         
         // Charlie should not be able to delete this page
-        principals = acl.findPrincipals( new PagePermission( page, "delete") );
+        principals = acl.findPrincipals( new PagePermission( wiki, page, "delete") );
         assertEquals( 0, principals.length );
     }
 

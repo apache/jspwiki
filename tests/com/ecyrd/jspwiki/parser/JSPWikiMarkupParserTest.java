@@ -76,7 +76,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             NoRequiredPropertyException,
             ServletException
     {
-        return translate( new WikiPage(PAGE_NAME), src );
+        return translate( new WikiPage(testEngine, PAGE_NAME), src );
     }
     
     private String translate( WikiEngine e, String src )
@@ -84,7 +84,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     NoRequiredPropertyException,
     ServletException
     {
-        return translate( e, new WikiPage(PAGE_NAME), src );
+        return translate( e, new WikiPage(testEngine, PAGE_NAME), src );
     }
     
     
@@ -122,7 +122,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         TestEngine testEngine2 = new TestEngine( props );
         
         WikiContext context = new WikiContext( testEngine2,
-                                               new WikiPage(PAGE_NAME) );
+                                               new WikiPage(testEngine2, PAGE_NAME) );
         JSPWikiMarkupParser r = new JSPWikiMarkupParser( context, 
                                              new BufferedReader( new StringReader(src)) );
 
@@ -588,7 +588,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         newPage("Test");
         
-        Attachment att = new Attachment( "Test", "TestAtt.txt" );
+        Attachment att = new Attachment( testEngine, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
         
@@ -610,7 +610,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         testEngine2.saveText( "Test", "foo ");
         created.addElement( "Test" );
         
-        Attachment att = new Attachment( "Test", "TestAtt.txt" );
+        Attachment att = new Attachment( testEngine2, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         
         testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
@@ -633,7 +633,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         testEngine2.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
         
-        Attachment att = new Attachment( "TestPage", "TestAtt.txt" );
+        Attachment att = new Attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         
         testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
@@ -653,7 +653,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         testEngine2.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
         
-        Attachment att = new Attachment( "TestPage", "TestAtt.txt" );
+        Attachment att = new Attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         
         testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
@@ -1796,7 +1796,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name=foo}]";
         
-        WikiPage p = new WikiPage( PAGE_NAME );
+        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
         
         String res = translate( p, src );
         
@@ -1810,7 +1810,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name = foo}]";
         
-        WikiPage p = new WikiPage( PAGE_NAME );
+        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
         
         String res = translate( p, src );
         
@@ -1824,7 +1824,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name= Janne Jalkanen}]";
         
-        WikiPage p = new WikiPage( PAGE_NAME );
+        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
         
         String res = translate( p, src );
         
@@ -1838,7 +1838,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
         
-        WikiPage p = new WikiPage( PAGE_NAME );
+        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
         
         String res = translate( p, src );
         

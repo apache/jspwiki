@@ -38,7 +38,7 @@ public class AttachmentDavProviderTest extends TestCase
         throws Exception
     {
         engine.saveText("TestPage", "foobar");
-        Attachment att = new Attachment("TestPage","deceit of the tribbles.txt");
+        Attachment att = new Attachment(engine,"TestPage","deceit of the tribbles.txt");
         
         engine.getAttachmentManager().storeAttachment( att, engine.makeAttachmentFile() );
         
