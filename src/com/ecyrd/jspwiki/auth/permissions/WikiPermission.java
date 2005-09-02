@@ -7,7 +7,7 @@ import java.util.Arrays;
  * <p>
  * Permission to perform an global wiki operation, such as self-registering or
  * creating new pages. Permission actions include: <code>createGroups</code>,
- * <code>createPages</code>, and <code>registerUser</code>.
+ * <code>createPages</code>, <code>registerUser</code> and <code>login</code>.
  * </p>
  * <p>
  * Certain permissions imply others. Currently, <code>createGroups</code>
@@ -15,7 +15,7 @@ import java.util.Arrays;
  * implies <code>registerUser</code>.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2005-08-07 20:16:16 $
+ * @version $Revision: 1.9 $ $Date: 2005-09-02 23:48:25 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
@@ -26,6 +26,8 @@ public final class WikiPermission extends Permission
 
     private static final String        CREATE_PAGES_ACTION  = "createPages";
 
+    private static final String        LOGIN_ACTION         = "login";
+    
     private static final String        REGISTER_ACTION      = "registerUser";
 
     private static final String        PREFERENCES_ACTION   = "editPreferences";
@@ -38,10 +40,14 @@ public final class WikiPermission extends Permission
 
     protected static final int         PREFERENCES_MASK     = 0x8;
     
+    protected static final int         LOGIN_MASK           = 0x10;
+    
     public static final WikiPermission CREATE_GROUPS        = new WikiPermission( CREATE_GROUPS_ACTION );
 
     public static final WikiPermission CREATE_PAGES         = new WikiPermission( CREATE_PAGES_ACTION );
 
+    public static final WikiPermission LOGIN                = new WikiPermission( LOGIN_ACTION );
+    
     public static final WikiPermission REGISTER             = new WikiPermission( REGISTER_ACTION );
 
     public static final WikiPermission PREFERENCES          = new WikiPermission( PREFERENCES_ACTION );
@@ -89,8 +95,8 @@ public final class WikiPermission extends Permission
 
     /**
      * Returns the actions for this permission: "createGroups", "createPages",
-     * "editPreferences" or "registerUser". The actions will always be sorted in 
-     * alphabetic order, and will always appear in lower case.
+     * "editPreferences", "login" or "registerUser". The actions will always be
+     * sorted in alphabetic order, and will always appear in lower case.
      * @see java.security.Permission#getActions()
      */
     public final String getActions()
@@ -193,6 +199,10 @@ public final class WikiPermission extends Permission
             else if ( action.equalsIgnoreCase( CREATE_PAGES_ACTION ) )
             {
                 mask |= CREATE_PAGES_MASK;
+            }
+            else if ( action.equalsIgnoreCase( LOGIN_ACTION ) )
+            {
+                mask |= LOGIN_MASK;
             }
             else if ( action.equalsIgnoreCase( PREFERENCES_ACTION ) )
             {
