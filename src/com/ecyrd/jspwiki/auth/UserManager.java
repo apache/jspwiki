@@ -43,7 +43,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.35 $ $Date: 2005-08-07 22:06:09 $
+ *  @version $Revision: 1.36 $
  *  @since 2.3
  */
 public class UserManager
@@ -53,7 +53,7 @@ public class UserManager
     private static final Logger log = Logger.getLogger(UserManager.class);
 
     private static final String  PROP_USERDATABASE   = "jspwiki.userdatabase";
-    
+    private static final String  PROP_GROUPMANAGER   = "jspwiki.groupmanager";
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** The user database loads, manages and persists user identities */
@@ -88,12 +88,52 @@ public class UserManager
      */
     public GroupManager getGroupManager()
     {
-        if( m_groupManager == null ) 
+        if( m_groupManager != null ) 
         {
-            // TODO: make this pluginizable
-            m_groupManager = new DefaultGroupManager();
-            m_groupManager.initialize( m_engine, m_engine.getWikiProperties() );
+            return m_groupManager;
         }
+        
+        String dbClassName = "<unknown>";
+        String dbInstantiationError = null;
+        Throwable cause = null;
+        try 
+        {
+            Properties props = m_engine.getWikiProperties(); 
+            dbClassName = props.getProperty( PROP_GROUPMANAGER );
+            if( dbClassName == null ) 
+            {
+                dbClassName = DefaultGroupManager.class.getName();
+            }
+            log.info("Attempting to load group manager class " + dbClassName);
+            Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", dbClassName );
+            m_groupManager = (GroupManager) dbClass.newInstance();
+            m_groupManager.initialize( m_engine, m_engine.getWikiProperties() );
+            log.info("GroupManager initialized.");
+        } 
+        catch( ClassNotFoundException e ) 
+        {
+            log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
+            dbInstantiationError = "Failed to locate GroupManager class " + dbClassName;
+            cause = e;
+        } 
+        catch( InstantiationException e ) 
+        {
+            log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
+            dbInstantiationError = "Failed to create GroupManager class " + dbClassName;
+            cause = e;
+        } 
+        catch( IllegalAccessException e ) 
+        {
+            log.error( "You are not allowed to access user database class " + dbClassName, e );
+            dbInstantiationError = "Access GroupManager class " + dbClassName + " denied";
+            cause = e;
+        }
+        
+        if( dbInstantiationError != null ) 
+        {
+            throw new RuntimeException( dbInstantiationError, cause );
+        }
+        
         return m_groupManager;
     }
 
