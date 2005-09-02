@@ -24,9 +24,12 @@ public class VerySimpleProvider implements WikiPageProvider
      *  The name of the page list.
      */
     public static final String AUTHOR   = "default-author";
+    
+    private WikiEngine m_engine;
 
     public void initialize( WikiEngine engine, Properties props )
     {
+        m_engine = engine;
     }
 
     public String getProviderInfo()
@@ -63,7 +66,7 @@ public class VerySimpleProvider implements WikiPageProvider
         m_latestReq  = page;
         m_latestVers = version;
 
-        WikiPage p = new WikiPage( page );
+        WikiPage p = new WikiPage( m_engine, page );
         p.setVersion( 5 );
         p.setAuthor( AUTHOR );
         p.setLastModified( new Date(0L) );

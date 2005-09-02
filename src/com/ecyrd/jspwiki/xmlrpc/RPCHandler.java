@@ -191,8 +191,8 @@ public class RPCHandler
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
         WikiPage page = m_engine.getPage(pagename);
 
-        if( !mgr.checkPermission( null,
-                                  new PagePermission( page, "view") ) )
+        if( !mgr.checkPermission( WikiSession.guestSession(),
+                                  new PagePermission( page.getWiki(), page, "view") ) )
         {
             throw new XmlRpcException( ERR_NOPERMISSION, "No permission to view page "+pagename+", o master");
         }

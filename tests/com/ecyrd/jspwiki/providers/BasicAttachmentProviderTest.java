@@ -141,7 +141,7 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         File in = makeAttachmentFile();
 
-        Attachment att = new Attachment( NAME1, "\u3072\u3048\u308båäötest.füü" );
+        Attachment att = new Attachment( m_engine, NAME1, "\u3072\u3048\u308båäötest.füü" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
@@ -157,13 +157,13 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         File in = makeAttachmentFile();
 
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
         Thread.sleep( 2000L ); // So that we get a bit of granularity.
 
-        Attachment att2 = new Attachment( NAME2, "test2.txt" );
+        Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
         
@@ -192,13 +192,13 @@ public class BasicAttachmentProviderTest extends TestCase
 
         try
         {
-            Attachment att = new Attachment( NAME1, "test1.txt" );
+            Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
             m_provider.putAttachmentData( att, new FileInputStream(in) );
 
             Thread.sleep( 2000L ); // So that we get a bit of granularity.
 
-            Attachment att2 = new Attachment( NAME2, "test2.txt" );
+            Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
         
@@ -231,7 +231,7 @@ public class BasicAttachmentProviderTest extends TestCase
         File attDir = new File( sDir, NAME1+"-att" );
 
 
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
         
@@ -241,7 +241,7 @@ public class BasicAttachmentProviderTest extends TestCase
         {
             Thread.sleep( 2000L ); // So that we get a bit of granularity.
 
-            Attachment att2 = new Attachment( NAME2, "test2.txt" );
+            Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
         
@@ -273,7 +273,7 @@ public class BasicAttachmentProviderTest extends TestCase
         File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
         File attDir = new File( sDir, NAME1+"-att" );
 
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
         
@@ -285,7 +285,7 @@ public class BasicAttachmentProviderTest extends TestCase
         {
             Thread.sleep( 2000L ); // So that we get a bit of granularity.
 
-            Attachment att2 = new Attachment( NAME2, "test2.txt" );
+            Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
 
             m_provider.putAttachmentData( att2, new FileInputStream(in) );
         
@@ -310,13 +310,13 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         File in = makeAttachmentFile();
         
-        Attachment att = new Attachment( NAME1, "test1." );
+        Attachment att = new Attachment( m_engine, NAME1, "test1." );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
         Thread.sleep( 2000L ); // So that we get a bit of granularity.
 
-        Attachment att2 = new Attachment( NAME2, "test2." );
+        Attachment att2 = new Attachment( m_engine, NAME2, "test2." );
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
         

@@ -88,7 +88,7 @@ public class RPCHandlerTest extends TestCase
 
         m_engine.saveText( pageName, text );
 
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -175,7 +175,7 @@ public class RPCHandlerTest extends TestCase
 
         m_engine.saveText( pageName, text );
 
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
 

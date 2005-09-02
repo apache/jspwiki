@@ -20,16 +20,19 @@ public class CounterProvider
 
     static Logger log = Logger.getLogger( CounterProvider.class );
 
-    WikiPage[]    m_pages = { new WikiPage("Foo"),
-                              new WikiPage("Bar"),
-                              new WikiPage("Blat"),
-                              new WikiPage("Blaa") };
-
+    WikiPage[]    m_pages         = new WikiPage[0];
+    
     String defaultText = "[Foo], [Bar], [Blat], [Blah]";
 
 
     public void initialize( WikiEngine engine, Properties props )
     {
+        m_pages = new WikiPage[]
+                  { new WikiPage(engine, "Foo"),
+                    new WikiPage(engine, "Bar"),
+                    new WikiPage(engine, "Blat"),
+                    new WikiPage(engine, "Blaa") };
+        
         m_initCalls++;
         
         for( int i = 0; i < m_pages.length; i++ ) 

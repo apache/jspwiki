@@ -56,7 +56,7 @@ public class FileSystemProviderTest extends TestCase
     public void testScandinavianLetters()
         throws Exception
     {
-        WikiPage page = new WikiPage("\u00c5\u00e4Test");
+        WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
 
         m_provider.putPageText( page, "test" );
         
@@ -73,7 +73,7 @@ public class FileSystemProviderTest extends TestCase
     public void testScandinavianLettersUTF8()
         throws Exception
     {
-        WikiPage page = new WikiPage("\u00c5\u00e4Test");
+        WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
 
         m_providerUTF8.putPageText( page, "test\u00d6" );
 
@@ -94,7 +94,7 @@ public class FileSystemProviderTest extends TestCase
     public void testSlashesInPageNamesUTF8()
          throws Exception
     {
-        WikiPage page = new WikiPage("Test/Foobar");
+        WikiPage page = new WikiPage(m_engine, "Test/Foobar");
 
         m_providerUTF8.putPageText( page, "test" );
         
@@ -111,7 +111,7 @@ public class FileSystemProviderTest extends TestCase
     public void testSlashesInPageNames()
          throws Exception
     {
-        WikiPage page = new WikiPage("Test/Foobar");
+        WikiPage page = new WikiPage(m_engine, "Test/Foobar");
 
         m_provider.putPageText( page, "test" );
    
@@ -130,7 +130,7 @@ public class FileSystemProviderTest extends TestCase
     {
         try
         {
-            WikiPage page = new WikiPage("\u00c5\u00e4Test");
+            WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
             page.setAuthor("Min\u00e4");
 
             m_provider.putPageText( page, "test" );
@@ -223,7 +223,7 @@ public class FileSystemProviderTest extends TestCase
     public void testDelete()
         throws Exception
     {
-        m_provider.putPageText( new WikiPage("Test"), "v1" );
+        m_provider.putPageText( new WikiPage(m_engine, "Test"), "v1" );
 
         m_provider.deletePage( "Test" );
 
