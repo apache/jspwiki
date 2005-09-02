@@ -70,14 +70,14 @@ public class AttachmentManagerTest extends TestCase
     public void testSimpleStore()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(NAME1)), 
+                                                                       new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -101,14 +101,14 @@ public class AttachmentManagerTest extends TestCase
     public void testSimpleStoreSpace()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test file.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test file.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(NAME1)), 
+                                                                       new WikiPage(m_engine, NAME1)), 
                                                        "test file.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -132,14 +132,14 @@ public class AttachmentManagerTest extends TestCase
     public void testSimpleStoreByVersion()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(NAME1)), 
+                                                                       new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt", 1 );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -164,7 +164,7 @@ public class AttachmentManagerTest extends TestCase
     public void testMultipleStore()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -174,7 +174,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );        
 
         Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(NAME1)), 
+                                                                       new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -200,7 +200,7 @@ public class AttachmentManagerTest extends TestCase
         //
 
         Attachment att3 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(NAME1)), 
+                                                                       new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt",
                                                        1 );
         assertEquals( "version of v1", 1, att3.getVersion() );
@@ -210,13 +210,13 @@ public class AttachmentManagerTest extends TestCase
     public void testListAttachments()
         throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Collection c = m_manager.listAttachments( new WikiPage(NAME1) );
+        Collection c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
 
         assertEquals( "Length", 1, c.size() );
 
@@ -228,14 +228,14 @@ public class AttachmentManagerTest extends TestCase
 
     public void testSimpleStoreWithoutExt() throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(NAME1)),
+                                                                       new WikiPage(m_engine, NAME1)),
                                                        "test1" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -260,7 +260,7 @@ public class AttachmentManagerTest extends TestCase
 
     public void testExists() throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1" );
 
         att.setAuthor( "FirstPost" );
 
@@ -272,7 +272,7 @@ public class AttachmentManagerTest extends TestCase
 
     public void testExists2() throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test1.bin" );
+        Attachment att = new Attachment( m_engine, NAME1, "test1.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -284,7 +284,7 @@ public class AttachmentManagerTest extends TestCase
 
     public void testExistsSpace() throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test file.bin" );
+        Attachment att = new Attachment( m_engine, NAME1, "test file.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -296,7 +296,7 @@ public class AttachmentManagerTest extends TestCase
 
     public void testExistsUTF1() throws Exception
     {
-        Attachment att = new Attachment( NAME1, "test\u00e4.bin" );
+        Attachment att = new Attachment( m_engine, NAME1, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -308,7 +308,7 @@ public class AttachmentManagerTest extends TestCase
 
     public void testExistsUTF2() throws Exception
     {
-        Attachment att = new Attachment( NAMEU, "test\u00e4.bin" );
+        Attachment att = new Attachment( m_engine, NAMEU, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
