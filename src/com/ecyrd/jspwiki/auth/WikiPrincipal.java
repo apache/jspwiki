@@ -20,14 +20,16 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
+import java.text.Collator;
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  *  A lightweight, immutable Principal class.
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.6 $ $Date: 2005-08-07 22:06:09 $
+ *  @version $Revision: 1.7 $ $Date: 2005-09-02 23:54:42 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
@@ -43,6 +45,7 @@ public final class WikiPrincipal implements Principal
     public static final String LOGIN_NAME = "loginName";
     public static final String WIKI_NAME  = "wikiName";
     public static final String UNSPECIFIED  = "unspecified";
+    public static final Comparator COMPARATOR = new PrincipalComparator();
     
     private static final String[] validTypes;
     
@@ -124,5 +127,25 @@ public final class WikiPrincipal implements Principal
     {
         return "[WikiPrincipal: " + getName() + "]";
     }
+    
+    /**
+     * Tiny little class that compares objects of type Principal.
+     * Used for sorting arrays or collections of Principals.
+     * @since 2.3
+     */
+    public static class PrincipalComparator implements Comparator 
+    {
+        public int compare( Object o1, Object o2 )
+        {
+            Collator collator = Collator.getInstance();
+            if ( o1 instanceof Principal && o2 instanceof Principal )
+            {
+                return collator.compare( ((Principal)o1).getName(), ((Principal)o2).getName() );
+            }
+            throw new ClassCastException( "Objects must be of type Principal.");
+        }
+          
+    }
+    
 
 }
