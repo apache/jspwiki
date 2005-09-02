@@ -192,13 +192,18 @@ public class PageManager
             }
             else
             {
-                m_engine.getSearchManager().pageRemoved(new WikiPage(pageName));
+                m_engine.getSearchManager().pageRemoved(new WikiPage(m_engine, pageName));
             }
         }
 
         return text;
     }
 
+    public WikiEngine getEngine()
+    {
+        return m_engine;
+    }
+    
     public void putPageText( WikiPage page, String content )
         throws ProviderException
     {
@@ -330,7 +335,7 @@ public class PageManager
             //
             log.info("Repository has been modified externally while fetching info for "+pageName );
 
-            WikiPage p = new WikiPage( pageName );
+            WikiPage p = new WikiPage( m_engine, pageName );
             
             m_engine.updateReferences( p );
 

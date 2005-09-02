@@ -39,12 +39,14 @@ public class WikiPage
     implements Cloneable,
                Comparable
 {
-    private String       m_name;
-    private Date         m_lastModified;
-    private long         m_fileSize = -1;
-    private int          m_version = WikiPageProvider.LATEST_VERSION;
-    private String       m_author = null;
-    private HashMap      m_attributes = new HashMap();
+    private final String     m_name;
+    private final WikiEngine m_engine;
+    private final String     m_wiki;
+    private Date             m_lastModified;
+    private long             m_fileSize = -1;
+    private int              m_version = WikiPageProvider.LATEST_VERSION;
+    private String           m_author = null;
+    private final HashMap    m_attributes = new HashMap();
 
     /**
      *  "Summary" is a short summary of the page.  It is a String.
@@ -57,10 +59,12 @@ public class WikiPage
     public static final String SIZE = "size";
 
     private Acl m_accessList = null;
-
-    public WikiPage( String name )
+    
+    public WikiPage( WikiEngine engine, String name )
     {
+        m_engine = engine;
         m_name = name;
+        m_wiki = engine.getApplicationName();
     }
 
     public String getName()
@@ -179,6 +183,14 @@ public class WikiPage
     {
         return m_author;
     }
+    
+    /**
+     *  Returns the wiki nanme for this page
+     */
+    public String getWiki()
+    {
+        return m_wiki;
+    }
 
     /**
      *  This method will remove all metadata from the page.
@@ -207,7 +219,7 @@ public class WikiPage
 
     public String toString()
     {
-        return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+        return "WikiPage ["+m_wiki+":"+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
     }
 
     /**
@@ -216,7 +228,7 @@ public class WikiPage
      */
     public Object clone()
     {
-        WikiPage p       = new WikiPage(m_name);
+        WikiPage p       = new WikiPage(m_engine, m_name);
 
         p.m_author       = m_author;
         p.m_version      = m_version;

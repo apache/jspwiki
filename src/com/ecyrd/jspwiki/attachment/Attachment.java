@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki.attachment;
 
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
 /**
@@ -39,9 +40,9 @@ public class Attachment
     public static final int UPLOADING     = 1;
     public static final int COMPLETE      = 2;
 
-    public Attachment( String parentPage, String fileName )
+    public Attachment( WikiEngine engine, String parentPage, String fileName )
     {
-        super( parentPage+"/"+fileName );
+        super( engine, parentPage+"/"+fileName );
 
         m_parentName = parentPage;
         m_fileName   = fileName;

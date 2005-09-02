@@ -37,9 +37,11 @@ import java.io.StringReader;
 public class SearchMatcher
 {
     private QueryItem[] m_queries;
+    private WikiEngine m_engine;
 
-    public SearchMatcher( QueryItem[] queries )
+    public SearchMatcher( WikiEngine engine, QueryItem[] queries )
     {
+        m_engine = engine;
         m_queries = queries;
     }
 
@@ -130,7 +132,7 @@ public class SearchMatcher
         
         public SearchResultImpl( String name, int score )
         {
-            m_page  = new WikiPage( name );
+            m_page  = new WikiPage( m_engine, name );
             m_score = score;
         }
         

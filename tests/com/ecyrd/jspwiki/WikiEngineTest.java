@@ -120,7 +120,7 @@ public class WikiEngineTest extends TestCase
     public void testNonExistantPage2()
         throws Exception
     {
-        WikiPage page = new WikiPage("Test1");
+        WikiPage page = new WikiPage(m_engine, "Test1");
 
         assertEquals( "Page already exists",
                       false,
@@ -256,7 +256,7 @@ public class WikiEngineTest extends TestCase
     {
         String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
 
-        Object[] result = m_engine.scanWikiLinks( new WikiPage("Test"), src ).toArray();
+        Object[] result = m_engine.scanWikiLinks( new WikiPage(m_engine, "Test"), src ).toArray();
         
         assertEquals( "item 0", result[0], "Foobar" );
         assertEquals( "item 1", result[1], "ThisIsALink" );
@@ -405,7 +405,7 @@ public class WikiEngineTest extends TestCase
         
         m_engine.saveText( NAME1, "fooBar");
 
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -478,7 +478,7 @@ public class WikiEngineTest extends TestCase
         
         // now we create the attachment
             
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
         try
@@ -517,7 +517,7 @@ public class WikiEngineTest extends TestCase
         
         m_engine.saveText( NAME1, "fooBar");
 
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -554,7 +554,7 @@ public class WikiEngineTest extends TestCase
         
         m_engine.saveText( NAME1, "[TestPage2]");
 
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -607,7 +607,7 @@ public class WikiEngineTest extends TestCase
     {
         m_engine.saveText( NAME1, "Test" );
 
-        Attachment att = new Attachment( NAME1, "TestAtt.txt" );
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
         

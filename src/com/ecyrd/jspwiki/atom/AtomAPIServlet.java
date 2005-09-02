@@ -133,7 +133,7 @@ public class AtomAPIServlet extends HttpServlet
             String pageName = plugin.getNewEntryPage( m_engine, blogid );
             String username = author.getName();
 
-            WikiPage entryPage = new WikiPage( pageName );
+            WikiPage entryPage = new WikiPage( m_engine, pageName );
             entryPage.setAuthor( username );
 
             WikiContext context = new WikiContext( m_engine, request, entryPage );

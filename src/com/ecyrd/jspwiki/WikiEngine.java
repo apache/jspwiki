@@ -1952,7 +1952,7 @@ public class WikiEngine
         if( wikipage == null ) 
         {
             pagereq = TranslatorReader.cleanLink( pagereq );
-            wikipage = new WikiPage( pagereq );
+            wikipage = new WikiPage( this, pagereq );
         }
 
         //

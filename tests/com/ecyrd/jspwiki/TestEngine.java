@@ -151,7 +151,7 @@ public class TestEngine extends WikiEngine
 
         FileWriter out = new FileWriter( tmpFile );
         
-        FileUtil.copyContents( new StringReader( "asdfaäöüdfzbvasdjkfbwfkUg783gqdwog" ), out );
+        FileUtil.copyContents( new StringReader( "asdfa??¸dfzbvasdjkfbwfkUg783gqdwog" ), out );
 
         out.close();
         
@@ -170,7 +170,8 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         HttpServletRequest request = new TestHttpServletRequest();
-        WikiContext context = new WikiContext( this, request, new WikiPage(pageName) );
+        WikiPage page = new WikiPage( this, pageName );
+        WikiContext context = new WikiContext( this, request, page );
         context.getWikiSession().getSubject().getPrincipals().add(Role.ADMIN);
         saveText( context, content );
     }

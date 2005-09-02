@@ -186,8 +186,8 @@ public class AttachmentServlet
                 //  Check if the user has permission for this attachment
                 //
 
-                Permission permission = new PagePermission(att, "view");
-                if( !authmgr.checkPermission( context, permission ) )
+                Permission permission = new PagePermission(att.getWiki(), att, "view");
+                if( !authmgr.checkPermission( context.getWikiSession(), permission ) )
                 {
                     log.debug("User does not have permission for this");
                     res.sendError( HttpServletResponse.SC_FORBIDDEN );
@@ -531,7 +531,7 @@ public class AttachmentServlet
         
         if( att == null )
         {
-            att = new Attachment( parentPage, filename );
+            att = new Attachment( m_engine, parentPage, filename );
             created = true;
         }
         
@@ -539,8 +539,8 @@ public class AttachmentServlet
         //  Check if we're allowed to do this?
         //
         
-        Permission permission = new PagePermission(att, "upload");
-        if( m_engine.getAuthorizationManager().checkPermission( context,
+        Permission permission = new PagePermission(att.getWiki(), att, "upload");
+        if( m_engine.getAuthorizationManager().checkPermission( context.getWikiSession(),
                                                                 permission ) )
         {
             if( user != null )

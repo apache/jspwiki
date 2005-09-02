@@ -376,7 +376,8 @@ public class AttachmentManager
         m_engine.getReferenceManager().updateReferences( att.getName(),
                                                          new java.util.Vector() );
 
-        m_engine.updateReferences( new WikiPage( att.getParentName() ) );
+        WikiPage parent = new WikiPage( m_engine, att.getParentName() );
+        m_engine.updateReferences( parent );
         
         m_engine.getSearchManager().reindexPage( att );
     }
