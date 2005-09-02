@@ -43,7 +43,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.36 $
+ *  @version $Revision: 1.37 $
  *  @since 2.3
  */
 public class UserManager
@@ -53,7 +53,7 @@ public class UserManager
     private static final Logger log = Logger.getLogger(UserManager.class);
 
     private static final String  PROP_USERDATABASE   = "jspwiki.userdatabase";
-    private static final String  PROP_GROUPMANAGER   = "jspwiki.groupmanager";
+
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** The user database loads, manages and persists user identities */
@@ -99,7 +99,7 @@ public class UserManager
         try 
         {
             Properties props = m_engine.getWikiProperties(); 
-            dbClassName = props.getProperty( PROP_GROUPMANAGER );
+            dbClassName = props.getProperty( GroupManager.PROP_GROUPMANAGER );
             if( dbClassName == null ) 
             {
                 dbClassName = DefaultGroupManager.class.getName();
