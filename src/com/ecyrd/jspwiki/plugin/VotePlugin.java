@@ -117,7 +117,8 @@ public class VotePlugin
 
         if( att == null )
         {
-            att = new Attachment( context.getPage().getName(),
+            att = new Attachment( context.getEngine(),
+                                  context.getPage().getName(),
                                   ATTACHMENT_NAME );
         }
 

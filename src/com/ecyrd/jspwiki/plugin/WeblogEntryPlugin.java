@@ -118,7 +118,8 @@ public class WeblogEntryPlugin implements WikiPlugin
 
         while( idx < MAX_BLOG_ENTRIES )
         {
-            WikiPage page = new WikiPage( WeblogPlugin.makeEntryPage( baseName, 
+            WikiPage page = new WikiPage( mgr.getEngine(),
+                                          WeblogPlugin.makeEntryPage( baseName, 
                                                                       date, 
                                                                       Integer.toString(idx) ) );
             PageLock lock = mgr.getCurrentLock( page );
