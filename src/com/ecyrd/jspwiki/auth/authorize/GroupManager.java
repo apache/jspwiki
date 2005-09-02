@@ -9,12 +9,14 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * Specifies how to add, remove, and persist groups to an external group
  * management entity.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $
  * @since 2.3
  */
 public interface GroupManager extends Authorizer
 {
-
+    /** Property name for the manager class in jspwiki.properties. */
+    public static final String  PROP_GROUPMANAGER = "jspwiki.groupmanager";
+    
     public void initialize( WikiEngine engine, Properties props );
 
     /**
