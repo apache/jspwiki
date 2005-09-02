@@ -44,6 +44,8 @@ import com.ecyrd.jspwiki.*;
  */
 public class RPCServlet extends HttpServlet
 {
+    private static final long serialVersionUID = 3976735878410416180L;
+
     /** This is what is appended to each command, if the handler has
         not been specified.  */
     // FIXME: Should this be $default?
