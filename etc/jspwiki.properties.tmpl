@@ -375,6 +375,15 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 
 jspwiki.xmlUserDatabaseFile = /etc/tomcat/userdatabase.xml
 
+#  ADMIN USER
+#  The name of the user who will be treated as the superuser. The admin
+#  user can do anything, and is not restricted by the usual access control
+#  checks or policies. The admin user is disabled by default; uncomment
+#  the line below, and (optionally) change the account name to something
+#  else if you'd like
+
+#jspwiki.admin.user = admin
+
 #  ACCESS CONTROL LISTS
 #  Last but not least, JSPWiki needs a way of reading and persisting page
 #  access control lists. The default implementation reads these from the page
