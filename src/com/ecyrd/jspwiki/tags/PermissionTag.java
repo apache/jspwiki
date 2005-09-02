@@ -25,6 +25,7 @@ import java.security.Permission;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
@@ -33,7 +34,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
  *  Tells whether the user in the current wiki context possesses a particular
  *  permission. The permission is typically a PagePermission (e.g., "edit", "view",
  *  "delete", "comment", "upload"). It may also be a wiki-wide WikiPermission
- *  ("createPages", "createGroups", "registerUser").
+ *  ("createPages", "createGroups", "registerUser", "editPreferences", "login").
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -41,6 +42,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 public class PermissionTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 3761412993048982325L;
     private String m_permission;
 
     /**
@@ -59,11 +61,13 @@ public class PermissionTag
         WikiPage    page           = m_wikiContext.getPage();
         AuthorizationManager mgr   = engine.getAuthorizationManager();
         boolean     got_permission = false;
+        WikiSession session        = m_wikiContext.getWikiSession();
         
         if ( "createGroups".equals(m_permission) || "createPages".equals(m_permission)
-             || "registerUser".equals( m_permission ) )
+             || "registerUser".equals( m_permission ) || "editPreferences".equals( m_permission )
+             || "login".equals( m_permission ) )
         {
-            got_permission = mgr.checkPermission( m_wikiContext, new WikiPermission( m_permission ) );
+            got_permission = mgr.checkPermission( session, new WikiPermission( m_permission ) );
         }
         else if( page != null )
         {
@@ -81,8 +85,8 @@ public class PermissionTag
                 }
             }
 
-            Permission permission = new PagePermission( page.getName(), m_permission );
-            got_permission = mgr.checkPermission( m_wikiContext,
+            Permission permission = new PagePermission( page.getWiki(), page, m_permission );
+            got_permission = mgr.checkPermission( session,
                                                   permission );
         }
 

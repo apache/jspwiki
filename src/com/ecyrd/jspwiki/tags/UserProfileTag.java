@@ -20,7 +20,9 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.security.Principal;
 
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
@@ -48,11 +50,13 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * exist in the user database
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-03 04:02:57 $
+ * @version $Revision: 1.4 $ $Date: 2005-09-02 23:42:15 $
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase
 {
+    private static final long serialVersionUID = 3258410625431582003L;
+
     public static final String BLANK = "(not set)";
     
     private static final String CREATED   = "created";
@@ -69,6 +73,8 @@ public class UserProfileTag extends WikiTagBase
     
     private static final String NEW       = "new";
     
+    private static final String ROLES     = "roles";
+    
     private static final String WIKINAME  = "wikiname";
     
     private String             m_prop;
@@ -76,7 +82,7 @@ public class UserProfileTag extends WikiTagBase
     public final int doWikiStartTag() throws IOException, WikiSecurityException
     {
         UserManager manager = m_wikiContext.getEngine().getUserManager();
-        UserProfile profile = manager.getUserProfile( m_wikiContext );
+        UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
         
         if ( EXISTS.equals( m_prop ) )
@@ -107,6 +113,22 @@ public class UserProfileTag extends WikiTagBase
         else if ( MODIFIED.equals( m_prop ) && profile.getLastModified() != null )
         {
             result = profile.getLastModified().toString();
+        }
+        else if ( ROLES.equals( m_prop ) )
+        {
+            AuthorizationManager auth = m_wikiContext.getEngine().getAuthorizationManager();
+            Principal[] roles = auth.getRoles( m_wikiContext.getWikiSession() );
+            StringBuffer sb = new StringBuffer();
+            for ( int i = 0; i < roles.length; i++ )
+            {
+                sb.append( roles[i].getName() );
+                if ( i < ( roles.length - 1 ) ) 
+                {
+                    sb.append(',');
+                    sb.append(' ');
+                }
+            }
+            result = sb.toString();
         }
         else if ( WIKINAME.equals( m_prop ) )
         {

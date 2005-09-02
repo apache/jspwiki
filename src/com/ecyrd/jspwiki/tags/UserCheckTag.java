@@ -48,6 +48,9 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
  *                       if the user is validated through the container.</li>
  * <li>"customAuth"    - the body of the tag is included 
  *                       if the user is validated through our own authentication.</li>
+ * <li>"notAuthenticated"
+ *                     - the body of the tag is included 
+ *                       if the user is not yet authenticated.</li>
  * </ul>
  *
  *  If the old "exists" -argument is used, it corresponds as follows:
@@ -59,11 +62,13 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
  *
  *  @author Janne Jalkanen
  *  @author Erik Bunn
+ *  @author Andrew Jaquith
  *  @since 2.0
  */
 public class UserCheckTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 3256438110127863858L;
     private static final String ASSERTED = "asserted";
     private static final String AUTHENTICATED = "authenticated";
     private static final String ANONYMOUS = "anonymous";
@@ -71,6 +76,7 @@ public class UserCheckTag
     private static final String ASSERTIONS_NOT_ALLOWED = "assertionsnotallowed";
     private static final String CONTAINER_AUTH = "containerauth";
     private static final String CUSTOM_AUTH = "customauth";
+    private static final String NOT_AUTHENTICATED = "notauthenticated";
 
     private String m_status;
 
@@ -105,8 +111,6 @@ public class UserCheckTag
 
 
     /**
-     * ARJ: This method is somewhat re-written. I am not sure I got this 
-     * right...
      * @see com.ecyrd.jspwiki.tags.WikiTagBase#doWikiStartTag()
      */
     public final int doWikiStartTag()
@@ -172,6 +176,13 @@ public class UserCheckTag
                     return EVAL_BODY_INCLUDE;
                 }
                 return SKIP_BODY;
+            }
+            else if( NOT_AUTHENTICATED.equals( m_status ))
+            { 
+                if (!status.equals(WikiSession.AUTHENTICATED)) 
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
             }
         }
 
