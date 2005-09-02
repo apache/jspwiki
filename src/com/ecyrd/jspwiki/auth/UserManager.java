@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
@@ -43,7 +44,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.37 $
+ *  @version $Revision: 1.38 $ $Date: 2005-09-02 23:58:55 $
  *  @since 2.3
  */
 public class UserManager
@@ -198,16 +199,16 @@ public class UserManager
 
     /**
      * Retrieves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the
-     * user in a wiki context. If the user is authenticated, the UserProfile
+     * user in a wiki session. If the user is authenticated, the UserProfile
      * returned will be the one stored in the user database; if one does
      * not exist, a new one will be initialized and returned. If the user is 
      * anonymous or asserted, the UserProfile will <i>always</i> be newly 
      * initialized to prevent spoofing of identities. If a UserProfile needs to
      * be initialized, its {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
      * method will return <code>true</code>. Note that this method does 
-     * not modify the retrieved (or newly created) profile in ant way; any
+     * not modify the retrieved (or newly created) profile in any way; any
      * and all fields in the user profile may be <code>null</code>.
-     * @param context the wiki context, which may not be <code>null</code>
+     * @param session the wiki session, which may not be <code>null</code>
      * @return the user's profile, which will be newly initialized if the
      * user is anonymous or asserted, or if the user cannot be found in the
      * user database
@@ -218,15 +219,15 @@ public class UserManager
      *             check for UserDatabase providers; it should only be thrown
      *             if the implementation is faulty.
      */
-    public UserProfile getUserProfile( WikiContext context ) throws WikiSecurityException
+    public UserProfile getUserProfile( WikiSession session ) throws WikiSecurityException
     {
         boolean needsInitialization = true;
         UserProfile profile = null;
         Principal user;
         
         // Figure out if this is an existing profile
-        if ( context.getWikiSession().isAuthenticated() ) {
-            user = context.getCurrentUser();
+        if ( session.isAuthenticated() ) {
+            user = session.getUserPrincipal();
             try
             {
                 profile = m_database.find( user.getName() );
@@ -251,22 +252,22 @@ public class UserManager
 
     /**
      * Saves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the user in
-     * a wiki context. This method verifies that a user profile to be saved
+     * a wiki session. This method verifies that a user profile to be saved
      * doesn't collide with existing profiles; that is, the login name, wiki
      * name or full name is already used by another profile. If the profile
      * collides, a <code>DuplicateUserException</code> is thrown. After saving
      * the profile, the user database changes are committed, and the user's
      * credential set is refreshed; if custom authentication is used, this means
      * the user will be automatically be logged in.
-     * @param context the wiki context, which may not be <code>null</code>
+     * @param session the wiki session, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
      */
-    public void setUserProfile( WikiContext context, UserProfile profile ) throws WikiSecurityException,
+    public void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
             DuplicateUserException
     {
 
         boolean newProfile = profile.isNew();
-        UserProfile oldProfile = getUserProfile( context );
+        UserProfile oldProfile = getUserProfile( session );
 
         // User profiles that may already have wikiname, fullname or loginname
         UserProfile otherProfile;
@@ -317,11 +318,11 @@ public class UserManager
         AuthenticationManager mgr = m_engine.getAuthenticationManager();
         if ( newProfile && !mgr.isContainerAuthenticated() )
         {
-            mgr.loginCustom( profile.getLoginName(), profile.getPassword(), context.getHttpRequest() );
+            mgr.login( session, profile.getLoginName(), profile.getPassword() );
         }
         else
         {
-            mgr.refreshCredentials( context.getWikiSession() );
+            mgr.refreshCredentials( session );
         }
     }
 
@@ -358,7 +359,7 @@ public class UserManager
         try
         {
             // Look up the existing profile, if it exists
-            existingProfile = getUserProfile( context );
+            existingProfile = getUserProfile( context.getWikiSession() );
         }
         catch( WikiSecurityException e )
         {
