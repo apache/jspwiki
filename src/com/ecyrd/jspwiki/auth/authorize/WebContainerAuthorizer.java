@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -18,6 +17,7 @@ import org.w3c.dom.NodeList;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.Authorizer;
 
 /**
@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-08-14 15:10:41 $
+ * @version $Revision: 1.6 $ $Date: 2005-09-02 23:52:14 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -57,6 +57,7 @@ public class WebContainerAuthorizer implements Authorizer
      */
     public WebContainerAuthorizer()
     {
+        super();
     }
 
     /**
@@ -98,23 +99,22 @@ public class WebContainerAuthorizer implements Authorizer
     }
 
     /**
-     * Returns <code>true</code> if the
-     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(java.lang.String)}
-     * method also returns <code>true</code>. The servlet request object is
-     * obtained by calling
-     * {@link com.ecyrd.jspwiki.WikiContext#getHttpRequest()}. If
-     * <code>context</code> or <code>group</code> are <code>null</code>,
-     * this method will return <code>false</code>.
-     * @param context the current wiki context
-     * @param subject the subject to check. In this implementation, the value of
-     *            this parameter has no effect on the result, and may be
-     *            <code>null</code>.
-     * @param role the wiki group (role) being tested for
-     * @see com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiContext, Subject,
-     *      Principal)
+     * Determines whether the Subject associated with a WikiSession is in a
+     * particular role. This method takes two parameters: the WikiSession
+     * containing the subject and the desired role ( which may be a Role or a
+     * Group). If either parameter is <code>null</code>, this method must
+     * return <code>false</code>. 
+     * This method extracts the last
+     * 
+     * @param session the current WikiSession
+     * @param role the role to check
+     * @return <code>true</code> if the user is considered to be in the role,
+     *         <code>false</code> otherwise
+     * @see com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(com.ecyrd.jspwiki.WikiSession, java.security.Principal)
      */
-    public boolean isUserInRole( WikiContext context, Subject subject, Principal role )
+    public boolean isUserInRole( WikiSession session, Principal role )
     {
+        WikiContext context = session.getLastContext();
         if ( context == null || role == null )
         {
             return false;
@@ -165,6 +165,19 @@ public class WebContainerAuthorizer implements Authorizer
     public boolean isContainerAuthorized()
     {
         return m_containerAuthorized;
+    }
+
+    /**
+     * Returns an array of role Principals this Authorizer knows about. 
+     * This method will return an array of Role objects corresponding to
+     * the logical roles enumerated in the <code>web.xml</code>.
+     * This method actually returns a defensive copy of an internally stored
+     * array.
+     * @return an array of Principals representing the roles
+     */
+    public Principal[] getRoles()
+    {
+        return (Principal[]) m_containerRoles.clone();
     }
 
     /**

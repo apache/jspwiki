@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
@@ -47,7 +48,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-08-12 16:24:47 $
+ * @version $Revision: 1.5 $ $Date: 2005-09-02 23:52:14 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -66,7 +67,7 @@ public class DefaultGroupManager implements GroupManager
         public void postSave( WikiContext context, String content )
         {
             AuthorizationManager auth = m_engine.getAuthorizationManager();
-            if (auth.checkPermission( context, WikiPermission.CREATE_GROUPS )) 
+            if (auth.checkPermission( context.getWikiSession(), WikiPermission.CREATE_GROUPS )) 
             {
                 
                 // Parse groups if name starts with GROUP_PREFIX
@@ -157,6 +158,18 @@ public class DefaultGroupManager implements GroupManager
     }
 
     /**
+     * Returns an array of role Principals this GroupManager knows about. This
+     * method will return an array of Group objects corresponding to the wiki
+     * groups managed by this class. This method actually returns a defensive
+     * copy of an internally stored hashmap.
+     * @return an array of Principals representing the roles
+     */
+    public Principal[] getRoles()
+    {
+        return (Principal[])m_groups.values().toArray(new Group[m_groups.size()]);
+    }
+    
+    /**
      * Initializes the group cache by adding a {@link SaveFilter}to the page
      * manager, so that groups are updated when pages are saved. This method
      * also calls {@link #reload()}.
@@ -174,18 +187,24 @@ public class DefaultGroupManager implements GroupManager
     }
 
     /**
-     * Determines whether a particular Subject is considered a member of a given
-     * Group. This method simply finds the group in question, then delegates to
-     * {@link Group#isMember(Principal)}for each of the principals in the
-     * Subject's principal set.
-     * @param context the wiki context. Not used in this implementation, so
-     *            <code>null</code> is permitted
-     * @param subject the subject about whom membership statis is sought
-     * @param role the Group to search. If null, this method always returns false
-     * @see com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiContext, Subject, Principal)
+     * <p>Determines whether the Subject associated with a WikiSession is in a
+     * particular role. This method takes two parameters: the WikiSession
+     * containing the subject and the desired role ( which may be a Role or a
+     * Group). If either parameter is <code>null</code>, this method must
+     * return <code>false</code>.</p>
+     * <p>With respect to this implementation, the supplied Principal must
+     * be a Group. The Subject posesses the "role" if it is a member of 
+     * that Group. This method simply finds the Group in question, then
+     * delegates to {@link Group#isMember(Principal)} for each of the 
+     * principals in the Subject's principal set.</p>
+     * @param session the current WikiSession
+     * @param role the role to check
+     * @return <code>true</code> if the user is considered to be in the role,
+     * <code>false</code> otherwise
      */
-    public boolean isUserInRole( WikiContext context, Subject subject, Principal role )
+    public boolean isUserInRole( WikiSession session, Principal role )
     {
+        Subject subject = session.getSubject();
         Object group = m_groups.get( role.getName() );
         if ( group != null && subject != null )
         {
@@ -268,13 +287,13 @@ public class DefaultGroupManager implements GroupManager
 
         log.debug( "Parsing member list: " + memberLine );
 
-        StringTokenizer tok = new StringTokenizer( memberLine, ", " );
+        StringTokenizer tok = new StringTokenizer( memberLine, "," );
 
         ArrayList members = new ArrayList();
 
         while( tok.hasMoreTokens() )
         {
-            String uid = tok.nextToken();
+            String uid = tok.nextToken().trim();
 
             log.debug( "  Adding member: " + uid );
 

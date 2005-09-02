@@ -3,49 +3,55 @@ package com.ecyrd.jspwiki.auth;
 import java.security.Principal;
 import java.util.Properties;
 
-import javax.security.auth.Subject;
-
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiSession;
 
 /**
  * Interface for service providers of authorization information.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-08-12 16:24:47 $
+ * @version $Revision: 1.5 $ $Date: 2005-09-02 23:52:48 $
  * @since 2.3
  */
 public interface Authorizer
 {
 
     /**
+     * Returns an array of role Principals this Authorizer knows about. 
+     * This method will always return an array; an implementing class may 
+     * choose to return an zero-length array if it has no ability to identify
+     * the roles under its control.
+     * @return an array of Principals representing the roles
+     */
+    public Principal[] getRoles();
+    
+    /**
      * Looks up and returns a role Principal matching a given String.
      * If a matching role cannot be found, this method returns <code>null</code>.
-     * Note that it may not be feasible for an Authorizer implementation
-     * to return a role Principal.
+     * Note that it may not always be feasible for an Authorizer 
+     * implementation to return a role Principal.
      * @param role the name of the role to retrieve
      * @return the role Principal
      */
     public Principal findRole( String role );
 
     /**
-     * Initializes the authorizer for.
+     * Initializes the authorizer.
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
     public void initialize( WikiEngine engine, Properties props );
 
     /**
-     * Determines whether the user represented by a supplied Subject is in a
-     * particular role. This method takes three parameters. Context may be
-     * <code>null</code>; however, if a Authorizer implementation requires it (<em>e.g.</em>,
-     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}), this
-     * method must return <code>false</code>.
-     * @param context the current WikiContext
-     * @param subject the current Subject
+     * Determines whether the Subject associated with a WikiSession is in a
+     * particular role. This method takes two parameters: the WikiSession
+     * containing the subject and the desired role ( which may be a Role or a
+     * Group). If either parameter is <code>null</code>, this method must
+     * return <code>false</code>.
+     * @param session the current WikiSession
      * @param role the role to check
      * @return <code>true</code> if the user is considered to be in the role,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      */
-    public boolean isUserInRole( WikiContext context, Subject subject, Principal role );
+    public boolean isUserInRole( WikiSession session, Principal role );
 
 }
