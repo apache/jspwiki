@@ -23,7 +23,7 @@ import java.util.Enumeration;
  * </ul>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-09-03 00:26:52 $
  * @since 2.3
  */
 public interface Group extends Principal
@@ -59,13 +59,6 @@ public interface Group extends Principal
      * @return the result of the operation
      */
     public boolean isMember( Principal principal );
-
-    /**
-     * Returns an enumeration of the Principals that are members of the group.
-     * Principals are not guaranteed to be in any particular order.
-     * @return the list of Principals in the Group
-     */
-    public Enumeration members();
 
     /**
      * The name of the group. Typically, this is set in concrete classes'

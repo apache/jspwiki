@@ -8,7 +8,7 @@ import java.util.Vector;
 /**
  * Provides a concrete implementation of the {@link Group} interface.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-09-03 00:26:52 $
  * @since 2.3
  */
 public class DefaultGroup implements Group
@@ -88,11 +88,6 @@ public class DefaultGroup implements Group
     public boolean isMember( Principal principal )
     {
         return findMember( principal.getName() ) != null;
-    }
-
-    public Enumeration members()
-    {
-        return m_members.elements();
     }
 
     public boolean remove( Principal user )
