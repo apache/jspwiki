@@ -25,14 +25,17 @@ import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
-import org.apache.log4j.Logger;
 import javax.security.auth.Subject;
 
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
@@ -41,8 +44,9 @@ import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
-import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -51,7 +55,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.25 $ $Date: 2005-08-12 16:24:47 $
+ * @version $Revision: 1.26 $ $Date: 2005-09-03 00:10:12 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -81,13 +85,12 @@ public class AuthorizationManager
     
     /**
      * Returns <code>true</code> or <code>false</code>, depending on
-     * whether this action is allowed for this WikiPage. The access control
-     * algorithm works this way:
+     * whether a Permission is allowed for the Subject associated with
+     * a supplied WikiSession. The access control algorithm works this way:
      * <ol>
      * <li>The {@link com.ecyrd.jspwiki.auth.acl.Acl} for the page is obtained</li>
      * <li>The Subject associated with the current
-     * {@link com.ecyrd.jspwiki.WikiSession} is obtained (this is looked up in
-     * the HttpSession associated with the supplied HttpServletRequest)</li>
+     * {@link com.ecyrd.jspwiki.WikiSession} is obtained</li>
      * <li>If the Subject's Principal set includes the Role Principal that is
      * the administrator group, always allow the Permission</li>
      * <li>If there is no ACL at all, check to see if the Permission is allowed
@@ -115,28 +118,19 @@ public class AuthorizationManager
      * succeed, the access check for the principal will fail by definition (the
      * Subject should never contain UnresolvedPrincipals).
      * </p>
-     * @param context the current wiki context. If <code>null</code>, a
-     *            synthetic anonymous WikiContext containing a
-     *            {@link com.ecyrd.jspwiki.WikiSession#GUEST_SESSION} is assumed
+     * @param session the current wiki session
      * @param permission the Permission being checked
      * @see #hasRoleOrPrincipal(WikiContext, Principal)
      * @return the result of the Permission check
      */
-    public boolean checkPermission( WikiContext context, Permission permission )
+    public boolean checkPermission( WikiSession session, Permission permission )
     {
         //
         //  A slight sanity check.
         //
-        if ( permission == null )
+        if ( session == null || permission == null )
         {
             return false;
-        }
-
-        // Get the current session and subject
-        WikiSession session = WikiSession.GUEST_SESSION;
-        if ( context != null )
-        {
-            session = WikiSession.getWikiSession( context.getHttpRequest() );
         }
         Subject subject = session.getSubject();
         
@@ -148,7 +142,7 @@ public class AuthorizationManager
 
         // If this isn't a PagePermission, just check the security policy
         // and we're done
-        if ( permission instanceof WikiPermission )
+        if ( ! ( permission instanceof PagePermission ) )
         {
             return checkStaticPermission( subject, permission );
         }
@@ -158,11 +152,13 @@ public class AuthorizationManager
         // If no Acl, we check the security policy to see what the
         // defaults should be.
         Acl acl = null;
-        if ( context != null )
+        String pageName = ((PagePermission)permission).getPage();
+        WikiPage page = m_engine.getPage( pageName );
+        if ( page == null )
         {
-            WikiPage page = context.getPage();
-            acl = m_engine.getAclManager().getPermissions( page );
+            return checkStaticPermission( subject, permission );
         }
+        acl = m_engine.getAclManager().getPermissions( page );
         if ( acl == null )
         {
             return checkStaticPermission( subject, permission );
@@ -196,19 +192,67 @@ public class AuthorizationManager
                 }
             }
             
-            if ( hasRoleOrPrincipal( context, aclPrincipal ) )
+            if ( hasRoleOrPrincipal( session, aclPrincipal ) )
             {
                 return true;
             }
         }
         return false;
-
     }
     
     /**
-     * Determines if the Subject associated with a supplied WikiContext contains
-     * a desired user Principal or built-in Role principal, OR is a member a
-     * Group or external Role. The rules as as follows:
+     * Returns an array of Principal objects that represents the roles that
+     * the user associated with a WikiSession possesses. The array is built
+     * by iterating through the Subject's Principal set and extracting
+     * all Role objects into a list. The external Authorizer and GroupManager 
+     * are also consulted; in each case, the Principal[] array returned by 
+     * <code>getRoles()</code> is examined. If the Subject posseses this
+     * role, it is added to the list. The list is returned as an array
+     * sorted in the natural order implied by each Principal's 
+     * <code>getName</code> method.
+     * @param session the wiki session
+     * @return an array of Principal objects corresponding to the 
+     * roles the Subject possesses, across all Authorizers
+     */
+    public Principal[] getRoles( WikiSession session )
+    {
+        Set roles = new HashSet();
+        Subject subject = session.getSubject();
+        
+        // Add all of the Roles possessed by the Subject directly
+        roles.addAll( subject.getPrincipals( Role.class ) );
+        
+        // Get the GroupManager and test for each Group
+        GroupManager manager = m_engine.getGroupManager();
+        Principal[] groups = manager.getRoles();
+        for ( int i = 0; i < groups.length; i++ )
+        {
+            if ( manager.isUserInRole( session, groups[i] ) )
+            {
+                roles.add( groups[i] );
+            }
+        }
+        
+        // Get the external Authorizer and test for each Role
+        Principal[] externalRoles = m_authorizer.getRoles();
+        for ( int i = 0; i < externalRoles.length; i++ )
+        {
+            if ( m_authorizer.isUserInRole( session, externalRoles[i] ) )
+            {
+                roles.add( externalRoles[i] );
+            }
+        }
+        
+        // Return a defensive copy
+        Principal[] roleArray = ( Principal[] )roles.toArray( new Principal[roles.size()] );
+        Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
+        return roleArray;
+    }
+    
+    /**
+     * Wrapper method that determines if the Subject associated with a 
+     * supplied WikiSession contains a desired built-in Role principal, 
+     * OR is a member a Group or external Role. The rules as as follows:
      * <ul>
      * <li>If the desired Principal is a built-in Role, the algorithm simply
      * checks to see if the Subject possesses it in its Principal set</li>
@@ -216,26 +260,24 @@ public class AuthorizationManager
      * external Authorizer's <code>isInRole</code> method is called</li>
      * <li>If the desired principal is a Group, the GroupManager's group
      * authorizer <code>isInRole</code> method is called</li>
-     * <li>For all other cases, delegate to
-     * {@link #hasUserPrincipal(Subject, Principal)}to determine whether the
-     * Subject posesses the desired Principal in its Principal set.</li>
      * </ul>
-     * @param context the current wiki context, which must be non-null. If null,
+     * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
-     * @param principal the Principal (role, group, or user principal) to look
+     * @param principal the Principal (role or group principal) to look
      *            for, which must be non-null. If null, the result of this
      *            method always returns <code>false</code>
      * @return <code>true</code> if the Subject supplied with the WikiContext
-     *         posesses the Role, is a member of the Group, or contains the
-     *         desired Principal, <code>false</code> otherwise
+     *         posesses the Role or is a member of the Group,
+     *         <code>false</code> otherwise
      */
-    protected boolean hasRoleOrPrincipal( WikiContext context, Principal principal )
+    public boolean isUserInRole( WikiSession session, Principal principal )
+    // TODO: write unit tests
     {
-        if (context == null || context.getWikiSession() == null || principal == null)
+        if (session == null || principal == null)
         {
             return false;
         }
-        Subject subject = context.getWikiSession().getSubject();
+        Subject subject = session.getSubject();
         if ( principal instanceof Role)
         {
             Role role = (Role) principal;
@@ -245,13 +287,46 @@ public class AuthorizationManager
                 return true;
             }
             // No luck; try the external authorizer (e.g., container)
-            return (m_authorizer.isUserInRole( context, subject, role ) );
+            return (m_authorizer.isUserInRole( session, role ) );
         }
         else if ( principal instanceof Group )
         {
             Group group = (Group) principal;
-            return m_engine.getGroupManager().isUserInRole( context, subject, group );
+            return m_engine.getGroupManager().isUserInRole( session, group );
         }
+        return false;
+    }
+    
+    /**
+     * Determines if the Subject associated with a supplied WikiSession contains
+     * a desired user Principal or built-in Role principal, OR is a member a
+     * Group or external Role. The rules as as follows:
+     * <ul>
+     * <li>Delegate the initial check to {@link #isUserInRole(WikiSession, Principal)}.</li>
+     * <li>If this check fails, delegate to
+     * {@link #hasUserPrincipal(Subject, Principal)} to determine whether the
+     * Subject posesses the desired Principal in its Principal set.</li>
+     * </ul>
+     * @param session the current wiki session, which must be non-null. If null,
+     *            the result of this method always returns <code>false</code>
+     * @param principal the Principal (role, group, or user principal) to look
+     *            for, which must be non-null. If null, the result of this
+     *            method always returns <code>false</code>
+     * @return <code>true</code> if the Subject supplied with the WikiContext
+     *         posesses the Role, is a member of the Group, or contains the
+     *         desired Principal, <code>false</code> otherwise
+     */
+    protected boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
+    {
+        if (session == null || principal == null)
+        {
+            return false;
+        }
+        if ( principal instanceof Role || principal instanceof Group )
+        {
+            return isUserInRole( session, principal );
+        }
+        Subject subject = session.getSubject();
         return hasUserPrincipal( subject, principal );
     }
 
@@ -300,7 +375,7 @@ public class AuthorizationManager
      * <code>null<code>.
      * @return the current Authorizer
      */
-    public Authorizer getAuthorizer()
+    protected Authorizer getAuthorizer()
     {
         return m_authorizer;
     }

@@ -16,7 +16,6 @@ package com.ecyrd.jspwiki.auth;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
-import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
@@ -56,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.10 $ $Date: 2005-08-12 16:24:47 $
+ * @version $Revision: 1.11 $ $Date: 2005-09-03 00:13:28 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -81,9 +79,13 @@ public class AuthenticationManager
 
     private WikiEngine                         m_engine            = null;
 
+    /** If not <code>null</code>, contains the name of the admin user */
+    private String              m_admin             = null;
+
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
+    private static final String                PROP_ADMIN_USER     = "jspwiki.admin.user";
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
     private static final String                PROP_POLICY_CONFIG  = "java.security.policy";
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
@@ -162,6 +164,17 @@ public class AuthenticationManager
                 log.error("Could not install security policy: " + e.getMessage());
             }
         }
+
+        // Initialize admin user, if found in the properties
+        m_admin = props.getProperty( PROP_ADMIN_USER, null );
+        if ( m_admin != null )
+        {
+           log.info( "Administrative user configured." );
+        }
+        else
+        {
+            log.info( "Administrative user property not present; NOT configured." );
+        }
     }
     
     /**
@@ -184,16 +197,14 @@ public class AuthenticationManager
     }
 
     /**
-     * Logs in the user by attempting to obtain a Subject from web container via
-     * the currrent wiki context. This method logs in the user if the
-     * user's status is "unknown" to the WikiSession, or if the Http servlet
-     * container's authentication status has changed. This method assumes that
-     * the WikiContext has been previously initialized with an
-     * HttpServletRequest and a WikiSession. If neither of these conditions are
-     * true, an IllegalStateException is thrown. This method is a
-     * <em>privileged</em> action; the caller must posess the (name here)
-     * permission.
-     * @param context wiki context for this user.
+     * Logs in the user by attempting to populate a WikiSession Subject from 
+     * a web servlet request. This method leverages container-managed authentication.
+     * This method logs in the user if the user's status is "unknown" to the 
+     * WikiSession, or if the Http servlet container's authentication status has 
+     * changed. This method assumes that the HttpServletRequest is not null; otherwise,
+     * an IllegalStateException is thrown. This method is a <em>privileged</em> action;
+     * the caller must posess the (name here) permission.
+     * @param request servlet request for this user
      * @throws IllegalStateException if the wiki context's
      *             <code>getHttpRequest</code> or <code>getWikiSession</code>
      *             methods return null
@@ -201,26 +212,17 @@ public class AuthenticationManager
      *             is null
      * @since 2.3
      */
-    public boolean loginContainer( WikiContext context )
+    public boolean login( HttpServletRequest request )
     {
-        // If the WikiSession's Subject doesn't have any principals,
-        // do a "login".
-        if ( context == null )
-        {
-            throw new IllegalArgumentException( "Context may not be null" );
-        }
-        
-        WikiSession wikiSession = context.getWikiSession();
-        HttpServletRequest request = context.getHttpRequest();
-        
-        if ( wikiSession == null )
-        {
-            throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
-        }
-        
         if ( request == null )
         {
             throw new IllegalStateException( "Wiki context's HttpRequest may not be null" );
+        }
+        
+        WikiSession wikiSession = WikiSession.getWikiSession( request );
+        if ( wikiSession == null )
+        {
+            throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
         }
         
         CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase() );
@@ -228,27 +230,28 @@ public class AuthenticationManager
     }
 
     /**
-     * Attempts to perform a login for the given username/password combination.
+     * Attempts to perform a WikiSession login for the given username/password 
+     * combination. This is custom authentication.
+     * @param session the current wiki session; may not be null.
      * @param username The user name. This is a login name, not a WikiName. In
      *            most cases they are the same, but in some cases, they might
      *            not be.
      * @param password The password
      * @return true, if the username/password is valid
      */
-    public boolean loginCustom( String username, String password, HttpServletRequest request )
+    public boolean login( WikiSession session, String username, String password )
     {
-        if ( request == null )
+        if ( session == null )
         {
-            log.error( "No Http request provided, cannot log in." );
+            log.error( "No wiki session provided, cannot log in." );
             return false;
         }
         
-        WikiSession wikiSession = WikiSession.getWikiSession( request );
-        Subject subject = wikiSession.getSubject();
+        Subject subject = session.getSubject();
         subject.getPrincipals().clear();
         CallbackHandler handler = new WikiCallbackHandler( m_engine.getUserDatabase(), username, password );
         
-        return doLogin( wikiSession, handler, LOGIN_CUSTOM );
+        return doLogin( session, handler, LOGIN_CUSTOM );
     }
     
     /**
@@ -313,14 +316,33 @@ public class AuthenticationManager
 
     /**
      * Determines whether authentication is required to view wiki pages. This is
-     * done by checking for the PagePermission.VIEW permission using a null
-     * WikiContext. It delegates the check to
-     * {@link AuthorizationManager#checkPermission(WikiContext, Permission)}.
+     * done by checking for the PagePermission.VIEW permission using a guest
+     * WikiSession. It delegates the check to
+     * {@link AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * @return <code>true</code> if logins are required
      */
     public boolean strictLogins()
     {
-        return ( m_engine.getAuthorizationManager().checkPermission( null, PagePermission.VIEW ) );
+        // FIXME: this should really be wiki-specific, but for now it's ok
+        return ( m_engine.getAuthorizationManager().checkPermission( WikiSession.guestSession(), PagePermission.VIEW ) );
+    }
+
+    /**
+     * Determines whether a WikiSession's Subject posesses a login id that
+     * matches the administrator id; if so, this method injects
+     * {@link com.ecyrd.jspwiki.auth.authorize.Role#ADMIN} into the principal
+     * set. To extract the login id Principal, this method delegates
+     * to {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}.
+     * 
+     * @param wikiSession the wiki session whose Subject is being examined
+     */
+    protected void checkForAdmin( WikiSession wikiSession )
+    {
+        Principal loginPrincipal = wikiSession.getLoginPrincipal();
+        if ( m_admin != null && loginPrincipal.getName().equals( m_admin ) )
+        {
+            wikiSession.getSubject().getPrincipals().add( Role.ADMIN );
+        }
     }
 
     /**
@@ -353,9 +375,10 @@ public class AuthenticationManager
             loginContext.login();
             Subject subject = loginContext.getSubject();
             wikiSession.setSubject( subject );
-            
-            // TODO: Inject Role.ADMIN if user is named admin or part of role
-            
+
+            // Lastly, inject the ADMIN role if the user's id is privileged
+            checkForAdmin( wikiSession );
+
             return true;
         }
         catch( LoginException e )
