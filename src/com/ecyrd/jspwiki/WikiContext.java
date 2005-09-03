@@ -128,7 +128,7 @@ public class WikiContext
      * status is checked. If not authenticated, or if the login status reported
      * by the container has changed, the constructor attempts to log in the user
      * with
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#loginContainer(WikiContext)}.
+     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#loginContainer(WikiSession)}.
      * </p>
      * @param engine The WikiEngine that is handling the request
      * @param request The HttpServletRequest that should be associated with this
@@ -138,17 +138,21 @@ public class WikiContext
      */
     public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) 
     {
+        super();
         m_engine = engine;
         m_request = request;
-        m_session = WikiSession.getWikiSession(request);
+        m_session = WikiSession.getWikiSession( request );
         m_page   = page;
         m_realPage = page;
         
+        // Stash the wiki context in the session as the "last context"
+        m_session.setLastContext( this );
+
         // Associate the wikiSession with this context
         // and associate a Subject with the session if it isn't there already
         if ( m_session.isUnknown() || m_session.isContainerStatusChanged( request ) )
         {
-            engine.getAuthenticationManager().loginContainer( this );
+            engine.getAuthenticationManager().login( request );
         }
     }
 
@@ -273,7 +277,7 @@ public class WikiContext
      *
      *  @since 2.0.13.
      */
-    public void setHttpRequest( HttpServletRequest req )
+    protected void setHttpRequest( HttpServletRequest req )
     {
         m_request = req;
     }
@@ -370,19 +374,13 @@ public class WikiContext
     
     /**
      * Returns the WikiSession associated with the context.
+     * This method is guaranteed to always return a valid WikiSession. 
+     * If this context was constructed without an associated 
+     * HttpServletRequest, it will return {@link WikiSession#guestSession()}.
      */  
     public WikiSession getWikiSession() 
     {
         return m_session;
     }
     
-    /**
-     * Sets the WikiSession assocated with the context.
-     * @param session
-     */
-    public void setWikiSession(WikiSession session) 
-    {
-        m_session = session;
-    }
-        
 }
