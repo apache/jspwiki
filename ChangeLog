@@ -1,3 +1,14 @@
+2005-09-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.31
+
+        * Undid change for 
+        BugShortViewURLConstructorAndShortURLConstructorProblems -
+        it apparently broke quite a lot of stuff.
+
+        * Changed to OSCache 2.2.1 to protect against a pretty
+        nasty memory leak.
+
 2005-08-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.2.30
