@@ -54,12 +54,16 @@
           is wiki:pagename. Wildcards are allowed as prefixes or
           suffixes for either part.
               
-         * WikiPermission now accepts a "login" target
+        * WikiPermission now accepts a "login" target
          
         * LeftMenu slightly tweaked
         
         * PreferencesContent.jsp for default template now displays 
           roles and groups user possesses.
+          
+        * <wiki:UserProfile property="roles"> will print the user's
+          current set of group and role memberships, nicely sorted.
+          Pretty nifty.
           
         * Many, many unit test changes.
 
