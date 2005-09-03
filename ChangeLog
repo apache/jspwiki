@@ -1,5 +1,70 @@
 2005-08-20  Andrew Jaquith <arjaquith@mindspring.com>
 
+        * v2.3.15
+        
+        * This release introduces a number of changes to the AAA
+          (package auth.*) APIs. If you have created custom top-level
+          templates, they will break. However, the changes are not 
+          major. Regular template JSPs like *Content.jsp should 
+          work without requiring changes.
+        
+        * AuthenticationManager supports named admin user in
+          jspwiki.properties: jspwiki.admin.user
+          
+        * AuthenticationManager public methods have changed:
+            a. public boolean login(HttpServletRequest)
+               replaces boolean loginContainer(WikiContext)
+            b. public boolean login(WikiSession, String, String)
+               replaces boolean loginCustom( String, String, HttpServletRequest)
+              
+        * AuthorizationManager public methods have changed:
+            a. checkPermission(WikiSession, Permission)
+               replaces checkPermission(WikiContext, Permission)
+            b. isUserInRole(WikiSession, Principal)
+               replaces isUserInRole(WikiContext, Subject, Principal)
+            c. new getRoles() method returns Principal[]; delegates
+               to GroupManager and Authorizer and returns union
+            d. public method getAuthorizer() changed to protected access
+          
+        * Authorizer public methods have changed:
+            a. isUserInRole(WikiSession, Principal)
+               replaces isUserInRole(WikiContext, Subject, Principal)
+            b. new getRoles() method returns Principal[]
+          These changes were propagated to WebContainerAuthorizer,
+          GroupManager and DefaultGroupManager.
+          
+        * GroupManager public methods have changed:
+           a. Enumeration members() removed.
+          
+        * WikiPrincipal adds static inner Comparator class
+          for sorting arrays of Principals.
+           
+        * WikiContext public methods have changed:
+           a. void setHttpRequest(HttpServletRequest) changed to protected access
+           b. void setWikiSession(WikiSession) removed.
+            
+        * WikiSession was refactored to allow independence from WikiContext.
+          Public GUEST_SESSION static instance eliminated in favor 
+          of public static factory method guestSesssion().
+
+        * UserManager get/setUserProfile(WikiSession...) replaces same
+          methods with WikiContext parameter. 
+           
+        * PagePermission now includes a wiki namespace. Syntax
+          is wiki:pagename. Wildcards are allowed as prefixes or
+          suffixes for either part.
+              
+         * WikiPermission now accepts a "login" target
+         
+        * LeftMenu slightly tweaked
+        
+        * PreferencesContent.jsp for default template now displays 
+          roles and groups user possesses.
+          
+        * Many, many unit test changes.
+
+2005-08-20  Andrew Jaquith <arjaquith@mindspring.com>
+
         * Minor changes to TestAuthorizer, AuthorizationManagerTest 
         and build.xml to correct test failures in AuthorizationManagerTest.
         This also fixes XMLRPC test failures. No version bump.
