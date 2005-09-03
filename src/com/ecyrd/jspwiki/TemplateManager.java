@@ -19,16 +19,17 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.util.Properties;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import com.opensymphony.module.oscache.base.Cache;
-import com.opensymphony.module.oscache.base.NeedsRefreshException;
+
+import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  This class takes care of managing JSPWiki templates.
