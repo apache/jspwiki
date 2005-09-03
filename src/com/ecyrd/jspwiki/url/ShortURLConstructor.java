@@ -54,7 +54,7 @@ public class ShortURLConstructor
     {
         super.initialize( engine, properties );
         
-        m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, "" );
+        m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, null );
         
         if( m_urlPrefix == null )
         {
