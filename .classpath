@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/lucene.jar"/>
 	<classpathentry kind="lib" path="lib/multipartrequest.jar"/>
 	<classpathentry kind="lib" path="lib/oro.jar"/>
-	<classpathentry kind="lib" path="lib/oscache.jar"/>
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
@@ -17,5 +16,7 @@
 	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/oscache.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
