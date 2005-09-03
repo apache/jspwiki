@@ -5,7 +5,9 @@ import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -20,17 +22,10 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.4 $ $Date: 2005-08-03 03:47:36 $
+ * @version $Revision: 2.5 $ $Date: 2005-09-03 00:07:02 $
  */
 public class WikiSession
 {
-
-    /**
-     * Anonymous session that contains a user principal
-     * of {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}
-     * and a role of {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
-     */
-    public static final WikiSession GUEST_SESSION;
 
     public static final String      ANONYMOUS           = "anonymous";
 
@@ -38,7 +33,8 @@ public class WikiSession
 
     public static final String      AUTHENTICATED       = "authenticated";
 
-    protected static final String   WIKI_SESSION        = "WikiSession";
+    /** Weak hashmap that maps wiki sessions to HttpSessions. */
+    private static final Map        c_sessions            = new WeakHashMap();
 
     private Subject                 m_subject             = new Subject();
 
@@ -46,12 +42,7 @@ public class WikiSession
 
     protected Principal             m_cachedUserPrincipal = null;
 
-    static
-    {
-        GUEST_SESSION = new WikiSession();
-        GUEST_SESSION.getSubject().getPrincipals().add( WikiPrincipal.GUEST );
-        GUEST_SESSION.getSubject().getPrincipals().add( Role.ANONYMOUS );
-    }
+    private WikiContext             m_lastContext         = null;
 
     /**
      * Returns <code>true</code> if this WikiSession's Subject contains
@@ -72,6 +63,25 @@ public class WikiSession
             }
         }
         return false;
+    }
+
+    /**
+     * Protected method that caches the most recent wiki context. This method is
+     * called only from
+     * {@link WikiContext#WikiContext(WikiEngine, HttpServletRequest, WikiPage)}
+     * and {@link WikiContext#WikiContext(WikiEngine, WikiPage)}, and nowhere
+     * else. Its primary function is to allow downstream classes such as
+     * {@link com.ecyrd.jspwiki.authorize.WebContainerAuthorizer}to access the
+     * most recent WikiContext, and thus, the HttpServletRequest.
+     * @param context the most recent wiki context, which may be <code>null</code>
+     */
+    protected void setLastContext( WikiContext context )
+    {
+        // TODO: callers should supply the WikiSessionPermission "setContext"
+        if ( context != null )
+        {
+            m_lastContext = context;
+        }
     }
 
     /**
@@ -121,12 +131,25 @@ public class WikiSession
     }
     
     /**
-     * <p>Returns the Principal used to log in to an authenticated session. The
-     * login principal is determined by examining the Subject's Principal set 
-     * for WikiPrincipals; the first one with type designator 
-     * <code>LOGIN_NAME</code></li> is the login principal. If one is not
-     * found, this method returns the first principal that isn't of type Role.
-     * If neither of these conditions hold, this method returns <code>null</code>.
+     * Returns the most recently-accessed WikiContext for this session.
+     * This method may return <code>null</code>.
+     * @return the most recent wiki context
+     */
+    public WikiContext getLastContext()
+    {
+        return m_lastContext;
+    }
+
+    /**
+     * <p>
+     * Returns the Principal used to log in to an authenticated session. The
+     * login principal is determined by examining the Subject's Principal set
+     * for WikiPrincipals; the first one with type designator
+     * <code>LOGIN_NAME</code></li>
+     * is the login principal. If one is not found, this method returns the
+     * first principal that isn't of type Role. If neither of these conditions
+     * hold, this method returns <code>null</code>.
+     * 
      * @return the login Principal
      */
     public Principal getLoginPrincipal()
@@ -254,17 +277,32 @@ public class WikiSession
      */
     public Subject getSubject()
     {
+        //TODO: this should be a privileged action
         return m_subject;
     }
 
     /**
+     * Factory method that creates a new "guest" session
+     * containing a single Principal, @link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
+     * @return
+     */
+    public static WikiSession guestSession()
+    {
+        WikiSession session = new WikiSession();
+        session.getSubject().getPrincipals().add( WikiPrincipal.GUEST );
+        session.getSubject().getPrincipals().add( Role.ANONYMOUS );
+        return session;
+    }
+    
+    /**
      * Static factory method that returns the WikiSession object associated with
-     * the current HTTP request. This method looks for an object associated with
-     * the session with the value {@link #WIKI_SESSION}. If not found, one is
-     * created. This method is guaranteed to always return a WikiSession,
-     * although the authentication status is unpredictable until the user
-     * attempts to log in. If the servlet request parameter is null, a synthetic
-     * {@link #GUEST_SESSION}is returned.
+     * the current HTTP request. This method looks up the associated HttpSession
+     * in an internal WeakHashMap and attempts to retrieve the WikiSession. If
+     * not found, one is created. This method is guaranteed to always return a
+     * WikiSession, although the authentication status is unpredictable until
+     * the user attempts to log in. If the servlet request parameter is
+     * <code>null</code>, a synthetic {@link #guestSession()}is returned.
+     * 
      * @param request the current servlet request object
      * @return the existing (or newly created) wiki session
      */
@@ -273,22 +311,22 @@ public class WikiSession
         // If request is null, return guest session
         if ( request == null )
         {
-            return GUEST_SESSION;
+            return guestSession();
         }
 
         // Look for a WikiSession associated with the user's Http Session
         // and create one if it isn't there yet.
         WikiSession wikiSession;
         HttpSession session = request.getSession( true );
-        Object att = session.getAttribute( WIKI_SESSION );
-        if ( att != null && att instanceof WikiSession )
+        Object storedSession = c_sessions.get( session );
+        if ( storedSession != null && storedSession instanceof WikiSession )
         {
-            wikiSession = (WikiSession) att;
+            wikiSession = (WikiSession) storedSession;
         }
         else
         {
             wikiSession = new WikiSession();
-            session.setAttribute( WIKI_SESSION, wikiSession );
+            c_sessions.put( session, wikiSession );
         }
         return wikiSession;
     }
@@ -322,6 +360,10 @@ public class WikiSession
         {
             m_cachedUserPrincipal = currentUserPrincipal;
             isChanged = true;
+        }
+        if ( isChanged )
+        {
+            cacheContainerCredentials( request );
         }
         return isChanged;
     }
