@@ -672,15 +672,14 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the basic URL to a page, without any modifications.
-     *  You may add any parameters to this.
-     *  @deprecated
+     *  Returns the basic absolute URL to a page, without any modifications.
+     *  You may add any parameters to this.  This is a convinience method.
      *
      *  @since 2.0.3
      */
     public String getViewURL( String pageName )
     {
-        return m_urlConstructor.makeURL( WikiContext.VIEW, pageName, false, null );
+        return m_urlConstructor.makeURL( WikiContext.VIEW, pageName, true, null );
     }
 
     /**
