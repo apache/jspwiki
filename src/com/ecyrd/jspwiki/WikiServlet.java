@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.url.DefaultURLConstructor;
 public class WikiServlet
     extends HttpServlet
 {
+    private static final long serialVersionUID = 3258410651167633973L;
     private WikiEngine m_engine;
     Logger log = Logger.getLogger(this.getClass().getName());
 

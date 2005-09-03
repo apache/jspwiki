@@ -28,6 +28,8 @@ package com.ecyrd.jspwiki;
 public class WikiException
     extends Exception
 {
+    private static final long serialVersionUID = 3257290231723210803L;
+
     /**
      *  Constructs an exception.
      */
