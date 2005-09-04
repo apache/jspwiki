@@ -6,9 +6,7 @@ package com.ecyrd.jspwiki.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.lang.SystemUtils;
 
@@ -99,11 +97,12 @@ public class ProviderConverter
             WikiPage p = (WikiPage)i.next();
             
             System.out.println("Converting page: "+p.getName()+" ("+idx+"/"+allPages.size()+")");
-            Collection pageHistory = engine.getVersionHistory( p.getName() );
+            List pageHistory = engine.getVersionHistory( p.getName() );
             
-            for( Iterator v = pageHistory.iterator(); v.hasNext(); )
+            
+            for( ListIterator v = pageHistory.listIterator(pageHistory.size()); v.hasPrevious(); )
             {
-                WikiPage pv = (WikiPage)v.next();
+                WikiPage pv = (WikiPage)v.previous();
                 
                 String text = engine.getPureText( pv.getName(), pv.getVersion() );
                 
