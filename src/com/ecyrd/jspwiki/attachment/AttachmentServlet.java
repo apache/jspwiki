@@ -27,6 +27,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
@@ -391,6 +392,13 @@ public class AttachmentServlet
                     //
                     filename = filename.trim();
 
+                    //
+                    //  Remove any characters that might be a problem. Most
+                    //  importantly - characters that might stop processing
+                    //  of the URL.
+                    //
+                    filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
+                    
                     log.debug("file="+filename);
                     //
                     //  Attempt to open the input stream
@@ -434,6 +442,12 @@ public class AttachmentServlet
                         att = new Attachment( wikipage, filename );
                     }
 
+                    if( !m_engine.pageExists(att.getParentName()) )
+                    {
+                        throw new RedirectException("Parent page does not exist.",
+                                                    errorPage );
+                    }
+                    
                     //
                     //  Check if we're allowed to do this?
                     //
