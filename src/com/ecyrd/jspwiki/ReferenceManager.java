@@ -331,12 +331,38 @@ public class ReferenceManager
         serializeToDisk();
     }
     
+    /**
+     * Updates the m_referedTo and m_referredBy hashmaps when a page has been
+     * deleted.
+     * <P>
+     * Within the m_refersTo map the pagename is a key. The whole key-value-set
+     * has to be removed to keep the map clean.
+     * Within the m_referredBy map the name is stored as a value. Since a key 
+     * can have more than one value we have to delete just the key-value-pair
+     * referring page:deleted page.
+     * 
+     *  @param page Name of the page to remove from the maps.
+    */
     public synchronized void pageRemoved( WikiPage page )
     {
         String pageName = page.getName();
         
+        Collection RefTo = (Collection)m_refersTo.get( pageName );
+        Iterator it_refTo = RefTo.iterator();
+        while( it_refTo.hasNext() )
+        {
+            String referredPageName = (String)it_refTo.next();
+            Set refBy = (Set)m_referredBy.get( referredPageName );
+
+            log.debug("Before cleaning m_referredBy HashMap key:value "+referredPageName+":"+m_referredBy.get( referredPageName ));
+            refBy.remove(pageName);
+            m_referredBy.remove( referredPageName );
+            m_referredBy.put( referredPageName, refBy );
+            log.debug("After cleaning m_referredBy HashMap key:value "+referredPageName+":"+m_referredBy.get( referredPageName ));
+        }
+
+        log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
         m_refersTo.remove( pageName );
-        clearPageEntries( pageName );
     }
     
     /**
