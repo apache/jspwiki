@@ -1,3 +1,24 @@
+2005-09-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.32
+        
+        * Added patch from Joerg Luedecker to fix a problem
+        with pages deleted not affecting RefMgr.
+
+        * Added a small note to the ShortURLConstructor: do NOT
+        use without baseURL.
+
+        * Fixes BugAttachFilesEvenIfPageDoesNotExist.  It is
+        no longer possible to upload a file if the page does
+        not exist.
+
+        * Install.jsp was Tomcat-specific.  Fixes
+        BugInstall.jspDoesNotCompileOnWebLogic8.1.  Reported by
+        JoachimMaes.
+
+        * Fixed BugAttachmentWithHashCannotBeViewed by replacing
+        now all illegal character values during upload.
+
 2005-09-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.31
