@@ -139,7 +139,7 @@
 %>
 
 <%
-    String propertyString = readProperties( getServletContext() );
+    String propertyString = readProperties( application );
     
     Properties props = new Properties();
     props.load( new ByteArrayInputStream(propertyString.getBytes()) );
@@ -205,7 +205,7 @@
             
             try
             {
-                writeProperties( findPropertyFile(getServletContext()), propertyString );
+                writeProperties( findPropertyFile(application), propertyString );
                 message = "Your new properties have been saved.  Please restart your container (unless this was your first install).  Scroll down a bit to see your new jspwiki.properties.";
             }
             catch( IOException e )
@@ -219,7 +219,7 @@
 %>
 
 <%    
-    File propertyFile = findPropertyFile( getServletContext() );
+    File propertyFile = findPropertyFile( application );
 
 	if( appname == null ) appname = props.getProperty( WikiEngine.PROP_APPNAME, "MyWiki" );
     
