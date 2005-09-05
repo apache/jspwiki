@@ -1,3 +1,10 @@
+2005-09-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.33
+
+        * Added two new methods in ReferenceManager to facilitate
+        LinkIndexPlugin.
+
 2005-09-04  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.2.32
