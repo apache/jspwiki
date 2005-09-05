@@ -7,6 +7,15 @@
           templates, they will break. However, the changes are not 
           major. Regular template JSPs like *Content.jsp should 
           work without requiring changes.
+          
+        * jspwiki.policy has changed. The PagePermission syntax
+          ....PagePermission "mywiki:Group*", "edit";
+          replaces the previous format, and adds support for wiki
+          name spaces. Either the wiki name or the page name
+          may contain wildcards. This change was made to support wiki
+          farms. See the PagePermission Javadoc for more details.
+          You should update your policy files accordingly, since
+          the change will "probably" break your existing policies.
         
         * AuthenticationManager supports named admin user in
           jspwiki.properties: jspwiki.admin.user
