@@ -27,6 +27,7 @@ import java.io.*;
 import java.security.Permission;
 import java.security.Principal;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
@@ -505,7 +506,14 @@ public class AttachmentServlet
         //  Should help with IE 5.22 on OSX
         //
         filename = filename.trim();
-        
+
+        //
+        //  Remove any characters that might be a problem. Most
+        //  importantly - characters that might stop processing
+        //  of the URL.
+        //
+        filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
+              
         log.debug("file="+filename);
         
         if( data == null )
