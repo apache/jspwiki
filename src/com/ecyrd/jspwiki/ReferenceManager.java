@@ -107,11 +107,15 @@ public class ReferenceManager
      *  pages.
      */
     private Map            m_refersTo;
+    private Map            m_unmutableRefersTo;
+    
     /** Maps page wikiname to a Set of referring pages. The Set must
      *  contain Strings. Non-existing pages (a reference exists, but not a file
      *  for the page contents) may have an empty Set in m_referredBy.
      */
     private Map            m_referredBy;
+    private Map            m_unmutableReferredBy;
+    
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
 
@@ -121,10 +125,13 @@ public class ReferenceManager
 
     private static final String SERIALIZATION_FILE = "refmgr.ser";
 
+    /** We use this also a generic serialization id */
+    private static final long serialVersionUID = 1L;
+    
     /**
      *  Builds a new ReferenceManager.
      *
-     *  @param engine The WikiEngine to which this is meeting.
+     *  @param engine The WikiEngine to which this is managing references to.
      */
     public ReferenceManager( WikiEngine engine )
     {
@@ -136,6 +143,11 @@ public class ReferenceManager
                                                              WikiEngine.PROP_MATCHPLURALS, 
                                                              m_matchEnglishPlurals );
 
+        //
+        //  Create two maps that contain unmutable versions of the two basic maps.
+        //
+        m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
+        m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
     }
 
     /**
@@ -146,15 +158,19 @@ public class ReferenceManager
     {
         String content = m_engine.getPageManager().getPageText( page.getName(), 
                                                                 WikiPageProvider.LATEST_VERSION );
+        
+        TreeSet res = new TreeSet();
         Collection links = m_engine.scanWikiLinks( page, content );
+        
+        res.addAll( links );
         Collection attachments = m_engine.getAttachmentManager().listAttachments( page );
 
         for( Iterator atti = attachments.iterator(); atti.hasNext(); )
         {
-            links.add( ((Attachment)(atti.next())).getName() );
+            res.add( ((Attachment)(atti.next())).getName() );
         }
 
-        updateReferences( page.getName(), links );
+        updateReferences( page.getName(), res );
     }
 
     /**
@@ -263,6 +279,13 @@ public class ReferenceManager
 
             in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
 
+            long ver     = in.readLong();
+            
+            if( ver != serialVersionUID )
+            {
+                throw new IOException("File format has changed; I need to recalculate references.");
+            }
+            
             saved        = in.readLong();
             m_refersTo   = (Map) in.readObject();
             m_referredBy = (Map) in.readObject();
@@ -297,6 +320,7 @@ public class ReferenceManager
 
             out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
 
+            out.writeLong( serialVersionUID );
             out.writeLong( System.currentTimeMillis() ); // Timestamp
             out.writeObject( m_refersTo );
             out.writeObject( m_referredBy );
@@ -331,12 +355,38 @@ public class ReferenceManager
         serializeToDisk();
     }
     
+    /**
+     * Updates the m_referedTo and m_referredBy hashmaps when a page has been
+     * deleted.
+     * <P>
+     * Within the m_refersTo map the pagename is a key. The whole key-value-set
+     * has to be removed to keep the map clean.
+     * Within the m_referredBy map the name is stored as a value. Since a key 
+     * can have more than one value we have to delete just the key-value-pair
+     * referring page:deleted page.
+     * 
+     *  @param page Name of the page to remove from the maps.
+    */
     public synchronized void pageRemoved( WikiPage page )
     {
         String pageName = page.getName();
         
+        Collection RefTo = (Collection)m_refersTo.get( pageName );
+        Iterator it_refTo = RefTo.iterator();
+        while( it_refTo.hasNext() )
+        {
+            String referredPageName = (String)it_refTo.next();
+            Set refBy = (Set)m_referredBy.get( referredPageName );
+
+            log.debug("Before cleaning m_referredBy HashMap key:value "+referredPageName+":"+m_referredBy.get( referredPageName ));
+            refBy.remove(pageName);
+            m_referredBy.remove( referredPageName );
+            m_referredBy.put( referredPageName, refBy );
+            log.debug("After cleaning m_referredBy HashMap key:value "+referredPageName+":"+m_referredBy.get( referredPageName ));
+        }
+
+        log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
         m_refersTo.remove( pageName );
-        clearPageEntries( pageName );
     }
     
     /**
@@ -644,7 +694,13 @@ public class ReferenceManager
      * Find all pages that refer to this page. Returns null if the page
      * does not exist or is not referenced at all, otherwise returns a 
      * collection containing page names (String) that refer to this one.
+     * <p>
+     * @param pagename The page to find referrers for.
+     * @return A Collection of Strings.  (This is, in fact, a Set, and is likely
+     *         to change at some point to a Set).  May return null, if the page
+     *         does not exist, or if it has no references.
      */
+    // FIXME: Return a Set instead of a Collection.
     public synchronized Collection findReferrers( String pagename )
     {
         Set refs = getReferenceList( m_referredBy, pagename );
@@ -658,4 +714,47 @@ public class ReferenceManager
        
     }
 
+    /**
+     *  Returns all pages that refer to this page.  Note that this method
+     *  returns an unmodifiable Map, which may be abruptly changed.  So any
+     *  access to any iterator may result in a ConcurrentModificationException.
+     *  <p>
+     *  The advantages of using this method over findReferrers() is that
+     *  it is very fast, as it does not create a new object.  The disadvantages
+     *  are that it does not do any mapping between plural names, and you
+     *  may end up getting a ConcurrentModificationException.
+     *  
+     * @param pageName Page name to query.
+     * @return A Set of Strings containing the names of all the pages that refer
+     *         to this page.  May return null, if the page does not exist or
+     *         has not been indexed yet.
+     * @since 2.2.33
+     */
+    public Set findReferredBy( String pageName )
+    {
+        return (Set)m_unmutableReferredBy.get( pageName );
+    }
+    
+    /**
+     *  Returns all pages that this page refers to.  You can use this as a quick
+     *  way of getting the links from a page, but note that it does not link any
+     *  InterWiki, image, or external links.  It does contain attachments, though.
+     *  <p>
+     *  The Collection returned is unmutable, so you cannot change it.  It does reflect
+     *  the current status and thus is a live object.  So, if you are using any
+     *  kind of an iterator on it, be prepared for ConcurrentModificationExceptions. 
+     *  <p>
+     *  The returned value is a Collection, because a page may refer to another page
+     *  multiple times.
+     *  
+     * @param pageName Page name to query
+     * @return A Collection of Strings containing the names of the pages that this page
+     *         refers to. May return null, if the page does not exist or has not
+     *         been indexed yet.
+     * @since 2.2.33
+     */
+    public Collection findRefersTo( String pageName )
+    {
+        return (Collection)m_unmutableRefersTo.get( pageName );
+    }
 }
