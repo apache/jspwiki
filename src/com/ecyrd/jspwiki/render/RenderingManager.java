@@ -13,8 +13,8 @@ import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
-import com.opensymphony.module.oscache.base.Cache;
-import com.opensymphony.module.oscache.base.NeedsRefreshException;
+import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  This class provides a facade towards the differing rendering routines.  You should
@@ -37,7 +37,7 @@ public class RenderingManager implements PageFilter
      *  if the page is never accessed.
      */
     // FIXME: Memory leak
-    private Cache m_documentCache = new Cache(true,false); 
+    private Cache m_documentCache = new Cache(true,false,false); 
     
     public void initialize( WikiEngine engine, Properties properties )
     {
