@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.44 2005-08-21 01:34:55 arj Exp $
+    $Id: build.xml,v 1.45 2005-09-07 19:38:42 jalkanen Exp $
 -->    
        
 <!--   
@@ -228,17 +228,20 @@
   </target>
 
   <!-- Creates javadocs -->
-
-  <!-- FIXME: Must not use constant package name! -->
   <target name="javadoc"
           description="Compiles the javadocs.">
 
+    <delete dir="${docs.javadoc}" quiet="true"/>
     <mkdir dir="${docs.javadoc}" />
 
-    <javadoc sourcepath="${code.src}"
-             destdir="${docs.javadoc}"
+    <javadoc destdir="${docs.javadoc}"
              use="yes"
-             packagenames="com.ecyrd.jspwiki,com.ecyrd.jspwiki.plugin,com.ecyrd.jspwiki.rss,com.ecyrd.jspwiki.xmlrpc,com.ecyrd.jspwiki.tags,com.ecyrd.jspwiki.providers,com.ecyrd.jspwiki.attachment,com.ecyrd.jspwiki.acl,com.ecyrd.jspwiki.auth,com.ecyrd.jspwiki.auth/**,com.ecyrd.jspwiki.auth.modules,com.ecyrd.jspwiki.filters,com.ecyrd.jspwiki.util,com.ecyrd.jspwiki.atom,com.ecyrd.jspwiki.forms">
+             breakiterator="true"
+             windowtitle="${ant.project.name}">
+      <packageset dir="${code.src}">
+        <include name="com/ecyrd/**" />
+      </packageset>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
       <classpath refid="path.base" />
     </javadoc>
              
