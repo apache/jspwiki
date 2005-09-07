@@ -318,7 +318,6 @@ public class AttachmentManagerTest extends TestCase
                     m_engine.pageExists( att.getName() ) );
     }
 
-
     public static Test suite()
     {
         return new TestSuite( AttachmentManagerTest.class );
