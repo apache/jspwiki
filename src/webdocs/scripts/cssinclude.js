@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 /*
  *  Chooses a suitable stylesheet based on browser.
  */
@@ -29,4 +29,3 @@
     {
         document.write("<link rel=\"stylesheet\" href=\"<wiki:BaseURL/>templates/<wiki:TemplateDir />/"+sheet+"\" />");
     }
-</script>

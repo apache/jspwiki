@@ -1,3 +1,66 @@
+2005-09-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.17
+
+        * Massive import of patches from 2.2.33.
+
+        * Added two new methods in ReferenceManager to facilitate
+        LinkIndexPlugin.
+
+        * Added patch from Joerg Luedecker to fix a problem
+        with pages deleted not affecting RefMgr.
+
+        * Added a small note to the ShortURLConstructor: do NOT
+        use without baseURL.
+
+        * Fixes BugAttachFilesEvenIfPageDoesNotExist.  It is
+        no longer possible to upload a file if the page does
+        not exist.
+
+        * Install.jsp was Tomcat-specific.  Fixes
+        BugInstall.jspDoesNotCompileOnWebLogic8.1.  Reported by
+        JoachimMaes.
+
+        * Fixed BugAttachmentWithHashCannotBeViewed by replacing
+        now all illegal character values during upload.
+
+        * Undid change for 
+        BugShortViewURLConstructorAndShortURLConstructorProblems -
+        it apparently broke quite a lot of stuff.
+
+        * Changed to OSCache 2.2.1 to protect against a pretty
+        nasty memory leak.
+
+        * Added generic null protection to CachingProvider, and
+        also protected against spurious input in RCSFileProvider
+        as a stopgap measure to some probable scaling issues.
+
+        * It was possible to get the authentication master password
+        by inserting simply it on a page as a variable.  Oops.
+        The master password is now saved under a different name
+        (jspwiki-s.auth.masterPassword), which may break existing
+        installations.  Also added a check in the VariableManager
+        to prevent reporting of that variable.
+        Reported by Trevor Yann.
+
+        * Bug fix: Attachments might get looping forever, if the page did
+        not exist.  Fixes 
+        BugHasAttachmentsAndAttachmentsIteratorTagsWhenPageDoesntExist
+
+        * Bug fix: You can now set the 'checked' attribute of checkboxes
+ 		in WikiForms with the parameter 'checked=true'.  Reported by JohnV.
+
+        * Bug fix: BugWrongRecognitionOfWikiWords.  A CamelCase
+        WikiWord would not be escaped correctly, if the word would
+        have two capital letters.
+
+        * Bug fix: BugShortViewURLConstructorAndShortURLConstructorProblems
+        ShortViewURLConstructor did not have a default prefix.
+        Reported by Olaf Kock.
+
+        * Added patch from Patrick Woodworth to fix a FIXME in javadoc
+        creation.
+
 2005-08-20  Andrew Jaquith <arjaquith@mindspring.com>
 
         * v2.3.16
