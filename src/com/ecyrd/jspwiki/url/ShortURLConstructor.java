@@ -59,6 +59,12 @@ public class ShortURLConstructor
         if( m_urlPrefix == null )
         {
             String baseurl = engine.getBaseURL();
+            
+            if( baseurl == null || baseurl.length() == 0 )
+            {
+                log.error("Using ShortURLConstructors without jspwiki.baseURL is NOT advised, and can result in trouble.");
+                baseurl = "";
+            }
             try
             {
                 URL url = new URL( baseurl );
