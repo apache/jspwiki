@@ -107,6 +107,16 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( "Foobars referrer 'TestPage'", "TestPage", (String) c.iterator().next() );
     }
 
+    public void testRefersTo()
+        throws Exception
+    {
+        Collection s = mgr.findRefersTo( "Foobar" );
+        
+        assertTrue( "does not have Foobar", s.contains("Foobar") );
+        assertTrue( "does not have Foobars", s.contains("Foobars") );
+        assertTrue( "does not have Foobar2", s.contains("Foobar2") );
+    }
+    
     /**
      *  Should fail in 2.2.14-beta
      * @throws Exception
