@@ -19,24 +19,18 @@
  */
 package com.ecyrd.jspwiki.providers;
 
-import java.util.Properties;
-import java.util.Collection;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 
-
-import com.opensymphony.module.oscache.base.Cache;
-import com.opensymphony.module.oscache.base.NeedsRefreshException;
-
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.util.ClassUtil;
+import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  Provides a caching attachment provider.  This class rests on top of a
@@ -85,7 +79,7 @@ public class CachingAttachmentProvider
         //
         //  Construct an unlimited cache.
         //
-        m_cache = new Cache( true, false );
+        m_cache = new Cache( true, false, true );
 
         //
         //  Find and initialize real provider.

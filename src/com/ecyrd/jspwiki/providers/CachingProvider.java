@@ -22,30 +22,15 @@ package com.ecyrd.jspwiki.providers;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.PageManager;
-import com.ecyrd.jspwiki.QueryItem;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.TranslatorReader;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.ClassUtil;
-import com.opensymphony.module.oscache.base.Cache;
-import com.opensymphony.module.oscache.base.NeedsRefreshException;
-import com.opensymphony.module.oscache.base.events.CacheEntryEvent;
-import com.opensymphony.module.oscache.base.events.CacheEntryEventListener;
+import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.NeedsRefreshException;
+import com.opensymphony.oscache.base.events.*;
 
 /**
  *  Provides a caching page provider.  This class rests on top of a
@@ -114,7 +99,7 @@ public class CachingProvider
 
     private static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
 
-    private static final String OSCACHE_ALGORITHM      = new com.opensymphony.module.oscache.base.algorithm.LRUCache().getClass().getName();
+    private static final String OSCACHE_ALGORITHM      = "com.opensymphony.oscache.base.algorithm.LRUCache";
 
     
     public void initialize( WikiEngine engine, Properties properties )
@@ -141,16 +126,24 @@ public class CachingProvider
 
         log.debug("Cache capacity "+capacity+" pages.");
 
-        m_cache = new Cache( true, false );
-        m_cache.addCacheEntryEventListener( m_allCollector );
+        m_cache = new Cache( true, false, true );
         
-        m_negCache = new Cache( true, false );
+        //
+        //  OSCache documentation sucks big time.  The clazz-parameter is completely
+        //  undefined; I had to read the source code to figure out that you need
+        //  to declare what type of a listener you are adding by sending the type
+        //  of the interface.
+        //
+        m_cache.addCacheEventListener( m_allCollector, CacheEntryEventListener.class );
         
-        m_textCache = new Cache( true, false,
+        m_negCache = new Cache( true, false, true );
+        
+        m_textCache = new Cache( true, false, true,
+                                 false,
                                  OSCACHE_ALGORITHM,
                                  capacity );
 
-        m_historyCache = new Cache( true, false,
+        m_historyCache = new Cache( true, false, true, false,
                                     OSCACHE_ALGORITHM,
                                     capacity );
                                     
@@ -196,6 +189,9 @@ public class CachingProvider
         throws ProviderException,
                RepositoryModifiedException
     {
+        // Sanity check; seems to occur sometimes
+        if( name == null ) return null;
+        
         try
         {
             WikiPage item = (WikiPage)m_cache.getFromCache( name, m_expiryPeriod );
@@ -224,7 +220,7 @@ public class CachingProvider
                 m_historyCache.putInCache( name, null );
                 // We cache a page miss
                 m_negCache.putInCache( name, name );
-
+                
                 throw new RepositoryModifiedException( "Removed: "+name, name );
             }
             else if( cached == null )
@@ -241,9 +237,12 @@ public class CachingProvider
                     throw new RepositoryModifiedException( "Added: "+name, name );
                     // return refreshed;
                 }
-                
-                // Cache page miss
-                m_negCache.putInCache( name, name );
+                else
+                {
+                    // Cache page miss
+                    m_negCache.putInCache( name, name );
+                    m_cache.cancelUpdate( name );
+                }
             }
             else if( cached.getVersion() != refreshed.getVersion() )
             {
@@ -286,6 +285,8 @@ public class CachingProvider
 
     public boolean pageExists( String pageName )
     {
+        if( pageName == null ) return false;
+        
         //
         //  First, check the negative cache if we've seen it before
         //
@@ -297,12 +298,7 @@ public class CachingProvider
         }
         catch( NeedsRefreshException e )
         {
-            // OSCache 2.1 locks the Entry which leads to a deadlock. We must unlock the entry
-            // if there is no entry yet in there. If you want to use OSCache 2.1, uncomment the
-            // following line.
-            // m_negCache.cancelUpdate(pageName);
-
-            // Let's just check if the page exists in the normal way
+            m_negCache.cancelUpdate(pageName);
         }
 
         WikiPage p = null;
@@ -374,6 +370,8 @@ public class CachingProvider
     {
         String result = null;
 
+        if( pageName == null ) return null;
+        
         if( version == WikiPageProvider.LATEST_VERSION )
         {
             result = getTextFromCache( pageName );
@@ -408,6 +406,8 @@ public class CachingProvider
     {
         String text;
 
+        if( pageName == null ) return null;
+        
         WikiPage page = getPageInfoFromCache( pageName );
 
         try
@@ -615,6 +615,7 @@ public class CachingProvider
     {
         List history = null;
 
+        if( page == null ) return null;
         try
         {
             history = (List)m_historyCache.getFromCache( page,
@@ -746,16 +747,24 @@ public class CachingProvider
         
         public void cacheEntryAdded( CacheEntryEvent arg0 )
         {
+            cacheEntryUpdated( arg0 );
         }
 
+        public void cachePatternFlushed( CachePatternEvent ev )
+        {
+        }
+        
+        public void cacheGroupFlushed( CacheGroupEvent ev )
+        {
+        }
+        
+        public void cacheFlushed( CachewideEvent ev )
+        {
+        }
+        
         public void cacheEntryFlushed( CacheEntryEvent arg0 )
         {
-            WikiPage item = (WikiPage) arg0.getEntry().getContent();
-
-            if( item != null )
-            {
-                m_allItems.remove( item );
-            }
+            cacheEntryRemoved( arg0 );
         }
 
         public void cacheEntryRemoved( CacheEntryEvent arg0 )

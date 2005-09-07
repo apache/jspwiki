@@ -7,7 +7,6 @@ package com.ecyrd.jspwiki.dav.methods;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,16 +24,12 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.DavContext;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WebdavServlet;
 import com.ecyrd.jspwiki.dav.items.DavItem;
-import com.ecyrd.jspwiki.dav.items.PageDavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.opensymphony.module.oscache.base.Cache;
-import com.opensymphony.module.oscache.base.NeedsRefreshException;
 
 /**
  *  @author jalkanen

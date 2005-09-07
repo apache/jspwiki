@@ -18,8 +18,8 @@ import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.dav.items.DirectoryItem;
 import com.ecyrd.jspwiki.dav.items.PageDavItem;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.opensymphony.module.oscache.base.Cache;
-import com.opensymphony.module.oscache.base.NeedsRefreshException;
+import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  Implements something for the pages.
@@ -32,7 +32,7 @@ public class RawPagesDavProvider extends WikiDavProvider
 {
     protected static final Logger log = Logger.getLogger( RawPagesDavProvider.class );
 
-    private Cache m_davItemCache = new Cache(true,false);
+    private Cache m_davItemCache = new Cache(true,false,false);
     
     private int m_refreshPeriod = 30*1000; // In millisseconds
     
