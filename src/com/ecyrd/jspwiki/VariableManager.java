@@ -42,6 +42,15 @@ public class VariableManager
     public static final String VAR_ERROR = "error";
     public static final String VAR_MSG   = "msg";
     
+    /**
+     *  Contains a list of those properties that shall never be shown.
+     *  Put names here in lower case.
+     */
+    
+    protected static final String[] THE_BIG_NO_NO_LIST = {
+        "jspwiki.auth.masterpassword"
+    };
+    
     public VariableManager( Properties props )
     {
     }
@@ -181,6 +190,12 @@ public class VariableManager
         String name = varName.toLowerCase();
         String res = "";
 
+        for( int i = 0; i < THE_BIG_NO_NO_LIST.length; i++ )
+        {
+            if( name.equals(THE_BIG_NO_NO_LIST[i]) )
+                return ""; // FIXME: Should this be something different?
+        }
+        
         if( name.equals("pagename") )
         {
             res = context.getPage().getName();
