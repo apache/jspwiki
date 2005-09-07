@@ -147,12 +147,21 @@ public class RCSFileProvider
                 if( matcher.contains( line, headpattern ) )
                 {                    
                     MatchResult result = matcher.getMatch();
-                    int vernum = Integer.parseInt( result.group(1) );
-
-                    if( vernum == version || version == WikiPageProvider.LATEST_VERSION )
+                    
+                    try
                     {
-                        info.setVersion( vernum );
-                        found = true;
+                        int vernum = Integer.parseInt( result.group(1) );
+
+                        if( vernum == version || version == WikiPageProvider.LATEST_VERSION )
+                        {
+                            info.setVersion( vernum );
+                            found = true;
+                        }
+                    }
+                    catch( NumberFormatException e )
+                    {
+                        log.info("Failed to parse version number from RCS log: ",e);
+                        // Just continue reading through
                     }
                 }
                 else if( matcher.contains( line, datepattern ) && found )
