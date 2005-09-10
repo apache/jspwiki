@@ -5,20 +5,19 @@
 package com.ecyrd.jspwiki.dav;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.methods.DavMethod;
 import com.ecyrd.jspwiki.dav.methods.GetMethod;
 import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
-import com.ecyrd.jspwiki.dav.methods.PropPatchMethod;
 
 /**
  *  @author jalkanen
@@ -58,7 +57,8 @@ public class WikiDavServlet extends WebdavServlet
     public void doPropFind( HttpServletRequest req, HttpServletResponse res )
         throws IOException,ServletException
     {
-        long start = System.currentTimeMillis();
+        StopWatch sw = new StopWatch();
+        sw.start();
         
         // Do the "sanitize url" trick
         String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
@@ -77,9 +77,9 @@ public class WikiDavServlet extends WebdavServlet
             m.execute( req, res, path.subPath(1) );
         }
         
-        long end = System.currentTimeMillis();
+        sw.stop();
         
-        log.debug("Propfind done for path "+path+", took "+(end-start)+" ms");
+        log.debug("Propfind done for path "+path+", took "+sw);
     }
     
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
