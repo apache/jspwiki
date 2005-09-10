@@ -1,3 +1,21 @@
+2005-09-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.18
+
+        * Two patches from Patrick Woodworth to fix broken URL
+        in jspwiki.tld and compilation directives.  This removes
+        the jar-optimized target and makes it an option for
+        build.properties.
+        
+        * Fixed problem with ReferenceManager: unmodifiable
+        maps were not updated at unserialization time.  Reported
+        by JohnV.
+        
+        * Removing misc debug code from auth.
+        
+        * Moved to StopWatch() instead of System.currentTimeMillis()
+        in all places ;-)
+
 2005-09-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.17
