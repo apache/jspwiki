@@ -25,6 +25,9 @@ public class StressTestSpeed extends TestCase
     {
         props.load( TestEngine.findTestProperties("/jspwiki_rcs.properties") );
 
+        props.setProperty( "jspwiki.usePageCache", "true" );
+        props.setProperty( "jspwiki.newRenderingEngine", "true" );
+        
         engine = new TestEngine(props);
     }
 
@@ -67,8 +70,8 @@ public class StressTestSpeed extends TestCase
 
         mark.stop();
 
-        System.out.println( ITERATIONS+" pages took "+mark.getDurationMs()+" ms (="+
-                            mark.getDurationMs()/ITERATIONS+" ms/page)" );
+        System.out.println( ITERATIONS+" pages took "+mark+" (="+
+                            mark.getTime()/ITERATIONS+" ms/page)" );
     }
 
     public void testSpeed2()
@@ -93,8 +96,8 @@ public class StressTestSpeed extends TestCase
 
         mark.stop();
 
-        System.out.println( ITERATIONS+" plugin pages took "+mark.getDurationMs()+" ms (="+
-                            mark.getDurationMs()/ITERATIONS+" ms/page)" );
+        System.out.println( ITERATIONS+" plugin pages took "+mark+" (="+
+                            mark.getTime()/ITERATIONS+" ms/page)" );
     }
 
     public static Test suite()
