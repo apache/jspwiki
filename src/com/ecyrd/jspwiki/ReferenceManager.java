@@ -20,13 +20,16 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.util.*;
 import java.io.*;
-import org.apache.log4j.*;
+import java.util.*;
 
+import org.apache.commons.lang.time.StopWatch;
+import org.apache.log4j.Logger;
+
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
-import com.ecyrd.jspwiki.attachment.*;
-import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /*
   BUGS
@@ -185,7 +188,8 @@ public class ReferenceManager
         throws ProviderException
     {
         log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
-        long start = System.currentTimeMillis();
+        StopWatch sw = new StopWatch();
+        sw.start();
         log.info( "Starting cross reference scan of WikiPages" );
 
         //
@@ -254,10 +258,8 @@ public class ReferenceManager
             serializeToDisk();
         }
 
-        log.info( "Cross reference scan done (" +
-                  (System.currentTimeMillis()-start) +
-                  " ms)" );
-
+        sw.stop();
+        log.info( "Cross reference scan done in "+sw );
     }
 
     /**
@@ -273,7 +275,8 @@ public class ReferenceManager
 
         try
         {
-            long start = System.currentTimeMillis();
+            StopWatch sw = new StopWatch();
+            sw.start();
             
             File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
 
@@ -292,8 +295,11 @@ public class ReferenceManager
 
             in.close();
 
-            long finish = System.currentTimeMillis();
-            log.debug("Read serialized data successfully in "+(finish-start)+"ms");
+            m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
+            m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
+            
+            sw.stop();
+            log.debug("Read serialized data successfully in "+sw);
         }
         finally
         {
@@ -314,7 +320,8 @@ public class ReferenceManager
 
         try
         {
-            long start = System.currentTimeMillis();
+            StopWatch sw = new StopWatch();
+            sw.start();
             
             File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
 
@@ -327,9 +334,9 @@ public class ReferenceManager
 
             out.close();
 
-            long finish = System.currentTimeMillis();
-
-            log.debug("serialization done - took "+(finish-start)+"ms");
+            sw.stop();
+            
+            log.debug("serialization done - took "+sw);
         }
         catch( IOException e )
         {
