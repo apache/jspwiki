@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.45 2005-09-07 19:38:42 jalkanen Exp $
+    $Id: build.xml,v 1.46 2005-09-10 22:02:12 jalkanen Exp $
 -->    
        
 <!--   
@@ -64,7 +64,11 @@
   <property name="build.properties" value="build.properties" />
 
   <property file="${build.properties}" />
-       
+
+  <property name="debug" value="true" />
+  <property name="deprecation" value="false" />
+  <property name="optimize" value="false" />
+
   <!-- This denotes the directory where the source code lies. -->
   <property name="code.src" value="src" />
        
@@ -195,26 +199,15 @@
           description="Builds the source code.">
     <javac srcdir="${code.src}"
            destdir="${code.build}"
-           debug="on"
-           optimize="off"
-           deprecation="off"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}"
+           source="1.4"
+           target="1.4"
            >
       <classpath refid="path.base" />
-      <compilerarg line="-source 1.4"/>
     </javac>
   </target>
-
-  <target name="compile-optimized" depends="clean,init"
-          description="Builds the source code for distribution.">
-    <javac srcdir="${code.src}"
-           destdir="${code.build}"
-           debug="off"
-           optimize="on">
-      <classpath refid="path.base" />
-      <compilerarg line="-source 1.4"/>
-    </javac>
-  </target>
-
 
   <!-- This is similar to above.  We use this to compile the
        tests. -->
@@ -285,15 +278,6 @@
       storepass="${jks.password}" verbose="false"/>
       
       <copy file="${jks.keystore}" toDir="tests/etc" />
-
-  </target>
-
-  <target name="jar-optimized" depends="compile-optimized,installinit">
-      <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
-
-      <jar jarfile="${jarfile}">
-         <fileset dir="${code.build}" includes="**/*.class" />
-      </jar>
 
   </target>
 
