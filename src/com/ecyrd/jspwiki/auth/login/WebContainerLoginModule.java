@@ -43,7 +43,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * Subject. Also, principals {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL}
  * and {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-03 03:53:06 $
+ * @version $Revision: 1.4 $ $Date: 2005-09-10 22:00:13 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
@@ -105,12 +105,14 @@ public class WebContainerLoginModule extends AbstractLoginModule
         }
         catch( IOException e )
         {
-            e.printStackTrace();
+            // e.printStackTrace();
+            // FIXME
             return false;
         }
         catch( UnsupportedCallbackException e )
         {
-            System.err.println( e.getMessage() );
+            // System.err.println( e.getMessage() );
+            // FIXME
             return false;
         }
         catch( NoSuchPrincipalException e )
