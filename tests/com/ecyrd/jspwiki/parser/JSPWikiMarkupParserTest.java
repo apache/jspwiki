@@ -1,13 +1,11 @@
 package com.ecyrd.jspwiki.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.security.Principal;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
 import javax.servlet.ServletException;
 
@@ -18,7 +16,7 @@ import junit.framework.TestSuite;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.authorize.Group;
-import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.render.XHTMLRenderer;
 
 public class JSPWikiMarkupParserTest extends TestCase
@@ -51,7 +49,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
     
     private void newPage( String name )
-    throws WikiException
+        throws WikiException
     {
         testEngine.saveText( name, "<test>" );
         
@@ -80,18 +78,18 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
     
     private String translate( WikiEngine e, String src )
-    throws IOException,
-    NoRequiredPropertyException,
-    ServletException
+        throws IOException,
+               NoRequiredPropertyException,
+               ServletException
     {
         return translate( e, new WikiPage(testEngine, PAGE_NAME), src );
     }
     
     
     private String translate( WikiPage p, String src )
-    throws IOException,
-    NoRequiredPropertyException,
-    ServletException
+        throws IOException,
+               NoRequiredPropertyException,
+               ServletException
     {
         return translate( testEngine, p, src );
     }
@@ -111,10 +109,10 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
     
     private String translate_nofollow( String src )
-    throws IOException,
-    NoRequiredPropertyException,
-    ServletException,
-    WikiException
+        throws IOException,
+               NoRequiredPropertyException,
+               ServletException,
+               WikiException
     {
         props.load( TestEngine.findTestProperties() );
         
@@ -413,16 +411,16 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "The page ASamplePage is not a hyperlink.",
                       translate(src) );
     }
-    
+
     public void testHyperlinksCCNegated4()
     throws Exception
     {
         String src = "The page \"~ASamplePage\" is not a hyperlink.";
         
-        assertEquals( "The page &quot;ASamplePage&quot; is not a hyperlink.",
+        assertEquals( "The page \"ASamplePage\" is not a hyperlink.",
                       translate(src) );
     }
-    
+
     public void testCCLinkInList()
     throws Exception
     {
@@ -1017,7 +1015,6 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "&lt;p&gt;", translate(src) );
     }
     
-    /*
     public void testHTMLWhenAllowed()
     throws Exception
     {
@@ -1026,22 +1023,16 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
         testEngine = new TestEngine( props );
         
-        WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(PAGE_NAME) );
-        
-        Reader r = new TranslatorReader( context, 
-                                         new BufferedReader( new StringReader(src)) );
-        StringWriter out = new StringWriter();
-        int c;
-        
-        while( ( c=r.read()) != -1 )
-        {
-            out.write( c );
-        }
-        
+        WikiPage page = new WikiPage(testEngine,PAGE_NAME);
+
+        String out = translate( testEngine, page, src );
+
         assertEquals( "<p>", out.toString() );
     }
-    */
+   
+    /*
+    // This test is not really needed anymore: the JDOM output mechanism
+    // handles attribute and element content escaping properly.
     public void testQuotes()
     throws Exception
     {
@@ -1049,7 +1040,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "&quot;Test&quot;&quot;", translate(src) );
     }
-    
+    */
     public void testItalicAcrossLinebreak()
     throws Exception
     {
@@ -1851,49 +1842,45 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Test collection of links.
      */
- /*   
+ 
     public void testCollectingLinks()
     throws Exception
     {
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
         WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(PAGE_NAME) );
+                                               new WikiPage(testEngine,PAGE_NAME) );
         
-        TranslatorReader r = new TranslatorReader( context, 
-                                                   new BufferedReader( new StringReader(src)) );
-        r.addLocalLinkHook( coll );
-        r.addExternalLinkHook( coll );
-        r.addAttachmentLinkHook( coll );
+        MarkupParser p = new JSPWikiMarkupParser( context, 
+                                                  new BufferedReader( new StringReader(src)) );
+        p.addLocalLinkHook( coll );
+        p.addExternalLinkHook( coll );
+        p.addAttachmentLinkHook( coll );
         
-        StringWriter out = new StringWriter();
-        
-        FileUtil.copyContents( r, out );
+        WikiDocument doc = p.parse();
         
         Collection links = coll.getLinks();
         
         assertEquals( "no links found", 1, links.size() );
         assertEquals( "wrong link", "Test", links.iterator().next() );
     }
-   */ 
-    /*
+
     public void testCollectingLinks2()
     throws Exception
     {
         LinkCollector coll = new LinkCollector();
         String src = "["+PAGE_NAME+"/Test.txt]";
+
         WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(PAGE_NAME) );
+                                               new WikiPage(testEngine,PAGE_NAME) );
         
-        TranslatorReader r = new TranslatorReader( context, 
-                                                   new BufferedReader( new StringReader(src)) );
-        r.addLocalLinkHook( coll );
-        r.addExternalLinkHook( coll );
-        r.addAttachmentLinkHook( coll );
+        MarkupParser p = new JSPWikiMarkupParser( context, 
+                                                  new BufferedReader( new StringReader(src)) );
+        p.addLocalLinkHook( coll );
+        p.addExternalLinkHook( coll );
+        p.addAttachmentLinkHook( coll );
         
-        StringWriter out = new StringWriter();
-        
-        FileUtil.copyContents( r, out );
+        WikiDocument doc = p.parse();
         
         Collection links = coll.getLinks();
         
@@ -1901,8 +1888,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "wrong link", PAGE_NAME+"/Test.txt", 
                       links.iterator().next() );
     }
-    */
-    /*
+
     public void testCollectingLinksAttachment()
     throws Exception
     {
@@ -1910,7 +1896,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         try
         {
-            Attachment att = new Attachment( PAGE_NAME, "TestAtt.txt" );
+            Attachment att = new Attachment( testEngine, PAGE_NAME, "TestAtt.txt" );
             att.setAuthor( "FirstPost" );
             testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
             
@@ -1919,17 +1905,15 @@ public class JSPWikiMarkupParserTest extends TestCase
             
             String src = "[TestAtt.txt]";
             WikiContext context = new WikiContext( testEngine,
-                                                   new WikiPage(PAGE_NAME) );
+                                                   new WikiPage(testEngine,PAGE_NAME) );
             
-            TranslatorReader r = new TranslatorReader( context, 
-                                                       new BufferedReader( new StringReader(src)) );
-            r.addLocalLinkHook( coll_others );
-            r.addExternalLinkHook( coll_others );
-            r.addAttachmentLinkHook( coll );
+            MarkupParser p = new JSPWikiMarkupParser( context, 
+                                                      new BufferedReader( new StringReader(src)) );
+            p.addLocalLinkHook( coll_others );
+            p.addExternalLinkHook( coll_others );
+            p.addAttachmentLinkHook( coll );
             
-            StringWriter out = new StringWriter();
-            
-            FileUtil.copyContents( r, out );
+            WikiDocument doc = p.parse();
             
             Collection links = coll.getLinks();
             
@@ -1948,7 +1932,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                 TestEngine.deleteAll( storagedir );
         }
     }
-    */
+
     public void testDivStyle1()
     throws Exception
     {
