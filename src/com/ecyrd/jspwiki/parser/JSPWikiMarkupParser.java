@@ -42,7 +42,7 @@ public class JSPWikiMarkupParser
     private static final int              INTERWIKI     = 7;
     private static final int              IMAGELINK     = 8;
     private static final int              IMAGEWIKILINK = 9;
-    public  static final int              ATTACHMENT    = 10;
+    private static final int              ATTACHMENT    = 10;
     // private static final int              ATTACHMENTIMAGE = 11;
 
     /** Lists all punctuation characters allowed in WikiMarkup. These
@@ -216,8 +216,6 @@ public class JSPWikiMarkupParser
 
         try
         {
-            // m_camelCasePtrn = m_compiler.compile( "^([[:^alnum:]]*)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)[[:^alnum:]]*$" );
-            
             m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX );
         }
         catch( MalformedPatternException e )
@@ -658,8 +656,18 @@ public class JSPWikiMarkupParser
             //
             String buf = m_plainTextBuf.toString();
             m_plainTextBuf = new StringBuffer();
+         
+            //
+            //  If there might be HTML in it, disable the output escaping
+            //  process here (yes, this does increase the DOM tree quite a lot,
+            //  if you allow HTML.)
+            //
+            if( m_allowHTML )
+            {
+                m_currentElement.addContent( new ProcessingInstruction( Result.PI_DISABLE_OUTPUT_ESCAPING, "" ));
+            }
             
-            if( m_camelCaseLinks )
+            if( m_camelCaseLinks && !m_isEscaping )
             {            
                 // System.out.println("Buffer="+buf);
                     
@@ -730,7 +738,7 @@ public class JSPWikiMarkupParser
                 //
                 //  No camelcase asked for, just add the elements
                 //
-                m_currentElement.addContent( m_plainTextBuf.toString() );
+                m_currentElement.addContent( buf );
             }
         }        
     }
@@ -1541,16 +1549,18 @@ public class JSPWikiMarkupParser
             {
                 if( m_isPre )
                 {
-                    m_isPre = false;
-                    m_isEscaping = false;
                     if( m_isPreBlock )
                     {
-                        return popElement( "pre" );
+                        popElement( "pre" );
                     }
                     else
                     {
-                        return popElement( "span" );
+                        popElement( "span" );
                     }
+
+                    m_isPre = false;
+                    m_isEscaping = false;
+                    return m_currentElement;
                 }
                 else
                 {
@@ -1924,10 +1934,18 @@ public class JSPWikiMarkupParser
             ch = nextToken();
         }
 
+        //
+        //  If the link is never finished, do some tricks to display the rest of the line
+        //  unchanged.
+        //
         if( ch == -1 )
         {
             log.debug("Warning: unterminated link detected!");
-            return null;
+            m_isEscaping = true;
+            m_plainTextBuf.append( sb );
+            flushPlainText();
+            m_isEscaping = false;
+            return m_currentElement;
         }
 
         return handleHyperlinks( sb.toString() );
@@ -2146,10 +2164,6 @@ public class JSPWikiMarkupParser
     private void fillBuffer( Element startElement )
         throws IOException
     {
-        StringBuffer word = null;
-        int previousCh = -2;
-        int start = 0;
-        
         m_currentElement = startElement;
         
         boolean quitReading = false;
@@ -2183,81 +2197,6 @@ public class JSPWikiMarkupParser
                 continue;
             }
 
-            //
-            //  CamelCase detection, a non-trivial endeavour.
-            //  We keep track of all white-space separated entities, which we
-            //  hereby refer to as "words".  We then check for an existence
-            //  of a CamelCase format text string inside the "word", and
-            //  if one exists, we replace it with a proper link.
-            //
-            /*
-            if( m_camelCaseLinks )
-            {
-                // Quick parse of start of a word boundary.
-
-                if( word == null &&                    
-                    (Character.isWhitespace( (char)previousCh ) ||
-                     WORD_SEPARATORS.indexOf( (char)previousCh ) != -1 ||
-                     newLine ) &&
-                    !Character.isWhitespace( (char) ch ) )
-                {
-                    word = new StringBuffer();
-                }
-
-                // Are we currently tracking a word?
-                if( word != null )
-                {
-                    //
-                    //  Check for the end of the word.
-                    //
-
-                    if( !Character.isLetterOrDigit( (char)ch ) || ch == -1 )
-                    {
-                        String potentialLink = word.toString();
-
-                        String camelCase = checkForCamelCaseLink(potentialLink);
-
-                        if( camelCase != null )
-                        {
-                            start = m_plainTextBuf.toString().lastIndexOf( camelCase );
-                            m_plainTextBuf.delete(start, start+potentialLink.length() );
-                            
-                            makeCamelCaseLink( camelCase );
-                        }
-                        else
-                        {
-                            if( isExternalLink( potentialLink ) )
-                            {
-                                start = m_plainTextBuf.toString().lastIndexOf( potentialLink );
-
-                                if( start >= 0 )
-                                {
-                                    String link = readUntil(" \t()[]{}!\"'\n|");
-
-                                    link = potentialLink + (char)ch + link; // Do not forget the start.
-                                    m_plainTextBuf.delete( start, start+potentialLink.length() );
-                                    makeDirectURILink( link );
-
-                                    ch = nextToken();
-                                }
-                            }
-                        }
-
-                        // We've ended a word boundary, so time to reset.
-                        word = null;
-                    }
-                    else
-                    {
-                        // This should only be appending letters and digits.
-                        word.append( (char)ch );
-                    } // if end of word
-                } // if word's not null
-
-                // Always set the previous character to test for word starts.
-                previousCh = ch;
-         
-            } // if m_camelCaseLinks
-*/
             //
             //  An empty line stops a list
             //
