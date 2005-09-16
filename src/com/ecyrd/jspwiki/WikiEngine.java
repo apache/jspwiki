@@ -242,7 +242,7 @@ public class WikiEngine
     private boolean          m_isConfigured = false; // Flag.
 
     /** Just for temporary testing */
-    private boolean m_useNewRenderingEngine = false;
+    private boolean m_useNewRenderingEngine = true;
     private static final String PROP_USERENDERINGMGR = "jspwiki.newRenderingEngine";
     
     /**
