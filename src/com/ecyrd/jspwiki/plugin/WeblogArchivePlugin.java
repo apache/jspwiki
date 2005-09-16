@@ -116,14 +116,14 @@ public class WeblogArchivePlugin implements WikiPlugin
     private SortedSet collectMonths( WikiEngine engine, String page )
         throws ProviderException
     {
-        TreeSet res = new TreeSet();
+        Comparator comp = new ArchiveComparator();
+        TreeSet res = new TreeSet( comp );
 
         WeblogPlugin pl = new WeblogPlugin();
 
         List blogEntries = pl.findBlogEntries( engine.getPageManager(),
                                                page, new Date(0L), new Date() );
         
-        Calendar urCalendar = Calendar.getInstance();
         for( Iterator i = blogEntries.iterator(); i.hasNext(); )
         {
             WikiPage p = (WikiPage) i.next();
@@ -131,10 +131,8 @@ public class WeblogArchivePlugin implements WikiPlugin
             // FIXME: Not correct, should parse page creation time.
 
             Date d = p.getLastModified();
-
-            Calendar cal = new ArchiveCalendar( urCalendar );
+            Calendar cal = Calendar.getInstance();
             cal.setTime( d );
-
             res.add( cal );
         }
 
@@ -168,52 +166,32 @@ public class WeblogArchivePlugin implements WikiPlugin
 
     }
 
+    
     /**
-     *  This is a simple calendar that extends the GregorianCalendar to 
-     *  provide a Comparable interface so that it can be put in a Set and sorted.  In
-     *  addition, it also evaluates two objects that are in the same month
-     *  to be equal.
+     * This is a simple comparator for ordering weblog archive entries.
+     * Two dates in the same month are considered equal.
      */
-    private class ArchiveCalendar
-        extends GregorianCalendar
-        implements Comparable
+    private class ArchiveComparator
+    implements Comparator
     {
-        public ArchiveCalendar( Calendar cal )
-        {
-            setTime( cal.getTime() );
-        }
 
-        public int compareTo(Object o)
+        public int compare( Object a, Object b ) 
         {
-            if( o instanceof Calendar )
+            if( a == null || b == null || 
+                !(a instanceof Calendar) || !(b instanceof Calendar) )
             {
-                Calendar c = (Calendar) o;
-
-                if( equals( c ) ) return 0;
-
-                return c.getTime().before( getTime() ) ? 1 : -1;
+                throw new ClassCastException( "Invalid calendar supplied for comparison." );
+            }
+                    
+            Calendar ca = (Calendar) a;
+            Calendar cb = (Calendar) b;
+            if( ca.get( Calendar.YEAR ) == cb.get( Calendar.YEAR ) &&
+                ca.get( Calendar.MONTH ) == cb.get( Calendar.MONTH ) )
+            {
+                return 0;
             }
 
-            return 0;
-        }
-
-        /**
-         *  Returns true, if these objects represent the same month and year.
-         */
-        public boolean equals( Object o )
-        {
-            if( o != null && o instanceof Calendar )
-            {
-                Calendar c = (Calendar) o;
-
-                if( c.get( Calendar.YEAR ) == get( Calendar.YEAR ) &&
-                    c.get( Calendar.MONTH ) == get( Calendar.MONTH ) )
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return cb.getTime().before( ca.getTime() ) ? 1 : -1;
         }
     }
 }
