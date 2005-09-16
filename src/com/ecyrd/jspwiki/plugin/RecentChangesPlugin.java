@@ -24,6 +24,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import java.util.*;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
@@ -38,6 +39,8 @@ public class RecentChangesPlugin
     implements WikiPlugin
 {
     private static final String PARAM_FORMAT = "format";
+    private static final String PARAM_TIME_FORMAT = "timeFormat";
+    private static final String PARAM_DATE_FORMAT = "dateFormat";
 
     /** How many days we show by default. */
     private static final int    DEFAULT_DAYS = 100*365;
@@ -90,8 +93,8 @@ public class RecentChangesPlugin
         {
             Date olddate   = new Date(0);
 
-            SimpleDateFormat fmt  = new SimpleDateFormat( "dd.MM.yyyy" );
-            SimpleDateFormat tfmt = new SimpleDateFormat( "HH:mm:ss" );
+            DateFormat fmt = getDateFormat(params);
+            DateFormat tfmt = getTimeFormat(params);
 
             out.write("<table border=\"0\" cellpadding=\""+spacing+"\">\n");
 
@@ -172,4 +175,44 @@ public class RecentChangesPlugin
         return out.toString();
     }
 
+    
+
+    // TODO: Ideally the default behavior should be to return the default format for the default
+    // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
+    // behaviour of that first version, so to get the default format, the user must explicitly do
+    // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
+    private DateFormat getTimeFormat(Map params)
+    {
+        String formatString = get(params, "HH:mm:ss", PARAM_TIME_FORMAT);
+
+        if ("".equals(formatString.trim()))
+            return SimpleDateFormat.getTimeInstance();
+
+        return new SimpleDateFormat(formatString);
+    }
+
+
+
+    private DateFormat getDateFormat(Map params)
+    {
+        String formatString = get(params, "dd.MM.yyyy", PARAM_DATE_FORMAT);
+
+        if ("".equals(formatString.trim()))
+            return SimpleDateFormat.getDateInstance();
+
+        return new SimpleDateFormat(formatString);
+
+    }
+
+
+
+    private String get(Map params, String defaultValue, String paramName)
+    {
+        String value = (String) params.get(paramName);
+        return (null == value ? defaultValue : value);
+    }
+
+    
 }
+
+
