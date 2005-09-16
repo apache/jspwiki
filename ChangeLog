@@ -1,3 +1,28 @@
+2005-09-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.19.
+        
+        * Fixed the rest of the new renderer tests, and turned
+        the new renderer on by default.  You can now turn it off
+        with "jspwiki.newRenderingEngine=false" in your property
+        file.
+
+        * FormInput now also accepts XHTML-like "checked=checked".
+        Suggested by Murray Altheim.
+
+        * Added patch from Erik Bunn to allow clean compilation
+        on JDK 5.0.
+
+        * Included patch from JohnV to add time and date format
+        parameters to RecentChangesPlugin.
+
+        * Incorporated even more patches from Patrik to fix
+        some problems with tests targets and diff noise.  Thanks
+        a heap!
+
+        * Added patch from Patrik Woodworth to fix tests
+        compilation failing due to jar file signing.
+
 2005-09-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.18

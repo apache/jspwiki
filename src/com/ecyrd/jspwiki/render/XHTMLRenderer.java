@@ -32,6 +32,7 @@ public class XHTMLRenderer
         Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
         fmt.setLineSeparator("\n");
+
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );
         
