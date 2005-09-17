@@ -47,6 +47,11 @@ public class ShortURLConstructor
     
     protected String m_urlPrefix = "";
     
+    /**
+     *  This corresponds to your WikiServlet path.  By default, it is assumed to
+     *  be "wiki/", but you can set it to whatever you like - including an empty
+     *  name.
+     */
     public static final String PROP_PREFIX = "jspwiki.shortURLConstructor.prefix";
     
     public void initialize( WikiEngine engine, 
@@ -153,6 +158,10 @@ public class ShortURLConstructor
             if( context.equals(WikiContext.ATTACH) || context.equals(WikiContext.VIEW) )
             {
                 parameters = "?"+parameters;
+            }
+            else if( context.equals(WikiContext.NONE) )
+            {
+                parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
             }
             else
             {

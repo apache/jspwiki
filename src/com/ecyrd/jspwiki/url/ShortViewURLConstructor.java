@@ -74,6 +74,10 @@ public class ShortViewURLConstructor
             {
                 parameters = "?"+parameters;
             }
+            else if( context.equals(WikiContext.NONE) )
+            {
+                parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
+            }
             else
             {
                 parameters = "&amp;"+parameters;
