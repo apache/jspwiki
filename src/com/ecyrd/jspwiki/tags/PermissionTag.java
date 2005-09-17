@@ -67,7 +67,7 @@ public class PermissionTag
              || "registerUser".equals( m_permission ) || "editPreferences".equals( m_permission )
              || "login".equals( m_permission ) )
         {
-            got_permission = mgr.checkPermission( session, new WikiPermission( m_permission ) );
+            got_permission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), m_permission ) );
         }
         else if( page != null )
         {
@@ -85,7 +85,7 @@ public class PermissionTag
                 }
             }
 
-            Permission permission = new PagePermission( page.getWiki(), page, m_permission );
+            Permission permission = new PagePermission( page, m_permission );
             got_permission = mgr.checkPermission( session,
                                                   permission );
         }
