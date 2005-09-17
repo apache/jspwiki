@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.auth.login;
 
+import java.security.Principal;
 import java.util.Properties;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-09-17 18:35:29 $
  */
 public class WebContainerLoginModuleTest extends TestCase
 {
@@ -30,8 +31,10 @@ public class WebContainerLoginModuleTest extends TestCase
 
     public final void testLogin()
     {
+        Principal principal = new WikiPrincipal( "Andrew Jaquith" ); 
+        Principal wrapper = new PrincipalWrapper( principal );
         TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Andrew Jaquith" ) );
+        request.setUserPrincipal( principal );
         try
         {
             // Test using Principal (WebContainerLoginModule succeeds)
@@ -40,7 +43,7 @@ public class WebContainerLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "Andrew Jaquith" ) ) );
+            assertTrue( principals.contains( wrapper ) );
             assertTrue( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );
 
@@ -53,7 +56,7 @@ public class WebContainerLoginModuleTest extends TestCase
             context.login();
             principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "Andrew Jaquith" ) ) );
+            assertTrue( principals.contains( wrapper ) );
             assertTrue( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );
 
@@ -66,7 +69,7 @@ public class WebContainerLoginModuleTest extends TestCase
             context.login();
             principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertFalse( principals.contains( new WikiPrincipal( "Andrew Jaquith" ) ) );
+            assertFalse( principals.contains( principal ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );
         }
@@ -79,8 +82,10 @@ public class WebContainerLoginModuleTest extends TestCase
 
     public final void testLogout()
     {
+        Principal principal = new WikiPrincipal( "Andrew Jaquith" ); 
+        Principal wrapper = new PrincipalWrapper( principal );
         TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Andrew Jaquith" ) );
+        request.setUserPrincipal( principal );
         try
         {
             CallbackHandler handler = new WebContainerCallbackHandler( request, db );
@@ -88,7 +93,7 @@ public class WebContainerLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "Andrew Jaquith" ) ) );
+            assertTrue( principals.contains( wrapper ) );
             assertTrue( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );
             context.logout();
