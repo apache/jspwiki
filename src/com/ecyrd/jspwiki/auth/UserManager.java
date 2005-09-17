@@ -44,7 +44,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.38 $ $Date: 2005-09-02 23:58:55 $
+ *  @version $Revision: 1.39 $ $Date: 2005-09-17 18:14:56 $
  *  @since 2.3
  */
 public class UserManager
@@ -200,30 +200,31 @@ public class UserManager
     /**
      * Retrieves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the
      * user in a wiki session. If the user is authenticated, the UserProfile
-     * returned will be the one stored in the user database; if one does
-     * not exist, a new one will be initialized and returned. If the user is 
-     * anonymous or asserted, the UserProfile will <i>always</i> be newly 
+     * returned will be the one stored in the user database; if one does not
+     * exist, a new one will be initialized and returned. If the user is
+     * anonymous or asserted, the UserProfile will <i>always</i> be newly
      * initialized to prevent spoofing of identities. If a UserProfile needs to
-     * be initialized, its {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
-     * method will return <code>true</code>. Note that this method does 
-     * not modify the retrieved (or newly created) profile in any way; any
-     * and all fields in the user profile may be <code>null</code>.
+     * be initialized, its
+     * {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()} method will
+     * return <code>true</code>, and its login name will will be set
+     * automatically if the user is authenticated. Note that this method does
+     * not modify the retrieved (or newly created) profile otherwise; other
+     * fields in the user profile may be <code>null</code>.
      * @param session the wiki session, which may not be <code>null</code>
-     * @return the user's profile, which will be newly initialized if the
-     * user is anonymous or asserted, or if the user cannot be found in the
-     * user database
+     * @return the user's profile, which will be newly initialized if the user
+     * is anonymous or asserted, or if the user cannot be found in the user
+     * database
      * @throws WikiSecurityException if the database returns an exception
      * @throws IllegalStateException if a new UserProfile was created, but its
-     *             {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()}
-     *             method returns <code>false</code>. This is meant as a quality
-     *             check for UserDatabase providers; it should only be thrown
-     *             if the implementation is faulty.
+     * {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()} method returns
+     * <code>false</code>. This is meant as a quality check for UserDatabase
+     * providers; it should only be thrown if the implementation is faulty.
      */
     public UserProfile getUserProfile( WikiSession session ) throws WikiSecurityException
     {
         boolean needsInitialization = true;
         UserProfile profile = null;
-        Principal user;
+        Principal user = null;
         
         // Figure out if this is an existing profile
         if ( session.isAuthenticated() ) {
@@ -241,6 +242,10 @@ public class UserManager
         if ( needsInitialization ) 
         {
             profile = m_database.newProfile();
+            if ( user != null )
+            {
+                profile.setLoginName( user.getName() );
+            }
             if ( !profile.isNew() )
             {
                 throw new IllegalStateException(
