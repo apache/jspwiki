@@ -19,33 +19,54 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.ProviderException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.util.*;
+import com.ecyrd.jspwiki.PageManager;
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  Builds a simple weblog.
- *  <P>
- *  The pageformat can use the following params:<br>
- *  %p - Page name<br>
- *
- *  <B>Parameters</B>
- *  <UL>
- *    <LI>page - which page is used to do the blog; default is the current page.
- *    <LI>days - how many days the weblog aggregator should show.  If set to "all", shows all pages.
- *    <LI>pageformat - What the entry pages should look like.
- *    <LI>startDate - Date when to start.  Format is "ddMMyy";
- *    <li>maxEntries - How many entries to show at most.
- *  </UL>
- *
- *  The "days" and "startDate" can also be sent in HTTP parameters,
- *  and the names are "weblog.days" and "weblog.startDate", respectively.
- *  <p>
- *  The weblog plugin also adds an attribute to each page it is on: "weblogplugin.isweblog" is set to "true".  This can be used to quickly peruse pages which have weblogs. 
+ *  <p>Builds a simple weblog.
+ *  The pageformat can use the following params:</p>
+ *  <p>%p - Page name</p>
+ *  <p>Parameters:</p>
+ *  <ul>
+ *    <li>page - which page is used to do the blog; default is the current page.</li>
+ *    <li>entryFormat - how to display the date on pages, using the J2SE SimpleDateFormat
+ *       syntax. Defaults to the current locale's DateFormat.LONG format
+ *       for the date, and current locale's DateFormat.SHORT for the time.
+ *       Thus, for the US locale this will print dates similar to
+ *       this: September 4, 2005 11:54 PM</li>
+ *    <li>days - how many days the weblog aggregator should show.  If set to
+ *      "all", shows all pages.</li>
+ *    <li>pageformat - What the entry pages should look like.</li>
+ *    <li>startDate - Date when to start.  Format is "ddMMyy."</li>
+ *    <li>maxEntries - How many entries to show at most.</li>
+ *  </ul>
+ *  <p>The "days" and "startDate" can also be sent in HTTP parameters,
+ *  and the names are "weblog.days" and "weblog.startDate", respectively.</p>
+ *  <p>The weblog plugin also adds an attribute to each page it is on: 
+ *  "weblogplugin.isweblog" is set to "true".  This can be used to quickly
+ *  peruse pages which have weblogs.</p>
  *  @since 1.9.21
  */
 
@@ -57,19 +78,29 @@ public class WeblogPlugin
                InitializablePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
-
+    private static final DateFormat DEFAULT_ENTRYFORMAT 
+                                = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
+    private static final Pattern headingPattern;
+    
     public static final int     DEFAULT_DAYS = 7;
     public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
 
     public static final String  DEFAULT_DATEFORMAT = "ddMMyy";
 
     public static final String  PARAM_STARTDATE    = "startDate";
+    public static final String  PARAM_ENTRYFORMAT  = "entryFormat";
     public static final String  PARAM_DAYS         = "days";
     public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
     public static final String  PARAM_MAXENTRIES   = "maxEntries";
     public static final String  PARAM_PAGE         = "page";
 
     public static final String  ATTR_ISWEBLOG      = "weblogplugin.isweblog";
+    
+    static
+    {
+    	    // This is a pretty ugly, brute-force regex. But it will do for now...
+        headingPattern = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
+    }
 
     public static String makeEntryPage( String pageName,
                                         String date,
@@ -108,6 +139,7 @@ public class WeblogPlugin
         //  Parse parameters.
         //
         String  days;
+        DateFormat entryFormat;
         String  startDay = null;
         boolean hasComments = false;
         int     maxEntries;
@@ -121,6 +153,15 @@ public class WeblogPlugin
         if( (days = context.getHttpParameter( "weblog."+PARAM_DAYS )) == null )
         {
             days = (String) params.get( PARAM_DAYS );
+        }
+        
+        if( ( params.get(PARAM_ENTRYFORMAT)) == null )
+        {
+            entryFormat = DEFAULT_ENTRYFORMAT;
+        }
+        else
+        {
+            entryFormat = new SimpleDateFormat( (String)params.get(PARAM_ENTRYFORMAT) );
         }
 
         if( days != null && days.equalsIgnoreCase("all") )
@@ -197,8 +238,6 @@ public class WeblogPlugin
 
             Collections.sort( blogEntries, new PageDateComparator() );
 
-            SimpleDateFormat entryDateFmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
-
             sb.append("<div class=\"weblog\">\n");
             for( Iterator i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
             {
@@ -212,7 +251,7 @@ public class WeblogPlugin
                 sb.append("<div class=\"weblogentryheading\">\n");
 
                 Date entryDate = p.getLastModified();
-                sb.append( entryDateFmt.format(entryDate) );
+                sb.append( entryFormat.format(entryDate) );
 
                 sb.append("</div>\n");
 
@@ -221,14 +260,28 @@ public class WeblogPlugin
                 //  context to that page.
                 //
 
-                sb.append("<div class=\"weblogentrybody\">\n");
-
                 WikiContext entryCtx = (WikiContext) context.clone();
                 entryCtx.setPage( p );
 
-                sb.append( engine.getHTML( entryCtx, 
-                                           engine.getPage(p.getName()) ) );
+                String html = engine.getHTML( entryCtx, engine.getPage(p.getName()) );
                 
+                // Extract the first h1/h2/h3 as title, and replace with null
+                sb.append("<div class=\"weblogentrytitle\">\n");
+                Matcher matcher = headingPattern.matcher( html );
+                if ( matcher.find() )
+                {
+                    String title = matcher.group(2);
+                    html = matcher.replaceFirst("");
+                    sb.append( title );
+                }
+                else
+                {
+                    sb.append( p.getName() );
+                }
+                sb.append("</div>\n");
+                
+                sb.append("<div class=\"weblogentrybody\">\n");
+                sb.append( html );
                 sb.append("</div>\n");
 
                 //
