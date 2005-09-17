@@ -103,6 +103,8 @@ public class WikiContext
 
     public static final String    NONE     = "";  // This is not a JSPWiki context, use it to access static files
     
+    public static final String    OTHER    = NONE; // This is just a clarification.
+    
     /**
      *  Create a new WikiContext for the given WikiPage. Delegates to
      * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
