@@ -40,7 +40,7 @@
     WikiPage wikipage = wikiContext.getPage();
 
     if( !mgr.checkPermission( wikiContext.getWikiSession(),
-                              new PagePermission( wikipage.getWiki(), wikipage, "view" ) ) )
+                              new PagePermission( wikipage, "view" ) ) )
     {
         if( authMgr.strictLogins() )
         {
@@ -58,7 +58,12 @@
             //
             if( pagereq.equals("LoginError") ) 
             {
-                throw new WikiSecurityException("Looped config detected - you must not prevent view access to page LoginError AND have strictLogins set to true!");
+                String msg = "Hmm. You don't have permission to view the page you asked for. "
+                           + "Check your security policy to see if it is too restrictive. "
+                           + "JSPWiki might also be having a problem verifying JAR signatures; "
+                           + "check that your jspwiki.jks is in the same directory as the "
+                           + "jspwiki.policy file, and that the JAR is, in fact, signed.";
+                throw new WikiSecurityException( msg );
             }
 
             log.info("User "+currentUser+" has no access - displaying message.");
