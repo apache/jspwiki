@@ -1,5 +1,14 @@
 2005-09-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * v2.3.20
+
+        * PageLock is now serializable.  This should reduce some
+        warnings on some containers.
+
+        * Forms are now XHTML conformant instead of HTML 4.01.
+
+2005-09-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * v2.3.19.
         
         * Fixed the rest of the new renderer tests, and turned
