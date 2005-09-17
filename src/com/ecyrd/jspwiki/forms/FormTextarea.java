@@ -25,7 +25,7 @@ import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
 import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.html.TextArea;
+import org.apache.ecs.xhtml.textarea;
 
 /**
  *  @author ebu
@@ -66,7 +66,7 @@ public class FormTextarea
         return( "" );
     }
 
-    private TextArea buildTextArea( Map params,
+    private textarea buildTextArea( Map params,
 				    Map previousValues )
         throws PluginException
     {
@@ -81,8 +81,8 @@ public class FormTextarea
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped
         // when the handler plugin is executed.
-        TextArea field = new TextArea( HANDLERPARAM_PREFIX + inputName,
-				       rows, cols);
+        textarea field = new textarea( HANDLERPARAM_PREFIX + inputName,
+                                       rows, cols);
 	
         if( previousValues != null )
         {

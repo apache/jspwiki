@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
-import org.apache.ecs.html.Input;
+import org.apache.ecs.xhtml.input;
 
 /**
  *  Creates a simple input text field.
@@ -70,7 +70,7 @@ public class FormInput
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped
         // when the handler plugin is executed.
-        Input field = new Input( inputType, 
+        input field = new input( inputType, 
                                  HANDLERPARAM_PREFIX + inputName, 
                                  inputValue );
 

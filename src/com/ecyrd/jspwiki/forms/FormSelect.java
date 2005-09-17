@@ -25,7 +25,8 @@ import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
 import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.html.Select;
+import org.apache.ecs.xhtml.option;
+import org.apache.ecs.xhtml.select;
 
 /**
  *  @author ebu
@@ -67,7 +68,7 @@ public class FormSelect
     /**
      * Builds a Select element.
      */
-    private Select buildSelect( Map pluginParams, Map ctxValues )
+    private select buildSelect( Map pluginParams, Map ctxValues )
         throws PluginException
     {
         String inputName = (String)pluginParams.get( PARAM_INPUTNAME );
@@ -124,10 +125,19 @@ public class FormSelect
         if( options == null )
             options = new String[0];
         int previouslySelected = -1;
+        
+        option[] optionElements = new option[options.length];
+        
+        //
+        //  Figure out which one of the options to select: prefer the one
+        //  that was previously selected, otherwise try to find the one
+        //  with the "select" marker.
+        //
         for( int i = 0; i < options.length; i++ )
         {
             int indicated = -1;
             options[i] = options[i].trim();
+            
             if( options[i].startsWith( optionSelector ) ) 
             {
                 options[i] = options[i].substring( optionSelector.length() );
@@ -136,15 +146,22 @@ public class FormSelect
             if( previouslySelected == -1 )
             {
                 if( !contextValueOverride && indicated > 0 )
+                {
                     previouslySelected = indicated;
+                }
                 else if( previousValue != null && 
-			 options[i].equals( previousValue ) )
+                        options[i].equals( previousValue ) )
+                {
                     previouslySelected = i;
+                }
             }
+            
+            optionElements[i] = new option( options[i] );
+            optionElements[i].addElement( options[i] );
         }
-        Select field = new Select( HANDLERPARAM_PREFIX + inputName, options );
-        if( previouslySelected > -1 )
-            field.selectOption( previouslySelected );
+
+        if( previouslySelected > -1 ) optionElements[previouslySelected].setSelected(true);
+        select field = new select( HANDLERPARAM_PREFIX + inputName, optionElements );
 
         return( field );
     }
