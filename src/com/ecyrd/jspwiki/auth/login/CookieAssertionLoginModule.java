@@ -35,7 +35,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-09-17 18:17:49 $
  * @since 2.3
  */
 public class CookieAssertionLoginModule extends AbstractLoginModule
@@ -70,7 +70,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
                 throw new FailedLoginException( "The user cookie was not found." );
             }
             
-            m_principals.add( new WikiPrincipal( name ) );
+            m_principals.add( new WikiPrincipal( name, WikiPrincipal.LOGIN_NAME ) );
             m_principals.add( Role.ASSERTED );
             m_principals.add( Role.ALL );
             return true;
