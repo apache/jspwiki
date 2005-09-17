@@ -168,19 +168,21 @@ function switchTo(tab)
        <p>This section allows you to do some management tasks with the page.</p>
     
        <wiki:PageType type="page">
-       <table cellspacing="4">
-       <tr>
-            <td valign="top"><b>Rename page</b></td>
-            <td>
-                <form action="<wiki:BaseURL/>Rename.jsp" method="POST"  ACCEPT-CHARSET="ISO-8859-1,UTF-8">
-                    <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>">
-                    <input type="text" name="renameto" value="<wiki:Variable var="pagename"/>" size="40"><br />
-                    <input type="checkbox" name="references" checked="checked">Update referrers?<br />
-                    <input type="submit" value="Rename">
-                </form>
-            </td>      
-       </tr>  
-       </table>  
+       <wiki:Permission permission="rename">
+          <table cellspacing="4">
+             <tr>
+                <td valign="top"><b>Rename page</b></td>
+                <td>
+                   <form action="<wiki:BaseURL/>Rename.jsp" method="POST"  ACCEPT-CHARSET="ISO-8859-1,UTF-8">
+                      <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>">
+                      <input type="text" name="renameto" value="<wiki:Variable var="pagename"/>" size="40"><br />
+                      <input type="checkbox" name="references" checked="checked">Update referrers?<br />
+                      <input type="submit" value="Rename">
+                   </form>
+                </td>      
+             </tr>  
+          </table>  
+       </wiki:Permission>
     </wiki:PageType>
 
        <form name="deleteForm" action="<wiki:BaseURL/>Delete.jsp?page=<wiki:Variable var="pagename" />" method="post" 
