@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2005-09-10 21:59:57 $
+ * @version $Revision: 1.8 $ $Date: 2005-09-17 18:37:45 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -72,9 +72,9 @@ public class WebContainerAuthorizer implements Authorizer
         Document webxml = getWebXml();
         if ( webxml != null )
         {
-            m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.AUTHENTICATED )
-                    && isConstrained( webxml, "/LoginRedirect.jsp", Role.AUTHENTICATED )
-                    && isConstrained( webxml, "/UserPreferences.jsp", Role.AUTHENTICATED );
+            m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.ALL )
+                    && isConstrained( webxml, "/LoginRedirect.jsp", Role.ALL )
+                    && isConstrained( webxml, "/UserPreferences.jsp", Role.ALL );
         }
         if ( m_containerAuthorized )
         {
@@ -214,7 +214,8 @@ public class WebContainerAuthorizer implements Authorizer
      * URL, <em>and</em>:</li>
      * <li>this constraint also contains an
      * <code>auth-constraint/role-name</code> element equal to the supplied
-     * Role's <code>getName()</code> method</li>
+     * Role's <code>getName()</code> method. If the supplied Role is Role.ALL,
+     * it matches all roles</li>
      * </ul>
      * @param webxml the web application deployment descriptor
      * @param url the web resource
@@ -253,20 +254,27 @@ public class WebContainerAuthorizer implements Authorizer
                 }
             }
             // See if our role is constained
-            NodeList authConstraints = constraint.getElementsByTagName( "auth-constraint" );
+            if ( role.equals(Role.ALL) )
             {
-                roleSearch: for( int j = 0; j < authConstraints.getLength(); j++ )
+                rolematch = true;
+            }
+            else
+            {
+                NodeList authConstraints = constraint.getElementsByTagName( "auth-constraint" );
                 {
-                    Element authConstraint = (Element) authConstraints.item( j );
-                    NodeList roleNames = authConstraint.getElementsByTagName( "role-name" );
-                    for( int k = 0; k < roleNames.getLength(); k++ )
+                    roleSearch: for( int j = 0; j < authConstraints.getLength(); j++ )
                     {
-                        Element roleName = (Element) roleNames.item( k );
-                        String roleValue = roleName.getFirstChild().getNodeValue();
-                        if ( roleValue != null && roleValue.trim().equals( role.getName() ) )
+                        Element authConstraint = (Element) authConstraints.item( j );
+                        NodeList roleNames = authConstraint.getElementsByTagName( "role-name" );
+                        for( int k = 0; k < roleNames.getLength(); k++ )
                         {
-                            rolematch = true;
-                            break roleSearch;
+                            Element roleName = (Element) roleNames.item( k );
+                            String roleValue = roleName.getFirstChild().getNodeValue();
+                            if ( roleValue != null && roleValue.trim().equals( role.getName() ) )
+                            {
+                                rolematch = true;
+                                break roleSearch;
+                            }
                         }
                     }
                 }
