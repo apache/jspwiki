@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.47 2005-09-16 21:58:14 jalkanen Exp $
+    $Id: build.xml,v 1.48 2005-09-17 18:42:42 arj Exp $
 -->    
        
 <!--   
@@ -265,33 +265,15 @@
 
   <!--  Builds the jar of all compiled class files -->
 
-  <target name="jar" depends="compile,installinit,sign-init,createjks,jkspassword">
-
+  <target name="jar" depends="compile,sign-init">
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
       </jar>
-      
-      <echo message="Signing code with this certificate: ${jks.keystore}" />
-      <exec dir="${basedir}" executable="keytool" failonerror="true">
-         <arg line="-list"/>
-         <arg line="-v"/>
-         <arg line="-alias"/>
-         <arg line="${jks.alias}"/>
-         <arg line="-keystore"/>
-         <arg line="${jks.keystore}"/>
-         <arg line="-storepass"/>
-         <arg line="${jks.password}"/>
-      </exec>
-      <signjar jar="${jarfile}" alias="jspwiki" keystore="${jks.keystore}"
-      storepass="${jks.password}" verbose="false"/>
-      
-      <copy file="${jks.keystore}" toDir="tests/etc" />
-
+      <sign-jar jar="${jarfile}" />
   </target>
 
-  <target name="jartests" depends="compiletests,installinit,sign-init,createjks,jkspassword">
-
+  <target name="jartests" depends="compiletests,sign-init">
     <jar jarfile="${testjarfile}" update="false">
       <fileset dir="${tests.build}">
         <include name="**/*.class"/>
@@ -300,12 +282,7 @@
         <include name="com/**/*.properties"/>
       </fileset>
     </jar>
-
-    <signjar jar="${testjarfile}"
-             keystore="${jks.keystore}"
-             storepass="${jks.password}"
-             alias="${jks.alias}" />
-
+    <sign-jar jar="${testjarfile}" />
   </target>
 
   <!--  Builds a Web Archive - basically a JAR file which
@@ -349,7 +326,7 @@
    description="Creates an opened JSPWiki war hierarhcy into the build dir.">
 
     <mkdir dir="${code.build}/${ant.project.name}" />
-    <unzip src="${install.fulldir}/${ant.project.name}.war"
+    <unzip src="${warfile}"
            dest="${code.build}/${ant.project.name}" />
 
   </target>
@@ -429,6 +406,19 @@
    -->
   <target name="tests" depends="jar,jartests"
           description="Runs the JUnit tests.">
+
+    <!-- Build up the /etc directory for testing -->
+    <delete file="tests/etc/userdatabase.xml" />
+    <delete file="tests/etc/userdatabase.xml.old" />
+    <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml" />
+    <mkdir dir="tests/etc/WEB-INF" />
+    <copy file="${basedir}/etc/web.xml" tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
+    
+    <!-- For testing, turn on container auth -->
+    <replace file="tests/etc/WEB-INF/web.xml"
+             token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+    <replace file="tests/etc/WEB-INF/web.xml"
+             token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
 
     <junit printsummary="yes" haltonfailure="no" fork="yes">
         <classpath>
@@ -614,18 +604,21 @@
     </tar>
   </target>
  
-  <!-- Code signing targets for enforcing J2SE security policy -->
+  <!-- ============================================================== -->
   
-  <target name="sign-init">
+  <!-- Targets for signing JAR files -->
+  
+  <!-- These targets collectively create a Java keystore for signing,
+       and automate the jar-signing process.
+  -->
+  <target name="sign-init" depends="installinit,jks-init,jks-create,jks-password" />
+  
+  <target name="jks-init">
     <property name="jks.alias" value="jspwiki" />
     <available file="${jks.keystore}" property="jks.exists" />
   </target>
   
-  <target name="jkspassword" unless="jks.password">
-    <input message="Keystore password:" addproperty="jks.password" />
-  </target>
-  
-  <target name="createjks" unless="jks.exists">
+  <target name="jks-create" unless="jks.exists">
     <echo>
 JSPWiki needs a digital certificate for code signing its JAR files. 
 Since you don't appear to have one, we need to generate a new certificate.
@@ -659,5 +652,28 @@ To automate the JAR signing processs, you can add the property
       <arg line="'cn=${jks.cn}, ou=JSPWiki Code Signing Division, o=${jks.o}, c=${jks.c}'"/>
     </exec>
   </target>
- 
+
+  <target name="jks-password" unless="jks.password">
+    <input message="Keystore password:" addproperty="jks.password" />
+  </target>
+  
+  <macrodef name="sign-jar">
+     <attribute name="jar"/>
+     <sequential>
+        <echo message="Signing code with this certificate: ${jks.keystore}" />
+        <exec dir="${basedir}" executable="keytool" failonerror="true">
+           <arg line="-list"/>
+           <arg line="-v"/>
+           <arg line="-alias"/>
+           <arg line="${jks.alias}"/>
+           <arg line="-keystore"/>
+           <arg line="${jks.keystore}"/>
+           <arg line="-storepass"/>
+           <arg line="${jks.password}"/>
+        </exec>
+        <signjar jar="@{jar}" alias="jspwiki" keystore="${jks.keystore}"
+        storepass="${jks.password}" verbose="false"/>
+     </sequential>
+  </macrodef>
+   
 </project>
