@@ -1,0 +1,198 @@
+Prerequisites for Tests:
+-----------------------
+Create test wikipages dir, and copy all existing wikipages into it.
+Configure jspwiki.properties to use this pages directory.
+
+For container-managed auth:
+Set up tomcat-users with these users:
+  <user username="arj" password="tomcat" roles="Authenticated"/>
+  <user username="admin" password="tomcat" roles="Admin"/>
+Configure container for SSL.
+
+Teardown for Tests:
+------------------
+In test pages directory:
+- Copy fresh Main.txt.
+- Delete Main.properties
+- Delete Main-att
+- Delete page GroupTest.txt
+- Delete pages NewBlog*.*
+Remove all users from userdatabase.xml.
+
+Custom Auth Tests:
+-----------------
+Start JSPWiki with custom auth.
+As anonymous user:
+
+1) Anonymous page view test
+a. Go to home page (/ or Wiki.jsp). Should show Main
+b. Click on More info... then Management tab. Should not see the rename page field.
+c. View Page Index (Wiki.jsp?page=PageIndex)
+d. Click 'Find Pages' (Search.jsp): find 'security': 6 results
+
+2) Anonymous page modification tests
+a. Click on Main. Edit; add "Anonymous test" to top and save. Click on More Info. See saved time.
+b. Try renaming page: Rename.jsp?page=Main. Should be redirected to login page.
+   Go to Main again. Page should still be available.
+c. Add a comment to Main (http://localhost:8080/content/Comment.jsp?page=Main)
+
+This is an anonymous comment.
+
+Save. See the comment, with IP address.
+d. Upload file to Main. Should be allowed. See it on the page.
+e. Try deleting page: Delete.jsp?page=Main. Should be redirected to login page.
+   Go to Main again. Page should still be available.
+
+3) Registration test
+a. Click on Register page
+   Create new user:
+     loginname: arj
+     password: password
+     wiki name: AndyJ
+     full name: Andrew Jaquith
+     email: arj@example.com
+   Save. Go to Main
+   Should see "G'day, Andrew Jaquith (authenticated)"
+   
+b. Click on Edit Your Profile.
+   Should see login name, wiki name, full name read-only; password and email
+   editable
+
+c. Manually navigate to Register.jsp. Should redirect to EditPreferences.jsp
+
+4) Authenticated page modification tests
+a. Click on Main. Edit; add "Authenticated test" to top and save.
+   Click on More Info. See saved time.
+b. Navigate to Main. Click Management tab. See the rename page field.
+   Rename page to Main2 and save. Should see Main2 at top.
+   Rename page back to Main. Should see Main at top.
+c. Add a comment to Main (http://localhost:8080/content/Comment.jsp?page=Main)
+
+This is an authenticated comment.
+
+Save. See the comment, with the wikiName Andrew Jaquith (obtained from login)
+
+d. Upload file to Main. Should be allowed. See it on the page.
+
+5) Authenticated group creation
+a. Click NewGroup.jsp. Create new group with name Test,
+   with members Andrew Jaquith. Save.
+   Fetch GroupTest. Should see "This is a wiki group. Edit this page
+   to see its members."
+b. Edit GroupTest. Append ''Group description goes here...''. Save.
+   Verify new text appears.
+
+6) Access control test
+a. Log out & clear cookies. Try accessing GroupTest. Should redirect to Login page.
+b. Login as arj. Should redirect to GroupTest and allow editing.
+
+7) Blog tests
+a. As arj, Create new page NewBlog. Add this text:
+
+[{ALLOW view All}]
+[{ALLOW edit AndyJ}]
+This is my blog:
+[{WeblogPlugin days=14}]
+
+Click here to create a new blog: [{WeblogEntryPlugin}]
+
+Save. Should succeeed.
+
+b. Add a new blog entry:
+>>>>>Note: the URL Constructor seems to be b0rked at the moment<<<<<<
+
+!Test blog entry
+This is my new blog.
+
+Save. Should succeed. Go back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
+c. Log out. Navigate back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
+
+
+Container-Managed Auth Tests:
+----------------------------
+
+As anonymous user:
+
+1) Anonymous page view test
+a. Go to home page (/ or Wiki.jsp). Should show Main
+b. Click on More info... then Management tab. Should not see the rename page field.
+c. View Page Index (Wiki.jsp?page=PageIndex)
+d. Click 'Find Pages' (Search.jsp): find 'security': 6 results
+
+2) Anonymous page modification tests
+a. Try Editing page Main. Should be redirected to login page.
+   Go to Main again. Page should still be available.
+b. Try renaming page: Rename.jsp?page=Main. Should be redirected to login page.
+   Go to Main again. Page should still be available.
+c. Add a comment to Main (http://localhost:8080/content/Comment.jsp?page=Main)
+   Should redirect to login page. 
+d. Upload file to Main. Should redirect to login page. 
+e. Try deleting page: Delete.jsp?page=Main. Should be redirected to login page.
+   Go to Main again. Page should still be available.
+
+3) Registration test
+a. Click on Register page. Should be redirected to login page.
+   Log in as user arj, password tomcat.
+   Create new user:
+     wiki name: AndyJ
+     full name: Andrew Jaquith
+     email: arj@example.com
+   Save. Go to Main
+   Should see "G'day, AndyJ"
+   
+b. Click on Edit Your Profile.
+   Should see login name, wiki name, full name read-only; password and email editable 
+   
+c. Manually navigate to Register.jsp. Should redirect to EditPreferences.jsp
+
+4) Authenticated page modification tests
+a. Click on Main. Edit; add "Authenticated test" to top and save.
+   Click on More Info. See saved time.
+b. Navigate to Main. Click Management tab. See the rename page field.
+   Rename page to Main2 and save. Should see Main2 at top.
+   Rename page back to Main. Should see Main at top.
+c. Add a comment to Main (http://localhost:8080/content/Comment.jsp?page=Main)
+
+This is an authenticated comment.
+
+Save. See the comment, with the wikiName AndyJ (obtained from login)
+
+d. Upload file to Main. Should be allowed. See it on the page.
+
+5) Authenticated group creation
+a. Click NewGroup.jsp. Create new group with name Test,
+   with members Andrew Jaquith. Save.
+   Fetch GroupTest. Should see "This is a wiki group. Edit this page
+   to see its members."
+b. Edit GroupTest. Append ''Group description goes here...''. Save.
+   Verify new text appears.
+
+6) Access control test
+a. Log out & clear cookies. Try accessing GroupTest. Should redirect to Login page.
+b. Login as arj. Should redirect to GroupTest and allow editing.
+>>>>>>> Error when using 8080: direct reference to Login.jsp. The culprit is URL constructors that specify context LOGIN which points to Login.jsp. This is fine, but what we need to protect Login.jsp
+as a resource. Solution for 2.3 20+: move Login.jsp logic to LoginForm.jsp. Then, in Login.jsp in first bits of
+code, include LoginForm.jsp if NOT cma; post to Login.jsp.
+If successful auth and NOT cma, forward to destination page.
+<<<<<<<
+
+7) Blog tests
+a. As arj, create new page NewBlog. Add this text:
+
+[{ALLOW view All}]
+[{ALLOW edit AndyJ}]
+This is my blog:
+[{WeblogPlugin days=14}]
+
+Click here to create a new blog: [{WeblogEntryPlugin}]
+
+Save. Should succeeed.
+
+b. Add a new blog entry:
+
+!Test blog entry
+This is my new blog.
+
+Save. Should succeed. Go back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
+
+c. Log out. Navigate back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
