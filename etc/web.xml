@@ -132,47 +132,68 @@
    </welcome-file-list>
 
    <!--
-       By default we just limit access to the Delete.jsp, as it
-       is actually dangerous.
+       CONTAINER-MANAGED AUTHENTICATION & AUTHORIZATION
+    
+       Here we define the users which are allowed to access JSPWiki.
+       These restrictions cause the web container to apply further 
+       contraints to the default security policy in jspwiki.policy,
+       and should be suitable for a corporate intranet or public wiki.
+
+       In particular, the restrictions below allow all users to
+       read documents, but only Authenticated users can comment
+       on or edit them (i.e., access the Edit.jsp page).
+       Users with the role Admin are the only persons who can 
+       delete pages. 
+
+       To implement this policy, the container enforces two web
+       resource constraints: one for the Administrator resources,
+       and one for  Authenticated users. Note that the "role-name" 
+       values are significant and should match the role names 
+       retrieved by your web container's security realm. The roles 
+       of "Admin" and "Authenticated" are assigned by the web 
+       container at login time.
+
+       For example, if you are using Tomcat's built-in "memory realm",
+       you should edit the $CATALINA_HOME/conf/tomcat-users.xml file 
+       and add the desired actual user accounts. Each user must possess
+       one or both of the Admin or Authenticated roles. For other realm
+       types, consult your web container's documentation.
+       
+       Alternatively, you could also replace all references to 
+       "Authenticated" and "Admin" with role names that match those 
+       returned by your container's security realm. We don't care
+       either way, as long as they match.
+       
+       Note that accessing protected resources will cause your
+       container to try to use SSL to secure the web session.
+       This, of course, assumes your web container (or web server) 
+       is configured with SSL support. If you do not wish to use SSL,
+       remove the "user-data-constraint" elements.
    -->
 
+   <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH
+   
    <security-constraint>
        <web-resource-collection>
-           <web-resource-name>Protected Area</web-resource-name>
+           <web-resource-name>Administrative Area</web-resource-name>
            <url-pattern>/Delete.jsp</url-pattern>
        </web-resource-collection>
        <auth-constraint>
            <role-name>Admin</role-name>
-           <role-name>Authenticated</role-name>
        </auth-constraint>
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
    </security-constraint>
       
-   <!--
-       Here we define the users which are allowed to access JSPWiki
-       editor.
-
-       I'll provide here an example case where you can set up a Wiki
-       which allows everyone read access, but only authenticated
-       users are allowed to edit (i.e. access the Edit.jsp page).
-
-       To enable this, replace the previous section with this section.
-
-       We setup here two sample roles, "admin" and "user".
-       There is no real difference between these two for now.
-
-       You must also add to your $TOMCAT_HOME/conf/tomcat-users.xml
-       the actual user accounts.
-   -->
-
-   <!--  START OF ACCESS RESTRICTION
    <security-constraint>
        <web-resource-collection>
-           <web-resource-name>Protected Area</web-resource-name>
+           <web-resource-name>Authenticated area</web-resource-name>
            <url-pattern>/Edit.jsp</url-pattern>
            <url-pattern>/Upload.jsp</url-pattern>
            <url-pattern>/Comment.jsp</url-pattern>
-           <url-pattern>/Delete.jsp</url-pattern>
            <url-pattern>/LoginRedirect.jsp</url-pattern>
+           <url-pattern>/Register.jsp</url-pattern>
            <url-pattern>/UserPreferences.jsp</url-pattern>
            <http-method>DELETE</http-method>
            <http-method>GET</http-method>
@@ -200,26 +221,26 @@
    </security-constraint>
 
    <login-config>
-     <auth-method>FORM</auth-method>
-     <form-login-config>
-       <form-login-page>/Login.jsp</form-login-page>
-       <form-error-page>/Login.jsp</form-error-page>
-     </form-login-config>
+       <auth-method>FORM</auth-method>
+       <form-login-config>
+           <form-login-page>/Login.jsp</form-login-page>
+           <form-error-page>/Login.jsp</form-error-page>
+       </form-login-config>
    </login-config>
 
    <security-role>
-     <description>
-       This logical role includes all authenticated users
-     </description>
-     <role-name>Authenticated</role-name>
+       <description>
+           This logical role includes all authenticated users
+       </description>
+       <role-name>Authenticated</role-name>
    </security-role>
 
    <security-role>
-     <description>
-       This logical role includes all administrative users
-     </description>
-     <role-name>Admin</role-name>
+       <description>
+           This logical role includes all administrative users
+       </description>
+       <role-name>Admin</role-name>
    </security-role>
-   -->
-
+   
+   REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  -->
 </web-app>
