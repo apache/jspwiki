@@ -9,13 +9,17 @@ import java.util.Arrays;
  * creating new pages. Permission actions include: <code>createGroups</code>,
  * <code>createPages</code>, <code>registerUser</code> and <code>login</code>.
  * </p>
+ * <p>The target is a given wiki. The syntax for the target is the wiki name. 
+ * "All wikis" can be specified using a wildcard (*). Page
+ * collections may also be specified using a wildcard. For pages, the wildcard
+ * may be a prefix, suffix, or all by itself.
  * <p>
  * Certain permissions imply others. Currently, <code>createGroups</code>
  * implies <code>createPages</code>, and <code>editPreferences</code>
  * implies <code>registerUser</code>.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2005-09-02 23:48:25 $
+ * @version $Revision: 1.10 $ $Date: 2005-09-17 18:21:44 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
@@ -32,6 +36,8 @@ public final class WikiPermission extends Permission
 
     private static final String        PREFERENCES_ACTION   = "editPreferences";
     
+    private static final String        WILDCARD             = "*";
+
     protected static final int         CREATE_GROUPS_MASK   = 0x1;
 
     protected static final int         CREATE_PAGES_MASK    = 0x2;
@@ -42,27 +48,29 @@ public final class WikiPermission extends Permission
     
     protected static final int         LOGIN_MASK           = 0x10;
     
-    public static final WikiPermission CREATE_GROUPS        = new WikiPermission( CREATE_GROUPS_ACTION );
+    public static final WikiPermission CREATE_GROUPS        = new WikiPermission( WILDCARD, CREATE_GROUPS_ACTION );
 
-    public static final WikiPermission CREATE_PAGES         = new WikiPermission( CREATE_PAGES_ACTION );
+    public static final WikiPermission CREATE_PAGES         = new WikiPermission( WILDCARD, CREATE_PAGES_ACTION );
 
-    public static final WikiPermission LOGIN                = new WikiPermission( LOGIN_ACTION );
+    public static final WikiPermission LOGIN                = new WikiPermission( WILDCARD, LOGIN_ACTION );
     
-    public static final WikiPermission REGISTER             = new WikiPermission( REGISTER_ACTION );
+    public static final WikiPermission REGISTER             = new WikiPermission( WILDCARD, REGISTER_ACTION );
 
-    public static final WikiPermission PREFERENCES          = new WikiPermission( PREFERENCES_ACTION );
+    public static final WikiPermission PREFERENCES          = new WikiPermission( WILDCARD, PREFERENCES_ACTION );
     
     private final String               m_actionString;
+    
+    private final String               m_wiki;
 
     private final int                  m_mask;
-
+    
     /**
      * Creates a new WikiPermission for a specified set of actions.
      * @param actions the actions for this permission
      */
-    public WikiPermission( String actions )
+    public WikiPermission( String wiki, String actions )
     {
-        super( actions );
+        super( wiki );
         String pageActions[] = actions.toLowerCase().split( "," );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
@@ -76,11 +84,12 @@ public final class WikiPermission extends Permission
             }
         }
         m_actionString = buffer.toString();
+        m_wiki = ( wiki == null ) ? WILDCARD : wiki;
     }
 
     /**
-     * Two WikiPermission objects are considered equal if their actions (after
-     * normalization) are equal.
+     * Two WikiPermission objects are considered equal if their wikis and actions
+     * (after normalization) are equal.
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public final boolean equals( Object obj )
@@ -90,7 +99,7 @@ public final class WikiPermission extends Permission
             return false;
         }
         WikiPermission p = (WikiPermission) obj;
-        return ( p.m_mask == m_mask );
+        return ( p.m_mask == m_mask && p.m_wiki != null && p.m_wiki.equals( m_wiki ) );
     }
 
     /**
@@ -105,18 +114,22 @@ public final class WikiPermission extends Permission
     }
 
     /**
+     * Returns the name of the wiki containing the page represented by
+     * this permission; may return the wildcard string.
+     * @return the wiki
+     */
+    public final String getWiki()
+    {
+        return m_wiki;
+    }
+
+    /**
      * Returns the hash code for this WikiPermission.
      * @see java.lang.Object#hashCode()
      */
     public final int hashCode()
     {
-        int hash = 0;
-        String actions = getActions();
-        for( int i = 0; i < actions.length(); i++ )
-        {
-            hash += 13 * actions.hashCode();
-        }
-        return hash;
+        return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * m_wiki.hashCode() );
     }
 
     /**
@@ -137,13 +150,16 @@ public final class WikiPermission extends Permission
         {
             return false;
         }
-
-        // Build up an "implied mask"
         WikiPermission p = (WikiPermission) permission;
-        int impliedMask = impliedMask( m_mask );
 
+        // See if the wiki is implied
+        boolean impliedWiki = PagePermission.isSubset( m_wiki, p.m_wiki );
+
+        // Build up an "implied mask" for actions
+        int impliedMask = impliedMask( m_mask );
+        
         // If actions aren't a proper subset, return false
-        return ( ( impliedMask & p.m_mask ) == p.m_mask );
+        return ( impliedWiki && ( impliedMask & p.m_mask ) == p.m_mask );
     }
 
     /**
@@ -152,7 +168,7 @@ public final class WikiPermission extends Permission
      */
     public final String toString()
     {
-        return "(\"" + this.getClass().getName() + "\",\"" + getActions() + "\")";
+        return "(\"" + this.getClass().getName() + "\",\"" + m_wiki + "\",\"" + getActions() + "\")";
     }
 
     /**
