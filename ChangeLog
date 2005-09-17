@@ -1,3 +1,83 @@
+2005-09-17  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.21
+
+        * Added a simple web test plan to docs.
+        
+        * WikiPermission gains support for wiki namespaces.
+          This introduces what I hope is the "final" tweak 
+          required to jspwiki.policy. The WikiPermission syntax
+          ...PagePermission "*", "registerUser";
+          replaces the previous format. The wiki name may contain
+          This change was made to support wiki farms. See the 
+          WikiPermission Javadoc for more details.
+
+        * PagePermission constructor WikiPage(String,WikiPage,String)
+          eliminated in favor of WikiPage(WikiPage,String) because
+          wiki name is now carried inside WikiPage. This means
+          we don't need to pass the wiki name into the constructor,
+          which is nice and simple. This change was propagated 
+          to 8 other classes and about a half-dozen top-level JSPs.
+
+        * Fixed return values in various WikiContext/WikiSession
+          get*Principal methods so that they return
+          WikiSession.GUEST if not otherwise set. This removes
+          neeed to check for nulls in calling code.
+          (Credit: John Volkar)
+          
+        * Assitional WikiSession/WikiContext cleanup:
+          Fixed bug preventing initial HttpRequest 'login'. 
+          Removed public WikiSession.isUnknown(); was only used
+          by one caller. Also, reduced visibility of 
+          WikiSession.isContainerStatusChanged() to protected.
+          Bug fix: added Role.ALL to guestSession(). 
+          
+        * Rename.jsp now checks for the rename permission
+          before actually undertaking the action. 
+          InfoContent.jsp now checks for the same permission 
+          also when rendering the info page UI for renaming.
+          
+        * Bugfix for NPE in PagePermission.
+        
+        * Much cleanup of web.xml, and tweaked the Ant script
+          to use this during tests (reduces maintenance).
+
+        * build.xml slightly refactored to better account
+          for using signed JARs during test runs.
+          Certain static files (web.xml/policy/jaas/jks)
+          in tests/etc eliminated in favor of dynamic files
+          copied from etc at test-time. This means we only
+          have to maintain one version of each file, instead of two.
+        
+        * WebContainerAuthorizer includes an improved heuristic
+          for detecting CMA. Instead of looking for specific 
+          role names contrained to Register.jsp, Delete.jsp
+          and UserPreferences.jsp, we just look for ANY role.
+          This means you can use your container's preferred
+          role names, instead forcing you to use "Admin" 
+          and "Authenticated".
+        
+        * DefaultGroupManager.getRoles() returns an array of
+          Group[] (downcasted to Principal[] by interface.
+          This should make 'instanceof' checks easier.
+          (Credit: John Volkar)
+        
+        * Bugfix for Register.jsp so that authenticated users
+          who already have profiles are always redirected to
+          EditPreferences. This wasn't a security risk 
+          but it was non-intuitive.
+        
+        * Replaced that old Wiki.jsp favorite, the "looped config"
+          message, with something more appropriate to 2.3.
+          
+        * Weblog plugin now accepts additional parameter for 
+          customizing the date format. It also tries to extract 
+          the "headline" of the blog and puts it at the top of the 
+          entry section.
+    
+        * Tweaks to Ant script to better encapsulate Jar-signing 
+          operations. Also, test-prep activities more automated.
+
 2005-09-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.20
@@ -434,10 +514,10 @@
 
         * Bug fix: Doing two empty searches in a row would cause the
         search_highlight.js to loop and kill the browser.
-        Reported by HolgerHoffstätte.
+        Reported by HolgerHoffst?tte.
         
         * Bug fix: Empty or non-Lucene compliant searches would throw
-        a NullPointerException. Reported by HolgerHoffstätte.
+        a NullPointerException. Reported by HolgerHoffst?tte.
         Fixes BugSearchAlwaysThrowsNPE.
         
         * Bug fix: It was impossible to use the InsertPage plugin to
