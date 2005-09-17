@@ -77,7 +77,7 @@ public class InsertPage
                 AuthorizationManager mgr = engine.getAuthorizationManager();
 
                 if( !mgr.checkPermission( context.getWikiSession(),
-                                          new PagePermission( page.getWiki(), page, "view") ) )
+                                          new PagePermission( page, "view") ) )
                 {
                     res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
                     return res.toString();

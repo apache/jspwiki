@@ -54,7 +54,7 @@
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
 
-    Permission requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "comment" );
+    Permission requiredPermission = new PagePermission( wikipage, "comment" );
     if( !mgr.checkPermission( wikiSession,
                               requiredPermission ) )
     {

@@ -74,7 +74,7 @@
     //
     if( wiki.pageExists( wikipage ) )
     {
-        requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "edit" );
+        requiredPermission = new PagePermission( wikipage, "edit" );
     }
     else
     {

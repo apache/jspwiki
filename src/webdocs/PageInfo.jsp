@@ -30,7 +30,7 @@
     AuthorizationManager mgr = wiki.getAuthorizationManager();
     Principal currentUser  = wikiContext.getWikiSession().getUserPrincipal();
     WikiPage wikipage = wikiContext.getPage();
-    Permission requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "view" );
+    Permission requiredPermission = new PagePermission( wikipage, "view" );
 
     if( !mgr.checkPermission( wikiContext.getWikiSession(),
                               requiredPermission ) )

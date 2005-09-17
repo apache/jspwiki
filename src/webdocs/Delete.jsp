@@ -44,7 +44,7 @@
 
     AuthorizationManager mgr = wiki.getAuthorizationManager();
     Principal currentUser  = wikiContext.getCurrentUser();
-    Permission requiredPermission = new PagePermission( wikipage.getWiki(), wikipage, "delete" );
+    Permission requiredPermission = new PagePermission( wikipage, "delete" );
 
     if( !mgr.checkPermission( wikiContext.getWikiSession(),
                               requiredPermission ) )
