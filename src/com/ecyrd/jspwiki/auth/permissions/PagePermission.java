@@ -37,7 +37,7 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * <i>never </i> imply others.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-09-02 23:47:52 $
+ * @version $Revision: 1.5 $ $Date: 2005-09-17 18:21:06 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
@@ -151,9 +151,9 @@ public final class PagePermission extends Permission
      * @param page
      * @param actions
      */
-    public PagePermission( String wiki, WikiPage page, String actions )
+    public PagePermission( WikiPage page, String actions )
     {
-        this( wiki + WIKI_SEPARATOR + page.getName(), actions );
+        this( page.getWiki() + WIKI_SEPARATOR + page.getName(), actions );
     }
 
     /**
@@ -169,7 +169,7 @@ public final class PagePermission extends Permission
         }
         PagePermission p = (PagePermission) obj;
         return ( p.m_mask == m_mask && p.m_page.equals( m_page ) 
-                 && p.m_wiki.equals( m_wiki ));
+                 && p.m_wiki != null && p.m_wiki.equals( m_wiki ));
     }
 
     /**
@@ -208,13 +208,7 @@ public final class PagePermission extends Permission
      */
     public final int hashCode()
     {
-        int hash = m_mask;
-        String actions = getActions();
-        for( int i = 0; i < actions.length(); i++ )
-        {
-            hash += 13 * actions.hashCode();
-        }
-        return hash;
+        return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * m_wiki.hashCode() );
     }
 
     /**
@@ -330,7 +324,7 @@ public final class PagePermission extends Permission
      * @return the results of the test, where <code>true</code> indicates that
      *         <code>subSet</code> is a subset of <code>superSet</code>
      */
-    protected final boolean isSubset( String superSet, String subSet )
+    protected static final boolean isSubset( String superSet, String subSet )
     {
         // If either is null, return false
         if ( superSet == null || subSet == null )
