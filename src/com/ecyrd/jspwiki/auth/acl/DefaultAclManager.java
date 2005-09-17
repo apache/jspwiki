@@ -17,7 +17,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 /**
  * Default implementation that parses Acls from wiki page markup.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-09-02 23:56:29 $
+ * @version $Revision: 1.5 $ $Date: 2005-09-17 18:15:36 $
  * @since 2.3
  */
 public class DefaultAclManager implements AclManager
@@ -54,7 +54,6 @@ public class DefaultAclManager implements AclManager
      */
     public Acl parseAcl( WikiPage page, String ruleLine ) throws WikiSecurityException
     {
-        String wiki = page.getWiki();
         Acl acl = page.getAcl();
         if ( acl == null )
             acl = new AclImpl();
@@ -75,7 +74,7 @@ public class DefaultAclManager implements AclManager
                 if ( oldEntry != null )
                 {
                     log.debug( "Adding to old acl list: " + principal + ", " + actions );
-                    oldEntry.addPermission( new PagePermission( wiki, page, actions ) );
+                    oldEntry.addPermission( new PagePermission( page, actions ) );
                 }
                 else
                 {
@@ -83,7 +82,7 @@ public class DefaultAclManager implements AclManager
                     AclEntry entry = new AclEntryImpl();
 
                     entry.setPrincipal( principal );
-                    entry.addPermission( new PagePermission( wiki, page, actions ) );
+                    entry.addPermission( new PagePermission( page, actions ) );
 
                     acl.addEntry( entry );
                 }
