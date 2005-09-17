@@ -48,7 +48,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-09-02 23:52:14 $
+ * @version $Revision: 1.6 $ $Date: 2005-09-17 18:17:03 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -166,7 +166,7 @@ public class DefaultGroupManager implements GroupManager
      */
     public Principal[] getRoles()
     {
-        return (Principal[])m_groups.values().toArray(new Group[m_groups.size()]);
+        return (Group[])m_groups.values().toArray(new Group[m_groups.size()]);
     }
     
     /**
