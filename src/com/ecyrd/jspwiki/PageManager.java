@@ -267,9 +267,9 @@ public class PageManager
 
         synchronized( m_pageLocks )
         {
-            m_pageLocks.remove( lock.getPage().getName() );
+            m_pageLocks.remove( lock.getPage() );
 
-            log.debug( "Unlocked page "+lock.getPage().getName() );
+            log.debug( "Unlocked page "+lock.getPage() );
         }
     }
 
@@ -446,7 +446,7 @@ public class PageManager
                             {
                                 i.remove();
 
-                                log.debug( "Reaped lock: "+p.getPage().getName()+
+                                log.debug( "Reaped lock: "+p.getPage()+
                                            " by "+p.getLocker()+
                                            ", acquired "+p.getAcquisitionTime()+
                                            ", and expired "+p.getExpiryTime() );

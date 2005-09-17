@@ -59,7 +59,7 @@ public class ListLocksPlugin
                 PageLock lock = (PageLock) i.next();
 
                 result.append("<tr>");
-                result.append("<td>"+lock.getPage().getName()+"</td>");
+                result.append("<td>"+lock.getPage()+"</td>");
                 result.append("<td>"+lock.getLocker()+"</td>");
                 result.append("<td>"+lock.getAcquisitionTime()+"</td>");
                 result.append("<td>"+lock.getExpiryTime()+"</td>");
