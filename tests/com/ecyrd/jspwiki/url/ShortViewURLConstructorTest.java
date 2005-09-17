@@ -120,6 +120,22 @@ public class ShortViewURLConstructorTest extends TestCase
         assertEquals( "/mywiki/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",false,null) );
     }
 
+    public void testOtherURL1()
+        throws Exception
+    {
+        URLConstructor c = getConstructor( "http://localhost/mywiki/", null );
+
+        assertEquals( "http://localhost/mywiki/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",true,null) );
+    }
+    
+    public void testOtherURL2()
+        throws Exception
+    {
+        URLConstructor c = getConstructor( "http://localhost/mywiki/dobble/", null );
+    
+        assertEquals( "http://localhost/mywiki/dobble/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp",true,"a=1&amp;b=2") );
+    }
+
     public static Test suite()
     {
         return new TestSuite( ShortViewURLConstructorTest.class );
