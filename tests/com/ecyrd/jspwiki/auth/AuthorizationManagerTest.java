@@ -302,10 +302,10 @@ public class AuthorizationManagerTest extends TestCase
         m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
         assertTrue( "Charlie view", 
                     mgr.checkPermission( m_session,
-                                     new PagePermission( wiki, p, "view" ) ) );
+                                     new PagePermission( p, "view" ) ) );
         assertTrue( "Charlie edit", 
                     mgr.checkPermission( m_session,
-                                      new PagePermission( wiki, p, "edit" ) ) );
+                                      new PagePermission( p, "edit" ) ) );
 
         // Bob is logged in
         principal = new WikiPrincipal( "Bob");
@@ -313,9 +313,9 @@ public class AuthorizationManagerTest extends TestCase
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
         assertTrue( "Bob view", mgr.checkPermission( m_session,
-                new PagePermission( wiki, p, "view" ) ) );
+                new PagePermission( p, "view" ) ) );
         assertTrue( "Bob edit", mgr.checkPermission( m_session,
-                new PagePermission( wiki, p, "edit" ) ) );
+                new PagePermission( p, "edit" ) ) );
 
         // Cleanup
         try
@@ -391,8 +391,8 @@ public class AuthorizationManagerTest extends TestCase
         m_session.getSubject().getPrincipals().clear();
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "view" ) ) );
-        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "edit" ) ) );
+        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
         assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
         assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
 
@@ -401,8 +401,8 @@ public class AuthorizationManagerTest extends TestCase
         m_session.getSubject().getPrincipals().clear();
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "view" ) ) );
-        assertFalse( "Bar !view Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "edit" ) ) );
+        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertFalse( "Bar !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
         assertTrue( "Bar view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
         assertTrue( "Bar !edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
         
@@ -425,15 +425,14 @@ public class AuthorizationManagerTest extends TestCase
         WikiPage p = m_engine.getPage( "Test" );
         m_context = new WikiContext( m_engine, p );
         m_session = m_context.getWikiSession();
-        String wiki = m_engine.getApplicationName();
 
         // Authenticated is in the ACL and can view and edit
         Principal principal = new WikiPrincipal( "Foo" );
         m_session.getSubject().getPrincipals().clear();
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "view" ) ) );
-        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "edit" ) ) );
+        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
         assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
         assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
 
@@ -442,8 +441,8 @@ public class AuthorizationManagerTest extends TestCase
         m_session.getSubject().getPrincipals().clear();
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "view" ) ) );
-        assertFalse( "Bar edit Test", m_auth.checkPermission( m_session, new PagePermission( wiki, p, "edit" ) ) );
+        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertFalse( "Bar edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
         
         // Cleanup
         try
