@@ -2,6 +2,10 @@
 
         * v2.3.20
 
+        * Both default ShortURLConstructors now check if the NONE
+        -context already has some parameters.  Requested by 
+        Erik Bunn.
+
         * PageLock is now serializable.  This should reduce some
         warnings on some containers.
 
