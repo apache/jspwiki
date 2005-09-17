@@ -66,6 +66,14 @@
     
     // Extract the user profile and action attributes
     UserProfile profile = userMgr.parseProfile( wikiContext );
+    
+    // If user already authenticated and has profile, redirect to prefs
+    if ( isAuthenticated && !profile.isNew() ) 
+    {
+        log.info("User "+wikiContext.getCurrentUser()+" profile already exists; redirecting to prefs.");
+        response.sendRedirect( wiki.getBaseURL()+"UserPreferences.jsp" );
+    }
+    
     String ok = request.getParameter("ok");
 
     if( ok != null || "save".equals(request.getParameter("action")) )
