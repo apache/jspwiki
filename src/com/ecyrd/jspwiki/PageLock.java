@@ -1,10 +1,12 @@
 package com.ecyrd.jspwiki;
 
+import java.io.Serializable;
 import java.util.Date;
 
 public class PageLock
+    implements Serializable
 {
-    private WikiPage m_page;
+    private String   m_page;
     private String   m_locker;
     private Date     m_lockAcquired;
     private Date     m_lockExpiry;
@@ -14,13 +16,13 @@ public class PageLock
                      Date acquired,
                      Date expiry )
     {
-        m_page         = page;
+        m_page         = page.getName();
         m_locker       = locker;
         m_lockAcquired = acquired;
         m_lockExpiry   = expiry;
     }
 
-    public WikiPage getPage()
+    public String getPage()
     {
         return m_page;
     }
