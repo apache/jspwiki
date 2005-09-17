@@ -1,2 +1,7 @@
 jspwiki*.properties
+jspwiki.jaas
 jspwiki.jks
+jspwiki.policy
+userdatabase.xml
+userdatabase.xml.old
+WEB-INF
