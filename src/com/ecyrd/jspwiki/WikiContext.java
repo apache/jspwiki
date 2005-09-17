@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -147,15 +148,15 @@ public class WikiContext
         m_page   = page;
         m_realPage = page;
         
-        // Stash the wiki context in the session as the "last context"
-        m_session.setLastContext( this );
-
-        // Associate the wikiSession with this context
-        // and associate a Subject with the session if it isn't there already
-        if ( m_session.isUnknown() || m_session.isContainerStatusChanged( request ) )
+        // Log in the user if new session or the container status changed
+        boolean doLogin = ( (request != null) && m_session.getLastContext() == null );
+        if ( doLogin || m_session.isContainerStatusChanged( request ) )
         {
             engine.getAuthenticationManager().login( request );
         }
+
+        // Stash the wiki context in the session as the "last context"
+        m_session.setLastContext( this );
     }
 
     /**
@@ -327,7 +328,8 @@ public class WikiContext
     {
         if (m_session == null) 
         {
-            return null;
+            // This shouldn't happen, really...
+            return WikiPrincipal.GUEST;
         }
         return m_session.getUserPrincipal();
     }

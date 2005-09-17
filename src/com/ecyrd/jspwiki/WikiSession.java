@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
 
 /**
  * Represents a long-running wiki session, with an associated user Principal,
@@ -22,7 +23,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.5 $ $Date: 2005-09-03 00:07:02 $
+ * @version $Revision: 2.6 $ $Date: 2005-09-17 18:11:03 $
  */
 public class WikiSession
 {
@@ -144,20 +145,22 @@ public class WikiSession
      * <p>
      * Returns the Principal used to log in to an authenticated session. The
      * login principal is determined by examining the Subject's Principal set
-     * for WikiPrincipals; the first one with type designator
-     * <code>LOGIN_NAME</code></li>
+     * for PrincipalWrappers or WikiPrincipals with type designator
+     * <code>LOGIN_NAME</code>; the first one found
      * is the login principal. If one is not found, this method returns the
      * first principal that isn't of type Role. If neither of these conditions
-     * hold, this method returns <code>null</code>.
+     * hold, this method returns {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
      * 
-     * @return the login Principal
+     * @return the login Principal. If it is a PrincipalWrapper containing an
+     * externally-provided Principal, the object returned is the Principal,
+     * not the wrapper around it.
      */
     public Principal getLoginPrincipal()
     {
         Set principals = m_subject.getPrincipals();
         Principal secondChoice = null;
 
-        // Take the first WikiPrincipal of type LOGIN_NAME
+        // Take the first PrincipalWrapper or WikiPrincipal of type LOGIN_NAME
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
@@ -171,13 +174,17 @@ public class WikiSession
                         return currentPrincipal;
                     }
                 }
+                else if ( currentPrincipal instanceof PrincipalWrapper )
+                {
+                    return ((PrincipalWrapper)currentPrincipal).getPrincipal();
+                }
                 if( secondChoice == null )
                 {
                     secondChoice = currentPrincipal;
                 }
             }
         }
-        return secondChoice;
+        return ( secondChoice == null ? WikiPrincipal.GUEST : secondChoice );
     }
     
     /**
@@ -190,7 +197,8 @@ public class WikiSession
      *   <li>For all other cases, the first Principal in the Subject's principal
      *       collection that that isn't of type Role is the primary.</li>
      * </ol> 
-     * If no primary user Principal is found, this method returns <code>null</code>.
+     * If no primary user Principal is found, this method returns
+     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
      * @return the primary user Principal
      */
     public Principal getUserPrincipal()
@@ -217,13 +225,17 @@ public class WikiSession
                         return currentPrincipal;
                     }
                 }
+                if ( currentPrincipal instanceof PrincipalWrapper )
+                {
+                    currentPrincipal = ((PrincipalWrapper)currentPrincipal).getPrincipal();
+                }
                 if( secondChoice == null )
                 {
                     secondChoice = currentPrincipal;
                 }
             }
         }
-        return secondChoice;
+        return ( secondChoice == null ? WikiPrincipal.GUEST : secondChoice );
     }
 
     /**
@@ -247,18 +259,6 @@ public class WikiSession
             }
         }
         return (Principal[])principals.toArray(new Principal[principals.size()]);
-    }
-
-    /**
-     * Identifies whether the WikiSession's Subject is currently unknown to the
-     * application. This will return <code>true</code> if the size of the
-     * Subject's Principal collection is 0.
-     * @return <code>true</code> if the subject contains zero principals,
-     *         <code>false</code> otherwise
-     */
-    public boolean isUnknown()
-    {
-        return ( m_subject.getPrincipals().size() == 0 );
     }
 
     /**
@@ -291,6 +291,7 @@ public class WikiSession
         WikiSession session = new WikiSession();
         session.getSubject().getPrincipals().add( WikiPrincipal.GUEST );
         session.getSubject().getPrincipals().add( Role.ANONYMOUS );
+        session.getSubject().getPrincipals().add( Role.ALL );
         return session;
     }
     
@@ -325,7 +326,7 @@ public class WikiSession
         }
         else
         {
-            wikiSession = new WikiSession();
+            wikiSession = guestSession();
             c_sessions.put( session, wikiSession );
         }
         return wikiSession;
@@ -341,7 +342,7 @@ public class WikiSession
      * @return <code>true</code> if the status has changed, <code>false</code>
      *         otherwise
      */
-    public boolean isContainerStatusChanged( HttpServletRequest request )
+    protected boolean isContainerStatusChanged( HttpServletRequest request )
     {
         if ( request == null )
         {
