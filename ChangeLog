@@ -7,10 +7,10 @@
         * WikiPermission gains support for wiki namespaces.
           This introduces what I hope is the "final" tweak 
           required to jspwiki.policy. The WikiPermission syntax
-          ...PagePermission "*", "registerUser";
+          ...WikiPermission "*", "registerUser";
           replaces the previous format. The wiki name may contain
-          This change was made to support wiki farms. See the 
-          WikiPermission Javadoc for more details.
+          wildcards. This change was made to support wiki farms. 
+          See the WikiPermission Javadoc for more details.
 
         * PagePermission constructor WikiPage(String,WikiPage,String)
           eliminated in favor of WikiPage(WikiPage,String) because
