@@ -64,6 +64,8 @@ import http.utils.multipartrequest.*;
 public class AttachmentServlet
     extends WebdavServlet
 {
+    private static final long serialVersionUID = 3257282552187531320L;
+    
     private WikiEngine m_engine;
     Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -187,7 +189,7 @@ public class AttachmentServlet
                 //  Check if the user has permission for this attachment
                 //
 
-                Permission permission = new PagePermission(att.getWiki(), att, "view");
+                Permission permission = new PagePermission( att, "view" );
                 if( !authmgr.checkPermission( context.getWikiSession(), permission ) )
                 {
                     log.debug("User does not have permission for this");
@@ -547,7 +549,7 @@ public class AttachmentServlet
         //  Check if we're allowed to do this?
         //
         
-        Permission permission = new PagePermission(att.getWiki(), att, "upload");
+        Permission permission = new PagePermission( att, "upload" );
         if( m_engine.getAuthorizationManager().checkPermission( context.getWikiSession(),
                                                                 permission ) )
         {
