@@ -1,5 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -34,6 +36,19 @@
 
     WikiContext wikiContext = new WikiContext( wiki, request, wiki.getPage(pagereq) );
     wikiContext.setRequestContext( WikiContext.ERROR );
+
+    // Check for the "rename" permission
+    AuthorizationManager mgr= wiki.getAuthorizationManager();
+    if( !mgr.checkPermission(  wikiContext.getWikiSession(),
+                               new PagePermission(wiki.getPage(renameFrom), "rename" ) ) )
+    {
+        log.info("User "+wikiContext.getCurrentUser()+" has no access - redirecting to login page.");
+        String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
+        wikiContext.setVariable( "msg", msg );
+        String pageurl = wiki.encodeName( pagereq );
+        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
+        return;
+    }
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
 
