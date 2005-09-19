@@ -1,3 +1,30 @@
+2005-09-19  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.22
+        
+        * Added patch from John Volkar to: 
+        
+        * Puts a catch block in DifferenceManager in case 
+  		an underlying provider throws.
+
+		* Adds some unit tests
+
+		* Handles whitespace "better" (see the tests), words and 
+		whitespace are both elements that get diffed.  Whitespace 
+  		edits show up in the diff output. (This is an interesting point of 
+  		debate, after bruising battles whitespace in wiki-text is 
+  		significant and deserves to be diffed. Consider two lines '* foo' 
+  		and ' * foo')
+
+		* Adds a optional property 
+        'jspwiki.contextualDiffProvider.unchangedContextLimit" that 
+  		is the number of *elements* to be emitted before and after 
+  		each change. (element=word or space or newline, so if you 
+ 		want ~50 'words' of leading context set the limit to 100)
+  		This defaults to a huge number, so it essentially doesn't
+  		serve as much of a limit (Preserves a 1 word change in 10 
+  		pages by default returns the whole 10 pages.)
+
 2005-09-17  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.21
