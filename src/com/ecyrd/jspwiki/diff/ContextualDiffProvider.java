@@ -1,7 +1,7 @@
 /* 
    JSPWiki - a JSP-based WikiWiki clone.
 
-   Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+   Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -26,15 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.commons.jrcs.diff.AddDelta;
-import org.apache.commons.jrcs.diff.ChangeDelta;
-import org.apache.commons.jrcs.diff.Chunk;
-import org.apache.commons.jrcs.diff.DeleteDelta;
-import org.apache.commons.jrcs.diff.Delta;
-import org.apache.commons.jrcs.diff.Diff;
-import org.apache.commons.jrcs.diff.DifferentiationFailedException;
-import org.apache.commons.jrcs.diff.Revision;
-import org.apache.commons.jrcs.diff.RevisionVisitor;
+import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.log4j.Logger;
 
@@ -57,6 +49,8 @@ public class ContextualDiffProvider implements DiffProvider
 {
 
     private static final Logger log = Logger.getLogger( ContextualDiffProvider.class );
+
+    public static final String PROP_UNCHANGED_CONTEXT_LIMIT = "jspwiki.contextualDiffProvider.unchangedContextLimit";
 
     //TODO all of these publics can become jspwiki.properties entries...
     //TODO span title= can be used to get hover info...
@@ -81,6 +75,16 @@ public class ContextualDiffProvider implements DiffProvider
     private String m_backPostIndex     = "\">&lt;&lt;</a>";
     private String m_forwardPreIndex   = "<a class=\"diff-nextprev\" title=\"Go to next change\" href=\"#change-";
     private String m_forwardPostIndex  = "\">&gt;&gt;</a>";
+    public String m_elidedHeadIndicatorHtml = "<br/><br/><b>...</b>";
+    public String m_elidedTailIndicatorHtml = "<b>...</b><br/><br/>";
+    public String m_lineBreakHtml = "<br />";
+    public String m_alternatingSpaceHtml = "&nbsp;";
+    
+    // This one, I will make property file based...
+    private static final int LIMIT_MAX_VALUE = (Integer.MAX_VALUE /2) - 1;
+    private int m_unchangedContextLimit = LIMIT_MAX_VALUE;
+
+
 
     public ContextualDiffProvider()
     {}
@@ -97,9 +101,24 @@ public class ContextualDiffProvider implements DiffProvider
      * @see com.ecyrd.jspwiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine,
      *      java.util.Properties)
      */
-    public void initialize( WikiEngine engine, Properties properties ) 
-        throws NoRequiredPropertyException, IOException
-    {}
+    public void initialize(WikiEngine engine, Properties properties) throws NoRequiredPropertyException, IOException
+    {
+        String configuredLimit = properties.getProperty(PROP_UNCHANGED_CONTEXT_LIMIT, Integer
+            .toString(LIMIT_MAX_VALUE));
+        int limit = LIMIT_MAX_VALUE;
+        try
+        {
+            limit = Integer.parseInt(configuredLimit);
+        }
+        catch (NumberFormatException e)
+        {
+            log.warn("Failed to parseInt " + PROP_UNCHANGED_CONTEXT_LIMIT + "=" + configuredLimit
+                + "   Will use a huge number as limit.", e);
+        }
+        m_unchangedContextLimit = limit;
+    }
+
+
 
     /**
      * Do a colored diff of the two regions. This. is. serious. fun. ;-)
@@ -128,7 +147,7 @@ public class ContextualDiffProvider implements DiffProvider
 
         int revSize = rev.size();
 
-        StringBuffer sb = new StringBuffer( revSize * 20 ); // Guessing how big it will become...
+        StringBuffer sb = new StringBuffer();
 
         sb.append( m_diffStart );
 
@@ -165,17 +184,20 @@ public class ContextualDiffProvider implements DiffProvider
         {
             String line = linesArray[i];
 
+            String lastToken = null; String token=null;
             // StringTokenizer might be discouraged but it still is perfect here...
-            for( StringTokenizer st = new StringTokenizer( line ); st.hasMoreTokens(); )
+            for (StringTokenizer st = new StringTokenizer( line, " ", true ); st.hasMoreTokens();)
             {
-                list.add( st.nextToken() );
+                token = st.nextToken();
 
-                if( st.hasMoreTokens() )
-                {
-                    list.add( " " );
-                }
+                if(" ".equals( lastToken) && " ".equals( token ))
+                    token = m_alternatingSpaceHtml;
+                
+                list.add(token);
+                lastToken = token;
             }
-            list.add( "<br />" ); // Line Break
+            
+            list.add(m_lineBreakHtml); // Line Break
         }
 
         return (String[])list.toArray( new String[0] );
@@ -196,8 +218,8 @@ public class ContextualDiffProvider implements DiffProvider
 
         private int m_index = 0;
 
-        /** Index of the next line to be copied into the output. */
-        private int m_firstLine = 0;
+        /** Index of the next element to be copied into the output. */
+        private int m_firstElem = 0;
 
         /** Link Anchor counter */
         private int m_count = 1;
@@ -229,18 +251,41 @@ public class ContextualDiffProvider implements DiffProvider
 
             Chunk orig = delta.getOriginal();
 
-            if( orig.first() > m_firstLine )
+            if (orig.first() > m_firstElem)
             {
                 // We "skip" some lines in the output.
                 // So flush out the last Change, if one exists.
-                flush();
+                flushChanges();
 
-                for( int j = m_firstLine; j < orig.first(); j++ )
+                // Allow us to "skip" large swaths of unchanged text, show a "limited" amound of
+                // unchanged context so the changes are shown in
+                if ((orig.first() - m_firstElem) > 2 * m_unchangedContextLimit)
                 {
+                    if (m_firstElem > 0)
+                    {
+                        int endIndex = Math.min( m_firstElem + m_unchangedContextLimit, m_origStrings.length -1 );
+                        
+                        for (int j = m_firstElem; j < endIndex; j++)
+                            m_sb.append(m_origStrings[j]);
+
+                        m_sb.append(m_elidedTailIndicatorHtml);
+                    }
+
+                    m_sb.append(m_elidedHeadIndicatorHtml);
+
+                    int startIndex = Math.max(orig.first() - m_unchangedContextLimit, 0);
+                    for (int j = startIndex; j < orig.first(); j++)
+                        m_sb.append(m_origStrings[j]);
+
+                }
+                else
+                {
+                    // No need to skip anything, just output the whole range...
+                    for (int j = m_firstElem; j < orig.first(); j++)
                     m_sb.append( m_origStrings[j] );
                 }
             }
-            m_firstLine = orig.last() + 1;
+            m_firstElem = orig.last() + 1;
         }
 
         public void visit( Revision rev )
@@ -255,7 +300,7 @@ public class ContextualDiffProvider implements DiffProvider
             // We have run Deletes up to now. Flush them out.
             if( m_mode == 1 )
             {
-                flush();
+                flushChanges();
                 m_mode = -1;
             }
             // We are in "neutral mode". Start a new Change
@@ -294,7 +339,7 @@ public class ContextualDiffProvider implements DiffProvider
             // We have run Adds up to now. Flush them out.
             if( m_mode == 0 )
             {
-                flush();
+                flushChanges();
                 m_mode = -1;
             }
             // We are in "neutral mode". Start a new Change
@@ -314,13 +359,25 @@ public class ContextualDiffProvider implements DiffProvider
         public void shutdown()
         {
             m_index = m_max + 1; // Make sure that no hyperlink gets created
-            flush();
+            flushChanges();
 
-            if( m_firstLine < m_origStrings.length )
+            if (m_firstElem < m_origStrings.length)
             {
-                for( int j = m_firstLine; j < m_origStrings.length; j++ )
+                // If there's more than the limit of the orginal left just emit limit and elided...
+                if ((m_origStrings.length - m_firstElem) > m_unchangedContextLimit)
                 {
+                    int endIndex = Math.min( m_firstElem + m_unchangedContextLimit, m_origStrings.length -1 );
+                    
+                    for (int j = m_firstElem; j < endIndex; j++)
                     m_sb.append( m_origStrings[j] );
+
+                    m_sb.append(m_elidedTailIndicatorHtml);
+                }
+                else
+                // emit entire tail of original...
+                {
+                    for (int j = m_firstElem; j < m_origStrings.length; j++)
+                        m_sb.append(m_origStrings[j]);
                 }
             }
         }
@@ -341,7 +398,9 @@ public class ContextualDiffProvider implements DiffProvider
             }
         }
 
-        private void flush()
+
+
+        private void flushChanges()
         {
 
             if( m_newBuf.length() + m_origBuf.length() > 0 )
@@ -358,9 +417,12 @@ public class ContextualDiffProvider implements DiffProvider
                 }
 
                 // An anchor for the change.
-                m_sb.append( m_anchorPreIndex );
-                m_sb.append( m_count++ );
-                m_sb.append( m_anchorPostIndex );
+                if (m_emitChangeNextPreviousHyperlinks)
+                {
+                    m_sb.append( m_anchorPreIndex );
+                    m_sb.append( m_count++ );
+                    m_sb.append( m_anchorPostIndex );
+                }
 
                 // ... has been added
                 if( m_newBuf.length() > 0 )
@@ -369,8 +431,6 @@ public class ContextualDiffProvider implements DiffProvider
                     m_sb.append( m_newBuf );
                     m_sb.append( m_insertionEndHtml );
                 }
-
-                m_sb.append( " " );
 
                 // .. has been removed
                 if( m_origBuf.length() > 0 )
@@ -389,7 +449,6 @@ public class ContextualDiffProvider implements DiffProvider
                 }
 
                 m_sb.append( m_changeEndHtml );
-                m_sb.append( "\n" );
 
                 // Nuke the buffers.
                 m_origBuf = new StringBuffer();

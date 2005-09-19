@@ -109,11 +109,19 @@ public class DifferenceManager
      */
     public String makeDiff(String firstWikiText, String secondWikiText)
     {
-        String diff = m_provider.makeDiffHtml( firstWikiText, secondWikiText);
+        String diff = null;
+        try
+        {
+            diff = m_provider.makeDiffHtml( firstWikiText, secondWikiText);
         
         if( diff == null )
             diff = "";
-        
+        }
+        catch(Exception e)
+        {
+            diff = "Failed to create a diff, check the logs.";
+            log.warn( diff, e);
+        }
         return diff;
     }    
 }
