@@ -1,4 +1,3 @@
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 /*
  *  Chooses a suitable stylesheet based on browser.
  */
