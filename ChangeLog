@@ -1,6 +1,6 @@
-2005-09-17  Andrew Jaquith <arjaquith@mindspring.com>
+2005-09-24  Andrew Jaquith <arjaquith@mindspring.com>
 
-        * 2.3.21
+        * 2.3.23
         
         * WikiContext, WikiSession and the auth.login.* login
           modules gain significantly enhanced debugging code.
