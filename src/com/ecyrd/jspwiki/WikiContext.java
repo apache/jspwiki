@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
@@ -106,6 +109,8 @@ public class WikiContext
     
     public static final String    OTHER    = NONE; // This is just a clarification.
     
+    protected static Logger       log      = Logger.getLogger( WikiContext.class );
+
     /**
      *  Create a new WikiContext for the given WikiPage. Delegates to
      * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
@@ -135,7 +140,7 @@ public class WikiContext
      * </p>
      * @param engine The WikiEngine that is handling the request
      * @param request The HttpServletRequest that should be associated with this
-     *            context
+     *            context. This parameter may be <code>null</code>.
      * @param page The WikiPage. If you want to create a WikiContext for an
      *            older version of a page, you must supply this parameter
      */
@@ -150,6 +155,16 @@ public class WikiContext
         
         // Log in the user if new session or the container status changed
         boolean doLogin = ( (request != null) && m_session.getLastContext() == null );
+        
+        // Debugging...
+        if ( log.isDebugEnabled() )
+        {
+            HttpSession session = ( request == null ) ? null : request.getSession( false );
+            String sid = ( session == null ) ? "(null)" : session.getId();
+            log.debug( "Creating WikiContext for session ID=" + sid + "; page=" + page.getName() );
+            log.debug( "Do we need to log the user in? " + doLogin );
+        }
+        
         if ( doLogin || m_session.isContainerStatusChanged( request ) )
         {
             engine.getAuthenticationManager().login( request );
@@ -270,19 +285,6 @@ public class WikiContext
         }
 
         return result;
-    }
-
-    /**
-     *  If the request originated from a HTTP server,
-     *  the HTTP request is stored here.
-     *
-     *  @param req The HTTP servlet request.
-     *
-     *  @since 2.0.13.
-     */
-    protected void setHttpRequest( HttpServletRequest req )
-    {
-        m_request = req;
     }
 
     /**

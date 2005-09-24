@@ -1975,7 +1975,6 @@ public class WikiEngine
                                                request,
                                                wikipage );
         context.setRequestContext( requestContext );
-        context.setHttpRequest( request );
         context.setTemplate( template );
 
         return context;

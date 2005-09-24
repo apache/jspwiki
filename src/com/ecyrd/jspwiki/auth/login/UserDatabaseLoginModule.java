@@ -10,6 +10,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -39,7 +41,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * the Subject's principal set.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-09-24 14:25:59 $
  * @since 2.3
  */
 public class UserDatabaseLoginModule extends AbstractLoginModule
@@ -48,6 +50,8 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
     private static final Class[] principalClasses = new Class[]
                                                   { WikiPrincipal.class };
 
+    protected static Logger      log              = Logger.getLogger( UserDatabaseLoginModule.class );
+    
     /**
      * @see javax.security.auth.spi.LoginModule#login()
      */
@@ -75,9 +79,18 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) )
             {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( "Logged in loginName=" + username );
+                    log.debug( "Added Principals Role.AUTHENTICATED,Role.ALL" );
+                }
                 for( int i = 0; i < principals.length; i++ )
                 {
                     m_principals.add( principals[i] );
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( "Added Principal " + principals[i].getName() );
+                    }
                 }
                 m_principals.add( Role.AUTHENTICATED );
                 m_principals.add( Role.ALL );

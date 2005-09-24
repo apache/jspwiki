@@ -13,6 +13,8 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
@@ -23,7 +25,7 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.6 $ $Date: 2005-09-17 18:11:03 $
+ * @version $Revision: 2.7 $ $Date: 2005-09-24 14:25:59 $
  */
 public class WikiSession
 {
@@ -45,6 +47,8 @@ public class WikiSession
 
     private WikiContext             m_lastContext         = null;
 
+    protected static Logger        log      = Logger.getLogger( WikiSession.class );
+    
     /**
      * Returns <code>true</code> if this WikiSession's Subject contains
      * a given Principal in its Principal set.
@@ -312,20 +316,33 @@ public class WikiSession
         // If request is null, return guest session
         if ( request == null )
         {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
+            }
             return guestSession();
         }
 
         // Look for a WikiSession associated with the user's Http Session
         // and create one if it isn't there yet.
         WikiSession wikiSession;
-        HttpSession session = request.getSession( true );
+        HttpSession session = request.getSession();
+        String sid = ( session == null ) ? "(null)" : session.getId();
         Object storedSession = c_sessions.get( session );
         if ( storedSession != null && storedSession instanceof WikiSession )
         {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug("Looking up WikiSession for session ID=" + sid + "... found it" );
+            }
             wikiSession = (WikiSession) storedSession;
         }
         else
         {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug("Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
+            }
             wikiSession = guestSession();
             c_sessions.put( session, wikiSession );
         }

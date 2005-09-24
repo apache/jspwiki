@@ -8,7 +8,11 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -44,12 +48,14 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * if user profile exists, or a generic WikiPrincipal if not.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-09-17 18:20:12 $
+ * @version $Revision: 1.6 $ $Date: 2005-09-24 14:25:59 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
 {
 
+    protected static Logger       log      = Logger.getLogger( WebContainerLoginModule.class );
+    
     /**
      * Logs in the user.
      * @see javax.security.auth.spi.LoginModule#login()
@@ -72,16 +78,30 @@ public class WebContainerLoginModule extends AbstractLoginModule
             {
                 throw new LoginException( "No Http request supplied." );
             }
+            HttpSession session = request.getSession(false);
+            String sid = (session == null) ? NULL : session.getId(); 
             Principal principal = request.getUserPrincipal();
             if ( principal == null )
             {
                 // If no Principal in request, try the remoteUser
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( "No userPrincipal found for session ID=" + sid);
+                }
                 userId = request.getRemoteUser();
                 if ( userId == null )
                 {
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( "No remoteUser found for session ID=" + sid);
+                    }
                     throw new FailedLoginException( "No remote user found" );
                 }
                 principal = new WikiPrincipal( userId, WikiPrincipal.LOGIN_NAME );
+            }
+            if ( log.isDebugEnabled() )
+            {
+                log.debug("Added Principal " + principal.getName() + ",Role.ANONYMOUS,Role.ALL" );
             }
             m_principals.add( new PrincipalWrapper( principal ) );
             
@@ -98,24 +118,30 @@ public class WebContainerLoginModule extends AbstractLoginModule
             Principal[] principals = database.getPrincipals( principal.getName() );
             for( int i = 0; i < principals.length; i++ )
             {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug("Added Principal " + principals[i].getName() + ",Role.ANONYMOUS,Role.ALL" );
+                }
                 m_principals.add( principals[i] );
             }
             return true;
         }
         catch( IOException e )
         {
-            // e.printStackTrace();
-            // FIXME
+            log.error( "IOException: " + e.getMessage() );
             return false;
         }
         catch( UnsupportedCallbackException e )
         {
-            // System.err.println( e.getMessage() );
-            // FIXME
+            log.error( "UnsupportedCallbackException: " + e.getMessage() );
             return false;
         }
         catch( NoSuchPrincipalException e )
         {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "Could not find principal in user database." );
+            }
             return true;
         }
     }

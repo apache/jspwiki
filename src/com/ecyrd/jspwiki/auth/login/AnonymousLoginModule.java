@@ -6,6 +6,9 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -32,7 +35,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-09-24 14:25:59 $
  * @since 2.3
  */
 public class AnonymousLoginModule extends AbstractLoginModule
@@ -43,6 +46,8 @@ public class AnonymousLoginModule extends AbstractLoginModule
      */
     public static final String PROMPT            = "User name";
 
+    protected static Logger    log               = Logger.getLogger( AnonymousLoginModule.class );
+    
     /**
      * Logs in the user by calling back to the registered CallbackHandler with an
      * HttpRequestCallback. The CallbackHandler must supply the current servlet
@@ -59,14 +64,22 @@ public class AnonymousLoginModule extends AbstractLoginModule
         {
             m_handler.handle( callbacks );
             HttpServletRequest request = hcb.getRequest();
-            m_principals.add( new WikiPrincipal( request.getRemoteAddr() ) );
+            WikiPrincipal ipAddr = new WikiPrincipal( request.getRemoteAddr() );
+            if ( log.isDebugEnabled() )
+            {
+                HttpSession session = ( request == null ) ? null : request.getSession( false );
+                String sid = (session == null) ? NULL : session.getId(); 
+                log.debug("Logged in session ID=" + sid);
+                log.debug("Added Principals " + ipAddr + ",Role.ANONYMOUS,Role.ALL" );
+            }
+            m_principals.add( ipAddr );
             m_principals.add( Role.ANONYMOUS );
             m_principals.add( Role.ALL );
             return true;
         }
         catch( IOException e )
         {
-            e.printStackTrace();
+            log.error("IOException: " + e.getMessage());
             return false;
         }
         catch( UnsupportedCallbackException e )

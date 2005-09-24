@@ -1,4 +1,20 @@
-2005-09-19  Andrew Jaquith <arjaquith@mindspring.com>
+2005-09-17  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.21
+        
+        * WikiContext, WikiSession and the auth.login.* login
+          modules gain significantly enhanced debugging code.
+          Changing Log4J settings in jspwiki.properties
+          to DEBUG will dump a large amount of information
+          about user session IDs and Principal creation
+          activities.
+        
+        * In the continued spirit of clowing-back little-used methods
+          that clutter the API, WikiContext's setHttpRequest() method
+          goes the way of the dodo bird. It was used by WikiEngine,
+          and only in one place, and it was redundant to boot.
+
+2005-09-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.22
         

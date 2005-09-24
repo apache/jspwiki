@@ -9,6 +9,9 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -35,7 +38,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-17 18:17:49 $
+ * @version $Revision: 1.4 $ $Date: 2005-09-24 14:25:59 $
  * @since 2.3
  */
 public class CookieAssertionLoginModule extends AbstractLoginModule
@@ -46,6 +49,8 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
 
     public static final String PROMPT            = "User name";
 
+    protected static Logger    log               = Logger.getLogger( CookieAssertionLoginModule.class );
+    
     /**
      * Logs in the user by calling back to the registered CallbackHandler with an
      * HttpRequestCallback. The CallbackHandler must supply the current servlet
@@ -64,12 +69,23 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
         {
             m_handler.handle( callbacks );
             HttpServletRequest request = hcb.getRequest();
+            HttpSession session = ( request == null ) ? null : request.getSession( false );
+            String sid = ( session == null ) ? NULL : session.getId();
             String name = getUserCookie( request );
             if ( name == null )
             {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( "No cookie " + PREFS_COOKIE_NAME + " present in session ID=:  " + sid );
+                }
                 throw new FailedLoginException( "The user cookie was not found." );
             }
             
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "Logged in session ID=" + sid );
+                log.debug( "Added Principals " + name + ",Role.ASSERTED,Role.ALL" );
+            }
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.LOGIN_NAME ) );
             m_principals.add( Role.ASSERTED );
             m_principals.add( Role.ALL );
@@ -77,7 +93,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
         }
         catch( IOException e )
         {
-            e.printStackTrace();
+            log.error( "IOException: " + e.getMessage() );
             return false;
         }
         catch( UnsupportedCallbackException e )

@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  * {@link #logout()} should be sufficient for most purposes, but can be safely
  * over-ridden.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-07-15 08:27:21 $
+ * @version $Revision: 1.4 $ $Date: 2005-09-24 14:25:59 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule
@@ -37,6 +37,8 @@ public abstract class AbstractLoginModule implements LoginModule
 
     protected Subject         m_subject;
 
+    protected static final String NULL           = "(null)";
+    
     /**
      * Aborts the login; always returns <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#abort()
