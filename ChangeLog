@@ -1,4 +1,4 @@
-2005-09-26  Erik Bunn  <Erik.Bunn@basen.net>
+2005-09-26  Erik Bunn  <Erik.Bunn@memecry.net>
 
         * Added CookieTag. See the class for documentation.
         Intended for custom JSPWiki installations, mostly useful for
