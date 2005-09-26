@@ -1,3 +1,9 @@
+2005-09-26  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Added CookieTag. See the class for documentation.
+        Intended for custom JSPWiki installations, mostly useful for
+        doing conditional logic based on e.g. a custom preferences cookie.
+
 2005-09-24  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.23
