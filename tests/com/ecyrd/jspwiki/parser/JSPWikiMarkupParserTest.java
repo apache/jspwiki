@@ -931,21 +931,29 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "1<span style=\"font-family:monospace; whitespace:pre;\">2345</span>6", translate(src) );
     }
-    
-    public void testPreEscape()
-    throws Exception
-    {
-        String src = "1~{{{2345}}}6";
-        
-        assertEquals( "1{{{2345}}}6", translate(src) );
-    }
-    
+
     public void testPre2()
     throws Exception
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
         
         assertEquals( "1 <span style=\"font-family:monospace; whitespace:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
+    }
+    
+    public void testPre3()
+    throws Exception
+    {
+        String src = "foo\n\nbar{{{2345}}}6";
+        
+        assertEquals( "foo\n<p>bar<span style=\"font-family:monospace; whitespace:pre;\">2345</span>6</p>", translate(src) );
+    }
+
+    public void testPreEscape()
+    throws Exception
+    {
+        String src = "1~{{{2345}}}6";
+        
+        assertEquals( "1{{{2345}}}6", translate(src) );
     }
     
     public void testHTMLInPre()
@@ -963,7 +971,15 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
     }
-    
+
+    public void testPreWithLines()
+    throws Exception
+    {
+        String src = "1\r\n{{{\r\nZippadii\r\n}}}";
+        
+        assertEquals( "1\n<pre>\nZippadii\n</pre>", translate(src) );
+    }
+
     public void testList1()
     throws Exception
     {
@@ -1550,7 +1566,16 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<hr />Foo",
                       translate(src) );
     }
-    
+
+    public void testRulerCombo2()
+    throws Exception
+    {
+        String src="Bar----Foo";
+        
+        assertEquals( "Bar----Foo",
+                      translate(src) );
+    }
+
     public void testShortRuler1()
     throws Exception
     {
@@ -1972,7 +1997,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
-    
+
+    public void testSpanEscape()
+    throws Exception
+    {
+        String src = "~%%foo test~%%\n";
+        
+        assertEquals( "%%foo test%%\n", translate(src) );
+    }
     public void testSpanNested()
     throws Exception
     {
