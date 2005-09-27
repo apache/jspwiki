@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -33,7 +35,8 @@ public class CheckRequestContextTag
     extends WikiTagBase
 {
     private String m_context;
-
+    private String[] m_contextList = {};
+    
     public String getContext()
     {
         return m_context;
@@ -42,15 +45,34 @@ public class CheckRequestContextTag
     public void setContext( String arg )
     {
         m_context = arg;
+        
+        m_contextList = StringUtils.split(arg,'|');
     }
 
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
     {
-        if( m_wikiContext.getRequestContext().equalsIgnoreCase(getContext()) )
+        for(int i = 0; i < m_contextList.length; i++ )
         {
-            return EVAL_BODY_INCLUDE;
+            String ctx = m_wikiContext.getRequestContext();
+            
+            String checkedCtx = m_contextList[i];
+
+            if( checkedCtx.length() > 0 )
+            {
+                if( checkedCtx.charAt(0) == '!' )
+                {
+                    if( !ctx.equalsIgnoreCase(checkedCtx.substring(1) ) )
+                    {
+                        return EVAL_BODY_INCLUDE;
+                    }
+                }
+                else if( ctx.equalsIgnoreCase(m_contextList[i]) )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+            }
         }
 
         return SKIP_BODY;
