@@ -65,7 +65,15 @@ public class IncludeTag
             String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
                                                                                   m_wikiContext.getTemplate(),
                                                                                   m_page );
-            pageContext.include( page );
+            
+            if( page == null )
+            {
+                pageContext.getOut().println("No template file called '"+m_page+"'");
+            }
+            else
+            {
+                pageContext.include( page );
+            }
         }
         catch( ServletException e )
         {
