@@ -26,6 +26,8 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
+import com.ecyrd.jspwiki.parser.Heading;
+import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -41,8 +43,11 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *  <P>
  *  The output of the HTML has not yet been validated against
  *  the HTML DTD.  However, it is very simple.
- *
+ *  <p>
+ *  This class is officially deprecated in 2.3, and will be replaced
+ *  with a dummy class later on.  Please see MarkupParser.
  *  @author Janne Jalkanen
+ *  @deprecated
  */
 
 public class TranslatorReader extends Reader
@@ -3133,20 +3138,4 @@ public class TranslatorReader extends Reader
         }
 
     } // TextRenderer
-
-    /**
-     *  This class is used to store the headings in a manner which
-     *  allow the building of a Table Of Contents.
-     */
-    public static class Heading
-    {
-        public static final int HEADING_SMALL  = 1;
-        public static final int HEADING_MEDIUM = 2;
-        public static final int HEADING_LARGE  = 3;
-
-        public int    m_level;
-        public String m_titleText;
-        public String m_titleAnchor;
-        public String m_titleSection;
-    }
 }
