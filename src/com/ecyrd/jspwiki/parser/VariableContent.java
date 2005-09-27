@@ -4,13 +4,7 @@
  */
 package com.ecyrd.jspwiki.parser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.xml.transform.Result;
-
-import org.jdom.*;
+import org.jdom.Text;
 
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
