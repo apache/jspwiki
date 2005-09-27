@@ -1,3 +1,29 @@
+2005-09-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.24
+
+        * IncludeTag now prints an error to the screen instead of
+        a NPE when the template file in question does not exist.
+
+        * CheckRequestContextTag now supports an extended parameter
+        list: <wiki:CheckRequestContext context='view|info|edit'>
+        evaluates its body, if the current context matches ANY of
+        the contexts.  It also supports negation with !, i.e.
+        <wiki:CheckRequestContext context='!view'> evaluates the
+        body in every context but "view".
+
+        * JSPWikiMarkupParser is now a lot more XHTML compliant,
+        thanks to Gregor Hagedorn.
+
+        * RSS Generator Thread now has a proper name.
+
+        * Moved TranslatorReader.Heading to com.ecyrd.jspwiki.parser.
+        This should not really cause any compatibility issues.
+        
+        * Moved HeadingListener to com.ecyrd.jspwiki.parser
+
+        * Added two new methods from John Volkar to ReferenceManager.
+
 2005-09-26  Erik Bunn  <Erik.Bunn@memecry.net>
 
         * Added CookieTag. See the class for documentation.
