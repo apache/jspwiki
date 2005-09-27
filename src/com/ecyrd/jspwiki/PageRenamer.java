@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.perl.Perl5Util;
 import org.apache.oro.text.regex.*;
 
+import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -54,8 +55,8 @@ public class PageRenamer
                                                              false );
  
         m_camelCaseLink = TextUtil.getBooleanProperty( props,
-                                                        TranslatorReader.PROP_CAMELCASELINKS,
-                                                        false );
+                                                       JSPWikiMarkupParser.PROP_CAMELCASELINKS,
+                                                       false );
                                        
         // Compile regular expression patterns
         PatternCompiler compiler = new Perl5Compiler();
