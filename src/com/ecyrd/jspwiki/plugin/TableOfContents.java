@@ -21,6 +21,9 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.parser.Heading;
+import com.ecyrd.jspwiki.parser.HeadingListener;
+
 import java.util.*;
 import java.io.StringReader;
 import java.io.IOException;
@@ -40,19 +43,19 @@ public class TableOfContents
 
     StringBuffer m_buf = new StringBuffer();
 
-    public void headingAdded( WikiContext context, TranslatorReader.Heading hd )
+    public void headingAdded( WikiContext context, Heading hd )
     {
         log.debug("HD: "+hd.m_level+", "+hd.m_titleText+", "+hd.m_titleAnchor);
 
         switch( hd.m_level )
         {
-          case TranslatorReader.Heading.HEADING_SMALL:
+          case Heading.HEADING_SMALL:
             m_buf.append("***");
             break;
-          case TranslatorReader.Heading.HEADING_MEDIUM:
+          case Heading.HEADING_MEDIUM:
             m_buf.append("**");
             break;
-          case TranslatorReader.Heading.HEADING_LARGE:
+          case Heading.HEADING_LARGE:
             m_buf.append("*");
             break;
           default:
