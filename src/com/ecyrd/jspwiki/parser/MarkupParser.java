@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 
-import com.ecyrd.jspwiki.HeadingListener;
 import com.ecyrd.jspwiki.StringTransmutator;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
