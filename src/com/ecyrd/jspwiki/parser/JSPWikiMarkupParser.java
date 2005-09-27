@@ -72,11 +72,6 @@ public class JSPWikiMarkupParser
 
     private boolean        m_isOpenParagraph = false;
 
-    /** Tag that gets closed at EOL. */
-    private String         m_closeTag     = null; 
-
-    
-
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
 
@@ -340,7 +335,7 @@ public class JSPWikiMarkupParser
         return text;
     }
 
-    private void callHeadingListenerChain( TranslatorReader.Heading param )
+    private void callHeadingListenerChain( Heading param )
     {
         List list = m_headingListenerChain;
 
@@ -870,7 +865,7 @@ public class JSPWikiMarkupParser
      *  an "id" tag may only contain [a-zA-Z0-9:_-], we'll replace the
      *  % after url encoding with '_'.
      */
-    private String makeHeadingAnchor( String baseName, String title, TranslatorReader.Heading hd )
+    private String makeHeadingAnchor( String baseName, String title, Heading hd )
     {
         hd.m_titleText = title;
         title = cleanLink( title );
@@ -911,7 +906,7 @@ public class JSPWikiMarkupParser
      *  @param level 
      *  @param headings A List to which heading should be added.
      */ 
-    public Element makeHeading( int level, String title, TranslatorReader.Heading hd )
+    public Element makeHeading( int level, String title, Heading hd )
     {
         Element el = null;
         
@@ -923,15 +918,15 @@ public class JSPWikiMarkupParser
 
         switch( level )
         {
-          case TranslatorReader.Heading.HEADING_SMALL:
+          case Heading.HEADING_SMALL:
             el = new Element("h4").setAttribute("id",makeHeadingAnchor( pageName, outTitle, hd ));
             break;
 
-          case TranslatorReader.Heading.HEADING_MEDIUM:
+          case Heading.HEADING_MEDIUM:
             el = new Element("h3").setAttribute("id",makeHeadingAnchor( pageName, outTitle, hd ));
             break;
 
-          case TranslatorReader.Heading.HEADING_LARGE:
+          case Heading.HEADING_LARGE:
             el = new Element("h2").setAttribute("id",makeHeadingAnchor( pageName, outTitle, hd ));
             break;
         }
@@ -1504,13 +1499,13 @@ public class JSPWikiMarkupParser
 
             if( ch2 == '{' )
             {
-                startBlockLevel();
                 m_isPre = true;
                 m_isEscaping = true;
                 m_isPreBlock = isBlock;
                 
                 if( isBlock )
                 {
+                    startBlockLevel();
                     return pushElement( new Element("pre") );
                 }
                 else
@@ -1632,7 +1627,7 @@ public class JSPWikiMarkupParser
         
         int ch  = nextToken();
 
-        TranslatorReader.Heading hd = new TranslatorReader.Heading();
+        Heading hd = new Heading();
 
         if( ch == '!' )
         {
@@ -1642,20 +1637,20 @@ public class JSPWikiMarkupParser
             {
                 String title = peekAheadLine();
                 
-                el = makeHeading( TranslatorReader.Heading.HEADING_LARGE, title, hd);
+                el = makeHeading( Heading.HEADING_LARGE, title, hd);
             }
             else
             {
                 pushBack( ch2 );
                 String title = peekAheadLine();
-                el = makeHeading( TranslatorReader.Heading.HEADING_MEDIUM, title, hd );
+                el = makeHeading( Heading.HEADING_MEDIUM, title, hd );
             }
         }
         else
         {
             pushBack( ch );
             String title = peekAheadLine();
-            el = makeHeading( TranslatorReader.Heading.HEADING_SMALL, title, hd );
+            el = makeHeading( Heading.HEADING_SMALL, title, hd );
         }
 
         callHeadingListenerChain( hd );
@@ -1697,6 +1692,10 @@ public class JSPWikiMarkupParser
      */
     private void startBlockLevel()
     {
+        popElement("i"); m_isitalic = false;
+        popElement("b"); m_isbold = false;
+        popElement("tt");
+        
         if( m_isOpenParagraph )
         {
             m_isOpenParagraph = false;
@@ -2148,7 +2147,7 @@ public class JSPWikiMarkupParser
 
         if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' || 
             ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
-            ch == '{' || ch == ']' || ch == '}' )
+            ch == '{' || ch == ']' || ch == '}' || ch == '%' )
         {
             m_plainTextBuf.append( (char)ch );
             m_plainTextBuf.append(readWhile( ""+(char)ch ));
@@ -2189,6 +2188,10 @@ public class JSPWikiMarkupParser
                 {
                     quitReading = true;
                 }
+                else if( ch == '\r' )
+                {
+                    // DOS line feeds we ignore.
+                }
                 else 
                 {
                     m_plainTextBuf.append( (char) ch );
@@ -2209,7 +2212,6 @@ public class JSPWikiMarkupParser
             {
                 el = popElement("table");
                 m_istable = false;
-                m_closeTag = null;
             }
 
             //
@@ -2225,11 +2227,6 @@ public class JSPWikiMarkupParser
                 //
                 //  Close things like headings, etc.
                 //
-                if( m_closeTag != null ) 
-                {
-                    m_plainTextBuf.append( m_closeTag );
-                    m_closeTag = null;
-                }
 
                 // FIXME: This is not really very fast
                 popElement("dl"); // Close definition lists.
@@ -2293,7 +2290,9 @@ public class JSPWikiMarkupParser
                 break;
 
               case '-':
-                el = handleDash();
+                if( newLine )
+                    el = handleDash();
+
                 break;
 
               case '!':
@@ -2312,12 +2311,6 @@ public class JSPWikiMarkupParser
                 {
                     el = handleDefinitionList();
                 }
-                /*
-                else
-                {
-                    s = ";";
-                }
-                */
                 break;
 
               case ':':
@@ -2327,12 +2320,6 @@ public class JSPWikiMarkupParser
                     el = pushElement( new Element("dd") );
                     m_isdefinition = false;
                 }
-                /*
-                else
-                {
-                    s = ":";
-                }
-                */
                 break;
 
               case '[':
@@ -2345,12 +2332,6 @@ public class JSPWikiMarkupParser
                     pushBack('*');
                     el = handleGeneralList();
                 }
-                /*
-                else
-                {
-                    s = "*";
-                }
-                */
                 break;
 
               case '#':
@@ -2359,12 +2340,6 @@ public class JSPWikiMarkupParser
                     pushBack('#');
                     el = handleGeneralList();
                 }
-                /*
-                else
-                {
-                    s = "#";
-                }
-                */
                 break;
 
               case '|':
@@ -2397,11 +2372,6 @@ public class JSPWikiMarkupParser
                 break;
 
               case -1:
-                if( m_closeTag != null )
-                {
-                    m_plainTextBuf.append( m_closeTag );
-                    m_closeTag = null;
-                }
                 quitReading = true;
                 continue;
 /*
