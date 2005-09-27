@@ -764,4 +764,59 @@ public class ReferenceManager
     {
         return (Collection)m_unmutableRefersTo.get( pageName );
     }
+    
+    /**
+     * This 'deepHashCode' can be used to determine if there were any
+     * modifications made to the underlying to and by maps of the
+     * ReferenceManager. The maps of the ReferenceManager are not
+     * synchronized, so someone could add/remove entries in them while the
+     * hashCode is being computed.
+     * 
+     * @return Sum of the hashCodes for the to and by maps of the
+     *         ReferenceManager
+     * @since 2.3.24
+     */
+    /*
+       This method traps and retries if a concurrent
+       modifcaition occurs.
+       TODO: It is unnecessary to calculate the hashcode; it should be calculated only
+             when the hashmaps are changed.  This is slow. 
+    */ 
+    public int deepHashCode()
+    {
+        boolean failed = true;
+        int signature = 0;
+        
+        while (failed)
+        {
+            signature = 0;
+            try
+            {
+                signature ^= m_referredBy.hashCode();
+                signature ^= m_refersTo.hashCode();
+                failed = false;
+            }
+            catch (ConcurrentModificationException e)
+            {
+                Thread.yield();
+            }
+        }
+        
+        return signature;
+    }
+    
+    /**
+     *  Returns a list of all pages that the ReferenceManager knows about. 
+     *  This should be roughly equivalent to PageManager.getAllPages(), but without
+     *  the potential disk access overhead.  Note that this method is not guaranteed
+     *  to return a Set of really all pages (especially during startup), but it is
+     *  very fast.
+     * 
+     *  @return A Set of all defined page names that ReferenceManager knows about.
+     *  @since 2.3.24
+     */
+    public Set findCreated()
+    {
+        return new HashSet( m_refersTo.keySet()  );
+    } 
 }
