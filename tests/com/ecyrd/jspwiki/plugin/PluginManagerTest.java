@@ -156,7 +156,22 @@ public class PluginManagerTest extends TestCase
                       res );
     }
 
+    // This should be read from tests/etc/ini/jspwiki_module.xml
+    public void testAlias()
+        throws Exception
+    {
+        String res = manager.execute( context, "{samplealias text=15}");
+        
+        assertEquals( "15", res );
+    }
+
+    public void testAlias2()
+        throws Exception
+    {
+        String res = manager.execute( context, "{samplealias2 text=xyzzy}");
     
+        assertEquals( "xyzzy", res );
+    }
 
     public static Test suite()
     {
