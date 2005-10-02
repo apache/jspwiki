@@ -20,14 +20,19 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 import org.jdom.Content;
+import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
@@ -89,15 +94,29 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  <pre>
  *  [{Counter name='foo'}]
  *  </pre>
- *
+ *  <p>
+ *  Since 2.3.25 you can also define a generic plugin XML properties file per
+ *  each JAR file.
+ *  <pre>
+ *  <modules>
+ *   <plugin class="com.ecyrd.jspwiki.foo.TestPlugin">
+ *       <author>Janne Jalkanen</author>
+ *       <script>foo.js</script>
+ *       <stylesheet>foo.css</stylesheet>
+ *       <alias>code</alias>
+ *   </plugin>
+ *   <plugin class="com.ecyrd.jspwiki.foo.TestPlugin2">
+ *       <author>Janne Jalkanen</author>
+ *   </plugin>
+ *   </modules>
+ *  </pre>
+ *  
  *  @author Janne Jalkanen
  *  @since 1.6.1
  */
 public class PluginManager
 {
-    public static final String NAMESPACE_RENDER = "http://www.jspwiki.org/ns/render#";
-
-    public static final String DOM_PLUGIN = "plugin";
+    private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
     private static Logger log = Logger.getLogger( PluginManager.class );
 
@@ -124,12 +143,24 @@ public class PluginManager
      */
     public static final String PARAM_DEBUG     = "debug";
 
+    /**
+     * Location of the property-files of plugins.
+     *  (Each plugin should include this property-file in its jar-file)
+     */
+    public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
+
     Vector  m_searchPath = new Vector();
 
     Pattern m_pluginPattern;
 
     private boolean m_pluginsEnabled = true;
     private boolean m_initStage      = false;
+
+    /** 
+     *  Keeps a list of all known plugin classes.
+     */
+    private Map m_pluginClassMap = new HashMap();
+
 
     /**
      *  Create a new PluginManager.
@@ -150,6 +181,8 @@ public class PluginManager
             }
         }
 
+        registerPlugins();
+
         //
         //  The default packages are always added.
         //
@@ -160,7 +193,7 @@ public class PluginManager
 
         try
         {
-            m_pluginPattern = compiler.compile( "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*" );
+            m_pluginPattern = compiler.compile( PLUGIN_INSERT_PATTERN );
         }
         catch( MalformedPatternException e )
         {
@@ -285,19 +318,24 @@ public class PluginManager
 
         try
         {
-            Class      pluginClass;
             WikiPlugin plugin;
 
             boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
 
-            pluginClass = findPluginClass( classname );
+            WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get(classname);
+            
+            if(pluginInfo == null)
+            {
+                pluginInfo = WikiPluginInfo.newInstance(findPluginClass( classname ));
+                registerPlugin(pluginInfo);
+            }
 
             //
             //   Create...
             //
             try
             {
-                plugin = (WikiPlugin) pluginClass.newInstance();
+                plugin = (WikiPlugin) pluginInfo.newPluginInstance();
             }
             catch( InstantiationException e )
             {
@@ -536,9 +574,7 @@ public class PluginManager
         return commandline;
     }
 
-    private Namespace m_jspwikiNameSpace = Namespace.getNamespace( NAMESPACE_RENDER );
-                                                         
-    public Content parsePluginLine( WikiContext context, String commandline )
+   public Content parsePluginLine( WikiContext context, String commandline )
         throws PluginException
     {
         PatternMatcher  matcher  = new Perl5Matcher();
@@ -580,24 +616,306 @@ public class PluginManager
 
         return null;
     }
-    /*
-      // FIXME: Not functioning, needs to create or fetch PageContext from somewhere.
-    public class TagPlugin implements WikiPlugin
+    
+    /** Registrar a plugin.
+     */
+    private void registerPlugin(WikiPluginInfo pluginClass)
     {
-        private Class m_tagClass;
-        
-        public TagPlugin( Class tagClass )
-        {
-            m_tagClass = tagClass;
-        }
-        
-        public String execute( WikiContext context, Map params )
-            throws PluginException
-        {
-            WikiPluginTag plugin = m_tagClass.newInstance();
+        String name;
 
-            
+        // Registrar the plugin with the className without the package-part
+        name = pluginClass.getName();
+        if(name != null)
+        {
+            log.debug("Registering plugin [name]: " + name);
+            m_pluginClassMap.put(name, pluginClass);
+        }
+
+        // Registrar the plugin with a short convenient name.
+        name = pluginClass.getAlias();
+        if(name != null)
+        {
+            log.debug("Registering plugin [shortName]: " + name);
+            m_pluginClassMap.put(name, pluginClass);
+        }
+
+        // Registrar the plugin with the className with the package-part
+        name = pluginClass.getClassName();
+        if(name != null)
+        {
+            log.debug("Registering plugin [className]: " + name);
+            m_pluginClassMap.put(name, pluginClass);
         }
     }
-    */
+
+    private void registerPlugins()
+    {
+        log.info( "Registering plugins" );
+
+        SAXBuilder builder = new SAXBuilder();
+        
+        try
+        {
+            //
+            // Register all plugins which have created a resource containing its properties.
+            //
+            // Get all resources of all plugins.
+            //
+            
+            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
+            
+            while( resources.hasMoreElements() )
+            {
+                URL resource = (URL) resources.nextElement();
+            
+                try
+                {
+                    log.debug( "Processing XML: " + resource );
+
+                    Document doc = builder.build( resource );
+
+                    List plugins = XPath.selectNodes( doc, "/modules/plugin");
+                    
+                    for( Iterator i = plugins.iterator(); i.hasNext(); )
+                    {
+                        Element pluginEl = (Element) i.next();
+                        
+                        String className = pluginEl.getAttributeValue("class");
+                        
+                        WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl );
+
+                        if( pluginInfo != null )
+                        {
+                            registerPlugin( pluginInfo );
+                        }
+                    }
+                }
+                catch( java.io.IOException e )
+                {
+                    log.error( "Couldn't load " + PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
+                }
+                catch( JDOMException e )
+                {
+                    log.error( "Error parsing XML for plugin: "+PLUGIN_RESOURCE_LOCATION );
+                }
+            }
+        }
+        catch( java.io.IOException e )
+        {
+            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
+        }
+    }
+
+    /**
+     *  Contains information about a bunch of plugins.
+     *  
+     *  @author Kees Kuip
+     *  @author Janne Jalkanen
+     *
+     *  @since
+     */
+    // FIXME: This class needs a better interface to return all sorts of possible
+    //        information from the plugin XML.  In fact, it probably should have
+    //        some sort of a superclass system.
+    protected static class WikiPluginInfo
+    {       
+        private URL    m_resource;
+        private String m_name;
+        private String m_className;
+        private String m_alias;
+        private Class  m_clazz;
+        private String m_scriptLocation;
+        private String m_scriptText;
+        private String m_stylesheetLocation;
+        private String m_stylesheetText;
+        private String m_author;
+
+        protected static WikiPluginInfo newInstance( String className, Element el )
+        {
+            if( className == null || className.length() == 0 ) return null;
+            WikiPluginInfo info = new WikiPluginInfo( className );
+            
+            info.initializeFromXML( el );
+            return info;
+        }
+        
+        private void initializeFromXML( Element el )
+        {
+            m_scriptLocation = el.getChildText("script");
+            m_stylesheetLocation = el.getChildText("stylesheet");
+            m_alias = el.getChildText("alias");
+            m_author = el.getChildText("author");            
+        }
+        
+        protected static WikiPluginInfo newInstance( Class clazz )
+        {
+            WikiPluginInfo info = new WikiPluginInfo( clazz.getName() );
+            
+            return info;
+        }
+        
+        private WikiPluginInfo(String className)
+        {
+            setClassName(className);
+        }
+        
+        private void setClassName(String fullClassName)
+        {
+            m_name = ClassUtils.getShortClassName( fullClassName );
+            m_className = fullClassName;
+        }
+
+        public String getName()
+        {
+            return m_name;
+        }
+
+        public String getClassName()
+        {
+            return m_className;
+        }
+
+        public String getAlias()
+        {
+            return m_alias;
+        }
+
+        public String getStylesheetLocation()
+        {
+            return m_stylesheetLocation;
+        }
+
+        public String getScriptLocation()
+        {
+            return m_scriptLocation;
+        }
+
+        public WikiPlugin newPluginInstance()
+            throws ClassNotFoundException,
+                   InstantiationException,
+                   IllegalAccessException
+        {
+            if( m_clazz == null )
+            {
+                m_clazz = Class.forName(m_className);
+            }
+
+            return (WikiPlugin) m_clazz.newInstance();
+        }
+        
+        public String getIncludeText(String type)
+        {
+            try
+            {
+                if( type.equals("script") )
+                {
+                    return getScriptText();
+                }
+                else if( type.equals("stylesheet") )
+                {
+                    return getStylesheetText();
+                }
+            }
+            catch(Exception ex)
+            {
+                return ex.getMessage();
+            }
+
+            return null;
+        }
+
+        private String getScriptText()
+            throws IOException
+        {
+            if (m_scriptText != null)
+            {
+                return m_scriptText;
+            }
+
+            if (m_scriptLocation == null)
+            {
+                return "";
+            }
+
+            try
+            {
+                m_scriptText = getTextResource(m_scriptLocation);
+            }
+            catch(IOException ex)
+            {
+                // Only throw this exception once!
+                m_scriptText = "";
+                throw ex;
+            }
+
+            return m_scriptText;
+        }
+        
+        private String getStylesheetText()
+            throws IOException
+        {
+            if (m_stylesheetText != null)
+            {
+                return m_stylesheetText;
+            }
+
+            if (m_stylesheetLocation == null)
+            {
+                return "";
+            }
+
+            try
+            {
+                m_stylesheetText = getTextResource(m_stylesheetLocation);
+            }
+            catch(IOException ex)
+            {
+                // Only throw this exception once!
+                m_stylesheetText = "";
+                throw ex;
+            }
+
+            return m_stylesheetText;
+        }
+        
+        private String getTextResource(String resourceLocation)
+            throws IOException
+        {
+            if(m_resource == null)
+            {
+                return "";
+            }
+
+            // The text of this resource should be loaded from the same
+            //   jar-file as the properties-file! This is because 2 plugins
+            //   could have the same name of the resourceLocation!
+            //   (2 plugins could have their stylesheet-files in 'ini/jspwiki.css')
+
+            // So try to construct a resource that loads this resource from the
+            //   same jar-file.
+            String spec = m_resource.toString();
+
+            // Replace the 'PLUGIN_RESOURCE_LOCATION' with the requested
+            //   resourceLocation.
+            int length = PluginManager.PLUGIN_RESOURCE_LOCATION.length();
+            spec = spec.substring(0, spec.length() - length) + resourceLocation;
+
+            URL url = new URL(spec);
+            BufferedInputStream in = new BufferedInputStream(url.openStream());
+            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+            
+            FileUtil.copyContents( in, out );
+
+            in.close();
+            String text = out.toString();
+            out.close();
+            
+            return text;
+        }
+        
+        public String toString()
+        {
+            return "Plugin :[name=" + m_name + "][className=" + m_className + "]";
+        }
+    } // WikiPluginClass
 }
