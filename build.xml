@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.48 2005-09-17 18:42:42 arj Exp $
+    $Id: build.xml,v 1.49 2005-10-02 21:10:50 jalkanen Exp $
 -->    
        
 <!--   
@@ -389,6 +389,22 @@
 
   <!-- Running tests -->
 
+  <target name="tests-init">
+      <!-- Build up the /etc directory for testing -->
+      <delete file="tests/etc/userdatabase.xml" />
+      <delete file="tests/etc/userdatabase.xml.old" />
+      <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml" />
+      <mkdir dir="tests/etc/WEB-INF" />
+      <copy file="${basedir}/etc/web.xml" tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
+      
+      <!-- For testing, turn on container auth -->
+      <replace file="tests/etc/WEB-INF/web.xml"
+               token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+      <replace file="tests/etc/WEB-INF/web.xml"
+               token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+
+  </target>
+    
   <!-- This target runs the JUnit tests that are available
        under tests/.  It generates the test result files
        into the ${tests.reports} -directory, one file per
@@ -404,21 +420,8 @@
        This runs the tests in text mode.  If you want the
        pretty GUI you probably want to write a new target.
    -->
-  <target name="tests" depends="jar,jartests"
+  <target name="tests" depends="jar,tests-init,jartests"
           description="Runs the JUnit tests.">
-
-    <!-- Build up the /etc directory for testing -->
-    <delete file="tests/etc/userdatabase.xml" />
-    <delete file="tests/etc/userdatabase.xml.old" />
-    <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml" />
-    <mkdir dir="tests/etc/WEB-INF" />
-    <copy file="${basedir}/etc/web.xml" tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
-    
-    <!-- For testing, turn on container auth -->
-    <replace file="tests/etc/WEB-INF/web.xml"
-             token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-    <replace file="tests/etc/WEB-INF/web.xml"
-             token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
 
     <junit printsummary="yes" haltonfailure="no" fork="yes">
         <classpath>
@@ -438,6 +441,25 @@
            </fileset>
         </batchtest>
      </junit>
+
+  </target>
+
+  <target name="guitests" depends="jar,tests-init,jartests"
+          description="Runs the tests in a pretty window.">
+
+     <java classname="junit.swingui.TestRunner" fork="yes">
+        <classpath>
+           <path refid="path.tests" />
+           <pathelement path="${tests.build}" />
+           <pathelement path="${java.class.path}" />
+        </classpath>
+
+        <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
+        <sysproperty key="java.security.policy" value="${basedir}/etc/jspwiki.policy"/>
+
+        <arg value="com.ecyrd.jspwiki.AllTests" />
+     </java>
+              
 
   </target>
 
