@@ -1,3 +1,14 @@
+2005-10-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.26
+
+        * Added (and modified a bit) a patch from Kees Kuip which
+        allows plugin writers to just specify properties in the plugin
+        archive itself.
+
+        * Added TemplateManager.listSkins(), which lists any and all
+        skins from templates/<yourtemplate>/skins/
+
 2005-09-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.25
