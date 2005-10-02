@@ -2,6 +2,9 @@
 
         * 2.3.26
 
+        * Restored the the Ant "guitests" target, who had gone MIA
+        accidentally.
+
         * Added (and modified a bit) a patch from Kees Kuip which
         allows plugin writers to just specify properties in the plugin
         archive itself.
