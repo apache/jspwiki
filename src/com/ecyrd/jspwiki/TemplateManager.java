@@ -21,11 +21,15 @@ package com.ecyrd.jspwiki;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.opensymphony.oscache.base.Cache;
@@ -215,6 +219,49 @@ public class TemplateManager
         return "/"+DIRECTORY+"/"+template+"/";
     }
 
+    /**
+     *   Lists the skins available under this template.  Returns an 
+     *   empty Set, if there are no extra skins available.  Note that
+     *   this method does not check whether there is anything actually
+     *   in the directories, it just lists them.  This may change
+     *   in the future.
+     *   
+     *   @param template
+     *   @return Set of Strings with the skin names.
+     *   @since 2.3.26
+     */
+    public Set listSkins( PageContext pageContext, String template )
+    {
+        String place = makeFullJSPName( template, "skins" );
+     
+        ServletContext sContext = pageContext.getServletContext();
+
+        Set skinSet = sContext.getResourcePaths( place );
+        TreeSet resultSet = new TreeSet();
+               
+        log.debug( "Listings skins from "+place );
+        
+        if( skinSet != null )
+        {
+            String[] skins = {};
+            
+            skins = (String[]) skinSet.toArray(skins);        
+        
+            for( int i = 0; i < skins.length; i++ )
+            {
+                String s[] = StringUtils.split(skins[i],"/");
+            
+                if( s.length > 1 )
+                {
+                    String skinName = s[s.length-1];
+                    resultSet.add( skinName );
+                    log.debug("..."+skinName);
+                }
+            }
+        }
+        
+        return resultSet;
+    }
 
     /**
      *  Always returns a valid property map.
