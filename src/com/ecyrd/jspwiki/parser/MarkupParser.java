@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 
 import com.ecyrd.jspwiki.StringTransmutator;
@@ -35,7 +36,19 @@ public abstract class MarkupParser
     protected ArrayList      m_linkMutators             = new ArrayList();
 
     protected boolean        m_inlineImages             = true;
+
+    protected boolean        m_parseAccessRules = true;
+    /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
+        this is a VERY dangerous option to set - never turn this on in a publicly
+        allowable Wiki, unless you are absolutely certain of what you're doing. */
+    public static final String     PROP_ALLOWHTML        = "jspwiki.translatorReader.allowHTML";
+    /** If set to "true", enables plugins during parsing */
+    public static final String     PROP_RUNPLUGINS       = "jspwiki.translatorReader.runPlugins";
     
+    /** Lists all punctuation characters allowed in WikiMarkup. These
+        will not be cleaned away. */
+    
+    protected static final String           PUNCTUATION_CHARS_ALLOWED = "._/";
 
     protected MarkupParser( WikiContext context, Reader in )
     {
@@ -127,8 +140,6 @@ public abstract class MarkupParser
         }
     }
 
-    protected boolean m_parseAccessRules = true;
-
     public void disableAccessRules()
     {
         m_parseAccessRules = false;
@@ -153,5 +164,64 @@ public abstract class MarkupParser
      */
     public abstract WikiDocument parse()
          throws IOException;
+
+    /**
+     *  Cleans a Wiki name.
+     *  <P>
+     *  [ This is a link ] -&gt; ThisIsALink
+     *
+     *  @param link Link to be cleared. Null is safe, and causes this to return null.
+     *  @return A cleaned link.
+     *
+     *  @since 2.0
+     */
+    public static String cleanLink( String link )
+    {
+        StringBuffer clean = new StringBuffer();
+    
+        if( link == null ) return null;
+    
+        //
+        //  Compress away all whitespace and capitalize
+        //  all words in between.
+        //
+    
+        StringTokenizer st = new StringTokenizer( link, " -" );
+    
+        while( st.hasMoreTokens() )
+        {
+            StringBuffer component = new StringBuffer(st.nextToken());
+    
+            component.setCharAt(0, Character.toUpperCase( component.charAt(0) ) );
+    
+            //
+            //  We must do this, because otherwise compiling on JDK 1.4 causes
+            //  a downwards incompatibility to JDK 1.3.
+            //
+            clean.append( component.toString() );
+        }
+    
+        //
+        //  Remove non-alphanumeric characters that should not
+        //  be put inside WikiNames.  Note that all valid
+        //  Unicode letters are considered okay for WikiNames.
+        //  It is the problem of the WikiPageProvider to take
+        //  care of actually storing that information.
+        //
+    
+        for( int i = 0; i < clean.length(); i++ )
+        {
+            char ch = clean.charAt(i);
+    
+            if( !(Character.isLetterOrDigit(ch) ||
+                  MarkupParser.PUNCTUATION_CHARS_ALLOWED.indexOf(ch) != -1 ))
+            {
+                clean.deleteCharAt(i);
+                --i; // We just shortened this buffer.
+            }
+        }
+    
+        return clean.toString();
+    }
 
 }

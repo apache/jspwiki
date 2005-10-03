@@ -45,11 +45,6 @@ public class JSPWikiMarkupParser
     private static final int              ATTACHMENT    = 10;
     // private static final int              ATTACHMENTIMAGE = 11;
 
-    /** Lists all punctuation characters allowed in WikiMarkup. These
-        will not be cleaned away. */
-
-    private static final String           PUNCTUATION_CHARS_ALLOWED = "._";
-
     private static Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
 
     //private boolean        m_iscode       = false;
@@ -98,17 +93,9 @@ public class JSPWikiMarkupParser
     /** If true, all outward links (external links) have a small link image appended. */
     public static final String     PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
 
-    /** If set to "true", allows using raw HTML within Wiki text.  Be warned,
-        this is a VERY dangerous option to set - never turn this on in a publicly
-        allowable Wiki, unless you are absolutely certain of what you're doing. */
-    public static final String     PROP_ALLOWHTML        = "jspwiki.translatorReader.allowHTML";
-
     /** If set to "true", all external links are tagged with 'rel="nofollow"' */
     public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
 
-    /** If set to "true", enables plugins during parsing */
-    public static final String     PROP_RUNPLUGINS       = "jspwiki.translatorReader.runPlugins";
-    
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
 
@@ -244,7 +231,7 @@ public class JSPWikiMarkupParser
                                                              PROP_USEOUTLINKIMAGE, 
                                                              m_useOutlinkImage );
         m_allowHTML           = TextUtil.getBooleanProperty( props,
-                                                             PROP_ALLOWHTML, 
+                                                             MarkupParser.PROP_ALLOWHTML, 
                                                              m_allowHTML );
 
         m_useRelNofollow      = TextUtil.getBooleanProperty( props,
@@ -265,7 +252,8 @@ public class JSPWikiMarkupParser
      *  @return Collection of Strings with patterns.
      */
 
-    protected static Collection getImagePatterns( WikiEngine engine )
+    // FIXME: Does not belong here; should be elsewhere
+    public static Collection getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
         ArrayList  ptrnlist = new ArrayList();
@@ -479,65 +467,6 @@ public class JSPWikiMarkupParser
         return el;
     }
 
-
-    /**
-     *  Cleans a Wiki name.
-     *  <P>
-     *  [ This is a link ] -&gt; ThisIsALink
-     *
-     *  @param link Link to be cleared. Null is safe, and causes this to return null.
-     *  @return A cleaned link.
-     *
-     *  @since 2.0
-     */
-    public static String cleanLink( String link )
-    {
-        StringBuffer clean = new StringBuffer();
-
-        if( link == null ) return null;
-
-        //
-        //  Compress away all whitespace and capitalize
-        //  all words in between.
-        //
-
-        StringTokenizer st = new StringTokenizer( link, " -" );
-
-        while( st.hasMoreTokens() )
-        {
-            StringBuffer component = new StringBuffer(st.nextToken());
-
-            component.setCharAt(0, Character.toUpperCase( component.charAt(0) ) );
-
-            //
-            //  We must do this, because otherwise compiling on JDK 1.4 causes
-            //  a downwards incompatibility to JDK 1.3.
-            //
-            clean.append( component.toString() );
-        }
-
-        //
-        //  Remove non-alphanumeric characters that should not
-        //  be put inside WikiNames.  Note that all valid
-        //  Unicode letters are considered okay for WikiNames.
-        //  It is the problem of the WikiPageProvider to take
-        //  care of actually storing that information.
-        //
-
-        for( int i = 0; i < clean.length(); i++ )
-        {
-            char ch = clean.charAt(i);
-
-            if( !(Character.isLetterOrDigit(ch) ||
-                  PUNCTUATION_CHARS_ALLOWED.indexOf(ch) != -1 ))
-            {
-                clean.deleteCharAt(i);
-                --i; // We just shortened this buffer.
-            }
-        }
-
-        return clean.toString();
-    }
 
     /**
      *  Figures out if a link is an off-site link.  This recognizes
@@ -868,7 +797,7 @@ public class JSPWikiMarkupParser
     private String makeHeadingAnchor( String baseName, String title, Heading hd )
     {
         hd.m_titleText = title;
-        title = cleanLink( title );
+        title = MarkupParser.cleanLink( title );
         hd.m_titleSection = m_engine.encodeName(title);
         hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
                            "-"+hd.m_titleSection;
@@ -1059,7 +988,7 @@ public class JSPWikiMarkupParser
     // FIXME: isExternalLink() is called twice.
     private Element handleImageLink( String reallink, String link, boolean hasLinkText )
     {
-        String possiblePage = cleanLink( link );
+        String possiblePage = MarkupParser.cleanLink( link );
         String matchedLink;
 
         if( isExternalLink( link ) && hasLinkText )
@@ -1304,7 +1233,7 @@ public class JSPWikiMarkupParser
                 String namedSection = reallink.substring( hashMark+1 );
                 reallink = reallink.substring( 0, hashMark );
 
-                reallink     = cleanLink( reallink );
+                reallink     = MarkupParser.cleanLink( reallink );
 
                 callMutatorChain( m_localLinkMutatorChain, reallink );
 
@@ -1323,7 +1252,7 @@ public class JSPWikiMarkupParser
             else
             {
                 // It's an internal Wiki link
-                reallink = cleanLink( reallink );
+                reallink = MarkupParser.cleanLink( reallink );
 
                 callMutatorChain( m_localLinkMutatorChain, reallink );
 
