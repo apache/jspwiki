@@ -73,7 +73,7 @@ public class CheckVersionTag
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
-        if( page != null && engine.pageExists(page) )
+        if( page != null && engine.pageExists(page.getName()) )
         {
             int version = page.getVersion();
             boolean include = false;
