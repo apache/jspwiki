@@ -10,6 +10,7 @@ import org.apache.oro.text.perl.Perl5Util;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -93,7 +94,7 @@ public class PageRenamer
         newName = newName.trim();
 
     
-        String newNameCleaned = TranslatorReader.cleanLink( newName );
+        String newNameCleaned = MarkupParser.cleanLink( newName );
         
         log.debug( "Rename request for page '"+ oldName +"' to '" + newNameCleaned + "'" );
            
@@ -275,7 +276,7 @@ public class PageRenamer
             ret.append( input.substring( lastMatchEnd, matchResult.beginOffset( 0 ) ) );
         
             String link = matchResult.group( 2 );
-            String linkDestinationPage = checkPluralPageName( TranslatorReader.cleanLink( link ) );
+            String linkDestinationPage = checkPluralPageName( MarkupParser.cleanLink( link ) );
             
             if( linkDestinationPage.equals( oldName ) )
             {

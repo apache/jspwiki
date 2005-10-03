@@ -11,13 +11,13 @@ import java.util.Collection;
 
 import org.jdom.Element;
 
-import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WikiDavProvider;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 
 /**
  *  @author jalkanen
@@ -55,7 +55,7 @@ public class HTMLPageDavItem extends PageDavItem
         WikiContext context = new WikiContext( engine, m_page );
         context.setRequestContext( WikiContext.VIEW );
 
-        context.setVariable( TranslatorReader.PROP_RUNPLUGINS, "false" );
+        context.setVariable( MarkupParser.PROP_RUNPLUGINS, "false" );
         context.setVariable( WikiEngine.PROP_RUNFILTERS, "false" );
 
         String text = engine.getHTML( context, m_page );

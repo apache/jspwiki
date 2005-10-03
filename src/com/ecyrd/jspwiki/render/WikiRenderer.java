@@ -7,7 +7,7 @@ import org.jdom.Document;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 
 /**
@@ -35,7 +35,7 @@ public abstract class WikiRenderer
         //  Do some sane defaults
         //
         WikiEngine engine = m_context.getEngine();
-        String runplugins = engine.getVariable( m_context, JSPWikiMarkupParser.PROP_RUNPLUGINS );
+        String runplugins = engine.getVariable( m_context, MarkupParser.PROP_RUNPLUGINS );
         if( runplugins != null ) enablePlugins( TextUtil.isPositive(runplugins));
     }
 

@@ -19,26 +19,18 @@
  */
 package com.ecyrd.jspwiki.attachment;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.TranslatorReader;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiProvider;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.PageManager;
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -243,7 +235,7 @@ public class AttachmentManager
         if( cutpt != -1 )
         {
             String parentPage = attachmentname.substring(0,cutpt);
-            parentPage = TranslatorReader.cleanLink( parentPage );
+            parentPage = MarkupParser.cleanLink( parentPage );
             attachmentname = attachmentname.substring(cutpt+1);
 
             // If we for some reason have an empty parent page name; 

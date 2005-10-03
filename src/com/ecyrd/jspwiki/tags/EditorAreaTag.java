@@ -6,17 +6,12 @@ package com.ecyrd.jspwiki.tags;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.xhtml.br;
-import org.apache.ecs.xhtml.div;
-import org.apache.ecs.xhtml.h3;
-import org.apache.ecs.xhtml.noscript;
-import org.apache.ecs.xhtml.script;
-import org.apache.ecs.xhtml.textarea;
+import org.apache.ecs.xhtml.*;
 
 import com.ecyrd.jspwiki.NoSuchVariableException;
-import com.ecyrd.jspwiki.TranslatorReader;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 
 /**
  *  @author jalkanen
@@ -45,7 +40,7 @@ public class EditorAreaTag extends WikiTagBase
         
         // FIXME: Should this change the properties?
         context.setVariable( WikiEngine.PROP_RUNFILTERS, "false" );
-        context.setVariable( TranslatorReader.PROP_RUNPLUGINS, "false" );
+        context.setVariable( MarkupParser.PROP_RUNPLUGINS, "false" );
         String pageAsHtml = StringEscapeUtils.escapeJavaScript( engine.textToHTML( context, getText(context) ) );
 
         div container = new div();

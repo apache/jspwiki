@@ -27,6 +27,8 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.render.RenderingManager;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -545,26 +547,20 @@ public class CachingProvider
     {
         if( page != null && !page.hasMetadata() )
         {
-            StringReader in = null;
-            StringWriter out = null;
-                
+            RenderingManager mgr = m_engine.getRenderingManager();
+            
             try
             {
-                in = new StringReader( m_provider.getPageText(page.getName(), page.getVersion()) ); 
-                                                    
-                TranslatorReader tr = new TranslatorReader( new WikiContext(m_engine, page), in );
+                String data = m_provider.getPageText(page.getName(), page.getVersion());
                 
-                out = new StringWriter();
-                FileUtil.copyContents( tr, out );
+                WikiContext ctx = new WikiContext( m_engine, page );
+                MarkupParser parser = mgr.getParser( ctx, data );
+                
+                parser.parse();
             }
             catch( Exception ex )
             {
                 log.debug("Failed to retrieve variables for wikipage "+page);
-            }
-            finally
-            {
-                if( in != null ) in.close();
-                if( out != null ) try { out.close(); } catch( IOException ex ) {};
             }
         }
     }
