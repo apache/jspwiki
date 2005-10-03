@@ -44,6 +44,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
+import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -240,11 +241,7 @@ public class WikiEngine
     private String           m_appid = "";
 
     private boolean          m_isConfigured = false; // Flag.
-
-    /** Just for temporary testing */
-    private boolean m_useNewRenderingEngine = true;
-    private static final String PROP_USERENDERINGMGR = "jspwiki.newRenderingEngine";
-    
+  
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -502,9 +499,6 @@ public class WikiEngine
         m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
         m_frontPage      = props.getProperty( PROP_FRONTPAGE,   "Main" );
 
-        m_useNewRenderingEngine = TextUtil.getBooleanProperty( props,
-                                                               PROP_USERENDERINGMGR,
-                                                               m_useNewRenderingEngine );
         //
         //  Initialize the important modules.  Any exception thrown by the
         //  managers means that we will not start up.
@@ -901,7 +895,7 @@ public class WikiEngine
 
     public Collection getAllInlinedImagePatterns()
     {
-        return TranslatorReader.getImagePatterns( this );
+        return JSPWikiMarkupParser.getImagePatterns( this );
     }
 
     /**
@@ -1327,34 +1321,29 @@ public class WikiEngine
     {
         String result = "";
 
-        if( m_useNewRenderingEngine )
+        boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
+        
+        StopWatch sw = new StopWatch();
+        sw.start();
+        try
         {
-            boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
-        
-            StopWatch sw = new StopWatch();
-            sw.start();
-            try
-            {
-                if( runFilters )
-                    pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
+            if( runFilters )
+                pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
-                result = m_renderingManager.getHTML( context, pagedata );
+            result = m_renderingManager.getHTML( context, pagedata );
 
-                if( runFilters )
-                    result = m_filterManager.doPostTranslateFiltering( context, result );
-            }
-            catch( FilterException e )
-            {
-                // FIXME: Don't yet know what to do
-            }
-            sw.stop();
-            if( log.isDebugEnabled() )
-                log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
-            
-            return( result );
+            if( runFilters )
+                result = m_filterManager.doPostTranslateFiltering( context, result );
         }
-        
-        return textToHTML( context, pagedata, null, null );
+        catch( FilterException e )
+        {
+            // FIXME: Don't yet know what to do
+        }
+        sw.stop();
+        if( log.isDebugEnabled() )
+            log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
+            
+        return( result );
     }
 
     /**
@@ -1418,8 +1407,6 @@ public class WikiEngine
             return null;
         }
 
-        TranslatorReader in = null;
-
         boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
         
         try
@@ -1430,29 +1417,15 @@ public class WikiEngine
             if( runFilters )
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
-            if( m_useNewRenderingEngine )
-            {
-                MarkupParser mp = m_renderingManager.getParser( context, pagedata );
-                mp.addLocalLinkHook( localLinkHook );
-                mp.addExternalLinkHook( extLinkHook );
-                mp.addAttachmentLinkHook( attLinkHook );
-                if( !parseAccessRules ) mp.disableAccessRules();
-
-                result = m_renderingManager.getHTML( context, mp.parse() );
-            }
-            else
-            {
-                in = new TranslatorReader( context,
-                                           new StringReader( pagedata ) );
-
-                in.addLocalLinkHook( localLinkHook );
-                in.addExternalLinkHook( extLinkHook );
-                in.addAttachmentLinkHook( attLinkHook );
-
-                if( !parseAccessRules ) in.disableAccessRules();
-                result = FileUtil.readContents( in );
-            }
+            MarkupParser mp = m_renderingManager.getParser( context, pagedata );
+            mp.addLocalLinkHook( localLinkHook );
+            mp.addExternalLinkHook( extLinkHook );
+            mp.addAttachmentLinkHook( attLinkHook );
             
+            if( !parseAccessRules ) mp.disableAccessRules();
+
+            result = m_renderingManager.getHTML( context, mp.parse() );
+
             if( runFilters )
                 result = m_filterManager.doPostTranslateFiltering( context, result );
             
@@ -1469,19 +1442,8 @@ public class WikiEngine
         {
             // FIXME: Don't yet know what to do
         }
-        finally
-        {
-            try
-            {
-                if( in  != null ) in.close();
-            }
-            catch( Exception e ) 
-            {
-                log.fatal("Closing failed",e);
-            }
-        }
 
-        return( result );
+        return result;
     }
 
     /**
@@ -1706,6 +1668,17 @@ public class WikiEngine
         return m_referenceManager;
     }
 
+    /**
+     *  Returns the rendering manager for this wiki application.
+     *  
+     *  @since 2.3.27
+     * @return A RenderingManager object.
+     */
+    public RenderingManager getRenderingManager()
+    {
+        return m_renderingManager;
+    }
+    
     /**      
      *  Returns the current plugin manager.
      *  @since 1.6.1
@@ -1950,7 +1923,7 @@ public class WikiEngine
 
         if( wikipage == null ) 
         {
-            pagereq = TranslatorReader.cleanLink( pagereq );
+            pagereq = MarkupParser.cleanLink( pagereq );
             wikipage = new WikiPage( this, pagereq );
         }
 
