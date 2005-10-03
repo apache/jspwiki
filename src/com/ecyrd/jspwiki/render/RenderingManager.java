@@ -64,11 +64,11 @@ public class RenderingManager implements PageFilter
     protected WikiDocument getRenderedDocument( WikiContext context, String pagedata )
         throws IOException
     {
-        String pagename = context.getRealPage().getName();
+        String pageid = context.getRealPage().getName()+"::"+context.getRealPage().getVersion();
         
         try
         {
-            WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pagename, 
+            WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pageid, 
                                                                             m_cacheExpiryPeriod );
             
             //
@@ -78,12 +78,12 @@ public class RenderingManager implements PageFilter
             if( !pagedata.equals(doc.getPageData()) )
                 throw new NeedsRefreshException(doc);
             
-            if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pagename );
+            if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pageid );
             return doc;
         }
         catch( NeedsRefreshException e )
         {
-            if( log.isDebugEnabled() ) log.debug("Re-rendering and storing "+pagename );
+            if( log.isDebugEnabled() ) log.debug("Re-rendering and storing "+pageid );
 
             MarkupParser parser = getParser( context, pagedata );
 
@@ -92,7 +92,7 @@ public class RenderingManager implements PageFilter
                 WikiDocument doc = parser.parse();
                 doc.setPageData( pagedata );
                 
-                m_documentCache.putInCache( pagename, doc );
+                m_documentCache.putInCache( pageid, doc );
                 
                 return doc;
             }
