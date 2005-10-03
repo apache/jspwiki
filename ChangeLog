@@ -1,3 +1,16 @@
+2005-10-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.27
+
+        * Bug fix: RenderingManager would cache old versions on
+        top of new ones.
+
+        * Bug fix: CheckVersionTag would cause unnecessary page
+        rendering.  Reported by Kees Kuip.
+
+        * Switched most of the code to use the new RenderingManager
+        to find problems with the code.
+
 2005-10-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.26
