@@ -86,10 +86,21 @@
             errors.add("The group must have at least one member.");
         }
         
-        // If no errors, build and save the group page
-        if ( errors.size() == 0 )
+        // If page already exists, disallow
+        String groupPage = "Group" + name;
+        if ( wiki.pageExists( groupPage ) )
         {
-            String groupPage = "Group" + name;
+            errors.add("A group named '" + name + "' already exists. Choose another.");
+        }
+        
+        // If no errors, build and save the group page
+        if ( errors.size() > 0 )
+        {
+            response.sendRedirect( "NewGroup.jsp?name=" + name + "&members=" + members );
+            return;
+        }
+        else
+        {
             WikiContext groupContext = new WikiContext( wiki, request, new WikiPage( wiki, groupPage ) );
             log.info("Creating group "+groupPage+". User="+user+", host="+request.getRemoteAddr() );
 
