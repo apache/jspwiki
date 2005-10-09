@@ -1,3 +1,59 @@
+2005-10-10  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.28
+        
+        * For once, no public auth API changes! 
+        
+        * CMA and custom authentication JSPs re-factored
+          so that they use the same "special page" for
+          logins: Login.jsp. This makes for much cleaner
+          JSP code; for example, LeftMenu.jsp no longer needs
+          conditional logic for Login.jsp v. LoginRedirect.jsp.
+        
+        * The web.xml file's constrained resources for CMA
+          expanded to include NewGroup.jsp, Upload.jsp
+          and Login.jsp. Constraint for LoginRedirect.jsp
+          removed (the page no longer exists). The login
+          form for CMA now uses the same as for custom 
+          auth (LoginForm.jsp).
+          
+        * WebContainerAuthorizer now tests for Login.jsp
+          constraints rather than LoginRedirect.jsp
+          when determining whether CMA is used.
+          WebContainerAuthorizerTest changed accordingly.
+          
+        * Security fix: Authorization algorithm fixed to prevent
+          privilege escalation with asserted Principals when
+          wiki page contains ACL. Authorization now checks to
+          make sure the security allows the requested permission
+          /in addition to/ matching the user's principals
+          with those in the ACL. This meant we needed to
+          add PagePermission "*:Group*", "edit" entries
+          to the Asserted and Authenticated policy blocks.
+        
+        * Bug fix: AuthenticationManager no longer flushes
+          Principals during custom logins. This was hosing
+          user sessions if the user failed to log in.
+          
+        * Bug fix: AuthorizationManagerTest's testGetRoles()
+          method no longer b0rks.
+        
+        * Bug fix: default/LoginContent.jsp whitespace goof.
+        
+        * Bug fix: both custom and container successful
+          logins set the user cookie, like they should.
+          (Credit: John Volkar)
+          
+        * Bug fix: group creation page (NewGroup.jsp)
+          checks for previous existence of group before
+          saving, and gives user chance to change the
+          name if it does.
+          
+        * Bug fix: NewGroup.jsp no longer triggers the
+          'direct access to login form' error when
+          CMA is used. This is due to the refactoring
+          mentioned above.
+        
 2005-10-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.27
