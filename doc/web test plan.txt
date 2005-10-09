@@ -18,6 +18,7 @@ In test pages directory:
 - Delete page GroupTest.txt
 - Delete pages NewBlog*.*
 Remove all users from userdatabase.xml.
+Flush cookies from browser.
 
 Custom Auth Tests:
 -----------------
@@ -58,7 +59,7 @@ b. Click on Edit Your Profile.
    Should see login name, wiki name, full name read-only; password and email
    editable
 
-c. Manually navigate to Register.jsp. Should redirect to EditPreferences.jsp
+c. Manually navigate to Register.jsp. Should redirect to UserPreferences.jsp
 
 4) Authenticated page modification tests
 a. Click on Main. Edit; add "Authenticated test" to top and save.
@@ -143,7 +144,7 @@ a. Click on Register page. Should be redirected to login page.
 b. Click on Edit Your Profile.
    Should see login name, wiki name, full name read-only; password and email editable 
    
-c. Manually navigate to Register.jsp. Should redirect to EditPreferences.jsp
+c. Manually navigate to Register.jsp. Should redirect to UserPreferences.jsp
 
 4) Authenticated page modification tests
 a. Click on Main. Edit; add "Authenticated test" to top and save.
@@ -170,11 +171,6 @@ b. Edit GroupTest. Append ''Group description goes here...''. Save.
 6) Access control test
 a. Log out & clear cookies. Try accessing GroupTest. Should redirect to Login page.
 b. Login as arj. Should redirect to GroupTest and allow editing.
->>>>>>> Error when using 8080: direct reference to Login.jsp. The culprit is URL constructors that specify context LOGIN which points to Login.jsp. This is fine, but what we need to protect Login.jsp
-as a resource. Solution for 2.3 20+: move Login.jsp logic to LoginForm.jsp. Then, in Login.jsp in first bits of
-code, include LoginForm.jsp if NOT cma; post to Login.jsp.
-If successful auth and NOT cma, forward to destination page.
-<<<<<<<
 
 7) Blog tests
 a. As arj, create new page NewBlog. Add this text:
