@@ -54,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.11 $ $Date: 2005-09-03 00:13:28 $
+ * @version $Revision: 1.12 $ $Date: 2005-10-09 05:54:18 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -247,10 +247,7 @@ public class AuthenticationManager
             return false;
         }
         
-        Subject subject = session.getSubject();
-        subject.getPrincipals().clear();
         CallbackHandler handler = new WikiCallbackHandler( m_engine.getUserDatabase(), username, password );
-        
         return doLogin( session, handler, LOGIN_CUSTOM );
     }
     
