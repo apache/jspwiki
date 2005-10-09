@@ -190,15 +190,17 @@
        <web-resource-collection>
            <web-resource-name>Authenticated area</web-resource-name>
            <url-pattern>/Edit.jsp</url-pattern>
-           <url-pattern>/Upload.jsp</url-pattern>
            <url-pattern>/Comment.jsp</url-pattern>
-           <url-pattern>/LoginRedirect.jsp</url-pattern>
+           <url-pattern>/Login.jsp</url-pattern>
+           <url-pattern>/NewGroup.jsp</url-pattern>
            <url-pattern>/Register.jsp</url-pattern>
+           <url-pattern>/Rename.jsp</url-pattern>
+           <url-pattern>/Upload.jsp</url-pattern>
            <url-pattern>/UserPreferences.jsp</url-pattern>
            <http-method>DELETE</http-method>
            <http-method>GET</http-method>
-           <http-method>POST</http-method>
            <http-method>HEAD</http-method>
+           <http-method>POST</http-method>
            <http-method>PUT</http-method>
        </web-resource-collection>
 
@@ -223,8 +225,8 @@
    <login-config>
        <auth-method>FORM</auth-method>
        <form-login-config>
-           <form-login-page>/Login.jsp</form-login-page>
-           <form-error-page>/Login.jsp</form-error-page>
+           <form-login-page>/LoginForm.jsp</form-login-page>
+           <form-error-page>/LoginForm.jsp</form-error-page>
        </form-login-config>
    </login-config>
 
