@@ -35,12 +35,7 @@
         <wiki:Permission permission="registerUser">
           <a href="Register.jsp">Register</a> or 
         </wiki:Permission>
-        <wiki:UserCheck status="customAuth">
-          <a href="Login.jsp">Log in</a>
-        </wiki:UserCheck>
-        <wiki:UserCheck status="containerAuth">
-          <a href="LoginRedirect.jsp">Log in</a>
-        </wiki:UserCheck>
+        <a href="Login.jsp">Log in</a>
       </p>
     </wiki:UserCheck>
    
