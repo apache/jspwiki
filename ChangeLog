@@ -1,4 +1,25 @@
-2005-10-10  Andrew Jaquith <arjaquith@mindspring.com>
+2005-10-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.29
+        
+        * Security fix: it was possible to inject javascript
+        using CSS.  Reported by Martijn Brinkers.
+        
+        * Bug fix: In certain cases, }}} would loop forever.
+        
+        * CachingProvider should now be a bit smarter about
+        refreshing metadata.
+        
+        * Added patch from Kees Kuip to cache the file properties
+        in VersioningFileProvider, providing faster performance.
+        
+        * Rearranged quite a lot of code in URL providers to fix
+        a bunch of problems.  Unfortunately, it also means that
+        URLs are no longer relative at all; they're always absolute,
+        but they don't always include the host name (depending
+        on the setting with jspwiki.referenceStyle).
+
+2005-10-09  Andrew Jaquith <arjaquith@mindspring.com>
 
         * v2.3.28
         
