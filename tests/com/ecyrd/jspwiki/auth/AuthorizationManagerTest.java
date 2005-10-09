@@ -338,7 +338,7 @@ public class AuthorizationManagerTest extends TestCase
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.setRoles( new String[]{"Admin"} );
         
-        WikiPage p = m_engine.getPage( "Test" );
+        WikiPage p = m_engine.getPage( "GroupTest" );
         m_context = new WikiContext( m_engine, request, p );
         
         // Pretend Bob has asserted his identity
