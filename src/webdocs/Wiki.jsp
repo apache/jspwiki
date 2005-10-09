@@ -45,7 +45,7 @@
         if( authMgr.strictLogins() )
         {
             log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
-            String msg = "Unknown user or password.<br>Please try again.";
+            String msg = "Oops! Looks like you aren't allowed to do that. Please log in first.";
             session.setAttribute( "msg", msg );
             String pageurl = wiki.encodeName( pagereq );
             response.sendRedirect( wikiContext.getURL( WikiContext.LOGIN, pageurl ) );
