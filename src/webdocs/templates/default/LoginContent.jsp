@@ -38,7 +38,7 @@
     with your login name and password.</p>
   <br />
   <br />
-  <form action="<%=postURL%>"accept-charset="<wiki:ContentEncoding />" method="post" >
+  <form action="<%=postURL%>" accept-charset="<wiki:ContentEncoding />" method="post" >
   <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
   <div align="center">
     <table border="0" cellspacing="3" cellpadding="5" width="35%" bgcolor="#efefef" />
