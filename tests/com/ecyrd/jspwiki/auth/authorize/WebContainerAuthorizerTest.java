@@ -40,7 +40,7 @@ public class WebContainerAuthorizerTest extends TestCase
     public void testConstraints()
     {
         assertTrue( m_authorizer.isConstrained( m_webxml, "/Delete.jsp", Role.AUTHENTICATED ) );
-        assertTrue( m_authorizer.isConstrained( m_webxml, "/LoginRedirect.jsp", Role.ADMIN ) );
+        assertTrue( m_authorizer.isConstrained( m_webxml, "/Login.jsp", Role.ADMIN ) );
         assertTrue( m_authorizer.isConstrained( m_webxml, "/UserPreferences.jsp", Role.AUTHENTICATED ) );
     }
     

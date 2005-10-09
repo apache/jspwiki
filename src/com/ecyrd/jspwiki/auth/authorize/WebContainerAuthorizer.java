@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2005-09-17 18:37:45 $
+ * @version $Revision: 1.9 $ $Date: 2005-10-09 05:52:51 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -73,7 +73,7 @@ public class WebContainerAuthorizer implements Authorizer
         if ( webxml != null )
         {
             m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.ALL )
-                    && isConstrained( webxml, "/LoginRedirect.jsp", Role.ALL )
+                    && isConstrained( webxml, "/Login.jsp", Role.ALL )
                     && isConstrained( webxml, "/UserPreferences.jsp", Role.ALL );
         }
         if ( m_containerAuthorized )
