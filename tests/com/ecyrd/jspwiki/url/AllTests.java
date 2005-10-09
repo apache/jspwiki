@@ -15,6 +15,8 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("URL constructor tests");
 
         suite.addTest( ShortViewURLConstructorTest.suite() );
+        suite.addTest( ShortURLConstructorTest.suite() );
+        suite.addTest( DefaultURLConstructorTest.suite() );
 
         return suite;
     }
