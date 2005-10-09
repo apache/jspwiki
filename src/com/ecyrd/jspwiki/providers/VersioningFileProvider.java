@@ -65,6 +65,8 @@ public class VersioningFileProvider
     public static final String      PAGEDIR      = "OLD";
     public static final String      PROPERTYFILE = "page.properties";
 
+    private CachedProperties        m_cachedProperties;
+    
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -182,20 +184,44 @@ public class VersioningFileProvider
     private Properties getPageProperties( String page )
         throws IOException
     {
-        Properties props = new Properties();
-
         File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
 
         if( propertyFile != null && propertyFile.exists() )
         {
+            long lastModified = propertyFile.lastModified();
+
+            // The profiler showed that when calling the history of a page the propertyfile
+            //   was read just as much times as there were versions of that file. The loading
+            //   of a propertyfile is a cpu-intensive jobs. So now hold on to the last propertyfile
+            //   read because the next method will with a high probability ask for the same propertyfile.
+            //   The time it took to show a historypage with 267 versions dropped with 300%. 
+
+            if( m_cachedProperties != null 
+                && m_cachedProperties.m_page.equals(page) 
+                && m_cachedProperties.m_lastModified == lastModified)
+            {
+                return m_cachedProperties.m_props;
+            }
+            
             InputStream in = new FileInputStream( propertyFile );
+
+            Properties props = new Properties();
 
             props.load(in);
 
             in.close();
+            
+            CachedProperties cp = new CachedProperties();
+            cp.m_page = page;
+            cp.m_lastModified = lastModified;
+            cp.m_props = props;
+            
+            m_cachedProperties = cp; // Atomic
+            
+            return props;
         }
         
-        return props;
+        return new Properties(); // Returns an empty object
     }
 
     /**
@@ -661,5 +687,12 @@ public class VersioningFileProvider
         File toOldDir = findOldPageDir( to );
         
         fromOldDir.renameTo( toOldDir );
+    }
+    
+    private static class CachedProperties
+    {
+        String m_page;
+        Properties m_props;
+        long m_lastModified;
     }
 }
