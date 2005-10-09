@@ -55,7 +55,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.27 $ $Date: 2005-10-09 05:47:21 $
+ * @version $Revision: 1.28 $ $Date: 2005-10-09 16:08:26 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -93,9 +93,9 @@ public class AuthorizationManager
      * {@link com.ecyrd.jspwiki.WikiSession} is obtained</li>
      * <li>If the Subject's Principal set includes the Role Principal that is
      * the administrator group, always allow the Permission</li>
-     * <li>If there is no ACL at all, check to see if the Permission is allowed
-     * according to the "static" security policy. The security policy speficies
-     * what permissions are available by default</li>
+     * <li>For all permissions, check to see if the Permission is allowed according
+     * to the default security policy. If it isn't, deny the permission and halt 
+     * further processing.</li>
      * <li>If there is an Acl, get the list of Principals assigned this
      * Permission in the Acl: these will be role, group or user Principals, or
      * {@link com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal}s (see below).
