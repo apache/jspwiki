@@ -44,7 +44,7 @@ public class AllTests extends TestCase
         suite.addTest( FileUtilTest.suite() );
         suite.addTest( PageManagerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
-        suite.addTest( TranslatorReaderTest.suite() );
+        // suite.addTest( TranslatorReaderTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
