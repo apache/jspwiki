@@ -29,7 +29,7 @@
           /in addition to/ matching the user's principals
           with those in the ACL. This meant we needed to
           add PagePermission "*:Group*", "edit" entries
-          to the Asserted and Authenticated policy blocks.
+          to the Authenticated policy block.
         
         * Bug fix: AuthenticationManager no longer flushes
           Principals during custom logins. This was hosing
