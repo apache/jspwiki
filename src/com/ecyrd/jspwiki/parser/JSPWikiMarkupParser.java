@@ -1,14 +1,20 @@
 package com.ecyrd.jspwiki.parser;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.*;
 
 import javax.xml.transform.Result;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
-import org.jdom.*;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.IllegalDataException;
+import org.jdom.ProcessingInstruction;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -864,48 +870,6 @@ public class JSPWikiMarkupParser
     }
 
     /**
-     *  Checks for the existence of a traditional style CamelCase link.
-     *  <P>
-     *  We separate all white-space -separated words, and feed it to this
-     *  routine to find if there are any possible camelcase links.
-     *  For example, if "word" is "__HyperLink__" we return "HyperLink".
-     *
-     *  @param word A phrase to search in.
-     *  @return The match within the phrase.  Returns null, if no CamelCase
-     *          hyperlink exists within this phrase.
-     */
-    /*
-    private String checkForCamelCaseLink( String word )
-    {
-        PatternMatcherInput input;
-
-        input = new PatternMatcherInput( word );
-
-        if( m_matcher.contains( input, m_camelCasePtrn ) )
-        {
-            MatchResult res = m_matcher.getMatch();
-  
-            String link = res.group(2);
-
-            if( res.group(1) != null )
-            {
-                if( res.group(1).endsWith("~") ||
-                    res.group(1).indexOf('[') != -1 )
-                {
-                    // Delete the (~) from beginning.
-                    // We'll make '~' the generic kill-processing-character from
-                    // now on.
-                    return null;
-                }
-            }
-
-            return link;
-        } // if match
-
-        return null;
-    }
-*/
-    /**
      *  When given a link to a WikiName, we just return
      *  a proper HTML link for it.  The local link mutator
      *  chain is also called.
@@ -1437,22 +1401,16 @@ public class JSPWikiMarkupParser
                     startBlockLevel();
                     return pushElement( new Element("pre") );
                 }
-                else
-                {
-                    return pushElement( new Element("span").setAttribute("style","font-family:monospace; whitespace:pre;") );
-                }
+
+                return pushElement( new Element("span").setAttribute("style","font-family:monospace; whitespace:pre;") );
             }
-            else
-            {
-                pushBack( ch2 );
-                
-                return pushElement( new Element("tt") );
-           }
+
+            pushBack( ch2 );
+            
+            return pushElement( new Element("tt") );
         }
-        else
-        {
-            pushBack( ch );
-        }
+        
+        pushBack( ch );
 
         return null;
     }
@@ -1486,30 +1444,20 @@ public class JSPWikiMarkupParser
                     m_isEscaping = false;
                     return m_currentElement;
                 }
-                else
-                {
-                    m_plainTextBuf.append("}}}");
-                    return m_currentElement;
-                }
-            }
-            else
-            {
-                pushBack( ch3 );
 
-                if( !m_isEscaping )
-                {
-                    return popElement("tt");
-                }
-                else
-                {
-                    pushBack( ch2 );
-                }
+                m_plainTextBuf.append("}}}");
+                return m_currentElement;
+            }
+
+            pushBack( ch3 );
+
+            if( !m_isEscaping )
+            {
+                return popElement("tt");
             }
         }
-        else
-        {
-            pushBack( ch2 );
-        }
+
+        pushBack( ch2 );
 
         return null;
     }
@@ -1981,11 +1929,21 @@ public class JSPWikiMarkupParser
                 catch( EmptyStackException e )
                 {
                     log.debug("Page '"+m_context.getPage().getName()+"' closes a %%-block that has not been opened.");
+                    return m_currentElement;
                 }
                 
                 return el;
             }
 
+            //
+            //  Check if there is an attempt to do something nasty
+            //
+            if( style != null && style.indexOf("javascript:") != -1 )
+            {
+                log.debug("Attempt to output javascript within CSS:"+style);
+                return addElement( makeError("Attempt to output javascript!") );
+            }
+            
             //
             //  Decide if we should open a div or a span?
             //
@@ -2274,24 +2232,7 @@ public class JSPWikiMarkupParser
               case '|':
                 el = handleBar( newLine );
                 break;
-/*
-              case '<':
-                s = m_allowHTML ? "<" : "&lt;";
-                break;
 
-              case '>':
-                s = m_allowHTML ? ">" : "&gt;";
-                break;
-
-              case '\"':
-                s = m_allowHTML ? "\"" : "&quot;";
-                break;
-*/
-                /*
-              case '&':
-                s = "&amp;";
-                break;
-                */
               case '~':
                 el = handleTilde();
                 break;
@@ -2303,12 +2244,6 @@ public class JSPWikiMarkupParser
               case -1:
                 quitReading = true;
                 continue;
-/*
-              default:
-                m_plainTextBuf.append( (char)ch );
-                newLine = false;
-                break;
-*/
             }
 
             //
