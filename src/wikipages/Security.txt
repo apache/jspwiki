@@ -1,4 +1,50 @@
+This page contains a quick overview of the AAA development for JSPWiki 2.3. The new system has been in development since January 2005, and is nearly stable in the current 2.3.x branches. The goal of the new security system was to merge the classic custom JSPWiki authorization scheme with web container authorization and standard Java 2 security. __This page applies to JSPWiki versions 2.3.28 and higher__.
+
+This guide should give you a good idea of how to use JSPWiki's security features. In addition to this  page, see also:
+* [JSPWiki:Authorization And Authentication 2.3 FAQ], which contains questions and answers to common problems
+* [JSPWiki:PluginsAndAuthorization2.3], which points out some areas where we could stand to make further improvements :)
+
+''Note: the security policy syntax has changed since the initial 2.3 builds. If you're using a custom security policy and have recently upgraded to 2.3.21 or higher, please see the __Modifying the Default Security Policy__ section below.''
+
 [{TableOfContents}]
+
+!!!Features
+!!Security Overview
+JSPWiki 2.3 and higher contain a rich and flexible set of security features. This makes JSPWiki well-suited for stand-alone deployments or as part of a larger corporate intranet. However, although JSPWiki's security subsystem is highly customizable, the default settings should be enough to get you started. Here's a description of the main features.
+
+|| Feeature || Description || Default
+| Anonymity and Trust | Users can be anonymous, partially-trusted (''aka'' "asserted" using a persistent cookie), or authenticated | Anonymous and asserted users can read and edit the wiki.
+| Identity Management | Users register themselves with the wiki. After logging in, users can manage their own profiles. Profiles store their login id, full name, wiki name, e-mail address and (optionally) a password. JSPWiki's API allows any compliant user database to be plugged in for identity storage, such as LDAP or relational databases. | JSPWiki uses a flat XML file as its user database for storing user profiles; passwords are hashed using SHA-1.
+| Authentication | The wiki can authenticate users against its own user database with the user's password, or can accept authenticated credentials from the J2EE container. | JSPWiki authenticates users against its own database ("custom authentication").
+| Security Policy | The wiki's security policy enforces what actions users are allowed to perform. For example, the policy can control whether anonymous, asserted and authenticated users can read, edit, rename and delete pages; self-register; manage their profiles; or create new pages and wiki groups. The policy can be overridden on a page-by-page basis using access control liists (ACLs).  | JSPWiki's default security policy grants wide privileges to most classes of users. 
+| Access Controls Lists | Authors can add ACLs to wiki pages that specify who can view, edit, or modify  them. ACLs can contain user names, wilk names, wiki groups or externally-authorized roles. If the ACL contains a wiki group or role, the user must be a member of the group, or possess the role. An API allows administrators to store ACLs externally, in a manner independent from the page content. | ACLs are stored inside the wiki page itself, using special wiki markup.
+| Groups | Users can create on-the-fly groups of users with a simple wizard. These groups can be added to ACLs to restrict access to particular pages. An API allows administrators to configure where group membership information is stored, such as in flat files or databases. | JSPWiki stores group membership information in special wiki pages prefixed with "Group."
+| Roles | Users may possess special roles that are associated with their identities, such as the "Authenticated" or "Admin" role. These roles can be added to ACLs to restrict access to particular pages. JSPWiki administrators can configure the wiki to consult an external "authorizer" such as a web container or database to determine whether a user possesses the role. | JSPWiki consults the J2EE web container using ''isInRole'' to determine role possession.
+| Enterprise Integration | Security policies are expressed using the J2SE-standard security policy file syntax; the location of the policy file can be customized by administrators. Authentication is managed using the Java Authentication and Authorization Service (JAAS); the location of the login configuration can be customized. The wiki can use supplemental J2EE web container constraints to supply authentication credentials and to enforce authorization checks. Container-managed authentication and authorization allows administrators to connect into enterprise security instructure components such as LDAP, Single Sign-On, PAM, Kerberos and Active Directory. | Pre-configured Java2 security policy and JAAS configuration files are supplied, and loaded at startup time if administrators have not overridden them with their own versions. JSPwiki does not use J2EE container-managed authentication and authorization by default.
+
+!!Getting Started
+You should not need to do anything special to get started with JSPWiki security; simply deploy the JSPWiki WAR and load it into your favorite servlet container. By default:
+* the default login configuration and security policy is loaded automatically
+* anonymous users can edit pages and self-register
+* users log in with a login name and password
+* user identities are stored in an XML file inside WEB-INF
+* container-managed authentication and authorization is turned off 
+
+The default settings allow users to register themselves, create pages and groups, and create page ACLs. 
+
+If you want to experiment with these features yourself, start up the wiki webapp. Try registering yourself as a new user. You'll see new user identity appear in {{WEB-INF/userdatabase.xml}}. Then, click on "Edit your profile" to view your identity information (for example, your wiki name might be ''AndyJ''). 
+
+Create a new page and add some ACL markup to the top of the page restricting everyone but you from viewing it: 
+{{{[{ALLOW view AndyJ}]}}}
+
+Log out and try to view the page; the wiki should deny your request, and redirect you to the login page.
+
+Next, log in again and create a new wiki group. Make sure you add yourself to it (which it should do by default). Then create a new wiki page and add an ACL allowing the new group to read it. Log out and try to view the page you just created; you should be redirected to the login page again.
+
+Take a look at the {{WEB-INF/jspwiki.policy}} file; its syntax should be reasonably intuitive. You can experiment a bit if you like: for example, try removing "edit" rights for anonymous users. The next time you start up the webapp, it should work.
+
+!!For More Information
+The remainder of this document contains more details about JSPWiki's security system. Read on if you're curious. 
 
 !!!Authentication
 JSPWiki supports multiple levels of authentication and trust. Users can be anonymous, have "asserted" identities using cookies, be authenticated, or be administrators:
@@ -6,7 +52,7 @@ JSPWiki supports multiple levels of authentication and trust. Users can be anony
 | Anonymous | User not logged in, and has not supplied a cookie | "You are anonymous"
 | Asserted | User's browser contains a cookie called {{JSPWikiAssertedName}} | "G'Day, ''username'' (not logged in)"
 | Authenticated | User logged in with a login id and password | "G'Day, ''username'' (authenticated)"
-| Admin | User logged in with a login id and password, ''and'' this id has been pre-designated as the Admin user | "G'Day, ''username'' (authenticated)\\You are the Admin"
+| Admin | User logged in with a login id and password, ''and'' this id has been pre-designated as the Admin user | "G'Day, ''username'' (authenticated)
 
 Depending on the default security policy and page access controls in place, users may (or may not) be required to authenticate. 
 
@@ -16,7 +62,7 @@ When a user decides to log in--or is challenged to do so by a page access contro
 
 JSPWiki is smart enough to detect which authentication method is in force. If certain {{<security-contraint>}} elements in {{web.xml}} are uncommented, container authentication is used. If not, JSPWiki uses custom authentication. In both cases, the user experience is identical. 
 
-!!!User Registration and Preferences
+!!!Identity Management
 !!Self-Registration
 Although some wikis are anonymous, many are not. Often, wikis give users the ability to create an identity for the website. JSPWiki includes a basic self-registration page that allows users to set up and manage their own ''wiki profiles.'' 
 
@@ -86,18 +132,22 @@ JSPWiki decides whether to allow an action by consulting two sources of informat
 To make it easy for users to quickly get productive, JSPWiki ships with a fairly loose default policy out of the box:
 
 || Permission || Anonymous users || Asserted users (with cookie) || Authenticated users || Administrator
-| View all pages* | x | x | x | x
-| Edit all pages* | x | x | x | x
-| Upload attachments to all pages* | x | x | x | x
-| Comment on all existing pages* | x | x | x | x
-| Create new pages* | x | x | x | x
+| View all pages | x | x | x | x
+| Edit all pages | x | x | x | x
+| Upload attachments to all pages | x | x | x | x
+| Comment on all existing pages | x | x | x | x
+| Create new pages | x | x | x | x
+| Rename all pages | | | x | x
+| Delete all pages | | | | x
 | View all groups | | x | x | x
+| Edit all groups | | | x | x
+| Rename all groups | | | | x
+| Delete all groups | | | | x
 | Create new groups | | | x | x
-| Rename all pages* | | | x | x
-| Delete all pages* | | | | x
 | Register as new user | x | x | x | x
 | Edit user preferences | | | x | x
-(*)except group pages or pages with existing ACLs
+
+These privileges are the defaults. For page actions such as viewing, editing, and commenting, the privileges can be restricted further by adding an ACL to particular pages. It is important to note that ACLs cannot elevate privileges above those already granted by the policy. For example, if the policy states that Anonymous users can read all pages (but not edit), an ACL on page ''Main'' that attempts to grant the {{Edit}} privilege to Anonymous ''will not work.''
 
 JSPWiki uses the standard Java 2 security policy APIs under the covers. Default permissions are granted using standard security policy file syntax. When JSPWiki starts up, it loads the default policy file (stored in {{WEB-INF/jspwiki.policy}}).
 
@@ -110,39 +160,41 @@ JSPWiki's security policy system is based on Java 2 policy APIs. The default pol
 expresses what the page permissions of the wiki should be when the user hasn't supplied a page ACL. The policy also governs what other non-page-related actions users are allowed to take, such as registering user profiles and creating groups.
 
 The {{jspwiki.policy}} file is a standard Java policy file, so if you are familiar with the syntax it should be easy to understand. The default policy is aimed at a standard "workgroup wiki" use case. Policy blocks typically grant two types of permissions, PagePermission and WikiPermission to users having a particular Role:
-* __PagePermission__ is an action on a particular page or set of pages: {{view}}, {{edit}}, {{comment}}, {{rename}}, {{upload}}, {{delete}}. PagePermission supports wildcards.
-* __WikiPermission__ is an action that is wiki-wide: {{createPages}}, {{createGroups}}, {{registerUser}}, {{editPreferences}}
+* __PagePermission__ is a permitted action on a particular target page or set of pages: {{view}}, {{edit}}, {{comment}}, {{rename}}, {{upload}}, {{delete}}. PagePermission supports wildcards.
+* __WikiPermission__ is a permitted action on a particular target wiki: {{createPages}}, {{createGroups}}, {{registerUser}}, {{editPreferences}}
+
+The syntax, generally speaking, for WikiPermissions and PagePermissions specifies the ''target'' followed by the ''actions'' allowed on that target. For WikiPermission, the target is the name of the wiki; this is the {{jspwiki.applicationName}} property in {{jspwiki.properties}}. For PagePermission, the target is the name of the wiki, plus a delimeter (colon), followed by the page name or page collection. The action string, as noted above, is permission-specific.
 
 Here's an example "grant" block from the default policy file.
 {{{grant signedBy "jspwiki" 
   principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "view";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "createPages";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "registerUser";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
 };}}}
 
-This policy block grants a fairly wide set of privileges to anonymous users. Users can view and edit any page that doesn't have an ACL, and can create new pages and self-register. But this policy can be customized as needed. For example, let's cut this down a bit so that anonymous users can't edit existing pages or create new ones---we'd like them to register first (and authenticate) before allowing them to do these things. Here's what the revised policy block would look like:
+This policy block grants a fairly wide set of privileges to anonymous users. Users can view and edit any page that doesn't have an ACL, and can create new pages and self-register on all wikis. But this policy can be customized as needed. For example, let's cut this down a bit so that anonymous users can't edit existing pages or create new ones---we'd like them to register first (and authenticate) before allowing them to do these things. Here's what the revised policy block would look like:
 {{{grant signedBy "jspwiki" 
   principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "view";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "registerUser";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
 };}}}
 
 But suppose even this isn't strict enough; perhaps users should only be able to read the front page, and nothing else. Here's a policy block that would accomplish that goal:
 {{{grant signedBy "jspwiki" 
   principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "Main", "view";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "registerUser";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Main", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
 };}}}
 
 ''Note: the {{signedBy "jspwiki"}} section of the "grant" block ensures that calling code is signed and trusted. If you customize the default policy, we highly recommend that you include this statement in all "grant" blocks.''
 
 !Wildcards
-The policy syntax for PagePermission accepts wildcards as a prefix or suffix to a page target. This keeps policy blocks nice and concise. For example, a page target of "Main*" applies to pages "MainPage", "MainStreet" and "MainWelcome". The wildcard "*" means all pages in the wiki other than group pages. Group pages have a page prefix of "Group" and are used to define wiki groups. You must ''explicitly'' grant permissions for a Group page or collection of Group pages, e.g.:
-{{{permission com.ecyrd.jspwiki.auth.permissions.PagePermission "GroupManagers", "edit";}}}
+The policy syntax for PagePermission accepts wildcards as a prefix or suffix to a page target. This keeps policy blocks nice and concise. For example, a page target of "Main*" applies to pages "MainPage", "MainStreet" and "MainWelcome". The wildcard "*" means all pages in the wiki other than group pages. Group pages have a page prefix of "Group" and are used to define wiki groups. You must ''explicitly'' grant permissions for a Group page or collection of Group pages, ''e.g.'':
+{{{permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:GroupManagers", "edit";}}}
 or
-{{{permission com.ecyrd.jspwiki.auth.permissions.PagePermission "Group*", "edit";}}}
+{{{permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";}}}
 
 !Implied Permissions
 Certain permissions imply others:
@@ -165,8 +217,8 @@ You can also use user-specfied Role names with certain external Authorizer imple
 You are not restricted to using Principals of type Role, however. You can also specify wiki Groups or any other type of Principal. For example, suppose one of your wiki pages defines an arbitrary wiki group called "Managers". You'd like this group to be able to manage all group membership lists and to delete or rename pages, just like an administrator could. Here's a policy block that accomplishes that goal:
 {{{grant signedBy "jspwiki" 
   principal com.ecyrd.jspwiki.auth.authorize.Group "Managers" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*", "edit,rename,delete";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "Group*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,rename,delete";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
 };}}}
 
 The possibilities are endless. That said, it's wise not to go too crazy with the policy file---they should be as simple as possible, but no simpler.
@@ -243,38 +295,75 @@ Configuring JSPWiki to rely on container-managed authentication is simple. First
 Other containers (WebSphere, WebLogic, JBoss, et al) configure realms differently, but the principles are the same.
 
 After configuring the security realm for the JSPWiki webapp, enable container authentication by uncommenting these {{<security-constraint>}} elements in {{WEB-INF/web.xml}}:
-{{{   <!--  START OF ACCESS RESTRICTION
+{{{   <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH
+   
    <security-constraint>
        <web-resource-collection>
-           <web-resource-name>Protected Area</web-resource-name>
-           <url-pattern>/Edit.jsp</url-pattern>
-           <url-pattern>/Upload.jsp</url-pattern>
-           <url-pattern>/Comment.jsp</url-pattern>
+           <web-resource-name>Administrative Area</web-resource-name>
            <url-pattern>/Delete.jsp</url-pattern>
-           <url-pattern>/LoginRedirect.jsp</url-pattern>
+       </web-resource-collection>
+       <auth-constraint>
+           <role-name>Admin</role-name>
+       </auth-constraint>
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+   </security-constraint>
+      
+   <security-constraint>
+       <web-resource-collection>
+           <web-resource-name>Authenticated area</web-resource-name>
+           <url-pattern>/Edit.jsp</url-pattern>
+           <url-pattern>/Comment.jsp</url-pattern>
+           <url-pattern>/Login.jsp</url-pattern>
+           <url-pattern>/NewGroup.jsp</url-pattern>
+           <url-pattern>/Register.jsp</url-pattern>
+           <url-pattern>/Rename.jsp</url-pattern>
+           <url-pattern>/Upload.jsp</url-pattern>
            <url-pattern>/UserPreferences.jsp</url-pattern>
+           <http-method>DELETE</http-method>
+           <http-method>GET</http-method>
+           <http-method>HEAD</http-method>
+           <http-method>POST</http-method>
+           <http-method>PUT</http-method>
+       </web-resource-collection>
 
-       ...
+...
 
    <security-role>
-     <description>
-       This logical role includes all authenticated users
-     </description>
-     <role-name>Authenticated</role-name>
+       <description>
+           This logical role includes all authenticated users
+       </description>
+       <role-name>Authenticated</role-name>
    </security-role>
 
    <security-role>
-     <description>
-       This logical role includes all administrative users
-     </description>
-     <role-name>Admin</role-name>
+       <description>
+           This logical role includes all administrative users
+       </description>
+       <role-name>Admin</role-name>
    </security-role>
-   -->}}}
-When JSPWiki starts up, it parses the JSPWiki's web application descriptor ({{WEB-INF/web.xml}}) and identifies whether certain constraints exist. Specifically, it checks to see if the logical role "Authenticated" is required to access {{/Delete.jsp}}, {{/UserPreferences.jsp}} and {{LoginRedirect.jsp}}. If you have uncommented the {{<security-constraint>}} block, this will be true, and JSPWiki will conclude that is should use container authentication instead of custom.
+   
+   REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  -->}}}
+''Note: for versions of JSPWiki earlier than 2.3.28, the contents of this file may appear slightly different.''
 
-By the way, the default container-managed security constraints in {{web.xml}} will force users to log in when they try to edit a page, upload a file, comment on a page, create a new group, or edit their user profiles. This supplements, and is slightly stricter than, the default security policy. It should be sufficient for most corporate intranets and public wikis. You can tweak the constraints if you wish, although you ''must'' retain the constraint for {{LoginRedirect.jsp}} for the "Log in" link on the menu bar to work correctly.
+When JSPWiki starts up, it parses the JSPWiki's web application descriptor ({{WEB-INF/web.xml}}) and identifies whether certain constraints exist. Specifically, it checks to see if a logical role is required to access {{/Delete.jsp}}, {{/UserPreferences.jsp}} and {{Login.jsp}}. If you have uncommented the {{<security-constraint>}} block, this will be true, and JSPWiki will conclude that is should use container authentication instead of custom.
 
-!Customizing the  User Database
+The default container-managed security constraints in {{web.xml}} will force users to log in when they try to edit a page, upload a file, comment on a page, create a new group, or edit their user profiles. This supplements, and is slightly stricter than, the default security policy. It should be sufficient for most corporate intranets and public wikis. You can tweak the constraints if you wish, although you ''must'' retain the constraint for {{LoginRedirect.jsp}} for the "Log in" link on the menu bar to work correctly.
+
+When using container authentication, the {{<role-name>}} values are significant and should match the role names retrieved by your web container's security realm. For the default configuration to work correctly, you should configure your container so that the roles of "Admin" and/or "Authenticated" are assigned approriately by the web container at login time.
+
+For example, if you are using Tomcat's built-in "memory realm", you should edit the {{''$CATALINA_HOME''/conf/tomcat-users.xml}} file and add the desired actual user accounts. Each user must possess one or both of the Admin or Authenticated roles. For other realm types, consult your web container's documentation.
+
+Alternatively, you could also replace all references to "Authenticated" and "Admin" with role names that match those returned by your container's security realm. JSPWiki doesn't care either way, as long as they match.
+
+Note also that accessing protected resources will cause your container to try to use SSL to secure the web session. This, of course, assumes your web container (or web server) is configured with SSL support. If you do not wish to use SSL, remove the {{<user-data-constraint>}} elements.
+
+;:__Warning: when using container-managed authentication, versions of JSPWiki through 2.3.28 ''require'' (but do not enforce) that users accept cookies in their browsers. This is so the web container can properly set the JSESSSIONID session identifier cookie.__
+
+!Customizing Identity Management
+JSPWiki uses something called a "user database" to store identity information about wiki members. The user's identify is stored in a ''user profile.'' User profile attributes include, for example, the user's login name, full name, wiki-name, and e-mail address. If JSPWiki's custom authentication scheme is used (instead of container-managed authentication), the user profile wll also contain the user's password. The login name, by the way, is the unique identifier that connects the container-managed identity with the JSPWiki identity. 
+
 Out of the box, JSPWiki uses a standard UserDatabase implementation {{com.ecyrd.jspwiki.auth.user.XMLUserDatabase}} for loading and persisting user profiles. This implementation is good enough for workgroups and small-scale public wikis. By default, JSPWiki looks for a file called {{userdatabase.xml}} in {{WEB-INF/web.xml}}. You can (and should) specify a permanent location for this file by editing the {{jspwiki.xmlUserDatabaseFile}} property in {{jspwiki.properties}}. The location should be outside of the JSPWiki webapp directory, ideally in a place like {{/etc}}.
 
 In addition to the default XML implementation, you can write your own alternative implementation that relies on, for example, LDAP or a relational database for persistent storage. The interface {{com.ecyrd.jspwiki.user.UserDatabase}} defines standard methods for finding, loading and saving user profiles. If you use your own UserDatabase, you need to specify the implementation class in {{jspwiki.properties}}:
@@ -287,16 +376,19 @@ Internally, the JSP authorization algorithm grants access based on 1) examinatio
 What constitutes a request for access? Any action requiring a Permission, such as a read, write, rename or delete operation on a page; attempt to self-register; create, save or delete a wiki group; create a page, etc. Before executing the action, the calling JSP or Java code asks JSPWiki for authorization by calling AuthorizationManager's {{checkPermission}} method. As a parameter to this method, the calling code passes a Permission object that will either be a PagePermission (if it involves page-level operations) or a WikiPermission (for Wiki-level operations like registering a user, or creating a group, or page).
 
 The authorization process checks whether the Permission was granted to the Subject associated with the WikiSession. The Permission-checking algorithm works as follows:
-* If the Subject's Principal set includes the Role Principal that represents the administrator group ("administrator"), the Permission is always allowed. By definition, administrators can do anything.
-* If the Permission is not a PagePermission, or if it is but its associated page has no ACL, we check to see if the Permission is allowed according to the default security policy
-* For pages with ACLs, we retrieve the list of Principals assigned this permission in the ACL: these will be Principals representing a Role, wiki group or user. Then, we determine whether the Subject is considered to have any of these Roles or Principals. ''That'' process is as follows:
-** If the Principal in the ACL is a built-in Role, the algorithm simply checks to see if the Subject possesses it in its Principal set
-** If the Principal in the ACL is a Role but ''not'' built-in, the external Authorizer's {{isInRole}} method is called
-** If the Principal in the ACLl is a wiki Group, the GroupManager's group authorizer {{isInRole}} method is called
-** If the Principal in the ACL is a user, check whether the Subject possesses it in its Principal set
-* Otherwise, deny the permission
+# If the Subject's Principal set includes the Role Principal that represents the administrator group ("administrator"), the Permission is always allowed. By definition, administrators can do anything.
+# For all permissions, check to see if the Permission is allowed according to the default security policy. If it isn't, deny the permission and halt further processing.
+# For pages with ACLs, we retrieve the list of Principals assigned this permission in the ACL: these will be Principals representing a Role, wiki group or user. Then, we determine whether the Subject is considered to have any of these Roles or Principals. ''That'' process is as follows:
+## If the Principal in the ACL is a built-in Role, the algorithm simply checks to see if the Subject possesses it in its Principal set
+## If the Principal in the ACL is a Role but ''not'' built-in, the external Authorizer's {{isInRole}} method is called
+## If the Principal in the ACLl is a wiki Group, the GroupManager's group authorizer {{isInRole}} method is called
+## If the Principal in the ACL is a user, check whether the Subject possesses it in its Principal set
+# Otherwise, deny the permission
 
 In short, this algorithm provides a way to use built-in roles ("authenticated", "all" etc) in access checks, but also external groups (such as those provided by the web container) and ad-hoc, arbitary wiki groups. So, if you've got an external LDAP server wired up to your web container for authentication and authorization, you can use it! And if your users want to create their own wiki groups by creating a special Group* page, we can use those too. 
+
+''As mentioned previously, ACLs'' cannot ''elevate privileges above those already granted by the policy. For example, if the policy states that Anonymous users can read all pages (but not edit), an ACL on page ''Main'' that attempts to grant the {{Edit}} privilege to Anonymous will not work.''
+
 
 !Consulting External Authorizers
 Recall that the authorization algorithm checks for the presence of built-in Role Principals or user Principals when making decisions. It also can make decisions based on wiki Group membership or membership in a Role as determined by an external ''authorizer''. 
@@ -308,3 +400,7 @@ JSPWiki's default Authorizer is {{com.ecyrd.jspwiki.auth.authorize.WebContainerA
 
 The GroupManager interface ({{com.ecyrd.jspwiki.auth.authorize.GroupManager}}) extents Authorizer, and defines additional methods for loading, saving and querying group member lists.The default implementation ({{com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager}}) reads membership lists from WikiPages that have the prefix "Group".  You are free to create your own GroupManager implementation. If you do, you need to specify the implementation class in {{jspwiki.properties}}:
 {{{jspwiki.groupManager = com.example.wiki.MyRDBMSGroupManager}}}
+
+What's the difference between and Authorizer and a GroupManager? They perform similar functions, in the sense that they both authorize actions based on whether or not users possesses a particular roles. The difference is that GroupManager is explicitly designed for wiki group storage: it loads, saves and manages discretionary roles that users create themselves. An Authorizer, on the other hand, is generally a back-end service provided by infrastructure under control of IT administrators. The external Authorizer does not provide the ability to create new roles; only the ability to determine whether users are members of the ones that have already been defined. We wanted to keep the boundaries between these two authorization methods clear. 
+
+The benefit of this approach is that it provides a lot of flexibilty. For the default, out-of-the box configuration, it means we can use a GroupManager ''plus'' an external Authorizer that takes advantage of the web container's authorization APIs.
