@@ -45,6 +45,9 @@ public class ShortURLConstructor
 {
     static Logger log = Logger.getLogger( ShortURLConstructor.class );
     
+    /**
+     *  Contains the path part after the JSPWiki base URL
+     */
     protected String m_urlPrefix = "";
     
     /**
@@ -63,26 +66,7 @@ public class ShortURLConstructor
         
         if( m_urlPrefix == null )
         {
-            String baseurl = engine.getBaseURL();
-            
-            if( baseurl == null || baseurl.length() == 0 )
-            {
-                log.error("Using ShortURLConstructors without jspwiki.baseURL is NOT advised, and can result in trouble.");
-                baseurl = "";
-            }
-            try
-            {
-                URL url = new URL( baseurl );
-            
-                String path = url.getPath();
-            
-                m_urlPrefix = path+"wiki/";
-            }
-            catch( MalformedURLException e )
-            {
-                log.error( "Malformed base URL!" );
-                m_urlPrefix = "/wiki/"; // Just a guess.
-            }
+            m_urlPrefix = "wiki/";
         }
 
         log.info("Short URL prefix path="+m_urlPrefix+" (You can use "+PROP_PREFIX+" to override this)");
@@ -95,7 +79,7 @@ public class ShortURLConstructor
                             String name,
                             boolean absolute )
     {
-        String viewurl = m_urlPrefix+"%n";
+        String viewurl = "%p"+m_urlPrefix+"%n";
 
         if( absolute ) 
             viewurl = "%u"+m_urlPrefix+"%n";
@@ -111,7 +95,7 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.ATTACH) )
         {
-            return doReplacement( "%Uattach/%n", name, absolute );
+            return doReplacement( "%uattach/%n", name, absolute );
         }
         else if( context.equals(WikiContext.INFO) )
         {

@@ -21,6 +21,9 @@ package com.ecyrd.jspwiki.url;
 
 import java.util.Properties;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.InternalWikiException;
@@ -63,6 +66,13 @@ public class DefaultURLConstructor
                                       
     private static Properties c_patternList = TextUtil.createProperties(c_patterns);
 
+    /**
+     *  Contains the absolute path of the JSPWiki Web application without the
+     *  actual servlet (which is the m_urlPrefix).
+     */
+    protected String m_pathPrefix = "";
+    
+
     public void initialize( WikiEngine engine, 
                             Properties properties )
     {
@@ -70,17 +80,53 @@ public class DefaultURLConstructor
 
         m_useRelativeURLStyle = "relative".equals( properties.getProperty( WikiEngine.PROP_REFSTYLE,
                                                                            "relative" ) );
+
+        String baseurl = engine.getBaseURL();
+
+        if( baseurl != null && baseurl.length() > 0 )
+        {
+            try
+            {
+                URL url = new URL( baseurl );
+        
+                String path = url.getPath();
+        
+                m_pathPrefix = path;
+            }
+            catch( MalformedURLException e )
+            {
+                m_pathPrefix = "/JSPWiki"; // Just a guess.
+            }
+        }
     }
 
+    /**
+     *  Does replacement of some particular variables.  The variables are:
+     *  
+     *  <ul>
+     *  <li> "%u" - inserts either the base URL (when absolute is required), or the base path
+     *       (which is an absolute path without the host name).
+     *  <li> "%U" - always inserts the base URL
+     *  <li> "%p" - always inserts the base path
+     *  <li> "%n" - inserts the page name
+     *  </ul>
+     *  
+     * @param baseptrn  The pattern to use
+     * @param name The page name
+     * @param absolute If true, %u is always the entire base URL, otherwise it depends on
+     *                 the setting in jspwiki.properties.
+     * @return A replacement.
+     */
     protected final String doReplacement( String baseptrn, String name, boolean absolute )
     {
-        String baseurl = "";
+        String baseurl = m_pathPrefix;
 
         if( absolute || !m_useRelativeURLStyle ) baseurl = m_engine.getBaseURL();
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );
         baseptrn = TextUtil.replaceString( baseptrn, "%n", m_engine.encodeName(name) );
+        baseptrn = TextUtil.replaceString( baseptrn, "%p", m_pathPrefix );
 
         return baseptrn;
     }
@@ -137,6 +183,10 @@ public class DefaultURLConstructor
             if( context.equals(WikiContext.ATTACH) )
             {
                 parameters = "?"+parameters;
+            }
+            else if( context.equals(WikiContext.NONE) )
+            {
+                parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
             }
             else
             {

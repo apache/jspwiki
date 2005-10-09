@@ -47,7 +47,7 @@ public class ShortViewURLConstructor
                             String name,
                             boolean absolute )
     {
-        String viewurl = m_urlPrefix+"%n";
+        String viewurl = "%p"+m_urlPrefix+"%n";
 
         if( absolute ) 
             viewurl = "%u"+m_urlPrefix+"%n";
@@ -60,7 +60,7 @@ public class ShortViewURLConstructor
 
         return doReplacement( DefaultURLConstructor.getURLPattern(context,name),
                               name,
-                              true );
+                              absolute );
     }
 
     public String makeURL( String context,
