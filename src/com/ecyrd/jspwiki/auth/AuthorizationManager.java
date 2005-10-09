@@ -55,7 +55,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.26 $ $Date: 2005-09-03 00:10:12 $
+ * @version $Revision: 1.27 $ $Date: 2005-10-09 05:47:21 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -139,31 +139,31 @@ public class AuthorizationManager
         {
             return true;
         }
+        
+        // If the user doesn't have *at least* the permission
+        // granted by policy, return false.
+        boolean hasPolicyPermission = checkStaticPermission( subject, permission );
+        if ( !hasPolicyPermission )
+        {
+            return false;
+        }
 
-        // If this isn't a PagePermission, just check the security policy
-        // and we're done
+        // If this isn't a PagePermission, it's allowed
         if ( ! ( permission instanceof PagePermission ) )
         {
-            return checkStaticPermission( subject, permission );
+            return true;
         }
 
         //
-        // Does the page in question have an access control list?
-        // If no Acl, we check the security policy to see what the
-        // defaults should be.
-        Acl acl = null;
+        // If the page or ACL is null, it's allowed.
         String pageName = ((PagePermission)permission).getPage();
         WikiPage page = m_engine.getPage( pageName );
-        if ( page == null )
+        Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
+        if ( page == null ||  acl == null )
         {
-            return checkStaticPermission( subject, permission );
+            return true;
         }
-        acl = m_engine.getAclManager().getPermissions( page );
-        if ( acl == null )
-        {
-            return checkStaticPermission( subject, permission );
-        }
-
+        
         //
         //  Next, iterate through the Principal objects assigned
         //  this permission. If the context's subject possesses
