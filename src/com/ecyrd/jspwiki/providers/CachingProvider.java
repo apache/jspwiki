@@ -20,8 +20,6 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -239,12 +237,10 @@ public class CachingProvider
                     throw new RepositoryModifiedException( "Added: "+name, name );
                     // return refreshed;
                 }
-                else
-                {
-                    // Cache page miss
-                    m_negCache.putInCache( name, name );
-                    m_cache.cancelUpdate( name );
-                }
+
+                // Cache page miss
+                m_negCache.putInCache( name, name );
+                m_cache.cancelUpdate( name );
             }
             else if( cached.getVersion() != refreshed.getVersion() )
             {
@@ -598,10 +594,10 @@ public class CachingProvider
         {
             // We do not cache old versions.
             page = m_provider.getPageInfo( pageName, version );
-            refreshMetadata( page );
+            //refreshMetadata( page );
         }
         
-        // refreshMetadata( page );
+        refreshMetadata( page );
         
         return page;
     }
