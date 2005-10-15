@@ -2029,7 +2029,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
     }
-    
+
+    public void testSpanJavascript2()
+    throws Exception
+    {
+        String src = "%%visibility: hidden; background&#09;-image:url(j&#000013;avas&#99;ript:'url()';alert('X');)%%\nTEST";
+        
+        assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
+    }
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
         "Please ''check [RecentChanges].\n" + 
