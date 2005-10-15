@@ -19,12 +19,17 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
-import java.util.*;
-import java.io.StringReader;
-import java.io.IOException;
+import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  This is a base class for all plugins using referral things.
@@ -147,31 +152,23 @@ public abstract class AbstractReferralPlugin
     protected String makeHTML( WikiContext context, String wikitext )
     {
         String result = "";
-        TranslatorReader in = null;
-
+        
+        RenderingManager mgr = m_engine.getRenderingManager();
+        
         try
         {
-            in     = new TranslatorReader( context,
-                                           new StringReader( wikitext ) );
-            in.addLinkTransmutator( new CutMutator(m_maxwidth) );
-            in.enableImageInlining( false );
+            MarkupParser parser = mgr.getParser(context, wikitext);
             
-            result = FileUtil.readContents( in );
+            parser.addLinkTransmutator( new CutMutator(m_maxwidth) );
+            parser.enableImageInlining( false );
+            
+            WikiDocument doc = parser.parse();
+            
+            result = mgr.getHTML( context, doc );
         }
         catch( IOException e )
         {
             log.error("Failed to convert page data to HTML", e);
-        }
-        finally
-        {
-            try
-            {
-                if( in != null ) in.close();
-            }
-            catch( Exception e ) 
-            {
-                log.fatal("Closing failed",e);
-            }
         }
 
         return result;
