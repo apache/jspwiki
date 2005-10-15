@@ -20,20 +20,14 @@
 package com.ecyrd.jspwiki;
 
 import java.io.IOException;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
-
+import com.ecyrd.jspwiki.providers.VersioningProvider;
+import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -390,6 +384,27 @@ public class PageManager
         }
 
         return m_provider.pageExists( pageName );
+    }
+
+    /**
+     * @since 2.3.29
+     * @param pageName
+     * @param version
+     * @return
+     * @throws ProviderException
+     */
+    public boolean pageExists( String pageName, int version )
+        throws ProviderException
+    {
+        if( pageName == null || pageName.length() == 0 )
+        {
+            throw new ProviderException("Illegal page name");
+        }
+
+        if( m_provider instanceof VersioningProvider )
+            return ((VersioningProvider)m_provider).pageExists( pageName, version );
+        
+        return m_provider.getPageInfo( pageName, version ) != null;
     }
 
     /**
