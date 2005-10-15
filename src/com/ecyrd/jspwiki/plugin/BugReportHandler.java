@@ -19,12 +19,19 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
-import com.ecyrd.jspwiki.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.security.Principal;
-import java.util.*;
-import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.*;
+
+import org.apache.log4j.Logger;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 
 /**
  *  Provides a handler for bug reports.  Still under construction.
@@ -169,7 +176,7 @@ public class BugReportHandler
                                               String title,
                                               String baseName )
     {
-        String basicPageName = ((baseName != null)?baseName:"Bug")+TranslatorReader.cleanLink(title);
+        String basicPageName = ((baseName != null)?baseName:"Bug")+MarkupParser.cleanLink(title);
 
         WikiEngine engine = context.getEngine();
         
