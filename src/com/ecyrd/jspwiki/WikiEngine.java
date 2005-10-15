@@ -1020,22 +1020,26 @@ public class WikiEngine
         if( getSpecialPageReference(page) != null ) return true;
 
         String finalName = getFinalPageName( page );
-        WikiPage p = null;
 
+        boolean isThere = false;
+        
         if( finalName != null )
         {
             //
             //  Go and check if this particular version of this page
             //  exists.
             //
-            p = m_pageManager.getPageInfo( finalName, version );
+            isThere = m_pageManager.pageExists( finalName, version );
         }
 
-        if( p == null )
+        if( isThere == false )
         {
+            //
+            //  Go check if such an attachment exists.
+            //
             try
             {
-                p = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page, version );
+                isThere = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page, version ) != null;
             }
             catch( ProviderException e )
             {
@@ -1043,7 +1047,7 @@ public class WikiEngine
             }
         }
 
-        return (p != null);
+        return isThere;
     }
 
     /**
