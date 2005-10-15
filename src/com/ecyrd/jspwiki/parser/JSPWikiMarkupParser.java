@@ -1938,6 +1938,7 @@ public class JSPWikiMarkupParser
             //
             //  Check if there is an attempt to do something nasty
             //
+            style = StringEscapeUtils.unescapeHtml(style);
             if( style != null && style.indexOf("javascript:") != -1 )
             {
                 log.debug("Attempt to output javascript within CSS:"+style);
