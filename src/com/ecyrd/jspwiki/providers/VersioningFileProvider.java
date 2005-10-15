@@ -59,6 +59,7 @@ import com.ecyrd.jspwiki.*;
  */
 public class VersioningFileProvider
     extends AbstractFileProvider
+    implements VersioningProvider
 {
     private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
    
@@ -509,6 +510,25 @@ public class VersioningFileProvider
         }
 
         return p;
+    }
+
+    public boolean pageExists( String pageName, int version )
+    {
+        File dir = findOldPageDir( pageName );
+
+        if( !dir.exists() || !dir.isDirectory() )
+        {
+            return false;
+        }
+
+        File file = new File( dir, version+FILE_EXT );
+
+        if( file != null && file.exists() )
+        {
+            return true;
+        }
+        
+        return false;
     }
 
     /**

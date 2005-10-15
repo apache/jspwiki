@@ -55,7 +55,7 @@ import com.opensymphony.oscache.base.events.*;
 //        for a lot of things.  RefactorMe.
 
 public class CachingProvider
-    implements WikiPageProvider
+    implements WikiPageProvider, VersioningProvider
 {
     private static final Logger log = Logger.getLogger(CachingProvider.class);
 
@@ -281,6 +281,72 @@ public class CachingProvider
         }
     }
 
+    public boolean pageExists( String pageName, int version )
+    {
+        if( pageName == null ) return false;
+        
+        //
+        //  First, check the negative cache if we've seen it before
+        //
+        try
+        {        
+            String isNonExistant = (String) m_negCache.getFromCache( pageName, m_expiryPeriod );
+            
+            if( isNonExistant != null ) return false; // No such page
+        }
+        catch( NeedsRefreshException e )
+        {
+            m_negCache.cancelUpdate(pageName);
+        }
+
+        WikiPage p = null;
+        
+        try
+        {
+            p = getPageInfoFromCache( pageName );
+        }
+        catch( RepositoryModifiedException e ) 
+        {
+            // The repository was modified, we need to check now if the page was removed or
+            // added.
+            // TODO: This information would be available in the exception, but we would
+            //       need to subclass.
+            
+            try
+            {
+                p = getPageInfoFromCache( pageName );
+            }
+            catch( Exception ex ) { return false; } // This should not happen
+        }
+        catch( ProviderException e ) 
+        {
+            log.info("Provider failed while trying to check if page exists: "+pageName);
+            return false;
+        }
+        
+        if( p != null )
+        {
+            int latestVersion = p.getVersion();
+        
+            if( version == latestVersion || version == LATEST_VERSION )
+            {
+                return true;
+            }
+            
+            if( m_provider instanceof VersioningProvider )
+                return ((VersioningProvider) m_provider).pageExists( pageName, version );
+        }
+
+        try
+        {
+            return getPageInfo( pageName, version ) != null;
+        }
+        catch( ProviderException e )
+        {}
+        
+        return false;
+    }
+    
     public boolean pageExists( String pageName )
     {
         if( pageName == null ) return false;
