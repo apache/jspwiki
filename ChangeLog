@@ -1,3 +1,18 @@
+2005-10-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.30
+        
+        * Removed dependencies of TranslatorReader from a number
+        of classes.
+        
+        * Added new "VersioningProvider" interface to fix a
+        serious problem with page info listings.  Based on an
+        idea by Kees Kuip.  A Provider can now declare it
+        supports VersioningProvider if it wants to be able
+        to support pageExists( name, version).  Yes, it's
+        a kludge, but it does speed up things considerably
+        until we refactor the entire provider interface.
+
 2005-10-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.29
