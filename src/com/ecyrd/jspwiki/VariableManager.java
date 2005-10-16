@@ -166,8 +166,21 @@ public class VariableManager
     }
     
     /**
-     *  Returns a value of the named variable.
+     *  Returns a value of the named variable.  The resolving order is
+     *  <ol>
+     *    <li>Known "constant" name, such as "pagename", etc.  This is so
+     *        that pages could not override certain constants.
+     *    <li>WikiContext local variable.  This allows a programmer to
+     *        set a parameter which cannot be overridden by user.
+     *    <li>HTTP Session
+     *    <li>HTTP Request parameters
+     *    <li>WikiPage variable.  As set by the user with the SET directive.
+     *    <li>jspwiki.properties
+     *  </ol>
      *
+     *  Use this method only whenever you really need to have a parameter that
+     *  can be overridden by anyone using the wiki.
+     *  
      *  @param varName Name of the variable.
      *
      *  @throws IllegalArgumentException If the name is somehow broken.
@@ -324,32 +337,6 @@ public class VariableManager
                 return context.getVariable( varName ).toString();
             }
 
-            // Next-to-final straw: attempt to fetch using property name
-            // We don't allow fetching any other properties than those starting
-            // with "jspwiki.".  I know my own code, but I can't vouch for bugs
-            // in other people's code... :-)
-            
-            if( varName.startsWith("jspwiki.") )
-            {
-                Properties props = context.getEngine().getWikiProperties();
-
-                res = props.getProperty( varName );
-                if( res != null )
-                {
-                    return res;
-                }
-            }
-            
-            // And the final straw: see if the current page has named metadata.
-            
-            WikiPage pg = context.getPage();
-            if( pg != null )
-            {
-                Object metadata = pg.getAttribute( varName );
-                if( metadata != null )
-                    return( metadata.toString() );
-            }
-
             //
             //  Well, I guess it wasn't a final straw.  We also allow 
             //  variables from the session and the request (in this order).
@@ -371,6 +358,32 @@ public class VariableManager
                 catch( ClassCastException e ) {}
             }
 
+            // And the final straw: see if the current page has named metadata.
+            
+            WikiPage pg = context.getPage();
+            if( pg != null )
+            {
+                Object metadata = pg.getAttribute( varName );
+                if( metadata != null )
+                    return( metadata.toString() );
+            }
+
+            // Next-to-final straw: attempt to fetch using property name
+            // We don't allow fetching any other properties than those starting
+            // with "jspwiki.".  I know my own code, but I can't vouch for bugs
+            // in other people's code... :-)
+            
+            if( varName.startsWith("jspwiki.") )
+            {
+                Properties props = context.getEngine().getWikiProperties();
+
+                res = props.getProperty( varName );
+                if( res != null )
+                {
+                    return res;
+                }
+            }
+            
             //
             //  Final defaults for some known quantities.
             //
