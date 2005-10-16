@@ -58,9 +58,9 @@ public class TableOfContentsTest extends TestCase
         // FIXME: The <p> should not be here.
         assertEquals( "\n<p><div class=\"toc\">\n"+
                       "<h4>Table of Contents</h4>\n"+
-                      "<ul>\n"+
-                      "<li> <a class=\"wikipage\" href=\"Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a>\n</li>\n"+
-                      "</ul>\n</div>\n\n</p>"+
+                      "<ul>"+
+                      "<li> <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a>\n</li>"+
+                      "</ul></div>\n\n</p>"+
                       "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>\n",
                       res );
     }
