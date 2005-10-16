@@ -129,6 +129,7 @@ public class RSS20Feed extends Feed
     
     public String getString()
     {
+        WikiEngine engine = m_wikiContext.getEngine();
         Element root = new Element("rss");
         root.setAttribute("version","2.0");
         
@@ -139,7 +140,7 @@ public class RSS20Feed extends Feed
         //  Mandatory parts
         //
         channel.addContent( new Element("title").setText( format(getChannelTitle()) ) );
-        channel.addContent( new Element("link").setText(m_wikiContext.getEngine().getBaseURL()));
+        channel.addContent( new Element("link").setText(engine.getBaseURL()));
         channel.addContent( new Element("description").setText( format(getChannelDescription()) ));
         
         //
@@ -147,6 +148,17 @@ public class RSS20Feed extends Feed
         //
         channel.addContent( new Element("language").setText(getChannelLanguage()));
         channel.addContent( new Element("generator").setText("JSPWiki "+Release.VERSTR));
+        
+        String mail = engine.getVariable(m_wikiContext,RSSGenerator.PROP_RSS_AUTHOREMAIL);
+        if( mail != null )
+        {
+            String editor = engine.getVariable( m_wikiContext,RSSGenerator.PROP_RSS_AUTHOR );
+            
+            if( editor != null )
+                mail = mail + " ("+editor+")";
+            
+            channel.addContent( new Element("managingEditor").setText(mail) );
+        }
         
         //
         //  Items
