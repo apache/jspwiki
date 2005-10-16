@@ -1644,7 +1644,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!!![Hello]";
         
-        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"editpage\" title=\"Create 'Hello'\" href=\"Edit.jsp?page=Hello\">Hello</a></h2>",
+        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"editpage\" title=\"Create 'Hello'\" href=\"/Edit.jsp?page=Hello\">Hello</a></h2>",
                       translate(src) );
     }
     
