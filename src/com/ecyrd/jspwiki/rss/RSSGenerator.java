@@ -71,6 +71,8 @@ public class RSSGenerator
      */
     public static final String PROP_CHANNEL_LANGUAGE    = "jspwiki.rss.channelLanguage";
 
+    public static final String PROP_CHANNEL_TITLE       = "jspwiki.rss.channelTitle";
+    
     /**
      *  Defines the property name for the RSS generator main switch.
      *  @since 1.7.6.
@@ -89,6 +91,10 @@ public class RSSGenerator
      */
     public static final String PROP_INTERVAL            = "jspwiki.rss.interval";
 
+    public static final String PROP_RSS_AUTHOR          = "jspwiki.rss.author";
+    public static final String PROP_RSS_AUTHOREMAIL     = "jspwiki.rss.author.email";
+    public static final String PROP_RSS_COPYRIGHT       = "jspwiki.rss.copyright";
+    
     private static final int MAX_CHARACTERS             = Integer.MAX_VALUE;
     
     /**
@@ -376,18 +382,28 @@ public class RSSGenerator
     {
         log.debug("Generating RSS for blog, size="+changed.size());
         
-        feed.setChannelTitle( m_engine.getApplicationName()+":"+wikiContext.getPage().getName() );
+        String ctitle = m_engine.getVariable( wikiContext, PROP_CHANNEL_TITLE );
+        
+        if( ctitle != null )
+            feed.setChannelTitle( ctitle );
+        else
+            feed.setChannelTitle( m_engine.getApplicationName()+":"+wikiContext.getPage().getName() );
+        
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
-        feed.setChannelLanguage( m_channelLanguage );
         
-        String channelDescription;
+        String language = m_engine.getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
         
-        try
+        if( language != null )
+            feed.setChannelLanguage( language );
+        else
+            feed.setChannelLanguage( m_channelLanguage );
+        
+        String channelDescription = m_engine.getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
+        
+        if( channelDescription != null )
         {
-            channelDescription = m_engine.getVariableManager().getValue( wikiContext, PROP_CHANNEL_DESCRIPTION );
             feed.setChannelDescription( channelDescription );
         }
-        catch( NoSuchVariableException e ) {}
 
         Collections.sort( changed, new PageTimeComparator() );
 
