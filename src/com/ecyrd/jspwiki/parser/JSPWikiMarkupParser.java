@@ -347,6 +347,8 @@ public class JSPWikiMarkupParser
         
         if( text == null ) text = link;
 
+        text = callMutatorChain( m_linkMutators, text );
+
         section = (section != null) ? ("#"+section) : "";
 
         // Make sure we make a link name that can be accepted
