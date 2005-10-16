@@ -30,7 +30,8 @@ public abstract class WikiRenderer
     {
         m_context = context;
         m_document = doc;
-
+        doc.setContext( context ); // Make sure it is set
+        
         //
         //  Do some sane defaults
         //
