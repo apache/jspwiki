@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
+import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 import java.util.*;
 import java.io.StringReader;
@@ -90,20 +92,19 @@ public class TableOfContents
         {
             String wikiText = engine.getPureText( page );
             
-            TranslatorReader in = new TranslatorReader( context,
-                                                        new StringReader(wikiText) );
-            in.enablePlugins( false );
-            in.addHeadingListener( this );
+            RenderingManager mgr = engine.getRenderingManager();
 
-            FileUtil.readContents( in );
+            JSPWikiMarkupParser parser = new JSPWikiMarkupParser( context,
+                                                                  new StringReader(wikiText) );
+            parser.addHeadingListener( this );
 
-            in.close();
+            parser.parse();
             
-            in = new TranslatorReader( context,
-                                       new StringReader( m_buf.toString() ) );
-            sb.append(FileUtil.readContents( in ));
+            parser.setInputReader( new StringReader(m_buf.toString()) );
+
+            context.setVariable( JSPWikiMarkupParser.PROP_RUNPLUGINS, "false" );
             
-            in.close();
+            sb.append( mgr.getHTML( context, parser.parse() ) );
         }
         catch( IOException e )
         {
