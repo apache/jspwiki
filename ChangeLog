@@ -1,3 +1,11 @@
+2005-10-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.32
+        
+        * Changed the way TableOfContents is created - it
+        no longer creates a nested list.  Thanks to Gregory
+        Pentz and Gregor Hagedorn.
+
 2005-10-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.31
