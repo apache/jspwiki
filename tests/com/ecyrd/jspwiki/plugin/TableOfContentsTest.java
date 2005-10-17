@@ -54,13 +54,12 @@ public class TableOfContentsTest extends TestCase
         
         String res = testEngine.getHTML( "Test" );
         
-        // FIXME: There's an extra space before the <a>...  Where does it come from?
         // FIXME: The <p> should not be here.
         assertEquals( "\n<p><div class=\"toc\">\n"+
                       "<h4>Table of Contents</h4>\n"+
-                      "<ul>"+
-                      "<li> <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a>\n</li>"+
-                      "</ul></div>\n\n</p>"+
+                      "<ul>\n"+
+                      "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
+                      "</ul>\n</div>\n\n</p>"+
                       "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>\n",
                       res );
     }
