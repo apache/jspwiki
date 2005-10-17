@@ -165,12 +165,14 @@ div.index .section { color:red; }
 /*  Table of contents plugin */
 
 .toc {
-     background: #e0e0ff;
-     border: 1px;
+     background: #f0f0ff;
+     border: 1px solid grey;
      padding: 8px;
+     font-size: 90%;
 }
 
 .toc h4 {
+	 margin-top: 0px;
 }
 
 .toc ul {
@@ -180,11 +182,21 @@ div.index .section { color:red; }
 }
 
 .toc li {
-     margin-left: 1em;
      padding-left: 0;
      display: block;
 }
 
+.toc li.toclevel-1 {
+     margin-left: 0.5em;
+}
+
+.toc li.toclevel-2 {
+	 margin-left: 1.5em;
+}
+
+.toc li.toclevel-3 {
+	 margin-left: 2.5em;
+}
 
 /*  Here's a nice style you can use to put comment boxes on pages.  It's used
     on some pages. */
