@@ -52,19 +52,22 @@ public class TableOfContents
         switch( hd.m_level )
         {
           case Heading.HEADING_SMALL:
-            m_buf.append("***");
+            m_buf.append("<li class=\"toclevel-3\">");
             break;
           case Heading.HEADING_MEDIUM:
-            m_buf.append("**");
+            m_buf.append("<li class=\"toclevel-2\">");
             break;
           case Heading.HEADING_LARGE:
-            m_buf.append("*");
+            m_buf.append("<li class=\"toclevel-1\">");
             break;
           default:
             throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
         }
 
-        m_buf.append(" ["+hd.m_titleText+"|"+context.getPage().getName()+"#"+hd.m_titleSection+"]\n");
+        String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
+        String sectref = "#section-"+context.getEngine().encodeName(context.getPage().getName())+"-"+hd.m_titleSection;
+
+        m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">"+hd.m_titleText+"</a></li>\n" );
     }
 
     public String execute( WikiContext context, Map params )
@@ -92,19 +95,13 @@ public class TableOfContents
         {
             String wikiText = engine.getPureText( page );
             
-            RenderingManager mgr = engine.getRenderingManager();
-
             JSPWikiMarkupParser parser = new JSPWikiMarkupParser( context,
                                                                   new StringReader(wikiText) );
             parser.addHeadingListener( this );
 
             parser.parse();
-            
-            parser.setInputReader( new StringReader(m_buf.toString()) );
 
-            context.setVariable( JSPWikiMarkupParser.PROP_RUNPLUGINS, "false" );
-            
-            sb.append( mgr.getHTML( context, parser.parse() ) );
+            sb.append( "<ul>\n"+m_buf.toString()+"</ul>\n" );
         }
         catch( IOException e )
         {
