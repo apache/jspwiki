@@ -1,3 +1,22 @@
+2005-10-19  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.33
+        
+        * Initial JDBC support for storing user profiles has
+          landed. See the build.xml file for details on
+          configuring unit testing with JDBC. See also the
+          Javadoc for com.ecyrd.jspwiki.auth.user.JDBCUserDatabase.
+
+        * Changed VariableManager and BaseURLTag to use a new 
+          makeBaseURL method in HTTPUtil so that HTTPS-related 
+          URLs are generated correctly. This partially supercedes
+          the WikiEngine.getBaseURL method, but the changes are
+          completely transparent to the <wiki:BaseURL> 
+          and <wiki:Variable> tags. So you shouldn't notice any
+          differences unless using HTTPS.
+          
+        * Several small Javadoc fixes.
+
 2005-10-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.32
