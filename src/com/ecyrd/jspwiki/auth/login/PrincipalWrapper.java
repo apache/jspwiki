@@ -25,7 +25,7 @@ public final class PrincipalWrapper implements Principal
 
     /**
      * Returns the wrapped Principal used to construct this instance.
-     * @return
+     * @return the wrapped Principal decorated by this instance.
      */
     public final Principal getPrincipal()
     {

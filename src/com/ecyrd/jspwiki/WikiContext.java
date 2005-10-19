@@ -136,7 +136,7 @@ public class WikiContext
      * status is checked. If not authenticated, or if the login status reported
      * by the container has changed, the constructor attempts to log in the user
      * with
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#loginContainer(WikiSession)}.
+     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}.
      * </p>
      * @param engine The WikiEngine that is handling the request
      * @param request The HttpServletRequest that should be associated with this

@@ -25,7 +25,7 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.7 $ $Date: 2005-09-24 14:25:59 $
+ * @version $Revision: 2.8 $ $Date: 2005-10-19 04:09:46 $
  */
 public class WikiSession
 {
@@ -76,7 +76,7 @@ public class WikiSession
      * {@link WikiContext#WikiContext(WikiEngine, HttpServletRequest, WikiPage)}
      * and {@link WikiContext#WikiContext(WikiEngine, WikiPage)}, and nowhere
      * else. Its primary function is to allow downstream classes such as
-     * {@link com.ecyrd.jspwiki.authorize.WebContainerAuthorizer}to access the
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}to access the
      * most recent WikiContext, and thus, the HttpServletRequest.
      * @param context the most recent wiki context, which may be <code>null</code>
      */
@@ -286,9 +286,13 @@ public class WikiSession
     }
 
     /**
-     * Factory method that creates a new "guest" session
-     * containing a single Principal, @link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
-     * @return
+     * Factory method that creates a new "guest" session containing a single
+     * user Principal,
+     * @link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}, plus the role
+     * principals
+     * @link Role#ALL and
+     * @link Role#ANONYMOUS.
+     * @return the guest wiki session
      */
     public static WikiSession guestSession()
     {

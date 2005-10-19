@@ -6,7 +6,7 @@ import java.util.Date;
  * Class for representing wiki user information, such as the login name, full
  * name, wiki name, and e-mail address.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-03 03:54:07 $
+ * @version $Revision: 1.4 $ $Date: 2005-10-19 04:11:53 $
  * @since 2.3
  */
 public interface UserProfile
@@ -95,7 +95,7 @@ public interface UserProfile
     /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#loginCustom(String, String, HttpServletRequest)}.
+     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession, String, String)},
      * {@link com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule}). The login
      * name is typically a short name ("jannej"). In contrast, the wiki name is
      * typically of type FirstnameLastName ("JanneJalkanen").

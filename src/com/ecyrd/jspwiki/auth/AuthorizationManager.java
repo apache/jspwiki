@@ -55,7 +55,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * Manages all access control and authorization; determines what authenticated
  * users are allowed to do.
  * @author Andrew Jaquith
- * @version $Revision: 1.28 $ $Date: 2005-10-09 16:08:26 $
+ * @version $Revision: 1.29 $ $Date: 2005-10-19 04:10:24 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -102,7 +102,7 @@ public class AuthorizationManager
      * Then iterate through the Subject's Principal set and determine whether
      * the user (Subject) posesses any one of these specified Roles or
      * Principals. The matching process delegates to
-     * {@link #hasRoleOrPrincipal(WikiContext, Principal)}.
+     * {@link #hasRoleOrPrincipal(WikiSession, Principal)}.
      * </ol>
      * <p>
      * Note that when iterating through the Acl's list of authorized Principals,
@@ -120,7 +120,7 @@ public class AuthorizationManager
      * </p>
      * @param session the current wiki session
      * @param permission the Permission being checked
-     * @see #hasRoleOrPrincipal(WikiContext, Principal)
+     * @see #hasRoleOrPrincipal(WikiSession, Principal)
      * @return the result of the Permission check
      */
     public boolean checkPermission( WikiSession session, Permission permission )

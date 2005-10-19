@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2005-10-09 05:52:51 $
+ * @version $Revision: 1.10 $ $Date: 2005-10-19 04:10:47 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -129,11 +129,11 @@ public class WebContainerAuthorizer implements Authorizer
 
     /**
      * Looks up and returns a Role Principal matching a given String. If the
-     * Role does not match one of the container Roles (see
-     * {@link #CONTAINER_ROLES}), this method returns <code>null</code>.
+     * Role does not match one of the container Roles identified during
+     * initialization, this method returns <code>null</code>.
      * @param role the name of the Role to retrieve
      * @return a Role Principal, or <code>null</code>
-     * @see com.ecyrd.jspwiki.auth.Authorizer#findRole(java.lang.String)
+     * @see com.ecyrd.jspwiki.auth.Authorizer#initialize(WikiEngine, Properties)
      */
     public Principal findRole( String role )
     {
