@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.50 2005-10-19 12:12:11 arj Exp $
+    $Id: build.xml,v 1.51 2005-10-19 21:29:32 arj Exp $
 -->    
        
 <!--   
@@ -709,7 +709,7 @@ To automate the JAR signing processs, you can add the property
        to use any JDBC driver.
        
        RUNNING JDBC UNIT TESTS
-       -----------------------
+       
        If you don't enable JDBC support, the JDBC-related unit test classes
        will compile fine, but will fail when the 'tests' Ant target executes.
        Don't worry about that. The JDBC-related test classes, by the way,
@@ -774,7 +774,7 @@ To automate the JAR signing processs, you can add the property
        the JDBC tests should Just Work.
        
        RUNNING JSPWIKI WITH JDBC SUPPORT
-       ---------------------------------
+
        All of the preceding tells you how to test JSPWiki with JDBC support.
        Sounds great, but how do you *run* JSPWiki with it? Simple:
        
