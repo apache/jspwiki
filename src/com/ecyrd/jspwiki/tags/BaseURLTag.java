@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.util.HttpUtil;
+
 /**
  *  Writes the jspwiki.baseURL property.
  *
@@ -33,8 +35,7 @@ public class BaseURLTag
     public final int doWikiStartTag()
         throws IOException
     {
-        pageContext.getOut().print( m_wikiContext.getEngine().getBaseURL() );
-
+        pageContext.getOut().print( HttpUtil.makeBaseURL( m_wikiContext.getHttpRequest() ) );
         return SKIP_BODY;
     }
 }

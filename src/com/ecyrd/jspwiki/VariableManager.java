@@ -28,6 +28,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.ecyrd.jspwiki.util.HttpUtil;
+
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
  *  available variables is on a Wiki page called "WikiVariables".
@@ -274,7 +276,14 @@ public class VariableManager
         }
         else if( name.equals("baseurl") )
         {
-            res = context.getEngine().getBaseURL();
+              HttpServletRequest request = context.getHttpRequest();
+              if ( request == null )
+              {
+                  res = context.getEngine().getBaseURL();
+              }
+              else {
+                  res = HttpUtil.makeBaseURL( request );
+              }
         }
         else if( name.equals("uptime") )
         {

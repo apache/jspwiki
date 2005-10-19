@@ -37,6 +37,8 @@ import com.ecyrd.jspwiki.WikiPage;
 public class HttpUtil
 {
     static Logger log = Logger.getLogger( HttpUtil.class );
+    private static String cachedBaseURL = null;
+    private static String cachedSecureBaseURL = null;
 
     /**
      *  Attempts to retrieve the given cookie value from the request.
@@ -156,5 +158,42 @@ public class HttpUtil
         }
         
         return uri;
+    }
+
+    /**
+     * Calculates the base URL for the web page. We could certainly do this by consulting
+     * {@link WikiEngine#getBaseURL()}, but when requests are sent over HTTPS,
+     * we need to send back something different. Thus, we build a base URL by inspecting
+     * the incoming HTTP request.
+     * @param request
+     * @return the base URL
+     */
+    public static String makeBaseURL( HttpServletRequest request )
+    {
+        int defaultPort;
+        if ( request.isSecure() ) 
+        {
+            defaultPort = 443;
+            if ( cachedSecureBaseURL == null )
+            {
+                cachedSecureBaseURL = request.getScheme() 
+                + "://" + request.getServerName()
+                + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) )
+                + request.getContextPath() + "/";
+            }
+            return cachedSecureBaseURL;
+        }
+        else
+        {
+            defaultPort = 80;
+            if ( cachedBaseURL == null )
+            {
+                cachedBaseURL = request.getScheme() 
+                + "://" + request.getServerName()
+                + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) )
+                + request.getContextPath() + "/";
+            }
+            return cachedBaseURL;
+        }
     }
 }
