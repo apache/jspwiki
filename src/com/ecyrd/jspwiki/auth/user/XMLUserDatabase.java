@@ -21,12 +21,8 @@ package com.ecyrd.jspwiki.auth.user;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,8 +36,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.catalina.util.HexUtils;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,7 +45,6 @@ import org.xml.sax.SAXException;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
-import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**
@@ -68,10 +61,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-08-12 16:24:47 $
+ * @version $Revision: 1.6 $ $Date: 2005-10-19 12:09:19 $
  * @since 2.3
  */
-public class XMLUserDatabase implements UserDatabase
+public class XMLUserDatabase extends AbstractUserDatabase
 {
 
     /**
@@ -88,15 +81,11 @@ public class XMLUserDatabase implements UserDatabase
 
     private static final String FULL_NAME         = "fullName";
 
-    private static final Logger   log             = Logger.getLogger( XMLUserDatabase.class );
-
     private static final String LOGIN_NAME        = "loginName";
 
     private static final String LAST_MODIFIED     = "lastModified";
     
     private static final String PASSWORD          = "password";
-
-    private static final String SHA_PREFIX        = "{SHA}";
 
     private static final String USER_TAG          = "user";
 
@@ -191,36 +180,6 @@ public class XMLUserDatabase implements UserDatabase
 
     /**
      * Looks up and returns the first {@link UserProfile}in the user database
-     * that whose login name, full name, or wiki name matches the supplied
-     * string. This method provides a "forgiving" search algorithm for resolving
-     * principal names when the exact profile attribute that supplied the name
-     * is unknown.
-     * @param index the login name, full name, or wiki name
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#find(java.lang.String)
-     */
-    public UserProfile find( String index ) throws NoSuchPrincipalException
-    {
-        UserProfile profile;
-        profile = findByAttribute( FULL_NAME, index );
-        if ( profile != null )
-        {
-            return profile;
-        }
-        profile = findByAttribute( WIKI_NAME, index );
-        if ( profile != null )
-        {
-            return profile;
-        }
-        profile = findByAttribute( LOGIN_NAME, index );
-        if ( profile != null )
-        {
-            return profile;
-        }
-        throw new NoSuchPrincipalException( "Not in database: " + index );
-    }
-
-    /**
-     * Looks up and returns the first {@link UserProfile}in the user database
      * that matches a profile having a given e-mail address. If the user
      * database does not contain a user with a matching attribute, throws a
      * {@link NoSuchPrincipalException}.
@@ -296,46 +255,6 @@ public class XMLUserDatabase implements UserDatabase
     }
 
     /**
-     * <p>Looks up the Principals representing a user from the user database. These
-     * are defined as a set of WikiPrincipals manufactured from the login name,
-     * full name, and wiki name. If the user database does not contain a user
-     * with the supplied identifier, throws a {@link NoSuchPrincipalException}.</p>
-     * <p>When this method creates WikiPrincipals, the Principal containing
-     * the user's full name is marked as containing the common name (see
-     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#WikiPrincipal(String, String)}).
-     * @param identifier the name of the principal to retrieve; this corresponds to
-     *            value returned by the user profile's
-     *            {@link UserProfile#getLoginName()}method.
-     * @return the array of Principals representing the user
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(java.lang.String)
-     */
-    public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException
-    {
-        try
-        {
-            UserProfile profile = findByLoginName( identifier );
-            ArrayList principals = new ArrayList();
-            if ( profile.getLoginName() != null && profile.getLoginName().length() > 0 )
-            {
-                principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
-            }
-            if ( profile.getFullname() != null && profile.getFullname().length() > 0 )
-            {
-                principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
-            }
-            if ( profile.getWikiName() != null && profile.getWikiName().length() > 0 )
-            {
-                principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
-            }
-            return (Principal[]) principals.toArray( new Principal[principals.size()] );
-        }
-        catch( NoSuchPrincipalException e )
-        {
-            throw e;
-        }
-    }
-
-    /**
      * Initializes the user database based on values from a Properties object.
      * The properties object must contain a file path to the XML database file
      * whose key is {@link #PROP_USERDATABASE}.
@@ -401,14 +320,6 @@ public class XMLUserDatabase implements UserDatabase
     }
 
     /**
-     * Factory method that instantiates a new DefaultUserProfile.
-     */
-    public UserProfile newProfile()
-    {
-        return new DefaultUserProfile();
-    }
-
-    /**
      * Saves a {@link UserProfile}to the user database, overwriting the
      * existing profile if it exists. The user name under which the profile
      * should be saved is returned by the supplied profile's
@@ -465,39 +376,6 @@ public class XMLUserDatabase implements UserDatabase
     }
 
     /**
-     * Validates the password for a given user. If the user does not exist in
-     * the user database, this method always returns <code>false</code>. If
-     * the user exists, the supplied password is compared to the stored
-     * password. Note that if the stored password's value starts with
-     * <code>{SHA}</code>, the supplied password is hashed prior to the
-     * comparison.
-     * @param loginName the user's login name
-     * @param password the user's password (obtained from user input, e.g., a web form)
-     * @return <code>true</code> if the supplied user password matches the
-     * stored password
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#validatePassword(java.lang.String,
-     *      java.lang.String)
-     */
-    public boolean validatePassword( String loginName, String password )
-    {
-        String hashedPassword = getHash( password );
-        try
-        {
-            UserProfile profile = findByLoginName( loginName );
-            String storedPassword = profile.getPassword();
-            if ( storedPassword.startsWith( SHA_PREFIX ) )
-            {
-                storedPassword = storedPassword.substring( SHA_PREFIX.length() );
-            }
-            return ( hashedPassword.equals( storedPassword ) );
-        }
-        catch( NoSuchPrincipalException e )
-        {
-            return false;
-        }
-    }
-
-    /**
      * Private method that returns the first {@link UserProfile}matching a
      * &lt;user&gt; element's supplied attribute.
      * @param matchAttribute
@@ -540,30 +418,6 @@ public class XMLUserDatabase implements UserDatabase
             }
         }
         return null;
-    }
-
-    /**
-     * Private method that calculates the SHA-1 hash of a given
-     * <code>String</code>
-     * @param text the text to hash
-     * @return the result hash
-     */
-    private String getHash( String text )
-    {
-        String hash = null;
-        try
-        {
-            MessageDigest md = MessageDigest.getInstance( "SHA" );
-            md.update( text.getBytes() );
-            byte digestedBytes[] = md.digest();
-            hash = HexUtils.convert( digestedBytes );
-        }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.error( "Error creating SHA password hash:" + e.getMessage() );
-            hash = text;
-        }
-        return hash;
     }
 
     /**

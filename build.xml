@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.49 2005-10-02 21:10:50 jalkanen Exp $
+    $Id: build.xml,v 1.50 2005-10-19 12:12:11 arj Exp $
 -->    
        
 <!--   
@@ -420,7 +420,7 @@
        This runs the tests in text mode.  If you want the
        pretty GUI you probably want to write a new target.
    -->
-  <target name="tests" depends="jar,tests-init,jartests"
+  <target name="tests" depends="jar,tests-init,jartests,tests-db-init"
           description="Runs the JUnit tests.">
 
     <junit printsummary="yes" haltonfailure="no" fork="yes">
@@ -697,5 +697,259 @@ To automate the JAR signing processs, you can add the property
         storepass="${jks.password}" verbose="false"/>
      </sequential>
   </macrodef>
-   
+
+  <!-- ============================================================== -->
+
+  <!-- JDBC Support -->
+  
+  <!-- Starting with 2.3.33, JSPWiki supports JDBC DataSources for
+       storing user profiles. The DataSource can be any database that
+       your web container supports. In practice, most containers supply
+       a generic datatbase connection pooling package that can be configured
+       to use any JDBC driver.
+       
+       RUNNING JDBC UNIT TESTS
+       -----------------------
+       If you don't enable JDBC support, the JDBC-related unit test classes
+       will compile fine, but will fail when the 'tests' Ant target executes.
+       Don't worry about that. The JDBC-related test classes, by the way,
+       are these:
+       
+          com.ecyrd.jspwiki.auth.user.JDBCUserDatabaseTest
+     
+       To run JDBC-related unit tests, you need to:
+       
+       1) Set up an external database
+       2) Obtain a JDBC driver
+       3) Tell JSPWiki where to find the driver, and how to
+          connect to the database, via jdbc.* properties in
+          your build.properties file. 
+       4) Provide table setup/teardown DDL scripts (executed by
+          the db-setup and db-teardown targets, below)
+
+       Step 1 is the hardest. Luckily for you, JSPWiki has built-in Ant 
+       scripts to automatically start and stop the embedded Mckoi 100%
+       Java database. It's small and fast, but because it is GPL-licensed 
+       we couldn't include it in the JSPWiki base distribution. Get it here:
+       
+         http://www.mckoi.com/database/index.html#Download
+       
+       ... and install the 'mckoidb.jar' file (which includes the JDBC driver)
+       into the 'lib' directory. Then set up your database properties
+       in build.properties, for example:
+       
+         jdbc.driver.id=mckoi
+         jdbc.driver.jar=lib/mckoidb.jar
+         jdbc.driver.class=com.mckoi.JDBCDriver
+         jdbc.driver.url=jdbc:mckoi://localhost:9157/
+         jdbc.admin.id=admin
+         jdbc.admin.password=password
+         jdbc.user.id=admin
+         jdbc.user.password=password
+       
+       The 'jdbc.driver.id' property is important. Its presence tells
+       the Ant scripts to do JDBC testing. It also points to
+       he subdirectory in etc/db that contains our setup/teardown
+       scripts, which *must* contain these files at a minumum:
+       
+         userdb-setup.ddl
+         userdb-teardown.ddl
+       
+       Sample scripts for Mckoi are supplied. If you want to use a 
+       different database, create a subdirectory in etc/db
+       (e.g., etc/db/oracle) and create the necessary DDL script files. 
+
+       Note that the DDL scripts contain token substitution fields where
+       table and column names mappings can be plugged in. This is so you
+       can customize how JSPWiki stores its data. For example, the McKoi
+       Mckoi teardown DDL looks like this:
+       
+         DROP TABLE IF EXISTS @jspwiki.userdatabase.table@;
+         
+       The complete list of customizable table properties are found
+       in etc/jspwiki.properties.tmpl. If you don't customize them,
+       JSPWiki will use some sensible defaults.
+       
+       All of this may sound complicated, but it really isn't. If you use Mckoi,
+       the JDBC tests should Just Work.
+       
+       RUNNING JSPWIKI WITH JDBC SUPPORT
+       ---------------------------------
+       All of the preceding tells you how to test JSPWiki with JDBC support.
+       Sounds great, but how do you *run* JSPWiki with it? Simple:
+       
+       1) Configure the Jdbc.* properties in build.properties, as described
+          above
+       2) Configure table and column mappings in etc/jspwiki.properties.tmpl
+       3) Configure your web container to create a JDBC DataSource
+          (by default, the JNDI name is jdbc/UserDatabase)
+       4) Put the JDBC driver jar in a place where your web container will
+          find it, for example CATALINA_HOME/common/lib
+       5) Build JSPWiki, and start it up!
+       
+       See the Javadoc for com.ecyrd.jspwiki.auth.user.JDBCUserDatabase
+       for details and examples.
+  -->
+
+  <target name="tests-db-init" depends="db-properties,mckoi-init,db-setup"/>
+  
+  <target name="db-properties" depends="init" if="jdbc.driver.id">
+    <!-- Load the JDBC props we need to do table maintenance -->
+    <check-property prop="jdbc.driver.jar" />
+    <check-property prop="jdbc.driver.class" />
+    <check-property prop="jdbc.driver.url" />
+    <check-property prop="jdbc.admin.id" />
+    <check-property prop="jdbc.admin.password" />
+  
+    <!-- Here's a neat trick: import the JDBC runtime props from jspwiki.properties -->
+    <echo message="Getting JDBC runtime properties." />
+    <loadproperties srcFile="etc/jspwiki.properties">
+      <filterchain>
+        <linecontainsregexp>
+          <regexp pattern="^jspwiki.userdatabase"/>
+        </linecontainsregexp>
+      </filterchain>
+    </loadproperties>
+    <check-property prop="jspwiki.userdatabase.table" />
+    <check-property prop="jspwiki.userdatabase.email" />
+    <check-property prop="jspwiki.userdatabase.fullName" />
+    <check-property prop="jspwiki.userdatabase.loginName" />
+    <check-property prop="jspwiki.userdatabase.password" />
+    <check-property prop="jspwiki.userdatabase.wikiName" />
+    <check-property prop="jspwiki.userdatabase.created" />
+    <check-property prop="jspwiki.userdatabase.modified" />
+    
+    <!-- Check for the presence of the database driver & script dir -->
+    <check-file file="etc/db/${jdbc.driver.id}"      prop="db.scripts" />
+    <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
+    
+    <!-- Bulk-copy the table setup/teardown scripts -->
+    <property name="tests.db.scripts" value="${tests.src}/etc/db/${jdbc.driver.id}" />
+    <mkdir dir="${tests.db.scripts}" />
+    <copy toDir="${tests.db.scripts}" overwrite="true">
+      <fileset dir="${db.scripts}" />
+      <filterset>
+        <filtersfile file="etc/jspwiki.properties" />
+      </filterset>
+    </copy>
+    
+    <!-- Check if the customized database scripts exist -->
+    <check-file file="${tests.db.scripts}/userdb-setup.ddl"    prop="userdb.setup" />
+    <check-file file="${tests.db.scripts}/userdb-teardown.ddl" prop="userdb.teardown" />
+    
+    <!-- If it's the mckoi database, set a special flag -->
+    <condition property="mckoi">
+      <equals arg1="${jdbc.driver.id}" arg2="mckoi" />
+    </condition>
+    
+    <!-- Set a flag that says all of our pre-conditions are met! -->
+    <property name="db.props.exist" value="true" />
+    
+    <!-- Dump all of the JDBC properties where our test scripts can find them -->
+    <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
+  </target>
+  
+  <target name="db-setup" depends="mckoi-init" if="db.props.exist">
+    <echo message="Setting up the database tables." />
+    <exec-sql file="${userdb.setup}" />
+  </target>
+  
+  <target name="db-teardown" depends="mckoi-init" if="db.props.exist">
+    <echo message="Tearing down the database tables." />
+    <exec-sql file="${userdb.teardown}" />
+  </target>
+
+  <!-- Some convenience macrodefs -->
+  <macrodef name="check-property">
+    <attribute name="prop"/>
+    <sequential>
+      <fail unless="@{prop}" message="Property @{prop} is required." />
+    </sequential>
+  </macrodef>
+  
+  <macrodef name="check-file">
+    <attribute name="file" />
+    <attribute name="prop" />
+    <sequential>
+      <available file="@{file}" property="@{prop}" value="@{file}" />
+      <fail unless="@{prop}" message="Couldn't find @{file}!" />
+    </sequential>
+  </macrodef>
+  
+  <macrodef name="exec-sql">
+    <attribute name="file" />
+    <sequential>
+      <sql driver="${jdbc.driver.class}"
+        classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
+        userid="${jdbc.admin.id}" password="${jdbc.admin.password}"
+        src="@{file}"/>
+    </sequential>
+  </macrodef>
+  
+  <!-- ============================================================== -->
+
+  <!-- Mckoi embedded database startup/shutdown (for testing JDBC) -->
+  
+  <!-- Special "init" target for mckoi -->
+  <target name="mckoi-init" depends="mckoi-check-conf,mckoi-conf,mckoi-check-start,mckoi-start" />
+  
+  <target name="mckoi-check-conf" depends="db-properties" if="mckoi">
+    <condition property="mckoi.configured">
+      <and>
+        <equals arg1="${jdbc.driver.id}" arg2="mckoi" />
+        <available file="${tests.db.scripts}/mckoi.conf" type="file" property="mckoi.conf" />
+        <available file="${tests.db.scripts}/data"       type="dir"  property="mckoi.data" />
+        <available file="${tests.db.scripts}/log"        type="dir"  property="mckoi.logs" />
+      </and>
+    </condition>
+    <property name="mckoi.conf" value="${tests.db.scripts}/mckoi.conf" /> 
+  </target>
+  
+  <target name="mckoi-conf" depends="mckoi-check-conf" unless="mckoi.configured">
+    <echo message="JSPWiki detected that you're using the Mckoi JDBC server." />
+    <echo message="Looks like we need to configure Mckoi. Here we go." />
+    <java jar="${jdbc.driver.jar}" fork="yes" failonerror="true">
+      <arg value="-conf" />
+      <arg value="${mckoi.conf}" />
+      <arg value="-create" />
+      <arg value="${jdbc.admin.id}" />
+      <arg value="${jdbc.admin.password}" />
+    </java>
+    <property name="mckoi.configured" value="true" />
+    <echo message="mckoi configured successfully." />
+  </target>
+  
+  <target name="mckoi-check-start" depends="mckoi-conf" if="mckoi.configured">
+    <condition property="mckoi.up">
+      <socket server="localhost" port="9157" />
+    </condition>
+  </target>
+  
+  <target name="mckoi-start" depends="mckoi-check-start" unless="mckoi.up">
+    <echo message="Starting up Mckoi JDBC server on localhost." />
+    <java jar="${jdbc.driver.jar}" fork="yes" spawn="yes">
+      <arg value="-conf" />
+      <arg value="${mckoi.conf}" />
+    </java>
+    <sleep seconds="5" />
+    <condition property="mckoi.up">
+      <socket server="localhost" port="9157" />
+    </condition>
+    <fail unless="mckoi.up">McKoi didn't appear to start up properly. You can start it manually from the command line as follows:
+
+   java -jar ${jdbc.driver.jar} -conf ${mckoi.conf}
+    </fail>
+    <echo message="Done." />
+  </target>
+
+  <target name="mckoi-stop" depends="mckoi-check-start" if="mckoi.up">
+    <echo message="Shutting down Mckoi JDBC server on localhost." />
+    <sql driver="${jdbc.driver.class}"
+      classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
+      userid="${jdbc.admin.id}" password="${jdbc.admin.password}">
+      SHUTDOWN
+    </sql>
+    <echo message="Done." />
+  </target>
+
 </project>

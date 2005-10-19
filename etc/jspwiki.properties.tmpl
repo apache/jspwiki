@@ -212,8 +212,9 @@ jspwiki.translatorReader.camelCaseLinks = false
 
 #
 #  This sets the default template used by the Wiki engine.  The templates
-#  live in templates/<template name>.  JSPWiki will attempt to find two
-#  basic templates from that directory: "ViewTemplate" and "EditTemplate".
+#  live in templates/<template name>.  JSPWiki will attempt to find three
+#  basic templates from that directory: "ViewTemplate," "EditTemplate"
+#  and "AdminTemplate"
 #
 #  By default this is called "default".
 #
@@ -299,6 +300,37 @@ jspwiki.plugin.searchPath =
 #  else, you'll have to specify it here.
 #
 #jspwiki.filterConfig = /some/path/to/your/filters.xml
+
+#############################################################################
+#
+#  URL Constructor
+#
+#  JSPWiki by default generates page and attachment links that use JSP
+#  pages and request parameters. It can also use alternative URL 
+#  constructors so that URL pages resemble traditional website paths, too.
+#  You have three choices for generating URLs:
+#
+#     DefaultURLConstructor - uses JSPs for all references:
+#         http://mywiki.com/jspwiki/Wiki.jsp?page=Main
+#         http://mywiki.com/jspwiki/Edit.jsp?page=Main
+#
+#     ShortURLConstructor - uses path-like reference style:
+#         http://mywiki.com/jspwiki/wiki/Main
+#         http://mywiki.com/jspwiki/wiki/Main?do=Edit
+#
+#     ShortViewURLConstructor - uses path-like references for views; JSPs for everything else:
+#         http://mywiki.com/jspwiki/wiki/Main
+#         http://mywiki.com/jspwiki/Edit.jsp?page=Main
+#
+#  Of course, you can also write your own implementation if you wish.
+#  
+#  For either of the ShortURL constructors, you can also specify a 
+#  prefix path to go in front of page names. By default, the
+#  prefix is '/wiki'.
+#
+#jspwiki.urlConstructor = DefaultURLConstructor
+jspwiki.urlConstructor = ShortViewURLConstructor
+#jspwiki.shortURLConstructor.prefix = /wiki
 
 #############################################################################
 #
@@ -522,6 +554,21 @@ jspwiki.rss.channelLanguage = en-us
 #  The command for getting the entire modification history
 #jspwiki.rcsFileProvider.fullLogCommand = rlog -zLT %s
 
+###########################################################################
+#
+#  JDBC Configuration. Tells JSPWiki which tables and columns to map
+#  to for the JDBCUserDatabase. For more info, see the JavaDoc
+#  for class com.ecyrd.jspwiki.auth.user.JDBCUserDatabase.
+#
+jspwiki.userdatabase.datasource=jdbc/UserDatabase
+jspwiki.userdatabase.table=users
+jspwiki.userdatabase.email=email
+jspwiki.userdatabase.fullName=full_name
+jspwiki.userdatabase.loginName=login_name
+jspwiki.userdatabase.password=password
+jspwiki.userdatabase.wikiName=wiki_name
+jspwiki.userdatabase.created=created
+jspwiki.userdatabase.modified=modified
 
 ###########################################################################
 #
