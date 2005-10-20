@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.51 2005-10-19 21:29:32 arj Exp $
+    $Id: build.xml,v 1.52 2005-10-20 01:28:26 arj Exp $
 -->    
        
 <!--   
@@ -830,6 +830,7 @@ To automate the JAR signing processs, you can add the property
       <fileset dir="${db.scripts}" />
       <filterset>
         <filtersfile file="etc/jspwiki.properties" />
+        <filtersfile file="build.properties" />
       </filterset>
     </copy>
     
@@ -882,7 +883,7 @@ To automate the JAR signing processs, you can add the property
       <sql driver="${jdbc.driver.class}"
         classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
         userid="${jdbc.admin.id}" password="${jdbc.admin.password}"
-        src="@{file}"/>
+        src="@{file}" onerror="continue" autocommit="true" />
     </sequential>
   </macrodef>
   
@@ -894,18 +895,20 @@ To automate the JAR signing processs, you can add the property
   <target name="mckoi-init" depends="mckoi-check-conf,mckoi-conf,mckoi-check-start,mckoi-start" />
   
   <target name="mckoi-check-conf" depends="db-properties" if="mckoi">
-    <condition property="mckoi.configured">
-      <and>
-        <equals arg1="${jdbc.driver.id}" arg2="mckoi" />
-        <available file="${tests.db.scripts}/mckoi.conf" type="file" property="mckoi.conf" />
-        <available file="${tests.db.scripts}/data"       type="dir"  property="mckoi.data" />
-        <available file="${tests.db.scripts}/log"        type="dir"  property="mckoi.logs" />
-      </and>
+    <condition property="mckoi.needs.config">
+      <not>
+        <and>
+          <equals arg1="${jdbc.driver.id}" arg2="mckoi" />
+          <available file="${tests.db.scripts}/mckoi.conf" type="file" property="mckoi.conf" />
+          <available file="${tests.db.scripts}/data"       type="dir"  property="mckoi.data" />
+          <available file="${tests.db.scripts}/log"        type="dir"  property="mckoi.logs" />
+        </and>
+      </not>
     </condition>
     <property name="mckoi.conf" value="${tests.db.scripts}/mckoi.conf" /> 
   </target>
   
-  <target name="mckoi-conf" depends="mckoi-check-conf" unless="mckoi.configured">
+  <target name="mckoi-conf" depends="mckoi-check-conf" if="mckoi.needs.config">
     <echo message="JSPWiki detected that you're using the Mckoi JDBC server." />
     <echo message="Looks like we need to configure Mckoi. Here we go." />
     <java jar="${jdbc.driver.jar}" fork="yes" failonerror="true">
@@ -920,12 +923,14 @@ To automate the JAR signing processs, you can add the property
   </target>
   
   <target name="mckoi-check-start" depends="mckoi-conf" if="mckoi.configured">
-    <condition property="mckoi.up">
-      <socket server="localhost" port="9157" />
+    <condition property="mckoi.needs.start">
+      <not>
+        <socket server="localhost" port="9157" />
+      </not>
     </condition>
   </target>
   
-  <target name="mckoi-start" depends="mckoi-check-start" unless="mckoi.up">
+  <target name="mckoi-start" depends="mckoi-check-start" if="mckoi.needs.start">
     <echo message="Starting up Mckoi JDBC server on localhost." />
     <java jar="${jdbc.driver.jar}" fork="yes" spawn="yes">
       <arg value="-conf" />
