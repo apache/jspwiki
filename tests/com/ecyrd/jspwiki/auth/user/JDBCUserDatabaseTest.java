@@ -48,11 +48,10 @@ public class JDBCUserDatabaseTest extends TestCase
         // Get the JDBC connection and init tables
         Connection m_conn = ds.getConnection();
         Statement stmt = m_conn.createStatement();
-        ResultSet rs;
         String sql;
 
         sql = "DELETE FROM " + JDBCUserDatabase.DEFAULT_DB_TABLE + ";";
-        rs = stmt.executeQuery( sql );
+        stmt.executeUpdate( sql );
 
         // Create a new test user 'janne'
         m_createStamp = new Timestamp( System.currentTimeMillis() );
@@ -62,14 +61,14 @@ public class JDBCUserDatabaseTest extends TestCase
                 + "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne',"
                 + "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," + "'JanneJalkanen'," + "'"
                 + new Timestamp( m_createStamp.getTime() ).toString() + "'" + ");";
-        rs = stmt.executeQuery( sql );
+        stmt.executeUpdate( sql );
 
         // Create a new test user 'user'
         sql = "INSERT INTO users (" + JDBCUserDatabase.DEFAULT_DB_EMAIL + "," + JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME
                 + "," + JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," + JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES ("
                 + "'user@example.com'," + "'user'," + "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," + "'"
                 + new Timestamp( m_createStamp.getTime() ).toString() + "'" + ");";
-        rs = stmt.executeQuery( sql );
+        stmt.executeUpdate( sql );
 
         // Initialize the user database
         m_db = new JDBCUserDatabase();
