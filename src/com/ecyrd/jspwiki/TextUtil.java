@@ -307,7 +307,7 @@ public class TextUtil
         
         try
         {
-            val = Integer.parseInt( value );
+            val = Integer.parseInt( value.trim() );
         }
         catch( Exception e ) {}
             
@@ -391,6 +391,8 @@ public class TextUtil
     {
         if( val == null ) return false;
 
+        val = val.trim();
+        
         return ( val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
                  val.equalsIgnoreCase("yes") );
     }
