@@ -78,7 +78,7 @@ public class AtomFeed extends Feed
             //
             
             entryEl.addContent( new Element("id").setText( getEntryID(e)) );
-            entryEl.addContent( new Element("title").setAttribute("type","html").setText( format( e.getTitle() )));
+            entryEl.addContent( new Element("title").setAttribute("type","html").setText( e.getTitle() ));
             entryEl.addContent( new Element("updated").setText( DateFormatUtils.formatUTC(p.getLastModified(),
                                                                                           RFC3339FORMAT )));
             //
@@ -87,7 +87,7 @@ public class AtomFeed extends Feed
             
             entryEl.addContent( new Element("author").addContent( new Element("name").setText( e.getAuthor() )));
             entryEl.addContent( new Element("link").setAttribute("rel","alternate").setAttribute("href",e.getURL()));
-            entryEl.addContent( new Element("content").setAttribute("type","html").setText(format(e.getContent())));
+            entryEl.addContent( new Element("content").setAttribute("type","html").setText( e.getContent() ));
             
             //
             //  Check for enclosures
@@ -142,7 +142,7 @@ public class AtomFeed extends Feed
         //
         //  Mandatory parts
         //
-        root.addContent( new Element("title").setText( format(getChannelTitle()) ) );
+        root.addContent( new Element("title").setText( getChannelTitle() ) );
         root.addContent( new Element("id").setText(getFeedID()) );
         root.addContent( new Element("updated").setText(DateFormatUtils.formatUTC( lastModified,
                                                                                    RFC3339FORMAT ) ));

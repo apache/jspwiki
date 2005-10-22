@@ -85,6 +85,9 @@ public class RSSGenerator
      */
     public static final String PROP_RSSFILE             = "jspwiki.rss.fileName";
 
+    public static final String PROP_RSSAUTHOR           = "jspwiki.rss.author";
+    public static final String PROP_RSSAUTHOREMAIL      = "jspwiki.rss.author.email";
+    
     /**
      *  Defines the property name for the RSS generation interval in seconds.
      *  @since 1.7.6.

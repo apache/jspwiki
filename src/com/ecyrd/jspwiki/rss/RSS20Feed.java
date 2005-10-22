@@ -78,9 +78,9 @@ public class RSS20Feed extends Feed
             
             item.addContent( new Element("link").setText(url) );
             
-            item.addContent( new Element("title").setText( format(e.getTitle())) );
+            item.addContent( new Element("title").setText( e.getTitle()) );
          
-            item.addContent( new Element("description").setText( format(e.getContent())) );
+            item.addContent( new Element("description").setText( e.getContent()) );
             
             //
             //  Attachments for enclosures
@@ -139,9 +139,9 @@ public class RSS20Feed extends Feed
         //
         //  Mandatory parts
         //
-        channel.addContent( new Element("title").setText( format(getChannelTitle()) ) );
+        channel.addContent( new Element("title").setText( getChannelTitle() ) );
         channel.addContent( new Element("link").setText(engine.getBaseURL()));
-        channel.addContent( new Element("description").setText( format(getChannelDescription()) ));
+        channel.addContent( new Element("description").setText( getChannelDescription() ));
         
         //
         //  Optional
