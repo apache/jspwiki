@@ -451,7 +451,7 @@ public class WikiEngine
         //
         //  Create and find the default working directory.
         //
-        m_workDir        = props.getProperty( PROP_WORKDIR );
+        m_workDir        = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
 
         if( m_workDir == null )
         {
@@ -484,8 +484,8 @@ public class WikiEngine
                                                         PROP_STOREUSERNAME, 
                                                         m_saveUserInfo );
 
-        m_useUTF8        = "UTF-8".equals( props.getProperty( PROP_ENCODING, "ISO-8859-1" ) );
-        m_baseURL        = props.getProperty( PROP_BASEURL, "" );
+        m_useUTF8        = "UTF-8".equals( TextUtil.getStringProperty( props, PROP_ENCODING, "ISO-8859-1" ) );
+        m_baseURL        = TextUtil.getStringProperty( props, PROP_BASEURL, "" );
 
 
         m_beautifyTitle  = TextUtil.getBooleanProperty( props,
@@ -496,8 +496,8 @@ public class WikiEngine
                                                              PROP_MATCHPLURALS, 
                                                              m_matchEnglishPlurals );
 
-        m_templateDir    = props.getProperty( PROP_TEMPLATEDIR, "default" );
-        m_frontPage      = props.getProperty( PROP_FRONTPAGE,   "Main" );
+        m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
+        m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -506,7 +506,7 @@ public class WikiEngine
         try
         {
             Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
-                                                  props.getProperty( PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+                                                  TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();               
             m_urlConstructor.initialize( this, props );
 
@@ -628,7 +628,7 @@ public class WikiEngine
     public static String getRequiredProperty( Properties props, String key )
         throws NoRequiredPropertyException
     {
-        String value = props.getProperty(key);
+        String value = TextUtil.getStringProperty( props, key, null );
 
         if( value == null )
         {
@@ -661,11 +661,12 @@ public class WikiEngine
     /**
      *  Don't use.
      *  @since 1.8.0
+     *  @deprecated
      */
     public String getPluginSearchPath()
     {
         // FIXME: This method should not be here, probably.
-        return m_properties.getProperty( PluginManager.PROP_SEARCHPATH );
+        return TextUtil.getStringProperty( m_properties, PluginManager.PROP_SEARCHPATH, null );
     }
 
     /**
@@ -866,7 +867,7 @@ public class WikiEngine
      */
     public String getInterWikiURL( String wikiName )
     {
-        return m_properties.getProperty(PROP_INTERWIKIREF+wikiName);
+        return TextUtil.getStringProperty(m_properties,PROP_INTERWIKIREF+wikiName,null);
     }
 
     /**
@@ -910,7 +911,7 @@ public class WikiEngine
     public String getSpecialPageReference( String original )
     {
         String propname = PROP_SPECIALPAGE+original;
-        String specialpage = m_properties.getProperty( propname );
+        String specialpage = TextUtil.getStringProperty( m_properties, propname, null );
 
         if( specialpage != null )
             specialpage = getURL( WikiContext.NONE, specialpage, null, true );
@@ -925,10 +926,7 @@ public class WikiEngine
     // FIXME: Should use servlet context as a default instead of a constant.
     public String getApplicationName()
     {
-        String appName = m_properties.getProperty(PROP_APPNAME);
-
-        if( appName == null )
-            return Release.APPNAME;
+        String appName = TextUtil.getStringProperty(m_properties,PROP_APPNAME,Release.APPNAME);
 
         return appName;
     }
@@ -2058,10 +2056,12 @@ public class WikiEngine
             setName("JSPWiki Global RSS generator thread");
             try
             {
-                String fileName = m_properties.getProperty( RSSGenerator.PROP_RSSFILE,
-                                                            "rss.rdf" );
-                int rssInterval = TextUtil.parseIntParameter( m_properties.getProperty( RSSGenerator.PROP_INTERVAL ),
-                                                              3600 );
+                String fileName = TextUtil.getStringProperty( m_properties,
+                                                              RSSGenerator.PROP_RSSFILE,
+                                                              "rss.rdf" );
+                int rssInterval = TextUtil.getIntegerProperty( m_properties,
+                                                               RSSGenerator.PROP_INTERVAL,
+                                                               3600 );
 
                 log.debug("RSS file will be at "+fileName);
                 log.debug("RSS refresh interval (seconds): "+rssInterval);
