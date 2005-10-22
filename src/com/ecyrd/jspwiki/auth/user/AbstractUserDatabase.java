@@ -19,7 +19,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Abstract UserDatabase class that provides convenience methods for finding
  * profiles, building Principal collections and hashing passwords.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.1 $ $Date: 2005-10-19 12:09:19 $
+ * @version $Revision: 1.2 $ $Date: 2005-10-22 13:46:34 $
  * @since 2.3
  */public abstract class AbstractUserDatabase implements UserDatabase
 {
@@ -43,22 +43,44 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      */
     public UserProfile find( String index ) throws NoSuchPrincipalException
     {
-        UserProfile profile;
-        profile = findByFullName( index );
+        UserProfile profile = null;
+        
+        // Try finding by full name
+        try {
+            profile = findByFullName( index );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+        }
         if ( profile != null )
         {
             return profile;
         }
-        profile = findByWikiName( index );
+        
+        // Try finding by wiki name
+        try {
+            profile = findByWikiName( index );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+        }
         if ( profile != null )
         {
             return profile;
         }
-        profile = findByLoginName( index );
+        
+        // Try finding by login name
+        try {
+            profile = findByLoginName( index );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+        }
         if ( profile != null )
         {
             return profile;
         }
+        
         throw new NoSuchPrincipalException( "Not in database: " + index );
     }
 
