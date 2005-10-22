@@ -46,6 +46,7 @@ public class AllTests extends TestCase
         suite.addTest( TextUtilTest.suite() );
         // suite.addTest( TranslatorReaderTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
+        suite.addTest( WikiSessionTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( com.ecyrd.jspwiki.plugin.AllTests.suite() );
