@@ -122,7 +122,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         WikiContext context = new WikiContext( testEngine2,
                                                new WikiPage(testEngine2, PAGE_NAME) );
         JSPWikiMarkupParser r = new JSPWikiMarkupParser( context, 
-                                             new BufferedReader( new StringReader(src)) );
+                                                         new BufferedReader( new StringReader(src)) );
 
         XHTMLRenderer conv = new XHTMLRenderer( context, r.parse() );
         
@@ -1508,7 +1508,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src=";:Foo";
         
-        assertEquals( "<dl><dt /><dd>Foo</dd></dl>",
+        assertEquals( "<dl><dt></dt><dd>Foo</dd></dl>",
                       translate(src) );
     }
     
@@ -1526,7 +1526,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src=";:";
         
-        assertEquals( "<dl><dt /><dd /></dl>",
+        assertEquals( "<dl><dt></dt><dd /></dl>",
                       translate(src) );
     }
     
@@ -1697,6 +1697,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "{{{\ncode.}\n";
         
         assertEquals( "<pre>\ncode.}\n</pre>", translate(src) );
+    }
+    
+    public void testExtraExclamation()
+        throws Exception
+    {
+        String src = "Hello!";
+        
+        assertEquals( "Hello!", translate(src) );
     }
     
     /**
@@ -2036,6 +2044,38 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "%%visibility: hidden; background&#09;-image:url(j&#000013;avas&#99;ript:'url()';alert('X');)%%\nTEST";
         
         assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
+    }
+    
+    public void testHTMLEntities1()
+    throws Exception
+    {
+        String src = "Janne&apos;s test";
+        
+        assertEquals( "Janne&amp;apos;s test", translate(src) );
+    }
+
+    public void testHTMLEntities2()
+    throws Exception
+    {
+        String src = "&Auml;";
+        
+        assertEquals( "&amp;Auml;", translate(src) );
+    }
+
+    public void testEmptyBold()
+    throws Exception
+    {
+        String src = "____";
+        
+        assertEquals( "<b></b>", translate(src) );
+    }
+
+    public void testEmptyItalic()
+    throws Exception
+    {
+        String src = "''''";
+        
+        assertEquals( "<i></i>", translate(src) );
     }
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
