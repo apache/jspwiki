@@ -270,7 +270,7 @@ public class JSPWikiMarkupParser
 
             if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
             {
-                String ptrn = props.getProperty( name );
+                String ptrn = TextUtil.getStringProperty( props, name, null );
 
                 ptrnlist.add( ptrn );
             }
@@ -578,9 +578,11 @@ public class JSPWikiMarkupParser
         return new Element("span").setAttribute("class","error").addContent(error);
     }
 
-    private void flushPlainText()
+    private int flushPlainText()
     {
-        if( m_plainTextBuf.length() > 0 )
+        int numChars = m_plainTextBuf.length();
+        
+        if( numChars > 0 )
         {
             //
             //  We must first empty the buffer because the side effect of 
@@ -672,7 +674,9 @@ public class JSPWikiMarkupParser
                 //
                 m_currentElement.addContent( buf );
             }
-        }        
+        }
+        
+        return numChars;
     }
     
     private Element pushElement( Element e )
@@ -694,9 +698,18 @@ public class JSPWikiMarkupParser
         return m_currentElement;
     }
     
+    /**
+     *  All elements that can be empty by the HTML DTD.
+     */
+    //  Keep sorted.
+    private static final String[] EMPTY_ELEMENTS = {
+        "area", "base", "br", "col", "hr", "img", "input", "link", "meta", "p", "param"
+    };
+    
     private Element popElement( String s )
     {
-        flushPlainText();
+        int flushedBytes = flushPlainText();
+        
         
         Element currEl = m_currentElement;
         
@@ -705,6 +718,19 @@ public class JSPWikiMarkupParser
             if( currEl.getName().equals(s) && !currEl.isRootElement() )
             {
                 m_currentElement = currEl.getParentElement();
+                
+                //
+                //  Check if it's okay for this element to be empty.  Then we will
+                //  trick the JDOM generator into not generating an empty element,
+                //  by putting an empty string between the tags.  Yes, it's a kludge
+                //  but what'cha gonna do about it. :-)
+                //
+                
+                if( flushedBytes == 0 && Arrays.binarySearch( EMPTY_ELEMENTS, s ) < 0 )
+                {
+                    currEl.addContent("");
+                }
+                
                 return m_currentElement;
             }
             
@@ -2189,10 +2215,6 @@ public class JSPWikiMarkupParser
                 if( newLine )
                 {
                     el = handleHeading();
-                }
-                else
-                {
-                    s = "!";
                 }
                 break;
 
