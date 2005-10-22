@@ -291,6 +291,25 @@ public class TextUtilTest extends TestCase
         catch( IllegalArgumentException e ) {}
     }
 
+    public void testBooleanParameter()
+       throws Exception
+    {
+        assertEquals( "1", true, TextUtil.isPositive(" true ") );
+        assertEquals( "2", false, TextUtil.isPositive(" fewqkfow kfpokwe ") );
+        assertEquals( "3", true, TextUtil.isPositive("on") );
+        assertEquals( "4", true, TextUtil.isPositive("\t\ton") );
+    }
+    
+    public void testTrimmedProperty()
+    {
+        String[] vals = { "foo", " this is a property ", "bar", "60" };
+        
+        Properties props = TextUtil.createProperties(vals);
+        
+        assertEquals( "foo", "this is a property", TextUtil.getStringProperty(props,"foo","") );
+        assertEquals( "bar", 60, TextUtil.getIntegerProperty(props,"bar",0) );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( TextUtilTest.class );
