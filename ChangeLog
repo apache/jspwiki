@@ -1,3 +1,29 @@
+2005-10-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.34
+
+        * Did a general sweep of a bunch of classes to make
+        sure they use TextUtil.getStringProperty() instead of
+        Properties.getProperty().  Also fixed 
+        BugTextUtil.parseIntParameterFailsInCaseOfTrailingBanks
+        to get rid of all space-related issues in jspwiki.properties.
+
+		* No longer generates empty <b/> -elements for markup "____".
+		The parser is now smart enough to check if a markup would
+		result in something that would not be recommended in XHTML 1.0.
+		Fixes BugEmptyMarkupDoesntWorkForBoldAndItalic.
+		
+		* RSS 2.0 and Atom feeds no longer double-encode ampersands.  
+		Oops. :)
+		
+		* PageModified.jsp now properly escape XHTML markup.
+		
+		* JSPWiki Auth tests are run now only if "jspwiki.tests.auth"
+		system property is set.  This helps everyone that is using
+		Eclipse...
+		
+		* Bug fix: exclamation marks are no longer doubled.
+
 2005-10-19  Andrew Jaquith <arjaquith@mindspring.com>
 
         * v2.3.33
