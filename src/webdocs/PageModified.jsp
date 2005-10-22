@@ -1,4 +1,5 @@
 <%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
@@ -31,9 +32,11 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    usertext = TextUtil.replaceString( usertext, "<", "&lt;" );
-    usertext = TextUtil.replaceString( usertext, ">", "&gt;" );
-    usertext = TextUtil.replaceString( usertext, "\n", "<BR />" );
+    //
+    //  Make the user and conflicting text presentable for display.
+    //
+    usertext = StringEscapeUtils.escapeXml( usertext );
+    usertext = TextUtil.replaceString( usertext, "\n", "<br />" );
 
     pageContext.setAttribute( "usertext",
                               usertext,
@@ -41,9 +44,8 @@
     
     String conflicttext = wiki.getText(pagereq);
 
-    conflicttext = TextUtil.replaceString( conflicttext, "<", "&lt;" );
-    conflicttext = TextUtil.replaceString( conflicttext, ">", "&gt;" );
-    conflicttext = TextUtil.replaceString( conflicttext, "\n", "<BR />" );
+    conflicttext = StringEscapeUtils.escapeXml( conflicttext );
+    conflicttext = TextUtil.replaceString( conflicttext, "\n", "<br />" );
 
     pageContext.setAttribute( "conflicttext",
                               conflicttext,
