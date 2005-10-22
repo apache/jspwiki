@@ -1,3 +1,33 @@
+2005-10-22  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.35
+        
+        * Fixed issue in that prevented users checking the
+          'remember me' box Comment.jsp from seeing their identity
+          assertion reflected in the WikiSession. This feature
+          now works as it should. Reworked a WikiSession method,
+          and added a WikiSessionTest unit test. WikiSession now
+          senses when the 'asserted' user cookie in the user's
+          session appears, changes, or disappears.
+          
+        * Clarified the logic in WikiSession.isAnonymous() for 
+          determining when a user is considered "anonymous". This 
+          will be the case when any of these conditions are true,
+          as evaluted in this order:
+          - The session's Principal set contains Role.ANONYMOUS
+          - The session's Principal set contains WikiPrincipal.GUEST
+          - The Principal returned by WikiSession.getUserPrincipal()
+            evaluates to an IP address
+          WikiSession includes a new, fast method for determining 
+          whether a string represents an IP address. The previous
+          technique was totally b0rked. These are the sorts of things
+          one discovers when writing unit tests...
+          
+        * Fixed minor issue with AbstractUserDatabase that
+          inadvertently introduced a bug into the way users
+          are found (or not). This was causing AuthorizationManager's
+          resolvePrincipal() method to fail in certain cases.
+        
 2005-10-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.34
