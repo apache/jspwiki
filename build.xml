@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.52 2005-10-20 01:28:26 arj Exp $
+    $Id: build.xml,v 1.53 2005-10-22 11:30:52 jalkanen Exp $
 -->    
        
 <!--   
@@ -430,6 +430,7 @@
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
         <sysproperty key="java.security.policy" value="${basedir}/etc/jspwiki.policy"/>
+		<sysproperty key="jspwiki.tests.auth" value="true" />
 
         <formatter type="plain" />
 
@@ -456,7 +457,8 @@
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
         <sysproperty key="java.security.policy" value="${basedir}/etc/jspwiki.policy"/>
-
+		<sysproperty key="jspwiki.tests.auth" value="true" />
+         
         <arg value="com.ecyrd.jspwiki.AllTests" />
      </java>
               
@@ -709,7 +711,7 @@ To automate the JAR signing processs, you can add the property
        to use any JDBC driver.
        
        RUNNING JDBC UNIT TESTS
-       
+       =======================
        If you don't enable JDBC support, the JDBC-related unit test classes
        will compile fine, but will fail when the 'tests' Ant target executes.
        Don't worry about that. The JDBC-related test classes, by the way,
@@ -774,7 +776,7 @@ To automate the JAR signing processs, you can add the property
        the JDBC tests should Just Work.
        
        RUNNING JSPWIKI WITH JDBC SUPPORT
-
+       =================================
        All of the preceding tells you how to test JSPWiki with JDBC support.
        Sounds great, but how do you *run* JSPWiki with it? Simple:
        
