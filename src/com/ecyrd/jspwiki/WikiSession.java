@@ -1,7 +1,5 @@
 package com.ecyrd.jspwiki;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
 
 /**
@@ -25,37 +24,45 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to false, and the user
  * principal is set to null.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.8 $ $Date: 2005-10-19 04:09:46 $
+ * @version $Revision: 2.9 $ $Date: 2005-10-22 13:45:46 $
  */
 public class WikiSession
 {
 
-    public static final String      ANONYMOUS           = "anonymous";
+    public static final String ANONYMOUS             = "anonymous";
 
-    public static final String      ASSERTED            = "asserted";
+    public static final String ASSERTED              = "asserted";
 
-    public static final String      AUTHENTICATED       = "authenticated";
+    public static final String AUTHENTICATED         = "authenticated";
 
     /** Weak hashmap that maps wiki sessions to HttpSessions. */
-    private static final Map        c_sessions            = new WeakHashMap();
+    private static final Map   c_sessions            = new WeakHashMap();
 
-    private Subject                 m_subject             = new Subject();
+    private Subject            m_subject             = new Subject();
 
-    protected String                m_cachedRemoteUser    = null;
-
-    protected Principal             m_cachedUserPrincipal = null;
-
-    private WikiContext             m_lastContext         = null;
-
-    protected static Logger        log      = Logger.getLogger( WikiSession.class );
+    protected String           m_cachedCookieIdentity= null;
     
+    protected String           m_cachedRemoteUser    = null;
+
+    protected Principal        m_cachedUserPrincipal = null;
+
+    private WikiContext        m_lastContext         = null;
+
+    protected static int       ONE                   = 48;
+
+    protected static int       NINE                  = 57;
+
+    protected static int       DOT                   = 46;
+
+    protected static Logger    log                   = Logger.getLogger( WikiSession.class );
+
     /**
-     * Returns <code>true</code> if this WikiSession's Subject contains
-     * a given Principal in its Principal set.
+     * Returns <code>true</code> if this WikiSession's Subject contains a
+     * given Principal in its Principal set.
      * @param principal the Principal to look for
-     * @return <code>true</code> if the Set of Principals returned by 
-     * {@link javax.security.auth.Subject#getPrincipals()} contains
-     * the specified Principal; <code>false</code> otherwise.
+     * @return <code>true</code> if the Set of Principals returned by
+     * {@link javax.security.auth.Subject#getPrincipals()} contains the
+     * specified Principal; <code>false</code> otherwise.
      */
     protected boolean hasPrincipal( Principal principal )
     {
@@ -76,9 +83,10 @@ public class WikiSession
      * {@link WikiContext#WikiContext(WikiEngine, HttpServletRequest, WikiPage)}
      * and {@link WikiContext#WikiContext(WikiEngine, WikiPage)}, and nowhere
      * else. Its primary function is to allow downstream classes such as
-     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}to access the
-     * most recent WikiContext, and thus, the HttpServletRequest.
-     * @param context the most recent wiki context, which may be <code>null</code>
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}to access
+     * the most recent WikiContext, and thus, the HttpServletRequest.
+     * @param context the most recent wiki context, which may be
+     * <code>null</code>
      */
     protected void setLastContext( WikiContext context )
     {
@@ -109,35 +117,77 @@ public class WikiSession
     }
 
     /**
-     * Determines whether the current user principal represents an 
-     * anonymous user represented by an IP
-     * address. If the user is not authenticated, this might be the case.
-     * This method works with either IPv4 or IPv6 addresses.
-     * @return whether the current user's identity is equivalent to an IP address
+     * <p>Determines whether the current session is anonymous. This will be
+     * true if any of these conditions are true:</p>
+     * <ul>
+     *   <li>The session's Principal set contains 
+     *       {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS</li>
+     *   <li>The session's Principal set contains 
+     *       {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST</li>
+     *   <li>The Principal returned by {@link #getUserPrincipal()} evaluates
+     *       to an IP address.</li> 
+     * </ul>
+     * <p>The criteria above are listed in the order in which they are 
+     * evaluated.</p>
+     * @return whether the current user's identity is equivalent to an IP
+     * address
      */
-    public boolean isAnonymous() 
+    public boolean isAnonymous()
     {
-        boolean isAddress = false;
-    
-        if( getUserPrincipal() != null )
+        Set principals = m_subject.getPrincipals();
+        return ( principals.contains( Role.ANONYMOUS ) ||
+                 principals.contains( WikiPrincipal.GUEST ) ||
+                 isIPV4Address( getUserPrincipal().getName() ) );
+    }
+
+    /**
+     * Verifies whether a String represents an IP address. The algorithm is
+     * extremely efficient and does not allocate any objects.
+     * @param name the address to test
+     * @return the result
+     */
+    protected static boolean isIPV4Address( String name )
+    {
+        if ( name.charAt( 0 ) == DOT || name.charAt( name.length() - 1 ) == DOT )
         {
-            byte[] addr = new byte[4];
-          
-            try
+            return false;
+        }
+
+        int[] addr = new int[]
+        { 0, 0, 0, 0 };
+        int currentOctet = 0;
+        for( int i = 0; i < name.length(); i++ )
+        {
+            int ch = name.charAt( i );
+            boolean isDigit = ( ch >= ONE && ch <= NINE );
+            boolean isDot = ( ch == DOT );
+            if ( !isDigit && !isDot )
             {
-                InetAddress ip = InetAddress.getByAddress( getUserPrincipal().getName(), addr );
-                isAddress = true;
+                return false;
             }
-            catch( UnknownHostException e )
+            if ( isDigit )
             {
+                addr[currentOctet] = 10 * addr[currentOctet] + ( ch - ONE );
+                if ( addr[currentOctet] > 255 )
+                {
+                    return false;
+                }
+            }
+            else if ( name.charAt( i - 1 ) == DOT )
+            {
+                return false;
+            }
+            else
+            {
+                currentOctet++;
             }
         }
-        return isAddress;
+        return ( currentOctet == 3 );
     }
-    
+
     /**
-     * Returns the most recently-accessed WikiContext for this session.
-     * This method may return <code>null</code>.
+     * Returns the most recently-accessed WikiContext for this session. This
+     * method may return <code>null</code>.
      * @return the most recent wiki context
      */
     public WikiContext getLastContext()
@@ -146,18 +196,16 @@ public class WikiSession
     }
 
     /**
-     * <p>
-     * Returns the Principal used to log in to an authenticated session. The
+     * <p> Returns the Principal used to log in to an authenticated session. The
      * login principal is determined by examining the Subject's Principal set
      * for PrincipalWrappers or WikiPrincipals with type designator
-     * <code>LOGIN_NAME</code>; the first one found
-     * is the login principal. If one is not found, this method returns the
-     * first principal that isn't of type Role. If neither of these conditions
-     * hold, this method returns {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
-     * 
+     * <code>LOGIN_NAME</code>; the first one found is the login principal.
+     * If one is not found, this method returns the first principal that isn't
+     * of type Role. If neither of these conditions hold, this method returns
+     * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
      * @return the login Principal. If it is a PrincipalWrapper containing an
-     * externally-provided Principal, the object returned is the Principal,
-     * not the wrapper around it.
+     * externally-provided Principal, the object returned is the Principal, not
+     * the wrapper around it.
      */
     public Principal getLoginPrincipal()
     {
@@ -168,11 +216,11 @@ public class WikiSession
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
-            if( !( currentPrincipal instanceof Role ) )
+            if ( !( currentPrincipal instanceof Role ) )
             {
-                if( currentPrincipal instanceof WikiPrincipal )
+                if ( currentPrincipal instanceof WikiPrincipal )
                 {
-                    WikiPrincipal wp = (WikiPrincipal)currentPrincipal;
+                    WikiPrincipal wp = (WikiPrincipal) currentPrincipal;
                     if ( wp.getType().equals( WikiPrincipal.LOGIN_NAME ) )
                     {
                         return currentPrincipal;
@@ -180,9 +228,9 @@ public class WikiSession
                 }
                 else if ( currentPrincipal instanceof PrincipalWrapper )
                 {
-                    return ((PrincipalWrapper)currentPrincipal).getPrincipal();
+                    return ( (PrincipalWrapper) currentPrincipal ).getPrincipal();
                 }
-                if( secondChoice == null )
+                if ( secondChoice == null )
                 {
                     secondChoice = currentPrincipal;
                 }
@@ -190,14 +238,13 @@ public class WikiSession
         }
         return ( secondChoice == null ? WikiPrincipal.GUEST : secondChoice );
     }
-    
+
     /**
      * <p>Returns the primary user Principal associated with this session. The
-     * primary user principal is determined as follows:</p>
-     * <ol>
-     *   <li>If the Subject's Principal set contains WikiPrincipals,
-     *       the first WikiPrincipal with type designator <code>FULL_NAME</code>
-     *       or (alternatively) <code>WIKI_NAME</true> is the primary Principal.</li>
+     * primary user principal is determined as follows:</p> <ol> <li>If the
+     * Subject's Principal set contains WikiPrincipals, the first WikiPrincipal
+     * with type designator <code>FULL_NAME</code> or (alternatively)
+     * <code>WIKI_NAME</true> is the primary Principal.</li>
      *   <li>For all other cases, the first Principal in the Subject's principal
      *       collection that that isn't of type Role is the primary.</li>
      * </ol> 
@@ -215,11 +262,11 @@ public class WikiSession
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
-            if( !( currentPrincipal instanceof Role ) )
+            if ( !( currentPrincipal instanceof Role ) )
             {
-                if( currentPrincipal instanceof WikiPrincipal )
+                if ( currentPrincipal instanceof WikiPrincipal )
                 {
-                    WikiPrincipal wp = (WikiPrincipal)currentPrincipal;
+                    WikiPrincipal wp = (WikiPrincipal) currentPrincipal;
                     if ( wp.getType().equals( WikiPrincipal.FULL_NAME ) )
                     {
                         return currentPrincipal;
@@ -231,9 +278,9 @@ public class WikiSession
                 }
                 if ( currentPrincipal instanceof PrincipalWrapper )
                 {
-                    currentPrincipal = ((PrincipalWrapper)currentPrincipal).getPrincipal();
+                    currentPrincipal = ( (PrincipalWrapper) currentPrincipal ).getPrincipal();
                 }
-                if( secondChoice == null )
+                if ( secondChoice == null )
                 {
                     secondChoice = currentPrincipal;
                 }
@@ -258,11 +305,11 @@ public class WikiSession
                 Principal currentPrincipal = (Principal) it.next();
                 if ( !( currentPrincipal instanceof Role ) )
                 {
-                    principals.add(currentPrincipal);
+                    principals.add( currentPrincipal );
                 }
             }
         }
-        return (Principal[])principals.toArray(new Principal[principals.size()]);
+        return (Principal[]) principals.toArray( new Principal[principals.size()] );
     }
 
     /**
@@ -271,7 +318,7 @@ public class WikiSession
      */
     public void setSubject( Subject subject )
     {
-        //TODO: this should be a privileged action
+        // TODO: this should be a privileged action
         m_subject = subject;
     }
 
@@ -281,7 +328,7 @@ public class WikiSession
      */
     public Subject getSubject()
     {
-        //TODO: this should be a privileged action
+        // TODO: this should be a privileged action
         return m_subject;
     }
 
@@ -302,7 +349,7 @@ public class WikiSession
         session.getSubject().getPrincipals().add( Role.ALL );
         return session;
     }
-    
+
     /**
      * Static factory method that returns the WikiSession object associated with
      * the current HTTP request. This method looks up the associated HttpSession
@@ -311,7 +358,6 @@ public class WikiSession
      * WikiSession, although the authentication status is unpredictable until
      * the user attempts to log in. If the servlet request parameter is
      * <code>null</code>, a synthetic {@link #guestSession()}is returned.
-     * 
      * @param request the current servlet request object
      * @return the existing (or newly created) wiki session
      */
@@ -337,7 +383,7 @@ public class WikiSession
         {
             if ( log.isDebugEnabled() )
             {
-                log.debug("Looking up WikiSession for session ID=" + sid + "... found it" );
+                log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
             }
             wikiSession = (WikiSession) storedSession;
         }
@@ -345,7 +391,7 @@ public class WikiSession
         {
             if ( log.isDebugEnabled() )
             {
-                log.debug("Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
+                log.debug( "Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
             }
             wikiSession = guestSession();
             c_sessions.put( session, wikiSession );
@@ -361,7 +407,7 @@ public class WikiSession
      * If the servlet request is null, this method always returns false.
      * @param request the current servlet request
      * @return <code>true</code> if the status has changed, <code>false</code>
-     *         otherwise
+     * otherwise
      */
     protected boolean isContainerStatusChanged( HttpServletRequest request )
     {
@@ -370,44 +416,22 @@ public class WikiSession
             return false;
         }
         
-        String currentRemoteUser = request.getRemoteUser();
-        Principal currentUserPrincipal = request.getUserPrincipal();
-        boolean isChanged = false;
-        if ( currentRemoteUser != m_cachedRemoteUser )
+        String requestCookieIdentity = CookieAssertionLoginModule.getUserCookie( request );
+        boolean changed = different( m_cachedRemoteUser, request.getRemoteUser() ) ||
+                          different( m_cachedUserPrincipal, request.getUserPrincipal() ) ||
+                          different( m_cachedCookieIdentity, requestCookieIdentity ) ;
+        if ( changed )
         {
-            m_cachedRemoteUser = currentRemoteUser;
-            isChanged = true;
+            m_cachedRemoteUser = request.getRemoteUser();
+            m_cachedUserPrincipal = request.getUserPrincipal();
+            m_cachedCookieIdentity = requestCookieIdentity;
         }
-        if ( currentUserPrincipal != m_cachedUserPrincipal )
-        {
-            m_cachedUserPrincipal = currentUserPrincipal;
-            isChanged = true;
-        }
-        if ( isChanged )
-        {
-            cacheContainerCredentials( request );
-        }
-        return isChanged;
-    }
-
-    /**
-     * Stash the Http request's <code>getUserPrincipal</code>
-     * and <code>getRemoteUser</code> so we can compare them
-     * later with {@link isStatusChanged()}.
-     * @param request
-     */
-    private void cacheContainerCredentials( HttpServletRequest request )
-    {
-        m_cachedRemoteUser = request.getRemoteUser();
-        m_cachedUserPrincipal = request.getUserPrincipal();
+        return changed;
     }
 
     /**
      * <p>Returns the status of the session as a text string. Valid values are:</p>
-     * <ul>
-     *   <li>{@link #AUTHENTICATED}</li>
-     *   <li>{@link #ASSERTED}</li>
-     *   <li>{@link #ANONYMOUS}</li>
+     * <ul> <li>{@link #AUTHENTICATED}</li> <li>{@link #ASSERTED}</li> <li>{@link #ANONYMOUS}</li>
      * </ul>
      * @return the session status
      */
@@ -429,4 +453,10 @@ public class WikiSession
         return "ILLEGAL STATUS!";
     }
 
+    
+    protected static boolean different( Object s1, Object s2 ) 
+    {
+        return !( ( s1 == null && s2 == null ) || ( s1 != null && s1.equals( s2 ) ) );
+    }
+    
 }
