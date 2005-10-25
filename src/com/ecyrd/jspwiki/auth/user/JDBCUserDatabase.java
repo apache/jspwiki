@@ -77,6 +77,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *     <td><code>wiki_name</code></td>
  *     <td>The column containing the user's wiki name</td>
  *   </tr>
+ *   <tr>
+ *     <td><code>jspwiki.userdatabase.hashPrefix</code></td>
+ *     <td><code>true</code></td>
+ *     <td>Whether or not to prepend a prefix for the hash algorithm, <em>e.g.</em>,
+ *         <code>{SHA}</code>.</td>
+ *   </tr>
  * </table>
  * <p>This class hashes passwords using SHA-1. All of the underying SQL commands used by this class are implemented using
  * prepared statements, so it is immune to SQL injection attacks.</p>
@@ -97,7 +103,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
  * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.1 $ $Date: 2005-10-19 12:09:19 $
+ * @version $Revision: 1.2 $ $Date: 2005-10-25 05:54:15 $
  * @since 2.3
  */public class JDBCUserDatabase extends AbstractUserDatabase
 {
@@ -108,6 +114,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
     public static final String DEFAULT_DB_FULL_NAME  = "full_name";
 
+    public static final String DEFAULT_DB_HASH_PREFIX = "true";
+    
     public static final String DEFAULT_DB_JNDI_NAME  = "jdbc/UserDatabase";
 
     public static final String DEFAULT_DB_MODIFIED   = "modified";
@@ -127,6 +135,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public static final String PROP_DB_FULL_NAME     = "jspwiki.userdatabase.fullName";
 
     public static final String PROP_DB_DATASOURCE    = "jspwiki.userdatabase.datasource";
+    
+    public static final String PROP_DB_HASH_PREFIX   = "jspwiki.userdatabase.hashPrefix";
 
     public static final String PROP_DB_LOGIN_NAME    = "jspwiki.userdatabase.loginName";
 
@@ -149,6 +159,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     private String m_table = null;
     private String m_email = null;
     private String m_fullName = null;
+    private boolean m_hashPrefix = true;
     private String m_loginName = null;
     private String m_password = null;
     private String m_wikiName = null;
@@ -212,6 +223,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             m_table     = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
             m_email     = props.getProperty( PROP_DB_EMAIL, DEFAULT_DB_EMAIL );
             m_fullName  = props.getProperty( PROP_DB_FULL_NAME, DEFAULT_DB_FULL_NAME );
+            m_hashPrefix = Boolean.valueOf( props.getProperty( PROP_DB_HASH_PREFIX, DEFAULT_DB_HASH_PREFIX ) ).booleanValue();
             m_loginName = props.getProperty( PROP_DB_LOGIN_NAME, DEFAULT_DB_LOGIN_NAME );
             m_password  = props.getProperty( PROP_DB_PASSWORD, DEFAULT_DB_PASSWORD );
             m_wikiName  = props.getProperty( PROP_DB_WIKI_NAME, DEFAULT_DB_WIKI_NAME );
@@ -293,20 +305,22 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         }
         
         // Get a clean password from the passed profile.
-        // Hash the password if it isn't null, doesn't exist, or has changed.
-        // Blank password is the same as null
+        // Blank password is the same as null, which means we re-use the existing one.
         String password = profile.getPassword();
         String existingPassword = ( existingProfile == null ) ? null : existingProfile.getPassword();
-        if ( password.equals("") )
+        if ( "".equals( password ) )
         {
             password = null;
         }
-        if ( password != null) 
-            {
-            if ( existingPassword != null || !password.equals( existingPassword ) ) 
-            {
-                password =  SHA_PREFIX + getHash( password );
-            }
+        if ( password == null) 
+        {
+            password = existingPassword;
+        }
+        
+        // If password changed, hash it before we save
+        if ( !password.equals( existingPassword ) )
+        {
+            password =  ( m_hashPrefix ) ? SHA_PREFIX + getHash( password ) : getHash( password );
         }
         
         try
