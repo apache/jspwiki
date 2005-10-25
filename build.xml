@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.53 2005-10-22 11:30:52 jalkanen Exp $
+    $Id: build.xml,v 1.54 2005-10-25 05:50:59 arj Exp $
 -->    
        
 <!--   
@@ -770,10 +770,13 @@ To automate the JAR signing processs, you can add the property
          
        The complete list of customizable table properties are found
        in etc/jspwiki.properties.tmpl. If you don't customize them,
-       JSPWiki will use some sensible defaults.
+       JSPWiki will use some sensible defaults. For unit testing purposes,
+       this script will always use the defaults from 'tests/etc/jspwiki.properties',
+       then apply any custom properties defined in your build.properties file.
        
        All of this may sound complicated, but it really isn't. If you use Mckoi,
-       the JDBC tests should Just Work.
+       the JDBC tests should Just Work. And if you specify an external database,
+       they should work just fine also.
        
        RUNNING JSPWIKI WITH JDBC SUPPORT
        =================================
@@ -831,7 +834,7 @@ To automate the JAR signing processs, you can add the property
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
       <filterset>
-        <filtersfile file="etc/jspwiki.properties" />
+        <filtersfile file="tests/etc/jspwiki.properties" />
         <filtersfile file="build.properties" />
       </filterset>
     </copy>
