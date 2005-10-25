@@ -61,7 +61,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2005-10-19 12:09:19 $
+ * @version $Revision: 1.7 $ $Date: 2005-10-25 05:49:50 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -170,7 +170,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         if ( !newFile.renameTo( c_file ) )
         {
             log.error( "Could not save database: " + backup + " restoring backup." );
-            if ( backup.renameTo( c_file ) )
+            if ( !backup.renameTo( c_file ) )
             {
                 log.error( "Restore failed. Check the file permissions." );
             }
