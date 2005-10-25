@@ -1,3 +1,37 @@
+2005-10-25  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.36
+        
+        * Cosmetic fix: cookie-asserted identities containing spaces were 
+          passing enclosing double-quotes on to the LoginModule, which had
+          the effect of "scare-quoting" the user's name. The offending
+          quotes are now snipped if detected, in HttpUtil.
+          
+        * Added a bang (!) to a particular line in XMLUserDatabase
+          that was causing a spurious error message.
+          (Credit: John Volkar)
+          
+        * Changed JDBC init tests so that they use column and table
+          mappings from tests/etc/jspwiki.properties, not 
+          jspwiki.properties. This was confusing the JDBCUserDatabaseTest
+          class big-time, when custom mappings were used. Also,
+          added JDBC test properties to the various test/etc templates.
+          
+        * Added an optional property 'jspwiki.userdatabase.hashPrefix'
+          that tells JDBCUserDatabase whether or not to prepend
+          its hash algorithm to the password hash (e.g., {SHA}).
+          This should increase compatibility with certain 
+          third-party applications that might wish to share the
+          user database, such as Tomcat.
+          
+        * Fixed a NPE in JDBCUserDatabase that was triggered by
+          a user editing a profile, but electing not to change the
+          password. It now exhibits correct behavoir: no password
+          means "use the old one", just like with XMLUserDatabase.
+          
+        * Added 'drop user' to the Postgres and Mckoi database
+          scripts; it was causing an error in some cases.
+
 2005-10-22  Andrew Jaquith <arjaquith@mindspring.com>
 
         * v2.3.35
