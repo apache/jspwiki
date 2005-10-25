@@ -1,4 +1,5 @@
 drop table if exists @jspwiki.userdatabase.table@;
+drop user @jdbc.user.id@;
 
 create table if not exists @jspwiki.userdatabase.table@ (
   @jspwiki.userdatabase.email@ varchar(100),
