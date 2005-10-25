@@ -44,7 +44,8 @@ public class HttpUtil
      *  Attempts to retrieve the given cookie value from the request.
      *  Returns the string value (which may or may not be decoded
      *  correctly, depending on browser!), or null if the cookie is
-     *  not found.
+     *  not found. The algorithm will automatically trim leading
+     *  and trailing double quotes, if found.
      *
      *  @param request The current request
      *  @param cookieName The name of the cookie to fetch.
@@ -61,7 +62,12 @@ public class HttpUtil
             {
                 if( cookies[i].getName().equals( cookieName ) )
                 {
-                    return( cookies[i].getValue() );
+                    String value = cookies[i].getValue();
+                    if ( value.charAt( 0 ) == '"' && value.charAt( value.length() - 1 ) == '"')
+                    {
+                        value = value.substring( 1, value.length() - 1 );
+                    }
+                    return value;
                 }
             }
         }
