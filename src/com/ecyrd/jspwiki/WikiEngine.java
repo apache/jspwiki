@@ -791,6 +791,9 @@ public class WikiEngine
      *  I am not yet entirely sure if it's safe to merge the code.
      *
      *  @since 1.5.3
+     *  @deprecated JSPWiki now requires servlet API 2.3, which has a better
+     *              way of dealing with this stuff.  This will be removed in 
+     *              the near future.
      */
 
     public String safeGetParameter( ServletRequest request, String name )
@@ -1858,6 +1861,19 @@ public class WikiEngine
             throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
         }
 
+        //
+        //  First, set the encoding for parameter parsing.
+        //
+        try
+        {
+            request.setCharacterEncoding( getContentEncoding() );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal("Someone gave us a encoding we cannot understand!");
+            throw new InternalWikiException("Unknown encoding "+getContentEncoding());
+        }
+        
         try
         {
             pagereq  = m_urlConstructor.parsePage( requestContext,
@@ -1870,7 +1886,7 @@ public class WikiEngine
             throw new InternalWikiException("Big internal booboo, please check logs.");
         }
 
-        String template = safeGetParameter( request, "skin" );
+        String template = request.getParameter( "skin" );
 
         //
         //  Figure out the page name.

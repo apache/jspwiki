@@ -168,7 +168,7 @@ public class ShortURLConstructor
                              String encoding )
         throws UnsupportedEncodingException
     {
-        String pagereq = m_engine.safeGetParameter( request, "page" );
+        String pagereq = request.getParameter( "page" );
 
         if( pagereq == null )
         {

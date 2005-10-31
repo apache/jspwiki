@@ -281,7 +281,7 @@ public class WikiContext
 
         if( m_request != null )
         {
-            result = m_engine.safeGetParameter( m_request, paramName );
+            result = m_request.getParameter( paramName );
         }
 
         return result;

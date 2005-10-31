@@ -244,12 +244,10 @@ public class CalendarTag
         //
         //  Check if there is a parameter in the request to set the date.
         //
-        String calendarDate = engine.safeGetParameter( pageContext.getRequest(), 
-                                                       "calendar.date" );
+        String calendarDate = pageContext.getRequest().getParameter( "calendar.date" );
         if( calendarDate == null )
         {
-            calendarDate = engine.safeGetParameter( pageContext.getRequest(),
-                                                    "weblog.startDate" );
+            calendarDate = pageContext.getRequest().getParameter( "weblog.startDate" );
         }
         
         if( calendarDate != null )

@@ -209,7 +209,7 @@ public class DefaultURLConstructor
                              String encoding )
         throws UnsupportedEncodingException
     {
-        String pagereq = m_engine.safeGetParameter( request, "page" );
+        String pagereq = request.getParameter( "page" );
 
         if( context.equals(WikiContext.ATTACH) )
         {

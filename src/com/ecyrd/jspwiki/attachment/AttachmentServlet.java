@@ -150,8 +150,10 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res ) 
         throws IOException, ServletException 
     {
-        String version  = m_engine.safeGetParameter( req, HDR_VERSION );
-        String nextPage = m_engine.safeGetParameter( req, "nextpage" );
+        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+
+        String version  = req.getParameter( HDR_VERSION );
+        String nextPage = req.getParameter( "nextpage" );
 
         String msg      = "An error occurred. Ouch.";
         int    ver      = WikiProvider.LATEST_VERSION;
@@ -160,7 +162,6 @@ public class AttachmentServlet
         AuthorizationManager authmgr = m_engine.getAuthorizationManager();
 
 
-        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
         String page = context.getPage().getName();
 
         if( page == null )
