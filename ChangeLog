@@ -7,6 +7,15 @@
         
         * Rearranged some code relating to search and reference managing;
         hopefully squashing some hard-to-find bugs.
+        
+        * Bug fix: safeGetParameter() is now deprecated, as createContext()
+        now does the proper request.setCharacterEncoding() as per Servlet
+        API 2.3.  Fixes BugClobberedUTF8InWikiBody.  Thanks to Chris Wilson
+        and msb0b!
+        
+        * Mass commit of new default template code, based on the
+        BrushedTemplate from Dirk Frederix.  Note that this thing is
+        probably pretty broken, so please be careful.
 
 2005-10-25  Andrew Jaquith <arjaquith@mindspring.com>
 
