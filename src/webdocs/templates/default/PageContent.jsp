@@ -2,6 +2,7 @@
 
 <%-- Inserts page content. --%>
 
+<div id="pagecontent">
       <%-- If the page is an older version, then offer a note and a possibility
            to restore this version as the latest one. --%>
 
@@ -25,7 +26,7 @@
            <wiki:EditLink>create it</wiki:EditLink>?
       </wiki:NoSuchPage>
 
-      <br clear="all" />
+</div>
 
       <wiki:HasAttachments>
          <div class="attachments">
@@ -46,38 +47,3 @@
          </div>
       </wiki:HasAttachments>
 
-      <hr /><br />
-      <table border="0" width="100%" class="pageactions">
-        <tr>
-          <td align="left">
-             <a href="#Top">Go to top</a>&nbsp;&nbsp;
-             <wiki:Permission permission="edit">
-                 <wiki:EditLink>Edit this page</wiki:EditLink>&nbsp;&nbsp;
-             </wiki:Permission>
-             <wiki:PageInfoLink>More info...</wiki:PageInfoLink>&nbsp;&nbsp;
-             <wiki:Permission permission="upload">
-                 <a href="javascript:window.open('<wiki:UploadLink format="url" />','Upload','width=640,height=480,toolbar=1,menubar=1,scrollbars=1,resizable=1,').focus()">Attach file...</a>
-             </wiki:Permission>
-             <br />
-          </td>
-        </tr>
-        <tr>
-          <td align="left">
-             <font size="-1">
-             
-             <wiki:CheckVersion mode="latest">
-                 <i>This page last changed on <wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate/></wiki:DiffLink> by <wiki:Author />.</i>
-             </wiki:CheckVersion>
-
-             <wiki:CheckVersion mode="notlatest">
-                 <i>This particular version was published on <wiki:PageDate/> by <wiki:Author /></i>.
-             </wiki:CheckVersion>
- 
-             <wiki:NoSuchPage>
-                 <i>Page not created yet.</i>
-             </wiki:NoSuchPage>
-
-             </font>
-          </td>
-        </tr>
-      </table>

@@ -20,26 +20,25 @@
   <body class="comment" bgcolor="#EEEEEE" onload="document.commentForm.text.focus()">
 </wiki:CheckRequestContext>
 
-<table border="0" cellspacing="8">
 
-  <tr>
-    <td class="leftmenu" width="15%" valign="top" nowrap="nowrap">
-       <%@ include file="LeftMenu.jsp" %>
-       <p>
-       <wiki:LinkTo page="TextFormattingRules">Help on editing</wiki:LinkTo>
-       </p>
-       <%@ include file="LeftMenuFooter.jsp" %>
-    </td>
+<div id="wikibody" >
 
-    <td class="page" width="85%" valign="top">
+  <wiki:Include page="Header.jsp" />
 
-       <wiki:Content/>
+  <div id="actionsTop"><wiki:Include page="PageActions.jsp"/></div>
 
-    </td>
-  </tr>
+  <div id="page"><wiki:Content/></div>
 
-</table>
+  <div id="favorites"><wiki:Include page="Favorites.jsp"/></div>
 
+  <div id="actionsBottom"><wiki:Include page="PageActions.jsp"/></div>
+
+  <wiki:Include page="Footer.jsp" />
+
+  <div style="clear:both; height:0px;" > </div>
+
+</div>
+<a name="Bottom"></a>
 </body>
 
 </html>

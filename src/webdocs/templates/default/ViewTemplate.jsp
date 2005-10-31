@@ -15,51 +15,27 @@
 </head>
 
 <body class="view" bgcolor="#FFFFFF">
+<a name="Top"></a>
 
-<table border="0" cellspacing="8" width="95%">
+<div id="wikibody" >
 
-  <tr>
-    <td class="leftmenu" width="10%" valign="top" nowrap="nowrap">
-       <wiki:Include page="LeftMenu.jsp"/>
-       <p>
-       <wiki:CheckRequestContext context="view">
-          <wiki:Permission permission="edit">
-             <wiki:EditLink>Edit this page</wiki:EditLink>
-          </wiki:Permission>
-       </wiki:CheckRequestContext>
-       </p>
-       <wiki:Include page="LeftMenuFooter.jsp"/>
+  <wiki:Include page="Header.jsp" />
 
-       <br /><br />
-       <div align="center">
-           <wiki:RSSImageLink title="Aggregate the RSS feed" />
-       </div>
-    </td>
+  <div id="actionsTop"><wiki:Include page="PageActions.jsp"/></div>
 
-    <td class="page" width="85%" valign="top">
+  <div id="page"><wiki:Content/></div>
 
-      <table width="100%" cellspacing="0" cellpadding="0" border="0">
-         <tr>
-            <td align="left">
-                <h1 class="pagename"><a name="Top"><wiki:PageName/></a></h1>
-            </td>
-            <td align="right"><wiki:Include page="SearchBox.jsp"/></td>
-         </tr>
-         <tr>
-            <td colspan="2" class="breadcrumbs">Your trail: <wiki:Breadcrumbs /></td>
-         </tr>
-      </table>
+  <div id="favorites"><wiki:Include page="Favorites.jsp"/></div>
 
-      <hr />
+  <div id="actionsBottom"><wiki:Include page="PageActions.jsp"/></div>
 
-      <wiki:Content/>
+  <wiki:Include page="Footer.jsp" />
 
-    </td>
-  </tr>
+  <div style="clear:both; height:0px;" > </div>
 
-</table>
+</div>
+<a name="Bottom"></a>
 
 </body>
-
 </html>
 

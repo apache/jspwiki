@@ -1,4 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="org.apache.commons.lang.*" %>
 
 <%-- Inserts page content for preview. --%>
 
@@ -25,7 +26,7 @@
    <p><hr /></p>
 
    <wiki:Editor>
-     <textarea rows="4" cols="20" readonly="true" style="display:none" name="text"><%=pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE) %></textarea>
+     <textarea rows="4" cols="20" readonly="true" style="display:none" name="text"><%=StringEscapeUtils.escapeXml((String)pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE)) %></textarea>
 
      <div id="previewsavebutton" align="center">
         <input type="submit" name="edit" value="Keep editing" />
