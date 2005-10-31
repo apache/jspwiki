@@ -1,3 +1,13 @@
+2005-10-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.37
+        
+        * Bug fix: RSS feeds no longer generate &amp;quot; whenever there
+        is a quote (") in the stream.
+        
+        * Rearranged some code relating to search and reference managing;
+        hopefully squashing some hard-to-find bugs.
+
 2005-10-25  Andrew Jaquith <arjaquith@mindspring.com>
 
         * v2.3.36
