@@ -541,7 +541,13 @@ public class WikiEngine
             initReferenceManager();
 
             m_templateManager   = new TemplateManager( this, props );
-            
+
+            //
+            //  Hook the different manager routines into the system.
+            //
+            getFilterManager().addPageFilter(m_referenceManager, -1000 );
+            getFilterManager().addPageFilter(m_searchManager, -1001 );
+
         }
         catch( Exception e )
         {
@@ -608,8 +614,6 @@ public class WikiEngine
         }
 
         m_pluginManager.setInitStage( false );
-
-        m_filterManager.addPageFilter( m_referenceManager, -1000 ); // FIXME: Magic number.
     }
 
 
@@ -1490,10 +1494,11 @@ public class WikiEngine
         m_pageManager.putPageText( page, text );
         
         // ARJ HACK: reload the page so we parse ACLs, among other things
+/*
         page = getPage( page.getName() );
         context.setPage( page );
         textToHTML( context, text );
-
+*/
         m_filterManager.doPostSaveFiltering( context, text );
     }
 
