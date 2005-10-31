@@ -1,14 +1,13 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
 /**
  * Provides a concrete implementation of the {@link Group} interface.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-03 00:26:52 $
+ * @version $Revision: 1.4 $ $Date: 2005-10-31 20:52:00 $
  * @since 2.3
  */
 public class DefaultGroup implements Group

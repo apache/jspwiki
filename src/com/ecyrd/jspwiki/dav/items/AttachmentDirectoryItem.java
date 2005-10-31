@@ -2,8 +2,6 @@ package com.ecyrd.jspwiki.dav.items;
 
 import java.util.Collection;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 

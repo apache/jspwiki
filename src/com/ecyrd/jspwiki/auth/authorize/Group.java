@@ -1,7 +1,6 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.Enumeration;
 
 /**
  * <p>
@@ -23,7 +22,7 @@ import java.util.Enumeration;
  * </ul>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-03 00:26:52 $
+ * @version $Revision: 1.4 $ $Date: 2005-10-31 20:52:33 $
  * @since 2.3
  */
 public interface Group extends Principal
