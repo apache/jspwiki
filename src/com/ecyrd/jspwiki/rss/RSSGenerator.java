@@ -25,9 +25,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.PageTimeComparator;
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -442,16 +449,17 @@ public class RSSGenerator
             //  Title
             //
             
-            String pageText = m_engine.getText(page.getName());
+            String pageText = m_engine.getPureText(page.getName(), WikiProvider.LATEST_VERSION );
+
             String title = "";
             int firstLine = pageText.indexOf('\n');
 
             if( firstLine > 0 )
             {
-                title = pageText.substring( 0, firstLine );
+                title = pageText.substring( 0, firstLine ).trim();
             }
             
-            if( title.trim().length() == 0 ) title = page.getName();
+            if( title.length() == 0 ) title = page.getName();
 
             // Remove wiki formatting
             while( title.startsWith("!") ) title = title.substring(1);
