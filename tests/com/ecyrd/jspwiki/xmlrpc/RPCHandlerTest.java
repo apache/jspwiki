@@ -114,7 +114,7 @@ public class RPCHandlerTest extends TestCase
     public void testPageInfo()
         throws Exception
     {
-        String text = "Foobar.";
+        String text = "Foobar.[{ALLOW view Guest}]";
         String pageName = NAME1;
 
         m_engine.saveText( pageName, text );
