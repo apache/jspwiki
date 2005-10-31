@@ -24,12 +24,10 @@ import java.util.Collection;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.filters.BasicPageFilter;
+import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -39,7 +37,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  @since 2.2.21.
  */
 
-public class SearchManager 
+public class SearchManager
+    extends BasicPageFilter
 {
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
@@ -67,7 +66,7 @@ public class SearchManager
         throws WikiException
     {
         loadSearchProvider(properties);
-
+       
         try 
         {
             m_searchProvider.initialize(engine, properties);
@@ -166,6 +165,16 @@ public class SearchManager
         m_searchProvider.pageRemoved(page);
     }
     
+    public void postSave( WikiContext wikiContext, String content )
+    {
+        reindexPage( wikiContext.getPage() );
+    }
+
+    /**
+     *   Forces the reindex of the given page.
+     *   
+     *   @param page
+     */
     public void reindexPage(WikiPage page)
     {
         m_searchProvider.reindexPage(page);
