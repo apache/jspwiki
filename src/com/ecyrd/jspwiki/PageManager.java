@@ -186,7 +186,9 @@ public class PageManager
             }
             else
             {
-                m_engine.getSearchManager().pageRemoved(new WikiPage(m_engine, pageName));
+                WikiPage dummy = new WikiPage(m_engine,pageName);
+                m_engine.getSearchManager().pageRemoved(dummy);
+                m_engine.getReferenceManager().pageRemoved(dummy);
             }
         }
 
@@ -197,7 +199,15 @@ public class PageManager
     {
         return m_engine;
     }
-    
+
+    /**
+     *  Puts the page text into the repository.  Note that this method does NOT update
+     *  JSPWiki internal data structures, and therefore you should always use WikiEngine.saveText()
+     *  
+     * @param page Page to save
+     * @param content Wikimarkup to save
+     * @throws ProviderException If something goes wrong in the saving phase
+     */
     public void putPageText( WikiPage page, String content )
         throws ProviderException
     {
@@ -207,8 +217,6 @@ public class PageManager
         }
 
         m_provider.putPageText( page, content );
-        
-        m_engine.getSearchManager().reindexPage( page );
     }
 
     /**
