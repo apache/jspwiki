@@ -34,8 +34,8 @@
     WikiPage wikipage      = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
 
-    String delete = wiki.safeGetParameter( request, "delete" );
-    String deleteall = wiki.safeGetParameter( request, "delete-all" );
+    String delete = request.getParameter( "delete" );
+    String deleteall = request.getParameter( "delete-all" );
 
     if( latestversion == null )
     {

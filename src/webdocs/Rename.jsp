@@ -16,16 +16,10 @@
 %>
 
 <%
-    String pagereq = wiki.safeGetParameter( request, "page" );
-
-    if( pagereq == null )
-    {
-        pagereq = wiki.getFrontPage();
-    }
-
-    String renameFrom = pagereq;
-    String renameTo = wiki.safeGetParameter( request, "renameto");
-
+	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
+	
+    String renameFrom = wikiContext.getPage().getName();
+    String renameTo = request.getParameter( "renameto");
     
     boolean changeReferences = false;
 
@@ -34,11 +28,8 @@
         changeReferences = true;
     }
 
-    WikiContext wikiContext = new WikiContext( wiki, request, wiki.getPage(pagereq) );
-    wikiContext.setRequestContext( WikiContext.ERROR );
-
     // Check for the "rename" permission
-    AuthorizationManager mgr= wiki.getAuthorizationManager();
+    AuthorizationManager mgr = wiki.getAuthorizationManager();
     if( !mgr.checkPermission(  wikiContext.getWikiSession(),
                                new PagePermission(wiki.getPage(renameFrom), "rename" ) ) )
     {

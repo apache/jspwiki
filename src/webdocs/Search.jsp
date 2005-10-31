@@ -22,7 +22,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
-    String query = wiki.safeGetParameter( request, "query");
+    String query = request.getParameter( "query");
     Collection list = null;
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,

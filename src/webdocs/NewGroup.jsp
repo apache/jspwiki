@@ -65,9 +65,9 @@
 
     
     // Extract the group name, members and action attributes
-    String ok      = request.getParameter("ok");
-    String name    = wiki.safeGetParameter( request, "name" );
-    String members = wiki.safeGetParameter( request, "members" );
+    String ok      = request.getParameter( "ok" );
+    String name    = request.getParameter( "name" );
+    String members = request.getParameter( "members" );
     if ( name == null ) { name = ""; }
     name = name.trim();
     if ( members == null ) { members = user; }

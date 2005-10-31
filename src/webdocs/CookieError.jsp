@@ -12,13 +12,6 @@
 %>
 
 <%
-    String skin    = wiki.safeGetParameter( request, "skin" );
-
-    if( skin == null )
-    {
-        skin = wiki.getTemplateDir();
-    }
-
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
  
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
@@ -31,7 +24,9 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-    String contentPage = "templates/"+skin+"/CookieErrorTemplate.jsp";
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "CookieErrorTemplate.jsp" );
 %>
 
   <wiki:Include page="<%=contentPage%>" />

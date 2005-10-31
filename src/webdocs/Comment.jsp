@@ -29,16 +29,17 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String user = wikiSession.getUserPrincipal().getName();
-    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() ) {
-        user  = wiki.safeGetParameter( request, "user" );
+    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() ) 
+    {
+        user  = request.getParameter( "user" );
     }
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
     String edit    = request.getParameter("edit");
-    String author  = wiki.safeGetParameter( request, "author" );
-    String link    = wiki.safeGetParameter( request, "link" );
+    String author  = request.getParameter( "author" );
+    String link    = request.getParameter( "link" );
     String remember = request.getParameter("remember");
     String pagereq = wikiContext.getPage().getName();
 
@@ -134,7 +135,7 @@
             pageText.append( "\n\n----\n\n" );
         }        
 
-        pageText.append( wiki.safeGetParameter( request, EditorAreaTag.AREA_NAME ) );
+        pageText.append( request.getParameter( EditorAreaTag.AREA_NAME ) );
 
         log.debug("Author name ="+author);
         if( author != null && author.length() > 0 )

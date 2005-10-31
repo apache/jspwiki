@@ -25,7 +25,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     pageContext.setAttribute( "usertext",
-                              wiki.safeGetParameter( request, "text" ),
+                              request.getParameter( "text" ),
                               PageContext.REQUEST_SCOPE );
 
     long lastchange = 0;

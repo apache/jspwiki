@@ -70,26 +70,6 @@
         return propertyfile;
     }
     
-    public static String safeGetParameter( ServletRequest request, String name )
-    {
-        try
-        {
-            String res = request.getParameter( name );
-            if( res != null ) 
-            {
-                res = new String(res.getBytes("ISO-8859-1"),
-                                 "UTF-8" );
-            }
-
-            return res;
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            // Should never happen
-            return "";
-        }
-
-    }
     public void writeProperties( File propertyFile, String contents )
         throws IOException
     {
@@ -144,15 +124,16 @@
     Properties props = new Properties();
     props.load( new ByteArrayInputStream(propertyString.getBytes()) );
     
-
-    String appname   = safeGetParameter( request, "appname" );
-    String baseurl   = safeGetParameter( request, "baseurl" );
-    String dir       = safeGetParameter( request, "dir" );
-    String logdir    = safeGetParameter( request, "logdir" );
-    String workdir   = safeGetParameter( request, "workdir" );
-    String password1 = safeGetParameter( request, "password1" );
-    String password2 = safeGetParameter( request, "password2" );
-    String password  = safeGetParameter( request, "password" );
+	request.setCharacterEncoding("UTF-8");
+	
+    String appname   = request.getParameter( "appname" );
+    String baseurl   = request.getParameter( "baseurl" );
+    String dir       = request.getParameter( "dir" );
+    String logdir    = request.getParameter( "logdir" );
+    String workdir   = request.getParameter( "workdir" );
+    String password1 = request.getParameter( "password1" );
+    String password2 = request.getParameter( "password2" );
+    String password  = request.getParameter( "password" );
 
     String oldpassword = props.getProperty( PROP_MASTERPWD, null );
     

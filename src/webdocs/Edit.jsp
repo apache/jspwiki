@@ -1,4 +1,5 @@
 <%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
@@ -31,7 +32,7 @@
     String user = wikiSession.getUserPrincipal().getName();
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() )
     {
-        user  = wiki.safeGetParameter( request, "author" );
+        user  = request.getParameter( "author" );
     }
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
@@ -39,8 +40,8 @@
     String cancel  = request.getParameter("cancel");
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
-    String author  = wiki.safeGetParameter( request, "author" );
-    String text    = wiki.safeGetParameter( request, EditorAreaTag.AREA_NAME );
+    String author  = request.getParameter( "author" );
+    String text    = request.getParameter( EditorAreaTag.AREA_NAME );
 
     //
     //  Context is created; continue
@@ -53,7 +54,7 @@
     //
     //  WYSIWYG editor sends us its greetings
     //
-    String htmlText = wiki.safeGetParameter( request, "htmlPageText" );
+    String htmlText = request.getParameter( "htmlPageText" );
     if( htmlText != null && cancel == null ) 
     {
         text = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);

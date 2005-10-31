@@ -24,7 +24,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
-    String usertext = wiki.safeGetParameter( request, "text" );
+    String usertext = request.getParameter( "text" );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,

@@ -41,8 +41,8 @@
         String action = request.getParameter("action");
         if( "login".equals(action) )
         {
-            String uid    = wiki.safeGetParameter( request,"j_username" );
-            String passwd = wiki.safeGetParameter( request,"j_password" );
+            String uid    = request.getParameter( "j_username" );
+            String passwd = request.getParameter( "j_password" );
             log.debug( "Attempting to authenticate user " + uid );
             
             // Log the user in!
