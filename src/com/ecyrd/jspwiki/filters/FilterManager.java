@@ -99,6 +99,12 @@ public class FilterManager
 
     public static final String DEFAULT_XMLFILE = "/filters.xml";
 
+    /** JSPWiki system filters are all below this value. */
+    public static final int SYSTEM_FILTER_PRIORITY = -1000;
+    
+    /** The standard user level filtering. */
+    public static final int USER_FILTER_PRIORITY   = 0;
+    
     public FilterManager( WikiEngine engine, Properties props )
         throws WikiException
     {
@@ -306,6 +312,7 @@ public class FilterManager
         {
             PageFilter f = (PageFilter) i.next();
 
+            // log.info("POSTSAVE: "+f.toString() );
             f.postSave( context, pageData );
         }
     }
