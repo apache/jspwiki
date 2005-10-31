@@ -79,6 +79,35 @@ public class RSSGeneratorTest extends TestCase
         assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
     }
     
+    public void testBlogRSS2()
+        throws Exception
+    {
+        WeblogEntryPlugin plugin = new WeblogEntryPlugin();
+        m_testEngine.saveText( "TestBlog", "Foo1" );
+    
+        String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
+        m_testEngine.saveText( newPage, "!Title1\r\nFoo \"blah\"." );
+            
+        newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
+        m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
+    
+        RSSGenerator gen = m_testEngine.getRSSGenerator();
+    
+        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPage("TestBlog") );
+    
+        WeblogPlugin blogplugin = new WeblogPlugin();
+    
+        List entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+                                                   "TestBlog",
+                                                   new Date(0),
+                                                   new Date(Long.MAX_VALUE) );
+    
+        Feed feed = new RSS20Feed( context );
+        String blog = gen.generateBlogRSS( context, entries, feed );
+    
+        assertTrue( "has Foo", blog.indexOf("<description>Foo \"blah\".</description>") != -1 );
+        assertTrue( "has proper Bar", blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1 );
+    }
     public static Test suite()
     {
         return new TestSuite( RSSGeneratorTest.class );
