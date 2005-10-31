@@ -48,7 +48,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2005-09-17 18:17:03 $
+ * @version $Revision: 1.7 $ $Date: 2005-10-31 20:52:18 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -180,7 +180,7 @@ public class DefaultGroupManager implements GroupManager
     {
         m_engine = engine;
 
-        m_engine.getFilterManager().addPageFilter( new SaveFilter(), 1000000 );
+        m_engine.getFilterManager().addPageFilter( new SaveFilter(), -1000 );
      
         reload();
         log.info("Authorizer DefaultGroupManager initialized successfully.");
