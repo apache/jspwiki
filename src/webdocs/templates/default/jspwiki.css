@@ -227,12 +227,15 @@ pre {
                      margin-left: 10px;
                      clear: both; }
 
-P.locknote { color: red;
-             font-size: 130%;
-             text-align: center; 
-             background: #EAEAEA;
-             padding: 12px 12px 12px 12px;
-             }
+.locknote { color: red;
+            font-size: 100%;
+            text-align: center; 
+            background: #EAEAEA;
+            padding: 12px 12px 12px 12px;
+            margin: 0px;
+            border-left: 2px solid black;
+            border-right: 2px solid black;
+            }
 
 /* For the CalendarTag */
 TABLE.calendar  { font-size: 80%; }
@@ -404,19 +407,15 @@ div.commentbox {
     
 
  /* +++ 420 Attachment Quick Viewer +++ */
-#attachments tr   { vertical-align: top; }
 
-#attachPreview    { margin: 0 1em 0 0; float: left; }
-#attachPreview td { position: relative;
-                    border: 4px solid #e0e0e0;
-                    text-align: center; vertical-align: middle;
-                    width: 300px; height: 300px; }
-#noImg            { position: absolute; }
-#attachImg        { visibility: hidden; max-height: 298px; max-width: 298px; }
+#attachments {}
+#attachments .list { float: left; }
+#attachments .preview { width: 300px; margin: 0 2em; height: 300px; float: right; }
 
-#attachList       { float: left; }
-#attachSelect     { font-size: 0.83em;}
-#attachInfo       { clear: both; margin: 1em 0; padding: 0.5em; }
+#attachImg { margin:0; vertical-align: middle; text-align: center;
+             height: 300px; width: 300px; 
+             border: 4px solid #e0e0e0; }
+#attachSelect { margin: 0.5em 0; font-size: 0.83em; }
 
 /* +++ 430 Tabbed Pages +++ */
 /* use absolute position trick to avoid page bump when inserting tabmenu */
