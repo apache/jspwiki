@@ -4,26 +4,14 @@
   String prefEditAreaHeight = (String) session.getAttribute("prefEditAreaHeight");
 %>
 <div class="tabmenu">
-  <wiki:CheckLock mode="locked" id="lock">
-  <span class="alerttab"><a id="menu-editlocknote"
-           onclick="TabbedSection.onclick('editlocknote')" >Page Locked</a></span>
-  </wiki:CheckLock>
-  <span><a class="activetab" id="menu-editcontent"
-           onclick="TabbedSection.onclick('editcontent')" >Edit Page</a></span>
-  <wiki:HasAttachments>
-  <span><a id="menu-attachments"
-           onclick="TabbedSection.onclick('attachments')" >Attachments</a></span>
-  </wiki:HasAttachments>
-  <span><a id="menu-edithelp"
-           onclick="TabbedSection.onclick('edithelp')" >Help</a></span>
-  <span><a id="menu-searchbarhelp"
-           onclick="TabbedSection.onclick('searchbarhelp')" >Find And Replace Help</a></span>
+    <span><a class="activetab" id="menu-editcontent" onclick="TabbedSection.onclick('editcontent')" >Edit Page</a></span>
+    <wiki:HasAttachments><span><a id="menu-attachments" onclick="TabbedSection.onclick('attachments')" >Attachments</a></span></wiki:HasAttachments>
+    <span><a id="menu-edithelp" onclick="TabbedSection.onclick('edithelp')" >Help</a></span>
+    <span><a id="menu-searchbarhelp" onclick="TabbedSection.onclick('searchbarhelp')" >Find And Replace Help</a></span>
 </div>
 
-<div class="tabs">
-
 <wiki:CheckLock mode="locked" id="lock">
-<div id="editlocknote" style="display:none;">
+<div id="editlocknote">
   <%-- need a cancel button here --%>
   <p class="locknote">User '<%=lock.getLocker()%>' has started to edit this page, but has not yet
   saved.  I won't stop you from editing this page anyway, BUT be aware that
@@ -34,6 +22,7 @@
 </div>
 </wiki:CheckLock>
 
+<div class="tabs">
 
 <div id="editcontent">
     <wiki:CheckVersion mode="notlatest">
@@ -44,27 +33,24 @@
 
     <wiki:Editor />
 
-<%-- Search and replace section --%>
-<form name="searchbar" id="searchbar">
-  <label for="findText">Find:</label>
-  <input type="text" name="findText" size="16"/>
-  <label for="replaceText">Replace:</label>
-  <input type="text" name="replaceText" size="16"/>
+    <%-- Search and replace section --%>
+    <form name="searchbar" id="searchbar" action="#">
+      <label for="findText">Find:</label>
+      <input type="text" id="findText" size="16"/>
+      <label for="replaceText">Replace:</label>
+      <input type="text" id="replaceText" size="16"/>
 
-  <input type="checkbox" name="matchCase" /><label for="matchCase">Match Case</label>
-  <input type="checkbox" name="regExp" /><label for="regExp">RegExp</label>
-  <input type="checkbox" name="global" checked /><label for="global">Replace all</label>
-  &nbsp;
-  <input type="button" name="replace" value="Replace"
-         onClick="Wiki.editReplace(this.form, document.getElementById('sectionTextArea') );" />
+      <input type="checkbox" id="matchCase" /><label for="matchCase">Match Case</label>
+      <input type="checkbox" id="regExp" /><label for="regExp">RegExp</label>
+      <input type="checkbox" id="global" checked="checked"/><label for="global">Replace all</label>
+      &nbsp;
+      <input type="button" id="replace" value="Replace" onclick="Wiki.editReplace(this.form, document.getElementById('sectionTextArea') );" />
 
-  <span id="undoHideOrShow" style="visibility:hidden;" >
-  <input type="button" name="undo" value="Undo"
-         onClick="Wiki.editUndo(this.form, document.getElementById('sectionTextArea') );" />
-  </span>
-  <input type="hidden" name="undoMemory" value="" />
-</form>
-
+      <span id="undoHideOrShow" style="visibility:hidden;" >
+        <input type="button" id="undo" value="Undo" onclick="Wiki.editUndo(this.form, document.getElementById('sectionTextArea') );" />
+      </span>
+      <input type="hidden" id="undoMemory" value="" />
+    </form>
 </div>
 
 <wiki:HasAttachments>
@@ -89,32 +75,7 @@
 </div>
 
 <div id="searchbarhelp"  style="display:none;">
-<%-- dummy non-functional find/replace toolbar --%>
-<p>
-<form name="searchbar2" id="searchbar2">
-  <label for="findText">Find:</label>
-  <input type="text" name="findText" size="16" onFocus="this.blur();"/>
-  <label for="replaceText">Replace:</label>
-  <input type="text" name="replaceText" size="16" onFocus="this.blur();"/>
-
-  <input type="checkbox" name="matchCase" onClick="this.checked=false;"/>
-  <label for="matchCase">Match Case</label>
-  <input type="checkbox" name="regExp" onClick="this.checked=false;"/>
-  <label for="regExp">RegExp</label>
-  <input type="checkbox" name="global" checked onClick="this.checked=true;"/>
-  <label for="global">Replace all</label>
-  &nbsp;
-  <input type="button" name="replace" value="Replace"  onFocus="this.blur();" />
-  <input type="button" name="undo" value="Undo"   onFocus="this.blur();" />
-</form>
-</p>
-<hr />
-
-
 <wiki:InsertPage page="EditFindAndReplaceHelp" />
 </div>
 
 </div>
-
-<script src="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/scripts/editsections.js"
-        type="text/javascript" > </script>
