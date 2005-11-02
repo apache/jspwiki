@@ -1,3 +1,14 @@
+2005-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.38
+
+        * Added missing search-replace Javascript code
+        
+        * Added missing AttachmentTab.jsp to default template.
+
+        * NB: While most of the code comes from BrushedTemplate, I'm
+        cleaning it up a bit - it's not XHTML compliant, for example.
+
 2005-10-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.37
