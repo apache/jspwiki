@@ -7,7 +7,69 @@ var zebraCnt ;
  ** Wiki functions
  **/
 var Wiki = new Object();
-Wiki.DELIM = "\u00A0"; //non-typable char - used as delimitter
+Wiki.DELIM = "\u00A4"; //non-typable char - used as delimitter
+
+Wiki.reImageTypes = new RegExp( '(.bmp|.gif|.png|.jpg|.jpeg|.tiff)$','i' );
+Wiki.showImage = function( attachment, attDELIM, maxWidth, maxHeight )
+{
+  // contains Name, Link-url, Info-url 
+  var attachArr = attachment.value.split( attDELIM );
+  var attachImg  = document.getElementById("attachImg");
+
+  if( !attachImg ) return true;
+
+  if( attachArr.length == 1 ) //no image selected
+  {
+    return;
+  }
+
+  //not clean: should actually be read from the attachImg size - but dont know yet how xbrowser
+  this.maxWidth = maxWidth;
+  this.maxHeight = maxHeight;
+
+  if( !this.reImageTypes.test( attachArr[0] ) ) 
+  { 
+    attachImg.innerHTML  = "No image selected"; 
+    return;
+  }  
+
+  this.pic = new Image();
+  this.pic.src = attachArr[1];
+  if( this.pic.complete ) return Wiki.showLoadedImage() ; 
+
+  this.countdown = 30;
+  setTimeout( "Wiki.showLoadedImage()" , 200 ); 
+  attachImg.innerHTML= "Loading image";
+}
+
+Wiki.showLoadedImage = function ()
+{
+  var attachImg  = document.getElementById("attachImg");
+
+  if( this.pic.complete ) 
+  { 
+    var w = parseInt(this.pic.width);
+    var h = parseInt(this.pic.height);
+
+    if( w > this.maxWidth  ) { h *= this.maxWidth/w;  w = this.maxWidth; }
+    if( h > this.maxHeight ) { w *= this.maxHeight/h; h = this.maxHeight; }
+    attachImg.innerHTML = "<img src='" + this.pic.src + "' width='" + parseInt(w) + "' height='" + parseInt(h)
+                        + "' style='margin-top:"+ parseInt((this.maxHeight-h)/2) +"px;' ></img>";
+    this.countdown = 0; 
+    this.pic = null;
+    return;  
+  }
+
+  if( this.countdown <= 0 ) 
+  {  
+    attachImg.innerHTML = "Loading image expired<br />Try loading the image manually";
+    return;
+  } 
+
+  this.countdown--;
+  setTimeout( "Wiki.showLoadedImage()" , 200) ; 
+  attachImg.innerHTML = "Loading image " + this.countdown
+}
 
 // called after loading the page
 function validateZebraTable()
@@ -164,6 +226,54 @@ TabbedSection.onclick = function ( tabId )
     }
   }
   return false;
+}
+
+/*
+ * Edit Find & Replace functionality
+ */
+Wiki.editReplace = function(form, dataField)
+{
+  if( !form ) return;
+  var findText    = form.findText.value; if( findText == "") return;
+  var replaceText = form.replaceText.value;
+  var isRegExp    = form.regExp.checked;
+  var reGlobal    = ((form.global.checked) ? "g" : "") ;
+  var reMatchCase = ((form.matchCase.checked) ? "" : "i") ;
+  var data = dataField.value;
+
+  if( !isRegExp ) /* escape all special re characters */
+  {
+    var re = new RegExp( "([\.\*\\\?\+\[\^\$])", "gi");
+    findText = findText.replace(re,"\\$1");
+  }
+  
+  var re = new RegExp(findText, reGlobal+reMatchCase+"m"); //multiline
+  if( !re.exec(data) )
+  {
+    alert("No match found!");
+    return(true);
+  } 
+    
+  data = data.replace(re,replaceText);  
+
+  form.undoMemory.value = dataField.value; 
+  var undoButton = document.getElementById("undoHideOrShow"); //!! to elements now
+  undoButton.style.visibility = "visible";
+  dataField.value = data;    
+  if( dataField.onchange ) dataField.onchange();
+  
+  return(true);
+}
+
+Wiki.editUndo = function(form, dataField)
+{
+  var undoButton = document.getElementById("undoHideOrShow");
+  if( undoButton.style.visibility == "hidden") return(true);
+  undoButton.style.visibility = "hidden";
+  dataField.value = form.undoMemory.value;
+  if( dataField.onchange ) dataField.onchange();
+  form.undoMemory.value = ""; 
+  return(true);
 }
 
 /**
