@@ -1,5 +1,7 @@
+/* Set the master look here */
 body { margin: 0; padding: 0;
-       font-family: Verdana, arial, helvetica, sans-serif; }
+       font-family: arial, helvetica, sans-serif; 
+       font-size: 14px; }
 
 /* +++ 001 LAYOUT of main ID blocks +++ */
 #wikibody { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
@@ -9,11 +11,12 @@ body { margin: 0; padding: 0;
 #page,
 #actionsBottom,
 #footer        { float: right; clear: right; width: 80%; }
-#favorites     { position:absolute; top:7px; width: 18%; }
-#actionsTop    { margin-bottom: -1.5em; }
+#favorites     { position:absolute; top:80px; width: 18%; }
+#actionsTop    { float:right; border: 1px solid grey; }
 
-#header .applicationlogo,
-#header .companylogo     { display: none; }
+#applicationlogo { display: block; }
+#companylogo     { display: none; }
+
 #header .pagename        { float: left; clear: both; }
 #header .searchbox       { float: right; }
 #header .breadcrumbs     { clear: both; }
@@ -25,16 +28,12 @@ body { margin: 0; padding: 0;
 #actionsBottom .username { display: none; }
 
 #favorites .username        { display: block; }
-#favorites .applicationlogo { display: block; }
-#favorites .companylogo,
 #favorites .actionComment,
 #favorites .actionPrefs,
 #favorites .actionAttach,
 #favorites .actionInfo,
 #favorites .pageInfo     { display: none; }
 
-#footer .applicationlogo,
-#footer .companylogo     { display: none; }
 #footer .copyright       { clear: both; }
 
 /* +++ 002 LOOK and FEEL of main blocks with ID +++ */
@@ -49,7 +48,7 @@ body { margin: 0; padding: 0;
 #recentSearches { margin: 0.5em 0 0 0.5em; color: silver; }
 #recentSearches div { color: black; cursor: pointer;}
 
-#actionsTop     { text-align: right; }
+#actionsTop     { text-align: right; width: 30%;}
 #actionsBottom  { margin-top: 0.5em; text-align: right; }
 
 #page           { margin-top: 0.5em; }
@@ -58,9 +57,11 @@ body { margin: 0; padding: 0;
              font-family: arial, helvetica, sans-serif; font-size: 90%; }
 #favorites .pageactions  { text-align: center; font-size: 100%; }
 
+#applicationlogo {  }
+#companylogo { }
+
 /* placeholder for specifics if needed */
 #pagecontent    {  }
-#attachments    {  }
 #pagecomments   {  }
 #editcontent    {  }
 #addcomment     {  }
@@ -94,12 +95,10 @@ body { margin: 0; padding: 0;
           border-top: 2px solid silver; }
 
 /* +++ 003 LOOK and FEEL of main css classes +++ */
-.applicationlogo {  }
-.companylogo { }
-.pagename    { font-size: 150%; font-weight: bold; margin: 0.5em; }
+.pagename    { font-size: 150%; font-weight: bold; margin: 0.5em 0.5em 0.5em 0; }
 .searchbox   { margin: 0.5em; }
-.breadcrumbs { font-size: 60%; padding: 0 1.5em 1em 1.5em; }
-.myfavorites      { margin-bottom: 0.5em; border: 1px solid black; }
+.breadcrumbs { font-size: 80%; padding: 0 1.5em 1em 0em; }
+.myfavorites { margin-bottom: 0.5em; border: 1px solid black; }
 .boxtitle { padding: 0.25em; text-align: center;
             border-bottom: 1px solid black; }
 
@@ -152,7 +151,6 @@ H3.leftmenuheading { margin-top: 0; }
 BODY.edit   { background-color: #D9E8FF; } /* Edit.jsp BODY element */
 .leftmenu { font-family: arial, helvetica, sans-serif;
                   font-size: 90%; }  /* Left menu */
-.page     { }                            /* Page data area */
 A.wikipage  { }                            /* Normal, internal wiki reference */
 A.editpage  { 
 	color: #FF0000;
@@ -190,7 +188,6 @@ pre {
 /* The text how the "This is a preview" comment should be shown. */
 .previewnote {
                text-align: center;
-               font-size: 100%;
                background:  #fff0f0;
                padding: 1em;
                }
@@ -249,8 +246,6 @@ TABLE.calendar TR.month { font-size: 120%;
                           font-family: sans-serif; }
 TABLE.calendar TR.weekdays { color: #FF0000; }
 
-/* For the BreadcrumbsTag */
-.breadcrumbs { font-size: 60%; }
 
 /* For the image plugin tag. */
 .imageplugin { margin: 5px 5px 5px 5px; }
@@ -378,7 +373,7 @@ div.commentbox {
     { font-size: 60%; vertical-align: super; text-decoration: none; }
 
 
-.zebra-table TH
+.zebr-table TH
     { background:  #e0e0e0;
     }
     
