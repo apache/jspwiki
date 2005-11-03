@@ -1,3 +1,18 @@
+2005-11-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.39
+        
+        * Default RSS version is now 2.0
+        
+        * Cleaned some ambiguities in the CSS file
+        
+        * Moved the app and company logos into a separate div of their
+        own to make layout easier.
+        
+        * Enabled personal favourites in the Favorites.jsp
+        
+        * General cleanup and poking around in the CSS
+
 2005-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.38
