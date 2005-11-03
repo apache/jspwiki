@@ -22,9 +22,9 @@
     String      type        = request.getParameter("type");
     
     if( mode == null || !(mode.equals(RSSGenerator.MODE_BLOG) || mode.equals(RSSGenerator.MODE_WIKI)) ) 
-    	mode = RSSGenerator.MODE_BLOG;
+    	   mode = RSSGenerator.MODE_BLOG;
     if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20) || type.equals(RSSGenerator.ATOM)) ) 
-    	type = RSSGenerator.RSS10;
+    	   type = RSSGenerator.RSS20;
     
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     WikiPage    wikipage    = wikiContext.getPage();
