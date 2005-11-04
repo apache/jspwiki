@@ -21,10 +21,10 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
 /**
  * Represents a long-running wiki session, with an associated user Principal,
  * user Subject, and authentication status. This class is initialized with
- * minimal, default-deny values: authentication is set to false, and the user
- * principal is set to null.
+ * minimal, default-deny values: authentication is set to <code>false</code>,
+ * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.9 $ $Date: 2005-10-22 13:45:46 $
+ * @version $Revision: 2.10 $ $Date: 2005-11-04 06:10:08 $
  */
 public class WikiSession
 {
@@ -442,7 +442,7 @@ public class WikiSession
             return AUTHENTICATED;
         }
 
-        if ( hasPrincipal( Role.ANONYMOUS ) )
+        if ( isAnonymous() )
         {
             return ANONYMOUS;
         }
