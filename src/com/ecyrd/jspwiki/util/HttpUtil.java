@@ -19,13 +19,19 @@
  */
 package com.ecyrd.jspwiki.util;
 
-import java.text.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
 /**
@@ -38,7 +44,9 @@ public class HttpUtil
 {
     static Logger log = Logger.getLogger( HttpUtil.class );
     private static String cachedBaseURL = null;
+    private static String cachedBaseURLNoContext = null;
     private static String cachedSecureBaseURL = null;
+    private static String cachedSecureBaseURLNoContext = null;
 
     /**
      *  Attempts to retrieve the given cookie value from the request.
@@ -176,30 +184,66 @@ public class HttpUtil
      */
     public static String makeBaseURL( HttpServletRequest request )
     {
+        return constructBaseURL( request, true );
+    }
+    
+    /**
+     * Calculates the base URL for the web page, but does not append the application
+     * context and trailing slash.
+     * @param request may not be null
+     * @return the base URL
+     */
+    public static String makeBaseURLNoContext( HttpServletRequest request )
+    {
+        return constructBaseURL( request, false );
+    }
+
+    private static String constructBaseURL( HttpServletRequest request, boolean appendContext )
+    {
         int defaultPort;
         if ( request.isSecure() ) 
         {
             defaultPort = 443;
             if ( cachedSecureBaseURL == null )
             {
-                cachedSecureBaseURL = request.getScheme() 
-                + "://" + request.getServerName()
-                + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) )
-                + request.getContextPath() + "/";
+                String serverName = getServerName( request.getServerName() );
+                cachedSecureBaseURLNoContext = request.getScheme() 
+                  + "://" + serverName
+                  + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) );
+                cachedSecureBaseURL = cachedSecureBaseURLNoContext + "/" + request.getContextPath() + "/";
             }
-            return cachedSecureBaseURL;
+            return appendContext ? cachedSecureBaseURL : cachedSecureBaseURLNoContext;
         }
         else
         {
             defaultPort = 80;
             if ( cachedBaseURL == null )
             {
-                cachedBaseURL = request.getScheme() 
-                + "://" + request.getServerName()
-                + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) )
-                + request.getContextPath() + "/";
+                String serverName = getServerName( request.getServerName() );
+                cachedBaseURLNoContext = request.getScheme() 
+                  + "://" + serverName
+                  + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) );
             }
-            return cachedBaseURL;
+            cachedBaseURL = cachedBaseURLNoContext + "/" + request.getContextPath() + "/";
+            return appendContext ? cachedBaseURL : cachedBaseURLNoContext;
         }
     }
+    
+    /**
+     * Static method that determines a fully-qualified host name by looking it
+     * up with the local machine's naming service.
+     */
+    private static String getServerName( String server )
+    {
+        try {
+            InetAddress address = InetAddress.getByName( server );
+            server = address.getHostName();
+        }
+        catch (UnknownHostException e) 
+        {
+            // just use the old name... 
+        }
+        return server;
+    }
+    
 }
