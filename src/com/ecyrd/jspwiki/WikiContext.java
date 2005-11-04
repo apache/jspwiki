@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -78,6 +79,9 @@ public class WikiContext
     /** User is preparing for a login/authentication. */
     public static final String    LOGIN    = "login";
 
+    /** User is preparing to log out. */
+    public static final String    LOGOUT   = "logout";
+
     /** User is viewing a DIFF between the two versions of the page. */
     public static final String    DIFF     = "diff";
 
@@ -99,6 +103,7 @@ public class WikiContext
     public static final String    COMMENT  = "comment";
     public static final String    FIND     = "find";
 
+    public static final String    CREATE_GROUP = "createGroup";
     public static final String    PREFS    = "prefs";
     public static final String    REGISTER = "register";
     public static final String    DELETE   = "del";
@@ -348,17 +353,29 @@ public class WikiContext
     }
 
     /**
-     *  Returns an URL from a page
+     *  Returns an URL from a page. It this WikiContext instance was constructed
+     *  with an actual HttpServletRequest, we will attempt to construct the
+     *  URL using HttpUtil, which preserves the HTTPS portion if it was used.
      */
     public String getURL( String context,
                           String page,
                           String params )
     {
-        // FIXME: is rather slow
-        return m_engine.getURL( context,
-                                page,
-                                params,
-                                "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE )) );
+        boolean absolute = "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE ));
+        if ( m_request == null || !absolute )
+        {
+            // FIXME: is rather slow
+            return m_engine.getURL( context,
+                                    page,
+                                    params,
+                                    absolute );
+        }
+        else 
+        {
+            String url = HttpUtil.makeBaseURLNoContext( m_request )
+                   + m_engine.getURL( context, page, params, false );
+            return url;
+        }
     }
 
     /**
