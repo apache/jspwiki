@@ -26,7 +26,7 @@
 %>
 
 <%
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.CREATE_GROUP );
     AuthenticationManager mgr = wiki.getAuthenticationManager();
     AuthorizationManager authMgr = wiki.getAuthorizationManager();
     UserManager userMgr = wiki.getUserManager();
