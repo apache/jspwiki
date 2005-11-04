@@ -1,3 +1,42 @@
+2005-11-03  Andrew Jaquith  <arjaquith@mindspring.com>
+
+        * v2.3.40
+        
+        * Fixed a subtle bug with HttpUtil that was 
+          causing BaseURLs to always print as the name
+          of the host as known to the web container,
+          which in default Tomcat deployments (99%)
+          is called "localhost". Rather than rely on
+          the fact that the user's HttpServletRequest
+          will *actually* return an accurate host name,
+          we do a quick, one-time host name resolution
+          lookup just to make sure.
+          
+        * Added WikiContext-to-*Content template mappings 
+          for the login and "create group" contexts. Added
+          wiki contexts for both.
+        
+        * Corrected potetial bug with WikiSession's 
+          getStatus() method. It now delegates to isAnonymous(),
+          as it should.
+        
+        * WikiContext's getURL() method now defaults to
+          HttpUtil's method of building the base URL from user
+          session request information, rather than from 
+          jspwiki.baseURL. We do this so that JSPWiki will
+          work nicely with HTTPS sessions. This method is 
+          transparent to downstream JSP tags like EditLink; 
+          they get HTTP compatibility "for free". If the
+          associated HTTPServletRequest is null, we default 
+          to the old method of looking up getBaseURL() from
+          WikiEngine.
+          
+        * NewGroup.jsp and Login.jsp now put their content
+          pages inside of AdminTemplate, which means they are
+          wrapped with standard headers and footers. Note that
+          LoginForm may be look a bit ugly until we get a few
+          kinks worked out.
+
 2005-11-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.3.39
