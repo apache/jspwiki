@@ -48,6 +48,7 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
  *                       if the user is validated through the container.</li>
  * <li>"customAuth"    - the body of the tag is included 
  *                       if the user is validated through our own authentication.</li>
+ * <li>"known"         - if the user is not anonymous</li>                      
  * <li>"notAuthenticated"
  *                     - the body of the tag is included 
  *                       if the user is not yet authenticated.</li>
@@ -76,6 +77,7 @@ public class UserCheckTag
     private static final String ASSERTIONS_NOT_ALLOWED = "assertionsnotallowed";
     private static final String CONTAINER_AUTH = "containerauth";
     private static final String CUSTOM_AUTH = "customauth";
+    private static final String KNOWN = "known";
     private static final String NOT_AUTHENTICATED = "notauthenticated";
 
     private String m_status;
@@ -172,6 +174,14 @@ public class UserCheckTag
             else if( CUSTOM_AUTH.equals( m_status )) 
             { 
                 if ( !containerAuth )
+                {
+                    return EVAL_BODY_INCLUDE;
+                }
+                return SKIP_BODY;
+            }
+            else if( KNOWN.equals( m_status )) 
+            { 
+                if ( !session.isAnonymous() )
                 {
                     return EVAL_BODY_INCLUDE;
                 }
