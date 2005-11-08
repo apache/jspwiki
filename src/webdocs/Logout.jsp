@@ -1,6 +1,6 @@
 <%@page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
 <%
-  AuthenticationManager.logout( session );
+  AuthenticationManager.logout( request );
   // Redirect to the webroot
   response.sendRedirect(".");
 %>

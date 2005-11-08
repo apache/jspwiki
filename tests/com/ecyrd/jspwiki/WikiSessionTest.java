@@ -140,14 +140,14 @@ public class WikiSessionTest extends TestCase
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // And finally, if we null the UserPrincipal and remoteUser again, 
-        // it should trigger a change.
+        // it should not trigger a change.
         request = new TestHttpServletRequest();
         request.setUserPrincipal( null );
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
         wikiSession = WikiSession.getWikiSession( request );
-        assertTrue( wikiSession.isContainerStatusChanged( request ) );
+        assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // Adding the magic "assertion cookie" should trigger a change in status.
         request = new TestHttpServletRequest();
