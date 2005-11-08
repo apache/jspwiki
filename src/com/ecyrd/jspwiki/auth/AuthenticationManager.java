@@ -54,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.12 $ $Date: 2005-10-09 05:54:18 $
+ * @version $Revision: 1.13 $ $Date: 2005-11-08 18:19:15 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -350,7 +350,7 @@ public class AuthenticationManager
      * @return the result of the login
      * @throws WikiSecurityException
      */
-    private boolean doLogin( WikiSession wikiSession, final CallbackHandler handler, final String application )
+    private boolean doLogin( final WikiSession wikiSession, final CallbackHandler handler, final String application )
     {
         try
         {
@@ -359,7 +359,7 @@ public class AuthenticationManager
                 public Object run() {
                     try
                     {
-                        return new LoginContext( application, handler );
+                        return new LoginContext( application, wikiSession.getSubject(), handler );
                     }
                     catch( LoginException e )
                     {
@@ -370,8 +370,6 @@ public class AuthenticationManager
                 }
             });
             loginContext.login();
-            Subject subject = loginContext.getSubject();
-            wikiSession.setSubject( subject );
 
             // Lastly, inject the ADMIN role if the user's id is privileged
             checkForAdmin( wikiSession );
@@ -429,27 +427,31 @@ public class AuthenticationManager
     }
 
     /**
-     * Logs the user out by invalidating the Http session associated with the
-     * Wiki context. As a consequence, this will also automatically unbind the
-     * WikiSession, and with it all of its Principal objects and Subject. This
+     * Logs the user out by retrieving the WikiSession associated with the
+     * HttpServletRequest and unbinding all of the Subject's Principals,
+     * except for {@link Role#ALL}, {@link Role#
      * is a cheap-and-cheerful way to do it without invoking JAAS LoginModules.
      * The logout operation will also remove the JSESSIONID cookie from
      * the user's browser session, if it was set.
      * @param session the current HTTP session
      */
-    public static void logout( HttpSession session )
+    public static void logout( HttpServletRequest request )
     {
-        if ( session == null )
+        if ( request == null )
         {
-            log.error( "No HTTP session provided; cannot log out." );
+            log.error( "No HTTP reqest provided; cannot log out." );
             return;
         }
-        // Clear the session
-        session.invalidate();
-
-        // Remove JSESSIONID in case it is still kicking around
-        Cookie sessionCookie = new Cookie("JSESSIONID", null);
-        sessionCookie.setMaxAge(0);
+        
+        HttpSession session = request.getSession();
+        String sid = ( session == null ) ? "(null)" : session.getId();
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "Invalidating WikiSession for session ID=" + sid );
+        }
+        // Retrieve the associated WikiSession and clear the Principal set
+        WikiSession wikiSession = WikiSession.getWikiSession( request );
+        wikiSession.invalidate();
     }
 
 }

@@ -106,6 +106,7 @@ public class WikiContext
     public static final String    CREATE_GROUP = "createGroup";
     public static final String    PREFS    = "prefs";
     public static final String    REGISTER = "register";
+    public static final String    RENAME   = "rename";
     public static final String    DELETE   = "del";
     public static final String    ATTACH   = "att";
     public static final String    RSS      = "rss";
