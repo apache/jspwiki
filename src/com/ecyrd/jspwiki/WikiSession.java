@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.10 $ $Date: 2005-11-04 06:10:08 $
+ * @version $Revision: 2.11 $ $Date: 2005-11-08 18:17:35 $
  */
 public class WikiSession
 {
@@ -344,9 +344,7 @@ public class WikiSession
     public static WikiSession guestSession()
     {
         WikiSession session = new WikiSession();
-        session.getSubject().getPrincipals().add( WikiPrincipal.GUEST );
-        session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        session.getSubject().getPrincipals().add( Role.ALL );
+        session.invalidate();
         return session;
     }
 
@@ -399,6 +397,22 @@ public class WikiSession
         return wikiSession;
     }
 
+    /** 
+     * Invalidates the WikiSession and resets its Subject's 
+     * Principal set to the equivalent of a "guest session"
+     * @param session the wiki session to invalidate
+     */
+    public void invalidate()
+    {
+        m_subject.getPrincipals().clear();
+        m_subject.getPrincipals().add( WikiPrincipal.GUEST );
+        m_subject.getPrincipals().add( Role.ANONYMOUS );
+        m_subject.getPrincipals().add( Role.ALL );
+        m_cachedCookieIdentity = null;
+        m_cachedRemoteUser = null;
+        m_cachedUserPrincipal = null;
+    }
+    
     /**
      * Returns whether the Http servlet container's authentication status has
      * changed. Used to detect whether the container has logged in a user since
@@ -416,15 +430,34 @@ public class WikiSession
             return false;
         }
         
-        String requestCookieIdentity = CookieAssertionLoginModule.getUserCookie( request );
-        boolean changed = different( m_cachedRemoteUser, request.getRemoteUser() ) ||
-                          different( m_cachedUserPrincipal, request.getUserPrincipal() ) ||
-                          different( m_cachedCookieIdentity, requestCookieIdentity ) ;
-        if ( changed )
+        String remoteUser = request.getRemoteUser();
+        Principal userPrincipal = request.getUserPrincipal();
+        String cookieIdentity = CookieAssertionLoginModule.getUserCookie( request );
+        boolean changed= false;
+        
+        // If request contains non-null remote user, update cached value if changed
+        if ( remoteUser != null && !remoteUser.equals( m_cachedRemoteUser) )
         {
-            m_cachedRemoteUser = request.getRemoteUser();
-            m_cachedUserPrincipal = request.getUserPrincipal();
-            m_cachedCookieIdentity = requestCookieIdentity;
+            m_cachedRemoteUser = remoteUser;
+            log.info( "Remote user changed to " + remoteUser );
+            changed = true;
+        }
+        
+        // If request contains non-null user principal, updated cached value if changed
+        if ( userPrincipal != null && !userPrincipal.equals( m_cachedUserPrincipal ) )
+        {
+            m_cachedUserPrincipal = userPrincipal;
+            log.info( "User principal changed to " + userPrincipal );
+            changed = true;
+        }
+        
+        // If cookie identity changed (to a different value or back to null), update cache
+        if ( ( cookieIdentity != null && !cookieIdentity.equals( m_cachedCookieIdentity ) )
+               || ( cookieIdentity == null && m_cachedCookieIdentity != null ) )
+        {
+            m_cachedCookieIdentity = cookieIdentity;
+            log.info( "Cookie changed to " + cookieIdentity );
+            changed = true;
         }
         return changed;
     }
@@ -451,12 +484,6 @@ public class WikiSession
             return ASSERTED;
         }
         return "ILLEGAL STATUS!";
-    }
-
-    
-    protected static boolean different( Object s1, Object s2 ) 
-    {
-        return !( ( s1 == null && s2 == null ) || ( s1 != null && s1.equals( s2 ) ) );
     }
     
 }
