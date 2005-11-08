@@ -9,15 +9,6 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-<!--
-    This is a sample login page, in case you prefer a clear
-    front page instead of the default sign-in type login box
-    at the side of the normal entry page. Set this page in
-    the welcome-file-list tag in web.xml to default here 
-    when entering the site.
--->
-
-
 <%! 
     public void jspInit()
     {
@@ -86,10 +77,13 @@
         // Set user cookie
         Principal principal = wikiSession.getUserPrincipal();
         CookieAssertionLoginModule.setUserCookie( response, principal.getName() );
+        
+        // If wiki page was "Login", redirect to main, otherwise use the page supplied
+        String redirectPage = wikiContext.getPage().getName();
+        String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
     
         // Redirect!
-        String viewUrl = wiki.getViewURL( wikiContext.getPage().getName() );
-        log.info( "Redirecting user to " + wikiContext.getPage().getName() );
+        log.info( "Redirecting user to " + viewUrl );
         response.sendRedirect( viewUrl );
         NDC.pop();
         NDC.remove();

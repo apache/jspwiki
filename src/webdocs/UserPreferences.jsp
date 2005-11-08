@@ -34,6 +34,7 @@
     boolean containerAuth = mgr.isContainerAuthenticated();
     boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
     boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
+    String user = wikiContext.getCurrentUser().getName();
     
     // User must have permission to change the profile
     if( !authMgr.checkPermission( wikiContext.getWikiSession(), WikiPermission.PREFERENCES ) )
@@ -41,7 +42,6 @@
         log.info("User "+wikiContext.getCurrentUser()+" has no access to set preferences - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
         wikiContext.setVariable( "msg", msg );
-        wikiContext.setVariable( "pageName", "Preferences" );
         String pageurl = wiki.encodeName( wikiContext.getPage().getName() );
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
     }
@@ -89,7 +89,7 @@
             try
             {
                 userMgr.setUserProfile( wikiContext.getWikiSession(), profile );
-                CookieAssertionLoginModule.setUserCookie( response, profile.getWikiName() );
+                CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             }
             catch( DuplicateUserException e )
             {
@@ -116,7 +116,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
-                                                            "AdminTemplate.jsp" );
+                                                            "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
     NDC.pop();
     NDC.remove();

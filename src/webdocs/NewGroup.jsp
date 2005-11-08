@@ -35,7 +35,7 @@
     boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
     String user = wikiContext.getCurrentUser().getName();
 
-    // User must be authenticated to create groups
+    // User must have permission to create groups
     if( !authMgr.checkPermission( wikiContext.getWikiSession(), WikiPermission.CREATE_GROUPS ) )
     {
         log.info("User "+user+" cannot create groups - redirecting to login page.");
@@ -91,6 +91,7 @@
         if ( wiki.pageExists( groupPage ) )
         {
             errors.add("A group named '" + name + "' already exists. Choose another.");
+            log.error( "User " + user + " tried to create a group page " + groupPage + ", but it already exists!" );
         }
         
         // If no errors, build and save the group page
@@ -119,6 +120,7 @@
             }
             catch( RedirectException ex )
             {
+                log.error( "Couldn't save page " + groupPage + ": " + ex.getMessage() );
                 session.setAttribute("msg", ex.getMessage());
                 response.sendRedirect( ex.getRedirect() );
                 return;
@@ -132,7 +134,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
-                                                            "GroupContent.jsp" );
+                                                            "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
     NDC.pop();
     NDC.remove();

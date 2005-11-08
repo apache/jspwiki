@@ -88,7 +88,7 @@
             try
             {
                 userMgr.setUserProfile( wikiContext.getWikiSession(), profile );
-                CookieAssertionLoginModule.setUserCookie( response, profile.getWikiName() );
+                CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             }
             catch( DuplicateUserException e )
             {
@@ -110,7 +110,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
-                                                            "AdminTemplate.jsp" );
+                                                            "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
     NDC.pop();
     NDC.remove();

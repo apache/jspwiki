@@ -36,7 +36,7 @@
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
-                                                            "AdminTemplate.jsp" );
+                                                            "ViewTemplate.jsp" );
                                                             
     log.debug("Login template content is: " + contentPage);
 %>
