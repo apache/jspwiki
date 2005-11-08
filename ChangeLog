@@ -1,3 +1,74 @@
+2005-11-08  Andrew Jaquith  <arjaquith@mindspring.com>
+
+        * v2.3.41
+        
+        * Fixed a nasty, serious authentication bug introduced
+          in 2.3.35 code for checking for cookie changes. Cookie
+          changes were triggering "container logins", which
+          caused the JAAS Subject to be rebuilt from scratch.
+          Instead of blowing away the Subject (and associated 
+          WikiSession) at logout time (or when the user's auth
+          status changes), the Subject is now preserved for the
+          life of the Http Session. In addition, executing
+          Logout.jsp no longer invalidates the HTTP session;
+          instead, the AuthenticationManager logout() method
+          simply resets the Subject's principal set instead.
+       
+        * Added an invalidate() method to WikiSession that
+          resets user wiki session principals when requested
+          by AuthManager.logout(). Resetting principals
+          means making a user an anonymous guest user.
+          Refactored WikiSession's cookie-change detection code.
+        
+        * All of the *LoginModule classes received
+          tweaks to make them work with long-lived
+          Subjects. In particular, login modules that 
+          inject Role principals now remove less-prileged ones.
+          For example, the UserDatabaseLoginModule injects
+          Role.AUTHENTICATED upon login; it also explicitly
+          removes Role.ANONYMOUS and Role.ASSERTED
+          if these are found.
+          
+        * <wiki:UserCheck> regains the venerable status attribute
+          "known", which denotes an authentication status of
+          "not anonymous", aka either authenticated or asserted.
+          This fixes an issue in the new JSP templates from 2.3.37.
+          
+        * HttpUtil gets an *even more* reliable fix to
+          the BaseURL issue patched in 2.3.40.
+          
+        * Added "SpecialPage" mappings to WikiEngine for Logout,
+          CreateGroup, CreateProfile, EditProfile, and Prefences.
+          These map to Logout.jsp, NewGroup.jsp, Register.jsp
+          and UserPreferences.jsp (x2).
+          
+        * Login.jsp, NewGroup.jsp, Register.jsp and
+          UserPreferences.jsp all now use ViewTemplate 
+          as the master template. This removes the need for
+          AdminTemplate.jsp, which was a kludge anyway.
+          That means one less template to maintain, and to hack.
+          Hooray!
+          
+        * Favorites.jsp receives the G'day treatment.
+        
+        * Cookie identities (cookie assertions) are now
+          set to the value of the user's full name during
+          custom auth login, and when user preferences
+          are initially set (Register.jsp) and after
+          user registration (UserPreferences.jsp).
+          Previously, we used the WikiName. However, the
+          full name is what's returned first by WikiSession's
+          getUserPrincipal() method, so we are now consistent
+          with that. This should partly resolve the issue JohnV
+          reported about user names "jumping around" between
+          wiki names, full names and login names. (But there
+          is still one more bug out there...)
+          
+        * Fixed compilation errors in Rename.jsp, and added
+          back code to hide rename fields on InfoContent.jsp
+          for users who aren't entitled to see them. This
+          had regressed a few revisions ago...
+        
 2005-11-03  Andrew Jaquith  <arjaquith@mindspring.com>
 
         * v2.3.40
