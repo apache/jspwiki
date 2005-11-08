@@ -94,31 +94,33 @@ function confirmDelete()
            <td><a href="<wiki:BaseURL/>rss.jsp?page=<wiki:Variable var="pagename" />&amp;mode=wiki"><img src="<wiki:BaseURL/>images/xml.png" border="0" alt="[RSS]"/></a></td>
        </tr>
 
-      <tr>
-           <td><b>Rename page</b></td>
-           <td>
-               <form action="<wiki:BaseURL/>Rename.jsp"
-                     method="post"  accept-charset="ISO-8859-1,UTF-8">
-                  <input type="hidden" name="page" value="<wiki:PageName />"/>
-                  <input type="text" name="renameto" value="<wiki:PageName />" size="40"/><br />
-                  <input type="checkbox" name="references" checked="checked"/>Update referrers?<br />
-                  <input type="submit" value="Rename"/>
-               </form>
-          </td>
-      </tr>
+      <wiki:Permission permission="rename">
+           <tr>
+               <td><b>Rename page</b></td>
+               <td>
+                    <form action="<wiki:BaseURL/>Rename.jsp"
+                          method="post"  accept-charset="ISO-8859-1,UTF-8">
+                        <input type="hidden" name="page" value="<wiki:PageName />"/>
+                        <input type="text" name="renameto" value="<wiki:PageName />" size="40"/><br />
+                        <input type="checkbox" name="references" checked="checked"/>Update referrers?<br />
+                        <input type="submit" value="Rename"/>
+                    </form>
+               </td>
+           </tr>
+       </wiki:Permission>
 
    <wiki:Permission permission="delete">
-   <form name="deleteForm"
-         action="<wiki:BaseURL/>Delete.jsp?page=<wiki:PageName />"
-         method="post"
-         accept-charset="<wiki:ContentEncoding />"
-         onsubmit="return confirmDelete()">
+       <form name="deleteForm"
+             action="<wiki:BaseURL/>Delete.jsp?page=<wiki:PageName />"
+             method="post"
+             accept-charset="<wiki:ContentEncoding />"
+             onsubmit="return confirmDelete()">
 
-   <tr>
-     <th>Delete page</th>
-     <td><input type="submit" name="delete-all" value="Delete entire page"/></td>
-   </tr>
-   </form>
+       <tr>
+         <th>Delete page</th>
+         <td><input type="submit" name="delete-all" value="Delete entire page"/></td>
+       </tr>
+       </form>
    </wiki:Permission>
 
        <tr>

@@ -36,7 +36,7 @@
         log.info("User "+wikiContext.getCurrentUser()+" has no access - redirecting to login page.");
         String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
         wikiContext.setVariable( "msg", msg );
-        String pageurl = wiki.encodeName( pagereq );
+        String pageurl = wiki.encodeName( renameFrom );
         response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
         return;
     }
@@ -45,7 +45,7 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     
-    log.info("Page rename request for page '"+pagereq+ "' to new name '"+renameTo+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
+    log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
     
     try 
     {
