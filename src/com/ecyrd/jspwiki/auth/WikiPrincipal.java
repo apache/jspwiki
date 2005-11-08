@@ -29,7 +29,7 @@ import java.util.Comparator;
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.7 $ $Date: 2005-09-02 23:54:42 $
+ *  @version $Revision: 1.8 $ $Date: 2005-11-08 18:19:43 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
@@ -125,7 +125,7 @@ public final class WikiPrincipal implements Principal
      */
     public final String toString()
     {
-        return "[WikiPrincipal: " + getName() + "]";
+        return "[WikiPrincipal (" + m_type + "): " + getName() + "]";
     }
     
     /**
