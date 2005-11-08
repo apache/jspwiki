@@ -41,14 +41,11 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * the Subject's principal set.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-24 14:25:59 $
+ * @version $Revision: 1.4 $ $Date: 2005-11-08 18:27:51 $
  * @since 2.3
  */
 public class UserDatabaseLoginModule extends AbstractLoginModule
 {
-
-    private static final Class[] principalClasses = new Class[]
-                                                  { WikiPrincipal.class };
 
     protected static Logger      log              = Logger.getLogger( UserDatabaseLoginModule.class );
     
@@ -92,8 +89,19 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
                         log.debug( "Added Principal " + principals[i].getName() );
                     }
                 }
+                
+                // If login succeeds, commit these roles
                 m_principals.add( Role.AUTHENTICATED );
                 m_principals.add( Role.ALL );
+                
+                // If login succeeds, overwrite these principals/roles
+                m_principalsToOverwrite.add( WikiPrincipal.GUEST );
+                m_principalsToOverwrite.add( Role.ANONYMOUS );
+                m_principalsToOverwrite.add( Role.ASSERTED );
+                
+                // If login fails, remove these roles
+                m_principalsToRemove.add( Role.AUTHENTICATED );
+                
                 return true;
             }
             throw new FailedLoginException( "The username or password is incorrect." );

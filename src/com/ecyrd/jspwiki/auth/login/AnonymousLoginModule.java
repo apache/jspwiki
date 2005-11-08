@@ -35,7 +35,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-24 14:25:59 $
+ * @version $Revision: 1.4 $ $Date: 2005-11-08 18:27:51 $
  * @since 2.3
  */
 public class AnonymousLoginModule extends AbstractLoginModule
@@ -52,11 +52,24 @@ public class AnonymousLoginModule extends AbstractLoginModule
      * Logs in the user by calling back to the registered CallbackHandler with an
      * HttpRequestCallback. The CallbackHandler must supply the current servlet
      * HTTP request as its response.
-     * @return the result of the login; this will always be <code>true</code>
+     * @return the result of the login; this will always be <code>false</code>
+     * if the Subject's Principal set already contains either
+     * {@link Role#ASSERTED} or {@link Role#AUTHENTICATED}; otherwise,
+     * always returns <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#login()
      */
     public boolean login() throws LoginException
     {
+        // If already logged in or asserted, ignore this login module
+        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) 
+             || m_subject.getPrincipals().contains( Role.ASSERTED ) )
+        {
+            // If login ignored, remove anonymous role
+            m_principalsToRemove.add( Role.ANONYMOUS );
+            return false;
+        }
+        
+        // Otherwise, let's go and make a Principal based on the IP address
         HttpRequestCallback hcb = new HttpRequestCallback();
         Callback[] callbacks = new Callback[]
         { hcb };
@@ -72,9 +85,17 @@ public class AnonymousLoginModule extends AbstractLoginModule
                 log.debug("Logged in session ID=" + sid);
                 log.debug("Added Principals " + ipAddr + ",Role.ANONYMOUS,Role.ALL" );
             }
+            // If login succeeds, commit these principals/roles
             m_principals.add( ipAddr );
             m_principals.add( Role.ANONYMOUS );
             m_principals.add( Role.ALL );
+            
+            // If login succeeds, overwrite these principals/roles
+            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
+            
+            // If login fails, remove these roles
+            m_principalsToRemove.add( Role.ANONYMOUS );
+            
             return true;
         }
         catch( IOException e )

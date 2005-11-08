@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-09-24 14:25:59 $
+ * @version $Revision: 1.5 $ $Date: 2005-11-08 18:27:51 $
  * @since 2.3
  */
 public class CookieAssertionLoginModule extends AbstractLoginModule
@@ -52,16 +52,27 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
     protected static Logger    log               = Logger.getLogger( CookieAssertionLoginModule.class );
     
     /**
-     * Logs in the user by calling back to the registered CallbackHandler with an
-     * HttpRequestCallback. The CallbackHandler must supply the current servlet
-     * HTTP request as its response.
-     * @return the result of the login; this will be <code>true</code>
-     * if a cookie is found. If not found, this method throws a 
-     * <code>FailedLoginException</code>.
+     * Logs in the user by calling back to the registered CallbackHandler with
+     * an HttpRequestCallback. The CallbackHandler must supply the current
+     * servlet HTTP request as its response.
+     * @return the result of the login; if the subject Principal set already
+     * possesses {@link Role#AUTHENTICATED}, always returns <code>false</code>
+     * to indicate that this module should be ignored. Otherwise, if a cookie is
+     * found, this method returns <code>true</code>. If not found, this
+     * method throws a <code>FailedLoginException</code>.
      * @see javax.security.auth.spi.LoginModule#login()
      */
     public boolean login() throws LoginException
     {
+        // Ignore this module if already authenticated
+        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) )
+        {
+            // If login ignored, remove asserted role
+            m_principalsToRemove.add( Role.ASSERTED );
+            return false;
+        }
+        
+        // Otherwise, let's go and look for the cookie!
         HttpRequestCallback hcb = new HttpRequestCallback();
         Callback[] callbacks = new Callback[]
         { hcb };
@@ -86,9 +97,17 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
                 log.debug( "Logged in session ID=" + sid );
                 log.debug( "Added Principals " + name + ",Role.ASSERTED,Role.ALL" );
             }
-            m_principals.add( new WikiPrincipal( name, WikiPrincipal.LOGIN_NAME ) );
+            // If login succeeds, commit these principals/roles
+            m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
             m_principals.add( Role.ASSERTED );
             m_principals.add( Role.ALL );
+            
+            // If login succeeds, overwrite these principals/roles
+            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
+            m_principalsToOverwrite.add( Role.ANONYMOUS );
+            
+            // If login fails, remove these roles
+            m_principalsToRemove.add( Role.ASSERTED );
             return true;
         }
         catch( IOException e )

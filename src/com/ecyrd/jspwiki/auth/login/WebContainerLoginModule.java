@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -48,7 +47,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * if user profile exists, or a generic WikiPrincipal if not.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2005-09-24 14:25:59 $
+ * @version $Revision: 1.7 $ $Date: 2005-11-08 18:27:51 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
@@ -105,10 +104,18 @@ public class WebContainerLoginModule extends AbstractLoginModule
             }
             m_principals.add( new PrincipalWrapper( principal ) );
             
-            // Add the roles Authenticated and All
+            // If login succeeds, commit these roles
             m_principals.add( Role.AUTHENTICATED );
             m_principals.add( Role.ALL );
-
+            
+            // If login succeeds, overwrite these principals/roles
+            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
+            m_principalsToOverwrite.add( Role.ANONYMOUS );
+            m_principalsToOverwrite.add( Role.ASSERTED );
+            
+            // If login fails, remove these roles
+            m_principalsToRemove.add( Role.AUTHENTICATED );
+            
             // Add any user principals from the UserDatabase.
             UserDatabase database = databaseCallback.getUserDatabase();
             if ( database == null )
