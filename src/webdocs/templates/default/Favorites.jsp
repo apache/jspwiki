@@ -35,7 +35,21 @@
   </wiki:NoSuchPage>
 </div>
 
- <wiki:Include page="PageActions.jsp"/>
+<div class="username">
+    <wiki:UserCheck status="anonymous">
+      <p>You are anonymous.</p>
+    </wiki:UserCheck>
+    <wiki:UserCheck status="asserted">
+        <p>G'day
+          <wiki:Translate>[<wiki:UserName />]</wiki:Translate> (not loagged in)</p>
+    </wiki:UserCheck>
+    <wiki:UserCheck status="authenticated">
+        <p>G'day
+          <wiki:Translate>[<wiki:UserName />]</wiki:Translate> (authenticated)</p>
+    </wiki:UserCheck>
+</div>
+
+<wiki:Include page="PageActions.jsp"/>
 
 <div class="leftmenufooter">
   <wiki:InsertPage page="LeftMenuFooter" />
