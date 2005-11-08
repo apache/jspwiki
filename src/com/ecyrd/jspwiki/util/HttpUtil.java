@@ -47,6 +47,8 @@ public class HttpUtil
     private static String cachedBaseURLNoContext = null;
     private static String cachedSecureBaseURL = null;
     private static String cachedSecureBaseURLNoContext = null;
+    private static final String LOOPBACK = "127.0.0.1";
+    private static final String LOCALHOST = "localhost";
 
     /**
      *  Attempts to retrieve the given cookie value from the request.
@@ -175,10 +177,11 @@ public class HttpUtil
     }
 
     /**
-     * Calculates the base URL for the web page. We could certainly do this by consulting
-     * {@link WikiEngine#getBaseURL()}, but when requests are sent over HTTPS,
-     * we need to send back something different. Thus, we build a base URL by inspecting
-     * the incoming HTTP request.
+     * Calculates the base URL for wiki web pages. We could certainly do this by
+     * consulting {@link WikiEngine#getBaseURL()}, but when requests are sent
+     * over HTTPS, we need to send back something different. Thus, we build a
+     * base URL by inspecting the incoming HTTP request. This method appends a
+     * trailing slash to the returned URL.
      * @param request
      * @return the base URL
      */
@@ -188,8 +191,8 @@ public class HttpUtil
     }
     
     /**
-     * Calculates the base URL for the web page, but does not append the application
-     * context and trailing slash.
+     * Calculates the base URL for wiki web pages, but does not append the
+     * application context or trailing slash.
      * @param request may not be null
      * @return the base URL
      */
@@ -200,50 +203,97 @@ public class HttpUtil
 
     private static String constructBaseURL( HttpServletRequest request, boolean appendContext )
     {
-        int defaultPort;
-        if ( request.isSecure() ) 
+        String server = request.getServerName();
+        boolean isLocalhost = ( server.startsWith( LOCALHOST ) || server.startsWith( LOOPBACK ) );
+        boolean getFromCache = !isLocalhost;
+ 
+        // If we are supposed to get this from the cache, retrieve value if we can
+        if ( getFromCache )
         {
-            defaultPort = 443;
-            if ( cachedSecureBaseURL == null )
+            if ( request.isSecure() )
             {
-                String serverName = getServerName( request.getServerName() );
-                cachedSecureBaseURLNoContext = request.getScheme() 
-                  + "://" + serverName
-                  + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) );
-                cachedSecureBaseURL = cachedSecureBaseURLNoContext + "/" + request.getContextPath() + "/";
+                if ( cachedSecureBaseURL != null ) 
+                {
+                    return appendContext ? cachedSecureBaseURL : cachedSecureBaseURLNoContext;
+                }
             }
-            return appendContext ? cachedSecureBaseURL : cachedSecureBaseURLNoContext;
+            else
+            {
+                if ( cachedBaseURL != null ) 
+                {
+                    return appendContext ? cachedBaseURL : cachedBaseURLNoContext;
+                }
+            }
         }
-        else
+        
+        // Build the base URL from scratch
+        // If not localhost, get the proper server name
+        if ( !isLocalhost ) {
+            server = getServerName( request ); 
+        }
+
+        // Build the base URLs
+        int defaultPort = request.isSecure() ? 443 : 80;
+        String portSuffix = request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ); 
+        String baseURLNoContext = request.getScheme() + "://" + server + portSuffix;
+        String baseURL = baseURLNoContext + request.getContextPath() + "/";
+        
+        // Store new values in cache
+        if ( getFromCache )
         {
-            defaultPort = 80;
-            if ( cachedBaseURL == null )
+            if ( request.isSecure() )
             {
-                String serverName = getServerName( request.getServerName() );
-                cachedBaseURLNoContext = request.getScheme() 
-                  + "://" + serverName
-                  + ( request.getServerPort() == defaultPort ? "" : ( ":" + String.valueOf( request.getServerPort() ) ) );
+                cachedSecureBaseURL = baseURL;
+                cachedSecureBaseURLNoContext = baseURLNoContext;
             }
-            cachedBaseURL = cachedBaseURLNoContext + "/" + request.getContextPath() + "/";
-            return appendContext ? cachedBaseURL : cachedBaseURLNoContext;
+            else
+            {
+                cachedBaseURL = baseURL;
+                cachedBaseURLNoContext = baseURLNoContext;
+            }
         }
+        
+        // Return the newly constructed value
+        return appendContext ? baseURL : baseURLNoContext;
     }
     
     /**
-     * Static method that determines a fully-qualified host name by looking it
-     * up with the local machine's naming service.
+     * Static method that determines a fully-qualified host name by examining an
+     * HTTP request's <code>Host</code> header. If the browser did not supply
+     * a <code>Host</code> header (a highly unusual and possibly suspicious
+     * event) or the <code>Host</code> header returns the localhost, the
+     * method will calculate the host name using by resolving the name of the
+     * server using the local naming service. The latter method may be less
+     * reliable if the server's host resolves to multiple names, but it
+     * should be sufficient in most cases.
+     * @param request the HTTP request
+     * @return the server name associated with the request, without trailing port number
      */
-    private static String getServerName( String server )
+    private static String getServerName( HttpServletRequest request )
     {
-        try {
-            InetAddress address = InetAddress.getByName( server );
-            server = address.getHostName();
-        }
-        catch (UnknownHostException e) 
+        String host = request.getHeader( "Host" );
+        if ( host != null && host.length() > 0 && 
+           !( host.startsWith( LOCALHOST ) || host.startsWith( LOOPBACK ) ) )
         {
-            // just use the old name... 
+            // Strip off any port numbers at the end
+            int colon = host.indexOf(':');
+            if ( colon != -1 )
+            {
+                host = host.substring( 0, colon );
+            }
         }
-        return server;
+        else
+        {
+            try {
+                InetAddress addr = InetAddress.getLocalHost();
+                host = addr.getHostName();
+                }
+                catch (UnknownHostException e) 
+                {
+                    request.getServerName(); 
+                }
+        }
+        return host;
     }
-    
+        
 }
