@@ -1,3 +1,11 @@
+2005-11-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.42
+
+        * Bold and italic markup are now carried across paragraph
+        breaks.  This is a convinience factor - XHTML does not
+        allow it, but we store the state.
+
 2005-11-08  Andrew Jaquith  <arjaquith@mindspring.com>
 
         * v2.3.41
