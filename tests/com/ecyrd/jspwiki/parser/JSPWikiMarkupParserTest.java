@@ -1072,7 +1072,15 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "<b>This is a\ntest.</b>", translate(src) );
     }
-    
+
+    public void testBoldAcrossParagraph()
+    throws Exception
+    {
+        String src="__This is a\n\ntest.__";
+        
+        assertEquals( "<b>This is a\n</b><p><b>test.</b></p>", translate(src) );
+    }
+
     public void testBoldItalic()
     throws Exception
     {
