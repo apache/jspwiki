@@ -709,8 +709,7 @@ public class JSPWikiMarkupParser
     private Element popElement( String s )
     {
         int flushedBytes = flushPlainText();
-        
-        
+    
         Element currEl = m_currentElement;
         
         while( currEl.getParentElement() != null )
@@ -1068,6 +1067,25 @@ public class JSPWikiMarkupParser
     }
 
     /**
+     *  Emits a processing instruction that will disable markup escaping. This is
+     *  very useful if you want to emit HTML directly into the stream.
+     *
+     */
+    private void disableOutputEscaping()
+    {
+        addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
+    }
+    
+    /**
+     *  Emits a processing instruction that will enable markup escaping.
+     *
+     */
+    private void enableOutputEscaping()
+    {
+        addElement( new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
+    }
+    
+    /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
     private Element handleHyperlinks( String link )
@@ -1092,9 +1110,9 @@ public class JSPWikiMarkupParser
             {
                 Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link );
 
-                addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
+                disableOutputEscaping();
                 addElement( pluginContent );
-                addElement( new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
+                enableOutputEscaping();
             }
             catch( PluginException e )
             {
@@ -1131,9 +1149,9 @@ public class JSPWikiMarkupParser
         {
             Content el = new VariableContent(link);
 
-            addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
+            disableOutputEscaping();
             addElement( el );
-            addElement( new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
+            enableOutputEscaping();
         }
         else if( isExternalLink( reallink ) )
         {
@@ -1591,22 +1609,35 @@ public class JSPWikiMarkupParser
         return buf;
     }
 
+    /** Controls whether italic is restarted after a paragraph shift */
+    
+    private boolean m_restartitalic = false;
+    private boolean m_restartbold   = false;
+    
     /**
-     *  Starts a block level element, therefore closing the
+     *  Starts a block level element, therefore closing
      *  a potential open paragraph tag.
      */
     private void startBlockLevel()
     {
-        popElement("i"); m_isitalic = false;
-        popElement("b"); m_isbold = false;
-        popElement("tt");
+        // These may not continue over block level limits in XHTML
         
+        popElement("i");
+        popElement("b");
+        popElement("tt");
+
         if( m_isOpenParagraph )
         {
             m_isOpenParagraph = false;
             popElement("p");
             m_plainTextBuf.append("\n"); // Just small beautification
         }
+
+        m_restartitalic = m_isitalic;
+        m_restartbold   = m_isbold;
+        
+        m_isitalic = false;
+        m_isbold   = false;
     }
 
     private static String getListType( char c )
@@ -2175,6 +2206,19 @@ public class JSPWikiMarkupParser
                     {
                         pushElement( new Element("p") );
                         m_isOpenParagraph = true;
+                        
+                        if( m_restartitalic )
+                        {
+                            pushElement( new Element("i") );
+                            m_isitalic = true;
+                            m_restartitalic = false;
+                        }
+                        if( m_restartbold )
+                        {
+                            pushElement( new Element("b") );
+                            m_isbold = true;
+                            m_restartbold = false;
+                        }
                     }
                 }
                 else
