@@ -9,6 +9,10 @@ import java.util.*;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.time.StopWatch;
+
+import stress.Benchmark;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -1057,6 +1061,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "&quot;Test&quot;&quot;", translate(src) );
     }
     */
+    public void testHTMLEntities()
+    throws Exception
+    {
+        String src = "& &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&";
+        
+        assertEquals( "&amp; &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&amp;", translate(src) );
+    }
+
     public void testItalicAcrossLinebreak()
     throws Exception
     {
@@ -2059,7 +2071,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Janne&apos;s test";
         
-        assertEquals( "Janne&amp;apos;s test", translate(src) );
+        assertEquals( "Janne&apos;s test", translate(src) );
     }
 
     public void testHTMLEntities2()
@@ -2067,7 +2079,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "&Auml;";
         
-        assertEquals( "&amp;Auml;", translate(src) );
+        assertEquals( "&Auml;", translate(src) );
     }
 
     public void testEmptyBold()
@@ -2085,6 +2097,22 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "<i></i>", translate(src) );
     }
+    
+    public void testRenderingSpeed1()
+       throws Exception
+    {
+        Benchmark sw = new Benchmark();
+        sw.start();
+        
+        for( int i = 0; i < 100; i++ )
+        {
+            translate( brokenPageText );
+        }
+        
+        sw.stop();
+        System.out.println("100 page renderings: "+sw+" ("+sw.toString(100)+" renderings/second)");
+    }
+    
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
         "Please ''check [RecentChanges].\n" + 
@@ -2178,6 +2206,18 @@ public class JSPWikiMarkupParserTest extends TestCase
     public static Test suite()
     {
         return new TestSuite( JSPWikiMarkupParserTest.class );
+    }
+    
+    public static Test suiteSingle( String test )
+    {
+        return new TestSuite( JSPWikiMarkupParserTest.class, test );
+    }
+    public static void main( String[] argv )
+    {
+        if( argv.length > 0 )
+            junit.textui.TestRunner.run(suiteSingle(argv[0]));
+        else
+            junit.textui.TestRunner.run(suite());
     }
 }
 
