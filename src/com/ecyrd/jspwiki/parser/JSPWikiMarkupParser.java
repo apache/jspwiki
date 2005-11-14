@@ -8,6 +8,7 @@ import java.util.*;
 import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
@@ -67,7 +68,7 @@ public class JSPWikiMarkupParser
     
      // general list handling
     private int            m_genlistlevel = 0;
-    private StringBuffer   m_genlistBulletBuffer = new StringBuffer();  // stores the # and * pattern
+    private StringBuffer   m_genlistBulletBuffer = new StringBuffer(10);  // stores the # and * pattern
     private boolean        m_allowPHPWikiStyleLists = true;
 
 
@@ -79,7 +80,7 @@ public class JSPWikiMarkupParser
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
-    private StringBuffer   m_plainTextBuf = new StringBuffer();
+    private StringBuffer   m_plainTextBuf = new StringBuffer(20);
     
     private Element        m_currentElement;
     
@@ -584,23 +585,23 @@ public class JSPWikiMarkupParser
         
         if( numChars > 0 )
         {
+            String buf;
+            
+            if( !m_allowHTML )
+            {
+                buf = escapeHTMLEntities(m_plainTextBuf);
+            }
+            else
+            {
+                buf = m_plainTextBuf.toString();
+            }
             //
             //  We must first empty the buffer because the side effect of 
             //  calling makeCamelCaseLink() is to call this routine.
             //
-            String buf = m_plainTextBuf.toString();
-            m_plainTextBuf = new StringBuffer();
-         
-            //
-            //  If there might be HTML in it, disable the output escaping
-            //  process here (yes, this does increase the DOM tree quite a lot,
-            //  if you allow HTML.)
-            //
-            if( m_allowHTML )
-            {
-                m_currentElement.addContent( new ProcessingInstruction( Result.PI_DISABLE_OUTPUT_ESCAPING, "" ));
-            }
-            
+
+            m_plainTextBuf = new StringBuffer(20);
+              
             if( m_camelCaseLinks && !m_isEscaping )
             {            
                 // System.out.println("Buffer="+buf);
@@ -678,6 +679,54 @@ public class JSPWikiMarkupParser
         
         return numChars;
     }
+
+    /**
+     *  Escapes XML entities in a HTML-compatible way (i.e. does not escape
+     *  entities that are already escaped).
+     *  
+     *  @param buf
+     *  @return
+     */
+    private String escapeHTMLEntities(StringBuffer buf)
+    {
+        StringBuffer tmpBuf = new StringBuffer( buf.length() + 20 );
+        
+        for( int i = 0; i < buf.length(); i++ )
+        {
+            char ch = buf.charAt(i);
+            
+            if( ch == '<' ) 
+            {
+                tmpBuf.append("&lt;");
+            }
+            else if( ch == '>' ) 
+            {
+                tmpBuf.append("&gt;");
+            }
+            else if( ch == '&' )
+            {
+                for( int j = (i < buf.length()-1 ) ? i+1 : i; j < buf.length(); j++ )
+                {
+                    int ch2 = buf.charAt(j);
+                    if( ch2 == ';' ) 
+                    { 
+                        tmpBuf.append(ch); 
+                        break; 
+                    }
+                    if( ch2 != '#' && !Character.isLetterOrDigit( (char)ch2) ) 
+                    { 
+                        tmpBuf.append("&amp;"); break; 
+                    }
+                }
+            }
+            else
+            {
+                tmpBuf.append( ch );
+            }
+        }
+
+        return tmpBuf.toString();
+    }
     
     private Element pushElement( Element e )
     {
@@ -748,7 +797,7 @@ public class JSPWikiMarkupParser
     private String readUntil( String endChars )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -783,7 +832,7 @@ public class JSPWikiMarkupParser
     private String readWhile( String endChars )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -1090,7 +1139,7 @@ public class JSPWikiMarkupParser
      */
     private Element handleHyperlinks( String link )
     {
-        StringBuffer sb        = new StringBuffer();
+        StringBuffer sb        = new StringBuffer(link.length()+80);
         String       reallink;
         int          cutpoint;
 
@@ -1110,9 +1159,7 @@ public class JSPWikiMarkupParser
             {
                 Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link );
 
-                disableOutputEscaping();
                 addElement( pluginContent );
-                enableOutputEscaping();
             }
             catch( PluginException e )
             {
@@ -1149,9 +1196,7 @@ public class JSPWikiMarkupParser
         {
             Content el = new VariableContent(link);
 
-            disableOutputEscaping();
             addElement( el );
-            enableOutputEscaping();
         }
         else if( isExternalLink( reallink ) )
         {
@@ -1591,7 +1636,7 @@ public class JSPWikiMarkupParser
         throws IOException
     {
         int ch;
-        StringBuffer buf = new StringBuffer();
+        StringBuffer buf = new StringBuffer( 256 );
 
         while( true )
         {
@@ -1605,7 +1650,6 @@ public class JSPWikiMarkupParser
             if( ch == '\n' ) 
                 break;
         }
-
         return buf;
     }
 
@@ -1829,7 +1873,7 @@ public class JSPWikiMarkupParser
     private Element handleOpenbracket()
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(40);
         int ch;
         boolean isPlugin = false;
 
@@ -1892,7 +1936,7 @@ public class JSPWikiMarkupParser
     private String readBraceContent( char opening, char closing )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(40);
         int braceLevel = 1;    
         int ch;        
         while(( ch = nextToken() ) != -1 )
@@ -2106,7 +2150,7 @@ public class JSPWikiMarkupParser
 
         return null;
     }
-   
+       
     private void fillBuffer( Element startElement )
         throws IOException
     {
@@ -2115,6 +2159,8 @@ public class JSPWikiMarkupParser
         boolean quitReading = false;
         boolean newLine     = true; // FIXME: not true if reading starts in middle of buffer
 
+        disableOutputEscaping();
+        
         while(!quitReading)
         {
             int ch = nextToken();
