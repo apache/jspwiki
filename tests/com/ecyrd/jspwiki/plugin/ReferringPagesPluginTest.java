@@ -108,6 +108,40 @@ public class ReferringPagesPluginTest extends TestCase
                       res );        
     }
 
+    public void testExclude()
+        throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{ReferringPagesPlugin exclude='*'}");
+
+        assertEquals( "",
+                      res );        
+    }
+
+    public void testExclude2()
+        throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{ReferringPagesPlugin exclude='*7'}");
+
+        assertTrue( res.indexOf("Foobar7") == -1 );        
+    }
+
+    public void testExclude3()
+       throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{ReferringPagesPlugin exclude='*7,*5,*4'}");
+
+        assertTrue( "7", res.indexOf("Foobar7") == -1 );        
+        assertTrue( "6", res.indexOf("Foobar6") != -1 );        
+        assertTrue( "5", res.indexOf("Foobar5") == -1 );        
+        assertTrue( "4", res.indexOf("Foobar4") == -1 );        
+        assertTrue( "3", res.indexOf("Foobar3") != -1 );        
+        assertTrue( "2", res.indexOf("Foobar2") != -1 );        
+    }
+
+
     public static Test suite()
     {
         return new TestSuite( ReferringPagesPluginTest.class );
