@@ -24,7 +24,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -52,10 +55,14 @@ public abstract class AbstractReferralPlugin
     public static final String PARAM_AFTER     = "after";
     public static final String PARAM_BEFORE    = "before";
  
+    public static final String PARAM_EXCLUDE   = "exclude";
+    
     protected           int      m_maxwidth = Integer.MAX_VALUE;
     protected           String   m_before = ""; // null not blank
     protected           String   m_separator = ""; // null not blank 
     protected           String   m_after = "\\\\";
+    
+    protected           Pattern[]  m_exclude;
     
     protected           WikiEngine m_engine;
 
@@ -64,6 +71,9 @@ public abstract class AbstractReferralPlugin
      *
      *  @since 1.6.4
      */
+
+    // FIXME: The compiled pattern strings should really be cached somehow.
+    
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
@@ -95,10 +105,56 @@ public abstract class AbstractReferralPlugin
         {
             m_after = s;
         }
+  
+        s = (String) params.get( PARAM_EXCLUDE );
+        
+        if( s != null )
+        {
+            try
+            {
+                PatternCompiler pc = new GlobCompiler();
+
+                String[] ptrns = StringUtils.split( s, "," );
+                
+                m_exclude = new Pattern[ptrns.length];
+                
+                for( int i = 0; i < ptrns.length; i++ )
+                {
+                    m_exclude[i] = pc.compile( ptrns[i] );
+                }
+            }
+            catch( MalformedPatternException e )
+            {
+                throw new PluginException("Exclude-parameter has a malformed pattern: "+e.getMessage());
+            }
+        }
         
         // log.debug( "Requested maximum width is "+m_maxwidth );
     }
-
+    
+    protected Collection filterCollection( Collection c )
+    {
+        if( m_exclude == null || m_exclude.length == 0 ) return c;
+        
+        PatternMatcher pm = new Perl5Matcher();
+        
+        for( Iterator i = c.iterator(); i.hasNext(); )
+        {
+            String pageName = (String) i.next();
+            
+            for( int j = 0; j < m_exclude.length; j++ )
+            {
+                if( pm.matches( pageName, m_exclude[j] ) )
+                {
+                    i.remove();
+                    break; // The inner loop, continue on the next item
+                }
+            }
+        }
+        
+        return c;
+    }
+    
     /**
      *  Makes WikiText from a Collection.
      *
