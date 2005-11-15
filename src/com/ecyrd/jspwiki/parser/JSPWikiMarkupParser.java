@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.parser;
 
 import java.io.IOException;
@@ -8,7 +27,6 @@ import java.util.*;
 import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
@@ -28,13 +46,12 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.CleanTextRenderer;
 
 /**
- *  This is a new class which replaces the TranslatorReader at some point.
- *  It is not yet functional, but it's getting there.  The aim is to produce
- *  a parser class to an internal DOM tree; then cache this tree and only
- *  evaluate it at output.
- *  
- * @author jalkanen
+ *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
+ *  heart and soul of JSPWiki : make sure you test properly anything that is added,
+ *  or else it breaks down horribly.
  *
+ *  @author Janne Jalkanen
+ *  @since  2.4
  */
 public class JSPWikiMarkupParser
     extends MarkupParser
@@ -602,10 +619,17 @@ public class JSPWikiMarkupParser
 
             m_plainTextBuf = new StringBuffer(20);
               
-            if( m_camelCaseLinks && !m_isEscaping )
+            //
+            //  This is the heaviest part of parsing, and therefore we can
+            //  do some optimization here.
+            //
+            //  1) Only when the length of the buffer is big enough, we try to do the match
+            //
+
+            if( m_camelCaseLinks && !m_isEscaping && buf.length() > 3 )
             {            
                 // System.out.println("Buffer="+buf);
-                    
+
                 while( m_camelCaseMatcher.contains( buf, m_camelCasePattern ) )
                 {
                     MatchResult result = m_camelCaseMatcher.getMatch();
@@ -665,7 +689,7 @@ public class JSPWikiMarkupParser
                         makeCamelCaseLink( camelCase );
                     }
                 }
-                
+
                 m_currentElement.addContent( buf );
             }
             else
@@ -1900,12 +1924,34 @@ public class JSPWikiMarkupParser
         //
 
         ch = nextToken();
+        int nesting = 1;    // Check for nested plugins
 
         while( ch != -1 )
         {
-            if( ch == ']' && (!isPlugin || sb.charAt( sb.length()-1 ) == '}' ) )
+            int ch2 = nextToken(); pushBack(ch2);
+            
+            if( isPlugin ) 
             {
-                break;
+                if( ch == '[' && ch2 == '{' ) 
+                {
+                    nesting++;
+                }
+                else if( nesting == 0 && ch == ']' && sb.charAt(sb.length()-1) == '}' ) 
+                {
+                    break;
+                }
+                else if( ch == '}' && ch2 == ']' ) 
+                {
+                    // NB: This will be decremented once at the end
+                    nesting--;
+                }
+            } 
+            else 
+            {
+                if( ch == ']' ) 
+                {
+                    break;
+                }
             }
 
             sb.append( (char) ch );
