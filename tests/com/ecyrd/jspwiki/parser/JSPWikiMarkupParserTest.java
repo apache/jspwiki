@@ -1439,6 +1439,24 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "Test  (a[]+b{}+Glob.+})", translate(src) );
     }
     
+    public void testNestedPlugin1()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\n\n[{SamplePlugin}]\nGlob.\n}}]";
+        
+        assertEquals( "Test  ([{SamplePlugin}]+Glob.+})", translate(src) );
+    }
+    
+
+    public void testNestedPlugin2()
+        throws Exception
+    {
+        String src="Test [{INSERT SamplePlugin\n\n[{SamplePlugin text='[{$foo}]'}]\nGlob.\n}}]";
+    
+        assertEquals( "Test  ([{SamplePlugin text='[{$foo}]'}]+Glob.+})", translate(src) );
+    }
+
+
     //  FIXME: I am not entirely certain if this is the right result
     //  Perhaps some sort of an error should be checked?
     public void testPluginNoEnd()
