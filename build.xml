@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.54 2005-10-25 05:50:59 arj Exp $
+    $Id: build.xml,v 1.55 2005-11-15 19:58:45 jalkanen Exp $
 -->    
        
 <!--   
@@ -663,17 +663,17 @@ To automate the JAR signing processs, you can add the property
     <input message="Your country (example: US, FI, AU):" addproperty="jks.c" />
     <input message="Keystore password (>6 characters):" addproperty="jks.password" />
     <exec dir="${basedir}" executable="keytool" failonerror="true">
-      <arg line="-genkey"/>
-      <arg line="-keysize"/>
-      <arg line="1024"/>
-      <arg line="-alias"/>
-      <arg line="${jks.alias}"/>
-      <arg line="-keystore"/>
-      <arg line="${jks.keystore}"/>
-      <arg line="-storepass"/>
-      <arg line="${jks.password}"/>
-      <arg line="-dname"/>
-      <arg line="'cn=${jks.cn}, ou=JSPWiki Code Signing Division, o=${jks.o}, c=${jks.c}'"/>
+      <arg value="-genkey"/>
+      <arg value="-keysize"/>
+      <arg value="1024"/>
+      <arg value="-alias"/>
+      <arg value="${jks.alias}"/>
+      <arg value="-keystore"/>
+      <arg value="${jks.keystore}"/>
+      <arg value="-storepass"/>
+      <arg value="${jks.password}"/>
+      <arg value="-dname"/>
+      <arg value="cn=${jks.cn}, ou=JSPWiki Code Signing Division, o=${jks.o}, c=${jks.c}"/>
     </exec>
   </target>
 
@@ -686,14 +686,14 @@ To automate the JAR signing processs, you can add the property
      <sequential>
         <echo message="Signing code with this certificate: ${jks.keystore}" />
         <exec dir="${basedir}" executable="keytool" failonerror="true">
-           <arg line="-list"/>
-           <arg line="-v"/>
-           <arg line="-alias"/>
-           <arg line="${jks.alias}"/>
-           <arg line="-keystore"/>
-           <arg line="${jks.keystore}"/>
-           <arg line="-storepass"/>
-           <arg line="${jks.password}"/>
+           <arg value="-list"/>
+           <arg value="-v"/>
+           <arg value="-alias"/>
+           <arg value="${jks.alias}"/>
+           <arg value="-keystore"/>
+           <arg value="${jks.keystore}"/>
+           <arg value="-storepass"/>
+           <arg value="${jks.password}"/>
         </exec>
         <signjar jar="@{jar}" alias="jspwiki" keystore="${jks.keystore}"
         storepass="${jks.password}" verbose="false"/>
