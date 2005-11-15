@@ -77,6 +77,7 @@ public class ReferringPagesPlugin
         
             if( links != null && links.size() > 0 )
             {
+                links = filterCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
                 if( items < links.size() && items > 0 )
