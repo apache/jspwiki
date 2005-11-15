@@ -1,4 +1,18 @@
-2005-11-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2005-11-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.44
+        
+        * Tiny JSPWikiMarkupParser speed optimizations.
+        
+        * Added build.xml patch from DaveSB to fix signing issues on 
+        Windows.
+
+        * Added patch from DaveSB to support nested plugins.
+        
+        * Added support in ReferringPagesPlugin for "exclude" -parameter:
+        use "exclude='pattern1,pattern2,pattern3'".
+
+2005-11-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.43
         
