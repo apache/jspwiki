@@ -42,6 +42,7 @@ import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
+import com.ecyrd.jspwiki.editor.EditorManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
@@ -212,6 +213,8 @@ public class WikiEngine
     private UserManager      m_userManager;
     
     private RenderingManager m_renderingManager;
+    
+    private EditorManager    m_editorManager;
     
 	/** Constructs URLs */
     private URLConstructor   m_urlConstructor;
@@ -528,6 +531,9 @@ public class WikiEngine
             m_authenticationManager = new AuthenticationManager();
             m_authorizationManager  = new AuthorizationManager();
             m_userManager           = new UserManager();
+
+            m_editorManager     = new EditorManager();
+            m_editorManager.initialize( this, props );
             
             // Initialize the authentication, authorization, user and acl managers
             m_authenticationManager.initialize( this, props );
@@ -2218,4 +2224,8 @@ public class WikiEngine
         return m_aclManager;
     }
 
+    public EditorManager getEditorManager()
+    {
+        return m_editorManager;
+    }
 }
