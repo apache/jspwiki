@@ -1,3 +1,26 @@
+2005-11-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.45 aka "The Great Template Break"
+        
+        * Added serialVersionUID to most classes that were missing it.
+        
+        * Added EditorManager class.  It's currently somewhat dummy,
+        but it should allow fully pluginizable editors in the future.
+        Incidentally, this means that we got rid of EditorAreaTag...
+        Sorry - this breaks quite a few templates out there.  But now,
+        if you want to create your editor, take a copy of 
+        editors/plain.jsp, put it in your own template directory, and
+        modify the blazes out of it.
+        
+        * Got finally rid of the very confusing "text" parameter for
+        all editors.  The new parameter name is 
+        EditorManager.REQ_EDITEDTEXT.  Note that this may break your
+        current configurations.
+        
+        * Hopefully finally fixed BugHtmlCharEntitiesMishandledInPreview.
+        
+        * Fixed BugIncorrectServletAPIVersionInREADME.
+
 2005-11-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.44
