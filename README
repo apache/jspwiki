@@ -4,8 +4,8 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.23 $
-                             $Date: 2005-04-17 08:40:36 $
+                         $Revision: 1.24 $
+                             $Date: 2005-11-22 21:42:51 $
                            $Author: jalkanen $
 
 What is it?
@@ -59,8 +59,9 @@ Okay, so you wanna Wiki?  You'll need the following things:
 
 REQUIRED:
 
-* A JSP engine that supports Servlet API 2.2.  I recommend Tomcat from
+* A JSP engine that supports Servlet API 2.3.  I recommend Tomcat from
   http://jakarta.apache.org/tomcat for a really easy installation.
+  Tomcat 4.x or later is supported.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
