@@ -3,7 +3,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-<%@ page import="com.ecyrd.jspwiki.tags.EditorAreaTag" %>
+<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="java.security.Principal" %>
@@ -31,7 +31,7 @@
     String user = wikiSession.getUserPrincipal().getName();
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() ) 
     {
-        user  = request.getParameter( "user" );
+        user  = request.getParameter( "author" );
     }
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
@@ -135,7 +135,7 @@
             pageText.append( "\n\n----\n\n" );
         }        
 
-        pageText.append( request.getParameter( EditorAreaTag.AREA_NAME ) );
+        pageText.append( EditorManager.getEditedText(pageContext) );
 
         log.debug("Author name ="+author);
         if( author != null && author.length() > 0 )
@@ -155,8 +155,6 @@
             pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
         }
 
-        wiki.saveText( wikiContext, pageText.toString() );
-
         if( remember != null )
         {
             if( link != null )
@@ -165,8 +163,11 @@
                 linkcookie.setMaxAge(1001*24*60*60);
                 response.addCookie( linkcookie );
             }
+
             CookieAssertionLoginModule.setUserCookie( response, user );            
         }
+
+        wiki.saveText( wikiContext, pageText.toString() );
 
         response.sendRedirect(wiki.getViewURL(pagereq));
         return;

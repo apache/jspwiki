@@ -1,6 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -24,7 +25,7 @@
 
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
-    String usertext = request.getParameter( "text" );
+    String usertext = request.getParameter( EditorManager.REQ_EDITEDTEXT );
 
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,

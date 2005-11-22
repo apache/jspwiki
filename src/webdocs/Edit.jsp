@@ -4,7 +4,7 @@
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-<%@ page import="com.ecyrd.jspwiki.tags.EditorAreaTag" %>
+<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="java.security.Principal" %>
@@ -41,7 +41,7 @@
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
     String author  = request.getParameter( "author" );
-    String text    = request.getParameter( EditorAreaTag.AREA_NAME );
+    String text    = EditorManager.getEditedText( pageContext );
 
     //
     //  Context is created; continue
@@ -80,7 +80,7 @@
     else
     {
         if ( pagereq.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
-    	{
+    	    {
             requiredPermission = WikiPermission.CREATE_GROUPS;
         }
         else
