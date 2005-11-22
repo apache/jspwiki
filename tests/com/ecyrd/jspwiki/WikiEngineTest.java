@@ -340,6 +340,7 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "wrong page", "test", vsp.m_latestReq );
         assertEquals( "wrong version", -1, vsp.m_latestVers );
+        assertNotNull("null", p);
     }
 
     public void testLatestGet2()
@@ -357,6 +358,7 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "wrong page", "test", vsp.m_latestReq );
         assertEquals( "wrong version", -1, vsp.m_latestVers );
+        assertNotNull("null", p);
     }
 
     public void testLatestGet3()
@@ -374,6 +376,7 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "wrong page", "test", vsp.m_latestReq );
         assertEquals( "wrong version", 5, vsp.m_latestVers );
+        assertNotNull("null", p);
     }
 
     public void testLatestGet4()
@@ -392,6 +395,7 @@ public class WikiEngineTest extends TestCase
 
         assertEquals( "wrong page", VerySimpleProvider.PAGENAME, vsp.m_latestReq );
         assertEquals( "wrong version", -1, vsp.m_latestVers );
+        assertNotNull("null", p);
     }
 
     /**

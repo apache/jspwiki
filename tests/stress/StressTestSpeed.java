@@ -8,7 +8,7 @@ import com.ecyrd.jspwiki.providers.*;
 
 public class StressTestSpeed extends TestCase
 {
-    private static int ITERATIONS = 1000;
+    private static int ITERATIONS = 100;
     public static final String NAME1 = "Test1";
 
     Properties props = new Properties();
@@ -103,6 +103,11 @@ public class StressTestSpeed extends TestCase
     public static Test suite()
     {
         return new TestSuite( StressTestSpeed.class );
+    }
+    
+    public static void main( String[] argv )
+    {
+        junit.textui.TestRunner.run(suite());
     }
 }
 
