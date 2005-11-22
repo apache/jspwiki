@@ -33,7 +33,8 @@ import java.util.Map;
 public class FormInfo
     implements Serializable
 {
-
+    private static final long serialVersionUID = 0L;
+    
     public static final int EXECUTED =  1;
     public static final int OK       =  0;
     public static final int ERROR    = -1;

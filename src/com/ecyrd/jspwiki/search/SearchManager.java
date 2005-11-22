@@ -22,13 +22,13 @@ package com.ecyrd.jspwiki.search;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
-import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Manages searching the Wiki.

@@ -28,6 +28,8 @@ package com.ecyrd.jspwiki.filters;
 public class RedirectException 
     extends FilterException
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_where;
 
     public RedirectException( String msg, String redirect )

@@ -36,6 +36,8 @@ import com.ecyrd.jspwiki.WikiEngine;
 public class RSSLinkTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public final int doWikiStartTag()
         throws IOException
     {

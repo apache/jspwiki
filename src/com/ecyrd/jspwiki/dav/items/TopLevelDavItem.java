@@ -4,7 +4,6 @@
  */
 package com.ecyrd.jspwiki.dav.items;
 
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 

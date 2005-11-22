@@ -30,6 +30,8 @@ import com.ecyrd.jspwiki.WikiException;
 public class ProviderException
     extends WikiException
 {
+    private static final long serialVersionUID = 0L;
+    
     public ProviderException( String msg )
     {
         super( msg );

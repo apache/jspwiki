@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
  */
 public class ForgetNullValuesLinkedHashMap extends LinkedHashMap
 {
+    private static final long serialVersionUID = 0L;
+    
     public Object put( Object key, Object value )
     {
         if( value != null )

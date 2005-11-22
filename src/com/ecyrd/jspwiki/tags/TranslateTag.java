@@ -37,6 +37,8 @@ import org.apache.log4j.Logger;
 public class TranslateTag
     extends BodyTagSupport
 {
+    private static final long serialVersionUID = 0L;
+    
     static    Logger    log = Logger.getLogger( TranslateTag.class );
 
     public final int doAfterBody()

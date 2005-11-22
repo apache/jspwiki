@@ -33,6 +33,8 @@ import com.ecyrd.jspwiki.WikiEngine;
 public class RSSImageLinkTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     protected String m_title;
 
     public void setTitle( String title )

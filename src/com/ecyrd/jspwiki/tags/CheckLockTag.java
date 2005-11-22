@@ -37,6 +37,8 @@ import javax.servlet.http.HttpSession;
 public class CheckLockTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public static final int LOCKED    = 0;
     public static final int NOTLOCKED = 1;
     public static final int OWNED     = 2;

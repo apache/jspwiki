@@ -7,6 +7,8 @@ import com.ecyrd.jspwiki.WikiPage;
 
 public class WikiDocument extends Document
 {
+    private static final long serialVersionUID = 0L;
+    
     private WikiPage m_page;
     private String   m_wikiText;
 

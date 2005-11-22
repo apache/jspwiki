@@ -29,6 +29,8 @@ import com.ecyrd.jspwiki.WikiException;
 public class FilterException 
     extends WikiException
 {
+    private static final long serialVersionUID = 0L;
+    
     public FilterException( String msg )
     {
         super( msg );

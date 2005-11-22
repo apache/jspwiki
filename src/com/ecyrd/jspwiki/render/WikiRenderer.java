@@ -2,8 +2,6 @@ package com.ecyrd.jspwiki.render;
 
 import java.io.IOException;
 
-import org.jdom.Document;
-
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;

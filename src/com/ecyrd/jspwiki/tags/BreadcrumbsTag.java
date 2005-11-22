@@ -49,6 +49,8 @@ import java.util.LinkedList;
  */
 public class BreadcrumbsTag extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private static final Logger log = Logger.getLogger(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
@@ -146,7 +148,8 @@ public class BreadcrumbsTag extends WikiTagBase
         implements Serializable
     {
         private int m_size;
-
+        private static final long serialVersionUID = 0L;
+        
         FixedQueue(int size)
         {
             m_size = size;

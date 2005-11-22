@@ -41,6 +41,8 @@ import com.ecyrd.jspwiki.WikiPage;
 public class PageInfoLinkTag
     extends WikiLinkTag
 {
+    private static final long serialVersionUID = 0L;
+    
     public final int doWikiStartTag()
         throws IOException
     {

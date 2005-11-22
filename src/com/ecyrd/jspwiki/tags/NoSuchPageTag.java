@@ -34,6 +34,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class NoSuchPageTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_pageName;
 
     public void setPage( String name )

@@ -96,6 +96,8 @@ import org.apache.log4j.Logger;
 public class CookieTag 
     extends TagSupport
 {
+    private static final long serialVersionUID = 0L;
+    
     private static Logger log = Logger.getLogger( CookieTag.class );
 
     /** Name of the cookie value. Required. */

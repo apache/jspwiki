@@ -43,6 +43,8 @@ import com.ecyrd.jspwiki.WikiPage;
 public class EditLinkTag
     extends WikiLinkTag
 {
+    private static final long serialVersionUID = 0L;
+    
     public String m_version = null;
 
     public void setVersion( String vers )

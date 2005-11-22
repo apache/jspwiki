@@ -39,6 +39,8 @@ import com.ecyrd.jspwiki.WikiContext;
 public class CommentLinkTag
     extends WikiLinkTag
 {
+    private static final long serialVersionUID = 0L;
+    
     public final int doWikiStartTag()
         throws IOException
     {

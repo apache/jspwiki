@@ -13,7 +13,8 @@ import java.util.Set;
  */
 public class PersistentMapDecorator extends Properties
 {
-
+    private static final long serialVersionUID = 0L;
+    
     private Map delegate;
 
     public PersistentMapDecorator( Map delegate )

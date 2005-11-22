@@ -40,6 +40,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class InsertPageTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public static final int HTML  = 0;
     public static final int PLAIN = 1;
 

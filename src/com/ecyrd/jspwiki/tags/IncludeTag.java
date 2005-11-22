@@ -36,6 +36,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class IncludeTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     protected String m_page;
 
     public void setPage( String page )

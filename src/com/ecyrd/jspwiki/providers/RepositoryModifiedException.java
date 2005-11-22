@@ -34,6 +34,8 @@ package com.ecyrd.jspwiki.providers;
 public class RepositoryModifiedException
     extends ProviderException
 {
+    private static final long serialVersionUID = 0L;
+    
     protected String m_page;
     
     /**

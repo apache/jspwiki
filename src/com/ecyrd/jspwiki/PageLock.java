@@ -6,6 +6,8 @@ import java.util.Date;
 public class PageLock
     implements Serializable
 {
+    private static final long serialVersionUID = 0L;
+    
     private String   m_page;
     private String   m_locker;
     private Date     m_lockAcquired;

@@ -38,6 +38,8 @@ import com.ecyrd.jspwiki.*;
 public class ContentTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private static Properties c_defaultMappings;
 
     private Properties m_mappings = new Properties( c_defaultMappings );

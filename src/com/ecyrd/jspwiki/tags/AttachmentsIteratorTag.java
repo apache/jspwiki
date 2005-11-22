@@ -49,6 +49,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class AttachmentsIteratorTag
     extends IteratorTag
 {
+    private static final long serialVersionUID = 0L;
+    
     static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
 
     public final int doStartTag()

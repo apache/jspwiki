@@ -39,6 +39,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class LinkToParentTag
     extends LinkToTag
 {
+    private static final long serialVersionUID = 0L;
+    
     public int doWikiStartTag()
         throws IOException
     {

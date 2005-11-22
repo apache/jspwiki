@@ -41,6 +41,8 @@ import com.ecyrd.jspwiki.WikiPage;
 public class InsertDiffTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public static final String ATTR_OLDVERSION = "insertdiff.old";
     public static final String ATTR_NEWVERSION = "insertdiff.new";
 

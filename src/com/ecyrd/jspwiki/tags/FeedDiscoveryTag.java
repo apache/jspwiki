@@ -36,7 +36,8 @@ import com.ecyrd.jspwiki.TextUtil;
 public class FeedDiscoveryTag
     extends WikiTagBase
 {
-
+    private static final long serialVersionUID = 0L;
+    
     public final int doWikiStartTag()
         throws IOException
     {

@@ -35,6 +35,8 @@ import com.ecyrd.jspwiki.TranslatorReader;
 public class AuthorTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public final int doWikiStartTag()
         throws IOException
     {

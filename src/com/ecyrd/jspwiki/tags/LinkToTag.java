@@ -43,6 +43,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class LinkToTag
     extends WikiLinkTag
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_version = null;
 
     public String getVersion()

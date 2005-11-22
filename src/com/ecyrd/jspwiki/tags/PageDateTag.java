@@ -43,6 +43,8 @@ import com.ecyrd.jspwiki.WikiPage;
 public class PageDateTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public static final String DEFAULT_FORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
     private String m_format = null;

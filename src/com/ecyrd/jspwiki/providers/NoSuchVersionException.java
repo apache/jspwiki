@@ -6,6 +6,8 @@ package com.ecyrd.jspwiki.providers;
 public class NoSuchVersionException
     extends ProviderException
 {
+    private static final long serialVersionUID = 0L;
+    
     public NoSuchVersionException( String msg )
     {
         super( msg );

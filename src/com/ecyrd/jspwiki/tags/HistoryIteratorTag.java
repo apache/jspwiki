@@ -47,6 +47,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class HistoryIteratorTag
     extends IteratorTag
 {
+    private static final long serialVersionUID = 0L;
+    
     static    Logger    log = Logger.getLogger( HistoryIteratorTag.class );
 
     public final int doStartTag()

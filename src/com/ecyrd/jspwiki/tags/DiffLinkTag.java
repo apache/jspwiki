@@ -48,6 +48,8 @@ import com.ecyrd.jspwiki.WikiProvider;
 public class DiffLinkTag
     extends WikiLinkTag
 {
+    private static final long serialVersionUID = 0L;
+    
     public static final String VER_LATEST   = "latest";
     public static final String VER_PREVIOUS = "previous";
     public static final String VER_CURRENT  = "current";

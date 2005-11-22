@@ -43,6 +43,8 @@ import com.ecyrd.jspwiki.plugin.PluginManager;
 public class PluginTag
     extends WikiBodyTag
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_plugin;
     private String m_args;
 

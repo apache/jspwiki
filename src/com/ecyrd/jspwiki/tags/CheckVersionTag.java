@@ -39,6 +39,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class CheckVersionTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     public static final int LATEST    = 0;
     public static final int NOTLATEST = 1;
     public static final int FIRST     = 2;

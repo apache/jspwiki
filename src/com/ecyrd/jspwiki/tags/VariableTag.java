@@ -46,6 +46,8 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
 public class VariableTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_var      = null;
     private String m_default  = null;
     

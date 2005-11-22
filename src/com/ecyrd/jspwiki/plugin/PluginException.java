@@ -24,6 +24,8 @@ import com.ecyrd.jspwiki.WikiException;
 public class PluginException 
     extends WikiException
 {
+    private static final long serialVersionUID = 0L;
+    
     private Throwable m_throwable;
     
     public PluginException( String message )

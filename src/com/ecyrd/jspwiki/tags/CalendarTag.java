@@ -59,6 +59,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class CalendarTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private SimpleDateFormat m_pageFormat = null;
     private SimpleDateFormat m_urlFormat = null;
     private SimpleDateFormat m_monthUrlFormat = null;

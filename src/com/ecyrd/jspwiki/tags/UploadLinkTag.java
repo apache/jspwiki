@@ -40,6 +40,8 @@ import com.ecyrd.jspwiki.WikiContext;
 public class UploadLinkTag
     extends WikiLinkTag
 {
+    private static final long serialVersionUID = 0L;
+    
     public final int doWikiStartTag()
         throws IOException
     {

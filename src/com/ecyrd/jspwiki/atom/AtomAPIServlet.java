@@ -51,7 +51,9 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class AtomAPIServlet extends HttpServlet
 {
     Logger log = Logger.getLogger( AtomAPIServlet.class ); 
-
+    
+    private static final long serialVersionUID = 0L;
+    
     private WikiEngine       m_engine;
 
     /**

@@ -34,6 +34,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class CheckRequestContextTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_context;
     private String[] m_contextList = {};
     

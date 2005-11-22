@@ -38,6 +38,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class PageTypeTag
     extends WikiTagBase
 {
+    private static final long serialVersionUID = 0L;
+    
     private String m_type;
 
     public void setType( String arg )
