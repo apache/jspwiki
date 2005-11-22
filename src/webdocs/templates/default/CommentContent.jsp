@@ -1,43 +1,23 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-      <table width="100%" cellspacing="0" cellpadding="0" border="0">
-         <tr>
-            <td align="left">
-                <h1 class="pagename">Adding comment to <wiki:PageName/></h1></td>
-            <td align="right">
-                <%@ include file="SearchBox.jsp" %>
-            </td>
-         </tr>
-      </table>
+<div class="tabmenu">
+  <span><a id="menu-pagecontent" onclick="TabbedSection.onclick('pagecontent')" accesskey="d"><u>D</u>iscussion Page</a></span>
+  <span><a class="activetab" id="menu-addcomment" onclick="TabbedSection.onclick('addcomment')" accesskey="c">Add a <u>c</u>omment</a></span>
+  <span><a id="menu-edithelp" onclick="TabbedSection.onclick('edithelp')"  accesskey="h"><u>H</u>elp</a></span>
+</div>
 
-      <hr />
+<div class="tabs">
+<div id="pagecontent" style="display:none;">
+  <wiki:InsertPage/>
+</div>
 
-      <wiki:InsertPage/>
+<div id="addcomment">
 
-      <h3>Please enter your comments below:</h3>
+  <wiki:Include page="editors/plain.jsp"/>
 
-      <wiki:Editor name="commentForm">
+</div>
 
-        <wiki:EditorArea/>
-
-        <table border="0">
-          <tr>
-            <td><label for="authorname">Your name</label></td><td><input type="text" name="author" id="authorname" value="<wiki:UserName/>" /></td>
-            <td><label for="rememberme">Remember me?</label></td><td><input type="checkbox" name="remember" id="rememberme" /></td>
-          </tr>
-          <tr>
-            <td><label for="link">Homepage or email</label></td><td colspan="3"><input type="text" name="link" id="link" value="<%=pageContext.getAttribute("link",PageContext.REQUEST_SCOPE)%>" /></td>
-          </tr>
-        </table>
-
-        <p>
-        <input type="submit" name="ok" value="Save" />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="preview" value="Preview" />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Cancel" />
-        </p>
-      </wiki:Editor>
+<div id="edithelp" style="display:none">
 
       <wiki:NoSuchPage page="EditPageHelp">
          <div class="error">
@@ -46,6 +26,6 @@
          </div>
       </wiki:NoSuchPage>
 
-      <div id="editpagehelp">
-         <wiki:InsertPage page="EditPageHelp" />
-      </div>
+      <wiki:InsertPage page="EditPageHelp" />
+</div>
+</div>

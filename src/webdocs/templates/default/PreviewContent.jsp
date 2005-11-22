@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
 
 <%-- Inserts page content for preview. --%>
 
@@ -11,7 +12,7 @@
    <p><hr /></p>
 
    <div class="previewcontent">
-      <wiki:Translate><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></wiki:Translate>
+      <wiki:Translate><%=EditorManager.getEditedText(pageContext)%></wiki:Translate>
    </div>
 
    <br clear="all" />
@@ -25,14 +26,4 @@
 
    <p><hr /></p>
 
-   <wiki:Editor>
-     <textarea rows="4" cols="20" readonly="true" style="display:none" name="text"><%=StringEscapeUtils.escapeXml((String)pageContext.getAttribute("usertext", PageContext.REQUEST_SCOPE)) %></textarea>
-
-     <div id="previewsavebutton" align="center">
-        <input type="submit" name="edit" value="Keep editing" />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="ok" value="Save" />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Cancel" />
-     </div>
-    </wiki:Editor>
+   <wiki:Editor/>
