@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    This is the JSPWiki default module property file.  It contains descriptors for each
+    JSPWiki Core Module (i.e stuff that is included with JSPWiki).  If a descriptor
+    is missing, that doesn't mean that we don't have it; we just in that case fall
+    back to defaults.
+-->
+<modules>
+
+   <editor name="plain">
+      <author>Janne Jalkanen</author>
+      <path>editors/plain.jsp</path>
+   </editor>
+   
+   <editor name="FCK">
+      <author>Janne Jalkanen</author>
+      <path>editors/FCK.jsp</path>
+   </editor>
+
+</modules>
