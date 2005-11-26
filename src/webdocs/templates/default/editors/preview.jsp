@@ -2,12 +2,12 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.*" %>
-<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
+<%@ page import="com.ecyrd.jspwiki.ui.*" %>
 
 <%--
         This is a special editor component for JSPWiki preview storage.
 --%>
-<% WikiContext context = (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE ); %>
+<% WikiContext context = WikiContext.findContext( pageContext ); %>
 <% String usertext = (String)pageContext.getAttribute( EditorManager.ATTR_EDITEDTEXT, PageContext.REQUEST_SCOPE ); %>
 <% if( usertext == null ) usertext = ""; %>
 

@@ -2,12 +2,12 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.*" %>
-<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
+<%@ page import="com.ecyrd.jspwiki.ui.*" %>
 
 <%--
         This is a plain editor for JSPWiki.
 --%>
-<% WikiContext context = (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE ); %>
+<% WikiContext context = WikiContext.findContext( pageContext ); %>
 <% String usertext = EditorManager.getEditedText( pageContext ); %>
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
@@ -55,3 +55,23 @@
         <input name='cancel' type='submit' value='Cancel' />
     </p>
 </form>
+
+    <%-- Search and replace section --%>
+    <form name="searchbar" id="searchbar" action="#">
+      <label for="findText">Find:</label>
+      <input type="text" id="findText" size="16"/>
+      <label for="replaceText">Replace:</label>
+      <input type="text" id="replaceText" size="16"/>
+
+      <input type="checkbox" id="matchCase" /><label for="matchCase">Match Case</label>
+      <input type="checkbox" id="regExp" /><label for="regExp">RegExp</label>
+      <input type="checkbox" id="global" checked="checked"/><label for="global">Replace all</label>
+      &nbsp;
+      <input type="button" id="replace" value="Replace" onclick="Wiki.editReplace(this.form, document.getElementById('sectionTextArea') );" />
+
+      <span id="undoHideOrShow" style="visibility:hidden;" >
+        <input type="button" id="undo" value="Undo" onclick="Wiki.editUndo(this.form, document.getElementById('sectionTextArea') );" />
+      </span>
+      <input type="hidden" id="undoMemory" value="" />
+    </form>
+    
