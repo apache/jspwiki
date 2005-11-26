@@ -1,9 +1,11 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
   <link rel="stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" />
   <script src="<wiki:BaseURL/>scripts/search_highlight.js" type="text/javascript"></script>
   <script src="<wiki:BaseURL/>scripts/jspwiki-common.js" type="text/javascript"></script>
+  <wiki:IncludeResources/>
   <meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
   <link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
   <link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
