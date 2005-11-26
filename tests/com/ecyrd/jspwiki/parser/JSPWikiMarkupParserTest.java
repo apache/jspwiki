@@ -1909,7 +1909,22 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "Janne Jalkanen", p.getAttribute("name") );
         assertEquals( "Janne Jalkanen", p.getAttribute("too") );
     }
+
+    public void testSetHTML()
+    throws Exception
+    {
+        String src = "Foobar.[{SET name='<b>danger</b>'}] [{$name}]";
+        
+        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        
+        String res = translate( p, src );
+        
+        assertEquals("Page text", "Foobar. &lt;b&gt;danger&lt;/b&gt;", res);
+        
+        assertEquals( "<b>danger</b>", p.getAttribute("name") );
+    }
     
+
     /**
      *  Test collection of links.
      */
