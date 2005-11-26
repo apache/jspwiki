@@ -42,7 +42,6 @@ import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
-import com.ecyrd.jspwiki.editor.EditorManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
@@ -53,6 +52,8 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.render.RenderingManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.search.SearchManager;
+import com.ecyrd.jspwiki.ui.EditorManager;
+import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
