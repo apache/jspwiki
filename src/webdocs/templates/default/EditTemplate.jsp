@@ -9,15 +9,14 @@
   <title><wiki:Variable var="ApplicationName" /> Edit: <wiki:PageName /></title>
   <meta name="ROBOTS" content="NOINDEX" />
   <wiki:Include page="commonheader.jsp"/>
-  <!-- <script type="text/javascript" src="scripts/fckeditor/fckeditor.js"></script> -->
 </head>
 
 <wiki:CheckRequestContext context="edit">
-  <body class="edit" bgcolor="#D9E8FF" onload="document.editForm.text.focus()">
+  <body class="edit" bgcolor="#D9E8FF">
 </wiki:CheckRequestContext>
 
 <wiki:CheckRequestContext context="comment">
-  <body class="comment" bgcolor="#EEEEEE" onload="document.commentForm.text.focus()">
+  <body class="comment" bgcolor="#EEEEEE">
 </wiki:CheckRequestContext>
 
 
