@@ -229,12 +229,6 @@
   </tag>
 
   <tag>
-     <name>EditorArea</name>
-     <tagclass>com.ecyrd.jspwiki.tags.EditorAreaTag</tagclass>
-     <bodycontent>empty</bodycontent>
-  </tag>
-  
-  <tag>
     <name>FeedDiscovery</name>
     <tagclass>com.ecyrd.jspwiki.tags.FeedDiscoveryTag</tagclass>
     <bodycontent>empty</bodycontent>
@@ -270,6 +264,12 @@
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
+  </tag>  
+
+  <tag>
+    <name>IncludeResources</name>
+    <tagclass>com.ecyrd.jspwiki.tags.IncludeResourcesTag</tagclass>
+    <bodycontent>empty</bodycontent>
   </tag>  
 
   <tag>
@@ -449,6 +449,20 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
+
+  <tag>
+    <name>RequestResource</name>
+    <tagclass>com.ecyrd.jspwiki.tags.RequestResourceTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>type</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>path</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+  </tag>  
 
   <tag>
     <name>RSSLink</name>
