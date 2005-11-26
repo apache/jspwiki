@@ -1,5 +1,41 @@
 2005-11-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * 2.3.46
+
+        * Reworked EditContent.jsp to account for changes in editor
+        system.
+
+        * Variable content is now escaped before shown.  Thanks to
+        Gregor Hagedorn for pointing this out.
+
+        * Added new package: module, containing ModuleManager and
+        WikiModuleInfo classes.
+
+        * Added WikiContext.findContext() to make life a bit easier
+        for template writers.
+        
+        * Moved TemplateManager to new package: ui.
+
+        * Added etc/ini/jspwiki_module.xml to contain some defaults.
+
+        * Added WikiServletFilter and the ability for plugins, etc to
+        request an injection of things in the header.  This is done by
+        adding <wiki:InsertResources> in commonheader.jsp.  It inserts
+        a particularly formatted comment in the header, which is then
+        replaced by WikiServletFilter.  A plugin may request a script
+        or a CSS file by using new methods in TemplateManager. Based
+        on ideas and code by Kees Kuip.
+
+        * Removed editors from Java files and put them in JSP files
+        under templates/default/editors/.  It's now possible for a template
+        to override any editor, or to use any editor they like.  It
+        should also make editors pluggable components.
+
+        * Continuing template rework.  Reworked EditorTag, removed 
+        EditorAreaTag. Added RequestResourceTag and InsertResourcesTag.
+
+2005-11-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * 2.3.45 aka "The Great Template Break"
         
         * Added serialVersionUID to most classes that were missing it.
