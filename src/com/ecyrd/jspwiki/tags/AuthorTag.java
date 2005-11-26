@@ -20,14 +20,16 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.TranslatorReader;
+import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
- *  Writes the author name of the current page.
+ *  Writes the author name of the current page, including a link to that page,
+ *  if that page exists.
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -52,11 +54,13 @@ public class AuthorTag
                 // FIXME: It's very boring to have to do this.
                 //        Slow, too.
 
-                TranslatorReader tr = new TranslatorReader( m_wikiContext, 
-                                                            new StringReader("") );
-                author = tr.makeLink( TranslatorReader.READ,
-                                      author,
-                                      author );
+                RenderingManager mgr = engine.getRenderingManager();
+                
+                MarkupParser p = mgr.getParser( m_wikiContext, "["+author+"|"+author+"]" );
+
+                WikiDocument d = p.parse();
+                
+                author = mgr.getHTML( m_wikiContext, d );
             }
             pageContext.getOut().print( author );
 
