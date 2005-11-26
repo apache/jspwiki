@@ -8,7 +8,8 @@
         This is a plain editor for JSPWiki.
 --%>
 <% WikiContext context = WikiContext.findContext( pageContext ); %>
-<% String usertext = EditorManager.getEditedText( pageContext ); %>
+<% String usertext = EditorManager.getEditedText( pageContext ); 
+   TemplateManager.addResourceRequest( context, "script", "scripts/searchreplace.js" );%>
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
     {
@@ -67,10 +68,10 @@
       <input type="checkbox" id="regExp" /><label for="regExp">RegExp</label>
       <input type="checkbox" id="global" checked="checked"/><label for="global">Replace all</label>
       &nbsp;
-      <input type="button" id="replace" value="Replace" onclick="Wiki.editReplace(this.form, document.getElementById('sectionTextArea') );" />
+      <input type="button" id="replace" value="Replace" onclick="SearchReplace.editReplace(this.form, document.getElementById('editorarea') );" />
 
       <span id="undoHideOrShow" style="visibility:hidden;" >
-        <input type="button" id="undo" value="Undo" onclick="Wiki.editUndo(this.form, document.getElementById('sectionTextArea') );" />
+        <input type="button" id="undo" value="Undo" onclick="SearchReplace.editUndo(this.form, document.getElementById('editorarea') );" />
       </span>
       <input type="hidden" id="undoMemory" value="" />
     </form>
