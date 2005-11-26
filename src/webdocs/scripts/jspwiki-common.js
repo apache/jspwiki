@@ -1,7 +1,135 @@
-// 004. Zebra tables  DF / May 2004
-// %%zebra-table
-//
-var zebraCnt ;
+/*
+ *  Contains a large amount of different UI-related utility Javascript
+ *  for JSPWiki.
+ *  (C) Dirk Fredericx, Janne Jalkanen 2005
+ */
+
+/**
+ ** 010 String stuff
+ **/
+
+// repeat string size time
+String.prototype.repeat = function( size )
+{
+   var a = new Array( size );
+   for( var i=0; i < size; i++ ) { a[i] = this; }
+   return( a.join("") );
+}
+// remove leading and trailing whitespace
+String.prototype.trim = function() 
+{
+  return this.replace(/^\s+|\s+$/g,'')
+}
+// split CamelCase string in readable string
+String.prototype.deCamelize = function()
+{
+  return this.replace(/([a-z])([A-Z])/g,'$1 $2');
+}
+// parse color : prefix with # if amtched with 3 or 6 hex codes
+var REparseColor =  new RegExp( "^[0-9a-fA-F]+" );
+String.prototype.parseColor = function()
+{
+  var s = this;
+  if( ((s.length==6) || (s.length==3)) && REparseColor.test(s) ) s = "#" + s;
+  return( s );
+}
+
+/**
+ ** 020 Array stuff
+ **/
+if( !Array.prototype.push ) Array.prototype.push = function() 
+{
+  for (var i=0; i<arguments.length; i++) this[this.length] = arguments[i];
+  return this.length; 
+}
+Array.prototype.first = function() { return this[0] }
+Array.prototype.last  = function() { return this[this.length-1] }
+
+/**
+ ** 030 DOM document functions
+ **/
+ 
+// get text of a dhtml node
+getNodeText = function( node )
+{
+  if( node.nodeType == 3)  return( node.nodeValue );
+
+  var s = "";
+  for( var n = node.firstChild; n ; n = n.nextSibling )
+  {
+    s += this.getNodeText( n );
+  }
+  return( s );
+}
+
+// find first ancestor element with tagName
+function getAncestorByTagName( node, tagName ) 
+{
+  if( !node) return null;
+  if( node.nodeType == 1 && (node.tagName.toLowerCase() == tagName.toLowerCase()))
+    return node;
+  else
+    return getAncestorByTagName( node.parentNode, tagName );
+}
+
+// walk all ancestors and match node with the given classname
+function getAncestorsByClassName ( node, clazz, matchFirst)
+{
+  var result = [];
+  var re = new RegExp ('(?:^| )'+clazz+'(?: |$)');  
+  while( node )
+  { 
+    if( re.test( node.className ) )
+    {
+      if( matchFirst ) return( node );
+      result.push( node );
+    }
+    node = node.parentNode;
+  }
+  return( (result.length==0) ? null : result ); 
+}
+
+
+// returns an array of elements matching the classname
+// returns only the first element matching the classname when matchFirst is true
+// returns null when nothing found
+function getElementsByClassName( node, clazz, matchFirst )
+{
+  var result = [];
+  var re;
+  if( clazz instanceof RegExp) { re = clazz; } 
+  else if( typeof clazz == 'string' ) { re = new RegExp ('(?:^| )'+clazz+'(?: |$)'); }
+  else return null;
+
+  var n = (node.all) ? node.all : node.getElementsByTagName("*");
+  for( var i=0; i<n.length; i++ )
+  { 
+    if( re.test(n[i].className) )  
+    { 
+      if( matchFirst ) return(n[i]);
+      result.push(n[i]); 
+    }
+  }
+  return( (result.length==0) ? null : result );
+}
+
+  
+// className = css class name of any element
+// matchFirst = true, when matching only the first occurence
+document.getElementsByClassName = function( className, matchFirst ) 
+{
+  return getElementsByClassName( document.documentElement, className, matchFirst );
+}
+
+// tagName = name of element, like DIV...
+// className = css class name
+// matchFirst = true, when matching only the first occurence
+document.getElementsByTagAndClassName = function( tagName, className, matchFirst )
+{
+  return getElementsByClassName( this.getElementsByTagName( tagName ) 
+                               , className, matchFirst );
+}
+
 
 /**
  ** Wiki functions
@@ -71,58 +199,40 @@ Wiki.showLoadedImage = function ()
   attachImg.innerHTML = "Loading image " + this.countdown
 }
 
-// called after loading the page
-function validateZebraTable()
+
+// initialise Wiki global object
+Wiki.onPageLoad = function()
 {
-  if (!document.createElement) return;
+  // mirrors commonheader.jsp !
+  var c = document.getCookie( "JSPWikiUserPrefs" );
+  if( c == null ) c=""; 
+  var cArr = c.split(Wiki.DELIM);
+  this.prefSkinName       = (cArr[0] ? cArr[0] : "PlainVanilla/SkinVanilla.css" );
+  this.prefDateFormat     = (cArr[1] ? cArr[1] : "" );
+  this.prefTimeZone       = (cArr[2] ? cArr[2] : "" );
+  this.prefEditAreaHeight = (cArr[3] ? parseInt(cArr[3]) : 24 );
+  this.prefShowQuickLinks = (cArr[4] ? (cArr[4]=="yes") : true);
+  this.prefShowCalendar   = (cArr[5] ? (cArr[5]=="yes") : false);
 
-  // find a <div class="zebra-table"> element
-  var divArr = document.getElementsByTagName("div");
-  if (! divArr) return; 
-
-  for (var i=0; i<divArr.length; i++) 
-  {
-    if ( divArr[i].className == "zebra-table" )
-    {
-      zebraCnt = 0;
-      validateZebraTableNode(divArr[i]);   
-    } 
-  }  
-
+  var u = document.getCookie( "JSPWikiUserProfile" );
+  var reUsername = new RegExp ( 'username=(\\w+)' );
+  this.username = ( reUsername.test(u) ) ? RegExp.$1 : null;
 }
 
-// returns an array of elements matching the classname
-// returns only the first element matching the classname when matchFirst is true
-// returns null when nothing found
-function getElementsByClassName( node, clazz, matchFirst )
-{
-  var result = [];
-  var re;
-  if( clazz instanceof RegExp) { re = clazz; }
-  else if( typeof clazz == 'string' ) { re = new RegExp ('(?:^| )'+clazz+'(?: |$)'); }
-  else return null;
 
-  var n = (node.all) ? node.all : node.getElementsByTagName("*");
-  for( var i=0; i<n.length; i++ )
-  {
-    if( re.test(n[i].className) )
-    {
-      if( matchFirst ) return(n[i]);
-      result.push(n[i]);
-    }
-  }
-  return ( (result.length==0) ? null : result );
-}
-
-function getCookie( name )
-{
-  var reMatchCookie = new RegExp ( "(?:; )?" + name + "=([^;]*);?" );
-  return( reMatchCookie.test( document.cookie ) ? decodeURIComponent(RegExp.$1) : null );
-}
-
-function setCookie( name, value, expires, path, domain, secure )
+/**
+ ** 040  cookie stuff 
+ **/
+document.setCookie = function( name, value, expires, path, domain, secure )
 {
   var c = name + "=" + encodeURIComponent( value );
+
+  if( !expires )
+  {
+    expires = new Date();
+	expires.setFullYear( expires.getFullYear() + 1 );
+  }
+
   if( expires ) { c += "; expires=" + expires.toGMTString(); } // Date()
   if( path    ) { c += "; path=" + path; }
   if( domain  ) { c += "; domain=" + domain; }
@@ -131,22 +241,10 @@ function setCookie( name, value, expires, path, domain, secure )
   document.cookie = c;
 }
 
-function validateZebraTableNode(node)
+document.getCookie = function( name )
 {
-  if ( node.nodeName == "TR") 
-  {
-     zebraCnt++;
-     if (zebraCnt % 2 == 1) node.className = "odd";
-  }
-  
-  if (node.hasChildNodes) 
-  {
-    for (var i=0; i<node.childNodes.length; i++) 
-    { 
-      validateZebraTableNode(node.childNodes[i]);
-    }
-  }
-
+  var reMatchCookie = new RegExp ( "(?:; )?" + name + "=([^;]*);?" );
+  return( reMatchCookie.test( document.cookie ) ? decodeURIComponent(RegExp.$1) : null );
 }
 
 // Select skin
@@ -166,19 +264,19 @@ function skinSelect(skin)
 }
 
 /**
- ** Tabbed Section
+ ** 110 Tabbed Section
  **/
-var TabbedSection = new Object();
+var TabbedSection = new Object(); 
 TabbedSection.reMatchTabs = new RegExp( "(?:^| )tab-(\\S+)" );
 TabbedSection.onPageLoad = function()
 {
-  var t = getElementsByClassName( "tabbedSection" );
+  var t = document.getElementsByClassName( "tabbedSection" );
   if( !t ) return;
 
   for( var i = 0; i<t.length; i++)
   {
     if( !t[i].hasChildNodes ) continue; //take next section
-
+    
     t[i].className = t[i].className +" tabs";
     var tabmenu = [];
     var active = true; //first tab assumed to be the active one
@@ -186,14 +284,14 @@ TabbedSection.onPageLoad = function()
     {
       if( !this.reMatchTabs.test( n.className ) ) continue; // not a tab: take next element
 
-      if ( (n.id==null) || (n.id=="") ) n.id = n.className;
+      if( (n.id==null) || (n.id=="") ) n.id = n.className;
       n.style.display = ( active ? "" : "none" );
 
-      /* <span><a class="active" href="#" id="menu-tabID"
+      /* <span><a class="active" href="#" id="menu-tabID" 
                  onclick="TabbedSection.onclick('tabID')" >xyz</a></span>
       */
-      tabmenu.push( "<span><a class='" + ( active ? "activetab" : "" ) + "' " );
-      tabmenu.push( "id='menu-" + n.id + "'" );
+      tabmenu.push( "<span><a class='" + ( active ? "activetab" : "" ) + "' " ); 
+      tabmenu.push( "id='menu-" + n.id + "'" ); 
       tabmenu.push( "onclick='TabbedSection.onclick(\"" + n.id + "\")' >" );
       tabmenu.push( RegExp.$1.deCamelize() + "</a></span>" );
       active=false;
@@ -204,76 +302,35 @@ TabbedSection.onPageLoad = function()
     e.innerHTML = tabmenu.join( "" );
     t[i].parentNode.insertBefore( e, t[i] );
 
-  } // take next section
+  } // take next section  
 
 }
 
 TabbedSection.onclick = function ( tabId )
 {
   var target = document.getElementById( tabId );
+  //safari and ie choke on some <a /> elements inside e.g. DiffContents.jsp
+  //so it would be more safe to walk the parent-path until you find the 
+  //element with classname == tabs . ugh - DF oct 2004
   var section = target.parentNode;
 
+  if( !section ) return;
+  
   for( var n = section.firstChild; n ; n = n.nextSibling )
   {
+    //alert( n.tagName+" " + n.id + " " +n.className + " " + n.innerHTML);
+    if( !n.id ) continue;
     var m = document.getElementById( "menu-" + n.id );
     if( m && m.className == "activetab" )
     {
+      if( n.id == target.id ) break; //stop - is already activetab
       n.style.display = "none";
       m.className = "";
       target.style.display = "";
       document.getElementById( "menu-" + target.id ).className = "activetab";
       break;
     }
-  }
-  return false;
-}
-
-/*
- * Edit Find & Replace functionality
- */
-Wiki.editReplace = function(form, dataField)
-{
-  if( !form ) return;
-  var findText    = form.findText.value; if( findText == "") return;
-  var replaceText = form.replaceText.value;
-  var isRegExp    = form.regExp.checked;
-  var reGlobal    = ((form.global.checked) ? "g" : "") ;
-  var reMatchCase = ((form.matchCase.checked) ? "" : "i") ;
-  var data = dataField.value;
-
-  if( !isRegExp ) /* escape all special re characters */
-  {
-    var re = new RegExp( "([\.\*\\\?\+\[\^\$])", "gi");
-    findText = findText.replace(re,"\\$1");
-  }
-  
-  var re = new RegExp(findText, reGlobal+reMatchCase+"m"); //multiline
-  if( !re.exec(data) )
-  {
-    alert("No match found!");
-    return(true);
-  } 
-    
-  data = data.replace(re,replaceText);  
-
-  form.undoMemory.value = dataField.value; 
-  var undoButton = document.getElementById("undoHideOrShow"); //!! to elements now
-  undoButton.style.visibility = "visible";
-  dataField.value = data;    
-  if( dataField.onchange ) dataField.onchange();
-  
-  return(true);
-}
-
-Wiki.editUndo = function(form, dataField)
-{
-  var undoButton = document.getElementById("undoHideOrShow");
-  if( undoButton.style.visibility == "hidden") return(true);
-  undoButton.style.visibility = "hidden";
-  dataField.value = form.undoMemory.value;
-  if( dataField.onchange ) dataField.onchange();
-  form.undoMemory.value = ""; 
-  return(true);
+  }  
 }
 
 /**
@@ -294,7 +351,7 @@ SearchBox.submit = function ( queryValue )
   if( this.recentSearches.length > 9 ) this.recentSearches.pop();
   this.recentSearches.unshift( queryValue );
 
-  setCookie( "JSPWikiSearchBox", this.recentSearches.join( Wiki.DELIM) );
+  document.setCookie( "JSPWikiSearchBox", this.recentSearches.join( Wiki.DELIM) );
 }
 
 
@@ -307,7 +364,7 @@ SearchBox.onPageLoad = function()
   if( !this.recentSearchesDIV ) return;
 
   this.recentSearches = new Array();
-  var c = getCookie( "JSPWikiSearchBox" );
+  var c = document.getCookie( "JSPWikiSearchBox" );
   if( c ) this.recentSearches = c.split( Wiki.DELIM );
 
   var s = "";
@@ -330,19 +387,440 @@ SearchBox.doSearch = function ( searchDiv )
 
 SearchBox.clearRecentSearches = function()
 {
-  setCookie( "JSPWikiSearchBox", "" );
+  document.setCookie( "JSPWikiSearchBox", "" );
   this.recentSearches = new Array();
   this.recentSearchesDIV.innerHTML = "";
 }
 
+/**
+ ** 280 ZebraTable
+ ** Color odd/even rows of table differently
+ ** 1) odd rows get css class odd (ref. jspwiki.css )
+ **   %%zebra-table ... %%
+ **
+ ** 2) odd rows get css style='background=<color>'
+ ** %%zebra-<odd-color> ... %%  
+ **
+ ** 3) odd rows get odd-color, even rows get even-color
+ ** %%zebra-<odd-color>-<even-color> ... %%
+ **
+ ** colors are specified in HEX (without #) format or html color names (red, lime, ...)
+ **
+ **/
 
-function runOnLoad()
-{ 
-  TabbedSection.onPageLoad();
-  SearchBox.onPageLoad();
-  
-  validateZebraTable();
-  googleSearchHighlight();
+var ZebraTable = new Object();
+ZebraTable.REclassName = new RegExp( "(?:^| )zebra-(\\S+)" );
+
+ZebraTable.onPageLoad = function()
+{
+  var z = document.getElementsByClassName ( this.REclassName ); if( !z ) return;
+
+  for( var i=0; i<z.length; i++)
+  {
+    var rows = z[i].getElementsByTagName( "TR" );  if( !rows ) continue;
+    this.REclassName.test( z[i].className );
+    var parms = RegExp.$1.split('-');
+
+    if( parms[0] == 'table' )
+    {
+      for( var r=0; r < rows.length; r+=2 ) rows[r].className += " odd";
+      continue;
+    }
+   
+    if( parms[0] )
+    { 
+      for( var r=2; r < rows.length; r+=2 ) 
+        rows[r].setAttribute( "style", "background:"+ parms[0].parseColor() +";" );
+    }
+    if( parms[1] )
+    {
+      for( var r=1; r < rows.length; r+=2 ) 
+        rows[r].setAttribute( "style", "background:"+ parms[1].parseColor() +";" );    
+    }
+  }
 }
 
-window.onload = runOnLoad;
+/**
+ ** 290 Highlight Word
+ **
+ ** Inspired by http://www.kryogenix.org/code/browser/searchhi/ 
+ ** Modified 20021006 to fix query string parsing and add case insensitivity 
+ ** Modified 20030227 by sgala@hisitech.com to skip words 
+ **                   with "-" and cut %2B (+) preceding pages 
+ ** Refactored for JSPWiki -- now based on regexp, by D.Frederickx. Nov 2005
+ **
+ **/
+var HighlightWord = new Object();
+HighlightWord.ClassName = "searchword";
+HighlightWord.ClassNameMatch = "<span class='"+HighlightWord.ClassName+"' >$1</span>" ;
+HighlightWord.ReQuery = new RegExp( "(?:\\?|&)(?:q|query)=([^&]*)", "g" );
+
+HighlightWord.onPageLoad = function () 
+{
+  if( !this.ReQuery.test( document.referrer ) ) return;
+
+  var words = decodeURIComponent(RegExp.$1);
+  words = words.replace( /\+/g, " " );
+  words = words.replace( /\s+-\S+/g, "" );
+  words = words.replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ); //escape metachars
+  words = words.trim().split(/\s+/).join("|");
+  this.reMatch = new RegExp( "(" + words + ")" , "gi");
+  //alert(this.reMatch);
+  
+  this.walkDomTree( document.getElementById("pagecontent") );
+}
+
+// recursive tree walk matching all text nodes
+HighlightWord.walkDomTree = function( node )
+{
+  var nn = null; 
+  for( var n = node.firstChild; n ; n = nn )
+  {
+    nn = n. nextSibling; /* prefetch nextSibling cause the tree will be modified */
+    this.walkDomTree( n );
+  }
+  
+  // continue on text-nodes, not yet highlighted, with a word match
+  if( node.nodeType != 3 ) return; 
+  if( node.parentNode.className == this.ClassName ) return;
+  var s = node.nodeValue;
+  if( !this.reMatch.test( s ) ) return;
+  
+  //alert("found "+RegExp.$1);  
+  var tmp = document.createElement("span");
+  tmp.innerHTML = s.replace( this.reMatch, this.ClassNameMatch );
+
+  var f = document.createDocumentFragment();
+  while( tmp.firstChild ) f.appendChild( tmp.firstChild );
+
+  node.parentNode.replaceChild( f, node );  
+}
+
+/**
+ ** 230 Sortable -- for all tables
+ **/
+var Sortable = new Object();
+Sortable.ClassName = "sortable";
+Sortable.ClassSort           = "sort";
+Sortable.ClassSortAscending  = "sortAscending";
+Sortable.ClassSortDescending = "sortDescending";
+Sortable.TitleSort           = "Click to sort";
+Sortable.TitleSortAscending  = "Ascending order - Click to sort in descending order";
+Sortable.TitleSortDescending = "Descending order - Click to sort in ascending order";
+
+
+Sortable.onPageLoad = function()
+{
+  var p = document.getElementById( "pagecontent" ); if( !p ) return; 
+  var sortables = getElementsByClassName( p, Sortable.ClassName );  if( !sortables ) return;
+  for( i=0; i<sortables.length; i++ )
+  {
+    var table = sortables[i].getElementsByTagName( "table" )[0];
+    if( !table ) continue;
+    if( table.rows.length < 2 ) continue;
+  
+    for( var i=0; i < table.rows[0].cells.length; i++ )
+    {
+      var c = table.rows[0].cells[i];
+      if( c.nodeName != "TH" ) break;
+      c.onclick    = function() { Sortable.sort(this); } ;
+      c.title      = this.TitleSort;
+      c.className += " " + this.ClassSort;
+    }
+  }
+}
+
+
+Sortable.REclassName = new RegExp ('(?:^| )(sort|sortAscending|sortDescending)(?: |$)'); 
+Sortable.sort = function( thNode )
+{
+  var table = getAncestorByTagName(thNode, "table" ); if( !table ) return;
+  if( table.tBodies[0] ) table = table.tBodies[0]; //bugfix
+  if( table.rows.length < 2 ) return;
+  var colidx = 0; //target column to sort
+  var thNodeClassName = this.ClassSort; //default column header classname
+  
+  //validate header row
+  for( var i=0; i < table.rows[0].cells.length; i++ )
+  {
+    var c = table.rows[0].cells[i];
+    if( c.nodeName != "TH" ) return;
+    
+    if( thNode == c ) 
+    { 
+      colidx = i; 
+      if( Sortable.REclassName.test(c.className) ) thNodeClassName = RegExp.$1; 
+    }
+    else
+    {
+      c.className = c.className.replace(Sortable.REclassName, "" ) + " " + this.ClassSort ;
+      c.title = this.TitleSort;
+    }
+  }
+  
+  //find body rows and guess data type of colidx
+  var rows = new Array();
+  var num  = true;
+  var date = true;
+  for( var i=1; i< table.rows.length; i++)
+  {
+    rows[i-1] = table.rows[i] ;
+    //var val = rows[i-1].cells[colidx].firstChild.nodeValue;
+    var val = getNodeText( rows[i-1].cells[colidx] );
+    if( num  ) num  = !isNaN( parseFloat( val ) ) ;    
+    if( date ) date = !isNaN( Date.parse( val ) );    
+  }
+  var datatype = "string";
+  if( num ) datatype = "num";
+  if( date ) datatype = "date";
+
+  //do the actual sorting
+  if( thNodeClassName == this.ClassSort ) //first time sort of column table.sortCol == colidx ) 
+  {
+    rows.sort( Sortable.createCompare( colidx, datatype ) );
+    thNodeClassName = this.ClassSortAscending;
+    thNode.title    = this.TitleSortAscending; 
+  }
+  else
+  { 
+    rows.reverse(); 
+    if( thNodeClassName == this.ClassSortAscending )
+    {
+      thNodeClassName = this.ClassSortDescending;
+      thNode.title    = this.TitleSortDescending;
+    }
+    else
+    {
+      thNodeClassName = this.ClassSortAscending;
+      thNode.title    = this.TitleSortDescending;
+    }
+  }
+  thNode.className = thNode.className.replace(Sortable.REclassName, "") + " " + thNodeClassName ;
+  
+  //put the sorted table back into the document
+  var frag = document.createDocumentFragment();
+  for( var i=0; i < rows.length; i++ )
+  {
+    frag.appendChild( rows[i] );
+  }
+  table.appendChild( frag );
+}
+
+Sortable.convert = function( val, datatype )
+{
+  switch( datatype )
+  {
+    case "num"  : return parseFloat( val );
+    case "date" : return new Date( Date.parse( val ) );
+    default     : return val.toString();
+  }
+}
+
+Sortable.createCompare = function( colidx, datatype )
+{
+  return function(row1, row2)
+  {
+    //var val1 = Sortable.convert( row1.cells[colidx].firstChild.nodeValue, datatype );
+    //var val2 = Sortable.convert( row2.cells[colidx].firstChild.nodeValue, datatype );
+    var val1 = Sortable.convert( getNodeText(row1.cells[colidx]), datatype );
+    var val2 = Sortable.convert( getNodeText(row2.cells[colidx]), datatype );
+
+    if     ( val1 < val2 ) { return -1; }
+    else if( val1 > val2 ) { return 1;  }
+    else { return 0; }
+  } 
+}
+/**
+ ** 200 Collapsable list items 
+ **
+ ** See also David Lindquist <first name><at><last name><dot><net>
+ ** See: http://www.gazingus.org/html/DOM-Scripted_Lists_Revisited.html
+ **
+ **/
+var Collapsable = new Object();
+
+Collapsable.tmpcookie    = null;
+Collapsable.cookies      = [] ;
+Collapsable.cookieNames  = [] ;
+
+Collapsable.ClassName    = "collapse";
+Collapsable.OpenTip      = "Click to collapse";
+Collapsable.CloseTip     = "Click to expand";
+Collapsable.CollapseID   = "clps"; //prefix for unique IDs of inserted DOM nodes
+Collapsable.MarkerOpen   = "O";    //cookie state chars 
+Collapsable.MarkerClose  = "C"; 
+Collapsable.CookiePrefix = "JSPWikiCollapse";
+Collapsable.bullet           = document.createElement("div"); // template bullet node
+Collapsable.bullet.className = "collapseBullet";
+Collapsable.bullet.innerHTML = "&bull;";
+
+/* FIXME: This assumes a bit too much about the page structure. */
+Collapsable.onPageLoad = function()
+{  
+  this.initialise( "leftmenu",       this.ClassName, this.CookiePrefix + "LeftMenu"       );
+  this.initialise( "leftmenufooter", this.ClassName, this.CookiePrefix + "LeftMenuFooter" );
+  this.initialise( "pagecontent",    this.ClassName, this.CookiePrefix + "$" );  
+  if( Wiki.username )
+  {
+    this.initialise( "myfavorites",  this.ClassName, this.CookiePrefix + Wiki.username + "Favorites" );
+  }
+}
+
+Collapsable.initialise = function( domID, className, cookieName )
+{
+  var page  = document.getElementById( domID );          if( !page  ) return;
+  var nodes = getElementsByClassName( page, className ); if( !nodes ) return;
+
+  this.tmpcookie = document.getCookie( cookieName );
+  this.cookies.push( "" ) ; //initialise new empty collapse cookie
+  this.cookieNames.push( cookieName );
+
+  for( var i=0; i < nodes.length; i++)
+  {
+    this.collapseNode( nodes[i] );
+  }
+}
+
+// Modifies the list such that sublists canbe hidden and shown by clicking the listitem bullet
+// The listitem bullet is a node inserted into the DOM tree as the first child of the 
+// listitem containing the sublist.
+Collapsable.collapseNode = function( node )
+{
+  var items = node.getElementsByTagName("li");
+  for( i=0; i < items.length; i++ )
+  {
+    var nodeLI = items[i];
+    var nodeXL = ( nodeLI.getElementsByTagName("ul")[0] || 
+                   nodeLI.getElementsByTagName("ol")[0] ); 
+
+    var bullet  = this.bullet.cloneNode(true);
+    
+    //dont insert bullet when LI is "empty" -- iow it has no text or no non ulol tags inside
+    //eg. * a listitem
+    //    *** a nested list item - intermediate level is empty
+    var emptyLI = true;
+    for( var n = nodeLI.firstChild; n ; n = n.nextSibling )
+    {
+      if((n.nodeType == 3 ) && ( n.nodeValue.trim() == "" ) ) continue; //keep searching
+      if((n.nodeName == "UL") || (n.nodeName == "OL")) break; //seems like an empty li 
+      emptyLI = false; 
+      break;
+    }
+    if( emptyLI ) continue; //do not insert a bullet
+    if( nodeXL )
+    {
+      var defaultState = (nodeXL.nodeName == "UL") ? this.MarkerOpen : this.MarkerClose ;
+      var collapseState = this.parseCookie( defaultState ); 
+      bullet.onclick = this.toggleBullet;
+      bullet.id = this.CollapseID + "." + (this.cookies.length-1) + 
+                                    "." + (this.cookies.last().length-1);
+      this.setOpenOrClose( ( collapseState == this.MarkerOpen ), nodeXL, bullet );
+    }
+    nodeLI.insertBefore( bullet, nodeLI.firstChild ); 
+  }
+}
+
+
+// modify dom-node according to the setToOpen flag
+Collapsable.setOpenOrClose = function( setToOpen, nodeXL, bullet )
+{
+  bullet.innerHTML     = (setToOpen) ? "&raquo;"      : "&laquo;" ;
+  bullet.className     = (setToOpen) ? "collapseOpen" : "collapseClose" ;
+  bullet.title         = (setToOpen) ? this.OpenTip   : this.CloseTip ;
+  nodeXL.style.display = (setToOpen) ? "block"        : "none" ;
+}
+ 
+ 
+// parse cookie 
+// this.tmpcookie  contains cookie being validated agains the document
+// this.cookies.last contains actual cookie being constructed
+//    this cookie is stored in the cookies[] 
+//    and only persisted when the user opens/closes something
+// returns collapseState MarkerOpen, MarkerClose
+Collapsable.parseCookie = function( token )
+{
+  var currentcookie = this.cookies.last();
+  var cookieToken = token; //default value
+
+  if( (this.tmpcookie) && (this.tmpcookie.length > currentcookie.length) )
+  {
+    cookieToken = this.tmpcookie.charAt( currentcookie.length );
+    if(  ( (token == this.MarkerOpen) && (cookieToken == this.MarkerClose) ) 
+      || ( (token == this.MarkerClose) && (cookieToken == this.MarkerOpen) ) ) //##fixed
+        token = cookieToken ; 
+    if( token != cookieToken )  //mismatch between tmpcookie and expected token
+        this.tmpcookie = null;
+  }   
+  this.cookies[this.cookies.length - 1] += token; //append and save currentcookie
+
+  return( token );    
+}
+
+
+// toggle bullet and update corresponding cookie
+// format of ID of bullet = "collapse.<cookies-index>.<cookie-charAt>"
+Collapsable.toggleBullet = function( )
+{
+  var cxt = Collapsable; //avoid confusion with this == clicked bullet
+
+  var nodeXL = ( this.parentNode.getElementsByTagName("ul")[0] || 
+                 this.parentNode.getElementsByTagName("ol")[0] ); 
+  var idARR  = this.id.split(".");  if( idARR.length != 3 ) return;
+
+  var cookie = cxt.cookies[idARR[1]]; // index in cookies array
+
+  cxt.setOpenOrClose( (nodeXL.style.display == "none"), nodeXL, this );
+  
+  var i = parseInt(idARR[2]); // position inside cookie
+  var c = ( cookie.charAt(i) == cxt.MarkerOpen ) ? cxt.MarkerClose : cxt.MarkerOpen; 
+  cookie = cookie.substring(0,i) + c + cookie.substring(i+1) ;
+
+  document.setCookie( cxt.cookieNames[idARR[1]], cookie );
+  cxt.cookies[idARR[1]] = cookie;
+
+  return false;  
+}
+
+/**
+ ** 130 GraphBar Object : also used on the findpage
+ ** %%graphBars ... %%
+ ** convert numbers inside %%gBar ... %% tags to graphic horizontal bars
+ ** no img needed.
+ ** supported parameters: bar-color and bar-maxsize
+ ** e.g. %%graphBars-e0e0e0 ... %%  use color #e0e0e0, default size 120
+ ** e.g. %%graphBars-red-40 ... %%  use color red, maxsize 40 chars
+ **/
+var GraphBar = new Object();
+GraphBar.REclassName = new RegExp( "(?:^| )graphBars(-\\S+)?" );
+GraphBar.onPageLoad = function()
+{
+  var g = document.getElementsByClassName ( this.REclassName ); if( !g ) return;
+
+  for( var i=0; i < g.length; i++ )
+  {
+    this.REclassName.test( g[i].className );
+    var parms = RegExp.$1.split('-');
+    var color =   ( parms[1] ? "style='background:"+parms[1].parseColor()+";color:"+parms[1].parseColor()+";' " : "" );
+    var maxsize = ( parms[2] ? parseInt(parms[2],10) : 120 );
+
+    var gBars = getElementsByClassName( g[i], "gBar" ); if( !gBars ) continue;
+
+    var gBarD = [], maxValue = Number.MIN_VALUE; minValue = Number.MAX_VALUE;    
+
+    for( var j=0; j < gBars.length; j++ )
+    {
+      var k = parseInt( getNodeText(gBars[j]),10 );
+      maxValue = Math.max( maxValue, k ); 
+      minValue = Math.min( minValue, k );
+      gBarD[j] = k;
+    }
+      
+    for( var j=0; j < gBars.length; j++ )
+    {
+      var s = ".".repeat( parseInt( maxsize * ( gBarD[j]-minValue) / maxValue ) + 1 ) ;
+      gBars[j].innerHTML = " <span class='graphBar' "+color+">"+s+"</span> "+gBarD[j];
+    }     
+  }
+}
+
+ 
