@@ -15,8 +15,20 @@
        jalkanen+jspwiki@ecyrd.com
    </description>
 
+   <!--
+      This is new in 2.4.  This defines a servlet filter which filters all requests. 
+   -->
 
+   <filter>
+      <filter-name>WikiServletFilter</filter-name>
+      <filter-class>com.ecyrd.jspwiki.ui.WikiServletFilter</filter-class>
+   </filter>
 
+   <filter-mapping>
+     <filter-name>WikiServletFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
