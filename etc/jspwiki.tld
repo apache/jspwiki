@@ -270,7 +270,11 @@
     <name>IncludeResources</name>
     <tagclass>com.ecyrd.jspwiki.tags.IncludeResourcesTag</tagclass>
     <bodycontent>empty</bodycontent>
-  </tag>  
+    <attribute>
+       <name>type</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+   </tag>  
 
   <tag>
     <name>InsertDiff</name>
