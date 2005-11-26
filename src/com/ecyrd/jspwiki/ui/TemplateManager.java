@@ -21,10 +21,7 @@ package com.ecyrd.jspwiki.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.PageContext;
@@ -47,6 +44,21 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
 public class TemplateManager 
     extends ModuleManager
 {
+    /**
+     * Requests a JavaScript function to be called during window.onload.
+     */
+    public static final String RESOURCE_JSFUNCTION = "jsfunction";
+
+    /**
+     * Requests a stylesheet to be inserted.
+     */
+    public static final String RESOURCE_STYLESHEET = "stylesheet";
+
+    /**
+     * Requests a script to be loaded.
+     */
+    public static final String RESOURCE_SCRIPT     = "script";
+
     /** The default directory for the properties. */
     public static final String DIRECTORY    = "templates";
 
@@ -296,12 +308,35 @@ public class TemplateManager
     }
     
     /**
+     *  Returns the include resources marker for a given type.  This is in a
+     *  HTML comment format.
+     *   
+     *  @param type
+     *  @return
+     */
+    public static String getMarker( String type )
+    {
+        if( type.equals(RESOURCE_JSFUNCTION) )
+        {
+            return "/* INCLUDERESOURCES ("+type+") */";
+        }
+        return "<!-- INCLUDERESOURCES ("+type+") -->";
+    }
+
+    /**
      *  Adds a resource request to the current request context.
      */
     
     public static void addResourceRequest( WikiContext ctx, String type, String path )
     {
-        Vector resources = (Vector) ctx.getVariable( RESOURCE_INCLUDES );
+        HashMap resourcemap = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
+       
+        if( resourcemap == null )
+        {
+            resourcemap = new HashMap();
+        }
+        
+        Vector resources = (Vector) resourcemap.get( type );
         
         if( resources == null )
         {
@@ -310,13 +345,17 @@ public class TemplateManager
         
         String resourceString = null;
         
-        if( type == "script" )
+        if( type == RESOURCE_SCRIPT )
         {
             resourceString = "<script type='text/javascript' src='"+path+"'></script>";
         }
-        else if( type == "stylesheet" )
+        else if( type == RESOURCE_STYLESHEET )
         {
             resourceString = "<link rel='stylesheet' type='text/css' src='"+path+"' />";
+        }
+        else if( type == RESOURCE_JSFUNCTION )
+        {
+            resourceString = path;
         }
         
         if( resourceString != null )
@@ -326,7 +365,8 @@ public class TemplateManager
         
         log.debug("Request to add a resource: "+resourceString);
         
-        ctx.setVariable( RESOURCE_INCLUDES, resources );
+        resourcemap.put( type, resources );
+        ctx.setVariable( RESOURCE_INCLUDES, resourcemap );
     }
     
     /**
@@ -334,14 +374,43 @@ public class TemplateManager
      *  returns an empty array.
      */
     
-    public static String[] getResourceRequests( WikiContext ctx )
+    public static String[] getResourceRequests( WikiContext ctx, String type )
     {
-        Vector resources = (Vector) ctx.getVariable( RESOURCE_INCLUDES );
+        HashMap hm = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
+        
+        if( hm == null ) return new String[0];
+        
+        Vector resources = (Vector) hm.get( type );
         
         if( resources == null ) return new String[0];
         
         String[] res = new String[resources.size()];
         
         return (String[]) resources.toArray( res );
+    }
+    
+    /**
+     *  returns all those types that have been requested so far.
+     *  
+     * @param ctx
+     * @return
+     */
+    public static String[] getResourceTypes( WikiContext ctx )
+    {
+        String[] res = new String[0];
+
+        if( ctx != null )
+        {
+            HashMap hm = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
+        
+            if( hm != null )
+            {
+                Set keys = hm.keySet();
+            
+                res = (String[]) keys.toArray( res );
+            }
+        }
+        
+        return res;
     }
 }
