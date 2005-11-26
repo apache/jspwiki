@@ -44,6 +44,13 @@ public class RenderingManager implements PageFilter
         m_engine = engine;
     }
     
+    /**
+     *  Returns the default Parser for this context.
+     *  
+     *  @param context
+     *  @param pagedata
+     *  @return A MarkupParser instance.
+     */
     public MarkupParser getParser( WikiContext context, String pagedata )
     {
         MarkupParser parser = new JSPWikiMarkupParser( context, new StringReader(pagedata) );
@@ -105,6 +112,15 @@ public class RenderingManager implements PageFilter
         return null;
     }
     
+    /**
+     *  Simply renders a WikiDocument to a String.  This version does not get the document
+     *  from the cache - in fact, it does not cache the document at all.
+     *  
+     *  @param context The WikiContext to render in
+     *  @param doc A proper WikiDocument
+     *  @return Rendered HTML.
+     *  @throws IOException If the WikiDocument is poorly formed. 
+     */
     public String getHTML( WikiContext context, WikiDocument doc )
         throws IOException
     {
@@ -114,7 +130,11 @@ public class RenderingManager implements PageFilter
     }
 
     /**
-     *   Convinience method for rendering, using the default parser and renderer.
+     *   Convinience method for rendering, using the default parser and renderer.  Note that
+     *   you can't use this method to do any arbitrary rendering, as the pagedata MUST
+     *   be the data from the that the WikiContext refers to - this method caches the HTML
+     *   internally, and will return the cached version.  If the pagedata is different
+     *   from what was cached, will re-render and store the pagedata into the internal cache.
      *   
      *  @param context
      *  @param pagedata
