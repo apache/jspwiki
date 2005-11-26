@@ -1,3 +1,16 @@
+2005-11-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.47
+        
+        * Added "type" parameter to IncludeResourcesTag.  This allows you
+        now to include multiple types of resources in different places.
+        
+        * Quite a few top-level JSPs had the old EditorManager package,
+        oops.
+        
+        * Added quite a lot of stuff from BrushedTemplate, including
+        collapsible lists, sortable tables, etc.
+        
 2005-11-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.46
