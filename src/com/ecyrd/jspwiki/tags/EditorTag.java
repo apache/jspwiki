@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.editor.EditorManager;
+import com.ecyrd.jspwiki.ui.EditorManager;
 
 /**
  *  Creates an editor component with all the necessary parts
