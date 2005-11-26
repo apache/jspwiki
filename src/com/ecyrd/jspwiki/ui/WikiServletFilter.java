@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.tags.IncludeResourcesTag;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 
 
@@ -64,14 +63,34 @@ public class WikiServletFilter implements Filter
         return ctx;
     }
 
-    private String filter(WikiContext wikiContext, String string)
+    /**
+     * Goes through all types.
+     * 
+     * @param wikiContext
+     * @param string
+     * @return
+     */
+    private String filter(WikiContext wikiContext, String string )
+    {
+        String[] resourceTypes = TemplateManager.getResourceTypes( wikiContext );
+        
+        for( int i = 0; i < resourceTypes.length; i++ )
+        {
+            string = filter( wikiContext, string, resourceTypes[i] );
+        }
+        
+        return string;
+    }
+
+    private String filter(WikiContext wikiContext, String string, String type )
     {
         if( wikiContext == null )
         {
             return string;
         }
 
-        int idx = string.indexOf( IncludeResourcesTag.MARKER );
+        String marker = TemplateManager.getMarker( type );
+        int idx = string.indexOf( marker );
         
         if( idx == -1 )
         {
@@ -80,7 +99,7 @@ public class WikiServletFilter implements Filter
         
         log.debug("...Inserting...");
         
-        String[] resources = TemplateManager.getResourceRequests( wikiContext );
+        String[] resources = TemplateManager.getResourceRequests( wikiContext, type );
         
         StringBuffer concat = new StringBuffer( resources.length * 40 );
         
@@ -92,7 +111,7 @@ public class WikiServletFilter implements Filter
 
         string = TextUtil.replaceString( string, 
                                          idx, 
-                                         idx+IncludeResourcesTag.MARKER.length(), 
+                                         idx+marker.length(), 
                                          concat.toString() );
         
         return string;
