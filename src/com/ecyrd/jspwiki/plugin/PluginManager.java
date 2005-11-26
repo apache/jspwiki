@@ -38,6 +38,8 @@ import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.modules.ModuleManager;
+import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.parser.PluginContent;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -114,7 +116,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  @author Janne Jalkanen
  *  @since 1.6.1
  */
-public class PluginManager
+public class PluginManager extends ModuleManager
 {
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
@@ -142,12 +144,6 @@ public class PluginManager
      *  A special name to be used in case you want to see debug output
      */
     public static final String PARAM_DEBUG     = "debug";
-
-    /**
-     * Location of the property-files of plugins.
-     *  (Each plugin should include this property-file in its jar-file)
-     */
-    public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
 
     Vector  m_searchPath = new Vector();
 
@@ -718,17 +714,11 @@ public class PluginManager
     //        information from the plugin XML.  In fact, it probably should have
     //        some sort of a superclass system.
     protected static class WikiPluginInfo
+        extends WikiModuleInfo
     {       
-        private URL    m_resource;
-        private String m_name;
         private String m_className;
         private String m_alias;
         private Class  m_clazz;
-        private String m_scriptLocation;
-        private String m_scriptText;
-        private String m_stylesheetLocation;
-        private String m_stylesheetText;
-        private String m_author;
 
         protected static WikiPluginInfo newInstance( String className, Element el )
         {
@@ -739,12 +729,10 @@ public class PluginManager
             return info;
         }
         
-        private void initializeFromXML( Element el )
+        protected void initializeFromXML( Element el )
         {
-            m_scriptLocation = el.getChildText("script");
-            m_stylesheetLocation = el.getChildText("stylesheet");
+            super.initializeFromXML( el );
             m_alias = el.getChildText("alias");
-            m_author = el.getChildText("author");            
         }
         
         protected static WikiPluginInfo newInstance( Class clazz )
@@ -765,11 +753,6 @@ public class PluginManager
             m_className = fullClassName;
         }
 
-        public String getName()
-        {
-            return m_name;
-        }
-
         public String getClassName()
         {
             return m_className;
@@ -778,16 +761,6 @@ public class PluginManager
         public String getAlias()
         {
             return m_alias;
-        }
-
-        public String getStylesheetLocation()
-        {
-            return m_stylesheetLocation;
-        }
-
-        public String getScriptLocation()
-        {
-            return m_scriptLocation;
         }
 
         public WikiPlugin newPluginInstance()
@@ -876,41 +849,6 @@ public class PluginManager
             }
 
             return m_stylesheetText;
-        }
-        
-        private String getTextResource(String resourceLocation)
-            throws IOException
-        {
-            if(m_resource == null)
-            {
-                return "";
-            }
-
-            // The text of this resource should be loaded from the same
-            //   jar-file as the properties-file! This is because 2 plugins
-            //   could have the same name of the resourceLocation!
-            //   (2 plugins could have their stylesheet-files in 'ini/jspwiki.css')
-
-            // So try to construct a resource that loads this resource from the
-            //   same jar-file.
-            String spec = m_resource.toString();
-
-            // Replace the 'PLUGIN_RESOURCE_LOCATION' with the requested
-            //   resourceLocation.
-            int length = PluginManager.PLUGIN_RESOURCE_LOCATION.length();
-            spec = spec.substring(0, spec.length() - length) + resourceLocation;
-
-            URL url = new URL(spec);
-            BufferedInputStream in = new BufferedInputStream(url.openStream());
-            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-            
-            FileUtil.copyContents( in, out );
-
-            in.close();
-            String text = out.toString();
-            out.close();
-            
-            return text;
         }
         
         public String toString()
