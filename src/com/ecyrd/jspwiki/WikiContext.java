@@ -25,10 +25,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
@@ -407,4 +409,16 @@ public class WikiContext
         return m_session;
     }
     
+    /**
+     *  This method can be used to find the WikiContext programmatically
+     *  from a JSP PageContext.
+     *  
+     *  @since 2.4
+     * @param pc
+     * @return Current WikiContext, or null, of no context exists.
+     */
+    public static WikiContext findContext( PageContext pageContext )
+    {
+        return (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    }
 }
