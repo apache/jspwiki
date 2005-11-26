@@ -2,7 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
+<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
