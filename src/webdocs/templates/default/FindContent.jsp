@@ -19,6 +19,7 @@
           </p>
 
           <div class="zebra-table">
+          <div class="graphBars">
           <table border="0" cellpadding="4" width="80%">
 
           <tr>
@@ -29,7 +30,7 @@
           <wiki:SearchResultIterator id="searchref" maxItems="20">
               <tr>
                   <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
-                  <td><%=searchref.getScore()%></td>
+                  <td class="gBar"><%=searchref.getScore()%></td>
               </tr>
           </wiki:SearchResultIterator>
 
@@ -40,6 +41,7 @@
           </wiki:IfNoSearchResults>
 
           </table>
+          </div>
           </div>
           <p>
           <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>

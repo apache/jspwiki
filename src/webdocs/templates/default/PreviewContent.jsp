@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="org.apache.commons.lang.*" %>
-<%@ page import="com.ecyrd.jspwiki.editor.EditorManager" %>
+<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 
 <%-- Inserts page content for preview. --%>
 

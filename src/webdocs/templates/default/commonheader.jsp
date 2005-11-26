@@ -3,9 +3,9 @@
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
   <link rel="stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" />
-  <script src="<wiki:BaseURL/>scripts/search_highlight.js" type="text/javascript"></script>
+  <wiki:IncludeResources type="stylesheet"/>
   <script src="<wiki:BaseURL/>scripts/jspwiki-common.js" type="text/javascript"></script>
-  <wiki:IncludeResources/>
+  <wiki:IncludeResources type="script"/>
   <meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
   <link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
   <link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
@@ -19,7 +19,7 @@
 <%
   // cookie-format
   // skinname DELIM dateformat DELIM timezone DELIM editareaheight
-  String DELIM  = "\u00a0"; //see brushed.js
+  String DELIM  = "\u00a0";
   String prefSkinName = null;
   String prefDateFormat = "HH:mm dd-MMM-yyyy";
   String prefTimeZone = java.util.TimeZone.getDefault().getID();
@@ -73,3 +73,21 @@
  <link rel="stylesheet" type="text/css"
        href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/skins/<%= prefSkinName %>" />
 <% } %>
+
+<%-- Here we define the "run when the page loads" -script. --%>
+<script type="text/javascript">
+function runOnLoad()
+{ 
+  TabbedSection.onPageLoad();
+  SearchBox.onPageLoad();
+  Wiki.onPageLoad();
+  Sortable.onPageLoad();
+  ZebraTable.onPageLoad();
+  HighlightWord.onPageLoad();
+  Collapsable.onPageLoad();
+  GraphBar.onPageLoad();
+  <wiki:IncludeResources type="jsfunction"/>
+}
+
+window.onload = runOnLoad;
+</script>

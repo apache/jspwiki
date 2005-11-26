@@ -453,4 +453,33 @@ div.commentbox {
 .graphBar { background: #ff9933; color: #ff9933; }
 .gBar { white-space: nowrap; }
 
- 
+/* +++ 460 Collapsable lists +++ */
+ul { margin: 0; padding-left: 1.5em; }
+
+div.collapse ul ,
+div.collapse ol   { margin-left: 1.5em; padding:0; }
+div.collapse * ul ,
+div.collapse * ol { margin-left:0 ; padding-left: 1.5em; }
+     
+div.collapse li   { list-style: none; position: relative; }
+
+/* relative to the containing LI */     
+.collapseBullet,
+.collapseOpen,
+.collapseClose { position: absolute; left: -1.5em;
+                 font-weight: bold; color: blue; }
+.collapseOpen,
+.collapseClose { cursor: pointer; }
+
+.collapseOpen:hover,
+.collapseClose:hover { background: #FF9933; color: white; }
+
+/* +++ Sortable tables +++ */
+.sortable .sort,
+.sortable .sortAscending,
+.sortable .sortDescending { padding: 0 1.25em;
+                            background-color: #f0f0f0;
+                            background-repeat: no-repeat; 
+                            background-position: 0.25em 50%; }
+.sortable .sortAscending  { background-image: url(images/bulletDown.png); }
+.sortable .sortDescending { background-image: url(images/bulletUp.png); }

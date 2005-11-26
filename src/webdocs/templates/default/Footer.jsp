@@ -7,8 +7,6 @@
   <div class="wikiversion">
   </div>
 
-  <div class="rssfeed"><wiki:RSSImageLink title="Aggregate the RSS feed" /></div>
-
   <div style="clear:both; height:0px;" > </div>
 
 </div>
