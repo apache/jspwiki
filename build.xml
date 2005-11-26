@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.55 2005-11-15 19:58:45 jalkanen Exp $
+    $Id: build.xml,v 1.56 2005-11-26 13:57:42 jalkanen Exp $
 -->    
        
 <!--   
@@ -269,6 +269,7 @@
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
+         <fileset dir="etc" includes="ini/*.xml" />
       </jar>
       <sign-jar jar="${jarfile}" />
   </target>
@@ -315,7 +316,7 @@
        <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" />
-       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml" />
+       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/**" />
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
