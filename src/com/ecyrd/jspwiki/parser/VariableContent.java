@@ -4,6 +4,7 @@
  */
 package com.ecyrd.jspwiki.parser;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom.Text;
 
 import com.ecyrd.jspwiki.NoSuchVariableException;
@@ -41,7 +42,7 @@ public class VariableContent extends Text
             result = JSPWikiMarkupParser.makeError("No such variable: "+e.getMessage()).getText(); 
         }
 
-        return result;
+        return StringEscapeUtils.escapeXml( result );
     }
     
     public String getText()
