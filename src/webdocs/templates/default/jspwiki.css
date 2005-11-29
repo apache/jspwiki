@@ -1,7 +1,15 @@
 /* Set the master look here */
-body { margin: 0; padding: 0;
-       font-family: arial, helvetica, sans-serif; 
-       font-size: 14px; }
+body { font-family: arial, helvetica, sans-serif; 
+       font-size: 0.9em;
+       behavior:url(scripts/csshover.htc); }
+*    { margin:0; padding: 0; }
+       
+/* Use as div 'block enclosure' to clear floats properly. This works across browsers
+   (even IE). Also known as the Wyke-Smith/Alsett/Holly 'clearfix' hack */
+.block:after  { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.block        { display: inline-block; }
+* html .block { height: 1%;}
+.block        { display: block; }
 
 /* +++ 001 LAYOUT of main ID blocks +++ */
 #wikibody { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
@@ -11,7 +19,7 @@ body { margin: 0; padding: 0;
 #page,
 #actionsBottom,
 #footer        { float: right; clear: right; width: 80%; }
-#favorites     { position:absolute; top:80px; width: 18%; }
+#favorites     { position:absolute; top:80px; left:2.5%; width: 18%; }
 #actionsTop    { float:right; border: 1px solid grey; }
 
 #applicationlogo { display: block; }
@@ -44,7 +52,7 @@ body { margin: 0; padding: 0;
 
 #searchboxMenu  { padding: 4px;
                   position: absolute; background: white;
-                  border: 2px solid silver; font-size: 80%; }
+                  border: 2px solid silver; font-size: 85%; }
 #recentSearches { margin: 0.5em 0 0 0.5em; color: silver; }
 #recentSearches div { color: black; cursor: pointer;}
 
@@ -54,10 +62,10 @@ body { margin: 0; padding: 0;
 #page           { margin-top: 0.5em; }
 
 #favorites { padding: 2px; overflow: hidden;
-             font-family: arial, helvetica, sans-serif; font-size: 90%; }
-#favorites .pageactions  { text-align: center; font-size: 100%; }
+             font-family: arial, helvetica, sans-serif; }
+#favorites .pageactions  { text-align: center; font-size: 85%; }
 
-#applicationlogo {  }
+#applicationlogo { text-align: center; }
 #companylogo { }
 
 /* placeholder for specifics if needed */
@@ -65,10 +73,10 @@ body { margin: 0; padding: 0;
 #pagecomments   {  }
 #editcontent    {  }
 #addcomment     {  }
-#edithelp       { font-size: 0.83em; }
-#searchbar      { font-size: 0.83em; }
-#searchbarhelp  { font-size: 0.83em; }
-#searchbar2     { font-size: 0.83em; color: grey; } /*inactive color */
+#edithelp       { font-size: 85%; }
+#searchbar      { font-size: 85%; margin: 1em; 0; }
+#searchbarhelp  { font-size: 85%; }
+#searchbar2     { font-size: 85%; color: grey; } /*inactive color */
 #findquery      {  }
 #findhelp       {  }
 #infocontent    {  overflow: auto; }
@@ -96,8 +104,8 @@ body { margin: 0; padding: 0;
 
 /* +++ 003 LOOK and FEEL of main css classes +++ */
 .pagename    { font-size: 150%; font-weight: bold; margin: 0.5em 0.5em 0.5em 0; }
-.searchbox   { margin: 0.5em; }
-.breadcrumbs { font-size: 80%; padding: 0 1.5em 1em 0em; }
+.searchbox   { margin: 1em 0.5em 0.5em 0.5em; }
+.breadcrumbs { font-size: 85%; padding: 0 1.5em 1em 0em; }
 .myfavorites { margin-bottom: 0.5em; border: 1px solid black; }
 .boxtitle { padding: 0.25em; text-align: center;
             border-bottom: 1px solid black; }
@@ -107,9 +115,9 @@ div.calendar { border: 1px solid black; }
 .leftmenufooter { margin: 1em 0 0 0; padding: 2px; white-space: nowrap; }
 
 .wikiversion,
-.rssfeed      { font-size: 60%; padding: 8px; text-align: center; }
+.rssfeed      { font-size: 85%; padding: 12px 0; text-align: center; }
 
-.pageactions { margin:0; padding: 0.25em; font-size: 90%; }
+.pageactions { margin:0; padding: 0.25em; font-size: 85%; }
 
 .actionView,
 .actionEdit,
@@ -118,28 +126,29 @@ div.calendar { border: 1px solid black; }
 .actionPrefs,
 .actionAttach,
 .actionInfo    { padding: 0 0.5em 0 0; }
-.pageInfo      { font-style: italic; font-size: 90%; }
+.pageInfo      { font-style: italic; padding: 0.5em; }
 .username      { font-style: italic; font-weight: bold; }
-
 .copyright { }
 
 
 
 /* Put all generic definitions here. */
-H1,H2,H3,H4 { font-family: Arial, Helvetica, sans-serif }
+h1,h2,h3,h4 { font-family: Arial, Helvetica, sans-serif;
+              margin: 1em 0 0.75em 0;
+              letter-spacing: -0.05em; word-spacing: 0.15em; }
 
 h2 { border-bottom: 2px grey solid }
 h3 { border-bottom: 1px grey solid }
 
-DIV.small   { font-size: 70%; }
-H1.pagename { margin-top: 0; }
-IMG.inline  {}
+div.small   { font-size: 70%; }
+h1.pagename { margin-top: 0; }
+img.inline  {}
 
-A.footnoteref { vertical-align: super; 
+a.footnoteref { vertical-align: super; 
                 font-size: 70%; }
-A.footnote    { color: #0044AA; }
-P.versionnote { color: blue;
-                font-size: 130%;
+a.footnote    { color: #0044AA; }
+p.versionnote { color: blue;
+                font-size: 120%;
                 text-align: center; 
                 background: #EAEAEA;
                 padding: 12px 12px 12px 12px;
@@ -147,35 +156,42 @@ P.versionnote { color: blue;
 
 /* Added in v1.5.1 */
 
-H3.leftmenuheading { margin-top: 0; }
-BODY.edit   { background-color: #D9E8FF; } /* Edit.jsp BODY element */
-.leftmenu { font-family: arial, helvetica, sans-serif;
-                  font-size: 90%; }  /* Left menu */
-A.wikipage  { }                            /* Normal, internal wiki reference */
-A.editpage  { 
+h3.leftmenuheading { margin-top: 0; }
+body.view          { background-color: white; }   /* Wiki.jsp BODY element */
+body.edit          { background-color: #D9E8FF; } /* Edit.jsp BODY element */
+body.comment       { background-color: #EEEEEE; } /* Comment.jsp BODY element */
+.leftmenu { font-family: arial, helvetica, sans-serif; }  /* Left menu */
+a.wikipage  { }                            /* Normal, internal wiki reference */
+a.editpage  { 
 	color: #FF0000;
  	text-decoration: none;
  	border-bottom: 1px dashed red;
  	}
-A.external  { }                            /* External reference */
-A.interwiki { }                            /* Interwiki reference */
+a.external  { }                            /* External reference */
+a.interwiki { }                            /* Interwiki reference */
 
 /* Added in 1.6.3 */
-TD.diffadd  { background: #99FF99; 
+td.diffadd  { background: #99FF99; 
               font-family: monospace; }
-TD.diffrem  { background: #FF9933; 
+td.diffrem  { background: #FF9933; 
               font-family: monospace; }
-TD.diff     { background: #FFFFFF; 
+td.diff     { background: #FFFFFF; 
               font-family: monospace; }
 
 /* Added in 1.6.9 */
 
-TABLE.wikitable { }
-TABLE.wikitable * TD { text-align: left; }
-TABLE.wikitable * TH { }
+table.wikitable { }
+table.wikitable * td { text-align: left; }
+table.wikitable * th { }
+
+/* Paragraphs, Lists and bullets */
+p     { margin: 0.5em 0; }
+ol,ul { margin: 0.35em 0 0.35em 1.25em; }
+li    { margin: 0.3em 0.75em; }
+hr    { margin: 0.5em 0; }
 
 /* This is the Edit.jsp editor style */
-TEXTAREA.editor {}
+textarea.editor {}
 
 pre { 
       white-space: pre;
@@ -212,7 +228,7 @@ pre {
 .weblogentry { }
 
 .weblogentryheading { background: #E0E0E0;
-                      font-size: 120%;
+                      font-size: 100%;
                       font-family: sans-serif; 
                       margin-top: 2ex; }
 
@@ -220,7 +236,7 @@ pre {
                    font-size: 85%; 
                    margin-left: 10px; }
 
-.weblogentryfooter { font-size: 9px; 
+.weblogentryfooter { font-size: 85%; 
                      margin-left: 10px;
                      clear: both; }
 
@@ -235,22 +251,22 @@ pre {
             }
 
 /* For the CalendarTag */
-TABLE.calendar  { font-size: 80%; }
-TABLE.calendar TD { text-align: center; }
+table.calendar  { font-size: 85%; }
+table.calendar td { text-align: center; }
 
-TABLE.calendar TD.othermonth { color: #707070; }
+table.calendar td.othermonth { color: #707070; }
 
-TABLE.calendar TD.link { background: #E0E0E0; }
+table.calendar td.link { background: #E0E0E0; }
 
-TABLE.calendar TR.month { font-size: 120%;
+table.calendar tr.month { font-size: 120%;
                           font-family: sans-serif; }
-TABLE.calendar TR.weekdays { color: #FF0000; }
+table.calendar tr.weekdays { color: #FF0000; }
 
 
 /* For the image plugin tag. */
 .imageplugin { margin: 5px 5px 5px 5px; }
 .imageplugin img { border: 0; }
-.imageplugin caption { font-size: 80%; }
+.imageplugin caption { font-size: 85%; }
 
 /* For the search_highlight.js.  This style defines the how the words that have
    been found look like.  If you look for "thingy", you will get these following
@@ -294,7 +310,7 @@ div.index .section { color:red; }
      background: #f0f0ff;
      border: 1px solid grey;
      padding: 8px;
-     font-size: 90%;
+     font-size: 00%;
 }
 
 .toc h4 {
@@ -332,7 +348,7 @@ div.commentbox {
    width: 20%;
    border-style: inset;
    background: #f0f0f0;
-   font-size: 80%;
+   font-size: 85%;
    padding: 4px;
    margin-left: 4px;
 }
@@ -370,25 +386,25 @@ div.commentbox {
     { background: #ffdddd; text-decoration: line-through; color: red; } 
 
 .diff-nextprev 
-    { font-size: 60%; vertical-align: super; text-decoration: none; }
+    { font-size: 85%; vertical-align: super; text-decoration: none; }
 
 
-.zebr-table TH
+.zebr-table th
     { background:  #e0e0e0;
     }
     
-.zebra-table TR.odd TD
+.zebra-table tr.odd td
     { background:  #f0f0f0;
     }
 
 .versionhistory
-    { font-size: 80%;
+    { font-size: 85%;
       font-family: arial, helvetica, sans-serif;
     }
 
 .attachments
     { font-family: arial, helvetica, sans-serif;
-      font-size: 90%;
+      font-size: 85%;
     }
 
 .attachments h3
@@ -403,40 +419,42 @@ div.commentbox {
 
  /* +++ 420 Attachment Quick Viewer +++ */
 
-#attachments {}
-#attachments .list { float: left; }
-#attachments .preview { width: 300px; margin: 0 2em; height: 300px; float: right; }
+#attachments          {}
+#attachments .list    { float: left; min-width: 300px; }
+#attachments .preview { float: right; }
 
 #attachImg { margin:0; vertical-align: middle; text-align: center;
              height: 300px; width: 300px; 
              border: 4px solid #e0e0e0; }
-#attachSelect { margin: 0.5em 0; font-size: 0.83em; }
+#attachSelect { margin: 0.5em 0; font-size: 85%; }
 
 /* +++ 430 Tabbed Pages +++ */
 /* use absolute position trick to avoid page bump when inserting tabmenu */
-.tabs    { margin: 0; padding: 0.5em;
-           border: 2px solid black; border-top: none; }
-.tabmenu { margin: 0; padding: 0.25em 0 0.25em 1em;
-           border-bottom: 2px solid black; }
-.tabmenu span   { margin: 0; padding: 0; overflow: hidden; }
-.tabmenu span a { color: grey; background: #dddddd;
-                  font: bold 1em "Trebuchet MS", Arial, sans-serif;
-                  margin: 0 0 0 -2px; padding: 0.25em 0.5em;
-                  text-decoration: none; cursor: pointer;
-                  border: 2px solid black; border-bottom:none; }
+.tabs               { margin: 0; padding: 1em;
+                      border: 1px solid gray; border-top: none; }
+.tabmenu            { margin: 0; padding: 0.25em 0 0.25em 1em;
+                      border-bottom: 1px solid gray; }
+.tabmenu span       { margin: 0; padding: 0; overflow: hidden; }
+.tabmenu span a     { color: grey; background: #dddddd;
+                      font: 85% arial, helvetica, sans-serif;
+                      margin: 0 0 0 -1px; padding: 0.25em 0.5em;
+                      text-decoration: none; cursor: pointer;
+                      border: 1px solid gray; border-bottom:none; }
 .tabmenu .activetab { color: black; background: white;
-                       border-bottom: 2px solid white; cursor: default;  }
-.edit .tabmenu a            { background: white; }
-.edit .tabmenu .activetab   { background: #D9E8FF; border-bottom: 2px solid #D9E8FF;}
+                      font-weight: bold;
+                      border-bottom: 1px solid white; cursor: default;  }
+.edit .tabmenu a    { background: white; }
+.edit .tabmenu .activetab
+                    { background: #D9E8FF; border-bottom: 1px solid #d9e8ff;}
 .tabmenu .alerttab a, .edit .tabmenu .alerttab a
-                { color: white; background: red; }
+                    { color: white; background: red; }
 .tabmenu .alerttab .activetab, .edit .tabmenu .alerttab .activetab
-                { color: red; background: #D9E8FF;
-                  border-bottom: 2px solid #d9e8ff; }
+                    { color: red; background: #D9E8FF;
+                      border-bottom: 1px solid #d9e8ff; }
 
 /* +++ 440 Quick Section Links +++ */
 .quicklinks { float: right; clear: both;
-              border: 1px solid blue; background: white; font-size: 90%; }
+              border: 1px solid blue; background: white; font-size: 85%; }
 
 .quick2Top  a,
 .quick2Prev a,
@@ -483,3 +501,21 @@ div.collapse li   { list-style: none; position: relative; }
                             background-position: 0.25em 50%; }
 .sortable .sortAscending  { background-image: url(images/bulletDown.png); }
 .sortable .sortDescending { background-image: url(images/bulletUp.png); }
+
+/* Form elements */
+div.formcontainer                      { width: 440px; margin: 20px 0 0 0; }
+div.formcontainer form                 { border-bottom: 2px solid silver; }
+div.formcontainer div.block            { vertical-align: top;
+                                         padding: 10px 0px;
+                                         border-top: 1px solid silver; }
+div.formcontainer form label           { width: 120px; float: left;
+                                         padding-top: .25em; 
+                                         margin: 0 10px;
+                                         font-size: 85%; }
+div.formcontainer input                { padding: 0.15em;
+                                         font-family: arial, helvetica, sans-serif; 
+                                         font-size: 85%em; }
+div.formcontainer input[type='submit'] { float:right; margin: 0 10px; }
+div.formcontainer .instructions        { margin: 0.5em 0; font-size: 85%; }
+div.formcontainer .description         { margin: 0.5em 10px 0.5em 140px;
+                                         font-size: 85%; font-style: italic; }
