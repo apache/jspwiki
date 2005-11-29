@@ -1,3 +1,58 @@
+2005-11-29  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.48
+        
+        * Major refactoring of UserPreferences.jsp. The separate
+          registration page is now *gone* and merged into the
+          prefs page. The prefs page itself now has tabs -- 
+          one for the user profile, and one for prefs. This
+          means we can relax a few of the security assumptions
+          at the JSP level, since they are already baked into
+          the core UserManager APIs. (Addresses Dirk's requests.)
+        
+        * Setting the user name via cookies is back!
+        
+        * The security policy was loosened to allow anonymous
+          users to edit their pref. WikiPermission "EditPreferences"
+          has been broadened in meaning to include prefs AND
+          profiles, while "RegisterUser" means simply the ability
+          to create a profile. RegisterUser will *probably* vanish
+          or be renamed in the near future.
+          
+        * SpecialPage REGISTER now points to UserPreferences.jsp
+        
+        * UserPreferences now implements a caching scheme for user
+          profiles that downstream classes like UserProfileTag
+          need. Also, UserPreferences gets a second password
+          (confirmation) field. UserManager receives additional
+          validation logic for processing same.
+          Everybody's happy, but especially Dirk.
+          
+        * Bugfix for XMLUserDatabase that caused funny auth
+          problems if the jspwiki.properties userdatabase prop
+          was commented out. (Credit: Janne)
+        
+        * Favorites/PageActions get context-sensitive 
+          "Log in" "Logout" and "Create group" links.
+         
+        * Build.xml gets some stub code for HTTP/web unit testing.
+          There aren't any tests just yet, but we do have a
+          snappy Tomcat auto-deploy mechanism now.
+          
+        * Thanks to the magic of XyleScope, the default
+          jspwiki.css gets some small tweaks to make the overall
+          styles a bit more aesthetically pleasing and consistent.
+          
+        * "You are anonymous" discreetly disappears.
+        
+        * Temporary bugfix for infinite-redirection loop issue with
+          Login.jsp... introduces another one...
+          
+        * This release introduces a known bugs: a "redirect loop"
+          occurs when using container-managed auth and accessing
+          a forbidden page. This will be fixed in my next
+          checkin.
+
 2005-11-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.3.47
