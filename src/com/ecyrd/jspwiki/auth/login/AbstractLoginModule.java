@@ -13,6 +13,9 @@ import javax.security.auth.spi.LoginModule;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.authorize.Role;
+
 /**
  * Abstract JAAS {@link javax.security.auth.spi.LoginModule}that implements
  * base functionality. The methods {@link #login()} and {@link #commit()} must
@@ -20,7 +23,7 @@ import org.apache.log4j.Logger;
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-11-08 18:27:51 $
+ * @version $Revision: 1.6 $ $Date: 2005-11-29 07:16:57 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule
@@ -32,6 +35,16 @@ public abstract class AbstractLoginModule implements LoginModule
 
     protected Map             m_options;
 
+    /**
+     * Collection of Principals set during login module initialization. 
+     * These represent the user's identities prior to the overall login.
+     * Typically these will contain earlier, less-authoritative principals
+     * like a WikiPrincipal for the user cookie, or an IP address.
+     * These Principals are forcibly removed during the commit phase
+     * if login succeeds.
+     */
+    protected Collection      m_previousWikiPrincipals;
+    
     /**
      * Implementing classes should add Principals to this collection; these
      * will be added to the principal set when the overall login succeeds. 
@@ -114,6 +127,7 @@ public abstract class AbstractLoginModule implements LoginModule
     {
         if ( succeeded() )
         {
+            removePrincipals( m_previousWikiPrincipals );
             for ( Iterator it = m_principals.iterator(); it.hasNext(); )
             {
                 Principal principal = (Principal)it.next();
@@ -148,6 +162,7 @@ public abstract class AbstractLoginModule implements LoginModule
      */
     public final void initialize( Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options )
     {
+        m_previousWikiPrincipals = new HashSet();
         m_principals = new HashSet();
         m_principalsToRemove = new HashSet();
         m_principalsToOverwrite = new HashSet();
@@ -163,6 +178,8 @@ public abstract class AbstractLoginModule implements LoginModule
         {
             throw new IllegalStateException( "Callback handler cannot be null" );
         }
+        // Stash the previous WikiPrincipals; we will flush these if login succeeds
+        m_previousWikiPrincipals.addAll( subject.getPrincipals( WikiPrincipal.class ) );
     }
 
     /**
