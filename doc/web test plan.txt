@@ -27,7 +27,7 @@ As anonymous user:
 
 1) Anonymous page view test
 a. Go to home page (/ or Wiki.jsp). Should show Main
-b. Click on More info... then Management tab. Should not see the rename page field.
+b. Click on More info... then 'Page info' tab. Should not see the rename page field.
 c. View Page Index (Wiki.jsp?page=PageIndex)
 d. Click 'Find Pages' (Search.jsp): find 'security': 6 results
 
@@ -45,7 +45,7 @@ e. Try deleting page: Delete.jsp?page=Main. Should be redirected to login page.
    Go to Main again. Page should still be available.
 
 3) Registration test
-a. Click on Register page
+a. Click on 'My Prefs'
    Create new user:
      loginname: arj
      password: password
@@ -55,11 +55,9 @@ a. Click on Register page
    Save. Go to Main
    Should see "G'day, Andrew Jaquith (authenticated)"
    
-b. Click on Edit Your Profile.
-   Should see login name, wiki name, full name read-only; password and email
-   editable
-
-c. Manually navigate to Register.jsp. Should redirect to UserPreferences.jsp
+b. Click on 'My Prefs'.
+   Should see login name, wiki name, full name read-only; password
+   and email editable
 
 4) Authenticated page modification tests
 a. Click on Main. Edit; add "Authenticated test" to top and save.
@@ -71,12 +69,12 @@ c. Add a comment to Main (http://localhost:8080/content/Comment.jsp?page=Main)
 
 This is an authenticated comment.
 
-Save. See the comment, with the wikiName Andrew Jaquith (obtained from login)
+Save. See the comment, with the wikiName Andrew Jaquith automatically populated (obtained from login)
 
 d. Upload file to Main. Should be allowed. See it on the page.
 
 5) Authenticated group creation
-a. Click NewGroup.jsp. Create new group with name Test,
+a. In action bar, click NewGroup.jsp. Create new group with name Test,
    with members Andrew Jaquith. Save.
    Fetch GroupTest. Should see "This is a wiki group. Edit this page
    to see its members."
@@ -106,7 +104,7 @@ b. Add a new blog entry:
 This is my new blog.
 
 Save. Should succeed. Go back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
-c. Log out. Navigate back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
+c. Log out & clear cookies. Navigate back to page NewBlog. See <div class="weblogentrytitle">TestBlogEntry</div>
 
 
 Container-Managed Auth Tests:
@@ -116,7 +114,7 @@ As anonymous user:
 
 1) Anonymous page view test
 a. Go to home page (/ or Wiki.jsp). Should show Main
-b. Click on More info... then Management tab. Should not see the rename page field.
+b. Click on Page Info. Should not see the rename page field.
 c. View Page Index (Wiki.jsp?page=PageIndex)
 d. Click 'Find Pages' (Search.jsp): find 'security': 6 results
 
@@ -132,7 +130,7 @@ e. Try deleting page: Delete.jsp?page=Main. Should be redirected to login page.
    Go to Main again. Page should still be available.
 
 3) Registration test
-a. Click on Register page. Should be redirected to login page.
+a. Click on UserPreferences.jsp page. Should be redirected to login page.
    Log in as user arj, password tomcat.
    Create new user:
      wiki name: AndyJ
@@ -141,11 +139,9 @@ a. Click on Register page. Should be redirected to login page.
    Save. Go to Main
    Should see "G'day, AndyJ"
    
-b. Click on Edit Your Profile.
+b. Click on My Prefs, then the Profile tab.
    Should see login name, wiki name, full name read-only; password and email editable 
    
-c. Manually navigate to Register.jsp. Should redirect to UserPreferences.jsp
-
 4) Authenticated page modification tests
 a. Click on Main. Edit; add "Authenticated test" to top and save.
    Click on More Info. See saved time.
