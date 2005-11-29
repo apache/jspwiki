@@ -27,6 +27,14 @@
     
     if( !mgr.isContainerAuthenticated() )
     {
+        // If user got here and is already authenticated, it means
+        // they just aren't allowed access to what they asked for.
+        // Weepy tears and hankies all 'round.
+        if ( wikiSession.isAuthenticated() )
+        {
+            response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
+        }
+    
         // If using custom auth, we need to do the login now
 
         String action = request.getParameter("action");
