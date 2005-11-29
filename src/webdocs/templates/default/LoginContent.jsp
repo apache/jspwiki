@@ -67,8 +67,8 @@
       </tr>
     </table>
     <p>Don't have a password? 
-      <a href="Register.jsp">Register with <wiki:Variable var="applicationname" />
-      now!</a>
+      <a href="UserPreferences.jsp">Set up a user profile</a>
+      with <wiki:Variable var="applicationname" />now!
     </p>
   </div>
   </form>
