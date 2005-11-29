@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.56 2005-11-26 13:57:42 jalkanen Exp $
+    $Id: build.xml,v 1.57 2005-11-29 07:21:03 arj Exp $
 -->    
        
 <!--   
@@ -141,6 +141,10 @@
      </fileset>
      <pathelement path="${tests.src}/etc" />
   </path>
+  
+  <!-- The prefix to use when reading environment variables -->
+  <property environment="env" />
+  
 
   <!-- ============================================================== -->
 
@@ -524,14 +528,28 @@
   <target name="war-tomcat"      depends="build-tomcat-war,staticzip"
     description="Builds the WAR file for Tomcat (with pre-compiled JSPs)"/>
 
-  <target name="war-tomcat-init" depends="init">
-    <property environment="env" />
+  <target name="tomcat-init" depends="init">
+    <!-- Auto-detect whether Tomcat is available -->
     <property name="war"               value="${code.build}/${ant.project.name}" />
     <property name="war.tomcat"        value="${ant.project.name}-tomcat.war" />
     <property name="tar.static"        value="${ant.project.name}-static.tar.gz" />
-    <fail unless="env.CATALINA_HOME">Couldn't find CATALINA_HOME. Did you set it?</fail>
-    <property name="tomcat.home"       value="${env.CATALINA_HOME}" />
-    <echo message="Detected Tomcat: ${env.CATALINA_HOME}" />
+    <check-property prop="env.CATALINA_HOME" />
+    <property name="tomcat.home" value="${env.CATALINA_HOME}" />
+    <echo message="Detected Tomcat: ${tomcat.home}" />
+    
+    <!-- Set classpath for pre-compilation and deployment tasks -->
+    <path id="tomcat.classpath"> 
+      <pathelement location="${java.home}/../lib/tools.jar" /> 
+      <fileset dir="${tomcat.home}/server/lib"> 
+        <include name="*.jar" /> 
+      </fileset> 
+      <fileset dir="${tomcat.home}/common/lib"> 
+        <include name="*.jar" /> 
+      </fileset> 
+      <fileset dir="${tomcat.home}/bin"> 
+        <include name="commons-logging-api.jar" /> 
+      </fileset> 
+    </path>
   </target>
 
   <!-- Use Jasper to generate Java class files for the JSPs.
@@ -541,23 +559,12 @@
        our existing web.xml, which we do using a file
        copy with token substitution.                       -->
 
-  <target name="compile-tomcat" depends="war-tomcat-init,opened-war">
+  <target name="compile-tomcat" depends="tomcat-init,opened-war">
     <mkdir dir="${code.build}/jsp-java" />
     <mkdir dir="${code.build}/jsp-classes"/>
     <taskdef classname="org.apache.jasper.JspC" name="jasper2">
       <classpath>
-        <path id="jspc.classpath"> 
-          <pathelement location="${java.home}/../lib/tools.jar" /> 
-          <fileset dir="${tomcat.home}/server/lib"> 
-            <include name="*.jar" /> 
-          </fileset> 
-          <fileset dir="${tomcat.home}/common/lib"> 
-            <include name="*.jar" /> 
-          </fileset> 
-          <fileset dir="${tomcat.home}/bin"> 
-            <include name="commons-logging-api.jar" /> 
-          </fileset> 
-        </path>
+        <path refid="tomcat.classpath" /> 
       </classpath> 
     </taskdef>
     <jasper2 
@@ -568,7 +575,7 @@
       webXmlFragment="${code.build}/web-fragment.xml" />
     <javac srcdir="${code.build}/jsp-java" destdir="${code.build}/jsp-classes">
       <classpath>
-        <path refid="jspc.classpath" /> 
+        <path refid="tomcat.classpath" /> 
         <path id="war.classpath"> 
           <fileset dir="${war}/WEB-INF/lib"> 
             <include name="*.jar" /> 
@@ -629,6 +636,38 @@
     </tar>
   </target>
  
+  <!-- ============================================================== -->
+  
+  <!-- Web unit testing -->
+  
+  <!-- This test assumes you have Tomcat 5 or higher installed
+        **and** that it is running on localhost:8080 when you
+       execute this target. The Manager app must be configured.
+       Right now, the script does nothing other than build WARs
+       for the custom-auth and container-auth versions of
+       JSPWiki, and deploys them to the container. Soon,
+       we will have some real web unit testing courtesy of
+       JWebUnit and friends.
+  -->
+  
+  <target name="webtests" depends="tests-init,tomcat-init,war">
+    
+    <!-- Build the custom auth WAR and test it -->
+    <ant dir="${basedir}" antfile="tests/etc/webtests.xml" 
+      target="webtests" inheritRefs="true">
+      <property name="webtest.context" value="test-custom" />
+      <property name="webtest.webxml"  value="${basedir}/etc/web.xml" />
+    </ant>
+    
+    <!-- Build the container auth WAR and test it -->
+    <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
+      target="webtests" inheritRefs="true">
+      <property name="webtest.context" value="test-container" />
+      <property name="webtest.webxml"  value="${basedir}/tests/etc/WEB-INF/web.xml" />
+    </ant>
+  </target>
+  
+
   <!-- ============================================================== -->
   
   <!-- Targets for signing JAR files -->

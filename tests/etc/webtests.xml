@@ -1,0 +1,126 @@
+<project name="JSPWiki-webtests" default="webtests" basedir="tests">
+
+  <!-- This Ant build file is designed to be called by the
+       "webtests" task in the top-level build.xml file. If
+       executed by itself, it will fail horribly and make
+       many unpleasant noises. It runs tests against a local
+       web application server running on port 8080.
+       
+       The tests require a few properties to be defined 
+       by the calling Ant script:
+       
+         webtest.context:  The webapp context that will be tested.
+                           This will be something like
+                           'test-custom' or 'test-container'.
+         webtest.webxml:   The web.xml file to use for the test.
+         webtest.teardown: If not set, leaves WARs deployed on
+                           the app server, and does not undeploy
+                           them. This property is optional.
+                       
+       The test script follows the narrative in doc/web test plan.txt.
+  -->
+       
+  <!-- The main target. Calls the setup, exec, and teardown targets -->
+  <target name="webtests" depends="webtest-setup,webtest-exec,webtest-teardown,webtest-report" />
+  
+  <!-- Sets up the web tests -->
+  <target name="webtest-setup-init">
+    <condition property="context.installed">
+      <http url="http://localhost:8080/${webtest.context}/Wiki.jsp" />
+    </condition>
+	  <property name="webtest.report" value="tests/reports/webtest-results" />
+	  <mkdir dir="${webtest.report}" />
+  </target>
+  
+  <target name="webtest-setup"
+    depends="webtest-setup-init" unless="context.installed">
+    <echo message="Test context ${webtest.context} not deployed. Deploying..."/>
+    <tomcat-deploy context="${webtest.context}" webxml="${webtest.webxml}" />
+  </target>
+    
+  <!-- Tears down the web tests -->
+  <target name="webtest-teardown" if="webtest.teardown">
+    <tomcat-undeploy context="${webtest.context}" />
+  </target>
+  
+  <!-- Runs the web tests -->
+  <target name="webtest-exec">
+  </target>
+  
+	<target name="webtest-report">
+	</target>
+	
+	<!-- ============================================================== -->
+  
+  <!-- Tomcat deployment tasks -->
+  
+  <!-- These macros deploy and undeploy WAR files to a Tomcat
+       server, assumed to be already running locally on port 8080.
+       The manager app MUST be installed and running in order for
+       this to work properly. Also, the 'tomcat.admin' and
+       'tomcat.password' properties must be set in build.properties.
+       To run these macros, calling tasks must have already
+       run the task 'tomcat-init'.
+  -->
+  <macrodef name="tomcat-deploy">
+    <attribute name="context" />
+    <attribute name="webxml" />
+    <sequential>
+      <!-- We need the tomcat.admin and tomcat.password properties -->
+      <check-property prop="tomcat.admin" />
+      <check-property prop="tomcat.password" />
+    
+      <!-- Declare the Tomcat deploy task -->
+      <taskdef classname="org.apache.catalina.ant.DeployTask" name="deploy">
+        <classpath>
+          <path refid="tomcat.classpath" /> 
+        </classpath> 
+      </taskdef>
+      
+      <!-- Create a context file for Tomcat -->
+      <mkdir dir="${tests.build}/@{context}" />
+      <echo file="${tests.build}/@{context}/context.xml"
+            message='&lt;Context path="/@{context}" debug="0"/&gt;' />
+    
+      <!-- Build the war -->
+      <war warfile="${tests.build}/@{context}/@{context}.war"
+           webxml="@{webxml}">
+         <lib dir="lib" includes="*.jar"
+           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
+         <lib file="${jarfile}" />
+         <fileset dir="${code.src}/webdocs" includes="**" />
+         <webinf dir="etc" includes="**" excludes="**.tmpl web.xml" />
+         <classes dir="etc" includes="oscache.properties" />
+         <metainf dir="${tests.build}/@{context}" includes="context.xml" />
+      </war>
+      
+      <!-- Deploy the webapp -->
+      <deploy url="http://localhost:8080/manager/" 
+        username="${tomcat.admin}" password="${tomcat.password}"
+        path="/@{context}"
+        war="//${basedir}/${tests.build}/@{context}/@{context}.war" />
+    </sequential>
+  </macrodef>
+ 
+  <macrodef name="tomcat-undeploy">
+    <attribute name="context" />
+    <sequential>
+      <!-- We need the tomcat.admin and tomcat.password properties -->
+      <check-property prop="tomcat.admin" />
+      <check-property prop="tomcat.password" />
+    
+      <!-- Declare the Tomcat deploy task -->
+      <taskdef classname="org.apache.catalina.ant.UndeployTask" name="undeploy">
+        <classpath>
+          <path refid="tomcat.classpath" /> 
+        </classpath> 
+      </taskdef>
+      
+      <!-- Undeploy the webapp -->
+      <undeploy url="http://localhost:8080/manager/" 
+        username="${tomcat.admin}" password="${tomcat.password}"
+        path="/@{context}" />
+    </sequential>
+  </macrodef>
+  
+</project>
