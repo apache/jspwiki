@@ -61,7 +61,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2005-10-25 05:49:50 $
+ * @version $Revision: 1.8 $ $Date: 2005-11-29 07:15:34 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -264,21 +264,25 @@ public class XMLUserDatabase extends AbstractUserDatabase
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
     {
+        File defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
+
         // Get database file location
         String file = props.getProperty( PROP_USERDATABASE );
         if ( file == null )
         {
-            throw new NoRequiredPropertyException( "Could not initialize user database; property " + PROP_USERDATABASE
-                    + " not found", PROP_USERDATABASE );
+            log.error( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile  );
+            c_file = defaultFile;
         }
-        c_file = new File( file );
-        if ( !c_file.exists() )
+        else 
         {
-            File defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
-            log.error( "XML user database " + file + " does not exist; trying " + defaultFile );
-            if ( defaultFile.exists() )
+            c_file = new File( file );
+            if ( !c_file.exists() )
             {
-                c_file = defaultFile;
+                log.error( "XML user database " + file + " does not exist; trying " + defaultFile );
+                if ( defaultFile.exists() )
+                {
+                    c_file = defaultFile;
+                }
             }
         }
 

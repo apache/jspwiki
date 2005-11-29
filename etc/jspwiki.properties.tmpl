@@ -403,16 +403,29 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 #  The default user database implementation stores usernames and passwords
 #  in an XML file. Passwords are SHA-1 hashed. The location of this file
 #  should be in a secure directory in the filesystem; for example, in
-#  your servlet container's configuration directory.
+#  /etc or your servlet container's configuration directory.
+#  If you do not supply a value for this property, a blank user database
+#  will be initialized in the WEB-INF/ directory of the deployed webapp.
+#  Since these directories are often overwritten when webapps are
+#  undeployed or redeployed, you should probably set this property to
+#  something useful as soon as you can. But for test wikis, it's probably
+#  ok to leave this un-set, as long as users know that their profiles could
+#  "disappear" if the wiki app is ever redeployed.
 
-jspwiki.xmlUserDatabaseFile = /etc/tomcat/userdatabase.xml
+#jspwiki.xmlUserDatabaseFile = /etc/tomcat/userdatabase.xml
+
+# You can also use a JDBC database for storing user profiles. 
+# See the online AuthenticationAndAuthorization2.3 docs for details on 
+# how to configure it.
+
+#jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.JDBCUserDatabase
 
 #  ADMIN USER
 #  The name of the user who will be treated as the superuser. The admin
 #  user can do anything, and is not restricted by the usual access control
 #  checks or policies. The admin user is disabled by default; uncomment
 #  the line below, and (optionally) change the account name to something
-#  else if you'd like
+#  else if you'd like.
 
 #jspwiki.admin.user = admin
 
