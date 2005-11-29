@@ -54,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.14 $ $Date: 2005-11-22 21:32:02 $
+ * @version $Revision: 1.15 $ $Date: 2005-11-29 07:12:04 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -452,6 +452,12 @@ public class AuthenticationManager
         // Retrieve the associated WikiSession and clear the Principal set
         WikiSession wikiSession = WikiSession.getWikiSession( request );
         wikiSession.invalidate();
+        
+        // If we're using container-managed auth, we need to flush the HTTP session too
+        if ( request.getUserPrincipal() != null || request.getRemoteUser() != null )
+        {
+            session.invalidate();
+        }
     }
 
 }
