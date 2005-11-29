@@ -65,7 +65,7 @@ public class ContentTag
         WikiContext.FIND,     "FindContent.jsp",
         WikiContext.LOGIN,    "LoginContent.jsp",
         WikiContext.PREFS,    "PreferencesContent.jsp",
-        WikiContext.REGISTER, "RegisterContent.jsp",
+        WikiContext.REGISTER, "PreferencesContent.jsp",
         WikiContext.ERROR,    "DisplayMessage.jsp",
         WikiContext.EDIT,     "EditContent.jsp",
         WikiContext.COMMENT,  "CommentContent.jsp"
