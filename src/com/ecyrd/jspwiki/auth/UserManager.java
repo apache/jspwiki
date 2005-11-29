@@ -21,8 +21,10 @@ package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,7 +46,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.39 $ $Date: 2005-09-17 18:14:56 $
+ *  @version $Revision: 1.40 $ $Date: 2005-11-29 07:13:29 $
  *  @since 2.3
  */
 public class UserManager
@@ -57,6 +59,9 @@ public class UserManager
 
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
+    /** Associateds wiki sessions with profiles */
+    private Map              m_profiles     = new WeakHashMap(); 
+    
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database     = null;
     
@@ -222,24 +227,25 @@ public class UserManager
      */
     public UserProfile getUserProfile( WikiSession session ) throws WikiSecurityException
     {
-        boolean needsInitialization = true;
-        UserProfile profile = null;
+        // Look up cached user profile
+        UserProfile profile = (UserProfile)m_profiles.get( session );
+        boolean newProfile = ( profile == null );
         Principal user = null;
         
-        // Figure out if this is an existing profile
+        // If user is authenticated, figure out if this is an existing profile
         if ( session.isAuthenticated() ) {
             user = session.getUserPrincipal();
             try
             {
                 profile = m_database.find( user.getName() );
-                needsInitialization = false;
+                newProfile = false;
             }
             catch( NoSuchPrincipalException e )
             {
             }
         }
         
-        if ( needsInitialization ) 
+        if ( newProfile ) 
         {
             profile = m_database.newProfile();
             if ( user != null )
@@ -252,6 +258,9 @@ public class UserManager
                         "New profile should be marked 'new'. Check your UserProfile implementation." );
             }
         }
+        
+        // Stash the profile for next time
+        m_profiles.put( session, profile );
         return profile;
     }
 
@@ -460,9 +469,27 @@ public class UserManager
         {
             errors.add( "Wiki name cannot be blank" );
         }
-        if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() && isNew && profile.getPassword() == null )
+        
+        // If new profile, passwords must match and can't be null
+        if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
         {
-            errors.add( "Password cannot be blank" );
+            String password = profile.getPassword();
+            if ( password == null )
+            {
+                if ( isNew )
+                {
+                    errors.add( "Password cannot be blank" );
+                }
+            }
+            else 
+            {
+                HttpServletRequest request = context.getHttpRequest();
+                String password2 = ( request == null ) ? null : request.getParameter( "password2" );
+                if ( !password.equals( password2 ) )
+                {
+                    errors.add( "Passwords don't match" );
+                }
+            }
         }
     }
 
