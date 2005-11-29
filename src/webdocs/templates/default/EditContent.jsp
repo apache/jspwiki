@@ -15,8 +15,8 @@
   <%-- need a cancel button here --%>
   <p class="locknote">User '<%=lock.getLocker()%>' has started to edit this page, but has not yet
   saved.  I won't stop you from editing this page anyway, BUT be aware that
-  the other person might be quite annoyed.  It would be courteous to wait for his lock
-  to expire or until he stops editing the page.  The lock expires in
+  the other person might be quite annoyed.  It would be courteous to wait for the lock
+  to expire or until the person stops editing the page.  The lock expires in
   <%=lock.getTimeLeft()%> minutes.
   </p>
 </div>
