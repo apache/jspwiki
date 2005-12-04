@@ -695,4 +695,29 @@ public class TextUtil
         };
         return hexDigit[(nibble & 0xF)];
     }
+
+    /**
+     *  Returns true, if the argument contains a number, otherwise false.
+     *  In a quick test this is roughly the same speed as Integer.parseInt()
+     *  if the argument is a number, and roughly ten times the speed, if
+     *  the argument is NOT a number.
+     *  
+     *  @since 2.4
+     */
+    
+    public static boolean isNumber( String s )
+    {
+        if( s == null ) return false;
+    
+        if( s.length() > 1 && s.charAt(0) == '-' )
+            s = s.substring(1);
+    
+        for( int i = 0; i < s.length(); i++ )
+        {
+            if( !Character.isDigit(s.charAt(i)) )
+                return false;
+        }
+    
+        return true;
+    }
 }
