@@ -13,8 +13,8 @@
   //String dateformat = "EEE, dd-MMM-yyyy [hh:mm]";
 
 
-  WikiContext c = (WikiContext) pageContext.getAttribute( "jspwiki.context",
-                                                         PageContext.REQUEST_SCOPE );
+  WikiContext c = WikiContext.findContext( pageContext );
+  
   int latestVersion = 0;
   try
   {
@@ -44,10 +44,10 @@ function confirmDelete()
           onclick="TabbedSection.onclick('infocontent')" >Page Info</a></span>
 
   <span><a id="menu-referingto"
-           onclick="TabbedSection.onclick('referingto')" >Refering To</a></span>
+           onclick="TabbedSection.onclick('referingto')" >Outgoing links</a></span>
 
   <span><a id="menu-referencedby"
-           onclick="TabbedSection.onclick('referencedby')" >Referenced By</a></span>
+           onclick="TabbedSection.onclick('referencedby')" >Incoming links</a></span>
   <wiki:HasAttachments>
   <span><a id="menu-attachments"
            onclick="TabbedSection.onclick('attachments')" >Attachment info</a></span>
@@ -247,9 +247,6 @@ function confirmDelete()
     <th>Attachment Name</th>
     <td>
       <wiki:LinkToParent><wiki:ParentPageName /></wiki:LinkToParent> / <wiki:LinkTo><wiki:PageName /></wiki:LinkTo>
-      <%-- wanna link to the parent page page info -- doesnt work - double nesting
-        <wiki:PageInfoLink page="<wiki:ParentPageName />" >Page-Info</wiki:PageInfoLink>
-       --%>
     </td>
     </tr>
 
@@ -271,8 +268,6 @@ function confirmDelete()
         </a>
     </td>
     </tr>
-    <!-- why not use <wiki:RSSImageLink title="Aggregate the RSS feed" />
-         which hides the link if not BaseURL is set-->
 
     <tr>
     <th>Upload new version</th>
