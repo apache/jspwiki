@@ -45,7 +45,7 @@ public class FormTextarea
         {
             if( info.hide() )
             {
-                return( "<p>(no need to show textarea field now)</p>" );
+                return "<p>(no need to show textarea field now)</p>";
             }
         }
 
@@ -61,9 +61,9 @@ public class FormTextarea
 
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
-            return( field.toString() );
+            return field.toString( ctx.getEngine().getContentEncoding() );
         
-        return( "" );
+        return "";
     }
 
     private textarea buildTextArea( Map params,

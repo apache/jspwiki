@@ -128,10 +128,11 @@ public class FormOpen
         info.setName( formName );
         info.setAction( submitServlet );
 
-        StringBuffer tag = new StringBuffer();
+        StringBuffer tag = new StringBuffer( 40 );
         tag.append( "<div class=\"wikiform\">\n" );
         tag.append( "<form action=\"" + submitServlet );
         tag.append( "\" name=\"" + formName );
+        tag.append( "\" accept-charset=\"" + ctx.getEngine().getContentEncoding() );
         tag.append( "\" method=\""+method+"\" enctype=\"application/x-www-form-urlencoded\">\n" );
         tag.append( "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN );
         tag.append( "\" value=\"" + formName + "\"/>\n" );

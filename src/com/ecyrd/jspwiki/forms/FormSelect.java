@@ -43,7 +43,7 @@ public class FormSelect
         {
             if( info.hide() )
             {
-                return( "<p>(no need to show input field now)</p>" );
+                return "<p>(no need to show input field now)</p>";
             }
         }
 
@@ -59,9 +59,9 @@ public class FormSelect
 
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
-            return( field.toString() );
+            return field.toString(ctx.getEngine().getContentEncoding());
         
-        return( "" );
+        return "";
     }
 
 

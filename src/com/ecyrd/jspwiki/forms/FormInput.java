@@ -24,6 +24,8 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
+import javax.print.attribute.standard.MediaSize.Engineering;
+
 import org.apache.ecs.xhtml.input;
 
 /**
@@ -89,6 +91,6 @@ public class FormInput
 
         if( size != null ) field.setSize( size );
 
-        return( field.toString() );
+        return field.toString(ctx.getEngine().getContentEncoding());
     }
 }
