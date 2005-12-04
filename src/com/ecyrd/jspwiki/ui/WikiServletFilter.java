@@ -47,7 +47,11 @@ public class WikiServletFilter implements Filter
 
         WikiContext wikiContext = getWikiContext( request );
         String r = filter( wikiContext, responseWrapper.toString() );
-        byte[] bytes = r.getBytes(); // TODO: Encoding?
+        
+        String encoding = "UTF-8";
+        if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
+                
+        byte[] bytes = r.getBytes( encoding );
 
         // Only now write the (real) response to the client.
         response.setContentLength( bytes.length );
