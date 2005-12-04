@@ -36,17 +36,14 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
-import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
-import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
-import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.auth.user.*;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.40 $ $Date: 2005-11-29 07:13:29 $
+ *  @version $Revision: 1.41 $ $Date: 2005-12-04 18:42:09 $
  *  @since 2.3
  */
 public class UserManager
@@ -497,19 +494,14 @@ public class UserManager
      * This is a database that gets used if nothing else is available. It does
      * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
      * someone tries to log in.
-     * @author jalkanen
+     * @author Janne Jalkanen
      */
-    public class DummyUserDatabase implements UserDatabase
+    public class DummyUserDatabase extends AbstractUserDatabase
     {
 
         public void commit() throws WikiSecurityException
         {
             // No operation
-        }
-
-        public UserProfile find(String index) throws NoSuchPrincipalException
-        {
-            throw new NoSuchPrincipalException("No user profiles available");
         }
 
         public UserProfile findByEmail(String index) throws NoSuchPrincipalException
@@ -532,27 +524,12 @@ public class UserManager
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
-        public Principal[] getPrincipals(String identifier) throws NoSuchPrincipalException
-        {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
         }
 
-        public UserProfile newProfile()
-        {
-            return new DefaultUserProfile();
-        }
-
         public void save( UserProfile profile ) throws WikiSecurityException
         {
-        }
-
-        public boolean validatePassword(String loginName, String password)
-        {
-            return false;
         }
         
     }
