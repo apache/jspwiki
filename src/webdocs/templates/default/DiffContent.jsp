@@ -1,31 +1,62 @@
 <%@ page import="com.ecyrd.jspwiki.tags.InsertDiffTag" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%!
-    String getVersionText( Integer ver )
-    {
-        return ver.intValue() > 0 ? ("version "+ver) : "current version";
-    }
-%>
 
-      <wiki:PageExists>
-          Difference between 
-          <%=getVersionText((Integer)pageContext.getAttribute(InsertDiffTag.ATTR_OLDVERSION, PageContext.REQUEST_SCOPE))%> 
-          and 
-          <%=getVersionText((Integer)pageContext.getAttribute(InsertDiffTag.ATTR_NEWVERSION, PageContext.REQUEST_SCOPE))%>:
-          <div>
-          <wiki:InsertDiff>
-              <i>No difference detected.</i>
-          </wiki:InsertDiff>
-          </div>
+<div id="diffcontent" >
 
-      </wiki:PageExists>
+    <wiki:PageExists>
+    <div class="diffnote">
 
-      <wiki:NoSuchPage>
-             This page does not exist.  Why don't you go and
-             <wiki:EditLink>create it</wiki:EditLink>?
-      </wiki:NoSuchPage>
+    <form action="<wiki:Variable var='baseURL'/>Diff.jsp" 
+          method="post"  accept-charset="UTF-8">     
+    Difference between version
+    <select id="r1" name="r1" onchange="this.form.submit();" >
+    <% 
+       WikiContext c = (WikiContext) pageContext.getAttribute( "jspwiki.context",
+                                                         PageContext.REQUEST_SCOPE ); 
+       int latestVersion = c.getPage().getVersion();;
+       int ii = 0;
+       ii = ((Integer)pageContext.getAttribute(InsertDiffTag.ATTR_OLDVERSION, 
+                                               PageContext.REQUEST_SCOPE)).intValue();
+       for( int i = 1; i <= latestVersion; i++) 
+       {
+    %> 
+       <option value="<%= i %>" <%= ((i==ii) ? "selected='selected'" : "") %> ><%= i %></option>
+    <%
+       }    
+    %>
+    </select>
+    and version
+    <select id="r2" name="r2" onchange="this.form.submit();" >
+    <% 
+       ii = ((Integer)pageContext.getAttribute(InsertDiffTag.ATTR_NEWVERSION, 
+                                               PageContext.REQUEST_SCOPE)).intValue();
+       for( int i = 1; i <= latestVersion; i++) 
+       {
+    %> 
+       <option value="<%= i %>" <%= ((i==ii) ? "selected='selected'" : "") %> ><%= i %></option>
+    <%
+       }    
+    %>
+    </select>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a title="Go to first change in this document" 
+       href="#change-1">View first change</a>&raquo;&raquo;
+    </form>
+    <br />
+    Back to <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>, or
+    <wiki:PageInfoLink><wiki:PageName/> version history</wiki:PageInfoLink>
+    </div>
+    <br />
+    <wiki:InsertDiff>
+      <i>No difference detected.</i>
+    </wiki:InsertDiff> 
+    </wiki:PageExists>
+    
+    <wiki:NoSuchPage>
+    <p>
+    This page does not exist.  Why don't you go and <wiki:EditLink>create it</wiki:EditLink>?
+    </p>
+    </wiki:NoSuchPage>
 
-      <p>
-      Back to <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>,
-       or to the <wiki:PageInfoLink>Page History</wiki:PageInfoLink>.
-       </p>
+</div>
