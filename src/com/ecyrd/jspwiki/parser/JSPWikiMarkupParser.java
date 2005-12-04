@@ -497,9 +497,11 @@ public class JSPWikiMarkupParser
     /**
      *  Figures out if a link is an off-site link.  This recognizes
      *  the most common protocols by checking how it starts.
+     *  
+     *  @since 2.4
      */
 
-    private boolean isExternalLink( String link )
+    public static boolean isExternalLink( String link )
     {
         int idx = Arrays.binarySearch( c_externalLinks, link, 
                                        c_startingComparator );
@@ -544,29 +546,6 @@ public class JSPWikiMarkupParser
     private static boolean isMetadata( String link )
     {
         return link.startsWith("{SET");
-    }
-
-    /**
-     *  Returns true, if the argument contains a number, otherwise false.
-     *  In a quick test this is roughly the same speed as Integer.parseInt()
-     *  if the argument is a number, and roughly ten times the speed, if
-     *  the argument is NOT a number.
-     */
-
-    private boolean isNumber( String s )
-    {
-        if( s == null ) return false;
-
-        if( s.length() > 1 && s.charAt(0) == '-' )
-            s = s.substring(1);
-
-        for( int i = 0; i < s.length(); i++ )
-        {
-            if( !Character.isDigit(s.charAt(i)) )
-                return false;
-        }
-
-        return true;
     }
 
     /**
@@ -1261,8 +1240,15 @@ public class JSPWikiMarkupParser
                 urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
                 callMutatorChain( m_externalLinkMutatorChain, urlReference );
 
-                makeLink( INTERWIKI, urlReference, link, null );
-
+                if( isImageLink(urlReference) )
+                {
+                    handleImageLink( urlReference, link, cutpoint != -1 );
+                }
+                else
+                {
+                    makeLink( INTERWIKI, urlReference, link, null );
+                }
+                
                 if( isExternalLink(urlReference) )
                 {
                     addElement( outlinkImage() );
@@ -1278,7 +1264,7 @@ public class JSPWikiMarkupParser
             // It defines a local footnote
             makeLink( LOCAL, reallink, link, null );
         }
-        else if( isNumber( reallink ) )
+        else if( TextUtil.isNumber( reallink ) )
         {
             // It defines a reference to a local footnote
             makeLink( LOCALREF, reallink, link, null );
