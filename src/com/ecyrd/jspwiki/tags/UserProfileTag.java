@@ -22,6 +22,9 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -50,14 +53,14 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * exist in the user database
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-09-02 23:42:15 $
+ * @version $Revision: 1.5 $ $Date: 2005-12-04 18:52:52 $
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase
 {
     private static final long serialVersionUID = 3258410625431582003L;
 
-    public static final String BLANK = "(not set)";
+    public  static final String BLANK = "(not set)";
     
     private static final String CREATED   = "created";
 
@@ -133,6 +136,20 @@ public class UserProfileTag extends WikiTagBase
         else if ( WIKINAME.equals( m_prop ) )
         {
             result = profile.getWikiName();
+            
+            if( result == null )
+            {
+                //
+                //  Default back to the declared user name
+                //
+                WikiSession wikiSession = WikiSession.getWikiSession((HttpServletRequest)pageContext.getRequest());
+                Principal user = wikiSession.getUserPrincipal();
+
+                if( user != null )
+                {
+                    result = user.getName();
+                }
+            }
         }
         if ( result != null )
         {
