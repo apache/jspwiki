@@ -301,6 +301,63 @@
   </tag>  
 
   <tag>
+    <name>Link</name>
+    <tagclass>com.ecyrd.jspwiki.tags.LinkTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>page</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>format</name>
+    </attribute>
+    <attribute>
+       <name>version</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>class</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+    <attribute>
+       <name>style</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+    <attribute>
+       <name>title</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+    <attribute>
+       <name>target</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+    <attribute>
+       <name>compareToVersion</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+    <attribute>
+       <name>rel</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+        <attribute>
+       <name>jsp</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+        <attribute>
+       <name>ref</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+        <attribute>
+       <name>context</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+        <attribute>
+       <name>absolute</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+  </tag>  
+
+  <tag>
     <name>LinkTo</name>
     <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
     <bodycontent>JSP</bodycontent>
