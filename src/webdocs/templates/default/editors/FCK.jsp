@@ -72,5 +72,5 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input name='cancel' type='submit' value='Cancel' />
     </p>
-</form>
 </div>
+</form>
