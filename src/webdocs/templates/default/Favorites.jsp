@@ -3,8 +3,7 @@
 
   <%
     //  Determine the name for the user's favorites page
-    WikiContext c = (WikiContext) pageContext.getAttribute( "jspwiki.context",
-                                                         PageContext.REQUEST_SCOPE );
+    WikiContext c = WikiContext.findContext( pageContext );
     String pagename = c.getPage().getName();
     String username = null;
  
