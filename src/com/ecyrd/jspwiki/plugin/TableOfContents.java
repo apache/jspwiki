@@ -42,8 +42,18 @@ public class TableOfContents
     private static Logger log = Logger.getLogger( TableOfContents.class );
 
     public static final String PARAM_TITLE = "title";
+    public static final String PARAM_NUMBERED = "numbered";
+    public static final String PARAM_START = "start";
+    public static final String PARAM_PREFIX = "prefix";
 
     StringBuffer m_buf = new StringBuffer();
+    private boolean m_usingNumberedList = false; 
+    private String m_prefix = ""; 
+    private int m_starting = 0; 
+    private int m_level1Index = 0; 
+    private int m_level2Index = 0; 
+    private int m_level3Index = 0; 
+    private int m_lastLevel = 0;
 
     public void headingAdded( WikiContext context, Heading hd )
     {
@@ -53,21 +63,60 @@ public class TableOfContents
         {
           case Heading.HEADING_SMALL:
             m_buf.append("<li class=\"toclevel-3\">");
+            m_level3Index++;
             break;
           case Heading.HEADING_MEDIUM:
             m_buf.append("<li class=\"toclevel-2\">");
+            m_level2Index++;
             break;
           case Heading.HEADING_LARGE:
             m_buf.append("<li class=\"toclevel-1\">");
+            m_level1Index++;
             break;
           default:
             throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
         }
 
+        if (m_level1Index < m_starting) 
+        {
+            // in case we never had a large heading ...
+            m_level1Index++;
+        }
+        if ((m_lastLevel == Heading.HEADING_SMALL) && (hd.m_level != Heading.HEADING_SMALL)) 
+        {
+            m_level3Index = 0;
+        }
+        if ( ((m_lastLevel == Heading.HEADING_SMALL) || (m_lastLevel == Heading.HEADING_MEDIUM)) &&
+                  (hd.m_level == Heading.HEADING_LARGE) ) 
+        {
+            m_level3Index = 0;
+            m_level2Index = 0;
+        }
+
         String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
         String sectref = "#section-"+context.getEngine().encodeName(context.getPage().getName())+"-"+hd.m_titleSection;
 
-        m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">"+hd.m_titleText+"</a></li>\n" );
+        m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">");
+        if (m_usingNumberedList) 
+        {
+            switch( hd.m_level )
+            {
+            case Heading.HEADING_SMALL:
+                m_buf.append(m_prefix + m_level1Index + "." + m_level2Index + "."+ m_level3Index +" ");
+                break;
+            case Heading.HEADING_MEDIUM:
+                m_buf.append(m_prefix + m_level1Index + "." + m_level2Index + " ");
+                break;
+            case Heading.HEADING_LARGE:
+                m_buf.append(m_prefix + m_level1Index +" ");
+                break;
+            default:
+                throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
+            }
+        }
+        m_buf.append( hd.m_titleText+"</a></li>\n" );
+
+        m_lastLevel = hd.m_level;
     }
 
     public String execute( WikiContext context, Map params )
@@ -81,7 +130,6 @@ public class TableOfContents
         sb.append("<div class=\"toc\">\n");
 
         String title = (String) params.get(PARAM_TITLE);
-        
         if( title != null )
         {
             sb.append("<h4>"+TextUtil.replaceEntities(title)+"</h4>\n");
@@ -89,6 +137,42 @@ public class TableOfContents
         else
         {
             sb.append("<h4>Table of Contents</h4>\n");
+        }
+
+        // should we use an ordered list?
+        m_usingNumberedList = false;
+        if (params.containsKey(PARAM_NUMBERED)) 
+        {
+            String numbered = (String)params.get(PARAM_NUMBERED);
+            if (numbered.equalsIgnoreCase("true")) 
+            {
+                m_usingNumberedList = true;
+            }
+            else if (numbered.equalsIgnoreCase("yes")) 
+            {
+                m_usingNumberedList = true;
+            }
+        }
+        
+        // if we are using a numbered list, get the rest of the parameters (if any) ...
+        if (m_usingNumberedList) 
+        {
+            int start = 0;
+            String startStr = (String)params.get(PARAM_START);
+            if ((startStr != null) && (startStr.matches("^\\d+$"))) 
+            {
+                start = Integer.parseInt(startStr);
+            }
+            if (start < 0) start = 0;
+            
+            m_starting = start;
+            m_level1Index = start - 1;
+            if (m_level1Index < 0) m_level1Index = 0;
+            m_level2Index = 0;
+            m_level3Index = 0;
+            m_prefix = (String)params.get(PARAM_PREFIX);
+            if (m_prefix == null) m_prefix = "";
+            m_lastLevel = Heading.HEADING_LARGE;
         }
 
         try
