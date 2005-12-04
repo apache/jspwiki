@@ -28,7 +28,7 @@
      <filter-name>WikiServletFilter</filter-name>
      <url-pattern>/*</url-pattern>
    </filter-mapping>
-   
+
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
