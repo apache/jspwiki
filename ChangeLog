@@ -1,3 +1,36 @@
+2005-12-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.49
+        
+        * Added LinkTag at the request of Gregor Hagedorn.  It
+        does pretty much everything.  Adding documentation later...
+        This class also needs some serious working so that the 
+        functionality could be offered to other classes as well
+        (such as the Image plugin).
+        
+        * Hopefully fixed the "my username is null" -problem, which
+        would occur, if you were both logged in and had a cookie.
+        
+        * Added a patch from Matt Luker to allow numbering in 
+        TableOfContents.
+        
+        * InterWiki links are now also checked for image inlining.
+        Merry Christmas :)
+        
+        * FCK.jsp had two elements reversed.  Thanks Dirk Fredericx!
+        
+        * Diffs now use code from BrushedTemplate by Dirk.
+        
+        * WikiServletFilter was letting only US-ASCII through - oops...
+        
+        * WikiForms can now handle UTF-8.
+        
+        * TableOfContentsPlugin font size was set accidentally to zero
+        in jspwiki.css.  WTF?
+        
+        * Reworked the jolly old "include correct CSS based on browser"
+        to be a proper Javascript method call.
+
 2005-11-29  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.48
