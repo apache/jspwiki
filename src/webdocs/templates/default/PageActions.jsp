@@ -78,15 +78,15 @@
     </wiki:CheckRequestContext>
     
     <wiki:UserCheck status="notAuthenticated">
-      <a href="Login.jsp">Log in</a>
+      <wiki:Link jsp="Login.jsp">Log in</wiki:Link>
     </wiki:UserCheck>
     
     <wiki:UserCheck status="authenticated">
-      <a href="Logout.jsp">Log out</a>
+      <wiki:Link jsp="Logout.jsp">Log out</wiki:Link>
     </wiki:UserCheck>
     
     <wiki:Permission permission="createGroups">
-      <a href="<wiki:BaseURL/>NewGroup.jsp">Create group</a>
+      <wiki:Link jsp="NewGroup.jsp">Create group</wiki:Link>
     </wiki:Permission>
   
     <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
