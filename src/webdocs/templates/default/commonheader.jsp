@@ -2,7 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
-  <link rel="stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" />
+  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" />
   <wiki:IncludeResources type="stylesheet"/>
   <script src="<wiki:BaseURL/>scripts/jspwiki-common.js" type="text/javascript"></script>
   <wiki:IncludeResources type="script"/>
@@ -15,7 +15,6 @@
   <link rel="alternate stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" title="Standard" />
   <link rel="icon" type="image/png" href="<wiki:BaseURL/>images/favicon.png" />
   <wiki:FeedDiscovery />
-
 <%
   // cookie-format
   // skinname DELIM dateformat DELIM timezone DELIM editareaheight
@@ -91,3 +90,4 @@ function runOnLoad()
 
 window.onload = runOnLoad;
 </script>
+<script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>");</script>
