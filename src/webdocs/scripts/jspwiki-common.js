@@ -371,12 +371,15 @@ TabbedSection.onclick = function ( tabId )
 }
 
 /**
- ** Search stuff
- ** 301 Remember 10 most recent search topics
- **     Uses a cookie to store to 10 most recent search topics
+ ** 120 SearchBox
+ **  Remember 10 most recent search topics
+ **  Uses a cookie to store to 10 most recent search topics
+ **
+ **  Extensions for quick link to View Page, Edit Page, Find as is.
+ **  (based on idea of Ron Howard - Nov 05)
  **/
 var SearchBox = new Object();
-
+ 
 SearchBox.submit = function ( queryValue )
 {
   for(var i=0; i < this.recentSearches.length; i++)
@@ -391,7 +394,6 @@ SearchBox.submit = function ( queryValue )
   document.setCookie( "JSPWikiSearchBox", this.recentSearches.join( Wiki.DELIM) );
 }
 
-
 SearchBox.onPageLoad = function()
 {
   this.searchForm = document.getElementById("searchForm");
@@ -403,17 +405,22 @@ SearchBox.onPageLoad = function()
   this.recentSearches = new Array();
   var c = document.getCookie( "JSPWikiSearchBox" );
   if( c ) this.recentSearches = c.split( Wiki.DELIM );
-
+  
   var s = "";
   if( this.recentSearches.length == 0 ) return;
 
   var div1 = "<div onclick='SearchBox.doSearch(this)'>";
   var div2 = "</div>";
-  var s = "Recent Searches: ";
+  
+  var s = "Recent Searches:"; 
+  var t = [];
+  for( i=0; i < this.recentSearches.length; i++ )
+  {
+    //todo
+  }
   s += div1 + this.recentSearches.join( div2+div1 ) + div2;
   s += "<br /><div onclick='SearchBox.clearRecentSearches()'>Clear Recent Searches</div>";
   this.recentSearchesDIV.innerHTML = s;
-
 }
 
 SearchBox.doSearch = function ( searchDiv )
@@ -427,6 +434,15 @@ SearchBox.clearRecentSearches = function()
   document.setCookie( "JSPWikiSearchBox", "" );
   this.recentSearches = new Array();
   this.recentSearchesDIV.innerHTML = "";
+}
+
+SearchBox.navigation = function( url, pagename )
+{
+  var s = SearchBox.searchForm.query.value;
+  if( s == 'Search' ) s = '';
+  if( s == '' ) s = pagename ; //current page name
+  if( s != '' ) location.href = url+s ;
+  return(false); //dont exec the click on the <a href=#>
 }
 
 /**
@@ -681,6 +697,8 @@ Collapsable.cookies      = [] ;
 Collapsable.cookieNames  = [] ;
 
 Collapsable.ClassName    = "collapse";
+Collapsable.ClassNameBox = "collapsebox";
+Collapsable.ClassNameBody= "collapsebody";
 Collapsable.OpenTip      = "Click to collapse";
 Collapsable.CloseTip     = "Click to expand";
 Collapsable.CollapseID   = "clps"; //prefix for unique IDs of inserted DOM nodes
@@ -705,18 +723,45 @@ Collapsable.onPageLoad = function()
 
 Collapsable.initialise = function( domID, className, cookieName )
 {
-  var page  = document.getElementById( domID );          if( !page  ) return;
-  var nodes = getElementsByClassName( page, className ); if( !nodes ) return;
-
+  var page  = document.getElementById( domID );  if( !page ) return;
   this.tmpcookie = document.getCookie( cookieName );
   this.cookies.push( "" ) ; //initialise new empty collapse cookie
   this.cookieNames.push( cookieName );
 
-  for( var i=0; i < nodes.length; i++)
-  {
-    this.collapseNode( nodes[i] );
+  var nodes;
+  nodes = getElementsByClassName( page, this.ClassName ); 
+  if( nodes ) 
+  { 
+    for( var i=0; i < nodes.length; i++)  this.collapseNode( nodes[i] );
   }
+  nodes = getElementsByClassName( page, this.ClassNameBox );
+  if( nodes ) 
+  { 
+    for( var i=0; i < nodes.length; i++)  this.collapseBox( nodes[i] );
+  }  
 }
+
+Collapsable.REboxtitle = new RegExp ( "h2|h3|h4" );
+Collapsable.collapseBox = function( node )
+{
+  var title = node.firstChild; 
+  while( (title != null) && (!this.REboxtitle.test( title.nodeName.toLowerCase() )) )
+  {
+    title = title.nextSibling;
+  }
+  if( !title ) return;  
+  if( !title.nextSibling ) return;
+  
+  var body = document.createElement( "div" );
+  body.className = this.ClassNameBody;
+  while( title.nextSibling ) body.appendChild( title.nextSibling );
+  node.appendChild( body );    
+
+  var bullet  = this.bullet.cloneNode(true);
+  this.initBullet( bullet, body, this.MarkerOpen );
+  title.appendChild( bullet );
+}
+
 
 // Modifies the list such that sublists canbe hidden and shown by clicking the listitem bullet
 // The listitem bullet is a node inserted into the DOM tree as the first child of the 
@@ -730,8 +775,6 @@ Collapsable.collapseNode = function( node )
     var nodeXL = ( nodeLI.getElementsByTagName("ul")[0] || 
                    nodeLI.getElementsByTagName("ol")[0] ); 
 
-    var bullet  = this.bullet.cloneNode(true);
-    
     //dont insert bullet when LI is "empty" -- iow it has no text or no non ulol tags inside
     //eg. * a listitem
     //    *** a nested list item - intermediate level is empty
@@ -744,27 +787,36 @@ Collapsable.collapseNode = function( node )
       break;
     }
     if( emptyLI ) continue; //do not insert a bullet
+
+    var bullet  = this.bullet.cloneNode(true);
+    
     if( nodeXL )
     {
       var defaultState = (nodeXL.nodeName == "UL") ? this.MarkerOpen : this.MarkerClose ;
-      var collapseState = this.parseCookie( defaultState ); 
-      bullet.onclick = this.toggleBullet;
-      bullet.id = this.CollapseID + "." + (this.cookies.length-1) + 
-                                    "." + (this.cookies.last().length-1);
-      this.setOpenOrClose( ( collapseState == this.MarkerOpen ), nodeXL, bullet );
+      this.initBullet( bullet, nodeXL, defaultState );
     }
     nodeLI.insertBefore( bullet, nodeLI.firstChild ); 
   }
 }
 
 
-// modify dom-node according to the setToOpen flag
-Collapsable.setOpenOrClose = function( setToOpen, nodeXL, bullet )
+// initialise bullet according to parser settings
+Collapsable.initBullet = function( bullet, body, defaultState )
 {
-  bullet.innerHTML     = (setToOpen) ? "&raquo;"      : "&laquo;" ;
-  bullet.className     = (setToOpen) ? "collapseOpen" : "collapseClose" ;
-  bullet.title         = (setToOpen) ? this.OpenTip   : this.CloseTip ;
-  nodeXL.style.display = (setToOpen) ? "block"        : "none" ;
+  var collapseState = this.parseCookie( defaultState ); 
+  bullet.onclick = this.toggleBullet;
+  bullet.id = this.CollapseID + "." + (this.cookies.length-1) + 
+                                "." + (this.cookies.last().length-1);
+  this.setOpenOrClose( bullet, ( collapseState == this.MarkerOpen ), body );
+}
+
+// modify dom-node according to the setToOpen flag
+Collapsable.setOpenOrClose = function( bullet, setToOpen, body )
+{
+  bullet.innerHTML   = (setToOpen) ? "&raquo;"      : "&laquo;" ;
+  bullet.className   = (setToOpen) ? "collapseOpen" : "collapseClose" ;
+  bullet.title       = (setToOpen) ? this.OpenTip   : this.CloseTip ;
+  body.style.display = (setToOpen) ? "block"        : "none" ;
 }
  
  
@@ -798,22 +850,31 @@ Collapsable.parseCookie = function( token )
 // format of ID of bullet = "collapse.<cookies-index>.<cookie-charAt>"
 Collapsable.toggleBullet = function( )
 {
-  var cxt = Collapsable; //avoid confusion with this == clicked bullet
+  var ctx = Collapsable; //avoid confusion with this == clicked bullet
 
-  var nodeXL = ( this.parentNode.getElementsByTagName("ul")[0] || 
-                 this.parentNode.getElementsByTagName("ol")[0] ); 
   var idARR  = this.id.split(".");  if( idARR.length != 3 ) return;
+  var cookie = ctx.cookies[idARR[1]]; // index in cookies array
 
-  var cookie = cxt.cookies[idARR[1]]; // index in cookies array
+  var body;
+  if( ctx.REboxtitle.test( this.parentNode.nodeName.toLowerCase() ) )
+  {
+    body = this.parentNode.nextSibling;
+  } 
+  else
+  {
+    body = ( this.parentNode.getElementsByTagName("ul")[0] || 
+             this.parentNode.getElementsByTagName("ol")[0] ); 
+  }
+  if( !body ) return;
 
-  cxt.setOpenOrClose( (nodeXL.style.display == "none"), nodeXL, this );
+  ctx.setOpenOrClose( this, (body.style.display == "none"), body );
   
   var i = parseInt(idARR[2]); // position inside cookie
-  var c = ( cookie.charAt(i) == cxt.MarkerOpen ) ? cxt.MarkerClose : cxt.MarkerOpen; 
+  var c = ( cookie.charAt(i) == ctx.MarkerOpen ) ? ctx.MarkerClose : ctx.MarkerOpen; 
   cookie = cookie.substring(0,i) + c + cookie.substring(i+1) ;
 
-  document.setCookie( cxt.cookieNames[idARR[1]], cookie );
-  cxt.cookies[idARR[1]] = cookie;
+  document.setCookie( ctx.cookieNames[idARR[1]], cookie );
+  ctx.cookies[idARR[1]] = cookie;
 
   return false;  
 }
