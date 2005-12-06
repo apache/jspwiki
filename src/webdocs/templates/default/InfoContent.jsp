@@ -223,9 +223,8 @@ function confirmDelete()
     </wiki:HistoryIterator>
   </table>
   </div> <%-- versionhistory --%>
-  
-  </div> <%-- pageinfo --%>
   </wiki:CheckVersion>
+</div> <%-- pageinfo --%>
 
 <div id="referingto" style="display:none;" >
   <p><wiki:Plugin plugin="ReferredPagesPlugin" args="depth=1" >body</wiki:Plugin></p>
