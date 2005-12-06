@@ -1,3 +1,16 @@
+2005-12-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.50 alpha.
+        
+        * Added collapsebox from BrushedTemplate.  Also synced
+        some search stuff from Brushed.
+        
+        * TableOfContents are now collapsable.
+        
+        * Moved the layout around a bit - actions are now a part of
+        Header.jsp and Footer.jsp.  This allows us to do a slightly
+        nicer layout, I think.
+
 2005-12-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.49
