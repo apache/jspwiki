@@ -39,11 +39,11 @@
   <div class="username">
     <wiki:UserCheck status="asserted">
         <p>G'day
-          <wiki:Translate>[<wiki:UserName />]</wiki:Translate> (not logged in)</p>
+          <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br />(not logged in)</p>
     </wiki:UserCheck>
     <wiki:UserCheck status="authenticated">
       <p>G'day
-        <wiki:Translate>[<wiki:UserName />]</wiki:Translate> (authenticated)</p>
+        <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br />(authenticated)</p>
     </wiki:UserCheck>
   </div>
   

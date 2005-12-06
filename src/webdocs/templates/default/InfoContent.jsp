@@ -228,12 +228,16 @@ function confirmDelete()
   </wiki:CheckVersion>
 
 <div id="referingto" style="display:none;" >
-  <p><wiki:Plugin plugin="ReferredPagesPlugin" args="depth=3" >body</wiki:Plugin></p>
+  <p><wiki:Plugin plugin="ReferredPagesPlugin" args="depth=1" >body</wiki:Plugin></p>
 </div>
 
 <div id="referencedby" style="display:none;" >
   <p><wiki:LinkTo><wiki:PageName /></wiki:LinkTo></p>
   <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " >body</wiki:Plugin>
+</div>
+
+<div id="attachments" style="display:none;">
+   <wiki:Include page="AttachmentTab.jsp"/>
 </div>
 
 </wiki:PageType>

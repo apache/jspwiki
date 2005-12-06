@@ -20,7 +20,7 @@ body { font-family: arial, helvetica, sans-serif;
 #actionsBottom,
 #footer        { float: right; clear: right; width: 80%; }
 #favorites     { position:absolute; top:80px; left:2.5%; width: 18%; }
-#actionsTop    { float:right; border: 1px solid grey; }
+#actionsTop    { float:right; }
 
 #applicationlogo { display: block; }
 #companylogo     { display: none; }
@@ -47,7 +47,7 @@ body { font-family: arial, helvetica, sans-serif;
 /* +++ 002 LOOK and FEEL of main blocks with ID +++ */
 #wikibody { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
 
-#header { margin: 0 0 4px 0; padding: 0em;
+#header { margin: 0 0 4px 0; padding: 0 0 0em 0;
           border-bottom: 2px solid silver; }
 
 #searchboxMenu  { padding: 4px;
@@ -56,8 +56,8 @@ body { font-family: arial, helvetica, sans-serif;
 #recentSearches { margin: 0.5em 0 0 0.5em; color: silver; }
 #recentSearches div { color: black; cursor: pointer;}
 
-#actionsTop     { text-align: right; width: 30%;}
-#actionsBottom  { margin-top: 0.5em; text-align: right; }
+#actionsTop     { text-align: right; width: auto; border: 1px solid silver; border-bottom: 0px; background: #fff0ff; }
+#actionsBottom  { text-align: right; width: auto; border: 1px solid silver; border-top: 0px; background: #fff0ff; }
 
 #page           { margin-top: 0.5em; }
 
@@ -105,7 +105,7 @@ body { font-family: arial, helvetica, sans-serif;
 /* +++ 003 LOOK and FEEL of main css classes +++ */
 .pagename    { font-size: 150%; font-weight: bold; margin: 0.5em 0.5em 0.5em 0; }
 .searchbox   { margin: 1em 0.5em 0.5em 0.5em; }
-.breadcrumbs { font-size: 85%; padding: 0 1.5em 1em 0em; }
+.breadcrumbs { font-size: 75%; padding: 0 1.5em 0.5em 0em; }
 .myfavorites { margin-bottom: 0.5em; border: 1px solid black; }
 .boxtitle { padding: 0.25em; text-align: center;
             border-bottom: 1px solid black; }
@@ -491,6 +491,20 @@ div.collapse li   { list-style: none; position: relative; }
 
 .collapseOpen:hover,
 .collapseClose:hover { background: #FF9933; color: white; }
+
+/* collapsebox */
+.collapsebox    { border: 1px solid gray; position:relative; margin: 1em 0;}
+.collapsebox h2,
+.collapsebox h3,
+.collapsebox h4 { margin: 0; padding: 0.25em 0.5em; }
+.collapsebody   { margin: 0.5em 1em;  }
+
+.toc .collapsebox { border: 0; margin: 0; }
+
+.collapsebox .collapseOpen,
+.collapsebox .collapseClose { top:0; left:auto; right:0.5em;
+                              font-size: 13px; }
+.collapsebox .quicklinks { display: none; }
 
 /* +++ Sortable tables +++ */
 .sortable .sort,

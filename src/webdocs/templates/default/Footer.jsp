@@ -2,6 +2,8 @@
 
 <div id="footer">
 
+  <div id="actionsBottom"><wiki:Include page="PageActions.jsp"/></div>
+
   <div class="copyright"><wiki:InsertPage page="CopyrightNotice"/></div>
 
   <div class="wikiversion">

@@ -8,6 +8,8 @@
 
   <div class="breadcrumbs">Your trail: <wiki:Breadcrumbs /></div>
 
+  <div id="actionsTop"><wiki:Include page="PageActions.jsp"/></div>
+
   <div style="clear:both; height:0;" > </div>
 
 </div>

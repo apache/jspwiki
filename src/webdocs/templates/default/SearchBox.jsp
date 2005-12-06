@@ -2,25 +2,35 @@
 <%-- Provides a simple searchbox that can be easily included anywhere
      on the page --%>
 
-<form action="<wiki:Variable var='baseURL'/>Search.jsp"
+<form action="<wiki:Link jsp="Search.jsp" format="url"/>"
       onsubmit="SearchBox.submit( this.query.value )"
       onmouseover="document.getElementById('searchboxMenu').style.visibility='visible'"
       onmouseout= "document.getElementById('searchboxMenu').style.visibility='hidden'"
-      name="searchForm" id="searchForm"
+      name="searchForm" id="searchForm" 
       accept-charset="<wiki:ContentEncoding />">
-
-  <input onblur= "if( this.value == '' ) { this.value = 'Search'}; "
+  <div>
+  <%-- search images --%>
+  <input onblur= "if( this.value == '' ) { this.value = 'Search'}; " 
          onfocus="if( this.value == 'Search' ) { this.value = ''}; "
-         type="text" value="Search" name="query" id="query" size="20" ></input>
-
-  <div id="searchboxMenu" style="position:absolute; visibility:hidden;" >
-    <%--
-    <div><input type="submit" name="ok" id="ok" value="Find!" ></input></div>
-    --%>
-    <div><wiki:LinkTo page="FindPage">Advanced Search</wiki:LinkTo></div>
-
-    <div id="recentSearches" ></div>
-
+         type="text" value="Search" name="query" size="20" 
+         accesskey="f"></input>
+  </div>  
+  <div id="searchboxMenu" style='visibility:hidden;'>
+    <div>
+      <a href="javascript://nop/" 
+         onclick="SearchBox.navigation( '<wiki:BaseURL />Wiki.jsp?page=','<wiki:Variable var='pagename' />' );return false;"
+         title="View the selected page">view</a> 
+      | 
+      <a href="javascript://nop/" 
+         onclick="SearchBox.navigation( '<wiki:BaseURL />Edit.jsp?page=','<wiki:Variable var='pagename' />' );return false;"
+         title="Edit the selected page">edit</a> 
+      | 
+      <a href="javascript://nop/" 
+         onclick="SearchBox.navigation( '<wiki:BaseURL />Search.jsp?query=','<wiki:Variable var='pagename' />' );return false;"
+         title="Advanced Search">find</a> 
+      [ f ]
+    </div>
+    <div id="recentSearches" > </div>
   </div>
 
 </form>
