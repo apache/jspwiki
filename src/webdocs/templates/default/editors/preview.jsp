@@ -21,7 +21,7 @@
         <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
                                                                                 PageContext.REQUEST_SCOPE )%>" />
     </p>
-    <textarea style="display:block;" readonly="true"
+    <textarea style="display:none;" readonly="true"
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="4" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
     <p>
