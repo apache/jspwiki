@@ -26,7 +26,14 @@ public class LinkTag extends WikiLinkTag
     private String m_jsp     = null;
     private String m_ref     = null;
     private String m_context = WikiContext.VIEW;
+    private String m_accesskey = null;
+    
     private boolean m_absolute = false;
+    
+    public void setAccessKey( String key )
+    {
+        m_accesskey = key;
+    }
     
     public void setAbsolute( String arg )
     {
@@ -267,6 +274,7 @@ public class LinkTag extends WikiLinkTag
         sb.append( (m_target != null ) ? "target=\""+m_target+"\" " : "" );
         sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );
         sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
+        sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
         
         switch( m_format )
         {
