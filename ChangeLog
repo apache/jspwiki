@@ -1,3 +1,13 @@
+2005-12-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.51
+        
+        * Added "accesskey" parameter to LinkTag.  Thanks to Gregor
+        Hagedorn!
+        
+        * InfoContent.jsp would fail if there was only one
+        version of a page.  Thanks to Dirk for pointing this out!
+
 2005-12-06  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.50 alpha.
