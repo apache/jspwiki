@@ -128,6 +128,7 @@ public class TableOfContents
         StringBuffer sb = new StringBuffer();
 
         sb.append("<div class=\"toc\">\n");
+        sb.append("<div class=\"collapsebox\">\n");
 
         String title = (String) params.get(PARAM_TITLE);
         if( title != null )
@@ -193,7 +194,7 @@ public class TableOfContents
             throw new PluginException("Unable to construct table of contents (see logs)");
         }
 
-        sb.append("</div>\n");
+        sb.append("</div>\n</div>\n");
 
         return sb.toString();
     }
