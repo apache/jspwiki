@@ -13,7 +13,8 @@
     String myFav = username + "Favorites";
   %>
 
-<div class="block">
+<!--<div class="block">-->
+<div>
 
   <wiki:UserCheck status="known">
     <wiki:PageExists page="<%=myFav %>">

@@ -1,7 +1,7 @@
 /* Set the master look here */
 body { font-family: arial, helvetica, sans-serif; 
        font-size: 0.9em;
-       behavior:url(scripts/csshover.htc); }
+     }
 *    { margin:0; padding: 0; }
        
 /* Use as div 'block enclosure' to clear floats properly. This works across browsers
