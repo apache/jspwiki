@@ -12,6 +12,11 @@ import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
+/**
+ *  Provides a generic link tag for all kinds of linking
+ *  purposes.
+ *  @since 2.3.50
+ */
 public class LinkTag extends WikiLinkTag
 {
     static final long serialVersionUID = 0L;
@@ -279,7 +284,7 @@ public class LinkTag extends WikiLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a \""+sb.toString()+"\" href=\""+url+"\">");
+            out.print("<a "+sb.toString()+" href=\""+url+"\">");
             break;
           case URL:
             out.print( url );
