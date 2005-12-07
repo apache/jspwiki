@@ -8,7 +8,8 @@
     <div class="diffnote">
 
     <form action="<wiki:Variable var='baseURL'/>Diff.jsp" 
-          method="post"  accept-charset="UTF-8">     
+          method="post"  accept-charset="UTF-8">
+       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />     
     Difference between version
     <select id="r1" name="r1" onchange="this.form.submit();" >
     <% 
@@ -18,6 +19,7 @@
        int ii = 0;
        ii = ((Integer)pageContext.getAttribute(InsertDiffTag.ATTR_OLDVERSION, 
                                                PageContext.REQUEST_SCOPE)).intValue();
+       if( ii == WikiProvider.LATEST_VERSION ) ii = latestVersion;
        for( int i = 1; i <= latestVersion; i++) 
        {
     %> 

@@ -12,17 +12,30 @@ body { font-family: arial, helvetica, sans-serif;
 .block        { display: block; }
 
 /* +++ 001 LAYOUT of main ID blocks +++ */
-#wikibody { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
+#wikibody { }
 
 #header,
-#actionsTop,
 #page,
 #actionsBottom,
-#footer        { float: right; clear: right; width: 80%; }
-#favorites     { position:absolute; top:80px; left:2.5%; width: 18%; }
-#actionsTop    { float:right; }
+#footer        { margin-left: 20%; }
+#favorites     { position:absolute; 
+                 left: 2.5%; 
+                 width: 18%;
+                 padding: 2px;
+                 top: 80px; /* make place for the logo */ }
 
-#applicationlogo { display: block; }
+#applicationlogo { position: absolute; 
+                   left: 9%; top: 4px; }
+
+#header { }
+#page { }
+#footer { margin-top: 1ex; }
+
+#actionsTop,
+#actionsBottom { float:right; }
+/*#actionsTop    { position:absolute; right: 2.5%; margin-top: 0.5em; z-index: 0;}*/
+
+/* #applicationlogo { display: block; } */
 #companylogo     { display: none; }
 
 #header .pagename        { float: left; clear: both; }
@@ -47,8 +60,7 @@ body { font-family: arial, helvetica, sans-serif;
 /* +++ 002 LOOK and FEEL of main blocks with ID +++ */
 #wikibody { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
 
-#header { margin: 0 0 4px 0; padding: 0 0 0em 0;
-          border-bottom: 2px solid silver; }
+#header { border-bottom: 2px solid silver; }
 
 #searchboxMenu  { padding: 4px;
                   position: absolute; background: white;
@@ -59,9 +71,9 @@ body { font-family: arial, helvetica, sans-serif;
 #actionsTop     { text-align: right; width: auto; border: 1px solid silver; border-bottom: 0px; background: #fff0ff; }
 #actionsBottom  { text-align: right; width: auto; border: 1px solid silver; border-top: 0px; background: #fff0ff; }
 
-#page           { margin-top: 0.5em; }
+#page           {}
 
-#favorites { padding: 2px; overflow: hidden;
+#favorites { overflow: hidden;
              font-family: arial, helvetica, sans-serif; }
 #favorites .pageactions  { text-align: center; font-size: 85%; }
 
@@ -99,8 +111,7 @@ body { font-family: arial, helvetica, sans-serif;
 #conflictown  {  }
 
 
-#footer { margin: 4px 0 0 0;
-          border-top: 2px solid silver; }
+#footer { border-top: 2px solid silver; }
 
 /* +++ 003 LOOK and FEEL of main css classes +++ */
 .pagename    { font-size: 150%; font-weight: bold; margin: 0.5em 0.5em 0.5em 0; }
@@ -126,7 +137,7 @@ div.calendar { border: 1px solid black; }
 .actionPrefs,
 .actionAttach,
 .actionInfo    { padding: 0 0.5em 0 0; }
-.pageInfo      { font-style: italic; padding: 0.5em; }
+.pageInfo      { font-style: italic; padding-top: 0.5ex; }
 .username      { font-style: italic; font-weight: bold; }
 .copyright { }
 
