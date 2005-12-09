@@ -202,9 +202,10 @@ public class RSSGenerator
         return res;
     }
 
+    // FIXME: This should probably return something more intelligent
     private String getEntryTitle( WikiPage page )
     {
-        return page.getName();
+        return page.getName()+", version "+page.getVersion();
     }
 
     /**
@@ -319,7 +320,7 @@ public class RSSGenerator
             }
             
             e.setURL( url );
-            e.setTitle( getEntryTitle(page) );
+            e.setTitle( page.getName() );
             e.setContent( getEntryDescription(page) );
             e.setAuthor( getAuthor(page) );
             
@@ -331,10 +332,21 @@ public class RSSGenerator
 
     protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )
     {        
-        feed.setChannelTitle( m_engine.getApplicationName() );
-        feed.setFeedURL( m_engine.getBaseURL() );
-        feed.setChannelLanguage( m_channelLanguage );
-        feed.setChannelDescription( m_channelDescription );
+        feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
+        feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
+        String language = m_engine.getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
+        
+        if( language != null )
+            feed.setChannelLanguage( language );
+        else
+            feed.setChannelLanguage( m_channelLanguage );
+        
+        String channelDescription = m_engine.getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
+        
+        if( channelDescription != null )
+        {
+            feed.setChannelDescription( channelDescription );
+        }
 
         Collections.sort( changed, new PageTimeComparator() );
                 
