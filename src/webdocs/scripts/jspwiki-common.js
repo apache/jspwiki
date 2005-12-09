@@ -526,6 +526,7 @@ HighlightWord.onPageLoad = function ()
 // recursive tree walk matching all text nodes
 HighlightWord.walkDomTree = function( node )
 {
+  if(!node) return;
   var nn = null; 
   for( var n = node.firstChild; n ; n = nn )
   {
