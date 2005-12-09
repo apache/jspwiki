@@ -26,10 +26,7 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
+import javax.security.auth.login.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -54,7 +51,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.15 $ $Date: 2005-11-29 07:12:04 $
+ * @version $Revision: 1.16 $ $Date: 2005-12-09 20:55:03 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -376,8 +373,31 @@ public class AuthenticationManager
 
             return true;
         }
+        catch( FailedLoginException e )
+        {
+            //
+            //  Just a mistyped password or a cracking attempt.  No need to worry
+            //  and alert the admin
+            //
+            log.info("Failed login: "+e.getLocalizedMessage());
+            return false;
+        }
+        catch( AccountExpiredException e )
+        {
+            log.info("Expired account: "+e.getLocalizedMessage());
+            return false;
+        }
+        catch( CredentialExpiredException e )
+        {
+            log.info("Credentials expired: "+e.getLocalizedMessage());
+            return false;
+        }
         catch( LoginException e )
         {
+            //
+            //  This should only be caught if something unforeseen happens,
+            //  so therefore we can log it as an error.
+            //
             log.error( "Couldn't log in.\nMessage="
                        + e.getLocalizedMessage() );
             return false;
