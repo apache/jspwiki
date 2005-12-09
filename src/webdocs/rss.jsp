@@ -103,6 +103,7 @@
     }
 
     response.addDateHeader("Last-Modified",latest.getTime());
+    response.addHeader("ETag", HttpUtil.createETag(wikipage) );
 %>
 <%-- <oscache:cache time="300"> --%>
 <%
