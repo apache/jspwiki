@@ -6,6 +6,8 @@ package com.ecyrd.jspwiki.rss;
 
 import java.util.*;
 
+import javax.servlet.ServletContext;
+
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 
@@ -94,6 +96,15 @@ public abstract class Feed
         m_feedURL = m_feedurl;
     }
     
+    protected String getMimeType(ServletContext c, String name)
+    {
+        String type = c.getMimeType(name);
+        
+        if( type == null ) type = "application/octet-stream";
+        
+        return type;
+    }
+
     /**
      *  Does the required formatting and entity replacement for XML.
      */
