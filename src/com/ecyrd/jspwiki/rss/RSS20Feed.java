@@ -99,7 +99,7 @@ public class RSS20Feed extends Feed
                         Element attEl = new Element("enclosure");
                         attEl.setAttribute( "url", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
                         attEl.setAttribute( "length", Long.toString(att.getSize()) );
-                        attEl.setAttribute( "type", servletContext.getMimeType( att.getFileName() ) );
+                        attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
                         
                         item.addContent( attEl );
                     }

@@ -107,7 +107,7 @@ public class AtomFeed extends Feed
                         attEl.setAttribute( "rel","enclosure" );
                         attEl.setAttribute( "href", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
                         attEl.setAttribute( "length", Long.toString(att.getSize()) );
-                        attEl.setAttribute( "type", servletContext.getMimeType( att.getFileName() ) );
+                        attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
                         
                         entryEl.addContent( attEl );
                     }
