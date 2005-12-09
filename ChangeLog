@@ -1,3 +1,25 @@
+2005-12-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.53
+        
+        * Unknown file types would cause an exception when generating
+        enclosures in RSS feed.
+        
+        * Wiki page RSS feeds are now a bit more descriptive.
+        
+        * Removed extra attributes for EditorTag from jspwiki.tld.
+        
+        * AuthenticationManager now uses less invasive logging levels
+        if someone typos their username...  Less email for me, hooray!
+        
+        * DiffLinkTag has now some small NPE protection... Fixes
+        symptoms, not cause.
+        
+        * RSS now also supports ETags.
+        
+        * Fixed an issue with Javascript - HighlightWord would sometimes
+        die (thanks Dirk!)
+
 2005-12-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.52
