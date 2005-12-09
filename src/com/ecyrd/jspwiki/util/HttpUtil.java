@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
@@ -85,15 +86,17 @@ public class HttpUtil
         return( null );
     }
 
+    public static String createETag( WikiPage p )
+    {
+        return Long.toString(p.getLastModified().getTime());
+    }
+    
     /**
      *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
      */
     public static boolean checkFor304( HttpServletRequest req,
                                        WikiPage page )
     {
-        DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
-        Date lastModified = page.getLastModified();
-
         //
         //  We'll do some handling for CONDITIONAL GET (and return a 304)
         //  If the client has set the following headers, do not try for a 304.
@@ -109,39 +112,69 @@ public class HttpUtil
         } 
         else 
         {
-            long ifModifiedSince = req.getDateHeader("If-Modified-Since");
-
-            //log.info("ifModifiedSince:"+ifModifiedSince);
-            if( ifModifiedSince != -1 )
+            //
+            //  HTTP 1.1 ETags go first
+            //
+            String thisTag = createETag( page );
+                        
+            String eTag = req.getHeader( "If-None-Match" );
+            
+            if( eTag != null )
             {
-                long lastModifiedTime = lastModified.getTime();
-
-                //log.info("lastModifiedTime:" + lastModifiedTime);
-                if( lastModifiedTime <= ifModifiedSince )
+                if( eTag.equals(thisTag) )
                 {
                     return true;
                 }
-            } 
-            else
-            {
-                try 
-                {
-                    String s = req.getHeader("If-Modified-Since");
+            }
+            
+            //
+            //  Next, try if-modified-since
+            //
+            DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+            Date lastModified = page.getLastModified();
 
-                    if( s != null ) 
+            try
+            {
+                long ifModifiedSince = req.getDateHeader("If-Modified-Since");
+
+                //log.info("ifModifiedSince:"+ifModifiedSince);
+                if( ifModifiedSince != -1 )
+                {
+                    long lastModifiedTime = lastModified.getTime();
+
+                    //log.info("lastModifiedTime:" + lastModifiedTime);
+                    if( lastModifiedTime <= ifModifiedSince )
                     {
-                        Date ifModifiedSinceDate = rfcDateFormat.parse(s);
-                        //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
-                        if( lastModified.before(ifModifiedSinceDate) ) 
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 } 
-                catch (ParseException e) 
+                else
                 {
-                    log.warn(e.getLocalizedMessage(), e);
+                    try 
+                    {
+                        String s = req.getHeader("If-Modified-Since");
+
+                        if( s != null ) 
+                        {
+                            Date ifModifiedSinceDate = rfcDateFormat.parse(s);
+                            //log.info("ifModifiedSinceDate:" + ifModifiedSinceDate);
+                            if( lastModified.before(ifModifiedSinceDate) ) 
+                            {
+                                return true;
+                            }
+                        }
+                    } 
+                    catch (ParseException e) 
+                    {
+                        log.warn(e.getLocalizedMessage(), e);
+                    }
                 }
+            }
+            catch( IllegalArgumentException e )
+            {
+                // Illegal date/time header format.
+                // We fail quietly, and return false.
+                // FIXME: Should really move to ETags.
             }
         }
          
