@@ -22,10 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.*;
 
 /**
  *  Writes a diff link.  Body of the link becomes the link text.
@@ -113,6 +110,11 @@ public class DiffLinkTag
             WikiPage latest = engine.getPage( pageName, 
                                               WikiProvider.LATEST_VERSION );
 
+            if( latest == null )
+            {
+                // This may occur if matchEnglishPlurals is on, and we access the wrong page name
+                return SKIP_BODY;
+            }
             r1 = latest.getVersion();
         }
         else if( VER_PREVIOUS.equals(getVersion()) )
