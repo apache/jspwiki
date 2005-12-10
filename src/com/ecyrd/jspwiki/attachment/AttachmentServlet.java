@@ -288,7 +288,21 @@ public class AttachmentServlet
         finally
         {
             if( in != null ) in.close();
-            if( out != null ) out.close();
+            
+            //
+            //  Quite often, aggressive clients close the connection when they have
+            //  received the last bits.  Therefore, we close the output, but ignore
+            //  any exception that might come out of it.
+            //
+            
+            if( out != null ) 
+            {
+                try
+                {
+                    out.close();
+                }
+                catch( IOException e ) {}
+            }
         }
     }
 
