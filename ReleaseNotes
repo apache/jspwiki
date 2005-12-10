@@ -1,23 +1,32 @@
 
-This is an unstable, nightly of JSPWiki v2.3
+This is an alpha version of JSPWiki 2.3
 
 NEW FEATURES
 ============
 
-* Authentication and authorization.  Note, however, that this is very experimental
-  at this stage, and does not work with your existing jspwiki.properties file.
+* Authentication and authorization.
   
-  Make sure that you have all the auth-related definitions from the included
-  jspwiki.properties in your own one, or else you will fall prey to a dozen
-  different failure cases.
+* New default template, with pluggable editors.
 
+* New rendering engine, which is WAY faster than the old one (the old one
+  is still included for backwards compatibility purposes).
+
+* Loads and loads of under-the-hood changes.
 
 UPGRADE NOTES
 =============
 
 Upgrading from 2.2:
 
-<nothing yet>
+* Replace your old web.xml from the one in the distribution, and change.
+
+* Install the new default template.
+
+* Make sure that you have all the auth-related definitions from the included
+  jspwiki.properties in your own one, or else you will fall prey to a dozen
+  different failure cases.
+
+* More stuff TBD.
 
 Upgrading from 2.0:
 

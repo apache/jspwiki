@@ -1,3 +1,10 @@
+2005-12-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.54
+        
+        * AttachmentServlet no longer throws an exception with
+        overzealous clients.
+
 2005-12-09  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.53

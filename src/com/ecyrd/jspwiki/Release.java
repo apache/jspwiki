@@ -41,15 +41,9 @@ public class Release
      */
     private static final String    POSTFIX       = "-cvs";
 
-    /**
-     *  This should be increased every time you do a release.
-     *  @deprecated
-     */
-    public static final String     RELEASE       = "R9";
-
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 3;
-    public static final int        MINORREVISION = 53;
+    public static final int        MINORREVISION = 54;
 
     /**
      *  This is the generic version string you should use
