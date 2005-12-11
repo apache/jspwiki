@@ -108,6 +108,20 @@ public class ReferringPagesPluginTest extends TestCase
                       res );        
     }
 
+    public void testInclude()
+        throws Exception
+    {
+        String res = manager.execute( context,
+                                      "{ReferringPagesPlugin include='*7'}" );
+        
+        assertTrue( "7", res.indexOf("Foobar7") != -1 );        
+        assertTrue( "6", res.indexOf("Foobar6") == -1 );        
+        assertTrue( "5", res.indexOf("Foobar5") == -1 );        
+        assertTrue( "4", res.indexOf("Foobar4") == -1 );        
+        assertTrue( "3", res.indexOf("Foobar3") == -1 );        
+        assertTrue( "2", res.indexOf("Foobar2") == -1 );        
+    }
+    
     public void testExclude()
         throws Exception
     {
