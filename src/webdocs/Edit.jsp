@@ -201,6 +201,7 @@
     {
         log.debug("Previewing "+pagereq);
         pageContext.forward( "Preview.jsp" );
+        return;
     }
     else if( cancel != null )
     {
