@@ -91,7 +91,8 @@
              <td>
                <br />
                <p>When you click 'save', this group will be saved as a wiki page
-                  called <b>Group<i>Name</i></b>.</p>
+                  called <b>Group<i>Name</i></b>.  E.g. if you type in "Admin", the
+                  group will be called "GroupAdmin".</p>
              </td>
            </tr>
            
