@@ -1,3 +1,13 @@
+2005-12-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.55
+        
+        * ReferringPagesPlugin and the like now also have the "include"
+        -parameter.
+        
+        * Preview was showing things twice (missing return -statement
+        in Edit.jsp... oops.)
+
 2005-12-10  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.54
