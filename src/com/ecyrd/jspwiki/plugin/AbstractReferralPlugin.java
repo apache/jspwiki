@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,6 +57,7 @@ public abstract class AbstractReferralPlugin
     public static final String PARAM_BEFORE    = "before";
  
     public static final String PARAM_EXCLUDE   = "exclude";
+    public static final String PARAM_INCLUDE   = "include";
     
     protected           int      m_maxwidth = Integer.MAX_VALUE;
     protected           String   m_before = ""; // null not blank
@@ -63,6 +65,7 @@ public abstract class AbstractReferralPlugin
     protected           String   m_after = "\\\\";
     
     protected           Pattern[]  m_exclude;
+    protected           Pattern[]  m_include;
     
     protected           WikiEngine m_engine;
 
@@ -128,31 +131,83 @@ public abstract class AbstractReferralPlugin
                 throw new PluginException("Exclude-parameter has a malformed pattern: "+e.getMessage());
             }
         }
+
+        // TODO: Cut-n-paste, refactor
+        s = (String) params.get( PARAM_INCLUDE );
         
+        if( s != null )
+        {
+            try
+            {
+                PatternCompiler pc = new GlobCompiler();
+
+                String[] ptrns = StringUtils.split( s, "," );
+                
+                m_include = new Pattern[ptrns.length];
+                
+                for( int i = 0; i < ptrns.length; i++ )
+                {
+                    m_include[i] = pc.compile( ptrns[i] );
+                }
+            }
+            catch( MalformedPatternException e )
+            {
+                throw new PluginException("Include-parameter has a malformed pattern: "+e.getMessage());
+            }
+        }
+
         // log.debug( "Requested maximum width is "+m_maxwidth );
     }
     
     protected Collection filterCollection( Collection c )
     {
-        if( m_exclude == null || m_exclude.length == 0 ) return c;
+        ArrayList result = new ArrayList();
         
         PatternMatcher pm = new Perl5Matcher();
         
         for( Iterator i = c.iterator(); i.hasNext(); )
         {
             String pageName = (String) i.next();
+
+            //
+            //  If include parameter exists, then by default we include only those
+            //  pages in it (excluding the ones in the exclude pattern list).
+            //
+            //  include='*' means the same as no include.
+            //
+            boolean includeThis = (m_include == null);
             
-            for( int j = 0; j < m_exclude.length; j++ )
-            {
-                if( pm.matches( pageName, m_exclude[j] ) )
+            if( m_include != null )
+            {       
+                for( int j = 0; j < m_include.length; j++ )
                 {
-                    i.remove();
-                    break; // The inner loop, continue on the next item
+                    if( pm.matches( pageName, m_include[j] ) )
+                    {
+                        includeThis = true;
+                        break;
+                    }
                 }
+            }
+
+            if( m_exclude != null )
+            {
+                for( int j = 0; j < m_exclude.length; j++ )
+                {
+                    if( pm.matches( pageName, m_exclude[j] ) )
+                    {
+                        includeThis = false;
+                        break; // The inner loop, continue on the next item
+                    }
+                }
+            }
+            
+            if( includeThis )
+            {
+                result.add( pageName );
             }
         }
         
-        return c;
+        return result;
     }
     
     /**
