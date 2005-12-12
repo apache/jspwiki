@@ -23,7 +23,6 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,13 +36,14 @@ import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.user.*;
+import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.41 $ $Date: 2005-12-04 18:42:09 $
+ *  @version $Revision: 1.42 $ $Date: 2005-12-12 07:03:48 $
  *  @since 2.3
  */
 public class UserManager
@@ -222,7 +222,7 @@ public class UserManager
      * <code>false</code>. This is meant as a quality check for UserDatabase
      * providers; it should only be thrown if the implementation is faulty.
      */
-    public UserProfile getUserProfile( WikiSession session ) throws WikiSecurityException
+    public UserProfile getUserProfile( WikiSession session )
     {
         // Look up cached user profile
         UserProfile profile = (UserProfile)m_profiles.get( session );
@@ -338,134 +338,97 @@ public class UserManager
     }
 
     /**
-     * <p>
-     * Extracts user profile parameters from the HTTP request and populates a
-     * new UserProfile with them. The UserProfile will either be a copy of the
+     * <p> Extracts user profile parameters from the HTTP request and populates
+     * a UserProfile with them. The UserProfile will either be a copy of the
      * user's existing profile (if one can be found), or a new profile (if not).
-     * The rules for populating the profile as as follows:
-     * </p>
-     * <ul>
-     * <li>If the <code>email</code> or <code>password</code> parameter
-     * values differ from those in the existing profile, the passed parameters
-     * override the old values.</li>
-     * <li>For new profiles, the <code>fullname</code> and
-     * <code>wikiname</code> parameters are always used; otherwise they are
-     * ignored.</li>
-     * <li>In all cases, the created/last modified timestamps of the user's
-     * existing/new profile are always used.</li>
-     * <li>If container authentication is used, the login name property of the
-     * profile is set to the name of
+     * The rules for populating the profile as as follows: </p> <ul> <li>If the
+     * <code>email</code> or <code>password</code> parameter values differ
+     * from those in the existing profile, the passed parameters override the
+     * old values.</li> <li>For new profiles, the user-supplied
+     * <code>fullname</code> and <code>wikiname</code> parameters are always
+     * used; for existing profiles the existing values are used, and whatever
+     * values the user supplied are discarded.</li> <li>In all cases, the
+     * created/last modified timestamps of the user's existing or new profile
+     * always override whatever values the user supplied.</li> <li>If
+     * container authentication is used, the login name property of the profile
+     * is set to the name of
      * {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}. Otherwise,
-     * the value of the <code>loginname</code> parameter is used.</li>
-     * </ul>
+     * the value of the <code>loginname</code> parameter is used.</li> </ul>
      * @param context the current wiki context
      * @return a new, populated user profile
      */
     public UserProfile parseProfile( WikiContext context )
     {
-        // TODO:this class is probably the wrong place for this method...
-
-        UserProfile profile = m_database.newProfile();
-        UserProfile existingProfile = null;
-        try
-        {
-            // Look up the existing profile, if it exists
-            existingProfile = getUserProfile( context.getWikiSession() );
-        }
-        catch( WikiSecurityException e )
-        {
-        }
+        // Retrieve the user's profile (may have been previously cached)
+        UserProfile profile = getUserProfile( context.getWikiSession() );
         HttpServletRequest request = context.getHttpRequest();
-
-        // Set e-mail to user's supplied value; if null, use existing value
-        String email = request.getParameter( "email" );
-        email = isNotBlank( email ) ? email : existingProfile.getEmail();
-        profile.setEmail( email );
-
-        // Set password to user's supplied value; if null, skip it
+        
+        // Extract values from request stream (cleanse whitespace as needed)
+        String loginName = request.getParameter( "loginname" );
         String password = request.getParameter( "password" );
-        password = isNotBlank( password ) ? password : null;
-        profile.setPassword( password );
-
-        // For new profiles, we use what the user supplied for
-        // full name and wiki name
-        String fullname = request.getParameter( "fullname" );
         String wikiname = request.getParameter( "wikiname" );
-        if ( existingProfile.isNew() )
+        String fullname = request.getParameter( "fullname" );
+        String email = request.getParameter( "email" );
+        loginName = InputValidator.isBlank( loginName ) ? null : loginName;
+        password = InputValidator.isBlank( password ) ? null : password;
+        wikiname = InputValidator.isBlank( wikiname ) ? null : wikiname.replaceAll("\\s", "");
+        fullname = InputValidator.isBlank( fullname ) ? null : fullname;
+        email = InputValidator.isBlank( email ) ? null : email;
+        
+        // If using container auth, login name is always taken from container
+        if ( context.getWikiSession().isAuthenticated() &&
+             m_engine.getAuthenticationManager().isContainerAuthenticated() )
         {
-            fullname = isNotBlank( fullname ) ? fullname : null;
-            wikiname = isNotBlank( wikiname ) ? wikiname : null;
+            loginName = context.getWikiSession().getLoginPrincipal().getName();
+        }
+        
+        if ( profile.isNew() )
+        {
+            // If new profile, use whatever values the user supplied
+            profile.setLoginName( loginName );
+            profile.setEmail( email);
+            profile.setFullname( fullname );
+            profile.setPassword( password );
+            profile.setWikiName( wikiname );
         }
         else
         {
-            fullname = existingProfile.getFullname();
-            wikiname = existingProfile.getWikiName();
+            // If modifying an existing profile, always override
+            // the timestamp, login name, full name and wiki name properties
+            profile.setEmail( email);
+            profile.setPassword( password );
         }
-        profile.setFullname( fullname );
-        profile.setWikiName( wikiname );
-
-        // For all profiles, we use the login name from the looked-up
-        // profile. If the looked-up profile doesn't have a login
-        // name, we either use the one from the session (if container auth)
-        // or the one the user supplies (if custom auth).
-        String loginName = existingProfile.getLoginName();
-        if ( loginName == null )
-        {
-            if ( m_engine.getAuthenticationManager().isContainerAuthenticated() )
-            {
-                Principal principal = context.getWikiSession().getLoginPrincipal();
-                loginName = principal.getName();
-            }
-            else
-            {
-                loginName = request.getParameter( "loginname" );
-                wikiname = isNotBlank( loginName ) ? loginName : null;
-            }
-        }
-        profile.setLoginName( loginName );
-
-        // Always use existing profile's lastModified and Created properties
-        profile.setCreated( existingProfile.getCreated() );
-        profile.setLastModified( existingProfile.getLastModified() );
-
         return profile;
     }
 
     /**
-     * Returns <code>true</code> if a supplied string is null or blank
-     * @param parameter
-     */
-    private static boolean isNotBlank( String parameter )
-    {
-        return ( parameter != null && parameter.length() > 0 );
-    }
-
-    /**
-     * Validates a user profile, and appends any errors to a user-supplied Set
-     * of error strings. If the wiki request context is REGISTER, the password
-     * will be checked to make sure it isn't null. Otherwise, the password
-     * is checked.
+     * Validates a user profile, and appends any errors to the session errors
+     * list. If the profile is new, the password will be checked to make sure it
+     * isn't null. Otherwise, the password is checked for length and that it
+     * matches the value of the 'password2' HTTP parameter. Note that we have
+     * a special case when container-managed authentication is used and
+     * the user is not authenticated; this will always cause validation to fail.
+     * Any validation errors are added to the wiki session's messages collection
+     * (see {@link WikiSession#getMessages()}.
      * @param context the current wiki context
      * @param profile the supplied UserProfile
-     * @param errors the set of error strings
      */
-    public void validateProfile( WikiContext context, UserProfile profile, Set errors )
+    public void validateProfile( WikiContext context, UserProfile profile )
     {
-        // TODO:this class is probably the wrong place for this method...
-        boolean isNew = ( WikiContext.REGISTER.equals( context.getRequestContext() ) );
+        boolean isNew = ( profile.isNew() );
+        WikiSession session = context.getWikiSession();
+        InputValidator validator = new InputValidator( "profile", session );
+        
+        if ( !context.getWikiSession().isAuthenticated()
+             && m_engine.getAuthenticationManager().isContainerAuthenticated() )
+        {
+            session.addMessage( "You must log in before creating a profile." );
+        }
 
-        if ( profile.getFullname() == null )
-        {
-            errors.add( "Full name cannot be blank" );
-        }
-        if ( profile.getLoginName() == null )
-        {
-            errors.add( "Login name cannot be blank" );
-        }
-        if ( profile.getWikiName() == null )
-        {
-            errors.add( "Wiki name cannot be blank" );
-        }
+        validator.validateNotNull( profile.getLoginName(), "Login name" );
+        validator.validateNotNull( profile.getWikiName(), "Wiki name" );
+        validator.validateNotNull( profile.getFullname(), "Full name" );
+        validator.validateNotNull( profile.getEmail(), "E-mail address", InputValidator.EMAIL );
         
         // If new profile, passwords must match and can't be null
         if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
@@ -475,7 +438,7 @@ public class UserManager
             {
                 if ( isNew )
                 {
-                    errors.add( "Password cannot be blank" );
+                    session.addMessage( "profile", "Password cannot be blank" );
                 }
             }
             else 
@@ -484,7 +447,7 @@ public class UserManager
                 String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if ( !password.equals( password2 ) )
                 {
-                    errors.add( "Passwords don't match" );
+                    session.addMessage( "profile", "Passwords don't match" );
                 }
             }
         }
