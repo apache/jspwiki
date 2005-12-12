@@ -1,3 +1,39 @@
+2005-11-29  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.56
+        
+        * Lots of cleanup to the top-level JSP pages: all of
+          the permission-checking is now in a new WikiContext
+          method called checkAccess(HttpServletResponse).
+          The workflow now goes like this: if a non-authenticated
+          user tries to access an unauthorized page, he or she is
+          redirected to the login page. If already logged in,
+          JSPWiki returns a standard 403 (forbidden) code. We
+          will likely use a nicer error page in the future.
+          LoginError.txt goes away; it is not needed any more.
+        
+        * WikiSession receives a series of new methods for
+          stashing, retrieving and clearing UI messages. These
+          are used primarily for auth-related messages but
+          are generic. All of the JSP pages that previously
+          stashed "msg" objects in the HttpSession now use these
+          methods. A companion JSP tag <wiki:Messages> makes
+          printing messages dead-simple.
+          
+        * AuthManager's logout() method resets the entire HTTP
+          session, like it used to.
+          
+        * UserManager validation routines were moved into new UI
+          class InputValidator; additional refactorings including
+          the new validation classes and WikiSession messages.
+          
+        * XMLUserDatabase now relies on its own cheap-and-cheerful
+          DOM writing routine. Errors using the standard J2SE
+          TRAX APIs were previously causing the users not to be
+          written to disk.
+        
+        * Fixed several failing auth.* tests.
+
 2005-12-12  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.55
