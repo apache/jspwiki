@@ -12,6 +12,14 @@
           will likely use a nicer error page in the future.
           LoginError.txt goes away; it is not needed any more.
         
+        * User profile save operations now have *actual* input
+          validation, courtesy of InputValidator. The email 
+          address is checked for conformance, and the other 
+          fields (except password) are checked for nasty
+          characters like angle brackets. Yes, yes, we know...
+          what took us so long? There's more to do but it's a
+          good start.
+        
         * WikiSession receives a series of new methods for
           stashing, retrieving and clearing UI messages. These
           are used primarily for auth-related messages but
@@ -31,7 +39,7 @@
           DOM writing routine. Errors using the standard J2SE
           TRAX APIs were previously causing the users not to be
           written to disk.
-        
+          
         * Fixed several failing auth.* tests.
 
 2005-12-12  Janne Jalkanen <jalkanen@ecyrd.com>
