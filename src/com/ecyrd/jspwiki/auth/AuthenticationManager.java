@@ -16,7 +16,6 @@ package com.ecyrd.jspwiki.auth;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
-import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashSet;
@@ -41,7 +40,6 @@ import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
 import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 
@@ -51,7 +49,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.16 $ $Date: 2005-12-09 20:55:03 $
+ * @version $Revision: 1.17 $ $Date: 2005-12-12 07:00:28 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -309,19 +307,6 @@ public class AuthenticationManager
     }
 
     /**
-     * Determines whether authentication is required to view wiki pages. This is
-     * done by checking for the PagePermission.VIEW permission using a guest
-     * WikiSession. It delegates the check to
-     * {@link AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * @return <code>true</code> if logins are required
-     */
-    public boolean strictLogins()
-    {
-        // FIXME: this should really be wiki-specific, but for now it's ok
-        return ( m_engine.getAuthorizationManager().checkPermission( WikiSession.guestSession(), PagePermission.VIEW ) );
-    }
-
-    /**
      * Determines whether a WikiSession's Subject posesses a login id that
      * matches the administrator id; if so, this method injects
      * {@link com.ecyrd.jspwiki.auth.authorize.Role#ADMIN} into the principal
@@ -451,7 +436,7 @@ public class AuthenticationManager
      * HttpServletRequest and unbinding all of the Subject's Principals,
      * except for {@link Role#ALL}, {@link Role#
      * is a cheap-and-cheerful way to do it without invoking JAAS LoginModules.
-     * The logout operation will also remove the JSESSIONID cookie from
+     * The logout operation will also flush the JSESSIONID cookie from
      * the user's browser session, if it was set.
      * @param session the current HTTP session
      */
@@ -473,11 +458,8 @@ public class AuthenticationManager
         WikiSession wikiSession = WikiSession.getWikiSession( request );
         wikiSession.invalidate();
         
-        // If we're using container-managed auth, we need to flush the HTTP session too
-        if ( request.getUserPrincipal() != null || request.getRemoteUser() != null )
-        {
-            session.invalidate();
-        }
+        // We need to flush the HTTP session too
+        session.invalidate();
     }
 
 }
