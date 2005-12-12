@@ -376,6 +376,24 @@
   </tag>  
 
   <tag>
+    <name>Messages</name>
+    <tagclass>com.ecyrd.jspwiki.tags.MessagesTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>action</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>prefix</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>topic</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
     <name>NextVersion</name>
     <tagclass>com.ecyrd.jspwiki.tags.NextVersionTag</tagclass>
     <bodycontent>empty</bodycontent>

@@ -3,6 +3,8 @@ package com.ecyrd.jspwiki;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -24,7 +26,7 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.11 $ $Date: 2005-11-08 18:17:35 $
+ * @version $Revision: 2.12 $ $Date: 2005-12-12 06:59:45 $
  */
 public class WikiSession
 {
@@ -34,7 +36,7 @@ public class WikiSession
     public static final String ASSERTED              = "asserted";
 
     public static final String AUTHENTICATED         = "authenticated";
-
+    
     /** Weak hashmap that maps wiki sessions to HttpSessions. */
     private static final Map   c_sessions            = new WeakHashMap();
 
@@ -47,6 +49,8 @@ public class WikiSession
     protected Principal        m_cachedUserPrincipal = null;
 
     private WikiContext        m_lastContext         = null;
+    
+    private Map                m_messages            = new HashMap();
 
     protected static int       ONE                   = 48;
 
@@ -55,6 +59,8 @@ public class WikiSession
     protected static int       DOT                   = 46;
 
     protected static Logger    log                   = Logger.getLogger( WikiSession.class );
+    
+    protected static final String ALL                = "*";
 
     /**
      * Returns <code>true</code> if this WikiSession's Subject contains a
@@ -288,7 +294,89 @@ public class WikiSession
         }
         return ( secondChoice == null ? WikiPrincipal.GUEST : secondChoice );
     }
+    
+    /**
+     * Adds a message to the generic list of messages associated with the
+     * session. These messages retain their order of insertion and remain until
+     * the {@link #clearMessages()} method is called.
+     * @param message the message to add; if <code>null</code> it is ignored.
+     */
+    public void addMessage(String message)
+    {
+        addMessage( ALL, message );
+    }
+    
+    
+    /**
+     * Adds a message to the specific set of messages associated with the
+     * session. These messages retain their order of insertion and remain until
+     * the {@link #clearMessages()} method is called.
+     * @param topic the topic to associate the message to; 
+     * @param message the message to add
+     */
+    public void addMessage(String topic, String message)
+    {
+        if ( topic == null || message == null )
+        {
+            throw new IllegalArgumentException( "Parameters cannot be null." );
+        }
+        Set messages = (Set)m_messages.get( topic );
+        if (messages == null ) 
+        {
+            messages = new LinkedHashSet();
+            m_messages.put( topic, messages );
+        }
+        messages.add( message );
+    }
+    
+    /**
+     * Clears all messages associated with this session.
+     */
+    public void clearMessages()
+    {
+        m_messages.clear();
+    }
+    
+    /**
+     * Clears all messages associated with a session topic.
+     * @param topic the topic whose messages should be cleared.
+     */
+    public void clearMessages( String topic )
+    {
+        Set messages = (Set)m_messages.get( topic );
+        if ( messages != null )
+        {
+            m_messages.clear();
+        }
+    }
+    
+    /**
+     * Returns all generic messages associated with this session.
+     * The messages stored with the session persist throughout the
+     * session unless they have been reset with {@link #clearMesssage()}.
+     * @return the current messsages.
+     */
+    public String[] getMessages() 
+    {
+        return getMessages( ALL );
+    }
 
+    /**
+     * Returns all messages associated with a session topic.
+     * The messages stored with the session persist throughout the
+     * session unless they have been reset with {@link #clearMesssage()}.
+     * @return the current messsages.
+     */
+    public String[] getMessages( String topic ) 
+    {
+        Set messages = (Set)m_messages.get( topic );
+        if ( messages == null || messages.size() == 0 )
+        {
+            return new String[0];
+        }
+        return (String[])messages.toArray( new String[messages.size()] );
+    }
+    
     /**
      * Returns all user Principals associated with this session. User principals
      * are those in the Subject's principal collection that aren't of type Role.
