@@ -19,7 +19,9 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,18 +29,9 @@ import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -61,7 +54,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2005-11-29 07:15:34 $
+ * @version $Revision: 1.9 $ $Date: 2005-12-12 07:02:55 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -107,54 +100,47 @@ public class XMLUserDatabase extends AbstractUserDatabase
             log.fatal( "User database doesn't exist in memory." );
         }
 
-        // First, neaten up the DOM by adding carriage returns before each
-        // element
-        Element root = c_dom.getDocumentElement();
-        NodeList nodes = root.getChildNodes();  
-        for( int i = 0; i < nodes.getLength(); i++ )
-        {
-            Node node = nodes.item( i );
-            if ( node instanceof Element )
-            {
-                Node previous = node.getPreviousSibling();
-                if ( previous == null || previous.getNodeType() != Node.TEXT_NODE )
-                {
-                    Node whitespace = c_dom.createTextNode( "\n  " );
-                    c_dom.getDocumentElement().insertBefore( whitespace, node );
-                }
-                // Add a return after the last element
-                if ( i == ( nodes.getLength() - 1 ) )
-                {
-                    if ( node.getNodeType() != Node.TEXT_NODE )
-                    {
-                        Node whitespace = c_dom.createTextNode( "\n" );
-                        c_dom.getDocumentElement().appendChild( whitespace );
-                    }
-                }
-            }
-        }
-
-        // Now, save to disk
+        File newFile = new File( c_file.getAbsolutePath() + ".new" );
         try
         {
-            File newFile = new File( c_file.getAbsolutePath() + ".new" );
-            Source source = new DOMSource( c_dom );
-            System.out.println( source.toString() );
-            Result result = new StreamResult( newFile );
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform( source, result );
+            BufferedWriter io = new BufferedWriter( new FileWriter ( newFile ) );
+            
+            // Write the file header and document root
+            io.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            io.write("<users>\n");
+            
+            // Write each profile as a <user> node
+            Element root = c_dom.getDocumentElement();
+            NodeList nodes = root.getElementsByTagName( USER_TAG );  
+            for( int i = 0; i < nodes.getLength(); i++ )
+            {
+                Element user = (Element)nodes.item( i );
+                io.write( "<" + USER_TAG + " ");
+                io.write( LOGIN_NAME );
+                io.write( "=\"" + user.getAttribute( LOGIN_NAME ) + "\" " );
+                io.write( WIKI_NAME );
+                io.write( "=\"" + user.getAttribute( WIKI_NAME ) + "\" " );
+                io.write( FULL_NAME );
+                io.write( "=\"" + user.getAttribute( FULL_NAME ) + "\" " );
+                io.write( EMAIL );
+                io.write( "=\"" + user.getAttribute( EMAIL ) + "\" " );
+                io.write( PASSWORD );
+                io.write( "=\"" + user.getAttribute( PASSWORD ) + "\" " );
+                io.write( CREATED );
+                io.write( "=\"" + user.getAttribute( CREATED ) + "\" " );
+                io.write( LAST_MODIFIED );
+                io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
+                io.write(" />\n");
+            }
+            io.write("</users>");
+            io.close();
         }
-        catch( TransformerConfigurationException e )
+        catch ( IOException e )
         {
-            log.error( "Could not save user database (problem configuring XML parser): " + e.getMessage() );
-        }
-        catch( TransformerException e )
-        {
-            log.error( "Could not save user database: " + e.getMessage() );
+            throw new WikiSecurityException( e.getLocalizedMessage() );
         }
 
         // Copy new file over old version
-        File newFile = new File( c_file.getAbsolutePath() + ".new" );
         File backup = new File( c_file.getAbsolutePath() + ".old" );
         if ( backup.exists() )
         {
