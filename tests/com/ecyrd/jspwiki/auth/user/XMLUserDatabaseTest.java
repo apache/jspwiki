@@ -3,6 +3,8 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
@@ -21,9 +23,11 @@ public class XMLUserDatabaseTest extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
     Properties props = new Properties();
+    props.load( TestEngine.findTestProperties() );
     props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
+    WikiEngine m_engine  = new TestEngine(props);
     db = new XMLUserDatabase();
-    db.initialize(null, props);
+    db.initialize(m_engine, props);
   }
   
   public void testFindByEmail() {
@@ -39,7 +43,7 @@ public class XMLUserDatabaseTest extends TestCase {
         assertTrue(false);
     }
     try {
-        UserProfile profile = db.findByEmail("foo@bar.org");
+        db.findByEmail("foo@bar.org");
         // We should never get here
         assertTrue(false);
     }
@@ -61,7 +65,7 @@ public class XMLUserDatabaseTest extends TestCase {
           assertTrue(false);
       }
       try {
-          UserProfile profile = db.findByEmail("foo");
+          db.findByEmail("foo");
           // We should never get here
           assertTrue(false);
       }
@@ -83,7 +87,7 @@ public class XMLUserDatabaseTest extends TestCase {
           assertTrue(false);
       }
       try {
-          UserProfile profile = db.findByEmail("FooBar");
+          db.findByEmail("FooBar");
           // We should never get here
           assertTrue(false);
       }

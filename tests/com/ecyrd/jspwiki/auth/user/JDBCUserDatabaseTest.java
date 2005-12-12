@@ -2,7 +2,6 @@ package com.ecyrd.jspwiki.auth.user;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -102,7 +101,7 @@ public class JDBCUserDatabaseTest extends TestCase
         }
         try
         {
-            UserProfile profile = m_db.findByEmail( "foo@bar.org" );
+            m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             assertTrue( false );
         }
@@ -131,7 +130,7 @@ public class JDBCUserDatabaseTest extends TestCase
         }
         try
         {
-            UserProfile profile = m_db.findByEmail( "foo@bar.org" );
+            m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             assertTrue( false );
         }
@@ -160,7 +159,7 @@ public class JDBCUserDatabaseTest extends TestCase
         }
         try
         {
-            UserProfile profile = m_db.findByEmail( "foo" );
+            m_db.findByEmail( "foo" );
             // We should never get here
             assertTrue( false );
         }
@@ -189,7 +188,7 @@ public class JDBCUserDatabaseTest extends TestCase
         }
         try
         {
-            UserProfile profile = m_db.findByEmail( "FooBar" );
+            m_db.findByEmail( "FooBar" );
             // We should never get here
             assertTrue( false );
         }

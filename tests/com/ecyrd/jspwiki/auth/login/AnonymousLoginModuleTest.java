@@ -11,7 +11,9 @@ import javax.security.auth.login.LoginException;
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.TestHttpServletRequest;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
@@ -19,7 +21,7 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2005-12-12 06:46:05 $
  */
 public class AnonymousLoginModuleTest extends TestCase
 {
@@ -80,12 +82,14 @@ public class AnonymousLoginModuleTest extends TestCase
     protected void setUp() throws Exception
     {
         Properties props = new Properties();
-        props.put( XMLUserDatabase.PROP_USERDATABASE, "./etc/userdatabase.xml" );
+        props.load( TestEngine.findTestProperties() );
+        props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
+        WikiEngine m_engine  = new TestEngine(props);
         db = new XMLUserDatabase();
         subject = new Subject();
         try
         {
-            db.initialize( null, props );
+            db.initialize( m_engine, props );
         }
         catch( NoRequiredPropertyException e )
         {
