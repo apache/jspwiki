@@ -12,21 +12,20 @@
 %>
 
 <%
+    // Create wiki context; authorization check not needed
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
  
+    // Stash the wiki context
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
 
-    //
-    //  Alright, then start responding.
-    //
-
+    // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "CookieErrorTemplate.jsp" );
-%>
+%><wiki:Include page="<%=contentPage%>" /><%
 
-  <wiki:Include page="<%=contentPage%>" />
+    wikiContext.getWikiSession().clearMessages();
+%>

@@ -21,57 +21,38 @@
     String postURL;
 %>
 
+<h3>Login</h3>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-
-<html>
-
-<head>
-  <title><wiki:Variable var="applicationname"/> Login</title>
-  <wiki:Include page="commonheader.jsp"/>
-  <meta name="robots" content="noindex,nofollow">
-</head>
-
-<body class="login" bgcolor="#FFFFFF">
-  <p>Welcome to <wiki:Variable var="applicationname" />. Please sign in
-    with your login name and password.</p>
-  <br />
-  <br />
-  <form action="<%=postURL%>" accept-charset="<wiki:ContentEncoding />" method="post" >
-  <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
-  <div align="center">
-    <table border="0" cellspacing="3" cellpadding="5" width="35%" bgcolor="#efefef" />
-      <tr>
-        <td colspan="2" bgcolor="#bfbfff">
-          <div align="center">
-            <h3>Welcome to <wiki:Variable var="applicationname"/></h3>
-            <p style="color:red"><wiki:Variable var="msg" /></p>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>Login:</td>
-        <td><input type="text" name="j_username" value="<wiki:Variable var="uid" default="" />" /></td>
-      </tr>
-      <tr>
-        <td>Password:</td>
-        <td><input type="password" name="j_password" /></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <div align="center">
-            <input type="submit" name="action" value="login" />
-          </div>
-        </td>
-      </tr>
-    </table>
-    <p>Don't have a password? 
-      <a href="UserPreferences.jsp">Set up a user profile</a>
-      with <wiki:Variable var="applicationname" />now!
-    </p>
+<div class="formcontainer">
+  <div class="instructions">
+    Welcome to <wiki:Variable var="applicationname" />. Please sign in
+    with your login name and password.
   </div>
-  </form>
-</body>
+  <div class="instructions">
+     <span style="color:red"><wiki:Messages prefix="Could not log in: " /></span>
+  </div>
+  
+  <form id="login" action="<%=postURL%>" 
+    method="POST" accept-charset="<wiki:ContentEncoding />" >
+      
+    <!-- User name -->
+    <div class="block">
+      <label>Login</label>
+      <input type="text" name="j_username" value="<wiki:Variable var="uid" default="" />" />
+    </div>
 
-</html>
+    <!-- Password -->
+    <div class="block">
+      <label>Password</label>
+      <input type="password" name="j_password" />
+    </div>
+
+    <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+    <input type="submit" name="action" value="login" />
+    <div class="instructions">
+      Don't have a password? 
+      <a href="UserPreferences.jsp?tab=profile">Set up a user profile</a>
+      with <wiki:Variable var="applicationname" /> now!
+    </div>
+  </form>
+</div>

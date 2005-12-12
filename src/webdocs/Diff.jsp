@@ -15,12 +15,11 @@
     WikiEngine wiki;
 %>
 
-
 <%
-    WikiContext wikiContext = wiki.createContext( request, 
-                                                  WikiContext.DIFF );
+    // Create wiki context and check for authorization
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.DIFF );
+    wikiContext.checkAccess( response );
     String pagereq = wikiContext.getPage().getName();
-
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 
     String pageurl = wiki.encodeName( pagereq );
@@ -57,10 +56,6 @@
         }
     }
 
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
     pageContext.setAttribute( InsertDiffTag.ATTR_OLDVERSION,
                               new Integer(ver1),
                               pageContext.REQUEST_SCOPE );
@@ -70,16 +65,19 @@
 
     // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    // Stash the wiki context
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
+    // Set the content type and include the response content
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
-%>
-
-<wiki:Include page="<%=contentPage%>" />
-
-<%
+%><wiki:Include page="<%=contentPage%>" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

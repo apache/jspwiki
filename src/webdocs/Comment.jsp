@@ -5,11 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="java.security.Principal" %>
-<%@ page import="java.security.Permission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -24,12 +20,16 @@
     WikiEngine wiki;
 %>
 
-
 <%
+    // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
+    wikiContext.checkAccess( response );
+    String pagereq = wikiContext.getPage().getName();
+    NDC.push( wiki.getApplicationName()+":"+pagereq );
+    
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String user = wikiSession.getUserPrincipal().getName();
-    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() ) 
+    if ( wikiSession.isAnonymous() ) 
     {
         user  = request.getParameter( "author" );
     }
@@ -41,47 +41,18 @@
     String author  = request.getParameter( "author" );
     String link    = request.getParameter( "link" );
     String remember = request.getParameter("remember");
-    String pagereq = wikiContext.getPage().getName();
-
-    NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
-
     if( latestversion == null )
     {
         latestversion = wikiContext.getPage();
     }
 
-    AuthorizationManager mgr = wiki.getAuthorizationManager();
-
-    Permission requiredPermission = new PagePermission( wikipage, "comment" );
-    if( !mgr.checkPermission( wikiSession,
-                              requiredPermission ) )
-    {
-        log.info("User "+user+" has no access - redirecting to login page.");
-        String pageurl = wiki.encodeName( pagereq );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-        return;
-    }
-
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
     String storedlink = HttpUtil.retrieveCookieValue( request, "link" );
     if( storedlink == null ) storedlink = "";
     
     pageContext.setAttribute( "link", storedlink, PageContext.REQUEST_SCOPE );
-
-    //
-    //  Set the response type before we branch.
-    //
-
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    response.setHeader( "Cache-control", "max-age=0" );
-    response.setDateHeader( "Expires", new Date().getTime() );
-    response.setDateHeader( "Last-Modified", new Date().getTime() );
 
     log.debug("preview="+preview+", ok="+ok);
 
@@ -208,8 +179,8 @@
                               Long.toString( lastchange ),
                               PageContext.REQUEST_SCOPE );
 
-	//  This is a hack to get the preview to work.
-	pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
+	  //  This is a hack to get the preview to work.
+	  pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
 	
     //
     //  Attempt to lock the page.
@@ -222,15 +193,23 @@
         session.setAttribute( "lock-"+pagereq, lock );
     }
 
+    // Stash the wiki context
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
+
+    // Set the content type and include the response content
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    response.setHeader( "Cache-control", "max-age=0" );
+    response.setDateHeader( "Expires", new Date().getTime() );
+    response.setDateHeader( "Last-Modified", new Date().getTime() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
 
-%>
-
-<wiki:Include page="<%=contentPage%>" />
-
-<%
+%><wiki:Include page="<%=contentPage%>" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

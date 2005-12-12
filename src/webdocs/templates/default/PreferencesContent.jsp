@@ -1,25 +1,27 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.HashSet" %>
-<%@ page import="org.apache.log4j.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%! 
-    Category log = Category.getInstance("JSPWiki"); 
-%>
-
 <%
-    // Init the errors list
-    Set errors;
-    if ( session.getAttribute( "errors" ) != null )
-    {
-       errors = (Set)session.getAttribute( "errors" );
-    }
-    else
-    {
-       errors = new HashSet();
-       session.setAttribute( "errors", errors );
-    }
+  // Figure out which tab should be active
+  String tab = request.getParameter( "tab" );
+  String prefsVisible;
+  String profileVisible;
+  String prefsClass;
+  String profileClass;
+  String activeTab;
+  if ( "profile".equals( tab ) )
+  {
+    prefsVisible   = "display:none;";
+    prefsClass     = "inactiveTab";
+    profileVisible = "display:block;";
+    profileClass   = "activeTab";
+  }
+  else
+  {
+    prefsVisible   = "display:block;";
+    prefsClass     = "activeTab";
+    profileVisible = "display:none;";
+    profileClass   = "inactiveTab";
+  }
 %>
 
 <h3>Your <wiki:Variable var="applicationname" /> profile</h3>
@@ -27,22 +29,28 @@
 <!-- Tab definitions -->
 <div class="tabmenu">
   <span>
-    <a class="activetab" id="menu-prefs" class="activetab" onclick="TabbedSection.onclick('prefs')" >Preferences</a>
+    <a class="activetab" id="menu-prefs" class="<%=prefsClass%>" onclick="TabbedSection.onclick('prefs')" >Preferences</a>
   </span>
-  <span><a id="menu-profile" onclick="TabbedSection.onclick('profile')" >Profile</a>
+  <span>
+    <a id="menu-profile" class="<%=profileClass%>" onclick="TabbedSection.onclick('profile')" >Profile</a>
   </span>
 </div>
 
 <div class="tabs">
   <!-- Tab 1: user preferences -->
-  <div id="prefs" class="tab-Prefs">
+  <div id="prefs" class="tab-Prefs" style="<%=prefsVisible%>">
+    <div class="formcontainer">
+      <div class="instructions">
+        Set your user preferences here. Your choices will be saved in your browser as cookies.
+      </div>
+    </div>
     <wiki:Permission permission="editPreferences">
       <wiki:UserCheck status="anonymous">
         <div class="formcontainer">
           <div class="instructions">
-            Set your user preferences here. Your choices will be saved in your browser as cookies.
+            <span style="color:red"><wiki:Messages topic="prefs" prefix="Could not save prefs: "/></span>
           </div>
-          <form id="setCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp" 
+          <form id="setCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=prefs" 
                 method="POST" accept-charset="UTF-8">
             <div class="block">
               <label>Wiki name</label>
@@ -72,7 +80,7 @@
       <!-- Clearing the 'asserted name' cookie -->
       <wiki:UserCheck status="asserted">
         <div class="formcontainer">
-          <form id="clearCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp" 
+          <form id="clearCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=prefs" 
                 method="POST" accept-charset="UTF-8">
             <div class="block">
               <div class="description">
@@ -88,7 +96,7 @@
   </div>
   
   <!-- Tab 2: If user can register, allow edits to profile -->
-  <div id="profile" class="tab-Profile" style="display:none;">
+  <div id="profile" class="tab-Profile" style="<%=profileVisible%>">
     <wiki:Permission permission="registerUser">
       <div class="formcontainer">
         <div class="instructions">
@@ -101,7 +109,10 @@
             Edit your wiki profile here.
           </wiki:UserProfile>
         </div>
-        <form id="editProfile" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp" 
+        <div class="instructions">
+          <span style="color:red"><wiki:Messages topic="profile" prefix="Could not save profile: "/></span>
+        </div>
+        <form id="editProfile" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=profile" 
               method="POST" accept-charset="UTF-8">
               
           <!-- Login name -->
@@ -197,21 +208,6 @@
           </div>
           
           <div class="block">
-            <!-- Any errors? -->
-            <%
-            if ( errors != null && errors.size() > 0 )
-            { 
-              out.println("<blockquote><p>Could not save profile:<ul>");
-              for ( Iterator it = errors.iterator(); it.hasNext(); )
-              {
-                out.println( "<li>" + it.next().toString() + "</li>" );
-              }
-              out.println("</ul></p></blockquote>");
-            }
-            %>
-            <div class="instructions">
-              Click &#39;save profile&#39; to save your wiki profile.
-            </div>
             <wiki:UserCheck status="assertionsAllowed">
               <div class="instructions">
                 This wiki automatically remembers you using cookies,
@@ -221,6 +217,23 @@
                 will be saved by your browser.
               </div>
             </wiki:UserCheck>
+            <wiki:UserProfile property="exists">
+              <div class="instructions">
+                Access control lists or wiki groups containing your identity
+                should specify <strong><wiki:UserProfile property="wikiname"/></strong>
+                or <strong><wiki:UserProfile property="fullname"/></strong>.
+                You are also a member of these roles and groups: 
+                <strong><wiki:UserProfile property="roles" /></strong>.
+                ACLs containing these roles and groups should work, too.
+              </div>
+            </wiki:UserProfile>
+            <div class="instructions">
+              <wiki:UserProfile property="exists">
+                You created your profile on <wiki:UserProfile property="created"/>,
+                and last saved it on <wiki:UserProfile property="modified"/></p>
+              </wiki:UserProfile>
+              Click &#39;save profile&#39; to save your wiki profile.
+            </div>
             <input type="submit" name="ok" value="Save profile" />
             <input type="hidden" name="action" value="saveProfile" />
           </div>
@@ -229,6 +242,3 @@
     </wiki:Permission> 
   </div>
 </div>
-<%
-    errors.clear();
-%>

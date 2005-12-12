@@ -4,12 +4,6 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
-<%@ page import="java.security.Permission" %>
-<%@ page import="java.security.Principal" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -23,12 +17,11 @@
     WikiEngine wiki;
 %>
 
-
 <%
-    WikiContext wikiContext = wiki.createContext( request, 
-                                                  WikiContext.DELETE );
+    // Create wiki context and check for authorization
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
+    wikiContext.checkAccess( response );
     String pagereq = wikiContext.getPage().getName();
-
     NDC.push( wiki.getApplicationName()+":"+pagereq );    
 
     WikiPage wikipage      = wikiContext.getPage();
@@ -41,29 +34,6 @@
     {
         latestversion = wikiContext.getPage();
     }
-
-    AuthorizationManager mgr = wiki.getAuthorizationManager();
-    Principal currentUser  = wikiContext.getCurrentUser();
-    Permission requiredPermission = new PagePermission( wikipage, "delete" );
-
-    if( !mgr.checkPermission( wikiContext.getWikiSession(),
-                              requiredPermission ) )
-    {
-        log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
-        String pageurl = wiki.encodeName( pagereq );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-        return;
-    }
-
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
-    //
-    //  Set the response type before we branch.
-    //
-
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     if( deleteall != null )
     {
@@ -96,15 +66,20 @@
         return; 
     }
 
+    // Stash the wiki context
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
+                              
+    // Set the content type and include the response content
     // FIXME: not so.
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
-%>
-
-<wiki:Include page="<%=contentPage%>" />
-
-<%
+%><wiki:Include page="<%=contentPage%>" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

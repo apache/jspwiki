@@ -60,7 +60,7 @@
     log.debug("Error.jsp exception is: ",exception);
 
 
-    pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
+    wikiContext.getWikiSession().addMessage( msg );
 %>
 
    <h3>JSPWiki has detected an error</h3>
@@ -68,7 +68,7 @@
    <dl>
       <dt><b>Error Message</b></dt>
       <dd>
-         <%=pageContext.getAttribute("message",PageContext.REQUEST_SCOPE)%>
+         <wiki:Messages />
       </dd>      
       <dt><b>Exception</b></dt>
       <dd><%=realcause.getClass().getName()%></dd>
@@ -93,7 +93,9 @@
 
    <br clear="all" />
 <%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>
 

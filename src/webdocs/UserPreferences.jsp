@@ -28,57 +28,31 @@
 %>
 
 <%
+    // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
-    WikiSession wikiSession = wikiContext.getWikiSession();
-    AuthenticationManager mgr = wiki.getAuthenticationManager();
-    AuthorizationManager authMgr = wiki.getAuthorizationManager();
-    UserManager userMgr = wiki.getUserManager();
-    boolean containerAuth = mgr.isContainerAuthenticated();
-    boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
-    boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
-    boolean canSavePrefs = authMgr.checkPermission( wikiSession, WikiPermission.PREFERENCES );
-    boolean canSaveProfile = authMgr.checkPermission( wikiSession, WikiPermission.REGISTER );
-    String user = wikiContext.getCurrentUser().getName();
-    
-    // User must have permission to change the profile
-    if( !canSavePrefs )
-    {
-        log.info("User "+wikiContext.getCurrentUser()+" has no access to set preferences - redirecting to login page.");
-        String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
-        wikiContext.setVariable( "msg", msg );
-        String pageurl = wiki.encodeName( wikiContext.getPage().getName() );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-    }
-    
+    wikiContext.checkAccess( response );
     NDC.push( wiki.getApplicationName()+":"+ wikiContext.getPage().getName() );
     
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
-
-    // Init the errors list
-    Set errors;
-    if ( session.getAttribute( "errors" ) != null )
-    {
-       errors = (Set)session.getAttribute( "errors" );
-    }
-    else
-    {
-       errors = new HashSet();
-       session.setAttribute( "errors", errors );
-    }
     
     // Extract the user profile and action attributes
+    UserManager userMgr = wiki.getUserManager();
     UserProfile profile = userMgr.parseProfile( wikiContext );
 
+    // Is the user allowed to save a profile?
+    WikiSession wikiSession = wikiContext.getWikiSession();
+    AuthorizationManager authMgr = wiki.getAuthorizationManager();
+    boolean canSaveProfile = authMgr.checkPermission( wikiSession, WikiPermission.REGISTER );
+    
     if( canSaveProfile && "saveProfile".equals(request.getParameter("action")) )
     {
         // Validate the profile
-        errors.clear();
-        userMgr.validateProfile( wikiContext, profile, errors );
+        userMgr.validateProfile( wikiContext, profile );
 
         // If no errors, save the profile now & refresh the principal set!
-        if ( errors.size() == 0 )
+        if ( wikiSession.getMessages( "profile" ).length == 0 )
         {
             try
             {
@@ -88,18 +62,18 @@
             catch( DuplicateUserException e )
             {
                 // User collision! (full name or wiki name already taken)
-                errors.add( e.getMessage() );
+                wikiSession.addMessage( "profile", e.getMessage() );
             }
             catch( WikiSecurityException e )
             {
                 // Something went horribly wrong! Maybe it's an I/O error...
-                errors.add( e.getMessage() );
+                wikiSession.addMessage( "profile", e.getMessage() );
             }
         }
-        if ( errors.size() == 0 )
+        if ( wikiSession.getMessages( "profile" ).length == 0 )
         {
-		   response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
-		   return;
+		        response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+		        return;
         }
     }
     if( "setAssertedName".equals(request.getParameter("action")) )
@@ -120,6 +94,8 @@
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

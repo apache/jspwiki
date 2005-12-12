@@ -5,13 +5,8 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="java.security.Permission" %>
-<%@ page import="java.security.Principal" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.PagePermission" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -25,9 +20,13 @@
     WikiEngine wiki;
 %>
 
-
 <%
+    // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
+    wikiContext.checkAccess( response );
+    String pagereq = wikiContext.getPage().getName();
+    NDC.push( wiki.getApplicationName()+":"+pagereq );    
+    
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String user = wikiSession.getUserPrincipal().getName();
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() )
@@ -44,14 +43,6 @@
     String text    = EditorManager.getEditedText( pageContext );
 
     //
-    //  Context is created; continue
-    //
-
-    String pagereq = wikiContext.getPage().getName();
-
-    NDC.push( wiki.getApplicationName()+":"+pagereq );    
-
-    //
     //  WYSIWYG editor sends us its greetings
     //
     String htmlText = request.getParameter( "htmlPageText" );
@@ -61,7 +52,6 @@
     }
 
     WikiPage wikipage = wikiContext.getPage();
-    Permission requiredPermission = null;
     WikiPage latestversion = wiki.getPage( pagereq );
 
     if( latestversion == null )
@@ -69,39 +59,6 @@
         latestversion = wikiContext.getPage();
     }
     
-    //
-    //  Figure out which is the proper permission for this
-    //  particular editing action.
-    //
-    if( wiki.pageExists( wikipage ) )
-    {
-        requiredPermission = new PagePermission( wikipage, "edit" );
-    }
-    else
-    {
-        if ( pagereq.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
-    	    {
-            requiredPermission = WikiPermission.CREATE_GROUPS;
-        }
-        else
-        {
-            requiredPermission = WikiPermission.CREATE_PAGES;
-        }
-    }   
-
-    AuthorizationManager mgr = wiki.getAuthorizationManager();
-
-    if( !mgr.checkPermission(  wikiSession,
-                               requiredPermission ) )
-    {
-        log.info("User "+user+" has no access - redirecting to login page.");
-        String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
-        wikiContext.setVariable( "msg", msg );
-        String pageurl = wiki.encodeName( pagereq );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-        return;
-    }
-
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
@@ -189,7 +146,7 @@
         }
         catch( RedirectException ex )
         {
-            session.setAttribute("msg", ex.getMessage());
+            wikiContext.getWikiSession().addMessage( ex.getMessage() );
             response.sendRedirect( ex.getRedirect() );
             return;
         }
@@ -247,11 +204,9 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
-%>
-
-<wiki:Include page="<%=contentPage%>" />
-
-<%
+%><wiki:Include page="<%=contentPage%>" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

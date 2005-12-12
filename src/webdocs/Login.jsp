@@ -23,7 +23,6 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
     WikiSession wikiSession = wikiContext.getWikiSession();
     NDC.push( wiki.getApplicationName() + ":Login.jsp"  );
-    session.setAttribute("msg","");
     
     if( !mgr.isContainerAuthenticated() )
     {
@@ -54,11 +53,11 @@
                 log.error( "Failed to authenticate user " + uid );
                 if ( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
                 {
-                    session.setAttribute("msg", "Invalid login (please check your Caps Lock key)");
+                    wikiSession.addMessage("Invalid login (please check your Caps Lock key)");
                 }
                 else
                 {
-                    session.setAttribute("msg", "Not a valid login.");
+                    wikiSession.addMessage("Not a valid login.");
                 }
             }
         }
@@ -101,9 +100,9 @@
     // So, find the login form and include it. This should be in the same directory
     // as this page. We don't need to use the wiki:Include tag.
     
-    %>
-        <jsp:include page="LoginForm.jsp" />
-    <%
+%><jsp:include page="LoginForm.jsp" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

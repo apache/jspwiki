@@ -4,6 +4,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 
@@ -18,17 +19,13 @@
 %>
 
 <%
-    String      mode        = request.getParameter("mode");
-    String      type        = request.getParameter("type");
-    
-    if( mode == null || !(mode.equals(RSSGenerator.MODE_BLOG) || mode.equals(RSSGenerator.MODE_WIKI)) ) 
-    	   mode = RSSGenerator.MODE_BLOG;
-    if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20) || type.equals(RSSGenerator.ATOM)) ) 
-    	   type = RSSGenerator.RSS20;
-    
+    // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
+    wikiContext.checkAccess( response );
     WikiPage    wikipage    = wikiContext.getPage();
+    NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
+    // Redirect if baseURL not set or RSS generation not on
     if( wiki.getBaseURL().length() == 0 )
     {
         response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate RSS" );
@@ -47,14 +44,20 @@
         return;
     }
 
-    NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
-
-    //
-    //  Force the TranslatorReader to output absolute URLs
-    //  regardless of the current settings.
-    //
+    // Set the mode and type for the feed
+    String      mode        = request.getParameter("mode");
+    String      type        = request.getParameter("type");
+    
+    if( mode == null || !(mode.equals(RSSGenerator.MODE_BLOG) || mode.equals(RSSGenerator.MODE_WIKI)) ) 
+    	   mode = RSSGenerator.MODE_BLOG;
+    if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20) || type.equals(RSSGenerator.ATOM)) ) 
+    	   type = RSSGenerator.RSS20;
+    
+    // Force the TranslatorReader to output absolute URLs
+    // regardless of the current settings.
     wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
+    // Set the content type and include the response content
     response.setContentType( RSSGenerator.getContentType(mode)+"; charset=UTF-8");
 
     StringBuffer result = new StringBuffer();
@@ -112,6 +115,8 @@
 <%-- </oscache:cache> --%>
 
 <%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

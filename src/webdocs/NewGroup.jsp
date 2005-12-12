@@ -1,16 +1,9 @@
 <%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.HashSet" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.WikiContext" %>
 <%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
 <%@ page import="com.ecyrd.jspwiki.WikiPage" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.UserManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
-<%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
+<%@ page import="com.ecyrd.jspwiki.WikiSession" %>
 <%@ page import="com.ecyrd.jspwiki.filters.RedirectException" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -26,43 +19,11 @@
 %>
 
 <%
+    // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.CREATE_GROUP );
-    AuthenticationManager mgr = wiki.getAuthenticationManager();
-    AuthorizationManager authMgr = wiki.getAuthorizationManager();
-    UserManager userMgr = wiki.getUserManager();
-    boolean containerAuth = mgr.isContainerAuthenticated();
-    boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
-    boolean isAuthenticated = wikiContext.getWikiSession().isAuthenticated();
+    wikiContext.checkAccess( response );
     String user = wikiContext.getCurrentUser().getName();
-
-    // User must have permission to create groups
-    if( !authMgr.checkPermission( wikiContext.getWikiSession(), WikiPermission.CREATE_GROUPS ) )
-    {
-        log.info("User "+user+" cannot create groups - redirecting to login page.");
-        String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
-        wikiContext.setVariable( "msg", msg );
-        String pageurl = wiki.encodeName( wikiContext.getPage().getName() );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-    }
-    
     NDC.push( wiki.getApplicationName()+":"+ wikiContext.getPage().getName() );
-    
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
-    // Init the errors list
-    Set errors;
-    if ( session.getAttribute( "errors" ) != null )
-    {
-       errors = (Set)session.getAttribute( "errors" );
-    }
-    else
-    {
-       errors = new HashSet();
-       session.setAttribute( "errors", errors );
-    }
-
     
     // Extract the group name, members and action attributes
     String ok      = request.getParameter( "ok" );
@@ -76,26 +37,26 @@
     if( ok != null || "save".equals(request.getParameter("action")) )
     {
         // Validate the group
-        errors.clear();
+        WikiSession wikiSession = wikiContext.getWikiSession();
         if ( name == null || name.length() < 1 ) 
         {
-            errors.add("Group name may not be blank.");
+            wikiSession.addMessage("Group name may not be blank.");
         }
         if ( members == null || members.length() < 1 )
         {
-            errors.add("The group must have at least one member.");
+            wikiSession.addMessage("The group must have at least one member.");
         }
         
         // If page already exists, disallow
         String groupPage = "Group" + name;
         if ( wiki.pageExists( groupPage ) )
         {
-            errors.add("A group named '" + name + "' already exists. Choose another.");
+            wikiSession.addMessage("A group named '" + name + "' already exists. Choose another.");
             log.error( "User " + user + " tried to create a group page " + groupPage + ", but it already exists!" );
         }
         
-        // If no errors, build and save the group page
-        if ( errors.size() > 0 )
+        // If no errors, build and save the group page; otherwise redirect to self
+        if ( wikiSession.getMessages().length > 0 )
         {
             response.sendRedirect( "NewGroup.jsp?name=" + name + "&members=" + members );
             return;
@@ -121,7 +82,7 @@
             catch( RedirectException ex )
             {
                 log.error( "Couldn't save page " + groupPage + ": " + ex.getMessage() );
-                session.setAttribute("msg", ex.getMessage());
+                wikiSession.addMessage( ex.getMessage() );
                 response.sendRedirect( ex.getRedirect() );
                 return;
             }
@@ -131,11 +92,20 @@
     
     pageContext.setAttribute( "name", name, PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( "members", members, PageContext.REQUEST_SCOPE );
+    
+    // Stash the wiki context
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
+
+    // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

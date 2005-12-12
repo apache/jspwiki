@@ -16,7 +16,9 @@
 %>
 
 <%
-	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
+    // Create wiki context and check for authorization
+	  WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
+    wikiContext.checkAccess( response );
 	
     String renameFrom = wikiContext.getPage().getName();
     String renameTo = request.getParameter( "renameto");
@@ -28,25 +30,17 @@
         changeReferences = true;
     }
 
-    // Check for the "rename" permission
-    AuthorizationManager mgr = wiki.getAuthorizationManager();
-    if( !mgr.checkPermission(  wikiContext.getWikiSession(),
-                               new PagePermission(wiki.getPage(renameFrom), "rename" ) ) )
-    {
-        log.info("User "+wikiContext.getCurrentUser()+" has no access - redirecting to login page.");
-        String msg = "You do not seem to have the permissions for this operation. Would you like to login as another user?";
-        wikiContext.setVariable( "msg", msg );
-        String pageurl = wiki.encodeName( renameFrom );
-        response.sendRedirect( wiki.getBaseURL()+"Login.jsp?page="+pageurl );
-        return;
-    }
+    // Stash the wiki context
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
 
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
-
+    // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     
     log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
     
+    WikiSession wikiSession = wikiContext.getWikiSession();
     try 
     {
         if (renameTo.length() > 0)
@@ -62,8 +56,7 @@
         }
         else
         {
-            String msg = "New page name empty.<br/>\nClick <b>back</b> on your browser and fill in the new name.";
-            pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
+            wikiSession.addMessage( "New page name empty.<br/>\nClick <b>back</b> on your browser and fill in the new name.");
 
            log.info("Page rename request failed because new page name was left blank");
         
@@ -73,7 +66,7 @@
             <dl>
                <dt><b>Reason:</b></dt>
                <dd>
-                  <%=pageContext.getAttribute("message",PageContext.REQUEST_SCOPE)%>
+                  <wiki:Messages />
                </dd>      
             </dl>
 <%
@@ -82,30 +75,23 @@
     } 
     catch (WikiException e) 
     {
-        String msg = null;
-        
-
         if (e.getMessage().equals("Page exists")) 
         {
             if (renameTo.equals( renameFrom ))
             {
                 log.info("Page rename request failed because page names are identical");
-
-                msg = "Page names identical.<br/>\nClick <b>back</b> on your browser and change the new name.";
+                wikiSession.addMessage( "Page names identical.<br/>\nClick <b>back</b> on your browser and change the new name." );
             }
             else
             {
                 log.info("Page rename request failed because new page name is already in use");
-
-                msg = "Page \"" + renameTo + "\" already exists.<br/>\nClick <b>back</b> on your browser and change the new name or delete the page \"" + renameTo + "\" first.";
+                wikiSession.addMessage( "Page \"" + renameTo + "\" already exists.<br/>\nClick <b>back</b> on your browser and change the new name or delete the page \"" + renameTo + "\" first." );
             }
         } 
         else 
         {
-            msg = "An Unknown error occurred (" + e.toString() + ")";
+            wikiSession.addMessage( "An Unknown error occurred (" + e.toString() + ")" );
         }
-
-        pageContext.setAttribute( "message", msg, PageContext.REQUEST_SCOPE );
 
 %>
        <h3>Unable to rename page</h3>
@@ -113,7 +99,7 @@
        <dl>
           <dt><b>Reason:</b></dt>
           <dd>
-             <%=pageContext.getAttribute("message",PageContext.REQUEST_SCOPE)%>
+             <wiki:Messages />
           </dd>      
        </dl>
 <%

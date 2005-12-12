@@ -6,6 +6,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%!
     public void jspInit()
@@ -30,21 +31,21 @@
 %>
 
 <%
-    WikiContext wikiContext = wiki.createContext( request, "rss" );
-    WikiPage    wikipage    = wikiContext.getPage();
-    
+    // Redirect if baseURL not set
     if( wiki.getBaseURL().length() == 0 )
     {
         response.sendError( 500, "The jspwiki.baseURL property has not been defined for this wiki - cannot generate Atom feed" );
         return;
     }
 
+    // Create wiki context and check for authorization
+    WikiContext wikiContext = wiki.createContext( request, "rss" );
+    wikiContext.checkAccess( response );
+    WikiPage    wikipage    = wikiContext.getPage();
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
-    //
-    //  Force the TranslatorReader to output absolute URLs
-    //  regardless of the current settings.
-    //
+    // Force the TranslatorReader to output absolute URLs
+    // regardless of the current settings.
     wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
     response.setContentType("text/xml; charset=UTF-8" );
@@ -250,6 +251,8 @@
 </feed>
 
 <%
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

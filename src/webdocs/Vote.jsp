@@ -13,12 +13,12 @@
     Category log = Category.getInstance("JSPWiki"); 
     WikiEngine wiki;
 %><%
+    // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
     String pagereq = wikiContext.getPage().getName();
-    String vote    = request.getParameter("vote");
-
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
+    String vote    = request.getParameter("vote");
     log.info("Vote '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
 
 
@@ -32,7 +32,9 @@
 
     response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp?page=VoteOk" );
 
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>
 

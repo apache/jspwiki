@@ -57,7 +57,7 @@
            </p>
            </form>
 
-           <span class="error"><wiki:Variable var="msg"/></span>
+           <span class="error"><wiki:Messages /></span>
 
         </td>
 

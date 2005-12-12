@@ -42,7 +42,8 @@
 %>
     <wiki:Include page="<%=contentPage%>" />
 <%
-    // Pop the page context
+    // Clean up the logger and clear UI messages
     NDC.pop();
     NDC.remove();
+    wikiContext.getWikiSession().clearMessages();
 %>

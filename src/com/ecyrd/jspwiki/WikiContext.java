@@ -19,17 +19,26 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PropertyPermission;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.NDC;
 
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
@@ -62,6 +71,7 @@ public class WikiContext
     WikiPage   m_page;
     WikiPage   m_realPage;
     WikiEngine m_engine;
+    Permission m_permission = null;
     String     m_requestContext = VIEW;
     String     m_template       = "default";
 
@@ -121,6 +131,7 @@ public class WikiContext
     public static final String    OTHER    = NONE; // This is just a clarification.
     
     protected static Logger       log      = Logger.getLogger( WikiContext.class );
+    private static final Permission DUMMY_PERMISSION = new PropertyPermission("os.name", "read");
 
     /**
      *  Create a new WikiContext for the given WikiPage. Delegates to
@@ -183,6 +194,9 @@ public class WikiContext
 
         // Stash the wiki context in the session as the "last context"
         m_session.setLastContext( this );
+        
+        // Figure out what permission is required to execute this context
+        updatePermission();
     }
 
     /**
@@ -198,6 +212,7 @@ public class WikiContext
     {
         WikiPage old = m_realPage;
         m_realPage = page;
+        updatePermission();
         return old;
     }
     
@@ -230,6 +245,7 @@ public class WikiContext
     public void setPage( WikiPage page )
     {
         m_page = page;
+        updatePermission();
     }
 
     /**
@@ -249,6 +265,7 @@ public class WikiContext
     public void setRequestContext( String arg )
     {
         m_requestContext = arg;
+        updatePermission();
     }
 
     /**
@@ -273,6 +290,7 @@ public class WikiContext
     public void setVariable( String key, Object data )
     {
         m_variableMap.put( key, data );
+        updatePermission();
     }
 
     /**
@@ -423,5 +441,155 @@ public class WikiContext
     public static WikiContext findContext( PageContext pageContext )
     {
         return (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    }
+    
+    /**
+     * Returns the permission required to successfully execute this context. 
+     * For example, the a wiki context of VIEW for a certain page means that
+     * the PagePermission "view" is required for the page. In some cases, no
+     * particular permission is required, in which case a dummy permission will
+     * be returned ({@link java.util.PropertyPermission}<code> "os.name",
+     * "read"</code>). This method is guaranteed to always return a valid, 
+     * non-null permission.
+     * @return the permission
+     * @since 2.4
+     */
+    public Permission requiredPermission()
+    {
+        return m_permission;
+    }
+    
+    /**
+     * Checks whether the current user has access to this wiki context,
+     * by obtaining the required Permission ({@link #requiredPermission()}
+     * and delegating to 
+     * {@link com.ecyrd.jspwiki.AuthorizationManager#checkPermission(WikiSession, Permission)}.
+     * If the user is allowed, this method will succeed silently. If
+     * the context is not allowed, the user will be redirected to the
+     * login page (if not logged in already) or to a standard 401/forbidden page
+     * (if not).
+     * @param response the HTTP response object for the users's current request
+     */
+    public void checkAccess( HttpServletResponse response ) throws Exception
+    {
+        //TODO: this class is, at best, a temporary placeholder for this method until we start using filters
+        AuthorizationManager mgr = m_engine.getAuthorizationManager();
+        Principal currentUser  = m_session.getUserPrincipal();
+        
+        // Log the access attempt
+        NDC.push( m_engine.getApplicationName()+":"+ m_page.getName() );
+        if ( log.isDebugEnabled() )
+        {
+            log.debug("Request for page '"+ m_page.getName() +"' from "
+                      + m_request.getRemoteAddr()
+                      + " by "+( getCurrentUser() != null ? getCurrentUser().getName() : "unknown user") );
+        }
+        
+        if( !mgr.checkPermission( m_session, requiredPermission() ) )
+        {
+            if( m_session.isAuthenticated() )
+            {
+                log.info("User "+currentUser.getName()+" has no access - displaying message.");
+                NDC.pop();
+                response.sendError( HttpServletResponse.SC_FORBIDDEN, "You don't have enough privileges to do that." );
+                return;
+            }
+            else
+            {
+                log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+                String pageurl = m_engine.encodeName( m_page.getName() );
+                NDC.pop();
+                m_session.addMessage("You don't have access to '" + pageurl + "'. Log in first.");
+                response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
+                return;
+            }
+        }
+        NDC.pop();
+    }
+
+    
+    /**
+     * Private method that updates the value returned by the {@link #requiredPermission()}
+     * method. Will always be called when the page name, request context, or variable
+     * changes.
+     * @since 2.4
+     */
+    protected void updatePermission() {
+        // Dummy permission that should always be true; default if nothing else works
+        m_permission = DUMMY_PERMISSION;
+        
+        // PageInfo.jsp
+        if ( ATTACH.equals( m_requestContext ) )
+        {
+            m_permission = new PagePermission( m_page, "upload" );
+        }
+        else if ( COMMENT.equals( m_requestContext ) )
+        {
+            m_permission = new PagePermission( m_page, "comment" );
+        }
+        else if ( CONFLICT.equals( m_requestContext ) || DIFF.equals( m_requestContext )
+                || INFO.equals( m_requestContext )    || PREVIEW.equals( m_requestContext )
+                || RSS.equals( m_requestContext )     || VIEW.equals( m_requestContext ) )
+        {
+            m_permission = new PagePermission( m_page, "view" );
+        }
+        else if ( CREATE_GROUP.equals( m_requestContext ) )
+        {
+            m_permission = new WikiPermission( m_page.getWiki(), "createGroups" );
+        }
+        else if ( DELETE.equals( m_requestContext ) )
+        {
+            m_permission = new PagePermission( m_page, "delete" );
+        }
+        else if ( EDIT.equals( m_requestContext ) )
+        {
+            //
+            //  Figure out which is the proper permission for this
+            //  particular editing action.
+            //
+            boolean exists = false;
+            try 
+            {
+                exists = m_engine.pageExists( m_page );
+            }
+            catch ( ProviderException e )
+            {
+            }
+            if( exists )
+            {
+                m_permission = new PagePermission( m_page, "edit" );
+            }
+            else
+            {
+                if ( m_page.getName().startsWith( DefaultGroupManager.GROUP_PREFIX ) )
+                    {
+                    m_permission = new WikiPermission( m_page.getWiki(), "createGroups" );
+                }
+                else
+                {
+                    m_permission = new WikiPermission( m_page.getWiki(), "createPages" );
+                }
+            }
+        }
+        else if ( LOGIN.equals( m_requestContext ) )
+        {
+            m_permission = new WikiPermission( m_page.getWiki(), "login" );
+        }
+        else if ( PREFS.equals( m_requestContext ) )
+        {
+            m_permission = new WikiPermission( m_page.getWiki(), "editPreferences" );
+        }
+        else if ( REGISTER.equals( m_requestContext ) )
+        {
+            m_permission = new WikiPermission( m_page.getWiki(), "registerUser" );
+        }
+        else if ( RENAME.equals( m_requestContext ) )
+        {
+            m_permission = new PagePermission( m_page, "rename" );
+        }
+        else if ( UPLOAD.equals( m_requestContext ) )
+        {
+            m_permission = new PagePermission( m_page, "upload" );
+        }
     }
 }
