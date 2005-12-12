@@ -21,21 +21,17 @@ package com.ecyrd.jspwiki.auth.user;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 /**
  * Default implementation for representing wiki user information, such as the
  * login name, full name, wiki name, and e-mail address.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-10-19 04:11:53 $
+ * @version $Revision: 1.6 $ $Date: 2005-12-12 05:51:43 $
  * @since 2.3
  */
 
 public class DefaultUserProfile implements UserProfile
 {
-    private Logger   log         = Logger.getLogger( DefaultUserProfile.class );
-    
     private Date     m_created   = null;
 
     private String   m_email     = null;

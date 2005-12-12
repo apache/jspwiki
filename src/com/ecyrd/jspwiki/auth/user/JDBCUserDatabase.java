@@ -103,7 +103,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
  * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-10-25 05:54:15 $
+ * @version $Revision: 1.3 $ $Date: 2005-12-12 05:51:43 $
  * @since 2.3
  */public class JDBCUserDatabase extends AbstractUserDatabase
 {
@@ -263,7 +263,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             Connection conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
-            ResultSet rs = ps.executeQuery();
+            ps.executeQuery();
             conn.close();
         }
         catch ( SQLException e )
