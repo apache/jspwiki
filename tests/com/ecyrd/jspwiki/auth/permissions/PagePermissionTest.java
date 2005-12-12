@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-02 23:22:59 $
+ * @version $Revision: 1.4 $ $Date: 2005-12-12 06:29:05 $
  */
 public class PagePermissionTest extends TestCase
 {
@@ -57,7 +57,6 @@ public class PagePermissionTest extends TestCase
     {
         PagePermission p1;
         PagePermission p2;
-        PagePermission p3;
 
         // Permissions without prepended wiki name should never imply themselves
         // or others

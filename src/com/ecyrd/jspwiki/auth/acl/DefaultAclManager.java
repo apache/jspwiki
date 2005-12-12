@@ -17,7 +17,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 /**
  * Default implementation that parses Acls from wiki page markup.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-09-17 18:15:36 $
+ * @version $Revision: 1.6 $ $Date: 2005-12-12 06:31:36 $
  * @since 2.3
  */
 public class DefaultAclManager implements AclManager
@@ -61,9 +61,9 @@ public class DefaultAclManager implements AclManager
         try
         {
             StringTokenizer fieldToks = new StringTokenizer( ruleLine );
-            String policy = fieldToks.nextToken();
+            fieldToks.nextToken();
             String actions = fieldToks.nextToken();
-            String pageName = page.getName();
+            page.getName();
 
             while( fieldToks.hasMoreTokens() )
             {
