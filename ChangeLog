@@ -19,6 +19,11 @@
           characters like angle brackets. Yes, yes, we know...
           what took us so long? There's more to do but it's a
           good start.
+          
+        * UserProfile.jsp gets some clever scriptlet hackery
+          via the 'tab' parameter to activate (or preserve)
+          a particular tab. This fixes the "disappearing profile"
+          issue during save operations.
         
         * WikiSession receives a series of new methods for
           stashing, retrieving and clearing UI messages. These
