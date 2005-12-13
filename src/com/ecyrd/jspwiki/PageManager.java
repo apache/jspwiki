@@ -449,6 +449,8 @@ public class PageManager
     {
         public void run()
         {
+            setName("JSPWiki Lock Reaper Thread");
+            
             while( true )
             {
                 try
