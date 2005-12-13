@@ -1,4 +1,13 @@
-2005-11-29  Andrew Jaquith <arjaquith@mindspring.com>
+2005-12-14  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.57
+        
+        * Just improved some output coming from the AttachmentServlet.
+        
+        * Fixed a few instances of still using Category instead of
+        Logger.
+
+2005-12-13  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.56
         
