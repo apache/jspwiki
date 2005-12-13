@@ -325,8 +325,9 @@ public class TemplateManager
 
     /**
      *  Adds a resource request to the current request context.
+     *  The content will be added at the resource-type marker 
+     *  (see IncludeResourcesTag) in WikiServletFilter.
      */
-    
     public static void addResourceRequest( WikiContext ctx, String type, String path )
     {
         HashMap resourcemap = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );

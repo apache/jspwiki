@@ -15,7 +15,33 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 
-
+/**
+ * This filter goes through the generated page response prior and
+ * places requested resources at the appropriate inclusion markers.
+ * This is done to let dynamic content (e.g. plugins, editors) 
+ * include custom resources, even after the HTML head section is
+ * in fact built.
+ * <p>
+ * Inclusion markers are placed by the IncludeResourcesTag; the
+ * defult content templates (see .../templates/default/commonheader.jsp)
+ * are configured to do this. As an example, a JavaScript resource marker
+ * is added like this:
+ * <pre>
+ * &lt;wiki:IncludeResources type="script"/&gt;
+ * </pre>
+ * Any code that requires special resources must register a resource
+ * request with the TemplateManager. For example:
+ * <pre>
+ * &lt;wiki:RequestResource type="script" path="scripts/custom.js" /&gt;
+ * </pre>
+ * or programmatically,
+ * <pre>
+ * TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/customresource.js" );
+ * </pre>
+ * 
+ * @see TemplateManager
+ * @see com.ecyrd.jspwiki.tags.RequestResourceTag
+ */
 public class WikiServletFilter implements Filter
 {
     protected static Logger log = Logger.getLogger( WikiServletFilter.class );
