@@ -373,6 +373,8 @@ public class LuceneSearchProvider implements SearchProvider
                 }
             }
         });
+        
+        m_luceneUpdateThread.setName("JSPWiki Lucene update thread");
         m_luceneUpdateThread.start();
     }
 
