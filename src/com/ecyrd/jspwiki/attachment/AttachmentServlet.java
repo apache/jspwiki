@@ -209,12 +209,7 @@ public class AttachmentServlet
                     return;
                 }
 
-                String mimetype = getServletConfig().getServletContext().getMimeType( att.getFileName().toLowerCase() );
-
-                if( mimetype == null )
-                {
-                    mimetype = "application/binary";
-                }
+                String mimetype = getMimeType( context, att.getFileName() );
 
                 res.setContentType( mimetype );
                 
@@ -281,13 +276,14 @@ public class AttachmentServlet
         catch( IOException ioe )
         {
             msg = "Error: " + ioe.getMessage();
+            log.error("I/O exception during download",ioe);
             res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                            msg );
             return;
         }
         finally
         {
-            if( in != null ) in.close();
+            if( in != null ) try { in.close(); } catch(Exception e) {}
             
             //
             //  Quite often, aggressive clients close the connection when they have
@@ -306,7 +302,35 @@ public class AttachmentServlet
         }
     }
 
+    /**
+     *  Returns the mime type for this particular file.  Case does not matter.
+     *  
+     * @param ctx WikiContext; required to access the ServletContext of the request.
+     * @param fileName The name to check for. 
+     * @return A valid mime type, or application/binary, if not recognized
+     */
+    private static String getMimeType(WikiContext ctx, String fileName )
+    {
+        String mimetype = null;
+        
+        HttpServletRequest req = ctx.getHttpRequest();
+        if( req != null )
+        {
+            ServletContext s = req.getSession().getServletContext();
+            
+            if( s != null )
+            {
+                mimetype = s.getMimeType( fileName.toLowerCase() );
+            }
+        }
 
+        if( mimetype == null )
+        {
+            mimetype = "application/binary";
+        }
+
+        return mimetype;
+    }
 
 
     /**
