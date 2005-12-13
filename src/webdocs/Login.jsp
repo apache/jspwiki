@@ -14,7 +14,7 @@
     {
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
-    Category log = Category.getInstance("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki"); 
     WikiEngine wiki;
 %>
 
@@ -29,9 +29,10 @@
         // If user got here and is already authenticated, it means
         // they just aren't allowed access to what they asked for.
         // Weepy tears and hankies all 'round.
-        if ( wikiSession.isAuthenticated() )
+        if( wikiSession.isAuthenticated() )
         {
             response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
+            return;
         }
     
         // If using custom auth, we need to do the login now
@@ -50,7 +51,7 @@
             }
             else
             {
-                log.error( "Failed to authenticate user " + uid );
+                log.info( "Failed to authenticate user " + uid );
                 if ( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
                 {
                     wikiSession.addMessage("Invalid login (please check your Caps Lock key)");
@@ -79,7 +80,7 @@
     // was called without parameters, this will be the front page. Otherwise,
     // there's probably a 'page' parameter telling us where to go.
     
-    if ( wikiSession.isAuthenticated() )
+    if( wikiSession.isAuthenticated() )
     {
         // Set user cookie
         Principal principal = wikiSession.getUserPrincipal();
@@ -94,6 +95,7 @@
         response.sendRedirect( viewUrl );
         NDC.pop();
         NDC.remove();
+        return;
     }
     
     // If we've gotten here, the user hasn't authenticated yet.

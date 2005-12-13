@@ -11,7 +11,7 @@
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
 
-    Category log = Category.getInstance("JSPWikiSearch");
+    Logger log = Logger.getLogger("JSPWikiSearch");
     WikiEngine wiki;
 %>
 
