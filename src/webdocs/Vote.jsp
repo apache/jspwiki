@@ -10,7 +10,7 @@
     {
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
-    Category log = Category.getInstance("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki"); 
     WikiEngine wiki;
 %><%
     // Create wiki context and check for authorization

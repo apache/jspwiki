@@ -20,7 +20,7 @@
     {
         wiki = WikiEngine.getInstance( getServletConfig() );
     }
-    Category log = Category.getInstance("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki"); 
     WikiEngine wiki;
 %>
 
