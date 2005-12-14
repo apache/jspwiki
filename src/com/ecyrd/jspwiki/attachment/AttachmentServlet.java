@@ -24,6 +24,7 @@ import javax.servlet.http.*;
 
 import java.util.*;
 import java.io.*;
+import java.net.SocketException;
 import java.security.Permission;
 import java.security.Principal;
 
@@ -272,6 +273,15 @@ public class AttachmentServlet
             res.sendError( HttpServletResponse.SC_BAD_REQUEST,
                            msg );
             return;
+        }
+        catch( SocketException se )
+        {
+            //
+            //  These are very common in download situations due to aggressive
+            //  clients.
+            //
+            log.debug("I/O exception during download",se);
+            return;            
         }
         catch( IOException ioe )
         {
