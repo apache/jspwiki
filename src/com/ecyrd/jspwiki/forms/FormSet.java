@@ -64,7 +64,7 @@ public class FormSet
     {
         String formName = (String)params.remove( FormElement.PARAM_FORM );
         if( formName == null || formName.trim().length() == 0 )
-            return( "" );
+            return "";
             
         FormInfo info = (FormInfo)ctx.getVariable( FormElement.FORM_VALUES_CARRIER );
         if( info == null || formName.equals( info.getName() ) == false )
@@ -75,6 +75,6 @@ public class FormSet
 
         info.setName( formName );
         info.addSubmission( params );
-        return( "" );
+        return "";
     }
 }
