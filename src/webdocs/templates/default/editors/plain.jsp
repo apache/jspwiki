@@ -36,13 +36,13 @@
         <table border="0" class="small">
           <tr>
             <td><label for="authorname" accesskey="n">Your <u>n</u>ame</label></td>
-            <td><input type="text" name="author" id="authorname" value="<wiki:UserName/>" /></td>
+            <td><input type="text" name="author" id="authorname" value="<%=session.getAttribute("author")%>" /></td>
             <td><label for="rememberme">Remember me?</label>
-            <input type="checkbox" name="remember" id="rememberme" /></td>
+            <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/></td>
           </tr>
           <tr>
             <td><label for="link" accesskey="m">Homepage or e<u>m</u>ail</label></td>
-            <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=pageContext.getAttribute("link",PageContext.REQUEST_SCOPE)%>" /></td>
+            <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=session.getAttribute("link")%>" /></td>
           </tr>
         </table>
     </p>

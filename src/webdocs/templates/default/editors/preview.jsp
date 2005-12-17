@@ -10,12 +10,20 @@
 <% WikiContext context = WikiContext.findContext( pageContext ); %>
 <% String usertext = (String)pageContext.getAttribute( EditorManager.ATTR_EDITEDTEXT, PageContext.REQUEST_SCOPE ); %>
 <% if( usertext == null ) usertext = ""; %>
-
+<% 
+   String action = "comment".equals(request.getParameter("action")) ? 
+                   context.getURL(WikiContext.COMMENT,context.getPage().getName()) : 
+                   context.getURL(WikiContext.EDIT,context.getPage().getName());
+ %>
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
-      action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
+      action="<%=action%>" 
       name="editForm" enctype="application/x-www-form-urlencoded">
     <p>
-        <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
+        <%-- Edit.jsp & Comment.jsp rely on these being found.  So be careful, if you make changes. --%>
+        <input name="author" type="hidden" value="<%=session.getAttribute("author")%>" />
+        <input name="link" type="hidden" value="<%=session.getAttribute("link")%>" />
+        <input name="remember" type="hidden" value="<%=session.getAttribute("remember")%>" />
+
         <input name="page" type="hidden" value="<wiki:Variable var="pagename"/>" />
         <input name="action" type="hidden" value="save" />
         <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
