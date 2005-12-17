@@ -28,18 +28,18 @@
     NDC.push( wiki.getApplicationName()+":"+pagereq );
     
     WikiSession wikiSession = wikiContext.getWikiSession(); 
-    String user = wikiSession.getUserPrincipal().getName();
+    String storedUser = wikiSession.getUserPrincipal().getName();
+
     if ( wikiSession.isAnonymous() ) 
     {
-        user  = request.getParameter( "author" );
+        storedUser  = request.getParameter( "author" );
     }
-    String action  = request.getParameter("action");
+
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
-    String edit    = request.getParameter("edit");
-    String author  = request.getParameter( "author" );
-    String link    = request.getParameter( "link" );
+    String author  = request.getParameter("author");
+    String link    = request.getParameter("link");
     String remember = request.getParameter("remember");
 
     WikiPage wikipage = wikiContext.getPage();
@@ -49,16 +49,44 @@
         latestversion = wikiContext.getPage();
     }
 
-    String storedlink = HttpUtil.retrieveCookieValue( request, "link" );
-    if( storedlink == null ) storedlink = "";
+    //
+    //  Setup everything for the editors and possible preview.  We store everything in the
+    //  session.
+    //
     
-    pageContext.setAttribute( "link", storedlink, PageContext.REQUEST_SCOPE );
+    if( remember == null )
+    {
+        remember = (String)session.getAttribute("remember");
+    }
 
+    if( remember == null ) remember = "false";
+    
+    session.setAttribute("remember",remember);
+    
+    if( author == null )
+    {
+        author = storedUser;
+    }    
+    if( author == null || author.length() == 0 ) author = "AnonymousCoward";
+
+    session.setAttribute("author",author);
+    
+    if( link == null )
+    {
+        link = HttpUtil.retrieveCookieValue( request, "link" );
+        if( link == null ) link = "";
+    }
+    
+    session.setAttribute( "link", link );
+
+    //
+    //  Branch
+    //
     log.debug("preview="+preview+", ok="+ok);
 
     if( ok != null )
     {
-        log.info("Saving page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
+        log.info("Saving page "+pagereq+". User="+storedUser+", host="+request.getRemoteAddr() );
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -92,7 +120,7 @@
         //  Set author information
         //
 
-        wikipage.setAuthor( user );
+        wikipage.setAuthor( storedUser );
 
         StringBuffer pageText = new StringBuffer(wiki.getPureText( wikipage ));
 
@@ -113,7 +141,7 @@
         {
             String signature = author;
             
-            if( link != null )
+            if( link != null && link.length() > 0 )
             {
                 link = HttpUtil.guessValidURI( link );
                 
@@ -126,7 +154,7 @@
             pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
         }
 
-        if( remember != null )
+        if( TextUtil.isPositive(remember) )
         {
             if( link != null )
             {
@@ -135,7 +163,12 @@
                 response.addCookie( linkcookie );
             }
 
-            CookieAssertionLoginModule.setUserCookie( response, user );            
+            CookieAssertionLoginModule.setUserCookie( response, author );            
+        }
+        else
+        {
+            session.removeAttribute("link");
+            session.removeAttribute("author");
         }
 
         wiki.saveText( wikiContext, pageText.toString() );
@@ -146,8 +179,8 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        if( author == null ) author = "";
-        pageContext.forward( "Preview.jsp?action=comment&author="+author );
+        pageContext.forward( "Preview.jsp?action=comment" );
+        return;
     }
     else if( cancel != null )
     {
@@ -179,14 +212,14 @@
                               Long.toString( lastchange ),
                               PageContext.REQUEST_SCOPE );
 
-	  //  This is a hack to get the preview to work.
-	  pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
+    //  This is a hack to get the preview to work.
+    pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
 	
     //
     //  Attempt to lock the page.
     //
     PageLock lock = wiki.getPageManager().lockPage( wikipage, 
-                                                    user );
+                                                    storedUser );
 
     if( lock != null )
     {
