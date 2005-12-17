@@ -1,3 +1,12 @@
+2005-12-17  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.58
+        
+        * Bug fix: Comment preview no longer views double
+        
+        * Bug fix: Comment preview no longer loses author/link
+        information.
+
 2005-12-14  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.57
