@@ -54,6 +54,12 @@ public class ReferenceManagerTest extends TestCase
         TestEngine.deleteTestPage( "BugCommentPreviewDeletesAllComments" );
         TestEngine.deleteTestPage( "FatalBugs" );
         TestEngine.deleteTestPage( "RandomPage" );
+        TestEngine.deleteTestPage( "NewBugs" );
+        TestEngine.deleteTestPage( "OpenBugs" );
+        TestEngine.deleteTestPage( "OpenBug" );
+        TestEngine.deleteTestPage( "NewBug" );
+        TestEngine.deleteTestPage( "BugOne" );
+        TestEngine.deleteTestPage( "BugTwo" );
     }
 
     public void testUnreferenced()
@@ -61,7 +67,7 @@ public class ReferenceManagerTest extends TestCase
     {
         Collection c = mgr.findUnreferenced();
         assertTrue( "Unreferenced page not found by ReferenceManager",
-		    Util.collectionContains( c, "TestPage" ));
+                    Util.collectionContains( c, "TestPage" ));
     }
 
 
@@ -203,6 +209,84 @@ public class ReferenceManagerTest extends TestCase
         
         assertTrue( "no uncreated", mgr.findUncreated().size()==0 );
         assertTrue( "no unreferenced", mgr.findUnreferenced().size()==0 );
+    }
+
+    public void testPluralSingularUpdate1()
+        throws Exception
+    {
+        engine.saveText( "BugOne", "NewBug" );
+        engine.saveText( "NewBugs", "foo" );
+        engine.saveText( "OpenBugs", "bar" );
+        
+        engine.saveText( "BugOne", "OpenBug" );
+        
+        Collection ref = mgr.findReferrers( "NewBugs" );
+        assertNull("newbugs",ref); // No referrers must be found
+
+        ref = mgr.findReferrers( "NewBug" );
+        assertNull("newbug",ref); // No referrers must be found
+
+        ref = mgr.findReferrers( "OpenBugs" );
+        assertEquals("openbugs",1,ref.size());
+        assertEquals("openbugs2","BugOne",ref.iterator().next());
+
+        ref = mgr.findReferrers( "OpenBug" );
+        assertEquals("openbug",1,ref.size());
+        assertEquals("openbug2","BugOne",ref.iterator().next());
+
+    }
+
+    public void testPluralSingularUpdate2()
+        throws Exception
+    {
+        engine.saveText( "BugOne", "NewBug" );
+        engine.saveText( "NewBug", "foo" );
+        engine.saveText( "OpenBug", "bar" );
+    
+        engine.saveText( "BugOne", "OpenBug" );
+    
+        Collection ref = mgr.findReferrers( "NewBugs" );
+        assertNull("newbugs",ref); // No referrers must be found
+
+        ref = mgr.findReferrers( "NewBug" );
+        assertNull("newbug",ref); // No referrers must be found
+
+        ref = mgr.findReferrers( "OpenBugs" );
+        assertEquals("openbugs",1,ref.size());
+        assertEquals("openbugs2","BugOne",ref.iterator().next());
+
+        ref = mgr.findReferrers( "OpenBug" );
+        assertEquals("openbug",1,ref.size());
+        assertEquals("openbug2","BugOne",ref.iterator().next());
+
+    }
+
+    public void testPluralSingularUpdate3()
+        throws Exception
+    {
+        engine.saveText( "BugOne", "NewBug" );
+        engine.saveText( "BugTwo", "NewBug" );
+        engine.saveText( "NewBugs", "foo" );
+        engine.saveText( "OpenBugs", "bar" );
+    
+        engine.saveText( "BugOne", "OpenBug" );
+    
+        Collection ref = mgr.findReferrers( "NewBugs" );
+        assertEquals("newbugs",1,ref.size()); 
+        assertEquals("newbugs2","BugTwo",ref.iterator().next()); 
+
+        ref = mgr.findReferrers( "NewBug" );
+        assertEquals("newbugs",1,ref.size()); 
+        assertEquals("newbugs2","BugTwo",ref.iterator().next()); 
+
+        ref = mgr.findReferrers( "OpenBugs" );
+        assertEquals("openbugs",1,ref.size());
+        assertEquals("openbugs2","BugOne",ref.iterator().next());
+
+        ref = mgr.findReferrers( "OpenBug" );
+        assertEquals("openbug",1,ref.size());
+        assertEquals("openbug2","BugOne",ref.iterator().next());
+
     }
 
     public static Test suite()
