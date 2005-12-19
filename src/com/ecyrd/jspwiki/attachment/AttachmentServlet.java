@@ -387,7 +387,7 @@ public class AttachmentServlet
             errorPage = context.getURL( WikiContext.UPLOAD,
                                         wikipage );
             
-            boolean created = executeUpload( req, data, path.getName(), errorPage, wikipage );
+            boolean created = executeUpload( context, data, path.getName(), errorPage, wikipage, req.getContentLength() );
             
             if( created )
                 res.sendError( HttpServletResponse.SC_CREATED );
@@ -425,6 +425,10 @@ public class AttachmentServlet
         {
             MultipartRequest multi;
 
+	    // Create the context _before_ Multipart operations, otherwise
+	    // strict servlet containers may fail when setting encoding.
+            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+
             multi = new MultipartRequest( null, // no debugging
                                           req.getContentType(), 
                                           req.getContentLength(), 
@@ -436,7 +440,6 @@ public class AttachmentServlet
             nextPage        = multi.getURLParameter( "nextpage" );
             String wikipage = multi.getURLParameter( "page" );
 
-            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
             errorPage = context.getURL( WikiContext.UPLOAD,
                                         wikipage );
 
@@ -471,7 +474,7 @@ public class AttachmentServlet
                         in = multi.getFileContents( part );
                     }
 
-                    executeUpload( req, in, filename, nextPage, wikipage );
+                    executeUpload( context, in, filename, nextPage, wikipage, req.getContentLength() );
                 }
                 finally
                 {
@@ -521,20 +524,20 @@ public class AttachmentServlet
      * @throws IOException
      * @throws ProviderException
      */
-    protected boolean executeUpload( HttpServletRequest req, InputStream data, 
-                                     String filename, String errorPage, String parentPage )
+    protected boolean executeUpload( WikiContext context, InputStream data, 
+                                     String filename, String errorPage, 
+                                     String parentPage, long contentLength )
         throws RedirectException,
                IOException, ProviderException
     {
         boolean created = false;
-        WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
         
         //
         //  FIXME: This has the unfortunate side effect that it will receive the
         //  contents.  But we can't figure out the page to redirect to
         //  before we receive the file, due to the stupid constructor of MultipartRequest.
         //
-        if( req.getContentLength() > m_maxSize )
+        if( contentLength > m_maxSize )
         {
             // FIXME: Does not delete the received files.
             throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
