@@ -1,10 +1,10 @@
 2005-12-19  Erik Bunn  <ebu@basen.net>
 
-	* Bug fix: reordered AttachmentServlet to get rid of an
-	HttpServletRequest reader/input stream access error when running
-	under Jetty. The Multipart library in the servlet fetched the
-	input, WikiEngine.createContext() attempted to modify it, and 
-	Jetty, being strict about this, threw an exception.	
+		* Bug fix: reordered AttachmentServlet to get rid of an
+		HttpServletRequest reader/input stream access error when running
+		under Jetty. The Multipart library in the servlet fetched the
+		input, WikiEngine.createContext() attempted to modify it, and 
+		Jetty, being strict about this, threw an exception.	
 
 2005-12-17  Janne Jalkanen <jalkanen@ecyrd.com>
 
