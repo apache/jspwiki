@@ -142,6 +142,8 @@ public class JSPWikiMarkupParser
     private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
     private Pattern                m_camelCasePattern;
     
+    private int                    m_rowNum              = 1;
+    
 
     /**
      *  The default inlining pattern.  Currently "*.png"
@@ -2127,11 +2129,16 @@ public class JSPWikiMarkupParser
             if( !m_istable )
             {
                 startBlockLevel();
-                el = pushElement( new Element("table").setAttribute("class","wikitable").setAttribute("border","1") );
+                el = pushElement( new Element("table").setAttribute("class","wikitable") );
                 m_istable = true;
+                m_rowNum = 0;
             }
 
-            el = pushElement( new Element("tr") );
+            m_rowNum++;
+            Element tr = ( m_rowNum % 2 == 1 ) 
+                       ? new Element("tr").setAttribute("class", "odd")
+                       : new Element("tr");
+            el = pushElement( tr );
             // m_closeTag = m_renderer.closeTableItem()+m_renderer.closeTableRow();
         }
         

@@ -43,27 +43,29 @@ public class ListLocksPlugin
         PageManager mgr = context.getEngine().getPageManager();
         List locks = mgr.getActiveLocks();
 
-        result.append("<table class=\"listlocksplugin\" border=1>\n");
+        result.append("<table class=\"wikitable\">\n");
         result.append("<tr>\n");
         result.append("<th>Page</th><th>Locked by</th><th>Acquired</th><th>Expires</th>\n");
         result.append("</tr>");
 
         if( locks.size() == 0 )
         {
-            result.append("<tr><td colspan=4>No locks exist currently.</td></tr>\n");
+            result.append("<tr><td colspan=\"4\" class=\"odd\">No locks exist currently.</td></tr>\n");
         }
         else
         {
+            int rowNum = 1;
             for( Iterator i = locks.iterator(); i.hasNext(); )
             {
                 PageLock lock = (PageLock) i.next();
 
-                result.append("<tr>");
+                result.append( rowNum % 2 == 1 ? "<tr class=\"odd\">" : "<tr>" );
                 result.append("<td>"+lock.getPage()+"</td>");
                 result.append("<td>"+lock.getLocker()+"</td>");
                 result.append("<td>"+lock.getAcquisitionTime()+"</td>");
                 result.append("<td>"+lock.getExpiryTime()+"</td>");
                 result.append("</tr>\n");
+                rowNum++;
             }
         }
 
