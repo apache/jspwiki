@@ -264,6 +264,7 @@
    
    REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  -->
 
+<!--
    <resource-ref>
        <description>
            Resource reference to JNDI factory for the JDBCUserDatabase.
@@ -278,5 +279,6 @@
            Container
        </res-auth>
    </resource-ref>
+-->
 
 </web-app>
