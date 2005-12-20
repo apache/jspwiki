@@ -1,4 +1,10 @@
-2005-12-13  Andrew Jaquith <arjaquith@mindspring.com>
+2005-12-20  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Modified jspwiki-common.js: overriding Array prototype
+        potentially breaks 3rd party scripts using arrays as maps.
+        Use ExtArray, instead.
+
+2005-12-19  Andrew Jaquith <arjaquith@mindspring.com>
 
         * 2.3.60 aka the "Neat and Tidy" release
          
