@@ -11,7 +11,7 @@
 // repeat string size time
 String.prototype.repeat = function( size )
 {
-   var a = new Array( size );
+   var a = new ExtArray( size );
    for( var i=0; i < size; i++ ) { a[i] = this; }
    return( a.join("") );
 }
@@ -37,13 +37,16 @@ String.prototype.parseColor = function()
 /**
  ** 020 Array stuff
  **/
-if( !Array.prototype.push ) Array.prototype.push = function() 
-{
-  for (var i=0; i<arguments.length; i++) this[this.length] = arguments[i];
-  return this.length; 
+function ExtArray() {
+  this.first = function() { return this[0] }
+  this.last  = function() { return this[this.length-1] }
 }
-Array.prototype.first = function() { return this[0] }
-Array.prototype.last  = function() { return this[this.length-1] }
+ExtArray.prototype = new Array();
+if( !ExtArray.prototype.push ) ExtArray.push = function() {
+  for (var i=0; i<arguments.length; i++) this[this.length] = arguments[i];
+  return this.length;
+}
+
 
 /**
  ** 030 DOM document functions
@@ -387,7 +390,7 @@ SearchBox.submit = function ( queryValue )
     if( this.recentSearches[i] == queryValue ) return;
   }
 
-  if( !this.recentSearches ) this.recentSearches = new Array();
+  if( !this.recentSearches ) this.recentSearches = new ExtArray();
   if( this.recentSearches.length > 9 ) this.recentSearches.pop();
   this.recentSearches.unshift( queryValue );
 
@@ -402,7 +405,7 @@ SearchBox.onPageLoad = function()
   this.recentSearchesDIV = document.getElementById("recentSearches");
   if( !this.recentSearchesDIV ) return;
 
-  this.recentSearches = new Array();
+  this.recentSearches = new ExtArray();
   var c = document.getCookie( "JSPWikiSearchBox" );
   if( c ) this.recentSearches = c.split( Wiki.DELIM );
   
@@ -432,7 +435,7 @@ SearchBox.doSearch = function ( searchDiv )
 SearchBox.clearRecentSearches = function()
 {
   document.setCookie( "JSPWikiSearchBox", "" );
-  this.recentSearches = new Array();
+  this.recentSearches = new ExtArray();
   this.recentSearchesDIV.innerHTML = "";
 }
 
@@ -613,7 +616,7 @@ Sortable.sort = function( thNode )
   }
   
   //find body rows and guess data type of colidx
-  var rows = new Array();
+  var rows = new ExtArray();
   var num  = true;
   var date = true;
   for( var i=1; i< table.rows.length; i++)
