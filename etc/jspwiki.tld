@@ -384,6 +384,10 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
+       <name>div</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
        <name>prefix</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
