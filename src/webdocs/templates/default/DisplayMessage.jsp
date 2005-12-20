@@ -2,7 +2,7 @@
 
 <%-- Inserts a string message. --%>
 
-   <div class="messagecontent">
+   <div class="error">
       <%=pageContext.getAttribute("message",PageContext.REQUEST_SCOPE)%>
    </div>
 

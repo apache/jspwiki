@@ -1,546 +1,436 @@
-/* Set the master look here */
-body { font-family: arial, helvetica, sans-serif; 
-       font-size: 0.9em;
-     }
-*    { margin:0; padding: 0; }
-       
-/* Use as div 'block enclosure' to clear floats properly. This works across browsers
-   (even IE). Also known as the Wyke-Smith/Alsett/Holly 'clearfix' hack */
-.block:after  { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
-.block        { display: inline-block; }
-* html .block { height: 1%;}
-.block        { display: block; }
-
-/* +++ 001 LAYOUT of main ID blocks +++ */
-#wikibody { }
-
+/* ----------------------------------------------------
+   000 Page blocks and divs
+   ---------------------------------------------------- */
+   
+/* +++ 030 LAYOUT of main ID blocks +++ */
+#wikibody                { }
 #header,
-#page,
-#actionsBottom,
-#footer        { margin-left: 20%; }
-#favorites     { position:absolute; 
-                 left: 2.5%; 
-                 width: 18%;
-                 padding: 2px;
-                 top: 80px; /* make place for the logo */ }
-
-#applicationlogo { position: absolute; 
-                   left: 9%; top: 4px; }
-
-#header { }
-#page { }
-#footer { margin-top: 1ex; }
-
-#actionsTop,
-#actionsBottom { float:right; }
-/*#actionsTop    { position:absolute; right: 2.5%; margin-top: 0.5em; z-index: 0;}*/
-
-/* #applicationlogo { display: block; } */
-#companylogo     { display: none; }
-
+#page                    { margin-left: 20%; }
 #header .pagename        { float: left; clear: both; }
 #header .searchbox       { float: right; }
 #header .breadcrumbs     { clear: both; }
-
+#applicationlogo         { position: absolute; left: 8%; top: 4px; text-align: center; }
+/* #applicationlogo      { display: block; } */
+#companylogo             { display: none; }
+#favorites               { position:absolute; left: 2.5%; width: 18%;
+                           padding: 2px;
+                           top: 80px; /* make place for the logo */ }
+/*#actionsTop            { position:absolute; right: 2.5%; margin-top: 0.5em; 
+                           z-index: 0;}*/
+#actionsTop,
+#actionsBottom           { float:right; margin-right: .5em; }
 #actionsTop .quick2Top,
-#actionsTop .username,
-#actionsTop .pageInfo,
-#actionsBottom .quick2Bottom,
-#actionsBottom .username { display: none; }
-
-#favorites .username        { display: block; }
-#favorites .actionComment,
-#favorites .actionPrefs,
-#favorites .actionAttach,
-#favorites .actionInfo,
-#favorites .pageInfo     { display: none; }
-
+#actionsTop .pageInfo    { display: none; }
+#actionsBottom .quick2Bottom
+                         { display: none; }
+#footer                  { margin-left: 20%; }
 #footer .copyright       { clear: both; }
 
-/* +++ 002 LOOK and FEEL of main blocks with ID +++ */
-#wikibody { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
+/* +++ 020 LOOK and FEEL of main blocks with IDs +++ */
+#wikibody                { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
+#header                  { border-bottom: 2px solid #D9D9D9; }
+#page                    { margin-top: 1.2em; margin-bottom: 1.4em; }
+#favorites               { overflow: hidden; }
+#favorites .pageactions  { display:none; }
+#actionsTop              { text-align: right; width: auto; 
+                           border: 1px solid silver; border-bottom: 0px; 
+                           background: #fff0ff;
+                           padding: 0 0.25em; }
+#actionsBottom           { text-align: right; width: auto; 
+                           border: 1px solid silver; border-top: 0px; 
+                           background: #fff0ff;
+                           padding: 0 0.25em; }
+#footer                  { margin-top: 1ex; border-top: 2px solid #D9D9D9; }
 
-#header { border-bottom: 2px solid silver; }
+/* ----------------------------------------------------
+   200 Text styles used by all pages
+   ---------------------------------------------------- */
 
-#searchboxMenu  { padding: 4px;
-                  position: absolute; background: white;
-                  border: 2px solid silver; font-size: 85%; }
-#recentSearches { margin: 0.5em 0 0 0.5em; color: silver; }
-#recentSearches div { color: black; cursor: pointer;}
+/* +++ 205 Base typefaces +++
+   Set the default typeface and size for all text here.
+   The default is a body font size of 76% per cross-browser hack at:
+   http://www.thenoodleincident.com/tutorials/typography/index.html
+*/
+body                     { font-family: Helvetica, Arial, sans-serif; 
+                           font-size: 80%;
+                           color: #000; background-color: #fff; }
+*                        { margin:0; padding: 0; }
 
-#actionsTop     { text-align: right; width: auto; border: 1px solid silver; border-bottom: 0px; background: #fff0ff; }
-#actionsBottom  { text-align: right; width: auto; border: 1px solid silver; border-top: 0px; background: #fff0ff; }
+/* +++ 210 Page titles, headings, and paragraphs +++ */
+.pagename                { font-size: 150%; font-weight: bold; 
+                           margin: 0.5em 0.5em 0.5em 0; }
+h1                       { font-size: 2.0em; font-weight: normal;
+	                         margin-top: 0em; margin-bottom: 0em; }
+h2                       { font-size: 1.7em; font-weight: normal; 
+                           margin: 1.2em 0em .8em 0em;
+	                         border-bottom: 1px #D9D9D9 solid; }
+h3                       { font-size: 1.4em; font-weight: normal;
+                           margin: 1.2em 0em .8em 0em; }
+h4                       { font-size: 1.2em; font-weight: bold;
+                           margin: 1.2em 0em .8em 0em; }
+h5                       { font-size: 1.0em; font-weight: bold;
+	                         margin: 1.2em 0em .8em 0em; }
+h6                       { font-size: 0.8em; font-weight: bold;
+	                         margin: 1.2em 0em .8em 0em; }
+p                        { margin: .75em 0 1em 0; }
+strong, b                { font-weight: bold;	}
 
-#page           { margin-top: 1ex; }
+/* +++ 220 Lists and bullets +++ */
+ol,ul                    { margin: 0.8em 0 0.8em 1.25em; }
+ul                       { padding-left: 1.5em; }
+li                       { margin: 0.6em 0.75em; }
+li > p                   { margin-top: 0.2em; }
 
-#favorites { overflow: hidden;
-             font-family: arial, helvetica, sans-serif; }
-#favorites .pageactions  { text-align: center; font-size: 85%; }
+/* +++ 230 Horizontal rules +++ */
+hr                       { margin: 1em 2em;
+                           color: #D9D9D9; background: #D9D9D9;
+                           height: 1px; border: 0 }
 
-#applicationlogo { text-align: center; }
-#companylogo { }
+/* +++ 240 Pre-formatted text blocks and code +++ */
+tt                       { font-size: 1.2em; margin: 0 .2em; }
+pre                      { white-space: pre; margin: 1.5em 2em 1.8em 2em; 
+	                         font-size: 1.2em;
+                           background:  #f0f0f0;
+                           padding: .5em .5em .6em .5em; overflow: auto; }
+                           
+/* +++ 250 Hyperlinks +++ */
+a                        { text-decoration: none; color: blue; }
+a:link                   { }
+a:visited                { }
+a:active                 { }
+a:hover                  { text-decoration: underline; }
+a.editpage               { color: #FF0000; text-decoration: none;
+ 	                         border-bottom: 1px dashed red; }
+a.external               { }                            /* External reference */
+a.interwiki              { }                            /* Interwiki reference */
+a.wikipage               { }                            /* Internal wiki reference */
+                           
+/* +++ 260 Image styles +++ */
+img                      { border: 0; }
+img.inline               { }
 
-/* placeholder for specifics if needed */
-#pagecontent    {  }
-#pagecomments   {  }
-#editcontent    {  }
-#addcomment     {  }
-#edithelp       { font-size: 85%; }
-#searchbar      { font-size: 85%; margin: 1em; 0; }
-#searchbarhelp  { font-size: 85%; }
-#searchbar2     { font-size: 85%; color: grey; } /*inactive color */
-#findquery      {  }
-#findhelp       {  }
-#infocontent    {  overflow: auto; }
-#infocontent tr { vertical-align: top; }
-#infocontent th { text-align: left; white-space: nowrap;  }
-#referingto     {  }
-#referencedby   {  }
-#versionhistory {  }
-#versionhistory td { white-space: nowrap; }
+/* +++ 270 Footnotes and small text +++ */
+a.footnoteref            { font-size: 85%; vertical-align: super; }
+a.footnote               { color: #0044AA; }
+.small                   { font-size: 85%; }
+.strike                  { text-decoration: line-through; }
+.sub                     { font-size: 85%; vertical-align: sub; }
+.sup                     { font-size: 85%; vertical-align: super; }
 
-#userPrefs    {  }
-#userPrefs tr { vertical-align: top; }
-#removePrefs  {  }
+/* +++ 280 Convenience styles and info/warning/error dialogs +++ */
+.center                  { text-align: center; } 
+.center table            { margin-left: auto; margin-right: auto; text-align: left; }
+.information,
+.warning,
+.error                   { display: block;
+                           padding: 1em 1em 1em 2.5em;
+                           margin: 1em .5em;
+                           background-position: .8em .9em;
+                           background-repeat: no-repeat; }
+.information             { background-image: url(images/information.png);
+                           background-color: #e0e0ff; }
+.warning                 { background-image: url(images/error.png);
+                           background-color: #ffff80; }
+.error                   { background-image: url(images/exclamation.png); 
+                           background-color: #ffe0e0; }
+.error * li              { margin-left: 0; padding-left: 0; }
+                           
+/* +++ 290 Comment boxes (used on some pages) +++ */
+.commentbox              { float:right; width: 20%; border-style: inset;
+                           background: #f0f0f0; padding: 4px; margin-left: 4px; }
+.commentbox ul, .commentbox ol
+                         { padding-left: 1em; margin-left: 4px; }
 
-#previewcontent { background: #E0E0E0;  }
-#diffcontent  {  }
+/* +++ 300 Wiki tables and zebra tables +++ */
+.wikitable               { border: 1px solid #666666; 
+                           border-spacing: 0; 
+                           margin: 1.5em 2em 1.8em 2em; }
+.wikitable * tr th       { font-size: 85%; 
+                           padding: .2em .7em .21em .7em;
+		                       border-left: 1px solid #666666;
+		                       background-color: #3d80df;
+		                       vertical-align: bottom;
+		                       color: white;
+		                       empty-cells: show; }
+.wikitable * tr td       { font-size: 85%; 
+                           padding: .4em .7em .45em .7em;
+		                       border-left: 1px solid #D9D9D9;
+		                       vertical-align: top;
+		                       empty-cells: show; }
+.wikitable * tr.odd td   { background-color: #edf3fe; }
 
-#conflict,
-#conflictother,
-#conflictown  {  }
+.zebra-table th          { background:  #e0e0e0; }
+.zebra-table tr.odd td   { background:  #edf3fe; }
 
+/* +++ 350 Attachments +++ */
+#attachments             { }
+#attachments .list       { float: left; min-width: 300px; }
+#attachments .preview    { float: right; }
+#attachments * table     { width: 40em; }
 
-#footer { border-top: 2px solid silver; }
+/* ----------------------------------------------------
+   400 Styles for specific JSPs
+   ---------------------------------------------------- */
 
-/* +++ 003 LOOK and FEEL of main css classes +++ */
-.pagename    { font-size: 150%; font-weight: bold; margin: 0.5em 0.5em 0.5em 0; }
-.searchbox   { margin: 1em 0.5em 0.5em 0.5em; }
-.breadcrumbs { font-size: 75%; padding: 0 1.5em 0.5em 0em; }
-.myfavorites { margin-bottom: 0.5em; border: 1px solid black; }
-.boxtitle { padding: 0.25em; text-align: center;
-            border-bottom: 1px solid black; }
+/* +++ 405 AttachmentTab +++ */
+#attachImg               { margin:0; vertical-align: middle; text-align: center;
+                           height: 300px; width: 300px; 
+                           border: 4px solid #e0e0e0; }
+#attachSelect            { margin: 0.5em 0; }
 
-div.calendar { border: 1px solid black; }
-.leftmenu       { margin: 0 0 1em 0; padding: 2px; white-space: nowrap; }
-.leftmenufooter { margin: 1em 0 0 0; padding: 2px; white-space: nowrap; }
+/* +++ 410 CommentContent +++ */
+#addcomment              { }
 
-.wikiversion,
-.rssfeed      { font-size: 85%; padding: 12px 0; text-align: center; }
+/* +++ 415 CommentContent and PageContent +++ */
+#pagecontent             { }
 
-.pageactions { margin:0; padding: 0.25em; font-size: 85%; }
+/* +++ 420 DiffContent and Diff Providers: Traditional and External +++ */
+#diffcontent             {  }
+td.diffadd               { background: #99FF99; font-family: monospace; }
+td.diffrem               { background: #FF9933; font-family: monospace; }
+td.diff                  { background: #FFFFFF; font-family: monospace; }
 
-.actionView,
-.actionEdit,
-.actionComment,
-.username,
-.actionPrefs,
-.actionAttach,
-.actionInfo    { padding: 0 0.5em 0 0; }
-.pageInfo      { font-style: italic; padding-top: 0.5ex; }
-.username      { font-style: italic; font-weight: bold; }
-.copyright { }
+/* +++ 425 Edit/EditContent and CommentContent +++ */
+body.edit                { background-color: #D9E8FF; } /* Edit.jsp BODY element */
+body.comment             { background-color: #EEEEEE; } /* Comment.jsp BODY element */
+#edithelp                {  }
 
+/* +++ 430 Edit/EditContent +++ */
+textarea.editor          { }
+#editcontent             {  }
+#searchbar               { margin: 1em 0; }
+#searchbarhelp           {  }
+                           
+/* +++ 440 Favorites +++ */
+.boxtitle                { padding: 0.25em; text-align: center;
+                           border-bottom: 1px solid black; }
+.myfavorites             { margin-bottom: 0.5em; border: 1px solid black; }
+.username                { font-style: italic; }
 
+/* +++ 445 Favorites and Footer +++ */
+.wikiversion, .rssfeed   { padding: 1em 0; 
+                           text-align: center; }
 
-/* Put all generic definitions here. */
-h1,h2,h3,h4 { font-family: Arial, Helvetica, sans-serif;
-              margin: 1em 0 0.75em 0;
-              letter-spacing: -0.05em; word-spacing: 0.15em; }
+/* +++ 450 FindContent +++ */
+.graphBars               { }
+.graphBar                { background: #ff9933; color: #ff9933; }
+.gBar                    { white-space: nowrap; }
 
-h2 { border-bottom: 2px grey solid }
-h3 { border-bottom: 1px grey solid }
+/* +++ 455 Footer +++ */
+.copyright               { }
 
-div.small   { font-size: 70%; }
-h1.pagename { margin-top: 0; }
-img.inline  {}
+/* +++ 460 Header +++ */
+.breadcrumbs             { font-size: 85%;
+                           padding: 0 1.5em 0.5em 0em; }
 
-a.footnoteref { vertical-align: super; 
-                font-size: 70%; }
-a.footnote    { color: #0044AA; }
-p.versionnote { color: blue;
-                font-size: 120%;
-                text-align: center; 
-                background: #EAEAEA;
-                padding: 12px 12px 12px 12px;
-                }
+/* +++ 465 InfoContent +++ */
+#infocontent             { overflow: auto; }
+#infocontent tr          { vertical-align: top; }
+#infocontent th          { text-align: left; white-space: nowrap;  }
+#referingto,
+#referencedby,
+#versionhistory          {  }
+#versionhistory td       { white-space: nowrap; }
 
-/* Added in v1.5.1 */
+/* +++ 470 PageActions +++ */
+.pageactions             { font-size: 85%; padding: 0.4em; }
+.pageactions * span      { padding: 0.3em; }
+.pageInfo                { font-style: italic; padding-top: .3em; }
+.quick2Top a             { background-image:url(images/bulletUp.png);
+                           background-repeat: no-repeat; background-position: 0 1px;
+                           padding: 0 8px 12px 0; }
+.quick2Bottom a          { background-image:url(images/bulletDown.png);
+                           background-repeat: no-repeat; background-position: 0 0;
+                           padding: 0 8px 12px 0; }
 
-h3.leftmenuheading { margin-top: 0; }
-body.view          { background-color: white; }   /* Wiki.jsp BODY element */
-body.edit          { background-color: #D9E8FF; } /* Edit.jsp BODY element */
-body.comment       { background-color: #EEEEEE; } /* Comment.jsp BODY element */
-.leftmenu { font-family: arial, helvetica, sans-serif; }  /* Left menu */
-a.wikipage  { }                            /* Normal, internal wiki reference */
-a.editpage  { 
-	color: #FF0000;
- 	text-decoration: none;
- 	border-bottom: 1px dashed red;
- 	}
-a.external  { }                            /* External reference */
-a.interwiki { }                            /* Interwiki reference */
+/* +++ 475 PreviewContent - "This is a preview" comment +++ */
+.previewcontent          { background: #E0E0E0; padding: 1em; }
 
-/* Added in 1.6.3 */
-td.diffadd  { background: #99FF99; 
-              font-family: monospace; }
-td.diffrem  { background: #FF9933; 
-              font-family: monospace; }
-td.diff     { background: #FFFFFF; 
-              font-family: monospace; }
+/* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
+div.formcontainer        { width: 440px; margin: 20px 0 0 0; }
+div.formcontainer form   { border-bottom: 2px solid silver; }
+div.formcontainer div.block
+                         { vertical-align: top;
+                           padding: 10px 0px;
+                           border-top: 1px solid silver; }
+div.formcontainer form label 
+                         { width: 120px; float: left;
+                           padding-top: .25em; margin: 0 10px; }
+div.formcontainer input  { padding: 0.15em; }
+div.formcontainer input[type='submit'] 
+                         { float:right; margin: 0 10px; }
+div.formcontainer .instructions
+                         { margin: 0.5em 0; }
+div.formcontainer .description
+                         { margin: 0.5em 10px 0.5em 140px; font-style: italic; }
 
-/* Added in 1.6.9 */
+/* +++ 485 SearchBox +++ */
+#searchboxMenu           { padding: 4px;
+                           position: absolute; background: white;
+                           border: 1px solid silver; }
+#recentSearches          { margin: 0.5em 0 0 0.5em; color: silver; }
+#recentSearches div      { color: black; cursor: pointer;}
+.searchbox               { margin: 1em 0.5em 0.5em 0.5em; }
 
-table.wikitable { }
-table.wikitable * td { text-align: left; }
-table.wikitable * th { }
+/* +++ 490 ViewTemplate +++ */
+body.view                { background-color: white; }   /* Wiki.jsp BODY element */
 
-/* Paragraphs, Lists and bullets */
-p     { margin: 0.5em 0; }
-ol,ul { margin: 0.35em 0 0.35em 1.25em; }
-li    { margin: 0.3em 0.75em; }
-hr    { margin: 0.5em 0; }
+/* ----------------------------------------------------
+   600 JSPWiki plugins
+   ---------------------------------------------------- */
 
-/* This is the Edit.jsp editor style */
-textarea.editor {}
+/* +++ 610 Image plugin +++ */
+.imageplugin             { margin: .5em; }
+.imageplugin img         { border: 0; }
+.imageplugin caption     { }
 
-pre { 
-      white-space: pre;
-      margin:      1em 2em 1em 2em; 
-      background:  #f0f0f0;
-      border:      1px dotted #3c78b5;
-      overflow: auto;
-     }
+/* +++ 620 Index plugin +++ */
+div.index                { }
+div.index .header        { padding: 4px; background: #f0f0f0; }
+div.index .body          { }
+div.index .section a     { display: block; padding: 0 0.25em;   
+                           color:black;
+                           font-weight: bold; text-decoration: none; }
 
-/* The text how the "This is a preview" comment should be shown. */
-.previewnote {
-               text-align: center;
-               background:  #fff0f0;
-               padding: 1em;
-               }
+/* +++ 625 Table of contents plugin +++ */
+.toc                     { background: #edf3fe; padding: .75em; }
+.toc h4                  { margin-top: 0px; }
+.toc ul                  { list-style: none; margin-left: 0; padding-left: 0; }
+.toc li                  { padding-left: 0; display: block; }
+.toc li.toclevel-1       { margin-left: 0.5em; }
+.toc li.toclevel-2       { margin-left: 1.5em; }
+.toc li.toclevel-3       { margin-left: 2.5em; }
 
-/* How the preview content should be shown */
-.previewcontent {
-                  background: #E0E0E0;
-                  padding: 1em;
-                  } 
+/* +++ 630 Weblog and weblogarchive plugins +++ */
+.weblog                  { margin-left: 20px; }
+.weblogentry             { }
+.weblogentryheading      { background: #E0E0E0; margin-top: 2ex; }
+.weblogentrybody         { margin-left: 10px; }
+.weblogentryfooter       { margin-left: 10px; clear: both; }
+.weblogarchive           { }
+.weblogarchive ul        { margin-top: 0px;
+                           padding: 0px; }
+.weblogarchive li        { display: block; list-style-type: none; margin-left: 1em; }
+.archiveyear             { font-weight: bold; text-decoration: none;
+                           margin-left: 0px !important; }
+.archiveyear:after       { content: " AD" }
 
-/* How the system messages should be shown (DisplayMessage.jsp) */
-.messagecontent { background: #E0E0E0; }
+/* ----------------------------------------------------
+   800 JSPWiki JSP Taglibs
+   ---------------------------------------------------- */
+   
+/* +++ 805 CalendarTag +++ */
+div.calendar             { border: 1px solid black; }
+table.calendar           { }
+table.calendar td        { text-align: center; }
+table.calendar td.othermonth
+                         { color: #707070; }
+table.calendar td.link   { background: #E0E0E0; }
+table.calendar tr.month  { }
+table.calendar tr.weekdays
+                         { color: #FF0000; }
 
-/* How the "This page has been modified..." -comment should be shown. */
+/* +++ 810 The CSS Styles for the Contextual diff provider +++ */
+.diff-wikitext           { margin: 10px; padding: 5px; 
+                           border-width: thin; border-style:inset; 
+                           font-family: monospace;  }
+.diff-insertion          { background: #ddffdd; 
+                           text-decoration:  none; color: #8000ff; } 
+.diff-deletion           { background: #ffdddd; 
+                           text-decoration: line-through; color: red; } 
+.diff-nextprev           { vertical-align: super; text-decoration: none; }
 
-.conflictnote { }
-
-/* For the weblog plugin */
-
-.weblog { margin-left: 20px; }
-
-.weblogentry { }
-
-.weblogentryheading { background: #E0E0E0;
-                      font-size: 100%;
-                      font-family: sans-serif; 
-                      margin-top: 2ex; }
-
-.weblogentrybody { font-family: sans-serif; 
-                   font-size: 85%; 
-                   margin-left: 10px; }
-
-.weblogentryfooter { font-size: 85%; 
-                     margin-left: 10px;
-                     clear: both; }
-
-.locknote { color: red;
-            font-size: 100%;
-            text-align: center; 
-            background: #EAEAEA;
-            padding: 12px 12px 12px 12px;
-            margin: 0px;
-            border-left: 2px solid black;
-            border-right: 2px solid black;
-            }
-
-/* For the CalendarTag */
-table.calendar  { font-size: 85%; }
-table.calendar td { text-align: center; }
-
-table.calendar td.othermonth { color: #707070; }
-
-table.calendar td.link { background: #E0E0E0; }
-
-table.calendar tr.month { font-size: 120%;
-                          font-family: sans-serif; }
-table.calendar tr.weekdays { color: #FF0000; }
-
-
-/* For the image plugin tag. */
-.imageplugin { margin: 5px 5px 5px 5px; }
-.imageplugin img { border: 0; }
-.imageplugin caption { font-size: 85%; }
-
-/* For the search_highlight.js.  This style defines the how the words that have
+/* ----------------------------------------------------
+   900 "Special-effects" JavaScript styles
+   ---------------------------------------------------- */
+   
+/* +++ 905 Search highlights +++
+   For the search_highlight.js.  This style defines the how the words that have
    been found look like.  If you look for "thingy", you will get these following
    in the results.
-
    <span class="searchword">thingy</span>
  */
-.searchword { background-color: #FFFF00; }
+.searchword              { background-color: #FFFF00; color: black; 
+                           text-decoration: inherit; }
 
-/* For the weblogarchive plugin. */
-
-.weblogarchive { }
-
-.weblogarchive ul { margin-top: 0px;
-                    padding: 0px; }
-
-.weblogarchive li { display: block;
-                    list-style-type: none;
-                    margin-left: 1em; }
-
-.archiveyear { font-weight: bold;
-               text-decoration: none;
-               margin-left: 0px !important; }
-.archiveyear:after { content: " AD" }
-
-/*  Error handling  (2.2+) */
-
-.error { color: #ff2222; 
-         font-weight: bold; }
-
-/*  Index plugin */
-
-div.index {}
-div.index .header { padding: 4px; background: #f0f0f0; }
-div.index .body {}
-div.index .section { color:red; }
-
-/*  Table of contents plugin */
-
-.toc {
-     background: #f0f0ff;
-     border: 1px solid grey;
-     padding: 8px;
-     font-size: 80%;
-}
-
-.toc h4 {
-	 margin-top: 0px;
-}
-
-.toc ul {
-     list-style: none;
-     margin-left: 0;
-     padding-left: 0;
-}
-
-.toc li {
-     padding-left: 0;
-     display: block;
-}
-
-.toc li.toclevel-1 {
-     margin-left: 0.5em;
-}
-
-.toc li.toclevel-2 {
-	 margin-left: 1.5em;
-}
-
-.toc li.toclevel-3 {
-	 margin-left: 2.5em;
-}
-
-/*  Here's a nice style you can use to put comment boxes on pages.  It's used
-    on some pages. */
-
-div.commentbox {
-   float:right;
-   width: 20%;
-   border-style: inset;
-   background: #f0f0f0;
-   font-size: 85%;
-   padding: 4px;
-   margin-left: 4px;
-}
-
-.commentbox ul, .commentbox ol {
-   padding-left: 1em;
-   margin-left: 4px;
-}
-
-/*  To make centering easier */
-
-.center { 
-    text-align: center;
-}
-
-.center table { 
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-}
-
-/* The CSS Styles for the Contextual diff provider */
-
-.diff-wikitext 
-    { margin: 10px; 
-      padding: 5px; 
-      border-width: thin; border-style:inset; 
-      font-family: courier new , monospace;  }
-
-
-.diff-insertion 
-    { background: #ddffdd; text-decoration:  none; color: #8000ff; } 
-
-.diff-deletion 
-    { background: #ffdddd; text-decoration: line-through; color: red; } 
-
-.diff-nextprev 
-    { font-size: 85%; vertical-align: super; text-decoration: none; }
-
-
-.zebr-table th
-    { background:  #e0e0e0;
-    }
-    
-.zebra-table tr.odd td
-    { background:  #f0f0f0;
-    }
-
-.versionhistory
-    { font-size: 85%;
-      font-family: arial, helvetica, sans-serif;
-    }
-
-.attachments
-    { font-family: arial, helvetica, sans-serif;
-      font-size: 85%;
-    }
-
-.attachments h3
-    { margin-bottom: 0px;
-      padding-bottom: 0px; }
-
- .versionhistory
-    { font-size: 85%;
-       font-family: arial, helvetica, sans-serif;
-    }
-    
-
- /* +++ 420 Attachment Quick Viewer +++ */
-
-#attachments          {}
-#attachments .list    { float: left; min-width: 300px; }
-#attachments .preview { float: right; }
-
-#attachImg { margin:0; vertical-align: middle; text-align: center;
-             height: 300px; width: 300px; 
-             border: 4px solid #e0e0e0; }
-#attachSelect { margin: 0.5em 0; font-size: 85%; }
-
-/* +++ 430 Tabbed Pages +++ */
+/* +++ 910 Tabbed Pages +++ */
 /* use absolute position trick to avoid page bump when inserting tabmenu */
-.tabs               { margin: 0; padding: 1em;
-                      border: 1px solid gray; border-top: none; }
-.tabmenu            { margin: 0; padding: 0.25em 0 0.25em 1em;
-                      border-bottom: 1px solid gray; }
-.tabmenu span       { margin: 0; padding: 0; overflow: hidden; }
-.tabmenu span a     { color: grey; background: #dddddd;
-                      font: 85% arial, helvetica, sans-serif;
-                      margin: 0 0 0 -1px; padding: 0.25em 0.5em;
-                      text-decoration: none; cursor: pointer;
-                      border: 1px solid gray; border-bottom:none; }
-.tabmenu .activetab { color: black; background: white;
-                      font-weight: bold;
-                      border-bottom: 1px solid white; cursor: default;  }
-.edit .tabmenu a    { background: white; }
+.tabs                    { margin: 0; padding: 1em;
+                           border: 1px solid gray; border-top: none; }
+.tabmenu                 { margin: 0; padding: 0.25em 0 0.25em 1em;
+                           border-bottom: 1px solid gray; }
+.tabmenu span            { margin: 0; padding: 0; overflow: hidden; }
+.tabmenu span a          { color: grey; background: #dddddd;
+                           margin: 0 0 0 -1px; padding: 0.25em 0.5em;
+                           text-decoration: none; cursor: pointer;
+                           border: 1px solid gray; border-bottom:none; }
+.tabmenu .activetab      { color: black; background: white;
+                           font-weight: bold;
+                           border-bottom: 1px solid white; cursor: default;  }
+.edit .tabmenu a         { background: white; }
 .edit .tabmenu .activetab
-                    { background: #D9E8FF; border-bottom: 1px solid #d9e8ff;}
+                         { background: #D9E8FF; border-bottom: 1px solid #d9e8ff;}
 .tabmenu .alerttab a, .edit .tabmenu .alerttab a
-                    { color: white; background: red; }
+                         { color: white; background: red; }
 .tabmenu .alerttab .activetab, .edit .tabmenu .alerttab .activetab
-                    { color: red; background: #D9E8FF;
-                      border-bottom: 1px solid #d9e8ff; }
+                         { color: red; background: #D9E8FF;
+                           border-bottom: 1px solid #d9e8ff; }
 
-/* +++ 440 Quick Section Links +++ */
-.quicklinks { float: right; clear: both;
-              border: 1px solid blue; background: white; font-size: 85%; }
-
-.quick2Top  a,
-.quick2Prev a,
-.quick2Edit a,
-.quick2Next a,
-.quick2Bottom a { font-family: webdings; color: blue; text-decoration: none; }
-
-.arrow { font-family: webdings; }
-.arrow a { text-decoration:none; }
-
-
-/* +++ 450 Graph Bars +++ */
-.graphBars { overflow: auto; }
-.graphBar { background: #ff9933; color: #ff9933; }
-.gBar { white-space: nowrap; }
-
-/* +++ 460 Collapsable lists +++ */
-ul { margin: 0; padding-left: 1.5em; }
-
-div.collapse ul ,
-div.collapse ol   { margin-left: 1.5em; padding:0; }
-div.collapse * ul ,
-div.collapse * ol { margin-left:0 ; padding-left: 1.5em; }
+/* +++ 920 Collapsable lists +++ */
+div.collapse ul,
+div.collapse ol          { margin-left: 1.5em; padding:0; }
+div.collapse * ul,
+div.collapse * ol        { margin-left:0 ; padding-left: 1.5em; }
      
-div.collapse li   { list-style: none; position: relative; }
+div.collapse li          { list-style: none; position: relative; }
 
 /* relative to the containing LI */     
 .collapseBullet,
 .collapseOpen,
-.collapseClose { position: absolute; left: -1.5em;
-                 font-weight: bold; color: blue; }
+.collapseClose           { position: absolute; left: -1.5em;
+                           font-weight: bold; color: blue; }
 .collapseOpen,
-.collapseClose { cursor: pointer; }
+.collapseClose           { cursor: pointer; }
 
 .collapseOpen:hover,
-.collapseClose:hover { background: #FF9933; color: white; }
+.collapseClose:hover     { background: #FF9933; color: white; }
 
 /* collapsebox */
-.collapsebox    { border: 1px solid gray; position:relative; margin: 1em 0;}
+.collapsebox             { border: 1px solid gray; position:relative; margin: 1em 0;}
 .collapsebox h2,
 .collapsebox h3,
-.collapsebox h4 { margin: 0; padding: 0.25em 0.5em; }
-.collapsebody   { margin: 0.5em 1em;  }
+.collapsebox h4          { margin: 0; padding: 0.25em 0.5em; }
+.collapsebody            { margin: 0.5em 1em;  }
 
-.toc .collapsebox { border: 0; margin: 0; }
+.toc .collapsebox        { border: 0; margin: 0; }
 
 .collapsebox .collapseOpen,
-.collapsebox .collapseClose { top:0; left:auto; right:0.5em;
-                              font-size: 13px; }
+.collapsebox .collapseClose
+                         { top:0; left:auto; right:0.5em;
+                           font-size: 13px; }
 .collapsebox .quicklinks { display: none; }
 
-/* +++ Sortable tables +++ */
+/* +++ 930 Sortable tables +++ */
 .sortable .sort,
 .sortable .sortAscending,
-.sortable .sortDescending { padding: 0 1.25em;
-                            background-color: #f0f0f0;
-                            background-repeat: no-repeat; 
-                            background-position: 0.25em 50%; }
-.sortable .sortAscending  { background-image: url(images/bulletDown.png); }
-.sortable .sortDescending { background-image: url(images/bulletUp.png); }
+.sortable .sortDescending
+                         { padding: 0 1.25em; cursor: pointer;
+                           background-color: #f0f0f0;
+                           background-repeat: no-repeat; 
+                           background-position: 0.25em 50%; }
+.sortable .sortAscending { background-image: url(images/bulletDown.png); }
+.sortable .sortDescending
+                         { background-image: url(images/bulletUp.png); }
 
-/* Form elements */
-div.formcontainer                      { width: 440px; margin: 20px 0 0 0; }
-div.formcontainer form                 { border-bottom: 2px solid silver; }
-div.formcontainer div.block            { vertical-align: top;
-                                         padding: 10px 0px;
-                                         border-top: 1px solid silver; }
-div.formcontainer form label           { width: 120px; float: left;
-                                         padding-top: .25em; 
-                                         margin: 0 10px;
-                                         font-size: 85%; }
-div.formcontainer input                { padding: 0.15em;
-                                         font-family: arial, helvetica, sans-serif; 
-                                         font-size: 85%em; }
-div.formcontainer input[type='submit'] { float:right; margin: 0 10px; }
-div.formcontainer .instructions        { margin: 0.5em 0; font-size: 85%; }
-div.formcontainer .description         { margin: 0.5em 10px 0.5em 140px;
-                                         font-size: 85%; font-style: italic; }
+/* ----------------------------------------------------
+   1000 Miscellaneous Cross-Browser Hackery
+   ---------------------------------------------------- */
+   
+/* Use as div 'block enclosure' to clear floats properly. This works across browsers
+   (even IE). Also known as the Wyke-Smith/Alsett/Holly 'clearfix' hack */
+.block:after             { content: "."; display: block; height: 0; 
+                           clear: both; visibility: hidden; }
+.block                   { display: inline-block; }
+* html .block            { height: 1%;}
+.block                   { display: block; }
+

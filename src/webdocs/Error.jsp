@@ -68,7 +68,7 @@
    <dl>
       <dt><b>Error Message</b></dt>
       <dd>
-         <wiki:Messages />
+         <wiki:Messages div="error" />
       </dd>      
       <dt><b>Exception</b></dt>
       <dd><%=realcause.getClass().getName()%></dd>

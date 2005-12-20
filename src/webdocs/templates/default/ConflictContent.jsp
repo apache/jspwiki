@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-   <div class="conflictnote">
+   <div class="error">
       <p><b>Oops!  Someone modified the page while you were editing it!</b></p>
 
       <p>Since I am stupid and can't figure out what the difference

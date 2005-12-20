@@ -29,7 +29,7 @@
     with your login name and password.
   </div>
   <div class="instructions">
-     <span style="color:red"><wiki:Messages prefix="Could not log in: " /></span>
+    <wiki:Messages div="error" prefix="Could not log in: " />
   </div>
   
   <form id="login" action="<%=postURL%>" 

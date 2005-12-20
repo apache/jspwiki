@@ -15,7 +15,7 @@
     Create a new wiki group.
   </div>
   <div class="instructions">
-    <span style="color:red"><wiki:Messages prefix="Could not create group: " /></span>
+    <wiki:Messages div="error" prefix="Could not create group: " />
   </div>
   <form id="newGroup" action="<wiki:Variable var="baseURL"/>NewGroup.jsp" 
     method="POST" accept-charset="UTF-8">

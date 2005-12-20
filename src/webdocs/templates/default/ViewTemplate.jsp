@@ -21,7 +21,7 @@
 
   <wiki:Include page="Header.jsp" />
 
-  <div id="applicationlogo" align="center">
+  <div id="applicationlogo">
     <a href="<wiki:LinkTo page='SystemInfo' format='url'/>"
          onmouseover="document.fav_logo.src='<wiki:BaseURL/>images/jspwiki_logo.png'"
          onmouseout="document.fav_logo.src='<wiki:BaseURL/>images/jspwiki_logo_s.png'">

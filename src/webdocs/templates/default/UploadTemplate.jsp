@@ -18,9 +18,9 @@
       <hr /><p>
 
       <wiki:HasAttachments>
-         <div class="attachments">
-         <h3>Currently existing attachments:</h3>
-         <div class="zebra-table" align="center">
+         <div id="attachments">
+         <h3>Current attachments</h3>
+         <div class="zebra-table">
          <table width="90%">
          <wiki:AttachmentsIterator id="att">
              <tr>
@@ -57,7 +57,7 @@
            </p>
            </form>
 
-           <span class="error"><wiki:Messages /></span>
+           <wiki:Messages div="error" />
 
         </td>
 

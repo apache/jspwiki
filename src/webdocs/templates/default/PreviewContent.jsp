@@ -4,26 +4,18 @@
 
 <%-- Inserts page content for preview. --%>
 
-   <div class="previewnote">
-      <b>This is a PREVIEW!  Hit "Keep Editing" to go back to the editor,
-      or hit "Save" if you're happy with what you see.</b>
-   </div>
+<div class="information">
+  This is a <strong>preview</strong>!  Hit "Keep Editing" to go back to the editor,
+  or hit "Save" if you're happy with what you see.
+</div>
 
-   <p><hr /></p>
+<div class="previewcontent">
+   <wiki:Translate><%=EditorManager.getEditedText(pageContext)%></wiki:Translate>
+</div>
 
-   <div class="previewcontent">
-      <wiki:Translate><%=EditorManager.getEditedText(pageContext)%></wiki:Translate>
-   </div>
+<div class="information">
+  This is a <strong>preview</strong>!  Hit "Keep Editing" to go back to the editor,
+  or hit "Save" if you're happy with what you see.
+</div>
 
-   <br clear="all" />
-
-   <p><hr /></p>
-
-   <div class="previewnote">
-      <b>This is a PREVIEW!  Hit "Keep Editing" to go back to the editor,
-      or hit "Save" if you're happy with what you see.</b>
-   </div>
-
-   <p><hr /></p>
-
-   <wiki:Editor/>
+<wiki:Editor/>

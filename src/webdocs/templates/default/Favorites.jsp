@@ -31,9 +31,9 @@
   <div class="leftmenu">
     <wiki:InsertPage page="LeftMenu" />
     <wiki:NoSuchPage page="LeftMenu">
-      <p align="center">
-      <wiki:EditLink page="LeftMenu">Please make a LeftMenu.</wiki:EditLink>
-      </p>
+      <div class="error">
+        <wiki:EditLink page="LeftMenu">Please make a LeftMenu.</wiki:EditLink>
+      </div>
     </wiki:NoSuchPage>
   </div>
   
@@ -53,9 +53,9 @@
   <div class="leftmenufooter">
     <wiki:InsertPage page="LeftMenuFooter" />
     <wiki:NoSuchPage page="LeftMenuFooter">
-      <p align="center">
-      <wiki:EditLink page="LeftMenuFooter">Please make a LeftMenuFooter.</wiki:EditLink>
-      </p>
+      <div class="error">
+        <wiki:EditLink page="LeftMenuFooter">Please make a LeftMenuFooter.</wiki:EditLink>
+      </div>
     </wiki:NoSuchPage>
   </div>
   

@@ -48,7 +48,7 @@
       <wiki:UserCheck status="anonymous">
         <div class="formcontainer">
           <div class="instructions">
-            <span style="color:red"><wiki:Messages topic="prefs" prefix="Could not save prefs: "/></span>
+            <wiki:Messages div="error" topic="prefs" prefix="Could not save prefs: "/>
           </div>
           <form id="setCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=prefs" 
                 method="POST" accept-charset="UTF-8">
@@ -110,7 +110,7 @@
           </wiki:UserProfile>
         </div>
         <div class="instructions">
-          <span style="color:red"><wiki:Messages topic="profile" prefix="Could not save profile: "/></span>
+          <wiki:Messages div="error" topic="profile" prefix="Could not save profile: "/>
         </div>
         <form id="editProfile" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=profile" 
               method="POST" accept-charset="UTF-8">

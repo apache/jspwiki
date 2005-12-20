@@ -66,7 +66,7 @@
             <dl>
                <dt><b>Reason:</b></dt>
                <dd>
-                  <wiki:Messages />
+                  <wiki:Messages div="error" />
                </dd>      
             </dl>
 <%
@@ -99,7 +99,7 @@
        <dl>
           <dt><b>Reason:</b></dt>
           <dd>
-             <wiki:Messages />
+             <wiki:Messages div="error" />
           </dd>      
        </dl>
 <%

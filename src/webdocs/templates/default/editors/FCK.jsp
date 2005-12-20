@@ -45,7 +45,7 @@
 </script>
 <noscript>
   <br>
-  <h3 class="previewnote">You need to enable Javascript in your browser to use the WYSIWYG editor</h3>
+  <div class="error">You need to enable Javascript in your browser to use the WYSIWYG editor</div>
 </noscript>
 
    <wiki:CheckRequestContext context="comment">
