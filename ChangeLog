@@ -1,3 +1,40 @@
+2005-12-13  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.60 aka the "Neat and Tidy" release
+         
+        * Complete, radical overhaul of the standard CSS jspwiki.css.
+          It is organized (!) and significantly trimmed back from its
+          former sprawling self. Note the new <div> classes "error"
+          "information" and "warning". These have been substituted into
+          one-timer classes like "versionnote". The styles, overall,
+          have had most of the rough edges rubbed out... not perfect
+          but it's a start -- not all of Dirk's recommendations made
+          it in.
+          
+        * Tweaked PageActions by substituting page up/down icons for
+          webdings. Also, comment permissions are checked instead
+          of assuming edit (credit: Benedikt Rausch).
+        
+        * Adjusted table generation routines in JSPWikiMarkupParser
+          and ListLocksPlugin to inject class="odd" attributes
+          into generated table rows. LLP also gives tables 
+          the style "wikitable" and now emits XHTML-compliant markup.
+        
+        * Added attribute "div" to <wiki:Messages> tag to allow
+          messages to be neatly wrapped. Default class is "information".
+          This required minor tweaks to several JSPs.
+          
+        * Turned LeftMenuFooter into a blank page, which makes the left
+          menu area nicer and cleaner. The default did nothing but display
+          referring pages, which we already know how to do via the
+          PageContent tabs. Less clutter, mo' better!
+          
+        * LeftMenu.jsp and LeftMenuFooter.jsp are laid to rest, with honors.
+        
+        * Commented out the <resource-ref> in web.xml for jdbc/UserDatabase;
+          it isn't on by default anyway, and it was causing JBoss to emit
+          a harmless (but annoying) error messages (credit: Milt Taylor).
+          
 2005-12-19  Erik Bunn  <ebu@basen.net>
 
         * 2.3.59
