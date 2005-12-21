@@ -32,7 +32,6 @@
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="25" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
    <wiki:CheckRequestContext context="comment">
-   </p>
         <table border="0" class="small">
           <tr>
             <td><label for="authorname" accesskey="n">Your <u>n</u>ame</label></td>
@@ -45,7 +44,6 @@
             <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=session.getAttribute("link")%>" /></td>
           </tr>
         </table>
-    </p>
     </wiki:CheckRequestContext>
 
     <p>
