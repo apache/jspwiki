@@ -32,6 +32,7 @@
 #page                    { margin-top: 1.2em; margin-bottom: 1.4em; }
 #favorites               { overflow: hidden; }
 #favorites .pageactions  { display:none; }
+#favorites ul            { margin-left: 0px; }
 #actionsTop              { text-align: right; width: auto; 
                            border: 1px solid silver; border-bottom: 0px; 
                            background: #fff0ff;
@@ -94,11 +95,11 @@ pre                      { white-space: pre; margin: 1.5em 2em 1.8em 2em;
                            padding: .5em .5em .6em .5em; overflow: auto; }
                            
 /* +++ 250 Hyperlinks +++ */
-a                        { text-decoration: none; color: blue; }
+a                        { color: blue; }
 a:link                   { }
 a:visited                { }
 a:active                 { }
-a:hover                  { text-decoration: underline; }
+a:hover                  { }
 a.editpage               { color: #FF0000; text-decoration: none;
  	                         border-bottom: 1px dashed red; }
 a.external               { }                            /* External reference */
@@ -145,28 +146,29 @@ a.footnote               { color: #0044AA; }
 .wikitable               { border: 1px solid #666666; 
                            border-spacing: 0; 
                            margin: 1.5em 2em 1.8em 2em; }
-.wikitable * tr th       { font-size: 85%; 
-                           padding: .2em .7em .21em .7em;
-		                       border-left: 1px solid #666666;
-		                       background-color: #3d80df;
-		                       vertical-align: bottom;
-		                       color: white;
-		                       empty-cells: show; }
-.wikitable * tr td       { font-size: 85%; 
+.wikitable * tr th       { font-size: 100%; 
+                           padding: .5em .7em .5em .7em;
+	                       border-left: 1px solid #666666;
+	                       background-color: #3d80df;
+	                       vertical-align: bottom;
+	                       color: black;
+	                       empty-cells: show; }
+.wikitable * tr td       { font-size: 95%; 
                            padding: .4em .7em .45em .7em;
-		                       border-left: 1px solid #D9D9D9;
-		                       vertical-align: top;
-		                       empty-cells: show; }
-.wikitable * tr.odd td   { background-color: #edf3fe; }
+	                       border-left: 1px solid #D9D9D9;
+	                       vertical-align: top;
+	                       empty-cells: show; }
+.wikitable * tr.odd td   { background-color: #e3f0ee; }
 
 .zebra-table th          { background:  #e0e0e0; }
-.zebra-table tr.odd td   { background:  #edf3fe; }
+.zebra-table tr.odd td   { background:  #e3f0ee; }
 
 /* +++ 350 Attachments +++ */
 #attachments             { }
 #attachments .list       { float: left; min-width: 300px; }
 #attachments .preview    { float: right; }
 #attachments * table     { width: 40em; }
+#attachments h3          { border-bottom: 1px solid grey; }
 
 /* ----------------------------------------------------
    400 Styles for specific JSPs
@@ -414,7 +416,7 @@ div.collapse li          { list-style: none; position: relative; }
 .sortable .sort,
 .sortable .sortAscending,
 .sortable .sortDescending
-                         { padding: 0 1.25em; cursor: pointer;
+                         { cursor: pointer;
                            background-color: #f0f0f0;
                            background-repeat: no-repeat; 
                            background-position: 0.25em 50%; }
