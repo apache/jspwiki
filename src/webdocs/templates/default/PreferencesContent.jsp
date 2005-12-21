@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%
   // Figure out which tab should be active
   String tab = request.getParameter( "tab" );
@@ -22,6 +23,16 @@
     profileVisible = "display:none;";
     profileClass   = "inactiveTab";
   }
+  
+  //  Determine the name for the user's favorites page
+  WikiContext c = WikiContext.findContext( pageContext );
+  String pagename = c.getPage().getName();
+  String username = null;
+ 
+  username = c.getEngine().getVariable( c, "username" );
+  if( username == null ) username = "";
+
+  String myFav = username + "Favorites";
 %>
 
 <h3>Your <wiki:Variable var="applicationname" /> profile</h3>
@@ -89,6 +100,14 @@
               <input type="submit" name="ok" value="Clear user name" />
               <input type="hidden" name="action" value="clearAssertedName" />
             </div>
+          </form>
+          <form action="<wiki:Link format="url" page="<%=myFav%>"/>" method="GET">
+             <div class="block">
+              <div class="description">
+                 You may set your personal Favourites list which will appear in the navigation menu.
+              </div>
+              <input type="submit" name="ok" value="Edit or create your personal favourites"/>
+             </div>
           </form>
         </div>
       </wiki:UserCheck>
