@@ -55,8 +55,8 @@ public class ReferenceManagerTest extends TestCase
         TestEngine.deleteTestPage( "FatalBugs" );
         TestEngine.deleteTestPage( "RandomPage" );
         TestEngine.deleteTestPage( "NewBugs" );
-        TestEngine.deleteTestPage( "OpenBugs" );
         TestEngine.deleteTestPage( "OpenBug" );
+        TestEngine.deleteTestPage( "OpenBugs" );
         TestEngine.deleteTestPage( "NewBug" );
         TestEngine.deleteTestPage( "BugOne" );
         TestEngine.deleteTestPage( "BugTwo" );
