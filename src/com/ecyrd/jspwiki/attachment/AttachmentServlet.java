@@ -425,8 +425,8 @@ public class AttachmentServlet
         {
             MultipartRequest multi;
 
-	    // Create the context _before_ Multipart operations, otherwise
-	    // strict servlet containers may fail when setting encoding.
+            // Create the context _before_ Multipart operations, otherwise
+            // strict servlet containers may fail when setting encoding.
             WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
 
             multi = new MultipartRequest( null, // no debugging
@@ -439,6 +439,15 @@ public class AttachmentServlet
 
             nextPage        = multi.getURLParameter( "nextpage" );
             String wikipage = multi.getURLParameter( "page" );
+            
+            //
+            // FIXME: Kludge alert.  We must end up with the parent page name,
+            //        if this is an upload of a new revision
+            //
+            
+            int x = wikipage.indexOf("/");
+            
+            if( x != -1 ) wikipage = wikipage.substring(0,x);
 
             errorPage = context.getURL( WikiContext.UPLOAD,
                                         wikipage );
