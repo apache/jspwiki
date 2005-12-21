@@ -55,11 +55,11 @@ public class TableOfContentsTest extends TestCase
         String res = testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
-        assertEquals( "\n<p><div class=\"toc\">\n"+
+        assertEquals( "\n<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                       "<h4>Table of Contents</h4>\n"+
                       "<ul>\n"+
                       "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
-                      "</ul>\n</div>\n\n</p>"+
+                      "</ul>\n</div>\n</div>\n\n</p>"+
                       "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>\n",
                       res );
     }
@@ -74,13 +74,13 @@ public class TableOfContentsTest extends TestCase
         String res = testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
-        String expecting = "\n<p><div class=\"toc\">\n"+
+        String expecting = "\n<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                 "<h4>Table of Contents</h4>\n"+
                 "<ul>\n"+
                 "<li class=\"toclevel-1\">3 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
                 "<li class=\"toclevel-2\">3.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">Subheading</a></li>\n"+
                 "<li class=\"toclevel-3\">3.1.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">Subsubheading</a></li>\n"+
-                "</ul>\n</div>\n\n</p>"+
+                "</ul>\n</div>\n</div>\n\n</p>"+
                 "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
                 "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
                 "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>\n";
@@ -99,7 +99,7 @@ public class TableOfContentsTest extends TestCase
         String res = testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
-        String expecting = "\n<p><div class=\"toc\">\n"+
+        String expecting = "\n<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4>Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-1\">3 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
@@ -110,7 +110,7 @@ public class TableOfContentsTest extends TestCase
         "<li class=\"toclevel-3\">3.2.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading3\">Subsubheading3</a></li>\n"+
         "<li class=\"toclevel-1\">4 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Heading\">Heading</a></li>\n"+
         "<li class=\"toclevel-2\">4.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading3\">Subheading3</a></li>\n"+
-        "</ul>\n</div>\n\n</p>"+
+        "</ul>\n</div>\n</div>\n\n</p>"+
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
         "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
         "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>"+
@@ -134,7 +134,7 @@ public class TableOfContentsTest extends TestCase
         String res = testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
-        String expecting = "\n<p><div class=\"toc\">\n"+
+        String expecting = "\n<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4>Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-2\">3.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading0\">Subheading0</a></li>\n"+
@@ -146,7 +146,7 @@ public class TableOfContentsTest extends TestCase
         "<li class=\"toclevel-3\">4.2.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading3\">Subsubheading3</a></li>\n"+
         "<li class=\"toclevel-1\">5 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Heading\">Heading</a></li>\n"+
         "<li class=\"toclevel-2\">5.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading3\">Subheading3</a></li>\n"+
-        "</ul>\n</div>\n\n</p>"+
+        "</ul>\n</div>\n</div>\n\n</p>"+
         "\n<h3 id=\"section-Test-Subheading0\">Subheading0</h3>"+
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
         "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
@@ -171,13 +171,13 @@ public class TableOfContentsTest extends TestCase
         String res = testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
-        String expecting = "\n<p><div class=\"toc\">\n"+
+        String expecting = "\n<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4>Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-1\">FooBar-3 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
         "<li class=\"toclevel-2\">FooBar-3.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">Subheading</a></li>\n"+
         "<li class=\"toclevel-3\">FooBar-3.1.1 <a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">Subsubheading</a></li>\n"+
-        "</ul>\n</div>\n\n</p>"+
+        "</ul>\n</div>\n</div>\n\n</p>"+
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
         "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
         "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>\n";
