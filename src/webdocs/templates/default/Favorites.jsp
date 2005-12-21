@@ -19,9 +19,9 @@
   <wiki:UserCheck status="known">
     <wiki:PageExists page="<%=myFav %>">
     <div class="myfavorites">
-      <div class="boxtitle">
+      <h4 class="boxtitle">
         <wiki:LinkTo page="<%=myFav %>" >My Favorites</wiki:LinkTo>
-      </div>
+      </h4>
       <wiki:InsertPage page="<%=myFav %>"/>
     </div>
     </wiki:PageExists>
