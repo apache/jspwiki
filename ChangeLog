@@ -1,3 +1,16 @@
+2005-12-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.61
+
+        * Bug fix: trying to upload a new revision of an attachment
+        resulted in a broken directory structure.  This is still
+        buggy, you can't upload a new revision of a file.
+        
+        * Did some tweaking of the jspwiki.css to make it a bit
+        more accessible (the link underlines are back, and you
+        can now actually read the titles, if you made the array
+        sortable).
+
 2005-12-20  Erik Bunn  <Erik.Bunn@basen.net>
 
         * Modified jspwiki-common.js: overriding Array prototype
