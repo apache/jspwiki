@@ -2,6 +2,12 @@
 
         * 2.3.61
 
+        * Quick fix from Dirk: table sorting works again.
+        
+        * Favourites menu looks a bit better now.
+        
+        * Added link to the Favourites menu in the UserPreferences.
+
         * Bug fix: trying to upload a new revision of an attachment
         resulted in a broken directory structure.  This is still
         buggy, you can't upload a new revision of a file.
