@@ -616,7 +616,7 @@ Sortable.sort = function( thNode )
   }
   
   //find body rows and guess data type of colidx
-  var rows = new ExtArray();
+  var rows = new Array();
   var num  = true;
   var date = true;
   for( var i=1; i< table.rows.length; i++)
@@ -810,7 +810,7 @@ Collapsable.initBullet = function( bullet, body, defaultState )
   var collapseState = this.parseCookie( defaultState ); 
   bullet.onclick = this.toggleBullet;
   bullet.id = this.CollapseID + "." + (this.cookies.length-1) + 
-                                "." + (this.cookies.last().length-1);
+                                "." + (this.cookies[this.cookies.length-1].length-1);
   this.setOpenOrClose( bullet, ( collapseState == this.MarkerOpen ), body );
 }
 
@@ -832,7 +832,7 @@ Collapsable.setOpenOrClose = function( bullet, setToOpen, body )
 // returns collapseState MarkerOpen, MarkerClose
 Collapsable.parseCookie = function( token )
 {
-  var currentcookie = this.cookies.last();
+  var currentcookie = this.cookies[this.cookies.length-1];
   var cookieToken = token; //default value
 
   if( (this.tmpcookie) && (this.tmpcookie.length > currentcookie.length) )
