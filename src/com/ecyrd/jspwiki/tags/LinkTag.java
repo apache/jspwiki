@@ -112,6 +112,11 @@ public class LinkTag extends WikiLinkTag
     {
         String url = null;
         WikiEngine engine = m_wikiContext.getEngine();
+        if( m_pageName == null ) 
+        {
+            WikiPage page = m_wikiContext.getPage(); 
+            m_pageName = page.getName();
+        }
         
         if( m_jsp != null )
         {
@@ -199,7 +204,14 @@ public class LinkTag extends WikiLinkTag
                 
             if( p instanceof Attachment )
             {
-                url = engine.getURL( WikiContext.ATTACH, m_pageName, parms, m_absolute );
+                String ctx = m_context;
+                // Switch context appropriately when attempting to view an
+                // attachment, but don't override the context setting otherwise
+                if( m_context == null || m_context.equals( WikiContext.VIEW ) ) 
+                {
+                    ctx = WikiContext.ATTACH;
+                }
+                url = engine.getURL( ctx, m_pageName, parms, m_absolute );
             }
             else
             {
