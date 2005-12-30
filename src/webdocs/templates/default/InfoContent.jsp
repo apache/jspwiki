@@ -275,12 +275,8 @@ function confirmDelete()
     <tr>
     <th>Upload new version</th>
     <td>
-    <form action="<wiki:Variable var="baseurl"/>attach"
+    <form action="<wiki:Link context="att" format="url" absolute="true"/>"
           method="post" enctype="multipart/form-data">
-
-    <%-- Do NOT change the order of wikiname and content, otherwise the
-        servlet won't find its parts. --%>
-
 
     <%-- Do NOT change the order of wikiname and content, otherwise the
         servlet won't find its parts. --%>
