@@ -1,3 +1,8 @@
+2005-12-30  Erik Bunn  <ebu@memecry.net>
+
+	* Modified AttachmentServlet, LinkTag, InfoContent.jsp to fix
+	attachment revision upload bug. 
+
 2005-12-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.61
