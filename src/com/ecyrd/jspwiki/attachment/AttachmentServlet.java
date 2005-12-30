@@ -427,7 +427,7 @@ public class AttachmentServlet
 
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
-            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+            WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
 
             multi = new MultipartRequest( null, // no debugging
                                           req.getContentType(), 
