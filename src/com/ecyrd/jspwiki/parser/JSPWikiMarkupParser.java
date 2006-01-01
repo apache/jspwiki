@@ -881,6 +881,7 @@ public class JSPWikiMarkupParser
      *  an "id" tag may only contain [a-zA-Z0-9:_-], we'll replace the
      *  % after url encoding with '_'.
      */
+    // FIXME: This method should probably be public and in an util class somewhere
     private String makeHeadingAnchor( String baseName, String title, Heading hd )
     {
         hd.m_titleText = title;
@@ -2129,7 +2130,7 @@ public class JSPWikiMarkupParser
             if( !m_istable )
             {
                 startBlockLevel();
-                el = pushElement( new Element("table").setAttribute("class","wikitable") );
+                el = pushElement( new Element("table").setAttribute("class","wikitable").setAttribute("border","1") );
                 m_istable = true;
                 m_rowNum = 0;
             }
