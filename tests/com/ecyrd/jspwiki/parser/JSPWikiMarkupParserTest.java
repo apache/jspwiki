@@ -1481,9 +1481,9 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
         
         assertEquals( "<table class=\"wikitable\" border=\"1\">"+
-                      "<tr><th> heading </th><th> heading2 </th></tr>\n"+
+                      "<tr class=\"odd\"><th> heading </th><th> heading2 </th></tr>\n"+
                       "<tr><td> Cell 1 </td><td> Cell 2 </td></tr>\n"+
-                      "<tr><td> Cell 3 </td><td> Cell 4</td></tr>\n"+
+                      "<tr class=\"odd\"><td> Cell 3 </td><td> Cell 4</td></tr>\n"+
                       "</table><p />",
                       translate(src) );
     }
@@ -1494,9 +1494,9 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
         
         assertEquals( "<table class=\"wikitable\" border=\"1\">"+
-                      "<tr><th>heading</th><th>heading2</th></tr>\n"+
+                      "<tr class=\"odd\"><th>heading</th><th>heading2</th></tr>\n"+
                       "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
-                      "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
+                      "<tr class=\"odd\"><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
                       translate(src) );
     }
@@ -1507,7 +1507,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
         
         assertEquals( "<table class=\"wikitable\" border=\"1\">"+
-                      "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
+                      "<tr class=\"odd\"><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td> Cell 3 </td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
                       translate(src) );
@@ -1521,7 +1521,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         newPage("ReallyALink");
         
         assertEquals( "<table class=\"wikitable\" border=\"1\">"+
-                      "<tr><td>Cell 1</td><td> Cell 2</td></tr>\n"+
+                      "<tr class=\"odd\"><td>Cell 1</td><td> Cell 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"/Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
                       translate(src) );
@@ -1535,7 +1535,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         newPage("ReallyALink");
         
         assertEquals( "<table class=\"wikitable\" border=\"1\">"+
-                      "<tr><td>Cell 1</td><td> Cell| 2</td></tr>\n"+
+                      "<tr class=\"odd\"><td>Cell 1</td><td> Cell| 2</td></tr>\n"+
                       "<tr><td><a class=\"wikipage\" href=\"/Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n"+
                       "</table><p />",
                       translate(src) );
@@ -2079,7 +2079,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "|%%(foo:bar;)test%%|no test\n";
         
-        assertEquals( "<table class=\"wikitable\" border=\"1\"><tr><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>", 
+        assertEquals( "<table class=\"wikitable\" border=\"1\"><tr class=\"odd\"><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>", 
                       translate(src) );
     }
     
