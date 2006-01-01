@@ -19,6 +19,8 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.Heading;
@@ -93,8 +95,10 @@ public class TableOfContents
             m_level2Index = 0;
         }
 
+        String titleSection = hd.m_titleSection.replace( '%', '_' );
+        
         String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
-        String sectref = "#section-"+context.getEngine().encodeName(context.getPage().getName())+"-"+hd.m_titleSection;
+        String sectref = "#section-"+context.getEngine().encodeName(context.getPage().getName())+"-"+titleSection;
 
         m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">");
         if (m_usingNumberedList) 
@@ -118,7 +122,7 @@ public class TableOfContents
 
         m_lastLevel = hd.m_level;
     }
-
+    
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
