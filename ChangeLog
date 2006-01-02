@@ -1,3 +1,21 @@
+2006-01-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.64
+        
+        * Fixed a relatively serious bug which was caused by 
+        FormSet doing a very selective remove() on its parameters;
+        this was relying on the fact that the FormSet parameters
+        are not stored (which was true on the old TranslatorReader).
+        The new RenderingManager stores the parsed parameter arrays,
+        which means that plugins Shall Not Modify their parameters,
+        or risk getting the same data back again the next time.
+        (However, if the page data expires, then you shall get the
+        original parameters.)  I am not sure whether this is good
+        behaviour...
+        
+        In effect, this fixes problems with jspwiki.org bug reporting
+        system.
+
 2006-01-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.63
