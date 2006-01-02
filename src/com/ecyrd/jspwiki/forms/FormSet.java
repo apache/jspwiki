@@ -62,19 +62,33 @@ public class FormSet
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {
-        String formName = (String)params.remove( FormElement.PARAM_FORM );
+        String formName = (String)params.get( FormElement.PARAM_FORM );
         if( formName == null || formName.trim().length() == 0 )
+        {
             return "";
-            
+        }
+
         FormInfo info = (FormInfo)ctx.getVariable( FormElement.FORM_VALUES_CARRIER );
+
         if( info == null || formName.equals( info.getName() ) == false )
         {
             info = new FormInfo();
             ctx.setVariable( FormElement.FORM_VALUES_CARRIER, info );
         }
 
+        //
+        //  Create a copy for the context.  Unfortunately we need to 
+        //  create slightly modified copy, because otherwise on next
+        //  invocation this might be coming from a cache; so we can't
+        //  modify the original param string.
+        //
         info.setName( formName );
-        info.addSubmission( params );
+        HashMap hm = new HashMap();
+        hm.putAll( params );
+        
+        hm.remove( FormElement.PARAM_FORM );
+        info.addSubmission( hm );
+        
         return "";
     }
 }
