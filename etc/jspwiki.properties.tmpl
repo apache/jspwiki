@@ -420,6 +420,15 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 
 #jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.JDBCUserDatabase
 
+#  If your JSPWiki user database shares login information with your
+#  web container's authentication realm, you can configure JSPWiki to
+#  add container users. At present, this only works with JDBCUserDatabase,
+#  and only if you've configured your web container to use a database
+#  with compatible columns and tables. If you don't know what this means,
+#  then leave this property set to FALSE (the default).
+
+#jspwiki.userdatabase.addContainerUsers = false
+
 #  ADMIN USER
 #  The name of the user who will be treated as the superuser. The admin
 #  user can do anything, and is not restricted by the usual access control
@@ -582,6 +591,8 @@ jspwiki.userdatabase.password=password
 jspwiki.userdatabase.wikiName=wiki_name
 jspwiki.userdatabase.created=created
 jspwiki.userdatabase.modified=modified
+jspwiki.userdatabase.roleTable=roles
+jspwiki.userdatabase.role=role
 
 ###########################################################################
 #

@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.57 2005-11-29 07:21:03 arj Exp $
+    $Id: build.xml,v 1.58 2006-01-05 06:18:28 arj Exp $
 -->    
        
 <!--   
@@ -863,6 +863,8 @@ To automate the JAR signing processs, you can add the property
     <check-property prop="jspwiki.userdatabase.wikiName" />
     <check-property prop="jspwiki.userdatabase.created" />
     <check-property prop="jspwiki.userdatabase.modified" />
+    <check-property prop="jspwiki.userdatabase.roleTable" />
+    <check-property prop="jspwiki.userdatabase.role" />
     
     <!-- Check for the presence of the database driver & script dir -->
     <check-file file="etc/db/${jdbc.driver.id}"      prop="db.scripts" />
