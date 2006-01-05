@@ -19,10 +19,10 @@
           those cases where the container and JSPWiki share
           user information. A future set of commits will include 
           adjustments to WikiPermission, UserManager and
-          UserPreferences to support this functionality. We do 
-          *not* envison broader role management capabilities 
-          for JDBCUserDatabase, other than just this initial 
-          role row insert support.  
+          UserPreferences to support the UI aspects of container 
+          enrollment functionality. We do *not* envison broader 
+          role management capabilities for JDBCUserDatabase, 
+          other than just this initial role row insert support.  
 
 2006-01-02  Janne Jalkanen <jalkanen@ecyrd.com>
 
