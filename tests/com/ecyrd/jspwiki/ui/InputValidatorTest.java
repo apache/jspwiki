@@ -47,6 +47,10 @@ public class InputValidatorTest extends TestCase
         assertFalse( val.validate( "Test <string>", "Name", InputValidator.STANDARD ) );
         assertFalse( val.validate( "Test & string", "Name", InputValidator.STANDARD ) );
         assertFalse( val.validate( "Test @ string", "Name", InputValidator.STANDARD ) );
+        
+        // Null or blank fields should validate
+        assertTrue( val.validate( "", "Name", InputValidator.STANDARD ) );
+        assertTrue( val.validate( null, "Name", InputValidator.STANDARD ) );
     }
     
     public void testValidateNotNull()

@@ -11,7 +11,7 @@ import com.ecyrd.jspwiki.WikiSession;
  * validator will reject any HTML-like input, and any of a number of special
  * characters.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2005-12-12 07:04:43 $
+ * @version $Revision: 1.2 $ $Date: 2006-01-05 06:09:08 $
  * @since 2.3.54
  */
 public final class InputValidator
@@ -77,7 +77,8 @@ public final class InputValidator
 
     /**
      * Validates a string against a particular pattern type: e-mail address,
-     * standard HTML input, etc.
+     * standard HTML input, etc. Note that a blank or null string will
+     * always validate.
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
      * @param type the target pattern to validate against ({@link #STANDARD},
@@ -87,6 +88,13 @@ public final class InputValidator
      */
     public final boolean validate( String input, String label, int type )
     {
+        // If blank, it's valid
+        if ( isBlank( input ) )
+        {
+            return true;
+        }
+        
+        // Otherwise, see if it matches the pattern for the target type
         Matcher matcher;
         boolean valid;
         switch( type )
