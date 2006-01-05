@@ -21,8 +21,9 @@ package com.ecyrd.jspwiki.auth.user;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Properties;
@@ -54,7 +55,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2005-12-12 07:02:55 $
+ * @version $Revision: 1.10 $ $Date: 2006-01-05 06:05:41 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -103,7 +104,8 @@ public class XMLUserDatabase extends AbstractUserDatabase
         File newFile = new File( c_file.getAbsolutePath() + ".new" );
         try
         {
-            BufferedWriter io = new BufferedWriter( new FileWriter ( newFile ) );
+            BufferedWriter io = new BufferedWriter( new OutputStreamWriter ( 
+                    new FileOutputStream( newFile ), "UTF-8" ) );
             
             // Write the file header and document root
             io.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
