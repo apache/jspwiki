@@ -1,4 +1,19 @@
-2006-01-5  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.66
+        
+        * WikiEngine now checks whether a page has changed before
+        committing it.  This should help reduce all the empty changes
+        that people do when they just click "save" in panic.
+        
+        * InputValidator now accepts email addresses of the form
+        "firstname.lastname@something" and "name+extension@something".
+        
+        * Added a tiny sanity check in WikiServletFilter
+        
+        * Added EditFindReplaceHelp which was missing...
+
+2006-01-05  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.65
 		
