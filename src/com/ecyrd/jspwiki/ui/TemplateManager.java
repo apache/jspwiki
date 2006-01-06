@@ -1,7 +1,7 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Copyright (C) 2003-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
