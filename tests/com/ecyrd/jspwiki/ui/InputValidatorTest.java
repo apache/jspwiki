@@ -66,6 +66,8 @@ public class InputValidatorTest extends TestCase
         assertTrue( val.validateNotNull("foo@bar.com", "E-mail", InputValidator.EMAIL) );
         assertTrue( val.validateNotNull("foo-bar@foo.com", "E-mail", InputValidator.EMAIL) );
         assertTrue( val.validateNotNull("foo-bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
+        assertTrue( val.validateNotNull("foo+bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
+        assertTrue( val.validateNotNull("foo.bar@foo.co.uk", "E-mail", InputValidator.EMAIL) );
         assertFalse( val.validateNotNull("foobar", "E-mail", InputValidator.EMAIL) );
         assertFalse( val.validateNotNull("foobar@foo", "E-mail", InputValidator.EMAIL) );
     }
