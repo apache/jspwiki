@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.ui;
 
 import java.util.regex.Matcher;
@@ -11,7 +30,7 @@ import com.ecyrd.jspwiki.WikiSession;
  * validator will reject any HTML-like input, and any of a number of special
  * characters.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-01-05 06:09:08 $
+ * @version $Revision: 1.3 $ $Date: 2006-01-06 23:05:31 $
  * @since 2.3.54
  */
 public final class InputValidator
@@ -20,7 +39,7 @@ public final class InputValidator
 
     public static final int        EMAIL          = 1;
 
-    protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
+    protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
 
     protected static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>;&@\\xff{}\\$%\\\\]" );
 
