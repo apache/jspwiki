@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.ui;
 
 import java.io.CharArrayWriter;
@@ -52,8 +71,6 @@ public class WikiServletFilter implements Filter
 
     public void destroy()
     {
-        // TODO Auto-generated method stub
-        
     }
 
     public void doFilter( ServletRequest  request,
@@ -61,6 +78,14 @@ public class WikiServletFilter implements Filter
                           FilterChain     chain )
         throws ServletException, IOException
     {
+        //
+        //  Sanity check; it might be true in some conditions, but we need to know where.
+        //
+        if( chain == null )
+        {
+            throw new ServletException("FilterChain is null, even if it should not be.  Please report this to the jspwiki development team.");
+        }
+        
         // Write the response to a dummy response because we want to 
         //   replace markers with scripts/stylesheet. 
         ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
@@ -84,6 +109,13 @@ public class WikiServletFilter implements Filter
         response.getOutputStream().write( bytes );
     }
 
+    /**
+     *  Figures out the wiki context from the request.  This method does not create the
+     *  context if it does not exist.
+     *  
+     *  @param request The request to examine
+     *  @return A valid WikiContext value (or null, if the context could not be located).
+     */
     private WikiContext getWikiContext(ServletRequest  request)
     {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -96,9 +128,9 @@ public class WikiServletFilter implements Filter
     /**
      * Goes through all types.
      * 
-     * @param wikiContext
-     * @param string
-     * @return
+     * @param wikiContext The usual processing context
+     * @param string The source string
+     * @return The modified string with all the insertions in place.
      */
     private String filter(WikiContext wikiContext, String string )
     {
@@ -112,6 +144,16 @@ public class WikiServletFilter implements Filter
         return string;
     }
 
+    /**
+     *  Inserts whatever resources
+     *  were requested by any plugins or other components for this particular
+     *  type.
+     *  
+     *  @param wikiContext The usual processing context
+     *  @param string The source string
+     *  @param type Type identifier for insertion
+     *  @return The filtered string.
+     */
     private String filter(WikiContext wikiContext, String string, String type )
     {
         if( wikiContext == null )
@@ -147,22 +189,41 @@ public class WikiServletFilter implements Filter
         return string;
     }
     
+    /**
+     *  Simple response wrapper that just allows us to gobble through the entire
+     *  response before it's output.
+     *  
+     *  @author jalkanen
+     */
     private class MyServletResponseWrapper
         extends HttpServletResponseWrapper
     {
         private CharArrayWriter output;
+      
+        /** 
+         *  How large the initial buffer should be.  This should be tuned to achieve
+         *  a balance in speed and memory consumption.
+         */
+        private int INIT_BUFFER_SIZE = 4096;
         
         public MyServletResponseWrapper( HttpServletResponse r )
         {
             super(r);
-            output = new CharArrayWriter();
+            output = new CharArrayWriter( INIT_BUFFER_SIZE );
         }
 
+        /**
+         *  Returns a writer for output; this wraps the internal buffer
+         *  into a PrintWriter.
+         */
         public PrintWriter getWriter()
         {
             return new PrintWriter(output);
         }
 
+        /**
+         *  Returns whatever was written so far into the Writer.
+         */
         public String toString()
         {
             return output.toString();
