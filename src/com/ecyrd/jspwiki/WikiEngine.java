@@ -1492,6 +1492,11 @@ public class WikiEngine
     {
         WikiPage page = context.getPage();
 
+        //
+        //  Figure out who the author was.  Prefer the author
+        //  set programmatically; otherwise get from the
+        //  current logged in user
+        //
         if( page.getAuthor() == null )
         {
             Principal wup = context.getCurrentUser();
@@ -1499,12 +1504,26 @@ public class WikiEngine
             if( wup != null ) page.setAuthor( wup.getName() );
         }
 
+        //
+        //  Prepare text for saving
+        //
         text = TextUtil.normalizePostData(text);
 
         text = m_filterManager.doPreSaveFiltering( context, text );
 
-        // Hook into cross reference collection.
+        //
+        //  Check if page data actually changed
+        //
         
+        String oldData = getPureText( page );
+        if( oldData != null && oldData.equals(text) )
+        {
+            return;
+        }
+        
+        //
+        //  Let the rest of the engine handle actual saving.
+        //
         m_pageManager.putPageText( page, text );
         
         // ARJ HACK: reload the page so we parse ACLs, among other things
@@ -1518,6 +1537,7 @@ public class WikiEngine
 
     /**
      *  Returns the number of pages in this Wiki
+     *  @return The total number of pages.
      */
     public int getPageCount()
     {
@@ -1525,7 +1545,8 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the provider name
+     *  Returns the provider name.
+     *  @return The full class name of the current page provider.
      */
 
     public String getCurrentProvider()
@@ -1534,7 +1555,11 @@ public class WikiEngine
     }
 
     /**
-     *  return information about current provider.
+     *  Return information about current provider.  This method just calls
+     *  the corresponding PageManager method, which in turn calls the
+     *  provider method.
+     *  
+     *  @return A textual description of the current provider. 
      *  @since 1.6.4
      */
     public String getCurrentProviderInfo()
@@ -1544,7 +1569,12 @@ public class WikiEngine
 
     /**
      *  Returns a Collection of WikiPages, sorted in time
-     *  order of last change.
+     *  order of last change (i.e. first object is the most
+     *  recently changed).  This method also includes attachments.
+     *  
+     *  @return Collection of WikiPage objects.  In reality, the returned
+     *          collection is a Set, but due to API compatibility reasons,
+     *          we're not changing the signature soon...
      */
 
     // FIXME: Should really get a Date object and do proper comparisons.
@@ -1590,7 +1620,11 @@ public class WikiEngine
     }
 
     /**
-     *  Return a bunch of information from the web page.
+     *  Finds the corresponding WikiPage object based on the page name.  It always finds
+     *  the latest version of a page.
+     *  
+     *  @param pagereq The name of the page to look for.
+     *  @return A WikiPage object, or null, if the page by the name could not be found.
      */
 
     public WikiPage getPage( String pagereq )
@@ -1599,7 +1633,15 @@ public class WikiEngine
     }
 
     /**
-     *  Returns specific information about a Wiki page.
+     *  Finds the corresponding WikiPage object base on the page name and version.
+     *  
+     *  @param pagereq The name of the page to look for.
+     *  @param version The version number to look for.  May be WikiProvider.LATEST_VERSION,
+     *  in which case it will look for the latest version (and this method then becomes
+     *  the equivalent of getPage(String).
+     *  
+     *  @return A WikiPage object, or null, if the page could not be found; or if there
+     *  is no such version of the page.
      *  @since 1.6.7.
      */
 
@@ -1627,6 +1669,10 @@ public class WikiEngine
     /**
      *  Returns a Collection of WikiPages containing the
      *  version history of a page.
+     *  
+     *  @param page Name of the page to look for
+     *  @return an ordered List of WikiPages, each corresponding to a different
+     *          revision of the page.
      */
 
     public List getVersionHistory( String page )
@@ -1690,7 +1736,7 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the rendering manager for this wiki application.
+     *  Returns the current rendering manager for this wiki application.
      *  
      *  @since 2.3.27
      * @return A RenderingManager object.
@@ -1709,6 +1755,11 @@ public class WikiEngine
     {
         return m_pluginManager;
     }
+    
+    /**
+     *  Returns the current variable manager.
+     *  @return The current VariableManager.
+     */
 
     public VariableManager getVariableManager()
     {
@@ -1720,6 +1771,9 @@ public class WikiEngine
      *  throw a NoSuchVariableException, but returns null in case the variable does
      *  not exist.
      *
+     *  @param context WikiContext to look the variable in
+     *  @param name Name of the variable to look for
+     *  @return Variable value, or null, if there is no such variable.
      *  @since 2.2
      */
     public String getVariable( WikiContext context, String name )
@@ -1735,7 +1789,8 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the current PageManager.
+     *  Returns the current PageManager which is responsible for storing
+     *  and managing WikiPages.
      */
     public PageManager getPageManager()
     {
@@ -1743,7 +1798,9 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the current AttachmentManager.
+     *  Returns the current AttachmentManager, which is responsible for
+     *  storing and managing attachments.
+     *  
      *  @since 1.9.31.
      */
     public AttachmentManager getAttachmentManager()
@@ -1790,6 +1847,7 @@ public class WikiEngine
      *  of specialpages to see if this path exists.  It is used to map things
      *  like "UserPreferences.jsp" to page "User Preferences".
      *
+     *  @param path The path to match.  A leading "/" -characters will be stripped.
      *  @return WikiName, or null if a match could not be found.
      */
     private String matchSpecialPagePath( String path )
