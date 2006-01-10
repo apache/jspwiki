@@ -24,11 +24,13 @@ import java.io.InputStream;
 import java.util.*;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
@@ -164,11 +166,24 @@ public class TemplateManager
      *  Attempts to locate a JSP page under the given template.  If that template
      *  does not exist, or the page does not exist under that template, will
      *  attempt to locate a similarly named file under the default template.
+     *  
+     *  @param pageContext The JSP PageContext
+     *  @param template From which template we should seek initially?
+     *  @param name Which resource are we looking for (e.g. "ViewTemplate.jsp")
+     *  @return path to the JSP page; null, if it was not found.
      */
     public String findJSP( PageContext pageContext, String template, String name )
     {
         ServletContext sContext = pageContext.getServletContext();
 
+        if( name == null || template == null )
+        {
+            log.fatal("findJSP() was asked to find a null template or name ("+template+","+name+")."+
+                      " JSP page '"+
+                      ((HttpServletRequest)pageContext.getRequest()).getRequestURI()+"'");
+            throw new InternalWikiException("Illegal arguments to findJSP(); please check logs.");
+        }
+        
         if( name.charAt(0) == '/' )
         {
             // This is already a full path
