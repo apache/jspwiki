@@ -1,3 +1,18 @@
+2006-01-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.67
+        
+        * XHTMLToWikiTranslator now supports <strong> and <em>
+        
+        * XHTMLToWikiTranslator now supports different URL Constructors
+        (which makes FCK run again)
+        
+        * Fix for BugRSSHasInvalidDccreatorProperty (well, not really
+        a fix, but it should play nicer with aggregators).
+        
+        * Refactored XHTMLToWikiTranslator tests - they were actually
+        not working at all... Shame on me for not noticing earlier.
+
 2006-01-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.66
