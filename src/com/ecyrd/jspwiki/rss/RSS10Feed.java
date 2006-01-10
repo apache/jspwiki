@@ -107,7 +107,8 @@ public class RSS10Feed extends Feed
             XML contributor = new XML("dc:creator");
             
             item.addElement( contributor );
-            
+
+            /*
             XML description = new XML("rdf:Description");
             if( m_wikiContext.getEngine().pageExists(author) )
             {
@@ -119,7 +120,13 @@ public class RSS10Feed extends Feed
             
             description.addElement( new XML("value").addElement( format(author) ) );
             contributor.addElement( description );
-           
+           */
+            
+            // Not too many aggregators seem to like this.  Therefore we're
+            // just adding the name here.
+            
+            contributor.addElement( format(author) );
+            
             //  PageHistory
 
             item.addElement( new XML("wiki:history").addElement( engine.getURL( WikiContext.INFO,
