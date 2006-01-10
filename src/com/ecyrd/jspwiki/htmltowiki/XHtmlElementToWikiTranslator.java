@@ -278,13 +278,13 @@ public class XHtmlElementToWikiTranslator
                         }
                     }
                 }
-                else if( n.equals( "b" ) )
+                else if( n.equals( "b" ) || n.equals("strong") )
                 {
                     out.print( "__" );
                     print( e );
                     out.print( "__" );
                 }
-                else if( n.equals( "i" ) )
+                else if( n.equals( "i" ) || n.equals("em") )
                 {
                     out.print( "''" );
                     print( e );
