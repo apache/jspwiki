@@ -1,3 +1,71 @@
+2006-01-10  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.68
+        
+        * We now have basic web unit tests, courtesy of the integration
+        of JWebUnit into build.xml and tests/etc/webtests.xml.
+        Four jars were added to the 'lib' dir for testing. Web unit
+        testing simulates a browser's experience and verifies that
+        the following test cases run properly:
+        - Anonymous viewing (Main and About pages)
+        - Setting asserted name via cookies
+        - Creating user profiles
+        - Logging in to JSPWiki using a password
+        Four combinations are explicitly tested: custom and container
+        authentication, each of these with both the XML and JDBC user
+        database types. Note to developers: the Ant task
+        "webtests" should be part of your test plan. Learn, love
+        and embrace JWebUnit. It's easy to express test cases
+        with it, and we will (no doubt) be creating more test cases
+        as we go... see examples in package com.ecyrd.jspwiki.web.
+        
+        * Rules for accessing UserPreferences in container-mananged
+        environments have been relaxed significantly: users do not
+        have to be logged in to edit preferences or their profiles.
+        Instead, unauthenticated users attempting to create a profile
+        receive a polite error message directing them to log in first.
+        If the container shares user data with JSPWiki, the profile
+        will be saved, and the user will as a result be registered
+        with the container.
+        
+        * UserDatabase interface receives one new method:
+        isSharedWithContainer(), to permit JSPWiki to serve
+        as a web container user registrar (see previous bullet).
+        Also, jspwiki.properties receives a new property: 
+          jspwiki.userdatabase.isSharedWithContainer
+        which defaults to false. Only JDBCUserDatabase uses it now. 
+          
+        * UserCheckTag gains an extra status type: "setPassword"
+        which identifies whether users are allowed to change their
+        JSPWiki passwords. For custom-auth configurations and
+        container-auth configurations with shared user databases,
+        this will be true. For most container auth scenarios (i.e.,
+        where user data is not shared), this will be false.
+        
+        * WikiPermission receives a new permission type, "editProfile"
+        that is better aligned with the streamlined profile pages
+        introduced in 2.3.48; "registerUser" is officially deprecated
+        and will be completely eliminated in a future build. To
+        register users, you MUST add the "editProfile" permission
+        for each required Role, otherwise the profile tab will be blank.
+        I am sorry about this -- but I promise this will absolutely be
+        the last change we make to the policy grammar prior to 
+        official release. See the sample jspwiki.properties.
+        
+        * Bug fix: UserDatabase contract now specifies that setting
+        created/modified timestamps is now the responsibility of
+        the implementation, and is no longer done by UserManager.
+
+        * Bug fix: email field on profile form now obeys the docs:
+        is is now, in fact, optional, and won't prevent profile
+        saving if omitted.
+        
+        * Bug fix: PreferencesContent's tab highlighting works better,
+        if not perfectly. Credit: Dirk Frederickx.
+        
+        * JBoss login-config.xml JAAS sample snipped appended to
+        jspwiki.jaas. Credit: Milt Taylor.
+
 2006-01-10  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.67
