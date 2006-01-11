@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.58 2006-01-05 06:18:28 arj Exp $
+    $Id: build.xml,v 1.59 2006-01-11 03:42:56 arj Exp $
 -->    
        
 <!--   
@@ -317,7 +317,7 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
+       <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,mckoidb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/**" />
@@ -400,14 +400,28 @@
       <delete file="tests/etc/userdatabase.xml.old" />
       <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml" />
       <mkdir dir="tests/etc/WEB-INF" />
-      <copy file="${basedir}/etc/web.xml" tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
       
-      <!-- For testing, turn on container auth -->
-      <replace file="tests/etc/WEB-INF/web.xml"
-               token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-      <replace file="tests/etc/WEB-INF/web.xml"
-               token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+      <!-- Create web.xml files for testing -->
+      <copy file="${basedir}/etc/web.xml" tofile="${tests.build}/web.xml.custom" overwrite="true" />
+      
+      <!-- For web unit tests, turn off SSL (self-signed certs b0rk 
+           the tests) and enable JDBC refs -->
+      <replace file="${tests.build}/web.xml.custom"
+               token="CONFIDENTIAL" value="NONE" />               
+      <replace file="${tests.build}/web.xml.custom"
+               token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
+      <replace file="${tests.build}/web.xml.custom"
+               token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
 
+      <!-- For unit testing, turn on container auth -->
+      <copy file="${tests.build}/web.xml.custom" 
+          tofile="${tests.build}/web.xml.container" overwrite="true" />
+      <replace file="${tests.build}/web.xml.container"
+               token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+      <replace file="${tests.build}/web.xml.container"
+               token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+      <copy file="${tests.build}/web.xml.container" 
+          tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
   </target>
     
   <!-- This target runs the JUnit tests that are available
@@ -444,6 +458,7 @@
                 <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
+                <exclude name="com/ecyrd/jspwiki/web/*.*" />
            </fileset>
         </batchtest>
      </junit>
@@ -466,9 +481,100 @@
          
         <arg value="com.ecyrd.jspwiki.AllTests" />
      </java>
-              
 
   </target>
+
+  <!-- This target runs web unit tests using JWebUnit, which
+       extends JUnit. These tests assumes you have Tomcat
+       or higher installed **and** that it is running on 
+       localhost:8080 when you execute this target. The Manager
+       app must be configured. Also, the Tomcat server's toncat-users.xml
+       file must contain a user named 'pancho' with a password 'secreto'
+       and an assigned role of 'Authenticated'.
+       These tests has been verified to deploy on Tomcat 5.5; 
+       other versions may not work.
+       
+       Of course, you need not use Tomcat in production... but to
+       keep this build file simple, we do require it for web unit tests.
+  -->
+  <target name="webtests" depends="jar,tests-init,jartests,tomcat-init,war">
+    
+    <!-- Build the custom auth WAR -->
+    <webtest-setup context="test-custom"
+      webxml="${tests.build}/web.xml.custom" 
+      props="etc/jspwiki.properties" />
+    
+    <!-- Build the container auth WAR -->
+    <webtest-setup context="test-container"
+      webxml="${tests.build}/web.xml.container" 
+      props="etc/jspwiki.properties" />
+    
+    <!-- Build the custom auth WAR (JDBC database) -->
+    <copy file="etc/jspwiki.properties" 
+        toFile="${tests.build}/jspwiki.properties.custom-jdbc" flatten="true" />
+    <propertyfile file="${tests.build}/jspwiki.properties.custom-jdbc">
+      <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
+    </propertyfile>
+    <webtest-setup context="test-custom-jdbc"
+      webxml="${tests.build}/web.xml.custom" 
+      props="${tests.build}/jspwiki.properties.custom-jdbc" />
+    
+    <!-- Build the container auth WAR (shared JDBC database) and test it -->
+    <copy file="etc/jspwiki.properties" 
+        toFile="${tests.build}/jspwiki.properties.container-jdbc" flatten="true" />
+    <propertyfile file="${tests.build}/jspwiki.properties.container-jdbc">
+      <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
+      <entry key="jspwiki.userdatabase.isSharedWithContainer" value="true" />
+      <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
+    </propertyfile>
+    <webtest-setup context="test-container-jdbc"
+      webxml="${tests.build}/web.xml.container" 
+      props="${tests.build}/jspwiki.properties.container-jdbc" />
+
+    <!-- Run the tests -->
+    <junit printsummary="yes" haltonfailure="no" fork="yes">
+      <classpath>
+        <path refid="path.tests" />
+      </classpath>
+      <formatter type="plain" />
+      <batchtest todir="${tests.reports}">
+        <fileset dir="${tests.src}">
+          <include name="com/ecyrd/jspwiki/web/*Test.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+    
+    <!-- Tear down the test contexts -->
+    <webtest-teardown context="test-custom" />
+    <webtest-teardown context="test-custom-jdbc" />
+    <webtest-teardown context="test-container" />
+    <webtest-teardown context="test-custom-jdbc" />
+  </target>
+  
+  <macrodef name="webtest-setup">
+    <attribute name="context" />
+    <attribute name="webxml" />
+    <attribute name="props" />
+    <sequential>
+      <ant dir="${basedir}" antfile="tests/etc/webtests.xml" 
+        target="webtest-setup" inheritRefs="true">
+        <property name="webtest.context" value="@{context}" />
+        <property name="webtest.webxml"  value="@{webxml}" />
+        <property name="webtest.props"   value="@{props}" />
+      </ant>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="webtest-teardown">
+    <attribute name="context" />
+    <sequential>
+      <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
+        target="webtest-teardown" inheritRefs="true">
+        <property name="webtest.context" value="@{context}" />
+      </ant>
+    </sequential>
+  </macrodef>
+
 
   <!-- ============================================================== -->
 
@@ -634,39 +740,7 @@
         <include name="**/*.png" />
       </tarfileset>
     </tar>
-  </target>
- 
-  <!-- ============================================================== -->
-  
-  <!-- Web unit testing -->
-  
-  <!-- This test assumes you have Tomcat 5 or higher installed
-        **and** that it is running on localhost:8080 when you
-       execute this target. The Manager app must be configured.
-       Right now, the script does nothing other than build WARs
-       for the custom-auth and container-auth versions of
-       JSPWiki, and deploys them to the container. Soon,
-       we will have some real web unit testing courtesy of
-       JWebUnit and friends.
-  -->
-  
-  <target name="webtests" depends="tests-init,tomcat-init,war">
-    
-    <!-- Build the custom auth WAR and test it -->
-    <ant dir="${basedir}" antfile="tests/etc/webtests.xml" 
-      target="webtests" inheritRefs="true">
-      <property name="webtest.context" value="test-custom" />
-      <property name="webtest.webxml"  value="${basedir}/etc/web.xml" />
-    </ant>
-    
-    <!-- Build the container auth WAR and test it -->
-    <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
-      target="webtests" inheritRefs="true">
-      <property name="webtest.context" value="test-container" />
-      <property name="webtest.webxml"  value="${basedir}/tests/etc/WEB-INF/web.xml" />
-    </ant>
-  </target>
-  
+  </target>  
 
   <!-- ============================================================== -->
   

@@ -1,0 +1,18 @@
+<Context path="/test-container-jdbc" debug="0">
+  <Resource name="@jspwiki.userdatabase.datasource@" auth="Container"
+      type="javax.sql.DataSource" 
+      driverClassName="@jdbc.driver.class@"
+      url="@jdbc.driver.url@"
+      username="@jdbc.user.id@" 
+      password="@jdbc.user.password@"
+      maxActive="20" maxIdle="10" maxWait="-1" />
+  <Realm className="org.apache.catalina.realm.DataSourceRealm"
+      dataSourceName="@jspwiki.userdatabase.datasource@"
+      localDataSource="true"
+      digest="SHA" 
+      userTable="@jspwiki.userdatabase.table@"
+      userNameCol="@jspwiki.userdatabase.loginName@"
+      userCredCol="@jspwiki.userdatabase.password@"
+      userRoleTable="@jspwiki.userdatabase.roleTable@"
+      roleNameCol="@jspwiki.userdatabase.role@" />
+</Context>

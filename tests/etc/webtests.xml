@@ -1,10 +1,10 @@
 <project name="JSPWiki-webtests" default="webtests" basedir="tests">
 
   <!-- This Ant build file is designed to be called by the
-       "webtests" task in the top-level build.xml file. If
-       executed by itself, it will fail horribly and make
+       "webtest-setup" macro in the top-level build.xml file.
+       If executed by itself, it will fail horribly and make
        many unpleasant noises. It runs tests against a local
-       web application server running on port 8080.
+       Tomcat web application server running on port 8080.
        
        The tests require a few properties to be defined 
        by the calling Ant script:
@@ -12,30 +12,33 @@
          webtest.context:  The webapp context that will be tested.
                            This will be something like
                            'test-custom' or 'test-container'.
+         webtest.props:    The jspwiki.properties file to use for the test.
          webtest.webxml:   The web.xml file to use for the test.
          webtest.teardown: If not set, leaves WARs deployed on
                            the app server, and does not undeploy
                            them. This property is optional.
                        
-       The test script follows the narrative in doc/web test plan.txt.
-  -->
+       The test scripts are written using JWebUnit, and reside
+       in tests/com/ecyrd/jspwiki/web.
        
-  <!-- The main target. Calls the setup, exec, and teardown targets -->
-  <target name="webtests" depends="webtest-setup,webtest-exec,webtest-teardown,webtest-report" />
-  
-  <!-- Sets up the web tests -->
+       For those of you following along at home, there are
+       some fairly black-belt Ant tricks in here,
+       notably the code that packages up the web contexts.  -->
+       
+  <!-- Checks to see if the context is already deployed -->
   <target name="webtest-setup-init">
     <condition property="context.installed">
       <http url="http://localhost:8080/${webtest.context}/Wiki.jsp" />
     </condition>
-	  <property name="webtest.report" value="tests/reports/webtest-results" />
-	  <mkdir dir="${webtest.report}" />
   </target>
   
+  <!-- The main target. Calls the init target and deploys webapp if needed -->
   <target name="webtest-setup"
     depends="webtest-setup-init" unless="context.installed">
     <echo message="Test context ${webtest.context} not deployed. Deploying..."/>
-    <tomcat-deploy context="${webtest.context}" webxml="${webtest.webxml}" />
+    <tomcat-deploy context="${webtest.context}"
+                    webxml="${webtest.webxml}"
+                     props="${webtest.props}" />
   </target>
     
   <!-- Tears down the web tests -->
@@ -43,13 +46,6 @@
     <tomcat-undeploy context="${webtest.context}" />
   </target>
   
-  <!-- Runs the web tests -->
-  <target name="webtest-exec">
-  </target>
-  
-	<target name="webtest-report">
-	</target>
-	
 	<!-- ============================================================== -->
   
   <!-- Tomcat deployment tasks -->
@@ -65,6 +61,7 @@
   <macrodef name="tomcat-deploy">
     <attribute name="context" />
     <attribute name="webxml" />
+    <attribute name="props" />
     <sequential>
       <!-- We need the tomcat.admin and tomcat.password properties -->
       <check-property prop="tomcat.admin" />
@@ -79,9 +76,39 @@
       
       <!-- Create a context file for Tomcat -->
       <mkdir dir="${tests.build}/@{context}" />
-      <echo file="${tests.build}/@{context}/context.xml"
-            message='&lt;Context path="/@{context}" debug="0"/&gt;' />
-    
+      <copy flatten="true" 
+        file="tests/etc/tomcat/context-@{context}.xml"
+        toFile="${tests.build}/@{context}/context.xml">
+        <filterset>
+          <filtersfile file="tests/etc/jspwiki.properties" />
+          <filtersfile file="build.properties" />
+        </filterset>
+      </copy>
+           
+      <!-- Create a page/log directory and point jspwiki.properties to it -->
+      <mkdir dir="${tests.build}/@{context}/wikipages" />
+      <copy toDir="${tests.build}/@{context}/wikipages" flatten="true" >
+        <fileset dir="src/wikipages">
+          <include name="Main.*" />
+          <include name="LeftMenu*.*" />
+          <include name="About.*" />
+          <include name="RecentChanges.*" />
+          <include name="WikiEtiquette.*" />
+          <include name="UnusedPages.*" />
+          <include name="UndefinedPages.*" />
+          <include name="PageIndex.*" />
+        </fileset>
+      </copy>
+      <copy file="@{props}" toFile="${tests.build}/@{context}/jspwiki.properties" flatten="true" />
+      <propertyfile file="${tests.build}/@{context}/jspwiki.properties">
+        <entry key="jspwiki.fileSystemProvider.pageDir" 
+             value="${basedir}/${tests.build}/@{context}/wikipages" />
+        <entry key="jspwiki.basicAttachmentProvider.storageDir" 
+             value="${basedir}/${tests.build}/@{context}/wikipages" />
+        <entry key="log4j.appender.FileLog.File" 
+             value="${basedir}/${tests.build}/@{context}/jspwiki.log" />
+      </propertyfile>
+      
       <!-- Build the war -->
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
@@ -89,7 +116,8 @@
            excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
          <lib file="${jarfile}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
-         <webinf dir="etc" includes="**" excludes="**.tmpl web.xml" />
+         <webinf dir="etc" includes="**" excludes="**.tmpl web.xml jspwiki.properties" />
+         <webinf dir="${tests.build}/@{context}" includes="jspwiki.properties" />
          <classes dir="etc" includes="oscache.properties" />
          <metainf dir="${tests.build}/@{context}" includes="context.xml" />
       </war>

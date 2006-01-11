@@ -1,0 +1,9 @@
+<Context path="/test-custom-jdbc" debug="0">
+  <Resource name="@jspwiki.userdatabase.datasource@" auth="Container"
+      type="javax.sql.DataSource" 
+      driverClassName="@jdbc.driver.class@"
+      url="@jdbc.driver.url@"
+      username="@jdbc.user.id@" 
+      password="@jdbc.user.password@"
+      maxActive="20" maxIdle="10" maxWait="-1" />
+</Context>
