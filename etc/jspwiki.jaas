@@ -1,4 +1,4 @@
-// $Id: jspwiki.jaas,v 1.2 2005-06-29 22:43:17 jalkanen Exp $
+// $Id: jspwiki.jaas,v 1.3 2006-01-11 03:49:35 arj Exp $
 //
 // This file contains the JAAS login configuration for JSPWiki.
 // It provides the rules that govern how users log into
@@ -7,7 +7,7 @@
 // If you are running your servlet container with a JAAS
 // login configuration file already, you should simply 
 // append the contents of this file to it. Otherwise, you
-// can simply use this as a stand-alone configuration file.
+// can use this as a stand-alone configuration file.
 //
 // To make this configuration active, you will need to specify 
 // the location of this file by setting the JVM system property
@@ -26,6 +26,13 @@
 //
 // In addition, it is typically good practice to store jaas.config
 // in the Tomcat config directory (CATALINA_HOME/conf).
+//
+// Note for JBoss users: JBoss (at least 3 and higher, and possibly older 
+// versions too) use a proprietary, XML-based JAAS configuration syntax.
+// The result is that it will ignore this file, and use its own. To configure
+// JBoss to use our JAAS settings, cut and paste the equivalent XML snippet
+// (shown at the bottom of this file) to your JBoss configuration directory,
+// e.g., $JBOSS_HOME/server/default/deploy/conf/login-config.xml
 //
 
 // -----------------------------------------------------------
@@ -88,3 +95,23 @@ JSPWiki-container {
 JSPWiki-custom {
   com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule    REQUIRED;
 };
+
+// JBoss equivalent (remove slashes and paste into login-config.xml)
+//
+//    <application-policy name="JSPWiki-container">
+//      <authentication>
+//        <login-module code="com.ecyrd.jspwiki.auth.login.WebContainerLoginModule"
+//          flag="sufficient"/>
+//        <login-module code="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule"
+//          flag="sufficient"/>
+//        <login-module code="com.ecyrd.jspwiki.auth.login.AnonymousLoginModule"
+//          flag="sufficient"/>
+//      </authentication>
+//    </application-policy>
+//
+//    <application-policy name="JSPWiki-custom">
+//      <authentication>
+//        <login-module code="com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule"
+//          flag="required"/>
+//      </authentication>
+//    </application-policy>
