@@ -4,66 +4,68 @@ import java.security.Permission;
 import java.util.Arrays;
 
 /**
- * <p>
- * Permission to perform an global wiki operation, such as self-registering or
- * creating new pages. Permission actions include: <code>createGroups</code>,
- * <code>createPages</code>, <code>registerUser</code> and <code>login</code>.
- * </p>
- * <p>The target is a given wiki. The syntax for the target is the wiki name. 
- * "All wikis" can be specified using a wildcard (*). Page
- * collections may also be specified using a wildcard. For pages, the wildcard
- * may be a prefix, suffix, or all by itself.
- * <p>
- * Certain permissions imply others. Currently, <code>createGroups</code>
- * implies <code>createPages</code>, and <code>editPreferences</code>
- * implies <code>registerUser</code>.
- * </p>
+ * <p> Permission to perform an global wiki operation, such as self-registering
+ * or creating new pages. Permission actions include: <code>createGroups</code>,
+ * <code>createPages</code>, <code>editPreferences</code>,
+ * <code>editProfile</code>, <code>registerUser</code> and
+ * <code>login</code>. </p> <p>The target is a given wiki. The syntax for
+ * the target is the wiki name. "All wikis" can be specified using a wildcard
+ * (*). Page collections may also be specified using a wildcard. For pages, the
+ * wildcard may be a prefix, suffix, or all by itself. <p> Certain permissions
+ * imply others. Currently, <code>createGroups</code> implies
+ * <code>createPages</code>. </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2005-09-17 18:21:44 $
+ * @version $Revision: 1.11 $ $Date: 2006-01-11 03:51:36 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
 {
-    private static final long          serialVersionUID = 1L;
+    private static final long          serialVersionUID        = 1L;
 
-    private static final String        CREATE_GROUPS_ACTION = "createGroups";
+    private static final String        CREATE_GROUPS_ACTION    = "createGroups";
 
-    private static final String        CREATE_PAGES_ACTION  = "createPages";
+    private static final String        CREATE_PAGES_ACTION     = "createPages";
 
-    private static final String        LOGIN_ACTION         = "login";
-    
-    private static final String        REGISTER_ACTION      = "registerUser";
+    private static final String        LOGIN_ACTION            = "login";
 
-    private static final String        PREFERENCES_ACTION   = "editPreferences";
-    
-    private static final String        WILDCARD             = "*";
+    private static final String        REGISTER_ACTION         = "registerUser";
 
-    protected static final int         CREATE_GROUPS_MASK   = 0x1;
+    private static final String        EDIT_PREFERENCES_ACTION = "editPreferences";
 
-    protected static final int         CREATE_PAGES_MASK    = 0x2;
+    private static final String        EDIT_PROFILE_ACTION     = "editProfile";
 
-    protected static final int         REGISTER_MASK        = 0x4;
+    private static final String        WILDCARD                = "*";
 
-    protected static final int         PREFERENCES_MASK     = 0x8;
-    
-    protected static final int         LOGIN_MASK           = 0x10;
-    
-    public static final WikiPermission CREATE_GROUPS        = new WikiPermission( WILDCARD, CREATE_GROUPS_ACTION );
+    protected static final int         CREATE_GROUPS_MASK      = 0x1;
 
-    public static final WikiPermission CREATE_PAGES         = new WikiPermission( WILDCARD, CREATE_PAGES_ACTION );
+    protected static final int         CREATE_PAGES_MASK       = 0x2;
 
-    public static final WikiPermission LOGIN                = new WikiPermission( WILDCARD, LOGIN_ACTION );
-    
-    public static final WikiPermission REGISTER             = new WikiPermission( WILDCARD, REGISTER_ACTION );
+    protected static final int         REGISTER_MASK           = 0x4;
 
-    public static final WikiPermission PREFERENCES          = new WikiPermission( WILDCARD, PREFERENCES_ACTION );
+    protected static final int         EDIT_PREFERENCES_MASK   = 0x8;
+
+    protected static final int         EDIT_PROFILE_MASK       = 0x20;
+
+    protected static final int         LOGIN_MASK              = 0x10;
+
+    public static final WikiPermission CREATE_GROUPS           = new WikiPermission( WILDCARD, CREATE_GROUPS_ACTION );
+
+    public static final WikiPermission CREATE_PAGES            = new WikiPermission( WILDCARD, CREATE_PAGES_ACTION );
+
+    public static final WikiPermission LOGIN                   = new WikiPermission( WILDCARD, LOGIN_ACTION );
+
+    public static final WikiPermission REGISTER                = new WikiPermission( WILDCARD, REGISTER_ACTION );
+
+    public static final WikiPermission EDIT_PREFERENCES        = new WikiPermission( WILDCARD, EDIT_PREFERENCES_ACTION );
+
+    public static final WikiPermission EDIT_PROFILE            = new WikiPermission( WILDCARD, EDIT_PROFILE_ACTION );
     
     private final String               m_actionString;
-    
+
     private final String               m_wiki;
 
     private final int                  m_mask;
-    
+
     /**
      * Creates a new WikiPermission for a specified set of actions.
      * @param actions the actions for this permission
@@ -88,8 +90,8 @@ public final class WikiPermission extends Permission
     }
 
     /**
-     * Two WikiPermission objects are considered equal if their wikis and actions
-     * (after normalization) are equal.
+     * Two WikiPermission objects are considered equal if their wikis and
+     * actions (after normalization) are equal.
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public final boolean equals( Object obj )
@@ -104,8 +106,9 @@ public final class WikiPermission extends Permission
 
     /**
      * Returns the actions for this permission: "createGroups", "createPages",
-     * "editPreferences", "login" or "registerUser". The actions will always be
-     * sorted in alphabetic order, and will always appear in lower case.
+     * "editPreferences", "editProfile", "login" or "registerUser". The actions
+     * will always be sorted in alphabetic order, and will always appear in
+     * lower case.
      * @see java.security.Permission#getActions()
      */
     public final String getActions()
@@ -114,8 +117,8 @@ public final class WikiPermission extends Permission
     }
 
     /**
-     * Returns the name of the wiki containing the page represented by
-     * this permission; may return the wildcard string.
+     * Returns the name of the wiki containing the page represented by this
+     * permission; may return the wildcard string.
      * @return the wiki
      */
     public final String getWiki()
@@ -138,9 +141,9 @@ public final class WikiPermission extends Permission
      * WikiPermission's actions are equal to, or a subset of, those for this
      * permission.
      * @param permission the permission which may (or may not) be implied by
-     *            this instance
+     * this instance
      * @return <code>true</code> if the permission is implied,
-     *         <code>false</code> otherwise
+     * <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
     public final boolean implies( Permission permission )
@@ -157,7 +160,7 @@ public final class WikiPermission extends Permission
 
         // Build up an "implied mask" for actions
         int impliedMask = impliedMask( m_mask );
-        
+
         // If actions aren't a proper subset, return false
         return ( impliedWiki && ( impliedMask & p.m_mask ) == p.m_mask );
     }
@@ -173,8 +176,7 @@ public final class WikiPermission extends Permission
 
     /**
      * Creates an "implied mask" based on the actions originally assigned: for
-     * example, createGroups implies createPages and editPreferences implies
-     * registerUser.
+     * example, <code>createGroups</code> implies <code>createPages</code>.
      * @param mask the initial mask
      * @return the implied mask
      */
@@ -183,10 +185,6 @@ public final class WikiPermission extends Permission
         if ( ( mask & CREATE_GROUPS_MASK ) > 0 )
         {
             mask |= CREATE_PAGES_MASK;
-        }
-        if ( ( mask & PREFERENCES_MASK ) > 0 )
-        {
-            mask |= REGISTER_MASK;
         }
         return mask;
     }
@@ -220,9 +218,13 @@ public final class WikiPermission extends Permission
             {
                 mask |= LOGIN_MASK;
             }
-            else if ( action.equalsIgnoreCase( PREFERENCES_ACTION ) )
+            else if ( action.equalsIgnoreCase( EDIT_PREFERENCES_ACTION ) )
             {
-                mask |= PREFERENCES_MASK;
+                mask |= EDIT_PREFERENCES_MASK;
+            }
+            else if ( action.equalsIgnoreCase( EDIT_PROFILE_ACTION ) )
+            {
+                mask |= EDIT_PROFILE_MASK;
             }
             else if ( action.equalsIgnoreCase( REGISTER_ACTION ) )
             {

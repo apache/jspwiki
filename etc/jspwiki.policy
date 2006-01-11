@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.11 2005-11-29 07:01:40 arj Exp $
+// $Id: jspwiki.policy,v 1.12 2006-01-11 03:52:05 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -7,15 +7,14 @@
 //
 // If you are running your servlet container with a security
 // policy already, you should simply append the contents
-// of this file to it. Otherwise, you can simply use this
-// as a stand-alone policy, even without running a 
-// security manager.
+// of this file to it. Otherwise, you can use this as a
+// stand-alone policy, even without running a security manager.
 //
 // By default, JSPWiki will load this policy into your web
 // container if it detects that no custom policies are being
 // used. In most cases, this should work just fine.
 //
-// If you want to use a policy file other than this default example,
+// If you want to use your own policy file instead of this default file,
 // you will need to specify the location of the policy by setting the
 // JVM system property 'java.security.policy' in the command line script
 // you use to start your web container. The file location should
@@ -42,6 +41,7 @@
 // to resolve our custom Wiki/PagePermissions. The keystore is specified in the
 // first line of the file, as shown below. If the path is not fully qualified, 
 // the JRE will assume it's in the same directory as this policy file.
+
 keystore "jspwiki.jks";
 
 // JSPWiki itself needs some basic privileges in order to operate.
@@ -73,8 +73,8 @@ grant signedBy "jspwiki"
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
 };
 
 
@@ -89,8 +89,8 @@ grant signedBy "jspwiki"
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "view";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
 };
 
 
@@ -103,9 +103,9 @@ grant signedBy "jspwiki"
   principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,rename";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
 };
 
 
@@ -115,7 +115,7 @@ grant signedBy "jspwiki"
   principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "rename,delete";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "rename,delete";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "registerUser";
-    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
 };

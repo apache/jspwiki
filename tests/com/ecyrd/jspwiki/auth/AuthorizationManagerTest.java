@@ -136,7 +136,8 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Anonymous upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertFalse( "Anonymous rename",  m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertFalse( "Anonymous delete",  m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Anonymous register", m_auth.checkStaticPermission( s, WikiPermission.REGISTER ) );
+        assertTrue( "Anonymous prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Anonymous profile",  m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
         assertTrue( "Anonymous pages",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
         assertFalse( "Anonymous groups",  m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
         
@@ -148,7 +149,8 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Asserted upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertFalse( "Asserted rename",  m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertFalse( "Asserted delete",  m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Asserted register", m_auth.checkStaticPermission( s, WikiPermission.REGISTER ) );
+        assertTrue( "Asserted prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Asserted profile",  m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
         assertTrue( "Asserted pages",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
         assertFalse( "Asserted groups",  m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
         
@@ -160,7 +162,8 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Authenticated upload",    m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertTrue( "Authenticated rename",    m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertFalse( "Authenticated delete",   m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Authenticated register",  m_auth.checkStaticPermission( s, WikiPermission.REGISTER ) );
+        assertTrue( "Authenticated prefs",     m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Authenticated profile",   m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
         assertTrue( "Authenticated pages",     m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
         assertTrue( "Authenticated groups",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
         
@@ -172,7 +175,8 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Admin upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertTrue( "Admin rename",   m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertTrue( "Admin delete",   m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Admin register", m_auth.checkStaticPermission( s, WikiPermission.REGISTER ) );
+        assertTrue( "Admin prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Admin profile",  m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
         assertTrue( "Admin pages",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
         assertTrue( "Admin groups",   m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
     }
@@ -291,7 +295,6 @@ public class AuthorizationManagerTest extends TestCase
         WikiPage p = m_engine.getPage("TestDefaultPage");
         m_context = new WikiContext( m_engine, p );
         m_session = m_context.getWikiSession();
-        String wiki = m_engine.getApplicationName();
 
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
         
@@ -384,7 +387,6 @@ public class AuthorizationManagerTest extends TestCase
         WikiPage p = m_engine.getPage( "Test" );
         m_context = new WikiContext( m_engine, p );
         m_session = m_context.getWikiSession();
-        String wiki = m_engine.getApplicationName();
 
         // Foo is in the ACL and can read
         Principal principal = new WikiPrincipal( "Foo" );

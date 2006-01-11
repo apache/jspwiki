@@ -34,7 +34,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
  *  Tells whether the user in the current wiki context possesses a particular
  *  permission. The permission is typically a PagePermission (e.g., "edit", "view",
  *  "delete", "comment", "upload"). It may also be a wiki-wide WikiPermission
- *  ("createPages", "createGroups", "registerUser", "editPreferences", "login").
+ *  ("createPages", "createGroups", "editProfile", "editPreferences", "login").
  *
  *  @author Janne Jalkanen
  *  @since 2.0
@@ -64,7 +64,7 @@ public class PermissionTag
         WikiSession session        = m_wikiContext.getWikiSession();
         
         if ( "createGroups".equals(m_permission) || "createPages".equals(m_permission)
-             || "registerUser".equals( m_permission ) || "editPreferences".equals( m_permission )
+             || "editPreferences".equals( m_permission ) || "editProfile".equals( m_permission )
              || "login".equals( m_permission ) )
         {
             got_permission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), m_permission ) );
