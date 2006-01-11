@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-08-07 21:15:19 $
+ * @version $Revision: 1.5 $ $Date: 2006-01-11 03:47:20 $
  * @since 2.3
  */
 public interface UserDatabase
@@ -129,6 +129,13 @@ public interface UserDatabase
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
+     * Returns <code>true</code> if this user database shares user/password data with the
+     * web container; <code>false</false> otherwise.
+     * @return the result
+     */
+    public boolean isSharedWithContainer();
+    
+    /**
      * Factory method that instantiates a new user profile.
      * The {@link UserProfile#isNew()} method of profiles created using
      * this method should return <code>true</code>.
@@ -150,11 +157,10 @@ public interface UserDatabase
      * already exists and the password is null, it should retain its previous
      * value, rather than being set to null.
      * </p>
-     * <p>Implementations are not required to time-stamp the creation
-     * or modification fields of the UserProfile; this should be
-     * handled by the calling class (such as UserManager)./p>
+     * <p>Implementations are <em>required</em> to time-stamp the creation
+     * or modification fields of the UserProfile./p>
      * <p>
-     * Calling classes should generally also call
+     * Calling classes should generally call
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#refreshCredentials(WikiSession)} after
      * calling this method to ensure that Principals are reloaded into the
      * current WikiSession's Subject.
