@@ -66,7 +66,7 @@
         * Bug fix: etc/db was erroneously (if harmlessly) being
         included in WAR builds.
         
-        * JBoss login-config.xml JAAS sample snipped appended to
+        * JBoss login-config.xml JAAS sample snippet appended to
         jspwiki.jaas. Credit: Milt Taylor.
 
 2006-01-10  Janne Jalkanen <jalkanen@ecyrd.com>
