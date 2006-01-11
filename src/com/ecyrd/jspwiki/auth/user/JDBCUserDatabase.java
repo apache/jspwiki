@@ -1,10 +1,6 @@
 package com.ecyrd.jspwiki.auth.user;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Date;
 import java.util.Properties;
 
@@ -14,6 +10,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -122,7 +119,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
  * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-01-11 03:46:21 $
+ * @version $Revision: 1.6 $ $Date: 2006-01-11 07:46:16 $
  * @since 2.3
  */public class JDBCUserDatabase extends AbstractUserDatabase
 {
@@ -296,7 +293,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             m_findRoles       = "SELECT * FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
             
             // Set the "share users with container flag"
-            m_sharedWithContainer = Boolean.parseBoolean( props.getProperty( PROP_SHARED_WITH_CONTAINER, "false" ) );
+            m_sharedWithContainer = TextUtil.isPositive( props.getProperty( PROP_SHARED_WITH_CONTAINER, "false" ) );
         }
         catch( NamingException e )
         {
