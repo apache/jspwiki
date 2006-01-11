@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -121,7 +122,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
  * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-01-05 06:17:46 $
+ * @version $Revision: 1.5 $ $Date: 2006-01-11 03:46:21 $
  * @since 2.3
  */public class JDBCUserDatabase extends AbstractUserDatabase
 {
@@ -196,6 +197,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     private String m_wikiName = null;
     private String m_created = null;
     private String m_modified = null;
+    private boolean m_sharedWithContainer = false;
 
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#commit()
@@ -292,6 +294,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                               + m_role
                               + ") VALUES (?,?)";
             m_findRoles       = "SELECT * FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
+            
+            // Set the "share users with container flag"
+            m_sharedWithContainer = Boolean.parseBoolean( props.getProperty( PROP_SHARED_WITH_CONTAINER, "false" ) );
         }
         catch( NamingException e )
         {
@@ -316,7 +321,17 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
-     * Attempts to find the user profile first by LoginName.
+     * Determines whether the user database shares user/password data with the
+     * web container; returns <code>true</code> if the JSPWiki property
+     * <code>jspwiki.userdatabase.isSharedWithContainer</code> is <code>true</code>.
+     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#isSharedWithContainer()
+     */
+    public boolean isSharedWithContainer()
+    {
+        return m_sharedWithContainer;
+    }
+    
+    /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#save(com.ecyrd.jspwiki.auth.user.UserProfile)
      */
     public void save( UserProfile profile ) throws WikiSecurityException
@@ -367,6 +382,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         try
         {
             Timestamp ts = new Timestamp( System.currentTimeMillis() );
+            Date modDate = new Date( ts.getTime() );
             if ( existingProfile == null )
             {
                 // User is new: insert new user record
@@ -381,22 +397,27 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.execute();
                 
                 // Insert role record if no roles yet
-                ps = conn.prepareStatement( m_findRoles );
-                ps.setString( 1, profile.getLoginName() );
-                ResultSet rs = ps.executeQuery();
-                int roles = 0;
-                while ( rs.next() )
+                if ( m_sharedWithContainer )
                 {
-                    roles++;
-                }
-                if ( roles == 0 )
-                {
-                    ps = conn.prepareStatement( m_insertRole );
+                    ps = conn.prepareStatement( m_findRoles );
                     ps.setString( 1, profile.getLoginName() );
-                    ps.setString( 2, m_initialRole );
-                    ps.execute();
+                    ResultSet rs = ps.executeQuery();
+                    int roles = 0;
+                    while ( rs.next() )
+                    {
+                        roles++;
+                    }
+                    if ( roles == 0 )
+                    {
+                        ps = conn.prepareStatement( m_insertRole );
+                        ps.setString( 1, profile.getLoginName() );
+                        ps.setString( 2, m_initialRole );
+                        ps.execute();
+                    }
                 }
                 
+                // Set the profile creation time
+                profile.setCreated( modDate );
             }
             else
             {
@@ -410,6 +431,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.setString(6, profile.getLoginName() );
                 ps.execute();
             }
+            // Set the profile mod time
+            profile.setLastModified( modDate );
         }
         catch ( SQLException e )
         {

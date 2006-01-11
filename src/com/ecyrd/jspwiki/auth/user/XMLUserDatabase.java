@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,7 +56,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2006-01-05 06:05:41 $
+ * @version $Revision: 1.11 $ $Date: 2006-01-11 03:46:21 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -310,6 +311,16 @@ public class XMLUserDatabase extends AbstractUserDatabase
             }
         }
     }
+    
+    /**
+     * Determines whether the user database shares user/password data with the
+     * web container; always returns <code>false</code>.
+     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#isSharedWithContainer()
+     */
+    public boolean isSharedWithContainer()
+    {
+        return false;
+    }
 
     /**
      * Saves a {@link UserProfile}to the user database, overwriting the
@@ -329,26 +340,27 @@ public class XMLUserDatabase extends AbstractUserDatabase
         String index = profile.getLoginName();
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         Element user = null;
+        boolean isNew = true;
         for( int i = 0; i < users.getLength(); i++ )
         {
             Element currentUser = (Element) users.item( i );
             if ( currentUser.getAttribute( LOGIN_NAME ).equals( index ) )
             {
                 user = currentUser;
+                isNew = false;
+                break;
             }
         }
-        if ( user == null )
+        Date modDate = new Date( System.currentTimeMillis() );
+        if ( isNew )
         {
+            profile.setCreated( modDate );
             log.info( "Creating new user " + index );
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
+            setAttribute( user, CREATED, c_format.format( modDate ) );
         }
-        if ( profile.getCreated() != null ) {
-            setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
-        }
-        if ( profile.getLastModified() != null ) {
-            setAttribute( user, LAST_MODIFIED, c_format.format( profile.getLastModified() ) );
-        }
+        setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
         setAttribute( user, WIKI_NAME, profile.getWikiName() );
@@ -365,6 +377,12 @@ public class XMLUserDatabase extends AbstractUserDatabase
             }
         }
 
+        // Set the profile timestamps
+        if ( isNew )
+        {
+            profile.setCreated( modDate );
+        }
+        profile.setLastModified( modDate );
     }
 
     /**
