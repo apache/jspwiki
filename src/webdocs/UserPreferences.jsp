@@ -6,8 +6,6 @@
 <%@ page import="com.ecyrd.jspwiki.WikiSession" %>
 <%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
 <%@ page import="com.ecyrd.jspwiki.auth.NoSuchPrincipalException" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthorizationManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.UserManager" %>
 <%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
@@ -40,13 +38,10 @@
     // Extract the user profile and action attributes
     UserManager userMgr = wiki.getUserManager();
     UserProfile profile = userMgr.parseProfile( wikiContext );
-
-    // Is the user allowed to save a profile?
     WikiSession wikiSession = wikiContext.getWikiSession();
-    AuthorizationManager authMgr = wiki.getAuthorizationManager();
-    boolean canSaveProfile = authMgr.checkPermission( wikiSession, WikiPermission.REGISTER );
-    
-    if( canSaveProfile && "saveProfile".equals(request.getParameter("action")) )
+
+    // Are we saving the profile?
+    if( "saveProfile".equals(request.getParameter("action")) )
     {
         // Validate the profile
         userMgr.validateProfile( wikiContext, profile );
@@ -56,7 +51,7 @@
         {
             try
             {
-                userMgr.setUserProfile( wikiContext.getWikiSession(), profile );
+                userMgr.setUserProfile( wikiSession, profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             }
             catch( DuplicateUserException e )

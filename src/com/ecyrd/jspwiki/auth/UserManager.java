@@ -19,8 +19,8 @@
 */
 package com.ecyrd.jspwiki.auth;
 
+import java.security.Permission;
 import java.security.Principal;
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
@@ -35,7 +35,11 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
-import com.ecyrd.jspwiki.auth.user.*;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
+import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -43,7 +47,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.42 $ $Date: 2005-12-12 07:03:48 $
+ *  @version $Revision: 1.43 $ $Date: 2006-01-11 03:45:32 $
  *  @since 2.3
  */
 public class UserManager
@@ -230,7 +234,8 @@ public class UserManager
         Principal user = null;
         
         // If user is authenticated, figure out if this is an existing profile
-        if ( session.isAuthenticated() ) {
+        if ( session.isAuthenticated() )
+        {
             user = session.getUserPrincipal();
             try
             {
@@ -276,11 +281,18 @@ public class UserManager
     public void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
             DuplicateUserException
     {
+        // Verify user is allowed to save profile!
+        Permission p = new WikiPermission( m_engine.getApplicationName(), "editProfile" );
+        if ( !m_engine.getAuthorizationManager().checkPermission( session, p ) )
+        {
+            throw new WikiSecurityException( "You are not allowed to save wiki profiles." );
+        }
 
+        // Check if profile is new, and see if container allows creation
         boolean newProfile = profile.isNew();
-        UserProfile oldProfile = getUserProfile( session );
 
         // User profiles that may already have wikiname, fullname or loginname
+        UserProfile oldProfile = getUserProfile( session );
         UserProfile otherProfile;
         try
         {
@@ -316,12 +328,7 @@ public class UserManager
         {
         }
 
-        Date modDate = new Date();
-        if ( newProfile )
-        {
-            profile.setCreated( modDate );
-        }
-        profile.setLastModified( modDate );
+        // Save the profile (userdatabase will take care of timestamps for us)
         m_database.save( profile );
         m_database.commit();
 
@@ -371,22 +378,24 @@ public class UserManager
         String email = request.getParameter( "email" );
         loginName = InputValidator.isBlank( loginName ) ? null : loginName;
         password = InputValidator.isBlank( password ) ? null : password;
-        wikiname = InputValidator.isBlank( wikiname ) ? null : wikiname.replaceAll("\\s", "");
+        wikiname = InputValidator.isBlank( wikiname ) ? null : wikiname.replaceAll( "\\s", "" );
         fullname = InputValidator.isBlank( fullname ) ? null : fullname;
         email = InputValidator.isBlank( email ) ? null : email;
-        
-        // If using container auth, login name is always taken from container
-        if ( context.getWikiSession().isAuthenticated() &&
-             m_engine.getAuthenticationManager().isContainerAuthenticated() )
+
+        // A special case if we have container authentication
+        if ( m_engine.getAuthenticationManager().isContainerAuthenticated() )
         {
-            loginName = context.getWikiSession().getLoginPrincipal().getName();
+            // If authenticated, login name is always taken from container
+            if ( context.getWikiSession().isAuthenticated() ) {
+                loginName = context.getWikiSession().getLoginPrincipal().getName();
+            }
         }
         
         if ( profile.isNew() )
         {
             // If new profile, use whatever values the user supplied
             profile.setLoginName( loginName );
-            profile.setEmail( email);
+            profile.setEmail( email );
             profile.setFullname( fullname );
             profile.setPassword( password );
             profile.setWikiName( wikiname );
@@ -395,7 +404,7 @@ public class UserManager
         {
             // If modifying an existing profile, always override
             // the timestamp, login name, full name and wiki name properties
-            profile.setEmail( email);
+            profile.setEmail( email );
             profile.setPassword( password );
         }
         return profile;
@@ -405,10 +414,10 @@ public class UserManager
      * Validates a user profile, and appends any errors to the session errors
      * list. If the profile is new, the password will be checked to make sure it
      * isn't null. Otherwise, the password is checked for length and that it
-     * matches the value of the 'password2' HTTP parameter. Note that we have
-     * a special case when container-managed authentication is used and
-     * the user is not authenticated; this will always cause validation to fail.
-     * Any validation errors are added to the wiki session's messages collection
+     * matches the value of the 'password2' HTTP parameter. Note that we have a
+     * special case when container-managed authentication is used and the user
+     * is not authenticated; this will always cause validation to fail. Any
+     * validation errors are added to the wiki session's messages collection
      * (see {@link WikiSession#getMessages()}.
      * @param context the current wiki context
      * @param profile the supplied UserProfile
@@ -419,16 +428,19 @@ public class UserManager
         WikiSession session = context.getWikiSession();
         InputValidator validator = new InputValidator( "profile", session );
         
-        if ( !context.getWikiSession().isAuthenticated()
-             && m_engine.getAuthenticationManager().isContainerAuthenticated() )
+        // If container-managed auth and user not logged in, throw an error
+        // unless we're allowed to add profiles to the container
+        if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
+             && !context.getWikiSession().isAuthenticated() 
+             && !m_database.isSharedWithContainer() )
         {
-            session.addMessage( "You must log in before creating a profile." );
+            session.addMessage( "profile", "You must log in before creating a profile." );
         }
 
         validator.validateNotNull( profile.getLoginName(), "Login name" );
         validator.validateNotNull( profile.getWikiName(), "Wiki name" );
         validator.validateNotNull( profile.getFullname(), "Full name" );
-        validator.validateNotNull( profile.getEmail(), "E-mail address", InputValidator.EMAIL );
+        validator.validate( profile.getEmail(), "E-mail address", InputValidator.EMAIL );
         
         // If new profile, passwords must match and can't be null
         if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
@@ -489,6 +501,11 @@ public class UserManager
 
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
+        }
+        
+        public boolean isSharedWithContainer()
+        {
+            return false;
         }
 
         public void save( UserProfile profile ) throws WikiSecurityException

@@ -14,12 +14,12 @@
     prefsVisible   = "display:none;";
     prefsClass     = "inactiveTab";
     profileVisible = "display:block;";
-    profileClass   = "activeTab";
+    profileClass   = "activetab";
   }
   else
   {
     prefsVisible   = "display:block;";
-    prefsClass     = "activeTab";
+    prefsClass     = "activetab";
     profileVisible = "display:none;";
     profileClass   = "inactiveTab";
   }
@@ -40,7 +40,7 @@
 <!-- Tab definitions -->
 <div class="tabmenu">
   <span>
-    <a class="activetab" id="menu-prefs" class="<%=prefsClass%>" onclick="TabbedSection.onclick('prefs')" >Preferences</a>
+    <a id="menu-prefs" class="<%=prefsClass%>" onclick="TabbedSection.onclick('prefs')" >Preferences</a>
   </span>
   <span>
     <a id="menu-profile" class="<%=profileClass%>" onclick="TabbedSection.onclick('profile')" >Profile</a>
@@ -116,7 +116,7 @@
   
   <!-- Tab 2: If user can register, allow edits to profile -->
   <div id="profile" class="tab-Profile" style="<%=profileVisible%>">
-    <wiki:Permission permission="registerUser">
+    <wiki:Permission permission="editProfile">
       <div class="formcontainer">
         <div class="instructions">
           <wiki:UserProfile property="new">
@@ -137,33 +137,22 @@
           <!-- Login name -->
           <div class="block">
             <label>Login name</label>
-            
-            <wiki:UserCheck status="customAuth">
-              <wiki:UserProfile property="new">
-                <input type="text" name="loginname" size="30" value="<wiki:UserProfile property="loginname"/>" />
-                <div class="description">
-                  This is your login id; once set, it cannot be changed.
-                  It is only used for authentication, not for page access control.
-                </div>
-              </wiki:UserProfile>
-              <wiki:UserProfile property="exists">
-                <p><wiki:UserProfile property="loginname"/></p>
-                <div class="description">
-                  This is your login id.
-                </div>
-              </wiki:UserProfile>
-            </wiki:UserCheck>
-            
-            <wiki:UserCheck status="containerAuth">
+            <wiki:UserProfile property="new">
+              <input type="text" name="loginname" size="30" value="<wiki:UserProfile property="loginname"/>" />
+              <div class="description">
+                This is your login id; once set, it cannot be changed.
+              </div>
+            </wiki:UserProfile>
+            <wiki:UserProfile property="exists">
               <p><wiki:UserProfile property="loginname"/></p>
               <div class="description">
                 This is your login id.
               </div>
-            </wiki:UserCheck>
+            </wiki:UserProfile>
           </div>
           
           <!-- Password; not displayed if container auth used -->
-          <wiki:UserCheck status="customAuth">
+          <wiki:UserCheck status="setPassword">
             <div class="block">
               <label>Password</label>
               <input type="password" name="password" size="30" value="" />

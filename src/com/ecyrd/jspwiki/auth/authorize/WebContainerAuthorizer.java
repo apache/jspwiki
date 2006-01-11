@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2005-10-19 04:10:47 $
+ * @version $Revision: 1.11 $ $Date: 2006-01-11 03:45:32 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -73,8 +73,7 @@ public class WebContainerAuthorizer implements Authorizer
         if ( webxml != null )
         {
             m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.ALL )
-                    && isConstrained( webxml, "/Login.jsp", Role.ALL )
-                    && isConstrained( webxml, "/UserPreferences.jsp", Role.ALL );
+                    && isConstrained( webxml, "/Login.jsp", Role.ALL );
         }
         if ( m_containerAuthorized )
         {
@@ -153,12 +152,12 @@ public class WebContainerAuthorizer implements Authorizer
      * method parses JSPWiki's web application descriptor (<code>web.xml</code>)
      * and identifies whether the string representation of
      * {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} is required
-     * to access <code>/Delete.jsp</code>, <code>/UserPreferences.jsp</code>
-     * and <code>LoginRedirect.jsp</code>. If the administrator has
-     * uncommented the large <code>&lt;security-constraint&gt;</code> section
-     * of <code>web.xml</code>, this will be true. This is admittedly an
-     * indirect way to go about it, but it should be an accurate test for
-     * default installations, and also in 99% of customized installs.
+     * to access <code>/Delete.jsp</code> and <code>LoginRedirect.jsp</code>.
+     * If the administrator has uncommented the large 
+     * <code>&lt;security-constraint&gt;</code> section of <code>web.xml</code>,
+     * this will be true. This is admittedly an indirect way to go about it, but
+     * it should be an accurate test for default installations, and also in 99%
+     * of customized installs.
      * @return <code>true</code> if the container protects resources,
      *         <code>false</code> otherwise
      */

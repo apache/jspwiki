@@ -214,7 +214,6 @@
            <url-pattern>/Register.jsp</url-pattern>
            <url-pattern>/Rename.jsp</url-pattern>
            <url-pattern>/Upload.jsp</url-pattern>
-           <url-pattern>/UserPreferences.jsp</url-pattern>
            <http-method>DELETE</http-method>
            <http-method>GET</http-method>
            <http-method>HEAD</http-method>
@@ -263,8 +262,8 @@
    </security-role>
    
    REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  -->
-
-<!--
+ 
+   <!--  REMOVE ME TO ENABLE JDBC DATABASE
    <resource-ref>
        <description>
            Resource reference to JNDI factory for the JDBCUserDatabase.
@@ -279,6 +278,6 @@
            Container
        </res-auth>
    </resource-ref>
--->
+   REMOVE ME TO ENABLE JDBC DATABASE  -->
 
 </web-app>
