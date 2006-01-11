@@ -344,17 +344,18 @@ jspwiki.plugin.searchPath =
 #  users can perform based on their authenticated identities.
 #
 #  For users looking to get started quickly, the default settings below
-#  should work fine. In addition to the properties below, you MUST set
-#  the following JRE runtime properties when running JSPWiki or
-#  the servlet container it runs in:
+#  should work fine. In addition to the properties below, you may also
+#  want to set the following JRE runtime properties when running JSPWiki
+#  or the servlet container it runs in:
 #
-#     java.security.auth.login.config
-#     java.security.policy
+#     java.security.auth.login.config==/path-to/jspwiki.jass
+#     java.security.policy=/path-to/jspwiki.policy
 #
 #  See the jspwiki.properties and jspwiki.jaas files for more details on
-#  how to do this. These files also contain addition configuration 
-#  options for the JSPWiki security policy and authentication, respectively,
-#  although the defaults should work fine.
+#  how to do this. These files contain addition configuration options
+#  for the JSPWiki security policy and authentication, respectively, although
+#  the defaults should work fine. If you don't set the JRE properties,
+#  JSPWiki will use default versions from the WEB-INF directory.
 
 #  AUTHENTICATION
 #  For authentication, JSPWiki uses JAAS (Java Authentication and Authorization
@@ -427,7 +428,7 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 #  with compatible columns and tables. If you don't know what this means,
 #  then leave this property set to FALSE (the default).
 
-#jspwiki.userdatabase.addContainerUsers = false
+#jspwiki.userdatabase.isSharedWithContainer = false
 
 #  ADMIN USER
 #  The name of the user who will be treated as the superuser. The admin
