@@ -63,6 +63,9 @@
         * Bug fix: PreferencesContent's tab highlighting works better,
         if not perfectly. Credit: Dirk Frederickx.
         
+        * Bug fix: etc/db was erroneously (if harmlessly) being
+        included in WAR builds.
+        
         * JBoss login-config.xml JAAS sample snipped appended to
         jspwiki.jaas. Credit: Milt Taylor.
 

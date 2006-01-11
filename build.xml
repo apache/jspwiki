@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.59 2006-01-11 03:42:56 arj Exp $
+    $Id: build.xml,v 1.60 2006-01-11 04:08:38 arj Exp $
 -->    
        
 <!--   
@@ -320,7 +320,7 @@
        <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,mckoidb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" />
-       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/**" />
+       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** db/**" />
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
