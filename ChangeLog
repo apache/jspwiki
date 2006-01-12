@@ -7,6 +7,8 @@
         to JDBC setup scripts to inject test users into database
         at setup time.
         
+        * Added 'create wiki group' web unit test
+        
 2006-01-10  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.68
