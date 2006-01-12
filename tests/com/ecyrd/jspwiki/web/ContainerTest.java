@@ -17,9 +17,4 @@ public class ContainerTest extends CommonTests
         t.assertTextPresent( "Could not save profile: You must log in before creating a profile." );
     }
 
-    public void testLogin()
-    {
-        login( USER );
-    }
-
 }

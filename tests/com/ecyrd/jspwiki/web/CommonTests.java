@@ -99,7 +99,7 @@ public class CommonTests extends TestCase
         return String.valueOf( System.currentTimeMillis() );
     }
     
-    protected void login( String user )
+    public void testLogin()
     {
         // Start at front page; try to log in
         t.beginAt( "/Wiki.jsp?page=Main" );
@@ -111,12 +111,12 @@ public class CommonTests extends TestCase
         t.assertFormElementPresent( "j_username" );
         t.assertFormElementPresent( "j_password" );
         t.assertSubmitButtonPresent( "action" );
-        t.setFormElement( "j_username", user );
-        t.setFormElement( "j_password", PASSWORD );
+        t.setFormElement( "j_username", "janne" );
+        t.setFormElement( "j_password", "myP@5sw0rd" );
         t.submit( "action" );
         t.assertTextNotPresent( "Please sign in" );
         t.assertTextPresent( "G'day" );
-        t.assertTextPresent( "Pancho" ); // This is a hack: detecting full
+        t.assertTextPresent( "Janne" ); // This is a hack: detecting full
                                             // name isn't working (?)
         t.assertTextPresent( "(authenticated)" );
     }

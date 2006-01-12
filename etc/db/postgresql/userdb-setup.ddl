@@ -21,3 +21,25 @@ create user @jdbc.user.id@ with encrypted password '@jdbc.user.password@' nocrea
 
 grant select, insert, update, delete on @jspwiki.userdatabase.table@ to @jdbc.user.id@;
 grant select, insert on @jspwiki.userdatabase.roleTable@ to @jdbc.user.id@;
+
+insert into @jspwiki.userdatabase.table@ (
+  @jspwiki.userdatabase.email@,
+  @jspwiki.userdatabase.fullName@,
+  @jspwiki.userdatabase.loginName@,
+  @jspwiki.userdatabase.password@,
+  @jspwiki.userdatabase.wikiName@
+) values (
+  'janne@ecyrd.com',
+  'Janne Jalkanen',
+  'janne',
+  '457b08e825da547c3b77fbc1ff906a1d00a7daee',
+  'JanneJalkanen'
+);
+  
+insert into @jspwiki.userdatabase.roleTable@ (
+  @jspwiki.userdatabase.loginName@,
+  @jspwiki.userdatabase.role@
+) values (  
+  'janne',
+  'Authenticated'
+);

@@ -1,3 +1,12 @@
+2006-01-11  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.69
+        
+        * Minor tweaks to web unit tests; they now use the same
+        test user and password as the unit tests. Small adjiustments
+        to JDBC setup scripts to inject test users into database
+        at setup time.
+        
 2006-01-10  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.68

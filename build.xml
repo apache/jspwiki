@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.60 2006-01-11 04:08:38 arj Exp $
+    $Id: build.xml,v 1.61 2006-01-12 05:29:37 arj Exp $
 -->    
        
 <!--   
@@ -489,7 +489,7 @@
        or higher installed **and** that it is running on 
        localhost:8080 when you execute this target. The Manager
        app must be configured. Also, the Tomcat server's toncat-users.xml
-       file must contain a user named 'pancho' with a password 'secreto'
+       file must contain a user named 'janne' with a password 'myP@5sw0rd'
        and an assigned role of 'Authenticated'.
        These tests has been verified to deploy on Tomcat 5.5; 
        other versions may not work.
@@ -497,7 +497,7 @@
        Of course, you need not use Tomcat in production... but to
        keep this build file simple, we do require it for web unit tests.
   -->
-  <target name="webtests" depends="jar,tests-init,jartests,tomcat-init,war">
+  <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,tomcat-init,war">
     
     <!-- Build the custom auth WAR -->
     <webtest-setup context="test-custom"
@@ -514,6 +514,7 @@
         toFile="${tests.build}/jspwiki.properties.custom-jdbc" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.custom-jdbc">
       <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
+      <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
     </propertyfile>
     <webtest-setup context="test-custom-jdbc"
       webxml="${tests.build}/web.xml.custom" 

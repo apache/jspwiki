@@ -18,10 +18,5 @@ public class ContainerJDBCTest extends CommonTests
         t.assertTextPresent( "Pancho" ); // This is a hack
         t.assertTextPresent( "(not logged in)" );
     }
-
-    public void testLogin()
-    {
-        String user = newUser();
-        login( user );
-    }
+    
 }

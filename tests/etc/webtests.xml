@@ -109,6 +109,10 @@
              value="${basedir}/${tests.build}/@{context}/jspwiki.log" />
       </propertyfile>
       
+      <!-- Copy our sample user database -->
+      <copy file="tests/etc/userdatabase.xml"
+          toFile="${tests.build}/@{context}/userdatabase.xml" />
+      
       <!-- Build the war -->
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
@@ -116,8 +120,11 @@
            excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
          <lib file="${jarfile}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
-         <webinf dir="etc" includes="**" excludes="**.tmpl web.xml jspwiki.properties" />
-         <webinf dir="${tests.build}/@{context}" includes="jspwiki.properties" />
+         <webinf dir="etc" 
+           includes="**" 
+           excludes="jspwiki.properties userdatabase.xml db/** **.tmpl web.xml" />
+         <webinf dir="${tests.build}/@{context}" 
+           includes="jspwiki.properties userdatabase.xml" />
          <classes dir="etc" includes="oscache.properties" />
          <metainf dir="${tests.build}/@{context}" includes="context.xml" />
       </war>

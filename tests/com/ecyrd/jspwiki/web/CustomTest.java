@@ -17,10 +17,4 @@ public class CustomTest extends CommonTests
         t.assertTextPresent( "(authenticated)" );
     }
 
-    public void testLogin()
-    {
-        String user = newUser();
-        login( user );
-    }
-
 }
