@@ -1,3 +1,15 @@
+2006-01-13  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.70
+        
+        * Tweaks to web unit tests to make auto-deploy scripts
+        work with Tomcat 4.1.
+        
+        * Bug fix: XMLUserDatbase was dying horribly in
+        certain cases with WAR deployments.
+        
+        * Added more 'create wiki group' unit tests
+        
 2006-01-11  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.69
