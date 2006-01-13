@@ -1,6 +1,6 @@
 package com.ecyrd.jspwiki.web;
 
-public class ContainerTest extends CommonTests
+public class ContainerTest extends CommonContainerTests
 {
     protected static final String USER = "pancho";
 
