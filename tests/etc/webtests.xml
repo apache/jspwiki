@@ -80,6 +80,8 @@
         file="tests/etc/tomcat/context-@{context}.xml"
         toFile="${tests.build}/@{context}/context.xml">
         <filterset>
+          <filter token="docBase" 
+            value="${tests.build}/@{context}/@{context}.war" />
           <filtersfile file="tests/etc/jspwiki.properties" />
           <filtersfile file="build.properties" />
         </filterset>
@@ -119,6 +121,7 @@
          <lib dir="lib" includes="*.jar"
            excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
          <lib file="${jarfile}" />
+         <lib file="${jdbc.driver.jar}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
          <webinf dir="etc" 
            includes="**" 
@@ -133,7 +136,7 @@
       <deploy url="http://localhost:8080/manager/" 
         username="${tomcat.admin}" password="${tomcat.password}"
         path="/@{context}"
-        war="//${basedir}/${tests.build}/@{context}/@{context}.war" />
+        war="file:///${basedir}/${tests.build}/@{context}/@{context}.war" />
     </sequential>
   </macrodef>
  

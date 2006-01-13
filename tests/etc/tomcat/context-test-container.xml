@@ -1,2 +1,2 @@
-<Context path="/test-container" debug="0">
+<Context path="/test-container" docBase="@docBase@">
 </Context>

@@ -1,4 +1,4 @@
-<Context path="/test-custom-jdbc" debug="0">
+<Context path="/test-custom-jdbc" docBase="@docBase@">
   <Resource name="@jspwiki.userdatabase.datasource@" auth="Container"
       type="javax.sql.DataSource" 
       driverClassName="@jdbc.driver.class@"

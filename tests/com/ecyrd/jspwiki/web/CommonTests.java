@@ -1,9 +1,13 @@
 package com.ecyrd.jspwiki.web;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 import net.sourceforge.jwebunit.WebTester;
 
-public class CommonTests extends TestCase
+import com.meterware.httpunit.WebResponse;
+
+public abstract class CommonTests extends TestCase
 {
     protected static final String PASSWORD = "secreto";
     protected WebTester t;
@@ -21,6 +25,14 @@ public class CommonTests extends TestCase
     {
     }
 
+    public void testAnonymousCreateGroup()
+    {
+        // Try to create a group; we should get redirected to login page
+        t.beginAt( "/NewGroup.jsp" );
+        t.assertFormNotPresent( "newGroup" );
+        t.assertTextPresent( "Please sign in" );
+    }
+    
     public void testAnonymousView()
     {
         // Start at main, then navigate to About; verify user not logged in
@@ -29,6 +41,15 @@ public class CommonTests extends TestCase
         t.assertLinkPresentWithText( "About" );
         t.clickLinkWithText( "About" );
         t.assertTextPresent( "This Wiki is done using" );
+    }
+    
+    public void testAnonymousViewImage() throws IOException
+    {
+        // See if we can view the JSPWiki logo
+        t.beginAt( "/images/jspwiki_logo_s.png" );
+        WebResponse r = t.getDialog().getResponse();
+        assertEquals( 200, r.getResponseCode() );
+        assertFalse( r.getText().length() == 0 );
     }
     
     public void testAssertedName()
@@ -61,27 +82,78 @@ public class CommonTests extends TestCase
         t.assertTextNotPresent( "(not logged in)" );
     }
     
-    public void testCreateGroup()
+    public void testCreateGroupFullName()
+    {
+        createGroup( "Janne Jalkanen" );
+    }
+    
+    public void testCreateGroupLoginName()
+    {
+        createGroup( "janne" );
+    }
+
+    public void testCreateGroupWikiName()
+    {
+        createGroup( "JanneJalkanen" );
+    }
+    
+    public void testLogin()
+    {
+        // Start at front page; try to log in
+        t.beginAt( "/Wiki.jsp?page=Main" );
+        t.assertTextNotPresent( "G'day" );
+        t.clickLinkWithText( "Log in" );
+        t.assertTextPresent( "Please sign in" );
+        t.assertFormPresent( "login" );
+        t.setWorkingForm( "login" );
+        t.assertFormElementPresent( "j_username" );
+        t.assertFormElementPresent( "j_password" );
+        t.assertSubmitButtonPresent( "action" );
+        t.setFormElement( "j_username", "janne" );
+        t.setFormElement( "j_password", "myP@5sw0rd" );
+        t.submit( "action" );
+        t.assertTextNotPresent( "Please sign in" );
+        t.assertTextPresent( "G'day" );
+        t.assertTextPresent( "Janne" ); // This is a hack: detecting full
+                                            // name isn't working (?)
+        t.assertTextPresent( "(authenticated)" );
+    }
+
+    public void testLogout()
+    {
+        // Start at front page; try to log in
+        t.beginAt( "/Login.jsp" );
+        t.setWorkingForm( "login" );
+        t.setFormElement( "j_username", "janne" );
+        t.setFormElement( "j_password", "myP@5sw0rd" );
+        t.submit( "action" );
+        t.assertTextNotPresent( "Please sign in" );
+        t.assertTextPresent( "G'day" );
+        t.assertTextPresent( "(authenticated)" );
+        
+        // Log out; we should still be asserted
+        t.clickLinkWithText( "Log out" );
+        t.assertTextPresent( "G'day" );
+        t.assertTextNotPresent( "(authenticated)" );
+        t.assertTextPresent( "(not logged in)" );
+        
+        // Clear cookies; we should be anonymous again
+        t.clickLinkWithText( "My Prefs" );
+        t.setWorkingForm( "clearCookie" );
+        t.submit( "ok" );
+        t.assertTextNotPresent( "G'day" );
+        t.assertTextNotPresent( "(authenticated)" );
+        t.assertTextNotPresent( "(not logged in)" );
+    }
+    
+    protected void createGroup( String members ) 
     {
         login();
         String group = "Test" + String.valueOf( System.currentTimeMillis() );
         t.beginAt( "/NewGroup.jsp" );
-        t.assertFormPresent( "newGroup" );
         t.setWorkingForm( "newGroup" );
-        t.assertFormElementPresent( "members" );
-        t.assertSubmitButtonPresent( "ok" );
-        t.submit( "ok" );
-        
-        //Oops! We forgot to name it
-        t.assertTextPresent( "Could not create group: Group name may not be blank" );
         t.setFormElement( "name", group );
-        t.setFormElement( "members", "" );
-        t.submit( "ok" );
-        
-        //Oops! We forgot to include 
-        t.assertTextPresent( "Could not create group: The group must have at least one member." );
-        t.setFormElement( "name", group );
-        t.setFormElement( "members", "Janne Jalkanen" );
+        t.setFormElement( "members", members );
         t.submit( "ok" );
         
         // Verify the group was created 
@@ -140,28 +212,6 @@ public class CommonTests extends TestCase
         return String.valueOf( System.currentTimeMillis() );
     }
     
-    public void testLogin()
-    {
-        // Start at front page; try to log in
-        t.beginAt( "/Wiki.jsp?page=Main" );
-        t.assertTextNotPresent( "G'day" );
-        t.clickLinkWithText( "Log in" );
-        t.assertTextPresent( "Please sign in" );
-        t.assertFormPresent( "login" );
-        t.setWorkingForm( "login" );
-        t.assertFormElementPresent( "j_username" );
-        t.assertFormElementPresent( "j_password" );
-        t.assertSubmitButtonPresent( "action" );
-        t.setFormElement( "j_username", "janne" );
-        t.setFormElement( "j_password", "myP@5sw0rd" );
-        t.submit( "action" );
-        t.assertTextNotPresent( "Please sign in" );
-        t.assertTextPresent( "G'day" );
-        t.assertTextPresent( "Janne" ); // This is a hack: detecting full
-                                            // name isn't working (?)
-        t.assertTextPresent( "(authenticated)" );
-    }
-
     public void login() 
     {
         // Start at front page; try to log in
