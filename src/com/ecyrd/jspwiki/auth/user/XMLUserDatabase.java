@@ -56,7 +56,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-01-11 03:46:21 $
+ * @version $Revision: 1.12 $ $Date: 2006-01-13 06:27:06 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -253,7 +253,16 @@ public class XMLUserDatabase extends AbstractUserDatabase
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
     {
-        File defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
+        File defaultFile = null;
+        if ( engine.getRootPath() == null )
+        {
+            log.error( "Cannot identify JSPWiki root path, and property " + PROP_USERDATABASE + " not set!"  );
+            defaultFile = new File( "WEB-INF/" + DEFAULT_USERDATABASE ).getAbsoluteFile();
+        }
+        else
+        {
+            defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
+        }
 
         // Get database file location
         String file = props.getProperty( PROP_USERDATABASE );
@@ -303,7 +312,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
             try
             {
                 log.info( "Could not load file from disk: creating in-memory DOM." );
+                log.info( "New users will disappear after shutdown; please set " + PROP_USERDATABASE );
                 c_dom = factory.newDocumentBuilder().newDocument();
+                c_dom.appendChild( c_dom.createElement( "users") );
             }
             catch( ParserConfigurationException e )
             {

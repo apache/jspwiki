@@ -149,6 +149,23 @@
      <location>/error/Forbidden.html</location>
    </error-page>
 
+   <!--  REMOVE ME TO ENABLE JDBC DATABASE
+   <resource-ref>
+       <description>
+           Resource reference to JNDI factory for the JDBCUserDatabase.
+       </description>
+       <res-ref-name>
+           jdbc/UserDatabase
+       </res-ref-name>
+       <res-type>
+           javax.sql.DataSource
+       </res-type>
+       <res-auth>
+           Container
+       </res-auth>
+   </resource-ref>
+   REMOVE ME TO ENABLE JDBC DATABASE  -->
+
    <!--
        CONTAINER-MANAGED AUTHENTICATION & AUTHORIZATION
     
@@ -263,21 +280,4 @@
    
    REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  -->
  
-   <!--  REMOVE ME TO ENABLE JDBC DATABASE
-   <resource-ref>
-       <description>
-           Resource reference to JNDI factory for the JDBCUserDatabase.
-       </description>
-       <res-ref-name>
-           jdbc/UserDatabase
-       </res-ref-name>
-       <res-type>
-           javax.sql.DataSource
-       </res-type>
-       <res-auth>
-           Container
-       </res-auth>
-   </resource-ref>
-   REMOVE ME TO ENABLE JDBC DATABASE  -->
-
 </web-app>
