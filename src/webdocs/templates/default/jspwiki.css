@@ -308,11 +308,15 @@ div.index .section a     { display: block; padding: 0 0.25em;
 .toc li.toclevel-3       { margin-left: 2.5em; }
 
 /* +++ 630 Weblog and weblogarchive plugins +++ */
-.weblog                  { margin-left: 20px; }
-.weblogentry             { }
-.weblogentryheading      { background: #E0E0E0; margin-top: 2ex; }
-.weblogentrybody         { margin-left: 10px; }
-.weblogentryfooter       { margin-left: 10px; clear: both; }
+.weblog                  { }
+.weblogentry             { margin: 1em 0 2em 0; }
+.weblogentryheading      { color: #999999; margin-top: 2em; 
+ 	                         border-bottom: 1px #D9D9D9 solid;}
+.weblogentrytitle        { font-size: 1.5em; font-weight: bold; 
+                           margin: 0.5em 0 .8em 0; }
+.weblogentrybody         { }
+.weblogentryfooter       { font-style: italic; margin-top: 1em; clear: both; }
+.weblogentryfooter a     { font-style: normal; margin-left: 0.5em; }
 .weblogarchive           { }
 .weblogarchive ul        { margin-top: 0px;
                            padding: 0px; }

@@ -1,3 +1,9 @@
+2006-01-16  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.71
+        
+        * Weblogentry-related CSS are now less fugly.
+        
 2006-01-14  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * DefaultPermissions.txt is now gone.  Thanks to Frank Fischer.
