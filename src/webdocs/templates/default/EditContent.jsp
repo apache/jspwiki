@@ -14,16 +14,9 @@
   </p>
 </wiki:CheckLock>
   
-<div class="tabmenu">
-  <span><a class="activetab" id="menu-editcontent" onclick="TabbedSection.onclick('editcontent')" >Edit Page</a></span>
-  <wiki:HasAttachments><span><a id="menu-attachments" onclick="TabbedSection.onclick('attachments')" >Attachments</a></span></wiki:HasAttachments>
-  <span><a id="menu-edithelp" onclick="TabbedSection.onclick('edithelp')" >Help</a></span>
-  <span><a id="menu-searchbarhelp" onclick="TabbedSection.onclick('searchbarhelp')" >Find And Replace Help</a></span>
-</div>
+<wiki:TabbedSection>
   
-<div class="tabs">
-  
-  <div id="editcontent">
+  <wiki:Tab id="editcontent" title="Edit Page">
   
     <wiki:CheckVersion mode="notlatest">
       <div class="warning">You are about to restore version <wiki:PageVersion/>.
@@ -33,16 +26,15 @@
     
     <wiki:Editor />
     
-  </div>
+  </wiki:Tab>
   
   <wiki:HasAttachments>
-    <div id="attachments" style="display:none;" >
+    <wiki:Tab id="attachments" title="Attachments">
       <wiki:Include page="AttachmentTab.jsp" />
-    </div>
+    </wiki:Tab>
   </wiki:HasAttachments>
   
-  
-  <div id="edithelp" style="display:none;">
+  <wiki:Tab id="edithelp" title="Help">
     <wiki:NoSuchPage page="EditPageHelp">
       <div class="error">
       Ho hum, it seems that the EditPageHelp<wiki:EditLink page="EditPageHelp">?</wiki:EditLink>
@@ -54,10 +46,10 @@
     </wiki:NoSuchPage>
   
     <wiki:InsertPage page="EditPageHelp" />
-  </div>
+  </wiki:Tab>
   
-  <div id="searchbarhelp"  style="display:none;">
+  <wiki:Tab id="searchbarhelp" title="Find and Replace help">
     <wiki:InsertPage page="EditFindAndReplaceHelp" />
-  </div>
+  </wiki:Tab>
   
-</div>
+</wiki:TabbedSection>

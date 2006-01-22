@@ -2,28 +2,6 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%
-  // Figure out which tab should be active
-  String tab = request.getParameter( "tab" );
-  String prefsVisible;
-  String profileVisible;
-  String prefsClass;
-  String profileClass;
-  String activeTab;
-  if ( "profile".equals( tab ) )
-  {
-    prefsVisible   = "display:none;";
-    prefsClass     = "inactiveTab";
-    profileVisible = "display:block;";
-    profileClass   = "activetab";
-  }
-  else
-  {
-    prefsVisible   = "display:block;";
-    prefsClass     = "activetab";
-    profileVisible = "display:none;";
-    profileClass   = "inactiveTab";
-  }
-  
   //  Determine the name for the user's favorites page
   WikiContext c = WikiContext.findContext( pageContext );
   String pagename = c.getPage().getName();
@@ -37,19 +15,9 @@
 
 <h3>Your <wiki:Variable var="applicationname" /> profile</h3>
 
-<!-- Tab definitions -->
-<div class="tabmenu">
-  <span>
-    <a id="menu-prefs" class="<%=prefsClass%>" onclick="TabbedSection.onclick('prefs')" >Preferences</a>
-  </span>
-  <span>
-    <a id="menu-profile" class="<%=profileClass%>" onclick="TabbedSection.onclick('profile')" >Profile</a>
-  </span>
-</div>
-
-<div class="tabs">
+<wiki:TabbedSection defaultTab="<%=request.getParameter("tab")%>">
   <!-- Tab 1: user preferences -->
-  <div id="prefs" class="tab-Prefs" style="<%=prefsVisible%>">
+  <wiki:Tab id="prefs" title="Preferences">
     <div class="formcontainer">
       <div class="instructions">
         Set your user preferences here. Your choices will be saved in your browser as cookies.
@@ -112,10 +80,10 @@
         </div>
       </wiki:UserCheck>
     </wiki:Permission>
-  </div>
+  </wiki:Tab>
   
   <!-- Tab 2: If user can register, allow edits to profile -->
-  <div id="profile" class="tab-Profile" style="<%=profileVisible%>">
+  <wiki:Tab id="profile" title="Profile">
     <wiki:Permission permission="editProfile">
       <div class="formcontainer">
         <div class="instructions">
@@ -248,5 +216,5 @@
         </form>
       </div>
     </wiki:Permission> 
-  </div>
-</div>
+  </wiki:Tab>
+</wiki:TabbedSection>

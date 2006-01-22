@@ -38,33 +38,12 @@ function confirmDelete()
 
 <wiki:PageExists>
 
-<div class="tabmenu">
-  <wiki:PageType type="page">
-  <span><a class="activetab" id="menu-infocontent"
-          onclick="TabbedSection.onclick('infocontent')" >Page Info</a></span>
-
-  <span><a id="menu-referingto"
-           onclick="TabbedSection.onclick('referingto')" >Outgoing links</a></span>
-
-  <span><a id="menu-referencedby"
-           onclick="TabbedSection.onclick('referencedby')" >Incoming links</a></span>
-  <wiki:HasAttachments>
-  <span><a id="menu-attachments"
-           onclick="TabbedSection.onclick('attachments')" >Attachment info</a></span>
-  </wiki:HasAttachments>
-  </wiki:PageType>
-  <wiki:PageType type="attachment">
-  <span><a class="activetab" id="menu-infocontent"
-          onclick="TabbedSection.onclick('infocontent')" >Attachment Info</a></span>
-  </wiki:PageType>
-
-</div><%-- tabmenu --%>
-<div class="tabs">
+<wiki:TabbedSection defaultTab="<%=request.getParameter("tab")%>">
 <%-- part 1 : normal wiki pages --%>
 
 <wiki:PageType type="page">
 
-<div id="infocontent" class="tab-PageInfo">
+<wiki:Tab id="infocontent" title="Page Info">
 
    <table cellspacing="4">
        <tr>
@@ -169,8 +148,8 @@ function confirmDelete()
         </select>
       </form>
       </wiki:CheckVersion>
-                      </td>
-      </tr>
+     </td>
+   </tr>
 </table>
 
   <wiki:CheckVersion mode="notfirst">
@@ -224,27 +203,27 @@ function confirmDelete()
   </table>
   </div> <%-- versionhistory --%>
   </wiki:CheckVersion>
-</div> <%-- pageinfo --%>
+</wiki:Tab>
 
-<div id="referingto" style="display:none;" >
+<wiki:Tab id="referingto" title="Outgoing Links">
   <p><wiki:Plugin plugin="ReferredPagesPlugin" args="depth=1" >body</wiki:Plugin></p>
-</div>
+</wiki:Tab>
 
-<div id="referencedby" style="display:none;" >
+<wiki:Tab id="referencedby" title="Incoming Links">
   <p><wiki:LinkTo><wiki:PageName /></wiki:LinkTo></p>
   <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " >body</wiki:Plugin>
-</div>
+</wiki:Tab>
 
-<div id="attachments" style="display:none;">
+<wiki:Tab id="attachments" title="Attachments">
    <wiki:Include page="AttachmentTab.jsp"/>
-</div>
+</wiki:Tab>
 
 </wiki:PageType>
 
 <%-- part 2 : attachments --%>
 
 <wiki:PageType type="attachment">
-<div id="infocontent" >
+<wiki:Tab id="infocontent" title="Attachment Info">
   <table>
     <tr>
     <th>Attachment Name</th>
@@ -360,9 +339,10 @@ function confirmDelete()
   </table>
   <div style="clear:both; height:0px;" > </div>
 
-</div><%-- infocontent --%>
+</wiki:Tab>
 </wiki:PageType>
 
+</wiki:TabbedSection>
 
 </wiki:PageExists>
 
@@ -372,4 +352,3 @@ function confirmDelete()
     <wiki:EditLink>create it</wiki:EditLink>?
 </wiki:NoSuchPage>
 
-</div> <%-- tabs --%>
