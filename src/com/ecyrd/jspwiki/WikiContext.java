@@ -469,8 +469,9 @@ public class WikiContext
      * login page (if not logged in already) or to a standard 401/forbidden page
      * (if not).
      * @param response the HTTP response object for the users's current request
+     * @return TODO
      */
-    public void checkAccess( HttpServletResponse response ) throws Exception
+    public boolean hasAccess( HttpServletResponse response ) throws Exception
     {
         //TODO: this class is, at best, a temporary placeholder for this method until we start using filters
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
@@ -492,7 +493,7 @@ public class WikiContext
                 log.info("User "+currentUser.getName()+" has no access - displaying message.");
                 NDC.pop();
                 response.sendError( HttpServletResponse.SC_FORBIDDEN, "You don't have enough privileges to do that." );
-                return;
+                return false;
             }
             else
             {
@@ -501,10 +502,12 @@ public class WikiContext
                 NDC.pop();
                 m_session.addMessage("You don't have access to '" + pageurl + "'. Log in first.");
                 response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
-                return;
+                return false;
             }
         }
         NDC.pop();
+        
+        return true;
     }
 
     
@@ -514,7 +517,8 @@ public class WikiContext
      * changes.
      * @since 2.4
      */
-    protected void updatePermission() {
+    protected void updatePermission() 
+    {
         // Dummy permission that should always be true; default if nothing else works
         m_permission = DUMMY_PERMISSION;
         
