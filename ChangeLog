@@ -1,3 +1,21 @@
+2006-01-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.72
+        
+        * Changed WikiContext.checkAccess() to return a boolean, so
+        that JSP pages can actually check whether they should return
+        from processing or not.  This should fix a number of strange
+        bugs.
+        
+        * Renamed WikiContext.checkAccess() to WikiContext.hasAccess()
+        to reflect its new role.
+        
+        * Added TabTag and TabbedSectionTag, which cleaned up the default
+        templates *enormously*.  Thanks heaps to Dirk Fredericx!
+        
+        * Added some extra safeties to URL Constructors to make sure the
+        proper encoding is being used in UTF-8.
+
 2006-01-16  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.71
