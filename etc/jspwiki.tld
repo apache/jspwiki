@@ -586,6 +586,40 @@
   </tag>  
 
   <tag>
+    <name>TabbedSection</name>
+    <tagclass>com.ecyrd.jspwiki.tags.TabbedSectionTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>A BodyTag for tabbed sections</info>
+    <attribute>
+      <name>defaultTab</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+    
+  <tag>
+    <name>Tab</name>
+    <tagclass>com.ecyrd.jspwiki.tags.TabTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>A Tag for a tab, which is a child of tabbedSection</info>
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>title</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>accesskey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>TemplateDir</name>
     <tagclass>com.ecyrd.jspwiki.tags.TemplateDirTag</tagclass>
     <bodycontent>empty</bodycontent>
