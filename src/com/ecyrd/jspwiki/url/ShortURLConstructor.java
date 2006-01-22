@@ -167,6 +167,7 @@ public class ShortURLConstructor
                              String encoding )
         throws UnsupportedEncodingException
     {
+        request.setCharacterEncoding( encoding );
         String pagereq = request.getParameter( "page" );
 
         if( pagereq == null )
