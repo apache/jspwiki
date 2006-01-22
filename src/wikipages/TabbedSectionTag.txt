@@ -1,0 +1,54 @@
+[{TableOfContents}]
+
+!!~TabbedSectionTag
+
+This tag allows you to specify a JSPWiki tabbed page. It is a container for the [TabTag].
+
+!Usage
+
+{{{
+  <wiki:TabbedSection defaultTab="<tab-id>" >
+    <wiki:Tab id=".." title=".." accesskey=".." > 
+      ..
+    </wiki:Tab>
+  </wiki:TabbedSection>
+}}}
+
+!Parameters
+
+* __defaultTab__ : id of the default tab. This tab is displayed by default. 
+  When this parameter is not present, the first tab will be displayed.
+
+!Example
+
+{{{
+  <wiki:TabbedSection defaultTab="pagecontent">
+    <wiki:Tab id="pagecontent" title="View" accesskey="v"> 
+      ..
+    </wiki:Tab>
+    <wiki:Tab id="attachment" title="Attach" accesskey="a"> 
+      ..
+    </wiki:Tab>
+  </wiki:TabbedSection>
+}}}
+
+Generated markup:
+
+{{{
+  <div class="tabmenu">
+    <span>
+      <a class="activetab" 
+         id="menu-pagecontent" 
+         onclick="TabbedSection.onclick('pagecontent')" 
+         accesskey="v"><u>V</u>iew</a>
+    </span>
+    ...
+  </div>
+  <div class="tabs">
+    <div id="pagecontent">
+    ...
+    </div> 
+    ...
+    <div style="clear:both; height:0px;" > </div>
+  </div>
+}}}

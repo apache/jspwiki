@@ -1,0 +1,31 @@
+[{TableOfContents }]
+
+!!~TabTag
+
+This tag help to define a JSPWiki page tab. It works together with [TabbedSectionTag].
+
+
+!Usage
+
+{{{
+  <wiki:Tab id=".." title=".." accesskey="..">
+    ..
+  </wiki:Tab>
+}}}
+
+!Parameters
+
+* __id__ : unique id for this tab (mandatory)
+* __title__ : title of this tab (mandatory)
+* __accesskey__ : accesskey for this tab (optional): this key in combination with alt- or cmnd-
+  can be used to active a tab with a single keystroke.
+  When present, the first occurence of the ''accesskey'' inside the title will be underscored
+  as a visual hint for the accesskey.
+
+!Example
+
+{{{
+  <wiki:Tab id="pageContent" title="View" accesskey="v">
+    ..
+  </wiki:Tab>
+}}}
