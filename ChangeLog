@@ -15,6 +15,10 @@
         
         * Added some extra safeties to URL Constructors to make sure the
         proper encoding is being used in UTF-8.
+        
+        * The Ant war-task did not properly place jspwiki.jks in the
+        WAR file, causing problems if the keystore was somewhere else
+        than in the default location.
 
 2006-01-16  Andrew Jaquith <andrew@freshcookies.org>
 
