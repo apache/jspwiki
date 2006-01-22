@@ -21,7 +21,7 @@
 <%
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
-    wikiContext.checkAccess( response );
+    if(!wikiContext.hasAccess( response )) return;
     WikiPage    wikipage    = wikiContext.getPage();
     NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 

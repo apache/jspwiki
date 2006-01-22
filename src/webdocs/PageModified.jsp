@@ -21,7 +21,7 @@
 <%
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.CONFLICT );
-    wikiContext.checkAccess( response );
+    if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getPage().getName();
     NDC.push( wiki.getApplicationName()+":"+pagereq );
 

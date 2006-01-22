@@ -17,8 +17,8 @@
 
 <%
     // Create wiki context and check for authorization
-	  WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
-    wikiContext.checkAccess( response );
+	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
+    if(!wikiContext.hasAccess( response )) return;
 	
     String renameFrom = wikiContext.getPage().getName();
     String renameTo = request.getParameter( "renameto");
