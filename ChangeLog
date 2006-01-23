@@ -1,3 +1,15 @@
+2006-01-23  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.73
+        
+        * Added ParamTag (provide name-value pairs to enclosing
+        ParamHandler tag) and ParamHandler (capability to accept
+        contained name-value pairs). 
+        
+        * Modified LinkTag to implement ParamHandler and accept
+        body content. The purpose is to support linking to custom
+        JSPs with any parameters.
+        
 2006-01-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.72
