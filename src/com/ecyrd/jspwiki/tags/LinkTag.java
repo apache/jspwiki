@@ -1,12 +1,15 @@
 package com.ecyrd.jspwiki.tags;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.tagext.BodyTag;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -15,9 +18,17 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 /**
  *  Provides a generic link tag for all kinds of linking
  *  purposes.
+ *  <p>
+ *  If parameter <i>jsp</i> is defined, constructs a URL pointing
+ *  to the specified JSP page, under the baseURL known by the WikiEngine.
+ *  Any ParamTag name-value pairs contained in the body are added to this
+ *  URL to provide support for arbitrary JSP calls.
+ *  <p>
  *  @since 2.3.50
  */
-public class LinkTag extends WikiLinkTag
+public class LinkTag 
+    extends WikiLinkTag
+    implements ParamHandler, BodyTag
 {
     static final long serialVersionUID = 0L;
     
@@ -34,6 +45,10 @@ public class LinkTag extends WikiLinkTag
     private String m_accesskey = null;
     
     private boolean m_absolute = false;
+
+    private Map m_containedParams;
+
+    private BodyContent m_bodyContent;
     
     public void setAccessKey( String key )
     {
@@ -101,6 +116,22 @@ public class LinkTag extends WikiLinkTag
     }
     
     /**
+     * Support for ParamTag supplied parameters in body.
+     */
+    public void setContainedParameter( String name, String value )
+    {
+        if( name != null ) 
+        {
+            if( m_containedParams == null ) 
+            {
+                m_containedParams = new HashMap();
+            }
+            m_containedParams.put( name, value );
+        }
+    }
+    
+    
+    /**
      *  This method figures out what kind of an URL should be output.  It mirrors heavily
      *  on JSPWikiMarkupParser.handleHyperlinks();
      *  
@@ -120,7 +151,8 @@ public class LinkTag extends WikiLinkTag
         
         if( m_jsp != null )
         {
-            url = engine.getURL( WikiContext.NONE, m_jsp, null, false );
+            String params = addParamsForRecipient( null, m_containedParams );
+            url = engine.getURL( WikiContext.NONE, m_jsp, params, false );
         }
         else if( m_ref != null )
         {
@@ -222,6 +254,36 @@ public class LinkTag extends WikiLinkTag
         return url;
     }
     
+    private String addParamsForRecipient( String addTo, Map params )
+    {
+        if( params == null || params.size() == 0 ) 
+        {
+            return null;
+        }
+        StringBuffer buf = new StringBuffer();
+        Iterator it = params.keySet().iterator();
+        while( it.hasNext() )
+        {
+            String n = (String)it.next();
+            String v = (String)params.get( n );
+            buf.append( n );
+            buf.append( "=" );
+            buf.append( v );
+            if( it.hasNext() ) 
+            {
+                buf.append( "&amp;" );
+            }
+        }
+        if( addTo == null ) 
+        {
+            return buf.toString();
+        }
+        if( !addTo.endsWith( "&amp;" ) ) {
+            return addTo + "&amp;" + buf.toString();
+        }
+        return addTo + buf.toString();
+    }
+    
     private String makeBasicURL( String context, String page, String parms, boolean absolute )
     {
         String url;
@@ -281,28 +343,55 @@ public class LinkTag extends WikiLinkTag
     
     public int doWikiStartTag() throws Exception
     {
-        JspWriter out = pageContext.getOut();
-        String url = figureOutURL();
-        
-        StringBuffer sb = new StringBuffer( 20 );
-        
-        sb.append( (m_class != null)   ? "class=\""+m_class+"\" " : "" );
-        sb.append( (m_style != null)   ? "style=\""+m_style+"\" " : "" );
-        sb.append( (m_target != null ) ? "target=\""+m_target+"\" " : "" );
-        sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );
-        sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
-        sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
-        
-        switch( m_format )
+        return EVAL_BODY_BUFFERED;
+    }
+    
+    public int doEndTag()
+    {
+        try 
         {
-          case ANCHOR:
-            out.print("<a "+sb.toString()+" href=\""+url+"\">");
-            break;
-          case URL:
-            out.print( url );
-            break;
+            JspWriter out = pageContext.getOut();
+            String url = figureOutURL();
+            
+            StringBuffer sb = new StringBuffer( 20 );
+            
+            sb.append( (m_class != null)   ? "class=\""+m_class+"\" " : "" );
+            sb.append( (m_style != null)   ? "style=\""+m_style+"\" " : "" );
+            sb.append( (m_target != null ) ? "target=\""+m_target+"\" " : "" );
+            sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );
+            sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
+            sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
+            
+            switch( m_format )
+            {
+              case ANCHOR:
+                out.print("<a "+sb.toString()+" href=\""+url+"\">");
+                break;
+              case URL:
+                out.print( url );
+                break;
+            }
+            
+            // Add any explicit body content. This is not the intended use
+            // of LinkTag, but happens to be the way it has worked previously.
+            if( m_bodyContent != null ) {
+                m_bodyContent.writeOut( out );
+            }
+        } 
+        catch( Exception e )
+        {
+            log.error( "Tag failed", e );
         }
+        
+        return EVAL_PAGE;    
+    }
 
-        return EVAL_BODY_INCLUDE;    
+    public void setBodyContent( BodyContent bc ) 
+    {
+        m_bodyContent = bc;
+    }
+
+    public void doInitBody() throws JspException 
+    {
     }
 }
