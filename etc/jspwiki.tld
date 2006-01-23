@@ -338,6 +338,20 @@
   </tag>  
 
   <tag>
+      <name>param</name>
+      <tagclass>com.ecyrd.jspwiki.tags.ParamTag</tagclass>
+      <bodycontent>JSP</bodycontent>
+      <attribute>
+          <name>name</name>
+          <rtexprvalue>false</rtexprvalue>
+      </attribute>
+      <attribute>
+          <name>value</name>
+          <rtexprvalue>true</rtexprvalue>
+      </attribute>
+  </tag>
+
+  <tag>
     <name>LinkTo</name>
     <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
     <bodycontent>JSP</bodycontent>
