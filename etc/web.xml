@@ -25,8 +25,32 @@
    </filter>
 
    <filter-mapping>
-     <filter-name>WikiServletFilter</filter-name>
-     <url-pattern>/*</url-pattern>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/attach/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/atom/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/dav/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/RPCU/</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/RPC2/</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/wiki/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
 
    <!--
@@ -228,7 +252,6 @@
            <url-pattern>/Comment.jsp</url-pattern>
            <url-pattern>/Login.jsp</url-pattern>
            <url-pattern>/NewGroup.jsp</url-pattern>
-           <url-pattern>/Register.jsp</url-pattern>
            <url-pattern>/Rename.jsp</url-pattern>
            <url-pattern>/Upload.jsp</url-pattern>
            <http-method>DELETE</http-method>
