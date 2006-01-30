@@ -244,10 +244,12 @@ textarea.editor          { }
 .pageInfo                { font-style: italic; padding-top: .3em; }
 .quick2Top a             { background-image:url(images/bulletUp.png);
                            background-repeat: no-repeat; background-position: 0 1px;
-                           padding: 0 8px 12px 0; }
+                           padding: 0 8px 12px 0; 
+                           text-decoration: none; }
 .quick2Bottom a          { background-image:url(images/bulletDown.png);
                            background-repeat: no-repeat; background-position: 0 0;
-                           padding: 0 8px 12px 0; }
+                           padding: 0 8px 12px 0;
+                           text-decoration: none; }
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
 .previewcontent          { background: #E0E0E0; padding: 1em; }
