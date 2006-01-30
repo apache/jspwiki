@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Properties;
 
 import javax.security.auth.Subject;
@@ -18,7 +19,7 @@ public class DefaultGroupManagerTest extends TestCase
 {
     TestEngine   m_engine;
 
-    GroupManager m_manager;
+    DefaultGroupManager m_manager;
 
     public DefaultGroupManagerTest( String s )
     {
@@ -40,8 +41,12 @@ public class DefaultGroupManagerTest extends TestCase
         String text2 = "[{SET members=Bob}]";
         m_engine.saveText( "GroupTest2", text2 );
         
-        String text3 = "[{SET members=Arnold}]";
-        m_engine.saveText( "BadGroupTest", text3 );
+        String text3 = "[{SET members=Fred Flintstone}]";
+        m_engine.saveText( "GroupTest3", text3 );
+        
+        String text4 = "[{SET members=Arnold}]";
+        m_engine.saveText( "BadGroupTest", text4 );
+        
     }
 
     public void tearDown()
@@ -50,6 +55,7 @@ public class DefaultGroupManagerTest extends TestCase
         {
             m_engine.deletePage( "GroupTest" );
             m_engine.deletePage( "GroupTest2" );
+            m_engine.deletePage( "GroupTest3" );
             m_engine.deletePage( "BadGroupTest" );
         }
         catch ( ProviderException e )
@@ -57,6 +63,28 @@ public class DefaultGroupManagerTest extends TestCase
         }
    }
 
+    public void testParseMemberList()
+    {
+        String members = "Biff";
+        List list = m_manager.parseMemberList( members );
+        assertEquals( 1, list.size() );
+        assertTrue ( list.contains( "Biff" ) );
+        
+        members = "Biff, SteveAustin, FredFlintstone";
+        list = m_manager.parseMemberList( members );
+        assertEquals( 3, list.size() );
+        assertTrue ( list.contains( "Biff" ) );
+        assertTrue ( list.contains( "SteveAustin" ) );
+        assertTrue ( list.contains( "FredFlintstone" ) );
+        
+        members = "Biff, Steve Austin, Fred Flintstone";
+        list = m_manager.parseMemberList( members );
+        assertEquals( 3, list.size() );
+        assertTrue ( list.contains( "Biff" ) );
+        assertTrue ( list.contains( "Steve Austin" ) );
+        assertTrue ( list.contains( "Fred Flintstone" ) );
+    }
+    
     public void testGetRoles()
     {
         Principal[] roles = m_manager.getRoles();
@@ -87,6 +115,7 @@ public class DefaultGroupManagerTest extends TestCase
         s.getPrincipals().add(p);
         assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test3" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
 
         session = WikiSession.guestSession();
@@ -95,6 +124,7 @@ public class DefaultGroupManagerTest extends TestCase
         s.getPrincipals().add(p);
         assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
         assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test3" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
 
         session = WikiSession.guestSession();
@@ -103,14 +133,25 @@ public class DefaultGroupManagerTest extends TestCase
         s.getPrincipals().add(p);
         assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test3" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
 
+        session = WikiSession.guestSession();
+        s = session.getSubject();
+        p = new WikiPrincipal( "Fred Flintstone" );
+        s.getPrincipals().add(p);
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertTrue( m_manager.isUserInRole( session, new DefaultGroup( "Test3" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
+        
         session = WikiSession.guestSession();
         s = session.getSubject();
         p = new WikiPrincipal( "Biff" );
         s.getPrincipals().add(p);
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test2" ) ) );
+        assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "Test3" ) ) );
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "NonExistant" ) ) );
     }
 

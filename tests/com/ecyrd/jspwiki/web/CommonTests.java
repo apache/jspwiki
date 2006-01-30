@@ -9,26 +9,95 @@ import com.meterware.httpunit.WebResponse;
 
 public abstract class CommonTests extends TestCase
 {
-    protected static final String PASSWORD = "secreto";
+    protected static final String TEST_PASSWORD = "myP@5sw0rd";
+    protected static final String TEST_LOGINNAME = "janne";
     protected WebTester t;
     protected final String m_baseURL;
 
     public CommonTests( String name, String baseURL )
     {
         super( name );
-        t = new WebTester();
-        t.getTestContext().setBaseUrl( baseURL );
         m_baseURL = baseURL;
+        newSession();
     }
 
     public void setUp()
     {
+        newSession();
     }
 
+    public void testAclJanneEdit()
+    {
+        // Log in as 'janne' and create page with him as editor
+        newSession();
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        String page = "AclEditOnly" + System.currentTimeMillis();
+        t.beginAt( "/Edit.jsp?page=" + page );
+        t.setWorkingForm( "editForm" );
+        String text = "[{ALLOW edit janne}]\n"
+                    + "This page was created with an ACL by janne";
+        t.setFormElement( "_editedtext", text );
+        t.submit( "ok" );
+        
+        // Anonymous viewing should NOT succeed
+        newSession();
+        t.gotoPage( "/Wiki.jsp?page=" + page );
+        t.assertTextPresent( "Error: You don't have access to '" + page + "'" );
+        
+        // Anonymous editing should fail
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertTextPresent( "Error: You don't have access to '" + page + "'" );
+        
+        // Now log in as janne again and view/edit it successfully
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        t.gotoPage( "/Wiki.jsp?page=" + page );
+        t.assertTextPresent( "This page was created with an ACL by janne" );
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertFormPresent( "editForm" );
+        t.setWorkingForm( "editForm" );
+        t.assertSubmitButtonPresent( "ok" );
+        t.assertFormElementPresent("_editedtext" );
+    }
+    
+    public void testAclJanneEditAllView()
+    {
+        /** testCreatePage does all of the form validation tests */
+        // Log in as 'janne' and create page with him as editor
+        newSession();
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        String page = "AclViewAndEdit" + System.currentTimeMillis();
+        t.beginAt( "/Edit.jsp?page=" + page );
+        t.setWorkingForm( "editForm" );
+        String text = "[{ALLOW edit janne}]\n"
+                    + "[{ALLOW view All}]\n"
+                    + "This page was created with an ACL by janne";
+        t.setFormElement( "_editedtext", text );
+        t.submit( "ok" );
+        
+        // Anonymous viewing should succeed
+        newSession();
+        t.gotoPage( "/Wiki.jsp?page=" + page );
+        t.assertTextPresent( "This page was created with an ACL by janne" );
+        
+        // Anonymous editing should fail
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertTextPresent( "Please sign in" );
+        
+        // Now log in as janne again and view/edit it successfully
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        t.gotoPage( "/Wiki.jsp?page=" + page );
+        t.assertTextPresent( "This page was created with an ACL by janne" );
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertFormPresent( "editForm" );
+        t.setWorkingForm( "editForm" );
+        t.assertSubmitButtonPresent( "ok" );
+        t.assertFormElementPresent("_editedtext" );
+    }
+    
     public void testAnonymousCreateGroup()
     {
         // Try to create a group; we should get redirected to login page
-        t.beginAt( "/NewGroup.jsp" );
+        t.gotoPage( "/NewGroup.jsp" );
         t.assertFormNotPresent( "newGroup" );
         t.assertTextPresent( "Please sign in" );
     }
@@ -36,7 +105,7 @@ public abstract class CommonTests extends TestCase
     public void testAnonymousView()
     {
         // Start at main, then navigate to About; verify user not logged in
-        t.beginAt( "/Wiki.jsp?page=Main" );
+        t.gotoPage( "/Wiki.jsp?page=Main" );
         t.assertTextPresent( "You have successfully installed" );
         t.assertLinkPresentWithText( "About" );
         t.clickLinkWithText( "About" );
@@ -46,7 +115,7 @@ public abstract class CommonTests extends TestCase
     public void testAnonymousViewImage() throws IOException
     {
         // See if we can view the JSPWiki logo
-        t.beginAt( "/images/jspwiki_logo_s.png" );
+        t.gotoPage( "/images/jspwiki_logo_s.png" );
         WebResponse r = t.getDialog().getResponse();
         assertEquals( 200, r.getResponseCode() );
         assertFalse( r.getText().length() == 0 );
@@ -55,7 +124,7 @@ public abstract class CommonTests extends TestCase
     public void testAssertedName()
     {
         // Navigate to Prefs page; set user cookie
-        t.beginAt( "/Wiki.jsp?page=Main" );
+        t.gotoPage( "/Wiki.jsp?page=Main" );
         t.assertTextNotPresent( "G'day" );
         t.clickLinkWithText( "My Prefs" );
         t.assertTextPresent( "Set your user preferences here." );
@@ -89,7 +158,7 @@ public abstract class CommonTests extends TestCase
     
     public void testCreateGroupLoginName()
     {
-        createGroup( "janne" );
+        createGroup( TEST_LOGINNAME );
     }
 
     public void testCreateGroupWikiName()
@@ -97,10 +166,24 @@ public abstract class CommonTests extends TestCase
         createGroup( "JanneJalkanen" );
     }
     
+    public void testCreatePage()
+    {
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        String page = "CreatePage" + System.currentTimeMillis();
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertFormPresent( "editForm" );
+        t.setWorkingForm( "editForm" );
+        t.assertSubmitButtonPresent( "ok" );
+        t.assertFormElementPresent("_editedtext" );
+        t.setFormElement( "_editedtext", "This page was created by the web unit tests." );
+        t.submit( "ok" );
+        t.assertTextPresent( "This page was created by the web unit tests." );
+    }
+    
     public void testLogin()
     {
         // Start at front page; try to log in
-        t.beginAt( "/Wiki.jsp?page=Main" );
+        t.gotoPage( "/Wiki.jsp?page=Main" );
         t.assertTextNotPresent( "G'day" );
         t.clickLinkWithText( "Log in" );
         t.assertTextPresent( "Please sign in" );
@@ -109,8 +192,8 @@ public abstract class CommonTests extends TestCase
         t.assertFormElementPresent( "j_username" );
         t.assertFormElementPresent( "j_password" );
         t.assertSubmitButtonPresent( "action" );
-        t.setFormElement( "j_username", "janne" );
-        t.setFormElement( "j_password", "myP@5sw0rd" );
+        t.setFormElement( "j_username", TEST_LOGINNAME );
+        t.setFormElement( "j_password", TEST_PASSWORD );
         t.submit( "action" );
         t.assertTextNotPresent( "Please sign in" );
         t.assertTextPresent( "G'day" );
@@ -122,10 +205,10 @@ public abstract class CommonTests extends TestCase
     public void testLogout()
     {
         // Start at front page; try to log in
-        t.beginAt( "/Login.jsp" );
+        t.gotoPage( "/Login.jsp" );
         t.setWorkingForm( "login" );
-        t.setFormElement( "j_username", "janne" );
-        t.setFormElement( "j_password", "myP@5sw0rd" );
+        t.setFormElement( "j_username", TEST_LOGINNAME );
+        t.setFormElement( "j_password", TEST_PASSWORD );
         t.submit( "action" );
         t.assertTextNotPresent( "Please sign in" );
         t.assertTextPresent( "G'day" );
@@ -148,7 +231,8 @@ public abstract class CommonTests extends TestCase
     
     protected void createGroup( String members ) 
     {
-        login();
+        t.gotoPage( "/Wiki.jsp" );
+        login( TEST_LOGINNAME, TEST_PASSWORD );
         String group = "Test" + String.valueOf( System.currentTimeMillis() );
         t.beginAt( "/NewGroup.jsp" );
         t.setWorkingForm( "newGroup" );
@@ -162,28 +246,26 @@ public abstract class CommonTests extends TestCase
         t.assertTextPresent( "This is a wiki group." );
         
         // Verifiy that anonymous users can't view the page
-        t = new WebTester();
-        t.getTestContext().setBaseUrl( m_baseURL );
-        t.beginAt( "/Wiki.jsp" );
+        newSession();
         t.gotoPage("/Wiki.jsp?page=Group" + group );
         t.assertTextPresent( "Please sign in" );
         
         // Log in again and verify we can read it
-        login();
+        login( TEST_LOGINNAME, TEST_PASSWORD );
         t.gotoPage("/Wiki.jsp?page=Group" + group );
         t.assertTextPresent( "This is a wiki group." );
     }
     
-    protected void createProfile()
+    protected String createProfile( String loginname, String fullname )
     {
-        createProfile( true );
+        return createProfile( loginname, fullname, true );
     }
     
     
-    protected void createProfile(boolean withPassword)
+    protected String createProfile( String loginname, String fullname, boolean withPassword )
     {
         // Navigate to profile tab
-        t.beginAt( "/Wiki.jsp?page=Main" );
+        t.gotoPage( "/Wiki.jsp?page=Main" );
         t.assertTextNotPresent( "G'day" );
         t.clickLinkWithText( "My Prefs" );
         t.assertFormPresent( "editProfile" );
@@ -193,18 +275,20 @@ public abstract class CommonTests extends TestCase
 
         // Create user profile with generated user name
         String suffix = generateSuffix();
-        t.setFormElement( "loginname", "pvilla" + suffix );
-        t.setFormElement( "wikiname", "PanchoVilla" + suffix );
-        t.setFormElement( "fullname", "Pancho Villa" + suffix );
-        t.setFormElement( "email", "pvilla@bandito.org" );
+        String wikiname = fullname.replaceAll(" ","");
+        t.setFormElement( "loginname", loginname + suffix );
+        t.setFormElement( "wikiname", wikiname + suffix );
+        t.setFormElement( "fullname", fullname + suffix );
+        t.setFormElement( "email", loginname + suffix + "@bandito.org" );
         if ( withPassword )
         {
             t.assertFormElementPresent( "password" );
             t.assertFormElementPresent( "password2" );
-            t.setFormElement( "password", PASSWORD + suffix );
-            t.setFormElement( "password2", PASSWORD + suffix );
+            t.setFormElement( "password", TEST_PASSWORD + suffix );
+            t.setFormElement( "password2", TEST_PASSWORD + suffix );
         }
         t.submit( "ok" );
+        return loginname + suffix;
     }
     
     protected String generateSuffix()
@@ -212,38 +296,22 @@ public abstract class CommonTests extends TestCase
         return String.valueOf( System.currentTimeMillis() );
     }
     
-    public void login() 
+    protected void login( String user, String password ) 
     {
         // Start at front page; try to log in
-        t.beginAt( "/Wiki.jsp?page=Main" );
+        t.gotoPage( "/Wiki.jsp?page=Main" );
         t.clickLinkWithText( "Log in" );
         t.setWorkingForm( "login" );
-        t.setFormElement( "j_username", "janne" );
-        t.setFormElement( "j_password", "myP@5sw0rd" );
+        t.setFormElement( "j_username", user );
+        t.setFormElement( "j_password", password );
         t.submit( "action" );
     }
     
-    /**
-     * Generates and registers a user with a unique name.
-     * @return the generated account name
-     */
-    protected String newUser()
+    protected void newSession()
     {
-        String baseURL = t.getTestContext().getBaseUrl();
-        String suffix = generateSuffix();
-        String user = "pvilla" + suffix;
-        t.beginAt( "/UserPreferences.jsp" );
-        t.setFormElement( "loginname", user );
-        t.setFormElement( "password", PASSWORD );
-        t.setFormElement( "password2", PASSWORD );
-        t.setFormElement( "wikiname", "PanchoVilla" + suffix );
-        t.setFormElement( "fullname", "Pancho Villa" + suffix );
-        t.setFormElement( "email", "pvilla@bandito.org" );
-        t.submit( "ok" );
-        t.assertTextNotPresent( "Could not save profile" );
         t = new WebTester();
-        t.getTestContext().setBaseUrl( baseURL );
-        return user;
+        t.getTestContext().setBaseUrl( m_baseURL );
+        t.beginAt( "/Wiki.jsp" );
     }
     
 }
