@@ -1,3 +1,52 @@
+2006-01-29  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.74
+        
+        * Web unit test scripts gain 3 more tests, which verify that
+        JSPWiki users can 1) create new pages (no ACL), 2) create new pages
+        with unrestricted view permissions and 3) create new
+        pages with restricted view permissions.
+
+        * Slightly tweaked WikiContext to make hasAccess() more 
+        flexible; redirection-on-failure can optionally be turned
+        off. Removed WikiContext.REGISTER; it is obsolete. Also,
+        removed WikiPermission.REGISTER target; please use EDIT_PROFILE
+        instead.
+        
+        * WikiServletFilter now takes responsibility for setting
+        Log4J NDC logging contexts. It also now takes care of WikiSession
+        message cleanup. All top-level JSPs changed (very) slightly,
+        and are simpler, as a result.
+        
+        * Bug fix: CommentContent.jsp now defaults to the "Add Comment"
+        tab. Credit: Dirk Frederickx.
+       
+        * Bug fix: quick2Top and quick2Bottom markers no longer have
+        an annoying underline. Credit: Dirk Frederickx.
+        
+        * Bug fix: inlined images were not being displayed due to the
+        attachment not being considered in PagePermission.implies().
+        We now discard the attachment name completely when constructing
+        PagePermissions, which means that a page's permissions now 
+        ALWAYS imply the same permission on its attachments, and vice-versa.
+        
+        * Bug fix: LoginContent's error message now correctly displays
+        a "you don't have access to page __(foo)__" if the user
+        needs to log in.
+        
+        * Bug fix: test version of userdatabase.xml modified to include
+        dummy created/lastModified timestamps. The lack thereof was
+        creating scary (but entirely harmless) messages in jspwiki.log.
+        
+        * Bug fix: added WikiPermission "*", "login" to jspwiki.policy.
+        It should have been there previously...
+        
+        * Bug fix: changed WikiServletFilterMappings to explicitly
+        list URL patterns, rather than the wildcard (/*). This fixes
+        the infamous "disappearing images" problem with Tomcat 4.1.
+        Also removed Register.jsp as protected resource, since it
+        vanished a long time ago anyhow.
+                
 2006-01-23  Erik Bunn  <Erik.Bunn@basen.net>
 
         * 2.3.73
