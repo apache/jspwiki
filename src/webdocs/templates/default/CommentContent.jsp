@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-<wiki:TabbedSection>
+<wiki:TabbedSection defaultTab="addcomment">
   <wiki:Tab id="pagecontent" title="Discussion page">
     <wiki:InsertPage/>
   </wiki:Tab>
