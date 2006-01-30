@@ -42,11 +42,11 @@ public abstract class CommonTests extends TestCase
         // Anonymous viewing should NOT succeed
         newSession();
         t.gotoPage( "/Wiki.jsp?page=" + page );
-        t.assertTextPresent( "Error: You don't have access to '" + page + "'" );
+        t.assertTextPresent( "Please sign in" );
         
         // Anonymous editing should fail
         t.gotoPage( "/Edit.jsp?page=" + page );
-        t.assertTextPresent( "Error: You don't have access to '" + page + "'" );
+        t.assertTextPresent( "Please sign in" );
         
         // Now log in as janne again and view/edit it successfully
         login( TEST_LOGINNAME, TEST_PASSWORD );
@@ -234,7 +234,7 @@ public abstract class CommonTests extends TestCase
         t.gotoPage( "/Wiki.jsp" );
         login( TEST_LOGINNAME, TEST_PASSWORD );
         String group = "Test" + String.valueOf( System.currentTimeMillis() );
-        t.beginAt( "/NewGroup.jsp" );
+        t.gotoPage( "/NewGroup.jsp" );
         t.setWorkingForm( "newGroup" );
         t.setFormElement( "name", group );
         t.setFormElement( "members", members );
