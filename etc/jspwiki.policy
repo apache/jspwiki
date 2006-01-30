@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.12 2006-01-11 03:52:05 arj Exp $
+// $Id: jspwiki.policy,v 1.13 2006-01-30 04:10:24 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -75,6 +75,7 @@ grant signedBy "jspwiki"
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
 };
 
 
@@ -91,6 +92,7 @@ grant signedBy "jspwiki"
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
 };
 
 
@@ -106,6 +108,7 @@ grant signedBy "jspwiki"
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
 };
 
 
@@ -118,4 +121,5 @@ grant signedBy "jspwiki"
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
 };
