@@ -52,8 +52,7 @@
  %>
 
 <%
-    WikiContext context = (WikiContext) pageContext.getAttribute( "jspwiki.context",
-                                                                  PageContext.REQUEST_SCOPE );
+    WikiContext context = WikiContext.findContext( pageContext );
    
     TemplateManager mgr = context.getEngine().getTemplateManager();
     

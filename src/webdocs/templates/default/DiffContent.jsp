@@ -13,8 +13,7 @@
     Difference between version
     <select id="r1" name="r1" onchange="this.form.submit();" >
     <% 
-       WikiContext c = (WikiContext) pageContext.getAttribute( "jspwiki.context",
-                                                         PageContext.REQUEST_SCOPE ); 
+       WikiContext c = WikiContext.findContext( pageContext );
        int latestVersion = c.getPage().getVersion();;
        int ii = 0;
        ii = ((Integer)pageContext.getAttribute(InsertDiffTag.ATTR_OLDVERSION, 
