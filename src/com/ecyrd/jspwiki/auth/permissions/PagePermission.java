@@ -37,7 +37,7 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * <i>never </i> imply others.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-09-17 18:21:06 $
+ * @version $Revision: 1.6 $ $Date: 2006-01-30 04:18:55 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
@@ -86,6 +86,8 @@ public final class PagePermission extends Permission
     
     private static final String        WIKI_SEPARATOR = ":";
 
+    private static final String        ATTACHMENT_SEPARATOR = "/";
+    
     private final String               m_actionString;
 
     private final int                  m_mask;
@@ -118,17 +120,21 @@ public final class PagePermission extends Permission
         super( page );
 
         // Parse wiki and page (which may include wiki name and page)
+        // Strip out attachment separator; it is irrelevant.
         String pathParams[] = page.split( WIKI_SEPARATOR );
+        String pageName; 
         if ( pathParams.length >= 2 )
         {
             m_wiki = pathParams[0].length() > 0 ? pathParams[0] : null;
-            m_page = pathParams[1];
+            pageName = pathParams[1];
         }
         else
         {
             m_wiki = null;
-            m_page = pathParams[0];
+            pageName = pathParams[0];
         }
+        int pos = pageName.indexOf( ATTACHMENT_SEPARATOR );
+        m_page = ( pos == -1 ) ? pageName : pageName.substring( 0, pos );
 
         // Parse actions
         String pageActions[] = actions.toLowerCase().split( ACTION_SEPARATOR );

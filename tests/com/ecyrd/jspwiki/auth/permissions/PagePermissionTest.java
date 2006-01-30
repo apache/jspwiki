@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-12-12 06:29:05 $
+ * @version $Revision: 1.5 $ $Date: 2006-01-30 04:19:14 $
  */
 public class PagePermissionTest extends TestCase
 {
@@ -78,6 +78,18 @@ public class PagePermissionTest extends TestCase
         assertFalse( p1.implies( p2 ) );
     }
 
+    public final void testImpliesAttachments()
+    {
+        PagePermission p1;
+        PagePermission p2;
+        
+        // A page should imply its attachment and vice-versa
+        p1 = new PagePermission( "mywiki:Main", "view" );
+        p2 = new PagePermission( "mywiki:Main/test.png", "view" );
+        assertTrue( p1.implies( p2 ) );
+        assertTrue( p2.implies( p1 ) );
+    }
+    
     /*
      * Class under test for boolean implies(java.security.Permission)
      */
