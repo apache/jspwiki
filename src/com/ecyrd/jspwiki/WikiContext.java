@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
@@ -31,7 +32,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
 
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -117,9 +117,6 @@ public class WikiContext
 
     public static final String    CREATE_GROUP = "createGroup";
     public static final String    PREFS    = "prefs";
-    
-    /** Deprecated. @deprecated */
-    public static final String    REGISTER = "register";
     
     public static final String    RENAME   = "rename";
     public static final String    DELETE   = "del";
@@ -432,7 +429,10 @@ public class WikiContext
     
     /**
      *  This method can be used to find the WikiContext programmatically
-     *  from a JSP PageContext.
+     *  from a JSP PageContext. We check the page context scope
+     *  first, then the request context. The wiki context, if it exists,
+     *  is looked up using the key 
+     *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      *  
      *  @since 2.4
      * @param pc
@@ -440,7 +440,14 @@ public class WikiContext
      */
     public static WikiContext findContext( PageContext pageContext )
     {
-        return (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        // Try the page context first, then the request
+        WikiContext context = (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.PAGE_SCOPE );
+        if ( context == null )
+        {
+            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+            context = (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
+        }
+        return context;
     }
     
     /**
@@ -461,56 +468,55 @@ public class WikiContext
     
     /**
      * Checks whether the current user has access to this wiki context,
-     * by obtaining the required Permission ({@link #requiredPermission()}
-     * and delegating to 
+     * by obtaining the required Permission ({@link #requiredPermission()})
+     * and delegating the access check to
      * {@link com.ecyrd.jspwiki.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method will succeed silently. If
-     * the context is not allowed, the user will be redirected to the
-     * login page (if not logged in already) or to a standard 401/forbidden page
-     * (if not).
-     * @param response the HTTP response object for the users's current request
-     * @return TODO
+     * If the user is allowed, this method returns <code>true</code>;
+     * <code>false</code> otherwise.
+     * Note that this method will automatically redirect the user to
+     * a login or error page, as appropriate, if access fails. This is
+     * NOT guaranteed to be default behavior in the future.
+     * @return the result of the access check
      */
-    public boolean hasAccess( HttpServletResponse response ) throws Exception
+    public boolean hasAccess( HttpServletResponse response ) throws IOException
     {
-        //TODO: this class is, at best, a temporary placeholder for this method until we start using filters
+        return hasAccess( response, true );
+    }
+
+    /**
+     * Checks whether the current user has access to this wiki context (and
+     * optionally redirects if not), by obtaining the required Permission ({@link #requiredPermission()})
+     * and delegating the access check to
+     * {@link com.ecyrd.jspwiki.AuthorizationManager#checkPermission(WikiSession, Permission)}.
+     * If the user is allowed, this method returns <code>true</code>;
+     * <code>false</code> otherwise.
+     * @return the result of the access check
+     */
+    public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException
+    {
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
-        Principal currentUser  = m_session.getUserPrincipal();
+        boolean allowed = mgr.checkPermission( m_session, requiredPermission() );
         
-        // Log the access attempt
-        NDC.push( m_engine.getApplicationName()+":"+ m_page.getName() );
-        if ( log.isDebugEnabled() )
+        // If access not allowed, redirect
+        if ( !allowed && redirect )
         {
-            log.debug("Request for page '"+ m_page.getName() +"' from "
-                      + m_request.getRemoteAddr()
-                      + " by "+( getCurrentUser() != null ? getCurrentUser().getName() : "unknown user") );
-        }
-        
-        if( !mgr.checkPermission( m_session, requiredPermission() ) )
-        {
+            Principal currentUser  = m_session.getUserPrincipal();
             if( m_session.isAuthenticated() )
             {
                 log.info("User "+currentUser.getName()+" has no access - displaying message.");
-                NDC.pop();
                 response.sendError( HttpServletResponse.SC_FORBIDDEN, "You don't have enough privileges to do that." );
-                return false;
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                NDC.pop();
                 m_session.addMessage("You don't have access to '" + pageurl + "'. Log in first.");
                 response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
-                return false;
             }
         }
-        NDC.pop();
-        
-        return true;
+        return allowed;
     }
 
-    
     /**
      * Private method that updates the value returned by the {@link #requiredPermission()}
      * method. Will always be called when the page name, request context, or variable
@@ -582,10 +588,6 @@ public class WikiContext
         else if ( PREFS.equals( m_requestContext ) )
         {
             m_permission = new WikiPermission( m_page.getWiki(), "editPreferences" );
-        }
-        else if ( REGISTER.equals( m_requestContext ) )
-        {
-            m_permission = new WikiPermission( m_page.getWiki(), "registerUser" );
         }
         else if ( RENAME.equals( m_requestContext ) )
         {

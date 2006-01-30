@@ -7,15 +7,14 @@ import java.util.Arrays;
  * <p> Permission to perform an global wiki operation, such as self-registering
  * or creating new pages. Permission actions include: <code>createGroups</code>,
  * <code>createPages</code>, <code>editPreferences</code>,
- * <code>editProfile</code>, <code>registerUser</code> and
- * <code>login</code>. </p> <p>The target is a given wiki. The syntax for
- * the target is the wiki name. "All wikis" can be specified using a wildcard
- * (*). Page collections may also be specified using a wildcard. For pages, the
- * wildcard may be a prefix, suffix, or all by itself. <p> Certain permissions
- * imply others. Currently, <code>createGroups</code> implies
- * <code>createPages</code>. </p>
+ * <code>editProfile</code> and <code>login</code>. </p> <p>The target is
+ * a given wiki. The syntax for the target is the wiki name. "All wikis" can be
+ * specified using a wildcard (*). Page collections may also be specified using
+ * a wildcard. For pages, the wildcard may be a prefix, suffix, or all by
+ * itself. <p> Certain permissions imply others. Currently,
+ * <code>createGroups</code> implies <code>createPages</code>. </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-01-11 03:51:36 $
+ * @version $Revision: 1.12 $ $Date: 2006-01-30 04:17:24 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
@@ -28,8 +27,6 @@ public final class WikiPermission extends Permission
 
     private static final String        LOGIN_ACTION            = "login";
 
-    private static final String        REGISTER_ACTION         = "registerUser";
-
     private static final String        EDIT_PREFERENCES_ACTION = "editPreferences";
 
     private static final String        EDIT_PROFILE_ACTION     = "editProfile";
@@ -40,11 +37,9 @@ public final class WikiPermission extends Permission
 
     protected static final int         CREATE_PAGES_MASK       = 0x2;
 
-    protected static final int         REGISTER_MASK           = 0x4;
+    protected static final int         EDIT_PREFERENCES_MASK   = 0x4;
 
-    protected static final int         EDIT_PREFERENCES_MASK   = 0x8;
-
-    protected static final int         EDIT_PROFILE_MASK       = 0x20;
+    protected static final int         EDIT_PROFILE_MASK       = 0x8;
 
     protected static final int         LOGIN_MASK              = 0x10;
 
@@ -53,8 +48,6 @@ public final class WikiPermission extends Permission
     public static final WikiPermission CREATE_PAGES            = new WikiPermission( WILDCARD, CREATE_PAGES_ACTION );
 
     public static final WikiPermission LOGIN                   = new WikiPermission( WILDCARD, LOGIN_ACTION );
-
-    public static final WikiPermission REGISTER                = new WikiPermission( WILDCARD, REGISTER_ACTION );
 
     public static final WikiPermission EDIT_PREFERENCES        = new WikiPermission( WILDCARD, EDIT_PREFERENCES_ACTION );
 
@@ -225,10 +218,6 @@ public final class WikiPermission extends Permission
             else if ( action.equalsIgnoreCase( EDIT_PROFILE_ACTION ) )
             {
                 mask |= EDIT_PROFILE_MASK;
-            }
-            else if ( action.equalsIgnoreCase( REGISTER_ACTION ) )
-            {
-                mask |= REGISTER_MASK;
             }
             else
             {

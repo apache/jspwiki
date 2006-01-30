@@ -54,10 +54,10 @@ public class WikiPermissionTest extends TestCase {
    * Class under test for String getActions()
    */
   public void testGetActions() {
-    WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,registerUser");
-    assertEquals("creategroups,createpages,registeruser", p1.getActions());
-    WikiPermission p2 = new WikiPermission("*", "createGroups,registerUser,createPages");
-    assertEquals("creategroups,createpages,registeruser", p2.getActions());
+    WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
+    assertEquals("creategroups,createpages,editprofile", p1.getActions());
+    WikiPermission p2 = new WikiPermission("*", "createGroups,editProfile,createPages");
+    assertEquals("creategroups,createpages,editprofile", p2.getActions());
   }
 
   /*
@@ -65,30 +65,24 @@ public class WikiPermissionTest extends TestCase {
    */
   public void testImpliesPermission() {
     // Superset of actions implies all individual actions
-    WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,registerUser");
+    WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
     WikiPermission p2 = new WikiPermission("*", "createPages");
     WikiPermission p3 = new WikiPermission("*", "createGroups");
-    WikiPermission p4 = new WikiPermission("*", "registerUser");
     WikiPermission p5 = new WikiPermission("*", "editPreferences");
     WikiPermission p6 = new WikiPermission("*", "editProfile");
     assertTrue(p1.implies(p2));
     assertFalse(p2.implies(p1));
     assertTrue(p1.implies(p3));
     assertFalse(p3.implies(p1));
-    assertTrue(p1.implies(p4));
-    assertFalse(p4.implies(p1));
+    assertTrue(p1.implies(p6));
+    assertFalse(p6.implies(p1));
     
     // createGroups implies createPages
     assertTrue(p3.implies(p2));
     assertFalse(p2.implies(p3));
     
-    // editPreferences no longer implies registerUser
-    assertFalse(p5.implies(p4));
-    assertFalse(p4.implies(p5));
-    
     // editProfile implies nothing
     assertFalse(p6.implies(p5));
-    assertFalse(p6.implies(p4));
     assertFalse(p6.implies(p3));
     assertFalse(p6.implies(p3));
     assertFalse(p6.implies(p1));
@@ -99,10 +93,10 @@ public class WikiPermissionTest extends TestCase {
    */
   public void testImpliesPermissionNS() {
     // Superset of actions implies all individual actions
-    WikiPermission p1 = new WikiPermission("*",      "createPages,createGroups,registerUser");
+    WikiPermission p1 = new WikiPermission("*",      "createPages,createGroups,editProfile");
     WikiPermission p2 = new WikiPermission("mywiki", "createPages");
     WikiPermission p3 = new WikiPermission("mywiki", "createGroups");
-    WikiPermission p4 = new WikiPermission("urwiki", "registerUser");
+    WikiPermission p4 = new WikiPermission("urwiki", "editProfile");
     WikiPermission p5 = new WikiPermission("*",      "editPreferences");
     assertTrue(p1.implies(p2));
     assertFalse(p2.implies(p1));
@@ -115,7 +109,7 @@ public class WikiPermissionTest extends TestCase {
     assertTrue(p3.implies(p2));
     assertFalse(p2.implies(p3));
     
-    // editPreferences does not imply registerUser
+    // editPreferences does not imply editProfile
     assertFalse(p5.implies(p4));
     assertFalse(p4.implies(p5));
   }
@@ -124,8 +118,8 @@ public class WikiPermissionTest extends TestCase {
    * Class under test for String toString()
    */
   public void testToString() {
-    WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,registerUser");
-    String result = "(\"com.ecyrd.jspwiki.auth.permissions.WikiPermission\",\"*\",\"creategroups,createpages,registeruser\")";
+    WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
+    String result = "(\"com.ecyrd.jspwiki.auth.permissions.WikiPermission\",\"*\",\"creategroups,createpages,editprofile\")";
     assertEquals(result, p1.toString());
   }
 
@@ -139,15 +133,14 @@ public class WikiPermissionTest extends TestCase {
     assertEquals(1, WikiPermission.createMask("createGroups"));
     assertEquals(2, WikiPermission.createMask("createPages"));
     assertEquals(3, WikiPermission.createMask("createGroups,createPages"));
-    assertEquals(4, WikiPermission.createMask("registerUser"));
-    assertEquals(5, WikiPermission.createMask("createGroups,registerUser"));
-    assertEquals(6, WikiPermission.createMask("createPages,registerUser"));
-    assertEquals(7, WikiPermission.createMask("createGroups,createPages,registerUser"));
-    assertEquals(8, WikiPermission.createMask("editPreferences"));
-    assertEquals(9, WikiPermission.createMask("createGroups,editPreferences"));
+    assertEquals(4, WikiPermission.createMask("editPreferences"));
+    assertEquals(5, WikiPermission.createMask("createGroups,editPreferences"));
+    assertEquals(6, WikiPermission.createMask("createPages,editPreferences"));
+    assertEquals(7, WikiPermission.createMask("createGroups,createPages,editPreferences"));
+    assertEquals(8, WikiPermission.createMask("editProfile"));
+    assertEquals(9, WikiPermission.createMask("createGroups,editProfile"));
     assertEquals(16, WikiPermission.createMask("login"));
-    assertEquals(32, WikiPermission.createMask("editProfile"));
-    assertEquals(48, WikiPermission.createMask("login,editProfile"));
+    assertEquals(24, WikiPermission.createMask("login,editProfile"));
   }
 
 }
