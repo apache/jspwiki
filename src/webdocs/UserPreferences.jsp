@@ -29,7 +29,6 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
     if(!wikiContext.hasAccess( response )) return;
-    NDC.push( wiki.getApplicationName()+":"+ wikiContext.getPage().getName() );
     
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
@@ -88,9 +87,5 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" /><%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>
+%><wiki:Include page="<%=contentPage%>" />
+

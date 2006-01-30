@@ -42,7 +42,6 @@
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     if( !wikiContext.hasAccess( response ) ) return;
     WikiPage    wikipage    = wikiContext.getPage();
-    NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
     // Force the TranslatorReader to output absolute URLs
     // regardless of the current settings.
@@ -249,10 +248,3 @@
 %>
 
 </feed>
-
-<%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>

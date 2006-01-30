@@ -21,7 +21,6 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.UPLOAD );
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getPage().getName();
-    NDC.push( wiki.getApplicationName() + ":" + pagereq );
 
     // Stash the wiki context
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
@@ -33,9 +32,5 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "UploadTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" /><%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>
+%><wiki:Include page="<%=contentPage%>" />
+

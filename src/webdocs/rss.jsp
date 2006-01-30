@@ -23,7 +23,6 @@
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     if(!wikiContext.hasAccess( response )) return;
     WikiPage    wikipage    = wikiContext.getPage();
-    NDC.push( wiki.getApplicationName()+":"+wikipage.getName() );    
 
     // Redirect if baseURL not set or RSS generation not on
     if( wiki.getBaseURL().length() == 0 )
@@ -113,10 +112,3 @@
     out.println(wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type ));
 %>
 <%-- </oscache:cache> --%>
-
-<%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>

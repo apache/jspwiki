@@ -25,7 +25,6 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getPage().getName();
-    NDC.push( wiki.getApplicationName()+":"+pagereq );    
     
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String user = wikiSession.getUserPrincipal().getName();
@@ -204,9 +203,4 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" /><%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>
+%><wiki:Include page="<%=contentPage%>" />

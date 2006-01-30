@@ -16,8 +16,6 @@
                                                   WikiContext.ERROR );
     String pagereq = wikiContext.getPage().getName();
 
-    NDC.push( wiki.getApplicationName() + ":" + pagereq );
-
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, 
                               wikiContext, 
                               PageContext.REQUEST_SCOPE );
@@ -92,10 +90,3 @@
    </p>
 
    <br clear="all" />
-<%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>
-

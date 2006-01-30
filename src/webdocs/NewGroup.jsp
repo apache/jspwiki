@@ -23,7 +23,6 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.CREATE_GROUP );
     if(!wikiContext.hasAccess( response )) return;
     String user = wikiContext.getCurrentUser().getName();
-    NDC.push( wiki.getApplicationName()+":"+ wikiContext.getPage().getName() );
     
     // Extract the group name, members and action attributes
     String ok      = request.getParameter( "ok" );
@@ -103,9 +102,5 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" /><%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>
+%><wiki:Include page="<%=contentPage%>" />
+

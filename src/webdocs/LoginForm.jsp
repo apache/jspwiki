@@ -28,7 +28,6 @@
     // Stash the Login page context, then go and find the login form
 
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
-    NDC.push( wiki.getApplicationName() + ":LoginForm.jsp"  );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
@@ -41,9 +40,3 @@
     log.debug("Login template content is: " + contentPage);
 %>
     <wiki:Include page="<%=contentPage%>" />
-<%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>

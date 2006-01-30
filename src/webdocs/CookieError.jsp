@@ -25,7 +25,4 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "CookieErrorTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" /><%
-
-    wikiContext.getWikiSession().clearMessages();
-%>
+%><wiki:Include page="<%=contentPage%>" />

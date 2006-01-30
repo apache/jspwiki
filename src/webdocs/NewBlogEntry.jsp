@@ -19,7 +19,6 @@
     // redirect will take care of that
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
     String pagereq = wikiContext.getPage().getName();
-    NDC.push( wiki.getApplicationName()+":"+pagereq );    
     
     // Redirect if the request was for a 'special page'
     String specialpage = wiki.getSpecialPageReference( pagereq );
@@ -33,11 +32,6 @@
     WeblogEntryPlugin p = new WeblogEntryPlugin();
     
     String newEntry = p.getNewEntryPage( wiki, pagereq );
-
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
 
     // Redirect to a new page for user to edit
     response.sendRedirect( wiki.getEditURL(newEntry) );

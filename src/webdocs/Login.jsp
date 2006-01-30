@@ -22,7 +22,6 @@
     AuthenticationManager mgr = wiki.getAuthenticationManager();
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
     WikiSession wikiSession = wikiContext.getWikiSession();
-    NDC.push( wiki.getApplicationName() + ":Login.jsp"  );
     
     if( !mgr.isContainerAuthenticated() )
     {
@@ -93,8 +92,6 @@
         // Redirect!
         log.info( "Redirecting user to " + viewUrl );
         response.sendRedirect( viewUrl );
-        NDC.pop();
-        NDC.remove();
         return;
     }
     
@@ -102,9 +99,4 @@
     // So, find the login form and include it. This should be in the same directory
     // as this page. We don't need to use the wiki:Include tag.
     
-%><jsp:include page="LoginForm.jsp" /><%
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
-%>
+%><jsp:include page="LoginForm.jsp" />

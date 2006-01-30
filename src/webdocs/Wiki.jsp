@@ -19,7 +19,6 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getPage().getName();
-    NDC.push( wiki.getApplicationName()+":"+pagereq );
 
     // Redirect if the request was for a 'special page'
     String redirect = wiki.getRedirectURL( wikiContext );
@@ -46,10 +45,5 @@
 %><wiki:Include page="<%=contentPage%>" /><%
     sw.stop();
     if( log.isDebugEnabled() ) log.debug("Total response time from server on page "+pagereq+": "+sw);
-    
-    // Clean up the logger and clear UI messages
-    NDC.pop();
-    NDC.remove();
-    wikiContext.getWikiSession().clearMessages();
 %>
 

@@ -29,9 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.NDC;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 
 /**
@@ -64,9 +66,12 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
 public class WikiServletFilter implements Filter
 {
     protected static Logger log = Logger.getLogger( WikiServletFilter.class );
+    private WikiEngine m_engine = null;
     
-    public void init(FilterConfig arg0) throws ServletException
+    public void init(FilterConfig config) throws ServletException
     {
+        ServletContext context = config.getServletContext();
+        m_engine = WikiEngine.getInstance( context, null );
     }
 
     public void destroy()
@@ -88,6 +93,8 @@ public class WikiServletFilter implements Filter
         
         // Write the response to a dummy response because we want to 
         //   replace markers with scripts/stylesheet. 
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        NDC.push( m_engine.getApplicationName()+":"+httpRequest.getServletPath() );
         ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
         chain.doFilter( request, responseWrapper );
 
@@ -107,6 +114,14 @@ public class WikiServletFilter implements Filter
         // Only now write the (real) response to the client.
         response.setContentLength( bytes.length );
         response.getOutputStream().write( bytes );
+        
+        // Clean up the UI messages and loggers
+        if ( wikiContext != null )
+        {
+            wikiContext.getWikiSession().clearMessages();
+        }
+        NDC.pop();
+        NDC.remove();
     }
 
     /**
