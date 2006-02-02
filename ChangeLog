@@ -1,3 +1,9 @@
+2006-02-02  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.75 
+        
+        * Fixed WikiContext.getURL(...) test for absolute reference style.
+
 2006-01-29  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.74
