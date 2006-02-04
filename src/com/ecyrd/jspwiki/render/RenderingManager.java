@@ -26,8 +26,6 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  */
 public class RenderingManager implements PageFilter
 {
-    private WikiEngine m_engine;
-
     private int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
     private static Logger log = Logger.getLogger( RenderingManager.class );
     
@@ -41,14 +39,13 @@ public class RenderingManager implements PageFilter
     
     public void initialize( WikiEngine engine, Properties properties )
     {
-        m_engine = engine;
     }
     
     /**
      *  Returns the default Parser for this context.
      *  
-     *  @param context
-     *  @param pagedata
+     *  @param context the wiki context
+     *  @param pagedata the page data
      *  @return A MarkupParser instance.
      */
     public MarkupParser getParser( WikiContext context, String pagedata )
@@ -61,9 +58,9 @@ public class RenderingManager implements PageFilter
     /**
      *  Returns a cached object, if one is found.
      *  
-     * @param context
-     * @param pagedata
-     * @return
+     * @param context the wiki context
+     * @param pagedata the page data
+     * @return the rendered wiki document
      * @throws IOException
      */
     // FIXME: The cache management policy is not very good: deleted/changed pages
@@ -136,8 +133,8 @@ public class RenderingManager implements PageFilter
      *   internally, and will return the cached version.  If the pagedata is different
      *   from what was cached, will re-render and store the pagedata into the internal cache.
      *   
-     *  @param context
-     *  @param pagedata
+     *  @param context the wiki context
+     *  @param pagedata the page data
      *  @return XHTML data.
      */
     public String getHTML( WikiContext context, String pagedata )

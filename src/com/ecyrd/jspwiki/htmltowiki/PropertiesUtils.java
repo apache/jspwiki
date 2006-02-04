@@ -13,6 +13,7 @@ import java.util.TreeMap;
  */
 public class PropertiesUtils
 {
+    private static final String OTHER_WHITESPACE = "\t\r\n\014";
     private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     /**
@@ -33,25 +34,27 @@ public class PropertiesUtils
             Map.Entry entry = (Map.Entry)iterator.next();
             String string_0_ = (String)entry.getKey();
             String string_1_ = entry.getValue() == null ? null : entry.getValue().toString();
-            string += toLine( string_0_, string_1_ ) + "\n";
+            string += toLine( string_0_, string_1_ ) + '\n';
         }
         return string;
     }
 
     /**
-     * @param key
-     * @param value
-     * @return
+     * Generates a property file line from a supplied key and value.
+     * @param key the property's key
+     * @param value the property's value
+     * @return the converted string
      */
     public static String toLine( String key, String value )
     {
-        return saveConvert( key, true ) + "=" + saveConvert( value, false );
+        return saveConvert( key, true ) + '=' + saveConvert( value, false );
     }
 
     /**
-     * @param string
-     * @param encodeWhiteSpace
-     * @return
+     * Encodes a property file string from a supplied key/value line.
+     * @param string the string to encode
+     * @param encodeWhiteSpace <code>true</code> if whitespace should be encoded also
+     * @return the converted string
      */
     public static String saveConvert( String string, boolean encodeWhiteSpace )
     {
@@ -101,7 +104,7 @@ public class PropertiesUtils
                     }
                     else
                     {
-                        if( "\t\r\n\014".indexOf( c ) != -1 )
+                        if( OTHER_WHITESPACE.indexOf( c ) != -1 )
                         {
                             stringbuffer.append( '\\' );
                         }

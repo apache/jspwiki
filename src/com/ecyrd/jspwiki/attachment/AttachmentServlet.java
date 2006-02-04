@@ -463,7 +463,7 @@ public class AttachmentServlet
                 File   f    = multi.getFile( part );
                 InputStream in;
 
-                String filename = multi.getFileSystemName( part );
+                String filename = (String)multi.getFileParameter( part, MultipartRequest.FILENAME );
 
                 try
                 {
@@ -523,12 +523,13 @@ public class AttachmentServlet
     
     /**
      * 
-     * @param req
-     * @param data
-     * @param filename
-     * @param errorPage The place to which you want to get a redirection
-     * @param parentPage
-     * @return true, if resulted in the creation of a new page
+     * @param context the wiki context
+     * @param data the input stream data
+     * @param filename the name of the file to upload
+     * @param errorPage the place to which you want to get a redirection
+     * @param parentPage the page to which the file should be attached
+     * @return <code>true</code> if upload results in the creation of a new page;
+     * <code>false</code> otherwise
      * @throws RedirectException
      * @throws IOException
      * @throws ProviderException

@@ -920,8 +920,9 @@ public class JSPWikiMarkupParser
     /**
      *  Returns XHTML for the start of the heading.  Also sets the
      *  line-end emitter.
-     *  @param level 
-     *  @param headings A List to which heading should be added.
+     *  @param level
+     *  @param title the title for the heading
+     *  @param hd a List to which heading should be added
      */ 
     public Element makeHeading( int level, String title, Heading hd )
     {
@@ -1035,13 +1036,12 @@ public class JSPWikiMarkupParser
     private Element handleImageLink( String reallink, String link, boolean hasLinkText )
     {
         String possiblePage = MarkupParser.cleanLink( link );
-        String matchedLink;
 
         if( isExternalLink( link ) && hasLinkText )
         {
             return makeLink( IMAGELINK, reallink, link, null );
         }
-        else if( (matchedLink = linkExists( possiblePage )) != null &&
+        else if( ( linkExists( possiblePage ) ) != null &&
                  hasLinkText )
         {
             // System.out.println("Orig="+link+", Matched: "+matchedLink);
@@ -1129,15 +1129,6 @@ public class JSPWikiMarkupParser
     private void disableOutputEscaping()
     {
         addElement( new ProcessingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "") );
-    }
-    
-    /**
-     *  Emits a processing instruction that will enable markup escaping.
-     *
-     */
-    private void enableOutputEscaping()
-    {
-        addElement( new ProcessingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "") );
     }
     
     /**
