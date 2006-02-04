@@ -28,7 +28,7 @@ public class InsertPageTest extends TestCase
 
     public void testRecursive() throws Exception
     {
-        String src = "[{InsertPage page='ThisPage'}] [{ALLOW view Guest}]";
+        String src = "[{InsertPage page='ThisPage'}] [{ALLOW view Anonymous}]";
         
         testEngine.saveText("ThisPage",src);
         
@@ -54,7 +54,7 @@ public class InsertPageTest extends TestCase
     public void testMultiInvocation() throws Exception
     {
         String src  = "[{InsertPage page='ThisPage2'}] [{InsertPage page='ThisPage2'}]";
-        String src2 = "foo[{ALLOW view Guest}]";
+        String src2 = "foo[{ALLOW view Anonymous}]";
 
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("ThisPage2",src2);

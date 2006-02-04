@@ -52,10 +52,36 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
- * Manages all access control and authorization; determines what authenticated
- * users are allowed to do.
+ * <p>Manages all access control and authorization; determines what authenticated
+ * users are allowed to do.</p>
+ * <p>Privileges in JSPWiki are expressed as Java-standard {@link java.security.Permission}
+ * classes. There are two types of permissions:</p>
+ * <ul>
+ *   <li>{@link com.ecyrd.jspwiki.auth.permissions.WikiPermission} - privileges that apply
+ *   to an entire wiki instance: <em>e.g.,</em> editing user profiles, creating pages, creating groups</li>
+ *   <li>{@link com.ecyrd.jspwiki.auth.permissions.PagePermission} - privileges that apply
+ *   to a single wiki page or range of pages: <em>e.g.,</em> reading, editing, renaming
+ * </ul>
+ * <p>Calling classes determine whether they are entitled to perform a particular action
+ * by constructing the appropriate permission first, then passing it and the current
+ * {@link com.ecyrd.jspwiki.WikiSession} to the 
+ * {@link #checkPermission(WikiSession, Permission)} method. If the session's 
+ * Subject possesses the permission, the action is allowed.</p>
+ * <p>For WikiPermissions, the decision criteria is relatively simple: the caller either
+ * possesses the permission, as granted by the wiki security policy -- or not.</p>
+ * <p>For PagePermissions, the logic is exactly the same if the page being checked
+ * does not have an access control list. However, if the page does have an ACL, the
+ * authorization decision is made based the <em>union</em> of the permissions
+ * granted in the ACL and in the security policy. In other words, the user must
+ * be named in the ACL (or belong to a group or role that is named in the ACL) 
+ * <em>and</em> be granted (at least) the same permission in the security policy. We
+ * do this to prevent a user from gaining more permissions than they already
+ * have, based on the security policy.</p>
+ * <p>See the {@link #checkPermission(WikiSession, Permission)} and 
+ * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
+ * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.29 $ $Date: 2005-10-19 04:10:24 $
+ * @version $Revision: 1.30 $ $Date: 2006-02-04 21:50:18 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -253,14 +279,14 @@ public class AuthorizationManager
      * Wrapper method that determines if the Subject associated with a 
      * supplied WikiSession contains a desired built-in Role principal, 
      * OR is a member a Group or external Role. The rules as as follows:
-     * <ul>
+     * <ol>
      * <li>If the desired Principal is a built-in Role, the algorithm simply
      * checks to see if the Subject possesses it in its Principal set</li>
      * <li>If the desired Principal is a Role but <em>not</em> built-in, the
      * external Authorizer's <code>isInRole</code> method is called</li>
      * <li>If the desired principal is a Group, the GroupManager's group
      * authorizer <code>isInRole</code> method is called</li>
-     * </ul>
+     * </ol>
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role or group principal) to look
@@ -298,15 +324,32 @@ public class AuthorizationManager
     }
     
     /**
-     * Determines if the Subject associated with a supplied WikiSession contains
+     * <p>Determines if the Subject associated with a supplied WikiSession contains
      * a desired user Principal or built-in Role principal, OR is a member a
-     * Group or external Role. The rules as as follows:
-     * <ul>
+     * Group or external Role. The rules are as follows:</p>
+     * <ol>
+     * <li>If the WikiSession is <em>not</em> authenticated, and we're looking for a built-in
+     * Role, delegate to {@link #isUserInRole(WikiSession, Principal)}; otherwise, always
+     * return <code>false</code>. We do this to prevent privilege escalation.</li>
      * <li>Delegate the initial check to {@link #isUserInRole(WikiSession, Principal)}.</li>
      * <li>If this check fails, delegate to
      * {@link #hasUserPrincipal(Subject, Principal)} to determine whether the
      * Subject posesses the desired Principal in its Principal set.</li>
-     * </ul>
+     * </ol>
+     * <p>Note: As stated in the first rule above, this method
+     * <em>always</em> returns <code>false</code> when the 
+     * user isn't authenticated, <code>and</code> the principal/role being 
+     * queried isn't a built-in Role like Anonymous or Asserted. This is
+     * to prevent privilege escalation by non-authenticated users.
+     * Thus, to gain access to pages that name a specific user, that user 
+     * is <em>required</em> to log in. Ditto for groups he or she 
+     * belongs to. The exception is for ACLs that contain built-in roles; 
+     * <em>e.g.,</em> "allow Asserted users to view" is allowed.</p>
+     * <p>A consequence of this rule is that ALCs that specify 
+     * <code>ALLOW Guest</code> <em>will not work</em> for
+     * anonymous/asserted users (because <code>Guest</code> is 
+     * a Principal, not a built-in Role). ACLs should specify
+     * <code>ALLOW Anonymous</code> instead.</p>
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role, group, or user principal) to look
@@ -322,10 +365,24 @@ public class AuthorizationManager
         {
             return false;
         }
+        
+        // If user NOT authenticated, only allow checking for built-in roles
+        if ( !session.isAuthenticated() )
+        {
+            if ( principal instanceof Role && Role.isBuiltInRole( (Role)principal ) )
+            {
+                return isUserInRole( session, principal );
+            }
+            return false;
+        }
+        
+        // If user is authenticated, check role membership first
         if ( principal instanceof Role || principal instanceof Group )
         {
             return isUserInRole( session, principal );
         }
+        
+        // We must be looking for a user principal, then
         Subject subject = session.getSubject();
         return hasUserPrincipal( subject, principal );
     }
@@ -372,7 +429,7 @@ public class AuthorizationManager
 
     /**
      * Returns the current external {@link Authorizer} in use, which may be 
-     * <code>null<code>.
+     * <code>null</code>.
      * @return the current Authorizer
      */
     protected Authorizer getAuthorizer()

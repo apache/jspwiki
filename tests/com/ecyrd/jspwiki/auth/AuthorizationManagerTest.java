@@ -97,15 +97,15 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Alice Engineering", m_auth.hasRoleOrPrincipal( session, new Role( "Engineering" ) ) );
         assertFalse( "Alice Finance", m_auth.hasRoleOrPrincipal( session, new Role( "Finance" ) ) );
 
-        // Test group membership
+        // Test group membership: Alice should be part of group Bar, but not Foo
         GroupManager groupMgr = m_engine.getGroupManager();
         Group fooGroup = new DefaultGroup( "Foo" );
         groupMgr.add( fooGroup );
         Group barGroup = new DefaultGroup( "Bar" );
         barGroup.add( principal );
         groupMgr.add( barGroup );
-        assertFalse( "Alice in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
-        assertTrue( "Alice in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
+        assertFalse( "Authenticated Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
+        assertTrue( "Authenticated Alice in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
         
         // Test user principal posession
         assertTrue("Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal("Alice")));
@@ -114,6 +114,16 @@ public class AuthorizationManagerTest extends TestCase
         // Test user principal (non-WikiPrincipal) posession
         assertTrue("Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal("Alice")));
         assertFalse("Alice has Bob", m_auth.hasRoleOrPrincipal( session, new TestPrincipal("Bob")));
+        
+        // Create a new session for Alice as an Asserted user. This time,
+        // she should NOT be considered part of either group Bar or Foo, since we prohibit
+        // Asserted users from being members of any role that isn't built-in.
+        principal = new WikiPrincipal( "Alice" );
+        roles = new Role[]
+        { Role.ASSERTED, Role.ALL };
+        session = buildSession( m_context, principal, roles );
+        assertFalse( "Asserted Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
+        assertFalse( "Asserted Alice not in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
         
         // Cleanup
         try
