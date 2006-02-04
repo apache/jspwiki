@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-01-11 03:45:32 $
+ * @version $Revision: 1.12 $ $Date: 2006-02-04 21:34:38 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -317,6 +317,7 @@ public class WebContainerAuthorizer implements Authorizer
         catch( Exception e )
         {
             log.error( "Cannot parse web.xml: " + e.getMessage() );
+            throw new RuntimeException( "Cannot parse web.xml: " + e.getMessage() );
         }
         return doc;
     }
