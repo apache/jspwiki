@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.62 2006-01-22 11:15:03 jalkanen Exp $
+    $Id: build.xml,v 1.63 2006-02-04 21:54:28 arj Exp $
 -->    
        
 <!--   
@@ -501,14 +501,19 @@
   <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,tomcat-init,war">
     
     <!-- Build the custom auth WAR -->
+    <copy file="etc/jspwiki.properties" 
+        toFile="${tests.build}/jspwiki.properties.container" flatten="true" />
+    <propertyfile file="${tests.build}/jspwiki.properties.container">
+      <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.XMLUserDatabase" />
+    </propertyfile>
     <webtest-setup context="test-custom"
       webxml="${tests.build}/web.xml.custom" 
-      props="etc/jspwiki.properties" />
+      props="${tests.build}/jspwiki.properties.container" />
     
     <!-- Build the container auth WAR -->
     <webtest-setup context="test-container"
       webxml="${tests.build}/web.xml.container" 
-      props="etc/jspwiki.properties" />
+      props="${tests.build}/jspwiki.properties.container" />
     
     <!-- Build the custom auth WAR (JDBC database) -->
     <copy file="etc/jspwiki.properties" 
