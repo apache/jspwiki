@@ -16,6 +16,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("JSPWiki web unit tests");
         suite.addTestSuite( com.ecyrd.jspwiki.web.CustomTest.class );
+        suite.addTestSuite( com.ecyrd.jspwiki.web.CustomAbsoluteTest.class );
         suite.addTestSuite( com.ecyrd.jspwiki.web.CustomJDBCTest.class );
         suite.addTestSuite( com.ecyrd.jspwiki.web.ContainerTest.class );
         suite.addTestSuite( com.ecyrd.jspwiki.web.ContainerJDBCTest.class );
