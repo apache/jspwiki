@@ -1,3 +1,42 @@
+2006-02-04  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.76
+        
+        * Bug fix: changed behavior of AuthorizationManager
+        to prevent privilege escalation with Asserted users.
+        The method AuthorizationManager.hasRoleOrPrincipal() now
+        ALWAYS returns false when the user isn't authenticated, AND
+        the principal/role being queried isn't a built-in role like
+        Anonymous, Asserted etc. Thus, to gain access to pages that
+        name a specific user, that user is now REQUIRED to log in.
+        Ditto for groups he or she belongs to. The exception is
+        for ACLs that contain built-in roles; e.g., "allow Asserted
+        users to view" is allowed. Adjusted several unit tests
+        and created a new web unit test to verify.
+        
+        NOTE: a consequence of this change is that ALCs that
+        specify "ALLOW Guest" **will not work** any longer (because
+        Guest is a principal, not a built-in role). Please use
+        "ALLOW Anonymous" instead.
+
+        * Bug fix: build.xml's web unit tests were not guaranteeing
+        use of XMLUserDatabase for non-JDBC tests. If built with
+        a jspwiki.properties.tmpl that specified the JDBC database,
+        this caused certain web unit tests to fail. We now force
+        the user database implementation for all web unit tests.
+        
+        * WebContainerAuthorizer now throws a RuntimeException
+        if it cannot somehow parse the web.xml. This isn't ideal,
+        but it's better than ignoring the error. Credit: Jürgen Weber.
+        
+        * Removed unused imports and unreferenced objects in
+        multiple classes. This does not affect functionality.
+        
+        * Removed obsolete "useOldAuth" refs from test
+        jspwiki.properties.
+        
+        * Many Javadoc tweaks and additional comments.
+
 2006-02-02  Erik Bunn  <Erik.Bunn@basen.net>
 
         * 2.3.75 
