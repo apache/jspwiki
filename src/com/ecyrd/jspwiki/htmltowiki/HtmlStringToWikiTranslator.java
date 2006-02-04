@@ -20,6 +20,8 @@ import com.ecyrd.jspwiki.WikiContext;
 public class HtmlStringToWikiTranslator
 {
 
+    private static final String CYBERNEKO_PARSER = "org.cyberneko.html.parsers.SAXParser";
+
     public HtmlStringToWikiTranslator()
     {}
 
@@ -51,7 +53,7 @@ public class HtmlStringToWikiTranslator
      */
     private Element htmlStringToElement( String html ) throws JDOMException, IOException
     {
-        SAXBuilder builder = new SAXBuilder( "org.cyberneko.html.parsers.SAXParser", true );
+        SAXBuilder builder = new SAXBuilder( CYBERNEKO_PARSER, true );
         Document doc = builder.build( new StringReader( html ) );
         Element element = doc.getRootElement();
         return element;

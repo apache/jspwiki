@@ -19,7 +19,6 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import java.util.*;
 
@@ -33,8 +32,6 @@ import java.util.*;
 public class ListLocksPlugin
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( ListLocksPlugin.class );
-
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

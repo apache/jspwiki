@@ -67,20 +67,6 @@ public class PropFindMethod
         output.output( doc, res.getWriter() );
     }
     
-    private void debugXML( Element el )
-    {
-        XMLOutputter output = new XMLOutputter();
-        
-        output.setFormat( Format.getPrettyFormat() );
-        
-        try
-        {
-            output.output( el, System.out );
-            System.out.println("");
-        }
-        catch( IOException e ) {}
-    }
-    
     private Element getPropertyNames( DavContext dc )
     {
         log.debug("Retrieving all property names for context "+dc);
@@ -248,12 +234,8 @@ public class PropFindMethod
 
             Element davresponse = null;
 
-            // log.debug("First node is:"+firstnode);
-            
             System.out.println("Request="+dc.getPath()+" depth="+dc.getDepth());
 
-            // debugXML( doc.getRootElement() );
-            
             if( firstnode == null || firstnode.getName().equals("allprop") )
             {
                 davresponse = getAllProps( dc );

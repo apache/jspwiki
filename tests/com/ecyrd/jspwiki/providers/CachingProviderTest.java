@@ -60,7 +60,7 @@ public class CachingProviderTest extends TestCase
         assertEquals("getPage", 2, p.m_getPageCalls); // These two are for non-existant pages (with and without s)
         assertEquals("getPageText", 4, p.m_getPageTextCalls);
 
-        WikiPage wp = engine.getPage( "Foo" );
+        engine.getPage( "Foo" );
 
         assertEquals("pageExists2", 0, p.m_pageExistsCalls);
         assertEquals("getPage2", 2, p.m_getPageCalls);

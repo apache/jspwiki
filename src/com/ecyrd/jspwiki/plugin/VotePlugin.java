@@ -49,7 +49,7 @@ public class VotePlugin
      */
     public int vote( WikiContext context, int vote )
     {
-        Properties props = getVotes( context );
+        getVotes( context );
 
         if( vote > 0 )
         {
@@ -73,7 +73,6 @@ public class VotePlugin
 
     private void putVotes( WikiContext context, String yesno, int nVotes )
     {
-        WikiEngine engine = context.getEngine();
         WikiPage   page   = context.getPage();
 
         Properties props = getVotes( context );
@@ -176,8 +175,6 @@ public class VotePlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        WikiEngine engine = context.getEngine();
-
         String posneg = (String) params.get( "value" );
 
         if( TextUtil.isPositive(posneg) )

@@ -40,10 +40,8 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-import org.apache.oro.text.regex.Util;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 
 public class ReferredPagesPlugin implements WikiPlugin
 {

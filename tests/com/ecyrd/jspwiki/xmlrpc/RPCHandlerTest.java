@@ -44,7 +44,7 @@ public class RPCHandlerTest extends TestCase
     {
         try
         {
-            byte[] res = m_handler.getPage( "NoSuchPage" );
+            m_handler.getPage( "NoSuchPage" );
             fail("No exception for missing page.");
         }
         catch( XmlRpcException e ) 
@@ -114,7 +114,7 @@ public class RPCHandlerTest extends TestCase
     public void testPageInfo()
         throws Exception
     {
-        String text = "Foobar.[{ALLOW view Guest}]";
+        String text = "Foobar.[{ALLOW view Anonymous}]";
         String pageName = NAME1;
 
         m_engine.saveText( pageName, text );

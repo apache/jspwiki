@@ -69,7 +69,7 @@ public class XHtmlToWikiConfig
     {
         if( wikiContext.getPage() != null )
         {
-            setPageName( wikiContext.getPage().getName() + "/" );
+            setPageName( wikiContext.getPage().getName() + '/' );
         }
     }
 

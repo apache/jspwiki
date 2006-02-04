@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki.htmltowiki;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,7 +22,8 @@ import org.jdom.xpath.XPath;
  */
 public class XHtmlElementToWikiTranslator
 {
-
+    private static final String UTF8 = "UTF-8";
+    
     private XHtmlToWikiConfig config;
 
     private WhitespaceTrimWriter outTimmer;
@@ -446,22 +448,29 @@ public class XHtmlElementToWikiTranslator
         {
             return null;
         }
-        ref = URLDecoder.decode( ref );
-        ref = ref.trim();
-        if( ref.startsWith( config.getAttachPage() ) )
+        try
         {
-            ref = ref.substring( config.getAttachPage().length() );
-        }
-        if( ref.startsWith( config.getWikiJspPage() ) )
-        {
-            ref = ref.substring( config.getWikiJspPage().length() );
-        }
-        if( config.getPageName() != null )
-        {
-            if( ref.startsWith( config.getPageName() ) )
+            ref = URLDecoder.decode( ref, UTF8 );
+            ref = ref.trim();
+            if( ref.startsWith( config.getAttachPage() ) )
             {
-                ref = ref.substring( config.getPageName().length() );
+                ref = ref.substring( config.getAttachPage().length() );
             }
+            if( ref.startsWith( config.getWikiJspPage() ) )
+            {
+                ref = ref.substring( config.getWikiJspPage().length() );
+            }
+            if( config.getPageName() != null )
+            {
+                if( ref.startsWith( config.getPageName() ) )
+                {
+                    ref = ref.substring( config.getPageName().length() );
+                }
+            }
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            // Shouldn't happen...
         }
         return ref;
     }

@@ -23,6 +23,7 @@ import javax.servlet.jsp.tagext.*;
 
 public class TabbedSectionTag extends BodyTagSupport
 {
+    private static final long serialVersionUID = 1702437933960026481L;
     private String       defaultTabId;
     private String       firstTabId;
     private boolean      defaultTabFound = false;

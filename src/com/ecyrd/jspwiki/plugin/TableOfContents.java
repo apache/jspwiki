@@ -19,14 +19,11 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
-import com.ecyrd.jspwiki.render.RenderingManager;
 
 import java.util.*;
 import java.io.StringReader;

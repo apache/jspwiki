@@ -24,8 +24,6 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import java.util.*;
 
-import javax.print.attribute.standard.MediaSize.Engineering;
-
 import org.apache.ecs.xhtml.input;
 
 /**

@@ -58,7 +58,7 @@ public class FilterManagerTest extends TestCase
         List l = m.getFilterList();
 
         Iterator i = l.iterator();
-        PageFilter f1 = (PageFilter)i.next();
+        i.next();
         TestFilter f2 = (TestFilter)i.next();
 
         Properties p = f2.m_properties;

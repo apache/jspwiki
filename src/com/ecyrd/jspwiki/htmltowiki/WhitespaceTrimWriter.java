@@ -19,7 +19,7 @@ public class WhitespaceTrimWriter extends Writer
 
     private boolean trimMode = true;
 
-    private Pattern ps = Pattern.compile( ".*?\\n\\s*?", Pattern.MULTILINE );
+    private static final Pattern ONLINE_PATTERN = Pattern.compile( ".*?\\n\\s*?", Pattern.MULTILINE );
 
     private boolean currentlyOnLineBegin = true;
 
@@ -82,9 +82,7 @@ public class WhitespaceTrimWriter extends Writer
     public void write( char[] arg0, int arg1, int arg2 ) throws IOException
     {
         buffer.append( arg0, arg1, arg2 );
-        currentlyOnLineBegin = ps.matcher( buffer ).matches();
-        //    System.out.println("\""+PropertiesUtils.saveConvert(buffer.toString(),true)+"\">>
-        // "+currentlyOnLineBegin);
+        currentlyOnLineBegin = ONLINE_PATTERN.matcher( buffer ).matches();
     }
 
     public void close() throws IOException

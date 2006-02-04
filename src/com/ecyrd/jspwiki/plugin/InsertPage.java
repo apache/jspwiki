@@ -19,7 +19,6 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
@@ -35,8 +34,6 @@ import java.util.*;
 public class InsertPage
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( InsertPage.class );
-
     public static final String PARAM_PAGENAME  = "page";
     public static final String PARAM_STYLE     = "style";
     public static final String PARAM_MAXLENGTH = "maxlength";

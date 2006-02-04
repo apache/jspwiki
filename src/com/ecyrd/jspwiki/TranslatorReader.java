@@ -790,14 +790,13 @@ public class TranslatorReader extends Reader
     private String handleImageLink( String reallink, String link, boolean hasLinkText )
     {
         String possiblePage = cleanLink( link );
-        String matchedLink;
         String res = "";
 
         if( isExternalLink( link ) && hasLinkText )
         {
             res = makeLink( IMAGELINK, reallink, link );
         }
-        else if( (matchedLink = linkExists( possiblePage )) != null &&
+        else if( ( linkExists( possiblePage ) ) != null &&
                  hasLinkText )
         {
             // System.out.println("Orig="+link+", Matched: "+matchedLink);

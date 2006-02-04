@@ -74,7 +74,7 @@ public class WikiEngineTest extends TestCase
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            newdir );
 
-        WikiEngine test = new TestEngine( props );
+        new TestEngine( props );
 
         File f = new File( newdir );
 
@@ -91,7 +91,7 @@ public class WikiEngineTest extends TestCase
 
         try
         {
-            WikiEngine test = new TestEngine( props );
+            new TestEngine( props );
 
             fail( "Wiki did not warn about missing property." );
         }

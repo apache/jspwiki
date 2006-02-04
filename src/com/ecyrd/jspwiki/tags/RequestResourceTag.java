@@ -1,7 +1,5 @@
 package com.ecyrd.jspwiki.tags;
 
-import com.ecyrd.jspwiki.ui.TemplateManager;
-
 public class RequestResourceTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
@@ -11,10 +9,7 @@ public class RequestResourceTag extends WikiTagBase
     
     public int doWikiStartTag() throws Exception
     {
-        TemplateManager mgr = m_wikiContext.getEngine().getTemplateManager();
-        
-        
-        
+        m_wikiContext.getEngine().getTemplateManager();
         return SKIP_BODY;
     }
 

@@ -32,9 +32,6 @@ import java.util.*;
 public class FormClose
     extends FormElement
 {
-    private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormClose.class );
-
     /**
      * Builds a Form close tag. Removes any information on the form from
      * the WikiContext.
