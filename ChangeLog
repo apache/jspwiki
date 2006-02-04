@@ -25,6 +25,15 @@
         this caused certain web unit tests to fail. We now force
         the user database implementation for all web unit tests.
         
+        * Bug fix: Ebu's 2.3.75 fix had the undesirable side
+        effect of hosing all relative URLs (while fixing all of
+        the absolute ones). WikiContext has been reverted to
+        its previous state. The real culprit turns out to
+        be in DefaultURLConstructor.doReplacement(). We have
+        added a web unit test suite to test for absolute URLs,
+        and also for relative URLs (these are manipulated in
+        jspwiki.properties prior to deployment of the test WARs).
+        
         * WebContainerAuthorizer now throws a RuntimeException
         if it cannot somehow parse the web.xml. This isn't ideal,
         but it's better than ignoring the error. Credit: Jürgen Weber.

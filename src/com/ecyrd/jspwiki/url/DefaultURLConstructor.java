@@ -121,7 +121,7 @@ public class DefaultURLConstructor
     {
         String baseurl = m_pathPrefix;
 
-        if( absolute || !m_useRelativeURLStyle ) baseurl = m_engine.getBaseURL();
+        if( absolute ) baseurl = m_engine.getBaseURL();
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );

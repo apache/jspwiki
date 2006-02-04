@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.63 2006-02-04 21:54:28 arj Exp $
+    $Id: build.xml,v 1.64 2006-02-04 23:52:08 arj Exp $
 -->    
        
 <!--   
@@ -502,18 +502,30 @@
     
     <!-- Build the custom auth WAR -->
     <copy file="etc/jspwiki.properties" 
-        toFile="${tests.build}/jspwiki.properties.container" flatten="true" />
-    <propertyfile file="${tests.build}/jspwiki.properties.container">
+        toFile="${tests.build}/jspwiki.properties.custom" flatten="true" />
+    <propertyfile file="${tests.build}/jspwiki.properties.custom">
       <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.XMLUserDatabase" />
+      <entry key="jspwiki.referenceStyle" value="relative" />
     </propertyfile>
     <webtest-setup context="test-custom"
       webxml="${tests.build}/web.xml.custom" 
-      props="${tests.build}/jspwiki.properties.container" />
+      props="${tests.build}/jspwiki.properties.custom" />
     
+    <!-- Build the custom auth WAR (absolute URLs) -->
+    <copy file="${tests.build}/jspwiki.properties.custom" 
+        toFile="${tests.build}/jspwiki.properties.custom-absolute" flatten="true" />
+    <propertyfile file="${tests.build}/jspwiki.properties.custom-absolute">
+      <entry key="jspwiki.referenceStyle" value="absolute" />
+      <entry key="jspwiki.baseURL" value="http://localhost:8080/test-custom-absolute/" />
+    </propertyfile>
+    <webtest-setup context="test-custom-absolute"
+      webxml="${tests.build}/web.xml.custom" 
+      props="${tests.build}/jspwiki.properties.custom-absolute" />
+        
     <!-- Build the container auth WAR -->
     <webtest-setup context="test-container"
       webxml="${tests.build}/web.xml.container" 
-      props="${tests.build}/jspwiki.properties.container" />
+      props="${tests.build}/jspwiki.properties.custom" />
     
     <!-- Build the custom auth WAR (JDBC database) -->
     <copy file="etc/jspwiki.properties" 
@@ -553,6 +565,7 @@
     
     <!-- Tear down the test contexts -->
     <webtest-teardown context="test-custom" />
+    <webtest-teardown context="test-custom-absolute" />
     <webtest-teardown context="test-custom-jdbc" />
     <webtest-teardown context="test-container" />
     <webtest-teardown context="test-custom-jdbc" />

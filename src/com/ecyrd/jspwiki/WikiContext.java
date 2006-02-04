@@ -383,7 +383,7 @@ public class WikiContext
                           String params )
     {
         boolean absolute = "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE ));
-        if ( m_request == null || absolute )
+        if ( m_request == null || !absolute )
         {
             // FIXME: is rather slow
             return m_engine.getURL( context,
