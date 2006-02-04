@@ -435,7 +435,7 @@ public class WikiContext
      *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      *  
      *  @since 2.4
-     * @param pc
+     * @param pageContext the JSP page context
      * @return Current WikiContext, or null, of no context exists.
      */
     public static WikiContext findContext( PageContext pageContext )
@@ -470,12 +470,13 @@ public class WikiContext
      * Checks whether the current user has access to this wiki context,
      * by obtaining the required Permission ({@link #requiredPermission()})
      * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.AuthorizationManager#checkPermission(WikiSession, Permission)}.
+     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
      * <code>false</code> otherwise.
      * Note that this method will automatically redirect the user to
      * a login or error page, as appropriate, if access fails. This is
      * NOT guaranteed to be default behavior in the future.
+     * @param response the http response
      * @return the result of the access check
      */
     public boolean hasAccess( HttpServletResponse response ) throws IOException
@@ -487,7 +488,7 @@ public class WikiContext
      * Checks whether the current user has access to this wiki context (and
      * optionally redirects if not), by obtaining the required Permission ({@link #requiredPermission()})
      * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.AuthorizationManager#checkPermission(WikiSession, Permission)}.
+     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
      * <code>false</code> otherwise.
      * @return the result of the access check
@@ -518,7 +519,7 @@ public class WikiContext
     }
 
     /**
-     * Private method that updates the value returned by the {@link #requiredPermission()}
+     * Protected method that updates the value returned by the {@link #requiredPermission()}
      * method. Will always be called when the page name, request context, or variable
      * changes.
      * @since 2.4

@@ -159,7 +159,7 @@ public abstract class MarkupParser
     
     /**
      *  Parses the document.
-     *  @return
+     *  @return the parsed document, as a WikiDocument
      *  @throws IOException
      */
     public abstract WikiDocument parse()

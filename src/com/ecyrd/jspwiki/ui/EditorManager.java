@@ -150,7 +150,7 @@ public class EditorManager extends ModuleManager
     /**
      *  Returns a list of editors as Strings of editor names.
      *  
-     *  @return
+     *  @return the list of available editors
      */
     public String[] getEditorList()
     {
@@ -192,8 +192,8 @@ public class EditorManager extends ModuleManager
      *  out whether the edited text is in the HTTP request parameters or somewhere in
      *  the session.
      *  
-     *  @param ctx
-     *  @return
+     *  @param ctx the JSP page context
+     *  @return the edited text, if present in the session page context or as a parameter
      */
     public static String getEditedText( PageContext ctx )
     {

@@ -13,12 +13,12 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
 /**
  * Handles logins made from inside the wiki application, rather than via the web
  * container. This handler is instantiated in
- * {@link AuthenticationManager#login(HttpServletRequest)}.
+ * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession, String, String)}.
  * If container-managed authentication is used, the
  * {@link WebContainerCallbackHandler}is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-10-19 04:11:25 $
+ * @version $Revision: 1.5 $ $Date: 2006-02-04 21:35:05 $
  * @since 2.3
  */
 public class WikiCallbackHandler implements CallbackHandler

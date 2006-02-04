@@ -30,7 +30,7 @@ import com.ecyrd.jspwiki.WikiSession;
  * validator will reject any HTML-like input, and any of a number of special
  * characters.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-01-06 23:05:31 $
+ * @version $Revision: 1.4 $ $Date: 2006-02-04 21:46:39 $
  * @since 2.3.54
  */
 public final class InputValidator
@@ -77,7 +77,7 @@ public final class InputValidator
     /**
      * Validates a string against a particular pattern type and additionally
      * checks that the value is not <code>null</code> or blank. Delegates to
-     * {@link #validate(String, int)}.
+     * {@link #validate(String, String, int)}.
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
      * @param type
@@ -140,7 +140,9 @@ public final class InputValidator
 
     /**
      * Returns <code>true</code> if a supplied string is null or blank
-     * @param parameter
+     * @param input the string to check
+     * @return <code>true</code> if <code>null</code> or blank (zero-length);
+     * <code>false</code> otherwise
      */
     public static final boolean isBlank( String input )
     {

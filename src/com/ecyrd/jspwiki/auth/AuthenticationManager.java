@@ -49,7 +49,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.17 $ $Date: 2005-12-12 07:00:28 $
+ * @version $Revision: 1.18 $ $Date: 2006-02-04 21:34:03 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -434,11 +434,11 @@ public class AuthenticationManager
     /**
      * Logs the user out by retrieving the WikiSession associated with the
      * HttpServletRequest and unbinding all of the Subject's Principals,
-     * except for {@link Role#ALL}, {@link Role#
+     * except for {@link Role#ALL}, {@link Role#ANONYMOUS}.
      * is a cheap-and-cheerful way to do it without invoking JAAS LoginModules.
      * The logout operation will also flush the JSESSIONID cookie from
      * the user's browser session, if it was set.
-     * @param session the current HTTP session
+     * @param request the current HTTP request
      */
     public static void logout( HttpServletRequest request )
     {

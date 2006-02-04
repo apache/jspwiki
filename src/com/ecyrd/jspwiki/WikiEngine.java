@@ -87,7 +87,7 @@ public class WikiEngine
 
     /** The web.xml parameter that defines where the config file is to be found. 
      *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE. 
-     *  {@value jspwiki.propertyfile}
+     *  {@value #DEFAULT_PROPERTYFILE}
      */
 
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
@@ -137,7 +137,7 @@ public class WikiEngine
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
 
     /** Path to the default property file. 
-     * {@value /WEB_INF/jspwiki.properties}
+     * {@value #DEFAULT_PROPERTYFILE}
      */
     public static final String  DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
     

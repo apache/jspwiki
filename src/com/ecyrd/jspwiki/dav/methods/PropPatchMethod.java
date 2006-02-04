@@ -23,7 +23,8 @@ public class PropPatchMethod
 {
 
     /**
-     * @param engine
+     * Constructs a new DAV PropPatchMethod.
+     * @param provider the DAV provider
      */
     public PropPatchMethod( DavProvider provider )
     {

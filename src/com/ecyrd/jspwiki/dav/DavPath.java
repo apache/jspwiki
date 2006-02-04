@@ -38,7 +38,7 @@ public class DavPath
     
     /**
      *  Creates a new DavPath from an old one.
-     * @param dp
+     * @param dp the dav path
      */
     public DavPath( DavPath dp )
     {
@@ -87,7 +87,7 @@ public class DavPath
     /**
      * Adds another path to the end of this path.
      * 
-     * @param dp
+     * @param dp the current dav path
      */
     public void append( DavPath dp )
     {
@@ -99,7 +99,7 @@ public class DavPath
      * Adds another path to the end of this path.  The "path" parameter
      * may contain a slash-separated path (e.g. "foo/bar/blog.txt").
      * 
-     * @param path
+     * @param path the current dav path
      */
     public void append( String path )
     {
@@ -122,7 +122,7 @@ public class DavPath
     /**
      * Returns true, if the path represents a directory.
      * 
-     * @return
+     * @return <code>true</code> if the path is a directory; <code>false</code> otherwise
      */
     public boolean isDirectory()
     {
@@ -132,7 +132,7 @@ public class DavPath
     /**
      * Returns the directory part of the DavPath.
      * 
-     * @return
+     * @return the directory portion of the path
      */
     public String pathPart()
     {
@@ -152,7 +152,7 @@ public class DavPath
      * of the path, unless the path is a directory, in which case it returns an
      * empty string.
      * 
-     * @return  File name or empty string.
+     * @return  the file name, or an empty string
      */
     public String filePart()
     {
@@ -166,7 +166,7 @@ public class DavPath
      * Returns the name of the last component of the DavPath.  This is either
      * the name of a directory, or the name of a file.
      * 
-     * @return
+     * @return the name of the right-most portion of the dav path
      */
     public String getName()
     {
@@ -178,7 +178,7 @@ public class DavPath
     
     /**
      * Returns the entire path as a String.
-     * @return
+     * @return the entire dav path
      */
     public String getPath()
     {
@@ -239,7 +239,7 @@ public class DavPath
      * Exactly equivalent to size().  I'm too lazy to remember whether it's length() or size(),
      * so I'll provide both...
      * 
-     * @return
+     * @return the size of the path
      */
     public int length()
     {
@@ -249,6 +249,7 @@ public class DavPath
     /**
      * Returns a human-readable version of the path.  Please use getPath() instead
      * of toString(), as this method is only good for debugging purposes.
+     * @return the String representation of the path
      */
     public String toString()
     {

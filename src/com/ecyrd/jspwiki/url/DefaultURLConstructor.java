@@ -254,8 +254,6 @@ public class DefaultURLConstructor
     /**
      *  This method is not needed for the DefaultURLConstructor.
      *  
-     *  @author jalkanen
-     *
      *  @since
      */
     public String getForwardPage( HttpServletRequest request )

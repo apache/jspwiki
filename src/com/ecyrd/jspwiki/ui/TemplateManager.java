@@ -326,8 +326,8 @@ public class TemplateManager
      *  Returns the include resources marker for a given type.  This is in a
      *  HTML comment format.
      *   
-     *  @param type
-     *  @return
+     *  @param type the marker
+     *  @return the generated marker comment
      */
     public static String getMarker( String type )
     {
@@ -408,8 +408,8 @@ public class TemplateManager
     /**
      *  returns all those types that have been requested so far.
      *  
-     * @param ctx
-     * @return
+     * @param ctx the wiki context
+     * @return the array of types requested
      */
     public static String[] getResourceTypes( WikiContext ctx )
     {

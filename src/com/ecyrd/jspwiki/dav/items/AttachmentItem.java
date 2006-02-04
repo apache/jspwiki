@@ -15,6 +15,7 @@ import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
 import com.ecyrd.jspwiki.dav.DavPath;
 
 /**
+ * Represents a DAV attachment.
  *  @author jalkanen
  *
  *  @since 
@@ -23,8 +24,10 @@ public class AttachmentItem extends PageDavItem
 {
 
     /**
-     * @param engine
-     * @param page
+     * Constructs a new DAV attachment.
+     * @param provider the dav provider
+     * @param path the current dav path
+     * @param att the attachment
      */
     public AttachmentItem( AttachmentDavProvider provider, DavPath path, Attachment att )
     {
@@ -32,6 +35,11 @@ public class AttachmentItem extends PageDavItem
     }
 
    
+    /**
+     * Returns a collection of properties for this attachment.
+     * @return the attachment properties
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getPropertySet()
+     */
     public Collection getPropertySet()
     {
         Collection set = getCommonProperties();
@@ -50,6 +58,7 @@ public class AttachmentItem extends PageDavItem
     /**
      *  Returns the content type as defined by the servlet container;
      *  or if the container cannot be found, returns "application/octet-stream".
+     *  @return the content type
      */
     public String getContentType()
     {
@@ -65,6 +74,11 @@ public class AttachmentItem extends PageDavItem
         return "application/octet-stream"; // FIXME: This is not correct
     }
     
+    /**
+     * Returns the length of the attachment.
+     * @return the length
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getLength()
+     */
     public long getLength()
     {
         return m_page.getSize();

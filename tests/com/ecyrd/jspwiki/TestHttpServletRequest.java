@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  * {@link #getSession(boolean)}. All others either return null, or don't work
  * they way they should.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2006-02-04 21:51:39 $
  */
 public class TestHttpServletRequest implements HttpServletRequest
 {
@@ -251,6 +251,7 @@ public class TestHttpServletRequest implements HttpServletRequest
 
     /**
      * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
+     * @deprecated
      */
     public String getRealPath( String arg0 )
     {
@@ -383,6 +384,7 @@ public class TestHttpServletRequest implements HttpServletRequest
 
     /**
      * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdFromUrl()
+     * @deprecated
      */
     public boolean isRequestedSessionIdFromUrl()
     {

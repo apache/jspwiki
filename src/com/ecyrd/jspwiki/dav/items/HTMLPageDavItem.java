@@ -20,6 +20,7 @@ import com.ecyrd.jspwiki.dav.WikiDavProvider;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 
 /**
+ * Represents a DAV HTML page item.
  *  @author jalkanen
  *
  *  @since 
@@ -29,20 +30,28 @@ public class HTMLPageDavItem extends PageDavItem
     private long m_cachedLength = -1;
     
     /**
-     * @param engine
-     * @param page
+     * @param provider the DAV provider
+     * @param path the DAV path
+     * @param page the wiki page
      */
     public HTMLPageDavItem( DavProvider provider, DavPath path, WikiPage page )
     {
         super( provider, path, page );
     }
 
-    
+    /**
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getHref()
+     */
     public String getHref()
     {
         return m_provider.getURL( m_path );    
     }
  
+    /**
+     * Returns the content type for the item. Always returns
+     * <code>text/html; charset=UTF-8</code>.
+     * @see com.ecyrd.jspwiki.dav.items.DavItem#getContentType()
+     */
     public String getContentType()
     {
         return "text/html; charset=UTF-8";

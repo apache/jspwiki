@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSessionContext;
  * Most methods work as the should; notable exceptions include
  * getSessionContext/getServletContext.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2006-02-04 21:51:39 $
  */
 public class TestHttpSession implements HttpSession
 {
@@ -98,6 +98,7 @@ public class TestHttpSession implements HttpSession
     /**
      * No-op; returns null;
      * @see javax.servlet.http.HttpSession#getSessionContext()
+     * @deprecated
      */
     public HttpSessionContext getSessionContext()
     {
@@ -117,6 +118,7 @@ public class TestHttpSession implements HttpSession
     /**
      * Delegates to {@link #getAttribute(String)}.
      * @see javax.servlet.http.HttpSession#getValue(java.lang.String)
+     * @deprecated
      */
     public Object getValue( String arg0 )
     {
@@ -138,6 +140,7 @@ public class TestHttpSession implements HttpSession
 
     /**
      * @see javax.servlet.http.HttpSession#getValueNames()
+     * @deprecated
      */
     public String[] getValueNames()
     {
@@ -161,6 +164,7 @@ public class TestHttpSession implements HttpSession
     /**
      * @see javax.servlet.http.HttpSession#putValue(java.lang.String,
      *      java.lang.Object)
+     * @deprecated
      */
     public void putValue( String arg0, Object arg1 )
     {
@@ -177,6 +181,7 @@ public class TestHttpSession implements HttpSession
 
     /**
      * @see javax.servlet.http.HttpSession#removeValue(java.lang.String)
+     * @deprecated
      */
     public void removeValue( String arg0 )
     {

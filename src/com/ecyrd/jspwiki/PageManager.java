@@ -398,7 +398,7 @@ public class PageManager
      * @since 2.3.29
      * @param pageName
      * @param version
-     * @return
+     * @return <code>true</code> if the page exists, <code>false</code> otherwise
      * @throws ProviderException
      */
     public boolean pageExists( String pageName, int version )

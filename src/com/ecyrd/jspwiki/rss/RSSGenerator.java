@@ -226,9 +226,10 @@ public class RSSGenerator
     }
 
     /**
+     * Returns the content type of this RSS feed.
      *  @since 2.3.15
-     * @param mode
-     * @return
+     * @param mode the RSS mode: {@link #RSS10}, {@link #RSS20} or {@link #ATOM}.
+     * @return the content type
      */
     public static String getContentType( String mode )
     {

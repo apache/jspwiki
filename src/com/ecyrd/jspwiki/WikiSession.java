@@ -26,7 +26,7 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.12 $ $Date: 2005-12-12 06:59:45 $
+ * @version $Revision: 2.13 $ $Date: 2006-02-04 21:32:06 $
  */
 public class WikiSession
 {
@@ -127,9 +127,9 @@ public class WikiSession
      * true if any of these conditions are true:</p>
      * <ul>
      *   <li>The session's Principal set contains 
-     *       {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS</li>
+     *       {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}</li>
      *   <li>The session's Principal set contains 
-     *       {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST</li>
+     *       {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}</li>
      *   <li>The Principal returned by {@link #getUserPrincipal()} evaluates
      *       to an IP address.</li> 
      * </ul>
@@ -353,7 +353,7 @@ public class WikiSession
     /**
      * Returns all generic messages associated with this session.
      * The messages stored with the session persist throughout the
-     * session unless they have been reset with {@link #clearMesssage()}.
+     * session unless they have been reset with {@link #clearMessages()}.
      * @return the current messsages.
      */
     public String[] getMessages() 
@@ -364,7 +364,7 @@ public class WikiSession
     /**
      * Returns all messages associated with a session topic.
      * The messages stored with the session persist throughout the
-     * session unless they have been reset with {@link #clearMesssage()}.
+     * session unless they have been reset with {@link #clearMessages(String)}.
      * @return the current messsages.
      */
     public String[] getMessages( String topic ) 
@@ -487,8 +487,7 @@ public class WikiSession
 
     /** 
      * Invalidates the WikiSession and resets its Subject's 
-     * Principal set to the equivalent of a "guest session"
-     * @param session the wiki session to invalidate
+     * Principal set to the equivalent of a "guest session".
      */
     public void invalidate()
     {
