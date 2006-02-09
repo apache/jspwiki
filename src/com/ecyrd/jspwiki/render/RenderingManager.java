@@ -28,17 +28,39 @@ public class RenderingManager implements PageFilter
 {
     private int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
     private static Logger log = Logger.getLogger( RenderingManager.class );
-    
+
+    public static final String PROP_USECACHE = "jspwiki.renderingManager.useCache";
+ 
+    /** 
+     * True if RenderingManager should cache built DOM trees. 
+     * The default is true.
+     * Set jspwiki.renderingManager.useCache in the properties to false
+     * to prevent this.
+     */
+    private boolean m_useCache = true;
+   
     /**
      *  Creates a new unlimited cache.  A good question is, whether this
      *  cache should be limited - at the moment it will just keep on growing,
      *  if the page is never accessed.
      */
     // FIXME: Memory leak
-    private Cache m_documentCache = new Cache(true,false,false); 
+    private Cache m_documentCache;
     
     public void initialize( WikiEngine engine, Properties properties )
     {
+        String s = properties.getProperty( PROP_USECACHE );
+        s = (s == null ? "true" : s);
+        Boolean b = new Boolean( s );
+        m_useCache = b.booleanValue();
+        if( m_useCache ) 
+        {
+            m_documentCache = new Cache(true,false,false); 
+        }
+        else
+        {
+            log.info( "RenderingManager caching is disabled." );
+        }
     }
     
     /**
@@ -69,41 +91,45 @@ public class RenderingManager implements PageFilter
         throws IOException
     {
         String pageid = context.getRealPage().getName()+"::"+context.getRealPage().getVersion();
-        
-        try
-        {
-            WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pageid, 
-                                                                            m_cacheExpiryPeriod );
-            
-            //
-            //  This check is needed in case the different filters have actually
-            //  changed the page data.
-            //  FIXME: Figure out a faster method
-            if( !pagedata.equals(doc.getPageData()) )
-                throw new NeedsRefreshException(doc);
-            
-            if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pageid );
-            return doc;
-        }
-        catch( NeedsRefreshException e )
-        {
-            if( log.isDebugEnabled() ) log.debug("Re-rendering and storing "+pageid );
 
-            MarkupParser parser = getParser( context, pagedata );
-
+        boolean refresh = false;
+        if( m_useCache ) 
+        {
             try
             {
-                WikiDocument doc = parser.parse();
-                doc.setPageData( pagedata );
+                WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pageid, 
+                                                                                m_cacheExpiryPeriod );
                 
-                m_documentCache.putInCache( pageid, doc );
-                
-                return doc;
+                //
+                //  This check is needed in case the different filters have actually
+                //  changed the page data.
+                //  FIXME: Figure out a faster method
+                if( pagedata.equals(doc.getPageData()) )
+                {
+                    if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pageid );
+                    return doc;
+                }
             }
-            catch( IOException ex )
+            catch( NeedsRefreshException e )
             {
-                log.error("Unable to parse",ex);
+                if( log.isDebugEnabled() ) log.debug("Re-rendering and storing "+pageid );
             }
+        }
+
+        MarkupParser parser = getParser( context, pagedata );
+        try
+        {
+            WikiDocument doc = parser.parse();
+            doc.setPageData( pagedata );
+            if( m_useCache ) 
+            {
+                m_documentCache.putInCache( pageid, doc );
+            }
+            return doc;
+        }
+        catch( IOException ex )
+        {
+            log.error("Unable to parse",ex);
         }
         
         return null;
@@ -163,8 +189,10 @@ public class RenderingManager implements PageFilter
     public void postSave( WikiContext wikiContext, String content ) throws FilterException
     {
         String pageName = wikiContext.getPage().getName();
-        
-        m_documentCache.flushEntry( pageName );
+        if( m_useCache )
+        {
+            m_documentCache.flushEntry( pageName );
+        }
     }
 
     public String postTranslate( WikiContext wikiContext, String htmlContent ) throws FilterException
