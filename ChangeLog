@@ -1,3 +1,10 @@
+2006-02-09  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.77
+        
+        * Added option jspwiki.renderingManager.useCache to properties;
+        set to false to prevent RenderingManager from caching DOM trees.
+
 2006-02-04  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.76
