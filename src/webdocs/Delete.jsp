@@ -2,7 +2,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.WikiProvider" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -65,11 +64,6 @@
         return; 
     }
 
-    // Stash the wiki context
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-                              
     // Set the content type and include the response content
     // FIXME: not so.
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

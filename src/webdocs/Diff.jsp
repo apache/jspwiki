@@ -1,6 +1,5 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.tags.InsertDiffTag" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -63,11 +62,6 @@
                               pageContext.REQUEST_SCOPE );
 
     // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
-
-    // Stash the wiki context
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

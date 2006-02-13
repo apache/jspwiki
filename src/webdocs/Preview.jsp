@@ -1,7 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Date" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -31,11 +30,6 @@
 
     pageContext.setAttribute( "lastchange",
                               Long.toString( lastchange ),
-                              PageContext.REQUEST_SCOPE );
-
-    // Stash the wiki context
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
                               PageContext.REQUEST_SCOPE );
 
     // Set the content type and include the response content

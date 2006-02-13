@@ -12,7 +12,6 @@
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.WikiPermission" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.DuplicateUserException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.UserProfile" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -29,10 +28,6 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
     if(!wikiContext.hasAccess( response )) return;
-    
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
     
     // Extract the user profile and action attributes
     UserManager userMgr = wiki.getUserManager();

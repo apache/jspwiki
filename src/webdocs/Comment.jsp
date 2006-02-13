@@ -2,7 +2,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
@@ -224,11 +223,6 @@
     {
         session.setAttribute( "lock-"+pagereq, lock );
     }
-
-    // Stash the wiki context
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

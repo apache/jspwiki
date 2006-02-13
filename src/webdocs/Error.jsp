@@ -1,7 +1,6 @@
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
     public void jspInit()
@@ -15,10 +14,6 @@
     WikiContext wikiContext = wiki.createContext( request, 
                                                   WikiContext.ERROR );
     String pagereq = wikiContext.getPage().getName();
-
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, 
-                              wikiContext, 
-                              PageContext.REQUEST_SCOPE );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 

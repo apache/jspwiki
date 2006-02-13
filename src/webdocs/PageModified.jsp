@@ -3,7 +3,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="java.util.Calendar,java.util.Date" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -43,11 +42,6 @@
                               usertext,
                               PageContext.REQUEST_SCOPE );
 
-    // Stash the wiki context
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-    
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,

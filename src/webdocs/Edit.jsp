@@ -3,7 +3,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager" %>
@@ -58,10 +57,6 @@
         latestversion = wikiContext.getPage();
     }
     
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
     //
     //  Set the response type before we branch.
     //

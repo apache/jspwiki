@@ -5,7 +5,6 @@
 <%@ page import="com.ecyrd.jspwiki.WikiPage" %>
 <%@ page import="com.ecyrd.jspwiki.WikiSession" %>
 <%@ page import="com.ecyrd.jspwiki.filters.RedirectException" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -92,11 +91,6 @@
     pageContext.setAttribute( "name", name, PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( "members", members, PageContext.REQUEST_SCOPE );
     
-    // Stash the wiki context
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
