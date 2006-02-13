@@ -472,7 +472,9 @@ public class WikiContext
      * and delegating the access check to
      * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise.
+     * <code>false</code> otherwise. If access is allowed,
+     * the wiki context will be added to the request as an attribute
+     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      * Note that this method will automatically redirect the user to
      * a login or error page, as appropriate, if access fails. This is
      * NOT guaranteed to be default behavior in the future.
@@ -490,7 +492,9 @@ public class WikiContext
      * and delegating the access check to
      * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise.
+     * <code>false</code> otherwise. If access is allowed,
+     * the wiki context will be added to the request as attribute
+     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      * @return the result of the access check
      */
     public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException
@@ -498,18 +502,29 @@ public class WikiContext
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
         boolean allowed = mgr.checkPermission( m_session, requiredPermission() );
         
+        // Stash the wiki context
+        if ( allowed )
+        {
+          if ( m_request != null && m_request.getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
+          {
+            m_request.setAttribute( WikiTagBase.ATTR_CONTEXT, this );
+          }
+        }
+        
         // If access not allowed, redirect
         if ( !allowed && redirect )
         {
             Principal currentUser  = m_session.getUserPrincipal();
             if( m_session.isAuthenticated() )
             {
-                log.info("User "+currentUser.getName()+" has no access - displaying message.");
-                response.sendError( HttpServletResponse.SC_FORBIDDEN, "You don't have enough privileges to do that." );
+                log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
+                String pageurl = m_engine.encodeName( m_page.getName() );
+                m_session.addMessage("You don't have access to '" + pageurl + "'. Do you want to log in as another user?.");
+                response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
             }
             else
             {
-                log.info("User "+currentUser.getName()+" has no access - redirecting to login page.");
+                log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_engine.encodeName( m_page.getName() );
                 m_session.addMessage("You don't have access to '" + pageurl + "'. Log in first.");
                 response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
