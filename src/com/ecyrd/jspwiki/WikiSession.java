@@ -26,7 +26,7 @@ import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.13 $ $Date: 2006-02-04 21:32:06 $
+ * @version $Revision: 2.14 $ $Date: 2006-02-13 00:09:28 $
  */
 public class WikiSession
 {
@@ -262,6 +262,7 @@ public class WikiSession
     {
         Set principals = m_subject.getPrincipals();
         Principal secondChoice = null;
+        Principal thirdChoice = null;
 
         // Take the first WikiPrincipal of type FULL_NAME as primary
         // Take the first non-Role as the alternate
@@ -279,20 +280,24 @@ public class WikiSession
                     }
                     else if ( wp.getType().equals( WikiPrincipal.WIKI_NAME ) )
                     {
-                        return currentPrincipal;
+                        secondChoice = currentPrincipal;
                     }
                 }
                 if ( currentPrincipal instanceof PrincipalWrapper )
                 {
                     currentPrincipal = ( (PrincipalWrapper) currentPrincipal ).getPrincipal();
                 }
-                if ( secondChoice == null )
+                if ( thirdChoice == null )
                 {
-                    secondChoice = currentPrincipal;
+                    thirdChoice = currentPrincipal;
                 }
             }
         }
-        return ( secondChoice == null ? WikiPrincipal.GUEST : secondChoice );
+        if ( secondChoice != null )
+        {
+          return secondChoice;
+        }
+        return ( thirdChoice != null ? thirdChoice : WikiPrincipal.GUEST );
     }
     
     /**
