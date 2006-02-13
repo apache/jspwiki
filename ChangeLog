@@ -1,4 +1,4 @@
-2006-02-04  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-12  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.78
         
@@ -8,7 +8,7 @@
         * Bug fix: added "temporary" fix to WikiContext.hasAccess()
         to redirect users to the login page, rather than send a 
         "forbidden" error, for authenticated users failing to access a
-        page. This resolves a case access to pages fail "open" due to
+        page. This resolves a case where access to pages fail "open" due to
         WikiServletFilter's response wrapping.
         
         * Bug fix: modified the way WikiSession.getUserPrincipal()
