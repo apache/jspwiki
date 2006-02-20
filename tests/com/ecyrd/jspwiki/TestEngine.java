@@ -91,7 +91,7 @@ public class TestEngine extends WikiEngine
     {
         Properties properties = new Properties();
         String m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING,
-                AbstractFileProvider.DEFAULT_ENCODING );
+                                                    AbstractFileProvider.DEFAULT_ENCODING );
 
         pagename = TextUtil.urlEncode( pagename, m_encoding );
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
@@ -112,8 +112,14 @@ public class TestEngine extends WikiEngine
             String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
             File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
-
+            
             f.delete();
+            
+            // Remove the property file, too
+            f = new File( files, mangleName(name)+".properties" );
+            
+            if( f.exists() )
+                f.delete();
         }
         catch( Exception e ) 
         {
