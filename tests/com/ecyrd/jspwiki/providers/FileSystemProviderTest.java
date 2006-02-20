@@ -223,15 +223,30 @@ public class FileSystemProviderTest extends TestCase
     public void testDelete()
         throws Exception
     {
-        m_provider.putPageText( new WikiPage(m_engine, "Test"), "v1" );
-
-        m_provider.deletePage( "Test" );
-
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        WikiPage p = new WikiPage(m_engine,"Test");
+        p.setAuthor("AnonymousCoward");
+        
+        m_provider.putPageText( p, "v1" );
 
         File f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
 
+        assertTrue( "file does not exist", f.exists() );
+        
+        f = new File( files, "Test.properties" );
+        
+        assertTrue( "property file does not exist", f.exists() );
+        
+        m_provider.deletePage( "Test" );
+
+        f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
+
         assertFalse( "file exists", f.exists() );
+        
+        f = new File( files, "Test.properties" );
+        
+        assertFalse( "properties exist", f.exists() );
     }
 
     public static Test suite()
