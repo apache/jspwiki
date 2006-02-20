@@ -228,7 +228,7 @@ public class VersioningFileProviderTest extends TestCase
 
         assertFalse( "file exists", f.exists() );
 
-        f = new File( files+File.separator+"RCS", NAME1+FileSystemProvider.FILE_EXT+",v" );
+        f = new File( files, NAME1+".properties" );
 
         assertFalse( "RCS file exists", f.exists() );
     }
