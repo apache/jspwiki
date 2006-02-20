@@ -137,6 +137,16 @@ public class FileSystemProvider
         return p;
     }
 
+    public void deletePage(String pageName) throws ProviderException
+    {
+        super.deletePage(pageName);
+
+        File file = new File( getPageDirectory(), 
+                              mangleName(pageName)+PROP_EXT );
+        
+        if( file.exists() ) file.delete();
+    }
+
     public void movePage( String from,
                           String to )
         throws ProviderException
