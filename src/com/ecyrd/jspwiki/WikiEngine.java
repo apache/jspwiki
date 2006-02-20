@@ -2046,7 +2046,8 @@ public class WikiEngine
     }
 
     /**
-     *  Deletes a page or an attachment completely, including all versions.
+     *  Deletes a page or an attachment completely, including all versions.  If the page
+     *  does not exist, does nothing.
      * 
      * @param pageName
      * @throws ProviderException
@@ -2056,22 +2057,24 @@ public class WikiEngine
     {
         WikiPage p = getPage( pageName );
         
-        if( p instanceof Attachment )
+        if( p != null )
         {
-            m_attachmentManager.deleteAttachment( (Attachment) p );
-        }
-        else
-        {
-            if (m_attachmentManager.hasAttachments( p ))
+            if( p instanceof Attachment )
             {
-                Collection attachments = m_attachmentManager.listAttachments( p );
-                for( Iterator atti = attachments.iterator(); atti.hasNext(); )
-                {
-                    m_attachmentManager.deleteAttachment( (Attachment)(atti.next()) );
-                }
-                
+                m_attachmentManager.deleteAttachment( (Attachment) p );
             }
-            m_pageManager.deletePage( p );
+            else
+            {
+                if (m_attachmentManager.hasAttachments( p ))
+                {
+                    Collection attachments = m_attachmentManager.listAttachments( p );
+                    for( Iterator atti = attachments.iterator(); atti.hasNext(); )
+                    {
+                        m_attachmentManager.deleteAttachment( (Attachment)(atti.next()) );
+                    }
+                }
+                m_pageManager.deletePage( p );
+            }
         }
     }
     
