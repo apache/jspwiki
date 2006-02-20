@@ -45,21 +45,22 @@ public class ReferenceManagerTest extends TestCase
     }
 
     public void tearDown()
+        throws Exception
     {
-        TestEngine.deleteTestPage( "TestPage" );
-        TestEngine.deleteTestPage( "Foobar" );
-        TestEngine.deleteTestPage( "Foobars" );
-        TestEngine.deleteTestPage( "Foobar2" );
-        TestEngine.deleteTestPage( "Foobar2s" );
-        TestEngine.deleteTestPage( "BugCommentPreviewDeletesAllComments" );
-        TestEngine.deleteTestPage( "FatalBugs" );
-        TestEngine.deleteTestPage( "RandomPage" );
-        TestEngine.deleteTestPage( "NewBugs" );
-        TestEngine.deleteTestPage( "OpenBug" );
-        TestEngine.deleteTestPage( "OpenBugs" );
-        TestEngine.deleteTestPage( "NewBug" );
-        TestEngine.deleteTestPage( "BugOne" );
-        TestEngine.deleteTestPage( "BugTwo" );
+        engine.deletePage( "TestPage" );
+        engine.deletePage( "Foobar" );
+        engine.deletePage( "Foobars" );
+        engine.deletePage( "Foobar2" );
+        engine.deletePage( "Foobar2s" );
+        engine.deletePage( "BugCommentPreviewDeletesAllComments" );
+        engine.deletePage( "FatalBugs" );
+        engine.deletePage( "RandomPage" );
+        engine.deletePage( "NewBugs" );
+        engine.deletePage( "OpenBug" );
+        engine.deletePage( "OpenBugs" );
+        engine.deletePage( "NewBug" );
+        engine.deletePage( "BugOne" );
+        engine.deletePage( "BugTwo" );
     }
 
     public void testUnreferenced()
