@@ -1,3 +1,20 @@
+2006-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.79.  Moved to new apartment, now back on coding
+        track...
+        
+        * WikiEngine.deletePage() is now protected against trying to
+        delete pages that don't exist.
+        
+        * FileSystemProvider did not delete associated metadata files
+        during deletePage().
+        
+        * ReferenceManagerTest is now a lot more careful about not leaving
+        a corrupted refmgr.ser file behind.  Unfortunately, this exposed
+        a consistent bug somewhere...
+        
+        * Some tests tweaks and iterations.
+
 2006-02-12  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.78
