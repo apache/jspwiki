@@ -22,6 +22,11 @@
         * Bug fix: BugStrangePageNameLogic (Fixed by changing
         MarkupParser.cleanLink() to a far more efficient version.  It's a whole
         lotta faster, too.)
+        
+        * Bug fix: If the local entity resolver cannot resolve the entities,
+        it now reverts to default operation (instead of dying with an NPE).
+        
+        * Added a bunch of Javascript issues from Dirk Fredericx.  Thanks, man!
 
 2006-02-21  Andrew Jaquith <andrew@freshcookies.org>
 
