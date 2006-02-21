@@ -46,6 +46,7 @@ import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
@@ -81,7 +82,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.30 $ $Date: 2006-02-04 21:50:18 $
+ * @version $Revision: 1.31 $ $Date: 2006-02-21 08:36:33 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -160,8 +161,10 @@ public class AuthorizationManager
         }
         Subject subject = session.getSubject();
         
-        // Always allow the action if it's the Admin
-        if ( subject.getPrincipals().contains( Role.ADMIN ) )
+        // Always allow the action if user has AllPermission
+        Permission allPermission = new AllPermission( m_engine.getApplicationName() );
+        boolean hasAllPermission = checkStaticPermission( subject, allPermission );
+        if ( hasAllPermission )
         {
             return true;
         }
