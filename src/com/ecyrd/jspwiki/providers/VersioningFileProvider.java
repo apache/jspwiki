@@ -197,11 +197,13 @@ public class VersioningFileProvider
             //   read because the next method will with a high probability ask for the same propertyfile.
             //   The time it took to show a historypage with 267 versions dropped with 300%. 
 
-            if( m_cachedProperties != null 
-                && m_cachedProperties.m_page.equals(page) 
-                && m_cachedProperties.m_lastModified == lastModified)
+            CachedProperties cp = m_cachedProperties;
+            
+            if( cp != null 
+                && cp.m_page.equals(page) 
+                && cp.m_lastModified == lastModified)
             {
-                return m_cachedProperties.m_props;
+                return cp.m_props;
             }
             
             InputStream in = new FileInputStream( propertyFile );
@@ -212,7 +214,7 @@ public class VersioningFileProvider
 
             in.close();
             
-            CachedProperties cp = new CachedProperties();
+            cp = new CachedProperties();
             cp.m_page = page;
             cp.m_lastModified = lastModified;
             cp.m_props = props;
@@ -535,7 +537,7 @@ public class VersioningFileProvider
      *  FIXME: Does not get user information.
      */
     public List getVersionHistory( String page )
-        throws ProviderException
+    throws ProviderException
     {
         ArrayList list = new ArrayList();
 
