@@ -45,7 +45,7 @@ public class JDBCUserDatabaseTest extends TestCase
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
-        Connection m_conn = ds.getConnection();
+        m_conn = ds.getConnection();
         Statement stmt = m_conn.createStatement();
         String sql;
 
