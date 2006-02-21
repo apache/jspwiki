@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.65 2006-02-13 00:06:56 arj Exp $
+    $Id: build.xml,v 1.66 2006-02-21 08:58:10 arj Exp $
 -->    
        
 <!--   
@@ -423,6 +423,15 @@
                token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
       <copy file="${tests.build}/web.xml.container" 
           tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
+          
+      <!-- Copy the DTDs to the test WEB-INF -->
+      <mkdir dir="tests/etc/WEB-INF/dtd" />
+      <copy toDir="tests/etc/WEB-INF/dtd">
+        <fileset dir="${basedir}/etc/dtd/" />
+      </copy>
+      
+      <!-- Copy the keystore to the test dir -->
+      <copy file="${jks.keystore}" toDir="tests/etc" />
   </target>
     
   <!-- This target runs the JUnit tests that are available
@@ -449,7 +458,7 @@
         </classpath>
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-        <sysproperty key="java.security.policy" value="${basedir}/etc/jspwiki.policy"/>
+        <sysproperty key="java.security.policy" value="tests/etc/jspwiki.policy"/>
 		<sysproperty key="jspwiki.tests.auth" value="true" />
 
         <formatter type="plain" />
@@ -477,7 +486,7 @@
         </classpath>
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-        <sysproperty key="java.security.policy" value="${basedir}/etc/jspwiki.policy"/>
+        <sysproperty key="java.security.policy" value="tests/etc/jspwiki.policy"/>
 		<sysproperty key="jspwiki.tests.auth" value="true" />
          
         <arg value="com.ecyrd.jspwiki.AllTests" />
