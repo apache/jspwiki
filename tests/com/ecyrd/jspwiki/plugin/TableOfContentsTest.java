@@ -186,6 +186,23 @@ public class TableOfContentsTest extends TestCase
                 res );
     }
     
+    /**
+     *  Tests BugTableOfContentsCausesHeapdump
+     *  
+     * @throws Exception
+     */
+    public void testSelfReference()
+        throws Exception
+    {
+        String src = "!!![{TableOfContents}]";
+        
+        testEngine.saveText( "Test", src );
+        
+        String res = testEngine.getHTML( "Test" );
+        
+        assertTrue( res.indexOf("Table of Contents") != -1 );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( TableOfContentsTest.class );
