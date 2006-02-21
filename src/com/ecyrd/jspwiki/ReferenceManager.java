@@ -123,7 +123,7 @@ public class ReferenceManager
     private WikiEngine     m_engine;
 
     private boolean        m_matchEnglishPlurals = false;
-
+    
     private static Logger log = Logger.getLogger(ReferenceManager.class);
 
     private static final String SERIALIZATION_FILE = "refmgr.ser";
@@ -154,7 +154,7 @@ public class ReferenceManager
     }
 
     /**
-     *  Does a full reference update.
+     *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
      */
     private void updatePageReferences( WikiPage page )
         throws ProviderException
@@ -173,7 +173,7 @@ public class ReferenceManager
             res.add( ((Attachment)(atti.next())).getName() );
         }
 
-        updateReferences( page.getName(), res );
+        internalUpdateReferences( page.getName(), res );
     }
 
     /**
@@ -358,8 +358,6 @@ public class ReferenceManager
 
         updateReferences( page.getName(),
                           context.getEngine().scanWikiLinks( page, content ) );
-
-        serializeToDisk();
     }
     
     /**
@@ -373,7 +371,7 @@ public class ReferenceManager
      * referring page:deleted page.
      * 
      *  @param page Name of the page to remove from the maps.
-    */
+     */
     public synchronized void pageRemoved( WikiPage page )
     {
         String pageName = page.getName();
@@ -385,15 +383,31 @@ public class ReferenceManager
             String referredPageName = (String)it_refTo.next();
             Set refBy = (Set)m_referredBy.get( referredPageName );
 
-            log.debug("Before cleaning m_referredBy HashMap key:value "+referredPageName+":"+m_referredBy.get( referredPageName ));
+            if( refBy == null )
+                throw new InternalWikiException("Refmgr out of sync: page "+pageName+" refers to "+referredPageName+", which has null referrers.");
+
             refBy.remove(pageName);
+            
             m_referredBy.remove( referredPageName );
-            m_referredBy.put( referredPageName, refBy );
-            log.debug("After cleaning m_referredBy HashMap key:value "+referredPageName+":"+m_referredBy.get( referredPageName ));
+            
+            // We won't put it back again if it becomes empty and does not exist.  It will be added
+            // later on anyway, if it becomes referenced again.
+            if( !(refBy.isEmpty() && !m_engine.pageExists(referredPageName)) )
+            {
+                m_referredBy.put( referredPageName, refBy );
+            }
         }
 
         log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
         m_refersTo.remove( pageName );
+        
+        Set refBy = (Set) m_referredBy.get( pageName );
+        if( refBy == null || refBy.isEmpty() )
+        {
+            m_referredBy.remove( pageName );
+        }
+        
+        serializeToDisk();
     }
     
     /**
@@ -410,12 +424,43 @@ public class ReferenceManager
      */
     public synchronized void updateReferences( String page, Collection references )
     {
+        internalUpdateReferences(page, references);
+        
+        serializeToDisk();
+    }
+
+    /**
+     *  Updates the referred pages of a new or edited WikiPage. If a refersTo
+     *  entry for this page already exists, it is removed and a new one is built
+     *  from scratch. Also calls updateReferredBy() for each referenced page.
+     *  <p>
+     *  This method does not synchronize the database to disk.
+     *  
+     *  @param page Name of the page to update.
+     *  @param references A Collection of Strings, each one pointing to a page this page references.
+     */
+
+    private void internalUpdateReferences(String page, Collection references)
+    {
+        page = getFinalPageName( page );
+        
         //
         // Create a new entry in m_refersTo.
         //
         Collection oldRefTo = (Collection)m_refersTo.get( page );
         m_refersTo.remove( page );
-        m_refersTo.put( page, references );
+        
+        TreeSet cleanedRefs = new TreeSet();
+        for( Iterator i = references.iterator(); i.hasNext(); )
+        {
+            String ref = (String)i.next();
+            
+            ref = getFinalPageName( ref );
+            
+            cleanedRefs.add( ref );
+        }
+        
+        m_refersTo.put( page, cleanedRefs );
 
         //
         //  We know the page exists, since it's making references somewhere.
@@ -432,16 +477,16 @@ public class ReferenceManager
         //  remove that reference. (We don't want to try to figure out
         //  which particular references were removed...)
         //
-        cleanReferredBy( page, oldRefTo, references );
+        cleanReferredBy( page, oldRefTo, cleanedRefs );
 
         // 
         //  Notify all referred pages of their referinesshoodicity.
         //
-        Iterator it = references.iterator();
+        Iterator it = cleanedRefs.iterator();
         while( it.hasNext() )
         {
             String referredPageName = (String)it.next();
-            updateReferredBy( referredPageName, page );
+            updateReferredBy( getFinalPageName(referredPageName), page );
         }
     }
 
@@ -589,7 +634,7 @@ public class ReferenceManager
      */
     public synchronized void clearPageEntries( String pagename )
     {
-        m_referredBy.remove(pagename);
+        m_referredBy.remove( getFinalPageName(pagename) );
     }
 
 
@@ -693,7 +738,6 @@ public class ReferenceManager
                     refs = refs2;
             }
         }
-
         return refs;
     }
 
@@ -739,7 +783,7 @@ public class ReferenceManager
      */
     public Set findReferredBy( String pageName )
     {
-        return (Set)m_unmutableReferredBy.get( pageName );
+        return (Set)m_unmutableReferredBy.get( getFinalPageName(pageName) );
     }
     
     /**
@@ -762,7 +806,7 @@ public class ReferenceManager
      */
     public Collection findRefersTo( String pageName )
     {
-        return (Collection)m_unmutableRefersTo.get( pageName );
+        return (Collection)m_unmutableRefersTo.get( getFinalPageName(pageName) );
     }
     
     /**
@@ -817,6 +861,24 @@ public class ReferenceManager
      */
     public Set findCreated()
     {
-        return new HashSet( m_refersTo.keySet()  );
-    } 
+        return new HashSet( m_refersTo.keySet() );
+    }
+    
+    private String getFinalPageName( String orig )
+    {
+        try
+        {
+            String s = m_engine.getFinalPageName( orig );
+            
+            if( s == null ) s = orig;
+            
+            return s;
+        }
+        catch( ProviderException e )
+        {
+            log.error("Error while trying to fetch a page name; trying to cope with the situation.",e);
+            
+            return orig;
+        }
+    }
 }
