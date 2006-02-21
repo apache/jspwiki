@@ -1,19 +1,25 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -27,14 +33,14 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.12 $ $Date: 2006-02-04 21:34:38 $
+ * @version $Revision: 1.13 $ $Date: 2006-02-21 08:41:03 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
 {
-    private static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
+    protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
 
-    private WikiEngine          m_engine;
+    protected WikiEngine          m_engine;
 
     /**
      * A lazily-initialized array of Roles that the container knows about. These
@@ -69,20 +75,30 @@ public class WebContainerAuthorizer implements Authorizer
     {
         m_engine = engine;
         m_containerAuthorized = false;
-        Document webxml = getWebXml();
-        if ( webxml != null )
-        {
-            m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.ALL )
-                    && isConstrained( webxml, "/Login.jsp", Role.ALL );
+        try {
+            Document webxml = getWebXml();
+            if ( webxml != null )
+            {
+                m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.ALL )
+                        && isConstrained( webxml, "/Login.jsp", Role.ALL );
+            }
+            if ( m_containerAuthorized )
+            {
+                m_containerRoles = getRoles( webxml );
+                log.info( "JSPWiki is using container-managed authentication." );
+            }
+            else
+            {
+                log.info( "JSPWiki is using custom authentication." );
+            }
         }
-        if ( m_containerAuthorized )
+        catch ( IOException e )
         {
-            m_containerRoles = getRoles( webxml );
-            log.info( "JSPWiki is using container-managed authentication." );
+            throw new RuntimeException( e.getMessage() );
         }
-        else
+        catch ( JDOMException e )
         {
-            log.info( "JSPWiki is using custom authentication." );
+            throw new RuntimeException( e.getMessage() );
         }
         
         if ( m_containerRoles.length > 0 )
@@ -187,14 +203,14 @@ public class WebContainerAuthorizer implements Authorizer
      * @param webxml the web application deployment descriptor
      * @return an array of Role objects
      */
-    protected Role[] getRoles( Document webxml )
+    protected Role[] getRoles( Document webxml ) throws JDOMException
     {
         Set roles = new HashSet();
-        Element root = webxml.getDocumentElement();
-        NodeList nodes = root.getElementsByTagName( "role-name" );
-        for( int i = 0; i < nodes.getLength(); i++ )
+        String selector = "//web-app/security-constraint/auth-constraint/role-name";
+        List nodes = XPath.selectNodes( webxml, selector );
+        for( Iterator it = nodes.iterator(); it.hasNext(); )
         {
-            String role = ( (Element) nodes.item( i ) ).getFirstChild().getNodeValue();
+            String role = ( (Element) it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
         return (Role[]) roles.toArray( new Role[roles.size()] );
@@ -222,68 +238,53 @@ public class WebContainerAuthorizer implements Authorizer
      * @return <code>true</code> if the resource is constrained to the role,
      *         <code>false</code> otherwise
      */
-    
-    // FIXME: This would be quite a lot nicer if done with XPath
-    
-    protected boolean isConstrained( Document webxml, String url, Role role )
+    protected boolean isConstrained( Document webxml, String url, Role role ) throws JDOMException
     {
-        // Loop through constraints, looking for our pattern
-        boolean constrained = false;
-        boolean rolematch = false;
-        Element root = webxml.getDocumentElement();
-        NodeList constraints = root.getElementsByTagName( "security-constraint" );
-        for( int i = 0; i < constraints.getLength(); i++ )
+        // Get all constraints that have our URL pattern
+        String selector;
+        selector = "//web-app/security-constraint[web-resource-collection/url-pattern=\"" + url + "\"]";
+        List constraints = XPath.selectNodes( webxml, selector);
+        
+        // Get all constraints that match our Role pattern
+        selector = "//web-app/security-constraint[auth-constraint/role-name=\"" + role.getName() + "\"]";
+        List roles = XPath.selectNodes( webxml, selector );
+        
+        // If we can't find either one, we must not be constrained
+        if ( constraints.size() == 0 )
         {
-            // See if the URL pattern is in the list of constrained resources
-            Element constraint = (Element) constraints.item( i );
-            NodeList resources = constraint.getElementsByTagName( "web-resource-collection" );
-            constraintSearch: for( int j = 0; j < resources.getLength(); j++ )
+            return false;
+        }
+        
+        // Shortcut: if the role is ALL, we are constrained
+        if ( role.equals( Role.ALL ) )
+        {
+            return true;
+        }
+        
+        // If no roles, we must not be constrained
+        if ( roles.size() == 0 )
+        {
+            return false;
+        }
+        
+        // If a constraint is contained in both lists, we must be constrained
+        for ( Iterator c = constraints.iterator(); c.hasNext(); )
+        {
+            Element constraint = (Element)c.next();
+            for ( Iterator r = roles.iterator(); r.hasNext(); )
             {
-                Element resource = (Element) resources.item( j );
-                NodeList patterns = resource.getElementsByTagName( "url-pattern" );
-                for( int k = 0; k < patterns.getLength(); k++ )
+                Element roleConstraint = (Element)r.next();
+                if ( constraint.equals( roleConstraint ) ) 
                 {
-                    Element pattern = (Element) patterns.item( k );
-                    String patternUrl = pattern.getFirstChild().getNodeValue();
-                    if ( patternUrl != null && patternUrl.trim().equals( url ) )
-                    {
-                        constrained = true;
-                        break constraintSearch;
-                    }
-                }
-            }
-            // See if our role is constained
-            if ( role.equals(Role.ALL) )
-            {
-                rolematch = true;
-            }
-            else
-            {
-                NodeList authConstraints = constraint.getElementsByTagName( "auth-constraint" );
-                {
-                    roleSearch: for( int j = 0; j < authConstraints.getLength(); j++ )
-                    {
-                        Element authConstraint = (Element) authConstraints.item( j );
-                        NodeList roleNames = authConstraint.getElementsByTagName( "role-name" );
-                        for( int k = 0; k < roleNames.getLength(); k++ )
-                        {
-                            Element roleName = (Element) roleNames.item( k );
-                            String roleValue = roleName.getFirstChild().getNodeValue();
-                            if ( roleValue != null && roleValue.trim().equals( role.getName() ) )
-                            {
-                                rolematch = true;
-                                break roleSearch;
-                            }
-                        }
-                    }
+                    return true;
                 }
             }
         }
-        return ( constrained && rolematch );
+        return false;
     }
-
+    
     /**
-     * Returns a {@link org.w3c.dom.Document} representing JSPWiki's web
+     * Returns an {@link org.jdom.Document} representing JSPWiki's web
      * application deployment descriptor. The document is obtained by calling
      * the servlet context's <code>getResource()</code> method and requesting
      * <code>/WEB-INF/web.xml</code>. For non-servlet applications, this
@@ -292,34 +293,70 @@ public class WebContainerAuthorizer implements Authorizer
      * <code>WEB-INF/web.xml</code>.
      * @return the descriptor
      */
-    protected Document getWebXml()
+    protected Document getWebXml() throws JDOMException, IOException
     {
         URL url;
+        SAXBuilder builder = new SAXBuilder();
+        builder.setValidation( false );
+        builder.setEntityResolver( new LocalEntityResolver() );
         Document doc = null;
-        try
+        if ( m_engine.getServletContext() == null )
         {
+            ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
+            url = cl.getResource( "WEB-INF/web.xml" );
+            log.info( "Examining " + url.toExternalForm() );
+        }
+        else
+        {
+            url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
+            log.info( "Examining " + url.toExternalForm() );
+        }
+        log.debug( "Processing web.xml at " + url.toExternalForm() );
+        doc = builder.build( url );
+        return doc;
+    }
+    
+    /**
+     * <p>XML entity resolver that redirects resolution requests by JDOM, JAXP and
+     * other XML parsers to locally-cached copies of the resources. Local
+     * resources are stored in the <code>WEB-INF/dtd</code> directory.</p>
+     * <p>For example, Sun Microsystem's DTD for the webapp 2.3 specification is normally
+     * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
+     * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
+     * @author Andrew Jaquith
+     * @version $Revision: 1.13 $ $Date: 2006-02-21 08:41:03 $
+     */
+    public class LocalEntityResolver implements EntityResolver
+    {
+        /**
+         * Returns an XML input source for a requested external resource by
+         * reading the resource instead from local storage. The local resource path
+         * is <code>WEB-INF/dtd</code>, plus the file name of the requested
+         * resource, minus the non-filename path information.
+         * @param publicId the public ID, such as
+         *            <code>-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN</code>
+         * @param systemId the system ID, such as
+         *            <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>
+         * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
+         *      java.lang.String)
+         */
+        public InputSource resolveEntity( String publicId, String systemId ) throws SAXException, IOException
+        {
+            String file = systemId.substring( systemId.lastIndexOf( '/' ) + 1 );
+            URL url;
             if ( m_engine.getServletContext() == null )
             {
                 ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
-                url = cl.getResource( "WEB-INF/web.xml" );
-                log.info( "Examining " + url.toExternalForm() );
+                url = cl.getResource( "WEB-INF/dtd/" + file );
             }
             else
             {
-                url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
-                log.info( "Examining " + url.toExternalForm() );
+                url = m_engine.getServletContext().getResource( "/WEB-INF/dtd/" + file );
             }
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setValidating( false );
-            InputStream is = url.openStream();
-            doc = factory.newDocumentBuilder().parse( is );
+            InputSource is = new InputSource( url.openStream() );
+            log.debug( "Resolved systemID=" + systemId + " using local file " + url );
+            return is;
         }
-        catch( Exception e )
-        {
-            log.error( "Cannot parse web.xml: " + e.getMessage() );
-            throw new RuntimeException( "Cannot parse web.xml: " + e.getMessage() );
-        }
-        return doc;
     }
 
 }
