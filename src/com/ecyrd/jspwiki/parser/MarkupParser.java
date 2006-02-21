@@ -180,27 +180,7 @@ public abstract class MarkupParser
         StringBuffer clean = new StringBuffer();
     
         if( link == null ) return null;
-    
-        //
-        //  Compress away all whitespace and capitalize
-        //  all words in between.
-        //
-    
-        StringTokenizer st = new StringTokenizer( link, " -" );
-    
-        while( st.hasMoreTokens() )
-        {
-            StringBuffer component = new StringBuffer(st.nextToken());
-    
-            component.setCharAt(0, Character.toUpperCase( component.charAt(0) ) );
-    
-            //
-            //  We must do this, because otherwise compiling on JDK 1.4 causes
-            //  a downwards incompatibility to JDK 1.3.
-            //
-            clean.append( component.toString() );
-        }
-    
+
         //
         //  Remove non-alphanumeric characters that should not
         //  be put inside WikiNames.  Note that all valid
@@ -208,16 +188,26 @@ public abstract class MarkupParser
         //  It is the problem of the WikiPageProvider to take
         //  care of actually storing that information.
         //
+        //  Also capitalize things, if necessary.
+        //
     
-        for( int i = 0; i < clean.length(); i++ )
+        boolean isWord = true;  // If true, we've just crossed a word boundary
+        
+        for( int i = 0; i < link.length(); i++ )
         {
-            char ch = clean.charAt(i);
-    
-            if( !(Character.isLetterOrDigit(ch) ||
-                  MarkupParser.PUNCTUATION_CHARS_ALLOWED.indexOf(ch) != -1 ))
+            char ch = link.charAt(i);
+
+            if( Character.isLetterOrDigit( ch ) || MarkupParser.PUNCTUATION_CHARS_ALLOWED.indexOf(ch) != -1 )
             {
-                clean.deleteCharAt(i);
-                --i; // We just shortened this buffer.
+                // Is a letter
+                
+                if( isWord ) ch = Character.toUpperCase( ch );
+                clean.append( ch );
+                isWord = false;
+            }
+            else
+            {
+                isWord = true;
             }
         }
     
