@@ -35,6 +35,8 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
@@ -49,7 +51,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.18 $ $Date: 2006-02-04 21:34:03 $
+ * @version $Revision: 1.19 $ $Date: 2006-02-21 08:34:00 $
  * @since 2.3
  */
 public class AuthenticationManager
@@ -74,13 +76,9 @@ public class AuthenticationManager
 
     private WikiEngine                         m_engine            = null;
 
-    /** If not <code>null</code>, contains the name of the admin user */
-    private String              m_admin             = null;
-
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
-    private static final String                PROP_ADMIN_USER     = "jspwiki.admin.user";
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
     private static final String                PROP_POLICY_CONFIG  = "java.security.policy";
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
@@ -158,17 +156,6 @@ public class AuthenticationManager
             {
                 log.error("Could not install security policy: " + e.getMessage());
             }
-        }
-
-        // Initialize admin user, if found in the properties
-        m_admin = props.getProperty( PROP_ADMIN_USER, null );
-        if ( m_admin != null )
-        {
-           log.info( "Administrative user configured." );
-        }
-        else
-        {
-            log.info( "Administrative user property not present; NOT configured." );
         }
     }
     
@@ -307,23 +294,32 @@ public class AuthenticationManager
     }
 
     /**
-     * Determines whether a WikiSession's Subject posesses a login id that
-     * matches the administrator id; if so, this method injects
-     * {@link com.ecyrd.jspwiki.auth.authorize.Role#ADMIN} into the principal
-     * set. To extract the login id Principal, this method delegates
-     * to {@link com.ecyrd.jspwiki.WikiSession#getLoginPrincipal()}.
-     * 
-     * @param wikiSession the wiki session whose Subject is being examined
+     * Injects GroupPrincipal objects into the user's Principal set
+     * based on the groups the user belongs to. This method also
+     * attaches a WikiEventListener to the GroupManager so that
+     * changes to groups are detected automatically.
+     * @param session the wiki session
      */
-    protected void checkForAdmin( WikiSession wikiSession )
+    protected void injectGroupPrincipals( WikiSession session )
     {
-        Principal loginPrincipal = wikiSession.getLoginPrincipal();
-        if ( m_admin != null && loginPrincipal.getName().equals( m_admin ) )
+        Subject subject = session.getSubject();
+        
+        // Get the GroupManager and test for each Group
+        GroupManager manager = m_engine.getGroupManager();
+        Principal[] groups = manager.getRoles();
+        for ( int i = 0; i < groups.length; i++ )
         {
-            wikiSession.getSubject().getPrincipals().add( Role.ADMIN );
+            if ( manager.isUserInRole( session, groups[i] ) )
+            {
+                Principal groupPrincipal = new GroupPrincipal( (Group)groups[i] );
+                subject.getPrincipals().add( groupPrincipal );
+            }
         }
+        
+        // Add the user's wiki session as a security event listener
+        manager.addWikiEventListener( session );
     }
-
+    
     /**
      * Log in to the application using a given JAAS LoginConfiguration.
      * @param wikiSession the current wiki session, to which the Subject will be associated
@@ -353,8 +349,8 @@ public class AuthenticationManager
             });
             loginContext.login();
 
-            // Lastly, inject the ADMIN role if the user's id is privileged
-            checkForAdmin( wikiSession );
+            // Inject the wiki group principals
+            injectGroupPrincipals( wikiSession );
 
             return true;
         }
