@@ -117,6 +117,9 @@ public class JSPWikiMarkupParser
     /** If true, all outward links (external links) have a small link image appended. */
     public static final String     PROP_USEOUTLINKIMAGE  = "jspwiki.translatorReader.useOutlinkImage";
 
+    /** If true, all outward attachment info links have a small link image appended. */
+    public static final String     PROP_USEATTACHMENTIMAGE = "jspwiki.translatorReader.useAttachmentImage";
+    
     /** If set to "true", all external links are tagged with 'rel="nofollow"' */
     public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
 
@@ -129,6 +132,8 @@ public class JSPWikiMarkupParser
 
     /** If true, all outward links use a small link image. */
     private boolean                m_useOutlinkImage     = true;
+
+    private boolean                m_useAttachmentImage  = true;
 
     /** If true, allows raw HTML. */
     private boolean                m_allowHTML           = false;
@@ -256,6 +261,9 @@ public class JSPWikiMarkupParser
         m_useOutlinkImage     = TextUtil.getBooleanProperty( props,
                                                              PROP_USEOUTLINKIMAGE, 
                                                              m_useOutlinkImage );
+        m_useAttachmentImage  = TextUtil.getBooleanProperty( props,
+                                                             PROP_USEATTACHMENTIMAGE, 
+                                                             m_useAttachmentImage );
         m_allowHTML           = TextUtil.getBooleanProperty( props,
                                                              MarkupParser.PROP_ALLOWHTML, 
                                                              m_allowHTML );
@@ -475,12 +483,19 @@ public class JSPWikiMarkupParser
                 
                 pushElement(el);
                 popElement(el.getName());
-                
-                el = new Element("img").setAttribute("src",imglink);
-                el.setAttribute("border","0");
-                el.setAttribute("alt","(info)");
-                
-                el = new Element("a").setAttribute("href",infolink).addContent(el);
+             
+                if( m_useAttachmentImage )
+                {
+                    el = new Element("img").setAttribute("src",imglink);
+                    el.setAttribute("border","0");
+                    el.setAttribute("alt","(info)");
+                    
+                    el = new Element("a").setAttribute("href",infolink).addContent(el);
+                }
+                else
+                {
+                    el = null;
+                }
                 break;
 
             default:
@@ -1497,7 +1512,7 @@ public class JSPWikiMarkupParser
                     return pushElement( new Element("pre") );
                 }
 
-                return pushElement( new Element("span").setAttribute("style","font-family:monospace; whitespace:pre;") );
+                return pushElement( new Element("span").setAttribute("style","font-family:monospace; white-space:pre;") );
             }
 
             pushBack( ch2 );
