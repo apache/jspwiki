@@ -400,7 +400,8 @@ div.collapse li          { list-style: none; position: relative; }
 .collapseBullet,
 .collapseOpen,
 .collapseClose           { position: absolute; left: -1.5em;
-                           font-weight: bold; color: blue; }
+                           font-weight: bold; color: blue;
+                           font-family: Verdana, sans-serif; }
 .collapseOpen,
 .collapseClose           { cursor: pointer; }
 
