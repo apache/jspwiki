@@ -7,7 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.w3c.dom.Document;
+import org.jdom.Document;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -37,16 +37,18 @@ public class WebContainerAuthorizerTest extends TestCase
         }
     }
 
-    public void testConstraints()
+    public void testConstraints() throws Exception
     {
-        assertTrue( m_authorizer.isConstrained( m_webxml, "/Delete.jsp", Role.AUTHENTICATED ) );
-        assertTrue( m_authorizer.isConstrained( m_webxml, "/Login.jsp", Role.ADMIN ) );
+        assertTrue( m_authorizer.isConstrained( m_webxml, "/Delete.jsp", new Role( "Admin" ) ) );
+        assertTrue( m_authorizer.isConstrained( m_webxml, "/Login.jsp", Role.AUTHENTICATED ) );
         assertFalse( m_authorizer.isConstrained( m_webxml, "/UserPreferences.jsp", Role.AUTHENTICATED ) );
     }
     
     public void testGetRoles()
     {
+        // We should find 2 roles: AUTHENTICATED and ADMIN
         Principal[] roles = m_authorizer.getRoles();
+        assertEquals( 2, roles.length );
         boolean found = false;
         for ( int i = 0; i < roles.length; i++ )
         {
@@ -58,7 +60,7 @@ public class WebContainerAuthorizerTest extends TestCase
         assertTrue( "Didn't find AUTHENTICATED", found );
         for ( int i = 0; i < roles.length; i++ )
         {
-            if ( roles[i].equals( Role.ADMIN ) )
+            if ( roles[i].equals( new Role( "Admin" ) ) )
             {
                 found = true;
             }
@@ -66,7 +68,7 @@ public class WebContainerAuthorizerTest extends TestCase
         assertTrue( "Didn't find ADMIN", found );
     }
     
-    public void testRoles()
+    public void testRoles() throws Exception
     {
         Role[] roles = m_authorizer.getRoles( m_webxml );
         boolean found = false;
@@ -80,7 +82,7 @@ public class WebContainerAuthorizerTest extends TestCase
         assertTrue( "Didn't find AUTHENTICATED", found );
         for ( int i = 0; i < roles.length; i++ )
         {
-            if ( roles[i].equals( Role.ADMIN ) )
+            if ( roles[i].equals( new Role( "Admin" ) ) )
             {
                 found = true;
             }

@@ -88,7 +88,6 @@ public class AuthorizationManagerTest extends TestCase
         WikiSession session = buildSession( m_context, principal, roles );
 
         // Test build-in role membership
-        assertFalse( "Alice ADMIN", m_auth.hasRoleOrPrincipal( session, Role.ADMIN ) );
         assertTrue( "Alice ALL", m_auth.hasRoleOrPrincipal( session, Role.ALL ) );
         assertFalse( "Alice ANONYMOUS", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
         assertFalse( "Alice ASSERTED", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
@@ -178,7 +177,7 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Authenticated groups",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
         
         s = new Subject();
-        s.getPrincipals().add( Role.ADMIN );
+        s.getPrincipals().add( new GroupPrincipal( "Admin" ) );
         assertTrue( "Admin view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
         assertTrue( "Admin edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
         assertTrue( "Admin comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
@@ -223,18 +222,16 @@ public class AuthorizationManagerTest extends TestCase
      */
     public void testResolveBuiltInRoles()
     {
-        Principal principal = Role.ADMIN;
-        assertEquals( principal, m_auth.resolvePrincipal( "Admin" ) );
-        principal = Role.AUTHENTICATED;
+        Principal principal = Role.AUTHENTICATED;
         assertEquals( principal, m_auth.resolvePrincipal( "Authenticated" ) );
         principal = Role.ASSERTED;
         assertEquals( principal, m_auth.resolvePrincipal( "Asserted" ) );
         principal = Role.ALL;
         assertEquals( principal, m_auth.resolvePrincipal( "All" ) );
-        principal = Role.ADMIN;
-        assertEquals( principal, m_auth.resolvePrincipal( "Admin" ) );
+        principal = Role.ANONYMOUS;
+        assertEquals( principal, m_auth.resolvePrincipal( "Anonymous" ) );
         
-        // This should NOT resolve
+        // This should resolve because there's no built-in role Admin
         principal = new WikiPrincipal("Admin");
         assertFalse( principal.equals( m_auth.resolvePrincipal( "Admin" ) ) );
     }
@@ -363,7 +360,7 @@ public class AuthorizationManagerTest extends TestCase
         boolean foundAll = false;
         boolean foundAsserted = false;
         boolean foundTest = false;
-        boolean foundAdmin = false;
+        boolean foundAnonymous = false;
         for ( int i = 0; i < foundRoles.length; i++ )
         {
             if ( foundRoles[i].equals( Role.ALL ) )
@@ -374,19 +371,19 @@ public class AuthorizationManagerTest extends TestCase
             {
                 foundAsserted = true;
             }
+            if ( foundRoles[i].equals( Role.ANONYMOUS ) )
+            {
+                foundAnonymous = true;
+            }
             if ( foundRoles[i].getName().equals( "Test" ) )
             {
                 foundTest = true;
             }
-            if ( foundRoles[i].equals( Role.ADMIN ) )
-            {
-                foundAdmin = true;
-            }
         }
         assertTrue( "Bob member of ALL", foundAll );
         assertTrue( "Bob member of ASSERTED", foundAsserted );
+        assertFalse( "Bob member of ANONYMOUS", foundAnonymous );
         assertTrue( "Bob member of Test", foundTest );
-        assertTrue( "Bob member of ADMIN", foundAdmin );
     }
     
     public void testPrincipalAclPermissions() throws Exception

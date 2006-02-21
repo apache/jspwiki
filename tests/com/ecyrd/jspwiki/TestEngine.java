@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.providers.*;
 
 /**
@@ -157,7 +157,7 @@ public class TestEngine extends WikiEngine
 
         FileWriter out = new FileWriter( tmpFile );
         
-        FileUtil.copyContents( new StringReader( "asdfa??¸dfzbvasdjkfbwfkUg783gqdwog" ), out );
+        FileUtil.copyContents( new StringReader( "asdfa??ï¿½dfzbvasdjkfbwfkUg783gqdwog" ), out );
 
         out.close();
         
@@ -178,7 +178,7 @@ public class TestEngine extends WikiEngine
         HttpServletRequest request = new TestHttpServletRequest();
         WikiPage page = new WikiPage( this, pageName );
         WikiContext context = new WikiContext( this, request, page );
-        context.getWikiSession().getSubject().getPrincipals().add(Role.ADMIN);
+        context.getWikiSession().getSubject().getPrincipals().add( new GroupPrincipal( "Admin" ) );
         saveText( context, content );
     }
 

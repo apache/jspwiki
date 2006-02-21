@@ -18,12 +18,12 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * the different tests.
  * @author Janne Jalkanen
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-02 23:38:03 $
+ * @version $Revision: 1.4 $ $Date: 2006-02-21 08:49:42 $
  * @since 2.3
  */
 public class TestAuthorizer implements Authorizer
 {
-    private Role[] m_roles = new Role[]{ Role.ADMIN, Role.AUTHENTICATED };
+    private Role[] m_roles = new Role[]{ new Role( "Admin"), Role.AUTHENTICATED };
     
     public TestAuthorizer()
     {
@@ -42,7 +42,7 @@ public class TestAuthorizer implements Authorizer
 
     /**
      * Returns an array of Principal objects containing two elements:
-     * Role.ADMIN and Role.AUTHENTICATED.
+     * Role "Admin" and Role.AUTHENTICATED.
      */
     public Principal[] getRoles()
     {
