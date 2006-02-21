@@ -27,14 +27,11 @@ import java.security.Principal;
  * used by an external {@link com.ecyrd.jspwiki.auth.Authorizer}, such as a web
  * container.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-08-12 16:24:46 $
+ * @version $Revision: 1.5 $ $Date: 2006-02-21 08:42:41 $
  * @since 2.3
  */
 public final class Role implements Principal
 {
-
-    /** If the user has authenticated and is an adminstrator */
-    public static final Role ADMIN         = new Role( "Admin" );
 
     /** All users, regardless of authentication status */
     public static final Role ALL           = new Role( "All" );
@@ -61,22 +58,22 @@ public final class Role implements Principal
 
     /**
      * Returns <code>true</code> if a supplied Role is a built-in Role:
-     * {@link #ADMIN}, {@link #ALL}, {@link #ANONYMOUS}, {@link #ASSERTED},
+     * {@link #ALL}, {@link #ANONYMOUS}, {@link #ASSERTED},
      * or {@link #AUTHENTICATED}.
      * @param role the role to check
      * @return the result of the check
      */
     public static final boolean isBuiltInRole(Role role)
     {
-        return (role.equals(ADMIN) || role.equals(ALL) || role.equals(ANONYMOUS) ||
-                role.equals(ASSERTED) || role.equals(AUTHENTICATED));
+        return ( role.equals( ALL ) || role.equals( ANONYMOUS ) ||
+                role.equals( ASSERTED ) || role.equals( AUTHENTICATED ) );
         
     }
     
     /**
      * Returns <code>true</code> if the supplied name is identical to the name
      * of a built-in Role; that is, the value returned by <code>getName()</code>
-     * for built-in Roles {@link #ADMIN}, {@link #ALL}, {@link #ANONYMOUS},
+     * for built-in Roles {@link #ALL}, {@link #ANONYMOUS},
      * {@link #ASSERTED}, or {@link #AUTHENTICATED}.
      * @param name the name to be tested
      * @return <code>true</code> if the name is reserved; <code>false</code>
@@ -84,9 +81,9 @@ public final class Role implements Principal
      */
     public static final boolean isReservedName(String name)
     {
-        return (name.equals(ADMIN.m_name) || name.equals(ALL.m_name) || 
-                name.equals(ANONYMOUS.m_name) || name.equals(ASSERTED.m_name) || 
-                name.equals(AUTHENTICATED.m_name));
+        return ( name.equals( ALL.m_name ) || 
+                name.equals( ANONYMOUS.m_name ) || name.equals( ASSERTED.m_name ) || 
+                name.equals( AUTHENTICATED.m_name ) );
     }
     
     /**
