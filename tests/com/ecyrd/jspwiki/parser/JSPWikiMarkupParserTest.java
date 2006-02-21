@@ -933,7 +933,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1{{{2345}}}6";
         
-        assertEquals( "1<span style=\"font-family:monospace; whitespace:pre;\">2345</span>6", translate(src) );
+        assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">2345</span>6", translate(src) );
     }
 
     public void testPre2()
@@ -941,7 +941,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
         
-        assertEquals( "1 <span style=\"font-family:monospace; whitespace:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
+        assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
     }
     
     public void testPre3()
@@ -949,7 +949,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "foo\n\nbar{{{2345}}}6";
         
-        assertEquals( "foo\n<p>bar<span style=\"font-family:monospace; whitespace:pre;\">2345</span>6</p>", translate(src) );
+        assertEquals( "foo\n<p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
     }
 
     public void testPreEscape()
@@ -2094,7 +2094,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void testSpanJavascript2()
     throws Exception
     {
-        String src = "%%visibility: hidden; background&#09;-image:url(j&#000013;avas&#99;ript:'url()';alert('X');)%%\nTEST";
+        String src = "%%(visibility: hidden; background&#09;-image:url(j&#000013;avas&#99;ript:'url()';alert('X');)%%\nTEST";
         
         assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
     }
@@ -2146,6 +2146,30 @@ public class JSPWikiMarkupParserTest extends TestCase
         System.out.println("100 page renderings: "+sw+" ("+sw.toString(100)+" renderings/second)");
     }
     
+    public void testPunctuatedWikiNames()
+        throws Exception
+    {
+        String src = "[-phobous]";
+        
+        assertEquals( "<a class=\"editpage\" title=\"Create 'Phobous'\" href=\"/Edit.jsp?page=Phobous\">-phobous</a>", translate(src) );        
+    }
+        
+    public void testPunctuatedWikiNames2()
+        throws Exception
+    {
+        String src = "[?phobous]";
+    
+        assertEquals( "<a class=\"editpage\" title=\"Create 'Phobous'\" href=\"/Edit.jsp?page=Phobous\">?phobous</a>", translate(src) );        
+    }
+
+    public void testPunctuatedWikiNames3()
+        throws Exception
+    {
+        String src = "[Brightness (apical)]";
+
+        assertEquals( "<a class=\"editpage\" title=\"Create 'BrightnessApical'\" href=\"/Edit.jsp?page=BrightnessApical\">Brightness (apical)</a>", translate(src) );        
+    }
+
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
         "Please ''check [RecentChanges].\n" + 
