@@ -1,3 +1,53 @@
+2006-02-21  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.80
+        
+        * Bug fix: Granting default permissions to wiki groups in the jspwiki.policy
+        security policy file is now supported. To do this, AuthenticationManager
+        injects 'GroupPrincipal' tokens into the wiki session's Subject at
+        login time. GroupPrincipals are also dynamically injected into the 
+        appropriate sessions when groups are created or changed -- this means 
+        that users do not need to log out in order to see the effect of group
+        membership changes on default policies. This is a rather clever bit of
+        programming if I do say so myself.
+        
+        * Enhancement/API change: to support dynamic GroupPrincipal injection,
+        the core jspwiki package receives a new top-level class WikiEvent,
+        a subclass auth.WikiSecurityEvent, and a listener class
+        WikiEventListener. GroupManager and the Group interface gain a new
+        method to register listeners (addWikiEventListener()), and a 
+        corresponding method for removal (removeWikiEventListener()). 
+        DefaultGroupManager and DefaultGroup fire security events to these 
+        listeners whenever wiki groups are added, changed or deleted.
+        
+        * Enhancement: the JSPWiki security policy now supports permission grants
+        to wiki group principals (GroupPrincipal). In addition, a new Permission class,
+        auth.permissions.AllPermission, grants administrative rights to specific wikis
+        (or all, with the wildcard). The combination of these two enhancements means
+        that wiki groups can now possess administrative rights. See the security policy
+        for a sample grant block.
+        
+        * Deprecation: the built-in Role.ALL enum has been eliminated. Use
+        com.ecyrd.jspwiki.auth.GroupPrincipal in jspwiki.properties instead.
+        
+        * Deprecation: the jspwiki.properties property 'jspwiki.admin.user' is 
+        now irrelevant because all administrative grants are handled exclusively
+        via the policy file.
+        
+        * Bug fix: added a "local entity resolver" to WebContainerAuthorizer
+        to prevent the need to call out to the network for the webapp 2.3 DTD
+        when parsing web.xml. Also, refactored the parsing logic to use the JDom
+        SAX parser (and XPath) instead of JAXP. Added new directory etc/dtd;
+        this is copied to tests/etc/WEB-INF at test-time, and also into the WAR.
+        Credit: Marc Patteet
+        
+        * Bug fix: patched WikiSession to treat null messages as empty strings.
+        Credit: Dan Frankowski.
+        
+        * Build.xml now uses its own security policy file for testing rather than
+        the production version in etc. The build file also copies the webapp 2.3
+        DTD to the WAR.
+        
 2006-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.79.  Moved to new apartment, now back on coding
