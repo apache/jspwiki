@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
+ * @version $Revision: 1.3 $ $Date: 2006-02-21 08:46:45 $
  */
 public class AllTests extends TestCase
 {
@@ -18,6 +18,7 @@ public class AllTests extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite( "Permissions tests" );
+        suite.addTestSuite( AllPermissionTest.class );
         suite.addTestSuite( PagePermissionTest.class );
         suite.addTestSuite( WikiPermissionTest.class );
         return suite;
