@@ -2,6 +2,8 @@ package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
 
+import com.ecyrd.jspwiki.WikiEventListener;
+
 /**
  * <p>
  * Groups are a specialized type of ad-hoc role used by the wiki system. Unlike
@@ -22,7 +24,7 @@ import java.security.Principal;
  * </ul>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-10-31 20:52:33 $
+ * @version $Revision: 1.5 $ $Date: 2006-02-21 08:39:39 $
  * @since 2.3
  */
 public interface Group extends Principal
@@ -31,21 +33,43 @@ public interface Group extends Principal
     public static String[] RESTRICTED_GROUPNAMES = new String[]{"Admin", "Anonymous", "All", "Asserted", "Authenticated"};
     
     /**
-     * Adds a Principal to the group.
-     * @param principal
+     * Adds a Principal to the group. When a Principal is added successfully, 
+     * the Group implementation should send a WikiSecurityEvent of type
+     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_ADD_MEMBER}
+     * to all of its registered WikiEventListeners.
+     * @param principal the principal to add
      * @return <code>true</code> if the operation was successful
      */
     public boolean add( Principal principal );
 
+    /** 
+     * Registers a WikiEventListener with this Group.
+     * @param listener the event listener
+     */
+    public void addWikiEventListener( WikiEventListener listener );
+    
     /**
-     * Removes a Principal from the group.
-     * @param principal
+     * Removes a Principal from the group. When a Principal is added successfully, 
+     * the Group implementation should send a WikiSecurityEvent of type
+     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_REMOVE_MEMBER}
+     * to all of its registered WikiEventListeners.
+     * @param principal the principal to remove
      * @return <code>true</code> if the operation was successful
      */
     public boolean remove( Principal principal );
 
     /**
-     * Clears all Principals from the group list.
+     * Un-registers a WikiEventListener from this Group.
+     * @param listener the event listener
+     */
+    public void removeWikiEventListener( WikiEventListener listener );
+    
+    /**
+     * Clears all Principals from the group list. When a 
+     * Group's members are cleared successfully, 
+     * the Group implementation should send a WikiSecurityEvent of type
+     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_CLEAR_MEMBERS}
+     * to all of its registered WikiEventListeners.
      */
     public void clear();
 

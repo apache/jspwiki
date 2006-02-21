@@ -11,8 +11,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.SecurityEventTrap;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class DefaultGroupManagerTest extends TestCase
@@ -20,6 +23,8 @@ public class DefaultGroupManagerTest extends TestCase
     TestEngine   m_engine;
 
     DefaultGroupManager m_manager;
+    
+    SecurityEventTrap m_trap = new SecurityEventTrap();
 
     public DefaultGroupManagerTest( String s )
     {
@@ -32,8 +37,15 @@ public class DefaultGroupManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         m_engine = new TestEngine( props );
-        m_manager = new DefaultGroupManager();
-        m_manager.initialize( m_engine, props );
+        m_manager = (DefaultGroupManager)m_engine.getGroupManager();
+        
+        // Flush any pre-existing pages (left over from previous failures, perhaps)
+        flushPage( m_engine, "GroupTest" );
+        flushPage( m_engine, "GroupTest2" );
+        flushPage( m_engine, "GroupTest3" );
+        flushPage( m_engine, "BadGroupTest" );
+        
+        m_manager.addWikiEventListener( m_trap );
 
         String text1 = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nBlood.";
         m_engine.saveText( "GroupTest", text1 );
@@ -47,6 +59,8 @@ public class DefaultGroupManagerTest extends TestCase
         String text4 = "[{SET members=Arnold}]";
         m_engine.saveText( "BadGroupTest", text4 );
         
+        assertEquals( 8, m_trap.events().length );
+        m_trap.clearEvents();
     }
 
     public void tearDown()
@@ -166,9 +180,69 @@ public class DefaultGroupManagerTest extends TestCase
         assertFalse( m_manager.isUserInRole( session, new DefaultGroup( "BadGroup" ) ) );
     }
 
+    public void testGroupAddEvent() throws Exception
+    {
+        // Flush any pre-existing pages (left over from previous failures, perhaps)
+        flushPage( m_engine, "GroupEvents" );
+        m_trap.clearEvents();
+        
+        String text1 = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nBlood.";
+        m_engine.saveText( "GroupEvents", text1 );
+        WikiSecurityEvent[] events = m_trap.events();
+        WikiSecurityEvent event;
+        Group group = (Group)m_manager.findRole( "Events" );
+        
+        // First event should be GROUP_ADD
+        assertEquals( 4, events.length );
+        event = events[0];
+        assertEquals( m_manager, event.getSource() );
+        assertEquals( WikiSecurityEvent.GROUP_ADD, event.getType() );
+        assertEquals( group, event.getTarget() );
+        
+        // Second, third and fourth should be the GROUP_ADD_MEMBER events
+        event = events[1];
+        assertEquals( group, event.getSource() );
+        assertEquals( WikiSecurityEvent.GROUP_ADD_MEMBER, event.getType() );
+        assertEquals( new WikiPrincipal( "Alice" ), event.getTarget() );
+        
+        event = events[2];
+        assertEquals( group, event.getSource() );
+        assertEquals( WikiSecurityEvent.GROUP_ADD_MEMBER, event.getType() );
+        assertEquals( new WikiPrincipal( "Bob" ), event.getTarget() );
+        
+        event = events[3];
+        assertEquals( group, event.getSource() );
+        assertEquals( WikiSecurityEvent.GROUP_ADD_MEMBER, event.getType() );
+        assertEquals( new WikiPrincipal( "Charlie" ), event.getTarget() );
+        
+        // Clean up
+        m_engine.deletePage( "GroupEvents" ); 
+    }
+    
     public static Test suite()
     {
         return new TestSuite( DefaultGroupManagerTest.class );
+    }
+    
+    public static void flushPage( WikiEngine engine, String page ) throws Exception
+    {
+        if ( engine.pageExists( page ) )
+        {
+            engine.deletePage( page );
+            
+            // Remove the group manually -- this is a ridiculous, horrible hack that we need to do until
+            // we have some sort of 'page deleted' event support in WikiEngine and/or the page providers
+            if ( page.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
+            {
+                GroupManager manager = engine.getGroupManager();
+                String groupName = page.substring(DefaultGroupManager.GROUP_PREFIX.length());
+                Group group = (Group)manager.findRole( groupName );
+                if ( group != null )
+                {
+                    manager.remove( group );
+                }
+            }
+        }
     }
 
 }

@@ -4,9 +4,11 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.security.auth.Subject;
@@ -15,10 +17,13 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiEvent;
+import com.ecyrd.jspwiki.WikiEventListener;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -48,7 +53,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2005-10-31 20:52:18 $
+ * @version $Revision: 1.8 $ $Date: 2006-02-21 08:39:39 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -86,6 +91,40 @@ public class DefaultGroupManager implements GroupManager
             }
         }
     }
+    
+    /** 
+     * Tiny little listener that captures wiki events fired by Groups this
+     * GroupManager knows about. When events are captured, they are
+     * forwarded on to listeners registered with the GroupManager instance.
+     */
+    public static class GroupListener implements WikiEventListener
+    {
+        DefaultGroupManager m_manager;
+        
+        /**
+         * Constructs a new instance of this listener.
+         * @param manager the enclosing DefaultGroupManager
+         */
+        public GroupListener( DefaultGroupManager manager )
+        {
+            m_manager = manager;
+        }
+        
+        /**
+         * Captures wiki events fired by member wiki Groups and forwards them
+         * on to WikiEventListeners registered with this instance.
+         * TODO: enclose this in an inner class at some point...
+         * @see com.ecyrd.jspwiki.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.WikiEvent)
+         */
+        public void actionPerformed( WikiEvent event )
+        {
+            if ( event instanceof WikiSecurityEvent )
+            {
+                m_manager.fireEvent( (WikiSecurityEvent) event );
+            }
+        }
+
+    }
 
     /**
      * The attribute to set on a page - [{SET members ...}] - to define members
@@ -95,10 +134,14 @@ public class DefaultGroupManager implements GroupManager
 
     static final Logger        log             = Logger.getLogger( DefaultGroupManager.class );
 
-    private WikiEngine         m_engine;
+    protected WikiEngine         m_engine;
+
+    protected WikiEventListener m_groupListener;
 
     private final HashMap      m_groups        = new HashMap();
-
+    
+    private final Set        m_listeners = new HashSet();
+    
     public static final String GROUP_PREFIX = "Group";
 
     /**
@@ -121,6 +164,16 @@ public class DefaultGroupManager implements GroupManager
             }
         }
         m_groups.put( group.getName(), group );
+        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_ADD, group ) );
+    }
+
+    /**
+     * Registers a WikiEventListener with this GroupManager.
+     * @param listener the event listener
+     */
+    public void addWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.add( listener );
     }
 
     /**
@@ -181,6 +234,8 @@ public class DefaultGroupManager implements GroupManager
         m_engine = engine;
 
         m_engine.getFilterManager().addPageFilter( new SaveFilter(), -1000 );
+        
+        m_groupListener = new GroupListener( this );
      
         reload();
         log.info("Authorizer DefaultGroupManager initialized successfully.");
@@ -236,6 +291,7 @@ public class DefaultGroupManager implements GroupManager
             Collection allPages = m_engine.getPageManager().getAllPages();
 
             m_groups.clear();
+            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_CLEAR_GROUPS, null ) );
 
             for( Iterator i = allPages.iterator(); i.hasNext(); )
             {
@@ -272,8 +328,18 @@ public class DefaultGroupManager implements GroupManager
             throw new IllegalArgumentException( "Group cannot be null." );
         }
         m_groups.remove( group.getName() );
+        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_REMOVE, group ) );
     }
 
+    /**
+     * Un-registers a WikiEventListener with this GroupManager.
+     * @param listener the event listener
+     */
+    public void removeWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.remove( listener );
+    }
+    
     /**
      * Protected method that parses through the group membership list on a wiki
      * page, and returns a List containing the member names as Strings.
@@ -304,6 +370,19 @@ public class DefaultGroupManager implements GroupManager
     }
 
     /**
+     * Fires a wiki event to all registered listeners.
+     * @param event the event
+     */
+    protected void fireEvent( WikiSecurityEvent event )
+    {
+        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
+        {
+            WikiEventListener listener = (WikiEventListener)it.next();
+            listener.actionPerformed(event);
+        }
+    }
+    
+    /**
      * Updates a named group with a List of new members. The List is a
      * collection of Strings that denotes members of this group. Each member is
      * added to the group as a WikiPrincipal. If the group already exists in the
@@ -325,28 +404,32 @@ public class DefaultGroupManager implements GroupManager
         if ( group == null && memberList != null )
         {
             log.debug( "Adding new group: " + groupName );
-
             group = new DefaultGroup( groupName );
+            group.addWikiEventListener( m_groupListener );
         }
 
         if ( group != null && memberList == null )
         {
             log.debug( "Detected removed group: " + groupName );
-
-            m_groups.remove( groupName );
-
+            remove( group );
             return;
         }
 
+        // Update the member list
+        if ( exists( group ) )
+        {
+            group.clear();
+        }
+        else
+        {
+            add( group );
+        }
         for( Iterator j = memberList.iterator(); j.hasNext(); )
         {
             Principal udp = new WikiPrincipal( (String) j.next() );
-
             group.add( udp );
-
-            log.debug( "** Added member: " + udp.getName() );
+            log.debug( "Adding group member: " + udp.getName() );
         }
 
-        add( group );
     }
 }

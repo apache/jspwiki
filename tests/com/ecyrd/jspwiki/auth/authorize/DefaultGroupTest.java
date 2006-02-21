@@ -6,13 +6,16 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.ecyrd.jspwiki.auth.SecurityEventTrap;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroup;
 
 public class DefaultGroupTest extends TestCase
 {
     Group m_group;
-
+    SecurityEventTrap m_trap;
+    
     public DefaultGroupTest( String s )
     {
         super( s );
@@ -21,6 +24,8 @@ public class DefaultGroupTest extends TestCase
     public void setUp() throws Exception
     {
         m_group = new DefaultGroup( "TestGroup" );
+        m_trap = new SecurityEventTrap();
+        m_group.addWikiEventListener( m_trap );
     }
 
     public void testAdd1()
@@ -28,6 +33,12 @@ public class DefaultGroupTest extends TestCase
         Principal u1 = new WikiPrincipal( "Alice" );
         m_group.add( u1 );
         assertTrue( m_group.isMember( u1 ) );
+        
+        // Test that our event listener works too
+        WikiSecurityEvent event = m_trap.lastEvent();
+        assertEquals( event.getSource(), m_group );
+        assertEquals( event.getType(), WikiSecurityEvent.GROUP_ADD_MEMBER );
+        assertEquals( event.getTarget(), u1 );
     }
 
     public void testAdd2()
@@ -36,7 +47,16 @@ public class DefaultGroupTest extends TestCase
         Principal u2 = new WikiPrincipal( "Bob" );
 
         assertTrue( "adding alice", m_group.add( u1 ) );
+        WikiSecurityEvent event = m_trap.lastEvent();
+        assertEquals( event.getSource(), m_group );
+        assertEquals( event.getType(), WikiSecurityEvent.GROUP_ADD_MEMBER );
+        assertEquals( event.getTarget(), u1 );
+
         assertTrue( "adding bob", m_group.add( u2 ) );
+        event = m_trap.lastEvent();
+        assertEquals( event.getSource(), m_group );
+        assertEquals( event.getType(), WikiSecurityEvent.GROUP_ADD_MEMBER );
+        assertEquals( event.getTarget(), u2 );
 
         assertTrue( "Alice", m_group.isMember( u1 ) );
         assertTrue( "Bob", m_group.isMember( u2 ) );
@@ -68,6 +88,10 @@ public class DefaultGroupTest extends TestCase
         m_group.add( u2 );
 
         m_group.remove( u3 );
+        WikiSecurityEvent event = m_trap.lastEvent();
+        assertEquals( event.getSource(), m_group );
+        assertEquals( event.getType(), WikiSecurityEvent.GROUP_REMOVE_MEMBER );
+        assertEquals( event.getTarget(), u3 );
 
         assertTrue( "Alice", m_group.isMember( u1 ) );
         assertFalse( "Bob", m_group.isMember( u2 ) );
