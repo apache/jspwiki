@@ -33,7 +33,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.13 $ $Date: 2006-02-21 08:41:03 $
+ * @version $Revision: 1.14 $ $Date: 2006-02-21 19:49:58 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -324,7 +324,7 @@ public class WebContainerAuthorizer implements Authorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.13 $ $Date: 2006-02-21 08:41:03 $
+     * @version $Revision: 1.14 $ $Date: 2006-02-21 19:49:58 $
      */
     public class LocalEntityResolver implements EntityResolver
     {
@@ -353,9 +353,16 @@ public class WebContainerAuthorizer implements Authorizer
             {
                 url = m_engine.getServletContext().getResource( "/WEB-INF/dtd/" + file );
             }
-            InputSource is = new InputSource( url.openStream() );
-            log.debug( "Resolved systemID=" + systemId + " using local file " + url );
-            return is;
+            
+            if( url != null )
+            {
+                InputSource is = new InputSource( url.openStream() );
+                log.debug( "Resolved systemID=" + systemId + " using local file " + url );
+                return is;
+            }
+            
+            // Fall back to default behaviour
+            return null;
         }
     }
 
