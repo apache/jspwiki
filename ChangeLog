@@ -1,3 +1,28 @@
+2006-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.81
+        
+        * Bug fix: BugPreformattedTextDoesntWorkAnyMore
+        
+        * Bug fix: BugPleaseMakePaperclipPicsConfigurableJustLikeOutlinks by
+        making the "jspwiki.translatorReader.useAttachmentImage" available. 
+        Set to "false" to turn paperclip images disappear.
+        
+        * Bug fix: page deletion would screw up Refmgr internal databases,
+        and not serialize on disk.
+        
+        * Bug fix: BugTableOfContentsCausesHeapdump
+        
+        * Bug fix: BugTimingErrorInVersioningFileProvider.getPageProviderString
+        (Thanks to BobKerns!)
+        
+        * Tinkered around a bit more with RefMgr, hoping to fix these
+        "disappearing references" -issues.
+
+        * Bug fix: BugStrangePageNameLogic (Fixed by changing
+        MarkupParser.cleanLink() to a far more efficient version.  It's a whole
+        lotta faster, too.)
+
 2006-02-21  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.80
