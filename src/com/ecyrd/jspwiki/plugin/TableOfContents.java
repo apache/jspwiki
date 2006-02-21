@@ -45,6 +45,8 @@ public class TableOfContents
     public static final String PARAM_START = "start";
     public static final String PARAM_PREFIX = "prefix";
 
+    private static final String VAR_ALREADY_PROCESSING = "__TableOfContents.processing";
+
     StringBuffer m_buf = new StringBuffer();
     private boolean m_usingNumberedList = false; 
     private String m_prefix = ""; 
@@ -126,6 +128,9 @@ public class TableOfContents
         WikiEngine engine = context.getEngine();
         WikiPage   page   = context.getPage();
 
+        if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
+            return "Table of Contents";
+        
         StringBuffer sb = new StringBuffer();
 
         sb.append("<div class=\"toc\">\n");
@@ -181,6 +186,7 @@ public class TableOfContents
         {
             String wikiText = engine.getPureText( page );
             
+            context.setVariable( VAR_ALREADY_PROCESSING, "x" );
             JSPWikiMarkupParser parser = new JSPWikiMarkupParser( context,
                                                                   new StringReader(wikiText) );
             parser.addHeadingListener( this );
