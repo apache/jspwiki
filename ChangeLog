@@ -27,7 +27,7 @@
         that wiki groups can now possess administrative rights. See the security policy
         for a sample grant block.
         
-        * Deprecation: the built-in Role.ALL enum has been eliminated. Use
+        * Deprecation: the built-in Role.ADMIN enum has been eliminated. Use
         com.ecyrd.jspwiki.auth.GroupPrincipal in jspwiki.properties instead.
         
         * Deprecation: the jspwiki.properties property 'jspwiki.admin.user' is 
