@@ -11,10 +11,11 @@
 // repeat string size time
 String.prototype.repeat = function( size )
 {
-   var a = new ExtArray( size );
+   var a = new Array( size );
    for( var i=0; i < size; i++ ) { a[i] = this; }
    return( a.join("") );
 }
+
 // remove leading and trailing whitespace
 String.prototype.trim = function() 
 {
@@ -34,6 +35,15 @@ String.prototype.parseColor = function()
   return( s );
 }
 
+// replace xml chars by &entities;
+String.prototype.escapeXML = function()
+{
+  var s = this.replace( /&/g, "&amp;" );
+  s = s.replace( /</g, "&lt;" );
+  s = s.replace( />/g, "&gt;" );
+  return s;
+}
+
 /**
  ** 020 Array stuff
  **/
@@ -46,6 +56,7 @@ if( !ExtArray.prototype.push ) ExtArray.push = function() {
   for (var i=0; i<arguments.length; i++) this[this.length] = arguments[i];
   return this.length;
 }
+
 
 
 /**
@@ -141,6 +152,11 @@ var Wiki = new Object();
 Wiki.DELIM = "\u00A4"; //non-typable char - used as delimitter
 
 Wiki.reImageTypes = new RegExp( '(.bmp|.gif|.png|.jpg|.jpeg|.tiff)$','i' );
+
+Wiki.getBaseURL  = function() { return this.BaseURL; } //not yet used
+Wiki.getBasePath = function() { return this.BasePath; }
+Wiki.getPageName = function() { return this.Pagename; }
+
 Wiki.showImage = function( attachment, attDELIM, maxWidth, maxHeight )
 {
   // contains Name, Link-url, Info-url 
@@ -228,7 +244,7 @@ Wiki.onPageLoad = function()
  * issue a document.write statement with the link to the browser specific stylesheet
  * should always be execute from direct javascript during page-load
  */
-Wiki.loadBrowserSpecificCSS  = function ( baseurl, templatePath )
+Wiki.loadBrowserSpecificCSS  = function ( baseurl, templatePath, pagename )
 {
     var IE4 = (document.all && !document.getElementById) ? true : false;
     var NS4 = (document.layers) ? true : false;
@@ -258,6 +274,11 @@ Wiki.loadBrowserSpecificCSS  = function ( baseurl, templatePath )
         sheet = baseurl+"templates/" +templatePath + "/" + sheet;
         document.write("<link rel=\"stylesheet\" href=\""+sheet+"\" />");
     }
+    
+    this.BaseURL = baseurl;
+    this.BasePath = this.BaseURL.slice( this.BaseURL.indexOf( location.host )
+                                      + location.host.length, -1 );
+    this.PageName = pagename;
 }
 
 /**
@@ -272,6 +293,11 @@ document.setCookie = function( name, value, expires, path, domain, secure )
     expires = new Date();
 	expires.setFullYear( expires.getFullYear() + 1 );
   }
+
+  /* Store the cookies agains the basepath of wiki
+     so that different URLformats are supported properly !
+   */
+  if( !path ) path = Wiki.getBasePath();
 
   if( expires ) { c += "; expires=" + expires.toGMTString(); } // Date()
   if( path    ) { c += "; path=" + path; }
@@ -541,6 +567,7 @@ HighlightWord.walkDomTree = function( node )
   if( node.nodeType != 3 ) return; 
   if( node.parentNode.className == this.ClassName ) return;
   var s = node.nodeValue;
+  s = s.escapeXML(); /* bugfix - nodeValue apparently unescapes the xml entities ?! */
   if( !this.reMatch.test( s ) ) return;
   
   //alert("found "+RegExp.$1);  
@@ -713,17 +740,13 @@ Collapsable.bullet           = document.createElement("div"); // template bullet
 Collapsable.bullet.className = "collapseBullet";
 Collapsable.bullet.innerHTML = "&bull;";
 
-/* FIXME: This assumes a bit too much about the page structure. */
+
 Collapsable.onPageLoad = function()
-{  
-  this.initialise( "leftmenu",       this.ClassName, this.CookiePrefix + "LeftMenu"       );
-  this.initialise( "leftmenufooter", this.ClassName, this.CookiePrefix + "LeftMenuFooter" );
-  this.initialise( "pagecontent",    this.ClassName, this.CookiePrefix + "$" );  
-  if( Wiki.username )
-  {
-    this.initialise( "myfavorites",  this.ClassName, this.CookiePrefix + Wiki.username + "Favorites" );
-  }
-}
+{
+  this.initialise( "favorites",   this.CookiePrefix + "Favorites" );
+  this.initialise( "pagecontent", this.CookiePrefix + Wiki.getPageName() );
+ }
+
 
 Collapsable.initialise = function( domID, className, cookieName )
 {

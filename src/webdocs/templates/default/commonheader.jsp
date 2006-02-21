@@ -89,4 +89,4 @@ function runOnLoad()
 
 window.onload = runOnLoad;
 </script>
-<script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>");</script>
+<script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>","<wiki:Variable var="pagename" />");</script>
