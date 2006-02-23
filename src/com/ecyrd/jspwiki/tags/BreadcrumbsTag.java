@@ -76,7 +76,7 @@ public class BreadcrumbsTag extends WikiTagBase
         m_separator = separator;
     }
 
-    public final int doWikiStartTag() throws IOException
+    public int doWikiStartTag() throws IOException
     {
         HttpSession session = pageContext.getSession();
         FixedQueue  trail   = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
