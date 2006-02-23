@@ -1,3 +1,14 @@
+2006-02-23  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.82
+
+        * BreadcrumbsTag.doWikiStartTag() is no longer final.
+        I don't understand why it was final in the first place...
+        
+        * Tiny refactoring: moved Event routines to a 
+        new com.ecyrd.jspwiki.event package.  No functionality
+        changes today.
+
 2006-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.81
