@@ -2,7 +2,7 @@ package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
 
-import com.ecyrd.jspwiki.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 
 /**
  * <p>
@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.WikiEventListener;
  * </ul>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-02-21 08:39:39 $
+ * @version $Revision: 1.6 $ $Date: 2006-02-23 20:51:31 $
  * @since 2.3
  */
 public interface Group extends Principal

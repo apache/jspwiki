@@ -1,11 +1,11 @@
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.event;
 
 import java.util.EventObject;
 
 /**
  * Abstract parent class for wiki events.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-02-21 08:29:56 $
+ * @version $Revision: 1.1 $ $Date: 2006-02-23 20:51:31 $
  * @see com.ecyrd.jspwiki.auth.WikiSecurityEvent
  * @since 2.3.79
  */

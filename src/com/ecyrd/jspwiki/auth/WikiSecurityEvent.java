@@ -1,10 +1,10 @@
 package com.ecyrd.jspwiki.auth;
 
-import com.ecyrd.jspwiki.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEvent;
 
 /**
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-02-21 08:30:22 $
+ * @version $Revision: 1.2 $ $Date: 2006-02-23 20:51:31 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent

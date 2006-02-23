@@ -3,13 +3,13 @@ package com.ecyrd.jspwiki.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ecyrd.jspwiki.WikiEvent;
-import com.ecyrd.jspwiki.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 
 /**
  * Traps the most recent WikiEvent so that it can be used in assertions.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-02-21 08:44:09 $
+ * @version $Revision: 1.2 $ $Date: 2006-02-23 20:51:59 $
  * @since 2.3.79
  */
 public class SecurityEventTrap implements WikiEventListener

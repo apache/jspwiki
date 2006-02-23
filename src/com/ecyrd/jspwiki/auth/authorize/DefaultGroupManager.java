@@ -17,14 +17,14 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiEvent;
-import com.ecyrd.jspwiki.WikiEventListener;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-02-21 08:39:39 $
+ * @version $Revision: 1.9 $ $Date: 2006-02-23 20:51:31 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -114,7 +114,7 @@ public class DefaultGroupManager implements GroupManager
          * Captures wiki events fired by member wiki Groups and forwards them
          * on to WikiEventListeners registered with this instance.
          * TODO: enclose this in an inner class at some point...
-         * @see com.ecyrd.jspwiki.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.WikiEvent)
+         * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
          */
         public void actionPerformed( WikiEvent event )
         {

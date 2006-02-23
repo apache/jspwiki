@@ -1,9 +1,9 @@
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.event;
 
 /**
  * Listener interface for notification of WikiEvents.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-02-21 08:29:56 $
+ * @version $Revision: 1.1 $ $Date: 2006-02-23 20:51:31 $
  * @since 2.3.79
  */
 public interface WikiEventListener

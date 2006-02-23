@@ -6,13 +6,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import com.ecyrd.jspwiki.WikiEventListener;
 import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 
 /**
  * Provides a concrete implementation of the {@link Group} interface.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-02-21 08:39:39 $
+ * @version $Revision: 1.6 $ $Date: 2006-02-23 20:51:31 $
  * @since 2.3
  */
 public class DefaultGroup implements Group
