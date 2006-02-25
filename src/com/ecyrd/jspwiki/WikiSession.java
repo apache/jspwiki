@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.16 $ $Date: 2006-02-23 20:51:09 $
+ * @version $Revision: 2.17 $ $Date: 2006-02-25 18:42:30 $
  */
 public class WikiSession implements WikiEventListener
 {
@@ -231,7 +231,7 @@ public class WikiSession implements WikiEventListener
      * for PrincipalWrappers or WikiPrincipals with type designator
      * <code>LOGIN_NAME</code>; the first one found is the login principal.
      * If one is not found, this method returns the first principal that isn't
-     * of type Role. If neither of these conditions hold, this method returns
+     * of type Role or GroupPrincipal. If neither of these conditions hold, this method returns
      * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
      * @return the login Principal. If it is a PrincipalWrapper containing an
      * externally-provided Principal, the object returned is the Principal, not
@@ -246,7 +246,7 @@ public class WikiSession implements WikiEventListener
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
-            if ( !( currentPrincipal instanceof Role ) )
+            if ( !( currentPrincipal instanceof Role || currentPrincipal instanceof GroupPrincipal ) )
             {
                 if ( currentPrincipal instanceof WikiPrincipal )
                 {
@@ -276,7 +276,7 @@ public class WikiSession implements WikiEventListener
      * with type designator <code>FULL_NAME</code> or (alternatively)
      * <code>WIKI_NAME</true> is the primary Principal.</li>
      *   <li>For all other cases, the first Principal in the Subject's principal
-     *       collection that that isn't of type Role is the primary.</li>
+     *       collection that that isn't of type Role or GroupPrincipal is the primary.</li>
      * </ol> 
      * If no primary user Principal is found, this method returns
      * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
@@ -293,7 +293,7 @@ public class WikiSession implements WikiEventListener
         for( Iterator it = principals.iterator(); it.hasNext(); )
         {
             Principal currentPrincipal = (Principal) it.next();
-            if ( !( currentPrincipal instanceof Role ) )
+            if ( !( currentPrincipal instanceof Role || currentPrincipal instanceof GroupPrincipal ) )
             {
                 if ( currentPrincipal instanceof WikiPrincipal )
                 {
