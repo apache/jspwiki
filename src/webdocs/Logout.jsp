@@ -1,6 +1,14 @@
-<%@page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
+<%@page import="com.ecyrd.jspwiki.WikiEngine" %>
+<%!
+    public void jspInit()
+    {
+        wiki = WikiEngine.getInstance( getServletConfig() );
+    }
+    WikiEngine wiki;
+%>
+
 <%
-  AuthenticationManager.logout( request );
+  wiki.getAuthenticationManager().logout( request );
   // Redirect to the webroot
   response.sendRedirect(".");
 %>
