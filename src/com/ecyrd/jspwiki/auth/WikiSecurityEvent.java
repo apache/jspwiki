@@ -1,10 +1,43 @@
 package com.ecyrd.jspwiki.auth;
 
+import java.security.Principal;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+
 import com.ecyrd.jspwiki.event.WikiEvent;
 
 /**
+ * <p>Event class for security events: login/logout, wiki group adds/changes, and
+ * authorization decisions. When a WikiSecurityEvent is constructed, the
+ * security logger {@link #LOGGER} is notified.</p>
+ * <p>These events are logged with priority <code>ERROR</code>:</p>
+ * <ul>
+ *   <li>login failed - bad credential or password</li>
+ * </ul>
+ * <p>These events are logged with priority <code>WARN</code>:</p>
+ * <ul>
+ *   <li>access denied</li>
+ *   <li>login failed - credential expired</li>
+ *   <li>login failed - account expired</li>
+ * </ul>
+ * <p>These events are logged with priority <code>INFO</code>:</p>
+ * <ul>
+ *   <li>login succeeded</li>
+ *   <li>logout</li>
+ * </ul>
+ * <p>These events are logged with priority <code>DEBUG</code>:</p>
+ * <ul>
+ *   <li>access allowed</li>
+ *   <li>add group</li>
+ *   <li>remove group</li>
+ *   <li>clear all groups</li>
+ *   <li>add group member</li>
+ *   <li>remove group member</li>
+ *   <li>clear all members from group</li>
+ * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-02-23 20:51:31 $
+ * @version $Revision: 1.3 $ $Date: 2006-02-25 18:44:34 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -12,40 +45,104 @@ public final class WikiSecurityEvent extends WikiEvent
 
     private static final long serialVersionUID    = -6751950399721334496L;
 
-    /**
-     * When a user authenticates with a username and password, or via container
-     * auth.
-     */
+    /** When a user authenticates with a username and password, or via container auth. */
     public static final int   LOGIN_AUTHENTICATED = 1;
 
-    /** When a user logs out */
-    public static final int   LOGOUT              = 2;
+    /** When a login fails due to account expiration. */
+    public static final int   LOGIN_ACCOUNT_EXPIRED = 2;
+    
+    /** When a login fails due to credential expiration. */
+    public static final int   LOGIN_CREDENTIAL_EXPIRED = 3;
+    
+    /** When a login fails due to wrong username or password. */
+    public static final int   LOGIN_FAILED = 4;
+    
+    /** When a user logs out. */
+    public static final int   LOGOUT = 5;
 
     /** When a new wiki group is added. */
-    public static final int   GROUP_ADD           = 13;
+    public static final int   GROUP_ADD = 11;
 
     /** When a wiki group is deleted. */
-    public static final int   GROUP_REMOVE        = 14;
+    public static final int   GROUP_REMOVE = 12;
 
-    public static final int   GROUP_CLEAR_GROUPS  = 15;
+    /** When all wiki groups are removed from GroupManager. */
+    public static final int   GROUP_CLEAR_GROUPS = 13;
 
-    /** When a new member is added to a wiki group */
-    public static final int   GROUP_ADD_MEMBER    = 16;
+    /** When a new member is added to a wiki group. */
+    public static final int   GROUP_ADD_MEMBER = 14;
 
-    /** When a member is removed from a wiki group */
-    public static final int   GROUP_REMOVE_MEMBER = 17;
+    /** When a member is removed from a wiki group. */
+    public static final int   GROUP_REMOVE_MEMBER = 15;
 
-    /** When a all members are cleared from a wiki group */
-    public static final int   GROUP_CLEAR_MEMBERS = 18;
+    /** When all members are cleared from a wiki group. */
+    public static final int   GROUP_CLEAR_MEMBERS = 16;
 
-    private final Object      target;
+    /** When access to a resource is allowed. */
+    public static final int   ACCESS_ALLOWED = 20;
+    
+    /** When access to a resource is allowed. */
+    public static final int   ACCESS_DENIED = 21;
+    
+    /** The security logging service. */
+    public static final Logger LOGGER = Logger.getLogger( "SecurityLog" );
+    
+    private final Principal m_principal;
+    
+    private final Object      m_target;
 
-    private final int         type;
+    private final int         m_type;
+    
+    private static final int[] ERROR_EVENTS = { LOGIN_FAILED };
+    
+    private static final int[] WARN_EVENTS  = { ACCESS_DENIED,
+                                                LOGIN_ACCOUNT_EXPIRED,
+                                                LOGIN_CREDENTIAL_EXPIRED };
+    
+    private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED,
+                                                LOGOUT };
+    
+    /**
+     * Constructs a new instance of this event type, which signals a security
+     * event has occurred. The <code>source</code> parameter is required, and
+     * may not be <code>null</code>. When the WikiSecurityEvent is
+     * constructed, the security logger {@link #LOGGER} is notified.
+     * @param source the source of the event, which can be any object: a wiki
+     *            page, group or authentication/authentication/group manager.
+     * @param type the type of event
+     * @param principal the subject of the event, which may be <code>null</code>
+     * @param target the changed Object, which may be <code>null</code>
+     */
+    public WikiSecurityEvent( Object source, int type, Principal principal, Object target )
+    {
+        super( source );
+        if ( source == null )
+        {
+            throw new IllegalArgumentException( "Argument(s) cannot be null." );
+        }
+        this.m_type = type;
+        this.m_principal = principal;
+        this.m_target = target;
+        if ( LOGGER.isEnabledFor( Priority.ERROR ) && inArray( ERROR_EVENTS, type ) )
+        {
+            LOGGER.error( this );
+        }
+        else if ( LOGGER.isEnabledFor( Priority.WARN ) && inArray( WARN_EVENTS, type ) )
+        {
+            LOGGER.warn( this );
+        }
+        else if ( LOGGER.isEnabledFor( Priority.INFO ) && inArray( INFO_EVENTS, type ) )
+        {
+            LOGGER.info( this );
+        }
+        LOGGER.debug( this );
+    }
 
     /**
      * Constructs a new instance of this event type, which signals a security
-     * event has occurred. The <code>source</code> and <code>type</code>
-     * parameters are required, and may not be <code>null</code>.
+     * event has occurred. The <code>source</code> parameter is required, and
+     * may not be <code>null</code>. When the WikiSecurityEvent is
+     * constructed, the security logger {@link #LOGGER} is notified.
      * @param source the source of the event, which can be any object: a wiki
      *            page, group or authentication/authentication/group manager.
      * @param type the type of event
@@ -53,24 +150,29 @@ public final class WikiSecurityEvent extends WikiEvent
      */
     public WikiSecurityEvent( Object source, int type, Object target )
     {
-        super( source );
-        if ( source == null )
-        {
-            throw new IllegalArgumentException( "Argument(s) cannot be null." );
-        }
-        this.type = type;
-        this.target = target;
+        this( source, type, null, target );
     }
 
     /**
+     * Returns the principal to whom the opeation applied, if supplied. This
+     * method may return <code>null</code>
+     * <em>&#8212; and calling methods should check for this condition</em>.
+     * @return the changed object
+     */
+    public final Object getPrincipal()
+    {
+        return m_principal;
+    }
+    
+    /**
      * Returns the object that was operated on, if supplied. This method may
-     * return <code>null</code>,
-     * <em>-- and calling methods should check for this condition</em>.
+     * return <code>null</code>
+     * <em>&#8212; and calling methods should check for this condition</em>.
      * @return the changed object
      */
     public final Object getTarget()
     {
-        return target;
+        return m_target;
     }
 
     /**
@@ -79,7 +181,7 @@ public final class WikiSecurityEvent extends WikiEvent
      */
     public final int getType()
     {
-        return type;
+        return m_type;
     }
 
     /**
@@ -90,48 +192,96 @@ public final class WikiSecurityEvent extends WikiEvent
     {
         StringBuffer msg = new StringBuffer();
         msg.append( "WikiSecurityEvent." );
+        msg.append(  eventName( m_type ) );
+        msg.append( " [source=" + getSource().toString() );
+        msg.append( ", princpal=" + m_principal );
+        msg.append( ", target=" + m_target );
+        msg.append( "]" );
+        return msg.toString();
+    }
+    
+    /**
+     * Returns a textual representation of an event type.
+     * @param type the type
+     * @return the string representation
+     */
+    protected static final String eventName( int type )
+    {
         switch( type )
         {
+        case ACCESS_ALLOWED:
+        {
+            return "ACCESS_ALLOWED";
+        }
+        case ACCESS_DENIED:
+        {
+            return "ACCESS_DENIED";
+        }
         case GROUP_ADD:
         {
-            msg.append( "GROUP_ADD" );
-            break;
-        }
-        case GROUP_REMOVE:
-        {
-            msg.append( "GROUP_REMOVE" );
-            break;
+            return "GROUP_ADD";
         }
         case GROUP_ADD_MEMBER:
         {
-            msg.append( "GROUP_ADD_MEMBER" );
-            break;
+            return "GROUP_ADD_MEMBER";
+        }
+        case GROUP_CLEAR_GROUPS:
+        {
+            return "GROUP_CLEAR_GROUPS";
         }
         case GROUP_CLEAR_MEMBERS:
         {
-            msg.append( "GROUP_CLEAR_MEMBERS" );
-            break;
+            return "GROUP_CLEAR_MEMBERS";
+        }
+        case GROUP_REMOVE:
+        {
+            return "GROUP_REMOVE";
         }
         case GROUP_REMOVE_MEMBER:
         {
-            msg.append( "GROUP_REMOVE_MEMBER" );
-            break;
+            return "GROUP_REMOVE_MEMBER";
+        }
+        case LOGIN_ACCOUNT_EXPIRED:
+        {
+            return "LOGIN_ACCOUNT_EXPIRED";
         }
         case LOGIN_AUTHENTICATED:
         {
-            msg.append( "LOGIN_AUTHENTICATED" );
-            break;
+            return "LOGIN_AUTHENTICATED";
+        }
+        case LOGIN_CREDENTIAL_EXPIRED:
+        {
+            return "LOGIN_ACCOUNT_EXPIRED";
+        }
+        case LOGIN_FAILED:
+        {
+            return "LOGIN_FAILED";
         }
         case LOGOUT:
         {
-            msg.append( "LOGOUT" );
-            break;
+            return "LOGOUT";
         }
         }
-        msg.append( " [source=" + getSource().toString() );
-        msg.append( ",target=" + target );
-        msg.append( "]" );
-        return msg.toString();
+        return "UNKNOWN";
+    }
+    
+    /**
+     * Returns <code>true</code> if an integer is
+     * contained in a supplied array.
+     * @param array an array of integers to search
+     * @param type the value to match
+     * @return the result of the inspection
+     */
+    protected static final boolean inArray( int[] array, int type )
+    {
+        for ( int i = 0; i < array.length; i++ )
+        {
+            if ( array[i] == type )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

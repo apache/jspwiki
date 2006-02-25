@@ -92,5 +92,12 @@ log4j.appender.FileLog.MaxBackupIndex = 14
 log4j.appender.FileLog.File = @tests.logfile@
 log4j.appender.FileLog.layout = org.apache.log4j.PatternLayout
 log4j.appender.FileLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
-
 log4j.rootCategory=DEBUG,FileLog
+
+log4j.appender.SecurityAppender = org.apache.log4j.RollingFileAppender
+log4j.appender.SecurityAppender.MaxFileSize    = 10MB
+log4j.appender.SecurityAppender.MaxBackupIndex = 14
+log4j.appender.SecurityAppender.File = @securitylog@
+log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
+log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
+log4j.logger.SecurityLog=INFO, SecurityAppender

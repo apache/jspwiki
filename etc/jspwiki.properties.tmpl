@@ -639,5 +639,20 @@ log4j.rootCategory=INFO,FileLog
 # Enable if you're using mailing, above.
 #log4j.rootCategory=INFO,FileLog,mail
 
-### End of configuration file.
+#
+# Uncomment these lines if you want to see detailed security event logging.
+# The logging levels are as follows:
+#  ERROR: login errors (other than failed/expired logins)
+#  WARN:  access denied, failed login (account expired, password/credential expired)
+#  INFO:  login, logout
+#  DEBUG: add/remove group, add/remove group member, clear groups/group members, access allowed
+#
+#log4j.logger.SecurityLog=INFO, SecurityAppender
+#log4j.appender.SecurityAppender = org.apache.log4j.RollingFileAppender
+#log4j.appender.SecurityAppender.MaxFileSize    = 10MB
+#log4j.appender.SecurityAppender.MaxBackupIndex = 14
+#log4j.appender.SecurityAppender.File = @securitylog@
+#log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
+#log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
 
+### End of configuration file.
