@@ -1,3 +1,40 @@
+2006-02-25  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.83
+        
+        * The jspwiki.policy file now includes a sample 'Admin' group
+        that demonstrates how to grant administrative privileges
+        (AllPermission). It is *not* enabled by default.
+        
+        * Bug fix: Authenticated users belonging to wiki groups were
+        erroneously seeing the group name, not their full names, added
+        as authors to comments and pages. WikiSession was not checking
+        for GroupPrincipals in several places. This has been fixed. 
+        Credit: Janne Jalkanen
+        
+        * Bug fix: Group principals are now only injected if a user
+        has successfully authenticated.
+        
+        * Enhancement: build.properties and jspwiki.properties now
+        support configuration of a log4j-based security log. The
+        default name is security.log. Use it to view error conditions
+        or more detailed trace information about login/logout events,
+        authorization decisions and more. To provide this capability,
+        WikiSecurityEvent constructors were modified to add log entries
+        to the Log4J Logger "SecurityLog".
+        
+        * AuthenticationManager and AuthorizationManager gain support
+        for wiki security events: login/logout, and access granted/denied,
+        respectively. These classes also were lightly re-organized;
+        the classes themselves, and all of their methods, were made final.
+        
+        * All add/removeWikiEventListener() methods, in all classes,
+        are now synchronized.
+        
+        * Due to the addition of logout events to WikiSecurityEvent,
+        the method AuthenticationManager.logout() is no longer static.
+        As a result, Logout.jsp changed slightly.
+
 2006-02-23  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.82
