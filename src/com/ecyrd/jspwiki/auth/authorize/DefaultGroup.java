@@ -12,7 +12,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 /**
  * Provides a concrete implementation of the {@link Group} interface.
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-02-23 20:51:31 $
+ * @version $Revision: 1.7 $ $Date: 2006-02-25 18:45:25 $
  * @since 2.3
  */
 public class DefaultGroup implements Group
@@ -34,7 +34,7 @@ public class DefaultGroup implements Group
      * added successfully, also sends a WikiSecurityEvent of type
      * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_ADD_MEMBER}
      * to all of its registered WikiEventListeners.
-     * @param principal the principal to add
+     * @param user the principal to add
      * @return <code>true</code> if the operation was successful
      */
     public boolean add( Principal user )
@@ -53,7 +53,7 @@ public class DefaultGroup implements Group
      * Registers a WikiEventListener with this Group.
      * @param listener the event listener
      */
-    public void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( WikiEventListener listener )
     {
         m_listeners.add( listener );
     }
@@ -126,7 +126,7 @@ public class DefaultGroup implements Group
      * added successfully, also sends a WikiSecurityEvent of type
      * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_REMOVE_MEMBER}
      * to all of its registered WikiEventListeners.
-     * @param principal the principal to remove
+     * @param user the principal to remove
      * @return <code>true</code> if the operation was successful
      */
     public boolean remove( Principal user )
@@ -146,7 +146,7 @@ public class DefaultGroup implements Group
      * Un-registers a WikiEventListener with this Group.
      * @param listener the event listener
      */
-    public void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( WikiEventListener listener )
     {
         m_listeners.remove( listener );
     }
@@ -158,17 +158,7 @@ public class DefaultGroup implements Group
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
-
-        sb.append( "[DefaultGroup: " + getName() + ", members=" );
-
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
-        {
-            sb.append( i.next() );
-            sb.append( ", " );
-        }
-
-        sb.append( "]" );
-
+        sb.append( "[DefaultGroup: " + getName() + "]" );
         return sb.toString();
     }
 

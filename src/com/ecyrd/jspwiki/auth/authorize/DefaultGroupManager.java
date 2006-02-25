@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-02-23 20:51:31 $
+ * @version $Revision: 1.10 $ $Date: 2006-02-25 18:45:54 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -171,7 +171,7 @@ public class DefaultGroupManager implements GroupManager
      * Registers a WikiEventListener with this GroupManager.
      * @param listener the event listener
      */
-    public void addWikiEventListener( WikiEventListener listener )
+    public synchronized void addWikiEventListener( WikiEventListener listener )
     {
         m_listeners.add( listener );
     }
@@ -335,7 +335,7 @@ public class DefaultGroupManager implements GroupManager
      * Un-registers a WikiEventListener with this GroupManager.
      * @param listener the event listener
      */
-    public void removeWikiEventListener( WikiEventListener listener )
+    public synchronized void removeWikiEventListener( WikiEventListener listener )
     {
         m_listeners.remove( listener );
     }
