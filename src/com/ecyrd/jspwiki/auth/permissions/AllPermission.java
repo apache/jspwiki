@@ -4,10 +4,10 @@ import java.security.Permission;
 
 /**
  * <p>
- * Permission to perform all operations in a given wiki.
+ * Permission to perform all operations on a given wiki.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-02-21 08:43:13 $
+ * @version $Revision: 1.2 $ $Date: 2006-02-25 18:46:24 $
  * @since 2.3.80
  */
 public final class AllPermission extends Permission
@@ -20,7 +20,7 @@ public final class AllPermission extends Permission
 
     /**
      * Creates a new WikiPermission for a specified set of actions.
-     * @param actions the actions for this permission
+     * @param wiki the wiki to which the permission should apply
      */
     public AllPermission( String wiki )
     {

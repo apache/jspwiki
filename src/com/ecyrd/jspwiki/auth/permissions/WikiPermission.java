@@ -14,7 +14,7 @@ import java.util.Arrays;
  * itself. <p> Certain permissions imply others. Currently,
  * <code>createGroups</code> implies <code>createPages</code>. </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.12 $ $Date: 2006-01-30 04:17:24 $
+ * @version $Revision: 1.13 $ $Date: 2006-02-25 18:46:45 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
@@ -99,7 +99,7 @@ public final class WikiPermission extends Permission
 
     /**
      * Returns the actions for this permission: "createGroups", "createPages",
-     * "editPreferences", "editProfile", "login" or "registerUser". The actions
+     * "editPreferences", "editProfile", or "login". The actions
      * will always be sorted in alphabetic order, and will always appear in
      * lower case.
      * @see java.security.Permission#getActions()
