@@ -50,6 +50,7 @@ import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -82,13 +83,13 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.31 $ $Date: 2006-02-21 08:36:33 $
+ * @version $Revision: 1.32 $ $Date: 2006-02-25 18:43:38 $
  * @since 2.3
  * @see AuthenticationManager
  */
-public class AuthorizationManager
+public final class AuthorizationManager
 {
-    static Logger log = Logger.getLogger( AuthorizationManager.class );
+    private static final Logger log = Logger.getLogger( AuthorizationManager.class );
     /**
      * The default external Authorizer is the {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
      */
@@ -103,6 +104,9 @@ public class AuthorizationManager
 
     private WikiEngine                        m_engine          = null;
 
+    /** Listeners for security events */
+    private final Set        m_listeners = new HashSet();
+    
     /**
      * Constructs a new AuthorizationManager instance.
      */
@@ -110,6 +114,15 @@ public class AuthorizationManager
     {
     }
     
+    /**
+     * Registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.add( listener );
+    }
+
     /**
      * Returns <code>true</code> or <code>false</code>, depending on
      * whether a Permission is allowed for the Subject associated with
@@ -150,22 +163,25 @@ public class AuthorizationManager
      * @see #hasRoleOrPrincipal(WikiSession, Principal)
      * @return the result of the Permission check
      */
-    public boolean checkPermission( WikiSession session, Permission permission )
+    public final boolean checkPermission( WikiSession session, Permission permission )
     {
         //
         //  A slight sanity check.
         //
         if ( session == null || permission == null )
         {
+            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, null, permission ) );
             return false;
         }
         Subject subject = session.getSubject();
+        Principal user = session.getLoginPrincipal();
         
         // Always allow the action if user has AllPermission
         Permission allPermission = new AllPermission( m_engine.getApplicationName() );
         boolean hasAllPermission = checkStaticPermission( subject, allPermission );
         if ( hasAllPermission )
         {
+            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
             return true;
         }
         
@@ -174,12 +190,14 @@ public class AuthorizationManager
         boolean hasPolicyPermission = checkStaticPermission( subject, permission );
         if ( !hasPolicyPermission )
         {
+            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, user, permission ) );
             return false;
         }
 
         // If this isn't a PagePermission, it's allowed
         if ( ! ( permission instanceof PagePermission ) )
         {
+            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
             return true;
         }
 
@@ -190,6 +208,7 @@ public class AuthorizationManager
         Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
         if ( page == null ||  acl == null )
         {
+            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
             return true;
         }
         
@@ -223,9 +242,11 @@ public class AuthorizationManager
             
             if ( hasRoleOrPrincipal( session, aclPrincipal ) )
             {
+                fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
                 return true;
             }
         }
+        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, user, permission ) );
         return false;
     }
     
@@ -243,7 +264,7 @@ public class AuthorizationManager
      * @return an array of Principal objects corresponding to the 
      * roles the Subject possesses, across all Authorizers
      */
-    public Principal[] getRoles( WikiSession session )
+    public final Principal[] getRoles( WikiSession session )
     {
         Set roles = new HashSet();
         Subject subject = session.getSubject();
@@ -299,7 +320,7 @@ public class AuthorizationManager
      *         posesses the Role or is a member of the Group,
      *         <code>false</code> otherwise
      */
-    public boolean isUserInRole( WikiSession session, Principal principal )
+    public final boolean isUserInRole( WikiSession session, Principal principal )
     // TODO: write unit tests
     {
         if (session == null || principal == null)
@@ -362,7 +383,7 @@ public class AuthorizationManager
      *         posesses the Role, is a member of the Group, or contains the
      *         desired Principal, <code>false</code> otherwise
      */
-    protected boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
+    protected final boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
     {
         if (session == null || principal == null)
         {
@@ -401,7 +422,7 @@ public class AuthorizationManager
      * @return <code>true</code> if any of the Subject's Principals have the
      *         same name as the supplied Principal, otherwise <code>false</code>
      */
-    protected boolean hasUserPrincipal( Subject subject, Principal principal )
+    protected final boolean hasUserPrincipal( Subject subject, Principal principal )
     {
         String principalName = principal.getName();
         for( Iterator it = subject.getPrincipals().iterator(); it.hasNext(); )
@@ -423,7 +444,7 @@ public class AuthorizationManager
      * Expects to find property 'jspwiki.authorizer' with a valid Authorizer
      * implementation name to take care of group lookup operations.
      */
-    public void initialize( WikiEngine engine, Properties properties ) throws WikiException
+    public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
         m_authorizer = getAuthorizerImplementation( properties );
@@ -431,11 +452,24 @@ public class AuthorizationManager
     }
 
     /**
+     * Fires a wiki event to all registered listeners.
+     * @param event the event
+     */
+    protected final void fireEvent( WikiSecurityEvent event )
+    {
+        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
+        {
+            WikiEventListener listener = (WikiEventListener)it.next();
+            listener.actionPerformed(event);
+        }
+    }
+    
+    /**
      * Returns the current external {@link Authorizer} in use, which may be 
      * <code>null</code>.
      * @return the current Authorizer
      */
-    protected Authorizer getAuthorizer()
+    protected final Authorizer getAuthorizer()
     {
         return m_authorizer;
     }
@@ -449,13 +483,13 @@ public class AuthorizationManager
      * @return a Authorizer used to get page authorization information
      * @throws WikiException
      */
-    private Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
+    private final Authorizer getAuthorizerImplementation( Properties props ) throws WikiException
     {
         String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
         return (Authorizer) locateImplementation( authClassName );
     }
 
-    private Object locateImplementation( String clazz ) throws WikiException
+    private final Object locateImplementation( String clazz ) throws WikiException
     {
         if ( clazz != null )
         {
@@ -525,6 +559,15 @@ public class AuthorizationManager
     }
     
     /**
+     * Un-registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public synchronized final void removeWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.remove( listener );
+    }
+    
+    /**
      * <p>Given a supplied string representing a Principal's name from an Acl, this
      * method resolves the correct type of Principal (role, group, or user).
      * This method is guaranteed to always return a Principal.
@@ -546,7 +589,7 @@ public class AuthorizationManager
      * @param name the name of the Principal to resolve
      * @return the fully-resolved Principal
      */
-    public Principal resolvePrincipal( String name ) 
+    public final Principal resolvePrincipal( String name ) 
     {    
         // Check built-in Roles first
         Role role = new Role(name);

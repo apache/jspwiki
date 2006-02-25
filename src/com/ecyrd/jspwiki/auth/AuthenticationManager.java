@@ -44,6 +44,7 @@ import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
 import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 
 /**
  * Manages authentication activities for a WikiEngine: user login, logout, and 
@@ -51,10 +52,10 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.19 $ $Date: 2006-02-21 08:34:00 $
+ * @version $Revision: 1.20 $ $Date: 2006-02-25 18:43:38 $
  * @since 2.3
  */
-public class AuthenticationManager
+public final class AuthenticationManager
 {
 
     /** The name of the built-in cookie authentication module */
@@ -69,13 +70,16 @@ public class AuthenticationManager
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
 
-    static Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
+    protected static final Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
     
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private static Boolean                     m_allowsAssertions  = null;
 
     private WikiEngine                         m_engine            = null;
 
+    /** Listeners for security events */
+    private final Set        m_listeners = new HashSet();
+    
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
@@ -84,44 +88,21 @@ public class AuthenticationManager
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
     private static final String                DEFAULT_POLICY      = "jspwiki.policy";    
     
-    private URL findConfigFile( String name )
+    /**
+     * Registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
     {
-        ClassLoader cl = AuthenticationManager.class.getClassLoader();
-        
-        URL path = cl.getResource("/WEB-INF/"+name);
-        
-        if( path == null )
-            path = cl.getResource("/"+name);
-        
-        if( path == null )
-            path = cl.getResource(name);
-        
-        if( path == null && m_engine.getServletContext() != null )
-        {
-            try
-            {
-                path = m_engine.getServletContext().getResource("/WEB-INF/"+name);
-            }
-            catch( MalformedURLException e )
-            {
-                // This should never happen unless I screw up
-                log.fatal("Your code is b0rked.  You are a bad person.");
-            }
-        }
+        m_listeners.add( listener );
+    }
 
-        return path;
-    }
-    
-    static
-    {
-    }
-    
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
      * done here.
      */
-    public void initialize( WikiEngine engine, Properties props ) throws WikiException
+    public final void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
@@ -168,7 +149,7 @@ public class AuthenticationManager
      * @return <code>true</code> if the wiki's authentication is managed by
      *         the container, <code>false</code> otherwise
      */
-    public boolean isContainerAuthenticated()
+    public final boolean isContainerAuthenticated()
     {
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         if ( authorizer != null && authorizer instanceof WebContainerAuthorizer )
@@ -194,7 +175,7 @@ public class AuthenticationManager
      *             is null
      * @since 2.3
      */
-    public boolean login( HttpServletRequest request )
+    public final boolean login( HttpServletRequest request )
     {
         if ( request == null )
         {
@@ -221,7 +202,7 @@ public class AuthenticationManager
      * @param password The password
      * @return true, if the username/password is valid
      */
-    public boolean login( WikiSession session, String username, String password )
+    public final boolean login( WikiSession session, String username, String password )
     {
         if ( session == null )
         {
@@ -234,6 +215,41 @@ public class AuthenticationManager
     }
     
     /**
+     * Logs the user out by retrieving the WikiSession associated with the
+     * HttpServletRequest and unbinding all of the Subject's Principals,
+     * except for {@link Role#ALL}, {@link Role#ANONYMOUS}.
+     * is a cheap-and-cheerful way to do it without invoking JAAS LoginModules.
+     * The logout operation will also flush the JSESSIONID cookie from
+     * the user's browser session, if it was set.
+     * @param request the current HTTP request
+     */
+    public final void logout( HttpServletRequest request )
+    {
+        if ( request == null )
+        {
+            log.error( "No HTTP reqest provided; cannot log out." );
+            return;
+        }
+        
+        HttpSession session = request.getSession();
+        String sid = ( session == null ) ? "(null)" : session.getId();
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "Invalidating WikiSession for session ID=" + sid );
+        }
+        // Retrieve the associated WikiSession and clear the Principal set
+        WikiSession wikiSession = WikiSession.getWikiSession( request );
+        wikiSession.invalidate();
+        
+        // We need to flush the HTTP session too
+        session.invalidate();
+        
+        // Log the event
+        WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGOUT, wikiSession.getLoginPrincipal(), null );
+        fireEvent( event );
+    }
+    
+    /**
      * Reloads user Principals into the suppplied WikiSession's Subject.
      * Existing Role principals are preserved; all other Principal
      * types are flushed and replaced by those returned by
@@ -243,7 +259,7 @@ public class AuthenticationManager
      * method returns silently.
      * @param wikiSession
      */
-    public void refreshCredentials( WikiSession wikiSession ) 
+    public final void refreshCredentials( WikiSession wikiSession ) 
     {
       // Get the database and wiki session Subject
       UserDatabase database = m_engine.getUserDatabase();
@@ -253,13 +269,13 @@ public class AuthenticationManager
       }
       Subject subject = wikiSession.getSubject();
       
-      // Copy all Role principals into a temporary cache
+      // Copy all Role and GroupPrincipal principals into a temporary cache
       Set oldPrincipals = subject.getPrincipals();
       Set newPrincipals = new HashSet();
       for (Iterator it = oldPrincipals.iterator(); it.hasNext();)
       {
           Principal principal = (Principal)it.next();
-          if (principal instanceof Role)
+          if (principal instanceof Role || principal instanceof GroupPrincipal )
           {
               newPrincipals.add( principal );
           }
@@ -294,100 +310,12 @@ public class AuthenticationManager
     }
 
     /**
-     * Injects GroupPrincipal objects into the user's Principal set
-     * based on the groups the user belongs to. This method also
-     * attaches a WikiEventListener to the GroupManager so that
-     * changes to groups are detected automatically.
-     * @param session the wiki session
+     * Un-registers a WikiEventListener with this instance.
+     * @param listener the event listener
      */
-    protected void injectGroupPrincipals( WikiSession session )
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
     {
-        Subject subject = session.getSubject();
-        
-        // Get the GroupManager and test for each Group
-        GroupManager manager = m_engine.getGroupManager();
-        Principal[] groups = manager.getRoles();
-        for ( int i = 0; i < groups.length; i++ )
-        {
-            if ( manager.isUserInRole( session, groups[i] ) )
-            {
-                Principal groupPrincipal = new GroupPrincipal( (Group)groups[i] );
-                subject.getPrincipals().add( groupPrincipal );
-            }
-        }
-        
-        // Add the user's wiki session as a security event listener
-        manager.addWikiEventListener( session );
-    }
-    
-    /**
-     * Log in to the application using a given JAAS LoginConfiguration.
-     * @param wikiSession the current wiki session, to which the Subject will be associated
-     * @param handler handles callbacks sent by the LoginModules in the configuration
-     * @param application the name of the application whose LoginConfiguration should be used
-     * @return the result of the login
-     * @throws WikiSecurityException
-     */
-    private boolean doLogin( final WikiSession wikiSession, final CallbackHandler handler, final String application )
-    {
-        try
-        {
-            LoginContext loginContext  = (LoginContext)AccessController.doPrivileged(new PrivilegedAction()
-            {
-                public Object run() {
-                    try
-                    {
-                        return new LoginContext( application, wikiSession.getSubject(), handler );
-                    }
-                    catch( LoginException e )
-                    {
-                        log.error( "Couldn't retrieve login configuration.\nMessage="
-                                   + e.getLocalizedMessage() );
-                        return null;
-                    }
-                }
-            });
-            loginContext.login();
-
-            // Inject the wiki group principals
-            injectGroupPrincipals( wikiSession );
-
-            return true;
-        }
-        catch( FailedLoginException e )
-        {
-            //
-            //  Just a mistyped password or a cracking attempt.  No need to worry
-            //  and alert the admin
-            //
-            log.info("Failed login: "+e.getLocalizedMessage());
-            return false;
-        }
-        catch( AccountExpiredException e )
-        {
-            log.info("Expired account: "+e.getLocalizedMessage());
-            return false;
-        }
-        catch( CredentialExpiredException e )
-        {
-            log.info("Credentials expired: "+e.getLocalizedMessage());
-            return false;
-        }
-        catch( LoginException e )
-        {
-            //
-            //  This should only be caught if something unforeseen happens,
-            //  so therefore we can log it as an error.
-            //
-            log.error( "Couldn't log in.\nMessage="
-                       + e.getLocalizedMessage() );
-            return false;
-        }
-        catch( SecurityException e )
-        {
-            log.error( "Could not log in.  Please check that your jaas.config file is found.", e );
-            return false;
-        }
+        m_listeners.remove( listener );
     }
     
     /**
@@ -396,7 +324,7 @@ public class AuthenticationManager
      * the LoginConfiguration for application <code>JSPWiki-container</code>.
      * @return <code>true</code> if cookies are allowed
      */
-    public static boolean allowsCookieAssertions()
+    public static final boolean allowsCookieAssertions()
     {
         // Lazily initialize
         if ( m_allowsAssertions == null )
@@ -426,36 +354,153 @@ public class AuthenticationManager
         }
         return m_allowsAssertions.booleanValue();
     }
-
+    
     /**
-     * Logs the user out by retrieving the WikiSession associated with the
-     * HttpServletRequest and unbinding all of the Subject's Principals,
-     * except for {@link Role#ALL}, {@link Role#ANONYMOUS}.
-     * is a cheap-and-cheerful way to do it without invoking JAAS LoginModules.
-     * The logout operation will also flush the JSESSIONID cookie from
-     * the user's browser session, if it was set.
-     * @param request the current HTTP request
+     * Fires a wiki event to all registered listeners.
+     * @param event the event
      */
-    public static void logout( HttpServletRequest request )
+    protected final void fireEvent( WikiSecurityEvent event )
     {
-        if ( request == null )
+        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
         {
-            log.error( "No HTTP reqest provided; cannot log out." );
-            return;
+            WikiEventListener listener = (WikiEventListener)it.next();
+            listener.actionPerformed(event);
+        }
+    }
+    
+    /**
+     * Injects GroupPrincipal objects into the user's Principal set
+     * based on the groups the user belongs to. This method also
+     * attaches a WikiEventListener to the GroupManager so that
+     * changes to groups are detected automatically.
+     * @param session the wiki session
+     */
+    protected final void injectGroupPrincipals( WikiSession session )
+    {
+        Subject subject = session.getSubject();
+        
+        // Get the GroupManager and test for each Group
+        GroupManager manager = m_engine.getGroupManager();
+        Principal[] groups = manager.getRoles();
+        for ( int i = 0; i < groups.length; i++ )
+        {
+            if ( manager.isUserInRole( session, groups[i] ) )
+            {
+                Principal groupPrincipal = new GroupPrincipal( (Group)groups[i] );
+                subject.getPrincipals().add( groupPrincipal );
+            }
         }
         
-        HttpSession session = request.getSession();
-        String sid = ( session == null ) ? "(null)" : session.getId();
-        if ( log.isDebugEnabled() )
+        // Add the user's wiki session as a security event listener
+        manager.addWikiEventListener( session );
+    }
+    
+    /**
+     * Log in to the application using a given JAAS LoginConfiguration.
+     * @param wikiSession the current wiki session, to which the Subject will be associated
+     * @param handler handles callbacks sent by the LoginModules in the configuration
+     * @param application the name of the application whose LoginConfiguration should be used
+     * @return the result of the login
+     * @throws WikiSecurityException
+     */
+    private final boolean doLogin( final WikiSession wikiSession, final CallbackHandler handler, final String application )
+    {
+        try
         {
-            log.debug( "Invalidating WikiSession for session ID=" + sid );
+            LoginContext loginContext  = (LoginContext)AccessController.doPrivileged(new PrivilegedAction()
+            {
+                public Object run() {
+                    try
+                    {
+                        return new LoginContext( application, wikiSession.getSubject(), handler );
+                    }
+                    catch( LoginException e )
+                    {
+                        log.error( "Couldn't retrieve login configuration.\nMessage="
+                                   + e.getLocalizedMessage() );
+                        return null;
+                    }
+                }
+            });
+            loginContext.login();
+
+            // If the user authenticated, inject group principals and log the event
+            if ( wikiSession.isAuthenticated() )
+            {
+                injectGroupPrincipals( wikiSession );
+                WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), null );
+                fireEvent( event );
+            }
+            return true;
         }
-        // Retrieve the associated WikiSession and clear the Principal set
-        WikiSession wikiSession = WikiSession.getWikiSession( request );
-        wikiSession.invalidate();
+        catch( FailedLoginException e )
+        {
+            //
+            //  Just a mistyped password or a cracking attempt.  No need to worry
+            //  and alert the admin
+            //
+            log.info("Failed login: "+e.getLocalizedMessage());
+            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_FAILED, wikiSession.getLoginPrincipal(), null );
+            fireEvent( event );
+            return false;
+        }
+        catch( AccountExpiredException e )
+        {
+            log.info("Expired account: "+e.getLocalizedMessage());
+            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_ACCOUNT_EXPIRED, wikiSession.getLoginPrincipal(), null );
+            fireEvent( event );
+            return false;
+        }
+        catch( CredentialExpiredException e )
+        {
+            log.info("Credentials expired: "+e.getLocalizedMessage());
+            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED, wikiSession.getLoginPrincipal(), null );
+            fireEvent( event );
+            return false;
+        }
+        catch( LoginException e )
+        {
+            //
+            //  This should only be caught if something unforeseen happens,
+            //  so therefore we can log it as an error.
+            //
+            log.error( "Couldn't log in.\nMessage="
+                       + e.getLocalizedMessage() );
+            return false;
+        }
+        catch( SecurityException e )
+        {
+            log.error( "Could not log in.  Please check that your jaas.config file is found.", e );
+            return false;
+        }
+    }
+    
+    private final URL findConfigFile( String name )
+    {
+        ClassLoader cl = AuthenticationManager.class.getClassLoader();
         
-        // We need to flush the HTTP session too
-        session.invalidate();
+        URL path = cl.getResource("/WEB-INF/"+name);
+        
+        if( path == null )
+            path = cl.getResource("/"+name);
+        
+        if( path == null )
+            path = cl.getResource(name);
+        
+        if( path == null && m_engine.getServletContext() != null )
+        {
+            try
+            {
+                path = m_engine.getServletContext().getResource("/WEB-INF/"+name);
+            }
+            catch( MalformedURLException e )
+            {
+                // This should never happen unless I screw up
+                log.fatal("Your code is b0rked.  You are a bad person.");
+            }
+        }
+
+        return path;
     }
 
 }
