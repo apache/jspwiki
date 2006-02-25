@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="etc/" kind="src" path="tests"/>
-	<classpathentry excluding="webdocs|wikipages" kind="src" path="src"/>
+	<classpathentry excluding="etc/|build/|reports/" kind="src" path="tests"/>
+	<classpathentry excluding="webdocs/|wikipages/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/ecs.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
@@ -19,5 +19,10 @@
 	<classpathentry kind="lib" path="lib/jaxen.jar"/>
 	<classpathentry kind="lib" path="lib/oscache.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.0.b2.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry kind="lib" path="lib/jwebunit-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpunit-1.5.4.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
