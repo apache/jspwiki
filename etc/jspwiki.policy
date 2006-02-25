@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.15 2006-02-25 18:40:46 arj Exp $
+// $Id: jspwiki.policy,v 1.16 2006-02-25 20:48:19 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -118,7 +118,7 @@ grant signedBy "jspwiki"
 // You should also match the permission target (here, 'JSPWiki') with
 // the value of the 'jspwiki.applicationName' property in jspwiki.properties.
 
-//grant
+//grant signedBy "jspwiki"
 //  principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
 //    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "JSPWiki";
 //};
