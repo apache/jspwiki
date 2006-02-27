@@ -1,3 +1,24 @@
+2006-02-26  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.84
+        
+        * Cosmetic: added NewGroup.jsp and Login.jsp as "special page"
+        references in jspwiki.properties. This prevents these pages
+        from displaying the name "Main" at odd times.
+        
+        * Bug fix: eliminated that annoying "User 'null' has started
+        editing this page...." bug. Embarassingly dumb error.
+        
+        * Bug fix: in WikiSession class, wrapped cached WikiSessions
+        with WeakRefererences to allow garbage collection when user's
+        HttpSession expires. 
+        
+        * Enhancement: added a static method sessions() to WikiSession
+        that counts the number of active wiki sessions. Added a
+        simple wiki plugin, SessionPlugin, that returns the same.
+        Slight re-organization of WikiSession (static methods now 
+        at bottom).
+         
 2006-02-25  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.83
