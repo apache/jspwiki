@@ -5,6 +5,7 @@ Here are some strategical figures and other interesting things about this partic
 | __JSPWiki Engine Version__         | [{$jspwikiversion}] 
 | __Character Encoding__             | [{$encoding}]
 | __Total Number of Pages__          | [{$totalpages}]
+| __Total Active Sessions__          | [{INSERT SessionsPlugin}]
 | __Current Uptime__                 | [{$uptime}]
 | __Current Page Provider__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
 | __Current Attachment Provider__    | [{$jspwiki.attachmentProvider}]
