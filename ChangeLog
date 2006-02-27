@@ -15,9 +15,11 @@
         
         * Enhancement: added a static method sessions() to WikiSession
         that counts the number of active wiki sessions. Added a
-        simple wiki plugin, SessionPlugin, that returns the same.
+        simple wiki plugin, SessionsPlugin, that returns the same.
         Slight re-organization of WikiSession (static methods now 
-        at bottom).
+        at bottom). Sample usage: 
+        
+        There are [{INSERT SessionsPlugin}] active wiki sessions
          
 2006-02-25  Andrew Jaquith <andrew@freshcookies.org>
 
