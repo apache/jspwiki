@@ -27,10 +27,6 @@
     
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String user = wikiSession.getUserPrincipal().getName();
-    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() )
-    {
-        user  = request.getParameter( "author" );
-    }
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
@@ -39,6 +35,11 @@
     String edit    = request.getParameter("edit");
     String author  = request.getParameter( "author" );
     String text    = EditorManager.getEditedText( pageContext );
+    if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() 
+         && author != null )
+    {
+        user  = request.getParameter( "author" );
+    }
 
     //
     //  WYSIWYG editor sends us its greetings
