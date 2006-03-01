@@ -7,6 +7,8 @@ import java.security.PrivilegedAction;
 
 import javax.security.auth.login.Configuration;
 
+import org.apache.log4j.Logger;
+
 import sun.security.provider.PolicyFile;
 import sun.security.util.PropertyExpander;
 
@@ -74,11 +76,13 @@ import com.sun.security.auth.login.ConfigFile;
  * </p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-07-29 14:48:53 $
+ * @version $Revision: 1.3 $ $Date: 2006-03-01 05:28:45 $
  * @since 2.3
  */
 public class PolicyLoader 
 {    
+    protected static final Logger log = Logger.getLogger( PolicyLoader.class );
+
     /**
      * Private constructor to prevent direct instantiation.
      */
@@ -160,6 +164,10 @@ public class PolicyLoader
                 return System.getProperty("java.security.policy");
             }
         });
+        if ( policy != null )
+        {
+            log.info( "Java security policy already set to: " + policy + ". (Leaving it alone...)" );
+        }
         return (policy != null);
     }
     
