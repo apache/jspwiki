@@ -1,3 +1,20 @@
+2006-02-28  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.85
+        
+        * Added an informational logging message to PolicyLoader
+        that makes it clear when JSPWiki can't install its security
+        policy because another one is already in use.
+        Credit: Terry Steichen
+        
+        * Bug fix: PermissionTag didn't recognize the new root-like
+        AllPermission. It now accepts it as an argument to the
+        "permission" attribute (the first letter is lowercase). Thus, 
+        <wiki:Permission permission="allPermission"> will evaluate
+        the tag body if the current user posseses AllPermission for
+        the wiki; if not, the contents will be skipped.
+        Credit: Terry Steichen
+        
 2006-02-26  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.84
