@@ -217,21 +217,21 @@ public class HttpUtil
      * @param request
      * @return the base URL
      */
-    public static String makeBaseURL( HttpServletRequest request )
-    {
-        return constructBaseURL( request, true );
-    }
-    
+//    public static String makeBaseURL( HttpServletRequest request )
+//    {
+//        return constructBaseURL( request, true );
+//    }
+//    
     /**
      * Calculates the base URL for wiki web pages, but does not append the
      * application context or trailing slash.
      * @param request may not be null
      * @return the base URL
      */
-    public static String makeBaseURLNoContext( HttpServletRequest request )
-    {
-        return constructBaseURL( request, false );
-    }
+//    public static String makeBaseURLNoContext( HttpServletRequest request )
+//    {
+//        return constructBaseURL( request, false );
+//    }
 
     private static String constructBaseURL( HttpServletRequest request, boolean appendContext )
     {
