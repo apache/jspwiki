@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 
 import com.ecyrd.jspwiki.StringTransmutator;
