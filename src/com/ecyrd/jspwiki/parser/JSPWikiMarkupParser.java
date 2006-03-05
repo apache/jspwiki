@@ -906,6 +906,7 @@ public class JSPWikiMarkupParser
                            "-"+hd.m_titleSection;
         
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
+        hd.m_titleAnchor = hd.m_titleAnchor.replace( '/', '_' );
         return hd.m_titleAnchor;
     }
 
