@@ -27,8 +27,11 @@ import com.ecyrd.jspwiki.WikiEngine;
 /**
  *  Writes an image link to the RSS file with the Coffee Cup
  *  for Userland aggregation.
- *
+ *  <p>
+ *  This class will be removed in JSPWiki 2.6.
+ *  
  *  @author Janne Jalkanen
+ *  @deprecated
  *  @since 2.0
  */
 public class RSSCoffeeCupLinkTag
