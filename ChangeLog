@@ -1,3 +1,33 @@
+2006-02-23  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.86
+        
+        * Removed HttpUtil.getBaseURL().  It just did not work,
+        and was causing major pains with people.  However:
+        
+        * Got rid of <wiki:BaseURL/> from the default template.  Now,
+        if you specify jspwiki.referenceStyle=relative, you should
+        be getting relative URLs everywhere, if possible.  This was
+        a major change, so there might still be bugs related to this.
+        To be precise, you are likely to get absolute paths, but 
+        with no hostname (this depends on your URLConstructor).
+        
+        * LinkTag gained a new parameter: templatefile (which is a
+        shortcut to point at a file in the current template)
+        
+        * Added missing Param tag in the jspwiki.tld
+        
+        * Bug fix: Attachments would generate an illegal id for
+        headings.  Removed the "/" and replaced it with "_".
+        
+        * Deprecated RSSCoffeeCupImageTag.  No point in coding for
+        a single platform.  It will be removed in 2.6...
+        
+        * Added a new RSS feed icon.
+        
+        * Fixed problem with LinkTag forgetting to close anchor
+        (reported by many people, sorry I totally missed this).
+
 2006-02-28  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.3.85
