@@ -43,12 +43,18 @@ public class LinkTag
     private String m_ref     = null;
     private String m_context = WikiContext.VIEW;
     private String m_accesskey = null;
+    private String m_templatefile = null;
     
     private boolean m_absolute = false;
 
     private Map m_containedParams;
 
     private BodyContent m_bodyContent;
+    
+    public void setTemplatefile( String key )
+    {
+        m_templatefile = key;
+    }
     
     public void setAccessKey( String key )
     {
@@ -143,13 +149,20 @@ public class LinkTag
     {
         String url = null;
         WikiEngine engine = m_wikiContext.getEngine();
+        
         if( m_pageName == null ) 
         {
             WikiPage page = m_wikiContext.getPage(); 
             m_pageName = page.getName();
         }
         
-        if( m_jsp != null )
+        if( m_templatefile != null )
+        {
+            String params = addParamsForRecipient( null, m_containedParams );
+            String template = engine.getTemplateDir();
+            url = engine.getURL( WikiContext.NONE, "templates/"+template+"/"+m_templatefile, params, false );
+        }
+        else if( m_jsp != null )
         {
             String params = addParamsForRecipient( null, m_containedParams );
             url = engine.getURL( WikiContext.NONE, m_jsp, params, false );
@@ -228,7 +241,7 @@ public class LinkTag
                 }
             }
         }
-        else if( m_pageName != null )
+        else if( m_pageName != null && m_pageName.length() > 0 )
         {
             WikiPage p = engine.getPage( m_pageName );
             
@@ -249,6 +262,11 @@ public class LinkTag
             {
                 url = makeBasicURL( m_context, m_pageName, parms, m_absolute );
             }
+        }
+        else
+        {
+            String page = engine.getFrontPage();
+            url = makeBasicURL( m_context, page, null, m_absolute );
         }
         
         return url;
@@ -374,9 +392,13 @@ public class LinkTag
             
             // Add any explicit body content. This is not the intended use
             // of LinkTag, but happens to be the way it has worked previously.
-            if( m_bodyContent != null ) {
+            if( m_bodyContent != null ) 
+            {
                 m_bodyContent.writeOut( out );
             }
+            
+            //  Finish off by closing opened anchor
+            if( m_format == ANCHOR ) out.print("</a>");
         } 
         catch( Exception e )
         {
