@@ -17,7 +17,7 @@
   <div class="instructions">
     <wiki:Messages div="error" prefix="Could not create group: " />
   </div>
-  <form id="newGroup" action="<wiki:Variable var="baseURL"/>NewGroup.jsp" 
+  <form id="newGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp"/>" 
     method="POST" accept-charset="UTF-8">
       
     <!-- Group name -->

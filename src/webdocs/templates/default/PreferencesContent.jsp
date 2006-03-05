@@ -29,7 +29,7 @@
           <div class="instructions">
             <wiki:Messages div="error" topic="prefs" prefix="Could not save prefs: "/>
           </div>
-          <form id="setCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=prefs" 
+          <form id="setCookie" action="<wiki:Link jsp="UserPreferences.jsp" format="url"><wiki:Param name="tab" value="prefs"/></wiki:Link>" 
                 method="POST" accept-charset="UTF-8">
             <div class="block">
               <label>Wiki name</label>
@@ -59,7 +59,7 @@
       <!-- Clearing the 'asserted name' cookie -->
       <wiki:UserCheck status="asserted">
         <div class="formcontainer">
-          <form id="clearCookie" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=prefs" 
+          <form id="clearCookie" action="<wiki:Link format="url" jsp="UserPreferences.jsp"><wiki:Param name="tab" value="prefs"/></wiki:Link>"
                 method="POST" accept-charset="UTF-8">
             <div class="block">
               <div class="description">
@@ -99,7 +99,7 @@
         <div class="instructions">
           <wiki:Messages div="error" topic="profile" prefix="Could not save profile: "/>
         </div>
-        <form id="editProfile" action="<wiki:Variable var="baseURL"/>UserPreferences.jsp?tab=profile" 
+        <form id="editProfile" action="<wiki:Link jsp="UserPreferences.jsp" format="url"><wiki:Param name="tab" value="profile"/></wiki:Link>" 
               method="POST" accept-charset="UTF-8">
               
           <!-- Login name -->

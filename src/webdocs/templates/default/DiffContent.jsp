@@ -7,7 +7,7 @@
     <wiki:PageExists>
     <div class="diffnote">
 
-    <form action="<wiki:Variable var='baseURL'/>Diff.jsp" 
+    <form action="<wiki:Link format="url" jsp="Diff.jsp"/>" 
           method="post"  accept-charset="UTF-8">
        <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />     
     Difference between version

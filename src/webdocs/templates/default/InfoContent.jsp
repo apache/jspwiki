@@ -70,15 +70,18 @@ function confirmDelete()
 
        <tr>
            <td><b>Page feed</b></td>
-           <td><a href="<wiki:BaseURL/>rss.jsp?page=<wiki:Variable var="pagename" />&amp;mode=wiki"><img src="<wiki:BaseURL/>images/xml.png" border="0" alt="[RSS]"/></a></td>
+           <td><a href="<wiki:Link format="url" jsp="rss.jsp">
+                           <wiki:Param name="page" value="<%=c.getPage().getName()%>"/>
+                           <wiki:Param name="mode" value="wiki"/>
+                        </wiki:Link>"><img src="<wiki:Link jsp="images/xml.png" format="url"/>" border="0" alt="[RSS]"/></a></td>
        </tr>
 
       <wiki:Permission permission="rename">
            <tr>
                <td><b>Rename page</b></td>
                <td>
-                    <form action="<wiki:BaseURL/>Rename.jsp"
-                          method="post"  accept-charset="ISO-8859-1,UTF-8">
+                    <form action="<wiki:Link format="url" jsp="Rename.jsp"/>"
+                          method="post"  accept-charset="<wiki:ContentEncoding/>">
                         <input type="hidden" name="page" value="<wiki:PageName />"/>
                         <input type="text" name="renameto" value="<wiki:PageName />" size="40"/><br />
                         <input type="checkbox" name="references" checked="checked"/>Update referrers?<br />
@@ -90,7 +93,7 @@ function confirmDelete()
 
    <wiki:Permission permission="delete">
        <form name="deleteForm"
-             action="<wiki:BaseURL/>Delete.jsp?page=<wiki:PageName />"
+             action="<wiki:Link context="delete" />"
              method="post"
              accept-charset="<wiki:ContentEncoding />"
              onsubmit="return confirmDelete()">
@@ -244,9 +247,12 @@ function confirmDelete()
 
     <tr>
     <th>Page feed</th>
-    <td><a href="<wiki:BaseURL/>rss.jsp?page=<wiki:Variable var="pagename" />&amp;mode=wiki"
+    <td><a href="<wiki:Link format="url" jsp="rss.jsp">
+                     <wiki:Param name="page" value="<%=c.getPage().getName()%>"/>
+                     <wiki:Param name="mode" value="wiki"/>
+                 </wiki:Link>"
            title="RSS link for <wiki:PageName />" >
-        <img src="<wiki:BaseURL/>images/xml.png" border="0" alt="[RSS]"  />
+        <img src="<wiki:Link format="url" jsp="images/xml.png"/>" border="0" alt="[RSS]"  />
         </a>
     </td>
     </tr>
@@ -265,7 +271,7 @@ function confirmDelete()
     In order to update this attachment with a newer version,
     please select a file name (click "Choose" button), then click on "Update".
     --%>
-    <input type="file" name="content">
+    <input type="file" name="content" />
     <br />
     <input type="submit" name="upload" value="Upload new attachment" />
     <input type="hidden" name="action" value="upload" />
@@ -277,7 +283,7 @@ function confirmDelete()
 
    <wiki:Permission permission="delete">
    <form name="deleteForm"
-         action="<wiki:BaseURL/>Delete.jsp?page=<wiki:Variable var="pagename" />"
+         action="<wiki:Link format="url" context="delete" />
          method="post"
          accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
    <tr>
@@ -305,8 +311,9 @@ function confirmDelete()
              if( latestVersion > size ) // more than one item in dropdown list
              {
           %>
-               <option value="<wiki:BaseURL/><wiki:PageInfoLink format="url" />&start=-1"
-                      <%= ( (start == -1) ? "SELECTED" : "") %> >
+               <option value="<wiki:Link context="info" format="url">
+                      <wiki:Param name="start" value="-1"/></wiki:Link>"
+                      <%= ( (start == -1) ? "selected='selected'" : "") %> >
                   Show all revisions from <%= latestVersion %> down to 1
                </option>
           <%

@@ -2,18 +2,18 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
-  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" />
+  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
   <wiki:IncludeResources type="stylesheet"/>
-  <script src="<wiki:BaseURL/>scripts/jspwiki-common.js" type="text/javascript"></script>
+  <script src="<wiki:Link format="url" jsp="scripts/jspwiki-common.js"/>" type="text/javascript"></script>
   <wiki:IncludeResources type="script"/>
   <meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
   <link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
   <link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
   <link rel="start"  href="<wiki:LinkTo format="url" page="Main"/>"                title="Front page" />
-  <link rel="stylesheet" type="text/css" media="print" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki_print.css" />
-  <link rel="alternate stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki_print.css" title="Print friendly" />
-  <link rel="alternate stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/jspwiki.css" title="Standard" />
-  <link rel="icon" type="image/png" href="<wiki:BaseURL/>images/favicon.png" />
+  <link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format="url" templatefile="jspwiki_print.css"/>" />
+  <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki_print.css"/>" title="Print friendly" />
+  <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>" title="Standard" />
+  <link rel="icon" type="image/png" href="<wiki:Link format="url" jsp="images/favicon.png"/>" />
   <wiki:FeedDiscovery />
 <%
   // cookie-format
@@ -62,14 +62,14 @@
     {
         String skinName = (String)i.next();
 %>
-        <link rel="alternate stylesheet" type="text/css" href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/skins/<%=skinName%>/skin.css" title="<%=skinName%>" /> 
+        <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format="url" templatefile="skins/<%=skinName%>/skin.css"/> title="<%=skinName%>" /> 
 <%
     }
 %>
 
 <% if(prefSkinName != null) { %>
  <link rel="stylesheet" type="text/css"
-       href="<wiki:BaseURL/>templates/<wiki:TemplateDir/>/skins/<%= prefSkinName %>" />
+       href="<wiki:Link format="url" templatefile="skins/<%=prefSkinName%>"/> />
 <% } %>
 
 <%-- Here we define the "run when the page loads" -script. --%>

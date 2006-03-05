@@ -40,7 +40,7 @@
    oFCKeditor.Width  = '100%';
    oFCKeditor.Height = '500';
    oFCKeditor.ToolbarSet = 'JSPWiki';
-   oFCKeditor.Config['CustomConfigurationsPath'] = '<wiki:BaseURL/>/scripts/fckconfig.js';
+   oFCKeditor.Config['CustomConfigurationsPath'] = '<wiki:Link format="url" jsp="scripts/fckconfig.js"/>';
    oFCKeditor.Create();
 </script>
 <noscript>

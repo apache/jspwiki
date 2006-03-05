@@ -30,10 +30,6 @@
           <wiki:PageType type="page">
             <wiki:EditLink>Edit page</wiki:EditLink>
           </wiki:PageType>
-          <wiki:PageType type="attachment">
-            <a href="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />"
-               title="Edit parent page" >Edit page</a>
-          </wiki:PageType>
         </span>
       </wiki:Permission>
   

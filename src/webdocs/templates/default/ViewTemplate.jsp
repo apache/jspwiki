@@ -23,9 +23,9 @@
 
   <div id="applicationlogo">
     <a href="<wiki:LinkTo page='SystemInfo' format='url'/>"
-         onmouseover="document.fav_logo.src='<wiki:BaseURL/>images/jspwiki_logo.png'"
-         onmouseout="document.fav_logo.src='<wiki:BaseURL/>images/jspwiki_logo_s.png'">
-        <img src="<wiki:BaseURL/>images/jspwiki_logo_s.png"
+         onmouseover="document.fav_logo.src='<wiki:Link format="url" jsp="images/jspwiki_logo.png"/>'"
+         onmouseout="document.fav_logo.src='<wiki:Link format="url" jsp="images/jspwiki_logo_s.png"/>'">
+        <img src="<wiki:Link format="url" jsp="images/jspwiki_logo_s.png"/>"
              name="fav_logo" alt="JSPWiki logo" border="0"/>
     </a>
   </div>

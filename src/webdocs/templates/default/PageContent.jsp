@@ -35,7 +35,7 @@
         <wiki:AttachmentsIterator id="att">
           <tr>
             <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
-            <td><wiki:PageInfoLink><img src="<wiki:BaseURL/>images/attachment_big.png" border="0" alt="Info on <%=att.getFileName()%>" /></wiki:PageInfoLink></td>
+            <td><wiki:PageInfoLink><img src="<wiki:Link format="url" jsp="images/attachment_big.png"/>" border="0" alt="Info on <%=att.getFileName()%>" /></wiki:PageInfoLink></td>
             <td><%=att.getSize()%> bytes</td>
           </tr>
         </wiki:AttachmentsIterator>

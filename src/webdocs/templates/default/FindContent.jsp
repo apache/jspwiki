@@ -49,7 +49,7 @@
           <p><hr /></p>
       </wiki:SearchResults>
 
-      <form action="<wiki:Variable var="baseURL"/>Search.jsp"
+      <form action="<wiki:Link format="url" jsp="Search.jsp"/>"
             accept-charset="<wiki:ContentEncoding/>">
 
       <p>
