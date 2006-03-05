@@ -46,7 +46,7 @@
            //Encoding is necessary in case the page name contains special chars like german Umlaute
            renamedTo = wiki.encodeName(renamedTo);
 
-           response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp?page="+renamedTo);
+           response.sendRedirect( wikiContext.getURL( WikiContext.VIEW, renamedTo ) );
         }
         else
         {

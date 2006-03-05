@@ -20,8 +20,10 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**
@@ -58,7 +60,7 @@ public class RSSImageLinkTag
         {
             JspWriter out = pageContext.getOut();
             out.print("<a href=\""+rssURL+"\">");
-            out.print("<img src=\""+engine.getBaseURL()+"images/xml.png\"");
+            out.print("<img src=\""+m_wikiContext.getURL( WikiContext.NONE,"images/xml.png")+"\"");
             out.print(" alt=\"[RSS]\" border=\"0\" title=\""+getTitle()+"\"/>");
             out.print("</a>");
         }

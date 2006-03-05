@@ -1,4 +1,3 @@
-<%@ page import="java.util.Iterator" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.WikiContext" %>
 <%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
@@ -85,7 +84,7 @@
                 return;
             }
         }
-        response.sendRedirect( wiki.getBaseURL()+"Wiki.jsp" );
+        response.sendRedirect( wikiContext.getURL(WikiContext.VIEW,null) );
     }
     
     pageContext.setAttribute( "name", name, PageContext.REQUEST_SCOPE );

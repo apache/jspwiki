@@ -276,14 +276,8 @@ public class VariableManager
         }
         else if( name.equals("baseurl") )
         {
-              HttpServletRequest request = context.getHttpRequest();
-              if ( request == null )
-              {
-                  res = context.getEngine().getBaseURL();
-              }
-              else {
-                  res = HttpUtil.makeBaseURL( request );
-              }
+            // HttpServletRequest request = context.getHttpRequest();
+            res = context.getEngine().getBaseURL();
         }
         else if( name.equals("uptime") )
         {

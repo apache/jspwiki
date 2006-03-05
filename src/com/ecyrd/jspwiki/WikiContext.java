@@ -383,20 +383,13 @@ public class WikiContext
                           String params )
     {
         boolean absolute = "absolute".equals(m_engine.getVariable( this, WikiEngine.PROP_REFSTYLE ));
-        if ( m_request == null || !absolute )
-        {
-            // FIXME: is rather slow
-            return m_engine.getURL( context,
-                                    page,
-                                    params,
-                                    absolute );
-        }
-        else 
-        {
-            String url = HttpUtil.makeBaseURLNoContext( m_request )
-                   + m_engine.getURL( context, page, params, false );
-            return url;
-        }
+
+        // FIXME: is rather slow
+        return m_engine.getURL( context,
+                                page,
+                                params,
+                                absolute );
+
     }
 
     /**
@@ -520,14 +513,14 @@ public class WikiContext
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
                 String pageurl = m_engine.encodeName( m_page.getName() );
                 m_session.addMessage("You don't have access to '" + pageurl + "'. Do you want to log in as another user?.");
-                response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
+                response.sendRedirect( m_engine.getURL(WikiContext.NONE,"Login.jsp","page="+pageurl, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_engine.encodeName( m_page.getName() );
                 m_session.addMessage("You don't have access to '" + pageurl + "'. Log in first.");
-                response.sendRedirect( m_engine.getBaseURL()+"Login.jsp?page="+pageurl );
+                response.sendRedirect( m_engine.getURL(WikiContext.NONE, "Login.jsp", "page="+pageurl, false ) );
             }
         }
         return allowed;

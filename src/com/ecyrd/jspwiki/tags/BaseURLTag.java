@@ -37,7 +37,7 @@ public class BaseURLTag
     public final int doWikiStartTag()
         throws IOException
     {
-        pageContext.getOut().print( HttpUtil.makeBaseURL( m_wikiContext.getHttpRequest() ) );
+        pageContext.getOut().print( m_wikiContext.getEngine().getBaseURL() );
         return SKIP_BODY;
     }
 }

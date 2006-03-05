@@ -21,11 +21,12 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.util.BlogUtil;
-import com.ecyrd.jspwiki.TextUtil;
 
 /**
  *  Outputs links to all the site feeds and APIs this Wiki/blog supports.
@@ -48,7 +49,10 @@ public class FeedDiscoveryTag
 
         String rssURL      = engine.getGlobalRSSURL();
         //String atomPostURL = engine.getBaseURL()+"atom/"+encodedName;
-        String rssFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName+"&amp;mode=wiki";
+        //String rssFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName+"&amp;mode=wiki";
+        String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp", 
+                                           "page="+encodedName+"&amp;mode=wiki",
+                                           true );
         
         if( rssURL != null )
         {
@@ -66,8 +70,8 @@ public class FeedDiscoveryTag
             // FIXME: This does not work always, as plugins are not initialized until the first fetch
             if( "true".equals(page.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) )
             {
-                String blogFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName;
-                String atomFeedURL = engine.getBaseURL()+"atom.jsp?page="+encodedName;
+                String blogFeedURL = engine.getURL(WikiContext.NONE,"rss.jsp","page="+encodedName,true);
+                String atomFeedURL = engine.getURL(WikiContext.NONE,"atom.jsp","page="+encodedName,true);
         
                 pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for weblog "+
                                            siteName+".\" href=\""+blogFeedURL+"\" />\n");
