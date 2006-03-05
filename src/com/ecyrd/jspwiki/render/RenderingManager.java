@@ -92,7 +92,6 @@ public class RenderingManager implements PageFilter
     {
         String pageid = context.getRealPage().getName()+"::"+context.getRealPage().getVersion();
 
-        boolean refresh = false;
         if( m_useCache ) 
         {
             try
