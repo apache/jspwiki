@@ -331,8 +331,12 @@
        <name>context</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>    
-        <attribute>
+    <attribute>
        <name>absolute</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>    
+    <attribute>
+       <name>templatefile</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>    
   </tag>  
@@ -487,6 +491,22 @@
     <name>PageVersion</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageVersionTag</tagclass>
     <bodycontent>JSP</bodycontent>
+  </tag>
+
+  <tag>
+    <name>Param</name>
+    <tagclass>com.ecyrd.jspwiki.tags.ParamTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+       <name>name</name>
+       <required>true</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>value</name>
+       <required>true</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>
 
   <tag>
