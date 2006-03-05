@@ -99,7 +99,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         //
         // do the actual work
         //
-        String href  = m_engine.getViewURL(rootname);  
+        String href  = context.getViewURL(rootname);  
         String title = "ReferredPagesPlugin: depth["+m_depth+
                        "] include["+includePattern+"] exclude["+excludePattern+
                        "] format["+(m_formatCompact ? "compact" : "full") +
@@ -140,7 +140,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         }
                     
         // go get all referred links
-        getReferredPages(rootname, 0);
+        getReferredPages(context,rootname, 0);
 
         // close and finish
         m_result.append ("</div>\n" ) ;
@@ -153,7 +153,7 @@ public class ReferredPagesPlugin implements WikiPlugin
      * Retrieves a list of all referred pages. Is called recursively
      * depending on the depth parameter
      */
-    protected void getReferredPages(String pagename, int depth )
+    protected void getReferredPages( WikiContext context, String pagename, int depth )
     {
         if( depth >= m_depth ) return;  // end of recursion
         if( pagename == null ) return;
@@ -163,10 +163,10 @@ public class ReferredPagesPlugin implements WikiPlugin
           
         Collection allPages = mgr.findRefersTo( pagename );
         
-        handleLinks( allPages, ++depth, pagename );
+        handleLinks( context, allPages, ++depth, pagename );
     }
        
-    protected void handleLinks(Collection links, int depth, String pagename)
+    protected void handleLinks(WikiContext context,Collection links, int depth, String pagename)
     {
         boolean UL = false;
         HashSet localLinkSet = new HashSet();  // needed to skip multiple
@@ -203,7 +203,7 @@ public class ReferredPagesPlugin implements WikiPlugin
 
                     m_result.append("<li> " + link + " </li>\n");          
 
-                    getReferredPages( link, depth );  // added recursive
+                    getReferredPages( context, link, depth );  // added recursive
                                                       // call - on general
                                                       // request
                 }
@@ -212,12 +212,12 @@ public class ReferredPagesPlugin implements WikiPlugin
             {
                 if( !UL ) { UL = true; m_result.append("<ul>\n");  }
 
-                String href = m_engine.getViewURL(link);  
+                String href = context.getURL(WikiContext.VIEW,link);  
                 m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a></li>\n" );
 
                 m_exists.add( link );
        
-                getReferredPages( link, depth );
+                getReferredPages( context, link, depth );
             }
         }
 
