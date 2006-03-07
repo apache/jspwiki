@@ -92,17 +92,18 @@ function confirmDelete()
        </wiki:Permission>
 
    <wiki:Permission permission="delete">
-       <form name="deleteForm"
-             action="<wiki:Link context="delete" />"
-             method="post"
-             accept-charset="<wiki:ContentEncoding />"
-             onsubmit="return confirmDelete()">
-
        <tr>
          <th>Delete page</th>
-         <td><input type="submit" name="delete-all" value="Delete entire page"/></td>
+         <td>
+           <form name="deleteForm"
+                 action="<wiki:Link context="delete" />"
+                 method="post"
+                 accept-charset="<wiki:ContentEncoding />"
+                 onsubmit="return confirmDelete()">
+             <input type="submit" name="delete-all" value="Delete entire page"/>
+           </form>
+         </td>
        </tr>
-       </form>
    </wiki:Permission>
 
        <tr>
@@ -282,15 +283,17 @@ function confirmDelete()
 
 
    <wiki:Permission permission="delete">
-   <form name="deleteForm"
-         action="<wiki:Link format="url" context="delete" />
-         method="post"
-         accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
    <tr>
      <th>Delete attachment</th>
-     <td><input type="submit" name="delete-all" value="Delete attachment"/></td>
+     <td>
+         <form name="deleteForm"
+               action="<wiki:Link format="url" context="delete" />
+               method="post"
+               accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
+           <input type="submit" name="delete-all" value="Delete attachment"/>
+         </form>
+     </td>
    </tr>
-   </form>
    </wiki:Permission>
 
    <tr>
