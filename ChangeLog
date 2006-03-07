@@ -1,3 +1,9 @@
+2006-03-07  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * src/webdocs/templates/default/InfoContent.jsp: Moved delete 
+        forms into single td blocks. Fixes weird rendering problem 
+        that sometimes caused delete tr to be invisible in firefox.
+
 2006-02-23  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.86
