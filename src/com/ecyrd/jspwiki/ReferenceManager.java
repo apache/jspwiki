@@ -21,6 +21,8 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -102,6 +104,10 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
  *  @since 1.6.1
  */
 
+// FIXME: The way that we save attributes is now a major booboo, and must be
+//        replace forthwith.  However, this is a workaround for the great deal
+//        of problems that occur here...
+
 public class ReferenceManager
     extends BasicPageFilter
 {
@@ -127,9 +133,10 @@ public class ReferenceManager
     private static Logger log = Logger.getLogger(ReferenceManager.class);
 
     private static final String SERIALIZATION_FILE = "refmgr.ser";
-
+    private static final String SERIALIZATION_DIR  = "refmgr-attr";
+    
     /** We use this also a generic serialization id */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     
     /**
      *  Builds a new ReferenceManager.
@@ -199,8 +206,23 @@ public class ReferenceManager
         //
         try
         {
+            //
+            //  Unserialize things.  The loop below cannot be combined with
+            //  the other loop below, simply because engine.getPage() has
+            //  side effects such as loading initializing the user databases,
+            //  which in turn want all of the pages to be read already...
+            //
+            //  Yes, this is a kludge.  We know.  Will be fixed.
+            //
             long saved = unserializeFromDisk();
 
+            for( Iterator it = pages.iterator(); it.hasNext(); )
+            {
+                WikiPage page = (WikiPage) it.next();
+                
+                unserializeAttrsFromDisk( page );
+            }
+            
             //
             //  Now we must check if any of the pages have been changed
             //  while we were in the electronic la-la-land, and update
@@ -219,8 +241,10 @@ public class ReferenceManager
                 }
                 else
                 {
+
                     // Refresh with the latest copy
                     page = m_engine.getPage( page.getName() );
+                    
                     if( page.getLastModified() == null )
                     {
                         log.fatal( "Provider returns null lastModified.  Please submit a bug report." );
@@ -252,7 +276,10 @@ public class ReferenceManager
                 else
                 {
                     updatePageReferences( page );
+
+                    serializeAttrsToDisk( page );
                 }
+                
             }
 
             serializeToDisk();
@@ -348,6 +375,169 @@ public class ReferenceManager
         }
     }
 
+    private String getHashFileName( String pageName ) 
+        throws NoSuchAlgorithmException
+    {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        
+        byte[] dig;
+        try
+        {
+            dig = digest.digest( pageName.getBytes("UTF-8") );
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new InternalWikiException("AAAAGH!  UTF-8 is gone!  My eyes!  It burns...!");
+        }
+        
+        return TextUtil.getHexString(dig)+".cache";
+    }
+    
+    /**
+     *  Reads the serialized data from the disk back to memory.
+     *  Returns the date when the data was last written on disk
+     */
+    private synchronized long unserializeAttrsFromDisk(WikiPage p)
+        throws IOException,
+               ClassNotFoundException
+    {
+        ObjectInputStream in = null;
+        long saved = 0L;
+
+        try
+        {
+            StopWatch sw = new StopWatch();
+            sw.start();
+            
+            //
+            //  Find attribute cache, and check if it exists
+            //
+            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+
+            f = new File( f, getHashFileName(p.getName()) );
+
+            if( !f.exists() ) 
+            {
+                return 0L;
+            }
+            
+            log.debug("Deserializing attributes for "+p.getName());
+            
+            in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
+
+            long ver     = in.readLong();
+            
+            if( ver != serialVersionUID )
+            {
+                log.debug("File format has changed; cannot deserialize.");
+                return 0L;
+            }
+            
+            saved        = in.readLong();
+
+            String name  = in.readUTF();
+            
+            if( !name.equals(p.getName()) ) 
+            {
+                log.debug("File name does not match ("+name+"), skipping...");
+                return 0L; // Not here
+            }
+            
+            long entries = in.readLong();
+            
+            for( int i = 0; i < entries; i++ )
+            {
+                String key   = in.readUTF();
+                Object value = in.readObject();
+                
+                p.setAttribute( key, value );
+                
+                log.debug("   attr: "+key+"="+value);
+            }
+            
+            in.close();
+
+            sw.stop();
+            log.debug("Read serialized data for "+name+" successfully in "+sw);
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.fatal("No MD5!?!");
+        }
+        finally
+        {
+            try {
+                if( in != null ) in.close();
+            } catch( IOException ex ) {}
+        }
+
+        return saved;
+    }
+
+    /**
+     *  Serializes hashmaps to disk.  The format is private, don't touch it.
+     */
+    private synchronized void serializeAttrsToDisk( WikiPage p )
+    {
+        ObjectOutputStream out = null;
+
+        try
+        {
+            // FIXME: There is a concurrency issue here...
+            Set entries = p.getAttributes().entrySet();
+
+            if( entries.size() == 0 ) return;
+            
+            StopWatch sw = new StopWatch();
+            sw.start();
+            
+            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+
+            if( !f.exists() ) f.mkdirs();
+            
+            //
+            //  Create a digest for the name
+            //
+            f = new File( f, getHashFileName(p.getName()) );
+            
+            out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
+
+            out.writeLong( serialVersionUID );
+            out.writeLong( System.currentTimeMillis() ); // Timestamp
+
+            out.writeUTF( p.getName() );
+            out.writeLong( entries.size() );
+            
+            for( Iterator i = entries.iterator(); i.hasNext(); )
+            {
+                Map.Entry e = (Map.Entry) i.next();
+                
+                if( e.getValue() instanceof Serializable )
+                {
+                    out.writeUTF( (String)e.getKey() );
+                    out.writeObject( e.getValue() );
+                }
+            }
+            
+            out.close();
+
+            sw.stop();
+            
+            log.debug("serialization for "+p.getName()+" done - took "+sw);
+        }
+        catch( IOException e )
+        {
+            log.error("Unable to serialize!");
+
+            try {
+                if( out != null ) out.close();
+            } catch( IOException ex ) {}
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.fatal("No MD5 algorithm!?!");
+        }
+    }
 
     /**
      *  After the page has been saved, updates the reference lists.
@@ -358,6 +548,8 @@ public class ReferenceManager
 
         updateReferences( page.getName(),
                           context.getEngine().scanWikiLinks( page, content ) );
+        
+        serializeAttrsToDisk( page );
     }
     
     /**
