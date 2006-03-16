@@ -37,7 +37,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-02-25 18:44:34 $
+ * @version $Revision: 1.4 $ $Date: 2006-03-16 21:04:50 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -95,11 +95,11 @@ public final class WikiSecurityEvent extends WikiEvent
     
     private static final int[] ERROR_EVENTS = { LOGIN_FAILED };
     
-    private static final int[] WARN_EVENTS  = { ACCESS_DENIED,
-                                                LOGIN_ACCOUNT_EXPIRED,
+    private static final int[] WARN_EVENTS  = { LOGIN_ACCOUNT_EXPIRED,
                                                 LOGIN_CREDENTIAL_EXPIRED };
     
     private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED,
+                                                ACCESS_DENIED,
                                                 LOGOUT };
     
     /**
