@@ -390,7 +390,7 @@ public class ReferenceManager
             throw new InternalWikiException("AAAAGH!  UTF-8 is gone!  My eyes!  It burns...!");
         }
         
-        return TextUtil.getHexString(dig)+".cache";
+        return TextUtil.toHexString(dig)+".cache";
     }
     
     /**

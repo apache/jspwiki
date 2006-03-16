@@ -705,7 +705,7 @@ public class TextUtil
      * @return A String representation
      * @since 2.3.87
      */
-    public static String getHexString( byte[] bytes )
+    public static String toHexString( byte[] bytes )
     {
         StringBuffer sb = new StringBuffer( bytes.length*2 );
         for( int i = 0; i < bytes.length; i++ )
