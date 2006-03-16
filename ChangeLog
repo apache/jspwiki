@@ -1,3 +1,29 @@
+2006-03-16  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.87
+
+        * Bug fix: XmlUserDatabase would default to the distro
+        user database in /WEB-INF/ if the user-set database was not
+        found.  However, this made it practically impossible to
+        bootstrap a new user database, as you needed to create the
+        file by hand...
+        
+        * Bug fix: Page attributes were not available, if the page
+        data was saved by ReferenceManager.  Now ReferenceManager
+        also caches the page data under $workDir.  This should
+        resolve quite a few problems relating to user groups
+        not being valid until they are modified, etc.
+        
+        * Made the ACCESS_DENIED event an INFO level event, simply
+        because my mailbox started to fill with JSPWiki ACCESS_DENIED
+        events (they are generated in a bit too chatty fashion).
+        
+        * DefaultURLConstructor now gets Delete.jsp as well
+        
+        * Mucked about in InfoContent.jsp to fix a problem with
+        it actually sending the wrong context...  Credit to 
+        Terry Steichen.
+
 2006-03-07  Erik Bunn  <Erik.Bunn@basen.net>
 
         * src/webdocs/templates/default/InfoContent.jsp: Moved delete 
