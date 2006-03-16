@@ -697,6 +697,27 @@ public class TextUtil
     }
 
     /**
+     *  Generates a hexadecimal string from an array of bytes.  For
+     *  example, if the array contains { 0x01, 0x02, 0x3E }, the resulting
+     *  string will be "01023E".
+     *  
+     * @param bytes A Byte array
+     * @return A String representation
+     * @since 2.3.87
+     */
+    public static String getHexString( byte[] bytes )
+    {
+        StringBuffer sb = new StringBuffer( bytes.length*2 );
+        for( int i = 0; i < bytes.length; i++ )
+        {
+            sb.append( toHex(bytes[i] >> 4) );
+            sb.append( toHex(bytes[i]) );
+        }
+        
+        return sb.toString();
+    }
+    
+    /**
      *  Returns true, if the argument contains a number, otherwise false.
      *  In a quick test this is roughly the same speed as Integer.parseInt()
      *  if the argument is a number, and roughly ten times the speed, if
