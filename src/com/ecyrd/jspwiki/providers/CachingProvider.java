@@ -108,6 +108,9 @@ public class CachingProvider
     {
         log.debug("Initing CachingProvider");
 
+        // engine is used for getting the search engine
+        m_engine = engine;
+        
         //
         //  Cache consistency checks
         //
@@ -125,8 +128,8 @@ public class CachingProvider
                                                     DEFAULT_CACHECAPACITY );
 
         log.debug("Cache capacity "+capacity+" pages.");
-
-        m_cache = new Cache( true, false, true );
+        
+        m_cache = new Cache( true, false, false );
         
         //
         //  OSCache documentation sucks big time.  The clazz-parameter is completely
@@ -136,14 +139,14 @@ public class CachingProvider
         //
         m_cache.addCacheEventListener( m_allCollector, CacheEntryEventListener.class );
         
-        m_negCache = new Cache( true, false, true );
+        m_negCache = new Cache( true, false, false );
         
-        m_textCache = new Cache( true, false, true,
+        m_textCache = new Cache( true, false, false,
                                  false,
                                  OSCACHE_ALGORITHM,
                                  capacity );
 
-        m_historyCache = new Cache( true, false, true, false,
+        m_historyCache = new Cache( true, false, false, false,
                                     OSCACHE_ALGORITHM,
                                     capacity );
                                     
@@ -152,8 +155,7 @@ public class CachingProvider
         //
         String classname = WikiEngine.getRequiredProperty( properties, 
                                                            PageManager.PROP_PAGEPROVIDER );
-        // engine is used for getting the search engine
-        m_engine = engine;
+
 
         try
         {            
