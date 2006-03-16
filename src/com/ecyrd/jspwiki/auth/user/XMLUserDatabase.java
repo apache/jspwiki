@@ -19,11 +19,7 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -56,7 +52,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.12 $ $Date: 2006-01-13 06:27:06 $
+ * @version $Revision: 1.13 $ $Date: 2006-03-16 21:06:14 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -254,9 +250,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
     {
         File defaultFile = null;
-        if ( engine.getRootPath() == null )
+        if( engine.getRootPath() == null )
         {
-            log.error( "Cannot identify JSPWiki root path, and property " + PROP_USERDATABASE + " not set!"  );
+            log.warn( "Cannot identify JSPWiki root path"  );
             defaultFile = new File( "WEB-INF/" + DEFAULT_USERDATABASE ).getAbsoluteFile();
         }
         else
@@ -266,7 +262,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
 
         // Get database file location
         String file = props.getProperty( PROP_USERDATABASE );
-        if ( file == null )
+        if( file == null )
         {
             log.error( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile  );
             c_file = defaultFile;
@@ -274,16 +270,10 @@ public class XMLUserDatabase extends AbstractUserDatabase
         else 
         {
             c_file = new File( file );
-            if ( !c_file.exists() )
-            {
-                log.error( "XML user database " + file + " does not exist; trying " + defaultFile );
-                if ( defaultFile.exists() )
-                {
-                    c_file = defaultFile;
-                }
-            }
         }
 
+        log.info("XML user database at "+c_file.getAbsolutePath());
+        
         // Read DOM
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating( false );
@@ -293,7 +283,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         try
         {
             c_dom = factory.newDocumentBuilder().parse( c_file );
-            log.info( "User database " + c_file + " successfully initialized." );
+            log.debug( "Database successfully initialized" );
         }
         catch( ParserConfigurationException e )
         {
@@ -303,6 +293,10 @@ public class XMLUserDatabase extends AbstractUserDatabase
         {
             log.error( "SAX error: " + e.getMessage() );
         }
+        catch( FileNotFoundException e )
+        {
+            log.info("User database not found; creating from scratch...");
+        }
         catch( IOException e )
         {
             log.error( "IO error: " + e.getMessage() );
@@ -311,8 +305,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                log.info( "Could not load file from disk: creating in-memory DOM." );
-                log.info( "New users will disappear after shutdown; please set " + PROP_USERDATABASE );
+                //
+                //  Create the DOM from scratch
+                //
                 c_dom = factory.newDocumentBuilder().newDocument();
                 c_dom.appendChild( c_dom.createElement( "users") );
             }
