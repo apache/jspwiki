@@ -511,6 +511,9 @@ public class WikiEngine
         //  Initialize the important modules.  Any exception thrown by the
         //  managers means that we will not start up.
         //
+
+        // FIXME: This part of the code is getting unwieldy.  We must think
+        //        of a better way to do the startup-sequence.
         try
         {
             Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
@@ -535,13 +538,12 @@ public class WikiEngine
 
             m_editorManager     = new EditorManager();
             m_editorManager.initialize( this, props );
-            
+
             // Initialize the authentication, authorization, user and acl managers
+            
             m_authenticationManager.initialize( this, props );
             m_authorizationManager.initialize( this, props );
             m_userManager.initialize( this, props );
-            
-            // m_groupManager = getGroupManager();
             m_aclManager = getAclManager();
 
             //
