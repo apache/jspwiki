@@ -19,11 +19,12 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 import java.util.HashMap;
-import com.ecyrd.jspwiki.auth.acl.Acl;
+import java.util.Map;
 
+import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
@@ -39,6 +40,8 @@ public class WikiPage
     implements Cloneable,
                Comparable
 {
+    private static final long serialVersionUID = 1L;
+
     private final String     m_name;
     private final WikiEngine m_engine;
     private final String     m_wiki;
