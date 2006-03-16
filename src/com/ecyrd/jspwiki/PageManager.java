@@ -43,6 +43,8 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 //        from WikiEngine (which is too big now) into this class.
 public class PageManager
 {
+    private static final long serialVersionUID = 1L;
+    
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
@@ -60,6 +62,7 @@ public class PageManager
      */
     private int     m_expiryTime = 60;
 
+   
     /**
      *  Creates a new PageManager.
      *  @throws WikiException If anything goes wrong, you get this.
@@ -130,6 +133,7 @@ public class PageManager
         //
         new LockReaper().start();
     }
+
 
     /**
      *  Returns the page provider currently in use.
