@@ -62,7 +62,8 @@ public class DefaultURLConstructor
      WikiContext.COMMENT,"%uComment.jsp?page=%n",
      WikiContext.LOGIN,  "%uLogin.jsp?page=%n",
      WikiContext.ERROR,  "%uError.jsp",
-     WikiContext.DELETE, "%uDelete.jsp?page=%n"
+     WikiContext.DELETE, "%uDelete.jsp?page=%n",
+     WikiContext.PREVIEW, "%uPreview.jsp?page=%n"
     };
                                       
     private static Properties c_patternList = TextUtil.createProperties(c_patterns);
