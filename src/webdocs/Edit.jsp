@@ -91,7 +91,8 @@
 
             log.info("Page changed, warning user.");
 
-            pageContext.forward( "PageModified.jsp" );
+            session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );
+            response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null, false) );
             return;
         }
 

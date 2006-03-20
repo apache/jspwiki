@@ -23,7 +23,7 @@
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getPage().getName();
 
-    String usertext = request.getParameter( EditorManager.REQ_EDITEDTEXT );
+    String usertext = (String)session.getAttribute( EditorManager.REQ_EDITEDTEXT );
 
     // Make the user and conflicting text presentable for display.
     usertext = StringEscapeUtils.escapeXml( usertext );
