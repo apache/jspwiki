@@ -20,7 +20,7 @@
     String pagereq = wikiContext.getPage().getName();
 
     pageContext.setAttribute( EditorManager.ATTR_EDITEDTEXT,
-                              request.getParameter( EditorManager.REQ_EDITEDTEXT ),
+                              session.getAttribute( EditorManager.REQ_EDITEDTEXT ),
                               PageContext.REQUEST_SCOPE );
 
     long lastchange = 0;

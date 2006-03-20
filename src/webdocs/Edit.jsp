@@ -152,7 +152,9 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        pageContext.forward( "Preview.jsp" );
+        session.setAttribute(EditorManager.REQ_EDITEDTEXT,
+                             EditorManager.getEditedText(pageContext));
+        response.sendRedirect( wiki.getURL(WikiContext.PREVIEW,pagereq,null,false) );
         return;
     }
     else if( cancel != null )
