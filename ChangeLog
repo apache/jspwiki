@@ -1,3 +1,13 @@
+2006-03-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.88
+
+        * Previews are now fixed.  We no longer use pageContext.forward()
+        but we send an honest, hardworking redirect (and store the 
+        edited text in the session).
+
+        * Ditto for PageModified.
+
 2006-03-16  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.87
