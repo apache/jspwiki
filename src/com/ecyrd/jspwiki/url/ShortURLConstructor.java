@@ -85,7 +85,7 @@ public class ShortURLConstructor
 
         if( context.equals(WikiContext.VIEW) )
         {
-            if( name == null ) return makeURL("%u","",absolute); // FIXME
+            if( name == null ) return doReplacement("%u","",absolute);
             return doReplacement( viewurl, name, absolute );
         }
         else if( context.equals(WikiContext.EDIT) )

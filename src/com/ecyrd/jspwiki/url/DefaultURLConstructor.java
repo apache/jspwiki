@@ -164,11 +164,6 @@ public class DefaultURLConstructor
                             String name,
                             boolean absolute )
     {
-        if( context.equals(WikiContext.VIEW) )
-        {
-            if( name == null ) return makeURL("%uWiki.jsp","",absolute); // FIXME
-        }
-        
         return doReplacement( getURLPattern(context,name), name, absolute );
     }
 
