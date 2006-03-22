@@ -54,7 +54,7 @@ public class ShortViewURLConstructor
 
         if( context.equals(WikiContext.VIEW) )
         {
-            if( name == null ) return doReplacement("%u","",absolute); // FIXME
+            if( name == null ) return doReplacement("%u","",absolute);
             return doReplacement( viewurl, name, absolute );
         }
 
