@@ -384,12 +384,29 @@ TabbedSection.onclick = function ( tabId )
   
   for( var n = section.firstChild; n ; n = n.nextSibling )
   {
-    //alert( n.tagName+" " + n.id + " " +n.className + " " + n.innerHTML);
     if( !n.id ) continue;
     var m = document.getElementById( "menu-" + n.id );
+    var edittab = document.getElementById( "editcontent" );
+    
     if( m && m.className == "activetab" )
     {
       if( n.id == target.id ) break; //stop - is already activetab
+
+      // Default to changing tabs if user is not asked.
+      changeTabs = true;
+
+      // If current tab is editcontent, save content in JavaScript
+      // so it will still be there when you come back.
+      if( edittab.style.display == "" )
+      {
+        // If editor has a special function for changing tabs, run it.
+        if ( window.onTabChange && typeof window.onTabChange === 'function')
+        {
+          // Save text so that you can click tabs and come back.
+          onTabChange();
+        }
+      }
+	  
       n.style.display = "none";
       m.className = "";
       target.style.display = "";
