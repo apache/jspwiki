@@ -1,3 +1,15 @@
+2006-03-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.89
+        
+        * Bug fix: in certain cases DefaultURLConstructor would get
+        a null name and have a seizure.  Thanks to Terry Steichen.
+        
+        * Incorporated patch from Chuck Smith to support multiple
+        editors.
+        
+        * Bug fix: BugDefaultTemplateViolatesJSPSpecification.
+
 2006-03-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.88
