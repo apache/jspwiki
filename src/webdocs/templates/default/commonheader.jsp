@@ -62,14 +62,14 @@
     {
         String skinName = (String)i.next();
 %>
-        <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format="url" templatefile="skins/<%=skinName%>/skin.css"/> title="<%=skinName%>" /> 
+        <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format="url" templatefile="<%="skins/"+skinName+"/skin.css"%>"/> title="<%=skinName%>" /> 
 <%
     }
 %>
 
 <% if(prefSkinName != null) { %>
  <link rel="stylesheet" type="text/css"
-       href="<wiki:Link format="url" templatefile="skins/<%=prefSkinName%>"/> />
+       href="<wiki:Link format="url" templatefile="<%="skins/"+prefSkinName%>"/> />
 <% } %>
 
 <%-- Here we define the "run when the page loads" -script. --%>
