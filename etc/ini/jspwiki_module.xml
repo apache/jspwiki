@@ -8,6 +8,9 @@
 -->
 <modules>
 
+   <!--
+       Define the editors that we ship with. 
+   -->
    <editor name="plain">
       <author>Janne Jalkanen</author>
       <path>editors/plain.jsp</path>
