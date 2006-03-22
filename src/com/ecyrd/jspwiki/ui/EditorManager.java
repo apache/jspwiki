@@ -37,28 +37,37 @@ import com.ecyrd.jspwiki.plugin.PluginManager;
  *  </pre>
  *  
  *  @author jalkanen
- *
+ *  @since 2.4
  */
-
-// FIXME: This class is slightly kludgish at the moment.
-// FIXME: Pull up the WikiPluginInfo; make it a generic for plugins, filters, etc.
 public class EditorManager extends ModuleManager
 {
-    public static final String PROP_EDITORTYPE = "jspwiki.editor";
+    /** The property name for setting the editor.  Current value is "jspwiki.editor" */
+    public static final String       PROP_EDITORTYPE = "jspwiki.editor";
     
-    public static final String EDITOR_PLAIN = "plain";
-    public static final String EDITOR_FCK   = "FCK";
-    public static final String EDITOR_PREVIEW = "preview";
+    /** Known name for the plain wikimarkup editor. */
+    public static final String       EDITOR_PLAIN    = "plain";
     
-    public static final String REQ_EDITEDTEXT = "_editedtext";
-    public static final String ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
+    /** Known name for the preview editor component. */
+    public static final String       EDITOR_PREVIEW  = "preview";
     
-    private           WikiEngine     m_engine;
+    /** Known attribute name for storing the user edited text inside a HTTP parameter. */
+    public static final String       REQ_EDITEDTEXT  = "_editedtext";
     
-    private Map m_editors;
+    /** Known attribute name for storing the user edited text inside a session or a page context */
+    public static final String       ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
     
-    private static Logger log = Logger.getLogger( EditorManager.class );
+    private             WikiEngine   m_engine;
     
+    private             Map          m_editors;
+    
+    private static      Logger       log             = Logger.getLogger( EditorManager.class );
+    
+    /**
+     *  Initializes the EditorManager.  It also registers any editors it can find.
+     *  
+     *  @param engine The WikiEngine we're attached to.
+     *  @param props  Properties for setup.
+     */
     public void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
@@ -66,9 +75,14 @@ public class EditorManager extends ModuleManager
         registerEditors();
     }
     
+    /**
+     *  This method goes through the jspwiki_module.xml files and hunts for editors.
+     *  Any editors found are put in the registry.
+     *
+     */
     private void registerEditors()
     {
-        log.info( "Registering modules" );
+        log.info( "Registering editor modules" );
 
         m_editors = new HashMap();
         SAXBuilder builder = new SAXBuilder();
@@ -106,6 +120,8 @@ public class EditorManager extends ModuleManager
                         parms[1] = pluginEl.getChildText("script");
                         parms[2] = pluginEl.getChildText("stylesheet");
                         m_editors.put( name, parms );
+                        
+                        log.debug("Registered editor "+name);
                     }
                 }
                 catch( java.io.IOException e )
@@ -125,11 +141,18 @@ public class EditorManager extends ModuleManager
     }
     
     /**
-     *  Returns an editor for the current context.
+     *  Returns an editor for the current context.  The editor names are matched in
+     *  a case insensitive manner.  At the moment, the only place that this method
+     *  looks in is the property file, but in the future this will also look at
+     *  user preferences.
+     *  <p>
+     *  For the PREVIEW context, this method returns the "preview" editor.
      *  
-     * @param context
-     * @return The name of the chosen editor.
+     * @param context The context that is chosen.
+     * @return The name of the chosen editor.  If no match could be found, will
+     *         rever to the default "plain" editor.
      */
+    // FIXME: Look at user preferences
     public String getEditorName( WikiContext context )
     {
         if( context.getRequestContext().equals(WikiContext.PREVIEW) )
@@ -139,8 +162,17 @@ public class EditorManager extends ModuleManager
         {
             String editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );
         
-            if( EDITOR_FCK.equalsIgnoreCase(editor) )
-                return EDITOR_FCK;
+            String[] editorlist = getEditorList();
+            
+            editor = editor.trim();
+            
+            for( int i = 0; i < editorlist.length; i++ )
+            {
+                if( editorlist[i].equalsIgnoreCase(editor))
+                {
+                    return editorlist[i];
+                }
+            }
         }
         catch( NoSuchVariableException e ) {} // This is fine
 
@@ -206,6 +238,4 @@ public class EditorManager extends ModuleManager
         
         return usertext;
     }
-
-
 }
