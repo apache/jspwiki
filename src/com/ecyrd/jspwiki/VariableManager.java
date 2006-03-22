@@ -20,15 +20,13 @@
 package com.ecyrd.jspwiki;
 
 import java.security.Principal;
-import java.util.Properties;
-import java.util.Iterator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all

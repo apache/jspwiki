@@ -40,7 +40,6 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
-import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A

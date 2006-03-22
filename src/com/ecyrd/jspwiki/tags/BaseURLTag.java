@@ -21,8 +21,6 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.util.HttpUtil;
-
 /**
  *  Writes the jspwiki.baseURL property.
  *
