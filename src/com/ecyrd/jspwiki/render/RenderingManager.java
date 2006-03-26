@@ -2,13 +2,16 @@ package com.ecyrd.jspwiki.render;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.filters.FilterException;
+import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -61,6 +64,8 @@ public class RenderingManager implements PageFilter
         {
             log.info( "RenderingManager caching is disabled." );
         }
+
+        engine.getFilterManager().addPageFilter( this, FilterManager.SYSTEM_FILTER_PRIORITY );
     }
     
     /**
@@ -185,12 +190,31 @@ public class RenderingManager implements PageFilter
     {
     }
 
+    /**
+     *  Flushes the cache objects that refer to this page.
+     */
     public void postSave( WikiContext wikiContext, String content ) throws FilterException
     {
         String pageName = wikiContext.getPage().getName();
         if( m_useCache )
         {
-            m_documentCache.flushEntry( pageName );
+            m_documentCache.flushPattern( pageName );
+            Set referringPages = wikiContext.getEngine().getReferenceManager().findReferredBy( pageName );
+            
+            //
+            //  Flush also those pages that refer to this page (if an nonexistant page
+            //  appears; we need to flush the HTML that refers to the now-existant page
+            //
+            if( referringPages != null )
+            {
+                Iterator i = referringPages.iterator();
+                while (i.hasNext())
+                {
+                    String page = (String) i.next();
+                    log.debug( "Flusing " + page );
+                    m_documentCache.flushPattern( page );
+                }
+            }
         }
     }
 
