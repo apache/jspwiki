@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2006-02-25 18:45:54 $
+ * @version $Revision: 1.11 $ $Date: 2006-03-26 21:13:26 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -67,6 +67,9 @@ public class DefaultGroupManager implements GroupManager
 
     // FIXME: JSPWiki should really take care of itself that any metadata
     //        relevant to a page is refreshed.
+    
+    // FIXME: A deleted page does not impact groups until system is restarted.
+    
     public class SaveFilter extends BasicPageFilter
     {
         public void postSave( WikiContext context, String content )
