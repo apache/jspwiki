@@ -397,7 +397,7 @@ TabbedSection.onclick = function ( tabId )
 
       // If current tab is editcontent, save content in JavaScript
       // so it will still be there when you come back.
-      if( edittab.style.display == "" )
+      if( edittab && edittab.style.display == "" )
       {
         // If editor has a special function for changing tabs, run it.
         if ( window.onTabChange && typeof window.onTabChange === 'function')
