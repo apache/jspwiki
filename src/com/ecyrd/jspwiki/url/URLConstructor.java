@@ -50,7 +50,7 @@ public interface URLConstructor
      *  
      *  @param context The request context (@see WikiContext) that you want the URL for
      *  @param name The page name (or in case of WikiContext.NONE, the auxiliary JSP page 
-     *              or resource you want to point at.  This must be URL encoded.
+     *              or resource you want to point at.  This must be URL encoded.  Null is NOT safe.
      *  @param absolute True, if you need an absolute URL.  False, if both relative and absolute
      *                  URLs are fine.
      *  @param parameters An URL parameter string (these must be URL-encoded, and separated with &amp;amp;)
