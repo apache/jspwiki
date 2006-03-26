@@ -6,6 +6,7 @@
   <wiki:IncludeResources type="stylesheet"/>
   <script src="<wiki:Link format="url" jsp="scripts/jspwiki-common.js"/>" type="text/javascript"></script>
   <wiki:IncludeResources type="script"/>
+  <wiki:IncludeResources type="inlinecss" />
   <meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
   <link rel="search" href="<wiki:LinkTo format="url" page="FindPage"/>"            title="Search <wiki:Variable var="ApplicationName" />" />
   <link rel="help"   href="<wiki:LinkTo format="url" page="TextFormattingRules"/>" title="Help" />
