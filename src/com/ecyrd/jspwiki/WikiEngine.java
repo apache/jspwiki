@@ -726,12 +726,17 @@ public class WikiEngine
 
     /**
      *  Returns the basic absolute URL to a page, without any modifications.
-     *  You may add any parameters to this.  This is a convinience method.
+     *  You may add any parameters to this.  This is a convenience method.
+     *  <p>
+     *  Since 2.3.90 it is safe to call this method with null pageName,
+     *  in which case it will default to the front page.
      *
      *  @since 2.0.3
      */
     public String getViewURL( String pageName )
     {
+        if( pageName == null ) pageName = getFrontPage();
+        
         return m_urlConstructor.makeURL( WikiContext.VIEW, pageName, true, null );
     }
 
