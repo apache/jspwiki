@@ -1,5 +1,5 @@
 /* 
-    JSPWiki - a JSP-based WikiWiki clone.
+ JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2003-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
@@ -61,16 +61,21 @@ public class TemplateManager
      */
     public static final String RESOURCE_SCRIPT     = "script";
 
+    /**
+     *  Requests inlined CSS.
+     */
+    public static final String RESOURCE_INLINECSS  = "inlinecss";
+    
     /** The default directory for the properties. */
-    public static final String DIRECTORY    = "templates";
+    public static final String DIRECTORY           = "templates";
 
-    public static final String DEFAULT_TEMPLATE = "default";
+    public static final String DEFAULT_TEMPLATE    = "default";
 
     /** Name of the file that contains the properties.*/
 
-    public static final String PROPERTYFILE = "template.properties";
+    public static final String PROPERTYFILE        = "template.properties";
 
-    public static final String RESOURCE_INCLUDES = "jspwiki.resourceincludes";
+    public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
     
     private WikiEngine         m_engine;
     private Cache              m_propertyCache;
@@ -342,8 +347,28 @@ public class TemplateManager
      *  Adds a resource request to the current request context.
      *  The content will be added at the resource-type marker 
      *  (see IncludeResourcesTag) in WikiServletFilter.
+     *  <p>
+     *  The resources can be of different types.  For RESOURCE_SCRIPT and RESOURCE_STYLESHEET
+     *  this is an URI path to the resource (a script file or an external stylesheet)
+     *  that needs to be included.  For RESOURCE_INLINECSS
+     *  the resource should be something that can be added between &lt;style>&lt;/style> in the
+     *  header file (commonheader.jsp).  For RESOURCE_JSFUNCTION it is the name of the Javascript
+     *  function that should be run at page load.
+     *  <p>
+     *  The IncludeResourceTag inserts code in the template files, which is then filled
+     *  by the WikiFilter after the request has been rendered but not yet sent to the recipient.
+     *  <p>
+     *  Note that ALL resource requests get rendered, so this method does not check if
+     *  the request already exists in the resources.  Therefore, if you have a plugin which
+     *  makes a new resource request every time, you'll end up with multiple resource requests
+     *  rendered.  It's thus a good idea to make this request only once during the page
+     *  life cycle.
+     *  
+     *  @param ctx The current wiki context
+     *  @param type What kind of a request should be added?
+     *  @param resource The resource to add.
      */
-    public static void addResourceRequest( WikiContext ctx, String type, String path )
+    public static void addResourceRequest( WikiContext ctx, String type, String resource )
     {
         HashMap resourcemap = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
        
@@ -363,15 +388,19 @@ public class TemplateManager
         
         if( type == RESOURCE_SCRIPT )
         {
-            resourceString = "<script type='text/javascript' src='"+path+"'></script>";
+            resourceString = "<script type='text/javascript' src='"+resource+"'></script>";
         }
         else if( type == RESOURCE_STYLESHEET )
         {
-            resourceString = "<link rel='stylesheet' type='text/css' src='"+path+"' />";
+            resourceString = "<link rel='stylesheet' type='text/css' href='"+resource+"' />";
+        }
+        else if( type == RESOURCE_INLINECSS )
+        {
+            resourceString = "<style type='text/css'>\n"+resource+"\n</style>\n";
         }
         else if( type == RESOURCE_JSFUNCTION )
         {
-            resourceString = path;
+            resourceString = resource;
         }
         
         if( resourceString != null )
