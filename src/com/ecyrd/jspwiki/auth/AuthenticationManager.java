@@ -52,7 +52,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.20 $ $Date: 2006-02-25 18:43:38 $
+ * @version $Revision: 1.21 $ $Date: 2006-03-30 04:55:16 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -107,6 +107,7 @@ public final class AuthenticationManager
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
+        log.info( "Checking JAAS configuration..." );
         if (! PolicyLoader.isJaasConfigured() ) 
         {
             URL config = findConfigFile( DEFAULT_JAAS_CONFIG );
@@ -123,7 +124,12 @@ public final class AuthenticationManager
                 log.error("Could not configure JAAS: " + e.getMessage());
             }
         }
+        else
+        {
+            log.info("JAAS already configured by some other application (leaving it alone...)");
+        }
         
+        log.info( "Checking security policy configuration..." );
         if (! PolicyLoader.isSecurityPolicyConfigured() )
         {
             URL policy = findConfigFile( DEFAULT_POLICY );
