@@ -4,15 +4,11 @@ import java.net.URL;
 import java.security.AccessController;
 import java.security.Policy;
 import java.security.PrivilegedAction;
+import java.security.Security;
 
 import javax.security.auth.login.Configuration;
 
 import org.apache.log4j.Logger;
-
-import sun.security.provider.PolicyFile;
-import sun.security.util.PropertyExpander;
-
-import com.sun.security.auth.login.ConfigFile;
 
 /**
  * <p>
@@ -76,7 +72,7 @@ import com.sun.security.auth.login.ConfigFile;
  * </p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-03-01 05:28:45 $
+ * @version $Revision: 1.4 $ $Date: 2006-03-30 04:56:04 $
  * @since 2.3
  */
 public class PolicyLoader 
@@ -208,25 +204,37 @@ public class PolicyLoader
             throw new SecurityException("URL for JAAS configuration cannot be null.");
         }
         
-        final String new_url;
-        try 
-        {
-            new_url = PropertyExpander.expand(url.toExternalForm());
-        }
-        catch (PropertyExpander.ExpandException peee) 
-        {
-            throw new SecurityException("Cannot expand: " + peee.getMessage());
+        // Get JAAS configuration class; default is Sun provider
+        String default_config_class;
+        default_config_class = (String)AccessController.doPrivileged(
+            new PrivilegedAction() {
+                public Object run() {
+                    return Security.getProperty("login.configuration.provider");
+                }
+            });
+        
+        if (default_config_class == null) {
+            default_config_class = "com.sun.security.auth.login.ConfigFile";
         }
         
         // Now, set the new config
+        final String config_class = default_config_class;
         AccessController.doPrivileged(new PrivilegedAction() {
             
             public Object run() 
             {
-                System.setProperty("java.security.auth.login.config", new_url);
-                Configuration config = new ConfigFile();
-                Configuration.setConfiguration(config);
-                return null;
+                // Remove old policy, then set our config URL and instantiate new instance 
+                try {
+                    Configuration.setConfiguration(null);
+                    System.setProperty("java.security.auth.login.config", url.toExternalForm());
+                    Configuration config = (Configuration)Class.forName(config_class).newInstance();
+                    Configuration.setConfiguration(config);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    throw new SecurityException(e.getMessage());
+                }
             }
         });
     }
@@ -271,39 +279,45 @@ public class PolicyLoader
      *           <code>sun.security.provider.PolicyFile</code></li>
      *           </ul>
      */
-    public static void setSecurityPolicy(URL url) throws SecurityException 
+    public static void setSecurityPolicy(final URL url) throws SecurityException 
     {
         if (url == null) 
         {
             throw new SecurityException("URL for security policy cannot be null.");
         }
         
-        final String new_url;
-        try 
-        {
-            new_url = PropertyExpander.expand(url.toExternalForm());
-        }
-        catch (PropertyExpander.ExpandException peee) 
-        {
-            throw new SecurityException("Cannot expand: " + peee.getMessage());
-        }
+        // Get policy class; default is Sun provider
+        String default_policy_class;
+        default_policy_class = (String)AccessController.doPrivileged(
+            new PrivilegedAction() {
+                public Object run() {
+                    return Security.getProperty("policy.provider");
+                }
+            });
         
-        if (!(Policy.getPolicy() instanceof PolicyFile)) 
-        {
-            throw new SecurityException(
-            "Policy implementation must be of type sun.security.provider.PolicyFile.");
+        if (default_policy_class == null) {
+            default_policy_class = "sun.security.provider.PolicyFile";
         }
         
         // Now, set the new policy
+        final String policy_class = default_policy_class;
         AccessController.doPrivileged(new PrivilegedAction() {
             
             public Object run() 
             {
-                Policy.setPolicy(null);
-                System.setProperty("java.security.policy", new_url);
-                Policy policy = new PolicyFile();
-                Policy.setPolicy(policy);
-                return null;
+                // Remove old policy, then set our policy URL and instantiate new instance 
+                try {
+                    Policy.setPolicy(null);
+                    System.setProperty("java.security.policy", url.toExternalForm());
+                    
+                    Policy policy = (Policy)Class.forName(policy_class).newInstance();
+                    Policy.setPolicy(policy);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    throw new SecurityException(e.getMessage());
+                }
             }
         });
     }
