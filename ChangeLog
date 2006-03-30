@@ -1,3 +1,38 @@
+2006-03-29  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.3.91
+        
+        * Enhancement: Added a new PagePermission target "update" that 
+        serves as a shorthand for "edit the text on the page" AND 
+        "upload files". The "edit" target, meanwhile, has been changed 
+        to mean ONLY "edit the text on the page." The default policy file 
+        now states that anonymous and asserted users can edit all pages 
+        (but they cannot upload files). Authenticated users can, by default, 
+        modify all pages (i.e., edit AND upload).
+        
+        * Bugfix: Fixed PolicyLoader so that there are no import dependencies on
+        private Sun classes for PolicyFile and Configuration (JAAS). Instead,
+        we read the appropriate security provider properties from the JVM and 
+        instantiate the classes using Class.forName().newInstance. This is MUCH 
+        cleaner and portable, and it *should* enable JSPWiki to work on WebSphere, 
+        Resin and other containers that use non-Sun JDKs, JAAS configuration 
+        implementations or J2SE PolicyFile implementations. As fixes go, 
+        this is a good'un. If you have been having trouble making JSPWiki work
+        on combinations other than Sun JDK + Tomcat, you should give this
+        version a try.
+        
+        * BugFix: Added a new PermissionCollection implementation that
+        fixes a subtle corner-case bug with the security policy file.
+        If only the JSPWiki AllPermission was granted to a particular group
+        (i.e., the grant block did not specify any other permissions), the 
+        implied WikiPermissions and PagePermissions were NOT inferred as 
+        they should have been.
+        
+        * Bugfix: Found and killed an NPE in TextUtil that was causing NewGroups.jsp
+        to fail.
+        
+        * Minor changes to test security policy file.
+        
 2006-03-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.90
@@ -352,7 +387,7 @@
         
         * WebContainerAuthorizer now throws a RuntimeException
         if it cannot somehow parse the web.xml. This isn't ideal,
-        but it's better than ignoring the error. Credit: JÃ¼rgen Weber.
+        but it's better than ignoring the error. Credit: Jürgen Weber.
         
         * Removed unused imports and unreferenced objects in
         multiple classes. This does not affect functionality.
