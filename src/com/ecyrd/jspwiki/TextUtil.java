@@ -144,8 +144,14 @@ public class TextUtil
      */
     public static String urlEncodeUTF8( String text )
     {
+        // If text is null, just return an empty string
+        if ( text == null )
+        {
+            return "";
+        }
+        
         byte[] rs = {};
-
+        
         try
         {
             rs = text.getBytes("UTF-8");
