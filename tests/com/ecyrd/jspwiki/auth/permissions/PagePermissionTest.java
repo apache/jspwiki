@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-01-30 04:19:14 $
+ * @version $Revision: 1.6 $ $Date: 2006-03-30 04:49:50 $
  */
 public class PagePermissionTest extends TestCase
 {
@@ -162,7 +162,7 @@ public class PagePermissionTest extends TestCase
         assertFalse( p2.implies( p1 ) );
         assertFalse( p3.implies( p1 ) );
 
-        // Delete action on collection should imply edit/upload/comment/view on
+        // Delete action on collection should imply modify/edit/upload/comment/view on
         // single page
         p1 = new PagePermission( "*:*in", "delete" );
         p2 = new PagePermission( "*:Main", "edit" );
@@ -172,6 +172,13 @@ public class PagePermissionTest extends TestCase
         assertFalse( p2.implies( p1 ) );
         assertFalse( p3.implies( p1 ) );
 
+        p2 = new PagePermission( "*:Main", "modify" );
+        p3 = new PagePermission( "mywiki:Main", "modify" );
+        assertTrue( p1.implies( p2 ) );
+        assertTrue( p1.implies( p3 ) );
+        assertFalse( p2.implies( p1 ) );
+        assertFalse( p3.implies( p1 ) );
+        
         p2 = new PagePermission( "*:Main", "upload" );
         p3 = new PagePermission( "mywiki:Main", "upload" );
         assertTrue( p1.implies( p2 ) );
@@ -202,9 +209,9 @@ public class PagePermissionTest extends TestCase
         assertFalse( p2.implies( p1 ) );
         assertFalse( p3.implies( p1 ) );
 
-        // Edit action on collection should imply upload/comment/view on single
+        // Modify action on collection should imply upload/comment/view on single
         // page
-        p1 = new PagePermission( "*:*in", "edit" );
+        p1 = new PagePermission( "*:*in", "modify" );
         p2 = new PagePermission( "*:Main", "upload" );
         p3 = new PagePermission( "mywiki:Main", "upload" );
         assertTrue( p1.implies( p2 ) );
@@ -271,16 +278,51 @@ public class PagePermissionTest extends TestCase
         assertFalse( p2.implies( p1 ) );
         assertFalse( p3.implies( p1 ) );
     }
+    
+    public final void testImplies()
+    {
+        assertTrue( PagePermission.RENAME.implies( PagePermission.MODIFY ) );
+        assertTrue( PagePermission.RENAME.implies( PagePermission.EDIT ) );
+        assertTrue( PagePermission.RENAME.implies( PagePermission.UPLOAD ) );
+        assertTrue( PagePermission.RENAME.implies( PagePermission.COMMENT ) );
+        assertTrue( PagePermission.RENAME.implies( PagePermission.VIEW ) );
+        
+        assertTrue( PagePermission.DELETE.implies( PagePermission.MODIFY ) );
+        assertTrue( PagePermission.DELETE.implies( PagePermission.EDIT ) );
+        assertTrue( PagePermission.DELETE.implies( PagePermission.UPLOAD ) );
+        assertTrue( PagePermission.DELETE.implies( PagePermission.COMMENT ) );
+        assertTrue( PagePermission.DELETE.implies( PagePermission.VIEW ) );
+        
+        assertTrue( PagePermission.MODIFY.implies( PagePermission.EDIT ) );
+        assertTrue( PagePermission.MODIFY.implies( PagePermission.UPLOAD ) );
+        assertTrue( PagePermission.MODIFY.implies( PagePermission.COMMENT ) );
+        assertTrue( PagePermission.MODIFY.implies( PagePermission.VIEW ) );
+        
+        assertTrue( PagePermission.EDIT.implies( PagePermission.VIEW ) );
+        assertTrue( PagePermission.EDIT.implies( PagePermission.COMMENT ) );
+        
+        assertTrue( PagePermission.UPLOAD.implies( PagePermission.VIEW ) );
+        
+        assertTrue( PagePermission.COMMENT.implies( PagePermission.VIEW ) );
+    }
 
     public final void testImpliedMask()
     {
-        int result = ( PagePermission.DELETE_MASK | PagePermission.EDIT_MASK | PagePermission.COMMENT_MASK
-                | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
+        int result = ( PagePermission.DELETE_MASK | PagePermission.MODIFY_MASK | PagePermission.EDIT_MASK 
+                | PagePermission.COMMENT_MASK | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
         assertEquals( result, PagePermission.impliedMask( PagePermission.DELETE_MASK ) );
 
-        result = ( PagePermission.EDIT_MASK | PagePermission.COMMENT_MASK | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
-        assertEquals( result, PagePermission.impliedMask( PagePermission.EDIT_MASK ) );
+        result = ( PagePermission.RENAME_MASK | PagePermission.MODIFY_MASK | PagePermission.EDIT_MASK 
+                | PagePermission.COMMENT_MASK | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
+        assertEquals( result, PagePermission.impliedMask( PagePermission.RENAME_MASK ) );
+        
+        result = ( PagePermission.MODIFY_MASK | PagePermission.EDIT_MASK | PagePermission.COMMENT_MASK
+                | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
+        assertEquals( result, PagePermission.impliedMask( PagePermission.MODIFY_MASK ) );
 
+        result = ( PagePermission.EDIT_MASK | PagePermission.COMMENT_MASK | PagePermission.VIEW_MASK );
+        assertEquals( result, PagePermission.impliedMask( PagePermission.EDIT_MASK ) );
+        
         result = ( PagePermission.COMMENT_MASK | PagePermission.VIEW_MASK );
         assertEquals( result, PagePermission.impliedMask( PagePermission.COMMENT_MASK ) );
 

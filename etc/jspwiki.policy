@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.16 2006-02-25 20:48:19 arj Exp $
+// $Id: jspwiki.policy,v 1.17 2006-03-30 04:48:47 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -60,9 +60,8 @@ grant signedBy "jspwiki" {
 
 // The first policy block is extremely loose, and unsuited for public-facing wikis.
 // Anonymous users are allowed to view, create, edit and comment on all pages
-// (except group pages), and upload files to existing ones.
-// Anonymous users can also register with the wiki; to edit their profile after
-// registration, they must log in.
+// (except group pages). Anonymous users can also register with the wiki; 
+// to edit their profile after registration, they must log in.
 //
 // Note: For Internet-facing wikis, you are strongly advised to remove the 
 // lines containing the "edit" and "createPages" permissions; this will make
@@ -81,9 +80,8 @@ grant signedBy "jspwiki"
 
 // This next policy block is also pretty loose. It allows users who claim to
 // be someone (via their cookie) to view, create, edit and comment on all pages
-// (except group pages), and upload files to existing ones.
-// Anonymous users can also register with the wiki; to edit their profile after
-// registration, they must log in.
+// (except group pages). Anonymous users can also register with the wiki;
+// to edit their profile after registration, they must log in.
 
 grant signedBy "jspwiki"
   principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
@@ -103,7 +101,7 @@ grant signedBy "jspwiki"
 
 grant signedBy "jspwiki" 
   principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,rename";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "modify,rename";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";

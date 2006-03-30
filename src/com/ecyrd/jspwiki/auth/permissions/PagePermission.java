@@ -10,8 +10,10 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * <p>
  * Permission to perform an operation on a single page or collection of pages in
  * a given wiki. Permission actions include: <code>view</code>,&nbsp;
- * <code>edit</code>,&nbsp;<code>comment</code>,&nbsp;
- * <code>upload</code>,&nbsp;<code>delete</code> and <code>rename</code>.
+ * <code>edit</code> (edit the text of a wiki page),&nbsp;<code>comment</code>,&nbsp;
+ * <code>upload</code>,&nbsp;<code>modify</code>&nbsp;(edit text and upload 
+ * attachments),&nbsp;<code>delete</code>&nbsp;
+ * and&nbsp;<code>rename</code>.
  * </p>
  * <p>
  * The target of a permission is a single page or collection in a given wiki.
@@ -29,38 +31,44 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * mywiki:Janne*</code>
  * </blockquote>
  * <p>
- * For a given target, certain permissions imply others: <code>delete</code>
- * and <code>rename</code> imply <code>edit</code> ;&nbsp; <code>edit</code>
- * implies <code>comment</code> ,&nbsp; <code>upload</code>, and
- * <code>view</code> ;&nbsp; <code>comment</code> and <code>upload</code>
- * imply <code>view</code>. Targets that do not include a wiki prefix
- * <i>never </i> imply others.
+ * For a given target, certain permissions imply others: 
  * </p>
+ * <ul>
+ * <li><code>delete</code>&nbsp;and&nbsp;<code>rename</code>&nbsp;imply&nbsp;<code>modify</code></li>
+ * <li><code>modify</code>&nbsp;implies&nbsp;<code>edit</code>&nbsp;and&nbsp;<code>upload</code></li>
+ * <li><code>edit</code>&nbsp;implies&nbsp;<code>comment</code>&nbsp;and&nbsp;<code>view</code></li>
+ * <li><code>comment</code>&nbsp;and&nbsp;<code>upload</code>&nbsp;imply&nbsp;<code>view</code></li>
+ * Targets that do not include a wiki prefix <i>never </i> imply others.
+ * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-01-30 04:18:55 $
+ * @version $Revision: 1.7 $ $Date: 2006-03-30 04:49:16 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
 {
-    private static final long          serialVersionUID = 1L;
+    private static final long          serialVersionUID = 2L;
 
-    private static final String        COMMENT_ACTION = "comment";
+    public static final String         COMMENT_ACTION = "comment";
 
-    private static final String        DELETE_ACTION  = "delete";
+    public static final String         DELETE_ACTION  = "delete";
 
-    private static final String        EDIT_ACTION    = "edit";
+    public static final String         EDIT_ACTION    = "edit";
 
-    private static final String        RENAME_ACTION  = "rename";
+    public static final String         MODIFY_ACTION  = "modify";
+    
+    public static final String         RENAME_ACTION  = "rename";
 
-    private static final String        UPLOAD_ACTION  = "upload";
+    public static final String         UPLOAD_ACTION  = "upload";
 
-    private static final String        VIEW_ACTION    = "view";
+    public static final String         VIEW_ACTION    = "view";
 
     protected static final int         COMMENT_MASK   = 0x4;
 
     protected static final int         DELETE_MASK    = 0x10;
 
     protected static final int         EDIT_MASK      = 0x2;
+
+    protected static final int         MODIFY_MASK    = 0x40;
 
     protected static final int         RENAME_MASK    = 0x20;
 
@@ -75,6 +83,8 @@ public final class PagePermission extends Permission
     public static final PagePermission EDIT           = new PagePermission( EDIT_ACTION );
 
     public static final PagePermission RENAME         = new PagePermission( RENAME_ACTION );
+
+    public static final PagePermission MODIFY         = new PagePermission( MODIFY_ACTION );
 
     public static final PagePermission UPLOAD         = new PagePermission( UPLOAD_ACTION );
 
@@ -180,7 +190,7 @@ public final class PagePermission extends Permission
 
     /**
      * Returns the actions for this permission: "view", "edit", "comment",
-     * "upload" or "delete". The actions will always be sorted in alphabetic
+     * "modify", "upload" or "delete". The actions will always be sorted in alphabetic
      * order, and will always appear in lower case.
      * @see java.security.Permission#getActions()
      */
@@ -294,7 +304,7 @@ public final class PagePermission extends Permission
 
     /**
      * Creates an "implied mask" based on the actions originally assigned: for
-     * example, delete implies edit, comment, upload and view.
+     * example, delete implies modify, comment, upload and view.
      * @param mask binary mask for actions
      * @return binary mask for implied actions
      */
@@ -302,15 +312,19 @@ public final class PagePermission extends Permission
     {
         if ( ( mask & DELETE_MASK ) > 0 )
         {
-            mask |= EDIT_MASK;
+            mask |= MODIFY_MASK;
         }
         if ( ( mask & RENAME_MASK ) > 0 )
         {
-            mask |= EDIT_MASK;
+            mask |= MODIFY_MASK;
+        }
+        if ( ( mask & MODIFY_MASK ) > 0 )
+        {
+            mask |= ( EDIT_MASK | UPLOAD_MASK );
         }
         if ( ( mask & EDIT_MASK ) > 0 )
         {
-            mask |= ( COMMENT_MASK | UPLOAD_MASK );
+            mask |= ( COMMENT_MASK );
         }
         if ( ( mask & COMMENT_MASK ) > 0 )
         {
@@ -360,7 +374,7 @@ public final class PagePermission extends Permission
         // If super ends with "*", sub must start with everything before *
         if ( superSet.endsWith( WILDCARD ) )
         {
-            String prefix = superSet.substring( 0, superSet.length() - 2 );
+            String prefix = superSet.substring( 0, superSet.length() - 1 );
             return subSet.startsWith( prefix );
         }
 
@@ -395,6 +409,10 @@ public final class PagePermission extends Permission
             else if ( action.equalsIgnoreCase( COMMENT_ACTION ) )
             {
                 mask |= COMMENT_MASK;
+            }
+            else if ( action.equalsIgnoreCase( MODIFY_ACTION ) )
+            {
+                mask |= MODIFY_MASK;
             }
             else if ( action.equalsIgnoreCase( UPLOAD_ACTION ) )
             {
