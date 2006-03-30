@@ -142,7 +142,8 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Anonymous view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
         assertTrue( "Anonymous edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
         assertTrue( "Anonymous comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertTrue( "Anonymous upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Anonymous modify",  m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Anonymous upload",  m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertFalse( "Anonymous rename",  m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertFalse( "Anonymous delete",  m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
         assertTrue( "Anonymous prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
@@ -155,7 +156,8 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Asserted view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
         assertTrue( "Asserted edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
         assertTrue( "Asserted comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertTrue( "Asserted upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Asserted modify",  m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Asserted upload",  m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertFalse( "Asserted rename",  m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertFalse( "Asserted delete",  m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
         assertTrue( "Asserted prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
@@ -168,6 +170,7 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Authenticated view",      m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
         assertTrue( "Authenticated edit",      m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
         assertTrue( "Authenticated comment",   m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Authenticated modify",    m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
         assertTrue( "Authenticated upload",    m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertTrue( "Authenticated rename",    m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertFalse( "Authenticated delete",   m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
@@ -181,6 +184,7 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Admin view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
         assertTrue( "Admin edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
         assertTrue( "Admin comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Admin modify",   m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
         assertTrue( "Admin upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertTrue( "Admin rename",   m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
         assertTrue( "Admin delete",   m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
