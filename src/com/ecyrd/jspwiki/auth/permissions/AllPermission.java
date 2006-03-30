@@ -1,13 +1,14 @@
 package com.ecyrd.jspwiki.auth.permissions;
 
 import java.security.Permission;
+import java.security.PermissionCollection;
 
 /**
  * <p>
  * Permission to perform all operations on a given wiki.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-02-25 18:46:24 $
+ * @version $Revision: 1.3 $ $Date: 2006-03-30 04:51:37 $
  * @since 2.3.80
  */
 public final class AllPermission extends Permission
@@ -105,6 +106,15 @@ public final class AllPermission extends Permission
 
         // If the wiki is implied, it's allowed
         return PagePermission.isSubset( m_wiki, wiki );
+    }
+
+    /**
+     * Creates a new {@link AllPermissionCollection}.
+     * @see java.security.Permission#newPermissionCollection()
+     */
+    public PermissionCollection newPermissionCollection()
+    {
+        return new AllPermissionCollection();
     }
 
     /**
