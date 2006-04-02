@@ -61,7 +61,7 @@ public abstract class WikiTagBase
      *  This method is called when the tag is encountered within a new request,
      *  but before the setXXX() methods are called. 
      *  The default implementation does nothing.
-     *
+     *  @since 2.3.92
      */
     public void initTag()
     {
