@@ -51,6 +51,13 @@ public class LinkTag
 
     private BodyContent m_bodyContent;
     
+    public void initTag()
+    {
+        m_version = m_class = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
+        m_context = WikiContext.VIEW;
+        m_absolute = false;
+    }
+
     public void setTemplatefile( String key )
     {
         m_templatefile = key;

@@ -45,6 +45,29 @@ public abstract class WikiTagBase
 
     protected WikiContext m_wikiContext;
 
+    /**
+     *   This method calls the parent setPageContext() but it also
+     *   provides a way for a tag to initialize itself before
+     *   any of the setXXX() methods are called.
+     */
+    public void setPageContext(PageContext arg0)
+    {
+        super.setPageContext(arg0);
+        
+        initTag();
+    }
+
+    /**
+     *  This method is called when the tag is encountered within a new request,
+     *  but before the setXXX() methods are called. 
+     *  The default implementation does nothing.
+     *
+     */
+    public void initTag()
+    {
+        return;
+    }
+    
     public int doStartTag()
         throws JspException
     {
