@@ -20,8 +20,8 @@ import com.ecyrd.jspwiki.WikiEngine;
 public abstract class MarkupParser
 {
     /** Allow this many characters to be pushed back in the stream.  In effect,
-    this limits the size of a single heading line.  */
-    private static final int              PUSHBACK_BUFFER_SIZE = 10*1024;
+        this limits the size of a single line.  */
+    protected static final int              PUSHBACK_BUFFER_SIZE = 10*1024;
     protected PushbackReader                m_in;
 
     protected WikiEngine     m_engine;
