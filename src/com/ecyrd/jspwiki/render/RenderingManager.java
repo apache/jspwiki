@@ -120,6 +120,9 @@ public class RenderingManager implements PageFilter
             }
         }
 
+        //
+        //  Refresh the data content
+        //
         MarkupParser parser = getParser( context, pagedata );
         try
         {
@@ -134,6 +137,7 @@ public class RenderingManager implements PageFilter
         catch( IOException ex )
         {
             log.error("Unable to parse",ex);
+            if( m_useCache ) m_documentCache.cancelUpdate( pageid );
         }
         
         return null;
