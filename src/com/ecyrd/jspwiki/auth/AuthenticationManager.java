@@ -52,7 +52,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.21 $ $Date: 2006-03-30 04:55:16 $
+ * @version $Revision: 1.22 $ $Date: 2006-04-03 19:48:48 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -83,10 +83,28 @@ public final class AuthenticationManager
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
+    /** Value specifying that the user wants to use the container-managed security, just like
+     *  in JSPWiki 2.2.
+     */
+    public static final String                SECURITY_CONTAINER= "container";
+
+    /** Value specifying that the user wants to use the built-in JAAS-based system */
+    public static final String                SECURITY_JAAS     = "jaas";
+
+    /**
+     *  This property determines whether we use JSPWiki authentication or not.
+     *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
+     *  
+     */
+    
+    public  static final String                PROP_SECURITY       = "jspwiki.security";
+
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
     private static final String                PROP_POLICY_CONFIG  = "java.security.policy";
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
     private static final String                DEFAULT_POLICY      = "jspwiki.policy";    
+    
+    private static       boolean               c_useJAAS = true;
     
     /**
      * Registers a WikiEventListener with this instance.
@@ -107,7 +125,16 @@ public final class AuthenticationManager
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
+        c_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
+        
+        if( !c_useJAAS ) return;
+        
+        //
+        //  The rest is JAAS implementation
+        //
+        
         log.info( "Checking JAAS configuration..." );
+
         if (! PolicyLoader.isJaasConfigured() ) 
         {
             URL config = findConfigFile( DEFAULT_JAAS_CONFIG );
@@ -157,6 +184,8 @@ public final class AuthenticationManager
      */
     public final boolean isContainerAuthenticated()
     {
+        if( !c_useJAAS ) return true;
+        
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         if ( authorizer != null && authorizer instanceof WebContainerAuthorizer )
         {
@@ -193,9 +222,14 @@ public final class AuthenticationManager
         {
             throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
         }
+
+        if( c_useJAAS )
+        {
+            CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase() );
+            return doLogin( wikiSession, handler, LOGIN_CONTAINER );
+        }
         
-        CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase() );
-        return doLogin( wikiSession, handler, LOGIN_CONTAINER );
+        return true;
     }
 
     /**
@@ -267,52 +301,52 @@ public final class AuthenticationManager
      */
     public final void refreshCredentials( WikiSession wikiSession ) 
     {
-      // Get the database and wiki session Subject
-      UserDatabase database = m_engine.getUserDatabase();
-      if ( database == null )
-      {
-          throw new IllegalStateException( "User database cannot be null." );
-      }
-      Subject subject = wikiSession.getSubject();
+        // Get the database and wiki session Subject
+        UserDatabase database = m_engine.getUserDatabase();
+        if ( database == null )
+        {
+            throw new IllegalStateException( "User database cannot be null." );
+        }
+        Subject subject = wikiSession.getSubject();
       
-      // Copy all Role and GroupPrincipal principals into a temporary cache
-      Set oldPrincipals = subject.getPrincipals();
-      Set newPrincipals = new HashSet();
-      for (Iterator it = oldPrincipals.iterator(); it.hasNext();)
-      {
-          Principal principal = (Principal)it.next();
-          if (principal instanceof Role || principal instanceof GroupPrincipal )
-          {
-              newPrincipals.add( principal );
-          }
-      }
-      String searchId = wikiSession.getUserPrincipal().getName();
-      if ( searchId == null )
-      {
-          // Oh dear, this wasn't an authenticated user after all
-          log.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
-          return;
-      }
+        // Copy all Role and GroupPrincipal principals into a temporary cache
+        Set oldPrincipals = subject.getPrincipals();
+        Set newPrincipals = new HashSet();
+        for (Iterator it = oldPrincipals.iterator(); it.hasNext();)
+        {
+            Principal principal = (Principal)it.next();
+            if (principal instanceof Role || principal instanceof GroupPrincipal )
+            {
+                newPrincipals.add( principal );
+            }
+        }
+        String searchId = wikiSession.getUserPrincipal().getName();
+        if ( searchId == null )
+        {
+            // Oh dear, this wasn't an authenticated user after all
+            log.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
+            return;
+        }
       
-      // Look up the user and go get the new Principals
-      try 
-      {
-          UserProfile profile = database.find( searchId );
-          Principal[] principals = database.getPrincipals( profile.getLoginName() );
-          for (int i = 0; i < principals.length; i++)
-          {
-              newPrincipals.add( principals[i] );
-          }
+        // Look up the user and go get the new Principals
+        try 
+        {
+            UserProfile profile = database.find( searchId );
+            Principal[] principals = database.getPrincipals( profile.getLoginName() );
+            for (int i = 0; i < principals.length; i++)
+            {
+                newPrincipals.add( principals[i] );
+            }
         
-          // Replace the Subject's old Principals with the new ones
-          oldPrincipals.clear();
-          oldPrincipals.addAll( newPrincipals );
-      }
-      catch ( NoSuchPrincipalException e )
-      {
-          // It would be extremely surprising if we get here....
-          log.error("Refresh principals failed because user profile matching '" + searchId + "' not found.");
-      }
+            // Replace the Subject's old Principals with the new ones
+            oldPrincipals.clear();
+            oldPrincipals.addAll( newPrincipals );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+            // It would be extremely surprising if we get here....
+            log.error("Refresh principals failed because user profile matching '" + searchId + "' not found.");
+        }
     }
 
     /**
@@ -332,32 +366,35 @@ public final class AuthenticationManager
      */
     public static final boolean allowsCookieAssertions()
     {
+        if( !c_useJAAS ) return true;
+        
         // Lazily initialize
-        if ( m_allowsAssertions == null )
+        if( m_allowsAssertions == null )
         {
-          m_allowsAssertions = Boolean.FALSE;
+            m_allowsAssertions = Boolean.FALSE;
           
-          // Figure out whether cookie assertions are allowed
-          Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
+            // Figure out whether cookie assertions are allowed
+            Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
               {
                   public Object run() {
                       return Configuration.getConfiguration();
                   }
               });
               
-          if (loginConfig != null)
-          {
-              AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
-              for ( int i = 0; i < configs.length; i++ )
-              {
-                  AppConfigurationEntry config = configs[i];
-                  if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
-                  {
-                      m_allowsAssertions = Boolean.TRUE;
-                  }
-              }
-          }
+            if (loginConfig != null)
+            {
+                AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
+                for ( int i = 0; i < configs.length; i++ )
+                {
+                    AppConfigurationEntry config = configs[i];
+                    if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
+                    {
+                        m_allowsAssertions = Boolean.TRUE;
+                    }
+                }
+            }
         }
+        
         return m_allowsAssertions.booleanValue();
     }
     

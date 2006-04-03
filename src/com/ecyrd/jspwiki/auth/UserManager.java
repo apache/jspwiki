@@ -34,12 +34,14 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
+import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
 import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -47,7 +49,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.43 $ $Date: 2006-01-11 03:45:32 $
+ *  @version $Revision: 1.44 $ $Date: 2006-04-03 19:48:48 $
  *  @since 2.3
  */
 public class UserManager
@@ -68,6 +70,8 @@ public class UserManager
     
     /** The group manager loads, manages and persists wiki groups */
     private GroupManager     m_groupManager = null;
+
+    private boolean          m_useJAAS      = true;
     
     /**
      * Constructs a new UserManager instance.
@@ -85,6 +89,8 @@ public class UserManager
     public void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
+        
+        m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
     }
     
     
@@ -97,6 +103,12 @@ public class UserManager
     {
         if( m_groupManager != null ) 
         {
+            return m_groupManager;
+        }
+        
+        if( !m_useJAAS )
+        {
+            m_groupManager = new DummyGroupManager();
             return m_groupManager;
         }
         
@@ -159,6 +171,12 @@ public class UserManager
     {
         if( m_database != null ) 
         {
+            return m_database;
+        }
+        
+        if( !m_useJAAS )
+        {
+            m_database = new DummyUserDatabase();
             return m_database;
         }
         
@@ -510,6 +528,67 @@ public class UserManager
 
         public void save( UserProfile profile ) throws WikiSecurityException
         {
+        }
+        
+    }
+    
+    /**
+     * Implements a simple GroupManager which does not simply
+     * manage any groups.  This is used when jspwiki security is
+     * turned off.
+     * 
+     * @author jalkanen
+     *
+     */
+    public class DummyGroupManager implements GroupManager
+    {
+
+        public void add(Group group)
+        {           
+        }
+
+        public void addWikiEventListener(WikiEventListener listener)
+        {
+        }
+
+        public void commit()
+        {
+        }
+
+        public boolean exists(Group group)
+        {
+            return false;
+        }
+
+        public void initialize(WikiEngine engine, Properties props)
+        {
+        }
+
+        public void reload()
+        {
+        }
+
+        public void remove(Group group)
+        {
+        }
+
+        public void removeWikiEventListener(WikiEventListener listener)
+        {
+        }
+
+        public Principal findRole(String role)
+        {
+            return null;
+        }
+
+        public Principal[] getRoles()
+        {
+            return null;
+        }
+
+        public boolean isUserInRole(WikiSession session, Principal role)
+        {
+            return false;
         }
         
     }

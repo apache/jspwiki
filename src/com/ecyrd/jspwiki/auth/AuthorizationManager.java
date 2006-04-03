@@ -35,11 +35,7 @@ import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
@@ -83,7 +79,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.32 $ $Date: 2006-02-25 18:43:38 $
+ * @version $Revision: 1.33 $ $Date: 2006-04-03 19:48:48 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -106,6 +102,8 @@ public final class AuthorizationManager
 
     /** Listeners for security events */
     private final Set        m_listeners = new HashSet();
+    
+    private boolean          m_useJAAS   = true;
     
     /**
      * Constructs a new AuthorizationManager instance.
@@ -158,6 +156,9 @@ public final class AuthorizationManager
      * succeed, the access check for the principal will fail by definition (the
      * Subject should never contain UnresolvedPrincipals).
      * </p>
+     * <p>
+     * If security not set to JAAS, will return true.
+     * </p>
      * @param session the current wiki session
      * @param permission the Permission being checked
      * @see #hasRoleOrPrincipal(WikiSession, Principal)
@@ -165,6 +166,8 @@ public final class AuthorizationManager
      */
     public final boolean checkPermission( WikiSession session, Permission permission )
     {
+        if( !m_useJAAS ) return true;
+        
         //
         //  A slight sanity check.
         //
@@ -447,6 +450,14 @@ public final class AuthorizationManager
     public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
+        
+        m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( properties.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
+        
+        if( !m_useJAAS ) return;
+        
+        //
+        //  JAAS authorization continues
+        //
         m_authorizer = getAuthorizerImplementation( properties );
         m_authorizer.initialize( engine, properties );
     }
@@ -540,6 +551,8 @@ public final class AuthorizationManager
      */
     protected final boolean checkStaticPermission( final Subject subject, final Permission permission )
     {
+        if( !m_useJAAS ) return true;
+        
         try
         {
             Subject.doAsPrivileged( subject, new PrivilegedAction()
