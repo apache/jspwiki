@@ -46,7 +46,8 @@ public class LinkTag
     private String m_templatefile = null;
     
     private boolean m_absolute = false;
-
+    private boolean m_overrideAbsolute = false;
+    
     private Map m_containedParams;
 
     private BodyContent m_bodyContent;
@@ -70,6 +71,7 @@ public class LinkTag
     
     public void setAbsolute( String arg )
     {
+        m_overrideAbsolute = true;
         m_absolute = TextUtil.isPositive( arg );
     }
 
@@ -172,7 +174,8 @@ public class LinkTag
         else if( m_jsp != null )
         {
             String params = addParamsForRecipient( null, m_containedParams );
-            url = engine.getURL( WikiContext.NONE, m_jsp, params, false );
+            //url = m_wikiContext.getURL( WikiContext.NONE, m_jsp, params );
+            url = engine.getURL( WikiContext.NONE, m_jsp, params, m_absolute );
         }
         else if( m_ref != null )
         {
@@ -264,6 +267,7 @@ public class LinkTag
                     ctx = WikiContext.ATTACH;
                 }
                 url = engine.getURL( ctx, m_pageName, parms, m_absolute );
+                //url = m_wikiContext.getURL( ctx, m_pageName, parms );
             }
             else
             {
@@ -361,6 +365,7 @@ public class LinkTag
             parms = "r1="+r1+"&amp;r2="+r2;
         }
         
+        //url = m_wikiContext.getURL( m_context, m_pageName, parms );
         url = engine.getURL( m_context, m_pageName, parms, m_absolute );
         
         return url;
@@ -375,6 +380,13 @@ public class LinkTag
     {
         try 
         {
+            if( !m_overrideAbsolute ) 
+            {
+                // TODO: see WikiContext.getURL(); this check needs to be specified somewhere.
+                WikiEngine engine = m_wikiContext.getEngine();
+                m_absolute = "absolute".equals( engine.getWikiProperties().getProperty( WikiEngine.PROP_REFSTYLE ) );
+            }
+
             JspWriter out = pageContext.getOut();
             String url = figureOutURL();
             
