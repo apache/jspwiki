@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="etc/|build/|reports/" kind="src" path="tests"/>
-	<classpathentry excluding="webdocs/|wikipages/" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/ecs.jar"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/lucene.jar"/>
-	<classpathentry kind="lib" path="lib/multipartrequest.jar"/>
-	<classpathentry kind="lib" path="lib/oro.jar"/>
-	<classpathentry kind="lib" path="lib/sandler.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
-	<classpathentry kind="lib" path="tests/etc"/>
-	<classpathentry kind="lib" path="lib/servlet.jar"/>
-	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="etc/" kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/jaxen.jar"/>
-	<classpathentry kind="lib" path="lib/oscache.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis-1.0.b2.jar"/>
+	<classpathentry kind="lib" path="lib/ecs.jar"/>
+	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
+	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/sandler.jar"/>
+	<classpathentry kind="lib" path="lib/portlet-api-1.0.jar"/>
+	<classpathentry sourcepath="/Users/jalkanen/Java/oscache-2.2/src/java" kind="lib" path="lib/oscache.jar"/>
+	<classpathentry kind="lib" path="lib/oro.jar"/>
 	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry kind="lib" path="lib/multipartrequest.jar"/>
+	<classpathentry kind="lib" path="lib/lucene.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/jwebunit-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/httpunit-1.5.4.jar"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="lib" path="tests/etc"/>
+	<classpathentry kind="lib" path="lib/jaxen.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.0.b2.jar"/>
+	<classpathentry kind="con" path="com.genuitec.eclipse.j2eedt.core.J2EE14_CONTAINER"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>

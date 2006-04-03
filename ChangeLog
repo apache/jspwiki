@@ -1,3 +1,21 @@
+2006-04-03  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.93
+        
+        * RenderingManager would hang if rendering would fail.  This
+        might explain some hangs.
+        
+        * With relation to the above: JSPWikiMarkupParser is now protected
+        against lines which are too long (the PushBackReader would
+        overflow).  Interestingly, this and the above bug were exposed
+        by a spammer advertising mobile ringtones with a really, really,
+        really long line and lots of links.
+        
+        * Added "jspwiki.security" to turn off jspwiki security model.
+        Allowed values are "jaas" (default) to use built-in JAAS security
+        model, or "container" to use the old 2.2 model.  Please note
+        that using "container" does not yet disable any UI functionality.
+
 2006-04-02  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.92
