@@ -2170,6 +2170,27 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<a class=\"editpage\" title=\"Create 'BrightnessApical'\" href=\"/Edit.jsp?page=BrightnessApical\">Brightness (apical)</a>", translate(src) );        
     }
 
+    public void testDeadlySpammer()
+        throws Exception
+    {
+        String deadlySpammerText = "zzz <a href=\"http://ring1.gmum.net/frog-ringtone.html\">frogringtone</a> zzz http://ring1.gmum.net/frog-ringtone.html[URL=http://ring1.gmum.net/frog-ringtone.html]frog ringtone[/URL] frogringtone<br>";
+        
+        StringBuffer death = new StringBuffer( 20000 );
+            
+        for( int i = 0; i < 1000; i++ )
+        {
+            death.append( deadlySpammerText );
+        }
+        
+        death.append("\n\n");
+        
+        System.out.println("Trying to crash parser with a line which is "+death.length()+" chars in size");
+        //  This should not fail
+        String res = translate( death.toString() );
+        
+        assertTrue( res.length() > 0 );
+    }
+    
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText = 
         "Please ''check [RecentChanges].\n" + 
@@ -2258,7 +2279,6 @@ public class JSPWikiMarkupParserTest extends TestCase
         "code.}}\n" + 
         "----\n" +
         "author: [Asser], [Ebu], [JanneJalkanen], [Jarmo|mailto:jarmo@regex.com.au]\n";
-    
     
     public static Test suite()
     {
