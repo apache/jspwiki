@@ -1,5 +1,11 @@
 2006-04-05  Erik Bunn  <Erik.Bunn@basen.net>
 
+        * 2.3.94
+        
+        * Added initTag() to all tags extending WikiTagBase, and
+        release() to all extending regular tag support classes.
+        (Switched release() to initTag() in WikiLinkTag, accordingly.)
+
         * Added release() to WikiLinkTag to clear page etc. from cached
         tags. This caused the wrong page name to be used in certain uses
         of LinkTag.
