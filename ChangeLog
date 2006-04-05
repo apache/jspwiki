@@ -1,5 +1,9 @@
 2006-04-05  Erik Bunn  <Erik.Bunn@basen.net>
 
+        * 2.3.95
+        
+        * Added missing call to super.initTag in LinkTag.initTag
+        
         * 2.3.94
         
         * Added initTag() to all tags extending WikiTagBase, and
