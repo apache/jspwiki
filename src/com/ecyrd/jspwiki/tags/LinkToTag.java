@@ -47,6 +47,12 @@ public class LinkToTag
     
     private String m_version = null;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_version = null;
+    }
+
     public String getVersion()
     {
         return m_version;

@@ -85,6 +85,12 @@ public class UserCheckTag
 
     private String m_status;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_status = null;
+    }
+
     public String getStatus()
     {
         return( m_status );

@@ -39,6 +39,12 @@ public class RSSImageLinkTag
     
     protected String m_title;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_title = null;
+    }
+
     public void setTitle( String title )
     {
         m_title = title;

@@ -49,6 +49,13 @@ public class PluginTag
     private String m_args;
 
     private boolean m_evaluated = false;
+
+    public void release()
+    {
+        super.release();
+        m_plugin = m_args = null;
+        m_evaluated = false;
+    }
     
     public void setPlugin( String p )
     {

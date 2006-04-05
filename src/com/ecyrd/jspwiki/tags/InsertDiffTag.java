@@ -48,6 +48,12 @@ public class InsertDiffTag
 
     protected String m_pageName;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_pageName = null;
+    }
+
     public void setPage( String page )
     {
         m_pageName = page;

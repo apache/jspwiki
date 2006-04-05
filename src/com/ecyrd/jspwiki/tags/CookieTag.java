@@ -112,8 +112,7 @@ public class CookieTag
     private String m_scope;
     /** Name of a cookie or a cookie nvp to clear. */
     private String m_clear;
-    
-    
+
     public void setName( String s )  { m_name = s; }
     public void setItem( String s )  { m_item = s; }
     public void setValue( String s ) { m_value = s; }

@@ -66,6 +66,13 @@ public class CalendarTag
     private SimpleDateFormat m_monthUrlFormat = null;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
+    public void initTag()
+    {
+        super.initTag();
+        m_pageFormat = m_urlFormat = m_monthUrlFormat = null;
+        m_dateFormat = new SimpleDateFormat( "ddMMyy" );
+    }
+
     /*
     public void setYear( String year )
     {

@@ -50,7 +50,13 @@ public class VariableTag
     
     private String m_var      = null;
     private String m_default  = null;
-    
+
+    public void initTag()
+    {
+        super.initTag();
+        m_var = m_default = null;
+    }
+
     public String getVar()
     {
         return m_var;

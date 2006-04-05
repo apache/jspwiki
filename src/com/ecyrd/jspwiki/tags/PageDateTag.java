@@ -49,6 +49,12 @@ public class PageDateTag
 
     private String m_format = null;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_format = null;
+    }
+
     public String getFormat()
     {
         if( m_format == null )

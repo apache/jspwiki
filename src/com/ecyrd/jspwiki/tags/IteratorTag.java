@@ -51,6 +51,15 @@ public abstract class IteratorTag
 
     static    Logger      log = Logger.getLogger( IteratorTag.class );
 
+    public void release()
+    {
+        super.release();
+        m_iterator = null;
+        m_pageName = null;
+        m_wikiContext = null;
+    }
+
+
     /**
      *  Sets the collection that is used to form the iteration.
      */

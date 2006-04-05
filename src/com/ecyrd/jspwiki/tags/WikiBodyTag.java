@@ -41,6 +41,12 @@ public abstract class WikiBodyTag extends BodyTagSupport
     protected WikiContext m_wikiContext;
     static    Logger    log = Logger.getLogger( WikiBodyTag.class );
 
+    public void release()
+    {
+        super.release();
+        m_wikiContext = null;
+    }
+
     public int doStartTag() throws JspException
     {
         try

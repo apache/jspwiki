@@ -38,6 +38,14 @@ public class CheckRequestContextTag
     
     private String m_context;
     private String[] m_contextList = {};
+
+
+    public void initTag()
+    {
+        super.initTag();
+        m_context = null;
+        m_contextList = new String[0];
+    }
     
     public String getContext()
     {

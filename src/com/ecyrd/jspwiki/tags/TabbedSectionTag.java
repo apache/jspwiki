@@ -33,6 +33,15 @@ public class TabbedSectionTag extends BodyTagSupport
     private static final int GENERATE_TABMENU = 1;
     private static final int GENERATE_TABBODY = 2;
     private              int state            = FIND_DEFAULT_TAB; 
+
+    public void release()
+    {
+        super.release();
+        defaultTabId = firstTabId = null;
+        defaultTabFound = false;
+        sb = new StringBuffer();
+        state = FIND_DEFAULT_TAB;
+    }
     
     public void setDefaultTab(String anDefaultTabId)
     {

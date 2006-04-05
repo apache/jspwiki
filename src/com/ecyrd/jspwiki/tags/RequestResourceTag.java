@@ -6,6 +6,12 @@ public class RequestResourceTag extends WikiTagBase
     
     private String m_type;
     private String m_path;
+
+    public void initTag()
+    {
+        super.initTag();
+        m_type = m_path = null;
+    }
     
     public int doWikiStartTag() throws Exception
     {

@@ -42,6 +42,12 @@ public class PageTypeTag
     
     private String m_type;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_type = null;
+    }
+
     public void setType( String arg )
     {
         m_type = arg.toLowerCase();

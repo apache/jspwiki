@@ -16,6 +16,12 @@ public class IncludeResourcesTag extends WikiTagBase
     private static final long serialVersionUID = 0L;
         
     private String m_type;
+
+    public void initTag()
+    {
+        super.initTag();
+        m_type = null;
+    }
     
     public void setType( String type )
     {

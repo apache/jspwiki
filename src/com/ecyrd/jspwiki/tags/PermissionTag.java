@@ -48,6 +48,12 @@ public class PermissionTag
     private static final long serialVersionUID = 3761412993048982325L;
     private String m_permission;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_permission = null;
+    }
+
     /**
      * Sets the permission to look for (case sensitive).
      * @param permission

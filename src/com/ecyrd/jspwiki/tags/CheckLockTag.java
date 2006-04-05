@@ -45,6 +45,12 @@ public class CheckLockTag
 
     private int m_mode;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_mode = 0;
+    }
+
     public void setMode( String arg )
     {
         if( "locked".equals(arg) )

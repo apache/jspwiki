@@ -38,6 +38,12 @@ public class NoSuchPageTag
     
     private String m_pageName;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_pageName = null;
+    }
+
     public void setPage( String name )
     {
         m_pageName = name;

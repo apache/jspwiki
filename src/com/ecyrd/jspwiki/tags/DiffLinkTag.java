@@ -54,6 +54,12 @@ public class DiffLinkTag
     private String m_version    = VER_LATEST;
     private String m_newVersion = VER_LATEST;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_version = m_newVersion = VER_LATEST;
+    }
+
     public final String getVersion()
     {
         return m_version;

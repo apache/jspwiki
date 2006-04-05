@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * exist in the user database
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-12-04 18:52:52 $
+ * @version $Revision: 1.6 $ $Date: 2006-04-05 15:45:47 $
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase
@@ -81,7 +81,13 @@ public class UserProfileTag extends WikiTagBase
     private static final String WIKINAME  = "wikiname";
     
     private String             m_prop;
-    
+
+    public void initTag()
+    {
+        super.initTag();
+        m_prop = null;
+    }
+
     public final int doWikiStartTag() throws IOException, WikiSecurityException
     {
         UserManager manager = m_wikiContext.getEngine().getUserManager();

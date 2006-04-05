@@ -48,6 +48,12 @@ public class SearchResultIteratorTag
     private   int         m_maxItems;
     private   int         m_count = 0;
 
+    public void release()
+    {
+        super.release();
+        m_maxItems = m_count = 0;
+    }
+
     public void setMaxItems( String arg )
     {
         m_maxItems = Integer.parseInt(arg);

@@ -65,6 +65,7 @@ public abstract class WikiTagBase
      */
     public void initTag()
     {
+        m_wikiContext = null;
         return;
     }
     

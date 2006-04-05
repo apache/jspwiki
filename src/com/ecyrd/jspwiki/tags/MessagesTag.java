@@ -52,6 +52,15 @@ public class MessagesTag extends WikiTagBase
 
     private static final String CLEAR            = "clear";
 
+    public void initTag()
+    {
+        super.initTag();
+        m_action = m_topic = null;
+        m_prefix = "";
+        m_div = "information";
+    }
+
+
     public void setTopic( String topic )
     {
         m_topic = topic;

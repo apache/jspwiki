@@ -31,6 +31,12 @@ public class TabTag extends TagSupport
     private String tabID;
     private String tabTitle;
 
+    public void release()
+    {
+        super.release();
+        accesskey = tabID = tabTitle = null;
+    }
+
     public void setId(String aTabID)
     {
         tabID = aTabID;

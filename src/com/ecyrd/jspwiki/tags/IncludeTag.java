@@ -40,6 +40,12 @@ public class IncludeTag
     
     protected String m_page;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_page = null;
+    }
+
     public void setPage( String page )
     {
         m_page = page;

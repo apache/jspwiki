@@ -48,6 +48,13 @@ public class InsertPageTag
     protected String m_pageName = null;
     private   int    m_mode = HTML;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_pageName = null;
+        m_mode = HTML;
+    }
+
     public void setPage( String page )
     {
         m_pageName = page;

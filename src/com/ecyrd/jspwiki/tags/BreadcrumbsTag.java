@@ -56,6 +56,13 @@ public class BreadcrumbsTag extends WikiTagBase
     private int m_maxQueueSize = 11;
     private String m_separator = " > ";
 
+    public void initTag()
+    {
+        super.initTag();
+        m_maxQueueSize = 11;
+        m_separator = " > ";
+    }
+
     public int getMaxpages()
     {
         return m_maxQueueSize;

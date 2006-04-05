@@ -47,6 +47,12 @@ public class EditLinkTag
     
     public String m_version = null;
 
+    public void initTag()
+    {
+        super.initTag();
+        m_version = null;
+    }
+
     public void setVersion( String vers )
     {
         m_version = vers;
