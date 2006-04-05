@@ -48,6 +48,14 @@ public abstract class WikiLinkTag
     protected int    m_format = ANCHOR;
     protected String m_template;
 
+    
+    public void release() 
+    {
+        super.release();
+        m_pageName = m_template = null;
+        m_format = ANCHOR;
+    }
+    
     public void setPage( String page )
     {
         m_pageName = page;
