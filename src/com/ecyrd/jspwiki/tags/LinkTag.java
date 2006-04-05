@@ -54,6 +54,7 @@ public class LinkTag
     
     public void initTag()
     {
+        super.initTag();
         m_version = m_class = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
         m_context = WikiContext.VIEW;
         m_absolute = false;
