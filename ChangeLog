@@ -1,3 +1,9 @@
+2006-04-05  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Added release() to WikiLinkTag to clear page etc. from cached
+        tags. This caused the wrong page name to be used in certain uses
+        of LinkTag.
+
 2006-04-03  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.93
