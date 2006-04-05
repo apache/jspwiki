@@ -49,9 +49,9 @@ public abstract class WikiLinkTag
     protected String m_template;
 
     
-    public void release() 
+    public void initTag() 
     {
-        super.release();
+        super.initTag();
         m_pageName = m_template = null;
         m_format = ANCHOR;
     }
