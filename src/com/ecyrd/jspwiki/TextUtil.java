@@ -704,7 +704,7 @@ public class TextUtil
 
     /**
      *  Generates a hexadecimal string from an array of bytes.  For
-     *  example, if the array contains { 0x01, 0x02, 0x3E }, the resulting
+     *  example, if the array contains { 0x01, 0x02, 0x3E }, the resulting
      *  string will be "01023E".
      *  
      * @param bytes A Byte array
