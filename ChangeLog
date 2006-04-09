@@ -1,3 +1,21 @@
+2006-04-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.96
+
+        * Split the wikipages to corepages and documentation.  We
+        now generate two zip files into the binary distro:
+        JSPWiki-doc.zip, which contains all the javadocs, plain-text
+        documentation and documentation-related wikipages, and
+        JSPWiki-corepages.zip, which contains the pages which are
+        necessary for JSPWiki to run.  This should make it easier
+        for people to get going.  The file which determines which
+        pages belong to the "corepages" set is under src/webdocs/.corepages
+        
+        * Added patch from Mikkel Troest to fix an attachment delete issue.
+        
+        * Added patch from Lars Orta to create a HTML report for all
+        JUnit tests.
+
 2006-04-05  Erik Bunn  <Erik.Bunn@basen.net>
 
         * 2.3.95

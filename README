@@ -4,9 +4,9 @@ Emacs, this is -*- Text -*- for you.
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.25 $
-                             $Date: 2005-12-20 05:45:40 $
-                           $Author: arj $
+                         $Revision: 1.26 $
+                             $Date: 2006-04-09 19:28:39 $
+                           $Author: jalkanen $
 
 What is it?
 -----------
@@ -129,8 +129,9 @@ Edit the WEB-INF/jspwiki.properties file to your liking.  The only
 thing you need to set is the directory where you want your wiki pages
 to be stored.  I recommend a directory that is regularly backed up.
 
-Unzip the contents of jspwiki-samplepages.zip into your newly created
-directory.  You can find the rest of the documentation in there.
+Unzip the contents of jspwiki-corepages.zip into your newly created
+directory.  You can find the rest of the documentation in the
+JSPWiki-doc.zip file.
 
 (Re)start tomcat.
 
@@ -146,7 +147,7 @@ If you are using a version of Microsoft Windows, you'll find that
 getting RCS up and running may be a bit problematic, and thus we
 recommend the VersioningFileProvider.
 
-There is some documentation within the samplepages archive, on page
+There is some documentation within the documentation archive, on page
 "WindowsInstall".
 
 
@@ -191,10 +192,11 @@ Where to go next aka. where is the rest of the documentation?
 
 With this information, you should've gotten the JSPWiki engine
 running.  I now suggest that you extract all of the files in
-jspwiki_samplepages.zip into your page repository directory, and start
-reading the documentation.  Most of the documentation comes in the
-form of Wiki pages, which you can obviously read with a text editor as
-well.
+JSPWiki-doc.zip, and start reading the documentation.  Most of the 
+documentation comes in the form of Wiki pages, which you can 
+obviously read with a text editor as well.  One trick would
+be to copy all the files from doc/wikipages to your page repository,
+which would allow you to use JSPWiki to view them.
 
 
 Notes:
