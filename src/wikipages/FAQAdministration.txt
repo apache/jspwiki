@@ -128,7 +128,7 @@ One particular source of confusion is the ''jspwiki.attachmentProvider'' setting
 
 Q: where to find a template for EditPageHelp.jsp to copy it into my tree? 
 
-A:It's not a JSP page, it's a page called [EditPageHelp] in the {{jspwiki_samplepages.zip}}.
+A:It's not a JSP page, it's a page called [EditPageHelp] in the {{jspwiki_corepages.zip}}.
 
 !!Problems setting up a hosted JSPWiki site
 
