@@ -287,7 +287,7 @@ function confirmDelete()
      <th>Delete attachment</th>
      <td>
          <form name="deleteForm"
-               action="<wiki:Link format="url" context="<%=WikiContext.DELETE%>" />
+               action="<wiki:Link format="url" context="<%=WikiContext.DELETE%>" />"
                method="post"
                accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
            <input type="submit" name="delete-all" value="Delete attachment"/>
