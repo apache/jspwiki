@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.66 2006-02-21 08:58:10 arj Exp $
+    $Id: build.xml,v 1.67 2006-04-09 19:28:31 jalkanen Exp $
 -->    
        
 <!--   
@@ -363,12 +363,28 @@
         <zipfileset dir="${install.src}" />
     </zip>
 
-    <zip zipfile="${install.fulldir}/${ant.project.name}-samplepages.zip">
-        <zipfileset dir="${install.src}/${ant.project.name}/src/wikipages" />
-    </zip>
-
   </target>
 
+  <!-- Creates a zip of all the core pages.  The file which determines
+       whether a page is a core page or not is found in src/wikipages/.corepages -->
+    
+  <target name="corepageszip" depends="installinit">
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages.zip"
+         basedir="src/wikipages" includesfile="src/wikipages/.corepages">
+    </zip>
+  </target>
+ 
+  <!-- Creates a full ZIP file of all document files -->
+    
+  <target name="documentzip" depends="installinit,javadoc"
+          description="Creates JSPWiki documentation zipfile">
+ 
+    <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
+        <zipfileset dir="doc" prefix="doc" />
+        <zipfileset dir="src/wikipages" prefix="doc/wikipages" />   
+    </zip> 
+  </target> 
+	
   <!-- Builds the entire distribution set.
 
        We build both the WAR-file and the source zip, then
@@ -378,7 +394,7 @@
        Note that if you don't have CVS access set up, you 
        probably can't run this.
     -->
-  <target name="dist" depends="installinit,srczip,war"
+  <target name="dist" depends="installinit,srczip,war,corepageszip,documentzip"
           description="Builds the entire distribution archive.">
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
@@ -386,7 +402,7 @@
      <copy file="doc/LICENSE" todir="${install.fulldir}" />     
 
      <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
-        <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
+        <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />  
      </zip>
 
   </target>
@@ -462,7 +478,8 @@
 		<sysproperty key="jspwiki.tests.auth" value="true" />
 
         <formatter type="plain" />
-
+    	    <formatter type="xml" usefile="yes" />
+    	
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
                 <include name="**/*Test.java" />
@@ -473,6 +490,13 @@
         </batchtest>
      </junit>
 
+  	 <junitreport todir="${tests.src}">
+  	    <fileset dir="${tests.reports}">
+  	       <include name="**/TEST-*.xml" />
+  	    </fileset>
+  	    <report format="noframes" todir="${tests.src}" />
+  	 </junitreport>
+  	
   </target>
 
   <target name="guitests" depends="jar,tests-init,jartests"
