@@ -158,10 +158,14 @@ public class CachingAttachmentProvider
 
                 return cloneCollection(c);
             }
-            catch( ProviderException ex )
+            catch( Exception ex )
             {
-                log.warn("Provider failed, returning cached content");
+                // Is a catch-all, because cache will get confused if
+                // we let this one go.
+                log.warn("Provider failed, returning cached content",ex);
 
+                m_cache.cancelUpdate(page.getName());
+                
                 return (Collection)nre.getCacheContent();
             }
         }
@@ -272,10 +276,11 @@ public class CachingAttachmentProvider
             {
                 c = refresh( page );
             }
-            catch( ProviderException ex )
+            catch( Exception ex )
             {
-                log.warn("Provider failed, returning cached content");
+                log.warn("Provider failed, returning cached content",ex);
 
+                m_cache.cancelUpdate( page.getName() );
                 c = (Collection)nre.getCacheContent();
             }
 

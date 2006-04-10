@@ -209,8 +209,27 @@ public class CachingProvider
             
             // int version = (cached != null) ? cached.getVersion() : WikiPageProvider.LATEST_VERSION;
             
-            WikiPage refreshed = m_provider.getPageInfo( name, WikiPageProvider.LATEST_VERSION );
-  
+            WikiPage refreshed;
+            
+            //
+            //  Just be careful that we don't accidentally leave the cache in a
+            //  hung state
+            //
+            try
+            {
+                refreshed = m_provider.getPageInfo( name, WikiPageProvider.LATEST_VERSION );
+            }
+            catch( ProviderException ex )
+            {
+                m_cache.cancelUpdate( name );   
+                throw ex;
+            }
+            catch( RuntimeException ex )
+            {
+                m_cache.cancelUpdate( name );
+                throw ex;
+            }
+            
             if( refreshed == null && cached != null )
             {
                 //  Page has been removed evilly by a goon from outer space
@@ -505,11 +524,19 @@ public class CachingProvider
         {            
             if( pageExists(pageName) )
             {
-                text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
+                try
+                {
+                    text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
                     
-                m_textCache.putInCache( pageName, text );
+                    m_textCache.putInCache( pageName, text );
 
-                m_cacheMisses++;
+                    m_cacheMisses++;
+                }
+                catch( ProviderException ex )
+                {
+                    m_textCache.cancelUpdate( pageName );
+                    throw ex;
+                }
             }
             else
             {
@@ -686,12 +713,20 @@ public class CachingProvider
         }
         catch( NeedsRefreshException e )
         {
-            history = m_provider.getVersionHistory( page );
+            try
+            {
+                history = m_provider.getVersionHistory( page );
 
-            m_historyCache.putInCache( page, history );
+                m_historyCache.putInCache( page, history );
 
-            log.debug("History cache miss for page "+page);
-            m_historyCacheMisses++;
+                log.debug("History cache miss for page "+page);
+                m_historyCacheMisses++;
+            }
+            catch( ProviderException ex )
+            {
+                m_historyCache.cancelUpdate( page );
+                throw ex;
+            }
         }
 
         return history;
