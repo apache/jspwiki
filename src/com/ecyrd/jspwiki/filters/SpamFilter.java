@@ -19,15 +19,17 @@
  */
 package com.ecyrd.jspwiki.filters;
 
+import java.io.*;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.*;
-
+import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  A regular expression-based spamfilter that can also do choke modifications.
@@ -36,6 +38,7 @@ import org.apache.log4j.Logger;
  *  <ul>
  *    <li>wordlist - Page name where the regexps are found.  Use [{SET spamwords='regexp list separated with spaces'}] on
  *     that page.  Default is "SpamFilterWordList".
+ *    <li>blacklist - The name of an attachment containing the list of spam patterns, one per line</li>
  *    <li>errorpage - The page to which the user is redirected.  Has a special variable $msg which states the reason. Default is "RejectedMessage".
  *    <li>pagechangesinminute - How many page changes are allowed/minute.  Default is 5.
  *    <li>bantime - How long an IP address stays on the temporary ban list (default is 60 for 60 minutes).
@@ -48,7 +51,8 @@ public class SpamFilter
 {
     private String m_forbiddenWordsPage = "SpamFilterWordList";
     private String m_errorPage          = "RejectedMessage";
-
+    private String m_blacklist          = "SpamFilterWordList/blacklist.txt";
+    
     private static final String LISTVAR = "spamwords";
     private PatternMatcher m_matcher = new Perl5Matcher();
     private PatternCompiler m_compiler = new Perl5Compiler();
@@ -63,6 +67,7 @@ public class SpamFilter
     public static final String PROP_ERRORPAGE = "errorpage";
     public static final String PROP_PAGECHANGES = "pagechangesinminute";
     public static final String PROP_BANTIME   = "bantime";
+    public static final String PROP_BLACKLIST = "blacklist";
     
     private Vector m_temporaryBanList = new Vector();
     
@@ -89,6 +94,8 @@ public class SpamFilter
         m_banTime = TextUtil.getIntegerProperty( properties,
                                                  PROP_BANTIME,
                                                  m_banTime );
+    
+        m_blacklist = properties.getProperty( PROP_BLACKLIST, m_blacklist );
         
         log.info("Spam filter initialized.  Temporary ban time "+m_banTime+
                  " mins, max page changes/minute: "+m_limitSinglePageChanges );
@@ -122,6 +129,49 @@ public class SpamFilter
         return compiledpatterns;
     }
 
+    private Collection parseBlacklist( String list )
+    {
+        ArrayList compiledpatterns = new ArrayList();
+        
+        if( list != null )
+        {
+            try
+            {
+                BufferedReader in = new BufferedReader( new StringReader(list) );
+            
+                String line;
+            
+                while( (line = in.readLine()) != null )
+                {
+                    line = line.trim();
+                    if( line.length() == 0 ) continue; // Empty line
+                    if( line.startsWith("#") ) continue; // It's a comment
+                    
+                    int ws = line.indexOf(' ');
+                    
+                    if( ws == -1 ) ws = line.indexOf('\t');
+                    
+                    if( ws != -1 ) line = line.substring(0,ws);
+                    
+                    try
+                    {
+                        compiledpatterns.add( m_compiler.compile( line ) );
+                    }
+                    catch( MalformedPatternException e )
+                    {
+                        log.debug( "Malformed spam filter pattern "+line );
+                    }                    
+                }
+            }
+            catch( IOException e )
+            {
+                log.info("Could not read patterns; returning what I got",e);
+            }
+        }
+        
+        return compiledpatterns;
+    }
+    
     private synchronized void checkSinglePageChange( WikiContext context )
         throws RedirectException
     {
@@ -211,28 +261,86 @@ public class SpamFilter
         }
         
     }
+    
+    private void refreshBlacklists( WikiContext context )
+    {
+        try
+        {
+            WikiPage source = context.getEngine().getPage( m_forbiddenWordsPage );
+            Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
+        
+            boolean rebuild = false;
+        
+            //
+            //  Rebuild, if the page or the attachment has changed since.
+            //
+            if( source != null )
+            {
+                if( m_spamPatterns == null || m_spamPatterns.isEmpty() || source.getLastModified().after(m_lastRebuild) )
+                {
+                    rebuild = true;
+                }
+            }
+
+            if( att != null )
+            {
+                if( m_spamPatterns == null || m_spamPatterns.isEmpty() || att.getLastModified().after(m_lastRebuild) )
+                {
+                    rebuild = true;
+                }
+            }
+  
+            
+            //
+            //  Do the actual rebuilding.  For simplicity's sake, we always rebuild the complete
+            //  filter list regardless of what changed.
+            //
+            
+            if( rebuild )
+            {
+                m_lastRebuild = new Date();
+
+                m_spamPatterns = parseWordList( source, 
+                                                (String)source.getAttribute( LISTVAR ) );
+
+                log.info("Spam filter reloaded - recognizing "+m_spamPatterns.size()+" patterns from page "+m_forbiddenWordsPage);
+            
+                if( att != null )
+                {
+                    InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
+            
+                    StringWriter out = new StringWriter();
+            
+                    FileUtil.copyContents( new InputStreamReader(in,"UTF-8"), out );
+            
+                    Collection blackList = parseBlacklist( out.toString() );
+
+                    log.info("...recognizing additional "+blackList.size()+" patterns from blacklist "+m_blacklist);
+            
+                    m_spamPatterns.addAll( blackList );
+                }
+            }
+        }
+        catch( IOException ex )
+        {
+            log.info("Unable to read attachment data, continuing...",ex);
+        }
+        catch( ProviderException ex )
+        {
+            log.info("Failed to read spam filter attachment, continuing...",ex);
+        }
+
+    }
+    
     public String preSave( WikiContext context, String content )
         throws RedirectException
     {
         cleanBanList();
         checkBanList( context );
         checkSinglePageChange( context );
+
+        refreshBlacklists(context);
         
-        WikiPage source = context.getEngine().getPage( m_forbiddenWordsPage );
-
-        if( source != null )
-        {
-            if( m_spamPatterns == null || m_spamPatterns.isEmpty() || source.getLastModified().after(m_lastRebuild) )
-            {
-                m_lastRebuild = source.getLastModified();
-
-                m_spamPatterns = parseWordList( source, 
-                                                (String)source.getAttribute( LISTVAR ) );
-
-                log.info("Spam filter reloaded - recognizing "+m_spamPatterns.size()+" patterns from page "+m_forbiddenWordsPage);
-            }
-        }
-
         //
         //  If we have no spam patterns defined, or we're trying to save
         //  the page containing the patterns, just return.
