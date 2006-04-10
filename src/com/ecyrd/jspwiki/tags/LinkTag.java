@@ -258,6 +258,8 @@ public class LinkTag
             
             String parms = (m_version != null) ? "version="+getVersion() : null; 
                 
+            parms = addParamsForRecipient( parms, m_containedParams );
+            
             if( p instanceof Attachment )
             {
                 String ctx = m_context;
@@ -288,7 +290,7 @@ public class LinkTag
     {
         if( params == null || params.size() == 0 ) 
         {
-            return null;
+            return addTo;
         }
         StringBuffer buf = new StringBuffer();
         Iterator it = params.keySet().iterator();
