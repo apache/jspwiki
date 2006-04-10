@@ -2,6 +2,7 @@ package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
@@ -37,7 +38,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-03-16 21:04:50 $
+ * @version $Revision: 1.5 $ $Date: 2006-04-10 20:42:57 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -123,15 +124,15 @@ public final class WikiSecurityEvent extends WikiEvent
         this.m_type = type;
         this.m_principal = principal;
         this.m_target = target;
-        if ( LOGGER.isEnabledFor( Priority.ERROR ) && inArray( ERROR_EVENTS, type ) )
+        if ( LOGGER.isEnabledFor( Priority.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
         {
             LOGGER.error( this );
         }
-        else if ( LOGGER.isEnabledFor( Priority.WARN ) && inArray( WARN_EVENTS, type ) )
+        else if ( LOGGER.isEnabledFor( Priority.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
         {
             LOGGER.warn( this );
         }
-        else if ( LOGGER.isEnabledFor( Priority.INFO ) && inArray( INFO_EVENTS, type ) )
+        else if ( LOGGER.isEnabledFor( Priority.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
         {
             LOGGER.info( this );
         }
@@ -265,23 +266,4 @@ public final class WikiSecurityEvent extends WikiEvent
         return "UNKNOWN";
     }
     
-    /**
-     * Returns <code>true</code> if an integer is
-     * contained in a supplied array.
-     * @param array an array of integers to search
-     * @param type the value to match
-     * @return the result of the inspection
-     */
-    protected static final boolean inArray( int[] array, int type )
-    {
-        for ( int i = 0; i < array.length; i++ )
-        {
-            if ( array[i] == type )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }
