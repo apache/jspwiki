@@ -93,6 +93,8 @@ public class PageRenamer
         // Work out the clean version of the new name of the page
         newName = newName.trim();
 
+        // Get the collection of pages that the refered to the old name (the From name)...
+        Collection referrers = getReferrersCollection( oldName );
     
         String newNameCleaned = MarkupParser.cleanLink( newName );
         
@@ -111,10 +113,6 @@ public class PageRenamer
         moveAttachmentData( oldName, newNameCleaned );
         
         m_wikiEngine.getReferenceManager().clearPageEntries(oldName);
-
-
-        // Get the collection of pages that the refered to the old name (the From name)...
-        Collection referrers = getReferrersCollection( oldName );
 
         // If there were pages refering to the old name, update them to point to the new name...
         if( referrers != null )
