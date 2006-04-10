@@ -248,10 +248,7 @@ function confirmDelete()
 
     <tr>
     <th>Page feed</th>
-    <td><a href="<wiki:Link format="url" jsp="rss.jsp">
-                     <wiki:Param name="page" value="<%=c.getPage().getName()%>"/>
-                     <wiki:Param name="mode" value="wiki"/>
-                 </wiki:Link>"
+    <td><a href="<wiki:Link format="url" jsp="rss.jsp"><wiki:Param name="page" value="<%=c.getPage().getName()%>"/><wiki:Param name="mode" value="wiki"/></wiki:Link>"
            title="RSS link for <wiki:PageName />" >
         <img src="<wiki:Link format="url" jsp="images/xml.png"/>" border="0" alt="[RSS]"  />
         </a>
@@ -302,7 +299,7 @@ function confirmDelete()
       <wiki:CheckVersion mode="first">Only one version </wiki:CheckVersion>
 
       <wiki:CheckVersion mode="notfirst">
-      <form>
+      <form action="">
         <select id="infoselect" name="infoselect"
                 onchange="location.replace(this[this.selectedIndex].value)" >
 
@@ -314,8 +311,7 @@ function confirmDelete()
              if( latestVersion > size ) // more than one item in dropdown list
              {
           %>
-               <option value="<wiki:Link context="info" format="url">
-                      <wiki:Param name="start" value="-1"/></wiki:Link>"
+               <option value="<wiki:Link context="info" format="url"><wiki:Param name="start" value="-1"/></wiki:Link>"
                       <%= ( (start == -1) ? "selected='selected'" : "") %> >
                   Show all revisions from <%= latestVersion %> down to 1
                </option>
@@ -328,8 +324,8 @@ function confirmDelete()
                selected = ( (start >= startofblock) && (start <= endofblock) );
                if( selected ) start = startofblock; //defensive
           %>
-               <option value="<wiki:BaseURL/><wiki:PageInfoLink format="url" />&start=<%=startofblock %>"
-                       <%= (selected ? "SELECTED" : "") %> >
+               <option value="<wiki:Link context="info" format="url"><wiki:Param name="start" value="<%=Integer.toString(startofblock)%>"/></wiki:Link>" 
+                       <%= (selected ? "selected='selected'" : "") %> >
                    Show <%= ((startofblock == 1) ? "first" : Integer.toString(size) ) %> revisions
                    from <%=endofblock%> to <%=startofblock %>
                </option>
@@ -345,8 +341,43 @@ function confirmDelete()
       </wiki:CheckVersion>
     </td>
     </tr>
-
+    
   </table>
+
+  <wiki:CheckVersion mode="notfirst">
+
+  <div id="versionhistory" class="zebra-table">
+
+  <table class="wikitable">
+
+    <tr>
+      <th>Version</th>
+      <th>Date</th>
+      <th>Author</th>
+      <th>Size</th>
+    </tr>
+
+    <wiki:HistoryIterator id="currentPage">
+    <% if( (start == -1)  ||
+           ((currentPage.getVersion() >= start) && (currentPage.getVersion() < start+size)) )
+       {
+     %>
+    <tr>
+      <td>
+        <wiki:LinkTo version="<%=Integer.toString(currentPage.getVersion())%>">
+          <wiki:PageVersion/>
+        </wiki:LinkTo>
+      </td>
+
+      <td><wiki:PageDate format="<%= prefDateFormat %>" /></td>
+      <td><wiki:Author /></td>
+      <td><wiki:PageSize /></td>
+    </tr>
+    <% } %>
+    </wiki:HistoryIterator>
+  </table>
+  </div> <%-- versionhistory --%>
+  </wiki:CheckVersion>
   <div style="clear:both; height:0px;" > </div>
 
 </wiki:Tab>
