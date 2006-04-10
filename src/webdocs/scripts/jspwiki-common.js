@@ -155,7 +155,7 @@ Wiki.reImageTypes = new RegExp( '(.bmp|.gif|.png|.jpg|.jpeg|.tiff)$','i' );
 
 Wiki.getBaseURL  = function() { return this.BaseURL; } //not yet used
 Wiki.getBasePath = function() { return this.BasePath; }
-Wiki.getPageName = function() { return this.Pagename; }
+Wiki.getPageName = function() { return this.PageName; }
 
 Wiki.showImage = function( attachment, attDELIM, maxWidth, maxHeight )
 {
@@ -765,7 +765,7 @@ Collapsable.onPageLoad = function()
  }
 
 
-Collapsable.initialise = function( domID, className, cookieName )
+Collapsable.initialise = function( domID, cookieName )
 {
   var page  = document.getElementById( domID );  if( !page ) return;
   this.tmpcookie = document.getCookie( cookieName );
