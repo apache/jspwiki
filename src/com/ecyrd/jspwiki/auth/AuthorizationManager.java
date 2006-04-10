@@ -79,7 +79,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.33 $ $Date: 2006-04-03 19:48:48 $
+ * @version $Revision: 1.34 $ $Date: 2006-04-10 20:41:57 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -603,7 +603,9 @@ public final class AuthorizationManager
      * @return the fully-resolved Principal
      */
     public final Principal resolvePrincipal( String name ) 
-    {    
+    {  
+        if( !m_useJAAS ) return new UnresolvedPrincipal(name);
+        
         // Check built-in Roles first
         Role role = new Role(name);
         if (Role.isBuiltInRole(role)) {
