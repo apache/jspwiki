@@ -70,8 +70,10 @@
 
 <% if(prefSkinName != null) { %>
  <link rel="stylesheet" type="text/css"
-       href="<wiki:Link format="url" templatefile="<%="skins/"+prefSkinName%>"/> />
+       href="<wiki:Link format="url" templatefile="<%="skins/"+prefSkinName%>"/>" />
 <% } %>
+
+<script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>","<wiki:Variable var="pagename" />");</script>
 
 <%-- Here we define the "run when the page loads" -script. --%>
 <script type="text/javascript">
@@ -90,4 +92,3 @@ function runOnLoad()
 
 window.onload = runOnLoad;
 </script>
-<script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>","<wiki:Variable var="pagename" />");</script>
