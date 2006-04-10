@@ -1,3 +1,32 @@
+2006-04-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.98
+        
+        * Killed extra <param> tag definition from jspwiki.tld; it was
+        there twice.
+        
+        * AuthorizationManager.resolvePrincipal() no longer dies if JAAS
+        is not in use and someone still tries to set an Acl.
+        
+        * WikiSecurityEvent now uses Jakarta Lang ArrayUtils.  Hooray
+        for code reuse!
+        
+        * SpamFilter rewritten so that it can use the usual format of
+        a blacklist; default is to use SpamFilterWordList/blacklist.txt,
+        but you can control it with a filter parameter "blacklist".
+        
+        * Both CachingAttachmentProvider and CachingProvider had issues
+        in case the underlying provider would fail, and might hang.
+        
+        * LinkTag was not properly parsing the Param tag in case you just
+        specified a context.
+        
+        * Fixed a huge bunch of Javascript and CSS issues from Dirk
+        Fredericx.  Fixes BugV2.3.90SomeJavascriptBugfixes.
+        
+        * InfoContent.jsp was behaving erratically with attachments;
+        e.g. the version history was missing altogether.  Thanks to DF!
+
 2006-04-10  Erik Bunn  <Erik.Bunn@basen.net>
 
         * 2.3.97
