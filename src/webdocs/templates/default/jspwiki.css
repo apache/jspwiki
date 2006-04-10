@@ -82,6 +82,9 @@ ul                       { padding-left: 1.5em; }
 li                       { margin: 0.6em 0.75em; }
 li > p                   { margin-top: 0.2em; }
 
+dl dt                    { font-weight: bold; font-size: 1.2em; }
+dl dd                    { margin-left: 3em; }
+
 /* +++ 230 Horizontal rules +++ */
 hr                       { color: #D9D9D9; background: #D9D9D9;
                            height: 1px; border: 0 }
@@ -407,6 +410,10 @@ div.collapse li          { list-style: none; position: relative; }
 
 .collapseOpen:hover,
 .collapseClose:hover     { background: #FF9933; color: white; }
+
+.collapse .collapseBullet,
+.collapse .collapseOpen,
+.collapse .collapseClose { left: -1.5em !important; right: auto !important; }
 
 /* collapsebox */
 .collapsebox             { border: 1px solid gray; position:relative; margin: 1em 0;}
