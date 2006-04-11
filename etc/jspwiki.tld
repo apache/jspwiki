@@ -339,6 +339,10 @@
        <name>templatefile</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>    
+    <attribute>
+       <name>accessKey</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>  
 
   <tag>
