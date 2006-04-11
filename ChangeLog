@@ -1,3 +1,13 @@
+2006-04-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.99
+        
+        * Variables in plugin parameters and body are now expanded.
+        e.g. [{SamplePlugin text='{$jspwiki.baseurl}'}]
+        
+        * Added missing accessKey parameter to LinkTag.  Reported
+        by Dirk Fredericx. 
+
 2006-04-10  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.98
