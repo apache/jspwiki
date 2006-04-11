@@ -4,6 +4,8 @@
  */
 package com.ecyrd.jspwiki.parser;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.jdom.Text;
@@ -38,9 +40,29 @@ public class PluginContent extends Text
         try
         {
             WikiEngine engine = context.getEngine();
+            
+            HashMap parsedParams = new HashMap();
+            
+            //
+            //  Parse any variable instances from the string
+            //
+            for( Iterator i = m_params.entrySet().iterator(); i.hasNext(); )
+            {
+                Map.Entry e = (Map.Entry) i.next();
+                
+                Object value = e.getValue();
+                
+                if( value instanceof String )
+                {
+                    value = engine.getVariableManager().expandVariables( context, (String)value );
+                }
+                
+                parsedParams.put( e.getKey(), value );
+            }
+            
             result = engine.getPluginManager().execute( context,
                                                         m_pluginName,
-                                                        m_params );
+                                                        parsedParams );
         }
         catch( Exception e )
         {
