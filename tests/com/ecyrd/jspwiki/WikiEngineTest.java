@@ -819,5 +819,13 @@ public class WikiEngineTest extends TestCase
         engine.deletePage( NAME1 );
     }
     
-
+    
+    public void testParsedVariables() throws Exception
+    {
+        m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
+        
+        String res = m_engine.getHTML( "TestPage" );
+        
+        assertEquals( "bar\n", res );
+    }
 }
