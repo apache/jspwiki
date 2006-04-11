@@ -16,7 +16,7 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
  *  some sane defaults to be implemented.
  *  
  *  @author jalkanen
- *
+ *  @since  2.4
  */
 public abstract class WikiRenderer
 {

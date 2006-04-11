@@ -18,7 +18,7 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
  *  all of the XHTML.
  *  
  *  @author Janne Jalkanen
- *
+ *  @since  2.4
  */
 public class CleanTextRenderer
     extends WikiRenderer

@@ -9,6 +9,14 @@ import org.jdom.output.XMLOutputter;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 
+/**
+ *  Implements a WikiRendered that outputs XHTML.  Because the internal DOM
+ *  representation is in XHTML already, this just basically dumps out everything
+ *  out in a non-prettyprinted format.
+ *   
+ *  @author jalkanen
+ *  @since  2.4
+ */
 public class XHTMLRenderer
     extends WikiRenderer 
 {

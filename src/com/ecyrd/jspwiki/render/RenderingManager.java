@@ -25,7 +25,7 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  want the different side effects to occur - such as WikiFilters.
  *  
  *  @author jalkanen
- *
+ *  @since  2.4
  */
 public class RenderingManager implements PageFilter
 {
