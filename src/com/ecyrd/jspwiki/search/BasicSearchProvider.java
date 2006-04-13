@@ -107,10 +107,10 @@ public class BasicSearchProvider implements SearchProvider
         return items;
     }
 
-    private String attachmentNames(WikiPage page, String seperator)
+    private String attachmentNames(WikiPage page, String separator)
     {
-    	if(m_engine.getAttachmentManager().hasAttachments(page))
-    	{
+        if(m_engine.getAttachmentManager().hasAttachments(page))
+        {
             Collection attachments;
 			try 
             {
@@ -128,13 +128,14 @@ public class BasicSearchProvider implements SearchProvider
                 Attachment att = (Attachment) it.next();
                 attachmentNames.append(att.getName());
                 if(it.hasNext())
-                    attachmentNames.append(seperator);
+                    attachmentNames.append(separator);
             }
             return attachmentNames.toString();
-    	}
+        }
         
         return "";
     }
+    
     private Collection findPages( QueryItem[] query )
     {
         TreeSet res = new TreeSet( new SearchResultComparator() );
