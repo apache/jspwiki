@@ -132,15 +132,15 @@ public class FileUtil
      *
      *  @since 1.5.8
      */
-    // FIXME: Could probably be more optimized
     public static void copyContents( Reader in, Writer out )
         throws IOException
     {
-        int c;
-        
-        while( (c = in.read()) != -1  )
+        char[] buf = new char[4096];
+        int bytesRead = 0;
+
+        while ((bytesRead = in.read(buf)) > 0) 
         {
-            out.write( c );
+            out.write(buf, 0, bytesRead);
         }
 
         out.flush();
@@ -151,15 +151,15 @@ public class FileUtil
      *
      *  @since 1.9.31
      */
-    // FIXME: Could probably be more optimized
     public static void copyContents( InputStream in, OutputStream out )
         throws IOException
     {
-        int c;
-        
-        while( (c = in.read()) != -1  )
+        byte[] buf = new byte[4096];
+        int bytesRead = 0;
+
+        while ((bytesRead = in.read(buf)) > 0) 
         {
-            out.write( c );
+            out.write(buf, 0, bytesRead);
         }
 
         out.flush();
