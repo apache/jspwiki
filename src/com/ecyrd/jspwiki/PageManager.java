@@ -325,7 +325,7 @@ public class PageManager
     {
         if( pageName == null || pageName.length() == 0 )
         {
-            throw new ProviderException("Illegal page name");
+            throw new ProviderException("Illegal page name '"+pageName+"'");
         }
 
         WikiPage page = null;
