@@ -1,5 +1,10 @@
 2006-04-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.3.100
+
+        * Fixed BugOptimizeFileUtil.copyContents.  FileUtil ops
+        are now way faster.  Thanks to Kees Kuip!
+
         * Typo fixed in BasicSearchProvider; thanks to Chuck Smith.
 
 2006-04-12  Janne Jalkanen <jalkanen@ecyrd.com>
