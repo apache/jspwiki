@@ -1,3 +1,60 @@
+2006-04-17  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.101
+        
+        * Upgraded to OSCache 2.3.1 to fix some issues with stability
+        
+        * VariableManager is now slightly faster.
+        
+        * VariableManager no longer outputs HTML (due to the new
+        rendering system which thinks that HTML is dangerous).
+        
+        * WebContainerAuthorizer is now a bit more verbose if
+        there is no internet connection and it cannot find local
+        DTDs.  It also throws a InternalWikiExcepton instead of
+        a generic RuntimeException or a NullPointerException... 
+        
+        * I don't know why, but SpamFilter.Host was a public class;
+        made it private for now...
+        
+        * JSPWikiMarkupParser now caches the outlink image, and
+        does not generate it new each time.  This gives us roughly
+        a 2% saving on each rendering...  Oh, the things you
+        learn when you run a profiler against your app!
+        
+        * Added plenty'o'javadocs to parser/rendering routines.
+        
+        * Tiny cleanups and tweaks all around; mostly concerning
+        allocating proper size StringBuffers to avoid resizing
+        overhead.
+        
+        * CachingAttachmentProvider no longer outputs HTML when
+        asked about the cache size.
+        
+        * CachingProvider would fail to call Cache.cancelUpdate()
+        in some certain rare conditions.  Over time on a busy wiki
+        they would accumulate and hang all the HTTP responder 
+        threads.
+        
+        * VersioningFileProvider was a bit relaxed about closing
+        streams in error situations.  Now handles them properly.
+        
+        * RenderingManager cleaned up a lot; new parameter
+        jspwiki.renderingManager.capacity added.  Also the
+        renderingManager.useCache is now gone; set the capacity
+        to zero to turn off caching.
+        
+        * WikiServletFilter is now a bit more tolerant towards
+        Exceptions - it actually restores the NDC now...
+        
+        * Rename.jsp had an extraneous encodeName(), causing
+        page rename failing if it was renamed to anything outside
+        the ASCII range.  Fix contributed by Mikkel Troest.
+        
+        * TestHttpServletRequest now implements the required
+        extra methods for the newest servlet API, so it can be
+        compiled in newer environments.
+
 2006-04-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.100
