@@ -94,34 +94,42 @@ public class WikiServletFilter implements Filter
         // Write the response to a dummy response because we want to 
         //   replace markers with scripts/stylesheet. 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        NDC.push( m_engine.getApplicationName()+":"+httpRequest.getServletPath() );
-        ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
-        chain.doFilter( request, responseWrapper );
-
-        // The response is now complete. Lets replace the markers now.
         
-        // WikiContext is only available after doFilter! (That is after
-        //   interpreting the jsp)
+        NDC.push( m_engine.getApplicationName()+":"+httpRequest.getRequestURL() );
 
-        WikiContext wikiContext = getWikiContext( request );
-        String r = filter( wikiContext, responseWrapper.toString() );
-        
-        String encoding = "UTF-8";
-        if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
-                
-        byte[] bytes = r.getBytes( encoding );
-
-        // Only now write the (real) response to the client.
-        response.setContentLength( bytes.length );
-        response.getOutputStream().write( bytes );
-        
-        // Clean up the UI messages and loggers
-        if ( wikiContext != null )
+        try
         {
-            wikiContext.getWikiSession().clearMessages();
+            ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
+            chain.doFilter( request, responseWrapper );
+
+            // The response is now complete. Lets replace the markers now.
+        
+            // WikiContext is only available after doFilter! (That is after
+            //   interpreting the jsp)
+
+            WikiContext wikiContext = getWikiContext( request );
+            String r = filter( wikiContext, responseWrapper.toString() );
+        
+            String encoding = "UTF-8";
+            if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
+            
+            byte[] bytes = r.getBytes( encoding );
+
+            // Only now write the (real) response to the client.
+            response.setContentLength( bytes.length );
+            response.getOutputStream().write( bytes );
+        
+            // Clean up the UI messages and loggers
+            if ( wikiContext != null )
+            {
+                wikiContext.getWikiSession().clearMessages();
+            }
         }
-        NDC.pop();
-        NDC.remove();
+        finally
+        {
+            NDC.pop();
+            NDC.remove();
+        }
     }
 
     /**
