@@ -138,7 +138,13 @@ public class CachingProvider
         //  of the interface.
         //
         m_cache.addCacheEventListener( m_allCollector, CacheEntryEventListener.class );
-        
+
+        //
+        //  FIXME: There's an interesting issue here... It would probably be
+        //  possible to DOS a JSPWiki instance by bombarding it with names that
+        //  do not exist, as they would fill the negcache.  Will need to
+        //  think about this some more...
+        //
         m_negCache = new Cache( true, false, false );
         
         m_textCache = new Cache( true, false, false,
@@ -191,12 +197,15 @@ public class CachingProvider
         throws ProviderException,
                RepositoryModifiedException
     {
+        boolean wasUpdated = false;
         // Sanity check; seems to occur sometimes
         if( name == null ) return null;
         
         try
         {
             WikiPage item = (WikiPage)m_cache.getFromCache( name, m_expiryPeriod );
+        
+            wasUpdated = true;
             
             if( item != null )
                 return item;
@@ -215,20 +224,8 @@ public class CachingProvider
             //  Just be careful that we don't accidentally leave the cache in a
             //  hung state
             //
-            try
-            {
-                refreshed = m_provider.getPageInfo( name, WikiPageProvider.LATEST_VERSION );
-            }
-            catch( ProviderException ex )
-            {
-                m_cache.cancelUpdate( name );   
-                throw ex;
-            }
-            catch( RuntimeException ex )
-            {
-                m_cache.cancelUpdate( name );
-                throw ex;
-            }
+
+            refreshed = m_provider.getPageInfo( name, WikiPageProvider.LATEST_VERSION );
             
             if( refreshed == null && cached != null )
             {
@@ -241,6 +238,7 @@ public class CachingProvider
                 m_historyCache.putInCache( name, null );
                 // We cache a page miss
                 m_negCache.putInCache( name, name );
+                wasUpdated = true;
                 
                 throw new RepositoryModifiedException( "Removed: "+name, name );
             }
@@ -254,6 +252,7 @@ public class CachingProvider
                     m_cache.putInCache( name, refreshed );
                     // Requests for this page are now no longer denied
                     m_negCache.putInCache( name, null );
+                    wasUpdated = true;
                     
                     throw new RepositoryModifiedException( "Added: "+name, name );
                     // return refreshed;
@@ -261,7 +260,6 @@ public class CachingProvider
 
                 // Cache page miss
                 m_negCache.putInCache( name, name );
-                m_cache.cancelUpdate( name );
             }
             else if( cached.getVersion() != refreshed.getVersion() )
             {
@@ -274,6 +272,7 @@ public class CachingProvider
 
                 m_textCache.flushEntry( name );
                 m_historyCache.flushEntry( name );
+                wasUpdated = true;
                 
                 return refreshed;
             }
@@ -288,7 +287,8 @@ public class CachingProvider
                 m_negCache.putInCache( name, null );
                 m_textCache.flushEntry( name );
                 m_historyCache.flushEntry( name );
-
+                wasUpdated = true;
+                
                 throw new RepositoryModifiedException( "Modified: "+name, name );
             }
             else
@@ -297,8 +297,14 @@ public class CachingProvider
                 m_cache.putInCache( name, cached );
                 // Requests for this page are now no longer denied
                 m_negCache.putInCache( name, null );
+                wasUpdated = true;
             }
             return cached;
+        }
+        finally
+        {
+            if( !wasUpdated )
+                m_cache.cancelUpdate(name);
         }
     }
 
@@ -490,7 +496,8 @@ public class CachingProvider
                RepositoryModifiedException
     {
         String text;
-
+        boolean wasUpdated = false;
+        
         if( pageName == null ) return null;
         
         WikiPage page = getPageInfoFromCache( pageName );
@@ -507,11 +514,13 @@ public class CachingProvider
                     text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
                 
                     m_textCache.putInCache( pageName, text );
-
+                    wasUpdated = true;
+                    
                     m_cacheMisses++;
                 }
                 else
                 {
+                    wasUpdated = true;
                     return null;
                 }
             }
@@ -524,25 +533,24 @@ public class CachingProvider
         {            
             if( pageExists(pageName) )
             {
-                try
-                {
-                    text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
+                text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
                     
-                    m_textCache.putInCache( pageName, text );
-
-                    m_cacheMisses++;
-                }
-                catch( ProviderException ex )
-                {
-                    m_textCache.cancelUpdate( pageName );
-                    throw ex;
-                }
+                m_textCache.putInCache( pageName, text );
+                wasUpdated = true;
+                    
+                m_cacheMisses++;
             }
             else
             {
                 m_textCache.putInCache( pageName, null );
+                wasUpdated = true;
                 return null; // No page exists
             }
+        }
+        finally
+        {
+            if( !wasUpdated )
+                m_textCache.cancelUpdate(pageName);
         }
         
         return text;
@@ -697,49 +705,48 @@ public class CachingProvider
         return page;
     }
 
-    public List getVersionHistory( String page )
+    public List getVersionHistory( String pageName )
         throws ProviderException
     {
         List history = null;
-
-        if( page == null ) return null;
+        boolean wasUpdated = false;
+        
+        if( pageName == null ) return null;
         try
         {
-            history = (List)m_historyCache.getFromCache( page,
+            history = (List)m_historyCache.getFromCache( pageName,
                                                          m_expiryPeriod );
 
-            log.debug("History cache hit for page "+page);
+            log.debug("History cache hit for page "+pageName);
             m_historyCacheHits++;
+            wasUpdated = true;
         }
         catch( NeedsRefreshException e )
         {
-            try
-            {
-                history = m_provider.getVersionHistory( page );
+            history = m_provider.getVersionHistory( pageName );
 
-                m_historyCache.putInCache( page, history );
-
-                log.debug("History cache miss for page "+page);
-                m_historyCacheMisses++;
-            }
-            catch( ProviderException ex )
-            {
-                m_historyCache.cancelUpdate( page );
-                throw ex;
-            }
+            m_historyCache.putInCache( pageName, history );
+                
+            log.debug("History cache miss for page "+pageName);
+            m_historyCacheMisses++;
+            wasUpdated = true;
         }
-
+        finally
+        {
+            if( !wasUpdated ) m_historyCache.cancelUpdate( pageName );
+        }
+        
         return history;
     }
 
     public synchronized String getProviderInfo()
     {              
         return("Real provider: "+m_provider.getClass().getName()+
-               "<br />Cache misses: "+m_cacheMisses+
-               "<br />Cache hits: "+m_cacheHits+
-               "<br />History cache hits: "+m_historyCacheHits+
-               "<br />History cache misses: "+m_historyCacheMisses+
-               "<br />Cache consistency checks: "+m_expiryPeriod+"s");
+               ". Cache misses: "+m_cacheMisses+
+               ". Cache hits: "+m_cacheHits+
+               ". History cache hits: "+m_historyCacheHits+
+               ". History cache misses: "+m_historyCacheMisses+
+               ". Cache consistency checks: "+m_expiryPeriod+"s");
     }
 
     public void deleteVersion( String pageName, int version )
@@ -819,25 +826,29 @@ public class CachingProvider
     /**
      *  This is a simple class that keeps a list of all WikiPages that
      *  we have in memory.  Because the OSCache cannot give us a list
-     *  of all pages currently in cache, we'll have to check this.
+     *  of all pages currently in cache, we'll have to check this
+     *  ourselves.
      * 
      *  @author jalkanen
      *
-     *  @since
+     *  @since 2.4
      */
     private class CacheItemCollector
         implements CacheEntryEventListener
     {
-        private TreeSet m_allItems = new TreeSet();
+        private Map m_allItems = new HashMap();
         
         /**
-         * 
          * Returns a clone of the set - you cannot manipulate this.
+         *
          * @return
          */
         public Set getAllItems()
         {
-            return (Set)m_allItems.clone();
+            Set ret = new TreeSet();
+            ret.addAll(m_allItems.values());
+        
+            return ret;
         }
         
         public void cacheEntryAdded( CacheEntryEvent arg0 )
@@ -879,28 +890,14 @@ public class CachingProvider
             if( item != null )
             {
                 // Item added or replaced.
-                m_allItems.add( item );
+                m_allItems.put( item.getName(), item );
             }
             else
             {
                 // Removed item
                 // FIXME: If the page system is changed during this time, we'll just fail gracefully
                 
-                try
-                {
-                    for( Iterator i = m_allItems.iterator(); i.hasNext(); )
-                    {
-                        WikiPage p = (WikiPage)i.next();
-                    
-                        if( p.getName().equals( arg0.getKey() ) )
-                        {
-                            i.remove();
-                            break;
-                        }
-                    }
-                }
-                catch( Exception e )
-                {}
+                m_allItems.remove( arg0.getKey() );
             }
         }
     }
