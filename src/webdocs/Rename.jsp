@@ -42,9 +42,6 @@
            String renamedTo = wiki.renamePage(renameFrom, renameTo, changeReferences);
 
            log.info("Page successfully renamed to '"+renamedTo+"'");
-     
-           //Encoding is necessary in case the page name contains special chars like german Umlaute
-           renamedTo = wiki.encodeName(renamedTo);
 
            response.sendRedirect( wikiContext.getURL( WikiContext.VIEW, renamedTo ) );
         }
