@@ -377,7 +377,7 @@ public class SpamFilter
      *
      *  @since
      */
-    public class Host
+    private class Host
     {
         private  long m_addedTime = System.currentTimeMillis();
         private  long m_releaseTime;
