@@ -14,7 +14,6 @@ import javax.security.auth.spi.LoginModule;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.Role;
 
 /**
  * Abstract JAAS {@link javax.security.auth.spi.LoginModule}that implements
@@ -23,7 +22,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-02-04 21:35:05 $
+ * @version $Revision: 1.8 $ $Date: 2006-04-17 09:40:16 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule
