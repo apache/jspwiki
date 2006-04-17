@@ -191,12 +191,14 @@ public class VersioningFileProvider
         {
             long lastModified = propertyFile.lastModified();
 
-            // The profiler showed that when calling the history of a page the propertyfile
+            //
+            //   The profiler showed that when calling the history of a page the propertyfile
             //   was read just as much times as there were versions of that file. The loading
             //   of a propertyfile is a cpu-intensive jobs. So now hold on to the last propertyfile
             //   read because the next method will with a high probability ask for the same propertyfile.
             //   The time it took to show a historypage with 267 versions dropped with 300%. 
-
+            //
+            
             CachedProperties cp = m_cachedProperties;
             
             if( cp != null 
@@ -206,22 +208,29 @@ public class VersioningFileProvider
                 return cp.m_props;
             }
             
-            InputStream in = new FileInputStream( propertyFile );
-
-            Properties props = new Properties();
-
-            props.load(in);
-
-            in.close();
+            InputStream in = null;
             
-            cp = new CachedProperties();
-            cp.m_page = page;
-            cp.m_lastModified = lastModified;
-            cp.m_props = props;
-            
-            m_cachedProperties = cp; // Atomic
-            
-            return props;
+            try
+            {
+                in = new BufferedInputStream(new FileInputStream( propertyFile ));
+
+                Properties props = new Properties();
+
+                props.load(in);
+
+                cp = new CachedProperties();
+                cp.m_page = page;
+                cp.m_lastModified = lastModified;
+                cp.m_props = props;
+                
+                m_cachedProperties = cp; // Atomic
+                
+                return props;
+            }
+            finally
+            {
+                if( in != null ) in.close();
+            }
         }
         
         return new Properties(); // Returns an empty object
@@ -235,12 +244,18 @@ public class VersioningFileProvider
         throws IOException
     {
         File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
+        OutputStream out = null;
+        
+        try
+        {
+            out = new FileOutputStream( propertyFile );
 
-        OutputStream out = new FileOutputStream( propertyFile );
-
-        properties.store( out, " JSPWiki page properties for "+page+". DO NOT MODIFY!" );
-
-        out.close();
+            properties.store( out, " JSPWiki page properties for "+page+". DO NOT MODIFY!" );
+        }
+        finally
+        {
+            if( out != null ) out.close();
+        }
     }
 
     /**
@@ -378,7 +393,7 @@ public class VersioningFileProvider
         try
         {
             //
-            // Copy old data, if one exists.
+            // Copy old data to safety, if one exists.
             //
 
             File oldFile = findPage( page.getName() );
@@ -392,24 +407,32 @@ public class VersioningFileProvider
 
             if( oldFile != null && oldFile.exists() )
             {
-                InputStream in = new BufferedInputStream( new FileInputStream( oldFile ) );
-                File pageFile = new File( pageDir, Integer.toString( versionNumber )+FILE_EXT );
-                OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
+                InputStream in = null;
+                OutputStream out = null;
+                
+                try
+                {
+                    in = new BufferedInputStream( new FileInputStream( oldFile ) );
+                    File pageFile = new File( pageDir, Integer.toString( versionNumber )+FILE_EXT );
+                    out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
 
-                FileUtil.copyContents( in, out );
+                    FileUtil.copyContents( in, out );
 
-                out.close();
-                in.close();
+                    //
+                    // We need also to set the date, since we rely on this.
+                    //
+                    pageFile.setLastModified( oldFile.lastModified() );
 
-                //
-                // We need also to set the date, since we rely on this.
-                //
-                pageFile.setLastModified( oldFile.lastModified() );
-
-                //
-                // Kludge to make the property code to work properly.
-                //
-                versionNumber++;
+                    //
+                    // Kludge to make the property code to work properly.
+                    //
+                    versionNumber++;
+                }
+                finally
+                {
+                    if( out != null ) out.close();
+                    if( in  != null ) in.close();
+                }
             }
 
             //
@@ -432,6 +455,7 @@ public class VersioningFileProvider
         catch( IOException e )
         {
             log.error( "Saving failed", e );
+            throw new ProviderException("Could not save page text: "+e.getMessage());
         }
     }
 
@@ -629,18 +653,18 @@ public class VersioningFileProvider
             File pageDir = findOldPageDir( page );
             File previousFile = new File( pageDir, Integer.toString(latest)+FILE_EXT );
 
+            InputStream in = null;
+            OutputStream out = null;
+            
             try
             {
                 if( previousFile != null && previousFile.exists() )
                 {
-                    InputStream in = new BufferedInputStream( new FileInputStream( previousFile ) );
+                    in = new BufferedInputStream( new FileInputStream( previousFile ) );
                     File pageFile = findPage(page);
-                    OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
+                    out = new BufferedOutputStream( new FileOutputStream( pageFile ) );
 
                     FileUtil.copyContents( in, out );
-
-                    out.close();
-                    in.close();
 
                     //
                     // We need also to set the date, since we rely on this.
@@ -652,7 +676,19 @@ public class VersioningFileProvider
             {
                 log.fatal("Something wrong with the page directory - you may have just lost data!",e);
             }
-                        
+            finally
+            {
+                try
+                {
+                    if( in != null ) in.close();
+                    if( out != null) out.close();
+                }
+                catch( IOException ex )
+                {
+                    log.error("Closing failed",ex);
+                }
+            }
+            
             return;
         }
 
