@@ -1,3 +1,22 @@
+/* 
+  JSPWiki - a JSP-based WikiWiki clone.
+
+  Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation; either version 2.1 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 package com.ecyrd.jspwiki.render;
 
 import java.io.IOException;
@@ -8,6 +27,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.filters.FilterException;
@@ -16,6 +36,7 @@ import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.providers.CachingProvider;
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 
@@ -23,42 +44,56 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  This class provides a facade towards the differing rendering routines.  You should
  *  use the routines in this manager instead of the ones in WikiEngine, if you don't
  *  want the different side effects to occur - such as WikiFilters.
- *  
+ *  <p>
+ *  This class also manages a rendering cache, i.e. documents are stored between calls.
+ *  You may control the size of the cache by using the "jspwiki.renderingManager.cacheSize"
+ *  parameter in jspwiki.properties.  The property value is the number of items that
+ *  are stored in the cache.  By default, the value of this parameter is taken from
+ *  the "jspwiki.cachingProvider.cacheSize" parameter (i.e. the rendering cache is
+ *  the same size as the page cache), but you may control them separately.
+ *  <p>
+ *  You can turn caching completely off by stating a cacheSize of zero.
+ *   
  *  @author jalkanen
  *  @since  2.4
  */
 public class RenderingManager implements PageFilter
 {
-    private int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
     private static Logger log = Logger.getLogger( RenderingManager.class );
 
-    public static final String PROP_USECACHE = "jspwiki.renderingManager.useCache";
- 
-    /** 
-     * True if RenderingManager should cache built DOM trees. 
-     * The default is true.
-     * Set jspwiki.renderingManager.useCache in the properties to false
-     * to prevent this.
-     */
-    private boolean m_useCache = true;
+    private              int    m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
+
+    public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";    
+    private static final int    DEFAULT_CACHESIZE = 1000;
+    private static final String OSCACHE_ALGORITHM = "com.opensymphony.oscache.base.algorithm.LRUCache";
    
     /**
-     *  Creates a new unlimited cache.  A good question is, whether this
-     *  cache should be limited - at the moment it will just keep on growing,
-     *  if the page is never accessed.
+     *  Stores the WikiDocuments that have been cached.
      */
-    // FIXME: Memory leak
-    private Cache m_documentCache;
+    private              Cache  m_documentCache;
     
+    /**
+     *  Initializes the RenderinManager.
+     *  
+     *  @param engine A WikiEngine instance.
+     *  @param properties A list of properties to get parameters from.
+     */
     public void initialize( WikiEngine engine, Properties properties )
     {
-        String s = properties.getProperty( PROP_USECACHE );
-        s = (s == null ? "true" : s);
-        Boolean b = new Boolean( s );
-        m_useCache = b.booleanValue();
-        if( m_useCache ) 
+        int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
+            
+        if( cacheSize == -1 )
         {
-            m_documentCache = new Cache(true,false,false); 
+            cacheSize = TextUtil.getIntegerProperty( properties, 
+                                                     CachingProvider.PROP_CACHECAPACITY, 
+                                                     DEFAULT_CACHESIZE );
+        }
+        
+        if( cacheSize > 0 )
+        {
+            m_documentCache = new Cache(true,false,false,false,
+                                        OSCACHE_ALGORITHM,
+                                        cacheSize);
         }
         else
         {
@@ -83,7 +118,7 @@ public class RenderingManager implements PageFilter
     }
     
     /**
-     *  Returns a cached object, if one is found.
+     *  Returns a cached document, if one is found.
      *  
      * @param context the wiki context
      * @param pagedata the page data
@@ -97,12 +132,16 @@ public class RenderingManager implements PageFilter
     {
         String pageid = context.getRealPage().getName()+"::"+context.getRealPage().getVersion();
 
-        if( m_useCache ) 
+        boolean wasUpdated = false;
+        
+        if( m_documentCache != null ) 
         {
             try
             {
                 WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pageid, 
                                                                                 m_cacheExpiryPeriod );
+
+                wasUpdated = true;
                 
                 //
                 //  This check is needed in case the different filters have actually
@@ -123,21 +162,25 @@ public class RenderingManager implements PageFilter
         //
         //  Refresh the data content
         //
-        MarkupParser parser = getParser( context, pagedata );
         try
         {
+            MarkupParser parser = getParser( context, pagedata );
             WikiDocument doc = parser.parse();
             doc.setPageData( pagedata );
-            if( m_useCache ) 
+            if( m_documentCache != null ) 
             {
                 m_documentCache.putInCache( pageid, doc );
+                wasUpdated = true;
             }
             return doc;
         }
         catch( IOException ex )
         {
             log.error("Unable to parse",ex);
-            if( m_useCache ) m_documentCache.cancelUpdate( pageid );
+        }
+        finally
+        {
+            if( m_documentCache != null && !wasUpdated ) m_documentCache.cancelUpdate( pageid );
         }
         
         return null;
@@ -145,7 +188,10 @@ public class RenderingManager implements PageFilter
     
     /**
      *  Simply renders a WikiDocument to a String.  This version does not get the document
-     *  from the cache - in fact, it does not cache the document at all.
+     *  from the cache - in fact, it does not cache the document at all.  This is
+     *  very useful, if you have something that you want to render outside the caching
+     *  routines.  Because the cache is based on full pages, and the cache keys are
+     *  based on names, use this routine if you're rendering anything for yourself.
      *  
      *  @param context The WikiContext to render in
      *  @param doc A proper WikiDocument
@@ -167,9 +213,9 @@ public class RenderingManager implements PageFilter
      *   internally, and will return the cached version.  If the pagedata is different
      *   from what was cached, will re-render and store the pagedata into the internal cache.
      *   
-     *  @param context the wiki context
-     *  @param pagedata the page data
-     *  @return XHTML data.
+     *   @param context the wiki context
+     *   @param pagedata the page data
+     *   @return XHTML data.
      */
     public String getHTML( WikiContext context, String pagedata )
     {
@@ -200,7 +246,7 @@ public class RenderingManager implements PageFilter
     public void postSave( WikiContext wikiContext, String content ) throws FilterException
     {
         String pageName = wikiContext.getPage().getName();
-        if( m_useCache )
+        if( m_documentCache != null )
         {
             m_documentCache.flushPattern( pageName );
             Set referringPages = wikiContext.getEngine().getReferenceManager().findReferredBy( pageName );
