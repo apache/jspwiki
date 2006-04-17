@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  * {@link #getSession(boolean)}. All others either return null, or don't work
  * they way they should.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-02-04 21:51:39 $
+ * @version $Revision: 1.4 $ $Date: 2006-04-17 10:52:44 $
  */
 public class TestHttpServletRequest implements HttpServletRequest
 {
@@ -488,6 +488,30 @@ public class TestHttpServletRequest implements HttpServletRequest
     public void setUserPrincipal( Principal principal )
     {
         m_userPrincipal = principal;
+    }
+
+    public int getRemotePort()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public String getLocalName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getLocalAddr()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public int getLocalPort()
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }
