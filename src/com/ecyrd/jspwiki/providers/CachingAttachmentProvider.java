@@ -323,8 +323,8 @@ public class CachingAttachmentProvider
     public synchronized String getProviderInfo()
     {              
         return("Real provider: "+m_provider.getClass().getName()+
-               "<br />Cache misses: "+m_cacheMisses+
-               "<br />Cache hits: "+m_cacheHits);
+               ".  Cache misses: "+m_cacheMisses+
+               ".  Cache hits: "+m_cacheHits);
     }
 
     public WikiAttachmentProvider getRealProvider()
