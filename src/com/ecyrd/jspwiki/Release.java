@@ -39,11 +39,11 @@ public class Release
      *  values are "-alpha" and "-beta" for alpha and beta versions,
      *  respectively.
      */
-    private static final String    POSTFIX       = "-alpha";
+    private static final String    POSTFIX       = "-cvs";
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 3;
-    public static final int        MINORREVISION = 100;
+    public static final int        MINORREVISION = 101;
 
     /**
      *  This is the generic version string you should use
