@@ -255,7 +255,6 @@ public class CachingProvider
                     wasUpdated = true;
                     
                     throw new RepositoryModifiedException( "Added: "+name, name );
-                    // return refreshed;
                 }
 
                 // Cache page miss
@@ -299,6 +298,7 @@ public class CachingProvider
                 m_negCache.putInCache( name, null );
                 wasUpdated = true;
             }
+
             return cached;
         }
         finally
@@ -506,6 +506,7 @@ public class CachingProvider
         {
             text = (String)m_textCache.getFromCache( pageName,
                                                      m_pageContentExpiryPeriod );
+            wasUpdated = true;
             
             if( text == null )
             {
@@ -514,13 +515,11 @@ public class CachingProvider
                     text = m_provider.getPageText( pageName, WikiPageProvider.LATEST_VERSION );
                 
                     m_textCache.putInCache( pageName, text );
-                    wasUpdated = true;
                     
                     m_cacheMisses++;
                 }
                 else
                 {
-                    wasUpdated = true;
                     return null;
                 }
             }
