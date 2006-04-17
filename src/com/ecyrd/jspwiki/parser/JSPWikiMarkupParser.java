@@ -56,6 +56,9 @@ import com.ecyrd.jspwiki.render.CleanTextRenderer;
 public class JSPWikiMarkupParser
     extends MarkupParser
 {
+    /** Name of the outlink image; relative path to the JSPWiki directory. */
+    private static final String OUTLINK_IMAGE = "images/out.png";
+    
     private static final int              READ          = 0;
     private static final int              EDIT          = 1;
     private static final int              EMPTY         = 2;  // Empty message
@@ -1006,14 +1009,30 @@ public class JSPWikiMarkupParser
         return m_currentElement;
     }
 
+    /** Holds the image URL for the duration of this parser */
+    private String m_outlinkImageURL = null;
+    
+    /**
+     *  Returns an element for the external link image (out.png).  However,
+     *  this method caches the URL for the lifetime of this MarkupParser,
+     *  because it's commonly used, and we'll end up with possibly hundreds
+     *  our thousands of references to it...  It's a lot faster, too.
+     *  
+     *  @return  An element containing the HTML for the outlink image.
+     */
     private Element outlinkImage()
     {
         Element el = null;
         
         if( m_useOutlinkImage )
         {
+            if( m_outlinkImageURL == null )
+            {
+                m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
+            }
+            
             el = new Element("img").setAttribute("class", "outlink");
-            el.setAttribute( "src", m_context.getURL( WikiContext.NONE,"images/out.png" ) );
+            el.setAttribute( "src", m_outlinkImageURL );
             el.setAttribute("alt","");
         }
 
@@ -1039,12 +1058,14 @@ public class JSPWikiMarkupParser
         }
         else
         {
-            result = makeLink( EXTERNAL, url, url,null );
+            result = makeLink( EXTERNAL, url, url, null );
             addElement( outlinkImage() );
         }
 
         if( last != null )
+        {
             m_plainTextBuf.append(last);
+        }
         
         return result;
     }
