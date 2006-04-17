@@ -21,6 +21,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
@@ -33,7 +34,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.14 $ $Date: 2006-02-21 19:49:58 $
+ * @version $Revision: 1.15 $ $Date: 2006-04-17 09:39:31 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -75,7 +76,10 @@ public class WebContainerAuthorizer implements Authorizer
     {
         m_engine = engine;
         m_containerAuthorized = false;
-        try {
+
+        // FIXME: Error handling here is not very verbose
+        try 
+        {
             Document webxml = getWebXml();
             if ( webxml != null )
             {
@@ -94,11 +98,13 @@ public class WebContainerAuthorizer implements Authorizer
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( e.getMessage() );
+            log.error("Initialization failed: ",e);
+            throw new InternalWikiException( e.getClass().getName()+": "+e.getMessage() );
         }
         catch ( JDOMException e )
         {
-            throw new RuntimeException( e.getMessage() );
+            log.error("Malformed XML in web.xml",e);
+            throw new InternalWikiException( e.getClass().getName()+": "+e.getMessage() );
         }
         
         if ( m_containerRoles.length > 0 )
@@ -304,13 +310,18 @@ public class WebContainerAuthorizer implements Authorizer
         {
             ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
             url = cl.getResource( "WEB-INF/web.xml" );
-            log.info( "Examining " + url.toExternalForm() );
+            if( url != null )
+                log.info( "Examining " + url.toExternalForm() );
         }
         else
         {
             url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
-            log.info( "Examining " + url.toExternalForm() );
+            if( url != null )
+                log.info( "Examining " + url.toExternalForm() );
         }
+        if( url == null )
+            throw new IOException("Unable to find web.xml for processing.");
+            
         log.debug( "Processing web.xml at " + url.toExternalForm() );
         doc = builder.build( url );
         return doc;
@@ -324,7 +335,7 @@ public class WebContainerAuthorizer implements Authorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.14 $ $Date: 2006-02-21 19:49:58 $
+     * @version $Revision: 1.15 $ $Date: 2006-04-17 09:39:31 $
      */
     public class LocalEntityResolver implements EntityResolver
     {
@@ -360,6 +371,19 @@ public class WebContainerAuthorizer implements Authorizer
                 log.debug( "Resolved systemID=" + systemId + " using local file " + url );
                 return is;
             }
+            
+            //
+            //  Let's fall back to default behaviour of the container, and let's
+            //  also let the user know what is going on.  This caught me by surprise
+            //  while running JSPWiki on an unconnected laptop...
+            //
+            //  The DTD needs to be resolved and read because it contains things like
+            //  entity definitions...
+            //
+            log.info("Please note: There are no local DTD references in /WEB-INF/dtd/"+file+"; falling back to default behaviour."+
+                     " This may mean that the XML parser will attempt to connect to the internet to find the DTD."+
+                     " If you are running JSPWiki locally in an unconnected network, you might want to put the DTD files in place to avoid nasty UnknownHostExceptions.");
+            
             
             // Fall back to default behaviour
             return null;
