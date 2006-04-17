@@ -1,5 +1,21 @@
 2006-04-17  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.3.102
+        
+        * DavServlet was not properly reading UTF-8 file names
+        
+        * CachingProvider was calling cancelUpdate() accidentally
+        when it wasn't supposed to.
+        
+        * BreadCrumbsTag default icon is now "," instead of ">", since
+        it was not a) proper XHTML, and b) it was confusing people.
+        Reported by Dirk Fredericx et al.
+        
+        * DefaultURLConstructor was still assuming all URIs are in
+        Latin1 instead of relying on the request encoding.  This would
+        cause problems with non-Latin1 page names (even when using UTF-8).
+        Reported and fixed by Mikkel Troest.
+        
         * 2.3.101
         
         * Upgraded to OSCache 2.3.1 to fix some issues with stability
