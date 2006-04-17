@@ -201,7 +201,7 @@ public class VariableManager
 
         // Faster than doing equalsIgnoreCase()
         String name = varName.toLowerCase();
-        String res = "";
+        StringBuffer res = new StringBuffer();
 
         for( int i = 0; i < THE_BIG_NO_NO_LIST.length; i++ )
         {
@@ -211,50 +211,54 @@ public class VariableManager
         
         if( name.equals("pagename") )
         {
-            res = context.getPage().getName();
+            return context.getPage().getName();
         }
         else if( name.equals("applicationname") )
         {
-            res = context.getEngine().getApplicationName();
+            return context.getEngine().getApplicationName();
         }
         else if( name.equals("jspwikiversion") )
         {
-            res = Release.getVersionString();
+            return Release.getVersionString();
         }
         else if( name.equals("encoding") )
         {
-            res = context.getEngine().getContentEncoding();
+            return context.getEngine().getContentEncoding();
         }
         else if( name.equals("totalpages") )
         {
-            res = Integer.toString(context.getEngine().getPageCount());
+            return Integer.toString(context.getEngine().getPageCount());
         }
         else if( name.equals("pageprovider") )
         {
-            res = context.getEngine().getCurrentProvider();
+            return context.getEngine().getCurrentProvider();
         }
         else if( name.equals("pageproviderdescription") )
         {
-            res = context.getEngine().getCurrentProviderInfo();
+            return context.getEngine().getCurrentProviderInfo();
         }
         else if( name.equals("attachmentprovider") )
         {
             WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
-            res = (p != null) ? p.getClass().getName() : "-";
+            return (p != null) ? p.getClass().getName() : "-";
         }
         else if( name.equals("attachmentproviderdescription") )
         {
             WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
 
-            res = (p != null) ? p.getProviderInfo() : "-";
+            return (p != null) ? p.getProviderInfo() : "-";
         }
         else if( name.equals("interwikilinks") )
         {
             // FIXME: Use StringBuffer
             for( Iterator i = context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
             {
+                if( res.length() > 0 ) res.append(", ");
                 String link = (String) i.next();
-                res += link+" --&gt; "+context.getEngine().getInterWikiURL(link)+"<br />\n";
+                res.append( link );
+                res.append( " --> " );
+                res.append( context.getEngine().getInterWikiURL(link) );
+                
             }
         }
         else if( name.equals("inlinedimages") )
@@ -262,20 +266,21 @@ public class VariableManager
             // FIXME: Use StringBuffer
             for( Iterator i = context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
+                if( res.length() > 0 ) res.append(", ");
+                
                 String ptrn = (String) i.next();
-                res += ptrn+"<br />\n";
+                res.append(ptrn);
             }
         }
         else if( name.equals("pluginpath") )
         {
-            res = context.getEngine().getPluginSearchPath();
+            String s = context.getEngine().getPluginSearchPath();
 
-            res = (res == null) ? "-" : res;
+            return (s == null) ? "-" : s;
         }
         else if( name.equals("baseurl") )
         {
-            // HttpServletRequest request = context.getHttpRequest();
-            res = context.getEngine().getBaseURL();
+            return context.getEngine().getBaseURL();
         }
         else if( name.equals("uptime") )
         {
@@ -350,11 +355,13 @@ public class VariableManager
 
                 try
                 {
-                    if( (res = (String)session.getAttribute( varName )) != null )
-                        return res;
+                    String s;
+                    
+                    if( (s = (String)session.getAttribute( varName )) != null )
+                        return s;
 
-                    if( (res = context.getHttpParameter( varName )) != null )
-                        return res;
+                    if( (s = context.getHttpParameter( varName )) != null )
+                        return s;
                 }
                 catch( ClassCastException e ) {}
             }
@@ -378,10 +385,10 @@ public class VariableManager
             {
                 Properties props = context.getEngine().getWikiProperties();
 
-                res = props.getProperty( varName );
-                if( res != null )
+                String s = props.getProperty( varName );
+                if( s != null )
                 {
-                    return res;
+                    return s;
                 }
             }
             
@@ -395,6 +402,6 @@ public class VariableManager
             throw new NoSuchVariableException( "No variable "+varName+" defined." );
         }
         
-        return res;
+        return res.toString();
     }
 }
