@@ -243,7 +243,7 @@ public class DefaultURLConstructor
         //  as Latin1, even if they are really UTF-8.
         //
         
-        name = TextUtil.urlDecode( name, encoding );
+        // name = TextUtil.urlDecode( name, encoding );
         
         return name;
     }
