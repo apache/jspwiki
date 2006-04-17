@@ -150,7 +150,10 @@ public class WikiDavServlet extends WebdavServlet
         throws ServletException, IOException
     {
         // Do the "sanitize url" trick
-        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
+        // String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
+        
+        req.setCharacterEncoding( m_engine.getContentEncoding() );
+        String p = req.getPathInfo();
         
         DavPath path = new DavPath( p );
         
