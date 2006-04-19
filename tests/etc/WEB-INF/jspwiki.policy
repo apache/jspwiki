@@ -1,0 +1,122 @@
+// $Id: jspwiki.policy,v 1.1 2006-04-19 20:52:27 jalkanen Exp $
+//
+// This file contains the Java 2 security policy for JSPWiki.
+// It provides the permissions rules for the JSPWiki
+// environment, and should be suitable for most 
+// purposes.
+//
+// If you are running your servlet container with a security
+// policy already, you should simply append the contents
+// of this file to it. Otherwise, you can use this as a
+// stand-alone policy, even without running a security manager.
+//
+// By default, JSPWiki will load this policy into your web
+// container if it detects that no custom policies are being
+// used. In most cases, this should work just fine.
+//
+// If you want to use your own policy file instead of this default file,
+// you will need to specify the location of the policy by setting the
+// JVM system property 'java.security.policy' in the command line script
+// you use to start your web container. The file location should
+// be the absolute path to the jspwiki.policy file. For example:
+//
+//   java -jar myservletcontainer.jar -Djava.security.policy=/path-to/jspwiki.policy
+// 
+// Some servlet containers make this very easy by looking
+// for an environment variable and automatically appending
+// the contents to the 'java' command. For example, Tomcat
+// users just need to set the CATALINA_OPTS variable:
+// 
+//   export CATALINA_OPTS="-Djava.security.policy=/path-to/jspwiki.policy"
+//
+// In addition, it is typically good practice to store jspwiki.policy
+// in the Tomcat config directory (CATALINA_HOME/conf).
+//
+//
+// -----------------------------------------------------------
+// And now, for the security policy
+//
+//
+// JSPWiki signs its own JAR files so that the Java security polcicy knows how
+// to resolve our custom Wiki/PagePermissions. The keystore is specified in the
+// first line of the file, as shown below. If the path is not fully qualified, 
+// the JRE will assume it's in the same directory as this policy file.
+
+keystore "jspwiki.jks";
+
+// JSPWiki itself needs some basic privileges in order to operate.
+// If you are running JSPWiki with a security manager, don't change these,
+// because it will totally b0rk the system.
+
+grant signedBy "jspwiki" {
+    permission java.security.SecurityPermission   "getPolicy";
+    permission java.security.SecurityPermission   "setPolicy";
+    permission java.util.PropertyPermission       "java.security.auth.login.config", "write";
+    permission java.util.PropertyPermission       "java.security.policy", "read,write";
+    permission javax.security.auth.AuthPermission "getLoginConfiguration";
+    permission javax.security.auth.AuthPermission "setLoginConfiguration";
+};
+
+
+// The first policy block is extremely loose, and unsuited for public-facing wikis.
+// Anonymous users are allowed to view, create, edit and comment on all pages
+// (except group pages). Anonymous users can also register with the wiki; 
+// to edit their profile after registration, they must log in.
+//
+// Note: For Internet-facing wikis, you are strongly advised to remove the 
+// lines containing the "edit" and "createPages" permissions; this will make
+// the wiki read-only for anonymous users.
+
+grant signedBy "jspwiki" 
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
+};
+
+
+// This next policy block is also pretty loose. It allows users who claim to
+// be someone (via their cookie) to view, create, edit and comment on all pages
+// (except group pages). Anonymous users can also register with the wiki;
+// to edit their profile after registration, they must log in.
+
+grant signedBy "jspwiki"
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
+};
+
+
+// Authenticated users can do most things: view, create, edit and 
+// comment on all pages; upload files to existing ones; create and edit
+// wiki groups; and rename existing pages. Authenticated users can register
+// with the wiki, and edit their own profiles.
+
+grant signedBy "jspwiki" 
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "modify,rename";
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
+};
+
+
+// Administrators also are allowed to delete any page, and can edit, 
+// rename and delete groups. To activate the administrator group, 
+// uncomment this block and create a wiki group called "Admin".
+// You should also match the permission target (here, 'JSPWiki') with
+// the value of the 'jspwiki.applicationName' property in jspwiki.properties.
+
+//grant signedBy "jspwiki"
+//  principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
+//    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "JSPWiki";
+//};
