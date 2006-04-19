@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.auth;
 
+import java.io.File;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.Policy;
@@ -72,7 +73,7 @@ import org.apache.log4j.Logger;
  * </p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-03-30 04:56:04 $
+ * @version $Revision: 1.5 $ $Date: 2006-04-19 20:49:43 $
  * @since 2.3
  */
 public class PolicyLoader 
@@ -160,9 +161,39 @@ public class PolicyLoader
                 return System.getProperty("java.security.policy");
             }
         });
+        
         if ( policy != null )
         {
             log.info( "Java security policy already set to: " + policy + ". (Leaving it alone...)" );
+            
+            //
+            //  Do a bit of a sanity checks to help people who are not familiar with JAAS.
+            //
+            File f = new File(policy);
+            
+            if( !f.exists() )
+            {
+                log.warn("You have set your 'java.security.policy' to point at '"+f.getAbsolutePath()+"', "+
+                         "but that file does not seem to exist.  I'll continue anyway, since this may be "+
+                         "something specific to your servlet container.  Just consider yourself warned." );
+            }
+            
+            File jks = new File( f.getParentFile(), "jspwiki.jks" );
+            
+            if( !jks.exists() || !jks.canRead() )
+            {
+                log.warn("I could not locate the JSPWiki keystore ('jspwiki.jks') in the same directory "+
+                         "as your jspwiki.policy file. On many servlet containers, such as Tomcat, this "+
+                         "needs to be done.  If you keep having access right permissions, please try "+
+                         "copying your WEB-INF/jspwiki.jks to "+f.getParentFile().getAbsolutePath() );
+            }
+            else
+            {
+                log.info("Found 'jspwiki.jks' from '"+f.getParentFile().getAbsolutePath()+"'.  If you are having "+
+                         "permission issues after an upgrade, please make sure that this file matches the one that "+
+                         "came with your distribution archive.");
+            }
+            
         }
         return (policy != null);
     }
