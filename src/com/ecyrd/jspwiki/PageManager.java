@@ -454,6 +454,7 @@ public class PageManager
         public void run()
         {
             setName("JSPWiki Lock Reaper Thread");
+            setDaemon(true);
             
             while( true )
             {
