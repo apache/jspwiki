@@ -511,14 +511,14 @@ public class WikiContext
             {
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                m_session.addMessage("You don't have access to '" + pageurl + "'. Do you want to log in as another user?.");
+                m_session.addMessage("You don't have access to '" + m_engine.decodeName(pageurl) + "'. Do you want to log in as another user?.");
                 response.sendRedirect( m_engine.getURL(WikiContext.NONE,"Login.jsp","page="+pageurl, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                m_session.addMessage("You don't have access to '" + pageurl + "'. Log in first.");
+                m_session.addMessage("You don't have access to '" + m_engine.decodeName(pageurl) + "'. Please log in first.");
                 response.sendRedirect( m_engine.getURL(WikiContext.NONE, "Login.jsp", "page="+pageurl, false ) );
             }
         }
