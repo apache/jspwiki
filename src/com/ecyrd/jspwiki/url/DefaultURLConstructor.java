@@ -23,8 +23,11 @@ import java.util.Properties;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.TextUtil;
@@ -128,12 +131,25 @@ public class DefaultURLConstructor
 
         baseptrn = TextUtil.replaceString( baseptrn, "%u", baseurl );
         baseptrn = TextUtil.replaceString( baseptrn, "%U", m_engine.getBaseURL() );
-        baseptrn = TextUtil.replaceString( baseptrn, "%n", m_engine.encodeName(name) );
+        baseptrn = TextUtil.replaceString( baseptrn, "%n", encodeURI(name) );
         baseptrn = TextUtil.replaceString( baseptrn, "%p", m_pathPrefix );
 
         return baseptrn;
     }
 
+    /**
+     *  URLEncoder returns pluses, when we want to have the percent
+     *  encoding.  See http://issues.apache.org/bugzilla/show_bug.cgi?id=39278
+     *  for more info.
+     */
+    private final String encodeURI( String uri )
+    {
+        uri = m_engine.encodeName(uri);
+        
+        uri = StringUtils.replace( uri, "+", "%20" );
+        
+        return uri;
+    }
     
     /**
      *   Returns the pattern used for each URL style.
@@ -218,6 +234,41 @@ public class DefaultURLConstructor
         return pagereq;
     }
 
+    /**
+     *  There's a bug in Tomcat until 5.5.16 at least: The "+" sign is not
+     *  properly decoded by the servlet container, and therefore request.getPathInfo()
+     *  will return faulty results for paths which contains + signs to signify spaces.
+     *  <p>
+     *  This method provides a workaround by simply parsing the getRequestURI(), which
+     *  is returned from the servlet container undedecoded.
+     *  <p>
+     *  Please see <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=39278">Tomcat Bug 39278</a>
+     *  for more information.
+     *  
+     *  @param request A HTTP servlet request
+     *  @param encoding The used encoding
+     *  @return a String, decoded by JSPWiki, specifying extra path information that comes 
+     *          after the servlet path but before the query string in the request URL; 
+     *          or null if the URL does not have any extra path information
+     *  @throws UnsupportedEncodingException
+     */
+    private static String getPathInfo( HttpServletRequest request, String encoding )
+        throws UnsupportedEncodingException
+    {
+        String c = request.getContextPath(); // Undecoded
+        String s = request.getServletPath(); // Decoded
+        String u = request.getRequestURI();  // Undecoded
+        
+        c = URLDecoder.decode( c, encoding );
+        u = URLDecoder.decode( u, encoding );
+        
+        String pi = u.substring( s.length()+c.length() );
+        
+        if( pi.length() == 0 ) pi = null;
+        
+        return pi;
+    }
+    
     /**
      *  Takes the name of the page from the request URI.
      *  The initial slash is also removed.  If there is no page,
