@@ -1,3 +1,14 @@
+2006-04-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.103
+        
+        * Great URL mixup fix: we're now using %20 to encode spaces
+        instead of "+".  This is because of
+        http://issues.apache.org/bugzilla/show_bug.cgi?id=39278.
+        In addition, we're moving away from using TextUtil.urlEncode().
+        
+        * 
+
 2006-04-17  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.102
