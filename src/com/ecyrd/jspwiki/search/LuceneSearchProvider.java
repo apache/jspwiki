@@ -19,18 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 package com.ecyrd.jspwiki.search;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -48,13 +38,7 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.SearchResult;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -344,7 +328,10 @@ public class LuceneSearchProvider implements SearchProvider
                 {
                     Thread.sleep( 60000L );
                 }
-                catch( InterruptedException e ) {}
+                catch( InterruptedException e ) 
+                { 
+                    throw new InternalWikiException("Interrupted while waiting to start."); 
+                }
 
                 try
                 {
@@ -375,6 +362,7 @@ public class LuceneSearchProvider implements SearchProvider
         });
         
         m_luceneUpdateThread.setName("JSPWiki Lucene update thread");
+        m_luceneUpdateThread.setDaemon(true);
         m_luceneUpdateThread.start();
     }
 
