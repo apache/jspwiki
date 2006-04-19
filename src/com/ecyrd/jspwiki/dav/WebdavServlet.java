@@ -111,7 +111,7 @@ public class WebdavServlet extends HttpServlet
     {
         String method = request.getMethod();
         
-        System.out.println("METHOD="+method+"; request="+request.getPathInfo() );
+        // System.out.println("METHOD="+method+"; request="+request.getPathInfo() );
         
         try
         {
