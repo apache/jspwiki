@@ -6,8 +6,22 @@
         instead of "+".  This is because of
         http://issues.apache.org/bugzilla/show_bug.cgi?id=39278.
         In addition, we're moving away from using TextUtil.urlEncode().
+        This fix should by the way also fix plenty of issues with
+        non-latin1 page names.
         
-        * 
+        * All JSPWiki daemon threads are now, well, official daemon
+        threads, so they should not hold up any exit.  This should fix
+        an issue with Tomcat not quitting properly.
+
+        * When login failed, you would get the URLEncoded page name
+        instead of plain text.
+        
+        * If the java.security.policy is already set, makes a sanity
+        check and tries to find also the keystore file in the same directory.
+        If it's not there, prints out a warning to the log.  Otherwise,
+        there's no way to know about this: Java itself won't mention
+        this at all - it would just fail silently when instantiating
+        permissions.  Boo hiss!
 
 2006-04-17  Janne Jalkanen <jalkanen@ecyrd.com>
 
