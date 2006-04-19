@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.*;
 
@@ -1150,14 +1152,21 @@ public class WikiEngine
      */
     public String encodeName( String pagename )
     {
-        return TextUtil.urlEncode( pagename, (m_useUTF8 ? "UTF-8" : "ISO-8859-1"));
+        try
+        {
+            return URLEncoder.encode( pagename, (m_useUTF8 ? "UTF-8" : "ISO-8859-1" ));
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
+        }        
     }
 
     public String decodeName( String pagerequest )
     {
         try
         {
-            return TextUtil.urlDecode( pagerequest, (m_useUTF8 ? "UTF-8" : "ISO-8859-1") );
+            return URLDecoder.decode( pagerequest, (m_useUTF8 ? "UTF-8" : "ISO-8859-1") );
         }
         catch( UnsupportedEncodingException e )
         {
