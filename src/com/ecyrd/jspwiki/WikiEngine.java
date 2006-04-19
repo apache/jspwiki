@@ -2163,6 +2163,8 @@ public class WikiEngine
         public void run()
         {
             setName("JSPWiki Global RSS generator thread");
+            setDaemon(true);
+            
             try
             {
                 String fileName = TextUtil.getStringProperty( m_properties,
