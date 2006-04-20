@@ -141,12 +141,15 @@ public class DefaultURLConstructor
      *  URLEncoder returns pluses, when we want to have the percent
      *  encoding.  See http://issues.apache.org/bugzilla/show_bug.cgi?id=39278
      *  for more info.
+     *  
+     *  We also convert any %2F's back to slashes to make nicer-looking URLs.
      */
     private final String encodeURI( String uri )
     {
         uri = m_engine.encodeName(uri);
         
         uri = StringUtils.replace( uri, "+", "%20" );
+        uri = StringUtils.replace( uri, "%2F", "/" );
         
         return uri;
     }
