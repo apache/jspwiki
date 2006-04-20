@@ -1,3 +1,16 @@
+2006-04-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.104
+        
+        * Tiny beautification: the attachment URLs no longer have %2F
+        but a slash.  Reported by Mikkel Troest.
+        
+        * LockReaper and RSSThread actually start now; we were calling the
+        setDaemon() in a wrong place.  Reported by Mikkel Troest.
+        
+        * Removed a dumb auth statement from SandBox. Thanks to
+        Murray Altheim.
+
 2006-04-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.103
