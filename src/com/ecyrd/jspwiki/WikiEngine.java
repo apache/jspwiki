@@ -2160,11 +2160,14 @@ public class WikiEngine
      */
     private class RSSThread extends Thread
     {
-        public void run()
+        public RSSThread()
         {
             setName("JSPWiki Global RSS generator thread");
-            setDaemon(true);
-            
+            setDaemon(true);            
+        }
+        
+        public void run()
+        {
             try
             {
                 String fileName = TextUtil.getStringProperty( m_properties,

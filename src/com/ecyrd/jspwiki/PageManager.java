@@ -451,11 +451,14 @@ public class PageManager
      */
     private class LockReaper extends Thread
     {
-        public void run()
+        public LockReaper()
         {
             setName("JSPWiki Lock Reaper Thread");
             setDaemon(true);
-            
+        }
+        
+        public void run()
+        {
             while( true )
             {
                 try
