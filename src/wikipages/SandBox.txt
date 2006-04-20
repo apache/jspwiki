@@ -1,27 +1,7 @@
-This page has [{VotePlugin value='yes'}] positive and [{VotePlugin value='no'}] negative votes.
+Hey!
 
-[Vote yes|http://192.168.0.10:8080/JSPWiki/Vote.jsp?page=SandBox&vote=yes].
+I am the sandbox!
 
+You can play in me!
 
-[Vote no|http://192.168.0.10:8080/JSPWiki/Vote.jsp?page=SandBox&vote=no].
-
-%%(color:red;font-size:200%;)
-Testing
-%%
-
-[jspwiki_logo.png]
-
-[jspwiki_logo.png]
-
-[{Denounce link='http://www.ecyrd.com'}]
-
-[{ALLOW edit JanneJalkanen,Authenticated AdminGroup}]
-
-----
-
-[{WeblogPlugin  days=60 allowComments=true}]
-
-[{WeblogEntryPlugin entrytext='Put in a new entry'}]
-
-[{SET jspwiki.translatorReader.camelCaseLinks=true}]
-
+Just click on "Edit this page"!
