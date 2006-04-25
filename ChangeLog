@@ -1,6 +1,6 @@
 2006-04-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
-        * 2.3.105
+        * 2.4.0
         
         * SearchResultsIterator now can start from a given place
         
@@ -30,6 +30,10 @@
         "jspwiki.css" file.
         
         * Minor cleanups to build.xml.
+        
+        * CheckLockTag would get confused if two people were trying to
+        create a non-existent page at the same time.  Reported by
+        Mark Rawlings.
 
 2006-04-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
