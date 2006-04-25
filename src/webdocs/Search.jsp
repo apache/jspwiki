@@ -24,6 +24,8 @@
     // Get the search results
     Collection list = null;
     String query = request.getParameter( "query");
+    String go    = request.getParameter("go");
+    
     if( query != null )
     {
         log.info("Searching for string "+query);
@@ -46,6 +48,25 @@
         pageContext.setAttribute( "query",
                                   query,
                                   PageContext.REQUEST_SCOPE );
+        
+        //
+        //  Did the user click on "go"?
+        //           
+        if( go != null )
+        {
+            if( list != null && list.size() > 0 )
+            {
+                SearchResult sr = (SearchResult) list.iterator().next();
+                
+                WikiPage wikiPage = sr.getPage();
+                
+                String url = wikiContext.getViewURL( wikiPage.getName() );
+                
+                response.sendRedirect( url );
+                
+                return;
+            }
+        }                              
     }
 
     // Set the content type and include the response content
