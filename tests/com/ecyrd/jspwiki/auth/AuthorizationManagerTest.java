@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.auth;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -11,12 +12,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
@@ -426,8 +423,91 @@ public class AuthorizationManagerTest extends TestCase
         }
         catch ( ProviderException e ) 
         {
-            assertTrue(false);
+            fail("Could not delete page");
         }
+    }
+
+    public void testInheritedPermissions() throws Exception
+    {
+        String src = "[{ALLOW edit Foo}] ";
+        m_engine.saveText( "Test", src );
+
+        File f = m_engine.makeAttachmentFile();
+        
+        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_engine.getAttachmentManager().storeAttachment( att, f );
+        
+        Attachment p = (Attachment)m_engine.getPage( "Test/test1.txt" );
+        m_context = new WikiContext( m_engine, p );
+        m_session = m_context.getWikiSession();
+
+        // Foo is in the ACL and can read
+        Principal principal = new WikiPrincipal( "Foo" );
+        m_session.getSubject().getPrincipals().clear();
+        m_session.getSubject().getPrincipals().add( principal );
+        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
+        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
+        assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+
+        // Bar is not in the ACL, so he can't read or edit
+        principal = new WikiPrincipal( "Bar" );
+        m_session.getSubject().getPrincipals().clear();
+        m_session.getSubject().getPrincipals().add( principal );
+        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
+        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertFalse( "Bar !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        assertTrue( "Bar view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
+        assertTrue( "Bar !edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+        
+
+        m_engine.deletePage( "Test" );
+    }
+
+    public void testInheritedPermissions2() throws Exception
+    {
+        String src = "[{ALLOW view Foo}] [[ALLOW edit AdminGroup}]";
+        m_engine.saveText( "Test", src );
+
+        File f = m_engine.makeAttachmentFile();
+        
+        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+
+        att.setAuthor( "FirstPost" );
+
+        m_engine.getAttachmentManager().storeAttachment( att, f );
+        
+        Attachment p = (Attachment)m_engine.getPage( "Test/test1.txt" );
+        m_context = new WikiContext( m_engine, p );
+        m_session = m_context.getWikiSession();
+
+        // Foo is in the ACL and can read
+        Principal principal = new WikiPrincipal( "Foo" );
+        m_session.getSubject().getPrincipals().clear();
+        m_session.getSubject().getPrincipals().add( principal );
+        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
+        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertFalse( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
+        assertFalse( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+
+        // Bar is not in the ACL, so he can't read or edit
+        principal = new WikiPrincipal( "Guest" );
+        m_session.getSubject().getPrincipals().clear();
+        m_session.getSubject().getPrincipals().add( principal );
+        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
+        assertFalse( "Guest view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertFalse( "Guest !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        assertFalse( "Guest view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
+        assertFalse( "Guest !edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+        
+
+        m_engine.deleteAttachments( "Test" );
+        m_engine.deletePage( "Test" );
     }
 
     public void testRoleAclPermissions() throws Exception
