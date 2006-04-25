@@ -74,7 +74,7 @@ public class CheckLockTag
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
-        if( page != null && engine.pageExists(page) )
+        if( page != null )
         {
             PageManager mgr = engine.getPageManager();
 
