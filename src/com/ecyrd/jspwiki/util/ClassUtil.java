@@ -70,7 +70,7 @@ public class ClassUtil
             }
         }
 
-        throw new ClassNotFoundException("Class not found in search path!");
+        throw new ClassNotFoundException("Class '"+className+"' not found in search path!");
     }
     
     /**
