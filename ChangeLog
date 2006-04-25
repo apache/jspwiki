@@ -1,3 +1,36 @@
+2006-04-25  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.105
+        
+        * SearchResultsIterator now can start from a given place
+        
+        * You can now see all of the search results - just click on
+        "next 20 results".
+        
+        * Included patch from Dan Frankowski to support returning
+        of search fragments.  Thanks!
+        
+        * Upgraded to Lucene 1.9.1
+        
+        * Removed slash from allowed characters in wikipage - that would
+        create pages that were impossible to link to.  Oops!  It must've
+        been some debug code left in...
+        
+        * LinkTag now removes extra whitespace from link text; this allows
+        you to use multi-line <wiki:Param> tags without the text becoming
+        too unwieldy...
+        
+        * Search now also supports Google-like "are you feeling lucky"
+        -functionality.  Just click on "Go!" in the search page.
+        
+        * Search help is now on a page called "SearchPageHelp".
+        
+        * Added support for left-to-right and right-to-left markup with
+        the %%ltr and %%rtl default styles.  You can copy them from the
+        "jspwiki.css" file.
+        
+        * Minor cleanups to build.xml.
+
 2006-04-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.3.104
