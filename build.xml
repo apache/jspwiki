@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.67 2006-04-09 19:28:31 jalkanen Exp $
+    $Id: build.xml,v 1.68 2006-04-25 20:00:42 jalkanen Exp $
 -->    
        
 <!--   
@@ -464,6 +464,11 @@
 
        This runs the tests in text mode.  If you want the
        pretty GUI you probably want to write a new target.
+       
+       If this test fails with a "cannot find task 'junit'"
+       error, put the junit.jar in your CLASSPATH.
+       
+       More info http://ant.apache.org/faq.html#delegating-classloader
    -->
   <target name="tests" depends="jar,tests-init,jartests,tests-db-init"
           description="Runs the JUnit tests.">
@@ -486,6 +491,7 @@
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
                 <exclude name="com/ecyrd/jspwiki/web/*.*" />
+                <exclude name="com/ecyrd/jspwiki/TranslatorReaderTest*" />
            </fileset>
         </batchtest>
      </junit>
@@ -505,8 +511,6 @@
      <java classname="junit.swingui.TestRunner" fork="yes">
         <classpath>
            <path refid="path.tests" />
-           <pathelement path="${tests.build}" />
-           <pathelement path="${java.class.path}" />
         </classpath>
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
