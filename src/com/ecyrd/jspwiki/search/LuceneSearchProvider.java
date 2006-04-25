@@ -24,17 +24,23 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -78,7 +84,10 @@ public class LuceneSearchProvider implements SearchProvider
     private int              m_updateCount = 0;
     private Thread           m_luceneUpdateThread = null;
     private Vector           m_updates = new Vector(); // Vector because multi-threaded.
-
+    
+    /** Maximum number of fragments from search matches. */
+    private static final int MAX_FRAGMENTS = 3;
+    
     public void initialize(WikiEngine engine, Properties props)
             throws NoRequiredPropertyException, IOException 
     {
@@ -301,17 +310,6 @@ public class LuceneSearchProvider implements SearchProvider
     }
 
 
-	/*
-    public void finalize()
-    {
-        if( m_luceneUpdateThread != null )
-        {
-            m_luceneUpdateThread.
-        }
-    }
-    */
-
-
     /**
      *  Waits first for a little while before starting to go through
      *  the Lucene "pages that need updating".
@@ -426,15 +424,19 @@ public class LuceneSearchProvider implements SearchProvider
         // Raw name is the keyword we'll use to refer to this document for updates.
         doc.add(Field.Keyword(LUCENE_ID, page.getName()));
 
+        /*
         // Body text is indexed, but not stored in doc. We add in the
         // title text as well to make sure it gets considered.
         doc.add(Field.Text(LUCENE_PAGE_CONTENTS, 
                            new StringReader(text + " " +
                                             page.getName()+" "+
                                             TextUtil.beautifyString(page.getName()))));
+        */
+        // Body text.  It is stored in the doc for search contexts.
+        doc.add(Field.Text(LUCENE_PAGE_CONTENTS, text));
 
         // Allow searching by page name
-        doc.add(Field.Text(LUCENE_PAGE_NAME, page.getName()));
+        doc.add(Field.Text(LUCENE_PAGE_NAME, TextUtil.beautifyString(page.getName())));
 
         // Allow searching by authorname
         
@@ -521,9 +523,16 @@ public class LuceneSearchProvider implements SearchProvider
               
         try
         {
-            QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
+            String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR };
+            QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+            
+            // QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
             
+            Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
+                                                      new SimpleHTMLEncoder(),
+                                                      new QueryScorer(luceneQuery));
+
             try
             {
                 searcher = new IndexSearcher(m_luceneDirectory);
@@ -545,14 +554,29 @@ public class LuceneSearchProvider implements SearchProvider
                 
                 if(page != null)
                 {
-                	if(page instanceof Attachment) 
+                    if(page instanceof Attachment) 
                     {
-                		// Currently attachments don't look nice on the search-results page
-                		// When the search-results are cleaned up this can be enabled again.
-                	}
+                        // Currently attachments don't look nice on the search-results page
+                        // When the search-results are cleaned up this can be enabled again.
+                    }
+                    
                     int score = (int)(hits.score(curr) * 100);
-                    SearchResult result = new SearchResultImpl( page, score );
-                    list.add(result);
+           
+                    
+                    // Get highlighted search contexts
+                    String text = doc.get(LUCENE_PAGE_CONTENTS);
+
+                    String fragments[] = new String[0];
+                    if (text != null) 
+                    {
+                        TokenStream tokenStream = getLuceneAnalyzer()
+                        .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
+                        fragments = highlighter.getBestFragments(tokenStream,
+                                                                 text, MAX_FRAGMENTS);
+
+                    }
+                    
+                    SearchResult result = new SearchResultImpl( page, score, fragments );                    list.add(result);
                 }
                 else
                 {
@@ -603,11 +627,13 @@ public class LuceneSearchProvider implements SearchProvider
     {
         private WikiPage m_page;
         private int      m_score;
+        private String[] m_contexts;
         
-        public SearchResultImpl( WikiPage page, int score )
+        public SearchResultImpl( WikiPage page, int score, String[] contexts )
         {
             m_page  = page;
             m_score = score;
+            m_contexts = contexts;
         }
 
         public WikiPage getPage()
@@ -623,6 +649,11 @@ public class LuceneSearchProvider implements SearchProvider
             return m_score;
         }
         
+        
+        public String[] getContexts() 
+        {
+            return m_contexts;
+        }
     }
         
 }
