@@ -137,7 +137,10 @@ a.footnote               { color: #0044AA; }
 .error                   { background-image: url(images/exclamation.png); 
                            background-color: #ffe0e0; }
 .error * li              { margin-left: 0; padding-left: 0; }
-                           
+
+.ltr                     { direction: ltr; }
+.rtl                     { direction: rtl; }
+
 /* +++ 290 Comment boxes (used on some pages) +++ */
 .commentbox              { float:right; width: 20%; border-style: inset;
                            background: #f0f0f0; padding: 4px; margin-left: 4px; }
@@ -367,6 +370,15 @@ table.calendar tr.weekdays
  */
 .searchword              { background-color: #FFFF00; color: black; 
                            text-decoration: inherit; }
+
+/*
+ * For fragments in search results (from FindPage), and the search match
+ * within a fragment. 
+ */
+.fragment                { margin-left: 1em; font-size: 90%; }
+.fragment_ellipsis       { font-weight: bold; }
+/* .searchmatch             { background-color: yellow; } Too strong ? */
+.searchmatch             { font-weight: bold; }
 
 /* +++ 910 Tabbed Pages +++ */
 /* use absolute position trick to avoid page bump when inserting tabmenu */
