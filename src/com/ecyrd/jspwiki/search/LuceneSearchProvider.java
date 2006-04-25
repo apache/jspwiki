@@ -421,6 +421,8 @@ public class LuceneSearchProvider implements SearchProvider
         // make a new, empty document
         Document doc = new Document();
 
+        if( text == null ) return;
+        
         // Raw name is the keyword we'll use to refer to this document for updates.
         doc.add(Field.Keyword(LUCENE_ID, page.getName()));
 
