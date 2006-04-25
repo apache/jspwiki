@@ -145,6 +145,11 @@ public class SearchMatcher
         {
             return m_score;
         }
+        
+        public String[] getContexts() {
+            // Unimplemented
+            return new String[0];
+        }
     }
     
 }

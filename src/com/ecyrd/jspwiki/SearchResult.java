@@ -32,4 +32,14 @@ public interface SearchResult
      */
 
     public int getScore();
+    
+    
+    /**
+     * Collection of XHTML fragments representing some contexts in which
+     * the match was made (a.k.a., "snippets").
+     *
+     * @return
+     * @since 2.4
+     */
+    public String[] getContexts();
 }
