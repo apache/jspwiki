@@ -47,7 +47,8 @@ public class SearchResultIteratorTag
     
     private   int         m_maxItems;
     private   int         m_count = 0;
-
+    private   int         m_start = 0;
+    
     public void release()
     {
         super.release();
@@ -59,6 +60,11 @@ public class SearchResultIteratorTag
         m_maxItems = Integer.parseInt(arg);
     }
 
+    public void setStart( String arg )
+    {
+        m_start = Integer.parseInt(arg);
+    }
+    
     public final int doStartTag()
     {
         //
@@ -69,6 +75,12 @@ public class SearchResultIteratorTag
             Collection searchresults = (Collection) pageContext.getAttribute( "searchresults",
                                                                               PageContext.REQUEST_SCOPE );
             setList( searchresults );
+            
+            int skip = 0;
+            
+            //  Skip the first few ones...
+            m_iterator = searchresults.iterator();
+            while( m_iterator.hasNext() && (skip++ < m_start) ) m_iterator.next();
         }
 
         m_count       = 0;
