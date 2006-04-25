@@ -416,7 +416,8 @@ public class LinkTag
             // of LinkTag, but happens to be the way it has worked previously.
             if( m_bodyContent != null ) 
             {
-                m_bodyContent.writeOut( out );
+                String linktext = m_bodyContent.getString().trim();
+                out.write( linktext );
             }
             
             //  Finish off by closing opened anchor
