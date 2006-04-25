@@ -66,7 +66,7 @@ public abstract class MarkupParser
     /** Lists all punctuation characters allowed in WikiMarkup. These
         will not be cleaned away. */
     
-    protected static final String           PUNCTUATION_CHARS_ALLOWED = "._/";
+    protected static final String           PUNCTUATION_CHARS_ALLOWED = "._";
 
     protected MarkupParser( WikiContext context, Reader in )
     {
