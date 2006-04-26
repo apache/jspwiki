@@ -44,6 +44,7 @@ import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -79,7 +80,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.34 $ $Date: 2006-04-10 20:41:57 $
+ * @version $Revision: 1.35 $ $Date: 2006-04-26 19:04:13 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -166,7 +167,17 @@ public final class AuthorizationManager
      */
     public final boolean checkPermission( WikiSession session, Permission permission )
     {
-        if( !m_useJAAS ) return true;
+        if( !m_useJAAS ) 
+        {
+            //
+            //  Nobody can login, if JAAS is turned off.
+            //
+
+            if( permission == null || permission.getActions().equals("login") )
+                return false;
+            
+            return true;
+        }
         
         //
         //  A slight sanity check.
