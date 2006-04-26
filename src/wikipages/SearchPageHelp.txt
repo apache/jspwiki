@@ -1,0 +1,14 @@
+Use '+' to require a word, '-' to forbid a word.  For example:
+
+{{{
+          +java -emacs jsp
+}}}
+
+finds pages that MUST include the word "java", and MAY NOT include
+the word "emacs".  Also, pages that contain the word "jsp" are
+ranked before the pages that don't.
+
+All searches are case insensitive.  If a page contains both
+forbidden and required keywords, it is not shown.
+
+Click on {{Find!}} to perform a search.  Click on {{Go!}} to go directly to the top result in the search.
