@@ -1,23 +1,22 @@
-Emacs, this is -*- Text -*- for you.
 
 
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.26 $
-                             $Date: 2006-04-09 19:28:39 $
+                         $Revision: 1.27 $
+                             $Date: 2006-04-26 19:00:31 $
                            $Author: jalkanen $
 
 What is it?
 -----------
 
-JSPWiki is a simple WikiWiki clone.  It keeps all of its
-formatting in JSP files, and uses a custom Java class called
+JSPWiki is a simple (well, not any more) WikiWiki clone.  It keeps 
+all of its formatting in JSP files, and uses a custom Java class called
 'com.ecyrd.jspwiki.WikiEngine' to all interfacing with the Wiki
 system.
 
 
-    Copyright (C) 2001-2005 Janne Jalkanen
+    Copyright (C) 2001-2006 JSPWiki development team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public License
@@ -61,14 +60,16 @@ REQUIRED:
 
 * A JSP engine that supports Servlet API 2.3.  I recommend Tomcat from
   http://jakarta.apache.org/tomcat for a really easy installation.
-  Tomcat 4.x or later is supported.
+  Tomcat 4.x or later is supported, however, we strongly recommend
+  Tomcat 5.x or later.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
 
 * And of course, a server to run the JSP engine on.
 
-* JDK 1.4+
+* JDK 1.4+.  JDK 1.5 is recommended.
+
 
 OPTIONAL:
 
@@ -111,8 +112,8 @@ engine.  Just do the following:
 That's it!
 
 
-Installation
-------------
+Advanced Installation
+---------------------
 
 First, install a JSP engine and a web server.  You can download Tomcat
 from http://jakarta.apache.org/tomcat/.  This software was built
@@ -161,19 +162,7 @@ Please read ReleaseNotes.
 Setting access controls
 -----------------------
 
-If you don't want everyone to have access to your Wiki, take a look a
-the "web.xml" file.  It contains sample configuration for someone who
-wants a Wiki that's viewable by all, but editable only be few.  By
-default, this is disabled, so your new Wiki is a free-for-all.
-
-Remove the marked comments from web.xml.
-
-Add a user to the "user" role in $TOMCAT_HOME/conf/tomcat-users.xml.
-For example:
-    <user name="wiki" password="wiki" roles="user" /
-adds an user called "wiki" with a password "wiki".
-
-Restart Tomcat.
+Please see the wikipage in the JSPWiki-doc.zip called "Security".
 
 
 Configuring JSPWiki
@@ -183,9 +172,7 @@ All configuration information is kept in WEB_INF/jspwiki.properties.
 The file is pretty well documented, so I recommend you read it through
 first. 
 
-The other good document to read is doc/Templates.txt, which explains
-how the JSPWiki templating system works.
-
+There are also some auxiliary configuration files, such as filters.xml.
 
 Where to go next aka. where is the rest of the documentation?
 -------------------------------------------------------------
