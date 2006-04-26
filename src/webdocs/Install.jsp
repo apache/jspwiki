@@ -6,6 +6,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.providers.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
 
 <%!
     String message = null;
@@ -183,7 +184,9 @@
             //
             propertyString = setProperty( propertyString, PageManager.PROP_PAGEPROVIDER, "VersioningFileProvider" );
             propertyString = setProperty( propertyString, WikiEngine.PROP_ENCODING, "UTF-8" );
-            
+            propertyString = setProperty( propertyString, AuthenticationManager.PROP_SECURITY,
+                                                          AuthenticationManager.SECURITY_CONTAINER );
+                                                          
             try
             {
                 writeProperties( findPropertyFile(application), propertyString );
