@@ -72,9 +72,11 @@
     </wiki:CheckRequestContext>
     
     <wiki:UserCheck status="notAuthenticated">
-      <span>
-        <wiki:Link jsp="Login.jsp">Log in</wiki:Link>
-      </span>
+      <wiki:Permission permission="login">
+        <span>
+          <wiki:Link jsp="Login.jsp">Log in</wiki:Link>
+        </span>
+      </wiki:Permission>
     </wiki:UserCheck>
     
     <wiki:UserCheck status="authenticated">
