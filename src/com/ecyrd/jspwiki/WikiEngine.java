@@ -2243,6 +2243,8 @@ public class WikiEngine
      * Renames, or moves, a wiki page. Can also alter referring wiki
      * links to point to the renamed page.
      *
+     * @param context           The context during which this rename takes
+     *                          place.
      * @param renameFrom        Name of the source page.
      * @param renameTo          Name of the destination page.
      * @param changeReferrers   If true, then changes any referring links
@@ -2253,12 +2255,13 @@ public class WikiEngine
      * @throws WikiException    In the case of an error, such as the destination
      *                          page already existing.
      */
-    public String renamePage( String renameFrom, 
+    public String renamePage( WikiContext context,
+                              String renameFrom, 
                               String renameTo,
                               boolean changeReferrers)
         throws WikiException
     {
-        return m_pageRenamer.renamePage(renameFrom, renameTo, changeReferrers);
+        return m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
     }
     
     /**
