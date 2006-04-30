@@ -1,5 +1,21 @@
-/*
- * Page Rename funcationality is here rather than comingled in the main WikiEngine class.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package com.ecyrd.jspwiki;
 
@@ -18,7 +34,9 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 
 /**
- * Do all the nitty-gritty work of renaming pages.
+ *  Do all the nitty-gritty work of renaming pages.
+ *  
+ *  @since 2.4
  */
 public class PageRenamer
 {
@@ -76,7 +94,7 @@ public class PageRenamer
     /**
      * Renames, or moves, a wiki page. Can also alter referring wiki
      * links to point to the renamed page.
-     *
+     * @param context TODO
      * @param oldName           Name of the source page.
      * @param newName           Name of the destination page.
      * @param changeReferrers   If true, then changes any referring links
@@ -87,7 +105,7 @@ public class PageRenamer
      * @throws WikiException    In the case of an error, such as the destination
      *                          page already existing.
      */
-    public String renamePage(String oldName, String newName, boolean changeReferrers)
+    public String renamePage(WikiContext context, String oldName, String newName, boolean changeReferrers)
         throws WikiException
     {
         // Work out the clean version of the new name of the page
@@ -117,7 +135,7 @@ public class PageRenamer
         // If there were pages refering to the old name, update them to point to the new name...
         if( referrers != null )
         {
-            updateReferrersOnRename( oldName, newName, changeReferrers, newNameCleaned, referrers );
+            updateReferrersOnRename( context, oldName, newName, changeReferrers, newNameCleaned, referrers );
         }
         else
         {
@@ -137,7 +155,8 @@ public class PageRenamer
 
 
     // Loop the collection, calling update for each, tickle the reference manager when done.
-    private void updateReferrersOnRename( String oldName,
+    private void updateReferrersOnRename( WikiContext context,
+                                          String oldName,
                                          String newName,
                                          boolean changeReferrers,
                                          String newNameCleaned,
@@ -151,7 +170,7 @@ public class PageRenamer
         while ( referrersIterator.hasNext() )
         {
             String referrerName = (String)referrersIterator.next();
-            updateReferrerOnRename( oldName, newName, changeReferrers, referrerName );
+            updateReferrerOnRename( context, oldName, newName, changeReferrers, referrerName );
         }
 
         m_wikiEngine.getReferenceManager().clearPageEntries( oldName );
@@ -164,14 +183,13 @@ public class PageRenamer
 
 
     // Update the referer, changing text if indicated.
-    private void updateReferrerOnRename(String oldName, String newName, boolean changeReferrer, String referrerName)
+    private void updateReferrerOnRename(WikiContext context, String oldName, String newName, boolean changeReferrer, String referrerName)
     {
         log.debug("oldName = "+oldName);
         log.debug("newName = "+newName);
         log.debug("referrerName = "+referrerName);
         
-        String text = m_wikiEngine.getText(referrerName);
-
+        String text = m_wikiEngine.getPureText(referrerName,WikiProvider.LATEST_VERSION);
 	
         if (changeReferrer)
         {
@@ -181,20 +199,14 @@ public class PageRenamer
         try
         {
 
-            WikiContext context = new WikiContext( m_wikiEngine, m_wikiEngine.getPage(referrerName) );
-
-            log.debug("Context.getEngine() "+context.getEngine());
-            log.debug("Context.getPage() "+context.getPage());
-            log.debug("Context.getRequestContext() "+context.getRequestContext());
-            log.debug("Context.getTemplate() "+context.getTemplate());
-            log.debug("Context.getCurrentUser() "+context.getCurrentUser());
+            WikiContext tempCtx = new WikiContext( m_wikiEngine, m_wikiEngine.getPage(referrerName) );
     
             if (context.getPage() != null)
             {
                 PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( m_wikiEngine.getPage(referrerName) );
                 m_wikiEngine.getPageManager().unlockPage( lock );
   
-
+                tempCtx.getPage().setAuthor( context.getCurrentUser().getName() );
                 m_wikiEngine.saveText( context, text );
 
                 Collection updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage(referrerName),text );
