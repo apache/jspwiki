@@ -1,3 +1,20 @@
+2006-04-30  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.2
+        
+        * Page Renamer did not write the author name properly to
+        any pages that were changed due to referrers changing.
+        
+        * Page Renamer would accidentally do double-encoding of
+        XHTML entities...  Yes, there's a difference between
+        getText() and getPureText().  Thanks to suomigo.net
+        community for finding this one out.
+        
+        * WikiEngine.renamePage() API signature was changed
+        because of this... It now takes a WikiContext as well.
+        
+        * Login.jsp did not write proper content encoding.
+
 2006-04-26  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.1
