@@ -39,7 +39,7 @@
     {
         if (renameTo.length() > 0)
         {
-           String renamedTo = wiki.renamePage(renameFrom, renameTo, changeReferences);
+           String renamedTo = wiki.renamePage(wikiContext, renameFrom, renameTo, changeReferences);
 
            log.info("Page successfully renamed to '"+renamedTo+"'");
 
