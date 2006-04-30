@@ -98,4 +98,6 @@
     // So, find the login form and include it. This should be in the same directory
     // as this page. We don't need to use the wiki:Include tag.
     
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    
 %><jsp:include page="LoginForm.jsp" />
