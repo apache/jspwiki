@@ -1,3 +1,21 @@
+2006-05-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.3
+        
+        * Added fix from Rolf Schumacher: no longer outputs 
+        password to the log file in Tomcat.  Oops.
+
+        * Fixed a failing unit test
+        
+        * atom.jsp is now gone; please use "rss.jsp?type=atom"
+        
+        * Fixed SearchBox.jsp issue reported by Dirk Fredericx.
+        
+        * FeedDiscoveryTag should now offer Atom 1.0 feeds.
+        
+        * WeblogPlugin no longer considers empty comment pages
+        as "1 comment".
+
 2006-04-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.2

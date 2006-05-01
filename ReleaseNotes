@@ -1,11 +1,11 @@
 
-This is an alpha version of JSPWiki 2.3
+This is a beta version of JSPWiki 2.4
 
 NEW FEATURES
 ============
 
 * Authentication and authorization.
-  
+
 * New default template, with pluggable editors.
 
 * New rendering engine, which is WAY faster than the old one (the old one
@@ -16,27 +16,18 @@ NEW FEATURES
 UPGRADE NOTES
 =============
 
-Upgrading from 2.2:
-
-* Replace your old web.xml from the one in the distribution, and change.
-
-* Install the new default template.
-
-* Make sure that you have all the auth-related definitions from the included
-  jspwiki.properties in your own one, or else you will fall prey to a dozen
-  different failure cases.
-
-* More stuff TBD.
-
-Upgrading from 2.0:
+Upgrading from 2.x:
 
 * Please reinstall in a new directory.  Then move your modified
   templates into the new templates/ -directory.  You MUST
   have the default template in place, else things might not
   work.
+
 * Replace jspwiki.properties with your old configuration file.
   It should run unmodified, though you might want to go through
   the new file to see new options.
+
+* You can copy your old filters.xml to WEB-INF/classes
 
 Upgrading from earlier installations:
 
@@ -52,7 +43,6 @@ KNOWN MAJOR ISSUES
 
 * Documentation needs cleanup; parts of it are out of date, etc.
 
-* See above for auth notes
 
 EXPERIMENTAL FEATURES
 =====================
@@ -61,7 +51,7 @@ There are some features in this release which could mostly be considered
 experimental at best.  The following ones are known to work only 
 partially:
 
-* Atom support.  We can give out feeds in Atom 0.3, but it's not really
+* Atom support.  We can give out feeds in Atom 1.0, but it's not really
   tested properly.  There's also preliminary APP support, but it does 
   not work.
   
@@ -75,20 +65,3 @@ partially:
 * XHTML -> WikiMarkup translation.  Spotty, but should work for the most
   part.
   
-
-NOTE ABOUT AUTHENTICATION
-=========================
-
-This JSPWiki version includes an unsupported version of Authorization
-and Authentication.  AAA was supposed to be the major feature of the
-2.2 release, but unfortunately it turned out that the solution chosen
-was crappy and the coder (me) did not know what he was doing.  This
-dragged the work for the 2.2 release behind for many months, as I was
-not really interested in doing it.  So I decided to discard the entire
-solution and settle for something simpler.  This work is still
-ongoing, and a new solution is being drafted.
-
-The old auth system is still in place, but it is completely deprecated
-and largely undocumented.  You may use it if you want, but please do
-not report any bugs regarding it.  You can enable it by putting
-"jspwiki.auth.useOldAuth=true" in your jspwiki.properties.
