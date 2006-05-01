@@ -352,6 +352,11 @@ public class WeblogPlugin
     {
         String pagedata = engine.getPureText( commentpage, WikiProvider.LATEST_VERSION );
 
+        if( pagedata == null || pagedata.trim().length() == 0 )
+        {
+            return 0;
+        }
+        
         return TextUtil.countSections( pagedata );
     }
 
