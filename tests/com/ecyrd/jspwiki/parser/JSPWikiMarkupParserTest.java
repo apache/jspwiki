@@ -1451,9 +1451,9 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void testNestedPlugin2()
         throws Exception
     {
-        String src="Test [{INSERT SamplePlugin\n\n[{SamplePlugin text='[{$foo}]'}]\nGlob.\n}}]";
+        String src="[{SET foo='bar'}]Test [{INSERT SamplePlugin\n\n[{SamplePlugin text='[{$foo}]'}]\nGlob.\n}}]";
     
-        assertEquals( "Test  ([{SamplePlugin text='[{$foo}]'}]+Glob.+})", translate(src) );
+        assertEquals( "Test  ([{SamplePlugin text='[bar]'}]+Glob.+})", translate(src) );
     }
 
 
