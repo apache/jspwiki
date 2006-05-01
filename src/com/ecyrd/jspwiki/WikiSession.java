@@ -32,7 +32,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.18 $ $Date: 2006-02-27 04:32:22 $
+ * @version $Revision: 2.19 $ $Date: 2006-05-01 22:35:41 $
  */
 public class WikiSession implements WikiEventListener
 {
@@ -531,7 +531,7 @@ public class WikiSession implements WikiEventListener
         if ( userPrincipal != null && !userPrincipal.equals( m_cachedUserPrincipal ) )
         {
             m_cachedUserPrincipal = userPrincipal;
-            log.info( "User principal changed to " + userPrincipal );
+            log.info( "User principal changed to " + userPrincipal.getName() );
             changed = true;
         }
         
