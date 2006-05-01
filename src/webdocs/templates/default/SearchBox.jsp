@@ -20,10 +20,10 @@
       <a href="javascript://nop/" 
          onclick="SearchBox.navigation( '<wiki:Link format="url" page=""/>','<wiki:Variable var='pagename' />' );return false;"
          title="View the selected page">view</a> 
-      | 
+      |
       <a href="javascript://nop/" 
-         onclick="SearchBox.navigation( '<wiki:Link format="url" context="edit"/>','<wiki:Variable var='pagename' />' );return false;"
-         title="Edit the selected page">edit</a> 
+         onclick="SearchBox.navigation( '<wiki:Link format="url" page="" context="edit"/>','<wiki:Variable var='pagename' />' );return false;"
+         title="Edit the selected page">edit</a>  
       | 
       <a href="javascript://nop/" 
          onclick="SearchBox.navigation( '<wiki:BaseURL />Search.jsp?query=','<wiki:Variable var='pagename' />' );return false;"
