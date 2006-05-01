@@ -48,8 +48,6 @@ public class FeedDiscoveryTag
         String encodedName = engine.encodeName( page.getName() );
 
         String rssURL      = engine.getGlobalRSSURL();
-        //String atomPostURL = engine.getBaseURL()+"atom/"+encodedName;
-        //String rssFeedURL  = engine.getBaseURL()+"rss.jsp?page="+encodedName+"&amp;mode=wiki";
         String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp", 
                                            "page="+encodedName+"&amp;mode=wiki",
                                            true );
@@ -59,8 +57,8 @@ public class FeedDiscoveryTag
             String siteName = BlogUtil.getSiteName(m_wikiContext);
             siteName = TextUtil.replaceEntities( siteName );
             
-            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for the entire site.\" href=\""+rssURL+"\" />\n");
-            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for page "+siteName+".\" href=\""+rssFeedURL+"\" />\n");
+            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for the entire site.\" href=\""+rssURL+"\" />\n");
+            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for page "+siteName+".\" href=\""+rssFeedURL+"\" />\n");
 
             // TODO: Enable this
             /*
@@ -71,12 +69,12 @@ public class FeedDiscoveryTag
             if( "true".equals(page.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) )
             {
                 String blogFeedURL = engine.getURL(WikiContext.NONE,"rss.jsp","page="+encodedName,true);
-                String atomFeedURL = engine.getURL(WikiContext.NONE,"atom.jsp","page="+encodedName,true);
+                String atomFeedURL = engine.getURL(WikiContext.NONE,"rss.jsp","page="+encodedName+"&amp;type=atom",true);
         
                 pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for weblog "+
                                            siteName+".\" href=\""+blogFeedURL+"\" />\n");
 
-                pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\""+
+                pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\"Atom 1.0 weblog feed for "+
                                            siteName+"\" href=\""+atomFeedURL+"\" />\n");
             }
         }
