@@ -52,7 +52,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.22 $ $Date: 2006-04-03 19:48:48 $
+ * @version $Revision: 1.23 $ $Date: 2006-05-06 14:38:16 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -465,8 +465,17 @@ public final class AuthenticationManager
                     }
                 }
             });
-            loginContext.login();
-
+            
+            if( loginContext != null )
+            {
+                loginContext.login();
+            }
+            else
+            {
+                log.error("No login context.  Please double-check that JSPWiki found your 'jspwiki.jaas' file or the contents have been appended to your regular JAAS file.");
+                return false;
+            }
+            
             // If the user authenticated, inject group principals and log the event
             if ( wikiSession.isAuthenticated() )
             {
