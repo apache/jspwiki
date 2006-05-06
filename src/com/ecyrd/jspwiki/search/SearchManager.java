@@ -21,11 +21,13 @@ package com.ecyrd.jspwiki.search;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -47,7 +49,9 @@ public class SearchManager
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
     private SearchProvider    m_searchProvider = null;
-
+    
+    protected WikiEngine m_engine;
+    
     public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
     {
@@ -65,6 +69,8 @@ public class SearchManager
     public void initialize(WikiEngine engine, Properties properties)
         throws WikiException
     {
+        m_engine = engine;
+        
         loadSearchProvider(properties);
        
         try 
@@ -153,7 +159,9 @@ public class SearchManager
         throws ProviderException, IOException
     {
         if( query == null ) query = "";
-        return m_searchProvider.findPages( query );
+        Collection c = m_searchProvider.findPages( query );
+
+        return c;
     }
 
     /**
