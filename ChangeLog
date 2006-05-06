@@ -1,3 +1,30 @@
+2006-05-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.4
+        
+        * Added activation.jar and mail.jar to the distribution
+        
+        * AuthenticationManager now complains if it cannot
+        locate the JAAS LoginManager information, instead of
+        failing with NPE.
+        
+        * PagePermission.hashCode() no longer fails with NPE
+        if wiki is not set (normally, though, you would never
+        need it, but there are certain cases where this might
+        occur).
+        
+        * Added a great patch from Dan Frankowski which allows
+        recovery of forgotten passwords!  Please see your
+        jspwiki.properties for new SMTP options.
+        
+        * Added search results filtering based on permissions,
+        i.e. you no longer see pages to which you have no
+        access to.  Requested by many people.
+        
+        * Login button is now on its own line instead of being
+        hidden in the right corner.  Helps those people who
+        like to "hunt and click" on the mouse.
+
 2006-05-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.3
