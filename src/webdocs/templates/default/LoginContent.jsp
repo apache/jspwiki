@@ -31,7 +31,7 @@
   <div class="instructions">
     <wiki:Messages div="error" prefix="Error: " />
   </div>
-  
+
   <form id="login" action="<%=postURL%>" 
     method="POST" accept-charset="<wiki:ContentEncoding />" >
       
@@ -47,12 +47,20 @@
       <input type="password" name="j_password" />
     </div>
 
-    <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
-    <input type="submit" name="action" value="login" />
+    <div class="block">
+      <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+      <input type="submit" name="action" value="login" />
+    </div>
+    
+  </form>
+  
     <div class="instructions">
       Don't have a password? 
-      <a href="UserPreferences.jsp?tab=profile">Set up a user profile</a>
-      with <wiki:Variable var="applicationname" /> now!
+      <a href="UserPreferences.jsp?tab=profile">Join
+      <wiki:Variable var="applicationname" /></a> now!
     </div>
-  </form>
+    <div class="instructions">
+      Lost your password? 
+      <a href="LostPassword.jsp">Get a new one</a>.
+    </div>
 </div>
