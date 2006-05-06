@@ -16,7 +16,8 @@ public class AllTests extends TestCase
 
         suite.addTest( ClassUtilTest.suite() );
         suite.addTest( PriorityListTest.suite() );
-
+        suite.addTest( TextUtilTest.suite() );
+        
         return suite;
     }
 }
