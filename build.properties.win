@@ -17,3 +17,6 @@
 @tests.workdir@=C:\\\\temp\\\\testworkdir
 @tests.logfile@=C:\\\\temp\\\\jspwikitests.log
 
+# JavaMail configuration
+@mail.from@=JSPWiki@localhost
+@mail.smtp.host@=localhost
