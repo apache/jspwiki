@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.68 2006-04-25 20:00:42 jalkanen Exp $
+    $Id: build.xml,v 1.69 2006-05-06 15:09:12 jalkanen Exp $
 -->    
        
 <!--   
@@ -248,6 +248,7 @@
         <include name="com/ecyrd/**" />
       </packageset>
       <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://java.sun.com/products/javamail/javadocs/"/>
       <classpath refid="path.base" />
     </javadoc>
              
