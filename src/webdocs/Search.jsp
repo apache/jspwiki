@@ -1,5 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.commons.lang.*"%>
 <%@ page errorPage="/Error.jsp" %>
@@ -34,8 +36,33 @@
         {
             list = wiki.findPages( query );
 
+            //
+            //  Filter down to only those that we actually have a permission to view
+            //
+            AuthorizationManager mgr = wiki.getAuthorizationManager();
+        
+            ArrayList filteredList = new ArrayList();
+            
+            for( Iterator i = list.iterator(); i.hasNext(); )
+            {
+                SearchResult r = (SearchResult)i.next();
+            
+                WikiPage p = r.getPage();
+            
+                PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
+
+                try
+                {            
+                    if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) )
+                    {
+                        filteredList.add( r );
+                    }
+                }
+                catch( Exception e ) { log.error( "Searching for page "+p, e ); }
+            }
+        
             pageContext.setAttribute( "searchresults",
-                                      list,
+                                      filteredList,
                                       PageContext.REQUEST_SCOPE );
         }
         catch( Exception e )
