@@ -41,7 +41,7 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * Targets that do not include a wiki prefix <i>never </i> imply others.
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-03-30 04:49:16 $
+ * @version $Revision: 1.8 $ $Date: 2006-05-06 14:39:40 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
@@ -224,7 +224,11 @@ public final class PagePermission extends Permission
      */
     public final int hashCode()
     {
-        return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * m_wiki.hashCode() );
+        //  If the wiki has not been set, uses a dummy value for the hashcode
+        //  calculation.  This may occur if the page given does not refer
+        //  to any particular wiki
+        String wiki = (m_wiki != null ? m_wiki : "dummy_value");
+        return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * wiki.hashCode() );
     }
 
     /**
