@@ -272,7 +272,7 @@ div.formcontainer form label
                            padding-top: .25em; margin: 0 10px; }
 div.formcontainer input  { padding: 0.15em; }
 div.formcontainer input[type='submit'] 
-                         { float:right; margin: 0 10px; }
+                         { width:auto; margin-left: 140px;  }
 div.formcontainer .instructions
                          { margin: 0.5em 0; }
 div.formcontainer .description
