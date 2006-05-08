@@ -13,6 +13,7 @@
  */
 package com.ecyrd.jspwiki.auth;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
@@ -52,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.23 $ $Date: 2006-05-06 14:38:16 $
+ * @version $Revision: 1.24 $ $Date: 2006-05-08 00:29:05 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -71,6 +72,12 @@ public final class AuthenticationManager
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
 
     protected static final Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
+    
+    /** Was JAAS login config already set before we startd up? */
+    protected boolean m_isJaasConfiguredAtStartup = false;
+    
+    /** Was Java security policy already set before we startd up? */
+    protected boolean m_isJavaPolicyConfiguredAtStartup = false;
     
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private static Boolean                     m_allowsAssertions  = null;
@@ -124,6 +131,8 @@ public final class AuthenticationManager
     {
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
+        m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
+        m_isJavaPolicyConfiguredAtStartup = PolicyLoader.isSecurityPolicyConfigured();
 
         c_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
         
@@ -135,7 +144,7 @@ public final class AuthenticationManager
         
         log.info( "Checking JAAS configuration..." );
 
-        if (! PolicyLoader.isJaasConfigured() ) 
+        if (! m_isJaasConfiguredAtStartup ) 
         {
             URL config = findConfigFile( DEFAULT_JAAS_CONFIG );
             log.info("JAAS not configured. Installing default configuration: " + config
@@ -157,7 +166,7 @@ public final class AuthenticationManager
         }
         
         log.info( "Checking security policy configuration..." );
-        if (! PolicyLoader.isSecurityPolicyConfigured() )
+        if (! m_isJavaPolicyConfiguredAtStartup )
         {
             URL policy = findConfigFile( DEFAULT_POLICY );
             log.info("Security policy not configured. Installing default policy: " + policy
@@ -529,6 +538,26 @@ public final class AuthenticationManager
     
     private final URL findConfigFile( String name )
     {
+        // Try creating an absolute path first
+        File defaultFile = null;
+        if( m_engine.getRootPath() != null )
+        {
+            defaultFile = new File( m_engine.getRootPath() + "/WEB-INF/" + name );
+        }
+        if ( defaultFile != null && defaultFile.exists() ) 
+        {
+            try {
+                return defaultFile.toURL();
+            }
+            catch ( MalformedURLException e)
+            {
+                // Shouldn't happen, but log it if it does
+                log.warn( "Malformed URL: " + e.getMessage() );
+            }
+            
+        }
+        
+        // Ok, the absolute path didn't work; try other methods
         ClassLoader cl = AuthenticationManager.class.getClassLoader();
         
         URL path = cl.getResource("/WEB-INF/"+name);
