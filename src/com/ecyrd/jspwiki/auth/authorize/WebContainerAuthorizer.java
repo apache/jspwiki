@@ -34,7 +34,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.15 $ $Date: 2006-04-17 09:39:31 $
+ * @version $Revision: 1.16 $ $Date: 2006-05-08 00:26:28 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -59,6 +59,8 @@ public class WebContainerAuthorizer implements Authorizer
      */
     protected boolean           m_containerAuthorized = false;
 
+    private Document            m_webxml = null;
+    
     /**
      * Constructs a new instance of the WebContainerAuthorizer class.
      */
@@ -80,15 +82,15 @@ public class WebContainerAuthorizer implements Authorizer
         // FIXME: Error handling here is not very verbose
         try 
         {
-            Document webxml = getWebXml();
-            if ( webxml != null )
+            m_webxml = getWebXml();
+            if ( m_webxml != null )
             {
-                m_containerAuthorized = isConstrained( webxml, "/Delete.jsp", Role.ALL )
-                        && isConstrained( webxml, "/Login.jsp", Role.ALL );
+                m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL )
+                        && isConstrained( "/Login.jsp", Role.ALL );
             }
             if ( m_containerAuthorized )
             {
-                m_containerRoles = getRoles( webxml );
+                m_containerRoles = getRoles( m_webxml );
                 log.info( "JSPWiki is using container-managed authentication." );
             }
             else
@@ -169,6 +171,72 @@ public class WebContainerAuthorizer implements Authorizer
     }
 
     /**
+     * <p>
+     * Protected method that identifies whether a particular webapp URL is
+     * constrained to a particular Role. The resource is considered constrained
+     * if:
+     * </p>
+     * <ul>
+     * <li>the web application deployment descriptor contains a
+     * <code>security-constraint</code> with a child
+     * <code>web-resource-collection/url-pattern</code> element matching the
+     * URL, <em>and</em>:</li>
+     * <li>this constraint also contains an
+     * <code>auth-constraint/role-name</code> element equal to the supplied
+     * Role's <code>getName()</code> method. If the supplied Role is Role.ALL,
+     * it matches all roles</li>
+     * </ul>
+     * @param url the web resource
+     * @param role the role
+     * @return <code>true</code> if the resource is constrained to the role,
+     *         <code>false</code> otherwise
+     */
+    public boolean isConstrained( String url, Role role ) throws JDOMException
+    {
+        // Get all constraints that have our URL pattern
+        String selector;
+        selector = "//web-app/security-constraint[web-resource-collection/url-pattern=\"" + url + "\"]";
+        List constraints = XPath.selectNodes( m_webxml, selector);
+        
+        // Get all constraints that match our Role pattern
+        selector = "//web-app/security-constraint[auth-constraint/role-name=\"" + role.getName() + "\"]";
+        List roles = XPath.selectNodes( m_webxml, selector );
+        
+        // If we can't find either one, we must not be constrained
+        if ( constraints.size() == 0 )
+        {
+            return false;
+        }
+        
+        // Shortcut: if the role is ALL, we are constrained
+        if ( role.equals( Role.ALL ) )
+        {
+            return true;
+        }
+        
+        // If no roles, we must not be constrained
+        if ( roles.size() == 0 )
+        {
+            return false;
+        }
+        
+        // If a constraint is contained in both lists, we must be constrained
+        for ( Iterator c = constraints.iterator(); c.hasNext(); )
+        {
+            Element constraint = (Element)c.next();
+            for ( Iterator r = roles.iterator(); r.hasNext(); )
+            {
+                Element roleConstraint = (Element)r.next();
+                if ( constraint.equals( roleConstraint ) ) 
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Returns <code>true</code> if the web container is configured to protect
      * certain JSPWiki resources by requiring authentication. Specifically, this
      * method parses JSPWiki's web application descriptor (<code>web.xml</code>)
@@ -223,73 +291,6 @@ public class WebContainerAuthorizer implements Authorizer
     }
 
     /**
-     * <p>
-     * Protected method that identifies whether a particular webapp URL is
-     * constrained to a particular Role. The resource is considered constrained
-     * if:
-     * </p>
-     * <ul>
-     * <li>the web application deployment descriptor contains a
-     * <code>security-constraint</code> with a child
-     * <code>web-resource-collection/url-pattern</code> element matching the
-     * URL, <em>and</em>:</li>
-     * <li>this constraint also contains an
-     * <code>auth-constraint/role-name</code> element equal to the supplied
-     * Role's <code>getName()</code> method. If the supplied Role is Role.ALL,
-     * it matches all roles</li>
-     * </ul>
-     * @param webxml the web application deployment descriptor
-     * @param url the web resource
-     * @param role the role
-     * @return <code>true</code> if the resource is constrained to the role,
-     *         <code>false</code> otherwise
-     */
-    protected boolean isConstrained( Document webxml, String url, Role role ) throws JDOMException
-    {
-        // Get all constraints that have our URL pattern
-        String selector;
-        selector = "//web-app/security-constraint[web-resource-collection/url-pattern=\"" + url + "\"]";
-        List constraints = XPath.selectNodes( webxml, selector);
-        
-        // Get all constraints that match our Role pattern
-        selector = "//web-app/security-constraint[auth-constraint/role-name=\"" + role.getName() + "\"]";
-        List roles = XPath.selectNodes( webxml, selector );
-        
-        // If we can't find either one, we must not be constrained
-        if ( constraints.size() == 0 )
-        {
-            return false;
-        }
-        
-        // Shortcut: if the role is ALL, we are constrained
-        if ( role.equals( Role.ALL ) )
-        {
-            return true;
-        }
-        
-        // If no roles, we must not be constrained
-        if ( roles.size() == 0 )
-        {
-            return false;
-        }
-        
-        // If a constraint is contained in both lists, we must be constrained
-        for ( Iterator c = constraints.iterator(); c.hasNext(); )
-        {
-            Element constraint = (Element)c.next();
-            for ( Iterator r = roles.iterator(); r.hasNext(); )
-            {
-                Element roleConstraint = (Element)r.next();
-                if ( constraint.equals( roleConstraint ) ) 
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    /**
      * Returns an {@link org.jdom.Document} representing JSPWiki's web
      * application deployment descriptor. The document is obtained by calling
      * the servlet context's <code>getResource()</code> method and requesting
@@ -335,7 +336,7 @@ public class WebContainerAuthorizer implements Authorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.15 $ $Date: 2006-04-17 09:39:31 $
+     * @version $Revision: 1.16 $ $Date: 2006-05-08 00:26:28 $
      */
     public class LocalEntityResolver implements EntityResolver
     {
