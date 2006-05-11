@@ -568,31 +568,35 @@ public class ReferenceManager
     {
         String pageName = page.getName();
         
-        Collection RefTo = (Collection)m_refersTo.get( pageName );
-        Iterator it_refTo = RefTo.iterator();
-        while( it_refTo.hasNext() )
+        Collection refTo = (Collection)m_refersTo.get( pageName );
+        
+        if( refTo != null )
         {
-            String referredPageName = (String)it_refTo.next();
-            Set refBy = (Set)m_referredBy.get( referredPageName );
-
-            if( refBy == null )
-                throw new InternalWikiException("Refmgr out of sync: page "+pageName+" refers to "+referredPageName+", which has null referrers.");
-
-            refBy.remove(pageName);
-            
-            m_referredBy.remove( referredPageName );
-            
-            // We won't put it back again if it becomes empty and does not exist.  It will be added
-            // later on anyway, if it becomes referenced again.
-            if( !(refBy.isEmpty() && !m_engine.pageExists(referredPageName)) )
+            Iterator it_refTo = refTo.iterator();
+            while( it_refTo.hasNext() )
             {
-                m_referredBy.put( referredPageName, refBy );
+                String referredPageName = (String)it_refTo.next();
+                Set refBy = (Set)m_referredBy.get( referredPageName );
+
+                if( refBy == null )
+                    throw new InternalWikiException("Refmgr out of sync: page "+pageName+" refers to "+referredPageName+", which has null referrers.");
+
+                refBy.remove(pageName);
+            
+                m_referredBy.remove( referredPageName );
+            
+                // We won't put it back again if it becomes empty and does not exist.  It will be added
+                // later on anyway, if it becomes referenced again.
+                if( !(refBy.isEmpty() && !m_engine.pageExists(referredPageName)) )
+                {
+                    m_referredBy.put( referredPageName, refBy );
+                }
             }
+            
+            log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
+            m_refersTo.remove( pageName );
         }
 
-        log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
-        m_refersTo.remove( pageName );
-        
         Set refBy = (Set) m_referredBy.get( pageName );
         if( refBy == null || refBy.isEmpty() )
         {
