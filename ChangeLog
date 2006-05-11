@@ -1,3 +1,23 @@
+2006-05-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.6
+        
+        * Fixed NPE in ReferenceManager.pageRemoved (thanks
+        to JMarquart).
+        
+        * ShortURLConstructor did not have PREVIEW context
+        available; thanks to Malte Kiesel for the fix.
+        
+        * Added quick fix from Dan Frankowski to generate
+        JDOM javadoc links.
+        
+        * Plain URIs in text are now parsed properly and no longer
+        cut at the first "=" sign.
+        
+        * NewGroup.jsp would occasionally throw NPEs if the context
+        was null - fixed by ICantRememberWhoAnymoreBecauseILostTheEmail.
+        Thanks anyway!
+
 2006-05-07  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.5
