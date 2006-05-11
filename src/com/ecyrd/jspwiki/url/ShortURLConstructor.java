@@ -88,6 +88,11 @@ public class ShortURLConstructor
             if( name == null ) return doReplacement("%u","",absolute);
             return doReplacement( viewurl, name, absolute );
         }
+        else if( context.equals(WikiContext.PREVIEW) )
+        {
+            if( name == null ) return doReplacement("%u","",absolute);
+            return doReplacement( viewurl+"?do=Preview", name, absolute);
+        }
         else if( context.equals(WikiContext.EDIT) )
         {
             return doReplacement( viewurl+"?do=Edit", name, absolute );
