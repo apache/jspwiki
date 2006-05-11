@@ -389,6 +389,16 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
     
+    
+    public void testHyperlinksCCURLs7()
+    throws Exception
+    {
+        String src = "http://www.foo.bar/ANewHope?q=foobar&gobble=bobble+gnoo";
+        
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo\">http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo</a>",
+                      translate(src) );
+    }
     public void testHyperlinksCCNegated()
     throws Exception
     {
