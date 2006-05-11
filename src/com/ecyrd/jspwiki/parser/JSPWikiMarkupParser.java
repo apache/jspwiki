@@ -27,6 +27,7 @@ import java.util.*;
 import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
@@ -145,7 +146,7 @@ public class JSPWikiMarkupParser
 
     private PatternCompiler        m_compiler = new Perl5Compiler();
 
-    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@]+))";
+    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+))";
     
     private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
     private Pattern                m_camelCasePattern;
@@ -385,9 +386,7 @@ public class JSPWikiMarkupParser
         // Make sure we make a link name that can be accepted
         // as a valid URL.
 
-        String encodedlink = m_engine.encodeName( link );
-
-        if( encodedlink.length() == 0 )
+        if( link.length() == 0 )
         {
             type = EMPTY;
         }
@@ -1039,6 +1038,17 @@ public class JSPWikiMarkupParser
         return el;
     }
 
+    /**
+     *  Takes an URL and turns it into a regular wiki link.  Unfortunately,
+     *  because of the way that flushPlainText() works, it already encodes
+     *  all of the XML entities.  But so does WikiContext.getURL(), so we
+     *  have to do a reverse-replace here, so that it can again be replaced in makeLink.
+     *  <p>
+     *  What a crappy problem.
+     *  
+     * @param url
+     * @return
+     */
     private Element makeDirectURILink( String url )
     {
         Element result;
@@ -1054,11 +1064,11 @@ public class JSPWikiMarkupParser
 
         if( isImageLink( url ) )
         {
-            result = handleImageLink( url, url, false );
+            result = handleImageLink( StringUtils.replace(url,"&amp;","&"), url, false );
         }
         else
         {
-            result = makeLink( EXTERNAL, url, url, null );
+            result = makeLink( EXTERNAL, StringUtils.replace(url,"&amp;","&"), url, null );
             addElement( outlinkImage() );
         }
 
