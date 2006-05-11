@@ -83,8 +83,13 @@
                 response.sendRedirect( ex.getRedirect() );
                 return;
             }
+			
+            //Moved redirect.  This fixed the issue of redirecting once the group has been created
+            //a null recirect causes a NullPointerException
+            response.sendRedirect( wikiContext.getURL(WikiContext.VIEW, groupContext.getPage().getName()) );
+
         }
-        response.sendRedirect( wikiContext.getURL(WikiContext.VIEW,null) );
+    
     }
     
     pageContext.setAttribute( "name", name, PageContext.REQUEST_SCOPE );
