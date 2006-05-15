@@ -1,3 +1,12 @@
+2006-05-09  Dan Frankowski
+
+        * 2.4.7
+        
+        * Fixed SearchBox "edit" bug when
+	  jspwiki.urlConstructor=ShortURLConstructor
+        
+        * Add a link on the attachment page back to the original page
+
 2006-05-09  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.6
