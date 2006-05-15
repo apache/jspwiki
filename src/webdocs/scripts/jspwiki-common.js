@@ -487,7 +487,7 @@ SearchBox.navigation = function( url, pagename )
   var s = SearchBox.searchForm.query.value;
   if( s == 'Search' ) s = '';
   if( s == '' ) s = pagename ; //current page name
-  if( s != '' ) location.href = url+s ;
+  if( s != '' ) location.href = url.replace('__PAGEHERE__', s);
   return(false); //dont exec the click on the <a href=#>
 }
 

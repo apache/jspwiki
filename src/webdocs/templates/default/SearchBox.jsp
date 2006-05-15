@@ -18,15 +18,15 @@
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div>
       <a href="javascript://nop/" 
-         onclick="SearchBox.navigation( '<wiki:Link format="url" page=""/>','<wiki:Variable var='pagename' />' );return false;"
+         onclick="SearchBox.navigation( '<wiki:Link format="url" page="__PAGEHERE__"/>','<wiki:Variable var='pagename' />' );return false;"
          title="View the selected page">view</a> 
-      |
-      <a href="javascript://nop/" 
-         onclick="SearchBox.navigation( '<wiki:Link format="url" page="" context="edit"/>','<wiki:Variable var='pagename' />' );return false;"
-         title="Edit the selected page">edit</a>  
       | 
       <a href="javascript://nop/" 
-         onclick="SearchBox.navigation( '<wiki:BaseURL />Search.jsp?query=','<wiki:Variable var='pagename' />' );return false;"
+         onclick="SearchBox.navigation( '<wiki:Link format="url" context="edit" page="__PAGEHERE__"/>','<wiki:Variable var='pagename' />' );return false;"
+         title="Edit the selected page">edit</a> 
+      | 
+      <a href="javascript://nop/" 
+         onclick="SearchBox.navigation( '<wiki:BaseURL />Search.jsp?query=__PAGEHERE__','<wiki:Variable var='pagename' />' );return false;"
          title="Advanced Search">find</a> 
       [ f ]
     </div>
