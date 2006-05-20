@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="etc/|build/" kind="src" path="tests"/>
+	<classpathentry excluding="webdocs/|wikipages/" kind="src" path="src"/>
+	<classpathentry excluding="etc/|build/|reports/" kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry kind="lib" path="lib/ecs.jar"/>
