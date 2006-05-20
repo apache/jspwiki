@@ -21,7 +21,7 @@ create table if not exists @jspwiki.userdatabase.roleTable@ (
 create user @jdbc.user.id@ set password '@jdbc.user.password@';
 
 grant select, insert, update, delete on @jspwiki.userdatabase.table@ to @jdbc.user.id@;
-grant select, insert on @jspwiki.userdatabase.roleTable@ to @jdbc.user.id@;
+grant select, insert, update, delete on @jspwiki.userdatabase.roleTable@ to @jdbc.user.id@;
 
 insert into @jspwiki.userdatabase.table@ (
   @jspwiki.userdatabase.email@,
