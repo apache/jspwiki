@@ -491,22 +491,21 @@ public class AuthorizationManagerTest extends TestCase
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
         assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        assertFalse( "Foo !edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
         assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertFalse( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+        assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
 
         // Bar is not in the ACL, so he can't read or edit
         principal = new WikiPrincipal( "Guest" );
         m_session.getSubject().getPrincipals().clear();
         m_session.getSubject().getPrincipals().add( principal );
         m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Guest view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Guest !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertFalse( "Guest view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertFalse( "Guest !edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+        assertFalse( "Guest !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
+        assertFalse( "Guest !edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        assertTrue( "Guest view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
+        assertTrue( "Guest edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
         
-
-        m_engine.deleteAttachments( "Test" );
+        m_engine.getAttachmentManager().deleteAttachment( att );
         m_engine.deletePage( "Test" );
     }
 
