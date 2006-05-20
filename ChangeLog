@@ -1,5 +1,25 @@
 2006-05-20  Andrew Jaquith
 
+        * 2.4.9
+
+        * Enhancement: UserDatabase interface includes two new methods:
+        getWikiNames() for enumerating the users in the current database,
+        and deleteByLoginName( String ), for removing users. I have implemented
+        these methods to the concrete classes JDBCUserDatabase and
+        XMLUserDatabase. Thanks to Frank Fischer for his patches; they
+        served as the basis for these changes. I have *not* added convenience
+        methods to UserManager... yet.
+
+        * Enhancement: SecurityVerifier includes new code that checks to make
+        sure the UserDatabase is initialized properly, and that it can add
+        and delete users correctly. Also, admin/SecurityConfig.jsp includes
+        a new section ('UserDatabase') where results of the checks are displayed.
+        
+        * Minor tweaks to the database setup scripts to include update/delete
+        privileges for the roles table.
+
+2006-05-20  Andrew Jaquith
+
         * 2.4.8
 
         * Enhancement: AuthenticationManager now injects role Principals
