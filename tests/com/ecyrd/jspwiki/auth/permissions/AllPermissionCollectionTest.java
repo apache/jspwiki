@@ -1,14 +1,13 @@
 package com.ecyrd.jspwiki.auth.permissions;
 
 import java.security.Permission;
-import java.security.Permissions;
 import java.util.Enumeration;
 
 import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-05-20 05:20:34 $
+ * @version $Revision: 1.3 $ $Date: 2006-05-20 23:53:11 $
  */
 public class AllPermissionCollectionTest extends TestCase
 {
