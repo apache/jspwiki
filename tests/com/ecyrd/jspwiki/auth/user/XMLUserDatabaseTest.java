@@ -1,4 +1,5 @@
 package com.ecyrd.jspwiki.auth.user;
+import java.security.Principal;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -28,6 +29,33 @@ public class XMLUserDatabaseTest extends TestCase {
     WikiEngine m_engine  = new TestEngine(props);
     db = new XMLUserDatabase();
     db.initialize(m_engine, props);
+  }
+  
+  public void testDeleteByLoginName() throws WikiSecurityException
+  {
+      // First, count the number of users in the db now.
+      int oldUserCount = db.getWikiNames().length;
+      
+      // Create a new user with random name
+      String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+      UserProfile profile = new DefaultUserProfile();
+      profile.setEmail("testuser@testville.com");
+      profile.setLoginName( loginName );
+      profile.setWikiName( "WikiName"+loginName );
+      profile.setFullname( "FullName"+loginName );
+      profile.setPassword("password");
+      db.save(profile);
+      db.commit();
+      
+      // Make sure the profile saved successfully
+      profile = db.findByLoginName( loginName );
+      assertEquals( loginName, profile.getLoginName() );
+      assertEquals( oldUserCount+1, db.getWikiNames().length );
+
+      // Now delete the profile; should be back to old count
+      db.deleteByLoginName( loginName );
+      db.commit();
+      assertEquals( oldUserCount, db.getWikiNames().length );
   }
   
   public void testFindByEmail() {
@@ -95,6 +123,12 @@ public class XMLUserDatabaseTest extends TestCase {
           assertTrue(true);
       }
     }
+  
+  public void testGetWikiNames() throws WikiSecurityException
+  {
+      Principal[] principals = db.getWikiNames();
+      assertEquals( 2, principals.length );
+  }
 
   public void testSave() {
       try {

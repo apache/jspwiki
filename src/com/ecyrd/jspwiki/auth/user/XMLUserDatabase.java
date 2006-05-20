@@ -20,10 +20,13 @@
 package com.ecyrd.jspwiki.auth.user;
 
 import java.io.*;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +39,7 @@ import org.xml.sax.SAXException;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**
@@ -52,7 +56,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.13 $ $Date: 2006-03-16 21:06:14 $
+ * @version $Revision: 1.14 $ $Date: 2006-05-20 23:56:17 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -164,6 +168,34 @@ public class XMLUserDatabase extends AbstractUserDatabase
     }
 
     /**
+     * Looks up and deletes the first {@link UserProfile} in the user database
+     * that matches a profile having a given login name. If the user database
+     * does not contain a user with a matching attribute, throws a
+     * {@link NoSuchPrincipalException}. The method does not commit the
+     * results of the delete; it only alters the database in memory.
+     * @param loginName the login name of the user profile that shall be deleted
+     */
+    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
+    {
+        if ( c_dom == null )
+        {
+            throw new WikiSecurityException( "FATAL: database does not exist" );
+        }
+            
+        NodeList users = c_dom.getDocumentElement().getElementsByTagName( USER_TAG );
+        for( int i = 0; i < users.getLength(); i++ )
+        {
+            Element user = (Element) users.item( i );
+            if ( user.getAttribute( LOGIN_NAME ).equals( loginName ) )
+            {
+                c_dom.getDocumentElement().removeChild(user);
+                return;
+            }
+        }
+        throw new NoSuchPrincipalException( "Not in database: " + loginName );
+    }        
+
+    /**
      * Looks up and returns the first {@link UserProfile}in the user database
      * that matches a profile having a given e-mail address. If the user
      * database does not contain a user with a matching attribute, throws a
@@ -239,6 +271,38 @@ public class XMLUserDatabase extends AbstractUserDatabase
         throw new NoSuchPrincipalException( "Not in database: " + index );
     }
 
+    /**
+     * Returns all WikiNames that are stored in the UserDatabase
+     * as an array of WikiPrincipal objects. If the database does not
+     * contain any profiles, this method will return a zero-length
+     * array.
+     * @return the WikiNames
+     */
+    public Principal[] getWikiNames() throws WikiSecurityException
+    {
+        if ( c_dom == null )
+        {
+            throw new IllegalStateException( "FATAL: database does not exist" );
+        }
+        Set principals = new HashSet();
+        NodeList users = c_dom.getElementsByTagName( USER_TAG );
+        for( int i = 0; i < users.getLength(); i++ )
+        {
+            Element user = (Element) users.item( i );
+            String wikiName = user.getAttribute( WIKI_NAME );
+            if ( wikiName == null )
+            {
+                log.warn( "Detected null wiki name in XMLUserDataBase. Check your user database." );
+            }
+            else
+            {
+                Principal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
+                principals.add( principal );
+            }
+        }
+        return (Principal[])principals.toArray( new Principal[principals.size()] );
+    }
+    
     /**
      * Initializes the user database based on values from a Properties object.
      * The properties object must contain a file path to the XML database file

@@ -1,8 +1,11 @@
 package com.ecyrd.jspwiki.auth.user;
 
+import java.security.Principal;
 import java.sql.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,6 +16,7 @@ import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**
@@ -119,7 +123,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
  * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-01-11 07:46:16 $
+ * @version $Revision: 1.7 $ $Date: 2006-05-20 23:56:17 $
  * @since 2.3
  */public class JDBCUserDatabase extends AbstractUserDatabase
 {
@@ -173,6 +177,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public static final String PROP_DB_WIKI_NAME     = "jspwiki.userdatabase.wikiName";
 
     private DataSource         m_ds                  = null;
+    private String m_deleteUserByLoginName = null;
+    private String m_deleteRoleByLoginName = null;
     private String m_findByEmail = null;
     private String m_findByFullName = null;
     private String m_findByLoginName = null;
@@ -205,6 +211,61 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
+     * Looks up and deletes the first {@link UserProfile} in the user database
+     * that matches a profile having a given login name. If the user database
+     * does not contain a user with a matching attribute, throws a
+     * {@link NoSuchPrincipalException}. The method does not commit the
+     * results of the delete; it only alters the database in memory.
+     * @param loginName the login name of the user profile that shall be deleted
+     */
+    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
+    {
+        // Get database connection
+        Connection conn;
+        try 
+        {
+            conn = m_ds.getConnection();
+        }
+        catch ( SQLException e )
+        {
+            throw new WikiSecurityException( e.getMessage() );
+        }
+        
+        // Get the existing user; if not found, throws NoSuchPrincipalException
+        findByLoginName( loginName );
+        
+        try
+        {
+            PreparedStatement ps;
+            // Delete user record
+            ps = conn.prepareStatement( m_deleteUserByLoginName );
+            ps.setString(1, loginName );
+            ps.execute();
+            
+            // Delete role record
+            ps = conn.prepareStatement( m_deleteRoleByLoginName );
+            ps.setString(1, loginName );
+            ps.execute();
+        }
+        catch ( SQLException e )
+        {
+            throw new WikiSecurityException( e.getMessage() );
+        }
+        
+        // Close connection
+        try 
+        {
+            if ( conn != null )
+            {
+                conn.close();
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+    }        
+    
+    /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
     public UserProfile findByEmail( String index ) throws NoSuchPrincipalException
@@ -236,6 +297,55 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         return findByPreparedStatement( m_findByWikiName, index );
     }
 
+    /**
+     * Returns all WikiNames that are stored in the UserDatabase
+     * as an array of WikiPrincipal objects. If the database does not
+     * contain any profiles, this method will return a zero-length
+     * array.
+     * @return the WikiNames
+     */
+    public Principal[] getWikiNames() throws WikiSecurityException
+    {
+        Connection conn = null;
+        Set principals = new HashSet();
+        try {
+            conn = m_ds.getConnection();
+            PreparedStatement ps = conn.prepareStatement( m_findAll );
+            ResultSet rs = ps.executeQuery();
+            while ( rs.next() )
+            {
+                String wikiName = rs.getString( m_wikiName );
+                if ( wikiName == null )
+                {
+                    log.warn( "Detected null wiki name in XMLUserDataBase. Check your user database." );
+                }
+                else
+                {
+                    Principal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
+                    principals.add( principal );
+                }
+            }
+        }
+        catch ( SQLException e )
+        {
+            throw new WikiSecurityException( e.getMessage() );
+        }
+        
+        // Close connection
+        try 
+        {
+            if ( conn != null )
+            {
+                conn.close();
+            }
+        }
+        catch ( SQLException e )
+        {
+        }
+        
+        return (Principal[])principals.toArray( new Principal[principals.size()] );
+    }
+    
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
      * java.util.Properties)
@@ -291,6 +401,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                               + m_role
                               + ") VALUES (?,?)";
             m_findRoles       = "SELECT * FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
+            
+            // Prepare the user delete SQL
+            m_deleteUserByLoginName = "DELETE FROM " + m_userTable + " WHERE " + m_loginName + "=?";
+            
+            // Prepare the role delete SQL
+            m_deleteRoleByLoginName = "DELETE FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
             
             // Set the "share users with container flag"
             m_sharedWithContainer = TextUtil.isPositive( props.getProperty( PROP_SHARED_WITH_CONTAINER, "false" ) );

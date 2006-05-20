@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-01-11 03:47:20 $
+ * @version $Revision: 1.6 $ $Date: 2006-05-20 23:56:17 $
  * @since 2.3
  */
 public interface UserDatabase
@@ -47,6 +47,16 @@ public interface UserDatabase
      */
     public void commit() throws WikiSecurityException;
 
+    /**
+     * Looks up and deletes the first {@link UserProfile} in the user database
+     * that matches a profile having a given login name. If the user database
+     * does not contain a user with a matching attribute, throws a
+     * {@link NoSuchPrincipalException}. The method does not commit the
+     * results of the delete; it only alters the database in memory.
+     * @param loginName the login name of the user profile that shall be deleted
+     */
+    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException;
+    
     /**
      * <p>
      * Looks up the Principals representing a user from the user database. These
@@ -73,6 +83,15 @@ public interface UserDatabase
      */
     public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException;
 
+    /**
+     * Returns all WikiNames that are stored in the UserDatabase
+     * as an array of Principal objects. If the database does not
+     * contain any profiles, this method will return a zero-length
+     * array.
+     * @return the WikiNames
+     */
+    public Principal[] getWikiNames() throws WikiSecurityException;
+    
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
      * that whose login name, full name, or wiki name matches the supplied

@@ -49,7 +49,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  Provides a facade for user and group information.
  *  
  *  @author Janne Jalkanen
- *  @version $Revision: 1.44 $ $Date: 2006-04-03 19:48:48 $
+ *  @version $Revision: 1.45 $ $Date: 2006-05-20 23:56:17 $
  *  @since 2.3
  */
 public class UserManager
@@ -497,6 +497,11 @@ public class UserManager
             // No operation
         }
 
+        public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
+        {
+            // No operation
+        }
+
         public UserProfile findByEmail(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
@@ -517,6 +522,11 @@ public class UserManager
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
+        public Principal[] getWikiNames() throws WikiSecurityException
+        {
+            return new Principal[0];
+        }
+        
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
         }
