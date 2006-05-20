@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.24 $ $Date: 2006-05-08 00:29:05 $
+ * @version $Revision: 1.25 $ $Date: 2006-05-20 05:18:29 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -232,13 +232,31 @@ public final class AuthenticationManager
             throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
         }
 
+        // If using JAAS, try to log in; otherwise logins "always" succeed
+        boolean login = true;
         if( c_useJAAS )
         {
             CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase() );
-            return doLogin( wikiSession, handler, LOGIN_CONTAINER );
+            login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
         }
         
-        return true;
+        // If login succeeded, inject container roles
+        // TODO: this should probably move to WebContainerLoginModule...
+        if ( login ) 
+        {
+            Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+            if ( authorizer instanceof WebContainerAuthorizer ) 
+            {
+                WebContainerAuthorizer wca = (WebContainerAuthorizer)authorizer;
+                Principal[] roles = wca.getRoles( request);
+                for ( int i = 0; i < roles.length; i++ )
+                {
+                    wikiSession.getSubject().getPrincipals().add( roles[i] );
+                }
+            }
+            
+        }
+        return login;
     }
 
     /**
@@ -448,6 +466,41 @@ public final class AuthenticationManager
     }
     
     /**
+     * Injects Role Principals into the user's Principal set
+     * based on the roles the user possesses, according to the
+     * external {@link Authorizer}. This method is called during
+     * once, during login. The algorithm first calls the 
+     * {@link Authorizer#getRoles()} to obtain the array of
+     * Principals the authorizer knows about. Then, the method
+     * {@link Authorizer#isUserInRole(WikiSession, Principal)} is
+     * called for each Principal. If the user possesses the role, 
+     * an equivalent role Principal is injected into the user's
+     * principal set.
+     * 
+     * @param session the wiki session
+     */
+    protected final void injectRolePrincipals( WikiSession session )
+    {
+        Subject subject = session.getSubject();
+        
+        // Get the authorizer's known roles, then test for each
+        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+        Principal[] roles = authorizer.getRoles();
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            Principal role = roles[i];
+            if ( authorizer.isUserInRole( session, role ) )
+            {
+                String roleName = role.getName();
+                if ( !Role.isReservedName( roleName ) )
+                {
+                    subject.getPrincipals().add( new Role( roleName ) );
+                }
+            }
+        }
+    }
+    
+    /**
      * Log in to the application using a given JAAS LoginConfiguration.
      * @param wikiSession the current wiki session, to which the Subject will be associated
      * @param handler handles callbacks sent by the LoginModules in the configuration
@@ -485,10 +538,11 @@ public final class AuthenticationManager
                 return false;
             }
             
-            // If the user authenticated, inject group principals and log the event
+            // If the user authenticated, inject role and group principals and log the event
             if ( wikiSession.isAuthenticated() )
             {
                 injectGroupPrincipals( wikiSession );
+                injectRolePrincipals( wikiSession );
                 WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), null );
                 fireEvent( event );
             }

@@ -34,7 +34,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.16 $ $Date: 2006-05-08 00:26:28 $
+ * @version $Revision: 1.17 $ $Date: 2006-05-20 05:18:48 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -270,6 +270,28 @@ public class WebContainerAuthorizer implements Authorizer
     }
 
     /**
+     * Returns an array of role Principals corresponding to those
+     * the container believes are authorized for the current request.
+     * The array will contain a proper subset of those enumerated 
+     * in the <code>web.xml</code>. This method actually returns 
+     * a defensive copy of an internally stored array.
+     * @return an array of Principals representing the roles
+     */
+    public Role[] getRoles( HttpServletRequest request )
+    {
+        Set roles = new HashSet();
+        for ( int i = 0; i < m_containerRoles.length; i++ )
+        {
+            Role role = m_containerRoles[i];
+            if ( request.isUserInRole( role.getName() ) )
+            {
+                roles.add( role );
+            }
+        }
+        return (Role[]) roles.toArray( new Role[roles.size()] );
+    }
+
+    /**
      * Protected method that extracts the roles from JSPWiki's web application
      * deployment descriptor. Each Role is constructed by using the String
      * representation of the Role, for example
@@ -336,7 +358,7 @@ public class WebContainerAuthorizer implements Authorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.16 $ $Date: 2006-05-08 00:26:28 $
+     * @version $Revision: 1.17 $ $Date: 2006-05-20 05:18:48 $
      */
     public class LocalEntityResolver implements EntityResolver
     {
