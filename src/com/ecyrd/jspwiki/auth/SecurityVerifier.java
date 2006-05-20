@@ -49,12 +49,15 @@ import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
 
 /**
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-05-20 05:21:38 $
+ * @version $Revision: 1.3 $ $Date: 2006-05-20 23:52:40 $
  * @since 2.4
  */
 public class SecurityVerifier
@@ -95,6 +98,12 @@ public class SecurityVerifier
 
     public static final String    INFO_ROLES                   = "Info.Roles";
     
+    public static final String    ERROR_DB                     = "Error.UserDatabase";
+    
+    public static final String    WARNING_DB                   = "Warning.UserDatabase";
+    
+    public static final String    INFO_DB                      = "Info.UserDatabase";
+    
     public static final String    INFO_JAAS                    = "Info.Jaas";
 
     private static final String[] CONTAINER_ACTIONS            = new String[]
@@ -120,6 +129,7 @@ public class SecurityVerifier
         verifyJaas();
         verifyPolicy();
         verifyPolicyAndContainerRoles();
+        verifyUserDatabase();
     }
 
     /**
@@ -609,6 +619,94 @@ public class SecurityVerifier
         AuthorizationManager auth = m_engine.getAuthorizationManager();
         boolean result = auth.checkStaticPermission( subject, permission );
         return result;
+    }
+    
+    /**
+     * Verifies that the user datbase was initialized properly, and that 
+     * user add and delete operations work as they should.
+     */
+    protected void verifyUserDatabase()
+    {
+        UserDatabase db = m_engine.getUserDatabase();
+        
+        // Check for obvious error conditions
+        if ( db == null )
+        {
+            m_session.addMessage( ERROR_DB, "UserDatabase is null; JSPWiki could not " +
+                    "initialize it. Check the error logs." );
+        }
+        if ( db instanceof UserManager.DummyUserDatabase )
+        {
+            m_session.addMessage( ERROR_DB, "UserDatabase is DummyUserDatabase; JSPWiki " +
+                    "may not have been able to initialize the database you supplied in " +
+                    "jspwiki.properties, or you left the 'jspwiki.userdatabase' property " +
+                    "blank. Check the error logs." );
+        }
+        
+        // Tell user what class of database this is.
+        m_session.addMessage( INFO_DB, "UserDatabase is of type '" + db.getClass().getName() + 
+                "'. It appears to be initialized properly." );
+        
+        // Now, see how many users we have.
+        int oldUserCount = 0;
+        try 
+        {
+            Principal[] users = db.getWikiNames();
+            oldUserCount = users.length;
+            m_session.addMessage( INFO_DB, "The user database contains " + oldUserCount + " users." );
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_DB, "Could not obtain a list of current users: " + e.getMessage() );
+            return;
+        }
+        
+        // Try adding a bogus user with random name
+        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        try
+        {
+            UserProfile profile = new DefaultUserProfile();
+            profile.setEmail("testuser@testville.com");
+            profile.setLoginName( loginName );
+            profile.setWikiName( "WikiName"+loginName );
+            profile.setFullname( "FullName"+loginName );
+            profile.setPassword("password");
+            db.save(profile);
+            db.commit();
+            
+            // Make sure the profile saved successfully
+            if ( db.getWikiNames().length == oldUserCount )
+            {
+                m_session.addMessage( ERROR_DB, "Could not add a test user to the database." );
+                return;
+            }
+            m_session.addMessage( INFO_DB, "The user database allows new users to be created, as it should." );
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_DB, "Could not add a test user to the database: " + e.getMessage() );
+            return;
+        }
+
+        // Now delete the profile; should be back to old count
+        try 
+        {
+            db.deleteByLoginName( loginName );
+            db.commit();
+            if ( db.getWikiNames().length != oldUserCount )
+            {
+                m_session.addMessage( ERROR_DB, "Could not delete a test user from the database." );
+                return;
+            }
+            m_session.addMessage( INFO_DB, "The user database allows users to be deleted, as it should." );
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_DB, "Could not add a test user to the database: " + e.getMessage() );
+            return;
+        }
+        
+        m_session.addMessage( INFO_DB, "The user database configuration looks fine." );
     }
 
     /**
