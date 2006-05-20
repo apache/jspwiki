@@ -1,3 +1,45 @@
+2006-05-20  Andrew Jaquith
+
+        * 2.4.8
+
+        * Enhancement: AuthenticationManager now injects role Principals
+        at login time from the external authorizer into our WikiSession's 
+        subject. This works with all Authorizers, including (of course)
+        WebContainerAuthorizer. This enables grants to Principals of
+        type com.ecyrd.jspwiki.auth.authorize.Role to be specified in
+        the Java security policy. In particular, this means that policy
+        files can be broadened to include container roles.
+        WebContainerAuthorizer received a new method to accomodate this.
+
+        * Enhancement: Added grant block in jspwiki for administrator groups
+        principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" (wiki group)
+        and principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" (container
+        role). Added new wiki page to distribution, GroupAdmin.txt with an
+        empty (disabled) membership, which makes the administrator group
+        secure by default. We expect that a future enhancement to Install.jsp
+        will overwrite the contents of this file, thus "enabling" the admin group.
+
+        * Bug fix: Uploaded JDK1.4-compatible version of freshcookies-security.jar.
+
+        * Bug fix: Fixed error in jspwiki.policy.
+
+        * Bug fix: Changed WikiEvent so that its toString() method does not
+        leak credentials.
+
+        * Bug fix: Logout.jsp now removes "asserted" identity cookies.
+        This is arguably less confusing to users.
+
+        * Bug fix: Removed SecurityConfig.jsp from web.xml constraint (for now).
+
+        * Removed spurious import in AuthorizationManager.
+
+        * Massive refactoring and huge improvements to SecurityVerifier and
+        admin/SecurityConfig.jsp. Janne, it should even for you now. :)
+
+        * AllPermissionCollection now accepts WikiPermission and PagePermission
+        types in its add() method. The newPermissionCollection() method for
+        WikiPermission and PagePermission returns a new AllPermissionCollection().
+
 2006-05-09  Dan Frankowski
 
         * 2.4.7
