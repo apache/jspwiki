@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.18 2006-05-08 00:25:33 arj Exp $
+// $Id: jspwiki.policy,v 1.19 2006-05-20 05:16:58 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -100,7 +100,6 @@ grant signedBy "jspwiki",
 // with the wiki, and edit their own profiles.
 
 grant signedBy "jspwiki", 
-  principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin",
   principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "modify,rename";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
@@ -111,13 +110,19 @@ grant signedBy "jspwiki",
 };
 
 
-// Administrators also are allowed to delete any page, and can edit, 
-// rename and delete groups. To activate the administrator group, 
-// uncomment this block and create a wiki group called "Admin".
-// You should also match the permission target (here, 'JSPWiki') with
-// the value of the 'jspwiki.applicationName' property in jspwiki.properties.
+// Administrators (principals or roles possessing AllPermission) 
+// are allowed to delete any page, and can edit, rename and delete 
+// groups. You should match the permission target (here, 'JSPWiki') 
+// with the value of the 'jspwiki.applicationName' property in 
+// jspwiki.properties. Two administative groups are set up below:
+// the wiki group "Admin" (stored by default in wiki page GroupAdmin)
+// and the container role "Admin" (managed by the web container).
 
-//grant signedBy "jspwiki"
-//  principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
-//    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "JSPWiki";
-//};
+grant signedBy "jspwiki",
+  principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
+    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "JSPWiki";
+};
+grant signedBy "jspwiki",
+  principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" {
+    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "JSPWiki";
+};

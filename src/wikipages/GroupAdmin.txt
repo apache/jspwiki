@@ -1,0 +1,3 @@
+[{ALLOW edit Admin}]
+[{SET members=''}]
+This is the administrative wiki group. Edit this page to see its members. By default, it has none.
