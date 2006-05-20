@@ -8,18 +8,18 @@ import java.util.Hashtable;
 /**
  * A collection of AllPermission objects.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-03-30 04:52:03 $
+ * @version $Revision: 1.2 $ $Date: 2006-05-20 05:20:34 $
  */
 public class AllPermissionCollection extends PermissionCollection
 {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean           c_not_empty      = false;
+    private boolean           m_not_empty      = false;
 
-    private boolean           c_read_only      = false;
+    private boolean           m_read_only      = false;
 
-    protected final Hashtable c_permissions    = new Hashtable();
+    protected final Hashtable m_permissions    = new Hashtable();
 
     /**
      * Adds an AllPermission object to this AllPermissionCollection. If this
@@ -30,22 +30,23 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public void add( Permission permission )
     {
-        if ( !( permission instanceof AllPermission ) )
+        if ( !( permission instanceof AllPermission ) && !( permission instanceof WikiPermission )
+                && !( permission instanceof PagePermission ) )
         {
             throw new IllegalArgumentException(
-                    "Permission must be of type com.ecyrd.jspwiki.permissions.AllPermission." );
+                    "Permission must be of type com.ecyrd.jspwiki.permissions.AllPermission, com.ecyrd.jspwiki.permissions.PagePermission or com.ecyrd.jspwiki.permissions.WikiPermission." );
         }
         
-        if ( c_read_only )
+        if ( m_read_only )
         {
             throw new SecurityException( "attempt to add a Permission to a readonly PermissionCollection" );
         }
         
-        c_not_empty = true;
+        m_not_empty = true;
         
         // This is a filthy hack, but it keeps us from having to write our own
         // Enumeration implementation
-        c_permissions.put( permission, permission );
+        m_permissions.put( permission, permission );
     }
 
     /**
@@ -55,7 +56,7 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public Enumeration elements()
     {
-        return c_permissions.elements();
+        return m_permissions.elements();
     }
 
     /**
@@ -75,7 +76,7 @@ public class AllPermissionCollection extends PermissionCollection
     public boolean implies( Permission permission )
     {
         // If nothing in the collection yet, fail fast
-        if ( !c_not_empty )
+        if ( !m_not_empty )
         {
             return false;
         }
@@ -88,11 +89,11 @@ public class AllPermissionCollection extends PermissionCollection
         }
 
         // Step through each AllPermission
-        Enumeration permEnum = c_permissions.elements();
+        Enumeration permEnum = m_permissions.elements();
         while( permEnum.hasMoreElements() )
         {
-            AllPermission all = (AllPermission) permEnum.nextElement();
-            if ( all.implies( permission ) )
+            Permission storedPermission = (Permission) permEnum.nextElement();
+            if ( storedPermission.implies( permission ) )
             {
                 return true;
             }
@@ -105,7 +106,7 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public boolean isReadOnly()
     {
-        return c_read_only;
+        return m_read_only;
     }
 
     /**
@@ -113,6 +114,19 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public void setReadOnly()
     {
-        c_read_only = true;
+        m_read_only = true;
+    }
+    
+    /**
+     * Factory method that returns an AllPermissionCollection for
+     * a specified wiki. For each wiki, only a single collection
+     * item will ever be created and returned. The AllPermissionCollection
+     * class itself maintains an internal static cache of permission
+     * collections, where newly-created collections are kept.
+     * @return the unique permission collection for the wiki
+     */
+    protected static final AllPermissionCollection getInstance( String wiki )
+    {
+        return new AllPermissionCollection();
     }
 }

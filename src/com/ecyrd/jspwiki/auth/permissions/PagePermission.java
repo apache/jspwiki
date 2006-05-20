@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.auth.permissions;
 
 import java.security.Permission;
+import java.security.PermissionCollection;
 import java.util.Arrays;
 
 import com.ecyrd.jspwiki.WikiPage;
@@ -41,7 +42,7 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * Targets that do not include a wiki prefix <i>never </i> imply others.
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-05-06 14:39:40 $
+ * @version $Revision: 1.9 $ $Date: 2006-05-20 05:20:34 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
@@ -296,6 +297,16 @@ public final class PagePermission extends Permission
         return ( impliedWiki && impliedPage );
     }
 
+    /**
+     * Returns a new {@link AllPermissionCollection}.
+     * @see java.security.Permission#newPermissionCollection()
+     * @see AllPermissionCollection#getInstance(String)
+     */
+    public PermissionCollection newPermissionCollection()
+    {
+        return AllPermissionCollection.getInstance( m_wiki );
+    }
+    
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()

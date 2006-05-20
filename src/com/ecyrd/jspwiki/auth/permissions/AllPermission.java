@@ -8,7 +8,7 @@ import java.security.PermissionCollection;
  * Permission to perform all operations on a given wiki.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-03-30 04:51:37 $
+ * @version $Revision: 1.4 $ $Date: 2006-05-20 05:20:34 $
  * @since 2.3.80
  */
 public final class AllPermission extends Permission
@@ -109,12 +109,13 @@ public final class AllPermission extends Permission
     }
 
     /**
-     * Creates a new {@link AllPermissionCollection}.
+     * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
+     * @see AllPermissionCollection#getInstance(String)
      */
     public PermissionCollection newPermissionCollection()
     {
-        return new AllPermissionCollection();
+        return AllPermissionCollection.getInstance( m_wiki );
     }
 
     /**

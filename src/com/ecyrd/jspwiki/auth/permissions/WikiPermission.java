@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.auth.permissions;
 
 import java.security.Permission;
+import java.security.PermissionCollection;
 import java.util.Arrays;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Arrays;
  * itself. <p> Certain permissions imply others. Currently,
  * <code>createGroups</code> implies <code>createPages</code>. </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.13 $ $Date: 2006-02-25 18:46:45 $
+ * @version $Revision: 1.14 $ $Date: 2006-05-20 05:20:34 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
@@ -158,6 +159,16 @@ public final class WikiPermission extends Permission
         return ( impliedWiki && ( impliedMask & p.m_mask ) == p.m_mask );
     }
 
+    /**
+     * Returns a new {@link AllPermissionCollection}.
+     * @see java.security.Permission#newPermissionCollection()
+     * @see AllPermissionCollection#getInstance(String)
+     */
+    public PermissionCollection newPermissionCollection()
+    {
+        return AllPermissionCollection.getInstance( m_wiki );
+    }
+    
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()
