@@ -2,15 +2,17 @@ package com.ecyrd.jspwiki.web;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
+import com.meterware.httpunit.WebResponse;
+
 import junit.framework.TestCase;
 import net.sourceforge.jwebunit.WebTester;
-
-import com.meterware.httpunit.WebResponse;
 
 public abstract class CommonTests extends TestCase
 {
     protected static final String TEST_PASSWORD = "myP@5sw0rd";
     protected static final String TEST_LOGINNAME = "janne";
+    protected static final String TEST_FULLNAME = "Janne Jalkanen";
     protected WebTester t;
     protected final String m_baseURL;
 
@@ -138,6 +140,9 @@ public abstract class CommonTests extends TestCase
         t.assertTextPresent( "G'day" );
         t.assertTextPresent( "Don Quixote" );
         t.assertTextPresent( "(not logged in)" );
+        String cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
+        assertNotNull( cookie );
+        assertEquals( "Don Quixote", cookie );
 
         // Clear user cookie
         t.clickLinkWithText( "My Prefs" );
@@ -149,6 +154,8 @@ public abstract class CommonTests extends TestCase
         t.assertTextNotPresent( "G'day" );
         t.assertTextNotPresent( "Don Quixote" );
         t.assertTextNotPresent( "(not logged in)" );
+        cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
+        assertEquals( "", cookie );
     }
     
     public void testAssertedPermissions( ) 
@@ -249,20 +256,15 @@ public abstract class CommonTests extends TestCase
         t.assertTextNotPresent( "Please sign in" );
         t.assertTextPresent( "G'day" );
         t.assertTextPresent( "(authenticated)" );
+        String cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
+        assertNotNull( cookie );
+        assertEquals( TEST_FULLNAME, cookie );
         
-        // Log out; we should still be asserted
-        t.clickLinkWithText( "Log out" );
-        t.assertTextPresent( "G'day" );
-        t.assertTextNotPresent( "(authenticated)" );
-        t.assertTextPresent( "(not logged in)" );
-        
-        // Clear cookies; we should be anonymous again
-        t.clickLinkWithText( "My Prefs" );
-        t.setWorkingForm( "clearCookie" );
-        t.submit( "ok" );
+        // Log out; we should NOT see any asserted identities
+        t.gotoPage( "/Logout.jsp" );
         t.assertTextNotPresent( "G'day" );
-        t.assertTextNotPresent( "(authenticated)" );
-        t.assertTextNotPresent( "(not logged in)" );
+        cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
+        assertEquals( "", cookie );
     }
     
     protected void createGroup( String members ) 
@@ -343,9 +345,16 @@ public abstract class CommonTests extends TestCase
         t.submit( "action" );
     }
     
+    protected String getCookie( String cookie )
+    {
+        return t.getTestContext().getWebClient().getCookieValue( cookie );
+    }
+    
     protected void newSession()
     {
         t = new WebTester();
+        t.getTestContext().getWebClient().getClientProperties().setAutoRedirect( true );
+        t.getTestContext().getWebClient().getClientProperties().setAcceptCookies( true );
         t.getTestContext().setBaseUrl( m_baseURL );
         t.beginAt( "/Wiki.jsp" );
     }

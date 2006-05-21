@@ -18,6 +18,8 @@
         * Minor tweaks to the database setup scripts to include update/delete
         privileges for the roles table.
 
+        * Minor tweak to web unit tests to account for cleared cookies at logout.
+
 2006-05-20  Andrew Jaquith
 
         * 2.4.8
@@ -855,7 +857,7 @@
         
         * WebContainerAuthorizer now throws a RuntimeException
         if it cannot somehow parse the web.xml. This isn't ideal,
-        but it's better than ignoring the error. Credit: Jürgen Weber.
+        but it's better than ignoring the error. Credit: J?rgen Weber.
         
         * Removed unused imports and unreferenced objects in
         multiple classes. This does not affect functionality.
