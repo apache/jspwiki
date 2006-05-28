@@ -56,7 +56,7 @@
     wikiContext.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
     // Set the content type and include the response content
-    response.setContentType( RSSGenerator.getContentType(mode)+"; charset=UTF-8");
+    response.setContentType( RSSGenerator.getContentType(type)+"; charset=UTF-8");
 
     StringBuffer result = new StringBuffer();
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
