@@ -40,7 +40,6 @@ import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
-import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
@@ -79,7 +78,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.36 $ $Date: 2006-05-20 05:19:09 $
+ * @version $Revision: 1.37 $ $Date: 2006-05-28 23:21:35 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -267,15 +266,16 @@ public final class AuthorizationManager
      * Returns an array of Principal objects that represents the roles that
      * the user associated with a WikiSession possesses. The array is built
      * by iterating through the Subject's Principal set and extracting
-     * all Role objects into a list. The external Authorizer and GroupManager 
-     * are also consulted; in each case, the Principal[] array returned by 
-     * <code>getRoles()</code> is examined. If the Subject posseses this
-     * role, it is added to the list. The list is returned as an array
-     * sorted in the natural order implied by each Principal's 
-     * <code>getName</code> method.
+     * all Role and GroupPrincipal objects into a list. The list is 
+     * returned as an array sorted in the natural order implied by 
+     * each Principal's <code>getName</code> method.
+     * Note that this method does <em>not</em> consult the external
+     * Authorizer or GroupManager; it relies on the Principals that
+     * have been injected into the user's Subject at login time, or
+     * after group creation/modification/deletion.
      * @param session the wiki session
      * @return an array of Principal objects corresponding to the 
-     * roles the Subject possesses, across all Authorizers
+     * roles the Subject possesses
      */
     public final Principal[] getRoles( WikiSession session )
     {
@@ -285,26 +285,8 @@ public final class AuthorizationManager
         // Add all of the Roles possessed by the Subject directly
         roles.addAll( subject.getPrincipals( Role.class ) );
         
-        // Get the GroupManager and test for each Group
-        GroupManager manager = m_engine.getGroupManager();
-        Principal[] groups = manager.getRoles();
-        for ( int i = 0; i < groups.length; i++ )
-        {
-            if ( manager.isUserInRole( session, groups[i] ) )
-            {
-                roles.add( groups[i] );
-            }
-        }
-        
-        // Get the external Authorizer and test for each Role
-        Principal[] externalRoles = m_authorizer.getRoles();
-        for ( int i = 0; i < externalRoles.length; i++ )
-        {
-            if ( m_authorizer.isUserInRole( session, externalRoles[i] ) )
-            {
-                roles.add( externalRoles[i] );
-            }
-        }
+        // Add all of the GroupPrincipals possessed by the Subject directly
+        roles.addAll( subject.getPrincipals( GroupPrincipal.class ) );
         
         // Return a defensive copy
         Principal[] roleArray = ( Principal[] )roles.toArray( new Principal[roles.size()] );
@@ -314,23 +296,23 @@ public final class AuthorizationManager
     
     /**
      * Wrapper method that determines if the Subject associated with a 
-     * supplied WikiSession contains a desired built-in Role principal, 
-     * OR is a member a Group or external Role. The rules as as follows:
-     * <ol>
-     * <li>If the desired Principal is a built-in Role, the algorithm simply
-     * checks to see if the Subject possesses it in its Principal set</li>
-     * <li>If the desired Principal is a Role but <em>not</em> built-in, the
-     * external Authorizer's <code>isInRole</code> method is called</li>
-     * <li>If the desired principal is a Group, the GroupManager's group
-     * authorizer <code>isInRole</code> method is called</li>
-     * </ol>
+     * supplied WikiSession contains a desired Role or GroupPrincipal. 
+     * The algorithm simply checks to see if the Subject possesses 
+     * the Role or GroupPrincipal it in its Principal set. If the Principal
+     * is of type {@link com.ecyrd.jspwiki.auth.authorize.Group},
+     * it is converted to an equivalent GroupPrincipal first.
+     * For all other cases, this method returns <code>false</code>.
+     * Note that this method does <em>not</em> consult the external
+     * Authorizer or GroupManager; it relies on the Principals that
+     * have been injected into the user's Subject at login time, or
+     * after group creation/modification/deletion.
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role or group principal) to look
      *            for, which must be non-null. If null, the result of this
      *            method always returns <code>false</code>
      * @return <code>true</code> if the Subject supplied with the WikiContext
-     *         posesses the Role or is a member of the Group,
+     *         posesses the Role or GroupPrincipal,
      *         <code>false</code> otherwise
      */
     public final boolean isUserInRole( WikiSession session, Principal principal )
@@ -340,22 +322,18 @@ public final class AuthorizationManager
         {
             return false;
         }
-        Subject subject = session.getSubject();
-        if ( principal instanceof Role)
+        
+        // Backwards compatibility hack
+        if ( principal instanceof Group )
         {
-            Role role = (Role) principal;
-            // If built-in role, check to see if user possesses it.
-            if ( Role.isBuiltInRole( role ) && subject.getPrincipals().contains( role ) )
-            {
-                return true;
-            }
-            // No luck; try the external authorizer (e.g., container)
-            return (m_authorizer.isUserInRole( session, role ) );
+            principal = new GroupPrincipal( principal.getName() );
         }
-        else if ( principal instanceof Group )
+            
+        if ( principal instanceof Role ||
+             principal instanceof GroupPrincipal )
         {
-            Group group = (Group) principal;
-            return m_engine.getGroupManager().isUserInRole( session, group );
+            Subject subject = session.getSubject();
+            return subject.getPrincipals().contains( principal );
         }
         return false;
     }
@@ -365,24 +343,26 @@ public final class AuthorizationManager
      * a desired user Principal or built-in Role principal, OR is a member a
      * Group or external Role. The rules are as follows:</p>
      * <ol>
-     * <li>If the WikiSession is <em>not</em> authenticated, and we're looking for a built-in
-     * Role, delegate to {@link #isUserInRole(WikiSession, Principal)}; otherwise, always
-     * return <code>false</code>. We do this to prevent privilege escalation.</li>
-     * <li>Delegate the initial check to {@link #isUserInRole(WikiSession, Principal)}.</li>
-     * <li>If this check fails, delegate to
-     * {@link #hasUserPrincipal(Subject, Principal)} to determine whether the
-     * Subject posesses the desired Principal in its Principal set.</li>
+     * <li>First, see if the user possesses the role by delegating to 
+     * {@link #isUserInRole(WikiSession, Principal)}. If the
+     * result is <code>true</code>, we're done. If the result is
+     * negative and the WikiSession is <em>not</em> authenticated, 
+     * always return <code>false</code>. We do this to prevent privilege 
+     * escalation.</li>
+     * <li>Otherwise, we're looking for a user Principal,
+     * so iterate through the Principal set and see if
+     * any share the same name as the one we are looking for.</li>
      * </ol>
-     * <p>Note: As stated in the first rule above, this method
-     * <em>always</em> returns <code>false</code> when the 
+     * <p>Note: as implied by the first rule above, this method
+     * will <em>always</em> return <code>false</code> when the 
      * user isn't authenticated, <code>and</code> the principal/role being 
-     * queried isn't a built-in Role like Anonymous or Asserted. This is
+     * queried isn't a Role or GroupPrincipal. This is
      * to prevent privilege escalation by non-authenticated users.
      * Thus, to gain access to pages that name a specific user, that user 
      * is <em>required</em> to log in. Ditto for groups he or she 
      * belongs to. The exception is for ACLs that contain built-in roles; 
      * <em>e.g.,</em> "allow Asserted users to view" is allowed.</p>
-     * <p>A consequence of this rule is that ALCs that specify 
+     * <p>A consequence of this rule is that ACLs that specify 
      * <code>ALLOW Guest</code> <em>will not work</em> for
      * anonymous/asserted users (because <code>Guest</code> is 
      * a Principal, not a built-in Role). ACLs should specify
@@ -393,55 +373,27 @@ public final class AuthorizationManager
      *            for, which must be non-null. If null, the result of this
      *            method always returns <code>false</code>
      * @return <code>true</code> if the Subject supplied with the WikiContext
-     *         posesses the Role, is a member of the Group, or contains the
-     *         desired Principal, <code>false</code> otherwise
+     *         posesses the Role, GroupPrincipal or desired
+     *         user Principal, <code>false</code> otherwise
      */
     protected final boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
     {
-        if (session == null || principal == null)
+        
+        boolean hasRoleOrGroup = isUserInRole( session, principal );
+        if ( !session.isAuthenticated() || hasRoleOrGroup )
         {
-            return false;
+            return hasRoleOrGroup;
         }
         
-        // If user NOT authenticated, only allow checking for built-in roles
-        if ( !session.isAuthenticated() )
-        {
-            if ( principal instanceof Role && Role.isBuiltInRole( (Role)principal ) )
-            {
-                return isUserInRole( session, principal );
-            }
-            return false;
-        }
-        
-        // If user is authenticated, check role membership first
-        if ( principal instanceof Role || principal instanceof Group )
-        {
-            return isUserInRole( session, principal );
-        }
-        
-        // We must be looking for a user principal, then
+        // We must be looking for a user principal, then. 
+        // So just look for a name match.
         Subject subject = session.getSubject();
-        return hasUserPrincipal( subject, principal );
-    }
-
-    /**
-     * Determines whether any of the user Principals posessed by a Subject have
-     * the same name as a supplied Principal. Principals in the subject's
-     * principal set that are of types Role or Group are <em>not</em>
-     * considered in the comparison, since this would otherwise introduce the
-     * potential for spoofing.
-     * @param subject the Subject whose Principal set will be inspected
-     * @param principal the desired Principal
-     * @return <code>true</code> if any of the Subject's Principals have the
-     *         same name as the supplied Principal, otherwise <code>false</code>
-     */
-    protected final boolean hasUserPrincipal( Subject subject, Principal principal )
-    {
         String principalName = principal.getName();
         for( Iterator it = subject.getPrincipals().iterator(); it.hasNext(); )
         {
             Principal userPrincipal = (Principal) it.next();
-            if ( !( userPrincipal instanceof Role || userPrincipal instanceof Group ) )
+            if ( !( userPrincipal instanceof Role || 
+                    userPrincipal instanceof GroupPrincipal ) )
             {
                 if ( userPrincipal.getName().equals( principalName ) )
                 {
