@@ -12,9 +12,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 
 /**
@@ -47,7 +49,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * if user profile exists, or a generic WikiPrincipal if not.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2005-11-08 18:27:51 $
+ * @version $Revision: 1.8 $ $Date: 2006-05-28 23:25:07 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
@@ -63,8 +65,9 @@ public class WebContainerLoginModule extends AbstractLoginModule
     {
         HttpRequestCallback requestCallback = new HttpRequestCallback();
         UserDatabaseCallback databaseCallback = new UserDatabaseCallback();
+        AuthorizerCallback authCallback = new AuthorizerCallback();
         Callback[] callbacks = new Callback[]
-        { requestCallback, databaseCallback };
+        { requestCallback, databaseCallback, authCallback };
         String userId = null;
 
         try
@@ -116,6 +119,26 @@ public class WebContainerLoginModule extends AbstractLoginModule
             // If login fails, remove these roles
             m_principalsToRemove.add( Role.AUTHENTICATED );
             
+            // Add any container roles we can find.
+            Authorizer authorizer = authCallback.getAuthorizer();
+            if ( authorizer == null )
+            {
+                throw new LoginException( "Authorizer cannot be null." );
+            }
+            if ( authorizer instanceof WebContainerAuthorizer ) 
+            {
+                WebContainerAuthorizer wca = (WebContainerAuthorizer)authorizer;
+                Principal[] roles = wca.getRoles( request);
+                for ( int i = 0; i < roles.length; i++ )
+                {
+                    m_principals.add( roles[i] );
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug("Added Principal " + roles[i].getName() + "." );
+                    }
+                }
+            }
+            
             // Add any user principals from the UserDatabase.
             UserDatabase database = databaseCallback.getUserDatabase();
             if ( database == null )
@@ -127,10 +150,11 @@ public class WebContainerLoginModule extends AbstractLoginModule
             {
                 if ( log.isDebugEnabled() )
                 {
-                    log.debug("Added Principal " + principals[i].getName() + ",Role.ANONYMOUS,Role.ALL" );
+                    log.debug("Added Principal " + principals[i].getName() + "." );
                 }
                 m_principals.add( principals[i] );
             }
+            
             return true;
         }
         catch( IOException e )

@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.25 $ $Date: 2006-05-20 05:18:29 $
+ * @version $Revision: 1.26 $ $Date: 2006-05-28 23:20:25 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -236,25 +236,9 @@ public final class AuthenticationManager
         boolean login = true;
         if( c_useJAAS )
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase() );
-            login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
-        }
-        
-        // If login succeeded, inject container roles
-        // TODO: this should probably move to WebContainerLoginModule...
-        if ( login ) 
-        {
             Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
-            if ( authorizer instanceof WebContainerAuthorizer ) 
-            {
-                WebContainerAuthorizer wca = (WebContainerAuthorizer)authorizer;
-                Principal[] roles = wca.getRoles( request);
-                for ( int i = 0; i < roles.length; i++ )
-                {
-                    wikiSession.getSubject().getPrincipals().add( roles[i] );
-                }
-            }
-            
+            CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase(), authorizer );
+            login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
         }
         return login;
     }
@@ -307,6 +291,9 @@ public final class AuthenticationManager
         // Retrieve the associated WikiSession and clear the Principal set
         WikiSession wikiSession = WikiSession.getWikiSession( request );
         wikiSession.invalidate();
+        
+        // Remove the wikiSession from the WikiSession cache
+        WikiSession.removeWikiSession( request );
         
         // We need to flush the HTTP session too
         session.invalidate();
