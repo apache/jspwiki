@@ -22,7 +22,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.ecyrd.jspwiki.InternalWikiException;
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.Authorizer;
@@ -34,7 +33,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.17 $ $Date: 2006-05-20 05:18:48 $
+ * @version $Revision: 1.18 $ $Date: 2006-05-28 23:24:17 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements Authorizer
@@ -127,7 +126,15 @@ public class WebContainerAuthorizer implements Authorizer
      * containing the subject and the desired role ( which may be a Role or a
      * Group). If either parameter is <code>null</code>, this method must
      * return <code>false</code>. 
-     * This method extracts the last
+     * This method simply examines the WikiSession subject to see if it
+     * possesses the desired Principal. We assume that the method
+     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}
+     * previously executed at user login time, and that it has injected
+     * the role Principals that were in force at login time (see
+     * {@link #getRoles(HttpServletRequest)}). This is definitely a hack,
+     * but it eliminates the need for WikiSession to keep dangling 
+     * references to the last WikiContext hanging around, just
+     * so we can look up the HttpServletRequest.
      * 
      * @param session the current WikiSession
      * @param role the role to check
@@ -137,17 +144,12 @@ public class WebContainerAuthorizer implements Authorizer
      */
     public boolean isUserInRole( WikiSession session, Principal role )
     {
-        WikiContext context = session.getLastContext();
-        if ( context == null || role == null )
+        if ( session == null || role == null )
         {
             return false;
         }
-        HttpServletRequest request = context.getHttpRequest();
-        if ( request == null )
-        {
-            return false;
-        }
-        return request.isUserInRole( role.getName() );
+        Set principals = session.getSubject().getPrincipals();
+        return principals.contains( role );
     }
 
     /**
@@ -302,6 +304,8 @@ public class WebContainerAuthorizer implements Authorizer
     protected Role[] getRoles( Document webxml ) throws JDOMException
     {
         Set roles = new HashSet();
+        
+        // Get roles referred to by constraints
         String selector = "//web-app/security-constraint/auth-constraint/role-name";
         List nodes = XPath.selectNodes( webxml, selector );
         for( Iterator it = nodes.iterator(); it.hasNext(); )
@@ -309,6 +313,16 @@ public class WebContainerAuthorizer implements Authorizer
             String role = ( (Element) it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
+        
+        // Get all defined roles
+        selector = "//web-app/security-role/role-name";
+        nodes = XPath.selectNodes( webxml, selector );
+        for( Iterator it = nodes.iterator(); it.hasNext(); )
+        {
+            String role = ( (Element) it.next() ).getTextTrim();
+            roles.add( new Role( role ) );
+        }
+        
         return (Role[]) roles.toArray( new Role[roles.size()] );
     }
 
@@ -358,7 +372,7 @@ public class WebContainerAuthorizer implements Authorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.17 $ $Date: 2006-05-20 05:18:48 $
+     * @version $Revision: 1.18 $ $Date: 2006-05-28 23:24:17 $
      */
     public class LocalEntityResolver implements EntityResolver
     {
