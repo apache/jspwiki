@@ -57,7 +57,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-05-20 23:52:40 $
+ * @version $Revision: 1.4 $ $Date: 2006-05-28 23:22:13 $
  * @since 2.4
  */
 public class SecurityVerifier
@@ -157,7 +157,15 @@ public class SecurityVerifier
         { "Main", "Index", "GroupTest", "GroupAdmin" };
         String[] actions = new String[]
         { "view", "edit", "modify", "rename", "delete" };
-        String colWidth = String.valueOf( (double) ( 67 / ( actions.length * roles.length ) ) ) + "%";
+        String colWidth;
+        if ( actions.length > 0 )
+        {
+            colWidth = String.valueOf( (double) ( 67 / ( actions.length * roles.length ) ) ) + "%";
+        }
+        else
+        {
+            colWidth = "67%";
+        }
 
         StringBuffer s = new StringBuffer();
 
