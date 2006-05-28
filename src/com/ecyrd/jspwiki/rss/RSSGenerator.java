@@ -245,17 +245,28 @@ public class RSSGenerator
         return "application/octet-stream"; // Unknown type
     }
     
+    /**
+     *  Generates a feed based on a context and list of changes.
+     * @param wikiContext The WikiContext
+     * @param changed A list of Entry objects
+     * @param mode The mode (wiki/blog)
+     * @param type The type (RSS10, RSS20, ATOM).  Default is RSS 1.0
+     * @return Fully formed XML.
+     * 
+     * @throws ProviderException If the underlying provider failed.
+     * @throws IllegalArgumentException If an illegal mode is given.
+     */
     public String generateFeed( WikiContext wikiContext, List changed, String mode, String type )
         throws ProviderException
     {
         Feed feed = null;
         String res = null;
         
-        if( type.equals( ATOM ) )
+        if( ATOM.equals(type) )
         {
             feed = new AtomFeed( wikiContext );
         }
-        else if( type.equals( RSS20 ) )
+        else if( RSS20.equals( type ) )
         {
             feed = new RSS20Feed( wikiContext );
         }
@@ -264,20 +275,24 @@ public class RSSGenerator
             feed = new RSS10Feed( wikiContext );
         }
         
-        if( mode.equals( MODE_BLOG ) )
+        feed.setMode( mode );
+        
+        if( MODE_BLOG.equals( mode ) )
         {
             res = generateBlogRSS( wikiContext, changed, feed );
         }
-        else if( mode.equals( MODE_FULL ) )
+        else if( MODE_FULL.equals(mode) )
         {
             res = generateFullWikiRSS( wikiContext, feed );
         }
-        else if( mode.equals( MODE_WIKI ) )
+        else if( MODE_WIKI.equals(mode) )
         {
             res = generateWikiPageRSS( wikiContext, changed, feed );
         }
         else
+        {
             throw new IllegalArgumentException( "Invalid value for feed mode: "+mode );
+        }
         
         return res;
     }

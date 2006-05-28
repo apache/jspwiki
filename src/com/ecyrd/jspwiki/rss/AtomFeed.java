@@ -71,23 +71,23 @@ public class AtomFeed extends Feed
             
             WikiPage p = e.getPage();
             
-            Element entryEl = new Element("entry");
+            Element entryEl = getElement("entry");
             
             //
             //  Mandatory elements
             //
             
-            entryEl.addContent( new Element("id").setText( getEntryID(e)) );
-            entryEl.addContent( new Element("title").setAttribute("type","html").setText( e.getTitle() ));
-            entryEl.addContent( new Element("updated").setText( DateFormatUtils.formatUTC(p.getLastModified(),
-                                                                                          RFC3339FORMAT )));
+            entryEl.addContent( getElement("id").setText( getEntryID(e)) );
+            entryEl.addContent( getElement("title").setAttribute("type","html").setText( e.getTitle() ));
+            entryEl.addContent( getElement("updated").setText( DateFormatUtils.formatUTC(p.getLastModified(),
+                                                                                         RFC3339FORMAT )));
             //
             //  Optional elements
             //
             
-            entryEl.addContent( new Element("author").addContent( new Element("name").setText( e.getAuthor() )));
-            entryEl.addContent( new Element("link").setAttribute("rel","alternate").setAttribute("href",e.getURL()));
-            entryEl.addContent( new Element("content").setAttribute("type","html").setText( e.getContent() ));
+            entryEl.addContent( getElement("author").addContent( getElement("name").setText( e.getAuthor() )));
+            entryEl.addContent( getElement("link").setAttribute("rel","alternate").setAttribute("href",e.getURL()));
+            entryEl.addContent( getElement("content").setAttribute("type","html").setText( e.getContent() ));
             
             //
             //  Check for enclosures
@@ -103,7 +103,7 @@ public class AtomFeed extends Feed
                     {
                         Attachment att = (Attachment) a.next();
                     
-                        Element attEl = new Element("link");
+                        Element attEl = getElement("link");
                         attEl.setAttribute( "rel","enclosure" );
                         attEl.setAttribute( "href", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
                         attEl.setAttribute( "length", Long.toString(att.getSize()) );
@@ -127,7 +127,8 @@ public class AtomFeed extends Feed
     
     public String getString()
     {
-        Element root = new Element("feed",m_atomNameSpace);
+        Element root = getElement("feed");
+        WikiEngine engine = m_wikiContext.getEngine();
         
         Date lastModified = new Date(0L);
         
@@ -142,17 +143,26 @@ public class AtomFeed extends Feed
         //
         //  Mandatory parts
         //
-        root.addContent( new Element("title").setText( getChannelTitle() ) );
-        root.addContent( new Element("id").setText(getFeedID()) );
-        root.addContent( new Element("updated").setText(DateFormatUtils.formatUTC( lastModified,
-                                                                                   RFC3339FORMAT ) ));
+        root.addContent( getElement("title").setText( getChannelTitle() ) );
+        root.addContent( getElement("id").setText(getFeedID()) );
+        root.addContent( getElement("updated").setText(DateFormatUtils.formatUTC( lastModified,
+                                                                                  RFC3339FORMAT ) ));
         
         //
         //  Optional
         //
-        // root.addContent( new Element("author").addContent(new Element("name").setText(format())))
-        root.addContent( new Element("link").setAttribute("href",m_wikiContext.getEngine().getBaseURL()));
-        root.addContent( new Element("generator").setText("JSPWiki "+Release.VERSTR));
+        // root.addContent( getElement("author").addContent(getElement("name").setText(format())))
+        root.addContent( getElement("link").setAttribute("href",engine.getBaseURL()));
+        root.addContent( getElement("generator").setText("JSPWiki "+Release.VERSTR));
+        
+        String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp", 
+                                           "page="+engine.encodeName(m_wikiContext.getPage().getName())+
+                                           "&mode="+m_mode+
+                                           "&type=atom",
+                                           true );
+        Element self = getElement("link").setAttribute("rel","self");
+        self.setAttribute("href",rssFeedURL);
+        root.addContent(self);
         
         //
         //  Items
@@ -180,4 +190,8 @@ public class AtomFeed extends Feed
         }
     }
 
+    private final Element getElement( String name )
+    {
+        return new Element( name, m_atomNameSpace );
+    }
 }

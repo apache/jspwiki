@@ -27,9 +27,16 @@ public abstract class Feed
 
     protected WikiContext m_wikiContext;
     
+    protected String m_mode = RSSGenerator.MODE_WIKI;
+    
     public Feed( WikiContext context )
     {
         m_wikiContext = context;
+    }
+    
+    public void setMode( String mode )
+    {
+        m_mode = mode;
     }
     
     public void addEntry( Entry e )
