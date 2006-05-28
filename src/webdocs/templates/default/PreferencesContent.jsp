@@ -178,8 +178,8 @@
             <label>E-mail address</label>
             <input type="text" name="email" size="30" value="<wiki:UserProfile property="email"/>" />
             <div class="description">
-              Your e-mail address is optional. In the future, it will be used
-              by JSPWiki for resetting lost passwords.
+              Your e-mail address is optional. If you lose your password, you can ask to
+              have a new, random password sent to this address.
             </div>
           </div>
           
