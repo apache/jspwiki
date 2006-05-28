@@ -72,6 +72,10 @@ public class HttpUtil
                 if( cookies[i].getName().equals( cookieName ) )
                 {
                     String value = cookies[i].getValue();
+                    if ( value.length() == 0 )
+                    {
+                        return null;
+                    }
                     if ( value.charAt( 0 ) == '"' && value.charAt( value.length() - 1 ) == '"')
                     {
                         value = value.substring( 1, value.length() - 1 );
