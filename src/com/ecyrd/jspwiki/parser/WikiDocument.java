@@ -19,6 +19,8 @@
 */
 package com.ecyrd.jspwiki.parser;
 
+import java.lang.ref.WeakReference;
+
 import org.jdom.Document;
 
 import com.ecyrd.jspwiki.WikiContext;
@@ -42,7 +44,7 @@ public class WikiDocument extends Document
     private WikiPage m_page;
     private String   m_wikiText;
 
-    private WikiContext m_context;
+    private WeakReference m_context;
     
     /**
      *  Creates a new WikiDocument for a specific page.
@@ -71,11 +73,17 @@ public class WikiDocument extends Document
 
     public void setContext( WikiContext ctx )
     {
-        m_context = ctx;
+        m_context = new WeakReference( ctx );
     }
     
+    /**
+     * Returns the wiki context for this document. This method
+     * may return <code>null</code> if the associated wiki session
+     * had previously been garbage-collected.
+     * @return
+     */
     public WikiContext getContext()
     {
-        return m_context;
+        return (WikiContext) m_context.get();
     }
 }
