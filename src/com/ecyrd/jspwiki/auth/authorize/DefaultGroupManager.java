@@ -1,15 +1,17 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
+import java.lang.ref.WeakReference;
+import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.WeakHashMap;
 
 import javax.security.auth.Subject;
 
@@ -53,7 +55,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-03-26 21:13:26 $
+ * @version $Revision: 1.12 $ $Date: 2006-05-28 23:23:12 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -75,9 +77,9 @@ public class DefaultGroupManager implements GroupManager
         public void postSave( WikiContext context, String content )
         {
             AuthorizationManager auth = m_engine.getAuthorizationManager();
-            if (auth.checkPermission( context.getWikiSession(), WikiPermission.CREATE_GROUPS )) 
+            Permission perm = new WikiPermission(m_engine.getApplicationName(), "createGroups");
+            if (auth.checkPermission( context.getWikiSession(), perm )) 
             {
-                
                 // Parse groups if name starts with GROUP_PREFIX
                 WikiPage p = context.getPage();
                 if (p.getName().startsWith(DefaultGroupManager.GROUP_PREFIX)) 
@@ -135,15 +137,15 @@ public class DefaultGroupManager implements GroupManager
      */
     public static final String ATTR_MEMBERLIST = "members";
 
-    static final Logger        log             = Logger.getLogger( DefaultGroupManager.class );
+    static final Logger         log             = Logger.getLogger( DefaultGroupManager.class );
 
-    protected WikiEngine         m_engine;
+    protected WikiEngine        m_engine;
 
     protected WikiEventListener m_groupListener;
 
-    private final HashMap      m_groups        = new HashMap();
+    private final Map           m_groups        = new HashMap();
     
-    private final Set        m_listeners = new HashSet();
+    private final Map           m_listeners     = new WeakHashMap();
     
     public static final String GROUP_PREFIX = "Group";
 
@@ -176,7 +178,7 @@ public class DefaultGroupManager implements GroupManager
      */
     public synchronized void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.add( listener );
+        m_listeners.put( listener, new WeakReference( listener)  );
     }
 
     /**
@@ -378,7 +380,7 @@ public class DefaultGroupManager implements GroupManager
      */
     protected void fireEvent( WikiSecurityEvent event )
     {
-        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
+        for ( Iterator it = m_listeners.keySet().iterator(); it.hasNext(); )
         {
             WikiEventListener listener = (WikiEventListener)it.next();
             listener.actionPerformed(event);
@@ -398,6 +400,10 @@ public class DefaultGroupManager implements GroupManager
     protected synchronized void updateGroup( String groupName, List memberList )
     {
         Group group = (Group) m_groups.get( groupName );
+        if ( group != null )
+        {
+            group.addWikiEventListener( m_groupListener );
+        }
 
         if ( group == null && memberList == null )
         {

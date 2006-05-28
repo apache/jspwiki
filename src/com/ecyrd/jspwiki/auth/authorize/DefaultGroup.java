@@ -1,10 +1,11 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
+import java.lang.ref.WeakReference;
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
 import java.util.Vector;
+import java.util.WeakHashMap;
 
 import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -12,13 +13,13 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 /**
  * Provides a concrete implementation of the {@link Group} interface.
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-02-25 18:45:25 $
+ * @version $Revision: 1.8 $ $Date: 2006-05-28 23:23:12 $
  * @since 2.3
  */
 public class DefaultGroup implements Group
 
 {
-    private final Set        m_listeners = new HashSet();
+    private final Map          m_listeners = new WeakHashMap();
     
     private final Vector       m_members = new Vector();
 
@@ -55,7 +56,7 @@ public class DefaultGroup implements Group
      */
     public synchronized void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.add( listener );
+        m_listeners.put( listener, new WeakReference( listener ) );
     }
     
     /**
@@ -183,7 +184,7 @@ public class DefaultGroup implements Group
      */
     private void fireEvent( WikiSecurityEvent event )
     {
-        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
+        for (Iterator it = m_listeners.keySet().iterator(); it.hasNext(); )
         {
             WikiEventListener listener = (WikiEventListener)it.next();
             listener.actionPerformed(event);
