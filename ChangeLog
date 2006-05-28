@@ -1,3 +1,53 @@
+2006-05-28  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.11
+
+        * WikiSession received minor refactorings to remove the set/getLastContext()
+        methods. These were used for only one purpose anyhow (WebContainerAuthorizer)
+        and the net result was that their inclusion was preventing garbage collection
+        of expired WikiSessions. WikiSession also receives a removeWikiSession()
+        method, which removes wiki sessions from its internal cache, and is called 
+        during logout.
+
+        * Bug fix: WikiSession.sessions() and the related SessionsPlugin now
+        more accurately reflect the number of current WikiSessions, instead of
+        continuously incrementing. (Technically, the counter shows the number of
+        non-GCed sessions.) In the future a "session reaper" would make this even
+        better.
+
+        * Bug fix: Removed divide-by-zero error from SecurityVerifier.
+
+        * Bug fix: DefaultGroup and DefaultGroupManager now store their
+        WikiEventListeners in WeakHashMaps to prevent listener objects 
+        (such as WikiSession) from being reclaimed by GC.
+
+        * Bug fix: WikiDocument now stores its reference to WikiContext
+        as a WeakReference, so that caching operations won't prevent GC
+        of the WikiContext.
+
+        * Bug fix: Corrected text on the default PreferencesContent.jsp
+        to reflect recent e-mail reset function.
+
+        * Bug fix: Fixed listener bug DefaultGroupManager that was preventing
+        WikiSessions from receiving updated GroupPrincipals when groups
+        were changed to include new members in certain cases.
+
+        * Bug fix: Fixed 'index out of range' error caused by zero-length cookies.
+
+        * Bug fix: WebContainerAuthorizer now recognizes roles declared in
+        web.xml for elements web-app/security-role/role-name, in addition to
+        those declared for web-app/security-constraint/auth-constraint/role-name.
+
+        * Moved hack-ey code that injects web container Role Principals from
+        AuthenticationManager to WebContainerLoginModule, where it belongs.
+
+        * As part of the memory-leak fix, WebContainerAuthorizer no longer
+        relies on a sneaky call to WikiSession.getLastContext().getHttpRequest()
+        to test whether a user possesses a particular container role. Instead,
+        we (only) inspect the user's Subject's Principal set for the desired role.
+        This means that changes to container's user/role mappings are NOT
+        reflected until the next time the user logs in.
+
 2006-05-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.10
@@ -6,7 +56,7 @@
         
         * RSS and Atom feeds are now served with proper media type
 
-2006-05-20  Andrew Jaquith
+2006-05-20  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.9
 
@@ -28,7 +78,7 @@
 
         * Minor tweak to web unit tests to account for cleared cookies at logout.
 
-2006-05-20  Andrew Jaquith
+2006-05-20  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.8
 
