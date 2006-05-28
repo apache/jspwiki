@@ -6,8 +6,7 @@ package com.ecyrd.jspwiki;
 
 import java.security.Principal;
 import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -18,7 +17,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * the different tests.
  * @author Janne Jalkanen
  * @author Andrew R. Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-02-21 08:49:42 $
+ * @version $Revision: 1.5 $ $Date: 2006-05-28 23:26:47 $
  * @since 2.3
  */
 public class TestAuthorizer implements Authorizer
@@ -28,7 +27,6 @@ public class TestAuthorizer implements Authorizer
     public TestAuthorizer()
     {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public Principal findRole( String role )
@@ -56,16 +54,12 @@ public class TestAuthorizer implements Authorizer
      */
     public boolean isUserInRole( WikiSession session, Principal role )
     {
-        WikiContext context = session.getLastContext();
-        if ( context != null )
+        if ( session == null || role == null )
         {
-            HttpServletRequest request = context.getHttpRequest();
-            if ( request != null && request instanceof TestHttpServletRequest )
-            {
-                return ( (TestHttpServletRequest) request ).m_roles.contains( role.getName() );
-            }
+            return false;
         }
-        return false;
+        Set principals = session.getSubject().getPrincipals();
+        return principals.contains( role );
     }
 
 }

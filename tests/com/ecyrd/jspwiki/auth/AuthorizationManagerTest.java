@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -70,8 +72,7 @@ public class AuthorizationManagerTest extends TestCase
             m_engine.saveText( "Test", src );
             WikiPage p = m_engine.getPage( "Test" );
             TestHttpServletRequest request = new TestHttpServletRequest();
-            request.setRoles( new String[]
-            { "IT", "Engineering" } );
+            request.setRoles( new String[0] );
             m_context = new WikiContext( m_engine, request, p );
         }
         catch( WikiException e )
@@ -79,10 +80,12 @@ public class AuthorizationManagerTest extends TestCase
             assertTrue( "Setup failed", false );
         }
 
-        Principal principal = new WikiPrincipal( "Alice" );
-        Role[] roles = new Role[]
-        { Role.AUTHENTICATED, Role.ALL };
-        WikiSession session = buildSession( m_context, principal, roles );
+        Principal alice = new WikiPrincipal( "Alice" );
+        Principal[] principals = new Principal[]
+        { alice, Role.AUTHENTICATED, Role.ALL, new Role( "IT" ), new Role ( "Engineering" ), new GroupPrincipal( "Admin" ) };
+        GroupManager groupMgr = m_engine.getGroupManager();
+        WikiSession session = buildSession( m_context, principals );
+        groupMgr.addWikiEventListener( session );
 
         // Test build-in role membership
         assertTrue( "Alice ALL", m_auth.hasRoleOrPrincipal( session, Role.ALL ) );
@@ -94,11 +97,10 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice Finance", m_auth.hasRoleOrPrincipal( session, new Role( "Finance" ) ) );
 
         // Test group membership: Alice should be part of group Bar, but not Foo
-        GroupManager groupMgr = m_engine.getGroupManager();
         Group fooGroup = new DefaultGroup( "Foo" );
         groupMgr.add( fooGroup );
         Group barGroup = new DefaultGroup( "Bar" );
-        barGroup.add( principal );
+        barGroup.add( alice );
         groupMgr.add( barGroup );
         assertFalse( "Authenticated Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
         assertTrue( "Authenticated Alice in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
@@ -114,10 +116,10 @@ public class AuthorizationManagerTest extends TestCase
         // Create a new session for Alice as an Asserted user. This time,
         // she should NOT be considered part of either group Bar or Foo, since we prohibit
         // Asserted users from being members of any role that isn't built-in.
-        principal = new WikiPrincipal( "Alice" );
-        roles = new Role[]
-        { Role.ASSERTED, Role.ALL };
-        session = buildSession( m_context, principal, roles );
+        principals = new Principal[]
+        { alice, Role.ASSERTED, Role.ALL };
+        session = buildSession( m_context, principals );
+        groupMgr.addWikiEventListener( session );
         assertFalse( "Asserted Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
         assertFalse( "Asserted Alice not in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
         
@@ -204,15 +206,14 @@ public class AuthorizationManagerTest extends TestCase
         }
     }
     
-    private WikiSession buildSession( WikiContext context, Principal user, Role[] roles )
+    private WikiSession buildSession( WikiContext context, Principal[] principals )
     {
         WikiSession session = context.getWikiSession();
-        Set principals = session.getSubject().getPrincipals();
-        principals.clear();
-        principals.add( user );
-        for( int i = 0; i < roles.length; i++ )
+        Set subjectPrincipals = session.getSubject().getPrincipals();
+        subjectPrincipals.clear();
+        for( int i = 0; i < principals.length; i++ )
         {
-            principals.add( roles[i] );
+            subjectPrincipals.add( principals[i] );
         }
         return session;
     }
@@ -341,50 +342,35 @@ public class AuthorizationManagerTest extends TestCase
 
     public void testGetRoles() throws Exception
     {
-        // Bob's a member of a wiki Group "Test"
-        String text = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nBlood.";
+        // Set up a group without Bob in it
+        String text = "Foobar.\n\n[{SET members=Alice, Charlie}]\n\nTest group.";
         m_engine.saveText( "GroupTest", text );
-
-        // Pretend web container has authorized Bob as an admin
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRoles( new String[]{"Admin"} );
         
+        // Pretend Bob has asserted his identity and has role "admin"
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        Principal[] principals = new Principal[]{ new WikiPrincipal( "Bob" ), Role.ALL, Role.ASSERTED, new GroupPrincipal( "Admin" ) };
         WikiPage p = m_engine.getPage( "GroupTest" );
         m_context = new WikiContext( m_engine, request, p );
+        m_session = buildSession( m_context, principals );
+        m_engine.getGroupManager().addWikiEventListener( m_session );
         
-        // Pretend Bob has asserted his identity
-        Role[] roles = new Role[]{ Role.ALL, Role.ASSERTED };
-        m_session = buildSession( m_context, new WikiPrincipal( "Bob" ), roles );
+        // Bob should have two roles
+        principals = m_auth.getRoles( m_session );
+        assertTrue( "Bob member of ALL", ArrayUtils.contains( principals, Role.ALL ) );
+        assertTrue( "Bob member of ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
+        assertFalse( "Bob member of ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        assertFalse( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( "Test" ) ) );
         
-        // Bob should have four roles
-        Principal[] foundRoles = m_auth.getRoles( m_session );
-        boolean foundAll = false;
-        boolean foundAsserted = false;
-        boolean foundTest = false;
-        boolean foundAnonymous = false;
-        for ( int i = 0; i < foundRoles.length; i++ )
-        {
-            if ( foundRoles[i].equals( Role.ALL ) )
-            {
-                foundAll = true;
-            }
-            if ( foundRoles[i].equals( Role.ASSERTED ) )
-            {
-                foundAsserted = true;
-            }
-            if ( foundRoles[i].equals( Role.ANONYMOUS ) )
-            {
-                foundAnonymous = true;
-            }
-            if ( foundRoles[i].getName().equals( "Test" ) )
-            {
-                foundTest = true;
-            }
-        }
-        assertTrue( "Bob member of ALL", foundAll );
-        assertTrue( "Bob member of ASSERTED", foundAsserted );
-        assertFalse( "Bob member of ANONYMOUS", foundAnonymous );
-        assertTrue( "Bob member of Test", foundTest );
+        // Re-save group "Test" with Bob as a member
+        text = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nTest group.";
+        m_engine.saveText( "GroupTest", text );
+
+        // Bob should have three roles
+        principals = m_auth.getRoles( m_session );
+        assertTrue( "Bob member of ALL", ArrayUtils.contains( principals, Role.ALL ) );
+        assertTrue( "Bob member of ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
+        assertFalse( "Bob member of ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        assertTrue( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( "Test" ) ) );
     }
     
     public void testPrincipalAclPermissions() throws Exception
