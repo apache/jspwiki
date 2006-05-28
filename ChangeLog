@@ -1,3 +1,11 @@
+2006-05-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.10
+        
+        * Atom feeds now validate properly
+        
+        * RSS and Atom feeds are now served with proper media type
+
 2006-05-20  Andrew Jaquith
 
         * 2.4.9
