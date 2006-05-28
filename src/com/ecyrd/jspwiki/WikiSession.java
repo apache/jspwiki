@@ -32,7 +32,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * minimal, default-deny values: authentication is set to <code>false</code>,
  * and the user principal is set to <code>null</code>.
  * @author Andrew R. Jaquith
- * @version $Revision: 2.19 $ $Date: 2006-05-01 22:35:41 $
+ * @version $Revision: 2.20 $ $Date: 2006-05-28 23:19:25 $
  */
 public class WikiSession implements WikiEventListener
 {
@@ -44,7 +44,7 @@ public class WikiSession implements WikiEventListener
     public static final String AUTHENTICATED         = "authenticated";
     
     /** Weak hashmap that maps wiki sessions to HttpSessions. */
-    private static final Map   c_sessions            = new WeakHashMap();
+    protected static final Map c_sessions            = new WeakHashMap();
 
     private Subject            m_subject             = new Subject();
 
@@ -54,7 +54,7 @@ public class WikiSession implements WikiEventListener
 
     protected Principal        m_cachedUserPrincipal = null;
 
-    private WikiContext        m_lastContext         = null;
+    private boolean            m_isNew               = true;
     
     private Map                m_messages            = new HashMap();
 
@@ -88,44 +88,20 @@ public class WikiSession implements WikiEventListener
     }
     
     /**
-     * Returns <code>true</code> if this WikiSession's Subject contains a
-     * given Principal in its Principal set.
-     * @param principal the Principal to look for
-     * @return <code>true</code> if the Set of Principals returned by
-     * {@link javax.security.auth.Subject#getPrincipals()} contains the
-     * specified Principal; <code>false</code> otherwise.
+     * Returns <code>true</code> if the wiki session is newly initialized.
      */
-    protected boolean hasPrincipal( Principal principal )
+    protected boolean isNew()
     {
-        for( Iterator it = m_subject.getPrincipals().iterator(); it.hasNext(); )
-        {
-            Principal current = (Principal) it.next();
-            if ( principal.equals( current ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return m_isNew;
     }
 
     /**
-     * Protected method that caches the most recent wiki context. This method is
-     * called only from
-     * {@link WikiContext#WikiContext(WikiEngine, HttpServletRequest, WikiPage)}
-     * and {@link WikiContext#WikiContext(WikiEngine, WikiPage)}, and nowhere
-     * else. Its primary function is to allow downstream classes such as
-     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}to access
-     * the most recent WikiContext, and thus, the HttpServletRequest.
-     * @param context the most recent wiki context, which may be
-     * <code>null</code>
+     * Sets the status of this wiki session.
+     * @param isNew whether this session should be considered "new".
      */
-    protected void setLastContext( WikiContext context )
+    protected void setNew( boolean isNew )
     {
-        // TODO: callers should supply the WikiSessionPermission "setContext"
-        if ( context != null )
-        {
-            m_lastContext = context;
-        }
+        m_isNew = isNew;
     }
 
     /**
@@ -144,7 +120,7 @@ public class WikiSession implements WikiEventListener
      */
     public boolean isAuthenticated()
     {
-        return ( hasPrincipal( Role.AUTHENTICATED ) );
+        return ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) );
     }
 
     /**
@@ -169,16 +145,6 @@ public class WikiSession implements WikiEventListener
         return ( principals.contains( Role.ANONYMOUS ) ||
                  principals.contains( WikiPrincipal.GUEST ) ||
                  isIPV4Address( getUserPrincipal().getName() ) );
-    }
-
-    /**
-     * Returns the most recently-accessed WikiContext for this session. This
-     * method may return <code>null</code>.
-     * @return the most recent wiki context
-     */
-    public WikiContext getLastContext()
-    {
-        return m_lastContext;
     }
 
     /**
@@ -392,6 +358,21 @@ public class WikiSession implements WikiEventListener
     }
 
     /**
+     * Removes the wiki session associated with the user's HTTP request
+     * from the cache of wiki sessions, typically as part of a logout 
+     * process.
+     * @param request the users's HTTP request
+     */
+    public static void removeWikiSession( HttpServletRequest request )
+    {
+        if ( request == null )
+        {
+            throw new IllegalArgumentException( "Request cannot be null." ); 
+        }
+        c_sessions.remove( request.getSession() );
+    }
+    
+    /**
      * Sets the Subject representing the user.
      * @param subject
      */
@@ -461,7 +442,7 @@ public class WikiSession implements WikiEventListener
                     {
                         Group group = (Group)e.getSource();
                         Principal principal = (Principal)e.getTarget();
-                        if ( hasPrincipal( principal ) )
+                        if ( m_subject.getPrincipals().contains( principal ) )
                         {   
                             m_subject.getPrincipals().remove( new GroupPrincipal( group ) ); 
                         }
@@ -471,7 +452,7 @@ public class WikiSession implements WikiEventListener
                     {
                         Group group = (Group)e.getSource();
                         GroupPrincipal principal = new GroupPrincipal( group );
-                        if ( hasPrincipal( principal ) )
+                        if ( m_subject.getPrincipals().contains( principal ) )
                         {   
                             m_subject.getPrincipals().remove( principal ); 
                         }
@@ -563,7 +544,7 @@ public class WikiSession implements WikiEventListener
         {
             return ANONYMOUS;
         }
-        else if ( hasPrincipal( Role.ASSERTED ) )
+        else if ( m_subject.getPrincipals().contains( Role.ASSERTED ) )
         {
             return ASSERTED;
         }

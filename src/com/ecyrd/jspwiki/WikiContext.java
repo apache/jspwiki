@@ -172,7 +172,7 @@ public class WikiContext
         m_realPage = page;
         
         // Log in the user if new session or the container status changed
-        boolean doLogin = ( (request != null) && m_session.getLastContext() == null );
+        boolean doLogin = ( (request != null) && m_session.isNew() );
         
         // Debugging...
         if ( log.isDebugEnabled() )
@@ -188,8 +188,11 @@ public class WikiContext
             engine.getAuthenticationManager().login( request );
         }
 
-        // Stash the wiki context in the session as the "last context"
-        m_session.setLastContext( this );
+        // Mark the session as "not new"
+        if ( m_session.isNew() )
+        {
+            m_session.setNew( false );
+        }
         
         // Figure out what permission is required to execute this context
         updatePermission();
