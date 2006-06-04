@@ -1,3 +1,14 @@
+2006-06-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.13
+        
+        * Added EditorManager patch from Chuck Smith.  This now allows
+        fully dynamic editor selection using a drop-down menu in EditContent.jsp
+        
+        * Added EditorIterator tag from Chuck, too.
+        
+        * Fixed some IE tab layout issues, thanks to Dirk Fredericx.
+
 2006-06-05  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.12
