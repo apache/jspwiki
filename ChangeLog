@@ -11,6 +11,8 @@
         * Added Ant target called 'tests-auth' for JDPA debugging of
         AuthorizationManagerTest.
 
+        * Minor Javadoc fixes.
+
 2006-05-28  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.11
