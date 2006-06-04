@@ -207,7 +207,17 @@
     <tagclass>com.ecyrd.jspwiki.tags.EditorTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
-
+  
+  <tag>
+    <name>EditorIterator</name>
+    <tagclass>com.ecyrd.jspwiki.tags.EditorIteratorTag</tagclass>
+    <teiclass>com.ecyrd.jspwiki.tags.EditorIteratorInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>id</name>
+    </attribute>
+  </tag>
+    
   <tag>
     <name>FeedDiscovery</name>
     <tagclass>com.ecyrd.jspwiki.tags.FeedDiscoveryTag</tagclass>
