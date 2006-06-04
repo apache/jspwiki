@@ -119,7 +119,7 @@
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
          <lib dir="lib" includes="*.jar"
-           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar"/>
+           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,httpunit*.jar,jwebunit*.jar"/>
          <lib file="${jarfile}" />
          <lib file="${jdbc.driver.jar}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
