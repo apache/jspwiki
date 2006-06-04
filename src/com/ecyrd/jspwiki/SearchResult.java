@@ -38,7 +38,7 @@ public interface SearchResult
      * Collection of XHTML fragments representing some contexts in which
      * the match was made (a.k.a., "snippets").
      *
-     * @return
+     * @return the search results
      * @since 2.4
      */
     public String[] getContexts();

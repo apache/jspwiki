@@ -80,7 +80,7 @@ public class WikiDocument extends Document
      * Returns the wiki context for this document. This method
      * may return <code>null</code> if the associated wiki session
      * had previously been garbage-collected.
-     * @return
+     * @return the wiki context
      */
     public WikiContext getContext()
     {

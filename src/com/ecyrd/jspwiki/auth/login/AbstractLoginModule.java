@@ -22,7 +22,7 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-04-17 09:40:16 $
+ * @version $Revision: 1.9 $ $Date: 2006-06-04 19:50:57 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule
@@ -67,10 +67,11 @@ public abstract class AbstractLoginModule implements LoginModule
      * be removed if login for this module, or for the entire login
      * configuration overall, succeeds. Generally, these will be Principals of
      * type {@link com.ecyrd.jspwiki.auth.authorize.Role}. For example,
-     * {@link CookieAssertionLoginModule} adds {@link Role#ANONYMOUS} to
-     * its <code>m_principalsToOverwrite</code> collection because when it
-     * succeeds, its own {@link Role#AUTHENTICATED} should over-write
-     * {@link Role#ANONYMOUS}.
+     * {@link CookieAssertionLoginModule} adds 
+     * {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS} to its
+     * <code>m_principalsToOverwrite</code> collection because when it
+     * succeeds, its own {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED}
+     * should over-write {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
      */
     protected Collection      m_principalsToOverwrite;
     

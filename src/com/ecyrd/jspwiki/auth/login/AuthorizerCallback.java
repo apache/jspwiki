@@ -9,7 +9,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * LoginModule. This Callback is used by LoginModules needing access to the
  * external authorizer or group manager.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-05-28 23:25:07 $
+ * @version $Revision: 1.2 $ $Date: 2006-06-04 19:50:57 $
  * @since 2.3
  */
 public class AuthorizerCallback implements Callback
@@ -19,7 +19,7 @@ public class AuthorizerCallback implements Callback
 
     /**
      * Sets the authorizer object. CallbackHandler objects call this method.
-     * @param request the authorizer
+     * @param authorizer the authorizer
      */
     public void setAuthorizer( Authorizer authorizer )
     {

@@ -57,7 +57,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-06-01 03:02:15 $
+ * @version $Revision: 1.6 $ $Date: 2006-06-04 19:51:12 $
  * @since 2.4
  */
 public class SecurityVerifier
@@ -368,7 +368,7 @@ public class SecurityVerifier
 
     /**
      * Returns <code>true</code> if JAAS is configured correctly.
-     * @return
+     * @return the result of the configuration check
      */
     public final boolean isJaasConfigured()
     {
@@ -413,7 +413,7 @@ public class SecurityVerifier
     /**
      * Returns <code>true</code> if the Java security policy is configured
      * correctly, and it verifies as valid.
-     * @return
+     * @return the result of the configuration check
      */
     public final boolean isSecurityPolicyConfigured()
     {
@@ -436,7 +436,7 @@ public class SecurityVerifier
     /**
      * If the active Authorizer is the WebContainerAuthorizer, returns the roles
      * it knows about; otherwise, a zero-length array.
-     * @return
+     * @return the roles parsed from <code>web.xml</code>, or a zero-length array
      */
     public final Principal[] webContainerRoles()
     {
