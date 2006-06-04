@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.70 2006-05-11 18:28:21 jalkanen Exp $
+    $Id: build.xml,v 1.71 2006-06-04 19:28:01 arj Exp $
 -->    
        
 <!--   
@@ -304,6 +304,7 @@
 
         1) All .jar -files in the lib-directory (except servlet.jar, since
            it's gonna be provided by the servlet container anyway.)
+           We also omit test-related jars like JUnit.
         2) All .class-files from the build-directory
         3) Everything from the src/webdocs -directory
         4) Everything from the etc-directory go to the WEB-INF -directory
@@ -319,7 +320,7 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,mckoidb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
+       <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/**" />
@@ -331,7 +332,7 @@
 
 
   <target name="opened-war" depends="war"
-   description="Creates an opened JSPWiki war hierarhcy into the build dir.">
+   description="Creates an opened JSPWiki war hierarchy into the build dir.">
 
     <mkdir dir="${code.build}/${ant.project.name}" />
     <unzip src="${warfile}"
@@ -507,6 +508,39 @@
   	
   </target>
 
+  <target name="tests-auth" depends="jar,tests-init,jartests"
+          description="Runs the AuthorizationManager tests, with JDPA">
+
+    <junit printsummary="yes" haltonfailure="no" fork="yes">
+        <classpath>
+           <path refid="path.tests" />
+        </classpath>
+
+        <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
+        <sysproperty key="java.security.policy" value="tests/etc/jspwiki.policy"/>
+        <sysproperty key="jspwiki.tests.auth" value="true" />
+        <jvmarg value="-Xdebug" />
+        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y" />
+
+        <formatter type="plain" />
+        <formatter type="xml" usefile="yes" />
+
+        <batchtest todir="${tests.reports}">
+           <fileset dir="${tests.src}">
+                <include name="**/AuthorizationManagerTest.java" />
+           </fileset>
+        </batchtest>
+     </junit>
+
+     <junitreport todir="${tests.src}">
+        <fileset dir="${tests.reports}">
+           <include name="**/TEST-*.xml" />
+        </fileset>
+        <report format="noframes" todir="${tests.src}" />
+     </junitreport>
+
+  </target>
+  
   <target name="guitests" depends="jar,tests-init,jartests"
           description="Runs the tests in a pretty window.">
 
@@ -540,6 +574,10 @@
        
        Of course, you need not use Tomcat in production... but to
        keep this build file simple, we do require it for web unit tests.
+       
+       Note: if the majority of JDBC tests fail but the non-JDBC tests do
+       not, that likely means that Tomcat cannot find your JDBC jar. You
+       should copy this file to Tomcat's common/lib directory.
   -->
   <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,tomcat-init,war">
     
@@ -907,23 +945,20 @@ To automate the JAR signing processs, you can add the property
           the db-setup and db-teardown targets, below)
 
        Step 1 is the hardest. Luckily for you, JSPWiki has built-in Ant 
-       scripts to automatically start and stop the embedded Mckoi 100%
-       Java database. It's small and fast, but because it is GPL-licensed 
-       we couldn't include it in the JSPWiki base distribution. Get it here:
+       scripts to automatically start and stop the embedded Hypersonic 100%
+       Java database. It's small and fast, and is included 
+       in the JSPWiki base distribution. You can, of course, use your own
+       JDBC-compliant database such as Postgresql.
        
-         http://www.mckoi.com/database/index.html#Download
+       Step 2: set up your database properties in build.properties, for example:
        
-       ... and install the 'mckoidb.jar' file (which includes the JDBC driver)
-       into the 'lib' directory. Then set up your database properties
-       in build.properties, for example:
-       
-         jdbc.driver.id=mckoi
-         jdbc.driver.jar=lib/mckoidb.jar
-         jdbc.driver.class=com.mckoi.JDBCDriver
-         jdbc.driver.url=jdbc:mckoi://localhost:9157/
-         jdbc.admin.id=admin
-         jdbc.admin.password=password
-         jdbc.user.id=admin
+         jdbc.driver.id=hsql
+         jdbc.driver.jar=lib/hsqldb.jar
+         jdbc.driver.class=org.hsqldb.jdbcDriver
+         jdbc.driver.url=jdbc:hsqldb:hsql://localhost/jspwiki
+         jdbc.admin.id=SA
+         jdbc.admin.password=
+         jdbc.user.id=jspwiki
          jdbc.user.password=password
        
        The 'jdbc.driver.id' property is important. Its presence tells
@@ -934,16 +969,16 @@ To automate the JAR signing processs, you can add the property
          userdb-setup.ddl
          userdb-teardown.ddl
        
-       Sample scripts for Mckoi are supplied. If you want to use a 
-       different database, create a subdirectory in etc/db
+       Sample scripts for Hypersonic and Postgresql are supplied. 
+       If you want to use a different database, create a subdirectory in etc/db
        (e.g., etc/db/oracle) and create the necessary DDL script files. 
 
        Note that the DDL scripts contain token substitution fields where
        table and column names mappings can be plugged in. This is so you
-       can customize how JSPWiki stores its data. For example, the McKoi
-       Mckoi teardown DDL looks like this:
+       can customize how JSPWiki stores its data. For example, the Hypersonic
+       teardown DDL looks like this:
        
-         DROP TABLE IF EXISTS @jspwiki.userdatabase.table@;
+         DROP TABLE @jspwiki.userdatabase.table@ IF EXISTS;
          
        The complete list of customizable table properties are found
        in etc/jspwiki.properties.tmpl. If you don't customize them,
@@ -951,7 +986,7 @@ To automate the JAR signing processs, you can add the property
        this script will always use the defaults from 'tests/etc/jspwiki.properties',
        then apply any custom properties defined in your build.properties file.
        
-       All of this may sound complicated, but it really isn't. If you use Mckoi,
+       All of this may sound complicated, but it really isn't. If you use Hypersonic,
        the JDBC tests should Just Work. And if you specify an external database,
        they should work just fine also.
        
@@ -973,7 +1008,7 @@ To automate the JAR signing processs, you can add the property
        for details and examples.
   -->
 
-  <target name="tests-db-init" depends="db-properties,mckoi-init,db-setup"/>
+  <target name="tests-db-init" depends="db-properties,hsql-init,db-setup"/>
   
   <target name="db-properties" depends="init" if="jdbc.driver.id">
     <!-- Load the JDBC props we need to do table maintenance -->
@@ -1022,9 +1057,9 @@ To automate the JAR signing processs, you can add the property
     <check-file file="${tests.db.scripts}/userdb-setup.ddl"    prop="userdb.setup" />
     <check-file file="${tests.db.scripts}/userdb-teardown.ddl" prop="userdb.teardown" />
     
-    <!-- If it's the mckoi database, set a special flag -->
-    <condition property="mckoi">
-      <equals arg1="${jdbc.driver.id}" arg2="mckoi" />
+    <!-- If it's the Hypersonic database, set a special flag -->
+    <condition property="hsql">
+      <equals arg1="${jdbc.driver.id}" arg2="hsql" />
     </condition>
     
     <!-- Set a flag that says all of our pre-conditions are met! -->
@@ -1034,12 +1069,12 @@ To automate the JAR signing processs, you can add the property
     <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
   </target>
   
-  <target name="db-setup" depends="mckoi-init" if="db.props.exist">
+  <target name="db-setup" depends="db-properties,hsql-init" if="db.props.exist">
     <echo message="Setting up the database tables." />
     <exec-sql file="${userdb.setup}" />
   </target>
   
-  <target name="db-teardown" depends="mckoi-init" if="db.props.exist">
+  <target name="db-teardown" depends="db-properties,hsql-init" if="db.props.exist">
     <echo message="Tearing down the database tables." />
     <exec-sql file="${userdb.teardown}" />
   </target>
@@ -1073,68 +1108,39 @@ To automate the JAR signing processs, you can add the property
   
   <!-- ============================================================== -->
 
-  <!-- Mckoi embedded database startup/shutdown (for testing JDBC) -->
+  <!-- Hypersonic embedded database startup/shutdown (for testing JDBC) -->
   
-  <!-- Special "init" target for mckoi -->
-  <target name="mckoi-init" depends="mckoi-check-conf,mckoi-conf,mckoi-check-start,mckoi-start" />
+  <!-- Special "init" target for Hypersonic -->
+  <target name="hsql-init" depends="hsql-check-start,hsql-start" />
   
-  <target name="mckoi-check-conf" depends="db-properties" if="mckoi">
-    <condition property="mckoi.needs.config">
-      <not>
-        <and>
-          <equals arg1="${jdbc.driver.id}" arg2="mckoi" />
-          <available file="${tests.db.scripts}/mckoi.conf" type="file" property="mckoi.conf" />
-          <available file="${tests.db.scripts}/data"       type="dir"  property="mckoi.data" />
-          <available file="${tests.db.scripts}/log"        type="dir"  property="mckoi.logs" />
-        </and>
-      </not>
-    </condition>
-    <property name="mckoi.conf" value="${tests.db.scripts}/mckoi.conf" /> 
+  <target name="hsql-check-start">
+    <available file="tests/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
   </target>
   
-  <target name="mckoi-conf" depends="mckoi-check-conf" if="mckoi.needs.config">
-    <echo message="JSPWiki detected that you're using the Mckoi JDBC server." />
-    <echo message="Looks like we need to configure Mckoi. Here we go." />
-    <java jar="${jdbc.driver.jar}" fork="yes" failonerror="true">
-      <arg value="-conf" />
-      <arg value="${mckoi.conf}" />
-      <arg value="-create" />
-      <arg value="${jdbc.admin.id}" />
-      <arg value="${jdbc.admin.password}" />
-    </java>
-    <property name="mckoi.configured" value="true" />
-    <echo message="mckoi configured successfully." />
-  </target>
-  
-  <target name="mckoi-check-start" depends="mckoi-conf" if="mckoi.configured">
-    <condition property="mckoi.needs.start">
-      <not>
-        <socket server="localhost" port="9157" />
-      </not>
-    </condition>
-  </target>
-  
-  <target name="mckoi-start" depends="mckoi-check-start" if="mckoi.needs.start">
-    <echo message="Starting up Mckoi JDBC server on localhost." />
-    <java jar="${jdbc.driver.jar}" fork="yes" spawn="yes">
-      <arg value="-conf" />
-      <arg value="${mckoi.conf}" />
+  <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
+    description="Starts the Hypersonic database for testing.">
+    <echo message="Starting up Hypersonic JDBC server on localhost." />
+    <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
+      dir="tests/etc/db/hsql">
+      <classpath>
+        <pathelement location="${jdbc.driver.jar}" />
+      </classpath>
     </java>
     <sleep seconds="5" />
-    <condition property="mckoi.up">
-      <socket server="localhost" port="9157" />
-    </condition>
-    <fail unless="mckoi.up">McKoi didn't appear to start up properly. You can start it manually from the command line as follows:
-
-   java -jar ${jdbc.driver.jar} -conf ${mckoi.conf}
+    <available file="tests/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
+    <fail unless="hsql.up">Hypersonic didn't appear to start up properly. You can start it manually from the command line as follows:
+   cd tests/etc/db/hsql
+   java -cp ${jdbc.driver.jar} org.hsqldb.Server
     </fail>
     <echo message="Done." />
   </target>
 
-  <target name="mckoi-stop" depends="mckoi-check-start" if="mckoi.up">
-    <echo message="Shutting down Mckoi JDBC server on localhost." />
+  <target name="hsql-stop" depends="hsql-check-start" if="hsql.up"
+    description="Shuts down the Hypersonic database, if it's up.">
+    <echo message="Shutting down Hypersonic JDBC server on localhost." />
     <sql driver="${jdbc.driver.class}"
       classpath="${jdbc.driver.jar}" url="${jdbc.driver.url}"
+      onerror="continue" autocommit="true"
       userid="${jdbc.admin.id}" password="${jdbc.admin.password}">
       SHUTDOWN
     </sql>
