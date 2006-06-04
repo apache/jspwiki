@@ -15,10 +15,6 @@
 #favorites               { position:absolute; left: 2.5%; width: 18%;
                            padding: 2px;
                            top: 80px; /* make place for the logo */ }
-/*#actionsTop            { position:absolute; right: 2.5%; margin-top: 0.5em; 
-                           z-index: 0;}*/
-#actionsTop,
-#actionsBottom           { float:right; margin-right: .5em; }
 #actionsTop .quick2Top,
 #actionsTop .pageInfo    { display: none; }
 #actionsBottom .quick2Bottom
@@ -28,20 +24,40 @@
 
 /* +++ 020 LOOK and FEEL of main blocks with IDs +++ */
 #wikibody                { margin: 4px 2.5% 4px 2.5%; padding: 3px; }
-#header                  { border-bottom: 2px solid #D9D9D9; }
+#header                  {  }
 #page                    { margin-top: 1.2em; margin-bottom: 1.4em; }
 #favorites               { overflow: hidden; }
 #favorites .pageactions  { display:none; }
 #favorites ul            { margin-left: 0px; }
-#actionsTop              { text-align: right; width: auto; 
-                           border: 1px solid silver; border-bottom: 0px; 
-                           background: #fff0ff;
-                           padding: 0 0.25em; }
-#actionsBottom           { text-align: right; width: auto; 
-                           border: 1px solid silver; border-top: 0px; 
-                           background: #fff0ff;
-                           padding: 0 0.25em; }
-#footer                  { margin-top: 1ex; border-top: 2px solid #D9D9D9; }
+
+#actionsTop              { border-bottom: 2px solid #D9D9D9; }
+#actionsBottom           { border-top: 2px solid #D9D9D9; }
+
+.pageactions             { font-size: 90%; line-height: normal; text-align: right;
+                           margin: 0; padding: 0.25em 0;}
+
+.pageactions a           { background-color: #fff0ff;
+                           border: 1px solid silver;
+                           line-height: normal; padding: 0.25em 0.5em;
+                         }
+.pageactions .pageInfo a { background: transparent;
+                           border: none;
+                           margin: 0; padding: 0;
+                         }
+
+#actionsTop a            { border-bottom: none; }
+#actionsBottom a         { border-top: none; }
+#actionsBottom .quick2Top a,
+#actionsTop .quick2Bottom a
+                         { border: none; background-color: transparent; }
+
+.pageactions  a:hover    { background-color: pink; }
+
+#actionsBottom .quick2Top a:hover,
+#actionsTop .quick2Bottom a:hover
+                         { background-color: transparent; }
+
+#footer                  { margin-top: 1ex; }
 
 /* ----------------------------------------------------
    200 Text styles used by all pages
@@ -245,9 +261,7 @@ textarea.editor          { }
 #versionhistory td       { white-space: nowrap; }
 
 /* +++ 470 PageActions +++ */
-.pageactions             { font-size: 85%; padding: 0.4em; }
-.pageactions * span      { padding: 0.3em; }
-.pageInfo                { font-style: italic; padding-top: .3em; }
+.pageInfo                { font-style: italic; padding: .5em 0; }
 .quick2Top a             { background-image:url(images/bulletUp.png);
                            background-repeat: no-repeat; background-position: 0 1px;
                            padding: 0 8px 12px 0; 

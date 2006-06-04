@@ -8,8 +8,6 @@
 %>
 
 <div class="pageactions">
-
-  <div class="block">
   
     <span class='quick2Top'><a href="#Top" title='Go to Top' >&nbsp;</a></span>
 
@@ -112,7 +110,5 @@
     </wiki:CheckRequestContext>
   
     <span class='quick2Bottom'><a href="#Bottom" title='Go to Bottom' >&nbsp;</a></span>
-
-  </div>
 
 </div>
