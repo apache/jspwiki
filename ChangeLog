@@ -1,3 +1,16 @@
+2006-06-05  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.12
+
+        * Added Hypersonic embedded database for JDBC testing. Enabled
+        JDBC testing in build.properties to use Hypersonic by default.
+        Added license file; corrected file extensions of two others.
+
+        * Removed database scripts for Mckoi embedded database.
+
+        * Added Ant target called 'tests-auth' for JDPA debugging of
+        AuthorizationManagerTest.
+
 2006-05-28  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.11
