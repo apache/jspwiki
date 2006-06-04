@@ -26,7 +26,11 @@
 
   <div id="page"><wiki:Content/></div>
 
-  <div id="favorites"><wiki:Include page="Favorites.jsp"/></div>
+  <div id="favorites">
+
+  <wiki:Include page="Favorites.jsp"/>
+  
+  </div>
 
   <wiki:Include page="Footer.jsp" />
 

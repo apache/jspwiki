@@ -24,6 +24,15 @@
       </div>
     </wiki:CheckVersion>
     
+    <div id="editorbar">  
+    Editor:
+    <select onchange="location.href=this.value">
+      <wiki:EditorIterator id="editor">
+        <option <%=editor.isSelected()%> value="<%=editor.getURL()%>"><%=editor.getName()%></option>
+      </wiki:EditorIterator>
+    </select>
+    </div>
+    
     <wiki:Editor />
     
   </wiki:Tab>
