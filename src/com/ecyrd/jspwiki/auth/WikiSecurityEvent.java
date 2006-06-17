@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-05-20 05:21:02 $
+ * @version $Revision: 1.7 $ $Date: 2006-06-17 23:10:45 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -92,8 +92,6 @@ public final class WikiSecurityEvent extends WikiEvent
     
     private final Object      m_target;
 
-    private final int         m_type;
-    
     private static final int[] ERROR_EVENTS = { LOGIN_FAILED };
     
     private static final int[] WARN_EVENTS  = { LOGIN_ACCOUNT_EXPIRED,
@@ -116,12 +114,11 @@ public final class WikiSecurityEvent extends WikiEvent
      */
     public WikiSecurityEvent( Object source, int type, Principal principal, Object target )
     {
-        super( source );
+        super( source, type );
         if ( source == null )
         {
             throw new IllegalArgumentException( "Argument(s) cannot be null." );
         }
-        this.m_type = type;
         this.m_principal = principal;
         this.m_target = target;
         if ( LOGGER.isEnabledFor( Priority.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
@@ -177,15 +174,6 @@ public final class WikiSecurityEvent extends WikiEvent
     }
 
     /**
-     * Returns the type of event.
-     * @return the event type
-     */
-    public final int getType()
-    {
-        return m_type;
-    }
-
-    /**
      * Prints a String (human-readable) representation of this object.
      * @see java.lang.Object#toString()
      */
@@ -193,7 +181,7 @@ public final class WikiSecurityEvent extends WikiEvent
     {
         StringBuffer msg = new StringBuffer();
         msg.append( "WikiSecurityEvent." );
-        msg.append(  eventName( m_type ) );
+        msg.append(  eventName( getType() ) );
         msg.append( " [source=" + getSource().toString() );
         msg.append( ", princpal=" + m_principal.getClass().getName() );
         msg.append( " " + m_principal.getName() );
