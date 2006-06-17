@@ -44,6 +44,7 @@ public class RSSGenerator
 
     private String             m_channelDescription = "";
     private String             m_channelLanguage    = "en-us";
+    private boolean            m_enabled = true;
 
     public static final String RSS10 = "rss10";
     public static final String RSS20 = "rss20";
@@ -295,6 +296,28 @@ public class RSSGenerator
         }
         
         return res;
+    }
+    
+    /**
+     * Returns <code>true</code> if RSS generation is enabled.
+     * @return whether RSS generation is currently enabled
+     */
+    public boolean isEnabled()
+    {
+        return m_enabled;
+    }
+    
+    /**
+     * Turns RSS generation on or off. This setting is used to set
+     * the "enabled" flag only for use by callers, and does not
+     * actually affect whether the {@link #generate()} or 
+     * {@link #generateFeed(WikiContext, List, String, String)}
+     * methods output anything.
+     * @param enabled whether RSS generation is considered enabled.
+     */
+    public synchronized void setEnabled( boolean enabled )
+    {
+        m_enabled = enabled;
     }
     
     /**
