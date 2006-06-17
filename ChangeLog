@@ -1,3 +1,59 @@
+2006-06-17  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.14
+
+        * Enhancement: all background threads now subclass a new class called
+        WikiBackgroundThread which will gracefully shut themselves down when
+        they hear a 'wiki shutdown' event. These threads are, at present:
+        WikiSession.SessionMonitor, PageManager.LockReaper, RSSThread, and
+        LuceneSearchProvider.LuceneUpdater. These threads are NO LONGER
+        daemon threads, which means they won't stay in memory when
+        the wiki webapp is removed.
+
+        * Enhancement: Added protected method shutdown() to WikiEngine that is
+        triggered by WikiServlet catching webapp destroy() events. Shutdown() 
+        fires a WikiEngineEvent called 'shutdown' to all listeners, which at 
+        present includes all WikiBackgroundThreads. New class added: 
+        WikiEngineEvent. To catch container events, WikiServlet was changed in
+        web.xml to load at startup. This is a dirty hack, but not too dirty.
+
+        * Enhancement: Major refactoring of WikiSession to include a background
+        'monitor' thread that removes expired wiki sessions. This means that
+        session-count information should be accurate to within a minute
+        of when your web container expires its sessions. The background thread
+        is an inner class called SessionMonitor that subclasses WikiBackgroundThread.
+        WikiSession also gains a method called getUserPrincipals(WikiEngine)
+        that returns an array of Principals that represents the current
+        users currently using the wiki.
+
+        * Enhancement: SessionsPlugin receives parameter 'property' to specify what
+        session information should be returned. If set to 'users', plugin
+        returns the list of current users. If omitted, it returns the number of
+        active sessions. Thus, [{INSERT SessionsPlugin property=users}]
+        will actually print the names of current users -- neat!
+
+        * Enhancement: Group interface receives a long-awaited members() 
+        method that returns the wiki group's current members as an array
+        of Principals.
+
+        * Enhancement: thread responsible for RSS generation extracted out of
+        WikEngine and moved to its own RSSThread class.
+
+        * Bug fix: to support multi-wiki webapps, WikiSession.getWikiSession's 
+        method signature now includes a parameter for the current WikiEngine. 
+        Check your custom JSPs to see if this affects you (it shouldn't; none of 
+        the default JSPs currently use this method).
+
+        * Bug fix: Fixed deprecated methods used in LuceneSearchProvider.
+
+        * Bug fix: added sensible session timeout defaults to TestHttpSession
+        to prevent some tests from failing.
+
+        * Minor signature change to GroupManager: commit() now throws WikiException.
+
+        * Minor refactoring of WikiEvent class and subclasses to add getType()
+        method to superclass.
+
 2006-06-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.13
