@@ -50,6 +50,7 @@ import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
@@ -59,7 +60,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public class LuceneSearchProvider implements SearchProvider 
 {
-    private static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
+    protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
 
     private WikiEngine m_engine;
 
@@ -82,8 +83,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     private String           m_luceneDirectory = null;
     private int              m_updateCount = 0;
-    private Thread           m_luceneUpdateThread = null;
-    private Vector           m_updates = new Vector(); // Vector because multi-threaded.
+    protected Vector         m_updates = new Vector(); // Vector because multi-threaded.
     
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
@@ -127,14 +127,18 @@ public class LuceneSearchProvider implements SearchProvider
             log.error("Problem while creating Lucene index - not using Lucene.", e);
         }
 
-        startLuceneUpdateThread();
+        // Start the Lucene update thread, which waits first
+        // for a little while before starting to go through
+        // the Lucene "pages that need updating".
+        LuceneUpdater updater = new LuceneUpdater( m_engine, this );
+        updater.start();
     }
 
     /**
      *  Performs a full Lucene reindex, if necessary.
      *  @throws IOException
      */
-    private void doFullLuceneReindex()
+    protected void doFullLuceneReindex()
         throws IOException
     {
         File dir = new File(m_luceneDirectory);
@@ -309,62 +313,7 @@ public class LuceneSearchProvider implements SearchProvider
         return null;
     }
 
-
-    /**
-     *  Waits first for a little while before starting to go through
-     *  the Lucene "pages that need updating".
-     */
-    private void startLuceneUpdateThread()
-    {
-        m_luceneUpdateThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                // FIXME: This is a kludge - JSPWiki should somehow report
-                //        that init phase is complete.
-                try
-                {
-                    Thread.sleep( 60000L );
-                }
-                catch( InterruptedException e ) 
-                { 
-                    throw new InternalWikiException("Interrupted while waiting to start."); 
-                }
-
-                try
-                {
-
-                    doFullLuceneReindex();
-                    
-                    while( true )
-                    {
-                        while( m_updates.size() > 0 )
-                        {
-                            Object[] pair = ( Object[] ) m_updates.remove(0);
-                            WikiPage page = ( WikiPage ) pair[0];
-                            String text = ( String ) pair[1];
-                            updateLuceneIndex(page, text);
-                        }
-                        try
-                        {
-                            Thread.sleep(500);
-                        }
-                        catch ( InterruptedException e ) {}
-                    }
-                }
-                catch( Exception e )
-                {
-                    log.error("Problem with Lucene indexing - indexing shut down (no searching)",e);
-                }
-            }
-        });
-        
-        m_luceneUpdateThread.setName("JSPWiki Lucene update thread");
-        m_luceneUpdateThread.setDaemon(true);
-        m_luceneUpdateThread.start();
-    }
-
-    private synchronized void updateLuceneIndex( WikiPage page, String text )
+    protected synchronized void updateLuceneIndex( WikiPage page, String text )
     {
         IndexWriter writer = null;
 
@@ -424,7 +373,8 @@ public class LuceneSearchProvider implements SearchProvider
         if( text == null ) return;
         
         // Raw name is the keyword we'll use to refer to this document for updates.
-        doc.add(Field.Keyword(LUCENE_ID, page.getName()));
+        Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED);
+        doc.add( field );
 
         /*
         // Body text is indexed, but not stored in doc. We add in the
@@ -435,16 +385,22 @@ public class LuceneSearchProvider implements SearchProvider
                                             TextUtil.beautifyString(page.getName()))));
         */
         // Body text.  It is stored in the doc for search contexts.
-        doc.add(Field.Text(LUCENE_PAGE_CONTENTS, text));
+        field = new Field(LUCENE_PAGE_CONTENTS, text, 
+                Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+        doc.add( field );
 
         // Allow searching by page name
-        doc.add(Field.Text(LUCENE_PAGE_NAME, TextUtil.beautifyString(page.getName())));
+        field = new Field(LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ), 
+                Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+        doc.add( field );
 
         // Allow searching by authorname
         
         if( page.getAuthor() != null )
         {
-            doc.add(Field.Text(LUCENE_AUTHOR, page.getAuthor()));
+            field = new Field(LUCENE_AUTHOR, page.getAuthor(), 
+                    Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+            doc.add( field );
         }
 
         // Now add the names of the attachments of this page
@@ -458,7 +414,9 @@ public class LuceneSearchProvider implements SearchProvider
                 Attachment att = (Attachment) it.next();
                 attachmentNames += att.getName() + ";";
             }
-            doc.add(Field.Text(LUCENE_ATTACHMENTS, attachmentNames));
+            field = new Field(LUCENE_ATTACHMENTS, attachmentNames, 
+                    Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+            doc.add( field );
 
         } 
         catch(ProviderException e) 
@@ -475,7 +433,7 @@ public class LuceneSearchProvider implements SearchProvider
         {
             // Must first remove existing version of page.
             IndexReader reader = IndexReader.open(m_luceneDirectory);
-            reader.delete(new Term(LUCENE_ID, page.getName()));
+            reader.deleteDocuments(new Term(LUCENE_ID, page.getName()));
             reader.close();
         }
         catch ( IOException e )
@@ -621,6 +579,52 @@ public class LuceneSearchProvider implements SearchProvider
     public String getProviderInfo()
     {
         return "LuceneSearchProvider";
+    }
+    
+    /**
+     * Updater thread that updates Lucene indexes.
+     */
+    private static class LuceneUpdater extends WikiBackgroundThread
+    {
+        private final LuceneSearchProvider m_provider;
+        
+        private LuceneUpdater( WikiEngine engine, LuceneSearchProvider provider )
+        {
+            super( engine, 1);
+            m_provider = provider;
+            setName("JSPWiki Lucene Indexer");
+        }
+        
+        public void startupTask() throws Exception
+        {
+            // Sleep initially...
+            try
+            {
+                Thread.sleep( 60000L );
+            }
+            catch( InterruptedException e ) 
+            { 
+                throw new InternalWikiException("Interrupted while waiting to start."); 
+            }
+            
+            // Reindex everything
+            m_provider.doFullLuceneReindex();
+        }
+        
+        public void backgroundTask() throws Exception
+        {
+            synchronized ( m_provider.m_updates )
+            {
+                while( m_provider.m_updates.size() > 0 )
+                {
+                    Object[] pair = ( Object[] ) m_provider.m_updates.remove(0);
+                    WikiPage page = ( WikiPage ) pair[0];
+                    String text = ( String ) pair[1];
+                    m_provider.updateLuceneIndex(page, text);
+                }
+            }
+        }
+        
     }
     
     // FIXME: This class is dumb; needs to have a better implementation
