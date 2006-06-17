@@ -29,6 +29,7 @@ import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.VersioningProvider;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
  *  Manages the WikiPages.  This class functions as an unified interface towards
@@ -53,16 +54,12 @@ public class PageManager
 
     private WikiPageProvider m_provider;
 
-    private HashMap m_pageLocks = new HashMap();
+    protected HashMap m_pageLocks = new HashMap();
 
     private WikiEngine m_engine;
+    
+    private int m_expiryTime = 60;
 
-    /**
-     *  The expiry time.  Default is 60 minutes.
-     */
-    private int     m_expiryTime = 60;
-
-   
     /**
      *  Creates a new PageManager.
      *  @throws WikiException If anything goes wrong, you get this.
@@ -76,8 +73,7 @@ public class PageManager
 
         boolean useCache = "true".equals(props.getProperty( PROP_USECACHE ));
 
-        m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ),
-                                                   m_expiryTime );
+        m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ), 60 );
 
         //
         //  If user wants to use a cache, then we'll use the CachingProvider.
@@ -131,7 +127,8 @@ public class PageManager
         //
         //  Start the lock reaper.
         //
-        new LockReaper().start();
+        LockReaper reaper = new LockReaper( m_engine );
+        reaper.start();
     }
 
 
@@ -449,45 +446,36 @@ public class PageManager
      *  or so (it's not really that important, as long as it runs),
      *  and removes all locks that have expired.
      */
-    private class LockReaper extends Thread
+    private class LockReaper extends WikiBackgroundThread
     {
-        public LockReaper()
+        public LockReaper( WikiEngine engine )
         {
-            setName("JSPWiki Lock Reaper Thread");
-            setDaemon(true);
+            super( engine, 60 );
+            setName("JSPWiki Lock Reaper");
         }
         
-        public void run()
+        public void backgroundTask() throws Exception
         {
-            while( true )
+            synchronized( m_pageLocks )
             {
-                try
+                Collection entries = m_pageLocks.values();
+
+                Date now = new Date();
+
+                for( Iterator i = entries.iterator(); i.hasNext(); )
                 {
-                    Thread.sleep( 60 * 1000L );
+                    PageLock p = (PageLock) i.next();
 
-                    synchronized( m_pageLocks )
+                    if( now.after( p.getExpiryTime() ) )
                     {
-                        Collection entries = m_pageLocks.values();
+                        i.remove();
 
-                        Date now = new Date();
-
-                        for( Iterator i = entries.iterator(); i.hasNext(); )
-                        {
-                            PageLock p = (PageLock) i.next();
-
-                            if( now.after( p.getExpiryTime() ) )
-                            {
-                                i.remove();
-
-                                log.debug( "Reaped lock: "+p.getPage()+
-                                           " by "+p.getLocker()+
-                                           ", acquired "+p.getAcquisitionTime()+
-                                           ", and expired "+p.getExpiryTime() );
-                            }
-                        }
+                        log.debug( "Reaped lock: "+p.getPage()+
+                                   " by "+p.getLocker()+
+                                   ", acquired "+p.getAcquisitionTime()+
+                                   ", and expired "+p.getExpiryTime() );
                     }
                 }
-                catch( Throwable t ) {}
             }
         }
     }
