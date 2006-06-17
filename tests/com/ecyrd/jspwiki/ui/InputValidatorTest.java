@@ -19,16 +19,16 @@ public class InputValidatorTest extends TestCase
 {
     TestEngine     testEngine;
 
-    Properties     props = new Properties();
-
     InputValidator val;
 
     String         TEST  = "test";
 
     protected void setUp() throws Exception
     {
+        Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        WikiSession session = WikiSession.getWikiSession( new TestHttpServletRequest() );
+        testEngine = new TestEngine( props );
+        WikiSession session = WikiSession.getWikiSession( testEngine, new TestHttpServletRequest() );
         val = new InputValidator( TEST, session );
     }
 
