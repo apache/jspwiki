@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.26 $ $Date: 2006-05-28 23:20:25 $
+ * @version $Revision: 1.27 $ $Date: 2006-06-17 23:09:56 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -226,7 +226,7 @@ public final class AuthenticationManager
             throw new IllegalStateException( "Wiki context's HttpRequest may not be null" );
         }
         
-        WikiSession wikiSession = WikiSession.getWikiSession( request );
+        WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         if ( wikiSession == null )
         {
             throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
@@ -289,11 +289,11 @@ public final class AuthenticationManager
             log.debug( "Invalidating WikiSession for session ID=" + sid );
         }
         // Retrieve the associated WikiSession and clear the Principal set
-        WikiSession wikiSession = WikiSession.getWikiSession( request );
+        WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         wikiSession.invalidate();
         
         // Remove the wikiSession from the WikiSession cache
-        WikiSession.removeWikiSession( request );
+        WikiSession.removeWikiSession( m_engine, request );
         
         // We need to flush the HTTP session too
         session.invalidate();
