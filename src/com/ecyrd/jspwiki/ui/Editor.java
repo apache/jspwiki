@@ -82,10 +82,7 @@ public class Editor
         {
             return ifSelected;
         }
-        else
-        {
-            return ifNotSelected;
-        }
+        return ifNotSelected;
     }
 
     public String toString()
