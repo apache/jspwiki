@@ -13,7 +13,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 /**
  * Provides a concrete implementation of the {@link Group} interface.
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-05-28 23:23:12 $
+ * @version $Revision: 1.9 $ $Date: 2006-06-17 23:11:24 $
  * @since 2.3
  */
 public class DefaultGroup implements Group
@@ -122,6 +122,11 @@ public class DefaultGroup implements Group
         return findMember( principal.getName() ) != null;
     }
 
+    public Principal[] members()
+    {
+        return (Principal[])m_members.toArray( new Principal[m_members.size()] );
+    }
+    
     /**
      * Removes a Principal from the group. When a Principal is 
      * added successfully, also sends a WikiSecurityEvent of type

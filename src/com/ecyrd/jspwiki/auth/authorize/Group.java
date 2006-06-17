@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * </ul>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-02-23 20:51:31 $
+ * @version $Revision: 1.7 $ $Date: 2006-06-17 23:11:24 $
  * @since 2.3
  */
 public interface Group extends Principal
@@ -90,6 +90,11 @@ public interface Group extends Principal
      */
     public String getName();
 
+    /**
+     * Returns the members of the group as an array of Principal objects.
+     */
+    public Principal[] members();
+    
     /**
      * Two DefaultGroups are considered equal if they both contains the
      * same Principals and have the same name (case-insentive comparison).
