@@ -96,9 +96,11 @@
        <servlet-class>com.ecyrd.jspwiki.atom.AtomAPIServlet</servlet-class>       
    </servlet>
 
+   <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
    <servlet>
        <servlet-name>WikiServlet</servlet-name>
        <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
+       <load-on-startup>1</load-on-startup>
    </servlet>
 
    <servlet>

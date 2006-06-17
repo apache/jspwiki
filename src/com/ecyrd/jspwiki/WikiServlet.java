@@ -29,9 +29,11 @@ import com.ecyrd.jspwiki.url.DefaultURLConstructor;
 
 /**
  *  This provides a master servlet for dealing with short urls.  It mostly does
- *  redirects to the proper JSP pages.
+ *  redirects to the proper JSP pages. It also intercepts the servlet
+ *  shutdown events and uses it to signal wiki shutdown.
  *  
  *  @author Janne Jalkanen
+ *  @author Andrew Jaquith
  *  @since 2.2
  */
 public class WikiServlet
@@ -49,6 +51,21 @@ public class WikiServlet
         m_engine         = WikiEngine.getInstance( config );
 
         log.info("WikiServlet initialized.");
+    }
+
+    /**
+     * Destroys the WikiServlet; called by the servlet container
+     * when shutting down the webapp. This method calls the
+     * protected method {@link WikiEngine#shutdown()}, which
+     * sends {@link com.ecyrd.jspwiki.event.WikiEngineEvent#SHUTDOWN}
+     * events to registered listeners.
+     * @see javax.servlet.GenericServlet#destroy()
+     */
+    public void destroy()
+    {
+        log.info("WikiServlet shutdown.");
+        m_engine.shutdown();
+        super.destroy();
     }
 
     public void doPost( HttpServletRequest req, HttpServletResponse res )
