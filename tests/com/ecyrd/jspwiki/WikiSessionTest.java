@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki;
 
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
@@ -15,9 +16,14 @@ import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 public class WikiSessionTest extends TestCase
 {
 
+    private WikiEngine m_engine = null;
+    
     protected void setUp() throws Exception
     {
         super.setUp();
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        m_engine = new TestEngine( props );
     }
 
     protected void tearDown() throws Exception
@@ -84,7 +90,7 @@ public class WikiSessionTest extends TestCase
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // Let's send another request from a different IP address but
@@ -97,7 +103,7 @@ public class WikiSessionTest extends TestCase
         request2.setRemoteUser( null );
         request2.setRemoteAddr( "127.1.1.1" );
         request2.m_session = session;
-        wikiSession2 = WikiSession.getWikiSession( request2 );
+        wikiSession2 = WikiSession.getWikiSession( m_engine, request2 );
         assertFalse( wikiSession2.isContainerStatusChanged( request2 ) );
         
         // ...and the WikiSessions should be the same
@@ -109,7 +115,7 @@ public class WikiSessionTest extends TestCase
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertTrue( wikiSession.isContainerStatusChanged( request ) );
         
         // ...but if the next request has the same UserPrincipal, it shouldn't.
@@ -118,7 +124,7 @@ public class WikiSessionTest extends TestCase
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // If we twiddle the remoteUser field, it should trigger a change again...
@@ -127,7 +133,7 @@ public class WikiSessionTest extends TestCase
         request.setRemoteUser( "fred" );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertTrue( wikiSession.isContainerStatusChanged( request ) );
         
         // ...but not if we follow up with a similar request again.
@@ -136,7 +142,7 @@ public class WikiSessionTest extends TestCase
         request.setRemoteUser( "fred" );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // And finally, if we null the UserPrincipal and remoteUser again, 
@@ -146,7 +152,7 @@ public class WikiSessionTest extends TestCase
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // Adding the magic "assertion cookie" should trigger a change in status.
@@ -157,7 +163,7 @@ public class WikiSessionTest extends TestCase
         request.m_session = session;
         String cookieName = CookieAssertionLoginModule.PREFS_COOKIE_NAME;
         request.m_cookies = new Cookie[] { new Cookie( cookieName, "FredFlintstone" ) };
-        wikiSession = WikiSession.getWikiSession( request );
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertTrue( wikiSession.isContainerStatusChanged( request ) );
     }
 

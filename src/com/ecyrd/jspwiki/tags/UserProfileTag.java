@@ -24,6 +24,7 @@ import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
@@ -53,7 +54,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * exist in the user database
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-04-05 15:45:47 $
+ * @version $Revision: 1.7 $ $Date: 2006-06-17 23:18:49 $
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase
@@ -148,7 +149,8 @@ public class UserProfileTag extends WikiTagBase
                 //
                 //  Default back to the declared user name
                 //
-                WikiSession wikiSession = WikiSession.getWikiSession((HttpServletRequest)pageContext.getRequest());
+                WikiEngine engine = this.m_wikiContext.getEngine();
+                WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
                 Principal user = wikiSession.getUserPrincipal();
 
                 if( user != null )
