@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSessionContext;
  * Most methods work as the should; notable exceptions include
  * getSessionContext/getServletContext.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-02-04 21:51:39 $
+ * @version $Revision: 1.4 $ $Date: 2006-06-17 23:21:08 $
  */
 public class TestHttpSession implements HttpSession
 {
@@ -30,6 +30,8 @@ public class TestHttpSession implements HttpSession
     protected final long          m_lastAccessTime;
 
     protected final Map           m_attributes;
+    
+    protected int                 m_inactiveInterval;
 
     protected boolean             m_invalidated;
 
@@ -43,6 +45,7 @@ public class TestHttpSession implements HttpSession
         m_id = String.valueOf( RANDOM.nextLong() );
         m_attributes = new HashMap();
         m_invalidated = false;
+        m_inactiveInterval = 1800;
     }
 
     /**
@@ -84,15 +87,17 @@ public class TestHttpSession implements HttpSession
      */
     public void setMaxInactiveInterval( int arg0 )
     {
+        m_inactiveInterval = arg0;
     }
 
     /**
-     * No-op; returns 0.
+     * Returns the number of seconds of allowed inactivity;
+     * returns 1800 seconds (30 minutes) by default.
      * @see javax.servlet.http.HttpSession#getMaxInactiveInterval()
      */
     public int getMaxInactiveInterval()
     {
-        return 0;
+        return m_inactiveInterval;
     }
 
     /**
