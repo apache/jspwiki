@@ -167,7 +167,7 @@ public class WikiContext
         super();
         m_engine = engine;
         m_request = request;
-        m_session = WikiSession.getWikiSession( request );
+        m_session = WikiSession.getWikiSession( engine, request );
         m_page   = page;
         m_realPage = page;
         
