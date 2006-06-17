@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
@@ -55,7 +56,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.12 $ $Date: 2006-05-28 23:23:12 $
+ * @version $Revision: 1.13 $ $Date: 2006-06-17 23:12:18 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -82,13 +83,13 @@ public class DefaultGroupManager implements GroupManager
             {
                 // Parse groups if name starts with GROUP_PREFIX
                 WikiPage p = context.getPage();
-                if (p.getName().startsWith(DefaultGroupManager.GROUP_PREFIX)) 
+                String groupName = getGroupName( p );
+                if ( groupName != null ) 
                 {
                     log.debug( "Skimming through page " + p.getName() + " to see if there are new groups..." );
 
                     m_engine.textToHTML( context, content );
                     
-                    String groupName = p.getName().substring(DefaultGroupManager.GROUP_PREFIX.length());
                     String members = (String) p.getAttribute( ATTR_MEMBERLIST );
 
                     updateGroup( groupName, parseMemberList( members ) );
@@ -186,7 +187,7 @@ public class DefaultGroupManager implements GroupManager
      * SaveFilter does this.
      * @see com.ecyrd.jspwiki.auth.authorize.GroupManager#commit()
      */
-    public void commit()
+    public void commit() throws WikiException
     {
     }
 
@@ -385,6 +386,24 @@ public class DefaultGroupManager implements GroupManager
             WikiEventListener listener = (WikiEventListener)it.next();
             listener.actionPerformed(event);
         }
+    }
+    
+    /**
+     * Returns the name of a wiki group, based on a supplied wiki page.
+     * If the page name begins with prefix {@link DefaultGroupManager#GROUP_PREFIX},
+     * the group name will be all of the characters following the prefix.
+     * If the wiki page does not begin with the default group prefix,
+     * this method returns <code>null</code>.
+     * @param p the wiki page
+     * @return the group name, or <code>null</code>
+     */
+    protected static String getGroupName( WikiPage p )
+    {
+        if (p.getName().startsWith(DefaultGroupManager.GROUP_PREFIX)) 
+        {
+            return p.getName().substring(DefaultGroupManager.GROUP_PREFIX.length() );
+        }
+        return null;
     }
     
     /**
