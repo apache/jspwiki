@@ -44,6 +44,9 @@ import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
+import com.ecyrd.jspwiki.event.WikiEngineEvent;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
@@ -53,6 +56,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.render.RenderingManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
+import com.ecyrd.jspwiki.rss.RSSThread;
 import com.ecyrd.jspwiki.search.SearchManager;
 import com.ecyrd.jspwiki.ui.EditorManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
@@ -224,9 +228,9 @@ public class WikiEngine
 
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
-
-    /** Stores the relative URL to the global RSS feed. */
-    private String           m_rssURL;
+    
+    /** The RSS file to generate. */
+    private String           m_rssFile;
 
     /** Store the ServletContext that we're in.  This may be null if WikiEngine
         is not running inside a servlet container (i.e. when testing). */
@@ -252,6 +256,9 @@ public class WikiEngine
 
     private boolean          m_isConfigured = false; // Flag.
   
+    /** Listeners for events */
+    private final Set        m_listeners = new HashSet();
+    
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -591,10 +598,17 @@ public class WikiEngine
                        "but there will be no RSS feed.", e );
         }
 
-        // FIXME: I wonder if this should be somewhere else.
+        // Start the RSS generator & generator thread
         if( m_rssGenerator != null )
         {
-            new RSSThread().start();
+            m_rssGenerator = new RSSGenerator( this, props );
+            m_rssFile = TextUtil.getStringProperty( props, 
+                    RSSGenerator.PROP_RSSFILE, "rss.rdf" );
+            File rssFile = new File( getRootPath(), m_rssFile );
+            int rssInterval = TextUtil.getIntegerProperty( props,
+                    RSSGenerator.PROP_INTERVAL, 3600 );
+            RSSThread rssThread = new RSSThread( this, rssFile, rssInterval );
+            rssThread.start();
         }
 
         log.info("WikiEngine configured.");
@@ -1383,6 +1397,18 @@ public class WikiEngine
     }
 
     /**
+     * Protected method that signals that the WikiEngine will be
+     * shut down by the servlet container. It is called by
+     * {@link WikiServlet#destroy()}. When this method is called,
+     * it fires a "shutdown"  WikiEngineEvent to all registered
+     * listeners.
+     */
+    protected void shutdown()
+    {
+        fireEvent( new WikiEngineEvent( this, WikiEngineEvent.SHUTDOWN ) );
+    }
+    
+    /**
      *  Reads a WikiPageful of data from a String and returns all links
      *  internal to this Wiki in a Collection.
      */
@@ -2120,9 +2146,9 @@ public class WikiEngine
      */
     public String getGlobalRSSURL()
     {
-        if( m_rssURL != null )
+        if( m_rssGenerator != null && m_rssGenerator.isEnabled() )
         {
-            return getBaseURL()+m_rssURL;
+            return getBaseURL()+m_rssFile;
         }
 
         return null;
@@ -2152,91 +2178,6 @@ public class WikiEngine
     public RSSGenerator getRSSGenerator()
     {
         return m_rssGenerator;
-    }
-    
-    /**
-     *  Runs the RSS generation thread.
-     *  FIXME: MUST be somewhere else, this is not a good place.
-     */
-    private class RSSThread extends Thread
-    {
-        public RSSThread()
-        {
-            setName("JSPWiki Global RSS generator thread");
-            setDaemon(true);            
-        }
-        
-        public void run()
-        {
-            try
-            {
-                String fileName = TextUtil.getStringProperty( m_properties,
-                                                              RSSGenerator.PROP_RSSFILE,
-                                                              "rss.rdf" );
-                int rssInterval = TextUtil.getIntegerProperty( m_properties,
-                                                               RSSGenerator.PROP_INTERVAL,
-                                                               3600 );
-
-                log.debug("RSS file will be at "+fileName);
-                log.debug("RSS refresh interval (seconds): "+rssInterval);
-
-                while(true)
-                {
-                    Writer out = null;
-                    Reader in  = null;
-
-                    try
-                    {
-                        //
-                        //  Generate RSS file, output it to
-                        //  default "rss.rdf".
-                        //
-                        log.debug("Regenerating RSS feed to "+fileName);
-
-                        String feed = m_rssGenerator.generate();
-
-                        File file = new File( m_rootPath, fileName );
-
-                        in  = new StringReader(feed);
-                        out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file), "UTF-8") );
-
-                        FileUtil.copyContents( in, out );
-
-                        m_rssURL = fileName;
-                    }
-                    catch( IOException e )
-                    {
-                        log.error("Cannot generate RSS feed to "+fileName, e );
-                        m_rssURL = null;
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            if( in != null )  in.close();
-                            if( out != null ) out.close();
-                        }
-                        catch( IOException e )
-                        {
-                            log.fatal("Could not close I/O for RSS", e );
-                            break;
-                        }
-                    }
-
-                    Thread.sleep(rssInterval*1000L);
-                } // while
-                
-            }
-            catch(InterruptedException e)
-            {
-                log.error("RSS thread interrupted, no more RSS feeds", e);
-            }
-            
-            //
-            // Signal: no more RSS feeds.
-            //
-            m_rssURL = null;
-        }
     }
 
     /**
@@ -2313,5 +2254,36 @@ public class WikiEngine
     public EditorManager getEditorManager()
     {
         return m_editorManager;
+    }
+    
+    /**
+     * Registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.add( listener );
+    }
+    
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.remove( listener );
+    }
+    
+    /**
+     * Fires a wiki event to all registered listeners.
+     * @param event the event
+     */
+    protected final void fireEvent( WikiEvent event )
+    {
+        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
+        {
+            WikiEventListener listener = (WikiEventListener)it.next();
+            listener.actionPerformed(event);
+        }
     }
 }
