@@ -141,6 +141,11 @@ public class PluginManager extends ModuleManager
     public static final String PARAM_BODY      = "_body";
 
     /**
+     *  The name of the command line content parameter. The value is "_cmdline".
+     */
+    public static final String PARAM_CMDLINE   = "_cmdline";
+
+    /**
      *  A special name to be used in case you want to see debug output
      */
     public static final String PARAM_DEBUG     = "debug";
@@ -224,7 +229,6 @@ public class PluginManager extends ModuleManager
     {
         return( m_pluginsEnabled );
     }
-
 
     /**
      *  Returns true if the link is really command to insert
@@ -421,6 +425,8 @@ public class PluginManager extends ModuleManager
         //  Protection against funny users.
         //
         if( argstring == null ) return arglist;
+
+        arglist.put( PARAM_CMDLINE, argstring );
 
         StringReader    in      = new StringReader(argstring);
         StreamTokenizer tok     = new StreamTokenizer(in);
