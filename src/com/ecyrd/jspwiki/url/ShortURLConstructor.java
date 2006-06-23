@@ -111,7 +111,7 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.NONE) )
         {
-            return doReplacement( "%U%n", name, absolute );
+            return doReplacement( "%u%n", name, absolute );
         }
         else if( context.equals(WikiContext.UPLOAD) )
         {
@@ -127,7 +127,7 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.ERROR) )
         {
-            return doReplacement( "%UError.jsp", name, absolute );
+            return doReplacement( "%uError.jsp", name, absolute );
         }
         throw new InternalWikiException("Requested unsupported context "+context);
     }
