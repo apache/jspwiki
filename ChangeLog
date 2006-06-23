@@ -1,3 +1,17 @@
+2006-06-23  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.15
+        
+        * Fixed issue with absolute URLs and ShortURLConstructor (we were
+        using %U where %u should've been used in ERROR and NONE contexts).  
+        Thanks to jim from IRC for pointing this out.
+
+        * Added patch from Brad Johnson to give better error output if
+        RCSFileProvider fails.
+        
+        * Added patch from Murray Altheim to support _cmdline in PluginManager.
+        This allows a plugin to do completely custom parsing.
+
 2006-06-17  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.14
