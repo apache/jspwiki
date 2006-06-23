@@ -57,7 +57,7 @@ import com.ecyrd.jspwiki.*;
 public class RCSFileProvider
     extends AbstractFileProvider
 {
-    private String m_checkinCommand  = "ci -q -m\"author=%u\" -l -t-none %s";
+    private String m_checkinCommand  = "ci -m\"author=%u\" -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
     private String m_logCommand      = "rlog -zLT -r %s";
     private String m_fullLogCommand  = "rlog -zLT %s";
@@ -345,6 +345,7 @@ public class RCSFileProvider
     public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
+        Process process = null;
         String pagename = page.getName();
         // Writes it in the dir.
         super.putPageText( page, text );
@@ -363,20 +364,57 @@ public class RCSFileProvider
 
             log.debug("Command = '"+cmd+"'");
 
-            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
+            process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             process.waitFor();
 
+            //
+            //  Collect possible error output
+            //
+            BufferedReader error = null; 
+            String elines = "";
+            error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String line = null;
+            while ((line = error.readLine()) != null) 
+            {
+                elines = elines + line +"\n";
+            }
+            
             log.debug("Done, returned = "+process.exitValue());
-
-            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
-            process.getInputStream().close();
-            process.getOutputStream().close();
-            process.getErrorStream().close(); 
+            log.debug(elines);
+            if (process.exitValue() != 0)
+            {
+                throw new ProviderException(cmd+"\n"+"Done, returned = "+process.exitValue()+"\n"+elines);
+            }
         }
         catch( Exception e )
         {
             log.error("RCS checkin failed",e);
+            ProviderException pe = new ProviderException("RCS checkin failed");
+            pe.initCause(e);
+            throw pe;        
+        }
+        finally
+        {
+            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+            if (process != null)
+            {
+                try
+                {
+                    if( process.getOutputStream() != null ) process.getOutputStream().close();
+                }
+                catch( Exception e ) {}
+                try
+                {
+                    if( process.getInputStream() != null ) process.getInputStream().close();
+                }
+                catch( Exception e ) {}
+                try
+                {
+                    if( process.getErrorStream() != null ) process.getErrorStream().close();
+                }
+                catch( Exception e ) {}
+            }
         }
     }
 
