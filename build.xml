@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.71 2006-06-04 19:28:01 arj Exp $
+    $Id: build.xml,v 1.72 2006-06-24 18:53:35 arj Exp $
 -->    
        
 <!--   
@@ -249,6 +249,7 @@
       </packageset>
       <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
+      <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>   
       <classpath refid="path.base" />
     </javadoc>
