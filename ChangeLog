@@ -4,6 +4,7 @@
 
         * Bug fix: SessionMonitor.sessions() now returns the same
         number of sessions as userPrincipals(). Credit: Terry Steichen.
+        Also, the array of Principals returned by userPrincipals() is now sorted.
 
         * WikiSession receives lots of Javadoc tweaks and minor 
         cleanup-oriented fixes (e.g., member visibility changes) that 
