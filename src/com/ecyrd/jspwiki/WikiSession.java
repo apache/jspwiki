@@ -30,67 +30,115 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
- * Represents a long-running wiki session, with an associated user Principal,
+ * <p>Represents a long-running wiki session, with an associated user Principal,
  * user Subject, and authentication status. This class is initialized with
  * minimal, default-deny values: authentication is set to <code>false</code>,
- * and the user principal is set to <code>null</code>.
+ * and the user principal is set to <code>null</code>.</p>
+ * <p>The WikiSession class allows callers to:</p>
+ * <ul>
+ *   <li>Obtain the authentication status of the user via 
+ *     {@link #isAnonymous()} and {@link #isAuthenticated()}</li>
+ *   <li>Query the session for Principals representing the
+ *     user's identity via {@link #getLoginPrincipal()},
+ *     {@link #getUserPrincipal()} and {@link #getPrincipals()}</li>
+ *   <li>Store, retrieve and clear UI messages via 
+ *     {@link #addMessage(String)}, {@link #getMessages(String)}
+ *     and {@link #clearMessages(String)}</li>
+ * </ul>
+ * <p>To keep track of the Principals each user posseses, each WikiSession
+ * stores a JAAS Subject. Various login processes add or remove Principals
+ * when users authenticate or log out.</p>
+ * <p>WikiSession implements the {@link com.ecyrd.jspwiki.event.WikiEventListener}
+ * interface and listens for group add/change/delete events fired by
+ * event sources the WikiSession is registered with. Normally, 
+ * {@link com.ecyrd.jspwiki.auth.AuthenticationManager} registers each WikiSession
+ * with the {@link com.ecyrd.jspwiki.auth.authorize.GroupManager}
+ * so it can catch group events. Thus, when a user is added to a 
+ * {@link com.ecyrd.jspwiki.auth.authorize.Group}, a corresponding
+ * {@link com.ecyrd.jspwiki.auth.GroupPrincipal} is injected into
+ * the Subject's Principal set. Likewise, when the user is removed from 
+ * the Group or the Group is deleted, the GroupPrincipal is removed
+ * from the Subject.</p>
+ * <p>In addition to methods for examining individual <code>WikiSession</code>
+ * objects, this class also contains a number of static methods for
+ * managing WikiSessions for an entire wiki. These methods allow callers
+ * to find, query and remove WikiSession objects, and
+ * to obtain a list of the current wiki session users.</p>
+ * <p>WikiSession encloses a protected static class, {@link SessionMonitor},
+ * to keep track of WikiSessions registered with each wiki.</p>
  * @author Andrew R. Jaquith
- * @version $Revision: 2.21 $ $Date: 2006-06-17 23:09:03 $
+ * @version $Revision: 2.22 $ $Date: 2006-06-24 18:57:01 $
  */
-public class WikiSession implements WikiEventListener
+public final class WikiSession implements WikiEventListener
 {
 
-    public static final String ANONYMOUS             = "anonymous";
+    /** An anonymous user's session status. */
+    public static final String  ANONYMOUS             = "anonymous";
 
-    public static final String ASSERTED              = "asserted";
+    /** An asserted user's session status. */
+    public static final String  ASSERTED              = "asserted";
 
-    public static final String AUTHENTICATED         = "authenticated";
+    /** An authenticated user's session status. */
+    public static final String  AUTHENTICATED         = "authenticated";
     
-    private Subject            m_subject             = new Subject();
+    private static final int    ONE                   = 48;
 
-    protected String           m_cachedCookieIdentity= null;
+    private static final int    NINE                  = 57;
+
+    private static final int    DOT                   = 46;
+
+    private static final Logger log                   = Logger.getLogger( WikiSession.class );
     
-    protected String           m_cachedRemoteUser    = null;
-
-    protected Principal        m_cachedUserPrincipal = null;
-
-    private boolean            m_isNew               = true;
+    private static final String ALL                   = "*";
     
-    private Map                m_messages            = new HashMap();
+    private final Subject       m_subject             = new Subject();
 
-    protected static int       ONE                   = 48;
+    private final Map           m_messages            = new HashMap();
 
-    protected static int       NINE                  = 57;
-
-    protected static int       DOT                   = 46;
-
-    protected static Logger    log                   = Logger.getLogger( WikiSession.class );
+    private String              m_cachedCookieIdentity= null;
     
-    protected static final String ALL                = "*";
+    private String              m_cachedRemoteUser    = null;
+
+    private Principal           m_cachedUserPrincipal = null;
+
+    private boolean             m_isNew               = true;
     
     /**
-     *  This is a simple monitor thread that runs roughly every minute
-     *  or so (it's not really that important, as long as it runs),
+     *  <p>Monitor thread that runs every 60 seconds
      *  and removes all sessions that have expired.  
-     *  Only one instance exists per JVM. It is a not a 
-     *  daemon thread; rather, it listens for wiki shutdown 
-     *  and persists in the JVM until it detects it.
+     *  Only one instance exists per WikiEngine. It is a not a 
+     *  daemon thread; rather, it listens for wiki engine shutdown 
+     *  and persists in the JVM until it detects it.</p>
+     *  <p>The <em>raison d'être</em> for this class is to work
+     *  around the fact that we need to keep track of HttpSessions
+     *  and know which ones have expired, and which haven't. We can't
+     *  t query the web container directly to see which have expired. As
+     *  a workaround, therefore, we keep a cache of the current <code>HttpSession</code>
+     *  objects for this webapp, and periodically walk through the 
+     *  cache to determine which sessions are still valid. Fortunately
+     *  for us, the HttpSession interface specifies two extremely
+     *  handy methods that make the job relatively easy:
+     *  {@link HttpSession#getLastAccessedTime()} and 
+     *  {@link HttpSession#getMaxInactiveInterval()}.</p>
+     *  <p>SessionMonitors are lazily initialized; a a monitor will not start
+     *  until the first WikiSession is requested.</p>
      */
-    private static class SessionMonitor extends WikiBackgroundThread
+    protected static final class SessionMonitor extends WikiBackgroundThread
     {
-        private static Logger monitorLog = Logger.getLogger( SessionMonitor.class );
+        private static final Logger monitorLog = Logger.getLogger( SessionMonitor.class );
         
         /** Map with WikiEngines as keys, and SessionMonitors as values. */
-        private static Map c_monitors = new HashMap();
+        private static final Map c_monitors = new HashMap();
         
         /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
-        protected final Map m_sessions;
+        private final Map m_sessions;
 
         /**
          * Returns the instance of the SessionMonitor for this wiki.
+         * Only one SessionMonitor exists per WikiEngine.
          * @return the session monitor
          */
-        public static SessionMonitor getInstance( WikiEngine engine ) {
+        public final static SessionMonitor getInstance( WikiEngine engine ) {
             if ( engine == null ) 
             {
                 throw new IllegalArgumentException( "Engine cannot be null." );
@@ -118,23 +166,32 @@ public class WikiSession implements WikiEventListener
         }
         
         /**
-         * Runs the session monitor's cleanup method, which iterates
-         * through the HttpSession keys in protected map
-         * {@link WikiSession#m_sessions} and checks for expired sessions.
-         * If the session has previously been garbage-collected, it is 
-         * removed from the map. If the value returned by the session's
-         * {@link HttpSession#getLastAccessedTime()} method
-         * plus the value of {@link HttpSession#getMaxInactiveInterval()}
-         * is less than the current time, the session is treated
-         * as expired, and removed from the map. Certain web containers
-         * will throw an exception like <code>IllegalStateException</code>
-         * when the last-accessed or max-inactive methods are called on
-         * sessions marked invalid by the container. If this is true,
-         * we similarly regard the session as invalid and remove it
-         * from the protected map.
+         * <p>Runs the session monitor's cleanup method, which iterates
+         * through the HttpSession keys in a private Map 
+         * and checks for expired sessions. Each HttpSession is
+         * evaluated for removal as follows:</p>
+         * <ul>
+         *   <li><em>Garbage collection.</em> If the session had 
+         *     previously been garbage-collected, 
+         *     it is removed from the map</li>
+         *   <li><em>Expiration.</em> If the value returned by the 
+         *     session's {@link HttpSession#getLastAccessedTime()} 
+         *     method plus the value of {@link HttpSession#getMaxInactiveInterval()}
+         *     is less than the current time, the session is treated
+         *     as expired, and removed from the map</li>
+         *   <li><em>Invalidation.</em> Certain web containers will 
+         *     throw an exception like <code>IllegalStateException</code> 
+         *     when the last-accessed or max-inactive methods are called
+         *     on sessions marked invalid by the container. If this is 
+         *     true when we call these methods, we similarly regard the
+         *     session as invalid and remove it from the map</li>
+         * </ul>
+         * <p>All of these conditions mean the same thing: the session
+         * isn't relevant to the container anymore, so we should stop
+         * caching it.</p>
          * @see java.lang.Thread#run()
          */
-        public void backgroundTask()
+        public final void backgroundTask()
         {
             synchronized( m_sessions )
             {
@@ -179,7 +236,7 @@ public class WikiSession implements WikiEventListener
                     
                     if ( expired || invalid || removed )
                     {
-                        log.info( "Removing expired wiki session: " + reason );
+                        monitorLog.info( "Removing expired wiki session: " + reason );
                         removeQueue.add( s );
                     }
                 }
@@ -193,14 +250,18 @@ public class WikiSession implements WikiEventListener
         }
         
         /**
-         * Looks up the wiki session associated with a user's Http session.
-         * This method will return the "guest session" if not found, and
-         * add the session to the session cache. This method is guaranteed
-         * to return a non-null WikiSession.
+         * <p>Looks up the wiki session associated with a user's Http session
+         * and adds it to the session cache. This method will return the 
+         * "guest session" as constructed by {@link WikiSession#guestSession()}
+         * if the HttpSession is not currently associated with a WikiSession.
+         * This method is guaranteed to return a non-<code>null</code> WikiSession.</p>
+         * <p>Internally, the session is stored in a HashMap; keys are
+         * the HttpSession objects, while the values are 
+         * {@link java.lang.ref.WeakReference}-wrapped WikiSessions.</p>
          * @param session the HTTP session
          * @return the wiki session
          */
-        public WikiSession find( HttpSession session )
+        public final WikiSession find( HttpSession session )
         {
             // Look for a WikiSession associated with the user's Http Session
             // and create one if it isn't there yet.
@@ -237,9 +298,9 @@ public class WikiSession implements WikiEventListener
         /**
          * Removes the wiki session associated with the user's HttpSession 
          * from the session cache.
-         * @param session the user's HttpSession
+         * @param session the user's HTTP session
          */
-        public void remove( HttpSession session )
+        public final void remove( HttpSession session )
         {
             if ( session == null )
             {
@@ -255,18 +316,24 @@ public class WikiSession implements WikiEventListener
          * Returns the current number of active wiki sessions.
          * @return the number of sessions
          */
-        public int sessions()
+        public final int sessions()
         {
-            return m_sessions.size();
+            return userPrincipals().length;
         }
         
         /**
-         * Returns the current users as an array of Principal objects.
+         * <p>Returns the current wiki users as an array of Principal objects.
          * The principals are those returned by each WikiSession's
-         * {@link WikiSession#getUserPrincipal()}'s method.
+         * {@link WikiSession#getUserPrincipal()}'s method.</p>
+         * <p>To obtain the list of current WikiSessions, we iterate 
+         * through our session Map and obtain the list of values, 
+         * which are WikiSessions wrapped in {@link java.lang.ref.WeakReference}
+         * objects. Those <code>WeakReference</code>s whose <code>get()</code>
+         * method returns non-<code>null</code> values are valid
+         * sessions.</p>
          * @return the array of user principals
          */
-        public Principal[] userPrincipals()
+        public final Principal[] userPrincipals()
         {
             Collection principals = new ArrayList();
             for ( Iterator it = m_sessions.values().iterator(); it.hasNext(); )
@@ -288,7 +355,7 @@ public class WikiSession implements WikiEventListener
      * @param group the group to test
      * @return the result
      */
-    protected boolean isInGroup( Group group )
+    protected final boolean isInGroup( Group group )
     {
         Principal[] principals = getPrincipals();
         for ( int i = 0; i < principals.length; i++ )
@@ -304,7 +371,7 @@ public class WikiSession implements WikiEventListener
     /**
      * Returns <code>true</code> if the wiki session is newly initialized.
      */
-    protected boolean isNew()
+    protected final boolean isNew()
     {
         return m_isNew;
     }
@@ -313,7 +380,7 @@ public class WikiSession implements WikiEventListener
      * Sets the status of this wiki session.
      * @param isNew whether this session should be considered "new".
      */
-    protected void setNew( boolean isNew )
+    protected final void setNew( boolean isNew )
     {
         m_isNew = isNew;
     }
@@ -332,7 +399,7 @@ public class WikiSession implements WikiEventListener
      * Role.AUTHENTICATED;
      * @return Returns <code>true</code> if the user is authenticated
      */
-    public boolean isAuthenticated()
+    public final boolean isAuthenticated()
     {
         return ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) );
     }
@@ -353,7 +420,7 @@ public class WikiSession implements WikiEventListener
      * @return whether the current user's identity is equivalent to an IP
      * address
      */
-    public boolean isAnonymous()
+    public final boolean isAnonymous()
     {
         Set principals = m_subject.getPrincipals();
         return ( principals.contains( Role.ANONYMOUS ) ||
@@ -373,7 +440,7 @@ public class WikiSession implements WikiEventListener
      * externally-provided Principal, the object returned is the Principal, not
      * the wrapper around it.
      */
-    public Principal getLoginPrincipal()
+    public final Principal getLoginPrincipal()
     {
         Set principals = m_subject.getPrincipals();
         Principal secondChoice = null;
@@ -410,7 +477,7 @@ public class WikiSession implements WikiEventListener
      * primary user principal is determined as follows:</p> <ol> <li>If the
      * Subject's Principal set contains WikiPrincipals, the first WikiPrincipal
      * with type designator <code>FULL_NAME</code> or (alternatively)
-     * <code>WIKI_NAME</true> is the primary Principal.</li>
+     * <code>WIKI_NAME</code> is the primary Principal.</li>
      *   <li>For all other cases, the first Principal in the Subject's principal
      *       collection that that isn't of type Role or GroupPrincipal is the primary.</li>
      * </ol> 
@@ -418,7 +485,7 @@ public class WikiSession implements WikiEventListener
      * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
      * @return the primary user Principal
      */
-    public Principal getUserPrincipal()
+    public final Principal getUserPrincipal()
     {
         Set principals = m_subject.getPrincipals();
         Principal secondChoice = null;
@@ -466,7 +533,7 @@ public class WikiSession implements WikiEventListener
      * the {@link #clearMessages()} method is called.
      * @param message the message to add; if <code>null</code> it is ignored.
      */
-    public void addMessage(String message)
+    public final void addMessage(String message)
     {
         addMessage( ALL, message );
     }
@@ -479,7 +546,7 @@ public class WikiSession implements WikiEventListener
      * @param topic the topic to associate the message to; 
      * @param message the message to add
      */
-    public void addMessage(String topic, String message)
+    public final void addMessage(String topic, String message)
     {
         if ( topic == null )
         {
@@ -501,7 +568,7 @@ public class WikiSession implements WikiEventListener
     /**
      * Clears all messages associated with this session.
      */
-    public void clearMessages()
+    public final void clearMessages()
     {
         m_messages.clear();
     }
@@ -510,7 +577,7 @@ public class WikiSession implements WikiEventListener
      * Clears all messages associated with a session topic.
      * @param topic the topic whose messages should be cleared.
      */
-    public void clearMessages( String topic )
+    public final void clearMessages( String topic )
     {
         Set messages = (Set)m_messages.get( topic );
         if ( messages != null )
@@ -525,7 +592,7 @@ public class WikiSession implements WikiEventListener
      * session unless they have been reset with {@link #clearMessages()}.
      * @return the current messsages.
      */
-    public String[] getMessages() 
+    public final String[] getMessages() 
     {
         return getMessages( ALL );
     }
@@ -536,7 +603,7 @@ public class WikiSession implements WikiEventListener
      * session unless they have been reset with {@link #clearMessages(String)}.
      * @return the current messsages.
      */
-    public String[] getMessages( String topic ) 
+    public final String[] getMessages( String topic ) 
     {
         Set messages = (Set)m_messages.get( topic );
         if ( messages == null || messages.size() == 0 )
@@ -553,7 +620,7 @@ public class WikiSession implements WikiEventListener
      * This is a defensive copy.
      * @return Returns the user principal
      */
-    public Principal[] getPrincipals()
+    public final Principal[] getPrincipals()
     {
         ArrayList principals = new ArrayList();
         {
@@ -575,10 +642,10 @@ public class WikiSession implements WikiEventListener
      * Removes the wiki session associated with the user's HTTP request
      * from the cache of wiki sessions, typically as part of a logout 
      * process.
-     * @param engine the current wiki engine
+     * @param engine the wiki engine
      * @param request the users's HTTP request
      */
-    public static void removeWikiSession( WikiEngine engine, HttpServletRequest request )
+    public static final void removeWikiSession( WikiEngine engine, HttpServletRequest request )
     {
         if ( engine == null || request == null )
         {
@@ -589,20 +656,15 @@ public class WikiSession implements WikiEventListener
     }
     
     /**
-     * Sets the Subject representing the user.
-     * @param subject
+     * <p>Returns the JAAS Subject representing the user and
+     * all of his or her Principals.</p>
+     * <em>Note: this method is highly privileged. Try to
+     * avoid using it. In the future, this method will explicitly
+     * check for {@link javax.security.auth.AuthPermission} with
+     * the target <code>getSubject</code>.</em>
+     * @return the wiki user's Subject
      */
-    public void setSubject( Subject subject )
-    {
-        // TODO: this should be a privileged action
-        m_subject = subject;
-    }
-
-    /**
-     * Returns the Subject representing the user.
-     * @return the subject
-     */
-    public Subject getSubject()
+    public final Subject getSubject()
     {
         // TODO: this should be a privileged action
         return m_subject;
@@ -613,7 +675,7 @@ public class WikiSession implements WikiEventListener
      * GroupManager.
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
      */
-    public void actionPerformed( WikiEvent event )
+    public final void actionPerformed( WikiEvent event )
     {
         if ( event instanceof WikiSecurityEvent )
         {
@@ -681,9 +743,9 @@ public class WikiSession implements WikiEventListener
     
     /** 
      * Invalidates the WikiSession and resets its Subject's 
-     * Principal set to the equivalent of a "guest session".
+     * Principals to the equivalent of a "guest session".
      */
-    public void invalidate()
+    public final void invalidate()
     {
         m_subject.getPrincipals().clear();
         m_subject.getPrincipals().add( WikiPrincipal.GUEST );
@@ -695,16 +757,16 @@ public class WikiSession implements WikiEventListener
     }
     
     /**
-     * Returns whether the Http servlet container's authentication status has
+     * Returns whether the HTTP servlet container's authentication status has
      * changed. Used to detect whether the container has logged in a user since
      * the last call to this function. This method is stateful. After calling
      * this function, the cached values are set to those in the current request.
      * If the servlet request is null, this method always returns false.
-     * @param request the current servlet request
+     * @param request the servlet request
      * @return <code>true</code> if the status has changed, <code>false</code>
      * otherwise
      */
-    protected boolean isContainerStatusChanged( HttpServletRequest request )
+    protected final boolean isContainerStatusChanged( HttpServletRequest request )
     {
         if ( request == null )
         {
@@ -744,12 +806,15 @@ public class WikiSession implements WikiEventListener
     }
 
     /**
-     * <p>Returns the status of the session as a text string. Valid values are:</p>
-     * <ul> <li>{@link #AUTHENTICATED}</li> <li>{@link #ASSERTED}</li> <li>{@link #ANONYMOUS}</li>
+     * <p>Returns the status of the wiki session as a text string. Valid values are:</p>
+     * <ul>
+     *   <li>{@link #AUTHENTICATED}</li> 
+     *   <li>{@link #ASSERTED}</li> 
+     *   <li>{@link #ANONYMOUS}</li>
      * </ul>
-     * @return the session status
+     * @return the user's session status
      */
-    public String getStatus()
+    public final String getStatus()
     {
         if ( isAuthenticated() )
         {
@@ -775,11 +840,11 @@ public class WikiSession implements WikiEventListener
      * WikiSession, although the authentication status is unpredictable until
      * the user attempts to log in. If the servlet request parameter is
      * <code>null</code>, a synthetic {@link #guestSession()}is returned.
-     * @param engine the current wiki engine
-     * @param request the current servlet request object
+     * @param engine the wiki engine
+     * @param request the servlet request object
      * @return the existing (or newly created) wiki session
      */
-    public static WikiSession getWikiSession( WikiEngine engine, HttpServletRequest request )
+    public final static WikiSession getWikiSession( WikiEngine engine, HttpServletRequest request )
     {
         // If request is null, return guest session
         if ( request == null )
@@ -806,15 +871,13 @@ public class WikiSession implements WikiEventListener
     }
 
     /**
-     * Factory method that creates a new "guest" session containing a single
-     * user Principal,
-     * @link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}, plus the role
-     * principals
-     * @link Role#ALL and
-     * @link Role#ANONYMOUS.
+     * Static factory method that creates a new "guest" session containing a single
+     * user Principal {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}, 
+     * plus the role principals {@link Role#ALL} and
+     * {@link Role#ANONYMOUS}.
      * @return the guest wiki session
      */
-    public static WikiSession guestSession()
+    public static final WikiSession guestSession()
     {
         WikiSession session = new WikiSession();
         session.invalidate();
@@ -822,11 +885,13 @@ public class WikiSession implements WikiEventListener
     }
     
     /**
-     * Returns the total number of active wiki sessions.
-     * @param engine the current wiki session
+     * Returns the total number of active wiki sessions for a
+     * particular wiki. This method delegates to the wiki's
+     * {@link SessionMonitor#sessions()} method.
+     * @param engine the wiki session
      * @return the number of sessions
      */
-    public static int sessions( WikiEngine engine )
+    public static final int sessions( WikiEngine engine )
     {
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.sessions();
@@ -834,25 +899,25 @@ public class WikiSession implements WikiEventListener
     
     /**
      * Returns Principals representing the current users known
-     * to the wiki. Each Principal will correspond to the
+     * to a particular wiki. Each Principal will correspond to the
      * value returned by each WikiSession's {@link #getUserPrincipal()}
      * method.
      * @param engine the wiki engine
      * @return an array of Principal objects
      */
-    public static Principal[] userPrincipals( WikiEngine engine )
+    public static final Principal[] userPrincipals( WikiEngine engine )
     {
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
     }
 
     /**
-     * Verifies whether a String represents an IP address. The algorithm is
+     * Verifies whether a String represents an IPv4 address. The algorithm is
      * extremely efficient and does not allocate any objects.
      * @param name the address to test
      * @return the result
      */
-    protected static boolean isIPV4Address( String name )
+    protected static final boolean isIPV4Address( String name )
     {
         if ( name.charAt( 0 ) == DOT || name.charAt( name.length() - 1 ) == DOT )
         {
