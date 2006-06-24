@@ -14,6 +14,9 @@
 
         * Ant 'javadoc' task now links to J2EE 1.3 API.
 
+        * Added table entry to SystemInfo page to display list of active users.
+        If you feel this is a privacy risk, remove the line from SystemInfo.
+
 2006-06-23  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.15
