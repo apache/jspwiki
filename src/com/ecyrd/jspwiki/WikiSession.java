@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki;
 import java.lang.ref.WeakReference;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
+import com.ecyrd.jspwiki.auth.WikiPrincipal.PrincipalComparator;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
@@ -67,7 +69,7 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
  * <p>WikiSession encloses a protected static class, {@link SessionMonitor},
  * to keep track of WikiSessions registered with each wiki.</p>
  * @author Andrew R. Jaquith
- * @version $Revision: 2.22 $ $Date: 2006-06-24 18:57:01 $
+ * @version $Revision: 2.23 $ $Date: 2006-06-24 19:13:12 $
  */
 public final class WikiSession implements WikiEventListener
 {
@@ -131,8 +133,10 @@ public final class WikiSession implements WikiEventListener
         private static final Map c_monitors = new HashMap();
         
         /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
-        private final Map m_sessions;
+        private final Map m_sessions = new WeakHashMap();
 
+        private final PrincipalComparator m_comparator = new WikiPrincipal.PrincipalComparator();
+        
         /**
          * Returns the instance of the SessionMonitor for this wiki.
          * Only one SessionMonitor exists per WikiEngine.
@@ -161,7 +165,6 @@ public final class WikiSession implements WikiEventListener
         private SessionMonitor( WikiEngine engine )
         {
             super( engine, 60 );
-            m_sessions = new WeakHashMap();
             setName("JSPWiki Session Monitor");
         }
         
@@ -322,9 +325,10 @@ public final class WikiSession implements WikiEventListener
         }
         
         /**
-         * <p>Returns the current wiki users as an array of Principal objects.
-         * The principals are those returned by each WikiSession's
-         * {@link WikiSession#getUserPrincipal()}'s method.</p>
+         * <p>Returns the current wiki users as a sorted array of 
+         * Principal objects. The principals are those returned by 
+         * each WikiSession's {@link WikiSession#getUserPrincipal()}'s 
+         * method.</p>
          * <p>To obtain the list of current WikiSessions, we iterate 
          * through our session Map and obtain the list of values, 
          * which are WikiSessions wrapped in {@link java.lang.ref.WeakReference}
@@ -345,7 +349,9 @@ public final class WikiSession implements WikiEventListener
                     principals.add( session.getUserPrincipal() );
                 }
             }
-            return (Principal[])principals.toArray( new Principal[principals.size()] );
+            Principal[] p = (Principal[])principals.toArray( new Principal[principals.size()] );
+            Arrays.sort( p, m_comparator );
+            return p;
         }
     }
     
@@ -901,9 +907,9 @@ public final class WikiSession implements WikiEventListener
      * Returns Principals representing the current users known
      * to a particular wiki. Each Principal will correspond to the
      * value returned by each WikiSession's {@link #getUserPrincipal()}
-     * method.
+     * method. This method delegates to {@link SessionMonitor#userPrincipals()}.
      * @param engine the wiki engine
-     * @return an array of Principal objects
+     * @return an array of Principal objects, sorted by name
      */
     public static final Principal[] userPrincipals( WikiEngine engine )
     {
