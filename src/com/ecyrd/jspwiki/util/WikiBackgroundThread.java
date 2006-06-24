@@ -9,14 +9,15 @@ import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 
 /**
- * Abstract Theat class that operates in the background, and listens
- * for the {@link WikiEngineEvent#SHUTDOWN} event to determine
- * whether it still needs to run. Subclasses of this method need only
- * implement the method {@link #backgroundTask()} (instead of
+ * Abstract Thread subclass that operates in the background;
+ * when it detects the {@link WikiEngineEvent#SHUTDOWN} event,
+ * it terminates itself. Subclasses of this method need only
+ * implement the method {@link #backgroundTask()}, instead of
  * the normal {@link Thread#run()}, and provide a constructor that
- * passes the WikiEngine and sleep interval.
+ * passes the WikiEngine and sleep interval. This class is
+ * thread-safe.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-06-17 23:19:40 $
+ * @version $Revision: 1.2 $ $Date: 2006-06-24 18:54:54 $
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener
 {
@@ -26,7 +27,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     
     /**
      * Constructs a new instance of this background thread with 
-     * a specified sleep interval, and adds the thread to the 
+     * a specified sleep interval, and adds the new instance to the 
      * wiki engine's event listeners.
      * @param engine the wiki engine
      * @param sleepInterval the interval between invocations of
@@ -60,14 +61,13 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     
     /**
      * Abstract method that performs the actual work for this
-     * background thread;
-     *
+     * background thread; subclasses must implement this method.
      */
     public abstract void backgroundTask() throws Exception;
     
     /**
      * Runs the background thread's {@link #backgroundTask()} method
-     * at the interval specified by {@link #getSleepInterval}.
+     * at the interval specified at construction.
      * The thread will initially pause for a full sleep interval
      * before starting, after which it will execute 
      * {@link #startupTask()}. This method will cleanly 
