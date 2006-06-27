@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-06-17 23:10:45 $
+ * @version $Revision: 1.8 $ $Date: 2006-06-27 21:22:59 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -183,8 +183,11 @@ public final class WikiSecurityEvent extends WikiEvent
         msg.append( "WikiSecurityEvent." );
         msg.append(  eventName( getType() ) );
         msg.append( " [source=" + getSource().toString() );
-        msg.append( ", princpal=" + m_principal.getClass().getName() );
-        msg.append( " " + m_principal.getName() );
+        if( m_principal != null )
+        {
+            msg.append( ", princpal=" + m_principal.getClass().getName() );
+            msg.append( " " + m_principal.getName() );
+        }
         msg.append( ", target=" + m_target );
         msg.append( "]" );
         return msg.toString();
