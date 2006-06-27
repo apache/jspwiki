@@ -1,3 +1,9 @@
+2006-06-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.17
+        
+        * WikiSecurityEvent.toString() would die if you had a null principal...
+
 2006-06-17  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.16
