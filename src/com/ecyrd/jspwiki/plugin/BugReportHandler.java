@@ -120,7 +120,7 @@ public class BugReportHandler
                     entry.getKey().equals( VERSION ) ||
                     entry.getKey().equals( MAPPINGS ) ||
                     entry.getKey().equals( PAGE ) ||
-                    entry.getKey().equals( PluginManager.PARAM_BODY ) )
+                    entry.getKey().toString().startsWith("_") )
                 {
                     // Ignore this
                 }
