@@ -15,7 +15,7 @@
 
 <h3>Your <wiki:Variable var="applicationname" /> profile</h3>
 
-<wiki:TabbedSection defaultTab="<%=request.getParameter("tab")%>">
+<wiki:TabbedSection defaultTab='<%=request.getParameter("tab")%>'>
   <!-- Tab 1: user preferences -->
   <wiki:Tab id="prefs" title="Preferences">
     <div class="formcontainer">
