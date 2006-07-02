@@ -1,3 +1,14 @@
+2006-07-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.18
+        
+        * BugReportHandler was dutifully adding the "_cmdline" to the
+        pages it was creating...
+        
+        * Fixed some quote issues in commonheader.jsp and 
+        PreferencesContent.jsp which were causing issues with
+        WebSphere.  Reported by Robin Tew and Thorsten Nordholm Søbirk.
+
 2006-06-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.17
