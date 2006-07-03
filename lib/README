@@ -1,0 +1,97 @@
+
+RUNTIME REQUIREMENTS
+
+The following jar files are required by JSPWiki for deployment.
+
+ecs.jar			Element Construction Set, version 1.4.2
+			http://jakarta.apache.org/ecs/index.html
+
+freshcookies-security-0.31.jar
+			Andrew Jaquith's security utilities.
+			http://freshcookies.org/
+
+jrcs-diff.jar		JRCS diff utilities
+			http://www.suigeneris.org/kb/display/jrcs/JRCS+Home
+
+lucene-highlighter.jar	Search term highlighter utility, from Lucene sandbox.
+			http://lucene.apache.org/java/docs/lucene-sandbox/
+
+lucene.jar		Lucene search engine, version 1.9.1.
+			http://lucene.apache.org/java/docs/index.html
+
+multipartrequest.jar	Pell Multipart request utility, version 1.30b3.
+			http://freshmeat.net/projects/multipartrequest
+
+nekohtml.jar		HTML parser utilities, version 0.9.4.
+			http://people.apache.org/~andyc/neko/doc/html/
+
+oro.jar			Jakarta regular expression utility, version unknown.
+			http://jakarta.apache.org/oro/
+
+oscache.jar		Cache utility library, version 2.3.1.
+			http://www.opensymphony.com/oscache/
+
+sandler.jar		Atom utilities. Version unknown.
+			(Home page unknown at the moment.)
+
+xmlrpc.jar		XML-RPC implementation, version 1.0.
+			(Source unknown, presumably http://ws.apache.org/xmlrpc/index.html)
+
+
+
+RUNTIME REQUIREMENTS, PROVISIONAL
+
+The following APIs/jar files are required by JSPWiki at run-time, but are often provided by the JSP container.
+
+activation.jar		Java Activation Framework, version 1.1.
+			http://java.sun.com/products/javabeans/jaf/downloads/index.html
+
+commons-lang-2.0.jar	Jakarta commons lang, version 2.0
+			http://jakarta.apache.org/commons/lang/	
+
+commons-logging-api.jar	Jakarta commons logging, version 1.0.4
+			http://jakarta.apache.org/commons/logging/
+
+jaxen.jar		Java XPath Engine, version 1.1b6.
+			http://jaxen.codehaus.org/index.html
+ 
+jdom.jar		JDOM, version 1.0.
+			http://www.jdom.org/
+			Note: requires xerces, in classpath before any other XML parsers.
+
+log4j.jar		Logging library, version 1.2.8.
+			http://logging.apache.org/log4j/docs/
+
+mail.jar		Java Mail API, version 1.4.
+			http://java.sun.com/products/javamail/
+
+
+
+BUILD REQUIREMENTS
+
+The following jar files are required to build and/or test JSPWiki (in addition to the previously listed ones), but are not necessary for deployment.
+
+hsqldb.jar		Hypersonic embedded DB, version 1.8.0. 
+			http://www.hsqldb.org/
+
+httpunit-1.5.4.jar	HTTP unit testing framework, version 1.5.4.
+			http://httpunit.sourceforge.net/
+
+junit.jar		Java Unit testing framework, version 3.8.1.
+			http://www.junit.org/index.htm
+
+jwebunit-1.2.jar	Web Unit test framework, version 1.2.
+			http://jwebunit.sourceforge.net/
+
+servlet.jar		Sun servlet library implementation, version 2.3.1.
+			http://java.sun.com/products/servlet/
+
+xercesImpl-2.6.2.jar	Apache Xerces2 XML parser, version 2.6.2.
+			http://xerces.apache.org/xerces2-j/index.html
+
+xml-apis-1.0.b2.jar	Collection of XML API implementations.
+			(Source unknown.)
+
+
+
+
