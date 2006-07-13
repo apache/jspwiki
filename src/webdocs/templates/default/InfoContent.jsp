@@ -82,8 +82,8 @@ function confirmDelete()
                <td>
                     <form action="<wiki:Link format="url" jsp="Rename.jsp"/>"
                           method="post"  accept-charset="<wiki:ContentEncoding/>">
-                        <input type="hidden" name="page" value="<wiki:PageName />"/>
-                        <input type="text" name="renameto" value="<wiki:PageName />" size="40"/><br />
+                        <input type="hidden" name="page" value="<wiki:Variable var="pagename" />"/>
+                        <input type="text" name="renameto" value="<wiki:Variable var="pagename" />" size="40"/><br />
                         <input type="checkbox" name="references" checked="checked"/>Update referrers?<br />
                         <input type="submit" value="Rename"/>
                     </form>
