@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
+import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -39,6 +40,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 
 public class SearchManager
     extends BasicPageFilter
+    implements InternalModule
 {
     private static final Logger log = Logger.getLogger(SearchManager.class);
 

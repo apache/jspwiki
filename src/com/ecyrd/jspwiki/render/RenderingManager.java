@@ -33,6 +33,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.filters.PageFilter;
+import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
@@ -57,7 +58,7 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  @author jalkanen
  *  @since  2.4
  */
-public class RenderingManager implements PageFilter
+public class RenderingManager implements PageFilter, InternalModule
 {
     private static Logger log = Logger.getLogger( RenderingManager.class );
 
