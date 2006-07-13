@@ -498,16 +498,16 @@ public class WikiContext
         boolean allowed = mgr.checkPermission( m_session, requiredPermission() );
         
         // Stash the wiki context
-        if ( allowed )
+        if( allowed )
         {
-          if ( m_request != null && m_request.getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
-          {
-            m_request.setAttribute( WikiTagBase.ATTR_CONTEXT, this );
-          }
+            if ( m_request != null && m_request.getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
+            {
+                m_request.setAttribute( WikiTagBase.ATTR_CONTEXT, this );
+            }
         }
         
         // If access not allowed, redirect
-        if ( !allowed && redirect )
+        if( !allowed && redirect )
         {
             Principal currentUser  = m_session.getUserPrincipal();
             if( m_session.isAuthenticated() )
