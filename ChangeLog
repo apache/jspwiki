@@ -1,3 +1,18 @@
+2006-07-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.19
+        
+        * Added "InternalModule" interface.  This is just an empty
+        interface which a module can declare and not get listed
+        in SystemInfo, for example.  Used internally by JSPWiki.
+        
+        * Fixed a major issue with page renaming: thanks to an
+        erroneus context sent downstream, the page which was renamed
+        from would get random contents.
+        
+        * Page rename would not change referrers if the breakTitleWithSpaces
+        option was set on.
+
 2006-07-12  Erik Bunn  <Erik.Bunn@basen.net>
 
         * Made ParamTag attribute 'value' non-required; tag body is
