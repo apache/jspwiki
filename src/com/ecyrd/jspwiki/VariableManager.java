@@ -28,6 +28,9 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.ecyrd.jspwiki.filters.PageFilter;
+import com.ecyrd.jspwiki.modules.InternalModule;
+
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
  *  available variables is on a Wiki page called "WikiVariables".
@@ -316,14 +319,10 @@ public class VariableManager
 
             for( Iterator i = filters.iterator(); i.hasNext(); )
             {
-                String f = i.next().getClass().getName();
+                PageFilter pf = (PageFilter)i.next();
+                String f = pf.getClass().getName();
 
-                //
-                //  Skip some known internal filters.
-                //  FIXME: Quite a klugde.
-                //
-
-                if( f.endsWith("ReferenceManager") || f.endsWith("WikiDatabase$SaveFilter" ) )
+                if( pf instanceof InternalModule )
                     continue;
 
                 if( sb.length() > 0 ) sb.append(", ");
