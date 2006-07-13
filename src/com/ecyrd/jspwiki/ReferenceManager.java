@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
+import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
@@ -110,6 +111,7 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 public class ReferenceManager
     extends BasicPageFilter
+    implements InternalModule
 {
     /** Maps page wikiname to a Collection of pages it refers to. The Collection 
      *  must contain Strings. The Collection may contain names of non-existing

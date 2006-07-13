@@ -3,25 +3,13 @@ package com.ecyrd.jspwiki.auth.authorize;
 import java.lang.ref.WeakReference;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
@@ -29,6 +17,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
+import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -56,7 +45,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  * allowed? (Suggestion: both)
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.13 $ $Date: 2006-06-17 23:12:18 $
+ * @version $Revision: 1.14 $ $Date: 2006-07-13 13:41:51 $
  * @since 2.3
  */
 public class DefaultGroupManager implements GroupManager
@@ -73,7 +62,7 @@ public class DefaultGroupManager implements GroupManager
     
     // FIXME: A deleted page does not impact groups until system is restarted.
     
-    public class SaveFilter extends BasicPageFilter
+    public class SaveFilter extends BasicPageFilter implements InternalModule
     {
         public void postSave( WikiContext context, String content )
         {
