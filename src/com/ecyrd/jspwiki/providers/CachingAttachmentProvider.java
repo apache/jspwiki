@@ -337,6 +337,7 @@ public class CachingAttachmentProvider
         throws ProviderException
     {
         m_provider.moveAttachmentsForPage(oldParent, newParent);
-        m_cache.putInCache( newParent, null );
+        m_cache.putInCache( newParent, null ); // FIXME
+        m_cache.putInCache( oldParent, null );
     }
 }
