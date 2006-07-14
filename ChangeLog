@@ -1,5 +1,12 @@
 2006-07-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.20
+        
+        * Fixed BugNoMoreThanOneSortableTablePerPage.  Thanks to
+        Juan Pablo Santos Rodriguez!
+
+2006-07-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * 2.4.19
         
         * Added "InternalModule" interface.  This is just an empty

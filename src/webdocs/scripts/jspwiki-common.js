@@ -620,9 +620,9 @@ Sortable.onPageLoad = function()
     if( !table ) continue;
     if( table.rows.length < 2 ) continue;
   
-    for( var i=0; i < table.rows[0].cells.length; i++ )
+    for( var j=0; j < table.rows[0].cells.length; j++ )
     {
-      var c = table.rows[0].cells[i];
+      var c = table.rows[0].cells[j];
       if( c.nodeName != "TH" ) break;
       c.onclick    = function() { Sortable.sort(this); } ;
       c.title      = this.TitleSort;
@@ -630,8 +630,6 @@ Sortable.onPageLoad = function()
     }
   }
 }
-
-
 Sortable.REclassName = new RegExp ('(?:^| )(sort|sortAscending|sortDescending)(?: |$)'); 
 Sortable.sort = function( thNode )
 {
