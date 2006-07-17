@@ -1,10 +1,15 @@
+2006-07-17  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.21
+
+        * RCSFileProvider had a rare concurrency issue with the
+        SimpleDateFormat.  Reported by Bosmon on IRC.
+
 2006-07-17  Erik Bunn  <root@d183.fi.basen.net>
 
-	* 2.4.21
-
-	* Modularized RenderingManager. By setting 
-	jspwiki.renderingManager.renderer in jspwiki.properties, a custom
-	WikiRenderer can be specified. Defaults to XHTMLRenderer.
+        * Modularized RenderingManager. By setting 
+        jspwiki.renderingManager.renderer in jspwiki.properties, a custom
+        WikiRenderer can be specified. Defaults to XHTMLRenderer.
 
 2006-07-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
