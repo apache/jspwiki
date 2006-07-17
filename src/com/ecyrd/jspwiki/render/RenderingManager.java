@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki.render;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -30,6 +32,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.filters.PageFilter;
@@ -67,19 +70,30 @@ public class RenderingManager implements PageFilter, InternalModule
     public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";    
     private static final int    DEFAULT_CACHESIZE = 1000;
     private static final String OSCACHE_ALGORITHM = "com.opensymphony.oscache.base.algorithm.LRUCache";
-   
+    private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
+    public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
+
     /**
      *  Stores the WikiDocuments that have been cached.
      */
     private              Cache  m_documentCache;
+
+    /**
+     * 
+     */
+    private         Constructor m_rendererConstructor;
     
     /**
-     *  Initializes the RenderinManager.
+     *  Initializes the RenderingManager.
+     *  Checks for cache size settings, initializes the document cache.
+     *  Looks for alternative WikiRenderers, initializes one, or the default
+     *  XHTMLRenderer, for use.
      *  
      *  @param engine A WikiEngine instance.
      *  @param properties A list of properties to get parameters from.
      */
     public void initialize( WikiEngine engine, Properties properties )
+    throws WikiException
     {
         int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
             
@@ -101,6 +115,34 @@ public class RenderingManager implements PageFilter, InternalModule
             log.info( "RenderingManager caching is disabled." );
         }
 
+        String renderImplName = properties.getProperty( PROP_RENDERER );
+        if( renderImplName == null ) {
+            renderImplName = DEFAULT_RENDERER;
+        }
+        Class[] rendererParams = { WikiContext.class, WikiDocument.class };
+        try 
+        {
+            Class c = Class.forName( renderImplName );
+            m_rendererConstructor = c.getConstructor( rendererParams );
+        } 
+        catch( ClassNotFoundException e ) 
+        {
+            log.error( "Unable to find WikiRenderer implementation " + renderImplName );
+        } 
+        catch( SecurityException e ) 
+        {
+            log.error( "Unable to access the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
+        } 
+        catch( NoSuchMethodException e ) 
+        {
+            log.error( "Unable to locate the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
+        }
+        if( m_rendererConstructor == null ) 
+        {
+            throw new WikiException( "Failed to get WikiRenderer '" + renderImplName + "'." );
+        }        
+        log.info( "Rendering content with " + renderImplName + "." );
+        
         engine.getFilterManager().addPageFilter( this, FilterManager.SYSTEM_FILTER_PRIORITY );
     }
     
@@ -205,6 +247,23 @@ public class RenderingManager implements PageFilter, InternalModule
         WikiRenderer rend = new XHTMLRenderer( context, doc );
         
         return rend.getString();
+    }
+
+    /**
+     * Returns a WikiRenderer instance, initialized with the given 
+     * context and doc. The object is an XHTMLRenderer, unless overridden
+     * in jspwiki.properties with PROP_RENDERER.
+     */
+    public WikiRenderer getRenderer( WikiContext context, WikiDocument doc ) 
+    {
+        Object[] params = { context, doc };
+        WikiRenderer rval = null;
+        try {
+            rval = (WikiRenderer)m_rendererConstructor.newInstance( params );
+        } catch( Exception e ) {
+            log.error( "Unable to create WikiRenderer", e );
+        } 
+        return rval;
     }
 
     /**
