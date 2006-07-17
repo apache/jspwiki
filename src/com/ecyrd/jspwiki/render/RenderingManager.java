@@ -244,7 +244,7 @@ public class RenderingManager implements PageFilter, InternalModule
     public String getHTML( WikiContext context, WikiDocument doc )
         throws IOException
     {
-        WikiRenderer rend = new XHTMLRenderer( context, doc );
+        WikiRenderer rend = getRenderer( context, doc );
         
         return rend.getString();
     }
