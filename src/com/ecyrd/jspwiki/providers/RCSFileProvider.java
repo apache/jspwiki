@@ -596,9 +596,12 @@ public class RCSFileProvider
     }
 
     /**
-     *  util method to parse a date string in Local and UTC formats
+     *  util method to parse a date string in Local and UTC formats.  This method is synchronized
+     *  because SimpleDateFormat is not thread-safe.
+     *  
+     *  @see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4228335
      */
-    private Date parseDate( String str )
+    private synchronized Date parseDate( String str )
     {
         Date d = null;
 
