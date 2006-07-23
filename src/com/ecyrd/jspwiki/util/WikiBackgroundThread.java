@@ -17,11 +17,12 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * passes the WikiEngine and sleep interval. This class is
  * thread-safe.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-07-13 13:43:51 $
+ * @version $Revision: 1.4 $ $Date: 2006-07-23 21:53:36 $
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener
 {
     private volatile boolean m_killMe = false;
+    private final WikiEngine m_engine;
     private final int m_interval;
     private static final long POLLING_INTERVAL = 1000L;
     
@@ -36,6 +37,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     public WikiBackgroundThread( WikiEngine engine, int sleepInterval )
     {
         super();
+        m_engine = engine;
         m_interval = sleepInterval;
         engine.addWikiEventListener( this );
         setDaemon( false );
@@ -64,6 +66,15 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * background thread; subclasses must implement this method.
      */
     public abstract void backgroundTask() throws Exception;
+    
+    /**
+     * Returns the WikiEngine that created this background thread.
+     * @return the wiki engine
+     */
+    public WikiEngine getEngine()
+    {
+        return m_engine;
+    }
     
     /**
      * Runs the background thread's {@link #backgroundTask()} method
