@@ -15,6 +15,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("Utility suite tests");
 
         suite.addTest( ClassUtilTest.suite() );
+        suite.addTest( CommentedPropertiesTest.suite() );
         suite.addTest( PriorityListTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         
