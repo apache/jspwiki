@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -24,13 +25,15 @@ import javax.servlet.http.HttpSession;
  * {@link #getSession(boolean)}. All others either return null, or don't work
  * they way they should.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-04-17 10:52:44 $
+ * @version $Revision: 1.5 $ $Date: 2006-07-23 21:49:40 $
  */
 public class TestHttpServletRequest implements HttpServletRequest
 {
 
     protected Cookie[]    m_cookies       = new Cookie[0];
 
+    protected Map         m_params        = new Hashtable();
+    
     protected String      m_remoteAddr    = "127.0.0.1";
 
     protected String      m_remoteUser    = null;
@@ -38,6 +41,9 @@ public class TestHttpServletRequest implements HttpServletRequest
     protected Set         m_roles         = new HashSet();
 
     protected Principal   m_userPrincipal = null;
+    
+    /** Everything to right of servlet root */
+    protected String      m_servletPath   = "/";
 
     protected HttpSession m_session       = null;
 
@@ -182,7 +188,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public String getParameter( String arg0 )
     {
-        return null;
+        return (String)m_params.get( arg0 );
     }
 
     /**
@@ -190,7 +196,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public Map getParameterMap()
     {
-        return null;
+        return m_params;
     }
 
     /**
@@ -198,7 +204,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public Enumeration getParameterNames()
     {
-        return null;
+        return ((Hashtable)m_params).keys();
     }
 
     /**
@@ -206,7 +212,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public String[] getParameterValues( String arg0 )
     {
-        return null;
+        return (String[])m_params.entrySet().toArray( new String[m_params.size()] );
     }
 
     /**
@@ -343,7 +349,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public String getServletPath()
     {
-        return null;
+        return m_servletPath;
     }
 
     /**
@@ -453,6 +459,11 @@ public class TestHttpServletRequest implements HttpServletRequest
         m_cookies = cookies;
     }
 
+    public void setParameter( String key, String value )
+    {
+        m_params.put( key, value );
+    }
+    
     /**
      * @param remoteAddr The remoteAddr to set.
      */
@@ -482,6 +493,15 @@ public class TestHttpServletRequest implements HttpServletRequest
         }
     }
 
+    /**
+     * Sets the servlet path; e.g., /JSPWiki/Wiki.jsp.
+     * @param path the servlet path
+     */
+    public void setServletPath( String path )
+    {
+        m_servletPath = path;
+    }
+    
     /**
      * @param userPrincipal The userPrincipal to set.
      */
