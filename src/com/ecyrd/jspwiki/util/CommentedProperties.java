@@ -18,8 +18,8 @@ import com.ecyrd.jspwiki.TextUtil;
  * comments present in the file are preserved.
  * @author Andrew Jaquith
  * @author Janne Jalkanen
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:11:50 $
- * @since 2.4.20
+ * @version $Revision: 1.2 $ $Date: 2006-07-23 21:46:49 $
+ * @since 2.4.22
  */
 public class CommentedProperties extends Properties
 {

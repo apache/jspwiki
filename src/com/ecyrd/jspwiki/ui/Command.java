@@ -59,7 +59,8 @@ import java.security.Permission;
  * {@link #requiredPermission()}.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:10:52 $
+ * @version $Revision: 1.2 $ $Date: 2006-07-23 21:46:18 $
+ * @since 2.4.22
  */
 public interface Command
 {

@@ -5,8 +5,8 @@ package com.ecyrd.jspwiki.ui;
  * Abstract, immutable Command implementation class. All of the fields in this
  * class are <code>final</code>. This class is thread-safe.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:10:52 $
- * @since 2.4.21
+ * @version $Revision: 1.2 $ $Date: 2006-07-23 21:46:18 $
+ * @since 2.4.22
  */
 public abstract class AbstractCommand implements Command
 {

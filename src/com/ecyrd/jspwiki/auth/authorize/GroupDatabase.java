@@ -11,8 +11,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 /**
  * Defines an interface for loading, persisting and storing wiki groups.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $
- * @since 2.4.17
+ * @version $Revision: 1.2 $
+ * @since 2.4.22
  */
 public interface GroupDatabase
 {

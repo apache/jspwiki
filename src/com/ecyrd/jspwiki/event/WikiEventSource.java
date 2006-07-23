@@ -4,8 +4,8 @@ package com.ecyrd.jspwiki.event;
  * Interface for types that generate {@link WikiEvent}s for others
  * to consume.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:09:21 $
- * @since 2.4.20
+ * @version $Revision: 1.2 $ $Date: 2006-07-23 21:44:38 $
+ * @since 2.4.22
  */
 public interface WikiEventSource
 {

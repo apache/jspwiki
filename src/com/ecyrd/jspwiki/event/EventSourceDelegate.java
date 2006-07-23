@@ -14,8 +14,8 @@ import java.util.WeakHashMap;
  * cause memory leaks. Its add/remove methods are <code>synchronized</code>,
  * which makes it thread-safe.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:09:04 $
- * @since 2.4.20
+ * @version $Revision: 1.2 $ $Date: 2006-07-23 21:44:38 $
+ * @since 2.4.22
  */
 public final class EventSourceDelegate implements WikiEventSource
 {
