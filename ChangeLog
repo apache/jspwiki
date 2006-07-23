@@ -1,3 +1,25 @@
+2006-07-16  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.22
+        
+        * Added several classes and interfaces to support upcoming 
+          AAA refactoring. These do not affect functionality, because
+          they are not referenced by any existing classes. New classes 
+          include: (1) Command interface and related AbstractCommand, 
+          PageCommand, GroupCommand and WikiCommand implementations; 
+          (2) WikiEventSource interface and EventSourceDelegate class, 
+          both in events package; (3) GroupDatabase interface and sample
+          groupdatabase.xml files and (4) CommentedProperties class for
+          reading and re-saving properties files that include comments.
+          Again, these classes are not yet actively used.
+          
+        * Minor tweak to TestHttpServletRequest to support parameters and
+          servlet path.
+          
+        * Removed cruft from HttpUtil; no functionality changes.
+        
+        * WikiBackgroundThread now contains a getEngine() accessor.
+
 2006-07-17  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.21
@@ -47,7 +69,7 @@
         
         * Fixed some quote issues in commonheader.jsp and 
         PreferencesContent.jsp which were causing issues with
-        WebSphere.  Reported by Robin Tew and Thorsten Nordholm Søbirk.
+        WebSphere.  Reported by Robin Tew and Thorsten Nordholm S?birk.
 
 2006-06-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
