@@ -116,6 +116,18 @@ public class CommentedPropertiesTest extends TestCase
         assertFalse( props3.containsKey( "testProp3" ) );
         assertTrue( props3.containsKey( "testProp4" ) );
         assertTrue( props3.containsKey( "testProp5" ) );
+        
+        // Clean up
+        File file = getFile( "test2.properties" );
+        if ( file != null && file.exists() )
+        {
+            file.delete();
+        }
+        file = getFile( "test3.properties" );
+        if ( file != null && file.exists() )
+        {
+            file.delete();
+        }
     }
 
     private File createFile( String file ) throws URISyntaxException
@@ -133,6 +145,27 @@ public class CommentedPropertiesTest extends TestCase
         return new File( dir, file );
     }
     
+    private File getFile( String name )
+    {
+        // Get the test.properties file
+        URL url = CommentedPropertiesTest.class.getClassLoader().getResource( name );
+        if ( url == null )
+        {
+            throw new IllegalStateException( "Very odd. We can't find test.properties!" );
+        }
+        // Return the file
+        File file = null;
+        try
+        {
+            file = new File( url.toURI() );
+        }
+        catch ( URISyntaxException e )
+        {
+            // No worries; just return null
+        }
+        return file;
+    }
+        
     public static Test suite()
     {
         return new TestSuite( CommentedPropertiesTest.class );
