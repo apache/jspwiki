@@ -14,6 +14,11 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("UI tests");
         suite.addTest( InputValidatorTest.suite() );
+        suite.addTest( CommandResolverTest.suite() );
+        suite.addTest( GroupCommandTest.suite() );
+        suite.addTest( PageCommandTest.suite() );
+        suite.addTest( RedirectCommandTest.suite() );
+        suite.addTest( WikiCommandTest.suite() );
         return suite;
     }
 
