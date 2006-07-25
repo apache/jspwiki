@@ -79,10 +79,12 @@ public class AuthorizationManagerTest extends TestCase
         {
             assertTrue( "Setup failed", false );
         }
+        
+        String wiki = m_engine.getApplicationName();
 
         Principal alice = new WikiPrincipal( "Alice" );
         Principal[] principals = new Principal[]
-        { alice, Role.AUTHENTICATED, Role.ALL, new Role( "IT" ), new Role ( "Engineering" ), new GroupPrincipal( "Admin" ) };
+        { alice, Role.AUTHENTICATED, Role.ALL, new Role( "IT" ), new Role ( "Engineering" ), new GroupPrincipal( wiki, "Admin" ) };
         GroupManager groupMgr = m_engine.getGroupManager();
         WikiSession session = buildSession( m_context, principals );
         groupMgr.addWikiEventListener( session );
@@ -136,6 +138,8 @@ public class AuthorizationManagerTest extends TestCase
     
     public void testStaticPermission()
     {
+        String wiki = m_engine.getApplicationName();
+        
         Subject s = new Subject();
         s.getPrincipals().add( Role.ANONYMOUS );
         assertTrue( "Anonymous view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
@@ -179,7 +183,7 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Authenticated groups",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
         
         s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "Admin" ) );
+        s.getPrincipals().add( new GroupPrincipal( wiki, "Admin" ) );
         assertTrue( "Admin view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
         assertTrue( "Admin edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
         assertTrue( "Admin comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
@@ -342,13 +346,15 @@ public class AuthorizationManagerTest extends TestCase
 
     public void testGetRoles() throws Exception
     {
+        String wiki = m_engine.getApplicationName();
+        
         // Set up a group without Bob in it
         String text = "Foobar.\n\n[{SET members=Alice, Charlie}]\n\nTest group.";
         m_engine.saveText( "GroupTest", text );
         
         // Pretend Bob has asserted his identity and has role "admin"
         TestHttpServletRequest request = new TestHttpServletRequest();
-        Principal[] principals = new Principal[]{ new WikiPrincipal( "Bob" ), Role.ALL, Role.ASSERTED, new GroupPrincipal( "Admin" ) };
+        Principal[] principals = new Principal[]{ new WikiPrincipal( "Bob" ), Role.ALL, Role.ASSERTED, new GroupPrincipal( wiki, "Admin" ) };
         WikiPage p = m_engine.getPage( "GroupTest" );
         m_context = new WikiContext( m_engine, request, p );
         m_session = buildSession( m_context, principals );
@@ -359,7 +365,7 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Bob member of ALL", ArrayUtils.contains( principals, Role.ALL ) );
         assertTrue( "Bob member of ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
         assertFalse( "Bob member of ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertFalse( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( "Test" ) ) );
+        assertFalse( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( wiki, "Test" ) ) );
         
         // Re-save group "Test" with Bob as a member
         text = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nTest group.";
@@ -370,7 +376,7 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Bob member of ALL", ArrayUtils.contains( principals, Role.ALL ) );
         assertTrue( "Bob member of ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
         assertFalse( "Bob member of ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertTrue( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( "Test" ) ) );
+        assertTrue( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( wiki, "Test" ) ) );
     }
     
     public void testPrincipalAclPermissions() throws Exception

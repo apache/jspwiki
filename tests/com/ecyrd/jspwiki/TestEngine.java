@@ -157,7 +157,7 @@ public class TestEngine extends WikiEngine
 
         FileWriter out = new FileWriter( tmpFile );
         
-        FileUtil.copyContents( new StringReader( "asdfa??�dfzbvasdjkfbwfkUg783gqdwog" ), out );
+        FileUtil.copyContents( new StringReader( "asdfa???dfzbvasdjkfbwfkUg783gqdwog" ), out );
 
         out.close();
         
@@ -178,7 +178,8 @@ public class TestEngine extends WikiEngine
         HttpServletRequest request = new TestHttpServletRequest();
         WikiPage page = new WikiPage( this, pageName );
         WikiContext context = new WikiContext( this, request, page );
-        context.getWikiSession().getSubject().getPrincipals().add( new GroupPrincipal( "Admin" ) );
+        String wiki = getApplicationName();
+        context.getWikiSession().getSubject().getPrincipals().add( new GroupPrincipal( wiki, "Admin" ) );
         saveText( context, content );
     }
 
