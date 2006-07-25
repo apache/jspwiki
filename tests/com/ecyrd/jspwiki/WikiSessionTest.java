@@ -33,7 +33,7 @@ public class WikiSessionTest extends TestCase
 
     public void testIsAuthenticated()
     {
-        WikiSession session = WikiSession.guestSession();
+        WikiSession session = WikiSession.guestSession( m_engine );
         Set principals = session.getSubject().getPrincipals();
         assertFalse( session.isAuthenticated() );
         
@@ -50,7 +50,7 @@ public class WikiSessionTest extends TestCase
 
     public void testIsAnonymous()
     {
-        WikiSession session = WikiSession.guestSession();
+        WikiSession session = WikiSession.guestSession( m_engine );
         Set principals = session.getSubject().getPrincipals();
         assertTrue( session.isAnonymous() );
         
