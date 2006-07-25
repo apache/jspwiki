@@ -58,6 +58,7 @@ import com.ecyrd.jspwiki.render.RenderingManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.rss.RSSThread;
 import com.ecyrd.jspwiki.search.SearchManager;
+import com.ecyrd.jspwiki.ui.CommandResolver;
 import com.ecyrd.jspwiki.ui.EditorManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
@@ -206,6 +207,9 @@ public class WikiEngine
     /** Stores the ACL manager. */
     private AclManager       m_aclManager = null;
  
+    /** Resolves wiki actions, JSPs and special pages. */
+    private CommandResolver m_pageResolver = null;
+    
     private TemplateManager  m_templateManager = null;
 
     /** Does all our diffs for us. */
@@ -465,6 +469,9 @@ public class WikiEngine
 
         log.debug("Configuring WikiEngine...");
 
+        //  Initializes the CommandResolver
+        m_pageResolver  = new CommandResolver( this, props );
+        
         //
         //  Create and find the default working directory.
         //
@@ -1837,6 +1844,15 @@ public class WikiEngine
     public PageManager getPageManager()
     {
         return m_pageManager;
+    }
+    
+    /**
+     * Returns the CommandResolver for this wiki engine.
+     * @return the resolver
+     */
+    public CommandResolver getPageResolver()
+    {
+        return m_pageResolver;
     }
 
     /**

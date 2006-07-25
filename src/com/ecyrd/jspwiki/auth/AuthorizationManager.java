@@ -78,7 +78,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.37 $ $Date: 2006-05-28 23:21:35 $
+ * @version $Revision: 1.38 $ $Date: 2006-07-25 03:46:22 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -326,7 +326,8 @@ public final class AuthorizationManager
         // Backwards compatibility hack
         if ( principal instanceof Group )
         {
-            principal = new GroupPrincipal( principal.getName() );
+            String wiki = m_engine.getApplicationName();
+            principal = new GroupPrincipal( wiki, principal.getName() );
         }
             
         if ( principal instanceof Role ||

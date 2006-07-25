@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.27 $ $Date: 2006-06-17 23:09:56 $
+ * @version $Revision: 1.28 $ $Date: 2006-07-25 03:46:22 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -443,7 +443,8 @@ public final class AuthenticationManager
         {
             if ( manager.isUserInRole( session, groups[i] ) )
             {
-                Principal groupPrincipal = new GroupPrincipal( (Group)groups[i] );
+                Group group = (Group)groups[i];
+                Principal groupPrincipal = new GroupPrincipal( m_engine.getApplicationName(), group.getName() );
                 subject.getPrincipals().add( groupPrincipal );
             }
         }

@@ -40,6 +40,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
+import com.ecyrd.jspwiki.ui.GroupCommand;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -115,6 +116,16 @@ public class WikiContext
     public static final String    FIND     = "find";
 
     public static final String    CREATE_GROUP = "createGroup";
+    
+    /** User is deleting an existing group. */
+    public static final String    DELETE_GROUP = GroupCommand.DELETE_GROUP.getRequestContext();
+    
+    /** User is editing an existing group. */
+    public static final String    EDIT_GROUP = GroupCommand.EDIT_GROUP.getRequestContext();
+    
+    /** User is viewing an existing group */
+    public static final String    VIEW_GROUP = GroupCommand.VIEW_GROUP.getRequestContext();
+    
     public static final String    PREFS    = "prefs";
     
     public static final String    RENAME   = "rename";
