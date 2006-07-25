@@ -1,3 +1,29 @@
+2006-07-24  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.23
+
+        * Andy J. fixes what he broke... namely the build. Thanks
+          to Mark Rawling for pointing it out.
+        
+        * SessionMonitor achieves escape velocity and becomes its own class,
+          breaking free of WikiSession's gravity.
+          
+        * WikiSession.guestSession() changes to guestSession(WikiEngine).
+          This required small tweaks to a few classes, notably the RPC handlers
+          and parts of the Auth code.
+          
+        * Various classes receive small code tweaks in preparation for upcoming 
+          builds. WikiContext gains three new group-related contexts; WikiEngine
+          gains code to initialize CommandResolver and a related accessor; 
+        
+        * GroupPrincipal gains a two-argument constructor that accepts the 
+          wiki name as the first parameter.
+          
+        * WikiPermission's action strings are now public. Ebu's been waiting a while
+          for this.
+          
+        * CommentedPropertiesTest's missing test.properties file is now in CVS.
+        
 2006-07-23  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.22
