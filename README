@@ -3,17 +3,17 @@
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.27 $
-                             $Date: 2006-04-26 19:00:31 $
+                         $Revision: 1.28 $
+                             $Date: 2006-07-25 11:10:56 $
                            $Author: jalkanen $
 
 What is it?
 -----------
 
-JSPWiki is a simple (well, not any more) WikiWiki clone.  It keeps 
-all of its formatting in JSP files, and uses a custom Java class called
-'com.ecyrd.jspwiki.WikiEngine' to all interfacing with the Wiki
-system.
+JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java
+and JSP.  A WikiWiki is a web site which allows anyone to participate
+in its development.  JSPWiki supports all the traditional wiki features,
+as well as very detailed access control and security integration using JAAS. 
 
 
     Copyright (C) 2001-2006 JSPWiki development team
@@ -117,7 +117,7 @@ Advanced Installation
 
 First, install a JSP engine and a web server.  You can download Tomcat
 from http://jakarta.apache.org/tomcat/.  This software was built
-originally on top of Tomcat 4.0, but probably most other versions
+originally on top of Tomcat 5.5, but probably most other versions
 work, too, and most other JSP containers.
 
 After you've installed the engine and checked that it works, you just
@@ -148,21 +148,16 @@ If you are using a version of Microsoft Windows, you'll find that
 getting RCS up and running may be a bit problematic, and thus we
 recommend the VersioningFileProvider.
 
-There is some documentation within the documentation archive, on page
-"WindowsInstall".
-
-
+All JSPWiki documentation is in the web; please see
+http://doc.jspwiki.org/2.4/wiki/WindowsInstall
 
 Upgrading from previous versions
 --------------------------------
 
 Please read ReleaseNotes.
 
-
-Setting access controls
------------------------
-
-Please see the wikipage in the JSPWiki-doc.zip called "Security".
+All JSPWiki documentation is in the web; please see
+http://doc.jspwiki.org/2.4/
 
 
 Configuring JSPWiki
@@ -174,128 +169,17 @@ first.
 
 There are also some auxiliary configuration files, such as filters.xml.
 
+Also, there is a far more detailed documentation in the web:
+
+http://doc.jspwiki.org/2.4/
+
+
 Where to go next aka. where is the rest of the documentation?
 -------------------------------------------------------------
 
-With this information, you should've gotten the JSPWiki engine
-running.  I now suggest that you extract all of the files in
-JSPWiki-doc.zip, and start reading the documentation.  Most of the 
-documentation comes in the form of Wiki pages, which you can 
-obviously read with a text editor as well.  One trick would
-be to copy all the files from doc/wikipages to your page repository,
-which would allow you to use JSPWiki to view them.
+The rest of the documentation is at
 
-
-Notes:
-~~~~~~
-
-Feel free to edit the JSP pages anyway you like.  Just don't touch any
-of the Java code, unless you know what you're doing, because otherwise
-the Wiki might stop to work.  Most modern HTML editors are smart
-enough not to mess with the JSP tags (all the stuff between <% and
-%>).
-
-With JSPWiki v2, we have split the functionality from presentation.
-Thus you can, and should edit only the pages under templates/.  See
-the page WikiTemplates for more information.
-
-While Tomcat is also a fully featured Web server, it is not
-particularly fast.  You might also have a web server already running.
-Tomcat does integrate itself pretty well with existing web servers,
-such as Apache, so you can just see the instructions at
-http://jakarta.apache.org/ to see how to get Tomcat and Apache talking
-to each other using mod_jk.  (Don't use mod_jserv, it's outdated and
-confusing.)
-
-RCS may be a bit troublesome to set up.  I recommend you just run it
-without RCS at first, then switch over when you understand how Wiki
-works.
-
-
-Files
------
-
-Files are kept in a subdirectory, which is defined in the
-jspwiki.properties file.  All files are in text format (usually in the
-system's native format), with a file ending defined in
-WikiEngine.java.  This is ".txt" by default.
-
-There are some default files with the distribution archive.  Feel free
-to use them to bootstrap your own Wiki.
-
-
-Internationalisation
---------------------
-
-JSPWiki can also handle UTF-8. In fact, it's even recommended to use UTF-8
-in new installations.  However, you need to switch this at
-install-time, since the old method of handling ISO-8859-1 and the new
-method of handling UTF-8 are not compatible, and I did not wish to
-break previous installations that are already using the ISO-8859-1
-charset.
-
-If you're interested, the reason is as follows:  W3C forgot to define
-a standard how URLs that are not US-ASCII should be handled.  The Web
-de-facto standard is to use ISO-8859-1 (Latin1) and encode it with
-(%xy), where xy is the hexadecimal representation.  However, this
-means that everyone else in the world can't use this.  So, very
-logically, you can also encode UTF-8 in this format.  Unfortunately,
-there is NO way to distinguish between these URLs that are really
-UTF-8 and those URLs that are ISO-8859-1, since they look exactly the
-same.  This is why you must tell JSPWiki which character set to use
-to start with.
-
-The FileSystemProvider and RCSFileProvider save the files on the disk
-just as if they were URLs.  This can get really messy with Japanese
-language page names, for example.  You can always check the URL to the
-page, to find how they are named on the disk =).
-
-There are some known issues with UTF-8 support on some older browsers.
-Please check
-http://www.jspwiki.org/Wiki.jsp?page=JSPWikiBrowserCompatibility
-for more information.
-
-
-Plugins
--------
-
-Since v1.6.3 you can now define your own plugins.  These are just
-simply Java classes that implement the
-'com.ecyrd.jspwiki.plugin.WikiPlugin' interface and can be found from
-somewhere in your class path.  The plugins work so that when you write
-a special code on the Wiki page, the plugins are invoked and their
-output is inserted into the page, verbatim.
-
-The form is:
-
-  [{INSERT <plugin class> WHERE <param1=value1>,<param2=value2>,...}]
-
-Check out the JSPWikiPlugins page from the JSPWiki distribution for
-more information.
-
-
-Attachments
------------
-
-Version 2 now brings new attachment functionality.  I recommend
-reading the WikiAttachments page.
-
-
-
-XML-RPC
--------
-
-JSPWiki comes configured with two XML-RPC interfaces.  The first
-interface, which lives by default in <your-wiki-url>/RPC2, is a fully
-XML-RPC spec compliant version, whereas the other one, which lives at
-<your-wiki-url>/RPCU makes things easier by accepting UTF-8 -format
-strings.
-
-You can configure the URLs and other things from the web.xml file.  By
-default, the XML-RPC interface is NOT enabled.
-
-For more information about the XML-RPC interface, see the
-"WikiRPCInterface" page in the default JSPWiki distribution.
+http://doc.jspwiki.org/2.4/
 
 
 Acknowledgements
@@ -309,6 +193,8 @@ This product includes software developed by the OpenSymphony Group
 information. 
 
 There have been many contributors so far.  Especially thanks go to
+Andrew Jaquith, Dirk Fredericx, Murray Altheim, Olaf Kock, Mark
+Rawling, Dan Frankowski, Terry Steichen, Chuck Smith, Christoph Sauer,
 Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips,
 Mahlen Morris, Paul Downes, Michael Gentry, John Volkar, Torsten
 Hildebrandt, and Foster Schucker who have given me quite a lot of
@@ -321,8 +207,7 @@ Contact
 -------
 
 JSPWiki was written by Janne Jalkanen.  You may send email to me at
-Janne.Jalkanen@nospam.ecyrd.com.  (Remove the nospam from the
-address).  Feel free to send me patches, suggestions, whatever.
+jalkanen+jspwiki@ecyrd.com.   Feel free to send me patches, suggestions, whatever.
 
 JSPWiki is available at http://www.jspwiki.org/
 

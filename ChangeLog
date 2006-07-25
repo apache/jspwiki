@@ -1,3 +1,12 @@
+2006-07-25  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.24
+        
+        * JSPWikiMarkupParser is now tolerant against illegal text in
+        the XML tree.
+        
+        * Updated README and ReleaseNotes.
+
 2006-07-24  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.23

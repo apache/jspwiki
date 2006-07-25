@@ -13,6 +13,8 @@ NEW FEATURES
 
 * Loads and loads of under-the-hood changes.
 
+* Atom 1.0 support
+
 UPGRADE NOTES
 =============
 
@@ -21,7 +23,9 @@ Upgrading from 2.x:
 * Please reinstall in a new directory.  Then move your modified
   templates into the new templates/ -directory.  You MUST
   have the default template in place, else things might not
-  work.
+  work.  If you have modified the default template, please
+  rename your old template to "mymodifications" or something.
+  You must NOT modify the default template anymore.
 
 * Replace jspwiki.properties with your old configuration file.
   It should run unmodified, though you might want to go through
@@ -50,10 +54,6 @@ EXPERIMENTAL FEATURES
 There are some features in this release which could mostly be considered
 experimental at best.  The following ones are known to work only 
 partially:
-
-* Atom support.  We can give out feeds in Atom 1.0, but it's not really
-  tested properly.  There's also preliminary APP support, but it does 
-  not work.
   
 * WYSIWYG editing.  You need to install FCK by yourself.  It sort of
   works, but not quite.
