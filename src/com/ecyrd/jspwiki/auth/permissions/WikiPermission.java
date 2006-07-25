@@ -15,24 +15,24 @@ import java.util.Arrays;
  * itself. <p> Certain permissions imply others. Currently,
  * <code>createGroups</code> implies <code>createPages</code>. </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.14 $ $Date: 2006-05-20 05:20:34 $
+ * @version $Revision: 1.15 $ $Date: 2006-07-25 03:52:05 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission
 {
     private static final long          serialVersionUID        = 1L;
 
-    private static final String        CREATE_GROUPS_ACTION    = "createGroups";
+    public static final String         CREATE_GROUPS_ACTION    = "createGroups"; 
 
-    private static final String        CREATE_PAGES_ACTION     = "createPages";
+    public static final String         CREATE_PAGES_ACTION     = "createPages";
 
-    private static final String        LOGIN_ACTION            = "login";
+    public static final String         LOGIN_ACTION            = "login";
 
-    private static final String        EDIT_PREFERENCES_ACTION = "editPreferences";
+    public static final String         EDIT_PREFERENCES_ACTION = "editPreferences";
 
-    private static final String        EDIT_PROFILE_ACTION     = "editProfile";
+    public static final String         EDIT_PROFILE_ACTION     = "editProfile";
 
-    private static final String        WILDCARD                = "*";
+    public static final String         WILDCARD                = "*";
 
     protected static final int         CREATE_GROUPS_MASK      = 0x1;
 
