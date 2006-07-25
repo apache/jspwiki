@@ -41,7 +41,7 @@ public class AuthenticationManagerTest extends TestCase
     
     public void testLoginCustom()
     {
-        WikiSession session = WikiSession.guestSession();
+        WikiSession session = WikiSession.guestSession( m_engine );
         m_auth.login( session, "janne", "myP@5sw0rd" );
         Subject subject = session.getSubject();
         Collection principals = subject.getPrincipals();
@@ -60,7 +60,7 @@ public class AuthenticationManagerTest extends TestCase
         
         // Log in 'janne' and verify there are 5 principals in the subject
         // (ALL, AUTHENTICATED, login, fullname, wikiname Principals)
-        WikiSession session = WikiSession.guestSession();
+        WikiSession session = WikiSession.guestSession( m_engine );
         m_auth.login( session, "janne", "myP@5sw0rd" );
         Subject subject = session.getSubject();
         Collection principals = subject.getPrincipals();
@@ -81,26 +81,27 @@ public class AuthenticationManagerTest extends TestCase
         
         // We should see eight security events (one for each group create, plus one for each member)
         // We should also see a GroupPrincipal for group Test1, but not Test2
+        String wiki = m_engine.getApplicationName();
         assertEquals( 8, trap.events().length );
         Group groupTest1 = (Group)manager.findRole( "Test1" );
         Group groupTest2 = (Group)manager.findRole( "Test2" );
-        assertTrue( principals.contains( new GroupPrincipal( groupTest1 ) ) );
-        assertFalse( principals.contains( new GroupPrincipal( groupTest2 ) ) );
+        assertTrue( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
+        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
         
         // If we remove Test1, the GroupPrincipal should disappear
         DefaultGroupManagerTest.flushPage( m_engine, "GroupTest1" );
-        assertFalse( principals.contains( new GroupPrincipal( groupTest1 ) ) );
-        assertFalse( principals.contains( new GroupPrincipal( groupTest2 ) ) );
+        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
+        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
         
         // Now, add 'JanneJalkanen' to Test2 group manually; we should see the GroupPrincipal
         groupTest2.add( new WikiPrincipal( "JanneJalkanen" ) );
-        assertFalse( principals.contains( new GroupPrincipal( groupTest1 ) ) );
-        assertTrue( principals.contains( new GroupPrincipal( groupTest2 ) ) );
+        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
+        assertTrue( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
         
         // Remove 'JanneJalkenen' manually; the GroupPrincipal should disappear
         groupTest2.remove( new WikiPrincipal( "JanneJalkanen" ) );
-        assertFalse( principals.contains( new GroupPrincipal( groupTest1 ) ) );
-        assertFalse( principals.contains( new GroupPrincipal( groupTest2 ) ) );
+        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
+        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
     }
     
     public static Test suite()
