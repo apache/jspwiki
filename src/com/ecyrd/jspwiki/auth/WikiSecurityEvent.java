@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-06-27 21:22:59 $
+ * @version $Revision: 1.9 $ $Date: 2006-07-29 19:51:18 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -67,7 +67,7 @@ public final class WikiSecurityEvent extends WikiEvent
     /** When a wiki group is deleted. */
     public static final int   GROUP_REMOVE = 12;
 
-    /** When all wiki groups are removed from GroupManager. */
+    /** When all wiki groups are removed from GroupDatabase. */
     public static final int   GROUP_CLEAR_GROUPS = 13;
 
     /** When a new member is added to a wiki group. */
@@ -85,6 +85,9 @@ public final class WikiSecurityEvent extends WikiEvent
     /** When access to a resource is allowed. */
     public static final int   ACCESS_DENIED = 21;
     
+    /** When a user profile is saved */
+    public static final int   PROFILE_SAVE = 31;
+    
     /** The security logging service. */
     public static final Logger LOGGER = Logger.getLogger( "SecurityLog" );
     
@@ -98,7 +101,6 @@ public final class WikiSecurityEvent extends WikiEvent
                                                 LOGIN_CREDENTIAL_EXPIRED };
     
     private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED,
-                                                ACCESS_DENIED,
                                                 LOGOUT };
     
     /**
