@@ -24,7 +24,6 @@ import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PropertyPermission;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,13 +33,19 @@ import javax.servlet.jsp.PageContext;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
+import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
-import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.permissions.AllPermission;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
+import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.ui.GroupCommand;
+import com.ecyrd.jspwiki.ui.Installer;
+import com.ecyrd.jspwiki.ui.PageCommand;
+import com.ecyrd.jspwiki.ui.CommandResolver;
+import com.ecyrd.jspwiki.ui.WikiCommand;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -66,14 +71,14 @@ import com.ecyrd.jspwiki.ui.GroupCommand;
  *  @author Andrew R. Jaquith
  */
 public class WikiContext
-    implements Cloneable
+    implements Cloneable, Command
 {
+    private    Command m_command = null;
+    
     WikiPage   m_page;
     WikiPage   m_realPage;
     WikiEngine m_engine;
-    Permission m_permission = null;
-    String     m_requestContext = VIEW;
-    String     m_template       = "default";
+    String     m_template = "default";
 
     Map        m_variableMap = new HashMap();
 
@@ -81,41 +86,46 @@ public class WikiContext
 
     WikiSession m_session = null;
 
+    /** User is administering JSPWiki (Install, SecurityConfig). */
+    public static final String    INSTALL  = WikiCommand.INSTALL.getRequestContext();
+    
     /** The VIEW context - the user just wants to view the page
         contents. */
-    public static final String    VIEW     = "view";
+    public static final String    VIEW     = PageCommand.VIEW.getRequestContext();
 
     /** The EDIT context - the user is editing the page. */
-    public static final String    EDIT     = "edit";
+    public static final String    EDIT     = PageCommand.EDIT.getRequestContext();
 
     /** User is preparing for a login/authentication. */
-    public static final String    LOGIN    = "login";
+    public static final String    LOGIN    = WikiCommand.LOGIN.getRequestContext();
 
     /** User is preparing to log out. */
-    public static final String    LOGOUT   = "logout";
+    public static final String    LOGOUT   = WikiCommand.LOGOUT.getRequestContext();
 
     /** User is viewing a DIFF between the two versions of the page. */
-    public static final String    DIFF     = "diff";
+    public static final String    DIFF     = PageCommand.DIFF.getRequestContext();
 
     /** User is viewing page history. */
-    public static final String    INFO     = "info";
+    public static final String    INFO     = PageCommand.INFO.getRequestContext();
 
     /** User is previewing the changes he just made. */
-    public static final String    PREVIEW  = "preview";
+    public static final String    PREVIEW  = PageCommand.PREVIEW.getRequestContext();
 
     /** User has an internal conflict, and does quite not know what to
         do. Please provide some counseling. */
-    public static final String    CONFLICT = "conflict";
+    public static final String    CONFLICT = PageCommand.CONFLICT.getRequestContext();
 
     /** An error has been encountered and the user needs to be informed. */
-    public static final String    ERROR    = "error";
+    public static final String    ERROR    = WikiCommand.ERROR.getRequestContext();
 
-    public static final String    UPLOAD   = "upload";
+    public static final String    UPLOAD   = PageCommand.UPLOAD.getRequestContext();
 
-    public static final String    COMMENT  = "comment";
-    public static final String    FIND     = "find";
+    public static final String    COMMENT  = PageCommand.COMMENT.getRequestContext();
+    
+    public static final String    FIND     = WikiCommand.FIND.getRequestContext();
 
-    public static final String    CREATE_GROUP = "createGroup";
+    /** User wishes to create a new group */
+    public static final String    CREATE_GROUP = WikiCommand.CREATE_GROUP.getRequestContext();
     
     /** User is deleting an existing group. */
     public static final String    DELETE_GROUP = GroupCommand.DELETE_GROUP.getRequestContext();
@@ -126,19 +136,22 @@ public class WikiContext
     /** User is viewing an existing group */
     public static final String    VIEW_GROUP = GroupCommand.VIEW_GROUP.getRequestContext();
     
-    public static final String    PREFS    = "prefs";
+    public static final String    PREFS    = WikiCommand.PREFS.getRequestContext();
     
-    public static final String    RENAME   = "rename";
-    public static final String    DELETE   = "del";
-    public static final String    ATTACH   = "att";
-    public static final String    RSS      = "rss";
+    public static final String    RENAME   = PageCommand.RENAME.getRequestContext();
+    public static final String    DELETE   = PageCommand.DELETE.getRequestContext();
+    public static final String    ATTACH   = PageCommand.ATTACH.getRequestContext();
+    public static final String    RSS      = PageCommand.RSS.getRequestContext();
 
-    public static final String    NONE     = "";  // This is not a JSPWiki context, use it to access static files
+    /** This is not a JSPWiki context, use it to access static files. */
+    public static final String    NONE     = PageCommand.NONE.getRequestContext();  
     
-    public static final String    OTHER    = NONE; // This is just a clarification.
+    /** Same as NONE; this is just a clarification. */
+    public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
     
     protected static Logger       log      = Logger.getLogger( WikiContext.class );
-    private static final Permission DUMMY_PERMISSION = new PropertyPermission("os.name", "read");
+    
+    private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
 
     /**
      *  Create a new WikiContext for the given WikiPage. Delegates to
@@ -150,15 +163,18 @@ public class WikiContext
      */
     public WikiContext( WikiEngine engine, WikiPage page )
     {
-        this(engine, null, page);
+        this( engine, null, findCommand( engine, null, page ) );
     }
     
     /**
      * <p>
-     * Creates a new WikiContext for the given WikiEngine, WikiPage and
-     * HttpServletRequest. This constructor will also look up the HttpSession
-     * associated with the request, and determine if a WikiSession object is
-     * present. If not, a new one is created.
+     * Creates a new WikiContext for the given WikiEngine, Command and
+     * HttpServletRequest.
+     * </p>
+     * <p>
+     * This constructor will also look up the HttpSession associated with the
+     * request, and determine if a WikiSession object is present. If not, a new
+     * one is created.
      * </p>
      * <p>
      * After the WikiSession object is obtained, the current authentication
@@ -166,21 +182,42 @@ public class WikiContext
      * by the container has changed, the constructor attempts to log in the user
      * with
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}.
+     * If an login process throws an exception, this method logs the error but
+     * does not re-throw it.
      * </p>
      * @param engine The WikiEngine that is handling the request
      * @param request The HttpServletRequest that should be associated with this
      *            context. This parameter may be <code>null</code>.
-     * @param page The WikiPage. If you want to create a WikiContext for an
-     *            older version of a page, you must supply this parameter
+     * @param command the command
+     * @throws IllegalArgumentException if <code>engine</code> or
+     *             <code>command</code> are <code>null</code>
      */
-    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) 
+    public WikiContext( WikiEngine engine, HttpServletRequest request, Command command )
     {
         super();
+        if ( engine == null || command == null )
+        {
+            throw new IllegalArgumentException( "Parameter engine and command must not be null." );
+        }
+        
         m_engine = engine;
         m_request = request;
         m_session = WikiSession.getWikiSession( engine, request );
-        m_page   = page;
-        m_realPage = page;
+        m_command = command;
+        
+        // If PageCommand, get the WikiPage
+        if ( command instanceof PageCommand )
+        {
+            m_page = (WikiPage)((PageCommand)command).getTarget();
+        }
+        
+        // If page not supplied, default to front page to avoid NPEs
+        if ( m_page == null )
+        {
+            m_page = m_engine.getPage( m_engine.getFrontPage() );
+        }
+        
+        m_realPage = m_page;
         
         // Log in the user if new session or the container status changed
         boolean doLogin = ( (request != null) && m_session.isNew() );
@@ -190,13 +227,21 @@ public class WikiContext
         {
             HttpSession session = ( request == null ) ? null : request.getSession( false );
             String sid = ( session == null ) ? "(null)" : session.getId();
-            log.debug( "Creating WikiContext for session ID=" + sid + "; page=" + page.getName() );
+            log.debug( "Creating WikiContext for session ID=" + sid + "; target=" + getName() );
             log.debug( "Do we need to log the user in? " + doLogin );
         }
         
         if ( doLogin || m_session.isContainerStatusChanged( request ) )
         {
-            engine.getAuthenticationManager().login( request );
+            try 
+            {
+                engine.getAuthenticationManager().login( request );
+            }
+            catch ( WikiSecurityException e )
+            {
+                // Login failed because config was screwy
+                log.error( "Could not log in user: " + e.getMessage() );
+            }
         }
 
         // Mark the session as "not new"
@@ -205,8 +250,41 @@ public class WikiContext
             m_session.setNew( false );
         }
         
-        // Figure out what permission is required to execute this context
-        updatePermission();
+        // Figure out what template to use
+        setDefaultTemplate( request );
+    }
+    
+    /**
+     * Creates a new WikiContext for the given WikiEngine, WikiPage and
+     * HttpServletRequest. This method simply looks up the appropriate Command
+     * using {@link #findCommand(WikiEngine, HttpServletRequest, WikiPage)} and
+     * delegates to
+     * {@link #WikiContext(WikiEngine, HttpServletRequest, Command)}.
+     * @param engine The WikiEngine that is handling the request
+     * @param request The HttpServletRequest that should be associated with this
+     *            context. This parameter may be <code>null</code>.
+     * @param page The WikiPage. If you want to create a WikiContext for an
+     *            older version of a page, you must supply this parameter
+     */
+    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) 
+    {
+        this( engine, request, findCommand( engine, request, page ) );
+    }
+
+    /**
+     * @see com.ecyrd.jspwiki.ui.Command#getContentTemplate()
+     */
+    public String getContentTemplate()
+    {
+        return m_command.getContentTemplate();
+    }
+    
+    /**
+     * @see com.ecyrd.jspwiki.ui.Command#getJSP()
+     */
+    public String getJSP()
+    {
+        return m_command.getContentTemplate();
     }
 
     /**
@@ -222,13 +300,46 @@ public class WikiContext
     {
         WikiPage old = m_realPage;
         m_realPage = page;
-        updatePermission();
+        updateCommand( m_command.getRequestContext() );
         return old;
     }
     
     public WikiPage getRealPage()
     {
         return m_realPage;
+    }
+    
+    /**
+     *  Figure out to which page we are really going to.  Considers
+     *  special page names from the jspwiki.properties, and possible aliases.
+     *  This method forwards requests to 
+     *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getSpecialPageReference(String)}.
+     *  @return A complete URL to the new page to redirect to
+     *  @since 2.2
+     */
+
+    public String getRedirectURL()
+    {
+        String pagename = m_page.getName();
+        String redirURL = null;
+        
+        redirURL = m_engine.getCommandResolver().getSpecialPageReference( pagename );
+
+        if( redirURL == null )
+        {
+            String alias = (String)m_page.getAttribute( WikiPage.ALIAS );
+            
+            if( alias != null )
+            {
+                redirURL = getViewURL( alias );
+            }
+            else
+            {
+                redirURL = (String)m_page.getAttribute( WikiPage.REDIRECT );
+            }
+        }
+
+        return redirURL;
     }
     
     /**
@@ -255,7 +366,7 @@ public class WikiContext
     public void setPage( WikiPage page )
     {
         m_page = page;
-        updatePermission();
+        updateCommand( m_command.getRequestContext() );
     }
 
     /**
@@ -263,7 +374,7 @@ public class WikiContext
      */
     public String getRequestContext()
     {
-        return m_requestContext;
+        return m_command.getRequestContext();
     }
 
     /**
@@ -274,8 +385,23 @@ public class WikiContext
      */
     public void setRequestContext( String arg )
     {
-        m_requestContext = arg;
-        updatePermission();
+        updateCommand( arg );
+    }
+
+    /**
+     * @see com.ecyrd.jspwiki.ui.Command#getTarget()
+     */
+    public Object getTarget()
+    {
+        return m_command.getTarget();
+    }
+
+    /**
+     * @see com.ecyrd.jspwiki.ui.Command#getURLPattern()
+     */
+    public String getURLPattern()
+    {
+        return m_command.getURLPattern();
     }
 
     /**
@@ -300,7 +426,7 @@ public class WikiContext
     public void setVariable( String key, Object data )
     {
         m_variableMap.put( key, data );
-        updatePermission();
+        updateCommand( m_command.getRequestContext() );
     }
 
     /**
@@ -349,6 +475,28 @@ public class WikiContext
         m_template = dir;
     }
 
+    /**
+     * Returns the target of this wiki context: a page, group name or JSP. If
+     * the associated Command is a PageCommand, this method returns the page's
+     * name. Otherwise, this method delegates to the associated Command's
+     * {@link com.ecyrd.jspwiki.ui.Command#getName()} method. Calling classes
+     * can rely on the results of this method for looking up canonically-correct
+     * page or group names. Because it does not automatically assume that the
+     * wiki context is a PageCommand, calling this method is inherently safer
+     * than calling <code>getPage().getName()</code>.
+     * @return the name of the target of this wiki context
+     * @see com.ecyrd.jspwiki.ui.PageCommand#getName()
+     * @see com.ecyrd.jspwiki.ui.GroupCommand#getName()
+     */
+    public String getName()
+    {
+        if ( m_command instanceof PageCommand )
+        {
+            return m_page.getName();
+        }
+        return m_command.getName();
+    }
+    
     /**
      *  Gets the template that is to be used throughout this request.
      *  @since 2.1.15.
@@ -406,19 +554,29 @@ public class WikiContext
     }
 
     /**
+     * Returns the Command associated with this WikiContext.
+     * @return the command
+     */
+    public Command getCommand()
+    {
+        return m_command;
+    }
+    
+    /**
      *  Returns a shallow clone of the WikiContext.
      *
      *  @since 2.1.37.
      */
     public Object clone()
     {
-        WikiContext copy = new WikiContext( m_engine, m_page );
+        WikiContext copy = new WikiContext( m_engine, null, m_command );
         
-        copy.m_requestContext = m_requestContext;
         copy.m_template       = m_template;
         copy.m_variableMap    = m_variableMap;
         copy.m_request        = m_request;
         copy.m_session        = m_session;
+        copy.m_page           = m_page;
+        copy.m_realPage       = m_realPage;
         return copy;
     }
     
@@ -426,7 +584,7 @@ public class WikiContext
      * Returns the WikiSession associated with the context.
      * This method is guaranteed to always return a valid WikiSession. 
      * If this context was constructed without an associated 
-     * HttpServletRequest, it will return {@link WikiSession#guestSession()}.
+     * HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
      */  
     public WikiSession getWikiSession() 
     {
@@ -469,9 +627,53 @@ public class WikiContext
      */
     public Permission requiredPermission()
     {
-        return m_permission;
+        // This is a filthy rotten hack -- absolutely putrid
+        if ( WikiCommand.INSTALL.equals( m_command ) )
+        {
+            // See if admin users exists
+            boolean adminExists = false;
+            try
+            {
+                UserManager userMgr = m_engine.getUserManager();
+                UserDatabase userDb = userMgr.getUserDatabase();
+                userDb.findByLoginName( Installer.ADMIN_ID );
+                adminExists = true;
+            }
+            catch ( NoSuchPrincipalException e )
+            {
+                return DUMMY_PERMISSION;
+            }
+            if ( adminExists )
+            {
+                return new AllPermission( m_engine.getApplicationName() );
+            }
+        }
+        
+        // TODO: we should really break the contract so that this
+        // method returns null, but until then we will use this hack
+        if ( m_command.requiredPermission() == null )
+        {
+            return DUMMY_PERMISSION;
+        }
+        
+        return m_command.requiredPermission();
     }
     
+    /**
+     * Associates a target with the current Command and returns
+     * the new targeted Command. If the Command associated with this
+     * WikiContext is already "targeted", it is returned instead.
+     * @see com.ecyrd.jspwiki.ui.Command#targetedCommand(java.lang.Object)
+     */
+    public Command targetedCommand( Object target )
+    {
+        if ( m_command.getTarget() == null )
+        {
+            return m_command.targetedCommand( target );
+        }
+        return m_command;
+    }
+
     /**
      * Checks whether the current user has access to this wiki context,
      * by obtaining the required Permission ({@link #requiredPermission()})
@@ -525,99 +727,99 @@ public class WikiContext
             {
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                m_session.addMessage("You don't have access to '" + m_engine.decodeName(pageurl) + "'. Do you want to log in as another user?.");
+                m_session.addMessage("You don't have access to '" + getName() + "'. Do you want to log in as another user?.");
                 response.sendRedirect( m_engine.getURL(WikiContext.NONE,"Login.jsp","page="+pageurl, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                m_session.addMessage("You don't have access to '" + m_engine.decodeName(pageurl) + "'. Please log in first.");
+                m_session.addMessage("You don't have access to '" + getName() + "'. Please log in first.");
                 response.sendRedirect( m_engine.getURL(WikiContext.NONE, "Login.jsp", "page="+pageurl, false ) );
             }
         }
         return allowed;
     }
+    
+    /**
+     * Figures out which template a new WikiContext should be using.
+     * @param request the HTTP request
+     */
+    protected void setDefaultTemplate( HttpServletRequest request )
+    {
+        // FIXME: Most definitely this should be checked for
+        //        existence, or else it is possible to create pages that
+        //        cannot be shown.
+        String template = m_engine.getTemplateDir();
+        
+        //  Figure out which template we should be using for this page.
+        if ( request != null )
+        {
+            template = request.getParameter( "skin" );
+        }
+        
+        // If request doesn't supply the value, extract from wiki page
+        if( template == null )
+        {
+            WikiPage page = getPage();
+            if ( page != null )
+            {
+                template = (String)page.getAttribute( WikiEngine.PROP_TEMPLATEDIR );
+            }
+
+        }
+        
+        // If something over-wrote the default, set the new value.
+        if ( template != null )
+        {
+            setTemplate( template );
+        }
+    }
+    
+    /**
+     * Looks up and returns a PageCommand based on a supplied WikiPage and HTTP
+     * request. First, the appropriate Command is obtained by examining the HTTP
+     * request; the default is {@link PageCommand#VIEW}. If the Command is a
+     * PageCommand (and it should be, in most cases), a targeted Command is
+     * created using the (non-<code>null</code>) WikiPage as target.
+     * @param engine the wiki engine
+     * @param request the HTTP request
+     * @param page the wiki page
+     * @return the correct command
+     */
+    protected static Command findCommand( WikiEngine engine, HttpServletRequest request, WikiPage page )
+    {
+        String defaultContext = PageCommand.VIEW.getRequestContext();
+        Command command = engine.getCommandResolver().findCommand( request, defaultContext );
+        if ( command instanceof PageCommand && page != null )
+        {
+            command = command.targetedCommand( page );
+        }
+        return command;
+    }
 
     /**
-     * Protected method that updates the value returned by the {@link #requiredPermission()}
-     * method. Will always be called when the page name, request context, or variable
+     * Protected method that updates the internally cached Command. 
+     * Will always be called when the page name, request context, or variable
      * changes.
+     * @param requestContext the desired request context
      * @since 2.4
      */
-    protected void updatePermission() 
+    protected void updateCommand( String requestContext ) 
     {
-        // Dummy permission that should always be true; default if nothing else works
-        m_permission = DUMMY_PERMISSION;
+        if ( requestContext == null )
+        {
+            m_command = PageCommand.NONE;
+        }
+        else
+        {
+            CommandResolver resolver = m_engine.getCommandResolver();
+            m_command = resolver.findCommand( m_request, requestContext );
+        }
         
-        // PageInfo.jsp
-        if ( ATTACH.equals( m_requestContext ) )
+        if ( m_command instanceof PageCommand && m_page != null )
         {
-            m_permission = new PagePermission( m_page, "upload" );
-        }
-        else if ( COMMENT.equals( m_requestContext ) )
-        {
-            m_permission = new PagePermission( m_page, "comment" );
-        }
-        else if ( CONFLICT.equals( m_requestContext ) || DIFF.equals( m_requestContext )
-                || INFO.equals( m_requestContext )    || PREVIEW.equals( m_requestContext )
-                || RSS.equals( m_requestContext )     || VIEW.equals( m_requestContext ) )
-        {
-            m_permission = new PagePermission( m_page, "view" );
-        }
-        else if ( CREATE_GROUP.equals( m_requestContext ) )
-        {
-            m_permission = new WikiPermission( m_page.getWiki(), "createGroups" );
-        }
-        else if ( DELETE.equals( m_requestContext ) )
-        {
-            m_permission = new PagePermission( m_page, "delete" );
-        }
-        else if ( EDIT.equals( m_requestContext ) )
-        {
-            //
-            //  Figure out which is the proper permission for this
-            //  particular editing action.
-            //
-            boolean exists = false;
-            try 
-            {
-                exists = m_engine.pageExists( m_page );
-            }
-            catch ( ProviderException e )
-            {
-            }
-            if( exists )
-            {
-                m_permission = new PagePermission( m_page, "edit" );
-            }
-            else
-            {
-                if ( m_page.getName().startsWith( DefaultGroupManager.GROUP_PREFIX ) )
-                    {
-                    m_permission = new WikiPermission( m_page.getWiki(), "createGroups" );
-                }
-                else
-                {
-                    m_permission = new WikiPermission( m_page.getWiki(), "createPages" );
-                }
-            }
-        }
-        else if ( LOGIN.equals( m_requestContext ) )
-        {
-            m_permission = new WikiPermission( m_page.getWiki(), "login" );
-        }
-        else if ( PREFS.equals( m_requestContext ) )
-        {
-            m_permission = new WikiPermission( m_page.getWiki(), "editPreferences" );
-        }
-        else if ( RENAME.equals( m_requestContext ) )
-        {
-            m_permission = new PagePermission( m_page, "rename" );
-        }
-        else if ( UPLOAD.equals( m_requestContext ) )
-        {
-            m_permission = new PagePermission( m_page, "upload" );
+            m_command = m_command.targetedCommand( m_page );
         }
     }
 }
