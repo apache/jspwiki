@@ -393,21 +393,28 @@ jspwiki.plugin.searchPath =
 #  However, you can use another Authorizer if you wish; specify that
 #  class here.
 
-jspwiki.authorizer          = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
+jspwiki.authorizer = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
 
 #  AUTHORIZATION (GROUPS)
-#  If the external authorizer fails, we also consult JSPWiki's GroupManager.
-#  Groups are "ad hoc" roles defined by wiki users. By default, JSPWiki
-#  scans existing pages with the prefix "Group" to define groups.
-#  For example, the wiki page "GroupTest" with this markup:
-#
-#      [{SET members=Alice, Bob, Charlie}]
-#
-#  ...causes JSPWiki to create a group called "Test" with three members.
-#  If groups are defined elsewhere on your system, specify the GroupManager
-#  implementation class here:
+#  As an additional source of authorization, users can belong to discretionary
+#  "wiki groups" that the users manage themselves. Wiki groups are stored in a
+#  GroupDatabase. The default group database uses an XML file for persistent 
+#  storage. Override with your own GroupDatabase implementation with this property:
 
-jspwiki.groupManager        = com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager
+jspwiki.groupdatabase = com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase
+
+#  The default group database implementation stores member lists
+#  in an XML file. The location of this file should be in a secure directory 
+#  in the filesystem; for example, in /etc or your servlet container's 
+#  configuration directory If you do not supply a value for this property, 
+#  a blank group database will be initialized in the WEB-INF/ directory of the
+#  deployed webapp. Since these directories are often overwritten when webapps
+#  are undeployed or redeployed, you should probably set this property to
+#  something useful as soon as you can. But for test wikis, it's probably
+#  ok to leave this un-set, as long as users know that their groups could
+#  "disappear" if the wiki app is ever redeployed.
+
+#jspwiki.xmlGroupDatabaseFile = /etc/tomcat/groupdatabase.xml
 
 #  USER DATABASE
 #  User's wiki profiles are stored in a UserDatabase. The default user database
