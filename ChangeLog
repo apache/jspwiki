@@ -1,11 +1,85 @@
-2006-07-25  Janne Jalkanen <jalkanen@ecyrd.com>
+2006-07-29  Andrew Jaquith <andrew@freshcookies.org>
 
-        * 2.4.24
+        * 2.4.25 - a.k.a. the AAA mega-patch
+
+        * This release completely changes the way JSPWiki manages wiki groups.
+          They are no longer stored in pages; instead, GroupManager controls 
+          access, while back-end storage is provided by the GroupDatabase interface.
+          This change has caused many other changes. More details:
+
+          * GroupManager changes from an interface to a concrete, final class. Group storage
+            is now handled by a separate GroupDatabase interface. The default implmentation is
+            XMLGroupDatabase. In addition, Group becomes a concrete final class; DefaultGroup
+            and DefaultGroupManager disappear. Group gets a new method groupPrincipal() that returns
+            the equivalent GroupPrincipal. Many new unit tests created for all of these changes.
+
+          * Group creation handled in UI by NewGroup.jsp. Editing is via EditGroup.jsp.
+
+          * UserProfileTag gains a property "groups" that will print the list of wiki groups
+            the current user belongs to. The "roles" property now just prints the roles.
+
+          * Default security policy (jspwiki.policy) gains grant entries for group
+            viewing, editing, deletion permissions. By default, users must be at least 
+            "asserted" to view group members, and must be a member of a group to edit
+            the membership.
+
+          * PermissionTag gains three new permission checks: "viewGroup", "editGroup", "deleteGroup".
+
+          * Group principal injection responsibilities moves to WikiSession from AuthenticationManager.
+
+          * The hard-coded restriction on pages prefixed "Group" has been lifted.
+
+          * SecurityVerifier adds tests for GroupPermission. Better support for detecting
+            exceptions. Adds tests for adding/deleting Groups.
+
+          * New Groups plugin prints a sorted list of the wiki groups in the group database; 
+            generates a hyperlink to each group page.
+
+        * JSPWikiInstaller (Install.jsp) receives a makeover and substantial enhancements to
+          support the new group scheme. When the wiki is set up, we now create an administrative 
+          user and an Admin group. It also uses the default CSS.
+
+        * The new Command class is now fully integrated into WikiEngine.createContext()
+          and the WikiContext constructors. Practically speaking, this means that the 
+          page names and redirect errors shown on pages will actually show something useful
+          when non-pages are accessed (e.g., access denied for UserPreferences.jsp won't
+          print the non-sensical "you don't have access to 'Main'). WikiEngine delegates
+          page-resolution responsibilities to CommandResolver. Minor changes to new
+          Command/CommandResolver classes to make JSP page names "friendlier".
+
+        * WikiSession.getUserPrincipal now defaults to the wiki principal, rather than
+          the full name. This means that favorites auto-linking won't break. It also gains
+          a method getRoles() that returns the roles and groups the user possesses.
+          The method doPrivileged(WikiSession,PrivilegedAction) allows actions to be
+          executed using the user's privileges. WikiSession's getSubject() method has been
+          removed; it was a security risk.
         
-        * JSPWikiMarkupParser is now tolerant against illegal text in
-        the XML tree.
+        * Substantial changes to the AAA package tests. Web unit tests changed to accomodate groups.
+
+        * Minor refactoring: AllPermission, WikiPermission, PagePermission. AllPermissionCollection.
+
+        * Bug fix: closed <span> tag in InsertPagePlugin
+
+        * WikiContext.getName() provides a "safer" shortcut than calling WikiContext.getPage().getName()
+          because not all wiki contexts apply to pages. This change was made to: TableOfContents plugin;
+          most of the top-level JSPs; TranslatorReader; PageNameTag.
+
+        * Container role principals are now injected at login time by WebContainerLoginModule, 
+          rather than the AuthenticationManager. 
+
+        * More use of checked exceptions. Authorizer.initialize() throws WikiSecurityException
         
-        * Updated README and ReleaseNotes.
+        * WikiSecurityEvent gains the event type PROFILE_SAVED, emitted by UserDatabase. Most
+          of the security events are now marked as "debug" level events, which means the logs
+          will be much less chatty (this is a temporary hack).
+
+        * AuthorizationManager gains a new public method: getAuthorizer()
+
+        * The WikiEventSource "marker interface"  added to class declarations for AuthorizationManager
+          AuthenticationManager, WikiEngine. EventSourceDelegate used in place of cut-and-paste code
+          for these classes also.
+
+        * TextUtil.password generator now uses SecureRandom instead of Random.
 
 2006-07-24  Andrew Jaquith <andrew@freshcookies.org>
 
