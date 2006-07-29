@@ -23,9 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessControlException;
+import java.security.AccessController;
 import java.security.KeyStore;
 import java.security.Permission;
 import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,7 +36,6 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -43,10 +45,15 @@ import org.jdom.JDOMException;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.GroupDatabase;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
+import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
@@ -57,10 +64,10 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-06-04 19:51:12 $
+ * @version $Revision: 1.7 $ $Date: 2006-07-29 19:46:31 $
  * @since 2.4
  */
-public class SecurityVerifier
+public final class SecurityVerifier
 {
     private static final long     serialVersionUID             = -3859563355089169941L;
 
@@ -104,6 +111,12 @@ public class SecurityVerifier
     
     public static final String    INFO_DB                      = "Info.UserDatabase";
     
+    public static final String    ERROR_GROUPS                 = "Error.GroupDatabase";
+    
+    public static final String    WARNING_GROUPS               = "Warning.GroupDatabase";
+    
+    public static final String    INFO_GROUPS                  = "Info.GroupDatabase";
+    
     public static final String    INFO_JAAS                    = "Info.Jaas";
 
     private static final String[] CONTAINER_ACTIONS            = new String[]
@@ -128,7 +141,15 @@ public class SecurityVerifier
         m_session.clearMessages();
         verifyJaas();
         verifyPolicy();
-        verifyPolicyAndContainerRoles();
+        try 
+        {
+            verifyPolicyAndContainerRoles();
+        }
+        catch ( WikiException e )
+        {
+            m_session.addMessage( ERROR_ROLES, e.getMessage() );
+        }
+        verifyGroupDatabase();
         verifyUserDatabase();
     }
 
@@ -149,18 +170,26 @@ public class SecurityVerifier
      * @throws IllegalStateException if the authorizer is not of type
      *             {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
      */
-    public String policyRoleTable()
+    public final String policyRoleTable()
     {
         Principal[] roles = m_policyPrincipals;
         String wiki = m_engine.getApplicationName();
+
         String[] pages = new String[]
         { "Main", "Index", "GroupTest", "GroupAdmin" };
-        String[] actions = new String[]
+        String[] pageActions = new String[]
         { "view", "edit", "modify", "rename", "delete" };
+ 
+        String[] groups = new String[]
+        { "Admin", "TestGroup", "Foo" };
+        String[] groupActions = new String[]
+        { "view", "edit", null, null, "delete" };
+               
+        // Calculate column widths
         String colWidth;
-        if ( actions.length > 0 && roles.length > 0 )
+        if ( pageActions.length > 0 && roles.length > 0 )
         {
-            colWidth = String.valueOf( (double) ( 67 / ( actions.length * roles.length ) ) ) + "%";
+            colWidth = String.valueOf( (double) ( 67 / ( pageActions.length * roles.length ) ) ) + "%";
         }
         else
         {
@@ -172,13 +201,13 @@ public class SecurityVerifier
         // Write the table header
         s.append( "<table class=\"wikitable\" border=\"1\">\n" );
         s.append( "  <colgroup span=\"1\" width=\"33%\"/>\n" );
-        s.append( "  <colgroup span=\"" + actions.length * roles.length + "\" width=\"" + colWidth
+        s.append( "  <colgroup span=\"" + pageActions.length * roles.length + "\" width=\"" + colWidth
                 + "\" align=\"center\"/>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th rowspan=\"2\" valign=\"bottom\">Permission</th>\n" );
         for( int i = 0; i < roles.length; i++ )
         {
-            s.append( "    <th colspan=\"" + actions.length + "\" title=\"" + roles[i].getClass().getName() + "\">"
+            s.append( "    <th colspan=\"" + pageActions.length + "\" title=\"" + roles[i].getClass().getName() + "\">"
                     + roles[i].getName() + "</th>\n" );
         }
         s.append( "  </tr>\n" );
@@ -187,10 +216,10 @@ public class SecurityVerifier
         s.append( "  <tr>\n" );
         for( int i = 0; i < roles.length; i++ )
         {
-            for( int j = 0; j < actions.length; j++ )
+            for( int j = 0; j < pageActions.length; j++ )
             {
-                String action = actions[j].substring( 0, 1 );
-                s.append( "    <th title=\"" + actions[j] + "\">" + action + "</th>\n" );
+                String action = pageActions[j].substring( 0, 1 );
+                s.append( "    <th title=\"" + pageActions[j] + "\">" + action + "</th>\n" );
             }
         }
         s.append( "  </tr>\n" );
@@ -203,14 +232,36 @@ public class SecurityVerifier
             s.append( "    <td>PagePermission \"" + wiki + ":" + page + "\"</td>\n" );
             for( int j = 0; j < roles.length; j++ )
             {
-                for( int k = 0; k < actions.length; k++ )
+                for( int k = 0; k < pageActions.length; k++ )
                 {
-                    Permission permission = new PagePermission( wiki + ":" + page, actions[k] );
+                    Permission permission = new PagePermission( wiki + ":" + page, pageActions[k] );
                     s.append( printPermissionTest( permission, roles[j], 1 ) );
                 }
             }
             s.append( "  </tr>\n" );
         }
+        
+        // Now do the group tests
+        for( int i = 0; i < groups.length; i++ )
+        {
+            String group = groups[i];
+            s.append( "  <tr>\n" );
+            s.append( "    <td>GroupPermission \"" + wiki + ":" + group + "\"</td>\n" );
+            for( int j = 0; j < roles.length; j++ )
+            {
+                for( int k = 0; k < groupActions.length; k++ )
+                {
+                    Permission permission = null;
+                    if ( groupActions[k] != null)
+                    {
+                        permission = new GroupPermission( wiki + ":" + group, groupActions[k] );
+                    }
+                    s.append( printPermissionTest( permission, roles[j], 1 ) );
+                }
+            }
+            s.append( "  </tr>\n" );
+        }
+        
 
         // Now check the wiki-wide permissions
         String[] wikiPerms = new String[]
@@ -222,7 +273,7 @@ public class SecurityVerifier
             for( int j = 0; j < roles.length; j++ )
             {
                 Permission permission = new WikiPermission( wiki, wikiPerms[i] );
-                s.append( printPermissionTest( permission, roles[j], actions.length ) );
+                s.append( printPermissionTest( permission, roles[j], pageActions.length ) );
             }
             s.append( "  </tr>\n" );
         }
@@ -233,7 +284,7 @@ public class SecurityVerifier
         for( int j = 0; j < roles.length; j++ )
         {
             Permission permission = new AllPermission( wiki );
-            s.append( printPermissionTest( permission, roles[j], actions.length ) );
+            s.append( printPermissionTest( permission, roles[j], pageActions.length ) );
         }
         s.append( "  </tr>\n" );
 
@@ -247,30 +298,38 @@ public class SecurityVerifier
      * @param perm the permission to format
      * @param allowed whether the permission is allowed
      */
-    private String printPermissionTest( Permission permission, Principal principal, int cols )
+    private final String printPermissionTest( Permission permission, Principal principal, int cols )
     {
         StringBuffer s = new StringBuffer();
-        boolean allowed = verifyStaticPermission( principal, permission );
-        s.append( "    <td colspan=\"" + cols + "\" align=\"center\" title=\"" );
-        s.append( allowed ? "ALLOW: " : "DENY: " );
-        s.append( permission.getClass().getName() );
-        s.append( " &quot;" );
-        s.append( permission.getName() );
-        s.append( "&quot;" );
-        if ( permission.getName() != null )
+        if ( permission == null )
         {
-            s.append( ",&quot;" );
-            s.append( permission.getActions() );
-            s.append( "&quot;" );
+            s.append( "    <td colspan=\"" + cols + "\" align=\"center\" title=\"N/A\">" );
+            s.append( "&nbsp;</td>\n" );
         }
-        s.append( " " );
-        s.append( principal.getClass().getName() );
-        s.append( " &quot;" );
-        s.append( principal.getName() );
-        s.append( "&quot;" );
-        s.append( "\"" );
-        s.append( ( allowed ? BG_GREEN + ">" : BG_RED + ">" ) );
-        s.append( "&nbsp;</td>\n" );
+        else
+        {
+            boolean allowed = verifyStaticPermission( principal, permission );
+            s.append( "    <td colspan=\"" + cols + "\" align=\"center\" title=\"" );
+            s.append( allowed ? "ALLOW: " : "DENY: " );
+            s.append( permission.getClass().getName() );
+            s.append( " &quot;" );
+            s.append( permission.getName() );
+            s.append( "&quot;" );
+            if ( permission.getName() != null )
+            {
+                s.append( ",&quot;" );
+                s.append( permission.getActions() );
+                s.append( "&quot;" );
+            }
+            s.append( " " );
+            s.append( principal.getClass().getName() );
+            s.append( " &quot;" );
+            s.append( principal.getName() );
+            s.append( "&quot;" );
+            s.append( "\"" );
+            s.append( ( allowed ? BG_GREEN + ">" : BG_RED + ">" ) );
+            s.append( "&nbsp;</td>\n" );
+        }
         return s.toString();
     }
 
@@ -280,7 +339,7 @@ public class SecurityVerifier
      * @throws IllegalStateException if the authorizer is not of type
      *             {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
      */
-    public String containerRoleTable()
+    public final String containerRoleTable() throws WikiException
     {
 
         AuthorizationManager authorizationManager = m_engine.getAuthorizationManager();
@@ -395,7 +454,7 @@ public class SecurityVerifier
      *            <code>JSPWiki-container</code>).
      * @return <code>true</code> if found; <code>false</code> otherwise
      */
-    protected boolean isJaasConfigurationAvailable( String config )
+    protected final boolean isJaasConfigurationAvailable( String config )
     {
         try
         {
@@ -403,7 +462,7 @@ public class SecurityVerifier
             new LoginContext( config );
             return true;
         }
-        catch( LoginException e )
+        catch( Exception e )
         {
             m_session.addMessage( ERROR_JAAS, "We could not find the '" + config + "' login configuration.</p>" );
             return false;
@@ -438,7 +497,7 @@ public class SecurityVerifier
      * it knows about; otherwise, a zero-length array.
      * @return the roles parsed from <code>web.xml</code>, or a zero-length array
      */
-    public final Principal[] webContainerRoles()
+    public final Principal[] webContainerRoles() throws WikiException
     {
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         if ( authorizer instanceof WebContainerAuthorizer )
@@ -452,7 +511,7 @@ public class SecurityVerifier
      * Verifies that the roles given in the security policy are reflected by the
      * container <code>web.xml</code> file.
      */
-    protected void verifyPolicyAndContainerRoles()
+    protected final void verifyPolicyAndContainerRoles() throws WikiException
     {
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         Principal[] containerRoles = authorizer.getRoles();
@@ -478,14 +537,125 @@ public class SecurityVerifier
     }
 
     /**
+     * Verifies that the group datbase was initialized properly, and that 
+     * user add and delete operations work as they should.
+     */
+    protected final void verifyGroupDatabase()
+    {
+        GroupManager mgr = m_engine.getGroupManager();
+        GroupDatabase db = null;
+        try 
+        {
+            db = m_engine.getGroupManager().getGroupDatabase();
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_GROUPS, "Could not retrieve GroupManager: " + e.getMessage() );
+        }
+        
+        // Check for obvious error conditions
+        if ( mgr == null || db == null )
+        {
+            if ( mgr == null )
+            {
+                m_session.addMessage( ERROR_GROUPS, "GroupManager is null; JSPWiki could not " +
+                        "initialize it. Check the error logs." );
+            }
+            if ( db == null )
+            {
+                m_session.addMessage( ERROR_GROUPS, "GroupDatabase is null; JSPWiki could not " +
+                        "initialize it. Check the error logs." );
+            }
+            return;
+        }
+        
+        // Everything initialized OK...
+        
+        // Tell user what class of database this is.
+        m_session.addMessage( INFO_GROUPS, "GroupDatabase is of type '" + db.getClass().getName() + 
+                "'. It appears to be initialized properly." );
+        
+        // Now, see how many groups we have.
+        int oldGroupCount = 0;
+        try 
+        {
+            Group[] groups = db.groups();
+            oldGroupCount = groups.length;
+            m_session.addMessage( INFO_GROUPS, "The group database contains " + oldGroupCount + " users." );
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_GROUPS, "Could not obtain a list of current groups: " + e.getMessage() );
+            return;
+        }
+        
+        // Try adding a bogus group with random name
+        String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+        try
+        {
+            // Create dummy test group
+            Group group = mgr.parseGroup( name, "", true );
+            Principal user = new WikiPrincipal( "TestUser" );
+            group.add( user );
+            db.save( group, new WikiPrincipal("SecurityVerifier") );
+            db.commit();
+            
+            // Make sure the group saved successfully
+            if ( db.groups().length == oldGroupCount )
+            {
+                m_session.addMessage( ERROR_GROUPS, "Could not add a test group to the database." );
+                return;
+            }
+            m_session.addMessage( INFO_GROUPS, "The group database allows new groups to be created, as it should." );
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_GROUPS, "Could not add a group to the database: " + e.getMessage() );
+            return;
+        }
+
+        // Now delete the group; should be back to old count
+        try 
+        {
+            mgr.removeGroup( name );
+            if ( db.groups().length != oldGroupCount )
+            {
+                m_session.addMessage( ERROR_GROUPS, "Could not delete a test group from the database." );
+                return;
+            }
+            m_session.addMessage( INFO_GROUPS, "The group database allows groups to be deleted, as it should." );
+        }
+        catch ( WikiSecurityException e )
+        {
+            m_session.addMessage( ERROR_GROUPS, "Could not delete a test group from the database: " + e.getMessage() );
+            return;
+        }
+        
+        m_session.addMessage( INFO_GROUPS, "The group database configuration looks fine." );
+    }
+    
+    /**
      * Verfies the JAAS configuration. The configuration is valid if value of
      * the system property <code>java.security.auth.login.config</code>
      * resolves to an existing file, and we can find the JAAS login
      * configurations for <code>JSPWiki-container</code> and
      * <code>JSPWiki-custom</code>.
      */
-    protected void verifyJaas()
+    protected final void verifyJaas()
     {
+        // See if JAAS is on
+        AuthorizationManager authMgr = m_engine.getAuthorizationManager();
+        if ( !authMgr.isJAASAuthorized() )
+        {
+            m_session.addMessage( ERROR_JAAS, "JSPWiki's JAAS-based authentication " +
+                    "and authorization system is turned off (your <code>jspwiki.properties</code> " +
+                    "contains the setting 'jspwiki.security = container'. This " +
+                    "setting disables authorization checks and is meant for testing " +
+                    "and troubleshooting only. The test results on this page will not " +
+                    "be reliable as a result. You should set this to 'jaas' " +
+                    "so that security works properly." );
+        }
+        
         // Validate the property is set correctly
         m_jaasConfig = getFileFromProperty( "java.security.auth.login.config" );
 
@@ -498,7 +668,7 @@ public class SecurityVerifier
         m_isJaasConfigured = ( m_jaasConfig != null && foundJaasContainerConfig && foundJaasCustomConfig );
     }
 
-    protected File getFileFromProperty( String property )
+    protected final File getFileFromProperty( String property )
     {
         String propertyValue = null;
         try
@@ -543,7 +713,7 @@ public class SecurityVerifier
      * resolves to an existing file, and the policy file that this file
      * represents a valid policy.
      */
-    protected void verifyPolicy()
+    protected final void verifyPolicy()
     {
         // Look up the policy property and set the status text.
         m_securityPolicy = getFileFromProperty( "java.security.policy" );
@@ -620,22 +790,35 @@ public class SecurityVerifier
      * @return the result, based on consultation with the active Java security
      *         policy
      */
-    protected boolean verifyStaticPermission( Principal principal, Permission permission )
+    protected final boolean verifyStaticPermission( Principal principal, final Permission permission )
     {
         Subject subject = new Subject();
         subject.getPrincipals().add( principal );
-        AuthorizationManager auth = m_engine.getAuthorizationManager();
-        boolean result = auth.checkStaticPermission( subject, permission );
-        return result;
+        try 
+        {
+            Subject.doAsPrivileged( subject, new PrivilegedAction()
+            {
+                public Object run()
+                {
+                        AccessController.checkPermission( permission );
+                        return null;
+                }
+            }, null );
+            return true;
+        }
+        catch ( AccessControlException e )
+        {
+            return false;
+        }
     }
     
     /**
      * Verifies that the user datbase was initialized properly, and that 
      * user add and delete operations work as they should.
      */
-    protected void verifyUserDatabase()
+    protected final void verifyUserDatabase()
     {
-        UserDatabase db = m_engine.getUserDatabase();
+        UserDatabase db = m_engine.getUserManager().getUserDatabase();
         
         // Check for obvious error conditions
         if ( db == null )
@@ -710,7 +893,7 @@ public class SecurityVerifier
         }
         catch ( WikiSecurityException e )
         {
-            m_session.addMessage( ERROR_DB, "Could not add a test user to the database: " + e.getMessage() );
+            m_session.addMessage( ERROR_DB, "Could not delete a test user to the database: " + e.getMessage() );
             return;
         }
         
