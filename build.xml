@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.72 2006-06-24 18:53:35 arj Exp $
+    $Id: build.xml,v 1.73 2006-07-29 19:55:45 arj Exp $
 -->    
        
 <!--   
@@ -419,7 +419,10 @@
       <!-- Build up the /etc directory for testing -->
       <delete file="tests/etc/userdatabase.xml" />
       <delete file="tests/etc/userdatabase.xml.old" />
-      <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml" />
+      <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
+      <delete file="tests/etc/groupdatabase.xml" />
+      <delete file="tests/etc/groupdatabase.xml.old" />
+      <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
       <mkdir dir="tests/etc/WEB-INF" />
       
       <!-- Create web.xml files for testing -->
