@@ -21,14 +21,18 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 
 /**
@@ -42,10 +46,12 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * <code>created</code> - creation date</li>
  * <code>email</code> - user's e-mail address</li>
  * <code>fullname</code> - user's full name</li>
+ * <code>groups</code> - a sorted list of the groups a user belongs to</li>
  * <code>loginname</code> - user's login name. If the current user does not have
  * a profile, the user's login principal (such as one provided by a container
  * login module, user cookie, or anonyous IP address), will supply the login 
  * name property</li>
+ * <code>roles</code> - a sorted list of the roles a user possesses</li>
  * <code>wikiname</code> - user's wiki name</li>
  * <code>modified</code> - last modification date</li>
  * <code>exists</code> - evaluates the body of the tag if user's profile exists
@@ -54,7 +60,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * exist in the user database
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-06-17 23:18:49 $
+ * @version $Revision: 1.8 $ $Date: 2006-07-29 19:53:29 $
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase
@@ -70,6 +76,8 @@ public class UserProfileTag extends WikiTagBase
     private static final String EXISTS    = "exists";
     
     private static final String FULLNAME  = "fullname";
+    
+    private static final String GROUPS    = "groups";
     
     private static final String LOGINNAME = "loginname";
         
@@ -116,6 +124,10 @@ public class UserProfileTag extends WikiTagBase
         {
             result = profile.getFullname();
         }
+        else if ( GROUPS.equals( m_prop ) )
+        {
+            result = printGroups( m_wikiContext );
+        }
         else if ( LOGINNAME.equals( m_prop ) )
         {
             result = profile.getLoginName();
@@ -126,19 +138,7 @@ public class UserProfileTag extends WikiTagBase
         }
         else if ( ROLES.equals( m_prop ) )
         {
-            AuthorizationManager auth = m_wikiContext.getEngine().getAuthorizationManager();
-            Principal[] roles = auth.getRoles( m_wikiContext.getWikiSession() );
-            StringBuffer sb = new StringBuffer();
-            for ( int i = 0; i < roles.length; i++ )
-            {
-                sb.append( roles[i].getName() );
-                if ( i < ( roles.length - 1 ) ) 
-                {
-                    sb.append(',');
-                    sb.append(' ');
-                }
-            }
-            result = sb.toString();
+            result = printRoles( m_wikiContext );
         }
         else if ( WIKINAME.equals( m_prop ) )
         {
@@ -169,5 +169,83 @@ public class UserProfileTag extends WikiTagBase
     public void setProperty( String property )
     {
         m_prop = property.toLowerCase().trim();
+    }
+    
+    /**
+     * Returns a sorted list of the {@link com.ecyrd.jspwiki.auth.authorize.Group} objects a user possesses
+     * in his or her WikiSession. The result is computed by consulting
+     * {@link com.ecyrd.jspwiki.WikiSession#getRoles()}
+     * and extracting those that are of type Group.
+     * @return the list of groups, sorted by name
+     */
+    public static String printGroups( WikiContext context )
+    {
+        Principal[] roles = context.getWikiSession().getRoles();
+        List tempRoles = new ArrayList();
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            if ( roles[i] instanceof Group )
+            {
+                tempRoles.add( roles[i].getName() );
+            }
+        }
+        if ( tempRoles.size() == 0 )
+        {
+            return "(none)";
+        }
+        
+        StringBuffer sb = new StringBuffer();
+        for ( int i = 0; i < tempRoles.size(); i++ )
+        {
+            String name = (String)tempRoles.get( i );
+            {
+                sb.append( name );
+                if ( i < ( tempRoles.size() - 1 ) ) 
+                {
+                    sb.append(',');
+                    sb.append(' ');
+                }
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Returns a sorted list of the {@link com.ecyrd.jspwiki.auth.authorize.Role} objects a user possesses
+     * in his or her WikiSession. The result is computed by consulting
+     * {@link com.ecyrd.jspwiki.WikiSession#getRoles()}
+     * and extracting those that are of type Role.
+     * @return the list of roles, sorted by name
+     */
+    public static String printRoles( WikiContext context )
+    {
+        Principal[] roles = context.getWikiSession().getRoles();
+        List tempRoles = new ArrayList();
+        for ( int i = 0; i < roles.length; i++ )
+        {
+            if ( roles[i] instanceof Role )
+            {
+                tempRoles.add( roles[i].getName() );
+            }
+        }
+        if ( tempRoles.size() == 0 )
+        {
+            return "(none)";
+        }
+        
+        StringBuffer sb = new StringBuffer();
+        for ( int i = 0; i < tempRoles.size(); i++ )
+        {
+            String name = (String)tempRoles.get( i );
+            {
+                sb.append( name );
+                if ( i < ( tempRoles.size() - 1 ) ) 
+                {
+                    sb.append(',');
+                    sb.append(' ');
+                }
+            }
+        }
+        return sb.toString();
     }
 }
