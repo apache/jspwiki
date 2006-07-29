@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Defines an interface for loading, persisting and storing users.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-05-20 23:56:17 $
+ * @version $Revision: 1.7 $ $Date: 2006-07-29 19:52:11 $
  * @since 2.3
  */
 public interface UserDatabase
@@ -178,12 +178,6 @@ public interface UserDatabase
      * </p>
      * <p>Implementations are <em>required</em> to time-stamp the creation
      * or modification fields of the UserProfile./p>
-     * <p>
-     * Calling classes should generally call
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#refreshCredentials(WikiSession)} after
-     * calling this method to ensure that Principals are reloaded into the
-     * current WikiSession's Subject.
-     * </p>
      * @param profile the user profile to save
      * @throws WikiSecurityException if the profile cannot be saved
      */

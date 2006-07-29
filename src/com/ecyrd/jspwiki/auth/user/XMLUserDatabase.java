@@ -56,7 +56,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.14 $ $Date: 2006-05-20 23:56:17 $
+ * @version $Revision: 1.15 $ $Date: 2006-07-29 19:52:11 $
  * @since 2.3
  */
 public class XMLUserDatabase extends AbstractUserDatabase
@@ -66,7 +66,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
      * The jspwiki.properties property specifying the file system location of
      * the user database.
      */
-    public static final String    PROP_USERDATABASE = "jspwiki.xmlUserDatabaseFile";
+    public static final String  PROP_USERDATABASE = "jspwiki.xmlUserDatabaseFile";
     
     private static final String DEFAULT_USERDATABASE = "userdatabase.xml";
 
