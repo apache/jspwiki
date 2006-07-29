@@ -90,7 +90,7 @@ public class InsertPage
                 {
                     if( previousIncludes.contains( page.getName() ) )
                     {
-                        return "<span class=\"error\">Error: Circular reference - you can't include a page in itself!";
+                        return "<span class=\"error\">Error: Circular reference - you can't include a page in itself!</span>";
                     }
                 }
                 else
