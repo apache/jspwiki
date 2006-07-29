@@ -19,14 +19,16 @@ import java.net.URL;
 import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.*;
+import javax.security.auth.login.AccountExpiredException;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -36,16 +38,15 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.authorize.Group;
-import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
 import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
-import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.EventSourceDelegate;
+import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventSource;
 
 /**
  * Manages authentication activities for a WikiEngine: user login, logout, and 
@@ -53,10 +54,10 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.28 $ $Date: 2006-07-25 03:46:22 $
+ * @version $Revision: 1.29 $ $Date: 2006-07-29 19:43:16 $
  * @since 2.3
  */
-public final class AuthenticationManager
+public final class AuthenticationManager implements WikiEventSource
 {
 
     /** The name of the built-in cookie authentication module */
@@ -84,8 +85,8 @@ public final class AuthenticationManager
 
     private WikiEngine                         m_engine            = null;
 
-    /** Listeners for security events */
-    private final Set        m_listeners = new HashSet();
+    /** Delegate for managing event listeners */
+    private EventSourceDelegate                m_listeners         = new EventSourceDelegate();
     
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
@@ -111,15 +112,14 @@ public final class AuthenticationManager
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
     private static final String                DEFAULT_POLICY      = "jspwiki.policy";    
     
-    private static       boolean               c_useJAAS = true;
+    private static       boolean               m_useJAAS = true;
     
     /**
-     * Registers a WikiEventListener with this instance.
-     * @param listener the event listener
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.add( listener );
+        m_listeners.addWikiEventListener( listener );
     }
 
     /**
@@ -134,9 +134,9 @@ public final class AuthenticationManager
         m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
         m_isJavaPolicyConfiguredAtStartup = PolicyLoader.isSecurityPolicyConfigured();
 
-        c_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
+        m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
         
-        if( !c_useJAAS ) return;
+        if( !m_useJAAS ) return;
         
         //
         //  The rest is JAAS implementation
@@ -193,12 +193,19 @@ public final class AuthenticationManager
      */
     public final boolean isContainerAuthenticated()
     {
-        if( !c_useJAAS ) return true;
+        if( !m_useJAAS ) return true;
         
-        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
-        if ( authorizer != null && authorizer instanceof WebContainerAuthorizer )
+        try 
         {
-             return ( ( WebContainerAuthorizer )authorizer ).isContainerAuthorized();
+            Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
+            if ( authorizer instanceof WebContainerAuthorizer )
+            {
+                 return ( ( WebContainerAuthorizer )authorizer ).isContainerAuthorized();
+            }
+        }
+        catch ( WikiException e )
+        {
+            // It's probably ok to fail silently...
         }
         return false;
     }
@@ -217,9 +224,10 @@ public final class AuthenticationManager
      *             methods return null
      * @throws IllegalArgumentException if the <code>context</code> parameter
      *             is null
+     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      * @since 2.3
      */
-    public final boolean login( HttpServletRequest request )
+    public final boolean login( HttpServletRequest request ) throws WikiSecurityException
     {
         if ( request == null )
         {
@@ -234,10 +242,14 @@ public final class AuthenticationManager
 
         // If using JAAS, try to log in; otherwise logins "always" succeed
         boolean login = true;
-        if( c_useJAAS )
+        if( m_useJAAS )
         {
-            Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
-            CallbackHandler handler = new WebContainerCallbackHandler( request, m_engine.getUserDatabase(), authorizer );
+            AuthorizationManager authMgr = m_engine.getAuthorizationManager();
+            UserManager userMgr = m_engine.getUserManager();
+            CallbackHandler handler = new WebContainerCallbackHandler( 
+                    request, 
+                    userMgr.getUserDatabase(), 
+                    authMgr.getAuthorizer() );
             login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
         }
         return login;
@@ -252,8 +264,9 @@ public final class AuthenticationManager
      *            not be.
      * @param password The password
      * @return true, if the username/password is valid
+     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      */
-    public final boolean login( WikiSession session, String username, String password )
+    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
     {
         if ( session == null )
         {
@@ -261,7 +274,11 @@ public final class AuthenticationManager
             return false;
         }
         
-        CallbackHandler handler = new WikiCallbackHandler( m_engine.getUserDatabase(), username, password );
+        UserManager userMgr = m_engine.getUserManager();
+        CallbackHandler handler = new WikiCallbackHandler( 
+                userMgr.getUserDatabase(), 
+                username, 
+                password );
         return doLogin( session, handler, LOGIN_CUSTOM );
     }
     
@@ -304,72 +321,11 @@ public final class AuthenticationManager
     }
     
     /**
-     * Reloads user Principals into the suppplied WikiSession's Subject.
-     * Existing Role principals are preserved; all other Principal
-     * types are flushed and replaced by those returned by
-     * {@link com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(String)}.
-     * This method should generally be called after a user's {@link com.ecyrd.jspwiki.auth.user.UserProfile}
-     * is saved. If the wiki session is null, or there is no matching user profile, the
-     * method returns silently.
-     * @param wikiSession
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
      */
-    public final void refreshCredentials( WikiSession wikiSession ) 
+    public final void removeWikiEventListener( WikiEventListener listener )
     {
-        // Get the database and wiki session Subject
-        UserDatabase database = m_engine.getUserDatabase();
-        if ( database == null )
-        {
-            throw new IllegalStateException( "User database cannot be null." );
-        }
-        Subject subject = wikiSession.getSubject();
-      
-        // Copy all Role and GroupPrincipal principals into a temporary cache
-        Set oldPrincipals = subject.getPrincipals();
-        Set newPrincipals = new HashSet();
-        for (Iterator it = oldPrincipals.iterator(); it.hasNext();)
-        {
-            Principal principal = (Principal)it.next();
-            if (principal instanceof Role || principal instanceof GroupPrincipal )
-            {
-                newPrincipals.add( principal );
-            }
-        }
-        String searchId = wikiSession.getUserPrincipal().getName();
-        if ( searchId == null )
-        {
-            // Oh dear, this wasn't an authenticated user after all
-            log.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
-            return;
-        }
-      
-        // Look up the user and go get the new Principals
-        try 
-        {
-            UserProfile profile = database.find( searchId );
-            Principal[] principals = database.getPrincipals( profile.getLoginName() );
-            for (int i = 0; i < principals.length; i++)
-            {
-                newPrincipals.add( principals[i] );
-            }
-        
-            // Replace the Subject's old Principals with the new ones
-            oldPrincipals.clear();
-            oldPrincipals.addAll( newPrincipals );
-        }
-        catch ( NoSuchPrincipalException e )
-        {
-            // It would be extremely surprising if we get here....
-            log.error("Refresh principals failed because user profile matching '" + searchId + "' not found.");
-        }
-    }
-
-    /**
-     * Un-registers a WikiEventListener with this instance.
-     * @param listener the event listener
-     */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.remove( listener );
+        m_listeners.removeWikiEventListener( listener );
     }
     
     /**
@@ -380,7 +336,7 @@ public final class AuthenticationManager
      */
     public static final boolean allowsCookieAssertions()
     {
-        if( !c_useJAAS ) return true;
+        if( !m_useJAAS ) return true;
         
         // Lazily initialize
         if( m_allowsAssertions == null )
@@ -413,90 +369,50 @@ public final class AuthenticationManager
     }
     
     /**
-     * Fires a wiki event to all registered listeners.
-     * @param event the event
+     * Determines whether the supplied Principal is a "role principal".
+     * @param principal the principal to test
+     * @return <code>true</code> if the Principal is of type
+     *         {@link GroupPrincipal} or
+     *         {@link com.ecyrd.jspwiki.auth.authorize.Role}, 
+     *         <code>false</code> otherwise
      */
-    protected final void fireEvent( WikiSecurityEvent event )
+    public static final boolean isRolePrincipal( Principal principal )
     {
-        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
-        {
-            WikiEventListener listener = (WikiEventListener)it.next();
-            listener.actionPerformed(event);
-        }
+        return ( principal instanceof Role ||
+                 principal instanceof GroupPrincipal );
     }
     
     /**
-     * Injects GroupPrincipal objects into the user's Principal set
-     * based on the groups the user belongs to. This method also
-     * attaches a WikiEventListener to the GroupManager so that
-     * changes to groups are detected automatically.
-     * @param session the wiki session
+     * Determines whether the supplied Principal is a "user principal".
+     * @param principal the principal to test
+     * @return <code>false</code> if the Principal is of type
+     *         {@link GroupPrincipal} or
+     *         {@link com.ecyrd.jspwiki.auth.authorize.Role}, 
+     *         <code>true</code> otherwise
      */
-    protected final void injectGroupPrincipals( WikiSession session )
+    public static final boolean isUserPrincipal( Principal principal )
     {
-        Subject subject = session.getSubject();
-        
-        // Get the GroupManager and test for each Group
-        GroupManager manager = m_engine.getGroupManager();
-        Principal[] groups = manager.getRoles();
-        for ( int i = 0; i < groups.length; i++ )
-        {
-            if ( manager.isUserInRole( session, groups[i] ) )
-            {
-                Group group = (Group)groups[i];
-                Principal groupPrincipal = new GroupPrincipal( m_engine.getApplicationName(), group.getName() );
-                subject.getPrincipals().add( groupPrincipal );
-            }
-        }
-        
-        // Add the user's wiki session as a security event listener
-        manager.addWikiEventListener( session );
+        return !isRolePrincipal( principal );
     }
     
     /**
-     * Injects Role Principals into the user's Principal set
-     * based on the roles the user possesses, according to the
-     * external {@link Authorizer}. This method is called during
-     * once, during login. The algorithm first calls the 
-     * {@link Authorizer#getRoles()} to obtain the array of
-     * Principals the authorizer knows about. Then, the method
-     * {@link Authorizer#isUserInRole(WikiSession, Principal)} is
-     * called for each Principal. If the user possesses the role, 
-     * an equivalent role Principal is injected into the user's
-     * principal set.
-     * 
-     * @param session the wiki session
+     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
      */
-    protected final void injectRolePrincipals( WikiSession session )
+    protected final void fireEvent( WikiEvent event )
     {
-        Subject subject = session.getSubject();
-        
-        // Get the authorizer's known roles, then test for each
-        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
-        Principal[] roles = authorizer.getRoles();
-        for ( int i = 0; i < roles.length; i++ )
-        {
-            Principal role = roles[i];
-            if ( authorizer.isUserInRole( session, role ) )
-            {
-                String roleName = role.getName();
-                if ( !Role.isReservedName( roleName ) )
-                {
-                    subject.getPrincipals().add( new Role( roleName ) );
-                }
-            }
-        }
+        m_listeners.fireEvent( event );
     }
-    
+        
     /**
-     * Log in to the application using a given JAAS LoginConfiguration.
+     * Log in to the application using a given JAAS LoginConfiguration. Any
+     * configuration error 
      * @param wikiSession the current wiki session, to which the Subject will be associated
      * @param handler handles callbacks sent by the LoginModules in the configuration
      * @param application the name of the application whose LoginConfiguration should be used
      * @return the result of the login
      * @throws WikiSecurityException
      */
-    private final boolean doLogin( final WikiSession wikiSession, final CallbackHandler handler, final String application )
+    private final boolean doLogin( final WikiSession wikiSession, final CallbackHandler handler, final String application ) throws WikiSecurityException
     {
         try
         {
@@ -505,7 +421,7 @@ public final class AuthenticationManager
                 public Object run() {
                     try
                     {
-                        return new LoginContext( application, wikiSession.getSubject(), handler );
+                        return wikiSession.getLoginContext( application, handler );
                     }
                     catch( LoginException e )
                     {
@@ -526,12 +442,10 @@ public final class AuthenticationManager
                 return false;
             }
             
-            // If the user authenticated, inject role and group principals and log the event
+            // If the user authenticated, fire an event and log it
             if ( wikiSession.isAuthenticated() )
             {
-                injectGroupPrincipals( wikiSession );
-                injectRolePrincipals( wikiSession );
-                WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), null );
+                WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), wikiSession );
                 fireEvent( event );
             }
             return true;
@@ -543,21 +457,21 @@ public final class AuthenticationManager
             //  and alert the admin
             //
             log.info("Failed login: "+e.getLocalizedMessage());
-            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_FAILED, wikiSession.getLoginPrincipal(), null );
+            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_FAILED, wikiSession.getLoginPrincipal(), wikiSession );
             fireEvent( event );
             return false;
         }
         catch( AccountExpiredException e )
         {
             log.info("Expired account: "+e.getLocalizedMessage());
-            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_ACCOUNT_EXPIRED, wikiSession.getLoginPrincipal(), null );
+            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_ACCOUNT_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
             fireEvent( event );
             return false;
         }
         catch( CredentialExpiredException e )
         {
             log.info("Credentials expired: "+e.getLocalizedMessage());
-            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED, wikiSession.getLoginPrincipal(), null );
+            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
             fireEvent( event );
             return false;
         }
