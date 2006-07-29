@@ -33,24 +33,14 @@ import org.apache.log4j.Logger;
  * </p>
  * <p>
  * The security policy-related methods {@link #isSecurityPolicyConfigured()}
- * &nbsp;and {@link #setSecurityPolicy(URL)}) assume that:
- * </p>
- * <ul>
- * <li>The Policy implementation for the JVM is
- * <code>sun.security.provider.PolicyFile</code>. This should be a safe
- * assumption in most cases, although recent versions of WebSphere and WebLogic
- * use custom Policy implementations. If the Policy implementation is not of
- * type PolicyFile, the policy installation fails. This assumption may be 
- * relaxed in the future; the important question is whether the Policy 
- * implementation parses standard policy files (versus XML, for example), not
- * whether the implementing class is of type PolicyFile <i>per se</i>.</li>
- * <li>The web container doesn't use a "double-equals" command-line assignment
+ * &nbsp;and {@link #setSecurityPolicy(URL)}) assumes that the web container 
+ * doesn't use a "double-equals" command-line assignment
  * to override the security policy ( <i>e.g. </i>,
  * <code>-Djava.security.policy==jspwiki.policy</code>). Note that Tomcat 4
- * and higher, when run using the "-security" option, does this.</li>
- * </ul>
+ * and higher, when run using the "-security" option, does this.
+ * </p>
  * <p>
- * To interoperate with <i>any</i> container running a security policy, the
+ * To interoperate with <i>any</i> container running with a security manager, the
  * container's JVM security policy should include a short set of permission
  * grant similar to the following:
  * </p>
@@ -73,10 +63,10 @@ import org.apache.log4j.Logger;
  * </p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-04-19 20:49:43 $
+ * @version $Revision: 1.6 $ $Date: 2006-07-29 19:45:41 $
  * @since 2.3
  */
-public class PolicyLoader 
+public final class PolicyLoader 
 {    
     protected static final Logger log = Logger.getLogger( PolicyLoader.class );
 
@@ -109,7 +99,7 @@ public class PolicyLoader
      * @throws SecurityException if the codesource containing this class posesses
      *           insufficient permmissions when running with a SecurityManager
      */
-    public static boolean isJaasConfigured() throws SecurityException 
+    public final static boolean isJaasConfigured() throws SecurityException 
     {
         Boolean configured = (Boolean) AccessController
         .doPrivileged(new PrivilegedAction() {
@@ -151,7 +141,7 @@ public class PolicyLoader
      * @throws SecurityException if the codesource containing this class posesses
      *           insufficient permmissions when running with a SecurityManager
      */
-    public static boolean isSecurityPolicyConfigured() throws SecurityException 
+    public final static boolean isSecurityPolicyConfigured() throws SecurityException 
     {
         String policy = (String) AccessController
         .doPrivileged(new PrivilegedAction() {
@@ -227,7 +217,7 @@ public class PolicyLoader
      *           sufficient permmissions when running with a SecurityManager</li>
      *           </ul>
      */
-    public static void setJaasConfiguration(final URL url)
+    public final static void setJaasConfiguration(final URL url)
     throws SecurityException 
     {
         if (url == null) 
@@ -310,7 +300,7 @@ public class PolicyLoader
      *           <code>sun.security.provider.PolicyFile</code></li>
      *           </ul>
      */
-    public static void setSecurityPolicy(final URL url) throws SecurityException 
+    public final static void setSecurityPolicy(final URL url) throws SecurityException 
     {
         if (url == null) 
         {
