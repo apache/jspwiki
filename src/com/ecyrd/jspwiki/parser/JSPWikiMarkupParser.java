@@ -972,7 +972,7 @@ public class JSPWikiMarkupParser
     {
         Element el = null;
         
-        String pageName = m_context.getName();
+        String pageName = m_context.getPage().getName();
 
         String outTitle = makeSectionTitle( title );
 
