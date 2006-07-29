@@ -110,10 +110,12 @@ public class CommandResolverTest extends TestCase
         assertNull( a.getTarget() );
         
         // Request for "NewGroup.jsp" should resolve to CREATE_GROUP action
+        // but targeted at the wiki
         request.setServletPath( "/NewGroup.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
-        assertEquals( WikiCommand.CREATE_GROUP, a );
-        assertNull( a.getTarget() );
+        assertNotSame( WikiCommand.CREATE_GROUP, a );
+        assertEquals( WikiCommand.CREATE_GROUP.getRequestContext(), a.getRequestContext() );
+        assertEquals( testEngine.getApplicationName(), a.getTarget() );
         
         // But request for JSP not mapped to action should get default
         request.setServletPath( "/NonExistent.jsp" );
