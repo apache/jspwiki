@@ -35,7 +35,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-11-08 18:27:51 $
+ * @version $Revision: 1.5 $ $Date: 2006-07-29 19:21:51 $
  * @since 2.3
  */
 public class AnonymousLoginModule extends AbstractLoginModule
@@ -46,7 +46,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
      */
     public static final String PROMPT            = "User name";
 
-    protected static Logger    log               = Logger.getLogger( AnonymousLoginModule.class );
+    protected final static Logger log            = Logger.getLogger( AnonymousLoginModule.class );
     
     /**
      * Logs in the user by calling back to the registered CallbackHandler with an

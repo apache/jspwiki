@@ -14,10 +14,10 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * Handles logins made from within JSPWiki.
  * @link AuthenticationManager#getWikiSession(HttpServletRequest).
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-05-28 23:25:07 $
+ * @version $Revision: 1.4 $ $Date: 2006-07-29 19:21:51 $
  * @since 2.3
  */
-public class WebContainerCallbackHandler implements CallbackHandler
+public final class WebContainerCallbackHandler implements CallbackHandler
 {
     private final UserDatabase       m_database;
 
@@ -35,7 +35,7 @@ public class WebContainerCallbackHandler implements CallbackHandler
     /**
      * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
      */
-    public void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
+    public final void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
     {
         for( int i = 0; i < callbacks.length; i++ )
         {

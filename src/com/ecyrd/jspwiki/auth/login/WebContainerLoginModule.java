@@ -2,6 +2,8 @@ package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -16,7 +18,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
-import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
+import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 
 /**
@@ -49,7 +51,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * if user profile exists, or a generic WikiPrincipal if not.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-05-28 23:25:07 $
+ * @version $Revision: 1.9 $ $Date: 2006-07-29 19:21:51 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
@@ -63,11 +65,11 @@ public class WebContainerLoginModule extends AbstractLoginModule
      */
     public boolean login() throws LoginException
     {
-        HttpRequestCallback requestCallback = new HttpRequestCallback();
-        UserDatabaseCallback databaseCallback = new UserDatabaseCallback();
-        AuthorizerCallback authCallback = new AuthorizerCallback();
+        HttpRequestCallback rcb = new HttpRequestCallback();
+        UserDatabaseCallback udb = new UserDatabaseCallback();
+        AuthorizerCallback acb = new AuthorizerCallback();
         Callback[] callbacks = new Callback[]
-        { requestCallback, databaseCallback, authCallback };
+        { rcb, udb, acb };
         String userId = null;
 
         try
@@ -75,7 +77,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
             // First, try to extract a Principal object out of the request
             // directly. If we find one, we're done.
             m_handler.handle( callbacks );
-            HttpServletRequest request = requestCallback.getRequest();
+            HttpServletRequest request = rcb.getRequest();
             if ( request == null )
             {
                 throw new LoginException( "No Http request supplied." );
@@ -107,11 +109,14 @@ public class WebContainerLoginModule extends AbstractLoginModule
             }
             m_principals.add( new PrincipalWrapper( principal ) );
             
+            // Add any container roles
+            injectWebAuthorizerRoles( acb.getAuthorizer(), request );
+            
             // If login succeeds, commit these roles
             m_principals.add( Role.AUTHENTICATED );
             m_principals.add( Role.ALL );
             
-            // If login succeeds, overwrite these principals/roles
+            // If login succeeds, remove these principals/roles
             m_principalsToOverwrite.add( WikiPrincipal.GUEST );
             m_principalsToOverwrite.add( Role.ANONYMOUS );
             m_principalsToOverwrite.add( Role.ASSERTED );
@@ -119,28 +124,8 @@ public class WebContainerLoginModule extends AbstractLoginModule
             // If login fails, remove these roles
             m_principalsToRemove.add( Role.AUTHENTICATED );
             
-            // Add any container roles we can find.
-            Authorizer authorizer = authCallback.getAuthorizer();
-            if ( authorizer == null )
-            {
-                throw new LoginException( "Authorizer cannot be null." );
-            }
-            if ( authorizer instanceof WebContainerAuthorizer ) 
-            {
-                WebContainerAuthorizer wca = (WebContainerAuthorizer)authorizer;
-                Principal[] roles = wca.getRoles( request);
-                for ( int i = 0; i < roles.length; i++ )
-                {
-                    m_principals.add( roles[i] );
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug("Added Principal " + roles[i].getName() + "." );
-                    }
-                }
-            }
-            
             // Add any user principals from the UserDatabase.
-            UserDatabase database = databaseCallback.getUserDatabase();
+            UserDatabase database = udb.getUserDatabase();
             if ( database == null )
             {
                 throw new LoginException( "User database cannot be null." );
@@ -175,6 +160,43 @@ public class WebContainerLoginModule extends AbstractLoginModule
             }
             return true;
         }
+    }
+
+    /**
+     * If the current Authorizer is a 
+     * {@link com.ecyrd.jwpwiki.auth.authorize.WebAuthorizer},
+     * this method iterates through each role returned by the 
+     * authorizer (via 
+     * {@link com.ecyrd.jwpwiki.auth.authorize.WebAuthorizer#isUserInRole( HttpServletRequest, Role)})
+     * and injects the appropriate ones into the Subject.
+     * @param acb the authorizer callback
+     * @param rcb the HTTP request
+     */
+    private final void injectWebAuthorizerRoles( Authorizer authorizer, HttpServletRequest request )
+    {
+        Principal[] roles = authorizer.getRoles();
+        Set foundRoles = new HashSet();
+        if ( authorizer instanceof WebAuthorizer )
+        {
+            WebAuthorizer wa = (WebAuthorizer)authorizer;
+            for ( int i = 0; i < roles.length; i++ )
+            {
+                if ( wa.isUserInRole( request, roles[i] ) )
+                {
+                    foundRoles.add( roles[i] );
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug("Added Principal " + roles[i].getName() + "." );
+                    }
+                }
+            }
+        }
+        
+        // Add these container roles if login succeeds
+        m_principals.addAll( foundRoles );
+
+        // Make sure the same ones are removed if login fails
+        m_principalsToRemove.add( foundRoles );
     }
 
 }

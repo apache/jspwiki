@@ -22,13 +22,13 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-06-04 19:50:57 $
+ * @version $Revision: 1.10 $ $Date: 2006-07-29 19:21:51 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule
 {
 
-    protected static Logger   log = Logger.getLogger( AbstractLoginModule.class );
+    protected final static Logger   log = Logger.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
 
@@ -219,7 +219,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * <code>false</code> otherwise.
      * @return
      */
-    private boolean succeeded() {
+    private final boolean succeeded() {
         return ( m_principals.size() > 0 );
     }
     
@@ -228,7 +228,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * Principal set. 
      * @param principals the principals to remove
      */
-    private void removePrincipals( Collection principals )
+    private final void removePrincipals( Collection principals )
     {
         for ( Iterator it = principals.iterator(); it.hasNext(); )
         {
