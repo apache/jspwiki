@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
+import com.ecyrd.jspwiki.auth.UserManager;
 
 /**
  *  Includes the content if an user check validates.  This has
@@ -205,8 +206,9 @@ public class UserCheckTag
             }
             else if ( SET_PASSWORD.equals( m_status ) )
             {
+                UserManager userMgr = m_wikiContext.getEngine().getUserManager();
                 if ( !mgr.isContainerAuthenticated() ||
-                     m_wikiContext.getEngine().getUserDatabase().isSharedWithContainer() )
+                     userMgr.getUserDatabase().isSharedWithContainer() )
                 {
                     return EVAL_BODY_INCLUDE;
                 }

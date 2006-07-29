@@ -30,7 +30,7 @@ import com.ecyrd.jspwiki.WikiSession;
  * validator will reject any HTML-like input, and any of a number of special
  * characters.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-02-04 21:46:39 $
+ * @version $Revision: 1.5 $ $Date: 2006-07-29 19:34:01 $
  * @since 2.3.54
  */
 public final class InputValidator
@@ -88,7 +88,7 @@ public final class InputValidator
     {
         if ( isBlank( input ) )
         {
-            m_session.addMessage( m_form, label + " cannot be null" );
+            m_session.addMessage( m_form, label + " cannot be blank" );
             return false;
         }
         return validate( input, label, type ) && !isBlank( input );
