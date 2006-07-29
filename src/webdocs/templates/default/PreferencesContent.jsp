@@ -4,7 +4,7 @@
 <%
   //  Determine the name for the user's favorites page
   WikiContext c = WikiContext.findContext( pageContext );
-  String pagename = c.getPage().getName();
+  String pagename = c.getName();
   String username = null;
  
   username = c.getEngine().getVariable( c, "username" );
@@ -198,8 +198,9 @@
                 Access control lists or wiki groups containing your identity
                 should specify <strong><wiki:UserProfile property="wikiname"/></strong>
                 or <strong><wiki:UserProfile property="fullname"/></strong>.
-                You are also a member of these roles and groups: 
-                <strong><wiki:UserProfile property="roles" /></strong>.
+                You are also a member of these roles: 
+                <strong><wiki:UserProfile property="roles" /></strong>,
+                and the following groups: <strong><wiki:UserProfile property="groups" /></strong>.
                 ACLs containing these roles and groups should work, too.
               </div>
             </wiki:UserProfile>

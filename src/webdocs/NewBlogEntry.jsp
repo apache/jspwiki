@@ -17,7 +17,7 @@
     // Create wiki context; no need to check for authorization since the 
     // redirect will take care of that
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
     
     // Redirect if the request was for a 'special page'
     String specialpage = wiki.getSpecialPageReference( pagereq );

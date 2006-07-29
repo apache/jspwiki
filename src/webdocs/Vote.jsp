@@ -14,7 +14,7 @@
 %><%
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
     
     String vote    = request.getParameter("vote");
     log.info("Vote '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );

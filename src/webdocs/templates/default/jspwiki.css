@@ -286,11 +286,15 @@ div.formcontainer form label
                            padding-top: .25em; margin: 0 10px; }
 div.formcontainer input  { padding: 0.15em; }
 div.formcontainer input[type='submit'] 
-                         { width:auto; margin-left: 140px;  }
+                         { width:auto; margin-right: 1em; float:right }
+div.formcontainer textarea 
+                         { padding: 0; width:65%; margin: 0 0 0 140px;  }
 div.formcontainer .instructions
                          { margin: 0.5em 0; }
 div.formcontainer .description
                          { margin: 0.5em 10px 0.5em 140px; font-style: italic; }
+div.formcontainer .readonly
+                         { margin: 0 10px 0.5em 140px; }
 
 /* +++ 485 SearchBox +++ */
 #searchboxMenu           { padding: 4px;

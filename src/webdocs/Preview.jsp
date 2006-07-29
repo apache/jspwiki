@@ -17,7 +17,7 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREVIEW );
     if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
 
     pageContext.setAttribute( EditorManager.ATTR_EDITEDTEXT,
                               session.getAttribute( EditorManager.REQ_EDITEDTEXT ),

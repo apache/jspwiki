@@ -4,7 +4,7 @@
   <%
     //  Determine the name for the user's favorites page
     WikiContext c = WikiContext.findContext( pageContext );
-    String pagename = c.getPage().getName();
+    String pagename = c.getName();
     String username = null;
  
     username = c.getEngine().getVariable( c, "username" );

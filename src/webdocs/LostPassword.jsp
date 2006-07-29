@@ -22,7 +22,7 @@
     {
         // Reset pw for account name
         String name = request.getParameter("name");
-        UserDatabase userDatabase = wiki.getUserDatabase();
+        UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
         boolean success = false;
         try 
         {

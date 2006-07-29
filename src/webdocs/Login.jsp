@@ -5,6 +5,7 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -20,6 +21,9 @@
 <%
     AuthenticationManager mgr = wiki.getAuthenticationManager();
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
+    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                              wikiContext,
+                              PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
     
     if( !mgr.isContainerAuthenticated() )
@@ -85,7 +89,7 @@
         CookieAssertionLoginModule.setUserCookie( response, principal.getName() );
         
         // If wiki page was "Login", redirect to main, otherwise use the page supplied
-        String redirectPage = wikiContext.getPage().getName();
+        String redirectPage = wikiContext.getName();
         String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
     
         // Redirect!

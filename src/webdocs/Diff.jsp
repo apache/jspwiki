@@ -18,7 +18,7 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DIFF );
     if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
 
     String pageurl = wiki.encodeName( pagereq );
 

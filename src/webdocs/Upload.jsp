@@ -19,7 +19,7 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.UPLOAD );
     if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

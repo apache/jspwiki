@@ -20,7 +20,7 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
     if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
 
     WikiPage wikipage      = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );

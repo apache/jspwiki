@@ -50,7 +50,7 @@ public class PageNameTag
             }
             else
             {
-                pageContext.getOut().print( engine.beautifyTitle(page.getName()) );
+                pageContext.getOut().print( engine.beautifyTitle( m_wikiContext.getName() ) );
             }
         }
 

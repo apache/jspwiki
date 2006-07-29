@@ -321,7 +321,7 @@ public class TranslatorReader extends Reader
         String runplugins = m_engine.getVariable( m_context, PROP_RUNPLUGINS );
         if( runplugins != null ) enablePlugins( TextUtil.isPositive(runplugins));
         
-        if( m_engine.getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
+        if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
             disableAccessRules();
         }   

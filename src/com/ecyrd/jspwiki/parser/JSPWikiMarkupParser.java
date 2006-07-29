@@ -276,7 +276,7 @@ public class JSPWikiMarkupParser
                                                              PROP_USERELNOFOLLOW,
                                                              m_useRelNofollow );
     
-        if( m_engine.getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
+        if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
             disableAccessRules();
         }   
@@ -418,13 +418,13 @@ public class JSPWikiMarkupParser
                 //
             case LOCALREF:
                 el = new Element("a").setAttribute("class","footnoteref");
-                el.setAttribute("href","#ref-"+m_context.getPage().getName()+"-"+link);
+                el.setAttribute("href","#ref-"+m_context.getName()+"-"+link);
                 el.addContent("["+text+"]");
                 break;
 
             case LOCAL:
                 el = new Element("a").setAttribute("class","footnote");
-                el.setAttribute("name", "ref-"+m_context.getPage().getName()+"-"+link.substring(1));
+                el.setAttribute("name", "ref-"+m_context.getName()+"-"+link.substring(1));
                 el.addContent("["+text+"]");
                 break;
 
@@ -972,7 +972,7 @@ public class JSPWikiMarkupParser
     {
         Element el = null;
         
-        String pageName = m_context.getPage().getName();
+        String pageName = m_context.getName();
 
         String outTitle = makeSectionTitle( title );
 
@@ -2130,7 +2130,7 @@ public class JSPWikiMarkupParser
                 }
                 catch( EmptyStackException e )
                 {
-                    log.debug("Page '"+m_context.getPage().getName()+"' closes a %%-block that has not been opened.");
+                    log.debug("Page '"+m_context.getName()+"' closes a %%-block that has not been opened.");
                     return m_currentElement;
                 }
                 
@@ -2507,7 +2507,7 @@ public class JSPWikiMarkupParser
         }
         catch( IllegalDataException e )
         {
-            log.error("Page "+m_context.getPage().getName()+" contained something that cannot be added in the DOM tree",e);
+            log.error("Page "+m_context.getName()+" contained something that cannot be added in the DOM tree",e);
             throw new IOException("Illegal page data: "+e.getMessage());
         }
         

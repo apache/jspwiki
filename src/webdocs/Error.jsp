@@ -13,7 +13,7 @@
 <%
     WikiContext wikiContext = wiki.createContext( request, 
                                                   WikiContext.ERROR );
-    String pagereq = wikiContext.getPage().getName();
+    String pagereq = wikiContext.getName();
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 

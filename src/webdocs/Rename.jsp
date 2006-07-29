@@ -19,7 +19,7 @@
 	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
     if(!wikiContext.hasAccess( response )) return;
 	
-    String renameFrom = wikiContext.getPage().getName();
+    String renameFrom = wikiContext.getName();
     String renameTo = request.getParameter( "renameto");
     
     boolean changeReferences = false;

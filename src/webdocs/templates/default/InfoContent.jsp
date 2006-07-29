@@ -71,7 +71,7 @@ function confirmDelete()
        <tr>
            <td><b>Page feed</b></td>
            <td><a href="<wiki:Link format="url" jsp="rss.jsp">
-                           <wiki:Param name="page" value="<%=c.getPage().getName()%>"/>
+                           <wiki:Param name="page" value="<%=c.getName()%>"/>
                            <wiki:Param name="mode" value="wiki"/>
                         </wiki:Link>"><img src="<wiki:Link jsp="images/xml.png" format="url"/>" border="0" alt="[RSS]"/></a></td>
        </tr>
@@ -248,7 +248,7 @@ function confirmDelete()
 
     <tr>
     <th>Page feed</th>
-    <td><a href="<wiki:Link format="url" jsp="rss.jsp"><wiki:Param name="page" value="<%=c.getPage().getName()%>"/><wiki:Param name="mode" value="wiki"/></wiki:Link>"
+    <td><a href="<wiki:Link format="url" jsp="rss.jsp"><wiki:Param name="page" value="<%=c.getName()%>"/><wiki:Param name="mode" value="wiki"/></wiki:Link>"
            title="RSS link for <wiki:PageName />" >
         <img src="<wiki:Link format="url" jsp="images/xml.png"/>" border="0" alt="[RSS]"  />
         </a>

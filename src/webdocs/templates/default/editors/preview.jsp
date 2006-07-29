@@ -12,8 +12,8 @@
 <% if( usertext == null ) usertext = ""; %>
 <% 
    String action = "comment".equals(request.getParameter("action")) ? 
-                   context.getURL(WikiContext.COMMENT,context.getPage().getName()) : 
-                   context.getURL(WikiContext.EDIT,context.getPage().getName());
+                   context.getURL(WikiContext.COMMENT,context.getName()) : 
+                   context.getURL(WikiContext.EDIT,context.getName());
  %>
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
       action="<%=action%>" 
