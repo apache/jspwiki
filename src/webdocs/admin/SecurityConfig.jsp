@@ -36,7 +36,7 @@
 <div id="page">
 <div id="pagecontent">
 
-<h1>Security Configuration Verifier</h1>
+<h1>JSPWiki Security Configuration Verifier</h1>
 
 <p>This page examines JSPWiki's security configuration and tries to determine if it is working the way it should. Although JSPWiki comes configured with some reasonable default configuration settings out of the box, it's not always obvious what settings to change if you need to customize the security... and sooner or later, just about everyone does.</p>
 
@@ -303,14 +303,21 @@ In addition, because you are using container-managed security, constraints on us
   }
 %>
 
-<h2>User Database</h2>
+<h2>User and Group Databases</h2>
 
-<h3>Database Configuration</h3>
+<h3>User Database Configuration</h3>
 <p>The user database stores user profiles. It's pretty important that it functions properly. We will try to determine what your current UserDatabase implementation is, based on the current value of the <code>jspwiki.userdatabase</code> property in your <code>jspwiki.properties</code> file. In addition, once we establish that the UserDatabase has been initialized properly, we will try to add (then, delete) a random test user. If all of these things work they way they should, then you should have no problems with user self-registration.</p>
 
 <wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_DB%>" prefix="Good news: "/>
 <wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_DB%>" prefix="We found some potential problems with your configuration: "/>
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_DB%>" prefix="We found some errors with your configuration: " />
+
+<h3>Group Database Configuration</h3>
+<p>The group database stores wiki groups. It's pretty important that it functions properly. We will try to determine what your current GroupDatabase implementation is, based on the current value of the <code>jspwiki.groupdatabase</code> property in your <code>jspwiki.properties</code> file. In addition, once we establish that the GroupDatabase has been initialized properly, we will try to add (then, delete) a random test group. If all of these things work they way they should, then you should have no problems with wiki group creation and editing.</p>
+
+<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_GROUPS%>" prefix="Good news: "/>
+<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_GROUPS%>" prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_GROUPS%>" prefix="We found some errors with your configuration: " />
 
 <!-- We're done... -->
 </div>
