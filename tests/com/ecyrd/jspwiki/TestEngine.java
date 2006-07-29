@@ -2,11 +2,12 @@
 package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.io.*;
-import javax.servlet.http.HttpServletRequest;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.auth.GroupPrincipal;
+import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.providers.*;
 
 /**
@@ -15,11 +16,22 @@ import com.ecyrd.jspwiki.providers.*;
 public class TestEngine extends WikiEngine
 {
     static Logger log = Logger.getLogger( TestEngine.class );
+    
+    private HttpSession m_adminSession;
 
     public TestEngine( Properties props )
         throws WikiException
     {
         super( props );
+        
+        // Set up long-running admin session
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        request.setRemoteAddr( "53.33.128.9" );
+        WikiSession session = WikiSession.getWikiSession( this, request );
+        this.getAuthenticationManager().login( session, 
+                Users.ADMIN, 
+                Users.ADMIN_PASS );
+        m_adminSession = request.getSession();
     }
 
     public static void emptyWorkDir()
@@ -175,11 +187,13 @@ public class TestEngine extends WikiEngine
     public void saveText( String pageName, String content )
         throws WikiException
     {
-        HttpServletRequest request = new TestHttpServletRequest();
+        // Build new request and associate our admin session
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        request.m_session = m_adminSession;
+        
+        // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
         WikiContext context = new WikiContext( this, request, page );
-        String wiki = getApplicationName();
-        context.getWikiSession().getSubject().getPrincipals().add( new GroupPrincipal( wiki, "Admin" ) );
         saveText( context, content );
     }
 

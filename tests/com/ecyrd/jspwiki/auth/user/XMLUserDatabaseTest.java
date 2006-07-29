@@ -2,11 +2,15 @@ package com.ecyrd.jspwiki.auth.user;
 import java.security.Principal;
 import java.util.Properties;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
+import com.ecyrd.jspwiki.auth.Users;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 
@@ -126,8 +130,17 @@ public class XMLUserDatabaseTest extends TestCase {
   
   public void testGetWikiNames() throws WikiSecurityException
   {
-      Principal[] principals = db.getWikiNames();
-      assertEquals( 2, principals.length );
+      // There are 8 test users in the database
+      Principal[] p = db.getWikiNames();
+      assertEquals( 8, p.length );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "JanneJalkanen" ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "" ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "Administrator" ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.ALICE ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BOB ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.CHARLIE ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "FredFlintstone" ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BIFF ) ) );
   }
 
   public void testSave() {

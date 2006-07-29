@@ -1,9 +1,7 @@
 package com.ecyrd.jspwiki.auth;
 
-import java.util.Collection;
+import java.security.Principal;
 import java.util.Properties;
-
-import javax.security.auth.Subject;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -11,9 +9,9 @@ import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManagerTest;
+import com.ecyrd.jspwiki.WikiSessionTest;
 import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 
 /**
@@ -25,7 +23,13 @@ public class AuthenticationManagerTest extends TestCase
     private AuthenticationManager m_auth;
 
     private TestEngine            m_engine;
+    
+    private GroupManager          m_groupMgr;
  
+    private WikiSession           m_session;
+    
+    private String                m_wiki;
+    
     public AuthenticationManagerTest( String s )
     {
         super( s );
@@ -37,71 +41,89 @@ public class AuthenticationManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         m_engine = new TestEngine( props );
         m_auth = m_engine.getAuthenticationManager();
+        m_groupMgr = m_engine.getGroupManager();
+        m_session = WikiSessionTest.adminSession( m_engine );
+        m_wiki = m_engine.getApplicationName();
     }
     
-    public void testLoginCustom()
+    public void testIsUserPrincipal()
     {
-        WikiSession session = WikiSession.guestSession( m_engine );
-        m_auth.login( session, "janne", "myP@5sw0rd" );
-        Subject subject = session.getSubject();
-        Collection principals = subject.getPrincipals();
-        assertTrue( principals.contains( Role.ALL ) );
-        assertTrue( principals.contains( Role.AUTHENTICATED ) );
-        assertTrue( principals.contains( new WikiPrincipal( "Janne Jalkanen" ) ) );
-        assertTrue( principals.contains( new WikiPrincipal( "janne" ) ) );
-        assertTrue( principals.contains( new WikiPrincipal( "JanneJalkanen" ) ) );
+        assertTrue( AuthenticationManager.isUserPrincipal( new WikiPrincipal( "Foo" ) ) );
+        assertFalse( AuthenticationManager.isUserPrincipal( new GroupPrincipal( m_wiki, "Group1" ) ) );
+        assertFalse( AuthenticationManager.isUserPrincipal( new Role( "Role1" ) ) );
+        assertFalse( AuthenticationManager.isUserPrincipal( Role.ANONYMOUS ) );
+    }
+    
+    public void testLoginCustom() throws Exception
+    {
+        WikiSession session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        assertTrue( session.hasPrincipal( Role.ALL ) );
+        assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen" ) ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE ) ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen" ) ) );
     }
     
     public void testLoginCustomWithGroup() throws Exception
     {
-        // Flush any pre-existing pages (left over from previous failures, perhaps)
-        DefaultGroupManagerTest.flushPage( m_engine, "GroupTest1" );
-        DefaultGroupManagerTest.flushPage( m_engine, "GroupTest2" );
+        // Flush any pre-existing groups (left over from previous failures, perhaps)
+        try
+        {
+            m_groupMgr.removeGroup( "Test1" );
+            m_groupMgr.removeGroup( "Test2" );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+            
+        }
         
         // Log in 'janne' and verify there are 5 principals in the subject
         // (ALL, AUTHENTICATED, login, fullname, wikiname Principals)
         WikiSession session = WikiSession.guestSession( m_engine );
-        m_auth.login( session, "janne", "myP@5sw0rd" );
-        Subject subject = session.getSubject();
-        Collection principals = subject.getPrincipals();
-        assertEquals( 5, principals.size() );
-        assertTrue( principals.contains( new WikiPrincipal( "JanneJalkanen" ) ) );
+        m_auth.login( session, Users.JANNE, Users.JANNE_PASS );
+        assertEquals( 3, session.getPrincipals().length );
+        assertEquals( 2, session.getRoles().length );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen" ) ) );
         
         // Listen for any group add events
-        DefaultGroupManager manager = (DefaultGroupManager)m_engine.getGroupManager();
+        GroupManager manager = m_engine.getGroupManager();
         SecurityEventTrap trap = new SecurityEventTrap();
         manager.addWikiEventListener( trap );
 
         // Create two groups; one with Janne in it, and one without
-        String text;
-        text = "Foobar.\n\n[{SET members=JanneJalkanen, Bob, Charlie}]\n\nBlood.";
-        m_engine.saveText( "GroupTest1", text );
-        text = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nBlood.";
-        m_engine.saveText( "GroupTest2", text );
+        Group groupTest1 = m_groupMgr.parseGroup( "Test1", "JanneJalkanen \n Bob \n Charlie", true );
+        m_groupMgr.setGroup( m_session, groupTest1 );
+        groupTest1 = m_groupMgr.getGroup( "Test1" );
+        Principal principalTest1 = groupTest1.getPrincipal();
         
-        // We should see eight security events (one for each group create, plus one for each member)
+        Group groupTest2 = m_groupMgr.parseGroup( "Test2", "Alice \n Bob \n Charlie", true );
+        m_groupMgr.setGroup( m_session, groupTest2 );
+        groupTest2 = m_groupMgr.getGroup( "Test2" );
+        Principal principalTest2 = groupTest2.getPrincipal();
+        
+        // We should see two security events (one for each group create)
         // We should also see a GroupPrincipal for group Test1, but not Test2
-        String wiki = m_engine.getApplicationName();
-        assertEquals( 8, trap.events().length );
-        Group groupTest1 = (Group)manager.findRole( "Test1" );
-        Group groupTest2 = (Group)manager.findRole( "Test2" );
-        assertTrue( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
-        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
+        assertEquals( 2, trap.events().length );
+        assertTrue( session.hasPrincipal( principalTest1 ) );
+        assertFalse( session.hasPrincipal( principalTest2 ) );
         
         // If we remove Test1, the GroupPrincipal should disappear
-        DefaultGroupManagerTest.flushPage( m_engine, "GroupTest1" );
-        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
-        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
+        m_groupMgr.removeGroup( "Test1" );
+        assertFalse( session.hasPrincipal( principalTest1 ) );
+        assertFalse( session.hasPrincipal( principalTest2 ) );
         
         // Now, add 'JanneJalkanen' to Test2 group manually; we should see the GroupPrincipal
         groupTest2.add( new WikiPrincipal( "JanneJalkanen" ) );
-        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
-        assertTrue( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
+        assertFalse( session.hasPrincipal( principalTest1 ) );
+        assertTrue( session.hasPrincipal( principalTest2 ) );
         
         // Remove 'JanneJalkenen' manually; the GroupPrincipal should disappear
         groupTest2.remove( new WikiPrincipal( "JanneJalkanen" ) );
-        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest1.getName() ) ) );
-        assertFalse( principals.contains( new GroupPrincipal( wiki, groupTest2.getName() ) ) );
+        assertFalse( session.hasPrincipal( principalTest1 ) );
+        assertFalse( session.hasPrincipal( principalTest2 ) );
+        
+        // Clean up
+        m_groupMgr.removeGroup( "Test2" );
     }
     
     public static Test suite()

@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-09-02 23:35:08 $
+ * @version $Revision: 1.4 $ $Date: 2006-07-29 19:23:14 $
  */
 public class AllTests extends TestCase
 {
@@ -18,9 +18,9 @@ public class AllTests extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite( "Role, group and group manager tests" );
-        suite.addTestSuite( DefaultGroupManagerTest.class );
-        suite.addTestSuite( DefaultGroupTest.class );
+        suite.addTestSuite( GroupTest.class );
         suite.addTestSuite( WebContainerAuthorizerTest.class );
+        suite.addTestSuite( XMLGroupDatabaseTest.class );
         return suite;
     }
 }

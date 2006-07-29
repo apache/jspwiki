@@ -1,33 +1,41 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
+import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.SecurityEventTrap;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroup;
 
-public class DefaultGroupTest extends TestCase
+public class GroupTest extends TestCase
 {
     Group m_group;
     SecurityEventTrap m_trap;
+    String m_wiki;
     
-    public DefaultGroupTest( String s )
+    public GroupTest( String s )
     {
         super( s );
     }
 
     public void setUp() throws Exception
     {
-        m_group = new DefaultGroup( "TestGroup" );
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        WikiEngine engine  = new TestEngine( props );
+        m_wiki = engine.getApplicationName();
+        
+        m_group = new Group( "TestGroup", m_wiki );
         m_trap = new SecurityEventTrap();
         m_group.addWikiEventListener( m_trap );
     }
-
+    
     public void testAdd1()
     {
         Principal u1 = new WikiPrincipal( "Alice" );
@@ -106,7 +114,7 @@ public class DefaultGroupTest extends TestCase
         m_group.add( u1 );
         m_group.add( u2 );
 
-        DefaultGroup group2 = new DefaultGroup( "TestGroup" );
+        Group group2 = new Group( "TestGroup", m_wiki );
         Principal u3 = new WikiPrincipal( "Alice" );
         Principal u4 = new WikiPrincipal( "Bob" );
 
@@ -124,7 +132,7 @@ public class DefaultGroupTest extends TestCase
         m_group.add( u1 );
         m_group.add( u2 );
 
-        DefaultGroup group2 = new DefaultGroup( "Group2" );
+        Group group2 = new Group( "Group2", m_wiki );
         Principal u3 = new WikiPrincipal( "Alice" );
         Principal u4 = new WikiPrincipal( "Charlie" );
 
@@ -136,13 +144,13 @@ public class DefaultGroupTest extends TestCase
 
     public void testEquals3()
     {
-        Group group1 = new DefaultGroup( "Blib" );
+        Group group1 = new Group( "Blib", m_wiki );
         Principal u1 = new WikiPrincipal( "Alice" );
         Principal u2 = new WikiPrincipal( "Bob" );
         group1.add( u1 );
         group1.add( u2 );
 
-        Group group2 = new DefaultGroup( "Blib" );
+        Group group2 = new Group( "Blib", m_wiki );
         Principal u3 = new WikiPrincipal( "Alice" );
         Principal u4 = new WikiPrincipal( "Bob" );
         group2.add( u3 );
@@ -153,13 +161,13 @@ public class DefaultGroupTest extends TestCase
 
     public void testEquals4()
     {
-        Group group1 = new DefaultGroup( "BlibBlab" );
+        Group group1 = new Group( "BlibBlab", m_wiki );
         Principal u1 = new WikiPrincipal( "Alice" );
         Principal u2 = new WikiPrincipal( "Bob" );
         group1.add( u1 );
         group1.add( u2 );
 
-        Group group2 = new DefaultGroup( "Blib" );
+        Group group2 = new Group( "Blib", m_wiki );
         Principal u3 = new WikiPrincipal( "Alice" );
         Principal u4 = new WikiPrincipal( "Bob" );
         group2.add( u3 );
@@ -170,7 +178,7 @@ public class DefaultGroupTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( DefaultGroupTest.class );
+        return new TestSuite( GroupTest.class );
     }
 
 }

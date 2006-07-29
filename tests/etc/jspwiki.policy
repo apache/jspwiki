@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.7 2006-05-08 00:27:12 arj Exp $
+// $Id: jspwiki.policy,v 1.8 2006-07-29 19:23:58 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -68,7 +68,7 @@ grant signedBy "jspwiki" {
 // lines containing the "edit" and "createPages" permissions; this will make
 // the wiki read-only for anonymous users.
 
-grant signedBy "jspwiki", 
+grant
   principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
@@ -85,10 +85,9 @@ grant signedBy "jspwiki",
 // Anonymous users can also register with the wiki; to edit their profile after
 // registration, they must log in.
 
-grant signedBy "jspwiki",
+grant
   principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "view";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
@@ -101,10 +100,9 @@ grant signedBy "jspwiki",
 // wiki groups; and rename existing pages. Authenticated users can register
 // with the wiki, and edit their own profiles.
 
-grant signedBy "jspwiki",
+grant
   principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,rename";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
@@ -114,10 +112,9 @@ grant signedBy "jspwiki",
 
 // Administrators also are allowed to delete any page, and can edit, rename and delete groups.
 
-grant signedBy "jspwiki",
+grant
   principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "rename,delete";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "rename,delete";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";

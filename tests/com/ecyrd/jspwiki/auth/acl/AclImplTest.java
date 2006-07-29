@@ -1,25 +1,39 @@
 package com.ecyrd.jspwiki.auth.acl;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.WikiSessionTest;
+import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
 import com.ecyrd.jspwiki.auth.acl.AclImpl;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroup;
 import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
 public class AclImplTest extends TestCase
 {
-    AclImpl m_acl;
+    private AclImpl      m_acl;
 
-    AclImpl m_aclGroup;
-
+    private AclImpl      m_aclGroup;
+    
+    private Map          m_groups;
+    
+    private GroupManager m_groupMgr;
+    
+    private WikiSession  m_session;
+    
     public AclImplTest( String s )
     {
         super( s );
@@ -30,10 +44,18 @@ public class AclImplTest extends TestCase
      * Charlie = may view Dave = may view, may comment groupAcl: FooGroup =
      * Alice, Bob - may edit BarGroup = Bob, Charlie - may view
      */
-    public void setUp()
+    public void setUp() throws Exception
     {
+        super.setUp();
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        WikiEngine engine  = new TestEngine( props );
+        m_groupMgr = engine.getGroupManager();
+        m_session = WikiSessionTest.adminSession( engine );
+        
         m_acl = new AclImpl();
         m_aclGroup = new AclImpl();
+        m_groups = new HashMap();
         Principal u_alice = new WikiPrincipal( "Alice" );
         Principal u_bob = new WikiPrincipal( "Bob" );
         Principal u_charlie = new WikiPrincipal( "Charlie" );
@@ -68,26 +90,32 @@ public class AclImplTest extends TestCase
         m_acl.addEntry( ae4 );
 
         // Foo group includes Alice and Bob
-        Group group1 = new DefaultGroup( "FooGroup" );
-        group1.add( u_alice );
-        group1.add( u_bob );
+        Group foo = m_groupMgr.parseGroup( "FooGroup", "", true );
+        m_groupMgr.setGroup( m_session, foo );
+        foo.add( u_alice );
+        foo.add( u_bob );
         AclEntry ag1 = new AclEntryImpl();
-        ag1.setPrincipal( group1 );
+        ag1.setPrincipal( foo.getPrincipal() );
         ag1.addPermission( PagePermission.EDIT );
         m_aclGroup.addEntry( ag1 );
+        m_groups.put( "FooGroup", foo );
 
         // Bar group includes Bob and Charlie
-        Group group2 = new DefaultGroup( "BarGroup" );
-        group2.add( u_bob );
-        group2.add( u_charlie );
+        Group bar = m_groupMgr.parseGroup( "BarGroup", "", true );
+        m_groupMgr.setGroup( m_session, bar );
+        bar.add( u_bob );
+        bar.add( u_charlie );
         AclEntry ag2 = new AclEntryImpl();
-        ag2.setPrincipal( group2 );
+        ag2.setPrincipal( bar.getPrincipal() );
         ag2.addPermission( PagePermission.VIEW );
         m_aclGroup.addEntry( ag2 );
+        m_groups.put( "BarGroup", bar );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
+        m_groupMgr.removeGroup( "FooGroup" );
+        m_groupMgr.removeGroup( "BarGroup" );
     }
 
     private boolean inArray( Object[] array, Object key )
@@ -106,9 +134,11 @@ public class AclImplTest extends TestCase
     {
         for( int i = 0; i < array.length; i++ )
         {
-            if (array[i] instanceof Group) 
+            if ( array[i] instanceof GroupPrincipal ) 
             {
-                if (((Group)array[i]).isMember(key))
+                String groupName = ((GroupPrincipal)array[i]).getName();
+                Group group = (Group)m_groups.get( groupName );
+                if ( group != null && group.isMember( key ) )
                 {
                     return true;
                 }

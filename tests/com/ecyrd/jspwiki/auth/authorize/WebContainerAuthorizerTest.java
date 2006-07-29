@@ -7,6 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.jdom.Document;
 
 import com.ecyrd.jspwiki.TestEngine;
@@ -46,26 +47,11 @@ public class WebContainerAuthorizerTest extends TestCase
     
     public void testGetRoles()
     {
-        // We should find 2 roles: AUTHENTICATED and ADMIN
+        // We should find 2 roles: AUTHENTICATED plus custom role "Admin"
         Principal[] roles = m_authorizer.getRoles();
         assertEquals( 2, roles.length );
-        boolean found = false;
-        for ( int i = 0; i < roles.length; i++ )
-        {
-            if ( roles[i].equals( Role.AUTHENTICATED ) )
-            {
-                found = true;
-            }
-        }
-        assertTrue( "Didn't find AUTHENTICATED", found );
-        for ( int i = 0; i < roles.length; i++ )
-        {
-            if ( roles[i].equals( new Role( "Admin" ) ) )
-            {
-                found = true;
-            }
-        }
-        assertTrue( "Didn't find ADMIN", found );
+        assertTrue( ArrayUtils.contains( roles, Role.AUTHENTICATED ) );
+        assertTrue( ArrayUtils.contains( roles, new Role( "Admin" ) ) );
     }
     
     public void testRoles() throws Exception

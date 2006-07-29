@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-03-30 04:49:50 $
+ * @version $Revision: 1.7 $ $Date: 2006-07-29 19:23:14 $
  */
 public class PagePermissionTest extends TestCase
 {
@@ -251,17 +251,17 @@ public class PagePermissionTest extends TestCase
         assertFalse( p2.implies( p1 ) );
         assertFalse( p3.implies( p1 ) );
 
-        // View action on wildcard collection shouldn't imply view on
+        // View action on wildcard collection SHOULD imply view on
         // GroupConfiguration page
         p1 = new PagePermission( "*:*", "view" );
         p2 = new PagePermission( "*:GroupConfiguration", "view" );
         p3 = new PagePermission( "mywiki:GroupConfiguration", "view" );
-        assertFalse( p1.implies( p2 ) );
-        assertFalse( p1.implies( p3 ) );
+        assertTrue( p1.implies( p2 ) );
+        assertTrue( p1.implies( p3 ) );
         assertFalse( p2.implies( p1 ) );
         assertFalse( p3.implies( p1 ) );
 
-        // However, pre- and post- wildcards should be fine
+        // Pre- and post- wildcards should also be fine
         p1 = new PagePermission( "*:Group*", "view" );
         p2 = new PagePermission( "*:GroupConfiguration", "view" );
         p3 = new PagePermission( "mywiki:GroupConfiguration", "view" );

@@ -13,6 +13,7 @@ public abstract class CommonTests extends TestCase
     protected static final String TEST_PASSWORD = "myP@5sw0rd";
     protected static final String TEST_LOGINNAME = "janne";
     protected static final String TEST_FULLNAME = "Janne Jalkanen";
+    protected static final String TEST_WIKINAME = "JanneJalkanen";
     protected WebTester t;
     protected final String m_baseURL;
 
@@ -100,7 +101,6 @@ public abstract class CommonTests extends TestCase
     {
         // Try to create a group; we should get redirected to login page
         t.gotoPage( "/NewGroup.jsp" );
-        t.assertFormNotPresent( "newGroup" );
         t.assertTextPresent( "Please sign in" );
     }
     
@@ -164,18 +164,36 @@ public abstract class CommonTests extends TestCase
         t.gotoPage( "/Wiki.jsp" );
         login( TEST_LOGINNAME, TEST_PASSWORD );
         String group = "AssertedPermissions" + String.valueOf( System.currentTimeMillis() );
+        String members = TEST_LOGINNAME + " \n FredFlintstone";
+
+        // First, create the group
         t.gotoPage( "/NewGroup.jsp" );
-        t.setWorkingForm( "newGroup" );
-        t.setFormElement( "name", group );
-        t.setFormElement( "members", TEST_LOGINNAME + ", FredFlintstone" );
+        t.assertTextPresent( "Create New Group" );
+        t.assertFormPresent( "createGroup" );
+        t.setWorkingForm( "createGroup" );
+        t.assertFormElementPresent("group" );
+        t.assertFormElementPresent("members" );
+        t.assertSubmitButtonPresent( "ok" );
+        t.setFormElement( "group", group );
+        t.setFormElement( "members", members );
         t.submit( "ok" );
         
         // Verify the group was created 
         t.assertTextNotPresent( "Could not create group" );
-        t.gotoPage("/Wiki.jsp?page=Group" + group );
-        t.assertTextPresent( "This is a wiki group." );
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextPresent( "This is the wiki group called" );
         
-        // Verifiy that asserted user 'Fred' can't view the page
+        // Verifiy that anonymous users can't view the group
+        newSession();
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextPresent( "Please sign in" );
+        
+        // Log in again and verify we can read it
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextPresent( "This is the wiki group called" );
+        
+        // Verify that asserted user 'Fred' can view the group but not edit
         newSession();
         t.gotoPage( "/Wiki.jsp?page=Main" );
         t.clickLinkWithText( "My Prefs" );
@@ -185,13 +203,12 @@ public abstract class CommonTests extends TestCase
         t.assertTextPresent( "G'day" );
         t.assertTextPresent( "FredFlintstone" );
         t.assertTextPresent( "(not logged in)" );
-        t.gotoPage("/Wiki.jsp?page=Group" + group );
-        t.assertTextPresent( "Please sign in" );
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextPresent( "This is the wiki group called" );
         
-        // Log in again and verify we can read it
-        login( TEST_LOGINNAME, TEST_PASSWORD );
-        t.gotoPage("/Wiki.jsp?page=Group" + group );
-        t.assertTextPresent( "This is a wiki group." );
+        // Try to edit -- it should not be allowed
+        t.gotoPage("/EditGroup.jsp?group=" + group );
+        t.assertTextPresent( "Please sign in" );
     }
     
     public void testCreateGroupFullName()
@@ -258,7 +275,7 @@ public abstract class CommonTests extends TestCase
         t.assertTextPresent( "(authenticated)" );
         String cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
         assertNotNull( cookie );
-        assertEquals( TEST_FULLNAME, cookie );
+        assertEquals( TEST_WIKINAME, cookie );
         
         // Log out; we should NOT see any asserted identities
         t.gotoPage( "/Logout.jsp" );
@@ -272,26 +289,38 @@ public abstract class CommonTests extends TestCase
         t.gotoPage( "/Wiki.jsp" );
         login( TEST_LOGINNAME, TEST_PASSWORD );
         String group = "Test" + String.valueOf( System.currentTimeMillis() );
+        
+        // First, name the group
         t.gotoPage( "/NewGroup.jsp" );
-        t.setWorkingForm( "newGroup" );
-        t.setFormElement( "name", group );
+        t.assertTextPresent( "Create New Group" );
+        t.assertFormPresent( "createGroup" );
+        t.setWorkingForm( "createGroup" );
+        t.assertFormElementPresent("group" );
+        t.assertFormElementPresent("members" );
+        t.assertSubmitButtonPresent( "ok" );
+        t.setFormElement( "group", group );
         t.setFormElement( "members", members );
         t.submit( "ok" );
         
         // Verify the group was created 
         t.assertTextNotPresent( "Could not create group" );
-        t.gotoPage("/Wiki.jsp?page=Group" + group );
-        t.assertTextPresent( "This is a wiki group." );
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextPresent( "This is the wiki group called" );
         
-        // Verifiy that anonymous users can't view the page
+        // Verifiy that anonymous users can't view the group
         newSession();
-        t.gotoPage("/Wiki.jsp?page=Group" + group );
+        t.gotoPage("/Group.jsp?group=" + group );
         t.assertTextPresent( "Please sign in" );
         
         // Log in again and verify we can read it
         login( TEST_LOGINNAME, TEST_PASSWORD );
-        t.gotoPage("/Wiki.jsp?page=Group" + group );
-        t.assertTextPresent( "This is a wiki group." );
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextPresent( "This is the wiki group called" );
+        
+        // Try to edit -- it should be allowed
+        t.gotoPage("/EditGroup.jsp?group=" + group );
+        t.assertTextNotPresent( "Please sign in" );
+        t.assertFormPresent( "editGroup" );
     }
     
     protected String createProfile( String loginname, String fullname )

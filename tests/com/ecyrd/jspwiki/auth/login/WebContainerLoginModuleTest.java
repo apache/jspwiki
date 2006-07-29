@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-05-28 23:27:57 $
+ * @version $Revision: 1.6 $ $Date: 2006-07-29 19:23:14 $
  */
 public class WebContainerLoginModuleTest extends TestCase
 {
@@ -48,9 +48,11 @@ public class WebContainerLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( wrapper ) );
-            assertTrue( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );
+            assertTrue(  principals.contains( wrapper ) );
+            assertFalse( principals.contains( Role.ANONYMOUS ) );
+            assertFalse( principals.contains( Role.ASSERTED ) );
+            assertTrue(  principals.contains( Role.AUTHENTICATED ) );
+            assertTrue(  principals.contains( Role.ALL ) );
 
             // Test using remote user (WebContainerLoginModule succeeds)
             subject = new Subject();
@@ -61,9 +63,11 @@ public class WebContainerLoginModuleTest extends TestCase
             context.login();
             principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( wrapper ) );
-            assertTrue( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );
+            assertTrue(  principals.contains( wrapper ) );
+            assertFalse( principals.contains( Role.ANONYMOUS ) );
+            assertFalse( principals.contains( Role.ASSERTED ) );
+            assertTrue(  principals.contains( Role.AUTHENTICATED ) );
+            assertTrue(  principals.contains( Role.ALL ) );
 
             // Test using IP address (AnonymousLoginModule succeeds)
             subject = new Subject();
@@ -75,8 +79,10 @@ public class WebContainerLoginModuleTest extends TestCase
             principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
             assertFalse( principals.contains( principal ) );
+            assertTrue(  principals.contains( Role.ANONYMOUS ) );
+            assertFalse( principals.contains( Role.ASSERTED ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );
+            assertTrue(  principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
@@ -85,6 +91,30 @@ public class WebContainerLoginModuleTest extends TestCase
         }
     }
 
+    public final void testLoginWithRoles() throws Exception
+    {
+        // Create user with 2 container roles; TestAuthorizer knows about these
+        Principal principal = new WikiPrincipal( "Andrew Jaquith" ); 
+        Principal wrapper = new PrincipalWrapper( principal );
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        request.setUserPrincipal( principal );
+        request.setRoles( new String[] { "IT", "Engineering" } );
+        
+        // Test using Principal (WebContainerLoginModule succeeds)
+        CallbackHandler handler = new WebContainerCallbackHandler( request, db, authorizer );
+        LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
+        context.login();
+        Set principals = subject.getPrincipals();
+        assertEquals( 5, principals.size() );
+        assertTrue( principals.contains( wrapper ) );
+        assertFalse( principals.contains( Role.ANONYMOUS ) );
+        assertFalse( principals.contains( Role.ASSERTED ) );
+        assertTrue(  principals.contains( Role.AUTHENTICATED ) );
+        assertTrue(  principals.contains( Role.ALL ) );
+        assertTrue(  principals.contains( new Role( "IT" ) ) );
+        assertTrue(  principals.contains( new Role( "Engineering" ) ) );
+    }
+    
     public final void testLogout()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" ); 

@@ -1,25 +1,23 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.io.File;
+import java.security.Permission;
 import java.security.Principal;
-import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.*;
+import org.apache.commons.lang.ArrayUtils;
+
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.WikiSessionTest;
 import com.ecyrd.jspwiki.attachment.Attachment;
-import com.ecyrd.jspwiki.auth.acl.Acl;
-import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroup;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -38,14 +36,38 @@ public class AuthorizationManagerTest extends TestCase
     private AuthorizationManager m_auth;
 
     private TestEngine           m_engine;
-
-    private WikiContext          m_context;
+    
+    private GroupManager         m_groupMgr;
 
     private WikiSession          m_session;
+    
+    private String               m_wiki;
+    
+    private static class TestPrincipal implements Principal
+    {
+        private final String m_name;
+
+        public TestPrincipal( String name )
+        {
+            m_name = name;
+        }
+
+        public String getName()
+        {
+            return m_name;
+        }
+    }
 
     public AuthorizationManagerTest( String s )
     {
         super( s );
+    }
+
+    public static Test suite()
+    {
+        TestSuite suite = new TestSuite( "Authorization Manager test" );
+        suite.addTestSuite( AuthorizationManagerTest.class );
+        return suite;
     }
 
     public void setUp() throws Exception
@@ -54,177 +76,395 @@ public class AuthorizationManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         m_engine = new TestEngine( props );
         m_auth = m_engine.getAuthorizationManager();
+        m_groupMgr = m_engine.getGroupManager();
+        m_session = WikiSessionTest.adminSession( m_engine );
+        m_wiki = m_engine.getApplicationName();
     }
 
     /**
-     * Set up a simple wiki page without ACL. 
-     * Create a WikiContext for this page, with an associated
-     * servlet request with userPrincipal Alice that has roles IT and Engineering.
-     * Create a sample user Alice who possesses built-in
-     * roles ALL and AUTHENTICATED.
-     *
+     * Tests the default policy. Anonymous users can read, Authenticated can
+     * edit, etc. Uses the default tests/etc/jspwiki.policy file installed by
+     * the JRE at startup.
+     * @throws Exception
      */
-    public void testHasRoleOrPrincipal()
+    public void testDefaultPermissions() throws Exception
     {
-        String src = "Sample wiki page without ACL";
+        // Save a page without an ACL
+        m_engine.saveText( "TestDefaultPage", "Foo" );
+        Permission view = new PagePermission( "*:TestDefaultPage", "view" );
+        Permission edit = new PagePermission( "*:TestDefaultPage", "edit" );
+        WikiSession session;
+        
+        // Alice is asserted
+        session = WikiSessionTest.assertedSession( m_engine, Users.ALICE );
+        assertTrue( "Alice view", m_auth.checkPermission( session, view ) );
+        assertTrue( "Alice edit", m_auth.checkPermission( session, edit ) );
+
+        // Bob is logged in
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        assertTrue( "Bob view", m_auth.checkPermission( session, view ) );
+        assertTrue( "Bob edit", m_auth.checkPermission( session, edit ) );
+
+        // Delete the test page
         try
         {
-            m_engine.saveText( "Test", src );
-            WikiPage p = m_engine.getPage( "Test" );
-            TestHttpServletRequest request = new TestHttpServletRequest();
-            request.setRoles( new String[0] );
-            m_context = new WikiContext( m_engine, request, p );
+            m_engine.deletePage( "TestDefaultPage" );
         }
-        catch( WikiException e )
+        catch( ProviderException e )
         {
-            assertTrue( "Setup failed", false );
+            assertTrue( false );
         }
+    }
+
+    public void testGetRoles() throws Exception
+    {
+        WikiSession session;
+        Principal[] principals;
+
+        // Create a new "asserted" session for Bob
+        session = WikiSessionTest.assertedSession( m_engine, Users.BOB );
+
+        // Set up a group without Bob in it
+        Group test = m_groupMgr.parseGroup( "Test", "Alice \n Charlie", true );
+        m_groupMgr.setGroup( m_session, test );
+
+        // Bob should have two roles: ASSERTED and ALL
+        principals = session.getRoles();
+        assertTrue( "Bob in ALL", ArrayUtils.contains( principals, Role.ALL ) );
+        assertTrue( "Bob in ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
+        assertFalse( "Bob not in ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        assertFalse( "Bob not in Test", ArrayUtils.contains( principals, test.getPrincipal() ) );
+
+        // Re-save group "Test" with Bob as a member
+        test = m_groupMgr.parseGroup( "Test", "Alice \n Bob \nCharlie", true );
+        m_groupMgr.setGroup( m_session, test );
+
+        // Bob not authenticated: should still have only two romes
+        principals = session.getRoles();
+        assertTrue( "Bob in ALL", ArrayUtils.contains( principals, Role.ALL ) );
+        assertTrue( "Bob in ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
+        assertFalse( "Bob not in ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        assertFalse( "Bob in Test", ArrayUtils.contains( principals, test.getPrincipal() ) );
         
-        String wiki = m_engine.getApplicationName();
+        // Elevate Bob to "authenticated" status
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        
+        // Re-save the group; Bob should possess the role now
+        test = m_groupMgr.parseGroup( "Test", "Alice \n Bob \n Charlie", true );
+        m_groupMgr.setGroup( m_session, test );
+        principals = session.getRoles();
+        assertTrue( "Bob in ALL", ArrayUtils.contains( principals, Role.ALL ) );
+        assertFalse( "Bob in ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
+        assertFalse( "Bob not in ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
+        assertTrue( "Bob in Test", ArrayUtils.contains( principals, test.getPrincipal() ) );
+        
+        // Cleanup
+        m_groupMgr.removeGroup( "Test" );
+    }
 
-        Principal alice = new WikiPrincipal( "Alice" );
-        Principal[] principals = new Principal[]
-        { alice, Role.AUTHENTICATED, Role.ALL, new Role( "IT" ), new Role ( "Engineering" ), new GroupPrincipal( wiki, "Admin" ) };
-        GroupManager groupMgr = m_engine.getGroupManager();
-        WikiSession session = buildSession( m_context, principals );
-        groupMgr.addWikiEventListener( session );
+    public void testAssertedSession() throws Exception
+    {
+        // Create Alice and her roles
+        Principal alice = new WikiPrincipal( Users.ALICE );
+        Role it = new Role( "IT" );
+        Role engineering = new Role( "Engineering" );
+        Role finance = new Role( "Finance" );
+        Principal admin = new GroupPrincipal( m_wiki, "Admin" );
+        WikiSession session = WikiSessionTest.assertedSession(
+                m_engine, 
+                Users.ALICE, 
+                new Principal[] { it, engineering, admin } );
 
-        // Test build-in role membership
-        assertTrue( "Alice ALL", m_auth.hasRoleOrPrincipal( session, Role.ALL ) );
-        assertFalse( "Alice ANONYMOUS", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
-        assertFalse( "Alice ASSERTED", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
-        assertTrue( "Alice AUTHENTICATED", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
-        assertTrue( "Alice IT", m_auth.hasRoleOrPrincipal( session, new Role( "IT" ) ) );
-        assertTrue( "Alice Engineering", m_auth.hasRoleOrPrincipal( session, new Role( "Engineering" ) ) );
-        assertFalse( "Alice Finance", m_auth.hasRoleOrPrincipal( session, new Role( "Finance" ) ) );
-
-        // Test group membership: Alice should be part of group Bar, but not Foo
-        Group fooGroup = new DefaultGroup( "Foo" );
-        groupMgr.add( fooGroup );
-        Group barGroup = new DefaultGroup( "Bar" );
+        // Create two groups: Alice should be part of group Bar, but not Foo
+        Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
+        Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
         barGroup.add( alice );
-        groupMgr.add( barGroup );
-        assertFalse( "Authenticated Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
-        assertTrue( "Authenticated Alice in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
+        m_groupMgr.setGroup( m_session, fooGroup );
+        m_groupMgr.setGroup( m_session, barGroup );
         
-        // Test user principal posession
-        assertTrue("Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal("Alice")));
-        assertFalse("Alice has Bob", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal("Bob")));
+        // Test user principal posession: Alice isn't considered to
+        // have the "Alice" principal because she's not authenticated
+        assertTrue ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ) );
+        assertTrue ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.ALICE ) ) );
+        assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.BOB ) ) );
+        assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.BOB ) ) );
+
+        // Built-in role memberships
+        assertTrue( "Alice in ALL", m_auth.hasRoleOrPrincipal( session, Role.ALL ) );
+        assertFalse( "Alice not in ANONYMOUS", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
+        assertTrue( "Alice in ASSERTED", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
+        assertFalse( "Alice not in AUTHENTICATED", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
         
-        // Test user principal (non-WikiPrincipal) posession
-        assertTrue("Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal("Alice")));
-        assertFalse("Alice has Bob", m_auth.hasRoleOrPrincipal( session, new TestPrincipal("Bob")));
+        // Custom roles should be FALSE because Alice is asserted
+        assertFalse( "Alice not in IT", m_auth.hasRoleOrPrincipal( session, it ) );
+        assertFalse( "Alice not in Engineering", m_auth.hasRoleOrPrincipal( session, engineering ) );
+        assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
+
+        // Group memberships should be FALSE because Alice is asserted
+        assertFalse( "Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup.getPrincipal() ) );
+        assertFalse( "Alice not in Bar", m_auth.hasRoleOrPrincipal( session, barGroup.getPrincipal() ) );
         
-        // Create a new session for Alice as an Asserted user. This time,
-        // she should NOT be considered part of either group Bar or Foo, since we prohibit
-        // Asserted users from being members of any role that isn't built-in.
-        principals = new Principal[]
-        { alice, Role.ASSERTED, Role.ALL };
-        session = buildSession( m_context, principals );
-        groupMgr.addWikiEventListener( session );
-        assertFalse( "Asserted Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup ) );
-        assertFalse( "Asserted Alice not in Bar", m_auth.hasRoleOrPrincipal( session, barGroup ) );
+        // Clean up
+        m_groupMgr.removeGroup( "Foo" );
+        m_groupMgr.removeGroup( "Bar" );
+    }
+    
+    public void testAuthenticatedSession() throws Exception
+    {
+        // Create Alice and her roles
+        Principal alice = new WikiPrincipal( Users.ALICE );
+        Role it = new Role( "IT" );
+        Role engineering = new Role( "Engineering" );
+        Role finance = new Role( "Finance" );
+        Principal admin = new GroupPrincipal( m_wiki, "Admin" );
+        WikiSession session = WikiSessionTest.containerAuthenticatedSession(
+                m_engine, 
+                Users.ALICE,
+                new Principal[] { it, engineering, admin } );
+
+        // Create two groups: Alice should be part of group Bar, but not Foo
+        Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
+        Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
+        barGroup.add( alice );
+        m_groupMgr.setGroup( m_session, fooGroup );
+        m_groupMgr.setGroup( m_session, barGroup );
         
+        // Test user principal posession: user principals of different
+        // types should still be "the same" if their names are equal
+        assertTrue( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ) );
+        assertTrue( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.ALICE ) ) );
+        assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.BOB ) ) );
+        assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.BOB ) ) );
+        
+        // Built-in role membership
+        assertTrue( "Alice in ALL", m_auth.hasRoleOrPrincipal( session, Role.ALL ) );
+        assertFalse( "Alice not in ANONYMOUS", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
+        assertFalse( "Alice not in ASSERTED", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
+        assertTrue( "Alice in AUTHENTICATED", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
+        
+        // Custom roles
+        assertTrue( "Alice in IT", m_auth.hasRoleOrPrincipal( session, it ) );
+        assertTrue( "Alice in Engineering", m_auth.hasRoleOrPrincipal( session, engineering ) );
+        assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
+
+        // Group memberships
+        assertFalse( "Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup.getPrincipal() ) );
+        assertTrue( "Alice in Bar", m_auth.hasRoleOrPrincipal( session, barGroup.getPrincipal() ) );
+        
+        // Cleanup
+        m_groupMgr.removeGroup( "Foo" );
+        m_groupMgr.removeGroup( "Bar" );
+    }
+
+    public void testInheritedPermissions() throws Exception
+    {
+        // Create test page & attachment
+        String src = "[{ALLOW edit Alice}] ";
+        m_engine.saveText( "Test", src );
+
+        File f = m_engine.makeAttachmentFile();
+        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+        att.setAuthor( "FirstPost" );
+        m_engine.getAttachmentManager().storeAttachment( att, f );
+        
+        Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
+        Permission view = new PagePermission( p, "view" );
+        Permission edit = new PagePermission( p, "edit" );
+        
+        // Create authenticated session with user 'Alice', who can read & edit (in ACL)
+        WikiSession session;
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        assertTrue( "Alice view Test/test1.txt", m_auth.checkPermission( session, view ) );
+        assertTrue( "Alice edit Test/test1.txt", m_auth.checkPermission( session, edit ) );
+
+        // Create authenticated session with user 'Bob', who can't read or edit (not in ACL)
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        assertFalse( "Bob !view Test/test1.txt", m_auth.checkPermission( session, view ) );
+        assertFalse( "Bob !edit Test/test1.txt", m_auth.checkPermission( session, edit ) );
+
+        // Delete test page & attachment
+        m_engine.getAttachmentManager().deleteAttachment( att );
+        m_engine.deletePage( "Test" );
+    }
+
+    public void testInheritedAclPermissions() throws Exception
+    {
+        // Create test page & attachment
+        String src = "[{ALLOW view Alice}] ";
+        m_engine.saveText( "Test", src );
+
+        File f = m_engine.makeAttachmentFile();
+        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+        att.setAuthor( "FirstPost" );
+        m_engine.getAttachmentManager().storeAttachment( att, f );
+
+        Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
+        Permission view = new PagePermission( p, "view" );
+        Permission edit = new PagePermission( p, "edit" );
+        
+        // Create session with user 'Alice', who can read (in ACL)
+        WikiSession session;
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        assertTrue( "Foo view Test", m_auth.checkPermission( session, view ) );
+        assertFalse( "Foo !edit Test", m_auth.checkPermission( session, edit ) );
+
+        // Create session with user 'Bob', who can't read or edit (not in ACL)
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        assertFalse( "Bar !view Test", m_auth.checkPermission( session, view ) );
+        assertFalse( "Bar !edit Test", m_auth.checkPermission( session, view ) );
+
+        // Delete test page & attachment
+        m_engine.getAttachmentManager().deleteAttachment( att );
+        m_engine.deletePage( "Test" );
+    }
+
+    public void testHasRoleOrPrincipal() throws Exception
+    {
+        // Create new user Alice and 2 sample roles
+        Principal alice = new WikiPrincipal( Users.ALICE );
+        Role it = new Role( "IT" );
+        Role finance = new Role( "Finance" );
+        
+        // Create Group1 with Alice in it, Group2 without
+        WikiSession session = WikiSessionTest.adminSession( m_engine );
+        Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
+        m_groupMgr.setGroup( session, g1 );
+        Principal group1 = g1.getPrincipal();
+        Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
+        m_groupMgr.setGroup( session, g2 );
+        Principal group2 = g2.getPrincipal();
+        
+        // Create anonymous session; not in ANY custom roles or groups
+        session = WikiSessionTest.anonymousSession( m_engine );
+        assertTrue ( "Anon anonymous", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
+        assertFalse( "Anon not asserted", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
+        assertFalse( "Anon not authenticated", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
+        assertFalse( "Alice not in Anon", m_auth.hasRoleOrPrincipal( session, alice ) );
+        assertFalse( "Anon not in IT", m_auth.hasRoleOrPrincipal( session, it ) );
+        assertFalse( "Anon not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
+        assertFalse( "Anon not in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
+        assertFalse( "Anon not in Group2", m_auth.hasRoleOrPrincipal( session, group2 ) );
+        
+        // Create asserted session with 1 GroupPrincipal & 1 custom Role
+        // Alice is asserted, and thus not in ANY custom roles or groups
+        session = WikiSessionTest.assertedSession( m_engine, Users.ALICE, new Principal[] { it } );
+        assertFalse( "Alice not anonymous", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
+        assertTrue ( "Alice asserted", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
+        assertFalse( "Alice not authenticated", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
+        assertTrue ( "Alice in Alice", m_auth.hasRoleOrPrincipal( session, alice ) );
+        assertFalse( "Alice not in IT", m_auth.hasRoleOrPrincipal( session, it ) );
+        assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
+        assertFalse( "Alice not in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
+        assertFalse( "Alice not in Group2", m_auth.hasRoleOrPrincipal( session, group2 ) );
+        
+        // Create authenticated session with 1 GroupPrincipal & 1 custom Role
+        // Alice is authenticated, and thus part of custom roles and groups
+        session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it } );
+        assertFalse( "Alice not anonymous", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
+        assertFalse( "Alice not asserted", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
+        assertTrue ( "Alice not authenticated", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
+        assertTrue ( "Alice in Ernie", m_auth.hasRoleOrPrincipal( session, alice ) );
+        assertTrue ( "Alice in IT", m_auth.hasRoleOrPrincipal( session, it ) );
+        assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
+        assertTrue ( "Alice in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
+        assertFalse( "Alice not in Group2", m_auth.hasRoleOrPrincipal( session, group2 ) );
+        
+        // Clean up
+        m_groupMgr.removeGroup( "Group1" );
+        m_groupMgr.removeGroup( "Group2" );
+    }
+    
+    public void testIsUserInRole() throws Exception
+    {
+        // Create new user Alice and 2 sample roles
+        Principal alice = new WikiPrincipal( Users.ALICE );
+        Role it = new Role( "IT" );
+        Role finance = new Role( "Finance" );
+        
+        // Create Group1 with Alice in it, Group2 without
+        WikiSession session = WikiSessionTest.adminSession( m_engine );
+        Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
+        m_groupMgr.setGroup( session, g1 );
+        Principal group1 = g1.getPrincipal();
+        Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
+        m_groupMgr.setGroup( session, g2 );
+        Principal group2 = g2.getPrincipal();
+
+        // Create anonymous session; not in ANY custom roles or groups
+        session = WikiSessionTest.anonymousSession( m_engine );
+        assertTrue ( "Anon anonymous", m_auth.isUserInRole( session, Role.ANONYMOUS ) );
+        assertFalse( "Anon not asserted", m_auth.isUserInRole( session, Role.ASSERTED ) );
+        assertFalse( "Anon not authenticated", m_auth.isUserInRole( session, Role.AUTHENTICATED ) );
+        assertFalse( "Anon not in Ernie", m_auth.isUserInRole( session, alice ) );
+        assertFalse( "Anon not in IT", m_auth.isUserInRole( session, it ) );
+        assertFalse( "Anon not in Finance", m_auth.isUserInRole( session, finance ) );
+        assertFalse( "Anon not in Group1", m_auth.isUserInRole( session, group1 ) );
+        assertFalse( "Anon not in Group2", m_auth.isUserInRole( session, group2 ) );
+        
+        // Create asserted session with 1 GroupPrincipal & 1 custom Role
+        // Alice is asserted, and thus not in ANY custom roles or groups
+        session = WikiSessionTest.assertedSession( m_engine, Users.ALICE, new Principal[] { it } );
+        assertFalse( "Alice not anonymous", m_auth.isUserInRole( session, Role.ANONYMOUS ) );
+        assertTrue ( "Alice asserted", m_auth.isUserInRole( session, Role.ASSERTED ) );
+        assertFalse( "Alice not authenticated", m_auth.isUserInRole( session, Role.AUTHENTICATED ) );
+        assertFalse( "Alice not in Alice", m_auth.isUserInRole( session, alice ) );
+        assertFalse( "Alice not in IT", m_auth.isUserInRole( session, it ) );
+        assertFalse( "Alice not in Finance", m_auth.isUserInRole( session, finance ) );
+        assertFalse( "Alice not in Group1", m_auth.isUserInRole( session, group1 ) );
+        assertFalse( "Alice not in Group2", m_auth.isUserInRole( session, group2 ) );
+        
+        // Create authenticated session with 1 GroupPrincipal & 1 custom Role
+        // Ernie is authenticated, and thus part of custom roles and groups
+        session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it } );
+        assertFalse( "Alice not anonymous", m_auth.isUserInRole( session, Role.ANONYMOUS ) );
+        assertFalse( "Alice not asserted", m_auth.isUserInRole( session, Role.ASSERTED ) );
+        assertTrue ( "Alice not authenticated", m_auth.isUserInRole( session, Role.AUTHENTICATED ) );
+        assertFalse( "Alice not in Alice", m_auth.isUserInRole( session, alice ) );
+        assertTrue ( "Alice in IT", m_auth.isUserInRole( session, it ) );
+        assertFalse( "Alice not in Finance", m_auth.isUserInRole( session, finance ) );
+        assertTrue ( "Alice in Group1", m_auth.isUserInRole( session, group1 ) );
+        assertFalse( "Alice not in Group2", m_auth.isUserInRole( session, group2 ) );
+        
+        // Clean up
+        m_groupMgr.removeGroup( "Group1" );
+        m_groupMgr.removeGroup( "Group2" );
+    }
+    
+    public void testPrincipalAcl() throws Exception
+    {
+        // Create test page & attachment
+        String src = "[{ALLOW edit Alice}] ";
+        m_engine.saveText( "Test", src );
+
+        WikiPage p = m_engine.getPage( "Test" );
+        Permission view = new PagePermission( p, "view" );
+        Permission edit = new PagePermission( p, "edit" );
+
+        // Create session with authenticated user 'Alice', who can read & edit (in ACL)
+        WikiSession session;
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        assertTrue( "Alice view Test", m_auth.checkPermission( session, view ) );
+        assertTrue( "Alice edit Test", m_auth.checkPermission( session, edit ) );
+
+        // Create session with authenticated user 'Bob', who can't read or edit (not in ACL)
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        assertFalse( "Bob !view Test", m_auth.checkPermission( session, view ) );
+        assertFalse( "Bob !edit Test", m_auth.checkPermission( session, edit ) );
+
         // Cleanup
         try
         {
             m_engine.deletePage( "Test" );
         }
-        catch ( ProviderException e ) 
+        catch( ProviderException e )
         {
-            assertTrue(false);
+            fail( "Could not delete page" );
         }
-    }
-    
-    public void testStaticPermission()
-    {
-        String wiki = m_engine.getApplicationName();
-        
-        Subject s = new Subject();
-        s.getPrincipals().add( Role.ANONYMOUS );
-        assertTrue( "Anonymous view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
-        assertTrue( "Anonymous edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
-        assertTrue( "Anonymous comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertFalse( "Anonymous modify",  m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
-        assertFalse( "Anonymous upload",  m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
-        assertFalse( "Anonymous rename",  m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
-        assertFalse( "Anonymous delete",  m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Anonymous prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
-        assertTrue( "Anonymous profile",  m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
-        assertTrue( "Anonymous pages",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
-        assertFalse( "Anonymous groups",  m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
-        
-        s = new Subject();
-        s.getPrincipals().add( Role.ASSERTED );
-        assertTrue( "Asserted view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
-        assertTrue( "Asserted edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
-        assertTrue( "Asserted comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertFalse( "Asserted modify",  m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
-        assertFalse( "Asserted upload",  m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
-        assertFalse( "Asserted rename",  m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
-        assertFalse( "Asserted delete",  m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Asserted prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
-        assertTrue( "Asserted profile",  m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
-        assertTrue( "Asserted pages",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
-        assertFalse( "Asserted groups",  m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
-        
-        s = new Subject();
-        s.getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Authenticated view",      m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
-        assertTrue( "Authenticated edit",      m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
-        assertTrue( "Authenticated comment",   m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertTrue( "Authenticated modify",    m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
-        assertTrue( "Authenticated upload",    m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
-        assertTrue( "Authenticated rename",    m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
-        assertFalse( "Authenticated delete",   m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Authenticated prefs",     m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
-        assertTrue( "Authenticated profile",   m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
-        assertTrue( "Authenticated pages",     m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
-        assertTrue( "Authenticated groups",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
-        
-        s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( wiki, "Admin" ) );
-        assertTrue( "Admin view",     m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
-        assertTrue( "Admin edit",     m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
-        assertTrue( "Admin comment",  m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertTrue( "Admin modify",   m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
-        assertTrue( "Admin upload",   m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
-        assertTrue( "Admin rename",   m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
-        assertTrue( "Admin delete",   m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
-        assertTrue( "Admin prefs",    m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
-        assertTrue( "Admin profile",  m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
-        assertTrue( "Admin pages",    m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
-        assertTrue( "Admin groups",   m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
-    }
-    
-    private static class TestPrincipal implements Principal
-    {
-        private final String m_name;
-        public TestPrincipal( String name)
-        {
-            m_name = name;
-        }
-        
-        public String getName() {
-            return m_name;
-        }
-    }
-    
-    private WikiSession buildSession( WikiContext context, Principal[] principals )
-    {
-        WikiSession session = context.getWikiSession();
-        Set subjectPrincipals = session.getSubject().getPrincipals();
-        subjectPrincipals.clear();
-        for( int i = 0; i < principals.length; i++ )
-        {
-            subjectPrincipals.add( principals[i] );
-        }
-        return session;
     }
 
     /**
-     * Any principal strings that have same names as built-in
-     * roles should resolve as built-in roles!
+     * Any principal strings that have same names as built-in roles should
+     * resolve as built-in roles!
      */
     public void testResolveBuiltInRoles()
     {
@@ -236,347 +476,153 @@ public class AuthorizationManagerTest extends TestCase
         assertEquals( principal, m_auth.resolvePrincipal( "All" ) );
         principal = Role.ANONYMOUS;
         assertEquals( principal, m_auth.resolvePrincipal( "Anonymous" ) );
-        
-        // This should resolve because there's no built-in role Admin
-        principal = new WikiPrincipal("Admin");
+
+        // This should not resolve because there's no built-in role Admin
+        principal = new WikiPrincipal( "Admin" );
         assertFalse( principal.equals( m_auth.resolvePrincipal( "Admin" ) ) );
     }
 
-    public void testResolveGroups()
+    public void testResolveGroups() throws WikiException
     {
-        Group group1 = new DefaultGroup("SampleGroup");
-        m_engine.getGroupManager().add( group1 );
-        assertEquals( group1, m_auth.resolvePrincipal( "SampleGroup" ) );
-        
+        Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
+        m_groupMgr.setGroup( m_session, group1 );
+
+        assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
+        m_groupMgr.removeGroup( "SampleGroup" );
+
         // We shouldn't be able to spoof a built-in role
-        Group group2 = new DefaultGroup("Authenticated");
-        m_engine.getGroupManager().add( group2 );
-        super.assertNotSame( group2, m_auth.resolvePrincipal( "Authenticated" ) );
-        super.assertEquals( Role.AUTHENTICATED, m_auth.resolvePrincipal( "Authenticated" ) );
-        
-        // We shouldn't resolve a group if the manager doesn't know about it
-        Group group3 = new DefaultGroup("NonExistentGroup");
-        assertFalse( group3.equals( m_auth.resolvePrincipal( "NonExistentGroup" ) ) );
+        try {
+            Group group2 = m_groupMgr.parseGroup( "Authenticated", "", true );
+            assertNotSame( group2.getPrincipal(), m_auth.resolvePrincipal( "Authenticated" ) );
+        }
+        catch ( WikiSecurityException e )
+        {
+            assertTrue ( "Authenticated not allowed as group name.", true );
+        }
+        assertEquals( Role.AUTHENTICATED, m_auth.resolvePrincipal( "Authenticated" ) );
     }
 
-    
-    public void testResolveUsers()
+    public void testResolveUsers() throws WikiException
     {
         // We should be able to resolve a user by login, user, or wiki name
         UserProfile profile = new DefaultUserProfile();
-        profile.setEmail("janne@jalkanen.net");
-        profile.setFullname("Janne Jalkanen");
-        profile.setLoginName("janne");
-        profile.setWikiName("JanneJalkanen");
-        try {
-            m_engine.getUserDatabase().save( profile );
-        }
-        catch (WikiSecurityException e)
+        profile.setEmail( "janne@jalkanen.net" );
+        profile.setFullname( "Janne Jalkanen" );
+        profile.setLoginName( "janne" );
+        profile.setWikiName( "JanneJalkanen" );
+        try
         {
-            assertFalse("Failed save: " + e.getLocalizedMessage(), true);
+            m_engine.getUserManager().getUserDatabase().save( profile );
+        }
+        catch( WikiSecurityException e )
+        {
+            assertFalse( "Failed save: " + e.getLocalizedMessage(), true );
         }
         assertEquals( new WikiPrincipal( "janne" ), m_auth.resolvePrincipal( "janne" ) );
         assertEquals( new WikiPrincipal( "Janne Jalkanen" ), m_auth.resolvePrincipal( "Janne Jalkanen" ) );
         assertEquals( new WikiPrincipal( "JanneJalkanen" ), m_auth.resolvePrincipal( "JanneJalkanen" ) );
+
+        // A wiki group should resolve to itself
+        Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
+        m_groupMgr.setGroup( m_session, group1 );
+        assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
+        m_groupMgr.removeGroup( "SampleGroup" );
         
-        // We shouldn't be able to spoof a built-in group
-        Group group1 = new DefaultGroup("SampleGroup");
-        m_engine.getGroupManager().add( group1 );
-        super.assertNotSame( new WikiPrincipal("SampleGroup"), m_auth.resolvePrincipal( "Authenticated" ) );
-        super.assertEquals( group1, m_auth.resolvePrincipal( "SampleGroup" ) );
+        // A built-in role should resolve to itself
+        assertEquals( Role.AUTHENTICATED, m_auth.resolvePrincipal( "Authenticated" ) );
 
         // We shouldn't be able to spoof a built-in role
-        super.assertNotSame( new WikiPrincipal("Authenticated"), m_auth.resolvePrincipal( "Authenticated" ) );
-        super.assertEquals( Role.AUTHENTICATED, m_auth.resolvePrincipal( "Authenticated" ) );
+        assertNotSame( new WikiPrincipal( "Authenticated" ), m_auth.resolvePrincipal( "Authenticated" ) );
 
         // An unknown user should resolve to a generic UnresolvedPrincipal
-        Principal principal = new UnresolvedPrincipal("Bart Simpson");
-        assertEquals( principal, m_auth.resolvePrincipal("Bart Simpson"));
-    }
-    
-    /**
-     * Tests the default policy. Anonymous users can read,
-     * Authenticated can edit, etc. Uses the default 
-     * tests/etc/jspwiki.policy file installed by the JRE at startup.
-     * @throws Exception
-     */
-    public void testDefaultPermissions() throws Exception
-    {
-        String text = "Foo";
-        m_engine.saveText( "TestDefaultPage", text );
-        
-        WikiPage p = m_engine.getPage("TestDefaultPage");
-        m_context = new WikiContext( m_engine, p );
-        m_session = m_context.getWikiSession();
-
-        AuthorizationManager mgr = m_engine.getAuthorizationManager();
-        
-        // Charlie is anonymous
-        Principal principal = new WikiPrincipal( "Charlie");
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertTrue( "Charlie view", 
-                    mgr.checkPermission( m_session,
-                                     new PagePermission( p, "view" ) ) );
-        assertTrue( "Charlie edit", 
-                    mgr.checkPermission( m_session,
-                                      new PagePermission( p, "edit" ) ) );
-
-        // Bob is logged in
-        principal = new WikiPrincipal( "Bob");
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Bob view", mgr.checkPermission( m_session,
-                new PagePermission( p, "view" ) ) );
-        assertTrue( "Bob edit", mgr.checkPermission( m_session,
-                new PagePermission( p, "edit" ) ) );
-
-        // Cleanup
-        try
-        {
-            m_engine.deletePage( "TestDefaultPage" );
-        }
-        catch ( ProviderException e ) 
-        {
-            assertTrue(false);
-        }
+        Principal principal = new UnresolvedPrincipal( "Bart Simpson" );
+        assertEquals( principal, m_auth.resolvePrincipal( "Bart Simpson" ) );
     }
 
-    public void testGetRoles() throws Exception
+    public void testRoleAcl() throws Exception
     {
-        String wiki = m_engine.getApplicationName();
-        
-        // Set up a group without Bob in it
-        String text = "Foobar.\n\n[{SET members=Alice, Charlie}]\n\nTest group.";
-        m_engine.saveText( "GroupTest", text );
-        
-        // Pretend Bob has asserted his identity and has role "admin"
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        Principal[] principals = new Principal[]{ new WikiPrincipal( "Bob" ), Role.ALL, Role.ASSERTED, new GroupPrincipal( wiki, "Admin" ) };
-        WikiPage p = m_engine.getPage( "GroupTest" );
-        m_context = new WikiContext( m_engine, request, p );
-        m_session = buildSession( m_context, principals );
-        m_engine.getGroupManager().addWikiEventListener( m_session );
-        
-        // Bob should have two roles
-        principals = m_auth.getRoles( m_session );
-        assertTrue( "Bob member of ALL", ArrayUtils.contains( principals, Role.ALL ) );
-        assertTrue( "Bob member of ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
-        assertFalse( "Bob member of ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertFalse( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( wiki, "Test" ) ) );
-        
-        // Re-save group "Test" with Bob as a member
-        text = "Foobar.\n\n[{SET members=Alice, Bob, Charlie}]\n\nTest group.";
-        m_engine.saveText( "GroupTest", text );
-
-        // Bob should have three roles
-        principals = m_auth.getRoles( m_session );
-        assertTrue( "Bob member of ALL", ArrayUtils.contains( principals, Role.ALL ) );
-        assertTrue( "Bob member of ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
-        assertFalse( "Bob member of ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
-        assertTrue( "Bob member of Test", ArrayUtils.contains( principals, new GroupPrincipal( wiki, "Test" ) ) );
-    }
-    
-    public void testPrincipalAclPermissions() throws Exception
-    {
-        String src = "[{ALLOW edit Foo}] ";
-        m_engine.saveText( "Test", src );
-
-        WikiPage p = m_engine.getPage( "Test" );
-        m_context = new WikiContext( m_engine, p );
-        m_session = m_context.getWikiSession();
-
-        // Foo is in the ACL and can read
-        Principal principal = new WikiPrincipal( "Foo" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
-
-        // Bar is not in the ACL, so he can't read or edit
-        principal = new WikiPrincipal( "Bar" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Bar !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Bar view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Bar !edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
-        
-        // Cleanup
-        try
-        {
-            m_engine.deletePage( "Test" );
-        }
-        catch ( ProviderException e ) 
-        {
-            fail("Could not delete page");
-        }
-    }
-
-    public void testInheritedPermissions() throws Exception
-    {
-        String src = "[{ALLOW edit Foo}] ";
-        m_engine.saveText( "Test", src );
-
-        File f = m_engine.makeAttachmentFile();
-        
-        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
-
-        att.setAuthor( "FirstPost" );
-
-        m_engine.getAttachmentManager().storeAttachment( att, f );
-        
-        Attachment p = (Attachment)m_engine.getPage( "Test/test1.txt" );
-        m_context = new WikiContext( m_engine, p );
-        m_session = m_context.getWikiSession();
-
-        // Foo is in the ACL and can read
-        Principal principal = new WikiPrincipal( "Foo" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
-
-        // Bar is not in the ACL, so he can't read or edit
-        principal = new WikiPrincipal( "Bar" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Bar !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Bar view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Bar !edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
-        
-
-        m_engine.deletePage( "Test" );
-    }
-
-    public void testInheritedPermissions2() throws Exception
-    {
-        String src = "[{ALLOW view Foo}] [[ALLOW edit AdminGroup}]";
-        m_engine.saveText( "Test", src );
-
-        File f = m_engine.makeAttachmentFile();
-        
-        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
-
-        att.setAuthor( "FirstPost" );
-
-        m_engine.getAttachmentManager().storeAttachment( att, f );
-        
-        Attachment p = (Attachment)m_engine.getPage( "Test/test1.txt" );
-        m_context = new WikiContext( m_engine, p );
-        m_session = m_context.getWikiSession();
-
-        // Foo is in the ACL and can read
-        Principal principal = new WikiPrincipal( "Foo" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Foo !edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
-
-        // Bar is not in the ACL, so he can't read or edit
-        principal = new WikiPrincipal( "Guest" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Guest !view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Guest !edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Guest view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Guest edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
-        
-        m_engine.getAttachmentManager().deleteAttachment( att );
-        m_engine.deletePage( "Test" );
-    }
-
-    public void testRoleAclPermissions() throws Exception
-    {
+        // Create test page & attachment
         String src = "[{ALLOW edit Authenticated}] ";
         m_engine.saveText( "Test", src );
 
         WikiPage p = m_engine.getPage( "Test" );
-        m_context = new WikiContext( m_engine, p );
-        m_session = m_context.getWikiSession();
+        Permission view = new PagePermission( p, "view" );
+        Permission edit = new PagePermission( p, "edit" );
 
-        // Authenticated is in the ACL and can view and edit
-        Principal principal = new WikiPrincipal( "Foo" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.AUTHENTICATED );
-        assertTrue( "Foo view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertTrue( "Foo edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
-        assertTrue( "Foo view all", m_auth.checkPermission( m_session, PagePermission.VIEW ) );
-        assertTrue( "Foo edit all", m_auth.checkPermission( m_session, PagePermission.EDIT ) );
+        // Create session with authenticated user 'Alice', who can read & edit
+        WikiSession session;
+        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        assertTrue( "Alice view Test", m_auth.checkPermission( session, view ) );
+        assertTrue( "Alice edit Test", m_auth.checkPermission( session, edit ) );
 
-        // Bar is not authenticated, so he can't read or edit
-        principal = new WikiPrincipal( "Bar" );
-        m_session.getSubject().getPrincipals().clear();
-        m_session.getSubject().getPrincipals().add( principal );
-        m_session.getSubject().getPrincipals().add( Role.ANONYMOUS );
-        assertFalse( "Bar view Test", m_auth.checkPermission( m_session, new PagePermission( p, "view" ) ) );
-        assertFalse( "Bar edit Test", m_auth.checkPermission( m_session, new PagePermission( p, "edit" ) ) );
+        // Create session with asserted user 'Bob', who can't read or edit (not in ACL)
+        session = WikiSessionTest.assertedSession( m_engine, Users.BOB );
+        assertFalse( "Bob !view Test", m_auth.checkPermission( session, view ) );
+        assertFalse( "Bob !edit Test", m_auth.checkPermission( session, edit ) );
         
         // Cleanup
         try
         {
             m_engine.deletePage( "Test" );
         }
-        catch ( ProviderException e ) 
+        catch( ProviderException e )
         {
-            assertTrue(false);
+            assertTrue( false );
         }
     }
 
-    /**
-     * Returns a string representation of the permissions of the page.
-     */
-    public static String printPermissions( WikiPage p ) throws Exception
+    public void testStaticPermission() throws Exception
     {
-        StringBuffer sb = new StringBuffer();
+        WikiSession s = WikiSessionTest.anonymousSession( m_engine );
+        assertTrue( "Anonymous view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertTrue( "Anonymous edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Anonymous comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertFalse( "Anonymous modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Anonymous upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Anonymous rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertFalse( "Anonymous delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertTrue( "Anonymous prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Anonymous profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertTrue( "Anonymous pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Anonymous groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
 
-        Acl acl = p.getAcl();
+        s = WikiSessionTest.assertedSession( m_engine, "Jack Sparrow" );
+        assertTrue( "Asserted view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertTrue( "Asserted edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Asserted comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertFalse( "Asserted modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Asserted upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Asserted rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertFalse( "Asserted delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertTrue( "Asserted prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Asserted profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertTrue( "Asserted pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Asserted groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
 
-        sb.append( "page = " + p.getName() + "\n" );
+        s = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        assertTrue( "Authenticated view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertTrue( "Authenticated edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Authenticated comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Authenticated modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertTrue( "Authenticated upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertTrue( "Authenticated rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertFalse( "Authenticated delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertTrue( "Authenticated prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Authenticated profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertTrue( "Authenticated pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertTrue( "Authenticated groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
 
-        if ( acl != null )
-        {
-            for( Enumeration e = acl.entries(); e.hasMoreElements(); )
-            {
-                AclEntry entry = (AclEntry) e.nextElement();
-
-                sb.append( "  user = " + entry.getPrincipal().getName() + ": " );
-
-                for( Enumeration perms = entry.permissions(); perms.hasMoreElements(); )
-                {
-                    sb.append( perms.nextElement().toString() );
-                }
-                sb.append( ")\n" );
-            }
-        }
-        else
-        {
-            sb.append( "  no permissions\n" );
-        }
-
-        return sb.toString();
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite("Authorization Manager test");
-        suite.addTestSuite( AuthorizationManagerTest.class );
-        return suite;
+        s = WikiSessionTest.adminSession( m_engine );
+        assertTrue( "Admin view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertTrue( "Admin edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Admin comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Admin modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertTrue( "Admin upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertTrue( "Admin rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertTrue( "Admin delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertTrue( "Admin prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertTrue( "Admin profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertTrue( "Admin pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertTrue( "Admin groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
     }
 }

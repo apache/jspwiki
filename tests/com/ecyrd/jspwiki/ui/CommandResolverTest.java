@@ -28,7 +28,7 @@ public class CommandResolverTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.put( WikiEngine.PROP_MATCHPLURALS, "yes" );
         testEngine = new TestEngine( props );
-        resolver = testEngine.getPageResolver();
+        resolver = testEngine.getCommandResolver();
         testEngine.saveText( "SinglePage", "This is a test." );
         testEngine.saveText( "PluralPages", "This is a test." );
     }

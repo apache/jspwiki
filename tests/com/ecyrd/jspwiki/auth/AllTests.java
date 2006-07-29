@@ -22,6 +22,7 @@ public class AllTests extends TestCase
         {
             suite.addTest( AuthenticationManagerTest.suite() );
             suite.addTest( AuthorizationManagerTest.suite() );
+            suite.addTest( GroupManagerTest.suite() );
             suite.addTest( com.ecyrd.jspwiki.auth.acl.AllTests.suite() );
             suite.addTest( com.ecyrd.jspwiki.auth.authorize.AllTests.suite() );
             suite.addTest( com.ecyrd.jspwiki.auth.login.AllTests.suite() );

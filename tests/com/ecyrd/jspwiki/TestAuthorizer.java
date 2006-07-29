@@ -6,23 +6,29 @@ package com.ecyrd.jspwiki;
 
 import java.security.Principal;
 import java.util.Properties;
-import java.util.Set;
 
-import com.ecyrd.jspwiki.auth.Authorizer;
+import javax.servlet.http.HttpServletRequest;
+
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
 
 /**
- * A very fast authorizer that does nothing. The WebContainerAuthorizer module
+ * A very fast authorizer that does almost nothing. The WebContainerAuthorizer module
  * is very slow, as it parses the web.xml each time, so we use this for most of
  * the different tests.
  * @author Janne Jalkanen
  * @author Andrew R. Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-05-28 23:26:47 $
+ * @version $Revision: 1.6 $ $Date: 2006-07-29 19:23:14 $
  * @since 2.3
  */
-public class TestAuthorizer implements Authorizer
+public class TestAuthorizer implements WebAuthorizer
 {
-    private Role[] m_roles = new Role[]{ new Role( "Admin"), Role.AUTHENTICATED };
+    private Role[] m_roles = new Role[]{ 
+            new Role( "Admin" ), 
+            Role.AUTHENTICATED,
+            new Role( "IT" ),
+            new Role( "Finance" ),
+            new Role( "Engineering" ) };
     
     public TestAuthorizer()
     {
@@ -39,8 +45,9 @@ public class TestAuthorizer implements Authorizer
     }
 
     /**
-     * Returns an array of Principal objects containing two elements:
-     * Role "Admin" and Role.AUTHENTICATED.
+     * Returns an array of Principal objects containing five elements:
+     * Role "Admin", Role.AUTHENTICATED, Role "IT", Role "Finance" and 
+     * Role "Engineering."
      */
     public Principal[] getRoles()
     {
@@ -48,9 +55,8 @@ public class TestAuthorizer implements Authorizer
     }
     
     /**
-     * We have a special case if we're using the TestHttpServletRequest under
-     * the covers, because we can actually make role decisions based on what's 
-     * in the test-request. It's a cheap and nasty hack, but it's a test, right?
+     * Returns <code>true</code> if the WikiSession's Subject contains 
+     * a particular role principal.
      */
     public boolean isUserInRole( WikiSession session, Principal role )
     {
@@ -58,8 +64,19 @@ public class TestAuthorizer implements Authorizer
         {
             return false;
         }
-        Set principals = session.getSubject().getPrincipals();
-        return principals.contains( role );
+        
+        return session.hasPrincipal( role );
+    }
+
+    /**
+     * Returns <code>true</code> if the HTTP request contains 
+     * a particular role principal. Delegates to
+     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
+     * @see com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, java.security.Principal)
+     */
+    public boolean isUserInRole( HttpServletRequest request, Principal role )
+    {
+        return request.isUserInRole( role.getName() );
     }
 
 }
