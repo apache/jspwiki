@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.19 2006-05-20 05:16:58 arj Exp $
+// $Id: jspwiki.policy,v 1.20 2006-07-29 19:15:03 arj Exp $
 //
 // This file contains the Java 2 security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
@@ -86,7 +86,7 @@ grant signedBy "jspwiki",
 grant signedBy "jspwiki",
   principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:*", "view";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
@@ -97,12 +97,13 @@ grant signedBy "jspwiki",
 // Authenticated users can do most things: view, create, edit and 
 // comment on all pages; upload files to existing ones; create and edit
 // wiki groups; and rename existing pages. Authenticated users can register
-// with the wiki, and edit their own profiles.
+// with the wiki, edit their own profiles, and edit groups they create.
 
 grant signedBy "jspwiki", 
   principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "modify,rename";
-    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:Group*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:<groupmember>", "edit";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
     permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
