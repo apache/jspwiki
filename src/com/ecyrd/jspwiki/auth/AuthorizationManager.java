@@ -25,27 +25,27 @@ import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
-
-import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.EventSourceDelegate;
+import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventSource;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -78,11 +78,11 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.38 $ $Date: 2006-07-25 03:46:22 $
+ * @version $Revision: 1.39 $ $Date: 2006-07-29 19:44:04 $
  * @since 2.3
  * @see AuthenticationManager
  */
-public final class AuthorizationManager
+public final class AuthorizationManager implements WikiEventSource
 {
     private static final Logger log = Logger.getLogger( AuthorizationManager.class );
     /**
@@ -99,10 +99,10 @@ public final class AuthorizationManager
 
     private WikiEngine                        m_engine          = null;
 
-    /** Listeners for security events */
-    private final Set        m_listeners = new HashSet();
+    /** Delegate for managing event listeners */
+    private EventSourceDelegate               m_listeners       = new EventSourceDelegate();
     
-    private boolean          m_useJAAS   = true;
+    private boolean                           m_useJAAS         = true;
     
     /**
      * Constructs a new AuthorizationManager instance.
@@ -112,12 +112,11 @@ public final class AuthorizationManager
     }
     
     /**
-     * Registers a WikiEventListener with this instance.
-     * @param listener the event listener
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
      */
-    public final synchronized void addWikiEventListener( WikiEventListener listener )
+    public final void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.add( listener );
+        m_listeners.addWikiEventListener( listener );
     }
 
     /**
@@ -185,12 +184,11 @@ public final class AuthorizationManager
             fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, null, permission ) );
             return false;
         }
-        Subject subject = session.getSubject();
         Principal user = session.getLoginPrincipal();
         
         // Always allow the action if user has AllPermission
         Permission allPermission = new AllPermission( m_engine.getApplicationName() );
-        boolean hasAllPermission = checkStaticPermission( subject, allPermission );
+        boolean hasAllPermission = checkStaticPermission( session, allPermission );
         if ( hasAllPermission )
         {
             fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
@@ -199,13 +197,13 @@ public final class AuthorizationManager
         
         // If the user doesn't have *at least* the permission
         // granted by policy, return false.
-        boolean hasPolicyPermission = checkStaticPermission( subject, permission );
+        boolean hasPolicyPermission = checkStaticPermission( session, permission );
         if ( !hasPolicyPermission )
         {
             fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, user, permission ) );
             return false;
         }
-
+        
         // If this isn't a PagePermission, it's allowed
         if ( ! ( permission instanceof PagePermission ) )
         {
@@ -263,80 +261,65 @@ public final class AuthorizationManager
     }
     
     /**
-     * Returns an array of Principal objects that represents the roles that
-     * the user associated with a WikiSession possesses. The array is built
-     * by iterating through the Subject's Principal set and extracting
-     * all Role and GroupPrincipal objects into a list. The list is 
-     * returned as an array sorted in the natural order implied by 
-     * each Principal's <code>getName</code> method.
-     * Note that this method does <em>not</em> consult the external
-     * Authorizer or GroupManager; it relies on the Principals that
-     * have been injected into the user's Subject at login time, or
-     * after group creation/modification/deletion.
-     * @param session the wiki session
-     * @return an array of Principal objects corresponding to the 
-     * roles the Subject possesses
-     */
-    public final Principal[] getRoles( WikiSession session )
-    {
-        Set roles = new HashSet();
-        Subject subject = session.getSubject();
-        
-        // Add all of the Roles possessed by the Subject directly
-        roles.addAll( subject.getPrincipals( Role.class ) );
-        
-        // Add all of the GroupPrincipals possessed by the Subject directly
-        roles.addAll( subject.getPrincipals( GroupPrincipal.class ) );
-        
-        // Return a defensive copy
-        Principal[] roleArray = ( Principal[] )roles.toArray( new Principal[roles.size()] );
-        Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
-        return roleArray;
-    }
-    
-    /**
-     * Wrapper method that determines if the Subject associated with a 
+     * <p>Determines if the Subject associated with a 
      * supplied WikiSession contains a desired Role or GroupPrincipal. 
      * The algorithm simply checks to see if the Subject possesses 
-     * the Role or GroupPrincipal it in its Principal set. If the Principal
-     * is of type {@link com.ecyrd.jspwiki.auth.authorize.Group},
-     * it is converted to an equivalent GroupPrincipal first.
-     * For all other cases, this method returns <code>false</code>.
-     * Note that this method does <em>not</em> consult the external
+     * the Role or GroupPrincipal it in its Principal set. Note that
+     * any user (anyonymous, asserted, authenticated) can possess
+     * a built-in role. But a user <em>must</em> be authenticated to 
+     * possess a role other than one of the built-in ones.
+     * We do this to prevent privilege escalation.</p> 
+     * <p>For all other cases, this method returns <code>false</code>.</p>
+     * <p>Note that this method does <em>not</em> consult the external
      * Authorizer or GroupManager; it relies on the Principals that
      * have been injected into the user's Subject at login time, or
-     * after group creation/modification/deletion.
+     * after group creation/modification/deletion.</p>
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role or group principal) to look
-     *            for, which must be non-null. If null, the result of this
-     *            method always returns <code>false</code>
+     *            for, which must be non-<cor>null</code>. If <code>null</code>,
+     *            the result of this method always returns <code>false</code>
      * @return <code>true</code> if the Subject supplied with the WikiContext
-     *         posesses the Role or GroupPrincipal,
-     *         <code>false</code> otherwise
+     *         posesses the Role or GroupPrincipal, <code>false</code> otherwise
      */
     public final boolean isUserInRole( WikiSession session, Principal principal )
-    // TODO: write unit tests
     {
-        if (session == null || principal == null)
+        if ( session == null || principal == null ||
+             AuthenticationManager.isUserPrincipal( principal ) )
         {
             return false;
         }
-        
-        // Backwards compatibility hack
-        if ( principal instanceof Group )
+
+        // Any type of user can possess a built-in role
+        if ( principal instanceof Role && Role.isBuiltInRole( ((Role)principal) ) )
         {
-            String wiki = m_engine.getApplicationName();
-            principal = new GroupPrincipal( wiki, principal.getName() );
+            return session.hasPrincipal( principal );
         }
-            
-        if ( principal instanceof Role ||
-             principal instanceof GroupPrincipal )
+        
+        // Only authenticated users can posssess groups or custom roles
+        if ( session.isAuthenticated() && AuthenticationManager.isRolePrincipal( principal ) )
         {
-            Subject subject = session.getSubject();
-            return subject.getPrincipals().contains( principal );
+            return session.hasPrincipal( principal );
         }
         return false;
+    }
+    
+    /**
+     * Returns the current external {@link Authorizer} in use. This method
+     * is guaranteed to return a properly-initialized Authorizer, unless
+     * it could not be initialized. In that case, this method throws
+     * a {@link com.ecyrd.jspwiki.WikiException}.
+     * @throws com.ecyrd.jspwiki.WikiException if the Authorizer could
+     * not be initialized
+     * @return the current Authorizer
+     */
+    public final Authorizer getAuthorizer() throws WikiSecurityException
+    {
+        if ( m_authorizer != null )
+        {
+            return m_authorizer;
+        }
+        throw new WikiSecurityException( "Authorizer did not initialize properly. Check the logs." );
     }
     
     /**
@@ -344,30 +327,13 @@ public final class AuthorizationManager
      * a desired user Principal or built-in Role principal, OR is a member a
      * Group or external Role. The rules are as follows:</p>
      * <ol>
-     * <li>First, see if the user possesses the role by delegating to 
-     * {@link #isUserInRole(WikiSession, Principal)}. If the
-     * result is <code>true</code>, we're done. If the result is
-     * negative and the WikiSession is <em>not</em> authenticated, 
-     * always return <code>false</code>. We do this to prevent privilege 
-     * escalation.</li>
+     * <li>First, if desired Principal is a Role or GroupPrincipal, delegate to 
+     * {@link #isUserInRole(WikiSession, Principal)} and
+     * return the result.</li>
      * <li>Otherwise, we're looking for a user Principal,
      * so iterate through the Principal set and see if
      * any share the same name as the one we are looking for.</li>
      * </ol>
-     * <p>Note: as implied by the first rule above, this method
-     * will <em>always</em> return <code>false</code> when the 
-     * user isn't authenticated, <code>and</code> the principal/role being 
-     * queried isn't a Role or GroupPrincipal. This is
-     * to prevent privilege escalation by non-authenticated users.
-     * Thus, to gain access to pages that name a specific user, that user 
-     * is <em>required</em> to log in. Ditto for groups he or she 
-     * belongs to. The exception is for ACLs that contain built-in roles; 
-     * <em>e.g.,</em> "allow Asserted users to view" is allowed.</p>
-     * <p>A consequence of this rule is that ACLs that specify 
-     * <code>ALLOW Guest</code> <em>will not work</em> for
-     * anonymous/asserted users (because <code>Guest</code> is 
-     * a Principal, not a built-in Role). ACLs should specify
-     * <code>ALLOW Anonymous</code> instead.</p>
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role, group, or user principal) to look
@@ -379,23 +345,27 @@ public final class AuthorizationManager
      */
     protected final boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
     {
-        
-        boolean hasRoleOrGroup = isUserInRole( session, principal );
-        if ( !session.isAuthenticated() || hasRoleOrGroup )
+        // If either parameter is null, always deny
+        if ( session == null || principal == null )
         {
-            return hasRoleOrGroup;
+            return false;
+        }
+        
+        // If principal is role, delegate to isUserInRole
+        if ( AuthenticationManager.isRolePrincipal( principal ) )
+        {
+            return isUserInRole( session, principal );
         }
         
         // We must be looking for a user principal, then. 
         // So just look for a name match.
-        Subject subject = session.getSubject();
-        String principalName = principal.getName();
-        for( Iterator it = subject.getPrincipals().iterator(); it.hasNext(); )
+        if ( AuthenticationManager.isUserPrincipal( principal ) )
         {
-            Principal userPrincipal = (Principal) it.next();
-            if ( !( userPrincipal instanceof Role || 
-                    userPrincipal instanceof GroupPrincipal ) )
+            String principalName = principal.getName();
+            Principal[] userPrincipals = session.getPrincipals();
+            for ( int i = 0; i < userPrincipals.length; i++ )
             {
+                Principal userPrincipal = userPrincipals[i];
                 if ( userPrincipal.getName().equals( principalName ) )
                 {
                     return true;
@@ -426,26 +396,21 @@ public final class AuthorizationManager
     }
 
     /**
-     * Fires a wiki event to all registered listeners.
-     * @param event the event
+     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
      */
-    protected final void fireEvent( WikiSecurityEvent event )
+    protected final void fireEvent( WikiEvent event )
     {
-        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
-        {
-            WikiEventListener listener = (WikiEventListener)it.next();
-            listener.actionPerformed(event);
-        }
+        m_listeners.fireEvent( event );
     }
     
-    /**
-     * Returns the current external {@link Authorizer} in use, which may be 
-     * <code>null</code>.
-     * @return the current Authorizer
+    /** 
+     * Returns <code>true</code> if JSPWiki's JAAS authorization system 
+     * is used for authorization in addition to container controls.
+     * @return the result
      */
-    protected final Authorizer getAuthorizer()
+    protected boolean isJAASAuthorized()
     {
-        return m_authorizer;
+        return m_useJAAS;
     }
     
     /**
@@ -507,25 +472,25 @@ public final class AuthorizationManager
      * @link AccessController#checkPermission(java.security.Permission). A
      *       caught exception (or lack thereof) determines whether the privilege
      *       is absent (or present).
-     * @param subject the Subject whose permission status is being queried
+     * @param session the WikiSession whose permission status is being queried
      * @param permission the Permission the Subject must possess
      * @return <code>true</code> if the Subject posesses the permission,
      *         <code>false</code> otherwise
      */
-    protected final boolean checkStaticPermission( final Subject subject, final Permission permission )
+    protected final boolean checkStaticPermission( WikiSession session, final Permission permission )
     {
         if( !m_useJAAS ) return true;
         
         try
         {
-            Subject.doAsPrivileged( subject, new PrivilegedAction()
+            WikiSession.doPrivileged( session, new PrivilegedAction()
             {
                 public Object run()
                 {
                     AccessController.checkPermission( permission );
                     return null;
                 }
-            }, null );
+            } );
             return true;
         }
         catch( AccessControlException e )
@@ -535,12 +500,11 @@ public final class AuthorizationManager
     }
     
     /**
-     * Un-registers a WikiEventListener with this instance.
-     * @param listener the event listener
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
      */
-    public synchronized final void removeWikiEventListener( WikiEventListener listener )
+    public final void removeWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.remove( listener );
+        m_listeners.removeWikiEventListener( listener );
     }
     
     /**
@@ -567,24 +531,28 @@ public final class AuthorizationManager
      */
     public final Principal resolvePrincipal( String name ) 
     {  
-        if( !m_useJAAS ) return new UnresolvedPrincipal(name);
+        if( !m_useJAAS )
+        {
+            return new UnresolvedPrincipal(name);
+        }
         
         // Check built-in Roles first
         Role role = new Role(name);
-        if (Role.isBuiltInRole(role)) {
+        if ( Role.isBuiltInRole( role ) )
+        {
             return role;
         }
         
         // Check Authorizer Roles
         Principal principal = m_authorizer.findRole( name );
-        if (principal != null) 
+        if ( principal != null ) 
         {
             return principal;
         }
         
         // Check Groups
         principal = m_engine.getGroupManager().findRole( name );
-        if (principal != null)
+        if ( principal != null )
         {
             return principal;
         }
@@ -592,7 +560,7 @@ public final class AuthorizationManager
         // Ok, no luck---this must be a user principal
         Principal[] principals = null;
         UserProfile profile = null;
-        UserDatabase db = m_engine.getUserDatabase();
+        UserDatabase db = m_engine.getUserManager().getUserDatabase();
         try
         {
             profile = db.find( name );
@@ -600,7 +568,7 @@ public final class AuthorizationManager
             for (int i = 0; i < principals.length; i++) 
             {
                 principal = principals[i];
-                if (principal.getName().equals( name ))
+                if ( principal.getName().equals( name ) )
                 {
                     return principal;
                 }
