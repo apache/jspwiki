@@ -5,6 +5,7 @@
   /* see commonheader.jsp */
   String prefDateFormat     = (String) session.getAttribute("prefDateFormat");
   String prefTimeZone       = (String) session.getAttribute("prefTimeZone");
+  String group              = request.getParameter( "group" );
 %>
 
 <div class="pageactions">
@@ -77,17 +78,42 @@
       </wiki:Permission>
     </wiki:UserCheck>
     
-    <wiki:UserCheck status="authenticated">
+    <wiki:CheckRequestContext context='viewGroup'>
+      <wiki:Permission permission="editGroup">
+        <span>
+          <wiki:Link jsp="EditGroup.jsp">
+            <wiki:Param name="group" value="<%=group%>" />
+            Edit group
+          </wiki:Link>
+        </span>
+      </wiki:Permission>
+      <wiki:Permission permission="deleteGroup">
+        <span>
+          <a onclick="return confirmDelete()" href="<wiki:Link jsp='DeleteGroup.jsp' format='url'><wiki:Param name='group' value='<%=group%>' /></wiki:Link>">Delete group</a>
+        </span>
+      </wiki:Permission>
+    </wiki:CheckRequestContext>
+    
+    <wiki:CheckRequestContext context='editGroup'>
       <span>
-        <wiki:Link jsp="Logout.jsp">Log out</wiki:Link>
+        <wiki:Link jsp="Group.jsp">
+          <wiki:Param name="group" value="<%=group%>" />
+          View group
+        </wiki:Link>
       </span>
-    </wiki:UserCheck>
+    </wiki:CheckRequestContext>
     
     <wiki:Permission permission="createGroups">
       <span>
         <wiki:Link jsp="NewGroup.jsp">Create group</wiki:Link>
       </span>
     </wiki:Permission>
+
+    <wiki:UserCheck status="authenticated">
+      <span>
+        <wiki:Link jsp="Logout.jsp">Log out</wiki:Link>
+      </span>
+    </wiki:UserCheck>
   
     <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
       <div class="pageInfo">

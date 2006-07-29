@@ -1,3 +1,4 @@
+<%@ page import="java.security.Principal" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.NoSuchPrincipalException" %>
@@ -13,11 +14,12 @@
     }
     Logger log = Logger.getLogger("JSPWiki"); 
     WikiEngine wiki;
+
 %>
 
 <%
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.CREATE_GROUP );
+    WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT_GROUP );
     if(!wikiContext.hasAccess( response )) return;
     
     // Extract the current user, group name, members and action attributes
@@ -26,7 +28,7 @@
     Group group = null;
     try 
     {
-        group = groupMgr.parseGroup( wikiContext, true );
+        group = groupMgr.parseGroup( wikiContext, false );
         pageContext.setAttribute ( "Group", group, PageContext.REQUEST_SCOPE );
     }
     catch ( WikiSecurityException e )
@@ -40,18 +42,6 @@
     {
         // Validate the group
         groupMgr.validateGroup( wikiContext, group );
-        
-        try 
-        {
-            groupMgr.getGroup( group.getName() );
-            // Oops! The group already exists. This is mischief!
-            wikiSession.addMessage( GroupManager.MESSAGES_KEY, "Group '" + 
-                group.getName() + "' already exists. Try another name." );
-        }
-        catch ( NoSuchPrincipalException e )
-        {
-            // Group not found; this is good!
-        }
 
         // If no errors, save the group now
         if ( wikiSession.getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
@@ -72,12 +62,12 @@
             return;
         }
     }
-
+        
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+                                                            "EditTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />
 
