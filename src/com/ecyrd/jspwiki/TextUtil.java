@@ -20,7 +20,9 @@
 package com.ecyrd.jspwiki;
 
 import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
 import java.util.Properties;
+import java.util.Random;
 
 
 /**
@@ -456,6 +458,7 @@ public class TextUtil
     private static final int UPPER = 2;
     private static final int DIGIT = 3;
     private static final int OTHER = 4;
+    private static final Random RANDOM = new SecureRandom();
 
     private static int getCharKind(int c)
     {
@@ -763,7 +766,7 @@ public class TextUtil
         
         String pw = "";
         for (int i=0; i<PASSWORD_LENGTH; i++) {
-            int index = (int)(Math.random()*letters.length());
+            int index = (int)(RANDOM.nextDouble()*letters.length());
             pw += letters.substring(index, index+1);
         }
         return pw;
