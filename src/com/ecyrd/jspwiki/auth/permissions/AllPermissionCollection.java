@@ -8,7 +8,7 @@ import java.util.Hashtable;
 /**
  * A collection of AllPermission objects.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-05-20 05:20:34 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-29 19:22:33 $
  */
 public class AllPermissionCollection extends PermissionCollection
 {
@@ -30,11 +30,10 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public void add( Permission permission )
     {
-        if ( !( permission instanceof AllPermission ) && !( permission instanceof WikiPermission )
-                && !( permission instanceof PagePermission ) )
+        if ( !AllPermission.isJSPWikiPermission( permission ) )
         {
             throw new IllegalArgumentException(
-                    "Permission must be of type com.ecyrd.jspwiki.permissions.AllPermission, com.ecyrd.jspwiki.permissions.PagePermission or com.ecyrd.jspwiki.permissions.WikiPermission." );
+                    "Permission must be of type com.ecyrd.jspwiki.permissions.*Permission." );
         }
         
         if ( m_read_only )
@@ -82,8 +81,7 @@ public class AllPermissionCollection extends PermissionCollection
         }
 
         // If not one of our permission types, it's not implied
-        if ( !( permission instanceof AllPermission ) && !( permission instanceof WikiPermission )
-                && !( permission instanceof PagePermission ) )
+        if ( !AllPermission.isJSPWikiPermission( permission ) )
         {
             return false;
         }
@@ -115,18 +113,5 @@ public class AllPermissionCollection extends PermissionCollection
     public void setReadOnly()
     {
         m_read_only = true;
-    }
-    
-    /**
-     * Factory method that returns an AllPermissionCollection for
-     * a specified wiki. For each wiki, only a single collection
-     * item will ever be created and returned. The AllPermissionCollection
-     * class itself maintains an internal static cache of permission
-     * collections, where newly-created collections are kept.
-     * @return the unique permission collection for the wiki
-     */
-    protected static final AllPermissionCollection getInstance( String wiki )
-    {
-        return new AllPermissionCollection();
     }
 }

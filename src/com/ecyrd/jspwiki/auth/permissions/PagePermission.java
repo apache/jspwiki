@@ -5,7 +5,6 @@ import java.security.PermissionCollection;
 import java.util.Arrays;
 
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
  * Targets that do not include a wiki prefix <i>never </i> imply others.
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-05-20 05:20:34 $
+ * @version $Revision: 1.10 $ $Date: 2006-07-29 19:22:33 $
  * @since 2.3
  */
 public final class PagePermission extends Permission
@@ -119,9 +118,9 @@ public final class PagePermission extends Permission
 
     /**
      * Creates a new PagePermission for a specified page name and set of
-     * actions. Page should include a prepended wiki name followed by a slash.
-     * If the wiki name is not supplied or starts with a colon (:), the page
-     * refers no wiki in particular, and will never imply any other
+     * actions. Page should include a prepended wiki name followed by a colon (:).
+     * If the wiki name is not supplied or starts with a colon, the page
+     * refers to no wiki in particular, and will never imply any other
      * PagePermission.
      * @param page the wiki page
      * @param actions the allowed actions for this page
@@ -250,15 +249,6 @@ public final class PagePermission extends Permission
      * <li>All of other PagePermission's actions are equal to, or a subset of,
      * those of this permission</li>
      * </ol>
-     * <p>
-     * Note: a significant (hard-coded) exception to the rule occurs with pages
-     * starting in
-     * {@link com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager#GROUP_PREFIX},
-     * because these are group member list pages. For a permission whose target
-     * is the wildcard "*", permission for Group* pages is <em>not</em>
-     * implied. The target "Group*", however, works normally. This is most
-     * definitely a horrible hack.
-     * </p>
      * @see java.security.Permission#implies(java.security.Permission)
      */
     public final boolean implies( Permission permission )
@@ -282,17 +272,9 @@ public final class PagePermission extends Permission
         // See if the tested permission's wiki is implied
         boolean impliedWiki = isSubset( m_wiki, p.m_wiki );
 
-        // Special case: if this page is "*", the tested permission's
-        // page is implied UNLESS it starts with "Group"
-        boolean impliedPage;
-        if ( m_page.equals( WILDCARD ) && p.m_page.startsWith( DefaultGroupManager.GROUP_PREFIX ) )
-        {
-            impliedPage = false;
-        }
-        else
-        {
-            impliedPage = isSubset( m_page, p.m_page );
-        }
+        // If this page is "*", the tested permission's
+        // page is implied
+        boolean impliedPage = isSubset( m_page, p.m_page );
 
         return ( impliedWiki && impliedPage );
     }
@@ -300,11 +282,10 @@ public final class PagePermission extends Permission
     /**
      * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
-     * @see AllPermissionCollection#getInstance(String)
      */
     public PermissionCollection newPermissionCollection()
     {
-        return AllPermissionCollection.getInstance( m_wiki );
+        return new AllPermissionCollection();
     }
     
     /**

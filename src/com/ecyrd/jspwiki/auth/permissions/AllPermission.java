@@ -8,7 +8,7 @@ import java.security.PermissionCollection;
  * Permission to perform all operations on a given wiki.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-05-20 05:20:34 $
+ * @version $Revision: 1.5 $ $Date: 2006-07-29 19:22:33 $
  * @since 2.3.80
  */
 public final class AllPermission extends Permission
@@ -84,9 +84,8 @@ public final class AllPermission extends Permission
      */
     public final boolean implies( Permission permission )
     {
-        // Permission must be a WikiPermission, PagePermission or AllPermission
-        if ( !( permission instanceof WikiPermission ) && !( permission instanceof PagePermission )
-                && !( permission instanceof AllPermission ) )
+        // Permission must be a JSPWiki permission, PagePermission or AllPermission
+        if ( !isJSPWikiPermission( permission ) )
         {
             return false;
         }
@@ -103,6 +102,10 @@ public final class AllPermission extends Permission
         {
             wiki = ( (WikiPermission) permission ).getWiki();
         }
+        if ( permission instanceof GroupPermission )
+        {
+            wiki = ( (GroupPermission) permission ).getWiki();
+        }
 
         // If the wiki is implied, it's allowed
         return PagePermission.isSubset( m_wiki, wiki );
@@ -111,11 +114,10 @@ public final class AllPermission extends Permission
     /**
      * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
-     * @see AllPermissionCollection#getInstance(String)
      */
     public PermissionCollection newPermissionCollection()
     {
-        return AllPermissionCollection.getInstance( m_wiki );
+        return new AllPermissionCollection();
     }
 
     /**
@@ -125,6 +127,14 @@ public final class AllPermission extends Permission
     public final String toString()
     {
         return "(\"" + this.getClass().getName() + "\",\"" + m_wiki + "\")";
+    }
+    
+    protected static final boolean isJSPWikiPermission( Permission permission )
+    {
+        return ( permission instanceof WikiPermission || 
+                 permission instanceof PagePermission ||
+                 permission instanceof GroupPermission || 
+                 permission instanceof AllPermission );
     }
 
 }
