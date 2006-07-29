@@ -19,20 +19,21 @@
 */
 package com.ecyrd.jspwiki.url;
 
-import java.util.Properties;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.ui.CommandResolver;
+import com.ecyrd.jspwiki.ui.Command;
 
 /**
  *  Implements the default URL constructor using links directly to the
@@ -51,34 +52,11 @@ public class DefaultURLConstructor
     protected boolean          m_useRelativeURLStyle = true;
 
     /**
-     *  These are the patterns for each different request context.
-     */
-    private static String[] c_patterns = 
-    {
-     WikiContext.VIEW,   "%uWiki.jsp?page=%n",
-     WikiContext.EDIT,   "%uEdit.jsp?page=%n",
-     WikiContext.ATTACH, "%uattach/%n",
-     WikiContext.INFO,   "%uPageInfo.jsp?page=%n",
-     WikiContext.DIFF,   "%uDiff.jsp?page=%n",
-     WikiContext.NONE,   "%u%n",
-     WikiContext.UPLOAD, "%uUpload.jsp?page=%n",
-     WikiContext.COMMENT,"%uComment.jsp?page=%n",
-     WikiContext.LOGIN,  "%uLogin.jsp?page=%n",
-     WikiContext.ERROR,  "%uError.jsp",
-     WikiContext.DELETE, "%uDelete.jsp?page=%n",
-     WikiContext.PREVIEW, "%uPreview.jsp?page=%n",
-     WikiContext.CONFLICT,"%uPageModified.jsp?page=%n"
-    };
-                                      
-    private static Properties c_patternList = TextUtil.createProperties(c_patterns);
-
-    /**
      *  Contains the absolute path of the JSPWiki Web application without the
      *  actual servlet (which is the m_urlPrefix).
      */
     protected String m_pathPrefix = "";
     
-
     public void initialize( WikiEngine engine, 
                             Properties properties )
     {
@@ -155,11 +133,11 @@ public class DefaultURLConstructor
     }
     
     /**
-     *   Returns the pattern used for each URL style.
-     * 
-     * @param context
-     * @param name
+     * Returns the URL pattern for a supplied wiki request context.
+     * @param context the wiki context
+     * @param name the wiki page
      * @return A pattern for replacement.
+     * @throws IllegalArgumentException if the context cannot be found
      */
     public static String getURLPattern( String context, String name )
     {
@@ -168,12 +146,10 @@ public class DefaultURLConstructor
             if( name == null ) return "%uWiki.jsp"; // FIXME
         }
         
-        String ptrn = c_patternList.getProperty(context);
-
-        if( ptrn == null )
-            throw new InternalWikiException("Requested unsupported context "+context);
+        // Find the action matching our pattern (could throw exception)
+        Command command = CommandResolver.findCommand( context );
         
-        return ptrn;
+        return command.getURLPattern();
     }
     
     /**
