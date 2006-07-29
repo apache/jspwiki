@@ -1,11 +1,13 @@
 package com.ecyrd.jspwiki.ui;
 
+import com.ecyrd.jspwiki.TextUtil;
+
 
 /**
  * Abstract, immutable Command implementation class. All of the fields in this
  * class are <code>final</code>. This class is thread-safe.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-07-23 21:46:18 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
  * @since 2.4.22
  */
 public abstract class AbstractCommand implements Command
@@ -43,6 +45,8 @@ public abstract class AbstractCommand implements Command
     private static final String    HTTP = "HTTP://";
     
     private final String           m_jsp;
+    
+    private final String           m_jspFriendlyName;
     
     private final String           m_urlPattern;
 
@@ -83,6 +87,7 @@ public abstract class AbstractCommand implements Command
         {
             // For an HTTP/HTTPS url, pass it through without modification
             m_jsp = urlPattern;
+            m_jspFriendlyName = "Special Page";
         }
         else
         {
@@ -95,6 +100,16 @@ public abstract class AbstractCommand implements Command
                 jsp = jsp.substring( 0, qPosition );
             }
             m_jsp = jsp.replaceAll( "\u0025[a-z|A-Z]", "" );
+            
+            // Calculate the "friendly name" for the JSP
+            if ( m_jsp.toUpperCase().endsWith( ".JSP" ) )
+            {
+                m_jspFriendlyName = TextUtil.beautifyString( m_jsp.substring( 0, m_jsp.length() - 4 ) );
+            }
+            else
+            {
+                m_jspFriendlyName = m_jsp;
+            }
         }
         
         m_urlPattern = urlPattern;
@@ -162,6 +177,16 @@ public abstract class AbstractCommand implements Command
     public final String getURLPattern()
     {
         return m_urlPattern;
+    }
+    
+    /**
+     * Returns the "friendly name" for this command's JSP, namely
+     * a beatified version of the JSP's name without the .jsp suffix.
+     * @returnt the friendly name
+     */
+    protected final String getJSPFriendlyName()
+    {
+        return m_jspFriendlyName;
     }
     
     /**

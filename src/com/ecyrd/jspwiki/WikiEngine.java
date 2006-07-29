@@ -42,11 +42,12 @@ import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
+import com.ecyrd.jspwiki.event.EventSourceDelegate;
 import com.ecyrd.jspwiki.event.WikiEngineEvent;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventSource;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
@@ -61,6 +62,7 @@ import com.ecyrd.jspwiki.search.SearchManager;
 import com.ecyrd.jspwiki.ui.CommandResolver;
 import com.ecyrd.jspwiki.ui.EditorManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
+import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -80,7 +82,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *
  *  @author Janne Jalkanen
  */
-public class WikiEngine
+public class WikiEngine implements WikiEventSource
 {
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
@@ -128,6 +130,7 @@ public class WikiEngine
 
     /** Property name for the "match english plurals" -hack. */
     public static final String PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
+    
     /** Property name for the template that is used. */
     public static final String PROP_TEMPLATEDIR  = "jspwiki.templateDir";
 
@@ -137,8 +140,6 @@ public class WikiEngine
     /** Property name for setting the url generator instance */
 
     public static final String PROP_URLCONSTRUCTOR = "jspwiki.urlConstructor";
-
-    private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
@@ -173,9 +174,6 @@ public class WikiEngine
     /** If true, uses UTF8 encoding for all data */
     private boolean          m_useUTF8      = true;
 
-    /** If true, we'll also consider english plurals (+s) a match. */
-    private boolean          m_matchEnglishPlurals = true;
-
     /** Stores the base URL. */
     private String           m_baseURL;
 
@@ -208,7 +206,7 @@ public class WikiEngine
     private AclManager       m_aclManager = null;
  
     /** Resolves wiki actions, JSPs and special pages. */
-    private CommandResolver m_pageResolver = null;
+    private CommandResolver m_commandResolver = null;
     
     private TemplateManager  m_templateManager = null;
 
@@ -221,7 +219,11 @@ public class WikiEngine
     /** Stores the Search manager */
     private SearchManager    m_searchManager = null;
 
-    private UserManager      m_userManager;
+    /** Facade for managing users */
+    private UserManager      m_userManager = null;
+    
+    /** Facade for managing users */
+    private GroupManager     m_groupManager = null;
     
     private RenderingManager m_renderingManager;
     
@@ -260,8 +262,8 @@ public class WikiEngine
 
     private boolean          m_isConfigured = false; // Flag.
   
-    /** Listeners for events */
-    private final Set        m_listeners = new HashSet();
+    /** Delegate for managing event listeners */
+    private EventSourceDelegate m_listeners = new EventSourceDelegate();
     
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -470,7 +472,7 @@ public class WikiEngine
         log.debug("Configuring WikiEngine...");
 
         //  Initializes the CommandResolver
-        m_pageResolver  = new CommandResolver( this, props );
+        m_commandResolver  = new CommandResolver( this, props );
         
         //
         //  Create and find the default working directory.
@@ -516,10 +518,6 @@ public class WikiEngine
                                                         PROP_BEAUTIFYTITLE, 
                                                         m_beautifyTitle );
 
-        m_matchEnglishPlurals = TextUtil.getBooleanProperty( props,
-                                                             PROP_MATCHPLURALS, 
-                                                             m_matchEnglishPlurals );
-
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
@@ -551,6 +549,7 @@ public class WikiEngine
             m_authenticationManager = new AuthenticationManager();
             m_authorizationManager  = new AuthorizationManager();
             m_userManager           = new UserManager();
+            m_groupManager          = new GroupManager();
 
             m_editorManager     = new EditorManager();
             m_editorManager.initialize( this, props );
@@ -560,6 +559,7 @@ public class WikiEngine
             m_authenticationManager.initialize( this, props );
             m_authorizationManager.initialize( this, props );
             m_userManager.initialize( this, props );
+            m_groupManager.initialize( this, props );
             m_aclManager = getAclManager();
 
             //
@@ -748,19 +748,23 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the basic absolute URL to a page, without any modifications.
-     *  You may add any parameters to this.  This is a convenience method.
-     *  <p>
-     *  Since 2.3.90 it is safe to call this method with null pageName,
-     *  in which case it will default to the front page.
-     *
-     *  @since 2.0.3
+     * <p>
+     * Returns the basic absolute URL to a page, without any modifications. You
+     * may add any parameters to this.
+     * </p>
+     * <p>
+     * Since 2.3.90 it is safe to call this method with <code>null</code>
+     * pageName, in which case it will default to the front page.
+     * </p>
+     * @since 2.0.3
      */
     public String getViewURL( String pageName )
     {
-        if( pageName == null ) pageName = getFrontPage();
-        
-        return m_urlConstructor.makeURL( WikiContext.VIEW, pageName, true, null );
+        if( pageName == null )
+        {
+            pageName = getFrontPage();
+        }
+        return getURLConstructor().makeURL( WikiContext.VIEW, pageName, true, null );
     }
 
     /**
@@ -795,6 +799,7 @@ public class WikiEngine
     {
         return m_urlConstructor.makeURL( context, pageName, absolute, params );
     }
+    
     /**
      *  Returns the default front page, if no page is used.
      */
@@ -948,23 +953,15 @@ public class WikiEngine
     }
 
     /**
-     *  If the page is a special page, then returns a direct URL
-     *  to that page.  Otherwise returns null.
-     *  <P>
-     *  Special pages are non-existant references to other pages.
-     *  For example, you could define a special page reference
-     *  "RecentChanges" which would always be redirected to "RecentChanges.jsp"
-     *  instead of trying to find a Wiki page called "RecentChanges".
+     *  <p>If the page is a special page, then returns a direct URL
+     *  to that page.  Otherwise returns <code>null</code>.
+     *  This method delgates requests to 
+     *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getSpecialPageReference(String)}.
+     *  </p>
      */
     public String getSpecialPageReference( String original )
     {
-        String propname = PROP_SPECIALPAGE+original;
-        String specialpage = TextUtil.getStringProperty( m_properties, propname, null );
-
-        if( specialpage != null )
-            specialpage = getURL( WikiContext.NONE, specialpage, null, true );
-        
-        return specialpage;
+        return m_commandResolver.getSpecialPageReference( original );
     }
 
     /**
@@ -1037,7 +1034,7 @@ public class WikiEngine
 
         try
         {
-            if( getSpecialPageReference(page) != null ) return true;
+            if( m_commandResolver.getSpecialPageReference(page) != null ) return true;
 
             if( getFinalPageName( page ) != null )
             {
@@ -1063,7 +1060,7 @@ public class WikiEngine
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
-        if( getSpecialPageReference(page) != null ) return true;
+        if( m_commandResolver.getSpecialPageReference(page) != null ) return true;
 
         String finalName = getFinalPageName( page );
 
@@ -1114,55 +1111,17 @@ public class WikiEngine
 
     /**
      *  Returns the correct page name, or null, if no such
-     *  page can be found.  Aliases are considered.
-     *  <P>
-     *  In some cases, page names can refer to other pages.  For example,
-     *  when you have matchEnglishPlurals set, then a page name "Foobars"
-     *  will be transformed into "Foobar", should a page "Foobars" not exist,
-     *  but the page "Foobar" would.  This method gives you the correct
-     *  page name to refer to.
-     *  <P>
-     *  This facility can also be used to rewrite any page name, for example,
-     *  by using aliases.  It can also be used to check the existence of any
-     *  page.
-     *
+     *  page can be found.  Aliases are considered. This
+     *  method simply delegates to 
+     *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getFinalPageName(String)}.
      *  @since 2.0
      *  @param page Page name.
      *  @return The rewritten page name, or null, if the page does not exist.
      */
-
     public String getFinalPageName( String page )
         throws ProviderException
     {
-        boolean isThere = simplePageExists( page );
-
-        if( !isThere && m_matchEnglishPlurals )
-        {
-            if( page.endsWith("s") )
-            {
-                page = page.substring( 0, page.length()-1 );
-            }
-            else
-            {
-                page += "s";
-            }
-
-            isThere = simplePageExists( page );
-        }
-
-        return isThere ? page : null ;
-    }
-
-    /**
-     *  Just queries the existing pages directly from the page manager.
-     *  We also check overridden pages from jspwiki.properties
-     */
-    private boolean simplePageExists( String page )
-        throws ProviderException
-    {
-        if( getSpecialPageReference(page) != null ) return true;
-
-        return m_pageManager.pageExists( page );
+        return m_commandResolver.getFinalPageName( page );
     }
 
     /**
@@ -1850,9 +1809,9 @@ public class WikiEngine
      * Returns the CommandResolver for this wiki engine.
      * @return the resolver
      */
-    public CommandResolver getPageResolver()
+    public CommandResolver getCommandResolver()
     {
-        return m_pageResolver;
+        return m_commandResolver;
     }
 
     /**
@@ -1901,47 +1860,10 @@ public class WikiEngine
     }
 
     /**
-     *  Parses the given path and attempts to match it against the list
-     *  of specialpages to see if this path exists.  It is used to map things
-     *  like "UserPreferences.jsp" to page "User Preferences".
-     *
-     *  @param path The path to match.  A leading "/" -characters will be stripped.
-     *  @return WikiName, or null if a match could not be found.
-     */
-    private String matchSpecialPagePath( String path )
-    {
-        //
-        //  Remove servlet root marker.
-        //
-        if( path.startsWith("/") )
-        {
-            path = path.substring(1);
-        }
-
-        for( Iterator i = m_properties.entrySet().iterator(); i.hasNext(); )
-        {
-            Map.Entry entry = (Map.Entry) i.next();
-           
-            String key = (String)entry.getKey();
-
-            if( key.startsWith( PROP_SPECIALPAGE ) )
-            {
-                String value = (String)entry.getValue();
-
-                if( value.equals( path ) )
-                {                    
-                    return key.substring( PROP_SPECIALPAGE.length() );
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      *  Figure out to which page we are really going to.  Considers
      *  special page names from the jspwiki.properties, and possible aliases.
-     *
+     *  This method delgates requests to 
+     *  {@link com.ecyrd.jspwiki.WikiContext#getRedirectURL()}.
      *  @param context The Wiki Context in which the request is being made.
      *  @return A complete URL to the new page to redirect to
      *  @since 2.2
@@ -1949,31 +1871,14 @@ public class WikiEngine
 
     public String getRedirectURL( WikiContext context )
     {
-        String pagename = context.getPage().getName();
-        String redirURL = null;
-        
-        redirURL = getSpecialPageReference( pagename );
-
-        if( redirURL == null )
-        {
-            String alias = (String)context.getPage().getAttribute( WikiPage.ALIAS );
-            
-            if( alias != null )
-            {
-                redirURL = getViewURL( alias );
-            }
-            else
-            {
-                redirURL = (String)context.getPage().getAttribute( WikiPage.REDIRECT );
-            }
-        }
-
-        return redirURL;
+        return context.getRedirectURL();
     }
 
     /**
-     *  Shortcut to create a WikiContext from the Wiki page.
-     *
+     *  Shortcut to create a WikiContext from a supplied HTTP request,
+     *  using a default wiki context.
+     *  @param request the HTTP request
+     *  @param requestContext the default context to use
      *  @since 2.1.15.
      */
     // FIXME: We need to have a version which takes a fixed page
@@ -1981,16 +1886,12 @@ public class WikiEngine
     public WikiContext createContext( HttpServletRequest request,
                                       String requestContext )
     {
-        String pagereq;
-
         if( !m_isConfigured )
         {
             throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
         }
 
-        //
         //  First, set the encoding for parameter parsing.
-        //
         try
         {
             request.setCharacterEncoding( getContentEncoding() );
@@ -2001,106 +1902,9 @@ public class WikiEngine
             throw new InternalWikiException("Unknown encoding "+getContentEncoding());
         }
         
-        try
-        {
-            pagereq  = m_urlConstructor.parsePage( requestContext,
-                                                   request,
-                                                   getContentEncoding() );
-        }
-        catch( IOException e )
-        {
-            log.error("Unable to create context",e);
-            throw new InternalWikiException("Big internal booboo, please check logs.");
-        }
-
-        String template = request.getParameter( "skin" );
-
-        //
-        //  Figure out the page name.
-        //  We also check the list of special pages, which incidentally
-        //  allows us to localize them, too.
-        //
-
-        if( pagereq == null || pagereq.length() == 0 )
-        {
-            String servlet = request.getServletPath();
-            log.debug("Servlet path is: "+servlet);
-
-            pagereq = matchSpecialPagePath( servlet );
-
-            log.debug("Mapped to "+pagereq);
-            if( pagereq == null )
-            {
-                pagereq = getFrontPage();
-            }
-        }
-
-        int hashMark = pagereq.indexOf('#');
-
-        if( hashMark != -1 )
-        {
-            pagereq = pagereq.substring( 0, hashMark );
-        }
-
-        int version          = WikiProvider.LATEST_VERSION;
-        String rev           = request.getParameter("version");
-
-        if( rev != null )
-        {
-            version = Integer.parseInt( rev );
-        }
-
-        //
-        //  Find the WikiPage object
-        //
-        String pagename = pagereq;
-        WikiPage wikipage; 
-
-        try
-        {
-            pagename = getFinalPageName( pagereq );
-        }
-        catch( ProviderException e ) {} // FIXME: Should not ignore!
-
-        if( pagename != null )
-        {
-            wikipage = getPage( pagename, version );
-        }
-        else
-        {
-            wikipage = getPage( pagereq, version );
-        }
-
-        if( wikipage == null ) 
-        {
-            pagereq = MarkupParser.cleanLink( pagereq );
-            wikipage = new WikiPage( this, pagereq );
-        }
-
-        //
-        //  Figure out which template we should be using for this page.
-        //
-        if( template == null )
-        {
-            template = (String)wikipage.getAttribute( PROP_TEMPLATEDIR );
-
-            // FIXME: Most definitely this should be checked for
-            //        existence, or else it is possible to create pages that
-            //        cannot be shown.
-
-            if( template == null || template.length() == 0 )
-            {
-                template = getTemplateDir();
-            }
-        }
-
-        WikiContext context = new WikiContext( this,
-                                               request,
-                                               wikipage );
-        context.setRequestContext( requestContext );
-        context.setTemplate( template );
-
-        return context;
+        // Build the wiki context
+        Command command = m_commandResolver.findCommand( request, requestContext );
+        return new WikiContext( this, request, command );
     }
 
     /**
@@ -2236,20 +2040,13 @@ public class WikiEngine
         return m_userManager;
     }
     
-    // FIXME: Must not throw RuntimeException, but something else.
-    public UserDatabase getUserDatabase()
-    {
-        return m_userManager.getUserDatabase();
-    }
-    
     /**
      * Returns the GroupManager employed by this WikiEngine.
-     * The GroupManager is lazily initialized.
      * @since 2.3
      */
     public GroupManager getGroupManager()
     {
-        return m_userManager.getGroupManager();
+        return m_groupManager;
     }
 
     /**
@@ -2273,33 +2070,26 @@ public class WikiEngine
     }
     
     /**
-     * Registers a WikiEventListener with this instance.
-     * @param listener the event listener
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.add( listener );
+        m_listeners.addWikiEventListener( listener );
     }
     
     /**
-     * Un-registers a WikiEventListener with this instance.
-     * @param listener the event listener
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
      */
-    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    public final void removeWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.remove( listener );
+        m_listeners.removeWikiEventListener( listener );
     }
     
     /**
-     * Fires a wiki event to all registered listeners.
-     * @param event the event
+     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
      */
     protected final void fireEvent( WikiEvent event )
     {
-        for (Iterator it = m_listeners.iterator(); it.hasNext(); )
-        {
-            WikiEventListener listener = (WikiEventListener)it.next();
-            listener.actionPerformed(event);
-        }
+        m_listeners.fireEvent( event );
     }
 }

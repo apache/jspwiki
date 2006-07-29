@@ -40,89 +40,56 @@ public class ContentTag
 {
     private static final long serialVersionUID = 0L;
     
-    private static Properties c_defaultMappings;
-
-    private Properties m_mappings = new Properties( c_defaultMappings );
-
-    /**
-     *  Lists the default pages for each JSP page.  It first contains the 
-     *  name of the context and then the page which should be included:
-     *  <pre>
-     *  public static final String[] DEFAULT_JSP_PAGES = {
-     *     WikiContext.VIEW,     "PageContent.jsp",
-     *     WikiContext.DIFF,     "DiffContent.jsp", ...
-     *  </pre>
-     *  A Property object is built using TextUtil.createProperties();
-     *  @see TextUtil#createProperties(String[])
-     */
-    public static final String[] DEFAULT_JSP_PAGES = {
-        WikiContext.VIEW,     "PageContent.jsp",
-        WikiContext.DIFF,     "DiffContent.jsp",
-        WikiContext.INFO,     "InfoContent.jsp",
-        WikiContext.PREVIEW,  "PreviewContent.jsp",
-        WikiContext.CONFLICT, "ConflictContent.jsp",
-        WikiContext.CREATE_GROUP, "GroupContent.jsp",
-        WikiContext.FIND,     "FindContent.jsp",
-        WikiContext.LOGIN,    "LoginContent.jsp",
-        WikiContext.PREFS,    "PreferencesContent.jsp",
-        WikiContext.ERROR,    "DisplayMessage.jsp",
-        WikiContext.EDIT,     "EditContent.jsp",
-        WikiContext.COMMENT,  "CommentContent.jsp"
-    };
-
-    static
-    {
-        c_defaultMappings = TextUtil.createProperties( DEFAULT_JSP_PAGES );
-    }
+    private Map m_mappings = new HashMap();
 
     public void setView( String s )
     {
-        m_mappings.setProperty( WikiContext.VIEW, s );
+        m_mappings.put( WikiContext.VIEW, s );
     }
 
     public void setDiff( String s )
     {
-        m_mappings.setProperty( WikiContext.DIFF, s );
+        m_mappings.put( WikiContext.DIFF, s );
     }
 
     public void setInfo( String s )
     {
-        m_mappings.setProperty( WikiContext.INFO, s );
+        m_mappings.put( WikiContext.INFO, s );
     }
 
     public void setPreview( String s )
     {
-        m_mappings.setProperty( WikiContext.PREVIEW, s );
+        m_mappings.put( WikiContext.PREVIEW, s );
     }
 
     public void setConflict( String s )
     {
-        m_mappings.setProperty( WikiContext.CONFLICT, s );
+        m_mappings.put( WikiContext.CONFLICT, s );
     }
 
     public void setFind( String s )
     {
-        m_mappings.setProperty( WikiContext.FIND, s );
+        m_mappings.put( WikiContext.FIND, s );
     }
 
     public void setPrefs( String s )
     {
-        m_mappings.setProperty( WikiContext.PREFS, s );
+        m_mappings.put( WikiContext.PREFS, s );
     }
 
     public void setError( String s )
     {
-        m_mappings.setProperty( WikiContext.ERROR, s );
+        m_mappings.put( WikiContext.ERROR, s );
     }
 
     public void setEdit( String s )
     {
-        m_mappings.setProperty( WikiContext.EDIT, s );
+        m_mappings.put( WikiContext.EDIT, s );
     }
 
     public void setComment( String s )
     {
-        m_mappings.setProperty( WikiContext.COMMENT, s );
+        m_mappings.put( WikiContext.COMMENT, s );
     }
 
     public final int doWikiStartTag()
@@ -137,16 +104,25 @@ public class ContentTag
     {
         try
         {
-            String jspPage = m_mappings.getProperty( m_wikiContext.getRequestContext() );
+            // Check the overridden templates first
+            String requestContext = m_wikiContext.getRequestContext();
+            String contentTemplate = (String)m_mappings.get( requestContext );
 
-            if( jspPage == null )
+            // If not found, use the defaults
+            if ( contentTemplate == null )
             {
-                throw new JspException("This template uses <wiki:Content/> in an unsupported context: "+m_wikiContext.getRequestContext());
+                contentTemplate = m_wikiContext.getContentTemplate();
+            }
+            
+            // If still no, something fishy is going on
+            if( contentTemplate == null )
+            {
+                throw new JspException("This template uses <wiki:Content/> in an unsupported context: " + requestContext );
             }
 
             String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
                                                                                   m_wikiContext.getTemplate(),
-                                                                                  jspPage );
+                                                                                  contentTemplate );
             pageContext.include( page );
         }
         catch( ServletException e )

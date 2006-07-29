@@ -49,7 +49,7 @@ import com.ecyrd.jspwiki.url.URLConstructor;
  * containing the page parameter value <code>UserPrefs</code>, 
  * will instead return {@link WikiCommand#PREFS}.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-07-23 21:46:18 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
  * @since 2.4.22
  */
 public final class CommandResolver
@@ -215,6 +215,8 @@ public final class CommandResolver
             }
         }
         
+        // These next blocks handle targeting requirements
+        
         // If we were passed a page parameter, try to resolve it
         if ( command instanceof PageCommand && pageName != null )
         {
@@ -226,13 +228,20 @@ public final class CommandResolver
             }
         }
         
+        // If "create group" command, target this wiki
+        String wiki = m_engine.getApplicationName();
+        if ( WikiCommand.CREATE_GROUP.equals( command ) )
+        {
+            return WikiCommand.CREATE_GROUP.targetedCommand( wiki );
+        }
+        
         // If group command, see if we were passed a group name
         if ( command instanceof GroupCommand )
         {
             String groupName = request.getParameter( "group" );
             if ( groupName != null && groupName.length() > 0 )
             {
-                GroupPrincipal group = new GroupPrincipal( m_engine.getApplicationName(), groupName );
+                GroupPrincipal group = new GroupPrincipal( wiki, groupName );
                 return command.targetedCommand( group );
             }
         }

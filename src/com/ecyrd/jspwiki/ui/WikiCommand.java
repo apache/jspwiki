@@ -13,7 +13,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
  * the future.</p>
  * @see com.ecyrd.jspwiki.WikiEngine#getApplicationName().
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-07-23 21:46:18 $
+ * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
  * @since 2.4.22
  */
 public class WikiCommand extends AbstractCommand
@@ -87,16 +87,12 @@ public class WikiCommand extends AbstractCommand
     }
     
     /**
+     * Always returns the "friendly" JSP name.
      * @see com.ecyrd.jspwiki.ui.Command#getName()
      */
     public final String getName()
     {
-        Object target = getTarget();
-        if ( target == null )
-        {
-            return getJSP();
-        }
-        return target.toString();
+        return getJSPFriendlyName();
     }
 
     /**
