@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
-import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -29,7 +28,7 @@ import java.util.Comparator;
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.8 $ $Date: 2005-11-08 18:19:43 $
+ *  @version $Revision: 1.9 $ $Date: 2006-07-29 19:50:07 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
@@ -114,7 +113,7 @@ public final class WikiPrincipal implements Principal
      * Returns the Principal "type": {@link #LOGIN_NAME}, {@link #FULL_NAME},
      * {@link #WIKI_NAME} or {@link #WIKI_NAME}
      */
-    public String getType()
+    public final String getType()
     {
         return m_type;
     }
@@ -126,25 +125,6 @@ public final class WikiPrincipal implements Principal
     public final String toString()
     {
         return "[WikiPrincipal (" + m_type + "): " + getName() + "]";
-    }
-    
-    /**
-     * Tiny little class that compares objects of type Principal.
-     * Used for sorting arrays or collections of Principals.
-     * @since 2.3
-     */
-    public static class PrincipalComparator implements Comparator 
-    {
-        public int compare( Object o1, Object o2 )
-        {
-            Collator collator = Collator.getInstance();
-            if ( o1 instanceof Principal && o2 instanceof Principal )
-            {
-                return collator.compare( ((Principal)o1).getName(), ((Principal)o2).getName() );
-            }
-            throw new ClassCastException( "Objects must be of type Principal.");
-        }
-          
     }
     
 
