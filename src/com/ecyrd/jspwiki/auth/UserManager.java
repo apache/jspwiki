@@ -32,45 +32,45 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.authorize.DefaultGroupManager;
-import com.ecyrd.jspwiki.auth.authorize.Group;
-import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
 import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.EventSourceDelegate;
+import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventSource;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
- *  Provides a facade for user and group information.
- *  
- *  @author Janne Jalkanen
- *  @version $Revision: 1.45 $ $Date: 2006-05-20 23:56:17 $
- *  @since 2.3
+ * Provides a facade for obtaining user information.
+ * @author Janne Jalkanen
+ * @version $Revision: 1.46 $ $Date: 2006-07-29 19:49:28 $
+ * @since 2.3
  */
-public class UserManager
+public final class UserManager implements WikiEventSource
 {
     private WikiEngine m_engine;
     
     private static final Logger log = Logger.getLogger(UserManager.class);
 
-    private static final String  PROP_USERDATABASE   = "jspwiki.userdatabase";
+    private static final String PROP_DATABASE = "jspwiki.userdatabase";
 
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** Associateds wiki sessions with profiles */
-    private Map              m_profiles     = new WeakHashMap(); 
+    private final Map        m_profiles     = new WeakHashMap(); 
     
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database     = null;
     
-    /** The group manager loads, manages and persists wiki groups */
-    private GroupManager     m_groupManager = null;
-
+    /** Delegate for managing event listeners */
+    private EventSourceDelegate m_listeners = new EventSourceDelegate();
+    
     private boolean          m_useJAAS      = true;
     
     /**
@@ -81,94 +81,35 @@ public class UserManager
     }
     
     /**
-     *  Initializes the engine for its nefarious purposes.
-     *  
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
+     */
+    public final void addWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.addWikiEventListener( listener );
+    }
+    
+    /**
+     * Initializes the engine for its nefarious purposes.
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
-    public void initialize( WikiEngine engine, Properties props )
+    public final void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
         
         m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
     }
     
-    
     /**
-     * Returns the GroupManager employed by this WikiEngine.
-     * The GroupManager is lazily initialized.
+     * Returns the UserDatabase employed by this WikiEngine. The UserDatabase is
+     * lazily initialized by this method, if it does not exist yet. If the
+     * initialization fails, this method will use the inner class
+     * DummyUserDatabase as a default (which is enough to get JSPWiki running).
      * @since 2.3
      */
-    public GroupManager getGroupManager()
+    public final UserDatabase getUserDatabase()
     {
-        if( m_groupManager != null ) 
-        {
-            return m_groupManager;
-        }
-        
-        if( !m_useJAAS )
-        {
-            m_groupManager = new DummyGroupManager();
-            return m_groupManager;
-        }
-        
-        String dbClassName = "<unknown>";
-        String dbInstantiationError = null;
-        Throwable cause = null;
-        try 
-        {
-            Properties props = m_engine.getWikiProperties(); 
-            dbClassName = props.getProperty( GroupManager.PROP_GROUPMANAGER );
-            if( dbClassName == null ) 
-            {
-                dbClassName = DefaultGroupManager.class.getName();
-            }
-            log.info("Attempting to load group manager class " + dbClassName);
-            Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", dbClassName );
-            m_groupManager = (GroupManager) dbClass.newInstance();
-            m_groupManager.initialize( m_engine, m_engine.getWikiProperties() );
-            log.info("GroupManager initialized.");
-        } 
-        catch( ClassNotFoundException e ) 
-        {
-            log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
-            dbInstantiationError = "Failed to locate GroupManager class " + dbClassName;
-            cause = e;
-        } 
-        catch( InstantiationException e ) 
-        {
-            log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
-            dbInstantiationError = "Failed to create GroupManager class " + dbClassName;
-            cause = e;
-        } 
-        catch( IllegalAccessException e ) 
-        {
-            log.error( "You are not allowed to access user database class " + dbClassName, e );
-            dbInstantiationError = "Access GroupManager class " + dbClassName + " denied";
-            cause = e;
-        }
-        
-        if( dbInstantiationError != null ) 
-        {
-            throw new RuntimeException( dbInstantiationError, cause );
-        }
-        
-        return m_groupManager;
-    }
-
-    /**
-     *  Returns the UserDatabase employed by this WikiEngine.
-     *  The UserDatabase is lazily initialized by this method, if
-     *  it does not exist yet.  If the initialization fails, this
-     *  method will use the inner class DummyUserDatabase as
-     *  a default (which is enough to get JSPWiki running).
-     *  
-     *  @since 2.3
-     */
-    
-    // FIXME: Must not throw RuntimeException, but something else.
-    public UserDatabase getUserDatabase()
-    {
+        // FIXME: Must not throw RuntimeException, but something else.
         if( m_database != null ) 
         {
             return m_database;
@@ -185,7 +126,7 @@ public class UserManager
         try
         {
             dbClassName = WikiEngine.getRequiredProperty( m_engine.getWikiProperties(), 
-                                                          PROP_USERDATABASE );
+                                                          PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
             Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.user", dbClassName );
@@ -195,7 +136,7 @@ public class UserManager
         }
         catch( NoRequiredPropertyException e )
         {
-            log.error( "You have not set the '"+PROP_USERDATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
+            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki." );
         }
         catch( ClassNotFoundException e )
         {
@@ -244,7 +185,7 @@ public class UserManager
      * <code>false</code>. This is meant as a quality check for UserDatabase
      * providers; it should only be thrown if the implementation is faulty.
      */
-    public UserProfile getUserProfile( WikiSession session )
+    public final UserProfile getUserProfile( WikiSession session )
     {
         // Look up cached user profile
         UserProfile profile = (UserProfile)m_profiles.get( session );
@@ -285,6 +226,15 @@ public class UserManager
     }
 
     /**
+     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
+     */
+    public final void removeWikiEventListener( WikiEventListener listener )
+    {
+        m_listeners.removeWikiEventListener( listener );
+    }
+    
+    /**
+     * <p>
      * Saves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the user in
      * a wiki session. This method verifies that a user profile to be saved
      * doesn't collide with existing profiles; that is, the login name, wiki
@@ -293,10 +243,21 @@ public class UserManager
      * the profile, the user database changes are committed, and the user's
      * credential set is refreshed; if custom authentication is used, this means
      * the user will be automatically be logged in.
+     * </p>
+     * <p>
+     * When the user's profile is saved succcessfully, this method fires a
+     * {@link WikiSecurityEvent#PROFILE_SAVE} event with the UserManager as the
+     * source and the WikiSession as target.
+     * </p>
+     * <p>
+     * Note that WikiSessions normally attach event listeners to the
+     * UserManager, so changes to the profile will automatically cause the
+     * correct Principals to be reloaded into the current WikiSession's Subject.
+     * </p>
      * @param session the wiki session, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
      */
-    public void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
+    public final void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
             DuplicateUserException
     {
         // Verify user is allowed to save profile!
@@ -350,16 +311,23 @@ public class UserManager
         m_database.save( profile );
         m_database.commit();
 
-        // Refresh the credential set
-        AuthenticationManager mgr = m_engine.getAuthenticationManager();
-        if ( newProfile && !mgr.isContainerAuthenticated() )
+        // If the profile is new, log the user in
+        // This will cause all credentials to be reloaded
+        try
         {
-            mgr.login( session, profile.getLoginName(), profile.getPassword() );
+            AuthenticationManager mgr = m_engine.getAuthenticationManager();
+            if ( newProfile && !mgr.isContainerAuthenticated() )
+            {
+                mgr.login( session, profile.getLoginName(), profile.getPassword() );
+            }
         }
-        else
+        catch ( WikiException e )
         {
-            mgr.refreshCredentials( session );
+            throw new WikiSecurityException( e.getMessage() );
         }
+        
+        // Alert all listeners that the profile changed
+        fireEvent( new WikiSecurityEvent( session, WikiSecurityEvent.PROFILE_SAVE, profile ) );
     }
 
     /**
@@ -382,7 +350,7 @@ public class UserManager
      * @param context the current wiki context
      * @return a new, populated user profile
      */
-    public UserProfile parseProfile( WikiContext context )
+    public final UserProfile parseProfile( WikiContext context )
     {
         // Retrieve the user's profile (may have been previously cached)
         UserProfile profile = getUserProfile( context.getWikiSession() );
@@ -440,7 +408,7 @@ public class UserManager
      * @param context the current wiki context
      * @param profile the supplied UserProfile
      */
-    public void validateProfile( WikiContext context, UserProfile profile )
+    public final void validateProfile( WikiContext context, UserProfile profile )
     {
         boolean isNew = ( profile.isNew() );
         WikiSession session = context.getWikiSession();
@@ -483,6 +451,14 @@ public class UserManager
         }
     }
 
+    /**
+     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
+     */
+    protected final void fireEvent( WikiEvent event )
+    {
+        m_listeners.fireEvent( event );
+    }
+    
     /**
      * This is a database that gets used if nothing else is available. It does
      * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
@@ -538,67 +514,6 @@ public class UserManager
 
         public void save( UserProfile profile ) throws WikiSecurityException
         {
-        }
-        
-    }
-    
-    /**
-     * Implements a simple GroupManager which does not simply
-     * manage any groups.  This is used when jspwiki security is
-     * turned off.
-     * 
-     * @author jalkanen
-     *
-     */
-    public class DummyGroupManager implements GroupManager
-    {
-
-        public void add(Group group)
-        {           
-        }
-
-        public void addWikiEventListener(WikiEventListener listener)
-        {
-        }
-
-        public void commit()
-        {
-        }
-
-        public boolean exists(Group group)
-        {
-            return false;
-        }
-
-        public void initialize(WikiEngine engine, Properties props)
-        {
-        }
-
-        public void reload()
-        {
-        }
-
-        public void remove(Group group)
-        {
-        }
-
-        public void removeWikiEventListener(WikiEventListener listener)
-        {
-        }
-
-        public Principal findRole(String role)
-        {
-            return null;
-        }
-
-        public Principal[] getRoles()
-        {
-            return null;
-        }
-
-        public boolean isUserInRole(WikiSession session, Principal role)
-        {
-            return false;
         }
         
     }
