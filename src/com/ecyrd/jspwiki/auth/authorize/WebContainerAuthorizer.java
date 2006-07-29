@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.Authorizer;
 
 /**
  * Authorizes users by delegating role membership checks to the servlet
@@ -33,10 +32,10 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.18 $ $Date: 2006-05-28 23:24:17 $
+ * @version $Revision: 1.19 $ $Date: 2006-07-29 19:19:10 $
  * @since 2.3
  */
-public class WebContainerAuthorizer implements Authorizer
+public class WebContainerAuthorizer implements WebAuthorizer
 {
     protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
 
@@ -121,6 +120,14 @@ public class WebContainerAuthorizer implements Authorizer
     }
 
     /**
+     * @see com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, java.security.Principal)
+     */
+    public boolean isUserInRole( HttpServletRequest request, Principal role )
+    {
+        return request.isUserInRole( role.getName() );
+    }
+    
+    /**
      * Determines whether the Subject associated with a WikiSession is in a
      * particular role. This method takes two parameters: the WikiSession
      * containing the subject and the desired role ( which may be a Role or a
@@ -130,8 +137,8 @@ public class WebContainerAuthorizer implements Authorizer
      * possesses the desired Principal. We assume that the method
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}
      * previously executed at user login time, and that it has injected
-     * the role Principals that were in force at login time (see
-     * {@link #getRoles(HttpServletRequest)}). This is definitely a hack,
+     * the role Principals that were in force at login time. 
+     * This is definitely a hack,
      * but it eliminates the need for WikiSession to keep dangling 
      * references to the last WikiContext hanging around, just
      * so we can look up the HttpServletRequest.
@@ -148,8 +155,7 @@ public class WebContainerAuthorizer implements Authorizer
         {
             return false;
         }
-        Set principals = session.getSubject().getPrincipals();
-        return principals.contains( role );
+        return session.hasPrincipal( role );
     }
 
     /**
@@ -272,28 +278,6 @@ public class WebContainerAuthorizer implements Authorizer
     }
 
     /**
-     * Returns an array of role Principals corresponding to those
-     * the container believes are authorized for the current request.
-     * The array will contain a proper subset of those enumerated 
-     * in the <code>web.xml</code>. This method actually returns 
-     * a defensive copy of an internally stored array.
-     * @return an array of Principals representing the roles
-     */
-    public Role[] getRoles( HttpServletRequest request )
-    {
-        Set roles = new HashSet();
-        for ( int i = 0; i < m_containerRoles.length; i++ )
-        {
-            Role role = m_containerRoles[i];
-            if ( request.isUserInRole( role.getName() ) )
-            {
-                roles.add( role );
-            }
-        }
-        return (Role[]) roles.toArray( new Role[roles.size()] );
-    }
-
-    /**
      * Protected method that extracts the roles from JSPWiki's web application
      * deployment descriptor. Each Role is constructed by using the String
      * representation of the Role, for example
@@ -372,7 +356,7 @@ public class WebContainerAuthorizer implements Authorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.18 $ $Date: 2006-05-28 23:24:17 $
+     * @version $Revision: 1.19 $ $Date: 2006-07-29 19:19:10 $
      */
     public class LocalEntityResolver implements EntityResolver
     {
