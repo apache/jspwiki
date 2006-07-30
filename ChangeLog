@@ -1,3 +1,9 @@
+2006-07-30  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.26
+
+        * Fixed editor textarea width, thanks to Gordon Smith.
+
 2006-07-29  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.25 - a.k.a. the AAA mega-patch
