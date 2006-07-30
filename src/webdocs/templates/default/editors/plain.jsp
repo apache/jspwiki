@@ -18,6 +18,7 @@
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = ""; %>
 
+<div style="width:100%"> <%-- Required for IE6 on Windows --%>
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
       action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
       name="editForm" enctype="application/x-www-form-urlencoded">
@@ -54,6 +55,7 @@
         <input name='cancel' type='submit' value='Cancel' />
     </p>
 </form>
+</div>
 
     <%-- Search and replace section --%>
     <form name="searchbar" id="searchbar" action="#">
