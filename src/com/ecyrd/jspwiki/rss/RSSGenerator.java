@@ -95,7 +95,7 @@ public class RSSGenerator
     public static final String PROP_RSS_AUTHOREMAIL     = "jspwiki.rss.author.email";
     public static final String PROP_RSS_COPYRIGHT       = "jspwiki.rss.copyright";
     
-    private static final int MAX_CHARACTERS             = Integer.MAX_VALUE;
+    private static final int MAX_CHARACTERS             = Integer.MAX_VALUE-1;
     
     /**
      *  Initialize the RSS generator.
