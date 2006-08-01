@@ -19,14 +19,15 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.ProviderException;
-import org.apache.log4j.Logger;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
-
 import java.io.StringWriter;
 import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.*;
+
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Builds an index of all pages.
@@ -44,7 +45,7 @@ import java.util.*;
  */
 public class IndexPlugin implements WikiPlugin
 {
-    protected static Logger   log = Logger.getLogger(IndexPlugin.class);
+    protected static final Logger log = Logger.getLogger(IndexPlugin.class);
 
     public  static final String INITIALS_COLOR                  = "red" ;
     private static final int    DEFAULT_ITEMS_PER_LINE          = 0     ;
@@ -91,13 +92,11 @@ public class IndexPlugin implements WikiPlugin
         //
         
         final Collection        allPages      = getAllPagesSortedByName( i_context );
-        final TranslatorReader  linkProcessor = new TranslatorReader( i_context, 
-                                                                      new java.io.StringReader ( "" ) );
-
+               
         //
         //  Build the page.
         //
-        buildIndexPageHeaderAndBody( i_context, allPages, linkProcessor );
+        buildIndexPageHeaderAndBody( i_context, allPages );
 
         StringBuffer res = new StringBuffer();
 
@@ -114,8 +113,7 @@ public class IndexPlugin implements WikiPlugin
 
 
     private void buildIndexPageHeaderAndBody( WikiContext context, 
-                                              final Collection i_allPages , 
-                                              final TranslatorReader i_linkProcessor )
+                                              final Collection i_allPages )
     {
         PatternMatcher matcher = new Perl5Matcher();
         
@@ -141,7 +139,7 @@ public class IndexPlugin implements WikiPlugin
                         m_previousPageFirstLetter = pageNameFirstLetter;
                     }
 
-                    addPageToIndex( context, curPage, i_linkProcessor );
+                    addPageToIndex( context, curPage );
                     breakLineIfTooLong();
                 }
             }
@@ -208,7 +206,7 @@ public class IndexPlugin implements WikiPlugin
                          "<hr />\n" );
     }
 
-    protected void addPageToIndex( WikiContext context, WikiPage i_curPage, final TranslatorReader i_linkProcessor )
+    protected void addPageToIndex( WikiContext context, WikiPage i_curPage )
     {
         final boolean notFirstPageOnLine = 2 <= m_currentNofPagesOnLine;
 
@@ -216,9 +214,11 @@ public class IndexPlugin implements WikiPlugin
         {
             m_bodyPart.write(",&nbsp; "); 
         }
-        m_bodyPart.write( i_linkProcessor.makeLink( TranslatorReader.READ, 
-                                                    i_curPage.getName(), 
-                                                    context.getEngine().beautifyTitleNoBreak(i_curPage.getName()) ));
+        
+        m_bodyPart.write("<a href=\""+
+                         context.getURL(WikiContext.VIEW, i_curPage.getName())+"\">"+
+                         context.getEngine().beautifyTitleNoBreak(i_curPage.getName())+
+                         "</a>");
     }
 
     protected void breakLineIfTooLong()
