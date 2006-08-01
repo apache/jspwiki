@@ -6,7 +6,7 @@ import java.util.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.*;
 
-public class StressTestSpeed extends TestCase
+public final class StressTestSpeed extends TestCase
 {
     private static int ITERATIONS = 100;
     public static final String NAME1 = "Test1";
