@@ -64,7 +64,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-07-29 19:46:31 $
+ * @version $Revision: 1.8 $ $Date: 2006-08-01 00:09:45 $
  * @since 2.4
  */
 public final class SecurityVerifier
@@ -591,10 +591,11 @@ public final class SecurityVerifier
         
         // Try adding a bogus group with random name
         String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+        Group group = null;
         try
         {
             // Create dummy test group
-            Group group = mgr.parseGroup( name, "", true );
+            group = mgr.parseGroup( name, "", true );
             Principal user = new WikiPrincipal( "TestUser" );
             group.add( user );
             db.save( group, new WikiPrincipal("SecurityVerifier") );
@@ -615,9 +616,16 @@ public final class SecurityVerifier
         }
 
         // Now delete the group; should be back to old count
+        if ( group == null )
+        {
+          m_session.addMessage( ERROR_GROUPS, "Skipped group deletion test." );
+          return;
+        }
+        
         try 
         {
-            mgr.removeGroup( name );
+            db.delete( group );
+            db.commit();
             if ( db.groups().length != oldGroupCount )
             {
                 m_session.addMessage( ERROR_GROUPS, "Could not delete a test group from the database." );
@@ -683,6 +691,12 @@ public final class SecurityVerifier
             {
                 m_session.addMessage( "Info." + property, "The system property '" + property + "' is set to: "
                         + propertyValue + "." );
+               
+                // Prepend a file: prefix if not there already
+                if ( !propertyValue.startsWith( "file:" ) )
+                {
+                  propertyValue = "file:" + propertyValue;
+                }
                 URL url = new URL( propertyValue );
                 File file = new File( url.getPath() );
                 if ( file.exists() )

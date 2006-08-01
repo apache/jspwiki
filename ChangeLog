@@ -1,3 +1,15 @@
+2006-07-31  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.27
+
+        * Bug fix: SecurityConfig was erroneously reporting that externally set
+          values for java.security.policy did not resolve to existing files,
+          even when they did.
+
+        * Bug fix: SecurityConfig was erroneously reporting that wiki groups
+          could not be deleted, even when this function actually worked 
+          properly.
+
 2006-07-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.26
