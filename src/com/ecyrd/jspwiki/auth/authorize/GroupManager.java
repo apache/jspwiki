@@ -46,7 +46,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * refactored into the GroupDatabase interface.</em>
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-07-29 19:18:01 $
+ * @version $Revision: 1.8 $ $Date: 2006-08-01 11:25:12 $
  * @since 2.4.19
  */
 public final class GroupManager implements Authorizer, WikiEventSource
@@ -377,7 +377,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
         {
             memberLine = "";
         }
-        memberLine.trim();
+        memberLine = memberLine.trim();
 
         // Create or retrieve the group (may have been previously cached)
         Group group = new Group( name, m_engine.getApplicationName() );
@@ -688,7 +688,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
     {
         //TODO: groups cannot have the same name as a user
         
-        if ( session == null )
+        if( session == null )
         {
             throw new WikiSecurityException( "Session cannot be null." );
         }
@@ -698,8 +698,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
         validator.validateNotNull( name, "Group name" );
 
         // Name cannot be one of the restricted names either
-        if ( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) )
-            ;
+        if( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) )
         {
             throw new WikiSecurityException( "The group name '" + name + "' is illegal. Choose another." );
         }
