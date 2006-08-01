@@ -60,6 +60,8 @@ public class PageManager
     
     private int m_expiryTime = 60;
 
+    private LockReaper m_reaper = null;
+    
     /**
      *  Creates a new PageManager.
      *  @throws WikiException If anything goes wrong, you get this.
@@ -124,11 +126,6 @@ public class PageManager
             throw new WikiException("Unable to start page provider: "+e.getMessage());
         }        
 
-        //
-        //  Start the lock reaper.
-        //
-        LockReaper reaper = new LockReaper( m_engine );
-        reaper.start();
     }
 
 
@@ -231,6 +228,18 @@ public class PageManager
     {
         PageLock lock = null;
 
+        if( m_reaper == null )
+        {
+            //
+            //  Start the lock reaper lazily.  We don't want to start it in
+            //  the constructor, because starting threads in constructors
+            //  is a bad idea when it comes to inheritance.  Besides,
+            //  laziness is a virtue.
+            //
+            m_reaper = new LockReaper( m_engine );
+            m_reaper.start();
+        }
+        
         synchronized( m_pageLocks )
         {
             lock = (PageLock) m_pageLocks.get( page.getName() );
