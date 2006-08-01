@@ -171,8 +171,8 @@ public class WeblogArchivePlugin implements WikiPlugin
      * This is a simple comparator for ordering weblog archive entries.
      * Two dates in the same month are considered equal.
      */
-    private class ArchiveComparator
-    implements Comparator
+    private static class ArchiveComparator
+        implements Comparator
     {
 
         public int compare( Object a, Object b ) 
