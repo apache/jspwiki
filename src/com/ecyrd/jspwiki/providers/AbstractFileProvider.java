@@ -422,7 +422,7 @@ public abstract class AbstractFileProvider
         f.delete();
     }
 
-    public class WikiFileFilter
+    public static class WikiFileFilter
         implements FilenameFilter
     {
         public boolean accept( File dir, String name )
