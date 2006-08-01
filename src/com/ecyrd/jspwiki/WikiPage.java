@@ -41,8 +41,8 @@ public class WikiPage
 {
     private static final long serialVersionUID = 1L;
 
-    private final String     m_name;
-    private final WikiEngine m_engine;
+    private       String     m_name;
+    private       WikiEngine m_engine;
     private final String     m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;
@@ -230,13 +230,23 @@ public class WikiPage
      */
     public Object clone()
     {
-        WikiPage p       = new WikiPage(m_engine, m_name);
+        try
+        {
+            WikiPage p = (WikiPage)super.clone();
+       
+            p.m_engine = m_engine;
+            p.m_name   = m_name;
 
-        p.m_author       = m_author;
-        p.m_version      = m_version;
-        p.m_lastModified = (Date)m_lastModified.clone();
+            p.m_author       = m_author;
+            p.m_version      = m_version;
+            p.m_lastModified = (Date)m_lastModified.clone();
 
-        return p;
+            return p;
+        }
+        catch( CloneNotSupportedException e )
+        {}
+        
+        return null;
     }
     
     public int compareTo( Object o )

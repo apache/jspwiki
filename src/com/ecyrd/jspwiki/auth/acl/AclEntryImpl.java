@@ -12,7 +12,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * Implementation of a JSPWiki AclEntry.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
+ * @version $Revision: 1.4 $ $Date: 2006-08-01 11:23:51 $
  * @since 2.3
  */
 public class AclEntryImpl implements AclEntry
@@ -46,13 +46,19 @@ public class AclEntryImpl implements AclEntry
 
     public Object clone()
     {
-        AclEntryImpl aei = new AclEntryImpl();
+        try
+        {
+            AclEntryImpl aei = (AclEntryImpl)super.clone();
 
-        aei.setPrincipal( m_principal );
+            aei.setPrincipal( m_principal );
 
-        aei.m_permissions = (Vector) m_permissions.clone();
+            aei.m_permissions = (Vector) m_permissions.clone();
 
-        return aei;
+            return aei;
+        }
+        catch( CloneNotSupportedException e ){}
+        
+        return null;
     }
 
     public Principal getPrincipal()

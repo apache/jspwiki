@@ -149,7 +149,7 @@ public class WikiContext
     /** Same as NONE; this is just a clarification. */
     public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
     
-    protected static Logger       log      = Logger.getLogger( WikiContext.class );
+    protected static final Logger log      = Logger.getLogger( WikiContext.class );
     
     private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
 
@@ -569,15 +569,26 @@ public class WikiContext
      */
     public Object clone()
     {
-        WikiContext copy = new WikiContext( m_engine, null, m_command );
+        try
+        {
+            // super.clone() must always be called to make sure that inherited objects
+            // get the right type
+            WikiContext copy = (WikiContext)super.clone();
         
-        copy.m_template       = m_template;
-        copy.m_variableMap    = m_variableMap;
-        copy.m_request        = m_request;
-        copy.m_session        = m_session;
-        copy.m_page           = m_page;
-        copy.m_realPage       = m_realPage;
-        return copy;
+            copy.m_engine = m_engine;
+            copy.m_command = m_command;
+        
+            copy.m_template       = m_template;
+            copy.m_variableMap    = m_variableMap;
+            copy.m_request        = m_request;
+            copy.m_session        = m_session;
+            copy.m_page           = m_page;
+            copy.m_realPage       = m_realPage;
+            return copy;
+        }
+        catch( CloneNotSupportedException e ){} // Never happens
+        
+        return null;
     }
     
     /**
