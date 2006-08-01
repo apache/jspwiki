@@ -116,7 +116,7 @@ public class TraditionalDiffProvider implements DiffProvider
     }
 
 
-    public class RevisionPrint
+    public static class RevisionPrint
         implements RevisionVisitor
     {
         private StringBuffer m_result = null;
