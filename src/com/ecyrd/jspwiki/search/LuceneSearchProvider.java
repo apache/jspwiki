@@ -628,7 +628,7 @@ public class LuceneSearchProvider implements SearchProvider
     }
     
     // FIXME: This class is dumb; needs to have a better implementation
-    private class SearchResultImpl
+    private static class SearchResultImpl
         implements SearchResult
     {
         private WikiPage m_page;
