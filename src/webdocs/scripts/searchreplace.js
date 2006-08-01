@@ -6,7 +6,7 @@ var SearchReplace = new Object();
 
 SearchReplace.editReplace = function(form, dataField)
 {
-  if( !form ) return;
+  if( !form ) { return; }
   var findText    = form.findText.value; if( findText == "") return;
   var replaceText = form.replaceText.value;
   var isRegExp    = form.regExp.checked;
