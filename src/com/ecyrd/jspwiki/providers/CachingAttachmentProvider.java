@@ -148,7 +148,7 @@ public class CachingAttachmentProvider
 
             log.debug("list NOT in cache, "+page.getName());
 
-            c = refresh( page );
+            refresh( page );
         }
         catch( NeedsRefreshException nre )
         {
