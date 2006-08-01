@@ -814,7 +814,7 @@ public class WikiEngineTest extends TestCase
         assertEquals( "V1", "bar", v1.getAttribute("foo") );
         
         // FIXME: The following must run as well
-        //assertEquals( "V2", "notbar", v2.getAttribute("foo") );
+        assertEquals( "V2", "notbar", v2.getAttribute("foo") );
         
         engine.deletePage( NAME1 );
     }
