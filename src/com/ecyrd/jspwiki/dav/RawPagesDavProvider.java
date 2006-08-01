@@ -175,12 +175,14 @@ public class RawPagesDavProvider extends WikiDavProvider
             {
                 WikiPage cached = ((PageDavItem)old).getPage();
                 
-                WikiPage current = m_engine.getPage( cached.getName() );
-                
-                if( cached != null && 
-                    cached.getLastModified().equals( current.getLastModified() ) )
+                if( cached != null )
                 {
-                    di = old;
+                    WikiPage current = m_engine.getPage( cached.getName() );
+                
+                    if( cached.getLastModified().equals( current.getLastModified() ) )
+                    {
+                        di = old;
+                    }
                 }
             }
             else
