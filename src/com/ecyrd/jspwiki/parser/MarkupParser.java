@@ -195,9 +195,9 @@ public abstract class MarkupParser
      */
     public static String cleanLink( String link )
     {
-        StringBuffer clean = new StringBuffer(link.length());
-    
         if( link == null ) return null;
+
+        StringBuffer clean = new StringBuffer(link.length());
 
         //
         //  Remove non-alphanumeric characters that should not
