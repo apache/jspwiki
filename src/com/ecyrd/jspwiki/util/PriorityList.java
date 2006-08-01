@@ -107,7 +107,7 @@ public class PriorityList
     /**
      *  Provides a holder for the priority-object 2-tuple.
      */
-    private class Item
+    private static class Item
     {
         public int     m_priority;
         public Object  m_object;
