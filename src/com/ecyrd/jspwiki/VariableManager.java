@@ -50,7 +50,7 @@ public class VariableManager
      *  Put names here in lower case.
      */
     
-    protected static final String[] THE_BIG_NO_NO_LIST = {
+    static final String[] THE_BIG_NO_NO_LIST = {
         "jspwiki.auth.masterpassword"
     };
     
