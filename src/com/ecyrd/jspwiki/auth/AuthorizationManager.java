@@ -78,7 +78,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.39 $ $Date: 2006-07-29 19:44:04 $
+ * @version $Revision: 1.40 $ $Date: 2006-08-01 11:20:20 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -231,7 +231,7 @@ public final class AuthorizationManager implements WikiEventSource
 
         log.debug( "Checking ACL entries..." );
         log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + aclPrincipals );
+        log.debug( "Checking for principal: " + String.valueOf(aclPrincipals) );
         log.debug( "Permission: " + permission );
 
         for( int i = 0; i < aclPrincipals.length; i++ )
