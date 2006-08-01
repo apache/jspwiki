@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -27,8 +28,10 @@ import java.util.*;
  */
 // FIXME: move to the search package
 public class SearchResultComparator
-    implements Comparator
+    implements Comparator, Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      *  Compares two SearchResult objects, returning
      *  the one that scored higher.
