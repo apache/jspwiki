@@ -134,11 +134,14 @@ public class FormUtil
     {
         HashMap params = new HashMap();
         
+        if( filterPrefix == null ) filterPrefix = "";
+        
         Enumeration en = req.getParameterNames();
         while( en.hasMoreElements() )
         {
             String param = (String)en.nextElement();
-            if( filterPrefix == null || param.startsWith( filterPrefix ) )
+            
+            if( param.startsWith( filterPrefix ) )
             {
                 String realName = param.substring( filterPrefix.length() );
                 String[] values = req.getParameterValues( param );
