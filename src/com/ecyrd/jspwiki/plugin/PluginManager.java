@@ -278,11 +278,12 @@ public class PluginManager extends ModuleManager
         d.addElement( new b( "Parameters to the plugin" ) );
         
         ul list = new ul();
-        for( Iterator i = params.keySet().iterator(); i.hasNext(); )
+        for( Iterator i = params.entrySet().iterator(); i.hasNext(); )
         {
-            String key = (String) i.next();
+            Map.Entry e = (Map.Entry) i.next();
+            String key = (String)e.getKey();
 
-            list.addElement(new li( key+"'='"+params.get(key) ) );
+            list.addElement(new li( key+"'='"+e.getValue() ) );
         }
 
         d.addElement( list );
