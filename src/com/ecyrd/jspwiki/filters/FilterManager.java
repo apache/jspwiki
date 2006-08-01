@@ -89,7 +89,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *
  *  @author Janne Jalkanen
  */
-public class FilterManager
+public final class FilterManager
 {
     private PriorityList     m_pageFilters = new PriorityList();
 
