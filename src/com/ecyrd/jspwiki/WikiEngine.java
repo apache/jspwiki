@@ -578,11 +578,27 @@ public class WikiEngine implements WikiEventSource
             getFilterManager().addPageFilter(m_searchManager, -1001 );
 
         }
-        catch( Exception e )
+        
+        catch( RuntimeException e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.fatal( "Failed to start managers.", e );
             throw new WikiException( "Failed to start managers: "+e.getMessage() );
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.fatal( "JSPWiki could not start, URLConstructor was not found: ",e );
+            throw new WikiException(e.getMessage());
+        }
+        catch (InstantiationException e)
+        {
+            log.fatal( "JSPWiki could not start, URLConstructor could not be instantiated: ",e );
+            throw new WikiException(e.getMessage());
+        }
+        catch (IllegalAccessException e)
+        {
+            log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: ",e );
+            throw new WikiException(e.getMessage());
         }
 
         //
@@ -744,7 +760,7 @@ public class WikiEngine implements WikiEventSource
 
     public Date getStartTime()
     {
-        return m_startTime;
+        return (Date)m_startTime.clone();
     }
 
     /**
