@@ -2363,7 +2363,7 @@
     </Field>
   </BugInstance>
   <Errors></Errors>
-  <FindBugsSummary timestamp="Mon, 31 Jul 2006 21:34:57 +0300" total_classes="204" total_bugs="275" total_size="0" num_packages="30" cpu_seconds="400.44" clock_seconds="2043.29" peak_mbytes="134.08" gc_seconds="33.99" priority_3="256" priority_2="15" priority_1="4">
+  <FindBugsSummary timestamp="Mon, 31 Jul 2006 21:34:57 +0300" total_classes="204" total_bugs="275" total_size="0" num_packages="30" cpu_seconds="431.29" clock_seconds="2239.14" peak_mbytes="134.18" gc_seconds="36.39" priority_3="256" priority_2="15" priority_1="4">
     <PackageStats package="com.ecyrd.jspwiki" total_bugs="41" total_types="22" total_size="0" priority_3="39" priority_2="2">
       <ClassStats class="com.ecyrd.jspwiki.AllTests" interface="false" size="0" bugs="1" priority_3="1"/>
       <ClassStats class="com.ecyrd.jspwiki.FileUtil" interface="false" size="0" bugs="3" priority_3="3"/>
