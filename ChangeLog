@@ -1,5 +1,11 @@
 2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.29
+
+        * Character encoding is now set in the servlet filter, not
+        WikiEngine.createContext() anymore.  This should remove certain
+        cases where character encoding got lost.
+
         * 2.4.28
         
         * Fixed a HUGE number of potential problems, found using FindBugs.
