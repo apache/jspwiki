@@ -42,7 +42,7 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 public class CleanTextRenderer
     extends WikiRenderer
 {
-    protected static Logger log = Logger.getLogger( CleanTextRenderer.class );
+    protected static final Logger log = Logger.getLogger( CleanTextRenderer.class );
     
     public CleanTextRenderer( WikiContext context, WikiDocument doc )
     {
