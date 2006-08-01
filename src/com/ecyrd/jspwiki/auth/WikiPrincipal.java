@@ -28,7 +28,7 @@ import java.util.Comparator;
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.9 $ $Date: 2006-07-29 19:50:07 $
+ *  @version $Revision: 1.10 $ $Date: 2006-08-01 11:21:49 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
@@ -109,6 +109,15 @@ public final class WikiPrincipal implements Principal
         return ( m_name.equals( ( (WikiPrincipal) obj ).getName() ) );
     }
 
+    /**
+     *  The hashCode() returned for the WikiPrincipal is the same as
+     *  for its name.
+     */
+    public final int hashCode()
+    {
+        return m_name.hashCode();
+    }
+    
     /**
      * Returns the Principal "type": {@link #LOGIN_NAME}, {@link #FULL_NAME},
      * {@link #WIKI_NAME} or {@link #WIKI_NAME}

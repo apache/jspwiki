@@ -13,7 +13,7 @@ import java.security.Principal;
  * {@link java.security.UnresolvedPermission}.
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
+ * @version $Revision: 1.4 $ $Date: 2006-08-01 11:24:04 $
  * @since 2.3
  */
 public final class UnresolvedPrincipal implements Principal
@@ -58,4 +58,11 @@ public final class UnresolvedPrincipal implements Principal
         return false;
     }
 
+    /**
+     *  The hashCode of this object is equal to the hash code of its name.
+     */
+    public final int hashCode()
+    {
+        return m_name.hashCode();
+    }
 }
