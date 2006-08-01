@@ -31,7 +31,7 @@ public final class HexUtils {
     // Code from Ajp11, from Apache's JServ
 
     // Table for HEX to DEC byte translation
-    public static final int[] DEC = {
+    static final int[] DEC = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
