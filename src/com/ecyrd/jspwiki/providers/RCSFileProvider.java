@@ -232,7 +232,9 @@ public class RCSFileProvider
     {
         String result = null;
         InputStream stdout = null;
-
+        BufferedReader stderr = null;
+        Process process = null;
+        
         // Let parent handle latest fetches, since the FileSystemProvider
         // can do the file reading just as well.
 
@@ -254,11 +256,11 @@ public class RCSFileProvider
 
             log.debug("Command = '"+cmd+"'");
 
-            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
+            process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
             stdout = process.getInputStream();
             result = FileUtil.readContents( stdout, m_encoding );
 
-            BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             Pattern headpattern = compiler.compile( PATTERN_REVISION );
 
@@ -275,11 +277,6 @@ public class RCSFileProvider
 
             int exitVal = process.exitValue();
             
-            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
-            process.getInputStream().close();
-            process.getOutputStream().close();
-            process.getErrorStream().close(); 
-
             log.debug("Done, returned = "+exitVal);
 
             //
@@ -330,9 +327,15 @@ public class RCSFileProvider
         {
             try
             {
+                // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
                 if( stdout != null ) stdout.close();
+                if( stderr != null ) stderr.close();
+                if( process != null ) process.getInputStream().close(); 
             }
-            catch( Exception e ) {}
+            catch( Exception e )
+            {
+                log.error("Unable to close streams!");
+            }
         }
 
         return result;
@@ -553,7 +556,7 @@ public class RCSFileProvider
     public void deleteVersion( String page, int version )
     {        
         String         line = "<rcs not run>";
-        BufferedReader stderr;
+        BufferedReader stderr  = null;
         boolean        success = false;
         String         cmd     = m_deleteVersionCommand;
 
@@ -563,9 +566,11 @@ public class RCSFileProvider
         cmd = TextUtil.replaceString( cmd, "%v", Integer.toString( version ) );
 
         log.debug("Running command "+cmd);
+        Process process = null;
+        
         try
         {
-            Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
+            process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             // 
             // 'rcs' command outputs to stderr methinks.
@@ -588,7 +593,22 @@ public class RCSFileProvider
         {
             log.error("Page deletion failed: ",e);
         }
-
+        finally
+        {
+            try
+            {
+                if( stderr != null ) stderr.close();
+                if( process != null )
+                {
+                    process.getInputStream().close();
+                    process.getOutputStream().close();
+                }
+            }
+            catch( IOException e ) {
+                log.error("Cannot close streams for process while deleting page version.");
+            }
+        }
+        
         if( !success )
         {
             log.error("Version deletion failed. Last info from RCS is: "+line);
