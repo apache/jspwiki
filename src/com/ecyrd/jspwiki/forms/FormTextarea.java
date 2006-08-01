@@ -41,15 +41,17 @@ public class FormTextarea
     {
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
+        Map previousValues = null;
+
         if( info != null )
         {
             if( info.hide() )
             {
                 return "<p>(no need to show textarea field now)</p>";
             }
+            previousValues = info.getSubmission();
         }
 
-        Map previousValues = info.getSubmission();
         if( previousValues == null )
         {
             previousValues = new HashMap();
