@@ -95,6 +95,8 @@ public class WikiServletFilter implements Filter
         //   replace markers with scripts/stylesheet. 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         
+        httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
+        
         NDC.push( m_engine.getApplicationName()+":"+httpRequest.getRequestURL() );
 
         try

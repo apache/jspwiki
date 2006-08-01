@@ -1907,17 +1907,6 @@ public class WikiEngine implements WikiEventSource
             throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
         }
 
-        //  First, set the encoding for parameter parsing.
-        try
-        {
-            request.setCharacterEncoding( getContentEncoding() );
-        }
-        catch( UnsupportedEncodingException e )
-        {
-            log.fatal("Someone gave us a encoding we cannot understand!");
-            throw new InternalWikiException("Unknown encoding "+getContentEncoding());
-        }
-        
         // Build the wiki context
         Command command = m_commandResolver.findCommand( request, requestContext );
         return new WikiContext( this, request, command );
