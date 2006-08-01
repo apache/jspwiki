@@ -832,7 +832,7 @@ public class CachingProvider
      *
      *  @since 2.4
      */
-    private class CacheItemCollector
+    private static class CacheItemCollector
         implements CacheEntryEventListener
     {
         private Map m_allItems = new HashMap();
