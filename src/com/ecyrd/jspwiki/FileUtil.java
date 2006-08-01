@@ -95,33 +95,42 @@ public class FileUtil
 
         Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
 
-        BufferedReader stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
-        BufferedReader stderr = new BufferedReader( new InputStreamReader(process.getErrorStream()) );
-
-        String line;
-
-        while( (line = stdout.readLine()) != null )
-        { 
-            result.append( line+"\n");
-        }            
-
-        StringBuffer error = new StringBuffer();
-        while( (line = stderr.readLine()) != null )
-        { 
-            error.append( line+"\n");
-        }            
-
-        if( error.length() > 0 )
-        {
-            log.error("Command failed, error stream is: "+error);
-        }
-
-        process.waitFor();
+        BufferedReader stdout = null;
+        BufferedReader stderr = null;
         
-        // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
-        process.getInputStream().close();
-        process.getOutputStream().close();
-        process.getErrorStream().close(); 
+        try
+        {
+            stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
+            stderr = new BufferedReader( new InputStreamReader(process.getErrorStream()) );
+
+            String line;
+
+            while( (line = stdout.readLine()) != null )
+            { 
+                result.append( line+"\n");
+            }            
+
+            StringBuffer error = new StringBuffer();
+            while( (line = stderr.readLine()) != null )
+            { 
+                error.append( line+"\n");
+            }            
+
+            if( error.length() > 0 )
+            {
+                log.error("Command failed, error stream is: "+error);
+            }
+
+            process.waitFor();
+        
+        }
+        finally
+        {
+            // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
+            process.getInputStream().close();
+            if( stdout != null ) stdout.close();
+            if( stderr != null ) stderr.close(); 
+        }
         
         return result.toString();
     }
@@ -174,7 +183,7 @@ public class FileUtil
  
     
     public static String readContents( InputStream input, String encoding )
-    throws IOException
+        throws IOException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         FileUtil.copyContents( input, out );
@@ -240,7 +249,10 @@ public class FileUtil
             {
                 if( out != null ) out.close();
             }
-            catch( Exception e ) {} // FIXME: Log errors.
+            catch( Exception e ) 
+            {
+                log.error("Not able to close the stream while reading contents.");
+            }
         }
     }
 
