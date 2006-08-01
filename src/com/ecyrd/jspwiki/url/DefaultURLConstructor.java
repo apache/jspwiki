@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.url;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.ui.CommandResolver;
 import com.ecyrd.jspwiki.ui.Command;
+import com.ecyrd.jspwiki.ui.CommandResolver;
 
 /**
  *  Implements the default URL constructor using links directly to the
@@ -231,6 +230,7 @@ public class DefaultURLConstructor
      *          or null if the URL does not have any extra path information
      *  @throws UnsupportedEncodingException
      */
+    /*
     private static String getPathInfo( HttpServletRequest request, String encoding )
         throws UnsupportedEncodingException
     {
@@ -247,7 +247,7 @@ public class DefaultURLConstructor
         
         return pi;
     }
-    
+    */
     /**
      *  Takes the name of the page from the request URI.
      *  The initial slash is also removed.  If there is no page,
