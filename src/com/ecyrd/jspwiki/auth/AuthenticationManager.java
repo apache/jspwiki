@@ -54,7 +54,7 @@ import com.ecyrd.jspwiki.event.WikiEventSource;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.29 $ $Date: 2006-07-29 19:43:16 $
+ * @version $Revision: 1.30 $ $Date: 2006-08-01 11:20:00 $
  * @since 2.3
  */
 public final class AuthenticationManager implements WikiEventSource
@@ -134,6 +134,7 @@ public final class AuthenticationManager implements WikiEventSource
         m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
         m_isJavaPolicyConfiguredAtStartup = PolicyLoader.isSecurityPolicyConfigured();
 
+        // Yes, writing to a static field is done here on purpose.
         m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
         
         if( !m_useJAAS ) return;
