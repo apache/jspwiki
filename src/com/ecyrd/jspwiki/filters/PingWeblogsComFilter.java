@@ -23,7 +23,7 @@ public class PingWeblogsComFilter
 
     public String m_pingURL;
 
-    public static String PROP_PINGURL = "pingurl";
+    public static final String PROP_PINGURL = "pingurl";
 
     public void initialize( Properties props )
     {
@@ -77,7 +77,7 @@ public class PingWeblogsComFilter
                                         Boolean flerror = (Boolean)res.get("flerror");
                                         String  msg     = (String)res.get("message");
 
-                                        if( flerror == Boolean.TRUE )
+                                        if( flerror.booleanValue() )
                                         {
                                             log.error("Failed to ping: "+msg);
                                         }
