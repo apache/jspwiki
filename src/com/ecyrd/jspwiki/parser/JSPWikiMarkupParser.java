@@ -2200,7 +2200,7 @@ public class JSPWikiMarkupParser
             }
 
             m_rowNum++;
-            Element tr = ( m_rowNum % 2 == 1 ) 
+            Element tr = ( m_rowNum % 2 != 0 ) 
                        ? new Element("tr").setAttribute("class", "odd")
                        : new Element("tr");
             el = pushElement( tr );
@@ -2268,7 +2268,6 @@ public class JSPWikiMarkupParser
         while(!quitReading)
         {
             int ch = nextToken();
-            String s = null;
             Element el = null;
             
             //
@@ -2481,12 +2480,6 @@ public class JSPWikiMarkupParser
             else
             {
                 m_plainTextBuf.append( (char) ch );
-                newLine = false;
-            }
-            
-            if( s != null )
-            {
-                m_plainTextBuf.append( s );
                 newLine = false;
             }
         }
