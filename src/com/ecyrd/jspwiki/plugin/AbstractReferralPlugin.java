@@ -289,7 +289,7 @@ public abstract class AbstractReferralPlugin
      *  A simple class that just cuts a String to a maximum
      *  length, adding three dots after the cutpoint.
      */
-    private class CutMutator implements StringTransmutator
+    private static class CutMutator implements StringTransmutator
     {
         private int m_length;
 
