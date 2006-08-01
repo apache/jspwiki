@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.auth;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.text.Collator;
 import java.util.Comparator;
@@ -9,8 +10,11 @@ import java.util.Comparator;
  * Used for sorting arrays or collections of Principals.
  * @since 2.3
  */
-public class PrincipalComparator implements Comparator 
+public class PrincipalComparator 
+    implements Comparator, Serializable 
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      * @see java.util.Comparator#compare(Object, Object)
      */
