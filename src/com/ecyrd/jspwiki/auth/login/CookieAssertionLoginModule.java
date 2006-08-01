@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2005-11-08 18:27:51 $
+ * @version $Revision: 1.6 $ $Date: 2006-08-01 11:25:49 $
  * @since 2.3
  */
 public class CookieAssertionLoginModule extends AbstractLoginModule
@@ -49,7 +49,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
 
     public static final String PROMPT            = "User name";
 
-    protected static Logger    log               = Logger.getLogger( CookieAssertionLoginModule.class );
+    protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
     
     /**
      * Logs in the user by calling back to the registered CallbackHandler with

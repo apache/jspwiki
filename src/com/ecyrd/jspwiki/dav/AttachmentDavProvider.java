@@ -19,7 +19,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class AttachmentDavProvider implements DavProvider
 {
     protected WikiEngine m_engine;
-    protected static Logger log = Logger.getLogger( AttachmentDavProvider.class );
+    protected static final Logger log = Logger.getLogger( AttachmentDavProvider.class );
     
     public AttachmentDavProvider( WikiEngine engine )
     {

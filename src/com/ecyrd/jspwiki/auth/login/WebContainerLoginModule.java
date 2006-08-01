@@ -51,13 +51,13 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * if user profile exists, or a generic WikiPrincipal if not.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-07-29 19:21:51 $
+ * @version $Revision: 1.10 $ $Date: 2006-08-01 11:26:14 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
 {
 
-    protected static Logger       log      = Logger.getLogger( WebContainerLoginModule.class );
+    protected static final Logger log      = Logger.getLogger( WebContainerLoginModule.class );
     
     /**
      * Logs in the user.
