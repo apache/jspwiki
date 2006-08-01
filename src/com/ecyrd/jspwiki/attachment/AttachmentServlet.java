@@ -449,9 +449,6 @@ public class AttachmentServlet
             
             if( x != -1 ) wikipage = wikipage.substring(0,x);
 
-            errorPage = context.getURL( WikiContext.UPLOAD,
-                                        wikipage );
-
             //
             //  Go through all files being uploaded.
             //
