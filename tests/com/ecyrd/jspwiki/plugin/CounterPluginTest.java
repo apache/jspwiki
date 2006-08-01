@@ -1,18 +1,30 @@
 
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
+
 import javax.servlet.ServletException;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.render.WikiRenderer;
+import com.ecyrd.jspwiki.render.XHTMLRenderer;
 
 public class CounterPluginTest extends TestCase
 {
     Properties props = new Properties();
     TestEngine testEngine;
-    WikiContext context;
-    PluginManager manager;
     
     public CounterPluginTest( String s )
     {
@@ -38,17 +50,14 @@ public class CounterPluginTest extends TestCase
     {
         WikiContext context = new WikiContext( testEngine,
                                                new WikiPage(testEngine, "TestPage") );
-        Reader r = new TranslatorReader( context, 
-                                         new BufferedReader( new StringReader(src)) );
-        StringWriter out = new StringWriter();
-        int c;
-
-        while( ( c=r.read()) != -1 )
-        {
-            out.write( c );
-        }
-
-        return out.toString();
+        
+        MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );
+        
+        WikiDocument dom = p.parse();
+        
+        WikiRenderer r = new XHTMLRenderer( context, dom );
+        
+        return r.getString();
     }
 
     public void testSimpleCount()
