@@ -293,11 +293,12 @@ public class LinkTag
             return addTo;
         }
         StringBuffer buf = new StringBuffer();
-        Iterator it = params.keySet().iterator();
+        Iterator it = params.entrySet().iterator();
         while( it.hasNext() )
         {
-            String n = (String)it.next();
-            String v = (String)params.get( n );
+            Map.Entry e = (Map.Entry) it.next();
+            String n = (String)e.getKey();
+            String v = (String)e.getValue();
             buf.append( n );
             buf.append( "=" );
             buf.append( v );
@@ -425,6 +426,7 @@ public class LinkTag
         } 
         catch( Exception e )
         {
+            // Yes, we want to catch all exceptions here, including RuntimeExceptions
             log.error( "Tag failed", e );
         }
         
