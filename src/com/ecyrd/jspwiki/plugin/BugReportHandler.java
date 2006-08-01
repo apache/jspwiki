@@ -48,11 +48,11 @@ public class BugReportHandler
 {
     private static Logger log = Logger.getLogger( BugReportHandler.class );
     
-    public static String TITLE          = "title";
-    public static String DESCRIPTION    = "description";
-    public static String VERSION        = "version";
-    public static String MAPPINGS       = "map";
-    public static String PAGE           = "page";
+    public static final String TITLE          = "title";
+    public static final String DESCRIPTION    = "description";
+    public static final String VERSION        = "version";
+    public static final String MAPPINGS       = "map";
+    public static final String PAGE           = "page";
 
     public static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
