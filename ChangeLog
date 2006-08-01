@@ -1,3 +1,31 @@
+2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.28
+        
+        * Fixed a HUGE number of potential problems, found using FindBugs.
+        Problems included such as:
+        
+        * Now many Comparators are also Serializable
+        
+        * hashCode() is now implemented properly on objects that do
+        equals()
+        
+        * clone() is rewritten to use super.clone()
+        
+        * Many inner classes were made static to save extra effort
+        
+        * Forms package classes had really dubious null checks which
+        were rewritten.
+        
+        * TranslatorReader is no longer used in the code anywhere.  Even
+        the TranslatorReaderTest is gone.  The class, however, remains,
+        until we can refactor it to be a facade for JSPWikiMarkupParser.
+        
+        * Coding style is now a local setting instead of a global
+        setting...
+        
+        * And a lot of small bits and pieces...
+
 2006-07-31  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.27
