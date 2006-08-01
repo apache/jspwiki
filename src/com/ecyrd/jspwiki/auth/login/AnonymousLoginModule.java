@@ -35,7 +35,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-07-29 19:21:51 $
+ * @version $Revision: 1.6 $ $Date: 2006-08-01 11:25:34 $
  * @since 2.3
  */
 public class AnonymousLoginModule extends AbstractLoginModule
@@ -80,7 +80,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
             WikiPrincipal ipAddr = new WikiPrincipal( request.getRemoteAddr() );
             if ( log.isDebugEnabled() )
             {
-                HttpSession session = ( request == null ) ? null : request.getSession( false );
+                HttpSession session = request.getSession( false );
                 String sid = (session == null) ? NULL : session.getId(); 
                 log.debug("Logged in session ID=" + sid);
                 log.debug("Added Principals " + ipAddr + ",Role.ANONYMOUS,Role.ALL" );
