@@ -38,9 +38,9 @@ public class VotePlugin
 {
     static Logger log = Logger.getLogger( VotePlugin.class );
 
-    public static String ATTACHMENT_NAME = "VotePlugin.properties";
+    public static final String ATTACHMENT_NAME = "VotePlugin.properties";
 
-    public static String VAR_VOTES = "VotePlugin.votes";
+    public static final String VAR_VOTES = "VotePlugin.votes";
 
     /**
      *  +1 for yes, -1 for no.
