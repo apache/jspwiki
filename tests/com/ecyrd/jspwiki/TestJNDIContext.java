@@ -32,7 +32,7 @@ import javax.naming.spi.InitialContextFactory;
  * </code></blockquote>
  * 
  * @author Andrew R. Jaquith
- * @version $Revision: 1.1 $ $Date: 2005-10-19 12:13:23 $
+ * @version $Revision: 1.2 $ $Date: 2006-08-01 11:45:19 $
  * @since 2.3
  */
 public class TestJNDIContext implements Context
@@ -46,7 +46,7 @@ public class TestJNDIContext implements Context
      * InitialContextFactory class that configures the JVM to
      * always return a particular TestJNDIContext.
      * @author Andrew R. Jaquith
-     * @version $Revision: 1.1 $ $Date: 2005-10-19 12:13:23 $
+     * @version $Revision: 1.2 $ $Date: 2006-08-01 11:45:19 $
      */
     public static class Factory implements InitialContextFactory
     {
@@ -268,7 +268,7 @@ public class TestJNDIContext implements Context
     public Object lookup( String name ) throws NamingException
     {
         Object obj = m_bindings.get( name );
-        if ( name == null )
+        if( obj == null )
         {
             throw new NamingException( "Object named '" + name + "' not found in JNDI context." );
         }
