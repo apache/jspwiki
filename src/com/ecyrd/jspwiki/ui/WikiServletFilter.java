@@ -65,7 +65,7 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
  */
 public class WikiServletFilter implements Filter
 {
-    protected static Logger log = Logger.getLogger( WikiServletFilter.class );
+    protected static final Logger log = Logger.getLogger( WikiServletFilter.class );
     private WikiEngine m_engine = null;
     
     public void init(FilterConfig config) throws ServletException
@@ -218,7 +218,7 @@ public class WikiServletFilter implements Filter
      *  
      *  @author jalkanen
      */
-    private class MyServletResponseWrapper
+    private static class MyServletResponseWrapper
         extends HttpServletResponseWrapper
     {
         private CharArrayWriter output;
