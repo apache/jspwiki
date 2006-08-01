@@ -19,13 +19,16 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.io.Serializable;
 import java.util.*;
 import org.apache.log4j.Logger;
 
 // FIXME: Does not implement equals().
 public class PageTimeComparator
-    implements Comparator
+    implements Comparator, Serializable
 {
+    private static final long serialVersionUID = 0L;
+
     static Logger log = Logger.getLogger( PageTimeComparator.class ); 
 
     public int compare( Object o1, Object o2 )
