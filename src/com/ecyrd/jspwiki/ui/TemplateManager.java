@@ -34,8 +34,6 @@ import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
-import com.opensymphony.oscache.base.Cache;
-import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  This class takes care of managing JSPWiki templates.
@@ -78,9 +76,9 @@ public class TemplateManager
     public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
     
     private WikiEngine         m_engine;
-    private Cache              m_propertyCache;
+    // private Cache              m_propertyCache;
 
-    protected static Logger log = Logger.getLogger( TemplateManager.class );
+    protected static final Logger log = Logger.getLogger( TemplateManager.class );
 
     public TemplateManager( WikiEngine engine, Properties properties )
     {
@@ -219,6 +217,7 @@ public class TemplateManager
      *  is lazy, i.e. the properties are not loaded until the template is
      *  actually used for the first time.
      */
+    /*
     public String getTemplateProperty( WikiContext context, String key )
     {
         String template = context.getTemplate();
@@ -251,7 +250,7 @@ public class TemplateManager
             return null;
         }
     }
-
+*/
     private static final String getPath( String template )
     {
         return "/"+DIRECTORY+"/"+template+"/";
@@ -304,6 +303,7 @@ public class TemplateManager
     /**
      *  Always returns a valid property map.
      */
+    /*
     private Properties getTemplateProperties( String templateName )
         throws IOException
     {
@@ -326,7 +326,7 @@ public class TemplateManager
 
         return p;
     }
-    
+*/    
     /**
      *  Returns the include resources marker for a given type.  This is in a
      *  HTML comment format.
