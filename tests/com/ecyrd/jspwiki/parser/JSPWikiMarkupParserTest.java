@@ -4,22 +4,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
-
-import org.apache.commons.lang.time.StopWatch;
-
-import stress.Benchmark;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import stress.Benchmark;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
-import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.render.XHTMLRenderer;
 
@@ -1057,7 +1055,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         String out = translate( testEngine, page, src );
 
-        assertEquals( "<p>", out.toString() );
+        assertEquals( "<p>", out );
     }
    
     /*
@@ -1761,6 +1759,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      * @param key
      * @return
      */
+    /*
     private boolean inArray( Object[] array, Object key )
     {
         for( int i = 0; i < array.length; i++ )
@@ -1772,13 +1771,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         }
         return false;
     }
-    
+    */
     /**
      * Used by the ACL tests.
      * @param array
      * @param key
      * @return
      */
+    /*
     private boolean inGroup( Object[] array, Principal key )
     {
         for( int i = 0; i < array.length; i++ )
@@ -1793,7 +1793,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         }
         return false;
     }
-    
+    */
     /**
      *  ACL tests.
      */
@@ -1847,6 +1847,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertTrue( "edit for SV", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
         }
         */
+    /*
     private boolean containsGroup( List l, String name )
     {
         for( Iterator i = l.iterator(); i.hasNext(); )
@@ -1859,7 +1860,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         return false;
     }
-    
+    */
     /**
      *   Metadata tests
      */
@@ -1953,7 +1954,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         p.addExternalLinkHook( coll );
         p.addAttachmentLinkHook( coll );
         
-        WikiDocument doc = p.parse();
+        p.parse();
         
         Collection links = coll.getLinks();
         
@@ -1976,7 +1977,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         p.addExternalLinkHook( coll );
         p.addAttachmentLinkHook( coll );
         
-        WikiDocument doc = p.parse();
+        p.parse();
         
         Collection links = coll.getLinks();
         
@@ -2009,7 +2010,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             p.addExternalLinkHook( coll_others );
             p.addAttachmentLinkHook( coll );
             
-            WikiDocument doc = p.parse();
+            p.parse();
             
             Collection links = coll.getLinks();
             
