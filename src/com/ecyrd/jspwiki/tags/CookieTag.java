@@ -261,15 +261,20 @@ public class CookieTag
      * Encodes name-value pairs in the map into a single string, in a format
      * understood by this class and JavaScript decodeURIComponent().
      */
-    private String encodeValues( Map values ) {
+    private String encodeValues( Map values ) 
+    {
         StringBuffer rval = new StringBuffer();
-        if( values == null || values.size() == 0 ) {
+        if( values == null || values.size() == 0 ) 
+        {
             return rval.toString();
         }
-        Iterator it = values.keySet().iterator();
-        while( it.hasNext() ) {
-            String n = (String)it.next();
-            String v = (String)values.get( n );
+        
+        Iterator it = values.entrySet().iterator();
+        while( it.hasNext() ) 
+        {
+            Map.Entry e = (Map.Entry) it.next();
+            String n = (String)e.getKey();
+            String v = (String)e.getValue();
             if( v != null ) {
                 String nv = n + "=" + v;
                 rval.append( encode( nv ) );
