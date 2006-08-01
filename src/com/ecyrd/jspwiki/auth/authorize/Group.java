@@ -44,13 +44,13 @@ import com.ecyrd.jspwiki.event.WikiEventSource;
  * </p>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-07-29 19:18:01 $
+ * @version $Revision: 1.9 $ $Date: 2006-08-01 11:24:51 $
  * @since 2.3
  */
 public class Group implements WikiEventSource
 {
 
-    public static String[]  RESTRICTED_GROUPNAMES = new String[]
+    static final String[]  RESTRICTED_GROUPNAMES = new String[]
                                                   { "Anonymous", "All", "Asserted", "Authenticated" };
 
     /** Delegate for managing event listeners */
@@ -161,6 +161,20 @@ public class Group implements WikiEventSource
         return true;
     }
 
+    /**
+     *  The hashcode is calculated as a XOR sum over all members of
+     *  the Group.
+     */
+    public int hashCode()
+    {
+        int hc = 0;
+        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        {
+            hc ^= i.next().hashCode();
+        }
+        return hc;
+    }
+    
     /**
      * Returns the creation date.
      * @return the creation date
