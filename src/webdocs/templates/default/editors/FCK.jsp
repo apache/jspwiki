@@ -1,8 +1,7 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 
 <%--
@@ -49,7 +48,7 @@
 </noscript>
 
    <wiki:CheckRequestContext context="comment">
-   </p>
+
         <table border="0" class="small">
           <tr>
             <td><label for="authorname" accesskey="n">Your <u>n</u>ame</label></td>
@@ -62,7 +61,7 @@
             <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=pageContext.getAttribute("link",PageContext.REQUEST_SCOPE)%>" /></td>
           </tr>
         </table>
-    </p>
+   
     </wiki:CheckRequestContext>
 
     <p>

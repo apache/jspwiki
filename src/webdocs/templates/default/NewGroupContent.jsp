@@ -38,7 +38,8 @@
       <div class="description">
         The name of the new group.
       </div>
-
+    </div>
+    
     <!-- Members -->
     <%
       StringBuffer s = new StringBuffer();

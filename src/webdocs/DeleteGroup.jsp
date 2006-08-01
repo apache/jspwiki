@@ -1,6 +1,5 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.NoSuchPrincipalException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>

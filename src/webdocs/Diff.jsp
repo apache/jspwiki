@@ -56,10 +56,10 @@
 
     pageContext.setAttribute( InsertDiffTag.ATTR_OLDVERSION,
                               new Integer(ver1),
-                              pageContext.REQUEST_SCOPE );
+                              PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( InsertDiffTag.ATTR_NEWVERSION,
                               new Integer(ver2),
-                              pageContext.REQUEST_SCOPE );
+                              PageContext.REQUEST_SCOPE );
 
     // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 

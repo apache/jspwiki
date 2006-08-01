@@ -1,4 +1,3 @@
-<%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>

@@ -1,12 +1,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.HashSet" %>
 <%@ page import="com.ecyrd.jspwiki.WikiContext" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
-<%@ page import="com.ecyrd.jspwiki.auth.WikiPrincipal" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.log4j.*" %>

@@ -1,7 +1,6 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 
 <%--
@@ -32,7 +31,6 @@
     <textarea style="display:none;" readonly="true"
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="4" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
-    <p>
     <div id="previewsavebutton" align="center">
         <input type="submit" name="edit" value="Keep editing" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -40,5 +38,5 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="submit" name="cancel" value="Cancel" />
      </div>
-     </p>
+
 </form>

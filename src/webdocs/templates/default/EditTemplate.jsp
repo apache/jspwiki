@@ -11,14 +11,14 @@
   <wiki:Include page="commonheader.jsp"/>
 </head>
 
+<body
 <wiki:CheckRequestContext context="edit">
-  <body class="edit" bgcolor="#D9E8FF">
+  class="edit"
 </wiki:CheckRequestContext>
-
 <wiki:CheckRequestContext context="comment">
-  <body class="comment" bgcolor="#EEEEEE">
+  class="comment"
 </wiki:CheckRequestContext>
-
+>
 
 <div id="wikibody" >
 

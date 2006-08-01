@@ -64,7 +64,7 @@
         <tr>
 
         <td>
-           <p>If you are done uploading, you may wish to return to <wiki:LinkTo><wiki:PageName/></wiki:LinkTo></a>.
+           <p>If you are done uploading, you may wish to return to <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>.
            </p>
         </td>
         </tr>

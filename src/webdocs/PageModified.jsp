@@ -2,7 +2,6 @@
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
-<%@ page import="java.util.Calendar,java.util.Date" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 

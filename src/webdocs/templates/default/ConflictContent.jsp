@@ -17,13 +17,13 @@
 
       <p><font color="#0000FF">Here is the modified text (by someone else):</font></p>
 
-      <p><hr /></p>
+      <hr />
 
       <tt>
         <%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%>
       </tt>      
 
-      <p><hr /></p>
+      <hr />
 
       <p><font color="#0000FF">And here's your text:</font></p>
 
@@ -31,7 +31,7 @@
         <%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%>
       </tt>
 
-      <p><hr /></p>
+      <hr />
 
       <p>
        <i>Go edit <wiki:EditLink><wiki:PageName /></wiki:EditLink>.</i>

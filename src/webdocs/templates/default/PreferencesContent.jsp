@@ -207,7 +207,7 @@
             <div class="instructions">
               <wiki:UserProfile property="exists">
                 You created your profile on <wiki:UserProfile property="created"/>,
-                and last saved it on <wiki:UserProfile property="modified"/></p>
+                and last saved it on <wiki:UserProfile property="modified"/>
               </wiki:UserProfile>
               Click &#39;save profile&#39; to save your wiki profile.
             </div>

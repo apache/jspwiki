@@ -88,7 +88,7 @@
           <p>
           <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>
           </p>
-          <p><hr /></p>
+          <hr />
       </wiki:SearchResults>
 
       <form action="<wiki:Link format="url" jsp="Search.jsp"/>"

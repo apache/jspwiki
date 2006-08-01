@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="javax.servlet.http.*" %>
-<%@ page import="javax.servlet.*" %>
-<%@ page import="java.io.*" %>
-<%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
 <%@ page import="com.ecyrd.jspwiki.ui.Installer" %>
@@ -136,12 +132,10 @@ the <code>jspwiki.properties</code> file directly.  You can find a sample config
   <div class="block">
   
     <label>Security configuration</label>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked">
-      JAAS plus container security (default)
-    </input><br/>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_CONTAINER%>">
+    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked"/>
+      JAAS plus container security (default)<br/>
+    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_CONTAINER%>"/>
       Container security only
-    </input>
    <div class="description">
      By default, JSPWiki manages access to resources using a JAAS-based security system. 
      It will also respect any container security constraints you might have,

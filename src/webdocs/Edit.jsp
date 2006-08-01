@@ -1,11 +1,9 @@
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
