@@ -19,13 +19,18 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.attachment.Attachment;
-import java.util.*;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.*;
+
+import org.apache.log4j.Logger;
+
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
  *  Returns the Recent Changes.
@@ -84,11 +89,6 @@ public class RecentChangesPlugin
         Collection   changes = engine.getRecentChanges();
         StringWriter out     = new StringWriter();
 
-        //
-        //  This linkProcessor is used to transform links.
-        //
-        TranslatorReader linkProcessor = new TranslatorReader( context, new java.io.StringReader("") );
-
         if( changes != null )
         {
             Date olddate   = new Date(0);
@@ -119,10 +119,10 @@ public class RecentChangesPlugin
                     olddate = lastmod;
                 }
 
-                String link = linkProcessor.makeLink( (pageref instanceof Attachment) ? 
-                                                      TranslatorReader.ATTACHMENT : TranslatorReader.READ,
-                                                      pageref.getName(),
-                                                      engine.beautifyTitle(pageref.getName()) );
+                String link = context.getURL( ((pageref instanceof Attachment) ? WikiContext.ATTACH : WikiContext.VIEW), 
+                                              pageref.getName() ) ;
+                
+                link = "<a href=\""+link+"\">"+engine.beautifyTitle(pageref.getName())+"</a>";
                                                       
                 out.write("<tr>\n");
 
@@ -155,7 +155,9 @@ public class RecentChangesPlugin
                     {
                         if( engine.pageExists(author) )
                         {
-                            author = linkProcessor.makeLink( TranslatorReader.READ, author, author );
+                            author = "<a href=\""+
+                                     context.getURL(WikiContext.VIEW, author )
+                                     +">"+author+"</a>";
                         }
                     }
                     else
