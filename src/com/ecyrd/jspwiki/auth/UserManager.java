@@ -49,7 +49,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 /**
  * Provides a facade for obtaining user information.
  * @author Janne Jalkanen
- * @version $Revision: 1.46 $ $Date: 2006-07-29 19:49:28 $
+ * @version $Revision: 1.47 $ $Date: 2006-08-01 11:21:28 $
  * @since 2.3
  */
 public final class UserManager implements WikiEventSource
@@ -465,7 +465,7 @@ public final class UserManager implements WikiEventSource
      * someone tries to log in.
      * @author Janne Jalkanen
      */
-    public class DummyUserDatabase extends AbstractUserDatabase
+    public static class DummyUserDatabase extends AbstractUserDatabase
     {
 
         public void commit() throws WikiSecurityException
