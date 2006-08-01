@@ -56,7 +56,7 @@ public class ListLocksPlugin
             {
                 PageLock lock = (PageLock) i.next();
 
-                result.append( rowNum % 2 == 1 ? "<tr class=\"odd\">" : "<tr>" );
+                result.append( rowNum % 2 != 0 ? "<tr class=\"odd\">" : "<tr>" );
                 result.append("<td>"+lock.getPage()+"</td>");
                 result.append("<td>"+lock.getLocker()+"</td>");
                 result.append("<td>"+lock.getAcquisitionTime()+"</td>");
