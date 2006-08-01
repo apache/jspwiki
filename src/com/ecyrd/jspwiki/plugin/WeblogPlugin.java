@@ -430,7 +430,7 @@ public class WeblogPlugin
     /**
      *  Reverse comparison.
      */
-    private class PageDateComparator implements Comparator
+    private static class PageDateComparator implements Comparator
     {
         public int compare( Object o1, Object o2 )
         {
