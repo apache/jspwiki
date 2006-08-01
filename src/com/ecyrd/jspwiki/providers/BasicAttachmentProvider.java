@@ -591,7 +591,7 @@ public class BasicAttachmentProvider
     /**
      *  Returns only those directories that contain attachments.
      */
-    public class AttachmentFilter
+    public static class AttachmentFilter
         implements FilenameFilter
     {
         public boolean accept( File dir, String name )
@@ -603,7 +603,7 @@ public class BasicAttachmentProvider
     /**
      *  Accepts only files that are actual versions, no control files.
      */
-    public class AttachmentVersionFilter
+    public static class AttachmentVersionFilter
         implements FilenameFilter
     {
         public boolean accept( File dir, String name )
