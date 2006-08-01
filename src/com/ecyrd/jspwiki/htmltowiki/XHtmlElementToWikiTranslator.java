@@ -477,7 +477,7 @@ public class XHtmlElementToWikiTranslator
 
     // FIXME: These should probably be better used with java.util.Stack
     
-    class LiStack
+    static class LiStack
     {
 
         private String li = "";
