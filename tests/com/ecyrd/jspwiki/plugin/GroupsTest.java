@@ -8,14 +8,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiContext;
 
 public class GroupsTest extends TestCase
 {
     Properties props = new Properties();
     TestEngine testEngine;
-    WikiContext context;
-    PluginManager manager;
     
     public GroupsTest( String s )
     {
