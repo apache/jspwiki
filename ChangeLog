@@ -1,3 +1,10 @@
+2006-08-04  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.30
+        
+        * Fixed cosmetic bug that was causing all search results to 
+          appear with the name "Search".
+        
 2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.29

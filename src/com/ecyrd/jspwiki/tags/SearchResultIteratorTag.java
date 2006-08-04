@@ -21,11 +21,16 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 import java.util.Collection;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.SearchResult;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.ui.Command;
+import com.ecyrd.jspwiki.ui.PageCommand;
 
 /**
  *  Iterates through Search result results.
@@ -95,15 +100,18 @@ public class SearchResultIteratorTag
         if( m_iterator != null && m_iterator.hasNext() && m_count++ < m_maxItems )
         {
             SearchResult r = (SearchResult) m_iterator.next();
-
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            context.setRequestContext( WikiContext.VIEW );
-            context.setPage( r.getPage() );
+            
+            // Create a wiki context for the result
+            WikiEngine engine = m_wikiContext.getEngine();
+            HttpServletRequest request = m_wikiContext.getHttpRequest();
+            Command command = PageCommand.VIEW.targetedCommand( r.getPage() );
+            WikiContext context = new WikiContext( engine, request, command );
+            
+            // Stash it in the page context
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
                                       context,
                                       PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(),
-                                      r );
+            pageContext.setAttribute( getId(), r );
 
             return EVAL_BODY_BUFFERED;
         }
