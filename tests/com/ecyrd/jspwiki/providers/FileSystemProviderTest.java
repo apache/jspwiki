@@ -167,14 +167,14 @@ public class FileSystemProviderTest extends TestCase
 
         String newdir = tmpdir + File.separator + dirname;
 
-        Properties props = new Properties();
+        Properties pr = new Properties();
 
-        props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
+        pr.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            newdir );
 
         FileSystemProvider test = new FileSystemProvider();
 
-        test.initialize( m_engine, props );
+        test.initialize( m_engine, pr );
 
         File f = new File( newdir );
 
@@ -193,16 +193,16 @@ public class FileSystemProviderTest extends TestCase
         {
             tmpFile = FileUtil.newTmpFile("foobar"); // Content does not matter.
 
-            Properties props = new Properties();
+            Properties pr = new Properties();
 
-            props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
+            pr.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                                tmpFile.getAbsolutePath() );
 
             FileSystemProvider test = new FileSystemProvider();
 
             try
             {
-                test.initialize( m_engine, props );
+                test.initialize( m_engine, pr );
 
                 fail( "Wiki did not warn about wrong property." );
             }

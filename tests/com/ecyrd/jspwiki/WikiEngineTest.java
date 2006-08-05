@@ -796,12 +796,12 @@ public class WikiEngineTest extends TestCase
     public void testOldVersionVars()
         throws Exception
     {   
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties"));
+        Properties pr = new Properties();
+        pr.load( TestEngine.findTestProperties("/jspwiki_vers.properties"));
         
-        props.setProperty( PageManager.PROP_USECACHE, "true" );
+        pr.setProperty( PageManager.PROP_USECACHE, "true" );
         
-        TestEngine engine = new TestEngine( props );
+        TestEngine engine = new TestEngine( pr );
         
         engine.saveText( NAME1, "[{SET foo=bar}]" );
     
