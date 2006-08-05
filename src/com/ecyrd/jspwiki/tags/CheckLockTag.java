@@ -88,11 +88,11 @@ public class CheckLockTag
                 (lock != null && m_mode == OWNED && lock == userLock ) ||
                 (lock == null && m_mode == NOTLOCKED) )
             {
-                String id = getId();
+                String tid = getId();
 
-                if( id != null && lock != null )
+                if( tid != null && lock != null )
                 {
-                    pageContext.setAttribute( id, lock );
+                    pageContext.setAttribute( tid, lock );
                 }
 
                 return EVAL_BODY_INCLUDE;
