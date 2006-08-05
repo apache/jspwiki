@@ -71,14 +71,14 @@ public class PluginContent extends Text
             {
                 Map.Entry e = (Map.Entry) i.next();
                 
-                Object value = e.getValue();
+                Object val = e.getValue();
                 
-                if( value instanceof String )
+                if( val instanceof String )
                 {
-                    value = engine.getVariableManager().expandVariables( context, (String)value );
+                    val = engine.getVariableManager().expandVariables( context, (String)val );
                 }
                 
-                parsedParams.put( e.getKey(), value );
+                parsedParams.put( e.getKey(), val );
             }
             
             result = engine.getPluginManager().execute( context,
