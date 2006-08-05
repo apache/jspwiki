@@ -1,3 +1,23 @@
+2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.31
+        
+        * Bug fix: BugArbitraryHTMLMarkupInHeadingIsRenderedByTableOfContentPlugin,
+        reported by Jerome Duprez.
+        
+        * Bug fix: BugCenteringImagesUsingImagePluginDoesNotWorkInFirefox,
+        contributed by Alex Reid.
+        
+        * Bug fix: BugCanKeepPressingNext20ResultsOnResultSearchPage.  Rewrote
+        the scriptlets in FindContent.jsp to provide a better experience
+        overall.
+        
+        * Bug fix: BugReferringPagesPluginDontWriteNobobyAfterFiltering.
+        Reported by François Burtin.
+ 
+        * Removed a bunch of compiler warnings found thanks to upgrade to 
+        Eclipse 3.2.
+        
 2006-08-04  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.30
