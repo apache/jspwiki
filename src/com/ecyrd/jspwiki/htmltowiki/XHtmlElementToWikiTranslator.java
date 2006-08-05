@@ -24,15 +24,15 @@ public class XHtmlElementToWikiTranslator
 {
     private static final String UTF8 = "UTF-8";
     
-    private XHtmlToWikiConfig config;
+    private XHtmlToWikiConfig m_config;
 
-    private WhitespaceTrimWriter outTimmer;
+    private WhitespaceTrimWriter m_outTimmer;
 
-    private PrintWriter out;
+    private PrintWriter m_out;
 
-    private LiStack li = new LiStack();
+    private LiStack m_liStack = new LiStack();
 
-    private PreStack pre = new PreStack();
+    private PreStack m_preStack = new PreStack();
 
     public XHtmlElementToWikiTranslator( Element base ) throws IOException, JDOMException
     {
@@ -41,21 +41,21 @@ public class XHtmlElementToWikiTranslator
 
     public XHtmlElementToWikiTranslator( Element base, XHtmlToWikiConfig config ) throws IOException, JDOMException
     {
-        this.config = config;
-        outTimmer = new WhitespaceTrimWriter();
-        out = new PrintWriter( outTimmer );
+        this.m_config = config;
+        m_outTimmer = new WhitespaceTrimWriter();
+        m_out = new PrintWriter( m_outTimmer );
         print( base );
     }
 
     public String getWikiString()
     {
-        return outTimmer.toString();
+        return m_outTimmer.toString();
     }
 
     private void print( String s )
     {
         s = StringEscapeUtils.unescapeHtml( s );
-        out.print( s );
+        m_out.print( s );
     }
 
     private void print( Object element ) throws IOException, JDOMException
@@ -64,16 +64,16 @@ public class XHtmlElementToWikiTranslator
         {
             Text t = (Text)element;
             String s = t.getText();
-            if( pre.isPreMode() )
+            if( m_preStack.isPreMode() )
             {
-                out.print( s );
+                m_out.print( s );
             }
             else
             {
                 s = s.replaceAll( "\\s+", " " );
                 if( !s.equals( " " ) )
                 {
-                    out.print( s );
+                    m_out.print( s );
                 }
             }
         }
@@ -111,38 +111,38 @@ public class XHtmlElementToWikiTranslator
                 }
                 if( bold )
                 {
-                    out.print( "__" );
+                    m_out.print( "__" );
                 }
                 if( italic )
                 {
-                    out.print( "''" );
+                    m_out.print( "''" );
                 }
                 if( monospace )
                 {
-                    out.print( "{{{" );
-                    pre.push();
+                    m_out.print( "{{{" );
+                    m_preStack.push();
                 }
                 if( cssSpecial != null )
                 {
-                    out.print( "%%(" + cssSpecial + " )" );
+                    m_out.print( "%%(" + cssSpecial + " )" );
                 }
                 printChildren( base );
                 if( cssSpecial != null )
                 {
-                    out.print( "%%" );
+                    m_out.print( "%%" );
                 }
                 if( monospace )
                 {
-                    pre.pop();
-                    out.print( "}}}" );
+                    m_preStack.pop();
+                    m_out.print( "}}}" );
                 }
                 if( italic )
                 {
-                    out.print( "''" );
+                    m_out.print( "''" );
                 }
                 if( bold )
                 {
-                    out.print( "__" );
+                    m_out.print( "__" );
                 }
             }
         }
@@ -159,82 +159,82 @@ public class XHtmlElementToWikiTranslator
                 String n = e.getName().toLowerCase();
                 if( n.equals( "h1" ) )
                 {
-                    out.print( "!!!" );
+                    m_out.print( "!!!" );
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "h2" ) )
                 {
-                    out.print( "!!" );
+                    m_out.print( "!!" );
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "h3" ) )
                 {
-                    out.print( "!" );
+                    m_out.print( "!" );
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "h4" ) )
                 {
-                    out.print( "!" );
+                    m_out.print( "!" );
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "p" ) )
                 {
-                    out.println();
-                    out.println();
+                    m_out.println();
+                    m_out.println();
                     print( e );
-                    out.println();
-                    out.println();
+                    m_out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "br" ) )
                 {
-                    if( pre.isPreMode() )
+                    if( m_preStack.isPreMode() )
                     {
-                        out.println();
+                        m_out.println();
                     }
                     else
                     {
-                        out.print( " \\\\" );
+                        m_out.print( " \\\\" );
                     }
                     print( e );
                 }
                 else if( n.equals( "hr" ) )
                 {
-                    out.println();
+                    m_out.println();
                     print( "----" );
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "table" ) )
                 {
-                    if( !outTimmer.isCurrentlyOnLineBegin() )
+                    if( !m_outTimmer.isCurrentlyOnLineBegin() )
                     {
-                        out.println();
+                        m_out.println();
                     }
                     print( e );
                 }
                 else if( n.equals( "tr" ) )
                 {
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "td" ) )
                 {
-                    out.print( "| " );
+                    m_out.print( "| " );
                     print( e );
-                    if( !pre.isPreMode() )
+                    if( !m_preStack.isPreMode() )
                     {
                         print( " " );
                     }
                 }
                 else if( n.equals( "th" ) )
                 {
-                    out.print( "|| " );
+                    m_out.print( "|| " );
                     print( e );
-                    if( !pre.isPreMode() )
+                    if( !m_preStack.isPreMode() )
                     {
                         print( " " );
                     }
@@ -265,77 +265,77 @@ public class XHtmlElementToWikiTranslator
                                     }
                                     else
                                     {
-                                        out.print( " [" );
+                                        m_out.print( " [" );
                                         print( e );
                                         if( !e.getTextTrim().replaceAll( "\\s", "" ).equals( ref ) )
                                         {
-                                            out.print( "|" );
+                                            m_out.print( "|" );
                                             print( ref );
                                         }
-                                        out.print( "]" );
+                                        m_out.print( "]" );
                                     }
                                 }
                             }
-                            out.print( " " );
+                            m_out.print( " " );
                         }
                     }
                 }
                 else if( n.equals( "b" ) || n.equals("strong") )
                 {
-                    out.print( "__" );
+                    m_out.print( "__" );
                     print( e );
-                    out.print( "__" );
+                    m_out.print( "__" );
                 }
                 else if( n.equals( "i" ) || n.equals("em") )
                 {
-                    out.print( "''" );
+                    m_out.print( "''" );
                     print( e );
-                    out.print( "''" );
+                    m_out.print( "''" );
                 }
                 else if( n.equals( "ul" ) )
                 {
-                    out.println();
-                    li.push( "*" );
+                    m_out.println();
+                    m_liStack.push( "*" );
                     print( e );
-                    li.pop();
+                    m_liStack.pop();
                 }
                 else if( n.equals( "ol" ) )
                 {
-                    out.println();
-                    li.push( "#" );
+                    m_out.println();
+                    m_liStack.push( "#" );
                     print( e );
-                    li.pop();
+                    m_liStack.pop();
                 }
                 else if( n.equals( "li" ) )
                 {
-                    out.print( li + " " );
+                    m_out.print( m_liStack + " " );
                     print( e );
-                    out.println();
+                    m_out.println();
                 }
                 else if( n.equals( "pre" ) )
                 {
-                    out.print( "{{{" );
-                    pre.push();
+                    m_out.print( "{{{" );
+                    m_preStack.push();
                     print( e );
-                    pre.pop();
-                    out.println( "}}}" );
+                    m_preStack.pop();
+                    m_out.println( "}}}" );
                 }
                 else if( n.equals( "code" ) || n.equals( "tt" ) )
                 {
-                    out.print( "{{" );
-                    pre.push();
+                    m_out.print( "{{" );
+                    m_preStack.push();
                     print( e );
-                    pre.pop();
-                    out.println( "}}" );
+                    m_preStack.pop();
+                    m_out.println( "}}" );
                 }
                 else if( n.equals( "img" ) )
                 {
                     if( !isIgnorableWikiMarkupLink( e ) )
                     {
-                        out.print( "[" );
+                        m_out.print( "[" );
                         print( trimLink( e.getAttributeValue( "src" ) ) );
-                        out.print( "]" );
-                        out.print( " " );
+                        m_out.print( "]" );
+                        m_out.print( " " );
                     }
                 }
                 else
@@ -389,17 +389,17 @@ public class XHtmlElementToWikiTranslator
         map.put( "style", base.getAttributeValue( "style" ) );
         if( map.size() > 0 )
         {
-            out.print( "[{Image src='" + src + "'" );
+            m_out.print( "[{Image src='" + src + "'" );
             for( Iterator i = map.entrySet().iterator(); i.hasNext(); )
             {
                 Map.Entry entry = (Map.Entry)i.next();
-                out.print( " " + entry.getKey() + "='" + entry.getValue() + "'" );
+                m_out.print( " " + entry.getKey() + "='" + entry.getValue() + "'" );
             }
-            out.print( "}]" );
+            m_out.print( "}]" );
         }
         else
         {
-            out.print( "[" + src + "]" );
+            m_out.print( "[" + src + "]" );
         }
     }
 
@@ -423,8 +423,8 @@ public class XHtmlElementToWikiTranslator
     {
         String ref = a.getAttributeValue( "href" );
         String class_ = a.getAttributeValue( "class" );
-        return (ref != null && ref.startsWith( config.getPageInfoJsp() ))
-               || (class_ != null && class_.trim().equalsIgnoreCase( config.getOutlink() ));
+        return (ref != null && ref.startsWith( m_config.getPageInfoJsp() ))
+               || (class_ != null && class_.trim().equalsIgnoreCase( m_config.getOutlink() ));
     }
 
     private Map getStylePropertiesLowerCase( Element base ) throws IOException
@@ -452,19 +452,19 @@ public class XHtmlElementToWikiTranslator
         {
             ref = URLDecoder.decode( ref, UTF8 );
             ref = ref.trim();
-            if( ref.startsWith( config.getAttachPage() ) )
+            if( ref.startsWith( m_config.getAttachPage() ) )
             {
-                ref = ref.substring( config.getAttachPage().length() );
+                ref = ref.substring( m_config.getAttachPage().length() );
             }
-            if( ref.startsWith( config.getWikiJspPage() ) )
+            if( ref.startsWith( m_config.getWikiJspPage() ) )
             {
-                ref = ref.substring( config.getWikiJspPage().length() );
+                ref = ref.substring( m_config.getWikiJspPage().length() );
             }
-            if( config.getPageName() != null )
+            if( m_config.getPageName() != null )
             {
-                if( ref.startsWith( config.getPageName() ) )
+                if( ref.startsWith( m_config.getPageName() ) )
                 {
-                    ref = ref.substring( config.getPageName().length() );
+                    ref = ref.substring( m_config.getPageName().length() );
                 }
             }
         }
@@ -512,13 +512,13 @@ public class XHtmlElementToWikiTranslator
         public void push()
         {
             pre++;
-            outTimmer.setWhitespaceTrimMode( !isPreMode() );
+            m_outTimmer.setWhitespaceTrimMode( !isPreMode() );
         }
 
         public void pop()
         {
             pre--;
-            outTimmer.setWhitespaceTrimMode( !isPreMode() );
+            m_outTimmer.setWhitespaceTrimMode( !isPreMode() );
         }
 
     }
