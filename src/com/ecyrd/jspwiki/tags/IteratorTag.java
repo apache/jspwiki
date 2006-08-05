@@ -49,7 +49,7 @@ public abstract class IteratorTag
     protected Iterator    m_iterator;
     protected WikiContext m_wikiContext;
 
-    static    Logger      log = Logger.getLogger( IteratorTag.class );
+    private static Logger log = Logger.getLogger( IteratorTag.class );
 
     public void release()
     {

@@ -89,10 +89,8 @@ public class EditorIteratorTag
                     pageContext.setAttribute( getId(), editor );
                     return EVAL_BODY_BUFFERED;
                 }
-                else
-                {
-                    return SKIP_BODY;
-                }
+
+                return SKIP_BODY;
             }
         }
         catch( Exception e )
