@@ -21,6 +21,14 @@
     if( startVal < 0 ) startVal = 0;
     
     int endVal = startVal + 20;
+    
+    Collection list = (Collection)pageContext.getAttribute( "searchresults",
+                                                            PageContext.REQUEST_SCOPE );
+    if( endVal > list.size() ) endVal = list.size();
+    
+    int prevSize = Math.max( startVal, 20 );
+    
+    int nextSize = Math.min(list.size() - endVal, 20);
 %>
 
       <h2>Find pages</h2>
@@ -29,7 +37,7 @@
           <h4>Search results for '<%=query%>'</h4>
 
           <p>
-          <i>Found <wiki:SearchResultsSize/> hits, here are the results from <%=startVal%> to <%=endVal%>.</i>
+          <i>Found <wiki:SearchResultsSize/> hits, here are the results from <%=startVal+1%> to <%=endVal%>.</i>
           </p>
 
           <div class="zebra-table">
@@ -73,17 +81,21 @@
           </div>
           </div>
           <p>
+          <% if( startVal > 0 ) { %>
           <wiki:Link jsp="Search.jsp">
               <wiki:Param name="query" value="<%=URLEncoder.encode(query)%>"/>
-              <wiki:Param name="start" value="<%=Integer.toString(startVal-(endVal-startVal))%>"/>
-              Get previous <%=endVal-startVal%> results
+              <wiki:Param name="start" value="<%=Integer.toString(startVal-prevSize)%>"/>
+              Get previous <%=prevSize%> results
           </wiki:Link>.
-
+          <% } %>
+          
+          <% if( endVal < list.size() ) { %>
           <wiki:Link jsp="Search.jsp">
               <wiki:Param name="query" value="<%=URLEncoder.encode(query)%>"/>
               <wiki:Param name="start" value="<%=Integer.toString(endVal)%>"/>
-              Get next <%=endVal-startVal%> results
+              Get next <%=nextSize%> results
           </wiki:Link>.
+          <% } %>
           </p>
           <p>
           <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>
