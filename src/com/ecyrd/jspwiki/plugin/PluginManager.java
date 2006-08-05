@@ -336,7 +336,7 @@ public class PluginManager extends ModuleManager
             //
             try
             {
-                plugin = (WikiPlugin) pluginInfo.newPluginInstance();
+                plugin = pluginInfo.newPluginInstance();
             }
             catch( InstantiationException e )
             {
