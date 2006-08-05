@@ -203,6 +203,20 @@ public class TableOfContentsTest extends TestCase
         assertTrue( res.indexOf("Table of Contents") != -1 );
     }
     
+    public void testHTML()
+        throws Exception
+    {
+        String src = "[{TableOfContents}]\n\n!<i>test</i>";
+        
+        testEngine.saveText( "Test", src );
+        
+        String res = testEngine.getHTML( "Test" );
+        
+        assertTrue( "<i>", res.indexOf("<i>") == -1 ); // Check that there is no HTML left
+        assertTrue( "</i>", res.indexOf("</i>") == -1 ); // Check that there is no HTML left
+        
+    }
+    
     public static Test suite()
     {
         return new TestSuite( TableOfContentsTest.class );
