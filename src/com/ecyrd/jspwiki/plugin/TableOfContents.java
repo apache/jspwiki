@@ -117,7 +117,7 @@ public class TableOfContents
                 throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
             }
         }
-        m_buf.append( hd.m_titleText+"</a></li>\n" );
+        m_buf.append( TextUtil.replaceEntities(hd.m_titleText)+"</a></li>\n" );
 
         m_lastLevel = hd.m_level;
     }
