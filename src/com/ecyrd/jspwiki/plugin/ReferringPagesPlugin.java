@@ -61,7 +61,7 @@ public class ReferringPagesPlugin
         if( page != null )
         {
             Collection   links  = refmgr.findReferrers( page.getName() );
-            String       wikitext;
+            String       wikitext = "";
 
             super.initialize( context, params );
 
@@ -87,7 +87,11 @@ public class ReferringPagesPlugin
                     wikitext += extras;
                 }
             }
-            else
+
+            //
+            //  If nothing was left after filtering or during search
+            //
+            if( links == null || links.size() == 0 )
             {
                 wikitext = "...nobody";
             }
