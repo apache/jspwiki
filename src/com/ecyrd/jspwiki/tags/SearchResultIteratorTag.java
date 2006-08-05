@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.log4j.Logger;
+
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -53,6 +55,8 @@ public class SearchResultIteratorTag
     private   int         m_maxItems;
     private   int         m_count = 0;
     private   int         m_start = 0;
+    
+    static Logger log = Logger.getLogger(SearchResultIteratorTag.class);
     
     public void release()
     {
