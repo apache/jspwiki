@@ -100,8 +100,33 @@ public class Image
         StringBuffer result = new StringBuffer();
 
         result.append( "<table border=\"0\" class=\""+cssclass+"\"" );
-        if( align != null ) result.append(" align=\""+align+"\"");
-        if( style != null ) result.append(" style=\""+style+"\"");
+        //if( align != null ) result.append(" align=\""+align+"\"");
+        //if( style != null ) result.append(" style=\""+style+"\"");
+        
+        //
+        //  Do some magic to make sure centering also work on FireFox
+        //
+        if( style != null ) 
+        {
+            result.append(" style=\""+style);
+
+            // Make sure that we add a ";" to the end of the style string
+            if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
+                
+            if( align != null && align.equals("center") ) 
+            {
+                result.append(" margin-left: auto; margin-right: auto;");
+            }
+                
+            result.append("\"");
+        }
+        else
+        {
+            if( align.equals("center") ) result.append(" style=\"margin-left: auto; margin-right: auto;\"");
+        }
+        
+        if( align != null && !(align.equals("center")) ) result.append(" align=\""+align+"\"");
+        
         result.append( ">\n" );
 
         if( caption != null ) 
