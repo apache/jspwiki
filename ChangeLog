@@ -1,3 +1,14 @@
+2006-08-08  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.32
+        
+        * Fixed an astoundingly brain-damaged bug in WikiContext that caused
+        all wiki contexts to use the default template in all cases, regardless
+        of the setting in jspwiki.properties. This bug was introduced by the 
+        2.4.25 security mega-patch. The fix, of course, was three lines
+        of code. Now that it's in, I'd like to put down my crack pipe 
+        long enough to thank Terry Steichen for spotting this.
+        
 2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.31
@@ -13,7 +24,7 @@
         overall.
         
         * Bug fix: BugReferringPagesPluginDontWriteNobobyAfterFiltering.
-        Reported by François Burtin.
+        Reported by FranÃ§ois Burtin.
  
         * Removed a bunch of compiler warnings found thanks to upgrade to 
         Eclipse 3.2.

@@ -761,9 +761,10 @@ public class WikiContext
         // FIXME: Most definitely this should be checked for
         //        existence, or else it is possible to create pages that
         //        cannot be shown.
-        String template = m_engine.getTemplateDir();
+        String defaultTemplate = m_engine.getTemplateDir();
         
         //  Figure out which template we should be using for this page.
+        String template = null;
         if ( request != null )
         {
             template = request.getParameter( "skin" );
@@ -784,6 +785,10 @@ public class WikiContext
         if ( template != null )
         {
             setTemplate( template );
+        }
+        else
+        {
+            setTemplate( defaultTemplate );
         }
     }
     
