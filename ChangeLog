@@ -1,3 +1,10 @@
+2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.33
+        
+        * RecentChangesPlugin was missing a quote in the generation
+        of author names.
+
 2006-08-08  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.32
