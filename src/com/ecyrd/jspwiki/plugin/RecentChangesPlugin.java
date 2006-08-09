@@ -157,7 +157,7 @@ public class RecentChangesPlugin
                         {
                             author = "<a href=\""+
                                      context.getURL(WikiContext.VIEW, author )
-                                     +">"+author+"</a>";
+                                     +"\">"+author+"</a>";
                         }
                     }
                     else
