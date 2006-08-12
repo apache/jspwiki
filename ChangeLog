@@ -1,4 +1,11 @@
-2006-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
+2006-08-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.34
+        
+        * Implemented RequestResourceTag (oops, it had been skipped for
+        some reason).
+
+2006-08-09  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.33
         
