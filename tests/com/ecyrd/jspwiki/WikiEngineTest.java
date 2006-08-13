@@ -633,6 +633,41 @@ public class WikiEngineTest extends TestCase
         assertFalse( "Attachment has not been removed", attfile.exists() );
     }
 
+    public void testDeletePageAndAttachments2()
+        throws Exception
+    {
+        m_engine.saveText( NAME1, "Test" );
+
+        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        att.setAuthor( "FirstPost" );
+        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
+        
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+
+        String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+        File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
+        
+        assertTrue( "Didn't create it!", saved.exists() );
+
+        assertTrue( "Attachment dir does not exist", attfile.exists() );
+        
+        WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
+
+        att = m_engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
+        
+        m_engine.deletePage(att.getName());
+        
+        m_engine.deletePage( NAME1 );
+        
+        assertNull( "Page not removed", m_engine.getPage(NAME1) );
+        assertNull( "Att not removed", m_engine.getPage(NAME1+"/TestAtt.txt") );
+        
+        Collection refs = m_engine.getReferenceManager().findReferrers(NAME1);
+        
+        assertEquals( "referrers", 0, refs.size() );
+    }
+    
     public void testDeleteVersion()
         throws Exception
     {
@@ -828,4 +863,5 @@ public class WikiEngineTest extends TestCase
         
         assertEquals( "bar\n", res );
     }
+    
 }
