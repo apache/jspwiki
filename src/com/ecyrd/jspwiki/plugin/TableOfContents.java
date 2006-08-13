@@ -95,9 +95,10 @@ public class TableOfContents
         }
 
         String titleSection = hd.m_titleSection.replace( '%', '_' );
+	String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
         
         String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
-        String sectref = "#section-"+context.getEngine().encodeName(context.getPage().getName())+"-"+titleSection;
+        String sectref = "#section-"+pageName+"-"+titleSection;
 
         m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">");
         if (m_usingNumberedList) 
