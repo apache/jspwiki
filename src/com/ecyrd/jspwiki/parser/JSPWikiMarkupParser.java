@@ -2179,6 +2179,20 @@ public class JSPWikiMarkupParser
         return el;
     }
 
+    private Element handleSlash( boolean newLine ) 
+        throws IOException
+    {
+        int ch = nextToken();
+        
+        pushBack(ch);
+        if( ch == '%' && !m_styleStack.isEmpty() )
+        {
+            return handleDiv( newLine );
+        }
+        
+        return null;
+    }
+    
     private Element handleBar( boolean newLine )
         throws IOException
     {
@@ -2240,6 +2254,9 @@ public class JSPWikiMarkupParser
     {
         int ch = nextToken();
 
+        if( ch == ' ' )
+            return m_currentElement;
+        
         if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' || 
             ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
             ch == '{' || ch == ']' || ch == '}' || ch == '%' )
@@ -2287,6 +2304,18 @@ public class JSPWikiMarkupParser
                 else if( ch == '\r' )
                 {
                     // DOS line feeds we ignore.
+                }
+                else if( ch == '<' )
+                {
+                    m_plainTextBuf.append( "&lt;" );
+                }
+                else if( ch == '>' )
+                {
+                    m_plainTextBuf.append( "&gt;" );
+                }
+                else if( ch == '&' )
+                {
+                    m_plainTextBuf.append( "&amp;" );
                 }
                 else 
                 {
@@ -2459,6 +2488,10 @@ public class JSPWikiMarkupParser
                 el = handleDiv( newLine );
                 break;
 
+              case '/':
+                el = handleSlash( newLine );
+                break;
+                
               case -1:
                 quitReading = true;
                 continue;
