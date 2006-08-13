@@ -1057,7 +1057,22 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         assertEquals( "<p>", out );
     }
-   
+
+    public void testHTMLWhenAllowedPre()
+    throws Exception
+    {
+        String src = "{{{ <br /> }}}";
+        
+        props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
+        testEngine = new TestEngine( props );
+        
+        WikiPage page = new WikiPage(testEngine,PAGE_NAME);
+
+        String out = translate( testEngine, page, src );
+
+        assertEquals( "<pre> &lt;br /&gt; </pre>", out );
+    }
+
     /*
     // This test is not really needed anymore: the JDOM output mechanism
     // handles attribute and element content escaping properly.
@@ -2070,6 +2085,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
+    public void testSpanStyle4()
+    throws Exception
+    {
+        String src = "Johan %%(foo:bar;)test/%\n";
+        
+        assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
+    }
+
     public void testSpanEscape()
     throws Exception
     {
@@ -2077,6 +2100,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "%%foo test%%\n", translate(src) );
     }
+    
     public void testSpanNested()
     throws Exception
     {
@@ -2125,6 +2149,15 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "&Auml;", translate(src) );
     }
+
+    public void testBlankEscape()
+    throws Exception
+    {
+        String src = "H2%%sub 2%%~ O";
+        
+        assertEquals( "H2<span class=\"sub\">2</span>O", translate(src) );
+    }
+    
 
     public void testEmptyBold()
     throws Exception
