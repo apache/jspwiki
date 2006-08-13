@@ -122,7 +122,7 @@ public class Image
         }
         else
         {
-            if( align.equals("center") ) result.append(" style=\"margin-left: auto; margin-right: auto;\"");
+            if( align != null && align.equals("center") ) result.append(" style=\"margin-left: auto; margin-right: auto;\"");
         }
         
         if( align != null && !(align.equals("center")) ) result.append(" align=\""+align+"\"");
