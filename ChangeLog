@@ -1,3 +1,20 @@
+2006-08-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.35
+
+        * Fixed BugPreformattedTextWithHtmlDoesnTWorkIfAllowHTMLTrue. Thanks to
+        RealGagnon and an unknown submitter.
+        
+        * Fixed BugStyleDoublePercentProblem.  There are two new tokens:
+        /% can also be used to stop a style, and ~<space> is a non-rendering
+        space.
+        
+        * Fixed BugNullPointerExceptionWhenInsertingImagesWithoutAlignAttribute.
+        Thanks to Candid Dauth for pointing it out.
+        
+        * Added patch from Laurent Courtin to fix 
+        BugTableOfContentsDoesnTWorkWithPageNotInAscii.  Thanks!
+
 2006-08-12  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.34
