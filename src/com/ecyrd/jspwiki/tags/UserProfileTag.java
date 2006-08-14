@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 
@@ -60,7 +60,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * exist in the user database
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-07-29 19:53:29 $
+ * @version $Revision: 1.9 $ $Date: 2006-08-14 05:45:21 $
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase
@@ -184,7 +184,7 @@ public class UserProfileTag extends WikiTagBase
         List tempRoles = new ArrayList();
         for ( int i = 0; i < roles.length; i++ )
         {
-            if ( roles[i] instanceof Group )
+            if( roles[i] instanceof GroupPrincipal )
             {
                 tempRoles.add( roles[i].getName() );
             }
