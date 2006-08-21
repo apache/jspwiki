@@ -60,6 +60,8 @@ public class WikiPage
 
     public static final String SIZE = "size";
 
+    public static final String CHANGENOTE = "changenote";
+    
     private Acl m_accessList = null;
     
     public WikiPage( WikiEngine engine, String name )
