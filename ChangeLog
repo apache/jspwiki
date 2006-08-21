@@ -1,3 +1,15 @@
+2006-08-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.37
+        
+        * Faced with physical threats at WikiSym, I added the "change note"
+        feature.  Hope y'all are happy now :-D  (Well, okay, it does not
+        work in the page info yet; I'm thinking what would be a good
+        presentation so that the page does not get overly wide).
+        
+        * Bug fix: jspwiki.tld had the wrong attribute for RequestResourceTag.
+        Reported by Marc ?.
+
 2006-08-14  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.36
