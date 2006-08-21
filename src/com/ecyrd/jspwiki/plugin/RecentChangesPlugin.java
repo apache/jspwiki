@@ -68,6 +68,8 @@ public class RecentChangesPlugin
                                                         DEFAULT_DAYS );
         int      spacing  = 4;
         boolean  showAuthor = true;
+        boolean  showChangenote = true;
+        
         WikiEngine engine = context.getEngine();
 
         //
@@ -77,6 +79,7 @@ public class RecentChangesPlugin
         {
             spacing  = 0;
             showAuthor = false;
+            showChangenote = false;
         }
 
         Calendar sincedate = new GregorianCalendar();
@@ -96,7 +99,7 @@ public class RecentChangesPlugin
             DateFormat fmt = getDateFormat(params);
             DateFormat tfmt = getTimeFormat(params);
 
-            out.write("<table border=\"0\" cellpadding=\""+spacing+"\">\n");
+            out.write("<table border=\"0\" cellpadding=\""+spacing+"\" class='recentchanges'>\n");
 
             for( Iterator i = changes.iterator(); i.hasNext(); )
             {
@@ -112,7 +115,7 @@ public class RecentChangesPlugin
                 if( !isSameDay( lastmod, olddate ) )
                 {
                     out.write("<tr>\n");
-                    out.write("  <td colspan=\"2\"><b>"+
+                    out.write("  <td colspan=\"3\" class='date'><b>"+
                               fmt.format(lastmod)+
                               "</b></td>\n");
                     out.write("</tr>\n");
@@ -132,11 +135,11 @@ public class RecentChangesPlugin
 
                 if( pageref instanceof Attachment )
                 {
-                    out.write("<td>"+tfmt.format(lastmod)+"</td>");
+                    out.write("<td class='lastchange'>"+tfmt.format(lastmod)+"</td>");
                 }
                 else
                 {
-                    out.write("<td><a href=\""+context.getURL(WikiContext.DIFF,
+                    out.write("<td class='lastchange'><a href=\""+context.getURL(WikiContext.DIFF,
                                                               pageref.getName(),
                                                               "r1=-1")+"\">"+
                               tfmt.format(lastmod)+
@@ -165,9 +168,15 @@ public class RecentChangesPlugin
                         author = "unknown";
                     }
 
-                    out.write("<td>"+author+"</td>");
+                    out.write("<td class='author'>"+author+"</td>");
                 }
 
+                // Change note
+                if( showChangenote )
+                {
+                    String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
+                    out.write("<td class='changenote'>"+(changenote != null ? TextUtil.replaceEntities(changenote) : "")+"<td>");
+                }
                 out.write("</tr>\n");
             }
 
