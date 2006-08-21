@@ -9,7 +9,9 @@
 --%>
 <% WikiContext context = WikiContext.findContext( pageContext ); %>
 <% String usertext = EditorManager.getEditedText( pageContext ); 
-   TemplateManager.addResourceRequest( context, "script", "scripts/searchreplace.js" );%>
+   TemplateManager.addResourceRequest( context, "script", "scripts/searchreplace.js" );
+   String changenote = (String)session.getAttribute("changenote");
+   changenote = changenote != null ? TextUtil.replaceEntities(changenote) : ""; %>
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
     {
@@ -32,6 +34,10 @@
     <textarea style="width:100%;" class="editor" 
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="25" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
+   <wiki:CheckRequestContext context="edit">
+       <label for="changenote">Change note</label>
+       <input type="text" id="changenote" name="changenote" size="80" value="<%=changenote%>"/>
+   </wiki:CheckRequestContext>
    <wiki:CheckRequestContext context="comment">
         <table border="0" class="small">
           <tr>
