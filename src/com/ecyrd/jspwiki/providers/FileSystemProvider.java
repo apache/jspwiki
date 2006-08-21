@@ -69,17 +69,24 @@ public class FileSystemProvider
         try
         {
             String author = page.getAuthor();
-
+            String changenote = (String)page.getAttribute( WikiPage.CHANGENOTE );
+            
             if( author != null )
             {
                 props.setProperty( "author", author );
-                File file = new File( getPageDirectory(), 
-                                      mangleName(page.getName())+PROP_EXT );
-     
-                out = new FileOutputStream( file );
-
-                props.store( out, "JSPWiki page properties for page "+page.getName() );
             }
+            
+            if( changenote != null )
+            {
+                props.setProperty( "changenote", changenote );
+            }
+            
+            File file = new File( getPageDirectory(), 
+                                  mangleName(page.getName())+PROP_EXT );
+     
+            out = new FileOutputStream( file );
+
+            props.store( out, "JSPWiki page properties for page "+page.getName() );
         }
         finally
         {
@@ -101,13 +108,19 @@ public class FileSystemProvider
             File file = new File( getPageDirectory(), 
                                   mangleName(page.getName())+PROP_EXT );
 
-            if( file != null && file.exists() )
+            if( file.exists() )
             {
                 in = new FileInputStream( file );
 
                 props.load(in);
 
                 page.setAuthor( props.getProperty( "author" ) );
+                
+                String changenote = props.getProperty( "changenote" );
+                if( changenote != null )
+                {
+                    page.setAttribute( WikiPage.CHANGENOTE, changenote );
+                }
             }            
         }
         finally

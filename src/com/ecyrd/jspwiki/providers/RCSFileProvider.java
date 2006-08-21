@@ -57,7 +57,7 @@ import com.ecyrd.jspwiki.*;
 public class RCSFileProvider
     extends AbstractFileProvider
 {
-    private String m_checkinCommand  = "ci -m\"author=%u\" -l -t-none %s";
+    private String m_checkinCommand  = "ci -m\"author=%u;changenote=%c\" -l -t-none %s";
     private String m_checkoutCommand = "co -l %s";
     private String m_logCommand      = "rlog -zLT -r %s";
     private String m_fullLogCommand  = "rlog -zLT %s";
@@ -74,6 +74,7 @@ public class RCSFileProvider
 
     private static final String   PATTERN_DATE      = "^date:\\s*(.*\\d);";
     private static final String   PATTERN_AUTHOR    = "^\"?author=([\\w\\.\\s\\+\\.\\%]*)\"?";
+    private static final String   PATTERN_CHANGENOTE= ";changenote=([\\w\\.\\s\\+\\.\\%]*)\"?";
     private static final String   PATTERN_REVISION  = "^revision \\d+\\.(\\d+)";
 
     private static final String   RCSFMT_DATE       = "yyyy-MM-dd HH:mm:ss";
@@ -140,6 +141,8 @@ public class RCSFileProvider
             // quotation marks, but on Windows, it does not.
             Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
             Pattern datepattern = compiler.compile( PATTERN_DATE );
+            Pattern notepattern = compiler.compile( PATTERN_CHANGENOTE );
+            
             boolean found = false;
 
             while( (line = stdout.readLine()) != null )
@@ -180,15 +183,23 @@ public class RCSFileProvider
                                  version);
                     }
                 }
-                else if( matcher.contains( line, userpattern ) && found )
-                {
-                    MatchResult result = matcher.getMatch();
-                    info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
-                }
                 else if( found && line.startsWith("----")  )
                 {
                     // End of line sign from RCS
                     break;
+                }
+                
+                if( found && matcher.contains( line, userpattern ) )
+                {
+                    MatchResult result = matcher.getMatch();
+                    info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
+                }
+                
+                if( found && matcher.contains( line, notepattern ) )
+                {
+                    MatchResult result = matcher.getMatch();
+                    
+                    info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );                    
                 }
             }
 
@@ -289,7 +300,6 @@ public class RCSFileProvider
             {
                 if( version == 1 )
                 {
-                    System.out.println("Migrating, fetching super.");
                     result = super.getPageText( page, WikiProvider.LATEST_VERSION );
                 }
                 else
@@ -362,9 +372,12 @@ public class RCSFileProvider
             String author = page.getAuthor();
             if( author == null ) author = "unknown";
 
+            String changenote = (String)page.getAttribute(WikiPage.CHANGENOTE);
+            if( changenote == null ) changenote = "";
+            
             cmd = TextUtil.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
             cmd = TextUtil.replaceString( cmd, "%u", TextUtil.urlEncodeUTF8(author) );
-
+            cmd = TextUtil.replaceString( cmd, "%c", TextUtil.urlEncodeUTF8(changenote) );
             log.debug("Command = '"+cmd+"'");
 
             process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
@@ -440,6 +453,8 @@ public class RCSFileProvider
             // quotation marks, but on Windows, it does not.
             Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
 
+            Pattern notepattern = compiler.compile( PATTERN_CHANGENOTE );
+            
             String cmd = TextUtil.replaceString( m_fullLogCommand,
                                                  "%s",
                                                  mangleName(page)+FILE_EXT );
@@ -481,6 +496,13 @@ public class RCSFileProvider
                     MatchResult result = matcher.getMatch();
 
                     info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
+                }
+                
+                if( matcher.contains( line, notepattern ) )
+                {
+                    MatchResult result = matcher.getMatch();
+                    
+                    info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
             }
 

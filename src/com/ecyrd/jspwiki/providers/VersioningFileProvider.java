@@ -449,7 +449,13 @@ public class VersioningFileProvider
             Properties props = getPageProperties( page.getName() );
 
             props.setProperty( versionNumber+".author", (page.getAuthor() != null) ? page.getAuthor() : "unknown" );
-
+            
+            String changeNote = (String) page.getAttribute(WikiPage.CHANGENOTE);
+            if( changeNote != null )
+            {
+                props.setProperty( versionNumber+".changenote", changeNote );
+            }
+            
             putPageProperties( page.getName(), props );
         }
         catch( IOException e )
@@ -528,6 +534,10 @@ public class VersioningFileProvider
                 {
                     p.setAuthor( author );
                 }
+                
+                String changenote = props.getProperty( realVersion+".changenote" );
+                if( changenote != null ) p.setAttribute( WikiPage.CHANGENOTE, changenote );
+                
             }
             catch( IOException e )
             {
@@ -549,7 +559,7 @@ public class VersioningFileProvider
 
         File file = new File( dir, version+FILE_EXT );
 
-        if( file != null && file.exists() )
+        if( file.exists() )
         {
             return true;
         }
