@@ -32,6 +32,7 @@
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
     String author  = request.getParameter( "author" );
+    String changenote = request.getParameter( "changenote" );
     String text    = EditorManager.getEditedText( pageContext );
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() 
          && author != null )
@@ -103,10 +104,23 @@
         session.removeAttribute( "lock-"+pagereq );
 
         //
-        //  Set author information
+        //  Set author information and other metadata
         //
 
-        wikiContext.getPage().setAuthor( user );        
+        wikiContext.getPage().setAuthor( user );
+    
+        if( changenote == null ) changenote = (String) session.getAttribute("changenote");
+        
+        session.removeAttribute("changenote");
+        
+        if( changenote != null && changenote.length() > 0 )
+        {
+            wikiContext.getPage().setAttribute( WikiPage.CHANGENOTE, changenote );
+        }
+        else
+        {
+            wikiContext.getPage().removeAttribute( WikiPage.CHANGENOTE );
+        }
 
         //
         //  Figure out the actual page text
@@ -131,7 +145,6 @@
                 pageText.append( text );
 
                 wiki.saveText( wikiContext, pageText.toString() );
-
             }
             else
             {
@@ -153,6 +166,7 @@
         log.debug("Previewing "+pagereq);
         session.setAttribute(EditorManager.REQ_EDITEDTEXT,
                              EditorManager.getEditedText(pageContext));
+        if( changenote != null ) session.setAttribute("changenote", changenote);
         response.sendRedirect( wiki.getURL(WikiContext.PREVIEW,pagereq,null,false) );
         return;
     }
@@ -200,4 +214,5 @@
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "EditTemplate.jsp" );
+    
 %><wiki:Include page="<%=contentPage%>" />
