@@ -351,6 +351,11 @@ div.index .section a     { display: block; padding: 0 0.25em;
                            margin-left: 0px !important; }
 .archiveyear:after       { content: " AD" }
 
+/* +++ 640 RecentChangesPlugin +++ */
+
+.recentchanges           { }
+.recentchanges .changenote { font-style: italic; }
+
 /* ----------------------------------------------------
    800 JSPWiki JSP Taglibs
    ---------------------------------------------------- */
