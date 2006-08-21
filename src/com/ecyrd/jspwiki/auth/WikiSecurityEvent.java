@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-07-29 19:51:18 $
+ * @version $Revision: 1.10 $ $Date: 2006-08-21 22:37:48 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -187,7 +187,7 @@ public final class WikiSecurityEvent extends WikiEvent
         msg.append( " [source=" + getSource().toString() );
         if( m_principal != null )
         {
-            msg.append( ", princpal=" + m_principal.getClass().getName() );
+            msg.append( ", principal=" + m_principal.getClass().getName() );
             msg.append( " " + m_principal.getName() );
         }
         msg.append( ", target=" + m_target );
@@ -204,58 +204,58 @@ public final class WikiSecurityEvent extends WikiEvent
     {
         switch( type )
         {
-        case ACCESS_ALLOWED:
-        {
-            return "ACCESS_ALLOWED";
-        }
-        case ACCESS_DENIED:
-        {
-            return "ACCESS_DENIED";
-        }
-        case GROUP_ADD:
-        {
-            return "GROUP_ADD";
-        }
-        case GROUP_ADD_MEMBER:
-        {
-            return "GROUP_ADD_MEMBER";
-        }
-        case GROUP_CLEAR_GROUPS:
-        {
-            return "GROUP_CLEAR_GROUPS";
-        }
-        case GROUP_CLEAR_MEMBERS:
-        {
-            return "GROUP_CLEAR_MEMBERS";
-        }
-        case GROUP_REMOVE:
-        {
-            return "GROUP_REMOVE";
-        }
-        case GROUP_REMOVE_MEMBER:
-        {
-            return "GROUP_REMOVE_MEMBER";
-        }
-        case LOGIN_ACCOUNT_EXPIRED:
-        {
-            return "LOGIN_ACCOUNT_EXPIRED";
-        }
-        case LOGIN_AUTHENTICATED:
-        {
-            return "LOGIN_AUTHENTICATED";
-        }
-        case LOGIN_CREDENTIAL_EXPIRED:
-        {
-            return "LOGIN_ACCOUNT_EXPIRED";
-        }
-        case LOGIN_FAILED:
-        {
-            return "LOGIN_FAILED";
-        }
-        case LOGOUT:
-        {
-            return "LOGOUT";
-        }
+            case ACCESS_ALLOWED:
+            {
+                return "ACCESS_ALLOWED";
+            }
+            case ACCESS_DENIED:
+            {
+                return "ACCESS_DENIED";
+            }
+            case GROUP_ADD:
+            {
+                return "GROUP_ADD";
+            }
+            case GROUP_ADD_MEMBER:
+            {
+                return "GROUP_ADD_MEMBER";
+            }
+            case GROUP_CLEAR_GROUPS:
+            {
+                return "GROUP_CLEAR_GROUPS";
+            }
+            case GROUP_CLEAR_MEMBERS:
+            {
+                return "GROUP_CLEAR_MEMBERS";
+            }
+            case GROUP_REMOVE:
+            {
+                return "GROUP_REMOVE";
+            }
+            case GROUP_REMOVE_MEMBER:
+            {
+                return "GROUP_REMOVE_MEMBER";
+            }
+            case LOGIN_ACCOUNT_EXPIRED:
+            {
+                return "LOGIN_ACCOUNT_EXPIRED";
+            }
+            case LOGIN_AUTHENTICATED:
+            {
+                return "LOGIN_AUTHENTICATED";
+            }
+            case LOGIN_CREDENTIAL_EXPIRED:
+            {
+                return "LOGIN_ACCOUNT_EXPIRED";
+            }
+            case LOGIN_FAILED:
+            {
+                return "LOGIN_FAILED";
+            }
+            case LOGOUT:
+            {
+                return "LOGOUT";
+            }
         }
         return "UNKNOWN";
     }
