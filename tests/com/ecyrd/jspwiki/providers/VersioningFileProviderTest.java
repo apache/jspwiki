@@ -266,6 +266,40 @@ public class VersioningFileProviderTest extends TestCase
         }
     }
 
+
+    public void testChangeNote()
+        throws Exception
+    {
+        WikiPage p = new WikiPage( engine, NAME1 );
+        p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
+        WikiContext context = new WikiContext(engine,p);
+        
+        engine.saveText( context, "test" );
+        
+        WikiPage p2 = engine.getPage( NAME1 );
+        
+        assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+    }
+
+    public void testChangeNoteOldVersion()
+        throws Exception
+    {
+        WikiPage p = new WikiPage( engine, NAME1 );
+        p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
+        WikiContext context = new WikiContext(engine,p);
+    
+        engine.saveText( context, "test" );
+        p.setAttribute(WikiPage.CHANGENOTE, "Change 2" );
+        
+        engine.saveText( context, "test2" );
+        WikiPage p2 = engine.getPage( NAME1, 1 );
+        
+        assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+
+        WikiPage p3 = engine.getPage( NAME1, 2 );
+        
+        assertEquals( "Change 2", p3.getAttribute(WikiPage.CHANGENOTE) );
+    }
     public static Test suite()
     {
         return new TestSuite( VersioningFileProviderTest.class );
