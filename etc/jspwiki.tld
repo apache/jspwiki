@@ -556,7 +556,7 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-       <name>path</name>
+       <name>resource</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>    
   </tag>  
