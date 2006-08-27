@@ -91,6 +91,22 @@ public class WikiServletFilter implements Filter
             throw new ServletException("FilterChain is null, even if it should not be.  Please report this to the jspwiki development team.");
         }
         
+        if( m_engine == null )
+        {
+            PrintWriter out = response.getWriter();
+            out.print("<html><head><title>Fatal problem with JSPWiki</title></head>");
+            out.print("<body>");
+            out.print("<h1>JSPWiki has not been started</h1>");
+            out.print("<p>JSPWiki is not running.  This is probably due to a configuration error in your jspwiki.properties file, ");
+            out.print("or a problem with your servlet container.  Please double-check everything before issuing a bug report ");
+            out.print("at jspwiki.org.</p>");
+            out.print("<p>We apologize for the inconvenience.  No, really, we do.  We're trying to ");
+            out.print("JSPWiki as easy as we can, but there is only so much we have time to test ");
+            out.print("platforms.</p>");
+            out.print("</body>");
+            return;
+        }
+        
         // Write the response to a dummy response because we want to 
         //   replace markers with scripts/stylesheet. 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
