@@ -43,11 +43,9 @@ import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
-import com.ecyrd.jspwiki.event.EventSourceDelegate;
 import com.ecyrd.jspwiki.event.WikiEngineEvent;
-import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
-import com.ecyrd.jspwiki.event.WikiEventSource;
+import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
@@ -82,7 +80,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *
  *  @author Janne Jalkanen
  */
-public class WikiEngine implements WikiEventSource
+public class WikiEngine
 {
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
@@ -262,9 +260,7 @@ public class WikiEngine implements WikiEventSource
 
     private boolean          m_isConfigured = false; // Flag.
   
-    /** Delegate for managing event listeners */
-    private EventSourceDelegate m_listeners = new EventSourceDelegate();
-    
+
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -450,6 +446,8 @@ public class WikiEngine implements WikiEventSource
         m_startTime  = new Date();
         m_properties = props;
 
+        fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
+
         //
         //  Initialized log4j.  However, make sure that
         //  we don't initialize it multiple times.  Also, if
@@ -633,6 +631,8 @@ public class WikiEngine implements WikiEventSource
             RSSThread rssThread = new RSSThread( this, rssFile, rssInterval );
             rssThread.start();
         }
+
+        fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
 
         log.info("WikiEngine configured.");
         m_isConfigured = true;
@@ -1382,12 +1382,12 @@ public class WikiEngine implements WikiEventSource
      * Protected method that signals that the WikiEngine will be
      * shut down by the servlet container. It is called by
      * {@link WikiServlet#destroy()}. When this method is called,
-     * it fires a "shutdown"  WikiEngineEvent to all registered
+     * it fires a "shutdown" WikiEngineEvent to all registered
      * listeners.
      */
     protected void shutdown()
     {
-        fireEvent( new WikiEngineEvent( this, WikiEngineEvent.SHUTDOWN ) );
+        fireEvent( WikiEngineEvent.SHUTDOWN );
     }
     
     /**
@@ -2074,27 +2074,35 @@ public class WikiEngine implements WikiEventSource
         return m_editorManager;
     }
     
+
     /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
+     * Registers a WikiEventListener with this instance.
+     * @param listener the event listener
      */
-    public final void addWikiEventListener( WikiEventListener listener )
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.addWikiEventListener( listener );
+        WikiEventManager.addWikiEventListener( this, listener );
     }
     
     /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
+     * Un-registers a WikiEventListener with this instance.
+     * @param listener the event listener
      */
-    public final void removeWikiEventListener( WikiEventListener listener )
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.removeWikiEventListener( listener );
+        WikiEventManager.removeWikiEventListener( this, listener );
     }
-    
+
     /**
-     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
+     * Fires a WikiEngineEvent to all registered listeners.
+     * @param type  the event type
      */
-    protected final void fireEvent( WikiEvent event )
+    protected final void fireEvent( int type )
     {
-        m_listeners.fireEvent( event );
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiEngineEvent(this,type));
+        }
     }
+
 }
