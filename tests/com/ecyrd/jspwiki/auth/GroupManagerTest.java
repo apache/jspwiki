@@ -15,6 +15,7 @@ import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.WikiSessionTest;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 public class GroupManagerTest extends TestCase
 {

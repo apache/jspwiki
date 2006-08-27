@@ -654,6 +654,8 @@ public class WikiEngineTest extends TestCase
         
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
+        assertNotNull( "page", page );
+
         att = m_engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
         
         m_engine.deletePage(att.getName());

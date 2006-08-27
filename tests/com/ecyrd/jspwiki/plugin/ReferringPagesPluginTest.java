@@ -128,7 +128,7 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*'}");
 
-        assertEquals( "",
+        assertEquals( "...nobody",
                       res );        
     }
 

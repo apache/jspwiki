@@ -11,7 +11,7 @@ import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.SecurityEventTrap;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 public class GroupTest extends TestCase
 {

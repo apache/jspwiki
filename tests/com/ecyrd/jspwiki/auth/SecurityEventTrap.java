@@ -5,11 +5,12 @@ import java.util.List;
 
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 /**
  * Traps the most recent WikiEvent so that it can be used in assertions.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-02-23 20:51:59 $
+ * @version $Revision: 1.3 $ $Date: 2006-08-27 14:12:45 $
  * @since 2.3.79
  */
 public class SecurityEventTrap implements WikiEventListener
