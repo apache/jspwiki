@@ -39,20 +39,19 @@ import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
 import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
-import com.ecyrd.jspwiki.event.EventSourceDelegate;
-import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
-import com.ecyrd.jspwiki.event.WikiEventSource;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  * Provides a facade for obtaining user information.
  * @author Janne Jalkanen
- * @version $Revision: 1.47 $ $Date: 2006-08-01 11:21:28 $
+ * @version $Revision: 1.48 $ $Date: 2006-08-27 14:04:23 $
  * @since 2.3
  */
-public final class UserManager implements WikiEventSource
+public final class UserManager
 {
     private WikiEngine m_engine;
     
@@ -68,9 +67,6 @@ public final class UserManager implements WikiEventSource
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database     = null;
     
-    /** Delegate for managing event listeners */
-    private EventSourceDelegate m_listeners = new EventSourceDelegate();
-    
     private boolean          m_useJAAS      = true;
     
     /**
@@ -79,15 +75,7 @@ public final class UserManager implements WikiEventSource
     public UserManager()
     {
     }
-    
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
-     */
-    public final void addWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.addWikiEventListener( listener );
-    }
-    
+
     /**
      * Initializes the engine for its nefarious purposes.
      * @param engine the current wiki engine
@@ -226,14 +214,6 @@ public final class UserManager implements WikiEventSource
     }
 
     /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
-     */
-    public final void removeWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.removeWikiEventListener( listener );
-    }
-    
-    /**
      * <p>
      * Saves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the user in
      * a wiki session. This method verifies that a user profile to be saved
@@ -327,7 +307,7 @@ public final class UserManager implements WikiEventSource
         }
         
         // Alert all listeners that the profile changed
-        fireEvent( new WikiSecurityEvent( session, WikiSecurityEvent.PROFILE_SAVE, profile ) );
+        fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
     }
 
     /**
@@ -452,14 +432,6 @@ public final class UserManager implements WikiEventSource
     }
 
     /**
-     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
-     */
-    protected final void fireEvent( WikiEvent event )
-    {
-        m_listeners.fireEvent( event );
-    }
-    
-    /**
      * This is a database that gets used if nothing else is available. It does
      * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
      * someone tries to log in.
@@ -517,4 +489,45 @@ public final class UserManager implements WikiEventSource
         }
         
     }
+
+
+    // events processing .......................................................
+
+    /**
+     * Registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.addWikiEventListener( this, listener );
+    }
+
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.removeWikiEventListener( this, listener );
+    }
+
+    /**
+     *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
+     *  to all registered listeners. 
+     *
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @param type       the event type to be fired
+     * @param session    the wiki session supporting the event
+     * @param profile    the user profile, which may be <code>null</code>
+     */
+    protected final void fireEvent( int type, WikiSession session, UserProfile profile )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiSecurityEvent(session,type,profile));
+        }
+    }
+
 }

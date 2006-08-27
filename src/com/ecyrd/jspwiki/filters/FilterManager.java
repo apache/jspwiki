@@ -37,6 +37,8 @@ import org.jdom.xpath.XPath;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiPageEvent;
 
 import com.ecyrd.jspwiki.util.PriorityList;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -105,6 +107,9 @@ public final class FilterManager
     /** The standard user level filtering. */
     public static final int USER_FILTER_PRIORITY   = 0;
     
+    private WikiEngine m_engine = null;
+
+
     public FilterManager( WikiEngine engine, Properties props )
         throws WikiException
     {
@@ -176,10 +181,10 @@ public final class FilterManager
     /**
      *  Initializes the filters from an XML file.
      */
-
     public void initialize( WikiEngine engine, Properties props )
         throws WikiException
     {
+        m_engine = engine;
         InputStream xmlStream = null;
         String      xmlFile   = props.getProperty( PROP_FILTERXML );
 
@@ -260,12 +265,16 @@ public final class FilterManager
     public String doPreTranslateFiltering( WikiContext context, String pageData )
         throws FilterException
     {
+        fireEvent( WikiPageEvent.PRE_TRANSLATE_BEGIN, context );
+
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
             PageFilter f = (PageFilter) i.next();
 
             pageData = f.preTranslate( context, pageData );
         }
+
+        fireEvent( WikiPageEvent.PRE_TRANSLATE_END, context );
 
         return pageData;
     }
@@ -276,12 +285,16 @@ public final class FilterManager
     public String doPostTranslateFiltering( WikiContext context, String pageData )
         throws FilterException
     {
+        fireEvent( WikiPageEvent.POST_TRANSLATE_BEGIN, context );
+
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
             PageFilter f = (PageFilter) i.next();
 
             pageData = f.postTranslate( context, pageData );
         }
+
+        fireEvent( WikiPageEvent.POST_TRANSLATE_END, context );
 
         return pageData;
     }
@@ -292,12 +305,16 @@ public final class FilterManager
     public String doPreSaveFiltering( WikiContext context, String pageData )
         throws FilterException
     {
+        fireEvent( WikiPageEvent.PRE_SAVE_BEGIN, context );
+
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
             PageFilter f = (PageFilter) i.next();
 
             pageData = f.preSave( context, pageData );
         }
+
+        fireEvent( WikiPageEvent.PRE_SAVE_END, context );
 
         return pageData;
     }
@@ -308,6 +325,8 @@ public final class FilterManager
     public void doPostSaveFiltering( WikiContext context, String pageData )
         throws FilterException
     {
+        fireEvent( WikiPageEvent.POST_SAVE_BEGIN, context );
+
         for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
         {
             PageFilter f = (PageFilter) i.next();
@@ -315,10 +334,33 @@ public final class FilterManager
             // log.info("POSTSAVE: "+f.toString() );
             f.postSave( context, pageData );
         }
+
+        fireEvent( WikiPageEvent.POST_SAVE_END, context );
     }
 
     public List getFilterList()
     {
         return m_pageFilters;
     }
+
+
+    // events processing .......................................................
+
+    /**
+     *  Fires a WikiPageEvent of the provided type and WikiContext.
+     *  Invalid WikiPageEvent types are ignored.
+     *
+     * @see com.ecyrd.jspwiki.event.WikiPageEvent 
+     * @param type      the WikiPageEvent type to be fired.
+     * @param context   the WikiContext of the event.
+     */
+    public final void fireEvent( int type, WikiContext context )
+    {
+        if ( WikiEventManager.isListening(this) && WikiPageEvent.isValidType(type) )
+        {
+            WikiEventManager.fireEvent(this,
+                    new WikiPageEvent(m_engine,type,context.getPage().getName()) );
+        }
+    }
+
 }

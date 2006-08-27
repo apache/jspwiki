@@ -42,10 +42,9 @@ import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
-import com.ecyrd.jspwiki.event.EventSourceDelegate;
-import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
-import com.ecyrd.jspwiki.event.WikiEventSource;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
@@ -78,11 +77,11 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.40 $ $Date: 2006-08-01 11:20:20 $
+ * @version $Revision: 1.41 $ $Date: 2006-08-27 14:04:34 $
  * @since 2.3
  * @see AuthenticationManager
  */
-public final class AuthorizationManager implements WikiEventSource
+public final class AuthorizationManager
 {
     private static final Logger log = Logger.getLogger( AuthorizationManager.class );
     /**
@@ -98,9 +97,6 @@ public final class AuthorizationManager implements WikiEventSource
     private Authorizer                        m_authorizer      = null;
 
     private WikiEngine                        m_engine          = null;
-
-    /** Delegate for managing event listeners */
-    private EventSourceDelegate               m_listeners       = new EventSourceDelegate();
     
     private boolean                           m_useJAAS         = true;
     
@@ -111,14 +107,6 @@ public final class AuthorizationManager implements WikiEventSource
     {
     }
     
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
-     */
-    public final void addWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.addWikiEventListener( listener );
-    }
-
     /**
      * Returns <code>true</code> or <code>false</code>, depending on
      * whether a Permission is allowed for the Subject associated with
@@ -181,7 +169,7 @@ public final class AuthorizationManager implements WikiEventSource
         //
         if ( session == null || permission == null )
         {
-            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, null, permission ) );
+            fireEvent( WikiSecurityEvent.ACCESS_DENIED, null, permission );
             return false;
         }
         Principal user = session.getLoginPrincipal();
@@ -191,7 +179,7 @@ public final class AuthorizationManager implements WikiEventSource
         boolean hasAllPermission = checkStaticPermission( session, allPermission );
         if ( hasAllPermission )
         {
-            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
+            fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
         }
         
@@ -200,14 +188,14 @@ public final class AuthorizationManager implements WikiEventSource
         boolean hasPolicyPermission = checkStaticPermission( session, permission );
         if ( !hasPolicyPermission )
         {
-            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, user, permission ) );
+            fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
             return false;
         }
         
         // If this isn't a PagePermission, it's allowed
         if ( ! ( permission instanceof PagePermission ) )
         {
-            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
+            fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
         }
 
@@ -218,7 +206,7 @@ public final class AuthorizationManager implements WikiEventSource
         Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
         if ( page == null ||  acl == null )
         {
-            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
+            fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
         }
         
@@ -252,11 +240,11 @@ public final class AuthorizationManager implements WikiEventSource
             
             if ( hasRoleOrPrincipal( session, aclPrincipal ) )
             {
-                fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_ALLOWED, user, permission ) );
+                fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
                 return true;
             }
         }
-        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.ACCESS_DENIED, user, permission ) );
+        fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
         return false;
     }
     
@@ -395,14 +383,6 @@ public final class AuthorizationManager implements WikiEventSource
         m_authorizer.initialize( engine, properties );
     }
 
-    /**
-     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
-     */
-    protected final void fireEvent( WikiEvent event )
-    {
-        m_listeners.fireEvent( event );
-    }
-    
     /** 
      * Returns <code>true</code> if JSPWiki's JAAS authorization system 
      * is used for authorization in addition to container controls.
@@ -500,14 +480,6 @@ public final class AuthorizationManager implements WikiEventSource
     }
     
     /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
-     */
-    public final void removeWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.removeWikiEventListener( listener );
-    }
-    
-    /**
      * <p>Given a supplied string representing a Principal's name from an Acl, this
      * method resolves the correct type of Principal (role, group, or user).
      * This method is guaranteed to always return a Principal.
@@ -580,6 +552,44 @@ public final class AuthorizationManager implements WikiEventSource
         }
         // Ok, no luck---mark this as unresolved and move on
         return new UnresolvedPrincipal( name );
+    }
+
+
+    // events processing .......................................................
+
+    /**
+     * Registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.addWikiEventListener( this, listener );
+    }
+    
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.removeWikiEventListener( this, listener );
+    }
+
+    /**
+     *  Fires a WikiSecurityEvent of the provided type, user,
+     *  and permission to all registered listeners. 
+     *
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent
+     * @param type        the event type to be fired
+     * @param user        the user associated with the event
+     * @param permission  the permission the subject must possess
+     */
+    protected final void fireEvent( int type, Principal user, Object permission )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,user,permission));
+        }
     }
 
 }
