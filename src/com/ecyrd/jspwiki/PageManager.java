@@ -28,6 +28,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.VersioningProvider;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
+import com.ecyrd.jspwiki.event.WikiPageEvent;
+import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
@@ -242,6 +244,8 @@ public class PageManager
         
         synchronized( m_pageLocks )
         {
+            fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
+
             lock = (PageLock) m_pageLocks.get( page.getName() );
 
             if( lock == null )
@@ -283,6 +287,8 @@ public class PageManager
 
             log.debug( "Unlocked page "+lock.getPage() );
         }
+
+        fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPage() );
     }
 
     /**
@@ -488,4 +494,24 @@ public class PageManager
             }
         }
     }
+
+
+    // events processing .......................................................
+
+    /**
+     *  Fires a WikiPageEvent of the provided type and page name
+     *  to all registered listeners. 
+     *
+     * @see com.ecyrd.jspwiki.event.WikiPageEvent 
+     * @param type       the event type to be fired
+     * @param pagename   the wiki page name as a String
+     */
+    protected final void fireEvent( int type, String pagename )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiPageEvent(m_engine,type,pagename));
+        }
+    }
+
 }
