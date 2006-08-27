@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.filters;
 
 import java.io.*;
+import java.security.Principal;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
-import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.FileUtil;
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -207,6 +211,13 @@ public class SpamFilter
             if( counter >= m_limitSinglePageChanges )
             {
                 Host host = new Host( addr );
+                
+                Principal admin = context.getEngine().getGroupManager().findRole("Admin");
+                if( context.getEngine().getAuthorizationManager().isUserInRole(context.getWikiSession(), 
+                                                                               admin ) )
+                {
+                    return;
+                }
                 
                 m_temporaryBanList.add( host );
                 
