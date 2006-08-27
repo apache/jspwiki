@@ -259,6 +259,7 @@ textarea.editor          { }
 #referencedby,
 #versionhistory          {  }
 #versionhistory td       { white-space: nowrap; }
+#infocontent .changenote { font-style: italic; }
 
 /* +++ 470 PageActions +++ */
 .pageInfo                { font-style: italic; padding: .5em 0; }
