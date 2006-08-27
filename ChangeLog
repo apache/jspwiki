@@ -1,3 +1,26 @@
+2006-08-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.38
+        
+        * WikiEvents are now fired at almost any occasion that seems suitable.
+        Thanks to Murray Altheim for this mega-patch.  Some of the event
+        classes were also reorganized (thanks to Andrew and Murray).
+        
+        * SpamFilter no longer counts admins as evil, if they make many
+        changes/minute.
+        
+        * WikiServletFilter fails now gracefully if WikiEngine instatiation
+        fails - should no longer emit dumb NullPointerExceptions.
+        
+        * FindContent.jsp now hopefully calculates previous- and next
+        search sizes correctly.
+        
+        * Change Notes are now visible in page history as well.  Unfortunately,
+        the visuals suck.  Anyone want to help to make them look better?  Just
+        don't make them too wide...
+        
+        * Change Notes are now limited to 60 characters (totally arbitrary).
+
 2006-08-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.37
