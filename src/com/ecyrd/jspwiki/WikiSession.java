@@ -27,7 +27,6 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -37,6 +36,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 /**
  * <p>Represents a long-running wiki session, with an associated user Principal,
@@ -80,7 +80,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
  * <p>WikiSession encloses a protected static class, {@link SessionMonitor},
  * to keep track of WikiSessions registered with each wiki.</p>
  * @author Andrew R. Jaquith
- * @version $Revision: 2.25 $ $Date: 2006-07-29 19:41:54 $
+ * @version $Revision: 2.26 $ $Date: 2006-08-27 14:03:50 $
  */
 public final class WikiSession implements WikiEventListener
 {
