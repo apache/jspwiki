@@ -43,10 +43,9 @@ import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
 import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
-import com.ecyrd.jspwiki.event.EventSourceDelegate;
-import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
-import com.ecyrd.jspwiki.event.WikiEventSource;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 /**
  * Manages authentication activities for a WikiEngine: user login, logout, and 
@@ -54,10 +53,10 @@ import com.ecyrd.jspwiki.event.WikiEventSource;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.30 $ $Date: 2006-08-01 11:20:00 $
+ * @version $Revision: 1.31 $ $Date: 2006-08-27 14:04:42 $
  * @since 2.3
  */
-public final class AuthenticationManager implements WikiEventSource
+public final class AuthenticationManager
 {
 
     /** The name of the built-in cookie authentication module */
@@ -85,9 +84,6 @@ public final class AuthenticationManager implements WikiEventSource
 
     private WikiEngine                         m_engine            = null;
 
-    /** Delegate for managing event listeners */
-    private EventSourceDelegate                m_listeners         = new EventSourceDelegate();
-    
     /** If true, logs the IP address of the editor */
     private boolean                            m_storeIPAddress    = true;
 
@@ -114,14 +110,6 @@ public final class AuthenticationManager implements WikiEventSource
     
     private static       boolean               m_useJAAS = true;
     
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
-     */
-    public final void addWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.addWikiEventListener( listener );
-    }
-
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -317,18 +305,9 @@ public final class AuthenticationManager implements WikiEventSource
         session.invalidate();
         
         // Log the event
-        WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGOUT, wikiSession.getLoginPrincipal(), null );
-        fireEvent( event );
+        fireEvent( WikiSecurityEvent.LOGOUT, wikiSession.getLoginPrincipal(), null );
     }
-    
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
-     */
-    public final void removeWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.removeWikiEventListener( listener );
-    }
-    
+
     /**
      * Determines whether this WikiEngine allows users to assert identities using
      * cookies instead of passwords. This is determined by inspecting
@@ -395,15 +374,7 @@ public final class AuthenticationManager implements WikiEventSource
     {
         return !isRolePrincipal( principal );
     }
-    
-    /**
-     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
-     */
-    protected final void fireEvent( WikiEvent event )
-    {
-        m_listeners.fireEvent( event );
-    }
-        
+
     /**
      * Log in to the application using a given JAAS LoginConfiguration. Any
      * configuration error 
@@ -446,8 +417,7 @@ public final class AuthenticationManager implements WikiEventSource
             // If the user authenticated, fire an event and log it
             if ( wikiSession.isAuthenticated() )
             {
-                WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), wikiSession );
-                fireEvent( event );
+                fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), wikiSession );
             }
             return true;
         }
@@ -458,22 +428,19 @@ public final class AuthenticationManager implements WikiEventSource
             //  and alert the admin
             //
             log.info("Failed login: "+e.getLocalizedMessage());
-            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_FAILED, wikiSession.getLoginPrincipal(), wikiSession );
-            fireEvent( event );
+            fireEvent( WikiSecurityEvent.LOGIN_FAILED, wikiSession.getLoginPrincipal(), wikiSession );
             return false;
         }
         catch( AccountExpiredException e )
         {
             log.info("Expired account: "+e.getLocalizedMessage());
-            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_ACCOUNT_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
-            fireEvent( event );
+            fireEvent( WikiSecurityEvent.LOGIN_ACCOUNT_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
             return false;
         }
         catch( CredentialExpiredException e )
         {
             log.info("Credentials expired: "+e.getLocalizedMessage());
-            WikiSecurityEvent event = new WikiSecurityEvent( this, WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
-            fireEvent( event );
+            fireEvent( WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
             return false;
         }
         catch( LoginException e )
@@ -539,6 +506,46 @@ public final class AuthenticationManager implements WikiEventSource
         }
 
         return path;
+    }
+
+
+    // events processing .......................................................
+
+    /**
+     * Registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.addWikiEventListener( this, listener );
+    }
+
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.removeWikiEventListener( this, listener );
+    }
+
+    /**
+     *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
+     *  to all registered listeners. 
+     *
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @param type       the event type to be fired
+     * @param principal  the subject of the event, which may be <code>null</code>
+     * @param target     the changed Object, which may be <code>null</code>
+     */
+    protected final void fireEvent( int type, Principal principal, Object target )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,target));
+        }
     }
 
 }

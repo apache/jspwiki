@@ -6,11 +6,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
-import com.ecyrd.jspwiki.event.EventSourceDelegate;
-import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
-import com.ecyrd.jspwiki.event.WikiEventSource;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 /**
  * <p>
@@ -44,17 +42,14 @@ import com.ecyrd.jspwiki.event.WikiEventSource;
  * </p>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-08-01 11:24:51 $
+ * @version $Revision: 1.10 $ $Date: 2006-08-27 14:04:53 $
  * @since 2.3
  */
-public class Group implements WikiEventSource
+public class Group
 {
 
     static final String[]  RESTRICTED_GROUPNAMES = new String[]
                                                   { "Anonymous", "All", "Asserted", "Authenticated" };
-
-    /** Delegate for managing event listeners */
-    private EventSourceDelegate m_listeners       = new EventSourceDelegate();
 
     private final Vector    m_members             = new Vector();
 
@@ -90,7 +85,7 @@ public class Group implements WikiEventSource
     /**
      * Adds a Principal to the group. When a Principal is added successfully,
      * also sends a WikiSecurityEvent of type
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_ADD_MEMBER} to all
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_ADD_MEMBER} to all
      * of its registered WikiEventListeners.
      * @param user the principal to add
      * @return <code>true</code> if the operation was successful
@@ -103,28 +98,20 @@ public class Group implements WikiEventSource
         }
 
         m_members.add( user );
-        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_ADD_MEMBER, user ) );
+        fireEvent( WikiSecurityEvent.GROUP_ADD_MEMBER, user );
         return true;
-    }
-
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
-     */
-    public final void addWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.addWikiEventListener( listener );
     }
 
     /**
      * Clears all Principals from the group list. When a Group's members are
      * cleared successfully, also sends a WikiSecurityEvent of type
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_CLEAR_MEMBERS} to
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_CLEAR_MEMBERS} to
      * all of its registered WikiEventListeners.
      */
     public void clear()
     {
         m_members.clear();
-        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_CLEAR_MEMBERS, null ) );
+        fireEvent( WikiSecurityEvent.GROUP_CLEAR_MEMBERS, null );
     }
 
     /**
@@ -262,7 +249,7 @@ public class Group implements WikiEventSource
     /**
      * Removes a Principal from the group. When a Principal is added
      * successfully, also sends a WikiSecurityEvent of type
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_REMOVE_MEMBER} to
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE_MEMBER} to
      * all of its registered WikiEventListeners.
      * @param user the principal to remove
      * @return <code>true</code> if the operation was successful
@@ -275,17 +262,9 @@ public class Group implements WikiEventSource
             return false;
 
         m_members.remove( user );
-        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_REMOVE_MEMBER, user ) );
+        fireEvent( WikiSecurityEvent.GROUP_REMOVE_MEMBER, user );
 
         return true;
-    }
-
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
-     */
-    public final void removeWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.removeWikiEventListener( listener );
     }
 
     /**
@@ -354,11 +333,43 @@ public class Group implements WikiEventSource
         return null;
     }
 
+
+    // events processing .......................................................
+
     /**
-     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
+     * Registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
      */
-    protected final void fireEvent( WikiEvent event )
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
     {
-        m_listeners.fireEvent( event );
+        WikiEventManager.addWikiEventListener( this, listener );
     }
+
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.removeWikiEventListener( this, listener );
+    }
+
+    /**
+     *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
+     *  to all registered listeners. 
+     *
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @param type       the event type to be fired
+     * @param principal  the subject of the event, which may be <code>null</code>
+     */
+    protected final void fireEvent( int type, Principal principal )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,null));
+        }
+    }
+
 }

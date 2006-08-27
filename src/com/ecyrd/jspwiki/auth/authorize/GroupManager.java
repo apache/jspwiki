@@ -23,12 +23,11 @@ import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityEvent;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.event.EventSourceDelegate;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
-import com.ecyrd.jspwiki.event.WikiEventSource;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -46,11 +45,10 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * refactored into the GroupDatabase interface.</em>
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-08-01 11:25:12 $
+ * @version $Revision: 1.9 $ $Date: 2006-08-27 14:05:05 $
  * @since 2.4.19
  */
-public final class GroupManager implements Authorizer, WikiEventSource
-
+public final class GroupManager implements Authorizer
 {
     /**
      * Tiny little listener that captures wiki events fired by Groups this
@@ -78,9 +76,9 @@ public final class GroupManager implements Authorizer, WikiEventSource
          */
         public void actionPerformed( WikiEvent event )
         {
-            if ( event instanceof WikiSecurityEvent )
+            if ( event instanceof WikiSecurityEvent && WikiEventManager.isListening(m_manager) )
             {
-                m_manager.fireEvent( event );
+                WikiEventManager.fireEvent(m_manager,event);
             }
         }
 
@@ -104,16 +102,6 @@ public final class GroupManager implements Authorizer, WikiEventSource
     /** The name of this wiki. */
     private String              m_wiki             = null;
 
-    /** Delegate for managing event listeners */
-    private EventSourceDelegate m_listeners        = new EventSourceDelegate();
-
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#addWikiEventListener(WikiEventListener)
-     */
-    public final void addWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.addWikiEventListener( listener );
-    }
 
     /**
      * <p>
@@ -264,7 +252,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
                 Group group = groups[i];
                 // Add new group to cache; fire GROUP_ADD event
                 m_groups.put( group.getPrincipal(), group );
-                fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_ADD, group ) );
+                fireEvent( WikiSecurityEvent.GROUP_ADD, group );
             }
         }
 
@@ -470,7 +458,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
      * Removes a named Group from the group database. If not found, throws a
      * <code>NoSuchPrincipalException</code>. After removal, this method will
      * commit the delete to the back-end group database. It will also fire a
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_REMOVE} event with
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE} event with
      * the GroupManager instance as the source and the Group as target.
      * @param index the group to remove
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(Group)
@@ -498,15 +486,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
         }
         m_groupDatabase.delete( group );
         m_groupDatabase.commit();
-        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_REMOVE, group ) );
-    }
-
-    /**
-     * @see com.ecyrd.jspwiki.event.WikiEventSource#removeWikiEventListener(WikiEventListener)
-     */
-    public final void removeWikiEventListener( WikiEventListener listener )
-    {
-        m_listeners.removeWikiEventListener( listener );
+        fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
     }
 
     /**
@@ -522,13 +502,13 @@ public final class GroupManager implements Authorizer, WikiEventSource
      * </p>
      * <ul>
      * <li><strong>When creating a new Group</strong>, this method fires a
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_ADD} with the
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_ADD} with the
      * GroupManager instance as its source and the new Group as the target.</li>
      * <li><strong>When overwriting an existing Group</strong>, this method
-     * fires a new {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_REMOVE}
+     * fires a new {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE}
      * with this GroupManager instance as the source, and the new Group as the
      * target. It then fires a
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_ADD} event with the
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_ADD} event with the
      * same source and target.</li>
      * </ul>
      * <p>
@@ -542,9 +522,9 @@ public final class GroupManager implements Authorizer, WikiEventSource
      * This method will register the new Group with the GroupManager. A
      * consequence of "registration" is that the GroupManager will listen for --
      * and forward -- group events such as
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_ADD_MEMBER},
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_CLEAR_MEMBERS} and
-     * {@link com.ecyrd.jspwiki.auth.WikiSecurityEvent#GROUP_REMOVE_MEMBER} to
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_ADD_MEMBER},
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_CLEAR_MEMBERS} and
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE_MEMBER} to
      * all event listeners attached to GroupManager via
      * {@link #addWikiEventListener(WikiEventListener)}. For example,
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager} attaches each
@@ -564,7 +544,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
         boolean groupExists = ( oldGroup != null );
         if ( groupExists )
         {
-            fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_REMOVE, oldGroup ) );
+            fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
             synchronized( m_groups )
             {
                 m_groups.remove( oldGroup.getPrincipal() );
@@ -586,7 +566,7 @@ public final class GroupManager implements Authorizer, WikiEventSource
             m_groups.put( group.getPrincipal(), group );
         }
         group.addWikiEventListener( m_groupListener );
-        fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_ADD, group ) );
+        fireEvent( WikiSecurityEvent.GROUP_ADD, group );
 
         // Save the group to back-end database; if it fails,
         // roll back to previous state. Note that the back-end
@@ -603,8 +583,8 @@ public final class GroupManager implements Authorizer, WikiEventSource
             if ( groupExists )
             {
                 // Restore previous version, re-throw...
-                fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_REMOVE, group ) );
-                fireEvent( new WikiSecurityEvent( this, WikiSecurityEvent.GROUP_ADD, oldGroup ) );
+                fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
+                fireEvent( WikiSecurityEvent.GROUP_ADD, oldGroup );
                 synchronized( m_groups )
                 {
                     m_groups.put( oldGroup.getPrincipal(), oldGroup );
@@ -670,14 +650,6 @@ public final class GroupManager implements Authorizer, WikiEventSource
     }
 
     /**
-     * @see com.ecyrd.jspwiki.event.EventSourceDelegate#fireEvent(com.ecyrd.jspwiki.event.WikiEvent)
-     */
-    protected final void fireEvent( WikiEvent event )
-    {
-        m_listeners.fireEvent( event );
-    }
-
-    /**
      * Checks if a String is blank or a restricted Group name, and if it is,
      * appends an error to the WikiSession's message list.
      * @param session the wiki session
@@ -701,6 +673,46 @@ public final class GroupManager implements Authorizer, WikiEventSource
         if( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) )
         {
             throw new WikiSecurityException( "The group name '" + name + "' is illegal. Choose another." );
+        }
+    }
+
+
+    // events processing .......................................................
+
+    /**
+     * Registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.addWikiEventListener( this, listener );
+    }
+
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * This is a convenience method.
+     * @param listener the event listener
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.removeWikiEventListener( this, listener );
+    }
+
+    /**
+     *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
+     *  to all registered listeners. 
+     *
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @param type       the event type to be fired
+     * @param principal  the subject of the event, which may be <code>null</code>
+     * @param target     the changed Object, which may be <code>null</code>
+     */
+    protected final void fireEvent( int type, Object target )
+    {
+        if ( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,target));
         }
     }
 
