@@ -200,8 +200,13 @@ function confirmDelete()
         </wiki:CheckVersion>
 
       </td>
-
     </tr>
+    <%
+       String changeNote = (String)currentPage.getAttribute(WikiPage.CHANGENOTE);
+       if( changeNote != null )
+       { %>
+       <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=changeNote%></td></tr>
+       <% } %>
     <% } %>
     </wiki:HistoryIterator>
   </table>
