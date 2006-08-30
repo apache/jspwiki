@@ -69,6 +69,9 @@ public class LuceneSearchProvider implements SearchProvider
     /** Which analyzer to use.  Default is StandardAnalyzer. */
     public static final String PROP_LUCENE_ANALYZER    = "jspwiki.lucene.analyzer";
 
+    private static final String PROP_LUCENE_INDEXDELAY   = "jspwiki.lucene.indexdelay";
+    private static final String PROP_LUCENE_INITIALDELAY = "jspwiki.lucene.initialdelay";
+    
     private String m_analyzerClass = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 
     private static final String LUCENE_DIR             = "lucene";
@@ -95,6 +98,9 @@ public class LuceneSearchProvider implements SearchProvider
 
         m_luceneDirectory = engine.getWorkDir()+File.separator+LUCENE_DIR;
 
+        int initialDelay = TextUtil.getIntegerProperty( props, PROP_LUCENE_INITIALDELAY, LuceneUpdater.INITIAL_DELAY );
+        int indexDelay   = TextUtil.getIntegerProperty( props, PROP_LUCENE_INDEXDELAY, LuceneUpdater.INDEX_DELAY );
+        
         // FIXME: Just to be simple for now, we will do full reindex
         // only if no files are in lucene directory.
 
@@ -130,7 +136,7 @@ public class LuceneSearchProvider implements SearchProvider
         // Start the Lucene update thread, which waits first
         // for a little while before starting to go through
         // the Lucene "pages that need updating".
-        LuceneUpdater updater = new LuceneUpdater( m_engine, this );
+        LuceneUpdater updater = new LuceneUpdater( m_engine, this, initialDelay, indexDelay );
         updater.start();
     }
 
@@ -376,22 +382,14 @@ public class LuceneSearchProvider implements SearchProvider
         Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED);
         doc.add( field );
 
-        /*
-        // Body text is indexed, but not stored in doc. We add in the
-        // title text as well to make sure it gets considered.
-        doc.add(Field.Text(LUCENE_PAGE_CONTENTS, 
-                           new StringReader(text + " " +
-                                            page.getName()+" "+
-                                            TextUtil.beautifyString(page.getName()))));
-        */
         // Body text.  It is stored in the doc for search contexts.
         field = new Field(LUCENE_PAGE_CONTENTS, text, 
-                Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                          Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
         doc.add( field );
 
-        // Allow searching by page name
-        field = new Field(LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ), 
-                Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+        // Allow searching by page name. Both beautified and raw
+        field = new Field(LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + " " + page.getName(), 
+                          Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
         doc.add( field );
 
         // Allow searching by authorname
@@ -399,7 +397,7 @@ public class LuceneSearchProvider implements SearchProvider
         if( page.getAuthor() != null )
         {
             field = new Field(LUCENE_AUTHOR, page.getAuthor(), 
-                    Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                              Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
             doc.add( field );
         }
 
@@ -415,7 +413,7 @@ public class LuceneSearchProvider implements SearchProvider
                 attachmentNames += att.getName() + ";";
             }
             field = new Field(LUCENE_ATTACHMENTS, attachmentNames, 
-                    Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
+                              Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
             doc.add( field );
 
         } 
@@ -483,10 +481,10 @@ public class LuceneSearchProvider implements SearchProvider
               
         try
         {
-            String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR };
+            String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
             QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
             
-            // QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
+            //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
             
             Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
@@ -586,11 +584,16 @@ public class LuceneSearchProvider implements SearchProvider
      */
     private static class LuceneUpdater extends WikiBackgroundThread
     {
+        protected static final int INDEX_DELAY    = 1;
+        protected static final int INITIAL_DELAY = 60;
         private final LuceneSearchProvider m_provider;
         
-        private LuceneUpdater( WikiEngine engine, LuceneSearchProvider provider )
+        private int initialDelay;
+        
+        private LuceneUpdater( WikiEngine engine, LuceneSearchProvider provider, 
+                               int initialDelay, int indexDelay )
         {
-            super( engine, 1);
+            super( engine, indexDelay );
             m_provider = provider;
             setName("JSPWiki Lucene Indexer");
         }
@@ -600,7 +603,7 @@ public class LuceneSearchProvider implements SearchProvider
             // Sleep initially...
             try
             {
-                Thread.sleep( 60000L );
+                Thread.sleep( initialDelay * 1000L );
             }
             catch( InterruptedException e ) 
             { 
@@ -661,5 +664,4 @@ public class LuceneSearchProvider implements SearchProvider
             return m_contexts;
         }
     }
-        
 }
