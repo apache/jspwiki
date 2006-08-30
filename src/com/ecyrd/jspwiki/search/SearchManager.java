@@ -175,7 +175,12 @@ public class SearchManager
     
     public void postSave( WikiContext wikiContext, String content )
     {
-        reindexPage( wikiContext.getPage() );
+        //
+        //  Makes sure that we're indexing the latest version of this
+        //  page.
+        //
+        WikiPage p = m_engine.getPage( wikiContext.getPage().getName() );
+        reindexPage( p );
     }
 
     /**
