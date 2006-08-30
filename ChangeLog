@@ -1,3 +1,25 @@
+2006-08-30  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.39 - The "Piko" release.  Rest in Peace.
+        
+        * Added SearchManagerTest to make sure that our search works.
+        
+        * Bug fix: LuceneSearchProvider was not indexing the WikiName 
+        of the page.
+        
+        * Bug fix: SearchManager now always indexes the latest version
+        of the page (thanks heaps to John Volkar for finding this).
+        
+        * Disabled ContextualDiffProviderTest.testKnownProblemCases(),
+        I have no idea how to fix those, and it was never running anyway.
+        
+        * Disabled JSPWikiMarkupParserTest.testSpanJavascript2() -
+        it would need a lot more care to make it really run.
+        
+        * Fixed failing XMLRPC tests.
+        
+        * Upgraded to Lucene 2.0.0.
+
 2006-08-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.38
