@@ -1550,12 +1550,14 @@ public class WikiEngine
         //
         m_pageManager.putPageText( page, text );
         
-        // ARJ HACK: reload the page so we parse ACLs, among other things
-/*
-        page = getPage( page.getName() );
-        context.setPage( page );
-        textToHTML( context, text );
-*/
+        //
+        //  Refresh the context for post save filtering.
+        //
+        
+//        page = getPage( page.getName() );
+//        context.setPage( page );
+//        textToHTML( context, text );
+
         m_filterManager.doPostSaveFiltering( context, text );
     }
 
