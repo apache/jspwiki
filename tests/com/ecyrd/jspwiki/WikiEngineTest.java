@@ -667,7 +667,7 @@ public class WikiEngineTest extends TestCase
         
         Collection refs = m_engine.getReferenceManager().findReferrers(NAME1);
         
-        assertEquals( "referrers", 0, refs.size() );
+        assertNull( "referrers", refs );
     }
     
     public void testDeleteVersion()
