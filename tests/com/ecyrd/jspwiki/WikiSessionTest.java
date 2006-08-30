@@ -53,6 +53,7 @@ public class WikiSessionTest extends TestCase
         assertFalse( ArrayUtils.contains( principals, Role.AUTHENTICATED ) );
         
         // Test roles for anonymous session
+        
         session = anonymousSession( m_engine );
         principals = session.getRoles();
         assertTrue(  session.isAnonymous() );
@@ -64,8 +65,8 @@ public class WikiSessionTest extends TestCase
         
         // Test roles for authenticated session
         session = authenticatedSession( m_engine, 
-                Users.JANNE, 
-                Users.JANNE_PASS );
+                                        Users.JANNE, 
+                                        Users.JANNE_PASS );
         principals = session.getRoles();
         assertFalse( session.isAnonymous() );
         assertTrue(  session.isAuthenticated() );
