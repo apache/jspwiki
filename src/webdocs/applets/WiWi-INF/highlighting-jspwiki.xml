@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes" ?>
+<TAGBASE>
+
+	<!-- 
+		************************************
+		Large Heading !!!
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>!!!</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>true</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>20</TAGFONTSIZE>
+		<TEXTFONTSIZE>20</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>3</HEADERTAG>
+		<ATBEGINNING>true</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Medium Heading !!
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>!!</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>true</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>17</TAGFONTSIZE>
+		<TEXTFONTSIZE>17</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>2</HEADERTAG>
+		<ATBEGINNING>true</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Small Heading ! 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>!</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>true</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>14</TAGFONTSIZE>
+		<TEXTFONTSIZE>14</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>1</HEADERTAG>
+		<ATBEGINNING>true</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Plugin [{ }] 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>[{</STARTTAG>
+		<ENDTAG>}]</ENDTAG>
+		<CODE>true</CODE>
+		<BACKGROUND>
+			<COLOR>EEF</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<STARTLINECOLOR>
+			<COLOR>906</COLOR>
+		</STARTLINECOLOR>
+		<FONTFAMILY>Courier</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>true</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Link Separator | 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>|</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>true</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Link escape [[ ]
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>[[</STARTTAG>
+		<ENDTAG>]</ENDTAG>
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Sourcecode {{{ }}} 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>{{{</STARTTAG>
+		<ENDTAG>}}}</ENDTAG>
+		<CODE>true</CODE>
+		<BACKGROUND>
+			<COLOR>EEF</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Courier</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Monospaced {{ }}
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>{{</STARTTAG>
+		<ENDTAG>}}</ENDTAG>
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Courier</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Italic '' ''
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>&apos;&apos;</STARTTAG>
+		<ENDTAG>&apos;&apos;</ENDTAG>
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>true</ITALIC>
+		<TAGFONTSIZE>14</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Bold __ __
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>__</STARTTAG>
+		<ENDTAG>__</ENDTAG>
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>true</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Separator Line 4x-
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>----</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Todo...
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>\\\\</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Bullet List * 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>*</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>14</TAGFONTSIZE>
+		<TEXTFONTSIZE>14</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>true</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Numbered List # 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>#</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>true</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Todo...
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>&lt;</STARTTAG>
+		<ENDTAG>&gt;</ENDTAG>
+		<CODE>true</CODE>
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>true</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Commentbox %% (Special Highlighting, has some bugs...)
+		************************************
+		<TAG>
+		<STARTTAG>%%commentbox</STARTTAG>
+		<ENDTAG>%%</ENDTAG>
+		<BACKGROUND>
+		<COLOR>FFC</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+		<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+		<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+		</TAG>
+	-->
+
+
+	<!-- 
+		************************************
+		CSS Format %% (BUG: Highlighting within %% does not work)
+		************************************
+		<TAG>
+		<STARTTAG>%%</STARTTAG>
+		<ENDTAG>%%</ENDTAG>
+		<HINTERLEGT>
+		<R>255</R>
+		<G>253</G>
+		<B>189</B>
+		</HINTERLEGT>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+		<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+		<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+		</TAG>
+	-->
+
+
+	<!-- 
+		************************************
+		Newline \\ 
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>\\</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+	<!-- 
+		************************************
+		Definition ;:
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>;:</STARTTAG>
+		<ENDTAG />
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>000</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+	<!-- 
+		************************************
+		Link [ ]
+		************************************
+	-->
+	<TAG>
+		<STARTTAG>[</STARTTAG>
+		<ENDTAG>]</ENDTAG>
+		<BACKGROUND>
+			<COLOR>000</COLOR>
+		</BACKGROUND>
+		<SEPERATOR>|</SEPERATOR>
+		<SEPERATORCOLOR>
+			<COLOR>600</COLOR>
+		</SEPERATORCOLOR>
+		<CODE>false</CODE>
+		<CODERIGHT>true</CODERIGHT>
+		<BOLD>false</BOLD>
+		<ITALIC>false</ITALIC>
+		<TAGFONTSIZE>12</TAGFONTSIZE>
+		<TEXTFONTSIZE>12</TEXTFONTSIZE>
+		<TAGCOLOR>
+			<COLOR>906</COLOR>
+		</TAGCOLOR>
+		<TEXTCOLOR>
+			<COLOR>00F</COLOR>
+		</TEXTCOLOR>
+		<FONTFAMILY>Arial</FONTFAMILY>
+		<HEADERTAG>0</HEADERTAG>
+		<ATBEGINNING>false</ATBEGINNING>
+		<TAGFIRSTROW>false</TAGFIRSTROW>
+		<TABLE>false</TABLE>
+	</TAG>
+
+
+</TAGBASE>

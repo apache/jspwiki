@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes" ?>
+<WIKIWIZARD>
+<EXTENSIONS>
+<GROUP>
+		<NAME>Wiki Vars</NAME>
+		<NAME lang="de">Wiki Variablen</NAME>		
+
+		<ITEM>
+			<NAME>Page Name</NAME>
+			<NAME lang="de">Seitenname</NAME>
+			<CODE>
+[{$pagename}]
+	        </CODE>
+		</ITEM>
+
+
+		<ITEM>
+			<NAME>JSPWiki Version</NAME>
+			<CODE>
+[{$jspwikiversion}] 
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>User name</NAME>
+			<CODE>
+[{$username}]
+	        </CODE>
+		</ITEM>
+
+
+		<ITEM>
+			<NAME>Character Encoding</NAME>
+			<CODE>
+[{$encoding}]
+	        </CODE>
+		</ITEM>
+		
+		<ITEM>
+			<NAME>Total Pages</NAME>
+			<CODE>
+[{$totalpages}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>InterWiki Links</NAME>
+			<CODE>
+[{$interwikilinks}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>HTML allowed?</NAME>
+			<CODE>
+[{$jspwiki.translatorReader.allowHTML}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Inline Images</NAME>
+			<CODE>
+[{$inlinedimages}]
+	        </CODE>
+		</ITEM>
+		
+	</GROUP>
+</EXTENSIONS>
+</WIKIWIZARD>

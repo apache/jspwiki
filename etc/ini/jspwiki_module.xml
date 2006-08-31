@@ -21,4 +21,9 @@
       <path>editors/FCK.jsp</path>
    </editor>
 
+   <editor name="WikiWizard">
+      <author>i3G Institut Hochschule Heilbronn</author>
+      <path>editors/WikiWizard.jsp</path>
+   </editor>
+
 </modules>

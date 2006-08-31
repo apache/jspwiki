@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes" ?>
+<WIKIWIZARD>
+<EXTENSIONS>
+<GROUP>
+		<NAME>InterWikiLinks</NAME>
+		<ITEM>
+			<NAME>Wikipedia.com</NAME>
+			<CODE>
+[Wikipedia:#cursor]
+	        </CODE>
+		</ITEM>
+		<ITEM>
+			<NAME>Google.com</NAME>
+			<CODE>
+[Google:#cursor]
+	        </CODE>
+		</ITEM>
+		<ITEM>
+			<NAME>JSPWiki documentation</NAME>
+			<CODE>
+[Doc:#cursor]
+	        </CODE>
+		</ITEM>
+
+
+
+<!--
+		<ITEM>
+			<NAME>Wikipedia.de</NAME>
+			<CODE>
+[WikipediaDE:#cursor]
+	        </CODE>
+		</ITEM>
+		<ITEM>
+			<NAME>Google.de</NAME>
+			<CODE>
+[GoogleDE:#cursor]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Open Link in new Window</NAME>
+			<CODE>
+[newhttp:#cursor]
+	        </CODE>
+		</ITEM>
+        <ITEM>
+			<NAME>ISBN (Link to Amazon)</NAME>
+			<CODE>
+[ISBN:#cursor]
+	        </CODE>
+		</ITEM>
+
+-->
+	</GROUP>
+</EXTENSIONS>
+</WIKIWIZARD>

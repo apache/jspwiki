@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes" ?>
+<WIKIWIZARD>
+<EXTENSIONS>
+<GROUP>
+   <NAME>Core Plugins</NAME>
+   <NAME lang="de">Standard-Plugins</NAME>
+		<ITEM>		
+			<NAME>Weblog (Blog)</NAME>
+			<CODE>
+!Main Blog
+[{WeblogEntryPlugin title='New Entry'}]
+------
+!Entries of the last 30 days
+[{INSERT WeblogPlugin page='Main' days=30}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Weblog Archive</NAME>
+			<CODE>
+!WeblogArchive
+[{WeblogArchivePlugin}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>Refering Pages</NAME>
+                        <SHORTCUT>3</SHORTCUT>
+			<CODE>
+Refering Pages
+[{ReferringPagesPlugin max=5, maxwidth=17}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>TableOfContents</NAME>
+                        <SHORTCUT>4</SHORTCUT>
+			<CODE>
+[{TableOfContents title='Table of Contents'}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>InsertPage</NAME>
+			            <SHORTCUT>5</SHORTCUT>
+			<CODE>
+[{InsertPage page='#cursor'}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>Page Index</NAME>
+			<CODE>
+This is a list of all pages in this Wiki. 
+
+[{IndexPlugin}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>Recent Changes</NAME>
+			<CODE>
+This is a list of all pages that were changed during the last 30 days. 
+
+[{RecentChangesPlugin since=30}]
+	        </CODE>
+		</ITEM>
+
+
+		<ITEM>
+			<NAME>ListLocks Plugin</NAME>
+			<CODE>
+Pages currently being edited
+
+[{ListLocksPlugin}]
+	        </CODE>
+		</ITEM>
+
+
+		<ITEM>
+			<NAME>Undefined Pages Plugin</NAME>
+			<CODE>
+Undefined Pages
+
+[{UndefinedPagesPlugin}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Unused Pages Plugin</NAME>
+			<CODE>
+Unused Pages
+
+[{UnusedPagesPlugin}]
+	        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>Server Date Time</NAME>
+			<CODE>
+This server lives on [{CurrentTimePlugin format=zzzz}]
+and the time here is [{CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}]
+	        </CODE>
+		</ITEM>
+
+
+		<ITEM>
+			<NAME>Set Alias</NAME>
+			<CODE>
+This page will redirect you...
+
+[{SET alias='#cursor'}]
+	        </CODE>
+		</ITEM>
+
+	</GROUP>
+</EXTENSIONS>
+</WIKIWIZARD>
