@@ -126,7 +126,17 @@ public class RecentChangesPlugin
                                               pageref.getName() ) ;
                 
                 link = "<a href=\""+link+"\">"+engine.beautifyTitle(pageref.getName())+"</a>";
-                                                      
+
+                //
+                //  Add the direct link to the attachment info.
+                //
+                if( pageref instanceof Attachment )
+                {
+                    link += "<a href='"+context.getURL( WikiContext.INFO, pageref.getName() )+"'>"+
+                            "<img border='0' src='"+context.getURL( WikiContext.NONE, "images/attachment_small.png" )+
+                            "' /></a>";
+                }
+                
                 out.write("<tr>\n");
 
                 out.write("<td width=\"30%\">"+
