@@ -8,6 +8,10 @@
         * WikiWizard is now included.  Hooray for WIKIWYG editing!
         
         * Small tweaks to the EditTemplate.
+        
+        * Changed "jspwiki.security=container" to "jspwiki.security=off".
+        This should make it more clear to people.  The old setting
+        will continue to work.
 
 2006-08-30  Janne Jalkanen <jalkanen@ecyrd.com>
 

@@ -15,6 +15,9 @@ NEW FEATURES
 
 * Atom 1.0 support
 
+* WIKIWYG editing
+
+
 UPGRADE NOTES
 =============
 
@@ -29,7 +32,14 @@ Upgrading from 2.x:
 
 * Replace jspwiki.properties with your old configuration file.
   It should run unmodified, though you might want to go through
-  the new file to see new options.
+  the new file to see new options.  Most specifically:
+  
+  * jspwiki.baseURL is now mandatory
+  
+  * jspwiki.workDir is a good idea to set
+  
+  * Set jspwiki.security=off, if you don't want JSPWiki to
+  use its own security system.
 
 * You can copy your old filters.xml to WEB-INF/classes
 
@@ -42,23 +52,12 @@ Please visit http://www.jspwiki.org/Wiki.jsp?page=Release2.2Discussion
 for further information.
 
 
-KNOWN MAJOR ISSUES
-==================
-
-* Documentation needs cleanup; parts of it are out of date, etc.
-
-
 EXPERIMENTAL FEATURES
 =====================
 
 There are some features in this release which could mostly be considered
 experimental at best.  The following ones are known to work only 
 partially:
-  
-* WYSIWYG editing.  You need to install FCK by yourself.  It sort of
-  works, but not quite.
-  
-* Install.jsp.  It's still a bit experimental, though it should work...
 
 * WebDAV support.  This is known to be broken on pretty many levels...
 
