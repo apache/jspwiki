@@ -216,5 +216,7 @@ if ( browser == "Netscape Navigator" ) {
         <input name='cancel' type='submit' value='Cancel' />
     </p>
     </div>
-</div>
+<script>
+  document.write('</div>');
+</script>
 </form>
