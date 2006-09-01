@@ -188,7 +188,9 @@ if ( browser == "Netscape Navigator" ) {
 	<param name="lang" value="<%=context.getHttpRequest().getHeader("Accept-Language")%>" />
 	Applets are currently not supported by your browser.  Please <a href="http://www.java.com/">download Java</a>, so you can use
 	the WikiWizard editor.
-</applet>
+<script>
+   document.write('</applet>');
+</script>
 
    <wiki:CheckRequestContext context="comment">
         <table border="0" class="small">
