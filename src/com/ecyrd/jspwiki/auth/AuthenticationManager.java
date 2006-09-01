@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.31 $ $Date: 2006-08-27 14:04:42 $
+ * @version $Revision: 1.32 $ $Date: 2006-09-01 17:01:00 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -90,7 +90,14 @@ public final class AuthenticationManager
     /** Value specifying that the user wants to use the container-managed security, just like
      *  in JSPWiki 2.2.
      */
-    public static final String                SECURITY_CONTAINER= "container";
+    public static final String                SECURITY_OFF      = "off";
+
+    /** Just to provide compatibility with the old versions.  The same
+     *  as SECURITY_OFF.
+     *   
+     *  @decprecated
+     */
+    protected static final String             SECURITY_CONTAINER = "container";
 
     /** Value specifying that the user wants to use the built-in JAAS-based system */
     public static final String                SECURITY_JAAS     = "jaas";
