@@ -12,6 +12,9 @@
         * Changed "jspwiki.security=container" to "jspwiki.security=off".
         This should make it more clear to people.  The old setting
         will continue to work.
+        
+        * Added page info links back to attachments in RecentChanges.
+        Unfortunate side effect of the new renderer...
 
 2006-08-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
