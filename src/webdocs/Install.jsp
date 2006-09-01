@@ -134,7 +134,7 @@ the <code>jspwiki.properties</code> file directly.  You can find a sample config
     <label>Security configuration</label>
     <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked"/>
       JAAS plus container security (default)<br/>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_CONTAINER%>"/>
+    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_OFF%>"/>
       Container security only
    <div class="description">
      By default, JSPWiki manages access to resources using a JAAS-based security system. 
