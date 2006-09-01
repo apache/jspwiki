@@ -1,5 +1,16 @@
 2006-08-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.40
+        
+        * Christoph Sauer joins in as a contributor (if only I got
+        him to update the ChangeLog... ;)
+        
+        * WikiWizard is now included.  Hooray for WIKIWYG editing!
+        
+        * Small tweaks to the EditTemplate.
+
+2006-08-30  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * 2.4.39 - The "Piko" release.  Rest in Peace.
         
         * Added SearchManagerTest to make sure that our search works.
