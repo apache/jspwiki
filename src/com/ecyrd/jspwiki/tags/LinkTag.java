@@ -162,8 +162,12 @@ public class LinkTag
         
         if( m_pageName == null ) 
         {
-            WikiPage page = m_wikiContext.getPage(); 
-            m_pageName = page.getName();
+            WikiPage page = m_wikiContext.getPage();
+            
+            if( page != null )
+            {
+                m_pageName = page.getName();
+            }
         }
         
         if( m_templatefile != null )
