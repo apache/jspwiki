@@ -1,3 +1,10 @@
+2006-09-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.41
+        
+        * LinkTag should no longer crash if WikiContext does not have
+        a page attached.  Reported by Fabiano Bonin.
+
 2006-08-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.40
