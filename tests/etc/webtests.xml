@@ -1,4 +1,4 @@
-<project name="JSPWiki-webtests" default="webtests" basedir="tests">
+<project name="JSPWiki-webtests" basedir="tests">
 
   <!-- This Ant build file is designed to be called by the
        "webtest-setup" macro in the top-level build.xml file.
