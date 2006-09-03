@@ -24,6 +24,7 @@ public class InsertPageTest extends TestCase
     {
         TestEngine.deleteTestPage( "ThisPage" );
         TestEngine.deleteTestPage( "ThisPage2" );
+        TestEngine.deleteTestPage( "Test_Page" );
     }
 
     public void testRecursive() throws Exception
@@ -63,6 +64,19 @@ public class InsertPageTest extends TestCase
         
         assertEquals( "found != 2", "<div style=\"\">foo\n</div> <div style=\"\">foo\n</div>\n", testEngine.getHTML("ThisPage") );
         
+    }
+    
+    public void testUnderscore() throws Exception
+    {
+        String src  = "[{InsertPage page='Test_Page'}]";
+        String src2 = "foo[{ALLOW view Anonymous}]";
+
+        testEngine.saveText("ThisPage",src);
+        testEngine.saveText("Test_Page",src2);
+
+        assertTrue( "got circ ref", testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1 );
+        
+        assertEquals( "found != 1", "<div style=\"\">foo\n</div>\n", testEngine.getHTML("ThisPage") );    
     }
     
     public static Test suite()
