@@ -1,3 +1,12 @@
+2006-09-03  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.43
+        
+        * Bug fix: If the front page did not exist, would die with
+        a NullPointerException, when accessed with the default URL
+        (e.g. /Wiki.jsp, or /wiki/ without the page).
+        Should fix BugBadDefaultConfig.
+
 2006-09-02  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.4.42
