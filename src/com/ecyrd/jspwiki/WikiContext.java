@@ -206,15 +206,21 @@ public class WikiContext
         m_command = command;
         
         // If PageCommand, get the WikiPage
-        if ( command instanceof PageCommand )
+        if( command instanceof PageCommand )
         {
             m_page = (WikiPage)((PageCommand)command).getTarget();
         }
         
         // If page not supplied, default to front page to avoid NPEs
-        if ( m_page == null )
+        if( m_page == null )
         {
             m_page = m_engine.getPage( m_engine.getFrontPage() );
+            
+            // Front page does not exist?
+            if( m_page == null )
+            {
+                m_page = new WikiPage( m_engine, m_engine.getFrontPage() );
+            }
         }
         
         m_realPage = m_page;
@@ -223,7 +229,7 @@ public class WikiContext
         boolean doLogin = ( (request != null) && m_session.isNew() );
         
         // Debugging...
-        if ( log.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
             HttpSession session = ( request == null ) ? null : request.getSession( false );
             String sid = ( session == null ) ? "(null)" : session.getId();
@@ -231,7 +237,7 @@ public class WikiContext
             log.debug( "Do we need to log the user in? " + doLogin );
         }
         
-        if ( doLogin || m_session.isContainerStatusChanged( request ) )
+        if( doLogin || m_session.isContainerStatusChanged( request ) )
         {
             try 
             {
@@ -245,7 +251,7 @@ public class WikiContext
         }
 
         // Mark the session as "not new"
-        if ( m_session.isNew() )
+        if( m_session.isNew() )
         {
             m_session.setNew( false );
         }
@@ -492,7 +498,7 @@ public class WikiContext
     {
         if ( m_command instanceof PageCommand )
         {
-            return m_page.getName();
+            return m_page != null ? m_page.getName() : "<no page>";
         }
         return m_command.getName();
     }
