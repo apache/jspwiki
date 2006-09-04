@@ -70,10 +70,3 @@ in the source distribution.  You may need to copy them by hand from
 somewhere, or the binary distribution.
 
 
-Troubleshooting
-===============
-
-If you get compilation errors from "FileUtil14.java", check your Java 
-environment.  JSPWiki requires SDK 1.4 to compile, even though it will
-run happily on 1.3.
-
