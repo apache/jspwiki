@@ -153,7 +153,8 @@
         }
         catch( RedirectException ex )
         {
-            wikiContext.getWikiSession().addMessage( ex.getMessage() );
+            // wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
+            session.setAttribute( VariableManager.VAR_MSG, ex.getMessage() );
             response.sendRedirect( ex.getRedirect() );
             return;
         }
