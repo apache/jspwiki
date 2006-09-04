@@ -1,1 +1,0 @@
-The Page Repository is a general name to the place where the [Page Provider] saves the pages.
