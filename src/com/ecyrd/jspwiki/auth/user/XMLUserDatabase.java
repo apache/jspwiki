@@ -56,9 +56,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.15 $ $Date: 2006-07-29 19:52:11 $
+ * @version $Revision: 1.16 $ $Date: 2006-09-04 06:42:55 $
  * @since 2.3
  */
+
+// FIXME: If the DB is shared across multiple systems, it's possible to lose accounts
+//        if two people add new accounts right after each other from different wikis.
 public class XMLUserDatabase extends AbstractUserDatabase
 {
 
@@ -338,6 +341,11 @@ public class XMLUserDatabase extends AbstractUserDatabase
 
         log.info("XML user database at "+c_file.getAbsolutePath());
         
+        buildDOM();
+    }
+    
+    private void buildDOM()
+    {
         // Read DOM
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating( false );
@@ -348,6 +356,8 @@ public class XMLUserDatabase extends AbstractUserDatabase
         {
             c_dom = factory.newDocumentBuilder().parse( c_file );
             log.debug( "Database successfully initialized" );
+            c_lastModified = c_file.lastModified();
+            c_lastCheck    = System.currentTimeMillis();
         }
         catch( ParserConfigurationException e )
         {
@@ -382,6 +392,24 @@ public class XMLUserDatabase extends AbstractUserDatabase
         }
     }
     
+    private long c_lastCheck    = 0;
+    private long c_lastModified = 0;
+    
+    private void checkForRefresh()
+    {
+        long time = System.currentTimeMillis();
+        
+        if( time - c_lastCheck > 60*1000L )
+        {
+            long lastModified = c_file.lastModified();
+            
+            if( lastModified > c_lastModified )
+            {
+                buildDOM();
+            }
+        }
+    }
+    
     /**
      * Determines whether the user database shares user/password data with the
      * web container; always returns <code>false</code>.
@@ -407,6 +435,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
             log.fatal( "Could not save profile " + profile + " database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
+        
+        checkForRefresh();
+        
         String index = profile.getLoginName();
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         Element user = null;
@@ -468,6 +499,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
         {
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
+        
+        checkForRefresh();
+        
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         for( int i = 0; i < users.getLength(); i++ )
         {

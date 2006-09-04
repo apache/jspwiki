@@ -52,7 +52,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * &lt;/groups&gt;
  * </code></blockquote>
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-29 19:18:01 $
+ * @version $Revision: 1.2 $ $Date: 2006-09-04 06:42:55 $
  * @since 2.4.17
  */
 public class XMLGroupDatabase implements GroupDatabase
@@ -256,6 +256,8 @@ public class XMLGroupDatabase implements GroupDatabase
             throw new IllegalArgumentException( "Group or modifier cannot be null." );
         }
         
+        checkForRefresh();
+        
         String index = group.getName();
         boolean isNew = !( m_groups.containsKey( index ) );
         Date modDate = new Date( System.currentTimeMillis() );
@@ -283,6 +285,8 @@ public class XMLGroupDatabase implements GroupDatabase
         {
             c_dom = factory.newDocumentBuilder().parse( c_file );
             log.debug( "Database successfully initialized" );
+            c_lastModified = c_file.lastModified();
+            c_lastCheck    = System.currentTimeMillis();
         }
         catch( ParserConfigurationException e )
         {
@@ -337,6 +341,30 @@ public class XMLGroupDatabase implements GroupDatabase
         }
     }
     
+    private long c_lastCheck    = 0;
+    private long c_lastModified = 0;
+    
+    private void checkForRefresh()
+    {
+        long time = System.currentTimeMillis();
+        
+        if( time - c_lastCheck > 60*1000L )
+        {
+            long lastModified = c_file.lastModified();
+            
+            if( lastModified > c_lastModified )
+            {
+                try
+                {
+                    buildDOM();
+                }
+                catch( WikiSecurityException e )
+                {
+                    log.error("Could not refresh DOM",e);
+                }
+            }
+        }
+    }
     /**
      * Constructs a Group based on a DOM group node.
      * @param groupNode the node in the DOM containing the node

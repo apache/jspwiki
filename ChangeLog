@@ -1,5 +1,14 @@
 2006-09-03  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.44
+
+        * Both XMLUserDatabase and XMLGroupDatabase will now check
+        if the database is up to date.  This allows propagation of
+        databases across wikis (though it's rather flaky; there are
+        concurrency issues).
+
+2006-09-03  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * 2.4.43
         
         * Bug fix: If the front page did not exist, would die with
