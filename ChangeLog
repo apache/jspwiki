@@ -1,3 +1,17 @@
+2006-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.45
+        
+        * Bug fix: When SpamFilter rejected something, there would
+        be no message shown in RejectedMessage.  Reported by 
+        Terry Steichen.
+        
+        * Removed plenty of documentation from the default wikipages
+        package.  It was out of date, and better written up at
+        doc.jspwiki.org anyway.
+        
+        * Removed doc/Templates.txt, which was no longer accurate.
+
 2006-09-03  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.44
