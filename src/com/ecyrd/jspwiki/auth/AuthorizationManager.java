@@ -77,7 +77,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.41 $ $Date: 2006-08-27 14:04:34 $
+ * @version $Revision: 1.42 $ $Date: 2006-09-05 19:22:02 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -331,30 +331,31 @@ public final class AuthorizationManager
      *         posesses the Role, GroupPrincipal or desired
      *         user Principal, <code>false</code> otherwise
      */
-    protected final boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
+    protected boolean hasRoleOrPrincipal( WikiSession session, Principal principal )
     {
         // If either parameter is null, always deny
-        if ( session == null || principal == null )
+        if( session == null || principal == null )
         {
             return false;
         }
         
         // If principal is role, delegate to isUserInRole
-        if ( AuthenticationManager.isRolePrincipal( principal ) )
+        if( AuthenticationManager.isRolePrincipal( principal ) )
         {
             return isUserInRole( session, principal );
         }
         
-        // We must be looking for a user principal, then. 
+        // We must be looking for a user principal, assuming that the user
+        // has been properly logged in. 
         // So just look for a name match.
-        if ( AuthenticationManager.isUserPrincipal( principal ) )
+        if( session.isAuthenticated() && AuthenticationManager.isUserPrincipal( principal ) )
         {
             String principalName = principal.getName();
             Principal[] userPrincipals = session.getPrincipals();
-            for ( int i = 0; i < userPrincipals.length; i++ )
+            for( int i = 0; i < userPrincipals.length; i++ )
             {
                 Principal userPrincipal = userPrincipals[i];
-                if ( userPrincipal.getName().equals( principalName ) )
+                if( userPrincipal.getName().equals( principalName ) )
                 {
                     return true;
                 }
