@@ -200,6 +200,14 @@
        <name>version</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+       <name>title</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>accesskey</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>  
 
   <tag>
@@ -373,7 +381,15 @@
     <attribute>
        <name>template</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
+    <attribute>
+       <name>title</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>accesskey</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>  
 
   <tag>
@@ -451,6 +467,14 @@
     </attribute>
     <attribute>
        <name>format</name>
+    </attribute>
+    <attribute>
+       <name>title</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>accesskey</name>
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
 
