@@ -1,3 +1,15 @@
+2006-09-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.48
+        
+        * Bug fix: it was possible to gain user privileges simply
+        by faking the cookie.  This is a serious problem and all
+        people running 2.4.x are suggested to upgrade.  Thanks
+        to Andrew for the fix.
+        
+        * SecurityVerifier no longer gets confused, if you state
+        a property using "==" instead of "=".
+
 2006-09-05  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.4.47
