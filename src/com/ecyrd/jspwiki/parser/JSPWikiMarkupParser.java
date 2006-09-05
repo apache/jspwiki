@@ -2317,6 +2317,25 @@ public class JSPWikiMarkupParser
                 {
                     m_plainTextBuf.append( "&amp;" );
                 }
+                else if( ch == '~' )
+                {
+                    String braces = readWhile("}");
+                    if( braces.length() >= 3 )
+                    {
+                        m_plainTextBuf.append("}}}");
+                     
+                        braces = braces.substring(3);
+                    }
+                    else
+                    {
+                        m_plainTextBuf.append( (char) ch );                        
+                    }
+                  
+                    for( int i = braces.length()-1; i >= 0; i-- )
+                    {
+                        pushBack(braces.charAt(i));
+                    }
+                }
                 else 
                 {
                     m_plainTextBuf.append( (char) ch );
