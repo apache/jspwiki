@@ -13,6 +13,10 @@
         a group called Admin - this is better because of i18n.
         
         * SpamFilter now checks also the changenote before saving.
+        
+        * Added the possibility to escape }}} within a preformatted
+        section by using ~}}}.  Suggested by several people at
+        WikiCreole.org...
 
 2006-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
