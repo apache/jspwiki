@@ -1,5 +1,19 @@
 2006-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.46
+        
+        * Bug fix: PageLock was using acquisition time for both
+        expiry and acquisition.  Fixes BugLockNotWorking.  Reported
+        by Terry Steichen.
+        
+        * Added WikiContext.hasAdminPermission() as a convenience
+        method.
+        
+        * Changed SpamFilter to check for AllPermission instead of
+        a group called Admin - this is better because of i18n.
+
+2006-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * 2.4.45
         
         * Bug fix: When SpamFilter rejected something, there would
