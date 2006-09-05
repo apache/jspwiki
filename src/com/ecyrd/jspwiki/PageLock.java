@@ -21,7 +21,7 @@ public class PageLock
         m_page         = page.getName();
         m_locker       = locker;
         m_lockAcquired = (Date)acquired.clone();
-        m_lockExpiry   = (Date)acquired.clone();
+        m_lockExpiry   = (Date)expiry.clone();
     }
 
     public String getPage()
