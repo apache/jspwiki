@@ -35,6 +35,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *    <LI>page - Page name to refer to.  Default is the current page.
  *    <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
  *    <LI>template - Which template should we link to.
+ *    <LI>title - Is used in page actions to display hover text (tooltip)
+ *    <LI>accesskey - Set an accesskey (ALT+[Char])
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -46,7 +48,9 @@ public class LinkToTag
     private static final long serialVersionUID = 0L;
     
     private String m_version = null;
-
+    public String m_title = "";
+    public String m_accesskey = "";
+    
     public void initTag()
     {
         super.initTag();
@@ -63,6 +67,17 @@ public class LinkToTag
         m_version = arg;
     }
 
+    public void setTitle( String title )
+    {
+        m_title = title;
+    }
+
+    public void setAccesskey( String access )
+    {
+        m_accesskey = access;
+    }
+
+    
     public int doWikiStartTag()
         throws IOException
     {
@@ -109,7 +124,8 @@ public class LinkToTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a class=\""+linkclass+"\" href=\""+url+"\">");
+            out.print("<a class=\""+linkclass+"\" href=\""+url+"\" accesskey=\"" 
+                          + m_accesskey + "\" title=\"" + m_title + "\">");
             break;
           case URL:
             out.print( url );

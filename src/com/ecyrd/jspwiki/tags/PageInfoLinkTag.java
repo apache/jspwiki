@@ -32,6 +32,8 @@ import com.ecyrd.jspwiki.WikiPage;
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
+ *    <LI>title - Is used in page actions to display hover text (tooltip)
+ *    <LI>accesskey - Set an accesskey (ALT+[Char])
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -42,6 +44,18 @@ public class PageInfoLinkTag
     extends WikiLinkTag
 {
     private static final long serialVersionUID = 0L;
+    public String m_title = "";
+    public String m_accesskey = "";
+    
+    public void setTitle( String title )
+    {
+        m_title = title;
+    }
+
+    public void setAccesskey( String access )
+    {
+        m_accesskey = access;
+    }
     
     public final int doWikiStartTag()
         throws IOException
@@ -72,7 +86,8 @@ public class PageInfoLinkTag
             switch( m_format )
             {
               case ANCHOR:
-                out.print("<a class=\"pageinfo\" href=\""+url+"\">");
+                out.print("<a class=\"pageinfo\" href=\""+url+"\" accesskey=\"" 
+                          + m_accesskey + "\" title=\"" + m_title + "\">");
                 break;
               case URL:
                 out.print( url );

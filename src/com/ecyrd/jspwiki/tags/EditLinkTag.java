@@ -35,6 +35,8 @@ import com.ecyrd.jspwiki.WikiPage;
  *    <LI>version - Version number of the page to refer to.  Possible values
  *        are "this", meaning the version of the current page; or a version
  *        number.  Default is always to point at the latest version of the page.
+ *    <LI>title - Is used in page actions to display hover text (tooltip)
+ *    <LI>accesskey - Set an accesskey (ALT+[Char])
  *  </UL>
  *
  *  @author Janne Jalkanen
@@ -46,7 +48,9 @@ public class EditLinkTag
     private static final long serialVersionUID = 0L;
     
     public String m_version = null;
-
+    public String m_title = "";
+    public String m_accesskey = "";
+    
     public void initTag()
     {
         super.initTag();
@@ -56,6 +60,16 @@ public class EditLinkTag
     public void setVersion( String vers )
     {
         m_version = vers;
+    }
+    
+    public void setTitle( String title )
+    {
+        m_title = title;
+    }
+
+    public void setAccesskey( String access )
+    {
+        m_accesskey = access;
     }
 
     public final int doWikiStartTag()
@@ -118,7 +132,8 @@ public class EditLinkTag
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)+"\">");
+            out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)
+                     +"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\"\">");
             break;
 
           case URL:
