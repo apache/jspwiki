@@ -967,6 +967,39 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         assertEquals( "1{{{2345}}}6", translate(src) );
     }
+
+    public void testPreEscape2()
+    throws Exception
+    {
+        String src = "1{{{{{{2345~}}}}}}6";
+        
+        assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">{{{2345}}}</span>6", translate(src) );
+    }
+
+    public void testPreEscape3()
+    throws Exception
+    {
+        String src = "1 {{{ {{{ 2345 ~}}} }}} 6";
+        
+        assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 }}} </span> 6", translate(src) );
+    }
+
+    public void testPreEscape4()
+    throws Exception
+    {
+        String src = "1{{{ {{{2345~}} }}}6";
+        
+        assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> {{{2345~}} </span>6", translate(src) );
+    }
+
+    public void testPreEscape5()
+    throws Exception
+    {
+        String src = "1{{{ ~ }}}6";
+        
+        assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> ~ </span>6", translate(src) );
+    }
+    
     
     public void testHTMLInPre()
     throws Exception
