@@ -1,3 +1,13 @@
+2006-09-05  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.4.47
+        
+        * Added title and accesskey attribute to 
+          LinkTag, EditLinkTag and PageInfoTag. You can now set
+          accesskeys to edit pages in the PageActions.jsp
+          Use the title attribute to add a tooltip text to indicate 
+          the speedkey you used.
+
 2006-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.46
