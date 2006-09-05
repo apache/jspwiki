@@ -7,7 +7,6 @@ import com.ecyrd.jspwiki.TextUtil;
  * Abstract, immutable Command implementation class. All of the fields in this
  * class are <code>final</code>. This class is thread-safe.
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
  * @since 2.4.22
  */
 public abstract class AbstractCommand implements Command
@@ -182,7 +181,7 @@ public abstract class AbstractCommand implements Command
     /**
      * Returns the "friendly name" for this command's JSP, namely
      * a beatified version of the JSP's name without the .jsp suffix.
-     * @returnt the friendly name
+     * @return the friendly name
      */
     protected final String getJSPFriendlyName()
     {
