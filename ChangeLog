@@ -11,6 +11,8 @@
         
         * Changed SpamFilter to check for AllPermission instead of
         a group called Admin - this is better because of i18n.
+        
+        * SpamFilter now checks also the changenote before saving.
 
 2006-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
