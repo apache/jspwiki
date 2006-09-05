@@ -759,6 +759,23 @@ public class WikiContext
     }
     
     /**
+     *  Returns true, if the current user has administrative permissions (i.e. the omnipotent
+     *  AllPermission).
+     *  
+     *  @since 2.4.46
+     *  @return true, if the user has all permissions.
+     */
+    public boolean hasAdminPermissions()
+    {
+        boolean admin = false;
+        
+        admin = m_engine.getAuthorizationManager().checkPermission( getWikiSession(), 
+                                                                    new AllPermission(m_engine.getApplicationName()) );
+        
+        return admin;
+    }
+    
+    /**
      * Figures out which template a new WikiContext should be using.
      * @param request the HTTP request
      */
