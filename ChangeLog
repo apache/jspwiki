@@ -1,3 +1,9 @@
+2006-09-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * Added a bunch of new unit tests to check for page
+        renaming problems.  At the moment most of them fail, suggesting
+        that there is something wrong in PageRenamer...
+
 2006-09-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.48
