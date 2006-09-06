@@ -51,7 +51,7 @@ public class PageRenamer
     private boolean m_camelCaseLink;
     private boolean m_matchEnglishPlurals;
 
-    private static final String m_longLinkPatternString = "\\[(.+[|])?(.+?)\\]";
+    private static final String m_longLinkPatternString = "\\[([\\w\\s]+\\|)?([\\w\\s\\+-/\\?&;@:=%\\#<>$\\.,\\(\\)'\\*]+)?\\]";
     private static final String m_camelCaseLinkPatternString = "([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)";
 
     private Pattern m_longLinkPattern = null;
@@ -229,12 +229,12 @@ public class PageRenamer
      * <pre>
      * "Start"                               "A"                                "B"
      * 1) OldCleanLink                   --> NewCleanLink                   --> [New Long Link]
-     * 2) [OldCleanLink]                 --> NewCleanLink                   --> [New Long Link]
+     * 2) [OldCleanLink]                 --> [NewCleanLink]                 --> [New Long Link]
      * 3) [old long text|OldCleanLink]   --> [old long text|NewCleanLink]   --> [old long text|New Long Link]
-     * 4) [Old Long Link]                --> NewCleanLink                   --> [New Long Link]
+     * 4) [Old Long Link]                --> [NewCleanLink]                 --> [New Long Link]
      * 5) [old long text|Old Long Link]  --> [old long text|NewCleanLink]   --> [old long text|New Long Link]
      * 6) OldLongLink                    --> NewCleanLink                   --> NewLongLink
-     * 7) [OldLongLink]                  --> NewCleanLink                   --> [NewLongLink]
+     * 7) [OldLongLink]                  --> [NewCleanLink]                 --> [NewLongLink]
      * </pre>
      * It's important to note that case 6 and 7 can exist, but are not expected since they are 
      * counter intuitive.
@@ -251,6 +251,7 @@ public class PageRenamer
 
         // Work out whether the new page name is CamelCase or not
         // TODO: Check if the pattern can be replaced with the compiled version
+        /*
         if( m_camelCaseLink == false || !m_perlUtil.match( "/" + m_camelCaseLinkPatternString + "/", newName ) )
         {
             replacementLink = "["+newName+"]";
@@ -259,20 +260,23 @@ public class PageRenamer
         {
             replacementLink = newName;
         }
-        
+        */
+        // replacementLink = "["+newName+"]";
         // Replace long format links
-        referrerText = replaceLongLinks( referrerText, oldName, replacementLink );
+        referrerText = replaceLongLinks( referrerText, oldName, newName );
         
         // Replace CamelCase links
         if( m_camelCaseLink == true )
         {
-            referrerText = replaceCamelCaseLinks( referrerText, oldName, replacementLink );
+            referrerText = replaceCamelCaseLinks( referrerText, oldName, newName );
         }
         
         return referrerText;
     }
 
-    // Replace long format links in a piece of text
+    /**
+     *  Replace long format links in a piece of text
+     */
     private String replaceLongLinks( String text, String oldName, String replacementLink )
     {
         int lastMatchEnd = 0;
@@ -287,25 +291,31 @@ public class PageRenamer
 
             ret.append( input.substring( lastMatchEnd, matchResult.beginOffset( 0 ) ) );
         
+            String linkText = matchResult.group( 1 );
             String link = matchResult.group( 2 );
+
+            String anchor = "";
+            
+            int hash;
+            if( (hash = link.indexOf('#')) != -1 )
+            {
+                anchor = link.substring(hash);
+                link   = link.substring(0,hash);
+            }
+            
             String linkDestinationPage = checkPluralPageName( MarkupParser.cleanLink( link ) );
             
             if( linkDestinationPage.equals( oldName ) )
             {
-                String linkText = matchResult.group( 1 );
-                
-                String properReplacement = replacementLink;
+                String properReplacement;
                 
                 if( linkText != null )
                 {
-                    if( properReplacement.charAt( 0 ) == '[' )
-                    {
-                        properReplacement = '[' + linkText + properReplacement.substring( 1 );
-                    }
-                    else
-                    {
-                        properReplacement = '[' + linkText + properReplacement + ']';
-                    }
+                    properReplacement = '[' + linkText + replacementLink + anchor + ']';
+                }
+                else
+                {
+                    properReplacement = '['+replacementLink+anchor+']';
                 }
                 
                 ret.append( properReplacement );
