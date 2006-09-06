@@ -1,5 +1,15 @@
 2006-09-06  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.49
+
+        * Witness the awesome p0w3r of unit testing.  Fixed the
+        unit tests added in the morning so that we now hopefully
+        are fixing BugStrangeRenameBehaviour.  Reported by Candid
+        Dauth.
+        
+        * Bug fix: ReferenceManager was not removing all references
+        to a page if it was renamed, resulting in "hanging" pages.
+
         * Added a bunch of new unit tests to check for page
         renaming problems.  At the moment most of them fail, suggesting
         that there is something wrong in PageRenamer...
