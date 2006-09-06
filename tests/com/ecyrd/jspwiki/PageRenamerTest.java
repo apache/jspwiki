@@ -33,6 +33,8 @@ public class PageRenamerTest extends TestCase
         TestEngine.deleteTestPage("TestPage2");
         TestEngine.deleteTestPage("FooTest");
         TestEngine.deleteTestPage("Test");
+        
+        TestEngine.emptyWorkDir();
     }
 
     public void testSimpleRename()
@@ -146,7 +148,9 @@ public class PageRenamerTest extends TestCase
      
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
      
-        assertEquals( "no rename", "[FooTest] [FooTest] [linktext|FooTest] FooTest [linktext|FooTest] [FooTest#Anchor] [FooTest] FooTest [FooTest]", data );
+        assertEquals( "no rename", 
+                      "[FooTest] [FooTest] [linktext|FooTest] FooTest [linktext|FooTest] [FooTest#Anchor] [FooTest] FooTest [FooTest]", 
+                      data.trim() );
 
         Collection refs = m_engine.getReferenceManager().findReferrers("TestPage");
         
