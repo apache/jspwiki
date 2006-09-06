@@ -832,7 +832,10 @@ public class ReferenceManager
      */
     public synchronized void clearPageEntries( String pagename )
     {
-        m_referredBy.remove( getFinalPageName(pagename) );
+        pagename = getFinalPageName(pagename);
+        
+        m_referredBy.remove( pagename );
+        m_refersTo.remove( pagename );
     }
 
 
