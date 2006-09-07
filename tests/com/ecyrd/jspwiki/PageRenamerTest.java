@@ -7,6 +7,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.ecyrd.jspwiki.attachment.Attachment;
+
 public class PageRenamerTest extends TestCase
 {
     TestEngine m_engine;
@@ -177,6 +179,48 @@ public class PageRenamerTest extends TestCase
         
         assertEquals( "wrong data", "[TestPage] [TestPage#anchor] test Test [TestPage] [link|TestPage] [link|TestPage]", data.trim() );
     }
+
+    public void testAttachmentChange()
+        throws Exception
+    {
+        m_engine.saveText("TestPage", "foofoo" );
+        m_engine.saveText("TestPage2", "[TestPage/foo.txt] [linktext|TestPage/bar.jpg]");
+ 
+        m_engine.addAttachment("TestPage", "foo.txt", "testing".getBytes() );
+        m_engine.addAttachment("TestPage", "bar.jpg", "pr0n".getBytes() );
+        WikiPage p = m_engine.getPage("TestPage");
+ 
+        WikiContext context = new WikiContext(m_engine, p);
+ 
+        m_engine.renamePage(context, "TestPage", "FooTest", true);
+ 
+        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+ 
+        assertEquals( "no rename", 
+                      "[FooTest/foo.txt] [linktext|FooTest/bar.jpg]", 
+                      data.trim() );
+
+        Attachment att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/foo.txt");
+        assertNotNull("footext",att);
+        
+        att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/bar.jpg");
+        assertNotNull("barjpg",att);
+        
+        att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/bar.jpg");
+        assertNull("testpage/bar.jpg exists",att);
+        
+        att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/foo.txt");
+        assertNull("testpage/foo.txt exists",att);
+        
+        Collection refs = m_engine.getReferenceManager().findReferrers("TestPage/bar.jpg");
+    
+        assertNull( "oldpage", refs );
+    
+        refs = m_engine.getReferenceManager().findReferrers( "FooTest/bar.jpg" );
+        assertEquals( "new size", 1, refs.size() );
+        assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
+}
+
     public static Test suite()
     {
         return new TestSuite( PageRenamerTest.class );
