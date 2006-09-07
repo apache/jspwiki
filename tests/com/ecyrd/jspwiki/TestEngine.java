@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.providers.*;
 
@@ -176,6 +177,20 @@ public class TestEngine extends WikiEngine
         return tmpFile;
     }
 
+    /**
+     *  Adds an attachment to a page for testing purposes.
+     * @param pageName
+     * @param attachmentName
+     * @param data
+     */
+    public void addAttachment( String pageName, String attachmentName, byte[] data )
+        throws ProviderException, IOException
+    {
+        Attachment att = new Attachment(this,pageName,attachmentName);
+        
+        getAttachmentManager().storeAttachment(att, new ByteArrayInputStream(data));
+    }
+    
     /**
      * Convenience method that saves a wiki page by constructing a fake
      * WikiContext and HttpServletRequest. We always want to do this using a
