@@ -1,3 +1,29 @@
+2006-09-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.50
+        
+        * Test release to check whether we can solve some WebLogic
+        issues.
+        
+        * Split WikiServletFilter to WikiServletFilter and WikiJSPFilter.
+        The latter takes care of JSP stuff, the former of all other types
+        of data.  WikiJSPFilter uses getWriter() extensively, while
+        WikiServletFilter is for those instances that use 
+        getOutputStream().  Thanks to Marc Patteet for the help.
+
+        * Renaming now also renames attachments (assuming that the
+        attachments exist - if they don't, then there's no way to know
+        which pages refer to them (bar going through all pages).
+        
+        * Changed web.xml to reflect the new filters.  Don't forget
+        to update!
+        
+        * Added "print" style for jspwiki.css in commonheader.jsp.  This
+        should fix problems with printing looking different from screen.
+        Reported by Steve Lihn, fix from Dirk Frederickx
+
+        * Fixed InfoContent.jsp for WebLogic.  By Marc Patteet.
+
 2006-09-06  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.49
