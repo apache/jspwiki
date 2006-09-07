@@ -22,9 +22,9 @@ package com.ecyrd.jspwiki;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.apache.oro.text.perl.Perl5Util;
 import org.apache.oro.text.regex.*;
 
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -43,8 +43,6 @@ public class PageRenamer
     private static final Logger log = Logger.getLogger(PageRenamer.class);
 
     private final WikiEngine m_wikiEngine;
-
-    private final Perl5Util m_perlUtil = new Perl5Util();
 
     private static final PatternMatcher m_matcher = new Perl5Matcher();
 
@@ -113,7 +111,9 @@ public class PageRenamer
 
         // Get the collection of pages that the refered to the old name (the From name)...
         Collection referrers = getReferrersCollection( oldName );
-    
+
+        
+        
         newName = MarkupParser.cleanLink( newName );
         
         log.debug( "Rename request for page '"+ oldName +"' to '" + newName + "'" );
@@ -153,7 +153,37 @@ public class PageRenamer
     // Go gather and return a collection of page names that refer to the old name...
     private Collection getReferrersCollection( String oldName )
     {
-        return m_wikiEngine.getReferenceManager().findReferrers(oldName);
+        TreeSet list = new TreeSet();
+        
+        WikiPage p = m_wikiEngine.getPage(oldName);
+        
+        if( p != null )
+        {
+            Collection c = m_wikiEngine.getReferenceManager().findReferrers(oldName);
+            
+            if( c != null ) list.addAll(c);
+        
+            try
+            {
+                Collection attachments = m_wikiEngine.getAttachmentManager().listAttachments(p);
+                
+                for( Iterator i = attachments.iterator(); i.hasNext(); )
+                {
+                    Attachment att = (Attachment) i.next();
+                    
+                    c = m_wikiEngine.getReferenceManager().findReferrers(att.getName());
+                    
+                    if( c != null ) list.addAll(c);
+                }
+            }
+            catch( ProviderException e )
+            {
+                log.error("Cannot list attachments",e);
+            }
+            
+        }
+        
+        return list;
     }
 
 
@@ -295,12 +325,20 @@ public class PageRenamer
             String link = matchResult.group( 2 );
 
             String anchor = "";
+            String subpage = "";
             
             int hash;
             if( (hash = link.indexOf('#')) != -1 )
             {
                 anchor = link.substring(hash);
                 link   = link.substring(0,hash);
+            }
+            
+            int slash;
+            if( (slash = link.indexOf('/')) != -1 )
+            {
+                subpage = link.substring(slash);
+                link    = link.substring(0,slash);
             }
             
             String linkDestinationPage = checkPluralPageName( MarkupParser.cleanLink( link ) );
@@ -311,11 +349,11 @@ public class PageRenamer
                 
                 if( linkText != null )
                 {
-                    properReplacement = '[' + linkText + replacementLink + anchor + ']';
+                    properReplacement = '[' + linkText + replacementLink+subpage+anchor + ']';
                 }
                 else
                 {
-                    properReplacement = '['+replacementLink+anchor+']';
+                    properReplacement = '['+replacementLink+subpage+anchor+']';
                 }
                 
                 ret.append( properReplacement );
