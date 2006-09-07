@@ -346,7 +346,7 @@ public class TemplateManager
     /**
      *  Adds a resource request to the current request context.
      *  The content will be added at the resource-type marker 
-     *  (see IncludeResourcesTag) in WikiServletFilter.
+     *  (see IncludeResourcesTag) in WikiJSPFilter.
      *  <p>
      *  The resources can be of different types.  For RESOURCE_SCRIPT and RESOURCE_STYLESHEET
      *  this is an URI path to the resource (a script file or an external stylesheet)
