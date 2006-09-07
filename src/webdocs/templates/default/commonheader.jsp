@@ -2,7 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
-  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
+  <link rel="stylesheet" media="screen, projection, print" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
   <wiki:IncludeResources type="stylesheet"/>
   <script src="<wiki:Link format="url" jsp="scripts/jspwiki-common.js"/>" type="text/javascript"></script>
   <wiki:IncludeResources type="script"/>
