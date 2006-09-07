@@ -23,6 +23,10 @@
       <filter-name>WikiServletFilter</filter-name>
       <filter-class>com.ecyrd.jspwiki.ui.WikiServletFilter</filter-class>
    </filter>
+   <filter>
+      <filter-name>WikiJSPFilter</filter-name>
+      <filter-class>com.ecyrd.jspwiki.ui.WikiJSPFilter</filter-class>
+   </filter>
 
    <filter-mapping>
        <filter-name>WikiServletFilter</filter-name>
@@ -45,11 +49,11 @@
        <url-pattern>/RPC2/</url-pattern>
    </filter-mapping>
    <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
+       <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>/wiki/*</url-pattern>
    </filter-mapping>
    <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
+       <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
 
