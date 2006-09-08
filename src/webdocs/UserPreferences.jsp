@@ -26,12 +26,12 @@
     
     // Extract the user profile and action attributes
     UserManager userMgr = wiki.getUserManager();
-    UserProfile profile = userMgr.parseProfile( wikiContext );
     WikiSession wikiSession = wikiContext.getWikiSession();
 
     // Are we saving the profile?
     if( "saveProfile".equals(request.getParameter("action")) )
     {
+        UserProfile profile = userMgr.parseProfile( wikiContext );
         // Validate the profile
         userMgr.validateProfile( wikiContext, profile );
 
