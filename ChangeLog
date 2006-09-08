@@ -1,3 +1,13 @@
+2006-09-08  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.51
+        
+        * Added patch from Malte Kiesel to fix a problem which caused
+        overwriting of user profile.
+        
+        * Fixed WikiJSPFilter writing the wrong content length to the
+        response (we're skipping setting the length for now).
+
 2006-09-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.50
