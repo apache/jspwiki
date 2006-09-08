@@ -84,17 +84,9 @@ public class WikiJSPFilter extends WikiServletFilter
         
         //String encoding = "UTF-8";
         //if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
-            
-        /*
-            byte[] bytes = r.getBytes( encoding );
-
-            // Only now write the (real) response to the client.
-            response.setContentLength( bytes.length );
-            response.getOutputStream().write( bytes );
-         */
-            
+        
         // Only now write the (real) response to the client.
-        response.setContentLength(r.length());
+        // response.setContentLength(r.length());
         // response.setContentType(encoding);
         response.getWriter().write(r);
             
