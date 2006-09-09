@@ -5,7 +5,8 @@
         * UserManager now checks to make sure that a user can't
         specify as a wiki name somebody elses's full name or login
         name. This check is peformed for all other combinations of
-        these three user profile fields also.
+        these three user profile fields also. This is a potentially
+        serious security flaw, so all users should upgrade.
 
 2006-09-08  Janne Jalkanen <jalkanen@ecyrd.com>
 
