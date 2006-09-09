@@ -1,3 +1,12 @@
+2006-09-09  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.52
+        
+        * UserManager now checks to make sure that a user can't
+        specify as a wiki name somebody elses's full name or login
+        name. This check is peformed for all other combinations of
+        these three user profile fields also.
+
 2006-09-08  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.51
