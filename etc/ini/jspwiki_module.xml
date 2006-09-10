@@ -16,11 +16,6 @@
       <path>editors/plain.jsp</path>
    </editor>
    
-   <editor name="FCK">
-      <author>Janne Jalkanen</author>
-      <path>editors/FCK.jsp</path>
-   </editor>
-
    <editor name="WikiWizard">
       <author>i3G Institut Hochschule Heilbronn</author>
       <path>editors/WikiWizard.jsp</path>
