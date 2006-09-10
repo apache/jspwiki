@@ -9,7 +9,8 @@
 --%>
 <% WikiContext context = WikiContext.findContext( pageContext ); %>
 <% String usertext = EditorManager.getEditedText( pageContext ); 
-   TemplateManager.addResourceRequest( context, "script", "scripts/searchreplace.js" );
+   TemplateManager.addResourceRequest( context, "script", 
+                                       context.getURL(WikiContext.NONE,"scripts/searchreplace.js") );
    String changenote = (String)session.getAttribute("changenote");
    changenote = changenote != null ? TextUtil.replaceEntities(changenote) : ""; %>
 <wiki:CheckRequestContext context="edit"><%
