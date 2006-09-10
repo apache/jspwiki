@@ -40,7 +40,7 @@
 
  <wiki:CheckRequestContext context="edit">
        <label for="changenote">Change note</label>
-       <input type="text" id="changenote" name="changenote" size="80" value="<%=changenote%>"/>
+       <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
    </wiki:CheckRequestContext>
 
 
