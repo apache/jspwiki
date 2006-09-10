@@ -36,7 +36,7 @@
 
    <wiki:CheckRequestContext context="edit">
        <label for="changenote">Change note</label>
-       <input type="text" id="changenote" name="changenote" size="40" maxlength="60" value="<%=changenote%>"/>
+       <input type="text" id="changenote" name="changenote" size="40" maxlength="80" value="<%=changenote%>"/>
    </wiki:CheckRequestContext>
    <wiki:CheckRequestContext context="comment">
         <table border="0" class="small">
