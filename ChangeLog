@@ -1,3 +1,17 @@
+2006-09-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.53
+        
+        * Removed FCK.jsp from the distribution (since we don't distribute
+        FCK, it's sort of weird to have it there breaking things).
+        
+        * Bug fix: Comment.jsp now catches RedirectExceptions
+        
+        * Bug fix: BugReportHandler also catches RedirectExceptions and
+        now gives a proper error report.
+        
+        * Limited change note length to 80 characters.
+
 2006-09-09  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.52
