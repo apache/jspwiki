@@ -31,6 +31,7 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 
 /**
@@ -159,6 +160,12 @@ public class BugReportHandler
                                           str.toString() );
 
             return "A new bug report has been created: <a href=\""+context.getViewURL(pageName)+"\">"+pageName+"</a>";
+        }
+        catch( RedirectException e )
+        {
+            log.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
+            
+            throw new PluginException("Saving not allowed, reason: "+e.getMessage());
         }
         catch( WikiException e )
         {
