@@ -33,15 +33,15 @@ import  java.util.Vector;
 import  java.util.HashMap;
 
 /**
- *  A singleton class that manages the addition and removal of WikiEvent listeners
- *  to a event source, as well as the firing of events to those listeners. An "event
- *  source" is the class delegating its event handling to an implementation of the
- *  {@link WikiEventDelegate} interface, in this case, the (inner) delegating class
- *  {@link WikiEventDelegateImpl} supplied by this manager. The class being serviced
- *  is considered a "client" of the WikiEventDelegate. This WikiEventManager operates
- *  across any number of simultaneously-existing WikiEngines since it manages all
- *  delegation on an per-object basis. Anything that might fire a WikiEvent (or any
- *  of its subclasses) can be a client.
+ *  A singleton class that manages the addition and removal of WikiEvent
+ *  listeners to a event source, as well as the firing of events to those
+ *  listeners. An "event source" is the object delegating its event
+ *  handling to an inner delegating class supplied by this manager. The
+ *  class being serviced is considered a "client" of the delegate. The
+ *  WikiEventManager operates across any number of simultaneously-existing
+ *  WikiEngines since it manages all delegation on a per-object basis.
+ *  Anything that might fire a WikiEvent (or any of its subclasses) can be
+ *  a client.
  *  </p>
  *
  *  <h3>Using a Delegate for Event Listener Management</h3>
@@ -72,9 +72,8 @@ import  java.util.HashMap;
  *  <pre>
  *      WikiEventManager.removeWikiEventListener(object,listener);
  *  </pre>
- *  If you only have a reference to the listener, the following
- *  method will remove it from any clients managed by the
- *  WikiEventManager:
+ *  If you only have a reference to the listener, the following method
+ *  will remove it from any clients managed by the WikiEventManager:
  *  <pre>
  *      WikiEventManager.removeWikiEventListener(listener);
  *  </pre>
@@ -82,9 +81,9 @@ import  java.util.HashMap;
  *  <h3>Backward Compatibility: Replacing Existing <tt>fireEvent()</tt> Methods</h3>
  *  <p>
  *  Using one manager for all events processing permits consolidation of all event
- *  listeners and their associated methods in one place rather than having them 
- *  attached to specific subcomponents of an application, and avoids a great deal 
- *  of event-related cut-and-paste code. Convenience methods that call the 
+ *  listeners and their associated methods in one place rather than having them
+ *  attached to specific subcomponents of an application, and avoids a great deal
+ *  of event-related cut-and-paste code. Convenience methods that call the
  *  WikiEventManager for event delegation can be written to maintain existing APIs.
  *  </p>
  *  <p>
@@ -103,10 +102,10 @@ import  java.util.HashMap;
  *  </pre>
  *  <p>
  *  One disadvantage is that the above method is supplied with event objects,
- *  which are created even when no listener exists for them. In a busy wiki 
+ *  which are created even when no listener exists for them. In a busy wiki
  *  with many users unused/unnecessary event creation could be considerable.
  *  Another advantage is that in addition to the iterator, there must be code
- *  to support the addition and remove of listeners. The above could be 
+ *  to support the addition and remove of listeners. The above could be
  *  replaced with the below code (and with no necessary local support for
  *  adding and removing listeners):
  *  </p>
@@ -120,12 +119,8 @@ import  java.util.HashMap;
  *    }
  *  </pre>
  *  <p>
- *  This only needs to be customized to supply the specific parameters for 
+ *  This only needs to be customized to supply the specific parameters for
  *  whatever WikiEvent you want to create.
- *  </p>
- *  <p>
- *  If you want to provide delegate service outside the bounds of this manager,
- *  you can use {@link EventSourceDelegate}.
  *  </p>
  *
  *  <h3 id="preloading">Preloading Listeners</h3>
@@ -133,10 +128,10 @@ import  java.util.HashMap;
  *  This may be used to create listeners for objects that don't yet exist,
  *  particularly designed for embedded applications that need to be able
  *  to listen for the instantiation of an Object, by maintaining a cache
- *  of client-less WikiEventSources that set their client upon being
- *  popped from the cache. Each time the {@link #getDelegateFor(Object)}
- *  method is called with a null parameter it will preload an internal
- *  cache with a client-less WikiEventDelegate that will be popped and
+ *  of client-less WikiEvent sources that set their client upon being
+ *  popped from the cache. Each time any of the methods expecting a client
+ *  parameter is called with a null parameter it will preload an internal
+ *  cache with a client-less delegate object that will be popped and
  *  returned in preference to creating a new object. This can have unwanted
  *  side effects if there are multiple clients populating the cache with
  *  listeners. The only check is for a Class match, so be aware if others
@@ -153,7 +148,7 @@ public class WikiEventManager
     /* The Map of client object to WikiEventDelegate. */
     private final Map m_delegates = new HashMap();
 
-    /* The Vector containing any preloaded EventSourceDelegates. */
+    /* The Vector containing any preloaded WikiEventDelegates. */
     private final Vector m_preloadCache = new Vector();
 
     /* Singleton instance of the WikiEventManager. */
@@ -197,28 +192,34 @@ public class WikiEventManager
 
 
     /**
-     *  Registers a WikiEventListener with a WikiEventDelegate for the provided client object.
+     *  Registers a WikiEventListener with a WikiEventDelegate for
+     *  the provided client object.
      *
      * @param client   the client of the event source
      * @param listener the event listener
+     * @return true if the listener was added (i.e., it was not already in the list and was added)
      */
-    public static synchronized final void addWikiEventListener( Object client, WikiEventListener listener )
+    public static synchronized final boolean addWikiEventListener(
+            Object client, WikiEventListener listener )
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
-        delegate.addWikiEventListener(listener);
+        return delegate.addWikiEventListener(listener);
     }
 
 
     /**
-     *  Un-registers a WikiEventListener with the WikiEventDelegate for the provided client object.
+     *  Un-registers a WikiEventListener with the WikiEventDelegate for
+     *  the provided client object.
      *
      * @param client   the client of the event source
      * @param listener the event listener
+     * @return true if the listener was found and removed.
      */
-    public static synchronized final void removeWikiEventListener( Object client, WikiEventListener listener )
+    public static synchronized final boolean removeWikiEventListener(
+            Object client, WikiEventListener listener )
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
-        delegate.removeWikiEventListener(listener);
+        return delegate.removeWikiEventListener(listener);
     }
 
 
@@ -394,7 +395,7 @@ public class WikiEventManager
      *  methods of the {@link WikiEventDelegate} API.
      *
      * @author Murray Altheim
-     * @version $Revision: 1.1 $ $Date: 2006-08-27 14:06:00 $
+     * @version $Revision: 1.2 $ $Date: 2006-09-12 20:22:42 $
      * @since 2.4.20
      */
     private static final class WikiEventDelegate
