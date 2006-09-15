@@ -3,8 +3,8 @@
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.29 $
-                             $Date: 2006-09-10 12:50:09 $
+                         $Revision: 1.30 $
+                             $Date: 2006-09-15 19:43:13 $
                            $Author: jalkanen $
 
 What is it?
@@ -230,12 +230,6 @@ License.  See http://www.apache.org/LICENSE.txt
 
 The search_highlight.js script is licensed under the X11 (MIT)
 License:
-
-Selected icons used in JSPWiki are copyright M. James under the 
-Creative Commons Attribution 2.5 License. See his fabulous work at 
-http://www.famfamfam.com/lab/icons/silk/.
-Creative Commons Attribution 2.5 License is located at:
-http://creativecommons.org/licenses/by/2.5/
 
 COPYRIGHT AND PERMISSION NOTICE
 
