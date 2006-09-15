@@ -661,17 +661,22 @@ Sortable.sort = function( thNode )
   var rows = new Array();
   var num  = true;
   var date = true;
+  var ip4  = true;
+  var ip4_regex = /(\d{1,3}\.){3}\d{1,3}/;
   for( var i=1; i< table.rows.length; i++)
   {
     rows[i-1] = table.rows[i] ;
     //var val = rows[i-1].cells[colidx].firstChild.nodeValue;
     var val = getNodeText( rows[i-1].cells[colidx] );
     if( num  ) num  = !isNaN( parseFloat( val ) ) ;    
-    if( date ) date = !isNaN( Date.parse( val ) );    
+    if( date ) date = !isNaN( Date.parse( val ) );
+    if( ip4  ) { if( !val.match( ip4_regex )) { ip4 = false; } }
   }
+
   var datatype = "string";
   if( num ) datatype = "num";
   if( date ) datatype = "date";
+  if( ip4 ) datatype = "ip4";
 
   //do the actual sorting
   if( thNodeClassName == this.ClassSort ) //first time sort of column table.sortCol == colidx ) 
@@ -711,6 +716,9 @@ Sortable.convert = function( val, datatype )
   {
     case "num"  : return parseFloat( val );
     case "date" : return new Date( Date.parse( val ) );
+    case "ip4"   : 
+		  var octet = val.split(/\./);
+                  return parseInt(octet[0]) * 1000000000 + parseInt(octet[1]) * 1000000 + parseInt(octet[2]) * 1000 + parseInt(octet[3]);
     default     : return val.toString();
   }
 }
