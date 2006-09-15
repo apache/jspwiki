@@ -1,3 +1,19 @@
+2006-09-15  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.55
+        
+        * Added patch from Joseph Schmigel to recognize IP
+        addresses in sortable tables.  Thanks!
+        
+        * Added new icons from Murray Altheim so that we could
+        get rid of all Creative Commons-licensed icons.  This was
+        done so that JSPWiki 2.4 could be included on Debian.  Thanks
+        heaps for the good work!
+        
+        * Reverted to previous behaviour with respect to WikiWizard:
+        no longer closes applet and div with javascript, which should help
+        in IE.
+
 2006-09-12  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.54
