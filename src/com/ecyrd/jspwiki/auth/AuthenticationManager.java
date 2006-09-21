@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.32 $ $Date: 2006-09-01 17:01:00 $
+ * @version $Revision: 1.33 $ $Date: 2006-09-21 18:46:22 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -289,7 +289,7 @@ public final class AuthenticationManager
      */
     public final void logout( HttpServletRequest request )
     {
-        if ( request == null )
+        if( request == null )
         {
             log.error( "No HTTP reqest provided; cannot log out." );
             return;
@@ -297,12 +297,13 @@ public final class AuthenticationManager
         
         HttpSession session = request.getSession();
         String sid = ( session == null ) ? "(null)" : session.getId();
-        if ( log.isDebugEnabled() )
+        if( log.isDebugEnabled() )
         {
             log.debug( "Invalidating WikiSession for session ID=" + sid );
         }
         // Retrieve the associated WikiSession and clear the Principal set
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
+        Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
         
         // Remove the wikiSession from the WikiSession cache
@@ -312,9 +313,9 @@ public final class AuthenticationManager
         session.invalidate();
         
         // Log the event
-        fireEvent( WikiSecurityEvent.LOGOUT, wikiSession.getLoginPrincipal(), null );
+        fireEvent( WikiSecurityEvent.LOGOUT, originalPrincipal, null );
     }
-
+    
     /**
      * Determines whether this WikiEngine allows users to assert identities using
      * cookies instead of passwords. This is determined by inspecting
