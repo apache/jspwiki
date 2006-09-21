@@ -1,3 +1,10 @@
+2006-09-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.56
+        
+        * Added patch from Kalle Kivimaa to fire the event with the
+        proper principal at logout.  Thanks!
+
 2006-09-15  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.55
