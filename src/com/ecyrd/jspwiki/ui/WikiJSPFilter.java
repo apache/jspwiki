@@ -24,17 +24,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
-
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.tags.WikiTagBase;
 
 /**
  * This filter goes through the generated page response prior and
