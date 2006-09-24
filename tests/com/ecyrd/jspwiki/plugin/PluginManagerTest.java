@@ -29,7 +29,7 @@ public class PluginManagerTest extends TestCase
 
         engine = new TestEngine(props);
         context = new WikiContext( engine, new WikiPage(engine, "testpage") );
-        manager = new PluginManager( props );
+        manager = new PluginManager( engine, props );
     }
 
     public void tearDown()
@@ -61,7 +61,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo" );
-        PluginManager m = new PluginManager( props );
+        PluginManager m = new PluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin2 WHERE text=foobar}");
 
@@ -73,7 +73,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo" );
-        PluginManager m = new PluginManager( props );
+        PluginManager m = new PluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin3 WHERE text=foobar}");
 
@@ -86,7 +86,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         props.setProperty( PluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
-        PluginManager m = new PluginManager( props );
+        PluginManager m = new PluginManager( engine, props );
         String res = m.execute( context,
                                 "{INSERT SamplePlugin WHERE text=foobar}");
 

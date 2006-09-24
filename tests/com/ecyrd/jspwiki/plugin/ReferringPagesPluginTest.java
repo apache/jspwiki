@@ -35,7 +35,7 @@ public class ReferringPagesPluginTest extends TestCase
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
         context = new WikiContext( engine, new WikiPage(engine,"TestPage") );
-        manager = new PluginManager( props );
+        manager = new PluginManager( engine, props );
     }
 
     public void tearDown()
