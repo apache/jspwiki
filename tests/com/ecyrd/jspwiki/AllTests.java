@@ -42,6 +42,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("JSPWiki Unit Tests");
 
         suite.addTest( FileUtilTest.suite() );
+        suite.addTest( ReleaseTest.suite() );
         suite.addTest( PageManagerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         // suite.addTest( TranslatorReaderTest.suite() );
