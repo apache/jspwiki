@@ -387,7 +387,13 @@ public class AttachmentServlet
             errorPage = context.getURL( WikiContext.UPLOAD,
                                         wikipage );
             
-            boolean created = executeUpload( context, data, path.getName(), errorPage, wikipage, req.getContentLength() );
+            String changeNote = null; // FIXME: Does not quite work
+            
+            boolean created = executeUpload( context, data, 
+                                             path.getName(), 
+                                             errorPage, wikipage, 
+                                             changeNote,
+                                             req.getContentLength() );
             
             if( created )
                 res.sendError( HttpServletResponse.SC_CREATED );
@@ -439,6 +445,7 @@ public class AttachmentServlet
 
             nextPage        = multi.getURLParameter( "nextpage" );
             String wikipage = multi.getURLParameter( "page" );
+            String changeNote = multi.getURLParameter( "changenote" );
             
             //
             // FIXME: Kludge alert.  We must end up with the parent page name,
@@ -480,7 +487,7 @@ public class AttachmentServlet
                         in = multi.getFileContents( part );
                     }
 
-                    executeUpload( context, in, filename, nextPage, wikipage, req.getContentLength() );
+                    executeUpload( context, in, filename, nextPage, wikipage, changeNote, req.getContentLength() );
                 }
                 finally
                 {
@@ -533,7 +540,8 @@ public class AttachmentServlet
      */
     protected boolean executeUpload( WikiContext context, InputStream data, 
                                      String filename, String errorPage, 
-                                     String parentPage, long contentLength )
+                                     String parentPage, String changenote, 
+                                     long contentLength )
         throws RedirectException,
                IOException, ProviderException
     {
@@ -615,6 +623,11 @@ public class AttachmentServlet
             if( user != null )
             {
                 att.setAuthor( user.getName() );
+            }
+            
+            if( changenote != null && changenote.length() > 0 )
+            {
+                att.setAttribute( WikiPage.CHANGENOTE, changenote );
             }
             
             m_engine.getAttachmentManager().storeAttachment( att, data );

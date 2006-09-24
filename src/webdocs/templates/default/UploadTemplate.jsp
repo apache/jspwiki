@@ -52,7 +52,8 @@
            <p>
            <input type="file" name="content" />
            <input type="submit" name="upload" value="Upload" />
-           <input type="hidden" name="action" value="upload" />
+           <input type="hidden" name="action" value="upload" /><br />
+           Change note: <input type="text" name="changenote" maxlength="80" width="60" />
            <input type="hidden" name="nextpage" value="<wiki:UploadLink format="url"/>" />
            </p>
            </form>
