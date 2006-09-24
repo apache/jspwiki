@@ -94,7 +94,9 @@ public class WikiEventUtils
     public static synchronized void addWikiEventListener(
             Object client, int type, WikiEventListener listener )
     {
-        WikiEventManager mgr = WikiEventManager.getInstance();
+        // Make sure WikiEventManager exists
+        WikiEventManager.getInstance();
+        
         // first, figure out what kind of event is expected to be generated this does
         // tie us into known types, but WikiEvent.isValidType() will return true so
         // long as the type was set to any non-ERROR or non-UNKNOWN value
@@ -105,10 +107,10 @@ public class WikiEventUtils
         }
         else if ( WikiPageEvent.isValidType(type) ) // add listener to one of several options
         {
-            if (       type == WikiPageEvent.PAGE_LOCK
-                    || type == WikiPageEvent.PAGE_UNLOCK ) // attach to PageManager
+            if(  type == WikiPageEvent.PAGE_LOCK
+              || type == WikiPageEvent.PAGE_UNLOCK ) // attach to PageManager
             {
-                if ( client instanceof WikiEngine )
+                if( client instanceof WikiEngine )
                 {
                     WikiEventManager.addWikiEventListener( ((WikiEngine)client).getPageManager(), listener );
                 }
@@ -117,19 +119,19 @@ public class WikiEventUtils
                     WikiEventManager.addWikiEventListener( client, listener );
                 }
             }
-            else if (  type == WikiPageEvent.PAGE_REQUESTED
-                    || type == WikiPageEvent.PAGE_DELIVERED ) // attach directly to WikiServletFilter
+            else if(  type == WikiPageEvent.PAGE_REQUESTED
+                   || type == WikiPageEvent.PAGE_DELIVERED ) // attach directly to WikiServletFilter
             {
                 WikiEventManager.addWikiEventListener( client, listener );
             }
-            else if (  type == WikiPageEvent.PRE_TRANSLATE_BEGIN
-                    || type == WikiPageEvent.PRE_TRANSLATE_END
-                    || type == WikiPageEvent.POST_TRANSLATE_BEGIN
-                    || type == WikiPageEvent.POST_TRANSLATE_END
-                    || type == WikiPageEvent.PRE_SAVE_BEGIN
-                    || type == WikiPageEvent.PRE_SAVE_END
-                    || type == WikiPageEvent.POST_SAVE_BEGIN
-                    || type == WikiPageEvent.POST_SAVE_END ) // attach to FilterManager
+            else if(  type == WikiPageEvent.PRE_TRANSLATE_BEGIN
+                   || type == WikiPageEvent.PRE_TRANSLATE_END
+                   || type == WikiPageEvent.POST_TRANSLATE_BEGIN
+                   || type == WikiPageEvent.POST_TRANSLATE_END
+                   || type == WikiPageEvent.PRE_SAVE_BEGIN
+                   || type == WikiPageEvent.PRE_SAVE_END
+                   || type == WikiPageEvent.POST_SAVE_BEGIN
+                   || type == WikiPageEvent.POST_SAVE_END ) // attach to FilterManager
             {
                 WikiEventManager.addWikiEventListener( ((WikiEngine)client).getFilterManager(), listener );
             }
@@ -141,12 +143,12 @@ public class WikiEventUtils
                 WikiEventManager.addWikiEventListener( client, listener );
             }
         }
-        else if ( WikiSecurityEvent.isValidType(type) ) // add listener to the client
+        else if( WikiSecurityEvent.isValidType(type) ) // add listener to the client
         {
             // currently just attach it to the client (we are ignorant of other options)
             WikiEventManager.addWikiEventListener( client, listener );
         }
-        else if ( WikiEvent.isValidType(type) ) // we don't know what to do
+        else if( WikiEvent.isValidType(type) ) // we don't know what to do
         {
             WikiEventManager.addWikiEventListener( client, listener );
         }
