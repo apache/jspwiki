@@ -101,6 +101,7 @@ public class LuceneSearchProvider implements SearchProvider
         int initialDelay = TextUtil.getIntegerProperty( props, PROP_LUCENE_INITIALDELAY, LuceneUpdater.INITIAL_DELAY );
         int indexDelay   = TextUtil.getIntegerProperty( props, PROP_LUCENE_INDEXDELAY, LuceneUpdater.INDEX_DELAY );
         
+        m_analyzerClass = TextUtil.getStringProperty( props, PROP_LUCENE_ANALYZER, m_analyzerClass );
         // FIXME: Just to be simple for now, we will do full reindex
         // only if no files are in lucene directory.
 
