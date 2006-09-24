@@ -16,6 +16,7 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
+import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 
 /**
@@ -61,11 +62,14 @@ public class EditorManager extends ModuleManager
     /** Known attribute name for storing the user edited text inside a session or a page context */
     public static final String       ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
     
-    private             WikiEngine   m_engine;
-    
     private             Map          m_editors;
     
     private static      Logger       log             = Logger.getLogger( EditorManager.class );
+    
+    public EditorManager( WikiEngine engine )
+    {
+        super(engine);
+    }
     
     /**
      *  Initializes the EditorManager.  It also registers any editors it can find.
@@ -73,10 +77,8 @@ public class EditorManager extends ModuleManager
      *  @param engine The WikiEngine we're attached to.
      *  @param props  Properties for setup.
      */
-    public void initialize( WikiEngine engine, Properties props )
+    public void initialize( Properties props )
     {
-        m_engine = engine;
-    
         registerEditors();
     }
     
@@ -95,9 +97,9 @@ public class EditorManager extends ModuleManager
         try
         {
             //
-            // Register all plugins which have created a resource containing its properties.
+            // Register all editors which have created a resource containing its properties.
             //
-            // Get all resources of all plugins.
+            // Get all resources of all modules
             //
             
             Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
@@ -117,16 +119,21 @@ public class EditorManager extends ModuleManager
                     for( Iterator i = plugins.iterator(); i.hasNext(); )
                     {
                         Element pluginEl = (Element) i.next();
-                        
+              
                         String name = pluginEl.getAttributeValue("name");
 
-                        String[] parms = new String[3];
-                        parms[0] = pluginEl.getChildText("path");
-                        parms[1] = pluginEl.getChildText("script");
-                        parms[2] = pluginEl.getChildText("stylesheet");
-                        m_editors.put( name, parms );
+                        WikiEditorInfo info = WikiEditorInfo.newInstance(name, pluginEl);
+
+                        if( checkCompatibility(info) )
+                        {
+                            m_editors.put( name, info );
                         
-                        log.debug("Registered editor "+name);
+                            log.debug("Registered editor "+name);
+                        }
+                        else
+                        {
+                            log.info("Editor '"+name+"' not compatible with this version of JSPWiki.");
+                        }
                     }
                 }
                 catch( java.io.IOException e )
@@ -242,11 +249,11 @@ public class EditorManager extends ModuleManager
         
         String editor = getEditorName( context );
         
-        String[] ed = (String[])m_editors.get( editor );
+        WikiEditorInfo ed = (WikiEditorInfo)m_editors.get( editor );
         
         if( ed != null )
         {
-            path = ed[0];
+            path = ed.getPath();
         }
         else
         {
@@ -275,4 +282,43 @@ public class EditorManager extends ModuleManager
         
         return usertext;
     }
+    
+    /**
+     *  Contains info about an editor.
+     *  
+     *  @author jalkanen
+     *
+     */
+    private static class WikiEditorInfo
+        extends WikiModuleInfo
+    {
+        private String m_path;
+        private String m_name;
+        
+        protected static WikiEditorInfo newInstance( String name, Element el )
+        {
+            if( name == null || name.length() == 0 ) return null;
+            WikiEditorInfo info = new WikiEditorInfo( name );
+            
+            info.initializeFromXML( el );
+            return info;
+        }
+        
+        protected void initializeFromXML( Element el )
+        {
+            super.initializeFromXML( el );
+            m_path = el.getChildText("path");
+        }
+        
+        private WikiEditorInfo( String name )
+        {
+            m_name = name;
+        }
+        
+        public String getPath()
+        {
+            return m_path;
+        }
+    }
+    
 }
