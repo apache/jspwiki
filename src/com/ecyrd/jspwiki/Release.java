@@ -75,6 +75,7 @@ public class Release
     public static boolean isNewerOrEqual( String version )
         throws IllegalArgumentException
     {
+        if( version == null ) return true;
         String[] versionComponents = StringUtils.split(version,".-");
         int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
         int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
@@ -111,6 +112,8 @@ public class Release
     public static boolean isOlderOrEqual( String version )
         throws IllegalArgumentException
     {
+        if( version == null ) return true;
+        
         String[] versionComponents = StringUtils.split(version,".-");
         int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
         int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
