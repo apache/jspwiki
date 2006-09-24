@@ -534,7 +534,7 @@ public class WikiEngine
             m_urlConstructor.initialize( this, props );
 
             m_pageManager       = new PageManager( this, props );
-            m_pluginManager     = new PluginManager( props );
+            m_pluginManager     = new PluginManager( this, props );
             m_differenceManager = new DifferenceManager( this, props );
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
@@ -549,8 +549,8 @@ public class WikiEngine
             m_userManager           = new UserManager();
             m_groupManager          = new GroupManager();
 
-            m_editorManager     = new EditorManager();
-            m_editorManager.initialize( this, props );
+            m_editorManager     = new EditorManager( this );
+            m_editorManager.initialize( props );
 
             // Initialize the authentication, authorization, user and acl managers
             
