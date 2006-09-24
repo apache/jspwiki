@@ -1,5 +1,15 @@
 2006-09-24  Janne Jalkanen <jalkanen@ecyrd.com>
         
+        * 2.4.58
+        
+        * Some internal reshuffling of Managers.
+        
+        * PluginManager and EditorManager now check if a module is
+        compatible with JSPWiki.  You can state your own compatibility
+        by declaring it in the jspwiki_module.xml file, as
+        <minVersion>2.4</minVersion>, and/or
+        <maxVersion>2.6.32</maxVersion>.
+        
         * 2.4.57
         
         * Added change notes also to attachments
