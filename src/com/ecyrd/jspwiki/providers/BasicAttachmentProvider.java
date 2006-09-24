@@ -101,6 +101,18 @@ public class BasicAttachmentProvider
         {
             f.mkdirs();
         }
+
+        //
+        // Some sanity checks
+        //
+        if( !f.exists() ) 
+            throw new IOException("Could not find or create attachment storage directory '"+m_storageDir+"'");
+
+        if( !f.canWrite() ) 
+            throw new IOException("Cannot write to the attachment storage directory '"+m_storageDir+"'");
+        
+        if( !f.isDirectory() )
+            throw new IOException("Your attachment storage points to a file, not a directory: '"+m_storageDir+"'");
     }
 
     /**
@@ -320,6 +332,13 @@ public class BasicAttachmentProvider
             }
 
             props.setProperty( versionNumber+".author", author );
+            
+            String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
+            if( changeNote != null )
+            {
+                props.setProperty( versionNumber+".changenote", changeNote );
+            }
+            
             putPageProperties( att, props );
         }
         catch( IOException e )
@@ -329,7 +348,7 @@ public class BasicAttachmentProvider
         }
         finally
         {
-                if( out != null ) out.close();
+            if( out != null ) out.close();
         }
     }
 
@@ -523,6 +542,12 @@ public class BasicAttachmentProvider
 
             att.setAuthor( props.getProperty( version+".author" ) );
 
+            String changeNote = props.getProperty( version+".changenote" );
+            if( changeNote != null )
+            {
+                att.setAttribute(WikiPage.CHANGENOTE, changeNote);
+            }
+            
             File f = findFile( dir, att );
 
             att.setSize( f.length() );
