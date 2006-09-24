@@ -20,6 +20,8 @@
 
 package com.ecyrd.jspwiki;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  *  Contains release and version information.
  *
@@ -39,11 +41,11 @@ public class Release
      *  values are "-alpha" and "-beta" for alpha and beta versions,
      *  respectively.
      */
-    private static final String    POSTFIX       = "";
+    private static final String    POSTFIX       = "-cvs";
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 4;
-    public static final int        MINORREVISION = 56;
+    public static final int        MINORREVISION = 57;
 
     /**
      *  This is the generic version string you should use
@@ -64,6 +66,77 @@ public class Release
         return VERSTR;
     }
 
+    /**
+     *  Returns true, if this version of JSPWiki is newer or equal than what is requested.
+     *  @param version A version parameter string (a.b.c-something). B and C are optional.
+     *  @return A boolean value describing whether the given version is newer than the current JSPWiki.
+     *  @since 2.4.57
+     */
+    public static boolean isNewerOrEqual( String version )
+        throws IllegalArgumentException
+    {
+        String[] versionComponents = StringUtils.split(version,".-");
+        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
+        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
+        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
+        
+        if( VERSION == reqVersion )
+        {
+            if( REVISION == reqRevision )
+            {
+                if( MINORREVISION == reqMinorRevision )
+                {
+                    return true;
+                }
+                
+                return MINORREVISION > reqMinorRevision;
+            }
+            else
+            {
+                return REVISION > reqVersion;
+            }
+        }
+        else
+        {
+            return VERSION > reqVersion;
+        }
+    }
+
+    /**
+     *  Returns true, if this version of JSPWiki is older or equal than what is requested.
+     *  @param version A version parameter string (a.b.c-something)
+     *  @return A boolean value describing whether the given version is older than the current JSPWiki version
+     *  @since 2.4.57
+     */
+    public static boolean isOlderOrEqual( String version )
+        throws IllegalArgumentException
+    {
+        String[] versionComponents = StringUtils.split(version,".-");
+        int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
+        int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
+        int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
+        
+        if( VERSION == reqVersion )
+        {
+            if( REVISION == reqRevision )
+            {
+                if( MINORREVISION == reqMinorRevision )
+                {
+                    return true;
+                }
+                
+                return MINORREVISION < reqMinorRevision;
+            }
+            else
+            {
+                return REVISION < reqVersion;
+            }
+        }
+        else
+        {
+            return VERSION < reqVersion;
+        }
+    }
     /**
      *  Executing this class directly from command line prints out
      *  the current version.  It is very useful for things like
