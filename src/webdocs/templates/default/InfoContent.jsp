@@ -253,43 +253,46 @@ function confirmDelete()
 
     <tr>
     <th>Page feed</th>
-    <td><a href="<wiki:Link format="url" jsp="rss.jsp"><wiki:Param name="page" value="<%=c.getName()%>"/><wiki:Param name="mode" value="wiki"/></wiki:Link>"
+    <td><a href="<wiki:Link format='url' jsp='rss.jsp'><wiki:Param name='page' value='<%=c.getName()%>'/><wiki:Param name='mode' value='wiki'/></wiki:Link>"
            title="RSS link for <wiki:PageName />" >
-        <img src="<wiki:Link format="url" jsp="images/xml.png"/>" border="0" alt="[RSS]"  />
+        <img src="<wiki:Link format='url' jsp='images/xml.png'/>" border="0" alt="[RSS]"  />
         </a>
     </td>
     </tr>
-
+    
+    <wiki:Permission permission="upload">
     <tr>
     <th>Upload new version</th>
     <td>
-    <form action="<wiki:Link context="att" format="url" absolute="true"/>"
+    <form action="<wiki:Link context='att' format='url' absolute='true'/>"
           method="post" enctype="multipart/form-data">
 
     <%-- Do NOT change the order of wikiname and content, otherwise the
         servlet won't find its parts. --%>
 
-    <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <%--
     In order to update this attachment with a newer version,
     please select a file name (click "Choose" button), then click on "Update".
     --%>
     <input type="file" name="content" />
     <br />
+    Change note: <input type="text" name="changenote" maxlength="80" width="60" />
+    <br />
     <input type="submit" name="upload" value="Upload new attachment" />
     <input type="hidden" name="action" value="upload" />
-    <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format="url"/>" />
+    <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format='url'/>" />
     </form>
     </td>
     </tr>
-
+   </wiki:Permission>
 
    <wiki:Permission permission="delete">
    <tr>
      <th>Delete attachment</th>
      <td>
          <form name="deleteForm"
-               action="<wiki:Link format="url" context="<%=WikiContext.DELETE%>" />"
+               action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
                method="post"
                accept-charset="<wiki:ContentEncoding />" onsubmit="return confirmDelete()">
            <input type="submit" name="delete-all" value="Delete attachment"/>
@@ -316,7 +319,7 @@ function confirmDelete()
              if( latestVersion > size ) // more than one item in dropdown list
              {
           %>
-               <option value="<wiki:Link context="info" format="url"><wiki:Param name="start" value="-1"/></wiki:Link>"
+               <option value="<wiki:Link context='info' format='url'><wiki:Param name='start' value='-1'/></wiki:Link>"
                       <%= ( (start == -1) ? "selected='selected'" : "") %> >
                   Show all revisions from <%= latestVersion %> down to 1
                </option>
@@ -329,7 +332,7 @@ function confirmDelete()
                selected = ( (start >= startofblock) && (start <= endofblock) );
                if( selected ) start = startofblock; //defensive
           %>
-               <option value="<wiki:Link context="info" format="url"><wiki:Param name="start" value="<%=Integer.toString(startofblock)%>"/></wiki:Link>" 
+               <option value="<wiki:Link context='info' format='url'><wiki:Param name='start' value='<%=Integer.toString(startofblock)%>'/></wiki:Link>" 
                        <%= (selected ? "selected='selected'" : "") %> >
                    Show <%= ((startofblock == 1) ? "first" : Integer.toString(size) ) %> revisions
                    from <%=endofblock%> to <%=startofblock %>
@@ -378,6 +381,12 @@ function confirmDelete()
       <td><wiki:Author /></td>
       <td><wiki:PageSize /></td>
     </tr>
+      <%
+        String changeNote = (String)currentPage.getAttribute(WikiPage.CHANGENOTE);
+        if( changeNote != null )
+        { %>
+          <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=changeNote%></td></tr>
+     <% } %>
     <% } %>
     </wiki:HistoryIterator>
   </table>
