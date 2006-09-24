@@ -45,7 +45,7 @@ public class Release
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 4;
-    public static final int        MINORREVISION = 57;
+    public static final int        MINORREVISION = 58;
 
     /**
      *  This is the generic version string you should use
@@ -92,15 +92,11 @@ public class Release
                 
                 return MINORREVISION > reqMinorRevision;
             }
-            else
-            {
-                return REVISION > reqVersion;
-            }
+
+            return REVISION > reqVersion;
         }
-        else
-        {
-            return VERSION > reqVersion;
-        }
+
+        return VERSION > reqVersion;
     }
 
     /**
@@ -130,16 +126,13 @@ public class Release
                 
                 return MINORREVISION < reqMinorRevision;
             }
-            else
-            {
-                return REVISION < reqVersion;
-            }
+
+            return REVISION < reqVersion;
         }
-        else
-        {
-            return VERSION < reqVersion;
-        }
+
+        return VERSION < reqVersion;
     }
+    
     /**
      *  Executing this class directly from command line prints out
      *  the current version.  It is very useful for things like
