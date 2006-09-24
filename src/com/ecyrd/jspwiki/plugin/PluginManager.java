@@ -620,7 +620,7 @@ public class PluginManager extends ModuleManager
         return null;
     }
     
-    /** Registrar a plugin.
+    /** Register a plugin.
      */
     private void registerPlugin(WikiPluginInfo pluginClass)
     {
@@ -727,6 +727,14 @@ public class PluginManager extends ModuleManager
         private String m_alias;
         private Class  m_clazz;
 
+        /**
+         *  Creates a new plugin info object which can be used to access a plugin.
+         *  
+         *  @param className Either a fully qualified class name, or a "short" name which is then
+         *                   checked against the internal list of plugin packages.
+         *  @param el A JDOM Element containing the information about this class.
+         *  @return A WikiPluginInfo object.
+         */
         protected static WikiPluginInfo newInstance( String className, Element el )
         {
             if( className == null || className.length() == 0 ) return null;
@@ -749,27 +757,43 @@ public class PluginManager extends ModuleManager
             return info;
         }
         
-        private WikiPluginInfo(String className)
+        private WikiPluginInfo( String className )
         {
-            setClassName(className);
+            setClassName( className );
         }
         
-        private void setClassName(String fullClassName)
+        private void setClassName( String fullClassName )
         {
             m_name = ClassUtils.getShortClassName( fullClassName );
             m_className = fullClassName;
         }
 
+        /**
+         *  Returns the full class name of this object.
+         *  @return
+         */
         public String getClassName()
         {
             return m_className;
         }
 
+        /**
+         *  Returns an alias name for this object.
+         *  @return
+         */
         public String getAlias()
         {
             return m_alias;
         }
-
+       
+        /**
+         *  Creates a new plugin instance.
+         *  
+         *  @return A new plugin.
+         *  @throws ClassNotFoundException If the class declared was not found.
+         *  @throws InstantiationException If the class cannot be instantiated-
+         *  @throws IllegalAccessException If the class cannot be accessed.
+         */
         public WikiPlugin newPluginInstance()
             throws ClassNotFoundException,
                    InstantiationException,
@@ -783,6 +807,12 @@ public class PluginManager extends ModuleManager
             return (WikiPlugin) m_clazz.newInstance();
         }
         
+        /**
+         *  Returns a text for IncludeResources.
+         *  
+         *  @param type Either "script" or "stylesheet"
+         *  @return Text, or an empty string, if there is nothing to be included.
+         */
         public String getIncludeText(String type)
         {
             try
@@ -796,8 +826,9 @@ public class PluginManager extends ModuleManager
                     return getStylesheetText();
                 }
             }
-            catch(Exception ex)
+            catch( Exception ex )
             {
+                // We want to fail gracefully here
                 return ex.getMessage();
             }
 
@@ -807,12 +838,12 @@ public class PluginManager extends ModuleManager
         private String getScriptText()
             throws IOException
         {
-            if (m_scriptText != null)
+            if( m_scriptText != null )
             {
                 return m_scriptText;
             }
 
-            if (m_scriptLocation == null)
+            if( m_scriptLocation == null )
             {
                 return "";
             }
@@ -821,7 +852,7 @@ public class PluginManager extends ModuleManager
             {
                 m_scriptText = getTextResource(m_scriptLocation);
             }
-            catch(IOException ex)
+            catch( IOException ex )
             {
                 // Only throw this exception once!
                 m_scriptText = "";
@@ -834,12 +865,12 @@ public class PluginManager extends ModuleManager
         private String getStylesheetText()
             throws IOException
         {
-            if (m_stylesheetText != null)
+            if( m_stylesheetText != null )
             {
                 return m_stylesheetText;
             }
 
-            if (m_stylesheetLocation == null)
+            if( m_stylesheetLocation == null )
             {
                 return "";
             }
@@ -848,7 +879,7 @@ public class PluginManager extends ModuleManager
             {
                 m_stylesheetText = getTextResource(m_stylesheetLocation);
             }
-            catch(IOException ex)
+            catch( IOException ex )
             {
                 // Only throw this exception once!
                 m_stylesheetText = "";
@@ -858,6 +889,10 @@ public class PluginManager extends ModuleManager
             return m_stylesheetText;
         }
         
+        /**
+         *  Returns a string suitable for debugging.  Don't assume that the format
+         *  would stay the same.
+         */
         public String toString()
         {
             return "Plugin :[name=" + m_name + "][className=" + m_className + "]";
