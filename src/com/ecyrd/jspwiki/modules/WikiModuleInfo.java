@@ -24,12 +24,16 @@ public class WikiModuleInfo
     protected String m_stylesheetText;
     protected String m_author;
     protected URL    m_resource;
-
+    protected String m_minVersion;
+    protected String m_maxVersion;
+    
     protected void initializeFromXML( Element el )
     {
         m_scriptLocation = el.getChildText("script");
         m_stylesheetLocation = el.getChildText("stylesheet");
-        m_author = el.getChildText("author");            
+        m_author = el.getChildText("author");
+        m_minVersion = el.getChildText("minVersion");
+        m_maxVersion = el.getChildText("maxVersion");
     }
 
     /**
@@ -63,6 +67,17 @@ public class WikiModuleInfo
     public String getAuthor()
     {
         return m_author;
+    }
+
+
+    public String getMinVersion()
+    {
+        return m_minVersion;
+    }
+    
+    public String getMaxVersion()
+    {
+        return m_maxVersion;
     }
 
     protected String getTextResource(String resourceLocation) 
