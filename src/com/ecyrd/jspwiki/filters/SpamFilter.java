@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.filters;
 
 import java.io.*;
-import java.security.Principal;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +32,6 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
-import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**

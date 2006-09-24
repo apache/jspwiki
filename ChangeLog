@@ -1,3 +1,25 @@
+2006-09-24  Janne Jalkanen <jalkanen@ecyrd.com>
+        
+        * 2.4.57
+        
+        * Added change notes also to attachments
+        
+        * Attachment names are now also beautified (though just the
+        page name part).  This should help the problem when RecentChanges
+        plugin overflows.
+        
+        * Cleaned away a few compiler warnings
+        
+        * Improved some PluginManager javadocs
+        
+        * BasicAttachmentProvider has now more sanity checks and should
+        no more throw wild NPEs at startup.
+        
+        * Fixed
+        BugLuceneSearchProviderNotReadJspwiki.lucene.analyzerFromConfiguration
+        Thanks to Ekkasit Takoungsakdakul for pointing this one out!
+        (And I am very sorry I did not notice that bug report earlier.)
+        
 2006-09-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.56
