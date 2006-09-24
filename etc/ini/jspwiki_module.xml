@@ -14,11 +14,15 @@
    <editor name="plain">
       <author>Janne Jalkanen</author>
       <path>editors/plain.jsp</path>
+      <minVersion>2.4</minVersion>
+      <maxVersion>2.4</maxVersion>
    </editor>
    
    <editor name="WikiWizard">
       <author>i3G Institut Hochschule Heilbronn</author>
       <path>editors/WikiWizard.jsp</path>
+      <minVersion>2.4</minVersion>
+      <maxVersion>2.4</maxVersion>
    </editor>
 
 </modules>
