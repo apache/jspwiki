@@ -111,8 +111,6 @@ public class PageRenamer
 
         // Get the collection of pages that the refered to the old name (the From name)...
         Collection referrers = getReferrersCollection( oldName );
-
-        
         
         newName = MarkupParser.cleanLink( newName );
         
@@ -277,7 +275,7 @@ public class PageRenamer
     private String changeReferrerText(String oldName, String newName, String referrerName, String referrerText)
     {
         // The text we are replacing old links with
-        String replacementLink = null;
+        // String replacementLink = null;
 
         // Work out whether the new page name is CamelCase or not
         // TODO: Check if the pattern can be replaced with the compiled version
