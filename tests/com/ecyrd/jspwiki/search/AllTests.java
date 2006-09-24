@@ -4,8 +4,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.providers.*;
-
 public class AllTests extends TestCase
 {
     public AllTests( String s )
