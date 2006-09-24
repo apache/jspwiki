@@ -34,10 +34,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.InternalWikiException;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.parser.PluginContent;
@@ -168,8 +165,9 @@ public class PluginManager extends ModuleManager
      *
      *  @param props Contents of a "jspwiki.properties" file.
      */
-    public PluginManager( Properties props )
+    public PluginManager( WikiEngine engine, Properties props )
     {
+        super(engine);
         String packageNames = props.getProperty( PROP_SEARCHPATH );
 
         if( packageNames != null )
@@ -331,6 +329,13 @@ public class PluginManager extends ModuleManager
                 registerPlugin(pluginInfo);
             }
 
+            if( !checkCompatibility(pluginInfo) )
+            {
+                String msg = "Plugin '"+pluginInfo.getName()+"' not compatible with this version of JSPWiki";
+                log.info(msg);
+                return msg;
+            }
+            
             //
             //   Create...
             //
@@ -620,12 +625,13 @@ public class PluginManager extends ModuleManager
         return null;
     }
     
-    /** Register a plugin.
+    /** 
+     *  Register a plugin.
      */
     private void registerPlugin(WikiPluginInfo pluginClass)
     {
         String name;
-
+        
         // Registrar the plugin with the className without the package-part
         name = pluginClass.getName();
         if(name != null)
