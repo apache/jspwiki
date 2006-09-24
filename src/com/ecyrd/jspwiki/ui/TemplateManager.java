@@ -82,7 +82,7 @@ public class TemplateManager
 
     public TemplateManager( WikiEngine engine, Properties properties )
     {
-        m_engine = engine;
+        super(engine);
 
         //
         //  Uses the unlimited cache.
