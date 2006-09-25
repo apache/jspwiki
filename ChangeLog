@@ -1,3 +1,13 @@
+2006-09-24  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.59
+        
+        * XMLGroupDatabase and XMLUserDatabase now represent dates using
+          a locale-independent, machine-independent format. To preserve backwards
+          compatibility, JSPWiki will attempt to parse dates using the platform
+          default format if parsing with the standard format fails. New records
+          will always be saved in the standard format.
+        
 2006-09-24  Janne Jalkanen <jalkanen@ecyrd.com>
         
         * 2.4.58

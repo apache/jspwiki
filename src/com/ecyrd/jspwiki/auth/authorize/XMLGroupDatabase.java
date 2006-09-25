@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * &lt;/groups&gt;
  * </code></blockquote>
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-09-04 06:42:55 $
+ * @version $Revision: 1.3 $ $Date: 2006-09-25 02:33:35 $
  * @since 2.4.17
  */
 public class XMLGroupDatabase implements GroupDatabase
@@ -85,7 +86,9 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private Document              c_dom            = null;
 
-    private DateFormat            c_format         = DateFormat.getDateTimeInstance();
+    private DateFormat            c_defaultFormat  = DateFormat.getDateTimeInstance();
+
+    private DateFormat            c_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
 
     private File                  c_file           = null;
     
@@ -403,10 +406,19 @@ public class XMLGroupDatabase implements GroupDatabase
             group.setCreated( c_format.parse( created ) );
             group.setLastModified( c_format.parse( modified ) );
         }
-        catch( ParseException e )
+        catch ( ParseException e )
         {
-            log.warn( "Could not parse 'created' or 'lastModified' " + "attribute for " + " group'"
-                    + group.getName() + "'." + " It may have been tampered with." );
+            // If parsing failed, use the platform default
+            try 
+            {
+                group.setCreated( c_defaultFormat.parse( created ) );                  
+                group.setLastModified( c_defaultFormat.parse( modified ) );                  
+            }
+            catch ( ParseException e2)
+            {
+                log.warn( "Could not parse 'created' or 'lastModified' " + "attribute for " + " group'"
+                          + group.getName() + "'." + " It may have been tampered with." );
+            }
         }
         group.setCreator( creator );
         group.setModifier( modifier );

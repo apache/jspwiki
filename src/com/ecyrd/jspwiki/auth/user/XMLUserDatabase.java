@@ -23,6 +23,7 @@ import java.io.*;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
@@ -56,7 +57,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.16 $ $Date: 2006-09-04 06:42:55 $
+ * @version $Revision: 1.17 $ $Date: 2006-09-25 02:33:35 $
  * @since 2.3
  */
 
@@ -91,8 +92,10 @@ public class XMLUserDatabase extends AbstractUserDatabase
 
     private Document            c_dom             = null;
 
-    private DateFormat          c_format          = DateFormat.getDateTimeInstance();
+    private DateFormat          c_defaultFormat   = DateFormat.getDateTimeInstance();
 
+    private DateFormat          c_format          = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
+    
     private File                c_file            = null;
 
     /**
@@ -523,10 +526,19 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 }
                 catch ( ParseException e )
                 {
-                    log.warn("Could not parse 'created' or 'lastModified' "
-                        + "attribute for "
-                        + " profile '" + profile.getLoginName() + "'."
-                        + " It may have been tampered with." );
+                    // If parsing failed, use the platform default
+                    try 
+                    {
+                        profile.setCreated( c_defaultFormat.parse( created ) );                  
+                        profile.setLastModified( c_defaultFormat.parse( modified ) );                  
+                    }
+                    catch ( ParseException e2)
+                    {
+                        log.warn("Could not parse 'created' or 'lastModified' "
+                            + "attribute for "
+                            + " profile '" + profile.getLoginName() + "'."
+                            + " It may have been tampered with." );
+                    }
                 }
                 return profile;
             }
