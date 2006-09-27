@@ -1,3 +1,20 @@
+2006-09-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.61
+        
+        * Fixed a couple of failing tests (recent changes caused slight behaviour
+        change)
+        
+        * Bug fix: the Wiki Event INITIALIZING is now fired after log4j is running -
+        this stops about a zillion of errors in the container log file.
+        
+        * Slightly juggled with the built-in system filter priorities to make sure
+        that they are executed in correct order.
+        
+        * Added a small fix to saveText() to check if it possibly fixes some problems
+        with disappearing ACL lists or other metadata.  Our provider interface is
+        desperately in the need of an overhaul...
+
 2006-09-27  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.60
