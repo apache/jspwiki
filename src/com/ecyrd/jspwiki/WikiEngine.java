@@ -446,8 +446,6 @@ public class WikiEngine
         m_startTime  = new Date();
         m_properties = props;
 
-        fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
-
         //
         //  Initialized log4j.  However, make sure that
         //  we don't initialize it multiple times.  Also, if
@@ -466,6 +464,8 @@ public class WikiEngine
 
         log.info("*******************************************");
         log.info("JSPWiki "+Release.VERSTR+" starting. Whee!");
+
+        fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
 
         log.debug("Configuring WikiEngine...");
 
@@ -572,8 +572,8 @@ public class WikiEngine
             //
             //  Hook the different manager routines into the system.
             //
-            getFilterManager().addPageFilter(m_referenceManager, -1000 );
-            getFilterManager().addPageFilter(m_searchManager, -1001 );
+            getFilterManager().addPageFilter(m_referenceManager, -1001 );
+            getFilterManager().addPageFilter(m_searchManager, -1002 );
 
         }
         
@@ -1560,9 +1560,9 @@ public class WikiEngine
         //  Refresh the context for post save filtering.
         //
         
-//        page = getPage( page.getName() );
-//        context.setPage( page );
-//        textToHTML( context, text );
+        page = getPage( page.getName() );
+        context.setPage( page );
+        textToHTML( context, text );
 
         m_filterManager.doPostSaveFiltering( context, text );
     }
