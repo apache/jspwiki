@@ -670,7 +670,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
         
-        assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">TestPage/TestAtt.txt</a>"+
+        assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
                       "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
