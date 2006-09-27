@@ -320,7 +320,7 @@ public class RenderingManager implements PageFilter, InternalModule
                 while (i.hasNext())
                 {
                     String page = (String) i.next();
-                    log.debug( "Flusing " + page );
+                    log.debug( "Flushing " + page );
                     m_documentCache.flushPattern( page );
                 }
             }
