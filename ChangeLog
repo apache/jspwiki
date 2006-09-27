@@ -1,3 +1,16 @@
+2006-09-27  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.60
+        
+        * Fixed typo in SecurityConfig.jsp that caused group verification to 
+          report the number of "users" rather thank groups. Credit: Chuck Deal.
+          
+        * Fixed a series of related, minor bugs that caused JSPWiki to always
+        redirect to the front page after login, even when instructed to redirect
+        to another page. This fix also resulted in the removal of a redundant
+        WikiContext creation in LoginForm. Thanks to Terry Steichen for figuring
+        out where to look.
+          
 2006-09-24  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.59

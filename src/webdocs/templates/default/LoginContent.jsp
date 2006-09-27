@@ -47,7 +47,7 @@
     </div>
 
     <div class="block">
-      <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+      <input type="hidden" name="redirect" value="<wiki:Variable var="redirect" />" />
       <input type="submit" name="action" value="login" />
     </div>
     

@@ -13,7 +13,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
  * the future.</p>
  * @see com.ecyrd.jspwiki.WikiEngine#getApplicationName().
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
+ * @version $Revision: 1.4 $ $Date: 2006-09-27 05:07:21 $
  * @since 2.4.22
  */
 public class WikiCommand extends AbstractCommand
@@ -32,7 +32,7 @@ public class WikiCommand extends AbstractCommand
         = new WikiCommand( "install", "%uInstall.jsp", null, null, null );
 
     public static final Command LOGIN
-        = new WikiCommand( "login", "%uLogin.jsp?page=%n", "LoginContent.jsp", null, WikiPermission.LOGIN_ACTION );
+        = new WikiCommand( "login", "%uLogin.jsp?redirect=%n", "LoginContent.jsp", null, WikiPermission.LOGIN_ACTION );
 
     public static final Command LOGOUT
         = new WikiCommand( "logout", "%uLogout.jsp", null, null, WikiPermission.LOGIN_ACTION );

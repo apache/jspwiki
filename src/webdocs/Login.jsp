@@ -24,6 +24,12 @@
                               PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
     
+    // Set the redirect-page variable if one was passed as a parameter
+    if ( request.getParameter( "redirect" ) != null )
+    {
+        wikiContext.setVariable( "redirect", request.getParameter( "redirect" ) );
+    }
+    
     if( !mgr.isContainerAuthenticated() )
     {
         // If user got here and is already authenticated, it means
@@ -87,7 +93,11 @@
         CookieAssertionLoginModule.setUserCookie( response, principal.getName() );
         
         // If wiki page was "Login", redirect to main, otherwise use the page supplied
-        String redirectPage = wikiContext.getName();
+        String redirectPage = request.getParameter( "redirect" );
+        if ( redirectPage == null )
+        {
+           redirectPage = wiki.getFrontPage();
+        }
         String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
     
         // Redirect!

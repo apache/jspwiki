@@ -745,14 +745,14 @@ public class WikiContext
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
                 String pageurl = m_engine.encodeName( m_page.getName() );
                 m_session.addMessage("You don't have access to '" + getName() + "'. Do you want to log in as another user?.");
-                response.sendRedirect( m_engine.getURL(WikiContext.NONE,"Login.jsp","page="+pageurl, false ) );
+                response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_engine.encodeName( m_page.getName() );
                 m_session.addMessage("You don't have access to '" + getName() + "'. Please log in first.");
-                response.sendRedirect( m_engine.getURL(WikiContext.NONE, "Login.jsp", "page="+pageurl, false ) );
+                response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
         }
         return allowed;
