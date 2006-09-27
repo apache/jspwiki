@@ -71,7 +71,7 @@ public class WikiCommandTest extends TestCase
         a = WikiCommand.LOGIN;
         assertEquals( "login", a.getRequestContext() );
         assertEquals( "Login.jsp", a.getJSP() );
-        assertEquals( "%uLogin.jsp?page=%n", a.getURLPattern() );
+        assertEquals( "%uLogin.jsp?redirect=%n", a.getURLPattern() );
         assertEquals( "LoginContent.jsp", a.getContentTemplate() );
         assertNull( a.getTarget() );
         assertNull( a.requiredPermission() );
