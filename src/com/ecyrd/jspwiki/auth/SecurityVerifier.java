@@ -64,7 +64,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-09-05 19:22:39 $
+ * @version $Revision: 1.10 $ $Date: 2006-09-27 05:06:12 $
  * @since 2.4
  */
 public final class SecurityVerifier
@@ -581,7 +581,7 @@ public final class SecurityVerifier
         {
             Group[] groups = db.groups();
             oldGroupCount = groups.length;
-            m_session.addMessage( INFO_GROUPS, "The group database contains " + oldGroupCount + " users." );
+            m_session.addMessage( INFO_GROUPS, "The group database contains " + oldGroupCount + " groups." );
         }
         catch ( WikiSecurityException e )
         {

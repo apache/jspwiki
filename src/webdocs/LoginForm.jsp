@@ -22,13 +22,10 @@
 %>
 
 <%
-    // Stash the Login page context, then go and find the login form
+    // Retrieve the Login page context, then go and find the login form
 
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
-    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                              wikiContext,
-                              PageContext.REQUEST_SCOPE );
-
+    WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
