@@ -64,6 +64,8 @@ import com.ecyrd.jspwiki.ui.WikiCommand;
  *  WikiSession contains information about the user's authentication
  *  status, and is consulted by {@link #getCurrentUser()}.
  *  object</p>
+ *  <p>Do not cache the page object that you get from the WikiContext; always
+ *  use getPage()!</p>
  *
  *  @see com.ecyrd.jspwiki.plugin.Counter
  *  
