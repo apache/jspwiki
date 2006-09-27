@@ -214,13 +214,14 @@ public class RCSFileProviderTest extends TestCase
         throws Exception
     {
         WikiPage p = new WikiPage( engine, NAME1 );
-        p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
         WikiContext context = new WikiContext(engine,p);
-    
+
+        context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
         engine.saveText( context, "test" );
-        p.setAttribute(WikiPage.CHANGENOTE, "Change 2" );
         
+        context.getPage().setAttribute(WikiPage.CHANGENOTE, "Change 2" );
         engine.saveText( context, "test2" );
+
         WikiPage p2 = engine.getPage( NAME1, 1 );
         
         assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
