@@ -28,6 +28,10 @@
     if ( request.getParameter( "redirect" ) != null )
     {
         wikiContext.setVariable( "redirect", request.getParameter( "redirect" ) );
+   	}
+   	else
+   	{
+        wikiContext.setVariable( "redirect", wiki.getFrontPage());
     }
     
     if( !mgr.isContainerAuthenticated() )

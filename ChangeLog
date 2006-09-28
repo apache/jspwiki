@@ -1,3 +1,11 @@
+2006-09-28  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.62
+        
+        * Fixed the fix for the login-redirection issue, patched in 2.4.60. 
+        "Regular" logins (those without a subsequent redirection) now work again.
+        Thanks to the indefatigable Terry Steichen.
+        
 2006-09-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.61
