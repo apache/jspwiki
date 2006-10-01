@@ -1,3 +1,19 @@
+2006-10-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.64
+        
+        * WikiPage.clone() was not cloning everything; this should now be fixed.
+        
+        * Included patch from Neil Miller to make RenderingManager use the
+        eventing system instead of PageFilters.  Thanks!
+        
+        * ShortURLConstructor now supports group functionality.
+        
+        * Fixed an annoying bug which appeared if saving failed for some reason
+        (e.g. when SpamFilter would reject an edit): the cache would still
+        contain the changed page metadata.  We now make a clone of the 
+        WikiPage before we attempt a save.
+
 2006-10-01  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.63
