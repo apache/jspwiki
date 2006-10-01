@@ -77,7 +77,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.42 $ $Date: 2006-09-05 19:22:02 $
+ * @version $Revision: 1.43 $ $Date: 2006-10-01 16:05:08 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -322,6 +322,9 @@ public final class AuthorizationManager
      * so iterate through the Principal set and see if
      * any share the same name as the one we are looking for.</li>
      * </ol>
+     * <p><em>Note: if the Principal parameter is a user principal, the session
+     * must be authenticated in order for the user to "possess it". Anonymous
+     * or asserted sessions will never posseess a named user principal.</em></p>
      * @param session the current wiki session, which must be non-null. If null,
      *            the result of this method always returns <code>false</code>
      * @param principal the Principal (role, group, or user principal) to look

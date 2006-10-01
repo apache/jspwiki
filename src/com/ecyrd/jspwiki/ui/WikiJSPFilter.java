@@ -35,7 +35,9 @@ import com.ecyrd.jspwiki.WikiContext;
  * places requested resources at the appropriate inclusion markers.
  * This is done to let dynamic content (e.g. plugins, editors) 
  * include custom resources, even after the HTML head section is
- * in fact built.
+ * in fact built. This filter is typically the last filter to execute,
+ * and it <em>must</em> run after servlet or JSP code that performs
+ * redirections or sends error codes (such as access control methods).
  * <p>
  * Inclusion markers are placed by the IncludeResourcesTag; the
  * defult content templates (see .../templates/default/commonheader.jsp)

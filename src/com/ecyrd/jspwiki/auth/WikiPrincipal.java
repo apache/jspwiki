@@ -24,11 +24,17 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- *  A lightweight, immutable Principal class.
+ *  A lightweight, immutable Principal class. WikiPrincipals can be created with
+ *  and optional "type" to denote what type of user profile Principal it represents
+ *  (FULL_NAME, WIKI_NAME, LOGIN_NAME). Types are used to determine suitable
+ *  user and login Principals in classes like WikiSession. However, the type
+ *  property of a WikiPrincipal does not affect a WikiPrincipal's logical equality
+ *  or hash code; two WikiPrincipals with the same name but different types are still
+ *  considered equal.
  *
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.10 $ $Date: 2006-08-01 11:21:49 $
+ *  @version $Revision: 1.11 $ $Date: 2006-10-01 16:05:31 $
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal
