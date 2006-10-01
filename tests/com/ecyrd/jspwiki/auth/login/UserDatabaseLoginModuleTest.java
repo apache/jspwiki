@@ -20,7 +20,7 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2005-12-12 06:46:05 $
+ * @version $Revision: 1.4 $ $Date: 2006-10-01 16:12:10 $
  */
 public class UserDatabaseLoginModuleTest extends TestCase
 {
@@ -38,7 +38,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "user" ) ) );
+            assertTrue( principals.contains( new PrincipalWrapper( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) ) );
             assertTrue( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );
             
@@ -48,10 +48,8 @@ public class UserDatabaseLoginModuleTest extends TestCase
             context = new LoginContext( "JSPWiki-custom", subject, handler );
             context.login();
             principals = subject.getPrincipals();
-            assertEquals( 5, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "janne" ) ) );
-            assertTrue( principals.contains( new WikiPrincipal( "JanneJalkanen" ) ) );
-            assertTrue( principals.contains( new WikiPrincipal( "Janne Jalkanen" ) ) );
+            assertEquals( 3, principals.size() );
+            assertTrue( principals.contains( new PrincipalWrapper( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) ) );
             assertTrue( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );            
         }
@@ -71,7 +69,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "user" ) ) );
+            assertTrue( principals.contains( new PrincipalWrapper( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) ) );
             assertTrue( principals.contains( Role.AUTHENTICATED ) );
             assertTrue( principals.contains( Role.ALL ) );
             context.logout();

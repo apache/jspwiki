@@ -59,9 +59,9 @@ public class AuthenticationManagerTest extends TestCase
         WikiSession session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
         assertTrue( session.hasPrincipal( Role.ALL ) );
         assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
-        assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen" ) ) );
-        assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE ) ) );
-        assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen" ) ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( "Janne Jalkanen",  WikiPrincipal.FULL_NAME ) ) );
     }
     
     public void testLoginCustomWithGroup() throws Exception
@@ -83,9 +83,9 @@ public class AuthenticationManagerTest extends TestCase
         m_auth.login( session, Users.JANNE, Users.JANNE_PASS );
         assertEquals( 3, session.getPrincipals().length );
         assertEquals( 2, session.getRoles().length );
-        assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen" ) ) );
+        assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen",  WikiPrincipal.WIKI_NAME ) ) );
         
-        // Listen for any group add events
+        // Listen for any manager group-add events
         GroupManager manager = m_engine.getGroupManager();
         SecurityEventTrap trap = new SecurityEventTrap();
         manager.addWikiEventListener( trap );
@@ -114,11 +114,13 @@ public class AuthenticationManagerTest extends TestCase
         
         // Now, add 'JanneJalkanen' to Test2 group manually; we should see the GroupPrincipal
         groupTest2.add( new WikiPrincipal( "JanneJalkanen" ) );
+        m_groupMgr.setGroup( session, groupTest2 );
         assertFalse( session.hasPrincipal( principalTest1 ) );
         assertTrue( session.hasPrincipal( principalTest2 ) );
         
         // Remove 'JanneJalkenen' manually; the GroupPrincipal should disappear
         groupTest2.remove( new WikiPrincipal( "JanneJalkanen" ) );
+        m_groupMgr.setGroup( session, groupTest2 );
         assertFalse( session.hasPrincipal( principalTest1 ) );
         assertFalse( session.hasPrincipal( principalTest2 ) );
         

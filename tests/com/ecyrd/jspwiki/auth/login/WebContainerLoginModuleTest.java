@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-07-29 19:23:14 $
+ * @version $Revision: 1.7 $ $Date: 2006-10-01 16:12:10 $
  */
 public class WebContainerLoginModuleTest extends TestCase
 {
@@ -43,7 +43,7 @@ public class WebContainerLoginModuleTest extends TestCase
         try
         {
             // Test using Principal (WebContainerLoginModule succeeds)
-            CallbackHandler handler = new WebContainerCallbackHandler( request, db, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
             LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             Set principals = subject.getPrincipals();
@@ -58,7 +58,7 @@ public class WebContainerLoginModuleTest extends TestCase
             subject = new Subject();
             request = new TestHttpServletRequest();
             request.setRemoteUser( "Andrew Jaquith" );
-            handler = new WebContainerCallbackHandler( request, db, authorizer );
+            handler = new WebContainerCallbackHandler( request, authorizer );
             context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             principals = subject.getPrincipals();
@@ -73,7 +73,7 @@ public class WebContainerLoginModuleTest extends TestCase
             subject = new Subject();
             request = new TestHttpServletRequest();
             request.setRemoteAddr( "53.33.128.9" );
-            handler = new WebContainerCallbackHandler( request, db, authorizer );
+            handler = new WebContainerCallbackHandler( request, authorizer );
             context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             principals = subject.getPrincipals();
@@ -101,7 +101,7 @@ public class WebContainerLoginModuleTest extends TestCase
         request.setRoles( new String[] { "IT", "Engineering" } );
         
         // Test using Principal (WebContainerLoginModule succeeds)
-        CallbackHandler handler = new WebContainerCallbackHandler( request, db, authorizer );
+        CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
         LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
         context.login();
         Set principals = subject.getPrincipals();
@@ -123,7 +123,7 @@ public class WebContainerLoginModuleTest extends TestCase
         request.setUserPrincipal( principal );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( request, db, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
             LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             Set principals = subject.getPrincipals();

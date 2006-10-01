@@ -133,14 +133,14 @@ public class XMLUserDatabaseTest extends TestCase {
       // There are 8 test users in the database
       Principal[] p = db.getWikiNames();
       assertEquals( 8, p.length );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "JanneJalkanen" ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "" ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "Administrator" ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.ALICE ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BOB ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.CHARLIE ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "FredFlintstone" ) ) );
-      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BIFF ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "", WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "Administrator", WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.ALICE, WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BOB, WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.CHARLIE, WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "FredFlintstone", WikiPrincipal.WIKI_NAME ) ) );
+      assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BIFF, WikiPrincipal.WIKI_NAME ) ) );
   }
 
   public void testSave() {

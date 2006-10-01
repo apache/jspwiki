@@ -184,8 +184,8 @@ public class AuthorizationManagerTest extends TestCase
         
         // Test user principal posession: Alice isn't considered to
         // have the "Alice" principal because she's not authenticated
-        assertTrue ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ) );
-        assertTrue ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.ALICE ) ) );
+        assertFalse ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ) );
+        assertFalse ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.ALICE ) ) );
         assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.BOB ) ) );
         assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.BOB ) ) );
 
@@ -351,7 +351,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice not anonymous", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
         assertTrue ( "Alice asserted", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
         assertFalse( "Alice not authenticated", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
-        assertTrue ( "Alice in Alice", m_auth.hasRoleOrPrincipal( session, alice ) );
+        assertFalse( "Alice not in Alice", m_auth.hasRoleOrPrincipal( session, alice ) );
         assertFalse( "Alice not in IT", m_auth.hasRoleOrPrincipal( session, it ) );
         assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
         assertFalse( "Alice not in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
@@ -362,7 +362,7 @@ public class AuthorizationManagerTest extends TestCase
         session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it } );
         assertFalse( "Alice not anonymous", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
         assertFalse( "Alice not asserted", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
-        assertTrue ( "Alice not authenticated", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
+        assertTrue ( "Alice authenticated", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
         assertTrue ( "Alice in Ernie", m_auth.hasRoleOrPrincipal( session, alice ) );
         assertTrue ( "Alice in IT", m_auth.hasRoleOrPrincipal( session, it ) );
         assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
@@ -518,9 +518,9 @@ public class AuthorizationManagerTest extends TestCase
         {
             assertFalse( "Failed save: " + e.getLocalizedMessage(), true );
         }
-        assertEquals( new WikiPrincipal( "janne" ), m_auth.resolvePrincipal( "janne" ) );
-        assertEquals( new WikiPrincipal( "Janne Jalkanen" ), m_auth.resolvePrincipal( "Janne Jalkanen" ) );
-        assertEquals( new WikiPrincipal( "JanneJalkanen" ), m_auth.resolvePrincipal( "JanneJalkanen" ) );
+        assertEquals( new WikiPrincipal( "janne",  WikiPrincipal.LOGIN_NAME ), m_auth.resolvePrincipal( "janne" ) );
+        assertEquals( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ), m_auth.resolvePrincipal( "Janne Jalkanen" ) );
+        assertEquals( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ), m_auth.resolvePrincipal( "JanneJalkanen" ) );
 
         // A wiki group should resolve to itself
         Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
