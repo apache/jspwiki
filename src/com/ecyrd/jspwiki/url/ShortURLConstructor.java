@@ -129,6 +129,23 @@ public class ShortURLConstructor
         {
             return doReplacement( "%uError.jsp", name, absolute );
         }
+        else if( context.equals(WikiContext.CREATE_GROUP) )
+        {
+            return doReplacement( viewurl+"?do=NewGroup", name, absolute );
+        }
+        else if( context.equals(WikiContext.DELETE_GROUP) )
+        {
+            return doReplacement( viewurl+"?do=DeleteGroup", name, absolute );
+        }        
+        else if( context.equals(WikiContext.EDIT_GROUP) )
+        {
+            return doReplacement( viewurl+"?do=EditGroup", name, absolute );
+        }
+        else if( context.equals(WikiContext.VIEW_GROUP) )
+        {
+            return doReplacement( viewurl+"?do=Group&group=%n", name, absolute );
+        }
+        
         throw new InternalWikiException("Requested unsupported context "+context);
     }
 
