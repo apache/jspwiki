@@ -32,9 +32,10 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.filters.FilterException;
-import com.ecyrd.jspwiki.filters.FilterManager;
-import com.ecyrd.jspwiki.filters.PageFilter;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventUtils;
+import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -60,11 +61,13 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  @author jalkanen
  *  @since  2.4
  */
-public class RenderingManager implements PageFilter, InternalModule
+public class RenderingManager implements WikiEventListener, InternalModule
 {
     private static Logger log = Logger.getLogger( RenderingManager.class );
 
     private              int    m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
+    
+    private          WikiEngine m_engine;
 
     public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";    
     private static final int    DEFAULT_CACHESIZE = 1000;
@@ -94,6 +97,7 @@ public class RenderingManager implements PageFilter, InternalModule
     public void initialize( WikiEngine engine, Properties properties )
     throws WikiException
     {
+        m_engine = engine;
         int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
             
         if( cacheSize == -1 )
@@ -142,7 +146,7 @@ public class RenderingManager implements PageFilter, InternalModule
         }        
         log.info( "Rendering content with " + renderImplName + "." );
         
-        engine.getFilterManager().addPageFilter( this, FilterManager.SYSTEM_FILTER_PRIORITY );
+        WikiEventUtils.addWikiEventListener(m_engine, WikiPageEvent.POST_SAVE_BEGIN, this);
     }
     
     /**
@@ -292,53 +296,37 @@ public class RenderingManager implements PageFilter, InternalModule
         return null;
     }
 
-    //
-    //  The following methods are for the PageFilter interface
-    //
-    public void initialize( Properties properties ) throws FilterException
-    {
-    }
-
     /**
-     *  Flushes the cache objects that refer to this page.
+     * Flushes the document cache in response to a POST_SAVE_BEGIN event.
+     *  
+     * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
      */
-    public void postSave( WikiContext wikiContext, String content ) throws FilterException
+    public void actionPerformed(WikiEvent event)
     {
-        String pageName = wikiContext.getPage().getName();
-        if( m_documentCache != null )
+        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN) )
         {
-            m_documentCache.flushPattern( pageName );
-            Set referringPages = wikiContext.getEngine().getReferenceManager().findReferredBy( pageName );
-            
-            //
-            //  Flush also those pages that refer to this page (if an nonexistant page
-            //  appears; we need to flush the HTML that refers to the now-existant page
-            //
-            if( referringPages != null )
+            if( m_documentCache != null )
             {
-                Iterator i = referringPages.iterator();
-                while (i.hasNext())
+                String pageName = ((WikiPageEvent) event).getPageName();
+                m_documentCache.flushPattern( pageName );
+                Set referringPages = m_engine.getReferenceManager().findReferredBy( pageName );
+                
+                //
+                //  Flush also those pages that refer to this page (if an nonexistant page
+                //  appears; we need to flush the HTML that refers to the now-existant page
+                //
+                if( referringPages != null )
                 {
-                    String page = (String) i.next();
-                    log.debug( "Flushing " + page );
-                    m_documentCache.flushPattern( page );
+                    Iterator i = referringPages.iterator();
+                    while (i.hasNext())
+                    {
+                        String page = (String) i.next();
+                        log.debug( "Flushing " + page );
+                        m_documentCache.flushPattern( page );
+                    }
                 }
             }
         }
     }
 
-    public String postTranslate( WikiContext wikiContext, String htmlContent ) throws FilterException
-    {
-        return htmlContent;
-    }
-
-    public String preSave( WikiContext wikiContext, String content ) throws FilterException
-    {
-        return content;
-    }
-
-    public String preTranslate( WikiContext wikiContext, String content ) throws FilterException
-    {
-        return content;
-    }
 }
