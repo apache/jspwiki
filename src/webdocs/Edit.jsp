@@ -74,6 +74,8 @@
     {
         log.info("Saving page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
 
+        WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
+
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
         //  is the best place to show errors, though.
@@ -107,7 +109,7 @@
         //  Set author information and other metadata
         //
 
-        wikiContext.getPage().setAuthor( user );
+        modifiedPage.setAuthor( user );
     
         if( changenote == null ) changenote = (String) session.getAttribute("changenote");
         
@@ -115,11 +117,11 @@
         
         if( changenote != null && changenote.length() > 0 )
         {
-            wikiContext.getPage().setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
         }
         else
         {
-            wikiContext.getPage().removeAttribute( WikiPage.CHANGENOTE );
+            modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
         }
 
         //
@@ -138,6 +140,8 @@
 
         try
         {
+            wikiContext.setPage( modifiedPage );
+            
             if( append != null )
             {
                 StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
