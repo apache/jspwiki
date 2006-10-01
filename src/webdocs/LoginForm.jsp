@@ -26,6 +26,15 @@
 
     WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
     
+    // If no context, it means we're using container auth.  So, create one anyway
+    if ( wikiContext == null )
+    {
+        wikiContext = wiki.createContext( request, WikiContext.LOGIN );
+        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                  wikiContext,
+                                  PageContext.REQUEST_SCOPE );
+    }
+    
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),

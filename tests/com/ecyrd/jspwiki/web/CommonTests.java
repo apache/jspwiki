@@ -284,6 +284,34 @@ public abstract class CommonTests extends TestCase
         assertEquals( "", cookie );
     }
     
+    public void testRedirectPageAfterLogin()
+    {
+        // Create new page 
+        login( TEST_LOGINNAME, TEST_PASSWORD );
+        String page = "CreatePage" + System.currentTimeMillis();
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.setWorkingForm( "editForm" );
+        String redirectText = "We created this page to test redirects.";
+        t.setFormElement( "_editedtext", "[{ALLOW view Authenticated}]\n" + redirectText );
+        t.submit( "ok" );
+        t.assertTextPresent( redirectText );
+        
+        // Now, from an anonymous session, try to view it, fail, then login
+        newSession();
+        t.gotoPage( "/Wiki.jsp?page=" + page );
+        t.assertTextNotPresent( redirectText );
+        t.assertFormPresent( "login" );
+        t.assertFormElementPresent( "j_username" );
+        t.assertFormElementPresent( "j_password" );
+        t.setWorkingForm( "login" );
+        t.setFormElement( "j_username", TEST_LOGINNAME );
+        t.setFormElement( "j_password", TEST_PASSWORD );
+        t.submit( "action" );
+
+        // We should be able to see the page now
+        t.assertTextPresent( redirectText );
+    }
+    
     protected void createGroup( String members ) 
     {
         t.gotoPage( "/Wiki.jsp" );
