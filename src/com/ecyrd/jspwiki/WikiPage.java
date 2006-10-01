@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.ecyrd.jspwiki.auth.acl.Acl;
@@ -43,7 +44,7 @@ public class WikiPage
 
     private       String     m_name;
     private       WikiEngine m_engine;
-    private final String     m_wiki;
+    private       String     m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;
     private int              m_version = WikiPageProvider.LATEST_VERSION;
@@ -228,7 +229,9 @@ public class WikiPage
 
     /**
      *  Creates a deep clone of a WikiPage.  Strings are not cloned, since
-     *  they're immutable.
+     *  they're immutable.  Attributes are not cloned, only the internal
+     *  HashMap (so if you modify the contents of a value of an attribute,
+     *  these will reflect back to everyone).
      */
     public Object clone()
     {
@@ -238,11 +241,16 @@ public class WikiPage
        
             p.m_engine = m_engine;
             p.m_name   = m_name;
-
+            p.m_wiki   = m_wiki;
+            
             p.m_author       = m_author;
             p.m_version      = m_version;
-            p.m_lastModified = (Date)m_lastModified.clone();
+            p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
 
+            p.m_fileSize     = m_fileSize;
+                            
+            p.m_attributes.putAll(m_attributes);
+            
             return p;
         }
         catch( CloneNotSupportedException e )
