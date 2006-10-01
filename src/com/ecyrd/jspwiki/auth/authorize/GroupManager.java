@@ -24,7 +24,6 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
@@ -45,45 +44,11 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * refactored into the GroupDatabase interface.</em>
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.9 $ $Date: 2006-08-27 14:05:05 $
+ * @version $Revision: 1.10 $ $Date: 2006-10-01 16:07:11 $
  * @since 2.4.19
  */
 public final class GroupManager implements Authorizer
 {
-    /**
-     * Tiny little listener that captures wiki events fired by Groups this
-     * GroupDatabase knows about. When events are captured, they are forwarded
-     * on to listeners registered with the GroupDatabase instance.
-     */
-    public static class GroupListener implements WikiEventListener
-    {
-        GroupManager m_manager;
-
-        /**
-         * Constructs a new instance of this listener.
-         * @param manager the enclosing GroupManager
-         */
-        public GroupListener( GroupManager manager )
-        {
-            m_manager = manager;
-        }
-
-        /**
-         * Captures wiki events fired by member wiki Groups and forwards them on
-         * to WikiEventListeners registered with this instance. TODO: enclose
-         * this in an inner class at some point...
-         * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
-         */
-        public void actionPerformed( WikiEvent event )
-        {
-            if ( event instanceof WikiSecurityEvent && WikiEventManager.isListening(m_manager) )
-            {
-                WikiEventManager.fireEvent(m_manager,event);
-            }
-        }
-
-    }
-
     public static final String  MESSAGES_KEY       = "group";
 
     private static final String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
@@ -240,7 +205,6 @@ public final class GroupManager implements Authorizer
             throw new WikiSecurityException( e.getMessage() );
         }
 
-        m_groupListener = new GroupListener( this );
         m_wiki = engine.getApplicationName();
 
         // Load all groups from the database into the cache
@@ -565,7 +529,6 @@ public final class GroupManager implements Authorizer
         {
             m_groups.put( group.getPrincipal(), group );
         }
-        group.addWikiEventListener( m_groupListener );
         fireEvent( WikiSecurityEvent.GROUP_ADD, group );
 
         // Save the group to back-end database; if it fails,

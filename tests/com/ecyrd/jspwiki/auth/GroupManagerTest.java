@@ -56,6 +56,7 @@ public class GroupManagerTest extends TestCase
         }
         
         m_groupMgr.addWikiEventListener( m_trap );
+        m_trap.clearEvents();
 
         // Add 3 test groups
         Group group;
@@ -175,29 +176,13 @@ public class GroupManagerTest extends TestCase
         group.add( new WikiPrincipal( "Bob" ) );
         group.add( new WikiPrincipal( "Charlie" ) );
         
-        // First event should be GROUP_ADD
+        // We should see a GROUP_ADD event
         WikiSecurityEvent[] events = m_trap.events();
-        assertEquals( 4, events.length );
+        assertEquals( 1, events.length );
         event = events[0];
         assertEquals( m_groupMgr, event.getSource() );
         assertEquals( WikiSecurityEvent.GROUP_ADD, event.getType() );
         assertEquals( group, event.getTarget() );
-        
-        // Second, third and fourth should be the GROUP_ADD_MEMBER events
-        event = events[1];
-        assertEquals( group, event.getSource() );
-        assertEquals( WikiSecurityEvent.GROUP_ADD_MEMBER, event.getType() );
-        assertEquals( new WikiPrincipal( "Alice" ), event.getTarget() );
-        
-        event = events[2];
-        assertEquals( group, event.getSource() );
-        assertEquals( WikiSecurityEvent.GROUP_ADD_MEMBER, event.getType() );
-        assertEquals( new WikiPrincipal( "Bob" ), event.getTarget() );
-        
-        event = events[3];
-        assertEquals( group, event.getSource() );
-        assertEquals( WikiSecurityEvent.GROUP_ADD_MEMBER, event.getType() );
-        assertEquals( new WikiPrincipal( "Charlie" ), event.getTarget() );
         
         // Clean up
         m_groupMgr.removeGroup( "Events" );
