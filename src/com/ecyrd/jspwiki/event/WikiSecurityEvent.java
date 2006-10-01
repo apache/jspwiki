@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  *   <li>clear all members from group</li>
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-08-27 14:06:00 $
+ * @version $Revision: 1.2 $ $Date: 2006-10-01 16:08:29 $
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
@@ -46,6 +46,15 @@ public final class WikiSecurityEvent extends WikiEvent
 
     private static final long serialVersionUID    = -6751950399721334496L;
 
+    /** When a user's attempts to log in as guest, via cookies, using a password or otherwise. */
+    public static final int   LOGIN_INITIATED          = 30;
+    
+    /** When a user first accesses JSPWiki, but before logging in or setting a cookie. */
+    public static final int   LOGIN_ANONYMOUS          = 31;
+    
+    /** When a user sets a cookie to assert their identity. */
+    public static final int   LOGIN_ASSERTED           = 32;
+    
     /** When a user authenticates with a username and password, or via container auth. */
     public static final int   LOGIN_AUTHENTICATED      = 40;
 
@@ -69,15 +78,6 @@ public final class WikiSecurityEvent extends WikiEvent
 
     /** When all wiki groups are removed from GroupDatabase. */
     public static final int   GROUP_CLEAR_GROUPS       = 47;
-
-    /** When a new member is added to a wiki group. */
-    public static final int   GROUP_ADD_MEMBER         = 48;
-
-    /** When a member is removed from a wiki group. */
-    public static final int   GROUP_REMOVE_MEMBER      = 49;
-
-    /** When all members are cleared from a wiki group. */
-    public static final int   GROUP_CLEAR_MEMBERS      = 50;
 
     /** When access to a resource is allowed. */
     public static final int   ACCESS_ALLOWED           = 51;
@@ -212,9 +212,6 @@ public final class WikiSecurityEvent extends WikiEvent
             case GROUP_ADD:                 return "GROUP_ADD";
             case GROUP_REMOVE:              return "GROUP_REMOVE";
             case GROUP_CLEAR_GROUPS:        return "GROUP_CLEAR_GROUPS";
-            case GROUP_ADD_MEMBER:          return "GROUP_ADD_MEMBER";
-            case GROUP_REMOVE_MEMBER:       return "GROUP_REMOVE_MEMBER";
-            case GROUP_CLEAR_MEMBERS:       return "GROUP_CLEAR_MEMBERS";
             case ACCESS_ALLOWED:            return "ACCESS_ALLOWED";
             case ACCESS_DENIED:             return "ACCESS_DENIED";
             case PROFILE_SAVE:              return "PROFILE_SAVE";
@@ -239,9 +236,6 @@ public final class WikiSecurityEvent extends WikiEvent
             case GROUP_ADD:                 return "new group added";
             case GROUP_REMOVE:              return "group removed";
             case GROUP_CLEAR_GROUPS:        return "all groups cleared";
-            case GROUP_ADD_MEMBER:          return "new member added to group";
-            case GROUP_REMOVE_MEMBER:       return "member removed from group";
-            case GROUP_CLEAR_MEMBERS:       return "all members cleared from group";
             case ACCESS_ALLOWED:            return "access allowed";
             case ACCESS_DENIED:             return "access denied";
             case PROFILE_SAVE:              return "user profile saved";
