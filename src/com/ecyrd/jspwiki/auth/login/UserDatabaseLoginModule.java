@@ -1,7 +1,6 @@
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -33,15 +32,14 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * {@link com.ecyrd.jspwiki.auth.user.UserDatabase}</li>
  * </ol>
  * <p>
- * After authentication, Principals based on the login name, full name, and wiki
- * name will be created and associated with the Subject, as returned by
- * {@link com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(String)}.
+ * After authentication, a Principals based on the login name will be created 
+ * and associated with the Subject.
  * Also, principals {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added to
  * the Subject's principal set.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-08-01 11:26:01 $
+ * @version $Revision: 1.6 $ $Date: 2006-10-01 16:10:28 $
  * @since 2.3
  */
 public class UserDatabaseLoginModule extends AbstractLoginModule
@@ -72,7 +70,6 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
                 throw new FailedLoginException( "No user database: check the callback handler code!" );
             }
             UserProfile profile = db.findByLoginName( username );
-            Principal[] principals = db.getPrincipals( username );
             String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) )
             {
@@ -81,16 +78,9 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
                     log.debug( "Logged in loginName=" + username );
                     log.debug( "Added Principals Role.AUTHENTICATED,Role.ALL" );
                 }
-                for( int i = 0; i < principals.length; i++ )
-                {
-                    m_principals.add( principals[i] );
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( "Added Principal " + principals[i].getName() );
-                    }
-                }
                 
-                // If login succeeds, commit these roles
+                // If login succeeds, commit these principals/roles
+                m_principals.add( new PrincipalWrapper( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) ) );
                 m_principals.add( Role.AUTHENTICATED );
                 m_principals.add( Role.ALL );
                 

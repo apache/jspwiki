@@ -8,27 +8,23 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.auth.Authorizer;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
 
 /**
  * Handles logins made from within JSPWiki.
  * @link AuthenticationManager#getWikiSession(HttpServletRequest).
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-07-29 19:21:51 $
+ * @version $Revision: 1.5 $ $Date: 2006-10-01 16:10:28 $
  * @since 2.3
  */
 public final class WebContainerCallbackHandler implements CallbackHandler
 {
-    private final UserDatabase       m_database;
-
     private final HttpServletRequest m_request;
 
     private final Authorizer         m_authorizer;
     
-    public WebContainerCallbackHandler( HttpServletRequest request, UserDatabase database, Authorizer authorizer )
+    public WebContainerCallbackHandler( HttpServletRequest request, Authorizer authorizer )
     {
         m_request = request;
-        m_database = database;
         m_authorizer = authorizer;
     }
 
@@ -43,10 +39,6 @@ public final class WebContainerCallbackHandler implements CallbackHandler
             if ( callback instanceof HttpRequestCallback )
             {
                 ( (HttpRequestCallback) callback ).setRequest( m_request );
-            }
-            else if ( callback instanceof UserDatabaseCallback )
-            {
-                ( (UserDatabaseCallback) callback ).setUserDatabase( m_database );
             }
             else if ( callback instanceof AuthorizerCallback )
             {

@@ -15,11 +15,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.Authorizer;
-import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
 
 /**
  * <p>
@@ -45,13 +43,11 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * <p>
  * After authentication, the Subject will contain principals
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL}
- * and {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED}.
- * In addition, the Subject will contain any Principals returned by
- * {@link com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(String)},
- * if user profile exists, or a generic WikiPrincipal if not.</p>
+ * and {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED},
+ * plus the Principal that represents the logged-in user.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2006-08-01 11:26:14 $
+ * @version $Revision: 1.11 $ $Date: 2006-10-01 16:10:28 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule
@@ -66,10 +62,9 @@ public class WebContainerLoginModule extends AbstractLoginModule
     public boolean login() throws LoginException
     {
         HttpRequestCallback rcb = new HttpRequestCallback();
-        UserDatabaseCallback udb = new UserDatabaseCallback();
         AuthorizerCallback acb = new AuthorizerCallback();
         Callback[] callbacks = new Callback[]
-        { rcb, udb, acb };
+        { rcb, acb };
         String userId = null;
 
         try
@@ -123,23 +118,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
             
             // If login fails, remove these roles
             m_principalsToRemove.add( Role.AUTHENTICATED );
-            
-            // Add any user principals from the UserDatabase.
-            UserDatabase database = udb.getUserDatabase();
-            if ( database == null )
-            {
-                throw new LoginException( "User database cannot be null." );
-            }
-            Principal[] principals = database.getPrincipals( principal.getName() );
-            for( int i = 0; i < principals.length; i++ )
-            {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug("Added Principal " + principals[i].getName() + "." );
-                }
-                m_principals.add( principals[i] );
-            }
-            
+                        
             return true;
         }
         catch( IOException e )
@@ -151,14 +130,6 @@ public class WebContainerLoginModule extends AbstractLoginModule
         {
             log.error( "UnsupportedCallbackException: " + e.getMessage() );
             return false;
-        }
-        catch( NoSuchPrincipalException e )
-        {
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "Could not find principal in user database." );
-            }
-            return true;
         }
     }
 
@@ -196,7 +167,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
         m_principals.addAll( foundRoles );
 
         // Make sure the same ones are removed if login fails
-        m_principalsToRemove.add( foundRoles );
+        m_principalsToRemove.addAll( foundRoles );
     }
 
 }
