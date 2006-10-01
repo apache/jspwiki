@@ -1,3 +1,46 @@
+2006-10-01  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.63
+
+        * WikiSession receives several under-the-hood changes to improve session
+        stability. The technique used to detect session status changes now includes an
+        explicit check for prior authentication; this should prevent sudden "downgrades"
+        from authenticated status to asserted (cookies). User/login Principals and
+        the status strings (anonymous/asserted/authenticated) are cached now, rather
+        than dynamically calculated. WikiSession gains a new public method, isAsserted()
+        that does what it says. Finally, WikiSession now takes responsibility
+        for populating the JAAS Subject with user profile principals, rather than
+        the various login modules.
+        
+        * AuthenticationManager now fires an event called LOGIN_INITIATED whenever
+        the authentication status changes, signifying that the JAAS login stack
+        executed (but without regard to whether it succeeded). WikiSession listens
+        for this event and updates its cached principals. AuthenticationManager
+        also now fires explicit events called LOGIN_ANONYMOUS and LOGIN_ASSERTED
+        in addition to LOGIN_AUTHENTICATED.
+        
+        * In the name of code simplification, event support was removed from the
+        Group class. It was redundant and made things more complicated. Consequently,
+        GroupManager loses its GroupListener inner class, and WikiSecurityEvent gets
+        rid of types GROUP_ADD_MEMBER, GROUP_REMOVE_MEMBER, GROUP_CLEAR_MEMBERS.
+        If you really really need these let me know, but in the meantime the coarser-
+        grained GROUP_ADD and GROUP_REMOVE will do what we need.
+        
+        * UserDatabaseLoginModule no longer populates WikiSession's Subject with
+        user profile principals; this was moved to WikiSession. This should make
+        pure, authentication-only login modules possible, such as for LDAP and Kerberos.
+        Because authentication and user profile storage are better separated, it will
+        prevent the need to subclass and hack XMLUserDatabase. WebContainerCallbackHandler
+        no longer needs a UserDatabaseCallback as a result, so the callback was removed.
+        
+        * Bug fix: LoginForm now injects a WikiContext, but only if one does not already
+        exist in the page context. This plugs the bug introduced in 2.4.60. Page redirection 
+        after login works for both container and custom authentication; the web unit
+        tests now test for this condition explicitly. The fix has been tested with
+        Tomcat and JBoss 4. 
+        
+        * Fixed a bunch of failing auth tests.
+
 2006-09-28  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.62
