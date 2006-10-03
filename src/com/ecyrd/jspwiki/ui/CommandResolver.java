@@ -49,7 +49,7 @@ import com.ecyrd.jspwiki.url.URLConstructor;
  * containing the page parameter value <code>UserPrefs</code>, 
  * will instead return {@link WikiCommand#PREFS}.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
+ * @version $Revision: 1.4 $ $Date: 2006-10-03 03:14:18 $
  * @since 2.4.22
  */
 public final class CommandResolver
@@ -174,6 +174,8 @@ public final class CommandResolver
      * for the resolution algorithm). Specifically, the Command will 
      * return a non-<code>null</code> value for its {@link AbstractCommand#getTarget()} method.
      * </p>
+     * <p><em>Note: if this method determines that the Command is the VIEW PageCommand, 
+     * then the Command returned will always be targeted to the front page.</em></p>
      * @param request the HTTP request; if <code>null</code>, delegates
      * to {@link #findCommand(String)}
      * @param defaultContext the request context to use by default
@@ -213,6 +215,12 @@ public final class CommandResolver
                     throw new IllegalArgumentException( "Wiki context " + defaultContext + " is illegal." );
                 }
             }
+        }
+        
+        // For PageCommand.VIEW, default to front page if a page wasn't supplied
+        if( PageCommand.VIEW.equals( command ) && pageName == null )
+        {
+            pageName = m_engine.getFrontPage();
         }
         
         // These next blocks handle targeting requirements

@@ -1,3 +1,12 @@
+2006-10-01  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.65
+        
+        * Bug fix: fixed an issue with WikiContext that caused ACLs and policy settings to
+        be ignored when accessing the default front page. This bug was introduced during
+        the AAA mega-patch in July (2.4.25). Note: we still have an unrelated bug
+        with ACLs not being applied the *first time* pages are loaded.
+        
 2006-10-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.64

@@ -227,6 +227,12 @@ public class WikiContext
         
         m_realPage = m_page;
         
+        // Special case: retarget any empty 'view' PageCommands to the front page
+        if ( PageCommand.VIEW.equals( command ) && command.getTarget() == null )
+        {
+            m_command = command.targetedCommand( m_page );
+        }
+        
         // Log in the user if new session or the container status changed
         boolean doLogin = ( (request != null) && m_session.isNew() );
         
