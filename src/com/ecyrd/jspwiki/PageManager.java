@@ -189,6 +189,9 @@ public class PageManager extends ModuleManager
             }
             else
             {
+                //
+                //  Make sure that it no longer exists in internal data structures either.
+                //
                 WikiPage dummy = new WikiPage(m_engine,pageName);
                 m_engine.getSearchManager().pageRemoved(dummy);
                 m_engine.getReferenceManager().pageRemoved(dummy);
@@ -452,11 +455,11 @@ public class PageManager extends ModuleManager
     public void deletePage( WikiPage page )
         throws ProviderException
     {
-        m_provider.deletePage( page.getName() );
+        fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
-        m_engine.getSearchManager().pageRemoved( page );
+        m_provider.deletePage( page.getName() );      
 
-        m_engine.getReferenceManager().pageRemoved( page );        
+        fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
     }
 
     /**
