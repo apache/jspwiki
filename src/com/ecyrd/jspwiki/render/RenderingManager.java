@@ -261,9 +261,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
     {
         Object[] params = { context, doc };
         WikiRenderer rval = null;
-        try {
+        
+        try 
+        {
             rval = (WikiRenderer)m_rendererConstructor.newInstance( params );
-        } catch( Exception e ) {
+        } 
+        catch( Exception e ) 
+        {
             log.error( "Unable to create WikiRenderer", e );
         } 
         return rval;
