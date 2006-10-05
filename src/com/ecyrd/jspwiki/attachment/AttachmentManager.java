@@ -441,6 +441,7 @@ public class AttachmentManager
     /** 
      * Deletes all versions of the given attachment.
      */
+    // FIXME: Should also use events!
     public void deleteAttachment( Attachment att )
     	throws ProviderException
     {
