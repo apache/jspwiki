@@ -60,6 +60,14 @@ public class JSPWikiMarkupParser
     /** Name of the outlink image; relative path to the JSPWiki directory. */
     private static final String OUTLINK_IMAGE = "images/out.png";
     
+    /** The value for anchor element <tt>class</tt> attributes when used 
+      * for wiki page (normal) links. The value is "wikipage". */
+    public static final String CLASS_WIKIPAGE = "wikipage";
+
+    /** The value for anchor element <tt>class</tt> attributes when used 
+      * for edit page links. The value is "editpage". */
+    public static final String CLASS_EDITPAGE = "editpage";
+    
     private static final int              READ          = 0;
     private static final int              EDIT          = 1;
     private static final int              EMPTY         = 2;  // Empty message
@@ -394,13 +402,13 @@ public class JSPWikiMarkupParser
         switch(type)
         {
             case READ:
-                el = new Element("a").setAttribute("class", "wikipage");
+                el = new Element("a").setAttribute("class",CLASS_WIKIPAGE);
                 el.setAttribute("href",m_context.getURL(WikiContext.VIEW, link)+section);
                 el.addContent(text);
                 break;
 
             case EDIT:
-                el = new Element("a").setAttribute("class", "editpage");
+                el = new Element("a").setAttribute("class",CLASS_EDITPAGE);
                 el.setAttribute("title","Create '"+link+"'");
                 el.setAttribute("href", m_context.getURL(WikiContext.EDIT,link));
                 el.addContent(text);
@@ -453,7 +461,7 @@ public class JSPWikiMarkupParser
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
-                el = new Element("a").setAttribute("class","wikipage").setAttribute("href",pagelink).addContent(el);
+                el = new Element("a").setAttribute("class",CLASS_WIKIPAGE).setAttribute("href",pagelink).addContent(el);
                 break;
 
             case EXTERNAL:
