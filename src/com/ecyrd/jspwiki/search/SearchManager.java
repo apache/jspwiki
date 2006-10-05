@@ -26,6 +26,10 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventUtils;
+import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -40,7 +44,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 
 public class SearchManager
     extends BasicPageFilter
-    implements InternalModule
+    implements InternalModule, WikiEventListener
 {
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
@@ -56,6 +60,9 @@ public class SearchManager
         throws WikiException
     {
         initialize( engine, properties );
+        
+        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(), 
+                                            WikiPageEvent.PAGE_DELETE_REQUEST, this);
     }
 
     /**
@@ -191,5 +198,19 @@ public class SearchManager
     public void reindexPage(WikiPage page)
     {
         m_searchProvider.reindexPage(page);
+    }
+
+    public void actionPerformed(WikiEvent event)
+    {
+        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )
+        {
+            String pageName = ((WikiPageEvent) event).getPageName();
+
+            WikiPage p = m_engine.getPage( pageName );
+            if( p != null )
+            {
+                pageRemoved( p );
+            }
+        }
     }
 }
