@@ -295,7 +295,7 @@ public class WikiEngine
     public static synchronized WikiEngine getInstance( ServletConfig config,
                                                        Properties props )
     {
-        return( getInstance( config.getServletContext(), null ) );
+        return( getInstance( config.getServletContext(), props ) );
     }
 
     /**
