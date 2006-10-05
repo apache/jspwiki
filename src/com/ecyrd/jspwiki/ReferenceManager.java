@@ -29,6 +29,10 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventUtils;
+import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -111,7 +115,7 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 public class ReferenceManager
     extends BasicPageFilter
-    implements InternalModule
+    implements InternalModule, WikiEventListener
 {
     /** Maps page wikiname to a Collection of pages it refers to. The Collection 
      *  must contain Strings. The Collection may contain names of non-existing
@@ -289,6 +293,9 @@ public class ReferenceManager
 
         sw.stop();
         log.info( "Cross reference scan done in "+sw );
+        
+        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(), 
+                                            WikiPageEvent.PAGE_DELETED, this);
     }
 
     /**
@@ -570,6 +577,11 @@ public class ReferenceManager
     {
         String pageName = page.getName();
         
+        pageRemoved(pageName);
+    }
+
+    private void pageRemoved(String pageName)
+    {
         Collection refTo = (Collection)m_refersTo.get( pageName );
         
         if( refTo != null )
@@ -604,8 +616,24 @@ public class ReferenceManager
         {
             m_referredBy.remove( pageName );
         }
-        
+
+        //
+        //  Remove any traces from the disk, too
+        //
         serializeToDisk();
+
+        try
+        {
+            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+
+            f = new File( f, getHashFileName(pageName) );
+        
+            if( f.exists() ) f.delete();
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.error("What do you mean - no such algorithm?", e);
+        }
     }
     
     /**
@@ -1080,6 +1108,19 @@ public class ReferenceManager
             log.error("Error while trying to fetch a page name; trying to cope with the situation.",e);
             
             return orig;
+        }
+    }
+
+    public void actionPerformed(WikiEvent event)
+    {
+        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )
+        {
+            String pageName = ((WikiPageEvent) event).getPageName();
+            
+            if( pageName != null )
+            {
+                pageRemoved( pageName );
+            }
         }
     }
 }
