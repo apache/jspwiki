@@ -74,7 +74,6 @@ public class EditorManager extends ModuleManager
     /**
      *  Initializes the EditorManager.  It also registers any editors it can find.
      *  
-     *  @param engine The WikiEngine we're attached to.
      *  @param props  Properties for setup.
      */
     public void initialize( Properties props )

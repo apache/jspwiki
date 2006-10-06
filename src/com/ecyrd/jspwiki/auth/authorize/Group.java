@@ -39,7 +39,7 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
  * </p>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-10-01 16:07:08 $
+ * @version $Revision: 1.12 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.3
  */
 public class Group
@@ -80,10 +80,8 @@ public class Group
     }
 
     /**
-     * Adds a Principal to the group. When a Principal is added successfully,
-     * also sends a WikiSecurityEvent of type
-     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_ADD_MEMBER} to all
-     * of its registered WikiEventListeners.
+     * Adds a Principal to the group. 
+     * 
      * @param user the principal to add
      * @return <code>true</code> if the operation was successful
      */
@@ -99,10 +97,7 @@ public class Group
     }
 
     /**
-     * Clears all Principals from the group list. When a Group's members are
-     * cleared successfully, also sends a WikiSecurityEvent of type
-     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_CLEAR_MEMBERS} to
-     * all of its registered WikiEventListeners.
+     * Clears all Principals from the group list. 
      */
     public void clear()
     {
@@ -242,10 +237,8 @@ public class Group
     }
 
     /**
-     * Removes a Principal from the group. When a Principal is added
-     * successfully, also sends a WikiSecurityEvent of type
-     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE_MEMBER} to
-     * all of its registered WikiEventListeners.
+     * Removes a Principal from the group. 
+     * 
      * @param user the principal to remove
      * @return <code>true</code> if the operation was successful
      */

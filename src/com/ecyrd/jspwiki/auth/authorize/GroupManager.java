@@ -44,7 +44,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * refactored into the GroupDatabase interface.</em>
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2006-10-01 16:07:11 $
+ * @version $Revision: 1.11 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.4.19
  */
 public final class GroupManager implements Authorizer
@@ -483,14 +483,7 @@ public final class GroupManager implements Authorizer
      * restoration of the old version).
      * </p>
      * <p>
-     * This method will register the new Group with the GroupManager. A
-     * consequence of "registration" is that the GroupManager will listen for --
-     * and forward -- group events such as
-     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_ADD_MEMBER},
-     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_CLEAR_MEMBERS} and
-     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE_MEMBER} to
-     * all event listeners attached to GroupManager via
-     * {@link #addWikiEventListener(WikiEventListener)}. For example,
+     * This method will register the new Group with the GroupManager. For example,
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager} attaches each
      * WikiSession as a GroupManager listener. Thus, the act of registering a
      * Group with <code>setGroup</code> means that all WikiSessions will
@@ -668,7 +661,6 @@ public final class GroupManager implements Authorizer
      *
      * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
      * @param type       the event type to be fired
-     * @param principal  the subject of the event, which may be <code>null</code>
      * @param target     the changed Object, which may be <code>null</code>
      */
     protected final void fireEvent( int type, Object target )

@@ -13,7 +13,7 @@ import java.security.Principal;
  * principals of type GroupPrincipal.
  * @see com.ecyrd.jspwiki.auth.authorize.Group
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2006-07-25 03:46:41 $
+ * @version $Revision: 1.3 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.3.79
  */
 public final class GroupPrincipal implements Principal
@@ -23,7 +23,7 @@ public final class GroupPrincipal implements Principal
 
     /**
      * Constructs a new GroupPrincipal object for all wikis (*).
-     * @param wiki the name of the wiki this group is for; cannot be <code>null</code>
+     *
      * @param group the wiki group; cannot be <code>null</code>
      */
     public GroupPrincipal( String group )

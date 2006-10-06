@@ -53,7 +53,7 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  * @author Andrew Jaquith
  * @author Janne Jalkanen
  * @author Erik Bunn
- * @version $Revision: 1.34 $ $Date: 2006-10-01 16:04:40 $
+ * @version $Revision: 1.35 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.3
  */
 public final class AuthenticationManager
@@ -95,7 +95,7 @@ public final class AuthenticationManager
     /** Just to provide compatibility with the old versions.  The same
      *  as SECURITY_OFF.
      *   
-     *  @decprecated
+     *  @deprecated
      */
     protected static final String             SECURITY_CONTAINER = "container";
 

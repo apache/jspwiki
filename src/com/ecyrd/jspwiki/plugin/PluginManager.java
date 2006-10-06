@@ -776,7 +776,7 @@ public class PluginManager extends ModuleManager
 
         /**
          *  Returns the full class name of this object.
-         *  @return
+         *  @return The full class name of the object.
          */
         public String getClassName()
         {
@@ -784,8 +784,8 @@ public class PluginManager extends ModuleManager
         }
 
         /**
-         *  Returns an alias name for this object.
-         *  @return
+         *  Returns the alias name for this object.
+         *  @return An alias name for the plugin.
          */
         public String getAlias()
         {
