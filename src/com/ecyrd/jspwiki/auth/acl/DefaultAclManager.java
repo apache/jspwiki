@@ -17,7 +17,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 /**
  * Default implementation that parses Acls from wiki page markup.
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2005-12-12 06:31:36 $
+ * @version $Revision: 1.7 $ $Date: 2006-10-09 18:50:54 $
  * @since 2.3
  */
 public class DefaultAclManager implements AclManager
@@ -118,26 +118,42 @@ public class DefaultAclManager implements AclManager
      */
     public Acl getPermissions( WikiPage page )
     {
-      //
-      //  Does the page already have cached ACLs?
-      //
-      Acl acl = page.getAcl();
-      log.debug( "page="+page.getName()+"\n"+acl );
+        //
+        //  Does the page already have cached ACLs?
+        //
+        Acl acl = page.getAcl();
+        log.debug( "page="+page.getName()+"\n"+acl );
 
-      if( acl == null )
-      {
-          //
-          //  If null, try the parent.
-          //
-          if( acl == null && page instanceof Attachment )
-          {
-              WikiPage parent = m_engine.getPage( ((Attachment)page).getParentName() );
+        if( acl == null )
+        {
+            //
+            //  If null, try the parent.
+            //
+            if( page instanceof Attachment )
+            {
+                WikiPage parent = m_engine.getPage( ((Attachment)page).getParentName() );
 
-              acl = getPermissions( parent );
-          }
-      }
+                acl = getPermissions( parent );
+            }
+            else
+            {
+                //
+                //  Or, try parsing the page
+                //
+                m_engine.getHTML( page.getName() );
+              
+                page = m_engine.getPage( page.getName(), page.getVersion() );
+                acl = page.getAcl();
+                
+                if( acl == null )
+                {
+                    acl = new AclImpl();
+                    page.setAcl( acl );
+                }
+            }
+        }
 
-      return acl;
+        return acl;
     }
 
 }
