@@ -593,8 +593,9 @@ jspwiki.rss.channelLanguage = en-us
 ###########################################################################
 #
 #  JDBC Configuration. Tells JSPWiki which tables and columns to map
-#  to for the JDBCUserDatabase. For more info, see the JavaDoc
-#  for class com.ecyrd.jspwiki.auth.user.JDBCUserDatabase.
+#  to for the JDBCUserDatabase and JDBCGroupDatabase. For more info, see the
+#  JavaDoc for classes com.ecyrd.jspwiki.auth.user.JDBCUserDatabase and
+#  com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase.
 #
 jspwiki.userdatabase.datasource=jdbc/UserDatabase
 jspwiki.userdatabase.table=users
@@ -607,6 +608,15 @@ jspwiki.userdatabase.created=created
 jspwiki.userdatabase.modified=modified
 jspwiki.userdatabase.roleTable=roles
 jspwiki.userdatabase.role=role
+jspwiki.groupdatabase.datasource=jdbc/GroupDatabase
+jspwiki.groupdatabase.table=groups
+jspwiki.groupdatabase.membertable=group_members
+jspwiki.groupdatabase.created=created
+jspwiki.groupdatabase.creator=creator
+jspwiki.groupdatabase.name=name
+jspwiki.groupdatabase.member=member
+jspwiki.groupdatabase.modified=modified
+jspwiki.groupdatabase.modifier=modifier
 
 ###########################################################################
 #

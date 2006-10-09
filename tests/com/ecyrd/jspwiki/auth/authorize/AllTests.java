@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-10-09 02:37:37 $
+ * @version $Revision: 1.6 $ $Date: 2006-10-09 02:38:20 $
  */
 public class AllTests extends TestCase
 {
@@ -19,8 +19,8 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite( "Authorizer, group and group database tests" );
         suite.addTestSuite( GroupTest.class );
-        suite.addTestSuite( JDBCGroupDatabaseTest.class );
         suite.addTestSuite( WebContainerAuthorizerTest.class );
+        suite.addTestSuite( JDBCGroupDatabaseTest.class );
         suite.addTestSuite( XMLGroupDatabaseTest.class );
         return suite;
     }

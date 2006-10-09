@@ -46,7 +46,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.75 2006-09-10 12:56:47 jalkanen Exp $
+    $Id: build.xml,v 1.76 2006-10-09 02:43:33 arj Exp $
 -->    
        
 <!--   
@@ -590,6 +590,7 @@
         toFile="${tests.build}/jspwiki.properties.custom" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.custom">
       <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.XMLUserDatabase" />
+      <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase" />
       <entry key="jspwiki.referenceStyle" value="relative" />
     </propertyfile>
     <webtest-setup context="test-custom"
@@ -618,6 +619,7 @@
     <propertyfile file="${tests.build}/jspwiki.properties.custom-jdbc">
       <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
       <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
+      <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
     </propertyfile>
     <webtest-setup context="test-custom-jdbc"
       webxml="${tests.build}/web.xml.custom" 
@@ -630,6 +632,7 @@
       <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
       <entry key="jspwiki.userdatabase.isSharedWithContainer" value="true" />
       <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
+      <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
     </propertyfile>
     <webtest-setup context="test-container-jdbc"
       webxml="${tests.build}/web.xml.container" 
@@ -1027,10 +1030,11 @@ To automate the JAR signing processs, you can add the property
     <loadproperties srcFile="etc/jspwiki.properties">
       <filterchain>
         <linecontainsregexp>
-          <regexp pattern="^jspwiki.userdatabase"/>
+          <regexp pattern="^[jspwiki.userdatabase|jspwiki.groupdatabase]"/>
         </linecontainsregexp>
       </filterchain>
     </loadproperties>
+    <check-property prop="jspwiki.userdatabase.datasource" />
     <check-property prop="jspwiki.userdatabase.table" />
     <check-property prop="jspwiki.userdatabase.email" />
     <check-property prop="jspwiki.userdatabase.fullName" />
@@ -1041,6 +1045,15 @@ To automate the JAR signing processs, you can add the property
     <check-property prop="jspwiki.userdatabase.modified" />
     <check-property prop="jspwiki.userdatabase.roleTable" />
     <check-property prop="jspwiki.userdatabase.role" />
+    <check-property prop="jspwiki.groupdatabase.datasource" />
+    <check-property prop="jspwiki.groupdatabase.table" />
+    <check-property prop="jspwiki.groupdatabase.membertable" />
+    <check-property prop="jspwiki.groupdatabase.created" />
+    <check-property prop="jspwiki.groupdatabase.creator" />
+    <check-property prop="jspwiki.groupdatabase.name" />
+    <check-property prop="jspwiki.groupdatabase.member" />
+    <check-property prop="jspwiki.groupdatabase.modified" />
+    <check-property prop="jspwiki.groupdatabase.modifier" />
     
     <!-- Check for the presence of the database driver & script dir -->
     <check-file file="etc/db/${jdbc.driver.id}"      prop="db.scripts" />
