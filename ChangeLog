@@ -1,3 +1,19 @@
+2006-10-08  Andrew Jaquith <andrew@freshcookies.org>
+
+        * 2.4.67
+        
+        * Enhancement: JDBCUserDatabase will now use transactions, if the
+        back-end database supports them. In addition, JDBCUserDatabase now
+        nails up a single, long-running connection instead of continually
+        opening and closing them. Log message verbosity expanded slightly.
+        
+        * Enhancement: GroupDatabase now has a relational database implementation
+        called JDBCGroupDatabase. It supports transactions and is configured
+        using a container-managed JNDI DataSource, exactly like JDBCUserDatabase.
+        Unit tests and DDL setup/teardown scripts were upgraded for the
+        new implementation. Sample scripts are included for PostgreSQL and
+        Hypersonic.
+
 2006-10-06  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * Fixed a bunch of javadoc warnings; not enough to warrant a
