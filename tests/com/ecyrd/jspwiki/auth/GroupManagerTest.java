@@ -190,7 +190,9 @@ public class GroupManagerTest extends TestCase
     
     public static Test suite()
     {
-        return new TestSuite( GroupManagerTest.class );
+        TestSuite suite = new TestSuite("Group manager tests");
+        suite.addTestSuite( GroupManagerTest.class );
+        return suite;
     }
     
 }
