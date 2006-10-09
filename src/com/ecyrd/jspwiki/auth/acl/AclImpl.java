@@ -29,7 +29,7 @@ import java.util.Vector;
  *  JSPWiki implementation of an Access Control List.
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
+ *  @version $Revision: 1.4 $ $Date: 2006-10-09 18:50:20 $
  *  @since 2.3
  */
 public class AclImpl
@@ -49,19 +49,23 @@ public class AclImpl
      */
     public Principal[] findPrincipals(Permission permission)
     {
-      Vector principals = new Vector();
-      Enumeration entries = entries();
-      while (entries.hasMoreElements()) {
-        AclEntry entry = (AclEntry)entries.nextElement();
-        Enumeration permissions = entry.permissions();
-        while (permissions.hasMoreElements()) {
-          Permission perm = (Permission)permissions.nextElement();
-          if (perm.implies(permission)) {
-            principals.add(entry.getPrincipal());
-          }
+        Vector principals = new Vector();
+        Enumeration entries = entries();
+        
+        while (entries.hasMoreElements()) 
+        {
+            AclEntry entry = (AclEntry)entries.nextElement();
+            Enumeration permissions = entry.permissions();
+            while (permissions.hasMoreElements()) 
+            {
+                Permission perm = (Permission)permissions.nextElement();
+                if (perm.implies(permission)) 
+                {
+                    principals.add(entry.getPrincipal());
+                }
+            }
         }
-      }
-      return (Principal[])principals.toArray(new Principal[principals.size()]);
+        return (Principal[])principals.toArray(new Principal[principals.size()]);
     }
   
     private boolean hasEntry( AclEntry entry )
@@ -162,6 +166,11 @@ public class AclImpl
         }
 
         return sb.toString();
+    }
+
+    public boolean isEmpty()
+    {
+        return m_entries.isEmpty();
     }
 
 }
