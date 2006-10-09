@@ -77,7 +77,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.43 $ $Date: 2006-10-01 16:05:08 $
+ * @version $Revision: 1.44 $ $Date: 2006-10-09 18:48:29 $
  * @since 2.3
  * @see AuthenticationManager
  */
@@ -172,6 +172,7 @@ public final class AuthorizationManager
             fireEvent( WikiSecurityEvent.ACCESS_DENIED, null, permission );
             return false;
         }
+        
         Principal user = session.getLoginPrincipal();
         
         // Always allow the action if user has AllPermission
@@ -201,10 +202,11 @@ public final class AuthorizationManager
 
         //
         // If the page or ACL is null, it's allowed.
+        //
         String pageName = ((PagePermission)permission).getPage();
         WikiPage page = m_engine.getPage( pageName );
         Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
-        if ( page == null ||  acl == null )
+        if ( page == null ||  acl == null || acl.isEmpty() )
         {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
