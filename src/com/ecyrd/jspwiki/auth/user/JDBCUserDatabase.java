@@ -121,9 +121,15 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * <p>JDBC driver JARs should be added to Tomcat's <code>common/lib</code> directory.
  * For more Tomcat 5.5 JNDI configuration examples, 
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
- * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
+ * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.</p>
+ * <p>JDBCUserDatabase commits changes as transactions if the back-end database supports them.
+ * If the database supports transactions, user profile changes are saved
+ * to permanent storage only when the {@link #commit()} method is called. If the database does <em>not</em>
+ * support transactions, then changes are made immediately (during the {@link #save(UserProfile)} 
+ * method), and the {@linkplain #commit()} method no-ops. Thus, callers should always call the
+ * {@linkplain #commit()} method after saving a profile to guarantee that changes are applied.</p>
  * @author Andrew R. Jaquith
- * @version $Revision: 1.8 $ $Date: 2006-08-01 11:26:50 $
+ * @version $Revision: 1.9 $ $Date: 2006-10-09 02:33:29 $
  * @since 2.3
  */public class JDBCUserDatabase extends AbstractUserDatabase
 {
@@ -201,13 +207,31 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     private String m_created = null;
     private String m_modified = null;
     private boolean m_sharedWithContainer = false;
+    private boolean m_supportsCommits = false;
+    private Connection m_conn = null;
 
     /**
+     * Commits pending additions to the user database. If the JDBC database does not support
+     * transactions, this method does nothing.
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#commit()
      */
     public void commit() throws WikiSecurityException
     {
-        log.info("Committing transactions.");
+        if ( !m_supportsCommits )
+        {
+            return;
+        }
+        
+        // Commit the transaction
+        try
+        {
+            m_conn.commit();
+            log.info("Committed transactions.");
+        }
+        catch ( SQLException e )
+        {
+            throw new WikiSecurityException( "Could not commit transaction: " + e.getMessage() );
+        }
     }
 
     /**
@@ -220,17 +244,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      */
     public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
     {
-        // Get database connection
-        Connection conn;
-        try 
-        {
-            conn = m_ds.getConnection();
-        }
-        catch ( SQLException e )
-        {
-            throw new WikiSecurityException( e.getMessage() );
-        }
-        
         // Get the existing user; if not found, throws NoSuchPrincipalException
         findByLoginName( loginName );
         
@@ -238,30 +251,18 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             PreparedStatement ps;
             // Delete user record
-            ps = conn.prepareStatement( m_deleteUserByLoginName );
+            ps = m_conn.prepareStatement( m_deleteUserByLoginName );
             ps.setString(1, loginName );
             ps.execute();
             
             // Delete role record
-            ps = conn.prepareStatement( m_deleteRoleByLoginName );
+            ps = m_conn.prepareStatement( m_deleteRoleByLoginName );
             ps.setString(1, loginName );
             ps.execute();
         }
         catch ( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
-        }
-        
-        // Close connection
-        try 
-        {
-            if ( conn != null )
-            {
-                conn.close();
-            }
-        }
-        catch ( SQLException e )
-        {
         }
     }        
     
@@ -306,11 +307,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      */
     public Principal[] getWikiNames() throws WikiSecurityException
     {
-        Connection conn = null;
         Set principals = new HashSet();
         try {
-            conn = m_ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement( m_findAll );
+            PreparedStatement ps = m_conn.prepareStatement( m_findAll );
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
             {
@@ -329,18 +328,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         catch ( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
-        }
-        
-        // Close connection
-        try 
-        {
-            if ( conn != null )
-            {
-                conn.close();
-            }
-        }
-        catch ( SQLException e )
-        {
         }
         
         return (Principal[])principals.toArray( new Principal[principals.size()] );
@@ -431,6 +418,36 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
         log.info( "JDBCUserDatabase initialized from JNDI DataSource: " + jndiName );
+        
+        // Determine if the datasource supports commits
+        try
+        {
+            Connection conn = m_ds.getConnection();
+            DatabaseMetaData dmd = conn.getMetaData();
+            if ( dmd.supportsTransactions() )
+            {
+                m_supportsCommits = true;
+                conn.setAutoCommit( false );
+                log.info("JDBCUserDatabase supports transactions. Good; we will use them." );
+            }
+            conn.close();
+        }
+        catch ( SQLException e )
+        {
+            log.warn("JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
+            throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
+        }
+        
+        // Nail up the database connection
+        try 
+        {
+            m_conn = m_ds.getConnection();
+            log.info("Opened JDBCUserDatabase connection." );
+        }
+        catch ( SQLException e )
+        {
+            throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase connection error: " + e.getMessage() );
+        }
     }
 
     /**
@@ -449,17 +466,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      */
     public void save( UserProfile profile ) throws WikiSecurityException
     {
-        // Get database connection
-        Connection conn;
-        try 
-        {
-            conn = m_ds.getConnection();
-        }
-        catch ( Exception e )
-        {
-            throw new WikiSecurityException( e.getMessage() );
-        }
-        
         // Figure out which prepared statement to use & execute it
         String loginName = profile.getLoginName();
         PreparedStatement ps = null;
@@ -499,7 +505,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             if ( existingProfile == null )
             {
                 // User is new: insert new user record
-                ps = conn.prepareStatement( m_insertProfile );
+                ps = m_conn.prepareStatement( m_insertProfile );
                 ps.setString(1, profile.getEmail() );
                 ps.setString(2, profile.getFullname() );
                 ps.setString(3, password );
@@ -512,7 +518,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 // Insert role record if no roles yet
                 if ( m_sharedWithContainer )
                 {
-                    ps = conn.prepareStatement( m_findRoles );
+                    ps = m_conn.prepareStatement( m_findRoles );
                     ps.setString( 1, profile.getLoginName() );
                     ResultSet rs = ps.executeQuery();
                     int roles = 0;
@@ -522,7 +528,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     }
                     if ( roles == 0 )
                     {
-                        ps = conn.prepareStatement( m_insertRole );
+                        ps = m_conn.prepareStatement( m_insertRole );
                         ps.setString( 1, profile.getLoginName() );
                         ps.setString( 2, m_initialRole );
                         ps.execute();
@@ -535,7 +541,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             else
             {
                 // User exists: modify existing record
-                ps = conn.prepareStatement( m_updateProfile );
+                ps = m_conn.prepareStatement( m_updateProfile );
                 ps.setString(1, profile.getEmail() );
                 ps.setString(2, profile.getFullname() );
                 ps.setString(3, password );
@@ -561,14 +567,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      */
     private UserProfile findByPreparedStatement( String sql, String index ) throws NoSuchPrincipalException
     {
-        Connection conn = null;
         UserProfile profile = null;
         boolean found = false;
         boolean unique = true;
         try 
         {
-            conn = m_ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement( sql );
+            PreparedStatement ps = m_conn.prepareStatement( sql );
             ps.setString( 1, index );
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
@@ -592,18 +596,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         catch ( SQLException e )
         {
             throw new NoSuchPrincipalException( e.getMessage() );
-        }
-        
-        // Close connection
-        try 
-        {
-            if ( conn != null )
-            {
-                conn.close();
-            }
-        }
-        catch ( SQLException e )
-        {
         }
         
         if ( !found )
