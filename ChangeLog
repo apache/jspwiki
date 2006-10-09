@@ -1,3 +1,10 @@
+2006-10-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.68
+        
+        * Hopefully fixed the "ACL not refreshed at startup" problem,
+        reported by many people.
+
 2006-10-08  Andrew Jaquith <andrew@freshcookies.org>
 
         * 2.4.67
