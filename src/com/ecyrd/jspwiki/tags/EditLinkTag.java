@@ -133,7 +133,7 @@ public class EditLinkTag
         {
           case ANCHOR:
             out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)
-                     +"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\"\">");
+                     +"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">");
             break;
 
           case URL:
