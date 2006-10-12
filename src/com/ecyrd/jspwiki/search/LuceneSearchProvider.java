@@ -78,11 +78,11 @@ public class LuceneSearchProvider implements SearchProvider
 
     // Number of page updates before we optimize the index.
     public static final int LUCENE_OPTIMIZE_COUNT      = 10;
-    private static final String LUCENE_ID              = "id";
-    private static final String LUCENE_PAGE_CONTENTS   = "contents";
-    private static final String LUCENE_AUTHOR          = "author";
-    private static final String LUCENE_ATTACHMENTS     = "attachment";
-    private static final String LUCENE_PAGE_NAME       = "name";
+    protected static final String LUCENE_ID            = "id";
+    protected static final String LUCENE_PAGE_CONTENTS = "contents";
+    protected static final String LUCENE_AUTHOR        = "author";
+    protected static final String LUCENE_ATTACHMENTS   = "attachment";
+    protected static final String LUCENE_PAGE_NAME     = "name";
 
     private String           m_luceneDirectory = null;
     private int              m_updateCount = 0;
@@ -139,6 +139,14 @@ public class LuceneSearchProvider implements SearchProvider
         // the Lucene "pages that need updating".
         LuceneUpdater updater = new LuceneUpdater( m_engine, this, initialDelay, indexDelay );
         updater.start();
+    }
+
+    /**
+     *  Returns the handling engine. 
+     */
+    protected WikiEngine getEngine()
+    {
+        return m_engine;
     }
 
     /**
@@ -371,7 +379,7 @@ public class LuceneSearchProvider implements SearchProvider
         return analyzer;
     }
 
-    private void luceneIndexPage( WikiPage page, String text, IndexWriter writer )
+    protected void luceneIndexPage( WikiPage page, String text, IndexWriter writer )
         throws IOException
     {
         // make a new, empty document
