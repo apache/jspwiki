@@ -363,6 +363,9 @@ public class AttachmentServlet
         }
         catch( RedirectException e )
         {
+            WikiSession session = WikiSession.getWikiSession( m_engine, req );
+            session.addMessage( e.getMessage() );
+            
             req.getSession().setAttribute("msg", e.getMessage());
             res.sendRedirect( e.getRedirect() );
         }
