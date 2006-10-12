@@ -42,6 +42,7 @@ public abstract class MarkupParser
         this limits the size of a single line.  */
     protected static final int              PUSHBACK_BUFFER_SIZE = 10*1024;
     protected PushbackReader                m_in;
+    private int              m_pos = -1; // current position in reader stream
 
     protected WikiEngine     m_engine;
     protected WikiContext    m_context;
@@ -182,6 +183,38 @@ public abstract class MarkupParser
      */
     public abstract WikiDocument parse()
          throws IOException;
+
+    /** 
+     *  Return the current position in the reader stream.
+     *  The value will be -1 prior to reading.
+     * @return the reader position as an int.
+     */
+    public int getPosition()
+    {
+        return m_pos;
+    }
+
+    protected int nextToken()
+        throws IOException
+    {
+        if( m_in == null ) return -1;
+        m_pos++;
+        return m_in.read();
+    }
+
+    /**
+     *  Push back any character to the current input.  Does not
+     *  push back a read EOF, though.
+     */
+    protected void pushBack( int c )
+        throws IOException
+    {        
+        if( c != -1 && m_in != null )
+        {
+            m_pos--;
+            m_in.unread( c );
+        }
+    }
 
     /**
      *  Cleans a Wiki name.
