@@ -68,6 +68,10 @@ public class JSPWikiMarkupParser
       * for edit page links. The value is "editpage". */
     public static final String CLASS_EDITPAGE = "editpage";
     
+    /** The value for anchor element <tt>class</tt> attributes when used 
+      * for interwiki page links. The value is "interwiki". */
+    public static final String CLASS_INTERWIKI = "interwiki";
+    
     private static final int              READ          = 0;
     private static final int              EDIT          = 1;
     private static final int              EMPTY         = 2;  // Empty message
@@ -472,7 +476,7 @@ public class JSPWikiMarkupParser
                 break;
                 
             case INTERWIKI:
-                el = new Element("a").setAttribute("class","interwiki");
+                el = new Element("a").setAttribute("class",CLASS_INTERWIKI);
                 el.setAttribute("href",link+section);
                 el.addContent(text);
                 break;
@@ -1215,7 +1219,7 @@ public class JSPWikiMarkupParser
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
-    private Element handleHyperlinks( String link )
+    private Element handleHyperlinks( String link, int pos )
     {
         StringBuffer sb        = new StringBuffer(link.length()+80);
         String       reallink;
@@ -1235,7 +1239,7 @@ public class JSPWikiMarkupParser
         {
             try
             {
-                Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link );
+                Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link, pos );
 
                 addElement( pluginContent );
             }
@@ -1437,27 +1441,6 @@ public class JSPWikiMarkupParser
         }
 
         return null;
-    }
-
-
-    private int nextToken()
-        throws IOException
-    {
-        if( m_in == null ) return -1;
-        return m_in.read();
-    }
-
-    /**
-     *  Push back any character to the current input.  Does not
-     *  push back a read EOF, though.
-     */
-    private void pushBack( int c )
-        throws IOException
-    {        
-        if( c != -1 && m_in != null )
-        {
-            m_in.unread( c );
-        }
     }
 
     /**
@@ -1959,6 +1942,7 @@ public class JSPWikiMarkupParser
         throws IOException
     {
         StringBuffer sb = new StringBuffer(40);
+        int pos = getPosition();
         int ch;
         boolean isPlugin = false;
 
@@ -2034,7 +2018,7 @@ public class JSPWikiMarkupParser
             return m_currentElement;
         }
 
-        return handleHyperlinks( sb.toString() );
+        return handleHyperlinks( sb.toString(), pos );
     }
 
     /**
