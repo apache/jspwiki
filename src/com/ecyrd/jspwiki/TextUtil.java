@@ -264,15 +264,16 @@ public class TextUtil
      *  @param src  The string to find.
      *  @param dest The string to replace <I>src</I> with.
      */
-
-    public static String replaceString( String orig, String src, String dest )
+    public final static String replaceString( String orig, String src, String dest )
     {
-        if( orig == null ) return null;
+        if ( orig == null ) return null;
+        if ( src == null || dest == null ) throw new NullPointerException();
+        if ( src.length() == 0 ) return orig;
 
         StringBuffer res = new StringBuffer();
         int start, end = 0, last = 0;
 
-        while( (start = orig.indexOf(src,end)) != -1 )
+        while ( (start = orig.indexOf(src,end)) != -1 )
         {
             res.append( orig.substring( last, start ) );
             res.append( dest );
