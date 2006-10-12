@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.WikiEngine;
   * 
   * @author  Murray Altheim
   * @author  Andrew Jaquith
-  * @version $Id: WikiEngineEvent.java,v 1.2 2006-08-27 14:05:41 jalkanen Exp $
+  * @version $Id: WikiEngineEvent.java,v 1.3 2006-10-12 19:57:54 jalkanen Exp $
   * @see     com.ecyrd.jspwiki.event.WikiEvent
   * @since   2.4.20
   */
@@ -93,6 +93,18 @@ public class WikiEngineEvent extends WikiEvent
      *  Returns the WikiEngine that spawned this event.
      *
      * @return  the WikiEngine that spawned this event.
+     */
+    public WikiEngine getEngine()
+    {
+        return m_engine;
+    }
+
+
+    /**
+     *  Returns the WikiEngine that spawned this event.
+     *
+     * @return  the WikiEngine that spawned this event.
+     * @deprecated  use {@link #getEngine()} instead.
      */
     public WikiEngine getWikiEngine()
     {
