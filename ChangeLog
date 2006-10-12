@@ -1,3 +1,22 @@
+2006-10-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.69
+        
+        * Added a couple of patches from Tomasz Szymko to fix a problem
+        with messages from the AttachmentServlet, and a problem with
+        EditLinkTag.
+        
+        * Added patch from Murray Altheim to fix a problem with
+        TextUtil.replaceString() - it would be dying under certain
+        circumstances.
+        
+        * Added patch from Murray to add "_bounds" parameter to the
+        plugin invocation.  _bounds consists of an integer array (int[]), 
+        where element 0 is the start of the plugin position in the page, 
+        and element 1 the end.
+
+        * Small fixes to LuceneSearchProvider.
+
 2006-10-09  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.68
