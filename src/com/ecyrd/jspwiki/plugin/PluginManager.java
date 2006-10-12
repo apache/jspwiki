@@ -143,6 +143,13 @@ public class PluginManager extends ModuleManager
     public static final String PARAM_CMDLINE   = "_cmdline";
 
     /**
+     *  The name of the parameter containing the start and end positions in the
+     *  read stream of the plugin text (stored as a two-element int[], start
+     *  and end resp.).
+     */
+    public static final String PARAM_BOUNDS    = "_bounds";
+
+    /**
      *  A special name to be used in case you want to see debug output
      */
     public static final String PARAM_DEBUG     = "debug";
@@ -405,23 +412,26 @@ public class PluginManager extends ModuleManager
         }
     }
 
-
     /**
-     *  Parses plugin arguments.  Handles quotes and all other kewl
-     *  stuff.
-     *  
-     *  @param argstring The argument string to the plugin.  This is
+     *  Parses plugin arguments.  Handles quotes and all other kewl stuff.
+     *
+     *  <h3>Special parameters</h3>
+     *  The plugin body is put into a special parameter defined by {@link #PARAM_BODY};
+     *  the plugin's command line into a parameter defined by {@link #PARAM_CMDLINE};
+     *  and the bounds of the plugin within the wiki page text by a parameter defined
+     *  by {@link #PARAM_BOUNDS}, whose value is stored as a two-element int[] array,
+     *  i.e., <tt>[start,end]</tt>.
+     *
+     * @param argstring The argument string to the plugin.  This is
      *  typically a list of key-value pairs, using "'" to escape
      *  spaces in strings, followed by an empty line and then the
      *  plugin body.  In case the parameter is null, will return an
      *  empty parameter list.
      *
-     *  @return A parsed list of parameters.  The plugin body is put
-     *  into a special parameter defined by PluginManager.PARAM_BODY.
+     * @return A parsed list of parameters.
      *
-     *  @throws IOException If the parsing fails.
+     * @throws IOException If the parsing fails.
      */
-
     public Map parseArgs( String argstring )
         throws IOException
     {
@@ -582,7 +592,7 @@ public class PluginManager extends ModuleManager
         return commandline;
     }
 
-   public Content parsePluginLine( WikiContext context, String commandline )
+   public Content parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
         PatternMatcher  matcher  = new Perl5Matcher();
@@ -598,6 +608,14 @@ public class PluginManager extends ModuleManager
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
                 Map arglist     = parseArgs( args );
+
+                // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
+                if ( pos != -1 )
+                {
+                    int end = ( pos + commandline.length() + 2 );
+                    int[] bounds = new int[] { pos, end };
+                    arglist.put( PARAM_BOUNDS, bounds );
+                }
 
                 PluginContent result = new PluginContent( plugin, arglist );
                 
