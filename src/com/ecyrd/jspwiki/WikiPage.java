@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.ecyrd.jspwiki.auth.acl.Acl;
