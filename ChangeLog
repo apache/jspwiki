@@ -1,3 +1,12 @@
+2006-10-13  Erik Bunn  <ebu@memecry.net>
+
+        * 2.4.70
+        
+        * Minor mod to WeblogEntryPlugin: now accepts a 'page' parameter,
+        like WeblogPlugin. Allows providing a 'new entry' link on some
+        page other than the actual blog page; this may be useful e.g.
+        for alternate views of a blog page.
+
 2006-10-12  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.69
