@@ -38,6 +38,13 @@ public class WeblogEntryPlugin implements WikiPlugin
     public static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 
     public static final String PARAM_ENTRYTEXT = "entrytext";
+    /** 
+     * Optional parameter: page that actually contains the blog.
+     * This lets us provide a "new entry" link for a blog page 
+     * somewhere else than on the page itself.
+     */
+    // "page" for uniform naming with WeblogPlugin...
+    public static final String PARAM_BLOGNAME = "page"; 
 
     public String getNewEntryPage( WikiEngine engine, String blogName )
         throws ProviderException
@@ -60,7 +67,11 @@ public class WeblogEntryPlugin implements WikiPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        String weblogName = context.getPage().getName();
+        String weblogName = (String)params.get( PARAM_BLOGNAME );
+        if( weblogName == null )
+        {
+            weblogName = context.getPage().getName();
+        }
         WikiEngine engine = context.getEngine();
         
         StringBuffer sb = new StringBuffer();
