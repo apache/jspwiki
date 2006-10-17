@@ -40,7 +40,8 @@
     String author  = request.getParameter("author");
     String link    = request.getParameter("link");
     String remember = request.getParameter("remember");
-
+    String changenote = request.getParameter( "changenote" );
+    
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
     if( latestversion == null )
