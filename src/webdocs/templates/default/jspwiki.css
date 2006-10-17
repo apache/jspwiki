@@ -148,9 +148,9 @@ a.footnote               { color: #0044AA; }
                            background-repeat: no-repeat; }
 .information             { background-image: url(images/information.png);
                            background-color: #e0e0ff; }
-.warning                 { background-image: url(images/error.png);
+.warning                 { background-image: url(images/exclamation.png);
                            background-color: #ffff80; }
-.error                   { background-image: url(images/exclamation.png); 
+.error                   { background-image: url(images/error.png); 
                            background-color: #ffe0e0; }
 .error * li              { margin-left: 0; padding-left: 0; }
 
