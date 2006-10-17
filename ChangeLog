@@ -1,3 +1,13 @@
+2006-10-17  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.71
+        
+        * Small fix from Tomasz Szymko: jspwiki.css has information
+        and error images reversed.
+        
+        * Comment.jsp did not compile.  Reported by a number of people.
+        Ooops...
+
 2006-10-13  Erik Bunn  <ebu@memecry.net>
 
         * 2.4.70
