@@ -1,3 +1,23 @@
+2006-10-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.72
+        
+        * SpamFilter is now a lot smarter.  I enlisted a small guy
+        called Herb, who has agreed to sit in the JAR file, and watch
+        for any spam.  Log files are a bit better, too.
+        
+        * SpamFilter will now watch at consecutive modifications, and
+        mark them as spam, if there are too many similar-looking
+        modifications (no matter what IP they're from).
+        
+        * SpamFilter can now connect to Akismet (www.akismet.com).
+        You need to get your own API key, though, and put it in the
+        filters.xml config file.  Unfortunately we don't yet have
+        the ability to mark "ham" and "spam".
+        
+        * ShortURLConstructor did not handle CONFLICT situations
+        correctly.
+
 2006-10-17  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.71
