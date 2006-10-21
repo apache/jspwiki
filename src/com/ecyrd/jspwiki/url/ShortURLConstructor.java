@@ -129,6 +129,10 @@ public class ShortURLConstructor
         {
             return doReplacement( viewurl+"?do=Delete", name, absolute ); 
         }
+        else if( context.equals(WikiContext.CONFLICT) )
+        {
+            return doReplacement( viewurl+"?do=PageModified", name, absolute ); 
+        }
         else if( context.equals(WikiContext.PREFS) )
         {
             return doReplacement( viewurl+"?do=UserPreferences", name, absolute ); 
