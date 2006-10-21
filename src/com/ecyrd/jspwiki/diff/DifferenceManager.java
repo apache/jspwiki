@@ -114,8 +114,8 @@ public class DifferenceManager
         {
             diff = m_provider.makeDiffHtml( firstWikiText, secondWikiText);
         
-        if( diff == null )
-            diff = "";
+            if( diff == null )
+                diff = "";
         }
         catch(Exception e)
         {
