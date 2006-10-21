@@ -24,34 +24,44 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.akismet.Akismet;
+
+import org.apache.commons.jrcs.diff.*;
+import org.apache.commons.jrcs.diff.myers.MyersDiff;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  A regular expression-based spamfilter that can also do choke modifications.
+ *  This is Herb, the JSPWiki spamfilter that can also do choke modifications.
  *
  *  Parameters:
  *  <ul>
  *    <li>wordlist - Page name where the regexps are found.  Use [{SET spamwords='regexp list separated with spaces'}] on
  *     that page.  Default is "SpamFilterWordList".
- *    <li>blacklist - The name of an attachment containing the list of spam patterns, one per line</li>
+ *    <li>blacklist - The name of an attachment containing the list of spam patterns, one per line. Default is
+ *        "SpamFilterWordList/blacklist.txt"</li>
  *    <li>errorpage - The page to which the user is redirected.  Has a special variable $msg which states the reason. Default is "RejectedMessage".
- *    <li>pagechangesinminute - How many page changes are allowed/minute.  Default is 5.
- *    <li>bantime - How long an IP address stays on the temporary ban list (default is 60 for 60 minutes).
+ *    <li>pagechangesinminute - How many page changes are allowed/minute.  Default is 5.</li>
+ *    <li>similarchanges - How many similar page changes are allowed before the host is banned.  Default is 2.  (since 2.4.72)</li>
+ *    <li>bantime - How long an IP address stays on the temporary ban list (default is 60 for 60 minutes).</li>
+ *    <li>maxurls - How many URLs can be added to the page before it is considered spam (default is 5)</li>
  *  </ul>
+ *  
+ *  <p>Changes by admin users are ignored.</p>
+ *  
  *  @since 2.1.112
  *  @author Janne Jalkanen
  */
 public class SpamFilter
     extends BasicPageFilter
 {
+    private String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
+    
     private String m_forbiddenWordsPage = "SpamFilterWordList";
     private String m_errorPage          = "RejectedMessage";
     private String m_blacklist          = "SpamFilterWordList/blacklist.txt";
@@ -69,8 +79,11 @@ public class SpamFilter
     public static final String PROP_WORDLIST  = "wordlist";
     public static final String PROP_ERRORPAGE = "errorpage";
     public static final String PROP_PAGECHANGES = "pagechangesinminute";
+    public static final String PROP_SIMILARCHANGES = "similarchanges";
     public static final String PROP_BANTIME   = "bantime";
     public static final String PROP_BLACKLIST = "blacklist";
+    public static final String PROP_MAXURLS   = "maxurls";
+    public static final String PROP_AKISMET_API_KEY = "akismet-apikey";
     
     private Vector m_temporaryBanList = new Vector();
     
@@ -83,6 +96,18 @@ public class SpamFilter
      */
     private int m_limitSinglePageChanges = 5;
     
+    private int m_limitSimilarChanges = 2;
+    
+    /**
+     *  How many URLs can be added at maximum.
+     */
+    private int m_maxUrls = 5;
+    
+    private Pattern m_UrlPattern;
+    private Akismet m_akismet;
+
+    private String  m_akismetAPIKey = null;
+    
     public void initialize( Properties properties )
     {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST, 
@@ -93,17 +118,49 @@ public class SpamFilter
         m_limitSinglePageChanges = TextUtil.getIntegerProperty( properties,
                                                                 PROP_PAGECHANGES,
                                                                 m_limitSinglePageChanges );
-        
+
+        m_limitSimilarChanges = TextUtil.getIntegerProperty( properties,
+                                                             PROP_SIMILARCHANGES,
+                                                             m_limitSimilarChanges );
+
+        m_maxUrls = TextUtil.getIntegerProperty( properties,
+                                                 PROP_MAXURLS,
+                                                 m_maxUrls );
+
         m_banTime = TextUtil.getIntegerProperty( properties,
                                                  PROP_BANTIME,
                                                  m_banTime );
     
         m_blacklist = properties.getProperty( PROP_BLACKLIST, m_blacklist );
         
+        try
+        {
+            m_UrlPattern = m_compiler.compile( URL_REGEXP );
+        }
+        catch( MalformedPatternException e )
+        {
+            log.fatal("Internal error: Someone put in a faulty pattern.",e);
+            throw new InternalWikiException("Faulty pattern.");
+        }
+
+        m_akismetAPIKey = TextUtil.getStringProperty( properties,
+                                                      PROP_AKISMET_API_KEY,
+                                                      m_akismetAPIKey );
+        
         log.info("Spam filter initialized.  Temporary ban time "+m_banTime+
                  " mins, max page changes/minute: "+m_limitSinglePageChanges );
+        
+        
     }
 
+    /**
+     *  Parses a list of patterns and returns a Collection of compiled Pattern
+     *  objects.
+     *  
+     * @param source
+     * @param list
+     * @return
+     */
     private Collection parseWordList( WikiPage source, String list )
     {
         ArrayList compiledpatterns = new ArrayList();
@@ -132,6 +189,13 @@ public class SpamFilter
         return compiledpatterns;
     }
 
+    /**
+     *  Takes a MT-Blacklist -formatted blacklist and returns a list of compiled
+     *  Pattern objects.
+     *  
+     *  @param list
+     *  @return
+     */
     private Collection parseBlacklist( String list )
     {
         ArrayList compiledpatterns = new ArrayList();
@@ -175,16 +239,34 @@ public class SpamFilter
         return compiledpatterns;
     }
     
-    private synchronized void checkSinglePageChange( WikiContext context )
+    /**
+     *  Takes a single page change and performs a load of tests on the content change.
+     *  An admin can modify anything.
+     *  
+     *  @param context
+     *  @param content
+     *  @throws RedirectException
+     */
+    private synchronized void checkSinglePageChange( WikiContext context, String content )
         throws RedirectException
     {
         HttpServletRequest req = context.getHttpRequest();
-        
+
+        if( context.hasAdminPermissions() )
+        {
+            return;
+        }
+
         if( req != null )
         {
             String addr = req.getRemoteAddr();
-            int counter = 0;
-                
+            int hostCounter = 0;
+            int changeCounter = 0;
+
+            String change = getChange( context, content );
+
+            log.debug("Change is"+change);
+
             long time = System.currentTimeMillis()-60*1000L; // 1 minute
             
             for( Iterator i = m_lastModifications.iterator(); i.hasNext(); )
@@ -200,33 +282,166 @@ public class SpamFilter
                     i.remove();
                     continue;
                 }
+         
+                //
+                // Check if this IP address has been seen before
+                //
                 
                 if( host.getAddress().equals(addr) )
                 {
-                    counter++;
+                    hostCounter++;
+                }
+                
+                //
+                //  Check, if this change has been seen before
+                //
+                
+                if( host.getChange() != null && host.getChange().equals(change) )
+                {
+                    changeCounter++;
                 }
             }
             
-            if( counter >= m_limitSinglePageChanges )
+            //
+            //  Now, let's check against the limits.
+            //
+            if( hostCounter >= m_limitSinglePageChanges )
             {
-                Host host = new Host( addr );
+                Host host = new Host( addr, null );
 
-                if( context.hasAdminPermissions() )
-                {
-                    return;
-                }
                 
                 m_temporaryBanList.add( host );
                 
-                log.info("Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
-                throw new RedirectException( "Too many modifications/minute",
+                log.info("SPAM:TooManyModifications. Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
+                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb!",
                                              context.getViewURL( m_errorPage ) );
             }
             
-            m_lastModifications.add( new Host( addr ) );
+            if( changeCounter >= m_limitSimilarChanges )
+            {
+                Host host = new Host( addr, null );
+                
+                m_temporaryBanList.add( host );
+                
+                log.info("SPAM:SimilarModifications. Added host "+addr+" to temporary ban list for doing too many similar modifications" );
+                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb!",
+                                             context.getViewURL( m_errorPage ) );                
+            }
+            
+            //
+            //  Calculate the number of links in the addition.
+            //
+            
+            String tstChange = change;
+            int    urlCounter = 0;
+            
+            while( m_matcher.contains(tstChange,m_UrlPattern) )
+            {
+                MatchResult m = m_matcher.getMatch();
+                
+                tstChange = tstChange.substring( m.end(0) );
+                
+                urlCounter++;
+            }
+            
+            if( urlCounter > m_maxUrls )
+            {
+                Host host = new Host( addr, null );
+                
+                m_temporaryBanList.add( host );
+                
+                log.info("SPAM:TooManyUrls. Added host "+addr+" to temporary ban list for adding too many URLs" );
+                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb!",
+                                             context.getViewURL( m_errorPage ) );                
+            }
+            
+            //
+            //  Do Akismet check
+            //
+            
+            checkAkismet( context, change );
+            
+            m_lastModifications.add( new Host( addr, change ) );
         }
     }
 
+    /**
+     *  Checks against the akismet system.
+     *  
+     * @param context
+     * @param change
+     * @throws RedirectException
+     */
+    private void checkAkismet( WikiContext context, String change )
+        throws RedirectException
+    {
+        if( m_akismetAPIKey != null )
+        {
+            if( m_akismet == null )
+            {
+                log.info("Initializing Akismet spam protection.");
+                
+                m_akismet = new Akismet( m_akismetAPIKey, context.getEngine().getBaseURL() );
+
+                if( !m_akismet.verifyAPIKey() )
+                {
+                    log.error("Akismet API key cannot be verified.  Please check your config.");
+                    m_akismetAPIKey = null;
+                    m_akismet = null;
+                }
+            }
+            
+            HttpServletRequest req = context.getHttpRequest();
+                
+            if( req != null && m_akismet != null )
+            {
+                log.debug("Calling Akismet to check for spam...");
+                
+                StopWatch sw = new StopWatch();
+                sw.start();
+                
+                String ipAddress     = req.getRemoteAddr();
+                String userAgent     = req.getHeader("User-Agent");
+                String referrer      = req.getHeader( "Referer");
+                String permalink     = context.getViewURL( context.getPage().getName() );
+                String commentType   = (context.getRequestContext().equals(WikiContext.COMMENT) ? "comment" : "edit" );
+                String commentAuthor = context.getCurrentUser().getName();
+                String commentAuthorEmail = null;
+                String commentAuthorURL   = null;
+                    
+                boolean isSpam = m_akismet.commentCheck( ipAddress,
+                                                         userAgent,
+                                                         referrer,
+                                                         permalink,
+                                                         commentType,
+                                                         commentAuthor,
+                                                         commentAuthorEmail,
+                                                         commentAuthorURL,
+                                                         change,
+                                                         null );
+                
+                sw.stop();
+                
+                log.debug("Akismet request done in: "+sw);
+                
+                if( isSpam )
+                {
+                    Host host = new Host( ipAddress, null );
+                    
+                    m_temporaryBanList.add( host );
+
+                    log.info("SPAM:Akismet. Akismet thinks this change is spam; added host to temporary ban list.");
+                    
+                    throw new RedirectException("Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb!",
+                                                context.getViewURL( m_errorPage ) );                
+                }
+            }
+        }
+    }
+    
+    /**
+     *  Goes through the ban list and cleans away any host which has expired from it.
+     */
     private synchronized void cleanBanList()
     {
         long now = System.currentTimeMillis();
@@ -243,6 +458,12 @@ public class SpamFilter
         }
     }
     
+    /**
+     *  Checks the ban list if the IP address of the changer is already on it.
+     *  
+     *  @param context
+     *  @throws RedirectException
+     */
     
     private void checkBanList( WikiContext context )
         throws RedirectException
@@ -270,6 +491,12 @@ public class SpamFilter
         
     }
     
+    /**
+     *  If the spam filter notices changes in the black list page, it will refresh
+     *  them automatically.
+     *  
+     *  @param context
+     */
     private void refreshBlacklists( WikiContext context )
     {
         try
@@ -345,8 +572,8 @@ public class SpamFilter
     {
         cleanBanList();
         checkBanList( context );
-        checkSinglePageChange( context );
-
+        checkSinglePageChange( context, content );
+        
         refreshBlacklists(context);
         
         String changeNote = (String)context.getPage().getAttribute( WikiPage.CHANGENOTE );
@@ -372,18 +599,66 @@ public class SpamFilter
                 //  Spam filter has a match.
                 //
 
-                throw new RedirectException( "Content matches the spam filter '"+p.getPattern()+"'", 
+                log.info("SPAM:Regexp. Content matches the spam filter '"+p.getPattern()+"'");
+                
+                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb!", 
                                              context.getURL(WikiContext.VIEW,m_errorPage) );
             }
             
             if( changeNote != null && m_matcher.contains( changeNote, p ) )
             {
-                throw new RedirectException( "Content matches the spam filter '"+p.getPattern()+"'", 
+                log.info("SPAM:Regexp. Content matches the spam filter '"+p.getPattern()+"'");
+
+                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb!", 
                                              context.getURL(WikiContext.VIEW,m_errorPage) );                
             }
         }
 
         return content;
+    }
+    
+    /**
+     *  Creates a simple text string describing the added content.
+     *  
+     *  @param context
+     *  @param newText
+     */
+    private String getChange( WikiContext context, String newText )
+    {
+        StringBuffer change = new StringBuffer();
+        WikiEngine engine = context.getEngine();
+        // Get current page version
+        
+        try
+        {
+            String oldText = engine.getPureText(context.getPage().getName(), WikiProvider.LATEST_VERSION);
+        
+            String[] first  = Diff.stringToArray(oldText);
+            String[] second = Diff.stringToArray(newText);
+            Revision rev = Diff.diff(first, second, new MyersDiff());
+
+            if( rev == null || rev.size() == 0 )
+            {
+                return null;
+            }
+
+            
+            for( int i = 0; i < rev.size(); i++ )
+            {
+                Delta d = rev.getDelta(i);
+                
+                if( d instanceof AddDelta )
+                {
+                    change.append( d.getRevised().toString() );
+                }
+            }
+        }
+        catch (DifferentiationFailedException e)
+        {
+            log.error( "Diff failed", e );
+        }
+
+        return change.toString();
     }
     
     /**
@@ -398,6 +673,7 @@ public class SpamFilter
         private  long m_addedTime = System.currentTimeMillis();
         private  long m_releaseTime;
         private  String m_address;
+        private  String m_change;
         
         public String getAddress()
         {
@@ -414,9 +690,15 @@ public class SpamFilter
             return m_addedTime;
         }
         
-        public Host( String ipaddress )
+        public String getChange()
+        {
+            return m_change;
+        }
+        
+        public Host( String ipaddress, String change )
         {
             m_address = ipaddress;
+            m_change  = change;
             
             m_releaseTime = System.currentTimeMillis() + m_banTime * 60 * 1000L;
         }
