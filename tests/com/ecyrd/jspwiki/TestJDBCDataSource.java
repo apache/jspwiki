@@ -19,7 +19,6 @@ import javax.sql.DataSource;
  * as unchecked, since it means that the test case that references this class is
  * failing somehow.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.1 $ $Date: 2005-10-19 12:13:23 $
  */
 public class TestJDBCDataSource implements DataSource
 {

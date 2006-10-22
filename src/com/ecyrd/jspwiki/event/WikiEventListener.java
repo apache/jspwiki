@@ -26,7 +26,6 @@ import  java.util.EventListener;
   * Defines an interface for an object that listens for WikiEvents.
   *
   * @author  Murray Altheim
-  * @version $Id: WikiEventListener.java,v 1.2 2006-08-27 14:06:00 jalkanen Exp $
   * @since   2.3.92
   */
 public interface WikiEventListener extends EventListener

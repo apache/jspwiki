@@ -53,7 +53,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * &lt;/groups&gt;
  * </code></blockquote>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-09-25 02:33:35 $
  * @since 2.4.17
  */
 public class XMLGroupDatabase implements GroupDatabase

@@ -27,7 +27,6 @@ import com.ecyrd.jspwiki.WikiException;
  *
  *  @author Erik Bunn
  *  @since 2.0
- *  @version $Revision: 1.5 $ $Date: 2005-09-02 23:53:09 $
  */
 public class WikiSecurityException
     extends WikiException

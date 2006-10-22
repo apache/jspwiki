@@ -27,7 +27,6 @@ import com.ecyrd.jspwiki.WikiEngine;
   * 
   * @author  Murray Altheim
   * @author  Andrew Jaquith
-  * @version $Id: WikiEngineEvent.java,v 1.3 2006-10-12 19:57:54 jalkanen Exp $
   * @see     com.ecyrd.jspwiki.event.WikiEvent
   * @since   2.4.20
   */

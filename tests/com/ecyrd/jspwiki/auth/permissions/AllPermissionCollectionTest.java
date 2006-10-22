@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-05-20 23:53:11 $
  */
 public class AllPermissionCollectionTest extends TestCase
 {

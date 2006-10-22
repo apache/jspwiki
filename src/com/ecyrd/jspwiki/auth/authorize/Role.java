@@ -27,7 +27,6 @@ import java.security.Principal;
  * used by an external {@link com.ecyrd.jspwiki.auth.Authorizer}, such as a web
  * container.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-02-21 08:42:41 $
  * @since 2.3
  */
 public final class Role implements Principal

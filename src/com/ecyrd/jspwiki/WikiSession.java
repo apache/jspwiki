@@ -80,7 +80,6 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  * <p>WikiSession encloses a protected static class, {@link SessionMonitor},
  * to keep track of WikiSessions registered with each wiki.</p>
  * @author Andrew R. Jaquith
- * @version $Revision: 2.27 $ $Date: 2006-10-01 16:03:51 $
  */
 public final class WikiSession implements WikiEventListener
 {

@@ -15,7 +15,6 @@ import java.util.Arrays;
  * itself. <p> Certain permissions imply others. Currently,
  * <code>createGroups</code> implies <code>createPages</code>. </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.16 $ $Date: 2006-07-29 19:22:33 $
  * @since 2.3
  */
 public final class WikiPermission extends Permission

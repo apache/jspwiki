@@ -48,7 +48,6 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 /**
  * Provides a facade for obtaining user information.
  * @author Janne Jalkanen
- * @version $Revision: 1.49 $ $Date: 2006-09-09 17:41:00 $
  * @since 2.3
  */
 public final class UserManager

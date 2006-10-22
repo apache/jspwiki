@@ -26,7 +26,6 @@ import java.util.Date;
  * login name, full name, wiki name, and e-mail address.
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-08-01 11:26:32 $
  * @since 2.3
  */
 

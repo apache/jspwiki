@@ -18,7 +18,6 @@ import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
  * the different tests.
  * @author Janne Jalkanen
  * @author Andrew R. Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-07-29 19:23:14 $
  * @since 2.3
  */
 public class TestAuthorizer implements WebAuthorizer

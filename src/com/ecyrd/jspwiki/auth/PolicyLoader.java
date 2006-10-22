@@ -63,7 +63,6 @@ import org.apache.log4j.Logger;
  * </p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-07-29 19:45:41 $
  * @since 2.3
  */
 public final class PolicyLoader 

@@ -9,7 +9,6 @@ import com.ecyrd.jspwiki.WikiSession;
 /**
  * Interface for service providers of authorization information.
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-07-29 19:44:33 $
  * @since 2.3
  */
 public interface Authorizer

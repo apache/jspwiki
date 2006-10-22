@@ -29,7 +29,6 @@ import java.util.Vector;
  *  JSPWiki implementation of an Access Control List.
  *  @author Janne Jalkanen
  *  @author Andrew Jaquith
- *  @version $Revision: 1.4 $ $Date: 2006-10-09 18:50:20 $
  *  @since 2.3
  */
 public class AclImpl

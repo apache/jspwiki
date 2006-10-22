@@ -13,7 +13,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:14:39 $
  */
 public class GroupPermissionTest extends TestCase
 {

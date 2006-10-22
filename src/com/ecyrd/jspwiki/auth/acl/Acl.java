@@ -53,7 +53,6 @@ import java.util.Enumeration;
  * </p>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-10-09 18:49:01 $
  * @since 2.3
  */
 public interface Acl

@@ -6,7 +6,6 @@ import java.util.Date;
  * Class for representing wiki user information, such as the login name, full
  * name, wiki name, and e-mail address.
  * @author Andrew Jaquith
- * @version $Revision: 1.4 $ $Date: 2005-10-19 04:11:53 $
  * @since 2.3
  */
 public interface UserProfile

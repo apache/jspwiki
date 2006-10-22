@@ -13,7 +13,6 @@ import java.security.Principal;
  * principals of type GroupPrincipal.
  * @see com.ecyrd.jspwiki.auth.authorize.Group
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.3.79
  */
 public final class GroupPrincipal implements Principal

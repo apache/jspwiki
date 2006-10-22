@@ -8,7 +8,6 @@ import java.util.Hashtable;
 /**
  * A collection of AllPermission objects.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-07-29 19:22:33 $
  */
 public class AllPermissionCollection extends PermissionCollection
 {

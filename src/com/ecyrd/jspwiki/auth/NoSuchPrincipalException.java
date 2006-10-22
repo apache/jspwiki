@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.auth;
 /**
  *  Thrown in some error situations where a WikiPrincipal object does not exist.
  *  @author Andrew Jaquith
- *  @version $Revision: 1.5 $ $Date: 2006-07-29 19:45:06 $
  *  @since 2.3
  */
 public final class NoSuchPrincipalException

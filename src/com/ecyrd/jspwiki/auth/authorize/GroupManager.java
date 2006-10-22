@@ -44,7 +44,6 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * refactored into the GroupDatabase interface.</em>
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.4.19
  */
 public final class GroupManager implements Authorizer

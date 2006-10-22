@@ -35,7 +35,6 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-08-01 11:25:34 $
  * @since 2.3
  */
 public class AnonymousLoginModule extends AbstractLoginModule

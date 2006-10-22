@@ -22,7 +22,6 @@ import java.util.Enumeration;
  * @see Acl
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
  * @since 2.3
  */
 public interface AclEntry {

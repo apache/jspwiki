@@ -13,7 +13,6 @@ import java.security.Permission;
  * <p>This class is not <code>final</code>; it may be extended in
  * the future.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.3 $ $Date: 2006-07-29 19:31:11 $
  * @since 2.4.22
  */
 public class RedirectCommand extends AbstractCommand

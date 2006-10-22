@@ -30,7 +30,6 @@ import com.ecyrd.jspwiki.WikiSession;
  * validator will reject any HTML-like input, and any of a number of special
  * characters.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-07-29 19:34:01 $
  * @since 2.3.54
  */
 public final class InputValidator

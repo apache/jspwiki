@@ -19,7 +19,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * Abstract UserDatabase class that provides convenience methods for finding
  * profiles, building Principal collections and hashing passwords.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-01-11 03:46:21 $
  * @since 2.3
  */
 public abstract class AbstractUserDatabase implements UserDatabase

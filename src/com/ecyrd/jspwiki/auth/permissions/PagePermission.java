@@ -41,7 +41,6 @@ import com.ecyrd.jspwiki.WikiPage;
  * Targets that do not include a wiki prefix <i>never </i> imply others.
  * </ul>
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2006-07-29 19:22:33 $
  * @since 2.3
  */
 public final class PagePermission extends Permission

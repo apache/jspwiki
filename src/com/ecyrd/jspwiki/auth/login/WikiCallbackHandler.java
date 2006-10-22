@@ -18,7 +18,6 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * {@link WebContainerCallbackHandler}is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-02-04 21:35:05 $
  * @since 2.3
  */
 public class WikiCallbackHandler implements CallbackHandler

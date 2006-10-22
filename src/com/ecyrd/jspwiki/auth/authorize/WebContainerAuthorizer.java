@@ -32,7 +32,6 @@ import com.ecyrd.jspwiki.WikiSession;
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
  * @author Andrew Jaquith
- * @version $Revision: 1.19 $ $Date: 2006-07-29 19:19:10 $
  * @since 2.3
  */
 public class WebContainerAuthorizer implements WebAuthorizer
@@ -356,7 +355,6 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      * @author Andrew Jaquith
-     * @version $Revision: 1.19 $ $Date: 2006-07-29 19:19:10 $
      */
     public class LocalEntityResolver implements EntityResolver
     {

@@ -8,7 +8,6 @@ import java.security.PermissionCollection;
  * Permission to perform all operations on a given wiki.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-07-29 19:22:33 $
  * @since 2.3.80
  */
 public final class AllPermission extends Permission

@@ -9,7 +9,6 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  * used by LoginModules that need access to a user database for looking up users
  * by id.
  * @author Andrew Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
  * @since 2.3
  */
 public class UserDatabaseCallback implements Callback

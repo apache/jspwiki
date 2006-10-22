@@ -22,7 +22,6 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
  * @author Andrew Jaquith
- * @version $Revision: 1.10 $ $Date: 2006-07-29 19:21:51 $
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule

@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSessionContext;
  * Most methods work as the should; notable exceptions include
  * getSessionContext/getServletContext.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.4 $ $Date: 2006-06-17 23:21:08 $
  */
 public class TestHttpSession implements HttpSession
 {

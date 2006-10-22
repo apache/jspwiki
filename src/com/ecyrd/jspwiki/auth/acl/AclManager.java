@@ -9,7 +9,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 /**
  *  Specifies how to parse and return ACLs from wiki pages.
  *  @author Andrew Jaquith
- *  @version $Revision: 1.3 $ $Date: 2005-08-07 22:06:09 $
  *  @since 2.3
  */
 public interface AclManager

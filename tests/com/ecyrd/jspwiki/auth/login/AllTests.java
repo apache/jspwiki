@@ -6,7 +6,6 @@ import junit.framework.TestSuite;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.2 $ $Date: 2005-06-29 22:43:17 $
  */
 public class AllTests extends TestCase
 {

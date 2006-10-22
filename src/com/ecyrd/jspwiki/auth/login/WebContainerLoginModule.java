@@ -47,7 +47,6 @@ import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
  * plus the Principal that represents the logged-in user.</p>
  * 
  * @author Andrew Jaquith
- * @version $Revision: 1.11 $ $Date: 2006-10-01 16:10:28 $
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule

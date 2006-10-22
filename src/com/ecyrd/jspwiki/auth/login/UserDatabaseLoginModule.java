@@ -39,7 +39,6 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * the Subject's principal set.
  * </p>
  * @author Andrew Jaquith
- * @version $Revision: 1.6 $ $Date: 2006-10-01 16:10:28 $
  * @since 2.3
  */
 public class UserDatabaseLoginModule extends AbstractLoginModule

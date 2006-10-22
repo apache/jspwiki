@@ -11,7 +11,6 @@ import com.ecyrd.jspwiki.auth.Authorizer;
  * including a delgate method for 
  * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
  * @author Andrew Jaquith
- * @version $Revision: 1.1 $ $Date: 2006-07-23 20:05:07 $
  */
 public interface WebAuthorizer extends Authorizer
 {

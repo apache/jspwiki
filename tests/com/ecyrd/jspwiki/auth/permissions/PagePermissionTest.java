@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew R. Jaquith
- * @version $Revision: 1.7 $ $Date: 2006-07-29 19:23:14 $
  */
 public class PagePermissionTest extends TestCase
 {

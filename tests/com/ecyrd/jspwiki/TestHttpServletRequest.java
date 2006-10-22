@@ -25,7 +25,6 @@ import javax.servlet.http.HttpSession;
  * {@link #getSession(boolean)}. All others either return null, or don't work
  * they way they should.
  * @author Andrew R. Jaquith
- * @version $Revision: 1.5 $ $Date: 2006-07-23 21:49:40 $
  */
 public class TestHttpServletRequest implements HttpServletRequest
 {

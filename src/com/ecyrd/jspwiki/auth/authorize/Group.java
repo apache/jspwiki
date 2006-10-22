@@ -39,7 +39,6 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
  * </p>
  * @author Janne Jalkanen
  * @author Andrew Jaquith
- * @version $Revision: 1.12 $ $Date: 2006-10-06 08:19:16 $
  * @since 2.3
  */
 public class Group

@@ -77,7 +77,6 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
- * @version $Revision: 1.44 $ $Date: 2006-10-09 18:48:29 $
  * @since 2.3
  * @see AuthenticationManager
  */
