@@ -1,3 +1,23 @@
+2006-10-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.73
+        
+        * Patch from Neil Miller to fix PageManager which was not using
+        proper getProperty().
+        
+        * AttachmentManager.listAttachments() now sorts the attachments.
+        Suggested by Fabio Bonin.
+        
+        * If jspwiki.useCache was set to false, finding pages would
+        not work with VersioningFileProvider, thanks to some really old
+        optimization code that never got updated.  Removed optimization,
+        hey presto!  It works!
+        
+        * Spam filter now includes change notes in its checks as well.
+        
+        * WikiEventSource is now gone, since it was not used for anything.
+        Thanks to Murray for the heads-up!
+
 2006-10-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.72
