@@ -91,11 +91,13 @@ public class PageManager extends ModuleManager
         }
         else
         {
-            classname = props.getProperty( PROP_PAGEPROVIDER );
+            classname = WikiEngine.getRequiredProperty( props, PROP_PAGEPROVIDER );
         }
 
         try
         {
+            log.debug("Page provider class: '"+classname+"'");
+
             Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
                                                        classname );
 
@@ -106,17 +108,17 @@ public class PageManager extends ModuleManager
         }
         catch( ClassNotFoundException e )
         {
-            log.error("Unable to locate provider class "+classname,e);
+            log.error("Unable to locate provider class '"+classname+"'",e);
             throw new WikiException("no provider class");
         }
         catch( InstantiationException e )
         {
-            log.error("Unable to create provider class "+classname,e);
+            log.error("Unable to create provider class '"+classname+"'",e);
             throw new WikiException("faulty provider class");
         }
         catch( IllegalAccessException e )
         {
-            log.error("Illegal access to provider class "+classname,e);
+            log.error("Illegal access to provider class '"+classname+"'",e);
             throw new WikiException("illegal provider class");
         }
         catch( NoRequiredPropertyException e )
@@ -366,6 +368,16 @@ public class PageManager extends ModuleManager
             page = m_provider.getPageInfo( pageName, version );
         }
 
+        //
+        //  Should update the metadata.
+        //
+        /*
+        if( page != null && !page.hasMetadata() )
+        {
+            WikiContext ctx = new WikiContext(m_engine,page);
+            m_engine.textToHTML( ctx, getPageText(pageName,version) );
+        }
+        */
         return page;
     }
 
@@ -430,10 +442,10 @@ public class PageManager extends ModuleManager
         {
             throw new ProviderException("Illegal page name");
         }
-
+/*
         if( m_provider instanceof VersioningProvider )
             return ((VersioningProvider)m_provider).pageExists( pageName, version );
-        
+  */      
         return m_provider.getPageInfo( pageName, version ) != null;
     }
 
