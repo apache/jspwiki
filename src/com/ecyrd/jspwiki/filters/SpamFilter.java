@@ -625,13 +625,14 @@ public class SpamFilter
      */
     private String getChange( WikiContext context, String newText )
     {
+        WikiPage page = context.getPage();
         StringBuffer change = new StringBuffer();
         WikiEngine engine = context.getEngine();
         // Get current page version
         
         try
         {
-            String oldText = engine.getPureText(context.getPage().getName(), WikiProvider.LATEST_VERSION);
+            String oldText = engine.getPureText(page.getName(), WikiProvider.LATEST_VERSION);
         
             String[] first  = Diff.stringToArray(oldText);
             String[] second = Diff.stringToArray(newText);
@@ -658,6 +659,17 @@ public class SpamFilter
             log.error( "Diff failed", e );
         }
 
+        //
+        //  Don't forget to include the change note, too
+        //
+        String changeNote = (String)page.getAttribute(WikiPage.CHANGENOTE);
+        
+        if( changeNote != null )
+        {
+            change.append("\r\n");
+            change.append(changeNote);
+        }
+        
         return change.toString();
     }
     
