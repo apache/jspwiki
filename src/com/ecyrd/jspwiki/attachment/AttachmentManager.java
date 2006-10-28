@@ -266,6 +266,8 @@ public class AttachmentManager
      *  @param wikipage The wiki page from which you are seeking attachments for.
      *  @return a valid collection of attachments.
      */
+    
+    // FIXME: This API should be changed to return a List.
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
     {
@@ -274,7 +276,17 @@ public class AttachmentManager
             return new ArrayList();
         }
         
-        return m_provider.listAttachments( wikipage );
+        Collection atts = m_provider.listAttachments( wikipage );
+        
+        //
+        //  This is just a sanity check; all of our providers return a Collection.
+        //
+        if( atts instanceof List )
+        {
+            Collections.sort( (List) atts );
+        }
+        
+        return atts;
     }
 
     /**
