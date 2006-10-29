@@ -1,15 +1,8 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-<%! 
-    public void jspInit()
-    {
-        wiki = WikiEngine.getInstance( getServletConfig() );
-    }
-    WikiEngine wiki;
-%>
-
 <%
+    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context; authorization check not needed
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
  

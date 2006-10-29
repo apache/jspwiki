@@ -8,15 +8,11 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
-    public void jspInit()
-    {
-        wiki = WikiEngine.getInstance( getServletConfig() );
-    }
     Logger log = Logger.getLogger("JSPWiki"); 
-    WikiEngine wiki;
 %>
 
 <%
+    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     AuthenticationManager mgr = wiki.getAuthenticationManager();
     WikiContext wikiContext = wiki.createContext( request, WikiContext.LOGIN );
     pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,

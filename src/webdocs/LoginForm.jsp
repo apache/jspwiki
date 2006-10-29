@@ -13,15 +13,11 @@
        container-managed authentication is in force, the container
        will prevent direct access to it.
      */
-    public void jspInit()
-    {
-        wiki = WikiEngine.getInstance( getServletConfig() );
-    }
     Logger log = Logger.getLogger("JSPWiki"); 
-    WikiEngine wiki;
 %>
 
 <%
+    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
 
     WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );

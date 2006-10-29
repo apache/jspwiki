@@ -5,16 +5,11 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
-    public void jspInit()
-    {
-        wiki = WikiEngine.getInstance( getServletConfig() );
-    }
-
     Logger log = Logger.getLogger("JSPWiki");
-    WikiEngine wiki;
 %>
 
 <%
+    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
     if(!wikiContext.hasAccess( response )) return;

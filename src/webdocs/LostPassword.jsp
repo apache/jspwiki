@@ -9,13 +9,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
 <%! 
-    public void jspInit()
-    {
-        wiki = WikiEngine.getInstance( getServletConfig() );
-    }
-
     Logger log = Logger.getLogger("JSPWiki");
-    WikiEngine wiki;
     
     String message = null;
     public boolean resetPassword(WikiEngine wiki, HttpServletRequest request) 
@@ -86,6 +80,7 @@
 %>
 
 <%
+    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
     if(!wikiContext.hasAccess( response )) return;

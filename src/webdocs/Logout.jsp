@@ -1,14 +1,7 @@
 <%@page import="com.ecyrd.jspwiki.WikiEngine" %>
 <%@page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
-<%!
-    public void jspInit()
-    {
-        wiki = WikiEngine.getInstance( getServletConfig() );
-    }
-    WikiEngine wiki;
-%>
-
 <%
+  WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
   wiki.getAuthenticationManager().logout( request );
   
   // Clear the user cookie
