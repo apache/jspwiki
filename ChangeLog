@@ -1,3 +1,16 @@
+2006-10-29  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.74
+        
+        * Improved startup a bit; now the log files should be better in
+        case you have a problem in your jspwiki.properties.  It's still
+        not perfect, but it's better.  The unfortunate side effect is
+        that you'll start getting 404 errors instead of error messages
+        when you are trying to access the site.
+        
+        * Got rid of jspInit() in all top-level JSP files.  This is a
+        bit nicer and simpler all around.
+
 2006-10-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.73
