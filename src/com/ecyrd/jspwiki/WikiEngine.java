@@ -316,17 +316,20 @@ public class WikiEngine
     {
         String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
 
-        context.log( "Application "+appid+" requests WikiEngine.");
+        // context.log( "Application "+appid+" requests WikiEngine.");
 
         WikiEngine engine = (WikiEngine) c_engines.get( appid );
 
         if( engine == null )
         {
-            context.log(" Assigning new log to "+appid);
+            context.log(" Assigning new engine to "+appid);
             try
             {
                 if( props == null )
+                {
                     props = loadWebAppProps( context );
+                }
+                
                 engine = new WikiEngine( context, appid, props );
             }
             catch( Exception e )
@@ -398,7 +401,7 @@ public class WikiEngine
         {
             try
             {
-                propertyStream.close();
+                if( propertyStream != null ) propertyStream.close();
             }
             catch( IOException e )
             {
@@ -433,7 +436,9 @@ public class WikiEngine
         }
         catch( Exception e )
         {
-            context.log( Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
+            String msg = Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage();
+            context.log( msg );
+            throw new WikiException( msg );
         }
     }
 
