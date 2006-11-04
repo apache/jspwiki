@@ -1,3 +1,15 @@
+2006-11-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.75
+        
+        * Added patch from Tomasz Szymko to fix previews when adding
+        comments.  Thanks!
+        
+        * Added patch from Murray Altheim to provide timestamps in 
+        WikiEvents, and added a new SESSION_EXPIRED event as well.
+
+        * Session monitor now fires SESSION_EXPIRED events.
+
 2006-10-29  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.74
