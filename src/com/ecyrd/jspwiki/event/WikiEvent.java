@@ -41,6 +41,8 @@ public abstract class WikiEvent extends EventObject
 
     private int m_type = UNDEFINED;
 
+    private final long m_when;
+
     // ............
 
 
@@ -52,7 +54,20 @@ public abstract class WikiEvent extends EventObject
     public WikiEvent( Object source, int type )
     {
         super( source );
+        m_when = System.currentTimeMillis();
         setType( type );
+    }
+
+
+    /**
+     *  Returns the timestamp of when this WikiEvent occurred.
+     *
+     * @return this event's timestamp
+     * @since 2.4.74
+     */
+    public long getWhen()
+    {
+        return m_when;
     }
 
 

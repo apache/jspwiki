@@ -69,14 +69,17 @@ public final class WikiSecurityEvent extends WikiEvent
     /** When a user logs out. */
     public static final int   LOGOUT                   = 44;
 
+    /** When a session expires. */
+    public static final int   SESSION_EXPIRED          = 45;
+
     /** When a new wiki group is added. */
-    public static final int   GROUP_ADD                = 45;
+    public static final int   GROUP_ADD                = 46;
 
     /** When a wiki group is deleted. */
-    public static final int   GROUP_REMOVE             = 46;
+    public static final int   GROUP_REMOVE             = 47;
 
     /** When all wiki groups are removed from GroupDatabase. */
-    public static final int   GROUP_CLEAR_GROUPS       = 47;
+    public static final int   GROUP_CLEAR_GROUPS       = 48;
 
     /** When access to a resource is allowed. */
     public static final int   ACCESS_ALLOWED           = 51;
@@ -100,7 +103,7 @@ public final class WikiSecurityEvent extends WikiEvent
                                                 LOGIN_CREDENTIAL_EXPIRED };
     
     private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED,
-                                                LOGOUT };
+                                                SESSION_EXPIRED, LOGOUT };
     
     /**
      * Constructs a new instance of this event type, which signals a security
@@ -208,6 +211,7 @@ public final class WikiSecurityEvent extends WikiEvent
             case LOGIN_CREDENTIAL_EXPIRED:  return "LOGIN_ACCOUNT_EXPIRED";
             case LOGIN_FAILED:              return "LOGIN_FAILED";
             case LOGOUT:                    return "LOGOUT";
+            case SESSION_EXPIRED:           return "SESSION_EXPIRED";
             case GROUP_ADD:                 return "GROUP_ADD";
             case GROUP_REMOVE:              return "GROUP_REMOVE";
             case GROUP_CLEAR_GROUPS:        return "GROUP_CLEAR_GROUPS";
@@ -232,6 +236,7 @@ public final class WikiSecurityEvent extends WikiEvent
             case LOGIN_CREDENTIAL_EXPIRED:  return "login failed: credential expired";
             case LOGIN_FAILED:              return "login failed";
             case LOGOUT:                    return "user logged out";
+            case SESSION_EXPIRED:           return "session expired";
             case GROUP_ADD:                 return "new group added";
             case GROUP_REMOVE:              return "group removed";
             case GROUP_CLEAR_GROUPS:        return "all groups cleared";
