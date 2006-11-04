@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
@@ -57,7 +58,8 @@ public final class SessionMonitor extends WikiBackgroundThread
      * Only one SessionMonitor exists per WikiEngine.
      * @return the session monitor
      */
-    public final static SessionMonitor getInstance( WikiEngine engine ) {
+    public final static SessionMonitor getInstance( WikiEngine engine ) 
+    {
         if ( engine == null ) 
         {
             throw new IllegalArgumentException( "Engine cannot be null." );
@@ -159,10 +161,17 @@ public final class SessionMonitor extends WikiBackgroundThread
                 }
             }
             
+            //
             // Remove everything we marked for removal
-            for ( Iterator it = removeQueue.iterator(); it.hasNext(); )
+            // and fire an event
+            //
+            for( Iterator it = removeQueue.iterator(); it.hasNext(); )
             {
-                m_sessions.remove( it.next() );
+                HttpSession s = (HttpSession) it.next();
+                m_sessions.remove( s );
+                
+                WikiSession ws = find( s );
+                fireEvent( WikiSecurityEvent.SESSION_EXPIRED, ws.getLoginPrincipal(), s );
             }
         }
     }
@@ -267,5 +276,38 @@ public final class SessionMonitor extends WikiBackgroundThread
         Principal[] p = (Principal[])principals.toArray( new Principal[principals.size()] );
         Arrays.sort( p, m_comparator );
         return p;
+    }
+    
+    /**
+     * Registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     * @since 2.4.75
+     */
+    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.addWikiEventListener( this, listener );
+    }
+    
+    /**
+     * Un-registers a WikiEventListener with this instance.
+     * @param listener the event listener
+     * @since 2.4.75
+     */
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
+    {
+        WikiEventManager.removeWikiEventListener( this, listener );
+    }
+
+    /**
+     * Fires a WikiSecurityEvent to all registered listeners.
+     * @param type  the event type
+     * @since 2.4.75
+     */
+    protected final void fireEvent( int type, Principal principal, HttpSession session )
+    {
+        if( WikiEventManager.isListening(this) )
+        {
+            WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,session));
+        }
     }
 }
