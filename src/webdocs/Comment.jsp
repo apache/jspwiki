@@ -197,7 +197,8 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        pageContext.forward( "Preview.jsp?action=comment" );
+        session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL(WikiContext.PREVIEW, pagereq, "action=comment", false),"&amp;","&") );
         return;
     }
     else if( cancel != null )
@@ -231,7 +232,7 @@
                               PageContext.REQUEST_SCOPE );
 
     //  This is a hack to get the preview to work.
-    pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
+    // pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
 	
     //
     //  Attempt to lock the page.
