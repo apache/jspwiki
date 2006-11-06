@@ -1,3 +1,12 @@
+2006-11-06  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.4.76
+        
+        * added fix from Chuck Smith so that WikiWizard.jsp now is valid XHTML:
+          document.write() function in JavaScript is deprecated, instead 
+          document.addEventListener("DOMContentLoaded", changeWidth, null)
+          is used now to modify the the DOM Tree after it is loaded.
+
 2006-11-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.75
