@@ -23,7 +23,7 @@
     WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
     
     // If no context, it means we're using container auth.  So, create one anyway
-    if ( wikiContext == null )
+    if( wikiContext == null )
     {
         wikiContext = wiki.createContext( request, WikiContext.LOGIN );
         pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
