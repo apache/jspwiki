@@ -1,6 +1,6 @@
 <script type='text/javascript' src='scripts/wikiwizard-jspwiki.js' language='Javascript'></script>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ page import="java.io.Serializable"%>
+<%@ page language="java" import="java.io.Serializable"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
@@ -15,7 +15,7 @@
 --%>
 
 <noscript>
-  <br>
+  <br />
   <div class="error">You need to enable Javascript in your browser to use the WikiWizard editor</div>
 </noscript>
 
@@ -38,11 +38,10 @@
       action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
       name="editForm" enctype="application/x-www-form-urlencoded">
 
- <wiki:CheckRequestContext context="edit">
-       <label for="changenote">Change note</label>
-       <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
-   </wiki:CheckRequestContext>
-
+    <wiki:CheckRequestContext context="edit">
+        <label for="changenote">Change note</label>
+        <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
+    </wiki:CheckRequestContext>
 
     <p>
         <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
@@ -52,66 +51,9 @@
                                                                        PageContext.REQUEST_SCOPE )%>" />
     </p>
 
-<script type="text/javascript">
-// Browser detection needed for Netscape (others added for possible future need)
-var detect = navigator.userAgent.toLowerCase();
-var OS,browser,version,total,thestring;
+<textarea style='visibility:hidden;width:100%;height:1px;'  class='editor' id='editorarea' name='<%=EditorManager.REQ_EDITEDTEXT%>' rows='10' cols='80'><%=TextUtil.replaceEntities(usertext)%></textarea>
 
-if (checkIt('konqueror'))
-{
-    browser = "Konqueror";
-    OS = "Linux";
-}
-else if (checkIt('safari')) browser = "Safari"
-else if (checkIt('omniweb')) browser = "OmniWeb"
-else if (checkIt('opera')) browser = "Opera"
-else if (checkIt('webtv')) browser = "WebTV";
-else if (checkIt('icab')) browser = "iCab"
-else if (checkIt('msie')) browser = "Internet Explorer"
-else if (!checkIt('compatible'))
-{
-    browser = "Netscape Navigator"
-    version = detect.charAt(8);
-}
-else browser = "An unknown browser";
-
-if (!version) version = detect.charAt(place + thestring.length);
-
-if (!OS)
-{
-    if (checkIt('linux')) OS = "Linux";
-    else if (checkIt('x11')) OS = "Unix";
-    else if (checkIt('mac')) OS = "Mac"
-    else if (checkIt('win')) OS = "Windows"
-    else OS = "an unknown operating system";
-}
-
-function checkIt(string)
-{
-    place = detect.indexOf(string) + 1;
-    thestring = string;
-    return place;
-}
-
-var myWidth = 0, myHeight = 0;
-if( typeof( window.innerWidth ) == 'number' ) {
-    //Non-IE
-    myWidth = window.innerWidth;
-    myHeight = window.innerHeight;
-}
-</script>
-
-<textarea id='invisibletxt' inwrap='virtual' style='visibility:hidden;width:100%;height:1px;'  class='editor' id='editorarea' name='<%=EditorManager.REQ_EDITEDTEXT%>' rows='10' cols='80'><%=TextUtil.replaceEntities(usertext)%></textarea>
-
-<script type="text/javascript">
-
-if ( browser == "Netscape Navigator" ) {
-    document.write("<div style='height:" + myHeight * .70 + "px'>");
-} else {
-    document.write("<div>");
-}
-  
-</script>
+<div id="editarea">
 
 <%
 // Create attachment list
@@ -159,36 +101,33 @@ if( trail != null )
         bcString += curPage + ";";            
     }
 }
+
+//Get maxsize for attachment uploads
+int maxSize = TextUtil.getIntegerProperty( engine.getWikiProperties(), 
+                                           AttachmentManager.PROP_MAXSIZE,
+                                           Integer.MAX_VALUE );
 %>
 
-<script type="text/javascript">
-
-var beginApplet  = "<applet code='org.wikiwizard.FlashSplash'\n"; 
-    beginApplet += "        archive='applets/wikiwizard.jar'\n";
-    beginApplet += "        name='WikiWizard'\n";
-    beginApplet += "        width='100%'\n";
-    beginApplet += "        height='";
-
-var endApplet    = "%'\n";
-    endApplet   += "        MAYSCRIPT>\n";
-
-if ( browser == "Netscape Navigator" ) {
-    document.write(beginApplet + "100" + endApplet);
-} else {
-    document.write(beginApplet + "70" + endApplet);
-}
+<applet id='WikiWizard'
+        code='org.wikiwizard.FlashSplash' 
+        archive='applets/wikiwizard.jar'
+        name='WikiWizard'
+        width='100%'
+        height='70%'
+        mayscript>
         
-</script>
-
 	<param name="attachments" value="<%=attString%>" />
+	<param name="attachpermission" value="<wiki:Permission permission="upload">true</wiki:Permission>" />
+	<param name="attachmaxsize" value="<%=maxSize%>" />
+	<param name="attachURL" value="<wiki:Link format="url" jsp="attach" absolute="true" />" />
 	<param name="user" value="<wiki:UserName />" /> 
 	<param name="breadcrumbs" value="<%=bcString%>" />
-	<param name="encoding" value="<%=context.getEngine().getContentEncoding()%>" />
-	<param name="page" value="<%=context.getPage().getName()%>" />
+	<param name="encoding" value="<wiki:ContentEncoding />" />
+	<param name="page" value="<wiki:PageName />" />
+	<param name="pageexists" value="<wiki:PageExists>true</wiki:PageExists>" />
 	<param name="lang" value="<%=context.getHttpRequest().getHeader("Accept-Language")%>" />
 	Applets are currently not supported by your browser.  Please <a href="http://www.java.com/">download Java</a>, so you can use
 	the WikiWizard editor.
-  
 </applet>
 
    <wiki:CheckRequestContext context="comment">
@@ -215,6 +154,5 @@ if ( browser == "Netscape Navigator" ) {
         <input name='cancel' type='submit' value='Cancel' />
     </p>
     </div>
-
-  </div>
+</div>
 </form>
