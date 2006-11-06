@@ -21,7 +21,7 @@
     WikiSession wikiSession = wikiContext.getWikiSession();
     
     // Set the redirect-page variable if one was passed as a parameter
-    if ( request.getParameter( "redirect" ) != null )
+    if( request.getParameter( "redirect" ) != null )
     {
         wikiContext.setVariable( "redirect", request.getParameter( "redirect" ) );
    	}
@@ -71,6 +71,19 @@
     }
     else 
     {
+        //
+        //  Have we already been submitted?  If yes, then we can assume that
+        //  we have been logged in before.
+        //
+        Object seen = session.getAttribute("_redirect");
+        if( seen != null )
+        {
+            response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
+            session.removeAttribute("_redirect");
+            return;             
+        }
+        session.setAttribute("_redirect","I love Outi"); // Just any marker will do
+        
         // If using container auth, the container will have automatically
         // attempted to log in the user before Login.jsp was loaded.
         // Thus, if we got here, the container must have authenticated 
