@@ -1,3 +1,14 @@
+2006-11-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.77
+        
+        * Hopefully fixed login redirection issues when using 
+        container authentication.  If the user did not have permissions
+        even after login, this would result in a constant series of
+        redirections.
+        
+        * Added run_webtests.sh
+
 2006-11-06  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.4.76
