@@ -1,4 +1,22 @@
-2006-11-04  Janne Jalkanen <jalkanen@ecyrd.com>
+2006-11-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.78
+        
+        * A bunch of minor refactorings suggested by Aron Gombas, 
+        including:
+        
+        * Visibility of member variables in WikiContext have been checked -
+        things were made more private, except m_request is now protected to
+        help in subclassing.
+        
+        * JSPWikiMarkupParser also has visibility checked a bit to help
+        in subclassing - the different link types are now protected,
+        and a new factory method createAnchor() was added.
+        
+        * JSPWikiMarkupParser now checks WikiContext for overrides for
+        most variables.
+
+2006-11-06  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.77
         
