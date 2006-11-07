@@ -229,7 +229,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "This should be a HyperLink.";
         
-        assertEquals( "This should be a <a class=\"editpage\" title=\"Create 'HyperLink'\" href=\"/Edit.jsp?page=HyperLink\">HyperLink</a>.",
+        assertEquals( "This should be a <a class=\"editpage\" href=\"/Edit.jsp?page=HyperLink\" title=\"Create 'HyperLink'\">HyperLink</a>.",
                       translate(src) );
     }
     
@@ -535,7 +535,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "This should be a [link|http://www.regex.fi/]";
         
-        assertEquals( "This should be a <a class=\"external\" rel=\"nofollow\" href=\"http://www.regex.fi/\">link</a>",
+        assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\" rel=\"nofollow\">link</a>",
                       translate_nofollow(src) );
     }
     
@@ -559,7 +559,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "This should be a [HyperLinks]";
         
-        assertEquals( "This should be a <a class=\"editpage\" title=\"Create 'HyperLinks'\" href=\"/Edit.jsp?page=HyperLinks\">HyperLinks</a>",
+        assertEquals( "This should be a <a class=\"editpage\" href=\"/Edit.jsp?page=HyperLinks\" title=\"Create 'HyperLinks'\">HyperLinks</a>",
                       translate(src) );
     }
     
@@ -815,7 +815,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
         
-        assertEquals("Link <a href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a>",
+        assertEquals("Link <a class=\"external\" href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a>",
                      translate(src) );
     }
     
@@ -1738,7 +1738,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!!![Hello]";
         
-        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"editpage\" title=\"Create 'Hello'\" href=\"/Edit.jsp?page=Hello\">Hello</a></h2>",
+        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"editpage\" href=\"/Edit.jsp?page=Hello\" title=\"Create 'Hello'\">Hello</a></h2>",
                       translate(src) );
     }
     
@@ -2230,7 +2230,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "[-phobous]";
         
-        assertEquals( "<a class=\"editpage\" title=\"Create 'Phobous'\" href=\"/Edit.jsp?page=Phobous\">-phobous</a>", translate(src) );        
+        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=Phobous\" title=\"Create 'Phobous'\">-phobous</a>", translate(src) );        
     }
         
     public void testPunctuatedWikiNames2()
@@ -2238,7 +2238,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "[?phobous]";
     
-        assertEquals( "<a class=\"editpage\" title=\"Create 'Phobous'\" href=\"/Edit.jsp?page=Phobous\">?phobous</a>", translate(src) );        
+        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=Phobous\" title=\"Create 'Phobous'\">?phobous</a>", translate(src) );        
     }
 
     public void testPunctuatedWikiNames3()
@@ -2246,7 +2246,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "[Brightness (apical)]";
 
-        assertEquals( "<a class=\"editpage\" title=\"Create 'BrightnessApical'\" href=\"/Edit.jsp?page=BrightnessApical\">Brightness (apical)</a>", translate(src) );        
+        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=BrightnessApical\" title=\"Create 'BrightnessApical'\">Brightness (apical)</a>", translate(src) );        
     }
 
     public void testDeadlySpammer()
