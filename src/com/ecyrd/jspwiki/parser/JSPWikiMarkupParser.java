@@ -72,18 +72,17 @@ public class JSPWikiMarkupParser
       * for interwiki page links. The value is "interwiki". */
     public static final String CLASS_INTERWIKI = "interwiki";
     
-    private static final int              READ          = 0;
-    private static final int              EDIT          = 1;
-    private static final int              EMPTY         = 2;  // Empty message
-    private static final int              LOCAL         = 3;
-    private static final int              LOCALREF      = 4;
-    private static final int              IMAGE         = 5;
-    private static final int              EXTERNAL      = 6;
-    private static final int              INTERWIKI     = 7;
-    private static final int              IMAGELINK     = 8;
-    private static final int              IMAGEWIKILINK = 9;
-    private static final int              ATTACHMENT    = 10;
-    // private static final int              ATTACHMENTIMAGE = 11;
+    protected static final int              READ          = 0;
+    protected static final int              EDIT          = 1;
+    protected static final int              EMPTY         = 2;  // Empty message
+    protected static final int              LOCAL         = 3;
+    protected static final int              LOCALREF      = 4;
+    protected static final int              IMAGE         = 5;
+    protected static final int              EXTERNAL      = 6;
+    protected static final int              INTERWIKI     = 7;
+    protected static final int              IMAGELINK     = 8;
+    protected static final int              IMAGEWIKILINK = 9;
+    protected static final int              ATTACHMENT    = 10;
 
     private static Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
 
@@ -192,6 +191,22 @@ public class JSPWikiMarkupParser
         "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
         "im:", "mtqp", "smb:" };
 
+    private static String[] CLASS_TYPES =
+    {
+       CLASS_WIKIPAGE,
+       CLASS_EDITPAGE,
+       "",
+       "footnote",
+       "footnoteref",
+       "",
+       "external",
+       CLASS_INTERWIKI,
+       "external",
+       CLASS_WIKIPAGE,
+       "attachment"
+    };
+    
+
     /**
      *  This Comparator is used to find an external link from c_externalLinks.  It
      *  checks if the link starts with the other arraythingie.
@@ -271,22 +286,27 @@ public class JSPWikiMarkupParser
                                                              m_camelCaseLinks );
         }
 
-        m_plainUris           = TextUtil.getBooleanProperty( props,
-                                                             PROP_PLAINURIS,
-                                                             m_plainUris );
-        m_useOutlinkImage     = TextUtil.getBooleanProperty( props,
-                                                             PROP_USEOUTLINKIMAGE, 
-                                                             m_useOutlinkImage );
-        m_useAttachmentImage  = TextUtil.getBooleanProperty( props,
-                                                             PROP_USEATTACHMENTIMAGE, 
-                                                             m_useAttachmentImage );
-        m_allowHTML           = TextUtil.getBooleanProperty( props,
-                                                             MarkupParser.PROP_ALLOWHTML, 
-                                                             m_allowHTML );
+        m_plainUris           = getLocalBooleanProperty( m_context,
+                                                         props,
+                                                         PROP_PLAINURIS,
+                                                         m_plainUris );
+        m_useOutlinkImage     = getLocalBooleanProperty( m_context,
+                                                         props,
+                                                         PROP_USEOUTLINKIMAGE, 
+                                                         m_useOutlinkImage );
+        m_useAttachmentImage  = getLocalBooleanProperty( m_context,
+                                                         props,
+                                                         PROP_USEATTACHMENTIMAGE, 
+                                                         m_useAttachmentImage );
+        m_allowHTML           = getLocalBooleanProperty( m_context,
+                                                         props,
+                                                         MarkupParser.PROP_ALLOWHTML, 
+                                                         m_allowHTML );
 
-        m_useRelNofollow      = TextUtil.getBooleanProperty( props,
-                                                             PROP_USERELNOFOLLOW,
-                                                             m_useRelNofollow );
+        m_useRelNofollow      = getLocalBooleanProperty( m_context,
+                                                         props,
+                                                         PROP_USERELNOFOLLOW,
+                                                         m_useRelNofollow );
     
         if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
@@ -296,6 +316,31 @@ public class JSPWikiMarkupParser
         m_context.getPage().setHasMetadata();
     }
 
+    /**
+     *  This is just a simple helper method which will first check the context
+     *  if there is already an override in place, and if there is not,
+     *  it will then check the given properties.
+     *  
+     *  @param context WikiContext to check first
+     *  @param props   Properties to check next
+     *  @param key     What key are we searching for?
+     *  @param defValue Default value for the boolean
+     *  @return True or false
+     */
+    private static boolean getLocalBooleanProperty( WikiContext context, 
+                                                    Properties  props, 
+                                                    String      key, 
+                                                    boolean     defValue )
+    {
+        Object bool = context.getVariable(key);
+        
+        if( bool != null )
+        {
+            return TextUtil.isPositive( (String) bool );
+        }
+        
+        return TextUtil.getBooleanProperty( props, key, defValue );
+    }
 
     /**
      *  Figure out which image suffixes should be inlined.
@@ -356,7 +401,7 @@ public class JSPWikiMarkupParser
      *  @return The result of the mutation.
      */
 
-    private String callMutatorChain( Collection list, String text )
+    protected String callMutatorChain( Collection list, String text )
     {
         if( list == null || list.size() == 0 )
         {
@@ -373,7 +418,12 @@ public class JSPWikiMarkupParser
         return text;
     }
 
-    private void callHeadingListenerChain( Heading param )
+    /**
+     * Calls the heading listeners.
+     * 
+     * @param param A Heading object.
+     */
+    protected void callHeadingListenerChain( Heading param )
     {
         List list = m_headingListenerChain;
 
@@ -385,6 +435,26 @@ public class JSPWikiMarkupParser
         }
     }
 
+    /**
+     *  Creates a JDOM anchor element.  Can be overridden to change the URL creation,
+     *  if you really know what you are doing.
+     *  
+     *  @param type One of the types above
+     *  @param link URL to which to link to
+     *  @param text Link text
+     *  @param section If a particular section identifier is required.
+     *  @return An A element.
+     *  @since 2.4.78
+     */
+    protected Element createAnchor(int type, String link, String text, String section) 
+    { 
+        Element el = new Element("a");
+        el.setAttribute("class",CLASS_TYPES[type]); 
+        el.setAttribute("href",link+section); 
+        el.addContent(text); 
+        return el; 
+    } 
+    
     private Element makeLink( int type, String link, String text, String section )
     {
         Element el = null;
@@ -406,16 +476,12 @@ public class JSPWikiMarkupParser
         switch(type)
         {
             case READ:
-                el = new Element("a").setAttribute("class",CLASS_WIKIPAGE);
-                el.setAttribute("href",m_context.getURL(WikiContext.VIEW, link)+section);
-                el.addContent(text);
+                el = createAnchor( READ, m_context.getURL(WikiContext.VIEW, link), text, section );
                 break;
 
             case EDIT:
-                el = new Element("a").setAttribute("class",CLASS_EDITPAGE);
+                el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" ); 
                 el.setAttribute("title","Create '"+link+"'");
-                el.setAttribute("href", m_context.getURL(WikiContext.EDIT,link));
-                el.addContent(text);
                 break;
 
             case EMPTY:
@@ -429,9 +495,7 @@ public class JSPWikiMarkupParser
                 //  to make sure the links are unique across Wiki.
                 //
             case LOCALREF:
-                el = new Element("a").setAttribute("class","footnoteref");
-                el.setAttribute("href","#ref-"+m_context.getName()+"-"+link);
-                el.addContent("["+text+"]");
+                el = createAnchor( LOCALREF, "#ref-"+m_context.getName()+"-"+link, "["+text+"]", "" );
                 break;
 
             case LOCAL:
@@ -457,7 +521,7 @@ public class JSPWikiMarkupParser
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
-                el = new Element("a").setAttribute("href",text).addContent(el);
+                el = createAnchor(IMAGELINK,text,"","").addContent(el);
                 break;
 
             case IMAGEWIKILINK:
@@ -465,20 +529,16 @@ public class JSPWikiMarkupParser
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
-                el = new Element("a").setAttribute("class",CLASS_WIKIPAGE).setAttribute("href",pagelink).addContent(el);
+                el = createAnchor(IMAGEWIKILINK,pagelink,"","").addContent(el);
                 break;
 
             case EXTERNAL:
-                el = new Element("a").setAttribute("class","external");
+                el = createAnchor( EXTERNAL, link, text, section );
                 if( m_useRelNofollow ) el.setAttribute("rel","nofollow");
-                el.setAttribute("href",link+section);
-                el.addContent(text);
                 break;
                 
             case INTERWIKI:
-                el = new Element("a").setAttribute("class",CLASS_INTERWIKI);
-                el.setAttribute("href",link+section);
-                el.addContent(text);
+                el = createAnchor( INTERWIKI, link, text, section );
                 break;
 
             case ATTACHMENT:
@@ -491,9 +551,7 @@ public class JSPWikiMarkupParser
                 String imglink = m_context.getURL( WikiContext.NONE,
                                                    "images/attachment_small.png" );
 
-                el = new Element("a").setAttribute("class","attachment");
-                el.setAttribute("href",attlink);
-                el.addContent(text);
+                el = createAnchor( ATTACHMENT, attlink, text, "" );
                 
                 pushElement(el);
                 popElement(el.getName());
@@ -503,7 +561,7 @@ public class JSPWikiMarkupParser
                     el = new Element("img").setAttribute("src",imglink);
                     el.setAttribute("border","0");
                     el.setAttribute("alt","(info)");
-                    
+
                     el = new Element("a").setAttribute("href",infolink).addContent(el);
                 }
                 else
@@ -1317,7 +1375,7 @@ public class JSPWikiMarkupParser
             if( urlReference != null )
             {
                 urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
-                callMutatorChain( m_externalLinkMutatorChain, urlReference );
+                urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
 
                 if( isImageLink(urlReference) )
                 {
