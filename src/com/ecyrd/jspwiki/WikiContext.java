@@ -77,16 +77,20 @@ public class WikiContext
 {
     private    Command m_command = null;
     
-    WikiPage   m_page;
-    WikiPage   m_realPage;
-    WikiEngine m_engine;
-    String     m_template = "default";
+    private    WikiPage   m_page;
+    private    WikiPage   m_realPage;
+    private    WikiEngine m_engine;
+    private    String     m_template = "default";
 
-    Map        m_variableMap = new HashMap();
+    private    Map        m_variableMap = new HashMap();
 
-    HttpServletRequest m_request = null;
+    /**
+     *  Stores the HttpServletRequest.  May be null, if the request did not
+     *  come from a servlet.
+     */
+    protected  HttpServletRequest m_request = null;
 
-    WikiSession m_session = null;
+    private    WikiSession m_session = null;
 
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String    INSTALL  = WikiCommand.INSTALL.getRequestContext();
@@ -151,7 +155,7 @@ public class WikiContext
     /** Same as NONE; this is just a clarification. */
     public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
     
-    protected static final Logger log      = Logger.getLogger( WikiContext.class );
+    private static final Logger   log      = Logger.getLogger( WikiContext.class );
     
     private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
 
