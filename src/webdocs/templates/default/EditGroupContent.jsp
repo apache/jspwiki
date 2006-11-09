@@ -1,12 +1,15 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="org.apache.log4j.*" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%! 
-    Category log = Category.getInstance("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki"); 
 %>
 
 <%
@@ -23,16 +26,16 @@
   }
 %>
 
-<h3>Edit Group <%=name%></h3>
+<h3><fmt:message key="editgroup.heading.edit"><fmt:param><%=name%></fmt:param></fmt:message></h3>
 
 <div class="formcontainer">
   <div class="instructions">
-    This page allows you to add or edit members for the wiki group called 
-    <em><%=name%></em>. Generally, only members of the group can edit the 
-    membership list. By default, the person who creates the group is a member.
+    <fmt:message key="editgroup.instructions">
+      <fmt:param><%=name%></fmt:param>
+     </fmt:message>
   </div>
   <div class="instructions">
-    <wiki:Messages div="error" topic="group" prefix="Could not save group: " />
+    <wiki:Messages div="error" topic="group" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"editgroup.saveerror") %>" />
   </div>
   <form id="editGroup" action="<wiki:Link format="url" jsp="EditGroup.jsp"/>" 
     method="POST" accept-charset="UTF-8">
@@ -50,19 +53,16 @@
       <label>Members</label>
       <textarea id="members" name="members" rows="20" cols="40"><%=s.toString()%></textarea>
       <div class="description">
-        The membership for this group. Enter each user&#8217;s wiki name
-        or full name, separated by carriage returns.
+        <fmt:message key="editgroup.memberlist"/>
       </div>
     </div>
 
     <div class="block">
       <!-- Any errors? -->
       <div class="instructions">
-        When you click &#8220;Save group,&#8221; this group will be saved as a group
-        called <strong><%=name%></strong>. You can specify this
-        name in page access control lists (ACLs).
+        <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></</fmt:message>
       </div>
-      <input type="submit" name="ok" value="Save group" />
+      <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save"/>" />
       <input type="hidden" name="group" value="<%=name%>" />
       <input type="hidden" name="action" value="save" />
     </div>

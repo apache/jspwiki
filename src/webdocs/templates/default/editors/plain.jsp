@@ -3,7 +3,8 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
-
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <%--
         This is a plain editor for JSPWiki.
 --%>
@@ -42,43 +43,43 @@
    <wiki:CheckRequestContext context="comment">
         <table border="0" class="small">
           <tr>
-            <td><label for="authorname" accesskey="n">Your <u>n</u>ame</label></td>
+            <td><label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
             <td><input type="text" name="author" id="authorname" value="<%=session.getAttribute("author")%>" /></td>
-            <td><label for="rememberme">Remember me?</label>
+            <td><label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
             <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/></td>
           </tr>
           <tr>
-            <td><label for="link" accesskey="m">Homepage or e<u>m</u>ail</label></td>
+            <td><label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label></td>
             <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=session.getAttribute("link")%>" /></td>
           </tr>
         </table>
     </wiki:CheckRequestContext>
 
     <p>
-        <input name='ok' type='submit' value='Save' />
+        <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='preview' type='submit' value='Preview' />
+        <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='cancel' type='submit' value='Cancel' />
+        <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
     </p>
 </form>
 </div>
 
     <%-- Search and replace section --%>
     <form name="searchbar" id="searchbar" action="#">
-      <label for="findText">Find:</label>
+      <label for="findText"><fmt:message key="editor.plain.find"/></label>
       <input type="text" id="findText" size="16"/>
-      <label for="replaceText">Replace:</label>
+      <label for="replaceText"><fmt:message key="editor.plain.replace"/></label>
       <input type="text" id="replaceText" size="16"/>
 
-      <input type="checkbox" id="matchCase" /><label for="matchCase">Match Case</label>
-      <input type="checkbox" id="regExp" /><label for="regExp">RegExp</label>
-      <input type="checkbox" id="global" checked="checked"/><label for="global">Replace all</label>
+      <input type="checkbox" id="matchCase" /><label for="matchCase"><fmt:message key="editor.plain.matchcase"/></label>
+      <input type="checkbox" id="regExp" /><label for="regExp"><fmt:message key="editor.plain.regexp"/></label>
+      <input type="checkbox" id="global" checked="checked"/><label for="global"><fmt:message key="editor.plain.global"/></label>
       &nbsp;
-      <input type="button" id="replace" value="Replace" onclick="SearchReplace.editReplace(this.form, document.getElementById('editorarea') );" />
+      <input type="button" id="replace" value="<fmt:message key="editor.plain.find.submit"/>" onclick="SearchReplace.editReplace(this.form, document.getElementById('editorarea') );" />
 
       <span id="undoHideOrShow" style="visibility:hidden;" >
-        <input type="button" id="undo" value="Undo" onclick="SearchReplace.editUndo(this.form, document.getElementById('editorarea') );" />
+        <input type="button" id="undo" value="<fmt:message key="editor.plain.undo.submit"/>" onclick="SearchReplace.editUndo(this.form, document.getElementById('editorarea') );" />
       </span>
       <input type="hidden" id="undoMemory" value="" />
     </form>

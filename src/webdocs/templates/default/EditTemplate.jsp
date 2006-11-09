@@ -1,4 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -6,7 +8,7 @@
 <html>
 
 <head>
-  <title><wiki:Variable var="ApplicationName" /> Edit: <wiki:PageName /></title>
+  <title><wiki:Variable var="ApplicationName" /><fmt:message key="edit.title.edit"><fmt:param><wiki:PageName /></fmt:param></fmt:message></title>
   <meta name="ROBOTS" content="NOINDEX" />
   <wiki:Include page="commonheader.jsp"/>
 </head>

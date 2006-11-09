@@ -5,6 +5,9 @@
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 
 <%
   // Extract the group name and members
@@ -20,23 +23,23 @@
   }
 %>
 
-<h3>Create New Group</h3>
+<h3><fmt:message key="newgroup.heading.create"/></h3>
 
-<wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix="Error: "/>
+<wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"newgroup.errorprefix")%> "/>
 
 <div class="formcontainer">
   <div class="instructions">
-    This page allows you to create a new wiki group.
+     <fmt:message key="newgroup.instructions.start"/>
   </div>
   <form id="createGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp"/>" 
     method="POST" accept-charset="UTF-8">
       
     <!-- Name -->
     <div class="block">
-      <label>Name</label>
+      <label><fmt:message key="newgroup.name"/></label>
       <input type="text" name="group" size="30" value="<%=name%>" />
       <div class="description">
-        The name of the new group.
+        <fmt:message key="newgroup.name.description"/>
       </div>
     </div>
     
@@ -50,18 +53,16 @@
       }
     %>
     <div class="block">
-      <label>Members</label>
+      <label><fmt:message key="group.members"/></label>
       <textarea id="members" name="members" rows="20" cols="40"><%=s.toString()%></textarea>
       <div class="description">
-        The membership for this group. Enter each user&#8217;s wiki name
-        or full name, separated by carriage returns.
+        <fmt:message key="newgroup.members.description"/>
       </div>
     </div>
 
     <div class="block">
       <div class="instructions">
-        When you click &#8220;Save group,&#8221; this group will be saved as a group.
-        You can specify the group's name in page access control lists (ACLs).
+         <fmt:message key="newgroup.instructions.end"/>
       </div>
       <input type="submit" name="ok" value="Create group" />
       <input type="hidden" name="action" value="save" />

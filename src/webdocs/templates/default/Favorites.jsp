@@ -1,4 +1,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 
   <%
@@ -20,7 +23,7 @@
     <wiki:PageExists page="<%=myFav %>">
     <div class="myfavorites">
       <h4 class="boxtitle">
-        <wiki:LinkTo page="<%=myFav %>" >My Favorites</wiki:LinkTo>
+        <wiki:LinkTo page="<%=myFav %>" ><fmt:message key="fav.myfavorites"/></wiki:LinkTo>
       </h4>
       <wiki:InsertPage page="<%=myFav %>"/>
     </div>
@@ -32,19 +35,22 @@
     <wiki:InsertPage page="LeftMenu" />
     <wiki:NoSuchPage page="LeftMenu">
       <div class="error">
-        <wiki:EditLink page="LeftMenu">Please make a LeftMenu.</wiki:EditLink>
+        <wiki:EditLink page="LeftMenu"><fmt:message key="fav.nomenu"><fmt:param>LeftMenu</fmt:param></fmt:message></wiki:EditLink>
       </div>
     </wiki:NoSuchPage>
   </div>
   
   <div class="username">
     <wiki:UserCheck status="asserted">
-        <p>G'day
-          <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br />(not logged in)</p>
+        <p><fmt:message key="fav.greet.asserted">
+             <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
+             </fmt:message>
+        </p>
     </wiki:UserCheck>
     <wiki:UserCheck status="authenticated">
-      <p>G'day
-        <wiki:Translate>[<wiki:UserName />]</wiki:Translate><br />(authenticated)</p>
+      <p><fmt:message key="fav.greet.authenticated">
+             <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
+             </fmt:message></p>
     </wiki:UserCheck>
   </div>
   
@@ -54,13 +60,13 @@
     <wiki:InsertPage page="LeftMenuFooter" />
     <wiki:NoSuchPage page="LeftMenuFooter">
       <div class="error">
-        <wiki:EditLink page="LeftMenuFooter">Please make a LeftMenuFooter.</wiki:EditLink>
+        <wiki:EditLink page="LeftMenuFooter"><fmt:message key="fav.nomenu"><fmt:param>LeftMenuFooter</fmt:param></fmt:message></wiki:EditLink>
       </div>
     </wiki:NoSuchPage>
   </div>
   
   <div class="wikiversion"><%=Release.APPNAME%> v<%=Release.getVersionString()%></div>
   
-  <div class="rssfeed"><wiki:RSSImageLink title="Aggregate the RSS feed of the entire wiki" /></div>
+  <div class="rssfeed"><wiki:RSSImageLink title="<%=LocaleSupport.getLocalizedMessage(pageContext,"fav.aggregatewiki.title")%>" /></div>
 
 </div>

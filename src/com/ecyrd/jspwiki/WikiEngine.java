@@ -48,6 +48,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.plugin.PluginManager;
@@ -226,6 +227,8 @@ public class WikiEngine
     private RenderingManager m_renderingManager;
     
     private EditorManager    m_editorManager;
+    
+    private InternationalizationManager m_internationalizationManager;
     
 	/** Constructs URLs */
     private URLConstructor   m_urlConstructor;
@@ -2087,6 +2090,11 @@ public class WikiEngine
         return m_editorManager;
     }
     
+    
+    public InternationalizationManager getInternationalizationManager()
+    {
+        return m_internationalizationManager;
+    }
 
     /**
      * Registers a WikiEventListener with this instance.

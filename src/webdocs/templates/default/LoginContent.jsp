@@ -1,7 +1,10 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 
 <%! 
     public void jspInit()
@@ -20,15 +23,14 @@
     String postURL;
 %>
 
-<h3>Login</h3>
+<h3><fmt:message key="login.heading.login"/></h3>
 
 <div class="formcontainer">
   <div class="instructions">
-    Welcome to <wiki:Variable var="applicationname" />. Please sign in
-    with your login name and password.
+    <fmt:message key="login.welcome"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message>
   </div>
   <div class="instructions">
-    <wiki:Messages div="error" prefix="Error: " />
+    <wiki:Messages div="error" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix") %> " />
   </div>
 
   <form id="login" action="<%=postURL%>" 
@@ -36,30 +38,31 @@
       
     <!-- User name -->
     <div class="block">
-      <label>Login</label>
+      <label><fmt:message key="login.login"/></label>
       <input type="text" name="j_username" value="<wiki:Variable var="uid" default="" />" />
     </div>
 
     <!-- Password -->
     <div class="block">
-      <label>Password</label>
+      <label><fmt:message key="login.password"/></label>
       <input type="password" name="j_password" />
     </div>
 
     <div class="block">
-      <input type="hidden" name="redirect" value="<wiki:Variable var="redirect" />" />
-      <input type="submit" name="action" value="login" />
+      <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+      <input type="submit" name="action" value="<fmt:message key="login.submit.login"/>" />
     </div>
     
   </form>
   
     <div class="instructions">
-      Don't have a password? 
-      <a href="UserPreferences.jsp?tab=profile">Join
-      <wiki:Variable var="applicationname" /></a> now!
+      <fmt:message key="login.nopassword"/>
+      <a href="UserPreferences.jsp?tab=profile"><fmt:message key="login.registernow">
+         <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
+         </fmt:message></a>
     </div>
     <div class="instructions">
-      Lost your password? 
-      <a href="LostPassword.jsp">Get a new one</a>.
+      <fmt:message key="login.lostpassword"/>
+      <a href="LostPassword.jsp"><fmt:message key="login.getnewpassword"/></a>.
     </div>
 </div>

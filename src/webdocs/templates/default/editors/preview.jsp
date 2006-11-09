@@ -2,7 +2,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
-
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <%--
         This is a special editor component for JSPWiki preview storage.
 --%>
@@ -32,11 +33,11 @@
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="4" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
     <div id="previewsavebutton" align="center">
-        <input type="submit" name="edit" value="Keep editing" />
+        <input type="submit" name="edit" value="<fmt:message key="editor.preview.edit.submit"/>" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="ok" value="Save" />
+        <input type="submit" name="ok" value="<fmt:message key="editor.preview.save.submit"/>" />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" name="cancel" value="Cancel" />
+        <input type="submit" name="cancel" value="<fmt:message key="editor.preview.cancel.submit"/>" />
      </div>
 
 </form>

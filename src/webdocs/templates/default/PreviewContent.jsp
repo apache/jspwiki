@@ -1,11 +1,13 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 
 <%-- Inserts page content for preview. --%>
 
 <div class="information">
-  This is a <strong>preview</strong>!  Hit "Keep Editing" to go back to the editor,
-  or hit "Save" if you're happy with what you see.
+   <fmt:message key="preview.info"/>
 </div>
 
 <div class="previewcontent">
@@ -13,8 +15,7 @@
 </div>
 
 <div class="information">
-  This is a <strong>preview</strong>!  Hit "Keep Editing" to go back to the editor,
-  or hit "Save" if you're happy with what you see.
+   <fmt:message key="preview.info"/>
 </div>
 
 <wiki:Editor/>

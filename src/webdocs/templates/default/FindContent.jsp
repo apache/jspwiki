@@ -1,7 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.net.URLEncoder" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 
 <%-- FIXME: Get rid of the scriptlets. --%>
 <%
@@ -38,10 +40,14 @@
       <h2>Find pages</h2>
 
       <wiki:SearchResults>
-          <h4>Search results for '<%=query%>'</h4>
+          <h4><fmt:message key="find.heading.results"><fmt:param><c:out var="${query}"/> }</fmt:param></fmt:message></h4>
 
           <p>
-          <i>Found <wiki:SearchResultsSize/> hits, here are the results from <%=startVal+1%> to <%=endVal%>.</i>
+          <i><fmt:message key="find.resultsstart">
+             <fmt:param><wiki:SearchResultsSize/></fmt:param>
+             <fmt:param><%=startVal+1%></fmt:param>
+             <fmt:param><%=endVal%></fmt:param>
+             </fmt:message>
           </p>
 
           <div class="zebra-table">
@@ -49,8 +55,8 @@
           <table border="0" cellpadding="4" width="80%">
 
           <tr>
-             <th align="left">Page</th>
-             <th align="left">Score</th>
+             <th align="left"><fmt:message key="find.results.page"/></th>
+             <th align="left"><fmt:message key="find.results.score"/></th>
           </tr>
 
           <wiki:SearchResultIterator id="searchref" start="<%=Integer.toString(startVal)%>" maxItems="20">
@@ -77,7 +83,7 @@
 
           <wiki:IfNoSearchResults>
               <tr>
-                  <td colspan="2"><b>No results</b></td>
+                  <td colspan="2"><b><fmt:message key="find.noresults"/></b></td>
               </tr>
           </wiki:IfNoSearchResults>
 
@@ -89,7 +95,9 @@
           <wiki:Link jsp="Search.jsp">
               <wiki:Param name="query" value="<%=URLEncoder.encode(query)%>"/>
               <wiki:Param name="start" value="<%=Integer.toString(startVal-prevSize)%>"/>
-              Get previous <%=prevSize%> results
+              <fmt:message key="find.getprevious">
+                 <fmt:param><%=prevSize%></fmt:param>
+              </fmt:message>
           </wiki:Link>.
           <% } %>
           
@@ -97,12 +105,14 @@
           <wiki:Link jsp="Search.jsp">
               <wiki:Param name="query" value="<%=URLEncoder.encode(query)%>"/>
               <wiki:Param name="start" value="<%=Integer.toString(endVal)%>"/>
-              Get next <%=nextSize%> results
+              <fmt:message key="find.getnext">
+                 <fmt:param><%=nextSize%></fmt:param>
+              </fmt:message>
           </wiki:Link>.
           <% } %>
           </p>
           <p>
-          <a href="http://www.google.com/search?q=<%=query%>" target="_blank">Try this same search on Google!</a>
+          <a href="http://www.google.com/search?q=<%=query%>" target="_blank"><fmt:message key="find.googleit"/></a>
           </p>
           <hr />
       </wiki:SearchResults>
@@ -115,8 +125,8 @@
       <input type="text" name="query" size="40" value="<%=query%>" /></p>
 
       <p>
-      <input type="submit" name="ok" value="Find!" />
-      <input type="submit" name="go" value="Go!" /></p>
+      <input type="submit" name="ok" value="<fmt:message key="find.submit.find"/>" />
+      <input type="submit" name="go" value="<fmt:message key="find.submit.go"/>" /></p>
       </form>
 
       <wiki:InsertPage page="SearchPageHelp"/>

@@ -1,6 +1,9 @@
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <%
   //  Determine the name for the user's favorites page
   WikiContext c = WikiContext.findContext( pageContext );
@@ -13,14 +16,14 @@
   String myFav = username + "Favorites";
 %>
 
-<h3>Your <wiki:Variable var="applicationname" /> profile</h3>
+<h3><fmt:message key="prefs.heading.yourprofile"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></h3>
 
 <wiki:TabbedSection defaultTab='<%=request.getParameter("tab")%>'>
   <!-- Tab 1: user preferences -->
-  <wiki:Tab id="prefs" title="Preferences">
+  <wiki:Tab id="prefs" title="<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.tab.prefs")%>">
     <div class="formcontainer">
       <div class="instructions">
-        Set your user preferences here. Your choices will be saved in your browser as cookies.
+        <fmt:message key="prefs.instructions"/>
       </div>
     </div>
     <wiki:Permission permission="editPreferences">
@@ -32,24 +35,19 @@
           <form id="setCookie" action="<wiki:Link jsp="UserPreferences.jsp" format="url"><wiki:Param name="tab" value="prefs"/></wiki:Link>" 
                 method="POST" accept-charset="UTF-8">
             <div class="block">
-              <label>Wiki name</label>
+              <label><fmt:message key="prefs.wikiname"/></label>
               <input type="text" name="assertedName" size="30" value="<wiki:UserProfile property="loginname"/>" />
               <div class="description">
-                Your wiki name. If you haven't created a user profile
-                yet, you can tell <wiki:Variable var="applicationname" /> 
-                who you are by 'asserting' an identity. You wouldn't
-                lie to us would you?
+                <fmt:message key="prefs.wikiname.description">
+                  <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
+                </fmt:message>
               </div>
               <div class="description">
-                Note that setting your user name this way isn't a
-                particularly trustworthy method of authentication, 
-                and the wiki may grant you fewer privileges as a
-                result. <a onclick="TabbedSection.onclick('profile')" >
-                Create a user profile</a> if you'd prefer a
-                traditional username and password, which is more
-                secure.
+                <fmt:message key="prefs.wikiname.description2">
+                  <fmt:param><a onclick="TabbedSection.onclick('profile')" ><fmt:message key="prefs.wikiname.create"/></a></fmt:param>
+                </fmt:message>
               </div>
-              <input type="submit" name="ok" value="Set user name" />
+              <input type="submit" name="ok" value="<fmt:message key="prefs.submit.setname"/>" />
               <input type="hidden" name="action" value="setAssertedName" />
             </div>
           </form>
@@ -63,18 +61,18 @@
                 method="POST" accept-charset="UTF-8">
             <div class="block">
               <div class="description">
-                Clears your 'asserted' user name.
+                <fmt:message key="prefs.clear.description"/>
               </div>
-              <input type="submit" name="ok" value="Clear user name" />
+              <input type="submit" name="ok" value="<fmt:message key="prefs.clear.submit"/>" />
               <input type="hidden" name="action" value="clearAssertedName" />
             </div>
           </form>
           <form action="<wiki:Link format="url" page="<%=myFav%>"/>" method="GET">
              <div class="block">
               <div class="description">
-                 You may set your personal Favourites list which will appear in the navigation menu.
+                 <fmt:message key="prefs.favs.description"/>
               </div>
-              <input type="submit" name="ok" value="Edit or create your personal favourites"/>
+              <input type="submit" name="ok" value="<fmt:message key="prefs.favs.submit"/>"/>
              </div>
           </form>
         </div>
@@ -83,38 +81,36 @@
   </wiki:Tab>
   
   <!-- Tab 2: If user can register, allow edits to profile -->
-  <wiki:Tab id="profile" title="Profile">
+  <wiki:Tab id="profile" title="<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.tab.profile")%>">
     <wiki:Permission permission="editProfile">
       <div class="formcontainer">
         <div class="instructions">
           <wiki:UserProfile property="new">
-            Hi! Looks like you haven't set up a wiki profile yet.
-            You can do that here. To set up your profile, we need
-            to know a little bit about you.
+            <fmt:message key="prefs.newprofile"/>
           </wiki:UserProfile>
           <wiki:UserProfile property="exists">
-            Edit your wiki profile here.
+            <fmt:message key="prefs.oldprofile"/>
           </wiki:UserProfile>
         </div>
         <div class="instructions">
-          <wiki:Messages div="error" topic="profile" prefix="Could not save profile: "/>
+          <wiki:Messages div="error" topic="profile" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix")%> "/>
         </div>
         <form id="editProfile" action="<wiki:Link jsp="UserPreferences.jsp" format="url"><wiki:Param name="tab" value="profile"/></wiki:Link>" 
               method="POST" accept-charset="UTF-8">
               
           <!-- Login name -->
           <div class="block">
-            <label>Login name</label>
+            <label><fmt:message key="prefs.loginname"/></label>
             <wiki:UserProfile property="new">
               <input type="text" name="loginname" size="30" value="<wiki:UserProfile property="loginname"/>" />
               <div class="description">
-                This is your login id; once set, it cannot be changed.
+                <fmt:message key="prefs.loginname.description"/>
               </div>
             </wiki:UserProfile>
             <wiki:UserProfile property="exists">
               <p><wiki:UserProfile property="loginname"/></p>
               <div class="description">
-                This is your login id.
+                <fmt:message key="prefs.loginname.exists"/>
               </div>
             </wiki:UserProfile>
           </div>
@@ -122,96 +118,91 @@
           <!-- Password; not displayed if container auth used -->
           <wiki:UserCheck status="setPassword">
             <div class="block">
-              <label>Password</label>
+              <label><fmt:message key="prefs.password"/></label>
               <input type="password" name="password" size="30" value="" />
               <div class="description">
-                Sets your account password. It may not be blank.
+                <fmt:message key="prefs.password.description"/>
               </div>
             </div>
       
             <div class="block">
-              <label>Password (re-type)</label>
+              <label><fmt:message key="prefs.password2"/></label>
               <input type="password" name="password2" size="30" value="" />
               <div class="description">
-                Type your password again.
+                <fmt:message key="prefs.password2.description"/>
               </div>
             </div>
           </wiki:UserCheck>
           
           <!-- Wiki name -->
           <div class="block">
-            <label>Wiki name</label>
+            <label><fmt:message key="prefs.wikiname"/></label>
             <wiki:UserProfile property="new">
               <input type="text" name="wikiname" size="30" value="<wiki:UserProfile property="wikiname"/>" />
               <div class="description">
-                This must be a proper WikiName; cannot contain
-                spaces or punctuation.
+                <fmt:message key="prefs.wikinameid.description"/>
               </div>
             </wiki:UserProfile>
             <wiki:UserProfile property="exists">
               <p><wiki:UserProfile property="wikiname"/></p>
               <div class="description">
-                This is your WikiName.
+                <fmt:message key="prefs.wikinameid.exists"/>
               </div>
             </wiki:UserProfile>
           </div>
           
           <!-- Full name -->
           <div class="block">
-            <label>Full name</label>
+            <label><fmt:message key="prefs.fullname"/></label>
             <wiki:UserProfile property="new">
               <input type="text" name="fullname" size="30" value="<wiki:UserProfile property="fullname"/>" />
               <div class="description">
-                This is your full name.
+                <fmt:message key="prefs.fullname.description"/>
               </div>
             </wiki:UserProfile>
             <wiki:UserProfile property="exists">
               <p><wiki:UserProfile property="fullname"/></p>
               <div class="description">
-                This is your full name.
+                <fmt:message key="prefs.fullname.exists"/>
               </div>
             </wiki:UserProfile>
           </div>
            
           <!-- E-mail -->
           <div class="block">
-            <label>E-mail address</label>
+            <label><fmt:message label="prefs.email"/></label>
             <input type="text" name="email" size="30" value="<wiki:UserProfile property="email"/>" />
             <div class="description">
-              Your e-mail address is optional. If you lose your password, you can ask to
-              have a new, random password sent to this address.
+              <fmt:message key="prefs.email.description"/>
             </div>
           </div>
           
           <div class="block">
             <wiki:UserCheck status="assertionsAllowed">
               <div class="instructions">
-                This wiki automatically remembers you using cookies,
-                without requiring additional authentication. To use this
-                feature, your browser must accept cookies from this
-                website. When you click &#39;save profile,&#39; the cookie
-                will be saved by your browser.
+                <fmt:message key="prefs.cookie.info"/>
               </div>
             </wiki:UserCheck>
             <wiki:UserProfile property="exists">
               <div class="instructions">
-                Access control lists or wiki groups containing your identity
-                should specify <strong><wiki:UserProfile property="wikiname"/></strong>
-                or <strong><wiki:UserProfile property="fullname"/></strong>.
-                You are also a member of these roles: 
-                <strong><wiki:UserProfile property="roles" /></strong>,
-                and the following groups: <strong><wiki:UserProfile property="groups" /></strong>.
-                ACLs containing these roles and groups should work, too.
+                <fmt:message key="prefs.acl.info">
+                  <fmt:param><strong><wiki:UserProfile property="wikiname"/></strong></fmt:param>
+                  <fmt:param><strong><wiki:UserProfile property="fullname"/></strong></fmt:param>
+                  <fmt:param><strong><wiki:UserProfile property="roles" /></strong></fmt:param>
+                  <fmt:param><strong><wiki:UserProfile property="groups" /></strong></fmt:param>
+                </fmt:message>
               </div>
             </wiki:UserProfile>
             <div class="instructions">
               <wiki:UserProfile property="exists">
-                You created your profile on <wiki:UserProfile property="created"/>,
-                and last saved it on <wiki:UserProfile property="modified"/>
+                <fmt:message key="prefs.lastmodified">
+                  <fmt:param><wiki:UserProfile property="created"/></fmt:param>
+                  <fmt:param><wiki:UserProfile property="modified"/></fmt:param>
+                </fmt:message>
               </wiki:UserProfile>
-              Click &#39;save profile&#39; to save your wiki profile.
+              <fmt:message key="prefs.save.description"/>
             </div>
-            <input type="submit" name="ok" value="Save profile" />
+            <input type="submit" name="ok" value="<fmt:message key="prefs.save.submit"/>" />
             <input type="hidden" name="action" value="saveProfile" />
           </div>
         </form>

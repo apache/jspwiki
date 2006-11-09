@@ -1,14 +1,17 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.security.Principal" %>
-<%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.WikiContext" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 <%! 
-    Category log = Category.getInstance("JSPWiki"); 
+    Logger log = Logger.getLogger("JSPWiki"); 
 %>
 
 <%
@@ -43,7 +46,7 @@
 <script language="javascript" type="text/javascript">
 function confirmDelete()
 {
-  var reallydelete = confirm("Are you sure you want to permanently delete group '<%=name%>'? Users might not be able to access pages whose ACLS contain this group. \n\nIf you click OK, the group will be removed immediately.");
+  var reallydelete = confirm("<fmt:message key="group.areyousure"><fmt:param><%=group%></fmt:param></fmt:message>");
 
   return reallydelete;
 }
@@ -59,21 +62,23 @@ function confirmDelete()
     if ( c.getWikiSession().getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
     {
 %>
-    This group does not exist.
+    <fmt:message key="group.doesnotexist"/>
     <wiki:Permission permission="createGroups">
-      Why don&#8217;t you go and
-      <wiki:Link jsp="NewGroup.jsp">
-        <wiki:Param name="group" value="<%=name%>" />
-        <wiki:Param name="group" value="<%=name%>" />
-        create it
-      </wiki:Link>?
+      <fmt:message key="group.createsuggestion">
+        <fmt:param><wiki:Link jsp="NewGroup.jsp">
+                      <wiki:Param name="group" value="<%=name%>" />
+                      <wiki:Param name="group" value="<%=name%>" />
+                      <fmt:message key="group.createit"/>
+                   </wiki:Link>
+        </fmt:param>
+      </fmt:message>
     </wiki:Permission>
 <%
     }
     else
     {
 %>
-       <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix="Error: "/>
+       <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix") %> "/>
 <%
     }
   }
@@ -82,13 +87,14 @@ function confirmDelete()
 %>
     <div class="formcontainer">
       <div class="instructions">
-        This is the wiki group called  <em><%=name%></em>.
-        Only members of this group can edit it.
+        <fmt:message key="group.groupintro">
+          <fmt:param><em><%=name%></em></fmt:param>
+        </fmt:message>
       </div>
     
       <!-- Members -->
       <div class="block">
-        <label>Members</label>
+        <label><fmt:message key="group.members"/></label>
         <div class="readonly"><%
             for ( int i = 0; i < members.length; i++ )
             {
@@ -100,13 +106,20 @@ function confirmDelete()
             }
           %></div>
         <div class="description">
-          The group&#8217;s membership.
+          <fmt:message key="group.membership"/>
         </div>
       </div>
       
       <div class="instructions">
-        <%=modifier%> saved this group on <%=modified%><br/>
-        <%=creator%> created it on <%=created%>. 
+        <fmt:message key="group.modifier">
+           <fmt:param><%=modifier%></fmt:param>
+           <fmt:param><%=modified%></fmt:param>
+        </fmt:message>
+        <br />
+        <fmt:message key="group.creator">
+           <fmt:param><%=creator%></fmt:param>
+           <fmt:param><%=created%></fmt:param>
+        </fmt:message> 
       </div>
     </div>
 <%

@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,20 +34,11 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.auth.AuthorizationManager;
-import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
-import com.ecyrd.jspwiki.auth.UserManager;
-import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
-import com.ecyrd.jspwiki.ui.Command;
-import com.ecyrd.jspwiki.ui.GroupCommand;
-import com.ecyrd.jspwiki.ui.Installer;
-import com.ecyrd.jspwiki.ui.PageCommand;
-import com.ecyrd.jspwiki.ui.CommandResolver;
-import com.ecyrd.jspwiki.ui.WikiCommand;
+import com.ecyrd.jspwiki.ui.*;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -873,4 +866,25 @@ public class WikiContext
             m_command = m_command.targetedCommand( m_page );
         }
     }
+    
+    // FIXME: This method should really cache the ResourceBundles or something...
+    public ResourceBundle getBundle( String bundle )
+    {
+        Locale loc = m_request.getLocale();
+        ResourceBundle b = m_engine.getInternationalizationManager().getBundle(bundle, loc);
+        
+        return b;
+    }
+    
+    /**
+     *  Returns the locale of the HTTP request if available,
+     *  otherwise returns the default Locale of the server.
+     */
+    public static Locale getLocale( WikiContext context )
+    {
+        HttpServletRequest request = context.getHttpRequest();
+        return ( request != null )
+                ? request.getLocale() : Locale.getDefault();
+    }
+
 }

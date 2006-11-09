@@ -1,23 +1,23 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%
   /* see commonheader.jsp */
   String prefDateFormat     = (String) session.getAttribute("prefDateFormat");
   String prefTimeZone       = (String) session.getAttribute("prefTimeZone");
   String group              = request.getParameter( "group" );
 %>
-
-<div class="pageactions">
+<fmt:setBundle basename="templates.DefaultResources"/>
+  <div class="pageactions">
   
-    <span class='quick2Top'><a href="#Top" title='Go to Top' >&nbsp;</a></span>
+    <span class='quick2Top'><a href="#Top" title='<fmt:message key="actions.gototop"/>' >&nbsp;</a></span>
 
     <wiki:CheckRequestContext context='info|diff|upload|edit'>
       <span>
         <wiki:PageType type="page">
-          <wiki:LinkTo>View page</wiki:LinkTo>
+          <wiki:LinkTo><fmt:message key="actions.view"/></wiki:LinkTo>
         </wiki:PageType>
         <wiki:PageType type="attachment">
-          <wiki:LinkToParent>View page</wiki:LinkToParent>
+          <wiki:LinkToParent><fmt:message key="actions.view"/></wiki:LinkToParent>
         </wiki:PageType>
       </span>
     </wiki:CheckRequestContext>
@@ -26,7 +26,7 @@
       <wiki:Permission permission="edit">
         <span>
           <wiki:PageType type="page">
-            <wiki:EditLink>Edit page</wiki:EditLink>
+            <wiki:EditLink><fmt:message key="actions.edit"/></wiki:EditLink>
           </wiki:PageType>
         </span>
       </wiki:Permission>
@@ -34,11 +34,11 @@
       <wiki:Permission permission="comment">
         <span>
           <wiki:PageType type="page">
-            <wiki:CommentLink>Add Comment</wiki:CommentLink>
+            <wiki:CommentLink><fmt:message key="actions.addcomment"/></wiki:CommentLink>
           </wiki:PageType>
           <wiki:PageType type="attachment">
             <a href="Comment.jsp?page=<wiki:ParentPageName />"
-               title="Add Comment to parent page" >Add Comment</a>
+               title="<fmt:message key="actions.addcommenttoparent"/>" ><fmt:message key="actions.addcomment"/></a>
           </wiki:PageType>
         </span>
       </wiki:Permission>
@@ -49,14 +49,14 @@
         <wiki:PageType type="page">
           <wiki:Permission permission="upload">
             <span>
-              <a href="<wiki:UploadLink format='url' />">Attach File</a>
+              <a href="<wiki:UploadLink format='url' />"><fmt:message key="actions.upload"/></a>
             </span>
           </wiki:Permission>
         </wiki:PageType>
       </wiki:CheckRequestContext>
       <span>
         <wiki:CheckRequestContext context='view|diff|edit|upload'>
-          <wiki:PageInfoLink>Page Info</wiki:PageInfoLink>
+          <wiki:PageInfoLink><fmt:message key="actions.info"/></wiki:PageInfoLink>
         </wiki:CheckRequestContext>
       </span>
     </wiki:PageExists>
@@ -64,7 +64,7 @@
     <wiki:CheckRequestContext context='!prefs'>
       <wiki:CheckRequestContext context='!preview'>
         <span>
-          <wiki:LinkTo page="UserPreferences">My Prefs</wiki:LinkTo>
+          <wiki:LinkTo page="UserPreferences"><fmt:message key="actions.prefs"/></wiki:LinkTo>
         </span>
       </wiki:CheckRequestContext>
     </wiki:CheckRequestContext>
@@ -72,7 +72,7 @@
     <wiki:UserCheck status="notAuthenticated">
       <wiki:Permission permission="login">
         <span>
-          <wiki:Link jsp="Login.jsp">Log in</wiki:Link>
+          <wiki:Link jsp="Login.jsp"><fmt:message key="actions.login"/></wiki:Link>
         </span>
       </wiki:Permission>
     </wiki:UserCheck>
@@ -82,13 +82,13 @@
         <span>
           <wiki:Link jsp="EditGroup.jsp">
             <wiki:Param name="group" value="<%=group%>" />
-            Edit group
+            <fmt:message key="actions.editgroup"/>
           </wiki:Link>
         </span>
       </wiki:Permission>
       <wiki:Permission permission="deleteGroup">
         <span>
-          <a onclick="return confirmDelete()" href="<wiki:Link jsp='DeleteGroup.jsp' format='url'><wiki:Param name='group' value='<%=group%>' /></wiki:Link>">Delete group</a>
+          <a onclick="return confirmDelete()" href="<wiki:Link jsp='DeleteGroup.jsp' format='url'><wiki:Param name='group' value='<%=group%>' /></wiki:Link>"><fmt:message key="actions.deletegroup"/></a>
         </span>
       </wiki:Permission>
     </wiki:CheckRequestContext>
@@ -97,43 +97,45 @@
       <span>
         <wiki:Link jsp="Group.jsp">
           <wiki:Param name="group" value="<%=group%>" />
-          View group
+          <fmt:message key="actions.viewgroup"/>
         </wiki:Link>
       </span>
     </wiki:CheckRequestContext>
     
     <wiki:Permission permission="createGroups">
       <span>
-        <wiki:Link jsp="NewGroup.jsp">Create group</wiki:Link>
+        <wiki:Link jsp="NewGroup.jsp"><fmt:message key="actions.creategroup"/></wiki:Link>
       </span>
     </wiki:Permission>
 
     <wiki:UserCheck status="authenticated">
       <span>
-        <wiki:Link jsp="Logout.jsp">Log out</wiki:Link>
+        <wiki:Link jsp="Logout.jsp"><fmt:message key="actions.logout"/></wiki:Link>
       </span>
     </wiki:UserCheck>
   
     <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
       <div class="pageInfo">
         <wiki:CheckVersion mode="latest">
-           This page (revision-<wiki:PageVersion />) last changed on
-           <wiki:DiffLink version="latest" newVersion="previous">
-             <wiki:PageDate format='<%= prefDateFormat %>'/>
-           </wiki:DiffLink>
-           by <wiki:Author />.
+           <fmt:message key="actions.lastchange">
+              <fmt:param><wiki:PageVersion /></fmt:param>
+              <fmt:param><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='<%= prefDateFormat %>'/></wiki:DiffLink></fmt:param>
+              <fmt:param><wiki:Author /></fmt:param>
+           </fmt:message>
         </wiki:CheckVersion>
   
         <wiki:CheckVersion mode="notlatest">
-          This particular version was published on
-            <wiki:PageDate format='<%= prefDateFormat %>'/> by <wiki:Author />.
+          <fmt:message key="actions.publishedon">
+             <fmt:param><wiki:PageDate format='<%= prefDateFormat %>'/></fmt:param>
+             <fmt:param><wiki:Author /></fmt:param>
+          </fmt:message>
         </wiki:CheckVersion>
   
-        <wiki:NoSuchPage>Page not created yet.</wiki:NoSuchPage>
+        <wiki:NoSuchPage><fmt:message key="actions.notcreated"/></wiki:NoSuchPage>
   
       </div>
     </wiki:CheckRequestContext>
   
-    <span class='quick2Bottom'><a href="#Bottom" title='Go to Bottom' >&nbsp;</a></span>
+    <span class='quick2Bottom'><a href="#Bottom" title='<fmt:message key="actions.gotobottom"/>' >&nbsp;</a></span>
 
 </div>

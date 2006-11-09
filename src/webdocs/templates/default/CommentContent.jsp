@@ -1,4 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 
 <wiki:TabbedSection defaultTab="addcomment">
   <wiki:Tab id="pagecontent" title="Discussion page">
@@ -12,8 +14,9 @@
   <wiki:Tab id="edithelp" title="Help">
     <wiki:NoSuchPage page="EditPageHelp">
       <div class="error">
-         Ho hum, it seems that the EditPageHelp<wiki:EditLink page="EditPageHelp">?</wiki:EditLink>
-         page is missing.  Someone must've done something to the installation...
+         <fmt:message key="comment.edithelpmissing">
+            <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
+         </fmt:message>
       </div>
     </wiki:NoSuchPage>
 
