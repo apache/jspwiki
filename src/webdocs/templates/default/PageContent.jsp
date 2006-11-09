@@ -43,7 +43,7 @@
           <tr>
             <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
             <td><wiki:PageInfoLink><img src="<wiki:Link format="url" jsp="images/attachment_big.png"/>" border="0" alt="Info on <%=att.getFileName()%>" /></wiki:PageInfoLink></td>
-            <td><fmt:message key="attach.bytes"><fmt:param><%=att.getSize()%></fmt:param></fmt:message></td>
+            <td><fmt:formatNumber value="${att.size}"/> <fmt:message key="attach.bytes"/></td>
           </tr>
         </wiki:AttachmentsIterator>
       </table>

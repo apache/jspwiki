@@ -44,8 +44,8 @@ public class Release
     private static final String    POSTFIX       = "-cvs";
 
     public static final int        VERSION       = 2;
-    public static final int        REVISION      = 4;
-    public static final int        MINORREVISION = 78;
+    public static final int        REVISION      = 5;
+    public static final int        MINORREVISION = 0;
 
     /**
      *  This is the generic version string you should use

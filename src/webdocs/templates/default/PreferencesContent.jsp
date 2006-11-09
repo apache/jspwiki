@@ -93,7 +93,7 @@
           </wiki:UserProfile>
         </div>
         <div class="instructions">
-          <wiki:Messages div="error" topic="profile" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix")%> "/>
+          <wiki:Messages div="error" topic="profile" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix")%>'/>
         </div>
         <form id="editProfile" action="<wiki:Link jsp="UserPreferences.jsp" format="url"><wiki:Param name="tab" value="profile"/></wiki:Link>" 
               method="POST" accept-charset="UTF-8">
@@ -170,7 +170,7 @@
            
           <!-- E-mail -->
           <div class="block">
-            <label><fmt:message label="prefs.email"/></label>
+            <label><fmt:message key="prefs.email"/></label>
             <input type="text" name="email" size="30" value="<wiki:UserProfile property="email"/>" />
             <div class="description">
               <fmt:message key="prefs.email.description"/>

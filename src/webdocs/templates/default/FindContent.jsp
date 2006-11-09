@@ -40,7 +40,7 @@
       <h2>Find pages</h2>
 
       <wiki:SearchResults>
-          <h4><fmt:message key="find.heading.results"><fmt:param><c:out var="${query}"/> }</fmt:param></fmt:message></h4>
+          <h4><fmt:message key="find.heading.results"><fmt:param><%=query%></fmt:param></fmt:message></h4>
 
           <p>
           <i><fmt:message key="find.resultsstart">

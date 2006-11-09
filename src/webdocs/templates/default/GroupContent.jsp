@@ -78,7 +78,7 @@ function confirmDelete()
     else
     {
 %>
-       <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix") %> "/>
+       <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>'/>
 <%
     }
   }
