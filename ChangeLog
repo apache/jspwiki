@@ -1,3 +1,13 @@
+2006-11-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.0
+        
+        * Split off 2.4 to its own JSPWIKI_2_4_BRANCH stable development
+        branch.  HEAD is now 2.6 development branch.
+        
+        * Mass commit of i18n code.  Almost everything is localized now,
+        but unfortunately we only support English right now.
+
 2006-11-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.78
