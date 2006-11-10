@@ -60,19 +60,22 @@ public final class SessionMonitor extends WikiBackgroundThread
      */
     public final static SessionMonitor getInstance( WikiEngine engine ) 
     {
-        if ( engine == null ) 
+        if( engine == null ) 
         {
             throw new IllegalArgumentException( "Engine cannot be null." );
         }
-        SessionMonitor monitor = (SessionMonitor)c_monitors.get( engine );
-        if ( monitor == null )
+        SessionMonitor monitor;
+        
+        synchronized( c_monitors )
         {
-            monitor = new SessionMonitor( engine );
-            synchronized ( c_monitors )
+            monitor = (SessionMonitor) c_monitors.get(engine);
+            if( monitor == null )
             {
+                monitor = new SessionMonitor(engine);
+
                 c_monitors.put( engine, monitor );
             }
-        }
+        }        
         return monitor;
     }
     
