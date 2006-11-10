@@ -87,7 +87,16 @@ public final class SessionMonitor extends WikiBackgroundThread
         super( engine, 60 );
         setName("JSPWiki Session Monitor");
     }
-    
+
+    /**
+     *  This just logs that we are shutting down.
+     */
+    public void shutdownTask()
+    {
+        log.info("Session monitor shutting down...");
+    }
+
+
     /**
      * <p>Runs the session monitor's cleanup method, which iterates
      * through the HttpSession keys in a private Map 
