@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -139,7 +140,9 @@ public class DefaultAclManager implements AclManager
                 //
                 //  Or, try parsing the page
                 //
-                m_engine.getHTML( page.getName() );
+                WikiContext ctx = new WikiContext( m_engine, page );
+                
+                m_engine.getHTML( ctx, page );
               
                 page = m_engine.getPage( page.getName(), page.getVersion() );
                 acl = page.getAcl();
