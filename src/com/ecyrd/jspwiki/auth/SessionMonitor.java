@@ -180,10 +180,13 @@ public final class SessionMonitor extends WikiBackgroundThread
             for( Iterator it = removeQueue.iterator(); it.hasNext(); )
             {
                 HttpSession s = (HttpSession) it.next();
-                m_sessions.remove( s );
-                
-                WikiSession ws = find( s );
-                fireEvent( WikiSecurityEvent.SESSION_EXPIRED, ws.getLoginPrincipal(), s );
+                WeakReference storedSession = (WeakReference) m_sessions.remove( s );
+
+                if( storedSession != null && storedSession.get() instanceof WikiSession )
+                {
+                    WikiSession ws = (WikiSession) storedSession.get();
+                    fireEvent( WikiSecurityEvent.SESSION_EXPIRED, ws.getLoginPrincipal(), ws );
+                }
             }
         }
     }
@@ -315,7 +318,7 @@ public final class SessionMonitor extends WikiBackgroundThread
      * @param type  the event type
      * @since 2.4.75
      */
-    protected final void fireEvent( int type, Principal principal, HttpSession session )
+    protected final void fireEvent( int type, Principal principal, WikiSession session )
     {
         if( WikiEventManager.isListening(this) )
         {
