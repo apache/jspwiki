@@ -4,6 +4,9 @@
         
         * Minor fixes in an attempt to stop the IllegalThreadStateException
         from WikiSession.getWikiSession()
+        
+        * Fixed problem where DefaultACLManager would call itself recursively
+        if there was an InsertPage loop on the pages.
 
 2006-11-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
