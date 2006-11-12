@@ -158,6 +158,8 @@ public final class PolicyLoader
             //
             //  Do a bit of a sanity checks to help people who are not familiar with JAAS.
             //
+            if( policy.startsWith("file:") ) policy = policy.substring("file:".length());
+            
             File f = new File(policy);
             
             if( !f.exists() )
