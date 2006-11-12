@@ -1,3 +1,15 @@
+2006-11-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.1
+        
+        * Fixed LoginContent.jsp so that it compiles.
+        
+        * Fixed issue with PolicyLoader when the URI found had a "file:"
+        in it.
+        
+        * Fixed some other issue which I can't remember right now because
+        I drunk some very nice Tomintoul 27 years old single malt whiskey.
+
 2006-11-09  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.0
