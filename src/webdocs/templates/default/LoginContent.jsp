@@ -30,7 +30,7 @@
     <fmt:message key="login.welcome"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message>
   </div>
   <div class="instructions">
-    <wiki:Messages div="error" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix") %> " />
+    <wiki:Messages div="error" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
   </div>
 
   <form id="login" action="<%=postURL%>" 
