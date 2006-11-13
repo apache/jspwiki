@@ -1,3 +1,12 @@
+2006-11-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.80
+        
+        * Fixed the SessionManager once and for all by incorporating a patch
+        from Tim Bass and Glenn Nielsen - SessionMonitor is no longer a
+        Thread, and it just listens to Servlet container notifications.
+        Note that you MUST add the listener to your web.xml!
+
 2006-11-10  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.79

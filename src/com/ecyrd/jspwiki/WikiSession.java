@@ -853,22 +853,6 @@ public final class WikiSession implements WikiEventListener
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;
         
-        // Start the session monitor thread if not started already
-        if ( !monitor.isAlive() )
-        {
-            try
-            {
-                monitor.start();
-            }
-            catch( IllegalThreadStateException e )
-            {
-                //
-                //  Well, if it's alive, we'll note an error, though his should never happen.
-                //  We still continue processing.
-                //
-                log.error("Session monitor already alive, yet JSPWiki tried to start it.");
-            }
-        }
         return wikiSession;
     }
 
