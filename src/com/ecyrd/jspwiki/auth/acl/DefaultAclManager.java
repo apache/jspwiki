@@ -14,6 +14,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
@@ -141,6 +142,8 @@ public class DefaultAclManager implements AclManager
                 //  Or, try parsing the page
                 //
                 WikiContext ctx = new WikiContext( m_engine, page );
+              
+                ctx.setVariable( RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
                 
                 m_engine.getHTML( ctx, page );
               
