@@ -1,3 +1,24 @@
+2006-11-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.81
+        
+        * AttachmentServlet is now less verbose if download is aborted.
+        
+        * DefaultAclManager would accidentally also render plugins when
+        refreshing ACLs on the list.  This could cause infinite recursion.
+        
+        * New rendering control feature: setting RenderingManager.VAR_EXECUTE_PLUGINS
+        to Boolean.FALSE in the WikiContext will stop any plugins from being 
+        rendered when you are calling render().  Note that they will still be
+        parsed, just not executed.
+        
+        * Changed WikiEventDelegate to use a TreeSet to get rid of object
+        creation overhead - iterating through the list at every add() was
+        overhead.   Needs more analysis though.
+        
+        * Added patch from Neil Miller to get rid of extraneous m_engine
+        declaration in TemplateManager.  Thanks!
+
 2006-11-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.80
