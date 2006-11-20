@@ -69,17 +69,9 @@ public class InsertPage
         {
             WikiPage page = engine.getPage( includedPage );
 
+            
             if( page != null )
             {
-                AuthorizationManager mgr = engine.getAuthorizationManager();
-
-                if( !mgr.checkPermission( context.getWikiSession(),
-                                          new PagePermission( page, "view") ) )
-                {
-                    res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
-                    return res.toString();
-                }
-                   
                 //
                 //  Check for recursivity
                 //
@@ -101,6 +93,17 @@ public class InsertPage
                 previousIncludes.add( page.getName() );
                 context.setVariable( ATTR_RECURSE, previousIncludes );
                 
+                //
+                // Check for permissions
+                //
+                AuthorizationManager mgr = engine.getAuthorizationManager();
+
+                if( !mgr.checkPermission( context.getWikiSession(),
+                                          new PagePermission( page, "view") ) )
+                {
+                    res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
+                    return res.toString();
+                }
 
                 /**
                  *  We want inclusion to occur within the context of
