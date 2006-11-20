@@ -75,7 +75,6 @@ public class TemplateManager
 
     public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
     
-    private WikiEngine         m_engine;
     // private Cache              m_propertyCache;
 
     protected static final Logger log = Logger.getLogger( TemplateManager.class );

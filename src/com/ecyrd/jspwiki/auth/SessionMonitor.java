@@ -1,56 +1,60 @@
+/* 
+  JSPWiki - a JSP-based WikiWiki clone.
+
+  Copyright (C) 2001-2006 JSPWiki Development Team
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation; either version 2.1 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 package com.ecyrd.jspwiki.auth;
 
 import java.lang.ref.WeakReference;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.event.*;
-import com.ecyrd.jspwiki.util.WikiBackgroundThread;
+import com.ecyrd.jspwiki.event.WikiEventListener;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 /**
- *  <p>Monitor thread that runs every 60 seconds
- *  and removes all sessions that have expired.  
- *  Only one instance exists per WikiEngine. It is a not a 
- *  daemon thread; rather, it listens for wiki engine shutdown 
- *  and persists in the JVM until it detects it.</p>
- *  <p>The <em>raison d'être</em> for this class is to work
- *  around the fact that we need to keep track of HttpSessions
- *  and know which ones have expired, and which haven't. We can't
- *  t query the web container directly to see which have expired. As
- *  a workaround, therefore, we keep a cache of the current <code>HttpSession</code>
- *  objects for this webapp, and periodically walk through the 
- *  cache to determine which sessions are still valid. Fortunately
- *  for us, the HttpSession interface specifies two extremely
- *  handy methods that make the job relatively easy:
- *  {@link HttpSession#getLastAccessedTime()} and 
- *  {@link HttpSession#getMaxInactiveInterval()}.</p>
- *  <p>SessionMonitors are lazily initialized; a a monitor will not start
- *  until the first WikiSession is requested.</p>
+ *  <p>Manages WikiSession's for different WikiEngine's.</p>
+ *  <p>The WikiSession's are stored both in the remote user
+ *  HttpSession and in the SessionMonitor for the WikeEngine.
+ *  This class must be configured as a session listener in the
+ *  web.xml for the wiki web application.
+ *  </p>
  */
-public final class SessionMonitor extends WikiBackgroundThread
+public class SessionMonitor implements HttpSessionListener
 {
     private static final Logger log = Logger.getLogger( SessionMonitor.class );
     
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
-    private static final Map c_monitors = new HashMap();
+    private static final Map          c_monitors   = new HashMap();
     
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
-    private final Map m_sessions = new WeakHashMap();
+    private final Map                 m_sessions   = new WeakHashMap();
 
+    private       WikiEngine          m_engine     = null;
+    
     private final PrincipalComparator m_comparator = new PrincipalComparator();
     
     /**
@@ -60,121 +64,38 @@ public final class SessionMonitor extends WikiBackgroundThread
      */
     public final static SessionMonitor getInstance( WikiEngine engine ) 
     {
-        if ( engine == null ) 
+        if( engine == null ) 
         {
             throw new IllegalArgumentException( "Engine cannot be null." );
         }
-        SessionMonitor monitor = (SessionMonitor)c_monitors.get( engine );
-        if ( monitor == null )
+        SessionMonitor monitor;
+        
+        synchronized( c_monitors )
         {
-            monitor = new SessionMonitor( engine );
-            synchronized ( c_monitors )
+            monitor = (SessionMonitor) c_monitors.get(engine);
+            if( monitor == null )
             {
+                monitor = new SessionMonitor(engine);
+
                 c_monitors.put( engine, monitor );
             }
-        }
+        }        
         return monitor;
     }
     
     /**
-     * Private constructor to prevent direct instantiation.
+     * Construct the SessionListener
      */
+    public SessionMonitor()
+    {
+    }
+
     private SessionMonitor( WikiEngine engine )
     {
-        super( engine, 60 );
-        setName("JSPWiki Session Monitor");
+        m_engine = engine;
     }
-    
-    /**
-     * <p>Runs the session monitor's cleanup method, which iterates
-     * through the HttpSession keys in a private Map 
-     * and checks for expired sessions. Each HttpSession is
-     * evaluated for removal as follows:</p>
-     * <ul>
-     *   <li><em>Garbage collection.</em> If the session had 
-     *     previously been garbage-collected, 
-     *     it is removed from the map</li>
-     *   <li><em>Expiration.</em> If the value returned by the 
-     *     session's {@link HttpSession#getLastAccessedTime()} 
-     *     method plus the value of {@link HttpSession#getMaxInactiveInterval()}
-     *     is less than the current time, the session is treated
-     *     as expired, and removed from the map</li>
-     *   <li><em>Invalidation.</em> Certain web containers will 
-     *     throw an exception like <code>IllegalStateException</code> 
-     *     when the last-accessed or max-inactive methods are called
-     *     on sessions marked invalid by the container. If this is 
-     *     true when we call these methods, we similarly regard the
-     *     session as invalid and remove it from the map</li>
-     * </ul>
-     * <p>All of these conditions mean the same thing: the session
-     * isn't relevant to the container anymore, so we should stop
-     * caching it.</p>
-     * @see java.lang.Thread#run()
-     */
-    public final void backgroundTask()
-    {
-        synchronized( m_sessions )
-        {
-            Set entries = m_sessions.keySet();
-            Set removeQueue = new HashSet();
 
-            for( Iterator i = entries.iterator(); i.hasNext(); )
-            {
-                boolean expired = false;
-                boolean invalid = false;
-                boolean removed = false;
-                String reason = null;
-                HttpSession s = (HttpSession) i.next();
-                
-                if ( s == null )
-                {
-                    removed = true;
-                    reason = "Garbage collector removed HttpSession";
-                }
-                else 
-                {
-                    try
-                    {
-                        long now = System.currentTimeMillis();
-                        long lastAccessed = s.getLastAccessedTime();
-                        long expiryTime = s.getMaxInactiveInterval() * 1000L;
-                        if ( now > ( lastAccessed + expiryTime ) )
-                        {
-                            expired = true;
-                            reason = "HttpSession has expired";
-                        }
-                    }
-                    
-                    // We will get an exception if the container
-                    // has invalidated the session already
-                    catch ( Exception e )
-                    {
-                        invalid = true;
-                        reason = "Container marked HttpSession as invalid";
-                    }
-                }
-                
-                if ( expired || invalid || removed )
-                {
-                    log.info( "Removing expired wiki session: " + reason );
-                    removeQueue.add( s );
-                }
-            }
-            
-            //
-            // Remove everything we marked for removal
-            // and fire an event
-            //
-            for( Iterator it = removeQueue.iterator(); it.hasNext(); )
-            {
-                HttpSession s = (HttpSession) it.next();
-                m_sessions.remove( s );
-                
-                WikiSession ws = find( s );
-                fireEvent( WikiSecurityEvent.SESSION_EXPIRED, ws.getLoginPrincipal(), s );
-            }
-        }
-    }
+
     
     /**
      * <p>Looks up the wiki session associated with a user's Http session
@@ -194,12 +115,17 @@ public final class SessionMonitor extends WikiBackgroundThread
         // and create one if it isn't there yet.
         WikiSession wikiSession;
         String sid = ( session == null ) ? "(null)" : session.getId();
-        WeakReference storedSession = ((WeakReference)m_sessions.get( session ));
+        WeakReference storedSession = ((WeakReference)m_sessions.get( sid ));
+        String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
+        if( storedSession == null ) 
+        {
+            storedSession = (WeakReference)session.getAttribute( wikiSessionName );
+        }
 
         // If the weak reference returns a wiki session, return it
-        if ( storedSession != null && storedSession.get() instanceof WikiSession )
+        if( storedSession != null && storedSession.get() instanceof WikiSession )
         {
-            if ( log.isDebugEnabled() )
+            if( log.isDebugEnabled() )
             {
                 log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
             }
@@ -209,15 +135,16 @@ public final class SessionMonitor extends WikiBackgroundThread
         // Otherwise, create a new guest session and stash it.
         else
         {
-            if ( log.isDebugEnabled() )
+            if( log.isDebugEnabled() )
             {
                 log.debug( "Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
             }
-            wikiSession = WikiSession.guestSession( getEngine() );
-            synchronized ( m_sessions )
+            wikiSession = WikiSession.guestSession( m_engine );
+            synchronized( m_sessions )
             {
-                m_sessions.put( session, new WeakReference( wikiSession ) );
+                m_sessions.put( sid, new WeakReference( wikiSession ) );
             }
+            session.setAttribute( wikiSessionName, wikiSession );
         }
         return wikiSession;
     }
@@ -235,7 +162,7 @@ public final class SessionMonitor extends WikiBackgroundThread
         }
         synchronized ( m_sessions )
         {
-            m_sessions.remove( session );
+            m_sessions.remove( session.getId() );
         }
     }
     
@@ -303,11 +230,39 @@ public final class SessionMonitor extends WikiBackgroundThread
      * @param type  the event type
      * @since 2.4.75
      */
-    protected final void fireEvent( int type, Principal principal, HttpSession session )
+    protected final void fireEvent( int type, Principal principal, WikiSession session )
     {
         if( WikiEventManager.isListening(this) )
         {
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,session));
+        }
+    }
+    
+    public void sessionCreated( HttpSessionEvent se )
+    {
+        // No Action Needed when session created
+    }
+    
+    public void sessionDestroyed( HttpSessionEvent se )
+    {
+        HttpSession session = se.getSession();
+        Iterator it = c_monitors.values().iterator();
+        while( it.hasNext() )
+        {
+            SessionMonitor monitor = (SessionMonitor)it.next();
+            
+            WikiSession storedSession = monitor.find(session);
+            
+            monitor.remove(session);
+            
+            log.debug("Removed session "+session.getId()+".");
+            
+            if( storedSession != null && storedSession instanceof WikiSession )
+            {
+                fireEvent( WikiSecurityEvent.SESSION_EXPIRED, 
+                           storedSession.getLoginPrincipal(), 
+                           storedSession );
+            }
         }
     }
 }

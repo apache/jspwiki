@@ -91,10 +91,10 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      */
     public final void run() 
     {
+        final Logger log = Logger.getLogger( WikiBackgroundThread.class );
         try 
         {
             // Perform the initial startup task
-            final Logger log = Logger.getLogger( WikiBackgroundThread.class );
             final String name = getName();
             log.info( "Starting up background thread: " + name + ".");
             startupTask();
@@ -136,9 +136,10 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
             // Perform the shutdown task
             shutdownTask();
         }
-        catch( Exception e )
+        catch( Throwable t )
         {
-            throw new InternalWikiException( e.getMessage() );
+            log.error( "Background thread error", t);
+            throw new InternalWikiException( t.getMessage() );
         }
     }
     

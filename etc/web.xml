@@ -56,7 +56,14 @@
        <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
-
+   
+   <!--
+       HttpSessionListener used for managing WikiSession's.
+     -->
+   <listener>
+      <listener-class>com.ecyrd.jspwiki.auth.SessionMonitor</listener-class>
+   </listener>
+   
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.

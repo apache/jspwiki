@@ -65,6 +65,8 @@ import http.utils.multipartrequest.*;
 public class AttachmentServlet
     extends WebdavServlet
 {
+    private static final int BUFFER_SIZE = 8192;
+
     private static final long serialVersionUID = 3257282552187531320L;
     
     private WikiEngine m_engine;
@@ -235,7 +237,7 @@ public class AttachmentServlet
                 in  = mgr.getAttachmentStream( att );
 
                 int read = 0;
-                byte buffer[] = new byte[8192];
+                byte buffer[] = new byte[BUFFER_SIZE];
                     
                 while( (read = in.read( buffer )) > -1 )
                 {
@@ -285,8 +287,11 @@ public class AttachmentServlet
         }
         catch( IOException ioe )
         {
+            //
+            //  Client dropped the connection or something else happened
+            //
             msg = "Error: " + ioe.getMessage();
-            log.error("I/O exception during download",ioe);
+            log.info("I/O exception during download",ioe);
             res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                            msg );
             return;

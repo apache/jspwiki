@@ -7,12 +7,14 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
@@ -139,7 +141,11 @@ public class DefaultAclManager implements AclManager
                 //
                 //  Or, try parsing the page
                 //
-                m_engine.getHTML( page.getName() );
+                WikiContext ctx = new WikiContext( m_engine, page );
+              
+                ctx.setVariable( RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
+                
+                m_engine.getHTML( ctx, page );
               
                 page = m_engine.getPage( page.getName(), page.getVersion() );
                 acl = page.getAcl();

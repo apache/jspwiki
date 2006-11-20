@@ -84,6 +84,8 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * 
      */
     private         Constructor m_rendererConstructor;
+
+    public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
     
     /**
      *  Initializes the RenderingManager.
