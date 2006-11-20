@@ -20,17 +20,9 @@
 
 package com.ecyrd.jspwiki.event;
 
-import  org.apache.log4j.Logger;
+import java.util.*;
 
-import  javax.swing.event.EventListenerList;
-import  java.util.Collections;
-import  java.util.EventListener;
-import  java.util.HashSet;
-import  java.util.Iterator;
-import  java.util.Map;
-import  java.util.Set;
-import  java.util.Vector;
-import  java.util.HashMap;
+import org.apache.log4j.Logger;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent
@@ -400,8 +392,10 @@ public class WikiEventManager
     private static final class WikiEventDelegate
     {
         /* A list of event listeners for this instance. */
-        private final EventListenerList m_listenerList = new EventListenerList();
+        //private final EventListenerList m_listenerList = new EventListenerList();
 
+        private SortedSet m_listenerList = Collections.synchronizedSortedSet(new TreeSet(new WikiEventListenerComparator()));
+        
         private Class  m_class  = null;
         private Object m_client = null;
 
@@ -431,10 +425,8 @@ public class WikiEventManager
         protected void setClient( Object client )
         {
             m_class  = null;
-            if ( m_client != null ) System.err.println("WARNING: delegate client was already set."); // TEMP
             m_client = client;
         }
-
 
         /**
          *  Returns the class of the client-less delegate, null if
@@ -456,14 +448,7 @@ public class WikiEventManager
          */
         public Set getWikiEventListeners()
         {
-            HashSet set = new HashSet();
-            WikiEventListener[] listeners =
-                    (WikiEventListener[])m_listenerList.getListeners(WikiEventListener.class);
-            for ( int i = 0; i < listeners.length; i++ )
-            {
-                set.add(listeners[i]);
-            }
-            return Collections.unmodifiableSet( set );
+            return Collections.unmodifiableSet(m_listenerList);
         }
 
 
@@ -475,18 +460,7 @@ public class WikiEventManager
          */
         public synchronized boolean addWikiEventListener( WikiEventListener listener )
         {
-            WikiEventListener[] listeners =
-                    (WikiEventListener[])m_listenerList.getListeners(WikiEventListener.class);
-            for ( int i = 0; i < listeners.length; i++ )
-            {
-            //  if ( listeners[i] == listener )
-                if ( listeners[i].equals(listener) == true )
-                {
-                    return false; // already added
-                }
-            }
-            m_listenerList.add( WikiEventListener.class, listener );
-            return true;
+            return m_listenerList.add( listener );
         }
 
 
@@ -498,18 +472,7 @@ public class WikiEventManager
          */
         public synchronized boolean removeWikiEventListener( WikiEventListener listener )
         {
-            WikiEventListener[] listeners =
-                    (WikiEventListener[])m_listenerList.getListeners(WikiEventListener.class);
-            for ( int i = 0; i < listeners.length; i++ )
-            {
-            //  if ( listeners[i] == listener )
-                if ( listeners[i].equals(listener) == true )
-                {
-                    m_listenerList.remove( WikiEventListener.class, listener );
-                    return true;
-                }
-            }
-            return false;
+            return m_listenerList.remove(listener);
         }
 
 
@@ -519,7 +482,7 @@ public class WikiEventManager
          */
         public synchronized boolean isListening()
         {
-            return ( m_listenerList.getListenerCount() > 0 );
+            return !m_listenerList.isEmpty();
         }
 
 
@@ -529,23 +492,45 @@ public class WikiEventManager
          */
         public void fireEvent( WikiEvent event )
         {
-            EventListener[] listeners = m_listenerList.getListeners(WikiEventListener.class);
-            if ( listeners.length > 0 )
+            try
             {
-                log.debug("fire event: " + event.toString() );
-                // process listeners last to first, notifying those interested in this event
-                for ( int i = listeners.length-1 ; i >= 0 ; i-- )
+                for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
                 {
-                    EventListener o = listeners[i];
-                    if ( o instanceof WikiEventListener )
-                    {
-                        ((WikiEventListener)o).actionPerformed(event);
-                    }
+                    WikiEventListener listener = (WikiEventListener) i.next();
+                
+                    listener.actionPerformed( event );
                 }
             }
+            catch( ConcurrentModificationException e )
+            {
+                //
+                //  We don't die, we just don't do notifications in that case.
+                //
+                log.info("Concurrent modification of event list; please report this.");
+            }
+
         }
 
 
     } // end inner class WikiEventDelegate
 
+    private static class WikiEventListenerComparator implements Comparator
+    {
+        // TODO: This method is a critical performance bottleneck
+        public int compare(Object arg0, Object arg1)
+        {
+            if( arg0 instanceof WikiEventListener && arg1 instanceof WikiEventListener )
+            {
+                WikiEventListener w0 = (WikiEventListener) arg0;
+                WikiEventListener w1 = (WikiEventListener) arg1;
+                
+                if( w1 == w0 || w0.equals(w1) ) return 0;
+                
+                return w1.hashCode() - w0.hashCode();
+            }
+            
+            throw new ClassCastException( arg1.getClass().getName() + " != " + arg0.getClass().getName() );
+        }
+        
+    }
 } // end com.ecyrd.jspwiki.event.WikiEventManager
