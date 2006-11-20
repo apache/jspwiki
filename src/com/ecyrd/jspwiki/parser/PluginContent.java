@@ -27,6 +27,7 @@ import org.jdom.Text;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  Stores the contents of a plugin in a WikiDocument DOM tree.
@@ -57,6 +58,9 @@ public class PluginContent extends Text
         String result;
         
         WikiContext context = ((WikiDocument)getDocument()).getContext();
+        
+        Boolean b = (Boolean)context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
+        if( b != null && !b.booleanValue() ) return "";
         
         try
         {
