@@ -1,3 +1,20 @@
+2006-11-21  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.5.3
+        
+        * Checked in WikiWizard 1.1:
+          
+          Major Improvements:
+          - Now supports multiple file uploads
+          - Speed up loading by putting config file init
+            in extra thread
+          - Highlighting of %% tags
+          - "Mark Occurences" function similar to eclipse
+          - Drag 'n Drop Interface for extension bar
+          
+          for details please take a look 
+          at /applets/WiWi-INF/ChangeLog.txt
+
 2006-11-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.2
