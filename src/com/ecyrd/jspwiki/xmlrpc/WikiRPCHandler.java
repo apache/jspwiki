@@ -28,6 +28,8 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  @author Janne Jalkanen
  *  @since 2.1.7
  */
+// FIXME: This class is fast becoming obsolete.  It should be moved to the "rpc" package
+//        in 3.0
 public interface WikiRPCHandler
 {
     public void initialize( WikiEngine engine );
