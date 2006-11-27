@@ -971,4 +971,63 @@ GraphBar.onPageLoad = function()
   }
 }
 
- 
+var globalCursorPos; // global variabe to keep track of where the cursor was
+
+//sets the global variable to keep track of the cursor position
+function setCursorPos(id) 
+{
+  globalCursorPos = getCursorPos( document.getElementById(id) );
+}
+
+function getCursorPos(textElement) 
+{
+  //save off the current value to restore it later,
+  var sOldText = textElement.value;
+
+  // For IE
+  if( document.selection )
+  {
+    var objRange = document.selection.createRange();
+    var sOldRange = objRange.text;
+
+    //set this string to a small string that will not normally be encountered
+    var sWeirdString = '#%~';
+
+    //insert the weirdstring where the cursor is at
+    objRange.text = sOldRange + sWeirdString; objRange.moveStart('character', (0 - sOldRange.length - sWeirdString.length));
+
+    //save off the new string with the weirdstring in it
+    var sNewText = textElement.value;
+
+    //set the actual text value back to how it was
+    objRange.text = sOldRange;
+
+    //look through the new string we saved off and find the location of
+    //the weirdstring that was inserted and return that value
+    for (i=0; i <= sNewText.length; i++) {
+      var sTemp = sNewText.substring(i, i + sWeirdString.length);
+      if (sTemp == sWeirdString) {
+        var cursorPos = (i - sOldRange.length);
+        return cursorPos;
+      }
+    }
+  }
+  // Mozilla and the rest
+  else if( textElement.selectionStart || textElement.selectionStart == '0') 
+  {
+    return textElement.selectionStart;
+  }
+  else
+  {
+    return sOldText.length;
+  }
+}
+
+//this function inserts the input string into the textarea
+//where the cursor was at
+function insertString(stringToInsert) {
+  var firstPart = myForm.myTextArea.value.substring(0, globalCursorPos);
+  var secondPart = myForm.myTextArea.value.substring(globalCursorPos,
+                                                     myForm.myTextArea.value.length);
+  myForm.myTextArea.value = firstPart + stringToInsert + secondPart;
+} 
