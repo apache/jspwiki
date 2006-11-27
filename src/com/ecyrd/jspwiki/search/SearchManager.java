@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package com.ecyrd.jspwiki.search;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.*;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
@@ -32,8 +32,11 @@ import com.ecyrd.jspwiki.event.WikiEventUtils;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.modules.InternalModule;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.metaparadigm.jsonrpc.JSONRPCBridge;
 
 /**
  *  Manages searching the Wiki.
@@ -56,6 +59,8 @@ public class SearchManager
     
     protected WikiEngine m_engine;
     
+    public static final String JSON_SEARCH = "search";
+    
     public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
     {
@@ -63,8 +68,49 @@ public class SearchManager
         
         WikiEventUtils.addWikiEventListener(m_engine.getPageManager(), 
                                             WikiPageEvent.PAGE_DELETE_REQUEST, this);
+        
+        JSONRPCBridge.getGlobalBridge().setDebug(true);
+        JSONRPCBridge.getGlobalBridge().registerObject( JSON_SEARCH, new JSONSearch() );
     }
 
+    /**
+     *  Provides a JSON RPC API to the JSPWiki Search Engine.
+     *  @author jalkanen
+     */
+    public class JSONSearch implements RPCCallable
+    {
+        public List getSuggestions( String value, int maxLength )
+        {
+            StopWatch sw = new StopWatch();
+            sw.start();
+            List list = new ArrayList();
+         
+            if( value.length() > 0 ) 
+            {
+                value = MarkupParser.cleanLink(value);
+                value = value.toLowerCase();
+                    
+                Set allPages = m_engine.getReferenceManager().findCreated();
+            
+                int counter = 0;
+                for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
+                {
+                    String p = (String) i.next();
+                    String pp = p.toLowerCase();
+                    if( pp.startsWith( value ) ) 
+                    {
+                        list.add( p );
+                        counter++;
+                    }
+                }
+            }
+            
+            sw.stop();
+            if( log.isDebugEnabled() ) log.debug("Suggestion request for "+value+" done in "+sw);
+            return list;
+        }
+    }
+    
     /**
      *  This particular method starts off indexing and all sorts of various activities,
      *  so you need to run this last, after things are done.
@@ -213,4 +259,5 @@ public class SearchManager
             }
         }
     }
+    
 }
