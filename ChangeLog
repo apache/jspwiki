@@ -1,3 +1,14 @@
+2006-11-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.4
+        
+        * Added rpc package, JSONRPCManager, and added preliminary
+        support to get suggestions in plain.jsp over AJAX.  Yes,
+        JSPWiki just gained AJAX support using JSON...
+
+        * Moved AtomAPIServlet to rpc/atom under the assumption that
+        nobody was using it anyway.
+
 2006-11-21  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.5.3

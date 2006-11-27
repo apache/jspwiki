@@ -8,6 +8,7 @@
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
+	<classpathentry kind="lib" path="lib/jsonrpc-1.0.jar" sourcepath="/Users/jalkanen/Downloads/json-rpc-java-1.0/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
 	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
