@@ -8,8 +8,59 @@
 <%--
         This is a plain editor for JSPWiki.
 --%>
+<style>
+#findSuggestionMenu { position:absolute;
+                      top: 0px;
+                      left: 0px; 
+                      border: 2px inset black;
+                      background-color: #f0f0f0;
+                      z-index: 1;}
+</style>
+<script>
+function getSuggestions(id)
+{
+  var textNode = document.getElementById(id);
+  var val = textNode.value;
+  var searchword;
+  
+  var pos = getCursorPos(textNode);
+  for( i = pos-1; i > 0; i-- )
+  {
+    if( val.charAt(i) == ']' ) break;
+    if( val.charAt(i) == '[' && i < val.length-1 ) { searchword = val.substring(i+1,pos); break; }
+  }
+
+  if( searchword )
+  {
+    jsonrpc.search.getSuggestions( callback, searchword, 10 );
+  }
+  else
+  {
+    var menuNode = document.getElementById("findSuggestionMenu");
+    menuNode.style.visibility = "hidden";
+  }
+}
+function callback(result,exception)
+{   
+   if(exception) { alert(exception.message); return; }
+   
+   var menuNode = document.getElementById("findSuggestionMenu");
+   
+   var html = "<ul>";
+   for( i = 0; i < result.list.length; i++ )
+   {
+      html += "<li>"+result.list[i]+"</li>";
+   }
+   html += "</ul>";
+   menuNode.innerHTML = html;
+   menuNode.style.visibility = "visible";
+}
+
+</script>
 <% WikiContext context = WikiContext.findContext( pageContext ); %>
-<% String usertext = EditorManager.getEditedText( pageContext ); 
+<% String usertext = EditorManager.getEditedText( pageContext );
+   JSONRPCManager.requestJSON( WikiContext.findContext(pageContext) );
+
    TemplateManager.addResourceRequest( context, "script", 
                                        context.getURL(WikiContext.NONE,"scripts/searchreplace.js") );
    String changenote = (String)session.getAttribute("changenote");
@@ -23,6 +74,7 @@
 <% if( usertext == null ) usertext = ""; %>
 
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
+      <div id="findSuggestionMenu" style='visibility:hidden;'></div>
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
       action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
       name="editForm" enctype="application/x-www-form-urlencoded">
@@ -33,7 +85,8 @@
         <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
                                                                        PageContext.REQUEST_SCOPE )%>" />
     </p>
-    <textarea style="width:100%;" class="editor" 
+    <textarea style="width:100%;" class="editor" onkeyup="getSuggestions(this.id)"
+              onclick="setCursorPos(this.id)" onchange="setCursorPos(this.id)"
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="25" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
    <wiki:CheckRequestContext context="edit">
