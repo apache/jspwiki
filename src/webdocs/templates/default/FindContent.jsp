@@ -1,7 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="java.util.Collection" %>
+<%@ page import="com.ecyrd.jspwiki.ui.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="java.net.URLEncoder" %>
 <fmt:setBundle basename="templates.DefaultResources"/>
 
@@ -38,6 +40,18 @@
 %>
 
       <h2>Find pages</h2>
+
+
+      <form action="<wiki:Link format="url" jsp="Search.jsp"/>"
+            accept-charset="<wiki:ContentEncoding/>">
+
+      <div>
+      Enter your query here:<br />
+      <input type="text" id="query" name="query" size="40" value="<%=query%>" />
+      <input type="submit" name="ok" value="<fmt:message key="find.submit.find"/>" />
+      <input type="submit" name="go" value="<fmt:message key="find.submit.go"/>" />
+      </div>
+      </form>
 
       <wiki:SearchResults>
           <h4><fmt:message key="find.heading.results"><fmt:param><%=query%></fmt:param></fmt:message></h4>
@@ -116,18 +130,6 @@
           </p>
           <hr />
       </wiki:SearchResults>
-
-      <form action="<wiki:Link format="url" jsp="Search.jsp"/>"
-            accept-charset="<wiki:ContentEncoding/>">
-
-      <p>
-      Enter your query here:<br />
-      <input type="text" name="query" size="40" value="<%=query%>" /></p>
-
-      <p>
-      <input type="submit" name="ok" value="<fmt:message key="find.submit.find"/>" />
-      <input type="submit" name="go" value="<fmt:message key="find.submit.go"/>" /></p>
-      </form>
 
       <wiki:InsertPage page="SearchPageHelp"/>
 
