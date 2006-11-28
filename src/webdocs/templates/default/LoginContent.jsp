@@ -50,7 +50,7 @@
 
     <div class="block">
       <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
-      <input type="submit" name="action" value="<fmt:message key="login.submit.login"/>" />
+      <input type="submit" name="submitlogin" value="<fmt:message key="login.submit.login"/>" />
     </div>
     
   </form>

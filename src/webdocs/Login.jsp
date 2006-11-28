@@ -44,7 +44,7 @@
         // If using custom auth, we need to do the login now
 
         String action = request.getParameter("action");
-        if( "login".equals(action) )
+        if( request.getParameter("submitlogin") != null )
         {
             String uid    = request.getParameter( "j_username" );
             String passwd = request.getParameter( "j_password" );
