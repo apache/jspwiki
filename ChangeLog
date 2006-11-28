@@ -1,3 +1,19 @@
+2006-11-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.5
+        
+        * plain.jsp did not compile due to last-minute changes in
+        package structure.  Reported by Juan Pablo Santos Rodriguez.
+        
+        * InternationalizationManager was not properly initialized.
+        Reported also by Juan.
+        
+        * TableOfContents was using wrong resource bundle.  Reported
+        by Juan.
+        
+        * LoginContent.jsp was failing, if someone localized the login
+        button.  Reported by someone (remind me and I will fix this entry)
+
 2006-11-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.4
