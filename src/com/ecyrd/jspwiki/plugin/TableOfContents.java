@@ -95,7 +95,7 @@ public class TableOfContents
         }
 
         String titleSection = hd.m_titleSection.replace( '%', '_' );
-	String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
+        String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
         
         String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
         String sectref = "#section-"+pageName+"-"+titleSection;
@@ -128,7 +128,7 @@ public class TableOfContents
     {
         WikiEngine engine = context.getEngine();
         WikiPage   page   = context.getPage();
-        ResourceBundle rb = context.getBundle("com.ecyrd.jspwiki.plugin.languagebundle");
+        ResourceBundle rb = context.getBundle("com.ecyrd.jspwiki.plugin.PluginResources");
         
         if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
             return "Table of Contents";
