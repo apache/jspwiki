@@ -582,6 +582,8 @@ public class WikiEngine
             //
             getFilterManager().addPageFilter(m_referenceManager, -1001 );
             getFilterManager().addPageFilter(m_searchManager, -1002 );
+            
+            m_internationalizationManager = new InternationalizationManager(this);
 
         }
         
