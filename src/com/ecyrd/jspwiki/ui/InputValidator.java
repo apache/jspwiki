@@ -25,10 +25,10 @@ import java.util.regex.Pattern;
 import com.ecyrd.jspwiki.WikiSession;
 
 /**
- * Provides basic validation services for HTTP parameters. Two standard
- * validators are provided: email address and standard input. Standard input
+ * Provides basic validation services for HTTP parameters. Three standard
+ * validators are provided: email address, identifier and standard input. Standard input
  * validator will reject any HTML-like input, and any of a number of special
- * characters.
+ * characters.  ID validator rejects HTML and quoted strings, and a couple of special characters.
  * @author Andrew Jaquith
  * @since 2.3.54
  */
@@ -38,9 +38,18 @@ public final class InputValidator
 
     public static final int        EMAIL          = 1;
 
+    /**
+     * @since 2.4.82
+     */
+    public static final int        ID             = 2;
+    
     protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
 
     protected static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>;&@\\xff{}\\$%\\\\]" );
+
+    /** Used when checking against IDs such as a full name when saving groups. 
+     *  @since 2.4.82 */
+    protected static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
 
     private final String           m_form;
 
@@ -131,6 +140,14 @@ public final class InputValidator
             if ( !valid )
             {
                 m_session.addMessage( m_form, label + " is not valid" );
+            }
+            return valid;
+        case ID:
+            matcher = ID_PATTERN.matcher( input );
+            valid = !matcher.find();
+            if ( !valid )
+            {
+                m_session.addMessage( m_form, label + " cannot contain these characters: \"'<>;&{}" );
             }
             return valid;
         }
