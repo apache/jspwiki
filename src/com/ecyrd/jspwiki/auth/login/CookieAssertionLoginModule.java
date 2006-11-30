@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.util.HttpUtil;
@@ -130,14 +131,17 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
      */
     public static String getUserCookie( HttpServletRequest request )
     {
-        return HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
+        String cookie = HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
+        
+        return TextUtil.urlDecodeUTF8(cookie);
     }
 
     /**
-     * Sets the username cookie.
+     * Sets the username cookie.  The cookie value is URLEncoded in UTF-8.
      */
     public static void setUserCookie( HttpServletResponse response, String name )
     {
+        name = TextUtil.urlEncodeUTF8(name);
         Cookie userId = new Cookie( PREFS_COOKIE_NAME, name );
         userId.setMaxAge( 1001 * 24 * 60 * 60 ); // 1001 days is default.
         response.addCookie( userId );
