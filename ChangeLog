@@ -1,3 +1,19 @@
+2006-11-30  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.82
+        
+        * Added patch from Glenn Nielsen to fix some issues of Lucene
+        starting twice.  WikiEngine is now stored as an attribute to
+        the ServletContext.
+        
+        * Fixed BugEditGroup.jspShouldAllowCharacterInMemberListWhenUsingNTLM
+        by remembering to do XML escaping in XMLGroupDatabase.  Please note
+        that if you have been mucking around in groupdatabase.xml on your own,
+        this may cause breakage.
+        
+        * Fixed BugUserPreferencesCanTDisplayedCorrectlyWithChinese by
+        encoding the username cookie with UTF-8 encoding.
+
 2006-11-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.81
