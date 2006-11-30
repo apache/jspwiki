@@ -20,6 +20,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -122,9 +123,9 @@ public class XMLGroupDatabase implements GroupDatabase
                 Group group = (Group) it.next();
                 io.write( "  <" + GROUP_TAG + " " );
                 io.write( GROUP_NAME );
-                io.write( "=\"" + group.getName() + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getName() )+ "\" " );
                 io.write( CREATOR );
-                io.write( "=\"" + group.getCreator() + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getCreator() ) + "\" " );
                 io.write( CREATED );
                 io.write( "=\"" + c_format.format( group.getCreated() ) + "\" " );
                 io.write( MODIFIER );
@@ -140,7 +141,7 @@ public class XMLGroupDatabase implements GroupDatabase
                     Principal member = members[j];
                     io.write( "    <" + MEMBER_TAG + " " );
                     io.write( PRINCIPAL );
-                    io.write( "=\"" + member.getName() + "\" " );
+                    io.write( "=\"" + StringEscapeUtils.escapeXml(member.getName()) + "\" " );
                     io.write( "/>\n" );
                 }
 
