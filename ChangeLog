@@ -1,5 +1,12 @@
 2006-11-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.83
+
+        * Added patch from Glenn Nielsen to allow WikiWizard to
+        compile on Tomcat 4.1
+
+2006-11-30  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * 2.4.82
         
         * Added patch from Glenn Nielsen to fix some issues of Lucene
