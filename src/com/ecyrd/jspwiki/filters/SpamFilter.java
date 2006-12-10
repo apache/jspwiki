@@ -60,53 +60,63 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class SpamFilter
     extends BasicPageFilter
 {
-    private String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
-    
-    private String m_forbiddenWordsPage = "SpamFilterWordList";
-    private String m_errorPage          = "RejectedMessage";
-    private String m_blacklist          = "SpamFilterWordList/blacklist.txt";
-    
     private static final String LISTVAR = "spamwords";
-    private PatternMatcher m_matcher = new Perl5Matcher();
+    public static final String  PROP_WORDLIST  = "wordlist";
+    public static final String  PROP_ERRORPAGE = "errorpage";
+    public static final String  PROP_PAGECHANGES = "pagechangesinminute";
+    public static final String  PROP_SIMILARCHANGES = "similarchanges";
+    public static final String  PROP_BANTIME   = "bantime";
+    public static final String  PROP_BLACKLIST = "blacklist";
+    public static final String  PROP_MAXURLS   = "maxurls";
+    public static final String  PROP_AKISMET_API_KEY = "akismet-apikey";
+    public static final String  PROP_IGNORE_AUTHENTICATED = "ignoreauthenticated";
+    
+    private String          URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
+    
+    private String          m_forbiddenWordsPage = "SpamFilterWordList";
+    private String          m_errorPage          = "RejectedMessage";
+    private String          m_blacklist          = "SpamFilterWordList/blacklist.txt";
+    
+    private PatternMatcher  m_matcher = new Perl5Matcher();
     private PatternCompiler m_compiler = new Perl5Compiler();
 
-    private Collection m_spamPatterns = null;
+    private Collection      m_spamPatterns = null;
 
-    private Date m_lastRebuild = new Date( 0L );
+    private Date            m_lastRebuild = new Date( 0L );
 
-    static Logger log = Logger.getLogger( SpamFilter.class );
+    static  Logger          log = Logger.getLogger( SpamFilter.class );
 
-    public static final String PROP_WORDLIST  = "wordlist";
-    public static final String PROP_ERRORPAGE = "errorpage";
-    public static final String PROP_PAGECHANGES = "pagechangesinminute";
-    public static final String PROP_SIMILARCHANGES = "similarchanges";
-    public static final String PROP_BANTIME   = "bantime";
-    public static final String PROP_BLACKLIST = "blacklist";
-    public static final String PROP_MAXURLS   = "maxurls";
-    public static final String PROP_AKISMET_API_KEY = "akismet-apikey";
     
-    private Vector m_temporaryBanList = new Vector();
+    private Vector          m_temporaryBanList = new Vector();
     
-    private int m_banTime = 60; // minutes
+    private int             m_banTime = 60; // minutes
     
-    private Vector m_lastModifications = new Vector();
+    private Vector          m_lastModifications = new Vector();
     
     /**
      *  How many times a single IP address can change a page per minute?
      */
-    private int m_limitSinglePageChanges = 5;
+    private int             m_limitSinglePageChanges = 5;
     
-    private int m_limitSimilarChanges = 2;
+    /**
+     *  How many times can you add the exact same string to a page?
+     */
+    private int             m_limitSimilarChanges = 2;
     
     /**
      *  How many URLs can be added at maximum.
      */
-    private int m_maxUrls = 5;
+    private int             m_maxUrls = 10;
     
-    private Pattern m_UrlPattern;
-    private Akismet m_akismet;
+    private Pattern         m_UrlPattern;
+    private Akismet         m_akismet;
 
-    private String  m_akismetAPIKey = null;
+    private String          m_akismetAPIKey = null;
+    
+    /**
+     * If set to true, will ignore anyone who is in Authenticated role.
+     */
+    private boolean         m_ignoreAuthenticated = false;
     
     public void initialize( Properties properties )
     {
@@ -133,6 +143,9 @@ public class SpamFilter
     
         m_blacklist = properties.getProperty( PROP_BLACKLIST, m_blacklist );
         
+        m_ignoreAuthenticated = TextUtil.getBooleanProperty( properties,
+                                                             PROP_IGNORE_AUTHENTICATED,
+                                                             m_ignoreAuthenticated );
         try
         {
             m_UrlPattern = m_compiler.compile( URL_REGEXP );
@@ -239,6 +252,21 @@ public class SpamFilter
         return compiledpatterns;
     }
     
+    private String getUniqueID()
+    {
+        StringBuffer sb = new StringBuffer();
+        Random rand = new Random();
+        
+        for( int i = 0; i < 6; i++ )
+        {
+            char x = (char)('A'+rand.nextInt(26));
+            
+            sb.append(x);
+        }
+        
+        return sb.toString();
+    }
+        
     /**
      *  Takes a single page change and performs a load of tests on the content change.
      *  An admin can modify anything.
@@ -251,11 +279,6 @@ public class SpamFilter
         throws RedirectException
     {
         HttpServletRequest req = context.getHttpRequest();
-
-        if( context.hasAdminPermissions() )
-        {
-            return;
-        }
 
         if( req != null )
         {
@@ -312,8 +335,10 @@ public class SpamFilter
                 
                 m_temporaryBanList.add( host );
                 
-                log.info("SPAM:TooManyModifications. Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
-                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb!",
+                String uid = getUniqueID();
+                
+                log.info("SPAM:TooManyModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
+                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
                                              context.getViewURL( m_errorPage ) );
             }
             
@@ -322,9 +347,11 @@ public class SpamFilter
                 Host host = new Host( addr, null );
                 
                 m_temporaryBanList.add( host );
+
+                String uid = getUniqueID();
                 
-                log.info("SPAM:SimilarModifications. Added host "+addr+" to temporary ban list for doing too many similar modifications" );
-                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb!",
+                log.info("SPAM:SimilarModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many similar modifications" );
+                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
                                              context.getViewURL( m_errorPage ) );                
             }
             
@@ -350,8 +377,10 @@ public class SpamFilter
                 
                 m_temporaryBanList.add( host );
                 
-                log.info("SPAM:TooManyUrls. Added host "+addr+" to temporary ban list for adding too many URLs" );
-                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb!",
+                String uid = getUniqueID();
+
+                log.info("SPAM:TooManyUrls ("+uid+"). Added host "+addr+" to temporary ban list for adding too many URLs" );
+                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
                                              context.getViewURL( m_errorPage ) );                
             }
             
@@ -363,6 +392,21 @@ public class SpamFilter
             
             m_lastModifications.add( new Host( addr, change ) );
         }
+    }
+
+    private boolean ignoreThisUser(WikiContext context)
+    {
+        if( context.hasAdminPermissions() )
+        {
+            return true;
+        }
+
+        if( m_ignoreAuthenticated && context.getWikiSession().isAuthenticated() )
+        {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -430,9 +474,11 @@ public class SpamFilter
                     
                     m_temporaryBanList.add( host );
 
-                    log.info("SPAM:Akismet. Akismet thinks this change is spam; added host to temporary ban list.");
+                    String uid = getUniqueID();
+
+                    log.info("SPAM:Akismet ("+uid+"). Akismet thinks this change is spam; added host to temporary ban list.");
                     
-                    throw new RedirectException("Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb!",
+                    throw new RedirectException("Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code "+uid+")",
                                                 context.getViewURL( m_errorPage ) );                
                 }
             }
@@ -571,11 +617,20 @@ public class SpamFilter
         throws RedirectException
     {
         cleanBanList();
-        checkBanList( context );
-        checkSinglePageChange( context, content );
+        refreshBlacklists(context);        
         
-        refreshBlacklists(context);
+        if(!ignoreThisUser(context))
+        {
+            checkBanList( context );
+            checkSinglePageChange( context, content );
+            checkPatternList(context, content);
+        }
         
+        return content;
+    }
+
+    private void checkPatternList(WikiContext context, String content) throws RedirectException
+    {
         String changeNote = (String)context.getPage().getAttribute( WikiPage.CHANGENOTE );
         
         //
@@ -584,37 +639,38 @@ public class SpamFilter
         //
         if( m_spamPatterns == null || context.getPage().getName().equals( m_forbiddenWordsPage ) )
         {
-            return content;
+            return;
         }
 
         for( Iterator i = m_spamPatterns.iterator(); i.hasNext(); )
         {
             Pattern p = (Pattern) i.next();
 
-            log.debug("Attempting to match page contents with "+p.getPattern());
+            // log.debug("Attempting to match page contents with "+p.getPattern());
 
             if( m_matcher.contains( content, p ) )
             {
                 //
                 //  Spam filter has a match.
                 //
+                String uid = getUniqueID();
 
-                log.info("SPAM:Regexp. Content matches the spam filter '"+p.getPattern()+"'");
+                log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.getPattern()+"'");
                 
-                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb!", 
+                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")", 
                                              context.getURL(WikiContext.VIEW,m_errorPage) );
             }
             
             if( changeNote != null && m_matcher.contains( changeNote, p ) )
             {
-                log.info("SPAM:Regexp. Content matches the spam filter '"+p.getPattern()+"'");
+                String uid = getUniqueID();
 
-                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb!", 
+                log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.getPattern()+"'");
+
+                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")", 
                                              context.getURL(WikiContext.VIEW,m_errorPage) );                
             }
         }
-
-        return content;
     }
     
     /**
