@@ -979,9 +979,9 @@ public class JSPWikiMarkupParser
     {
         if( m_cleanTranslator == null )
         {
-            WikiContext dummyContext = new WikiContext( m_engine, 
-                                                        m_context.getPage() );
-            
+            WikiContext dummyContext = new WikiContext( m_engine,
+                                                        m_context.getHttpRequest(),
+                                                        m_context.getPage() );            
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
 
             m_cleanTranslator.m_allowHTML = true;
