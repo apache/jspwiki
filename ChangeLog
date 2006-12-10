@@ -1,3 +1,23 @@
+2006-12-11  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.84
+        
+        * SpamFilter now ignores admins completely (an admin cannot be
+        banned)
+        
+        * SpamFilter has a new parameter: ignoreauthenticated, which, if
+        set to true, causes authenticated users to be always ignored when
+        checking.
+        
+        * SpamFilter now publishes an "incident code" in both the reject
+        message and log file, which should help figuring out why 
+        a particular edit was rejected.
+        
+        * General SpamFilter code reorganization.
+        
+        * Fixed a memory leak in JSPWikiMarkupTranslator, found by Aron
+        Gombas.
+
 2006-11-30  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.83
