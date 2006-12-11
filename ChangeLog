@@ -1,5 +1,12 @@
 2006-12-11  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.85
+
+        * Ahha!  Found the reason why SpamFilter was rejecting legit
+        edits: there was a typo in the code that checked whether the
+        user was adding too many URLs, and one URL could be counted
+        several times.
+
         * 2.4.84
         
         * SpamFilter now ignores admins completely (an admin cannot be
