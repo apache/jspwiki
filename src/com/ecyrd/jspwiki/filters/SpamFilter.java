@@ -366,7 +366,7 @@ public class SpamFilter
             {
                 MatchResult m = m_matcher.getMatch();
                 
-                tstChange = tstChange.substring( m.end(0) );
+                tstChange = tstChange.substring( m.endOffset(0) );
                 
                 urlCounter++;
             }
