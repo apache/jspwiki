@@ -83,6 +83,8 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public class WikiEngine
 {
+    private static final String ATTR_WIKIENGINE = "com.ecyrd.jspwiki.WikiEngine";
+
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
     /** True, if log4j has been configured. */
@@ -163,9 +165,6 @@ public class WikiEngine
       "jspwiki.specialPage.Preferences",     "UserPreferences.jsp",
       "jspwiki.specialPage.Search",          "Search.jsp",
       "jspwiki.specialPage.FindPage",        "FindPage.jsp"};
-
-    /** Stores an internal list of engines per each ServletContext */
-    private static Hashtable c_engines = new Hashtable();
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
@@ -317,14 +316,12 @@ public class WikiEngine
                                                        Properties props )
         throws InternalWikiException
     {
-        String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
-
-        // context.log( "Application "+appid+" requests WikiEngine.");
-
-        WikiEngine engine = (WikiEngine) c_engines.get( appid );
+        WikiEngine engine = (WikiEngine) context.getAttribute( ATTR_WIKIENGINE );
 
         if( engine == null )
         {
+            String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
+
             context.log(" Assigning new engine to "+appid);
             try
             {
@@ -334,6 +331,7 @@ public class WikiEngine
                 }
                 
                 engine = new WikiEngine( context, appid, props );
+                context.setAttribute( ATTR_WIKIENGINE, engine );
             }
             catch( Exception e )
             {
@@ -341,7 +339,6 @@ public class WikiEngine
                 throw new InternalWikiException( "No wiki engine, check logs." );
             }
 
-            c_engines.put( appid, engine );            
         }
 
         return engine;

@@ -167,12 +167,15 @@ public class TextUtil
     }
 
     /**
-     *  As java.net.URLDecoder class, but for UTF-8 strings.
+     *  As java.net.URLDecoder class, but for UTF-8 strings.  null is a safe
+     *  value and returns null.
      */
     public static String urlDecodeUTF8( String utf8 )
     {
         String rs = null;
-
+        
+        if( utf8 == null ) return null;
+        
         try
         {
             rs = urlDecode( utf8.getBytes("ISO-8859-1"), "UTF-8" );
@@ -188,7 +191,7 @@ public class TextUtil
     /**
      * Provides encoded version of string depending on encoding.
      * Encoding may be UTF-8 or ISO-8859-1 (default).
-     *
+     * 
      * <p>This implementation is the same as in 
      * FileSystemProvider.mangleName().
      */

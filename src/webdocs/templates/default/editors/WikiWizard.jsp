@@ -1,6 +1,6 @@
 <script type='text/javascript' src='scripts/wikiwizard-jspwiki.js' language='Javascript'></script>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ page language="java" import="java.io.Serializable"%>
+<%@ page import="java.io.Serializable"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>

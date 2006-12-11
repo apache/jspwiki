@@ -1,5 +1,7 @@
 
-This is a stable release of JSPWiki 2.4
+This is a stable release of JSPWiki 2.4.  It contains a number of
+bug fixes, which can be found from ChangeLog.
+
 
 NEW FEATURES
 ============
@@ -13,13 +15,22 @@ NEW FEATURES
 
 * Loads and loads of under-the-hood changes.
 
-* Atom 1.0 support
+* Atom Feed Format 1.0 support
 
 * WIKIWYG editing using the WikiWizard from University of Heilbronn.
 
+* Advanced SpamFilter which supports Akismet as well.
 
 UPGRADE NOTES
 =============
+
+Upgrading from previous releases of 2.4:
+
+* You should be able to just install the JSP files (top-level and
+  the default template), and the set of JAR files.
+  
+* In addition, please check web.xml for any additional definitions
+  that may have been added.
 
 Upgrading from 2.x:
 

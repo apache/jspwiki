@@ -577,7 +577,7 @@ public final class GroupManager implements Authorizer
         Principal[] members = group.members();
         for( int i = 0; i < members.length; i++ )
         {
-            validator.validateNotNull( members[i].getName(), "Full name" );
+            validator.validateNotNull( members[i].getName(), "Full name", InputValidator.ID );
         }
     }
 
