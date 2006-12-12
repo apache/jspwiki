@@ -1,3 +1,23 @@
+2006-12-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.7
+        
+        * JSPWikiMarkupParser will now ignore whitespace between
+        list bullet and list - makes no difference and produces more
+        unambiguous code.
+
+        * Added CreoleMarkupRenderer, which currently supports
+        WikiCreole 0.2 syntax.  This is a highly experimental feature.
+        You can't do much with it yet, since we're missing a backconverter.
+
+        * JSPWikiMarkupParser now properly produces <p> tags for
+        all paragraphs - UNLESS there is just a single paragraph, in
+        which case old behaviour will follow.
+
+        * Bug fix: DefaultResources.properties was still using some
+        {0,date} strings instead of just strings.  Reported by Harry
+        Metske.
+
 2006-12-11  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.6
