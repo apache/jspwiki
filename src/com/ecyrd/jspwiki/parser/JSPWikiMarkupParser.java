@@ -31,10 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
-import org.jdom.Content;
-import org.jdom.Element;
-import org.jdom.IllegalDataException;
-import org.jdom.ProcessingInstruction;
+import org.jdom.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -86,7 +83,6 @@ public class JSPWikiMarkupParser
 
     private static Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
 
-    //private boolean        m_iscode       = false;
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
     private boolean        m_istable      = false;
@@ -1869,15 +1865,12 @@ public class JSPWikiMarkupParser
              if( numBullets > m_genlistlevel )
              {
                  pushElement( new Element( getListType(strBullets.charAt(m_genlistlevel++) ) ) );
-                 // buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel++)) );
 
                  for( ; m_genlistlevel < numBullets; m_genlistlevel++ )
                  {
                      // bullets are growing, get from new bullet list
                      pushElement( new Element("li") );
-                     // buf.append( m_renderer.openListItem() );
                      pushElement( new Element( getListType(strBullets.charAt(m_genlistlevel)) ));
-                     // buf.append( m_renderer.openList(strBullets.charAt(m_genlistlevel)) );
                  }
              }
              else if( numBullets < m_genlistlevel )
@@ -1889,12 +1882,10 @@ public class JSPWikiMarkupParser
                  for( ; m_genlistlevel > numBullets; m_genlistlevel-- )
                  {
                      // bullets are shrinking, get from old bullet list
-                     // buf.append( m_renderer.closeList(m_genlistBulletBuffer.charAt(m_genlistlevel - 1)) );
                      
                      popElement( getListType(m_genlistBulletBuffer.charAt(m_genlistlevel-1)) );
                      if( m_genlistlevel > 0 ) 
                      {
-                         // buf.append( m_renderer.closeListItem() );
                          popElement( "li" );
                      }
 
@@ -1905,7 +1896,6 @@ public class JSPWikiMarkupParser
                  if( m_genlistlevel > 0 ) 
                  {
                      popElement( "li" );
-                     // buf.append( m_renderer.closeListItem() );
                  }
              }
          }
@@ -1935,28 +1925,28 @@ public class JSPWikiMarkupParser
              for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
              {
                  popElement( getListType( m_genlistBulletBuffer.charAt(m_genlistlevel-1) ) );
-                 // buf.append( m_renderer.closeList( m_genlistBulletBuffer.charAt(m_genlistlevel - 1) ) );
                  if( m_genlistlevel > 0 ) 
                  {
-                     //buf.append( m_renderer.closeListItem() );
                      popElement("li");
                  }
              }
 
              //rewind
-             // buf.append( m_renderer.openList( strBullets.charAt(numEqualBullets++) ) );
+
              pushElement( new Element(getListType( strBullets.charAt(numEqualBullets++) ) ) );
              for(int i = numEqualBullets; i < numBullets; i++)
              {
                  pushElement( new Element("li") );
                  pushElement( new Element( getListType( strBullets.charAt(i) ) ) );
-                 // buf.append( m_renderer.openListItem() );
-                 // buf.append( m_renderer.openList( strBullets.charAt(i) ) );
              }
              m_genlistlevel = numBullets;
          }
-         //buf.append( m_renderer.openListItem() );
+
+         //
+         //  Push a new list item, and eat away any extra whitespace
+         //
          pushElement( new Element("li") );
+         readWhile(" ");
          
          // work done, remember the new bullet list (in place of old one)
          m_genlistBulletBuffer.setLength(0);
@@ -2599,6 +2589,34 @@ public class JSPWikiMarkupParser
         try
         {
             fillBuffer( rootElement );
+
+            //
+            //  Add the paragraph tag to the first paragraph
+            //
+            List kids = rootElement.getContent();
+            
+            if( rootElement.getChild("p") != null )
+            {
+                for( Iterator i = kids.iterator(); i.hasNext(); )
+                {
+                    Content c = (Content) i.next();
+                    if( c instanceof Element )
+                    {
+                        // FIXME: Should test for other block-level elements as well.
+                        String name = ((Element)c).getName();
+                        if( "p".equals(name) || "table".equals(name) ) break; 
+                    }
+                    if( c instanceof Text || c instanceof Element)
+                    {
+                        Element newel = new Element("p");
+                        int idx = rootElement.indexOf(c);
+                        rootElement.setContent(idx, newel);
+                        newel.addContent(c);
+                        break;
+                    }
+                }
+            }
+                        
         }
         catch( IllegalDataException e )
         {
