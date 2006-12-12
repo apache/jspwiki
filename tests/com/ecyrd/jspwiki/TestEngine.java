@@ -19,7 +19,7 @@ public class TestEngine extends WikiEngine
     static Logger log = Logger.getLogger( TestEngine.class );
     
     private HttpSession m_adminSession;
-
+    
     public TestEngine( Properties props )
         throws WikiException
     {

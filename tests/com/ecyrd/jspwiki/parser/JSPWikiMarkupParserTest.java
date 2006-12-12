@@ -846,7 +846,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1\n\n2\n\n3";
         
-        assertEquals( "1\n<p>2\n</p>\n<p>3</p>", translate(src) );
+        assertEquals( "<p>1</p>\n<p>2\n</p>\n<p>3</p>", translate(src) );
     }
     
     public void testParagraph2()
@@ -856,7 +856,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         newPage( "WikiEtiquette" );        
         
-        assertEquals( "<a class=\"wikipage\" href=\"/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n"+
+        assertEquals( "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a></p>\n"+
                       "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
     }
     
@@ -957,7 +957,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "foo\n\nbar{{{2345}}}6";
         
-        assertEquals( "foo\n<p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
+        assertEquals( "<p>foo</p>\n<p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
     }
 
     public void testPreEscape()
@@ -1030,7 +1030,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "A list:\n* One\n* Two\n* Three\n";
         
-        assertEquals( "A list:\n<ul><li> One\n</li><li> Two\n</li><li> Three\n</li></ul>", 
+        assertEquals( "A list:\n<ul><li>One\n</li><li>Two\n</li><li>Three\n</li></ul>", 
                       translate(src) );
     }
     
@@ -1047,7 +1047,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
         
-        assertEquals( "A list:\n<ul><li> One\n continuing.\n</li><li> Two\n</li><li> Three\n</li></ul>", 
+        assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>", 
                       translate(src) );
     }
     
@@ -1056,7 +1056,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
         
-        assertEquals( "A list:\n<ul><li> One\n continuing.\n</li><li> Two\n</li><li> Three\n</li></ul>Should be normal.", 
+        assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>Should be normal.", 
                       translate(src) );
     }
     
@@ -1146,7 +1146,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="__This is a\n\ntest.__";
         
-        assertEquals( "<b>This is a\n</b><p><b>test.</b></p>", translate(src) );
+        assertEquals( "<p><b>This is a\n</b></p><p><b>test.</b></p>", translate(src) );
     }
 
     public void testBoldItalic()
@@ -1183,7 +1183,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="A\n\n**\n\nB";
         
         // System.out.println(translate(src));
-        assertEquals( "A\n<ul><li><ul><li>\n</li></ul></li></ul><p>B</p>", 
+        assertEquals( "<p>A</p>\n<ul><li><ul><li>\n</li></ul></li></ul><p>B</p>", 
                       translate(src) );
     }
     
@@ -1193,7 +1193,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="A\n\n##\n\nB";
         
         // System.out.println(translate(src));
-        assertEquals( "A\n<ol><li><ol><li>\n</li></ol></li></ol><p>B</p>", 
+        assertEquals( "<p>A</p>\n<ol><li><ol><li>\n</li></ol></li></ol><p>B</p>", 
                       translate(src) );
     }
     
