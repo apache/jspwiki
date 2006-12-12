@@ -47,6 +47,13 @@ public class PluginContent extends Text
         m_pluginName = pluginName;
         m_params     = parameters;
     }
+    /**
+     * @since 2.5.7
+     */
+    public String getPluginName()
+    {
+        return m_pluginName;
+    }
     
     public String getValue()
     {
