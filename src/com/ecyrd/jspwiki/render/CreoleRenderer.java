@@ -1,7 +1,10 @@
 package com.ecyrd.jspwiki.render;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jdom.Content;
 import org.jdom.Element;
@@ -29,18 +32,21 @@ public class CreoleRenderer extends WikiRenderer
      * Contains element, start markup, end markup
      */
     private static final String[] ELEMENTS = {
-       "i", "//", "//",
-       "b", "**", "**",
-       "h2", "== ", " ==",
-       "h3", "=== ", " ===",
-       "h4", "==== ", " ====",
-       "hr", "----", ""
+       "i" , "//"    , "//",
+       "b" , "**"    , "**",
+       "h2", "== "   , " ==",
+       "h3", "=== "  , " ===",
+       "h4", "==== " , " ====",
+       "hr", "----"  , "",
+       "tt", "<<{{>>", "<<}}>>"
     };
     
     private int m_listCount = 0;
     private char m_listChar = 'x';
 
-    public CreoleRenderer(WikiContext ctx, WikiDocument doc)
+    private List m_plugins = new ArrayList();
+
+    public CreoleRenderer( WikiContext ctx, WikiDocument doc )
     {
         super( ctx, doc );
     }
@@ -112,8 +118,16 @@ public class CreoleRenderer extends WikiRenderer
             if( c instanceof PluginContent )
             {
                 PluginContent pc = (PluginContent)c;
-                int idx = 1; // FIXME: Not yet functional
-                sb.append( "<<"+pc.getPluginName()+" "+idx+">>" );
+                
+                if( pc.getPluginName().equals("Image") )
+                {
+                    sb.append("{{"+pc.getParameter("src")+"}}");
+                }
+                else
+                {
+                    m_plugins.add(pc);
+                    sb.append( "<<"+pc.getPluginName()+" "+m_plugins.size()+">>" );
+                }
             }
             else if( c instanceof Text )
             {
