@@ -55,6 +55,11 @@ public class PluginContent extends Text
         return m_pluginName;
     }
     
+    public Object getParameter( String name )
+    {
+        return m_params.get(name);
+    }
+    
     public String getValue()
     {
         return getText();
