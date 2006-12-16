@@ -95,13 +95,19 @@ public class CreoleRendererTest extends TestCase
         assertEquals( src, render(src) );
     }
 
-    public void testPlugins() throws Exception
+    public void testInlineImages() throws Exception
     {
-        String src = "Testing [{Image src='foobar'}] plugin.";
+        String src = "Testing [{Image src='http://test/image.png'}] plugin.";
         
-        assertEquals( "Testing <<Image 1>> plugin.", render(src) );
+        assertEquals( "Testing {{http://test/image.png}} plugin.", render(src) );
     }
 
+    public void testPlugins() throws Exception
+    {
+        String src = "[{Counter}] [{Counter}]";
+        
+        assertEquals( "<<Counter 1>> <<Counter 2>>", render(src) );
+    }
     public void testHeading1() throws Exception
     {
         String src = "!!!Hello";
