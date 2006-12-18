@@ -98,8 +98,8 @@ public final class FilterManager
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
     public static final String PROP_FILTERXML = "jspwiki.filterConfig";
-
-    public static final String DEFAULT_XMLFILE = "/filters.xml";
+    
+    public static final String DEFAULT_XMLFILE = "/WEB-INF/filters.xml";
 
     /** JSPWiki system filters are all below this value. */
     public static final int SYSTEM_FILTER_PRIORITY = -1000;
@@ -192,8 +192,15 @@ public final class FilterManager
         {
             if( xmlFile == null )
             {
-                log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from class path.");
-                xmlStream = getClass().getResourceAsStream( DEFAULT_XMLFILE );
+                log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
+                xmlStream = engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+                
+                if ( xmlStream == null )
+                {
+                    //just a fallback element to the old behaviour prior to 2.5.8
+                    log.debug("Attempting to locate filters.xml from class path.");
+                    xmlStream = getClass().getResourceAsStream( "/filters.xml" );
+                }
             }
             else
             {
