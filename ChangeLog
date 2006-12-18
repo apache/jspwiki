@@ -1,3 +1,13 @@
+2006-12-18  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.5.9
+        
+        * Bugfix in FilterManager: Filter Manager used
+        getClass().getResourceAsStream( "/filters.xml" ) to locate filters.xml.
+        To ensure that it reads it from WEB-INF like described in the
+        documentation we have to use the same aproach like with jspwiki.properties:
+        engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+
 2006-12-16  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.8
