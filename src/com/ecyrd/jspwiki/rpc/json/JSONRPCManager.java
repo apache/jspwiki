@@ -3,13 +3,13 @@ package com.ecyrd.jspwiki.rpc.json;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
-import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.RPCManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
@@ -45,6 +45,41 @@ public class JSONRPCManager extends RPCManager
     }
     
     /**
+     *  Finds this user's personal RPC Bridge.  If it does not exist, will
+     *  create one and put it in the context.  If there is no HTTP Request included,
+     *  returns the global bridge.
+     *  
+     *  @param context WikiContext to find the bridge in
+     *  @return A JSON RPC Bridge
+     */
+    // FIXME: Is returning the global bridge a potential security threat?
+    private static JSONRPCBridge getBridge( WikiContext context )
+    {
+        HttpServletRequest req = context.getHttpRequest();
+        
+        if( req != null )
+        {
+            HttpSession hs = req.getSession();
+            
+            if( hs != null )
+            {
+                JSONRPCBridge bridge = (JSONRPCBridge)hs.getAttribute("JSONRPCBridge");
+                
+                if( bridge == null )
+                {
+                    bridge = new JSONRPCBridge();
+                
+                    hs.setAttribute("JSONRPCBridge", new JSONRPCBridge());
+                }
+                
+                return bridge;
+            }
+        }
+        
+        return JSONRPCBridge.getGlobalBridge();
+    }
+    
+    /**
      *  Registers a callable to JSON global bridge and requests JSON libraries to be added.
      *  @param context
      *  @param c
@@ -53,7 +88,7 @@ public class JSONRPCManager extends RPCManager
     public static String registerJSONObject( WikiContext context, RPCCallable c )
     {
         String id = getId(c);
-        JSONRPCBridge.getGlobalBridge().registerObject( id, c );
+        getBridge(context).registerObject( id, c );
 
         requestJSON( context );
         return id;
@@ -74,7 +109,7 @@ public class JSONRPCManager extends RPCManager
                                            TemplateManager.RESOURCE_JSFUNCTION, 
                                            "jsonrpc = new JSONRpcClient(\""+jsonurl+"\");");
         
-        JSONRPCBridge.getGlobalBridge().registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
+        getBridge(context).registerCallback(new WikiJSONAccessor(), HttpServletRequest.class);
     }
     
     // FIXME: Does not work yet

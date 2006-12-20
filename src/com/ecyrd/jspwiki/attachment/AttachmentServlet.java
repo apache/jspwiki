@@ -87,6 +87,14 @@ public class AttachmentServlet
      */
     private int   m_maxSize = Integer.MAX_VALUE;
 
+    /**
+     *  List of attachment types which are allowed
+     */
+    
+    private String[] m_allowedPatterns;
+
+    private String[] m_forbiddenPatterns;
+    
     //
     // Not static as DateFormat objects are not thread safe.
     // Used to handle the RFC date format = Sat, 13 Apr 2002 13:23:01 GMT
@@ -111,6 +119,24 @@ public class AttachmentServlet
                                                         AttachmentManager.PROP_MAXSIZE,
                                                         Integer.MAX_VALUE );
 
+        String allowed = TextUtil.getStringProperty( props, 
+                                                     AttachmentManager.PROP_ALLOWEDEXTENSIONS,
+                                                     null );
+       
+        if( allowed != null && allowed.length() > 0 )
+            m_allowedPatterns = allowed.toLowerCase().split("\\s");
+        else
+            m_allowedPatterns = new String[0];
+        
+        String forbidden = TextUtil.getStringProperty( props, 
+                                                       AttachmentManager.PROP_FORDBIDDENEXTENSIONS,
+                                                       null );
+       
+        if( forbidden != null && forbidden.length() > 0 )
+            m_forbiddenPatterns = forbidden.toLowerCase().split("\\s");
+        else
+            m_forbiddenPatterns = new String[0];
+
         File f = new File( m_tmpDir );
         if( !f.exists() )
         {
@@ -125,6 +151,27 @@ public class AttachmentServlet
                    m_tmpDir + " for temporary storage." );
     }
 
+    private boolean isTypeAllowed( String name )
+    {
+        if( name == null || name.length() == 0 ) return false;
+        
+        name = name.toLowerCase();
+        
+        for( int i = 0; i < m_forbiddenPatterns.length; i++ )
+        {
+            if( name.endsWith(m_forbiddenPatterns[i]) && m_forbiddenPatterns[i].length() > 0 )
+                return false;
+        }
+        
+        for( int i = 0; i < m_allowedPatterns.length; i++ )
+        {
+            if( name.endsWith(m_allowedPatterns[i]) && m_allowedPatterns[i].length() > 0 )
+                return true;
+        }
+        
+        return m_allowedPatterns.length == 0;
+    }
+    
 	public void doPropFind( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException
     {
@@ -560,11 +607,21 @@ public class AttachmentServlet
         //  contents.  But we can't figure out the page to redirect to
         //  before we receive the file, due to the stupid constructor of MultipartRequest.
         //
-        if( contentLength > m_maxSize )
+        
+        if( !context.hasAdminPermissions() )
         {
-            // FIXME: Does not delete the received files.
-            throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
-                                         errorPage );
+            if( contentLength > m_maxSize )
+            {
+                // FIXME: Does not delete the received files.
+                throw new RedirectException( "File exceeds maximum size ("+m_maxSize+" bytes)",
+                                             errorPage );
+            }
+        
+            if( !isTypeAllowed(filename) )
+            {
+                throw new RedirectException( "Files of this type may not be uploaded to this wiki",
+                                             errorPage );
+            }
         }
         
         Principal user    = context.getCurrentUser();

@@ -10,7 +10,7 @@
   
 <wiki:CheckLock mode="locked" id="lock">
   <%-- need a cancel button here --%>
-  <p class="error"><fmt:message key="info.locked">
+  <p class="error"><fmt:message key="edit.locked">
       <fmt:param><%=lock.getLocker()%></fmt:param>
       <fmt:param><%=lock.getTimeLeft()%></fmt:param>
       </fmt:message>

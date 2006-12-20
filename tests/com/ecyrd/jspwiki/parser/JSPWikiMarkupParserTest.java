@@ -1568,7 +1568,19 @@ public class JSPWikiMarkupParserTest extends TestCase
                       "</table><p />",
                       translate(src) );
     }
-    
+
+    public void testTable4()
+    throws Exception
+    {
+        String src="|a\nbc";
+        
+        assertEquals( "<table class=\"wikitable\" border=\"1\">"+
+                      "<tr class=\"odd\"><td>a</td></tr>\n"+
+                      "</table>"+
+                      "bc",
+                      translate(src) );
+    }
+
     public void testTableLink()
     throws Exception
     {
