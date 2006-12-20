@@ -1,5 +1,13 @@
 2006-12-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.87
+
+        * Fixed a stupid typo in AttachmentServlet which caused reverse
+        logic when uploading something and checking whether that type
+        is allowed or not :)
+
+        * SpamFilter would die on empty changes.
+
         * 2.4.86
         
         * Bug fix: BugFirstCharacterAfterEndOfTableGetsEaten

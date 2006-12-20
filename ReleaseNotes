@@ -21,6 +21,8 @@ NEW FEATURES
 
 * Advanced SpamFilter which supports Akismet as well.
 
+* (2.4.86) Ability to allow/disallow certain file types from being uploaded
+
 UPGRADE NOTES
 =============
 
