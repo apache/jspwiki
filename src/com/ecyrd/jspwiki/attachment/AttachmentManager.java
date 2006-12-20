@@ -56,6 +56,16 @@ public class AttachmentManager
      */
     public static final String  PROP_MAXSIZE  = "jspwiki.attachment.maxsize";
 
+    /**
+     *  A space-separated list of attachment types which can be uploaded
+     */
+    public static final String PROP_ALLOWEDEXTENSIONS    = "jspwiki.attachment.allowed";
+
+    /**
+     *  A space-separated list of attachment types which cannot be uploaded
+     */
+    public static final String PROP_FORDBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
+
     static Logger log = Logger.getLogger( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
     private WikiEngine             m_engine;
