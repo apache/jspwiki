@@ -2268,7 +2268,6 @@ public class JSPWikiMarkupParser
                        ? new Element("tr").setAttribute("class", "odd")
                        : new Element("tr");
             el = pushElement( tr );
-            // m_closeTag = m_renderer.closeTableItem()+m_renderer.closeTableRow();
         }
         
         int ch = nextToken();
@@ -2404,7 +2403,7 @@ public class JSPWikiMarkupParser
 
             if( newLine && ch != '|' && m_istable )
             {
-                el = popElement("table");
+                popElement("table");
                 m_istable = false;
             }
 
