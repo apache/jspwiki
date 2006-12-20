@@ -165,11 +165,11 @@ public class AttachmentServlet
         
         for( int i = 0; i < m_allowedPatterns.length; i++ )
         {
-            if( name.endsWith(m_allowedPatterns[i]) && m_forbiddenPatterns[i].length() > 0 )
+            if( name.endsWith(m_allowedPatterns[i]) && m_allowedPatterns[i].length() > 0 )
                 return true;
         }
         
-        return m_allowedPatterns.length != 0;
+        return m_allowedPatterns.length == 0;
     }
     
 	public void doPropFind( HttpServletRequest req, HttpServletResponse res )
