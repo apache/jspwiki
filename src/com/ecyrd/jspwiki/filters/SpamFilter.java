@@ -288,7 +288,7 @@ public class SpamFilter
 
             String change = getChange( context, content );
 
-            log.debug("Change is"+change);
+            log.debug("Change is "+change);
 
             long time = System.currentTimeMillis()-60*1000L; // 1 minute
             
@@ -678,6 +678,7 @@ public class SpamFilter
      *  
      *  @param context
      *  @param newText
+     *  @return Empty string, if there is no change.
      */
     private String getChange( WikiContext context, String newText )
     {
@@ -696,7 +697,7 @@ public class SpamFilter
 
             if( rev == null || rev.size() == 0 )
             {
-                return null;
+                return "";
             }
 
             
