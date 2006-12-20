@@ -91,6 +91,20 @@ jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 #jspwiki.attachment.maxsize=100000
 
 #
+#  By default JSPWiki accepts all types of attachments.  However, you
+#  can allow some types only, or forbid some other types.  By default,
+#  all file types are allowed (if you do not specify the "allow" list
+#  at all or it is empty).
+#
+#  These both are space-separated lists of file suffixes
+#
+#  Example: Allow only PNG, JPG, ZIP and JAR file attachments
+#jspwiki.attachment.allow=.png .jpg .zip .jar
+
+#  Example: Forbid HTML, PHP, ASP and EXE
+#jspwiki.attachment.forbid=.html .htm .php .asp .exe
+
+#
 #  page Diff Representation
 #
 #  To show differences between page versions, you can define a 
