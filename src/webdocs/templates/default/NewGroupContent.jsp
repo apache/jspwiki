@@ -25,7 +25,7 @@
 
 <h3><fmt:message key="newgroup.heading.create"/></h3>
 
-<wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"newgroup.errorprefix")%> "/>
+<wiki:Messages div='error' topic='<%=GroupManager.MESSAGES_KEY%>' prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"newgroup.errorprefix")%>' />
 
 <div class="formcontainer">
   <div class="instructions">

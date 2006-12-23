@@ -60,7 +60,7 @@
     <div class="block">
       <!-- Any errors? -->
       <div class="instructions">
-        <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></</fmt:message>
+        <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
       </div>
       <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save"/>" />
       <input type="hidden" name="group" value="<%=name%>" />
