@@ -113,7 +113,8 @@ public class DefaultAclManager implements AclManager
      * on-the-fly. If the page has a parent page, then that is tried also.
      * This method was moved from Authorizer;
      * it was consolidated with some code from AuthorizationManager.
-     * @param page
+     * This method is guaranteed to return a non-<code>null</code> Acl.
+     * @param page the page
      * @since 2.2.121
      * @return the Acl representing permissions for the page
      */
