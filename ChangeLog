@@ -1,3 +1,11 @@
+2006-12-23  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.5.11
+        
+        * Fixed failing auth unit tests and web unit tests.
+        
+        * Fixed compilation errors for *GroupContent JSPs.
+
 2006-12-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.10
@@ -275,7 +283,7 @@
         * Hopefully fixed the "ACL not refreshed at startup" problem,
         reported by many people.
 
-2006-10-08  Andrew Jaquith <andrew@freshcookies.org>
+2006-10-08  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.67
         
@@ -315,7 +323,7 @@
         
         * Fixed ShortURLConstructor again for some contexts (FIND, DELETE & PREFS)
 
-2006-10-01  Andrew Jaquith <andrew@freshcookies.org>
+2006-10-01  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.65
         
@@ -340,7 +348,7 @@
         contain the changed page metadata.  We now make a clone of the 
         WikiPage before we attempt a save.
 
-2006-10-01  Andrew Jaquith <andrew@freshcookies.org>
+2006-10-01  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.63
 
@@ -383,7 +391,7 @@
         
         * Fixed a bunch of failing auth tests.
 
-2006-09-28  Andrew Jaquith <andrew@freshcookies.org>
+2006-09-28  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.62
         
@@ -408,7 +416,7 @@
         with disappearing ACL lists or other metadata.  Our provider interface is
         desperately in the need of an overhaul...
 
-2006-09-27  Andrew Jaquith <andrew@freshcookies.org>
+2006-09-27  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.60
         
@@ -421,7 +429,7 @@
         WikiContext creation in LoginForm. Thanks to Terry Steichen for figuring
         out where to look.
           
-2006-09-24  Andrew Jaquith <andrew@freshcookies.org>
+2006-09-24  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.59
         
@@ -508,7 +516,7 @@
         
         * Limited change note length to 80 characters.
 
-2006-09-09  Andrew Jaquith <andrew@freshcookies.org>
+2006-09-09  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.52
         
@@ -770,7 +778,7 @@
         * RecentChangesPlugin was missing a quote in the generation
         of author names.
 
-2006-08-08  Andrew Jaquith <andrew@freshcookies.org>
+2006-08-08  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.32
         
@@ -801,7 +809,7 @@
         * Removed a bunch of compiler warnings found thanks to upgrade to 
         Eclipse 3.2.
         
-2006-08-04  Andrew Jaquith <andrew@freshcookies.org>
+2006-08-04  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.30
         
@@ -842,7 +850,7 @@
         
         * And a lot of small bits and pieces...
 
-2006-07-31  Andrew Jaquith <andrew@freshcookies.org>
+2006-07-31  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.27
 
@@ -860,7 +868,7 @@
 
         * Fixed editor textarea width, thanks to Gordon Smith.
 
-2006-07-29  Andrew Jaquith <andrew@freshcookies.org>
+2006-07-29  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.25 - a.k.a. the AAA mega-patch
 
@@ -943,7 +951,7 @@
 
         * TextUtil.password generator now uses SecureRandom instead of Random.
 
-2006-07-24  Andrew Jaquith <andrew@freshcookies.org>
+2006-07-24  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.23
 
@@ -969,7 +977,7 @@
           
         * CommentedPropertiesTest's missing test.properties file is now in CVS.
         
-2006-07-23  Andrew Jaquith <andrew@freshcookies.org>
+2006-07-23  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.22
         
@@ -1048,7 +1056,7 @@
         
         * WikiSecurityEvent.toString() would die if you had a null principal...
 
-2006-06-17  Andrew Jaquith <andrew@freshcookies.org>
+2006-06-17  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.16
 
@@ -1081,7 +1089,7 @@
         * Added patch from Murray Altheim to support _cmdline in PluginManager.
         This allows a plugin to do completely custom parsing.
 
-2006-06-17  Andrew Jaquith <andrew@freshcookies.org>
+2006-06-17  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.14
 
@@ -1148,7 +1156,7 @@
         
         * Fixed some IE tab layout issues, thanks to Dirk Fredericx.
 
-2006-06-05  Andrew Jaquith <andrew@freshcookies.org>
+2006-06-05  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.12
 
@@ -1163,7 +1171,7 @@
 
         * Minor Javadoc fixes.
 
-2006-05-28  Andrew Jaquith <andrew@freshcookies.org>
+2006-05-28  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.11
 
@@ -1221,7 +1229,7 @@
         
         * RSS and Atom feeds are now served with proper media type
 
-2006-05-20  Andrew Jaquith <andrew@freshcookies.org>
+2006-05-20  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.9
 
@@ -1243,7 +1251,7 @@
 
         * Minor tweak to web unit tests to account for cleared cookies at logout.
 
-2006-05-20  Andrew Jaquith <andrew@freshcookies.org>
+2006-05-20  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.8
 
@@ -1314,7 +1322,7 @@
         was null - fixed by ICantRememberWhoAnymoreBecauseILostTheEmail.
         Thanks anyway!
 
-2006-05-07  Andrew Jaquith <andrew@freshcookies.org>
+2006-05-07  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.4.5
         
@@ -1691,7 +1699,7 @@
         properly in case it was pooled.  Added initTag() method to
         WikiTagBase.  Reported by Terry Steichen; found by Frank Fischer.
 
-2006-03-29  Andrew Jaquith <andrew@freshcookies.org>
+2006-03-29  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.91
         
@@ -1831,7 +1839,7 @@
         * Fixed problem with LinkTag forgetting to close anchor
         (reported by many people, sorry I totally missed this).
 
-2006-02-28  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-28  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.85
         
@@ -1848,7 +1856,7 @@
         the wiki; if not, the contents will be skipped.
         Credit: Terry Steichen
         
-2006-02-26  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-26  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.84
         
@@ -1871,7 +1879,7 @@
         
         There are [{INSERT SessionsPlugin}] active wiki sessions
          
-2006-02-25  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-25  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.83
         
@@ -1949,7 +1957,7 @@
         
         * Added a bunch of Javascript issues from Dirk Fredericx.  Thanks, man!
 
-2006-02-21  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-21  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.80
         
@@ -2016,7 +2024,7 @@
         
         * Some tests tweaks and iterations.
 
-2006-02-12  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-12  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.78
         
@@ -2042,7 +2050,7 @@
         * Added option jspwiki.renderingManager.useCache to properties;
         set to false to prevent RenderingManager from caching DOM trees.
 
-2006-02-04  Andrew Jaquith <andrew@freshcookies.org>
+2006-02-04  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.76
         
@@ -2096,7 +2104,7 @@
         
         * Fixed WikiContext.getURL(...) test for absolute reference style.
 
-2006-01-29  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-29  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.74
         
@@ -2179,7 +2187,7 @@
         WAR file, causing problems if the keystore was somewhere else
         than in the default location.
 
-2006-01-16  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-16  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.71
         
@@ -2189,7 +2197,7 @@
 
         * DefaultPermissions.txt is now gone.  Thanks to Frank Fischer.
 
-2006-01-13  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-13  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.70
         
@@ -2201,7 +2209,7 @@
         
         * Added more 'create wiki group' unit tests
         
-2006-01-11  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-11  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.69
         
@@ -2212,7 +2220,7 @@
         
         * Added 'create wiki group' web unit test
         
-2006-01-10  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-10  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.68
         
@@ -2313,7 +2321,7 @@
         
         * Added EditFindReplaceHelp which was missing...
 
-2006-01-05  Andrew Jaquith <andrew@freshcookies.org>
+2006-01-05  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.3.65
 		
