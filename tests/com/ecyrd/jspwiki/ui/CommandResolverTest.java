@@ -167,12 +167,12 @@ public class CommandResolverTest extends TestCase
         TestHttpServletRequest request;
         Command a;
         
-        // Passing an EDIT request with View JSP yields VIEW
+        // Passing an EDIT request with View JSP yields EDIT of the Front page
         request = new TestHttpServletRequest();
         request.setServletPath( "/Wiki.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
-        assertEquals( PageCommand.VIEW, a );
-        assertNull( a.getTarget() );
+        assertNotNull( a.getTarget() );
+        assertEquals( ((WikiPage)a.getTarget()).getName(), testEngine.getFrontPage() );
         
         // Passing an EDIT request with Group JSP yields VIEW_GROUP
         request.setServletPath( "/Group.jsp" );

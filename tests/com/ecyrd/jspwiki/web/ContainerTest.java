@@ -14,7 +14,7 @@ public class ContainerTest extends CommonContainerTests
         createProfile( "pvilla", "Pancho Villa", false );
         
         // We should NOT be able to create profile, because we're not logged in
-        t.assertTextPresent( "Could not save profile: You must log in before creating a profile." );
+        t.assertTextPresent( "Could not save profile:&nbsp;You must log in before creating a profile." );
     }
 
 }

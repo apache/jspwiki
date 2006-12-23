@@ -54,11 +54,13 @@ public class DefaultAclManagerTest
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
-        assertNull( page.getAcl() );
+        assertNotNull( page.getAcl() );
+        assertTrue(page.getAcl().isEmpty());
         
         page = m_engine.getPage( "TestAclPage" );
         acl = m_engine.getAclManager().getPermissions( page );
         assertNotNull( page.getAcl() );
+        assertFalse(page.getAcl().isEmpty());
         
         Principal[] p;
         
