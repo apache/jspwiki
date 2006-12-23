@@ -713,8 +713,9 @@ public final class WikiSession implements WikiEventListener
         }
         catch ( NoSuchPrincipalException e )
         {
-            // It would be extremely surprising if we get here....
-            log.error("Refresh principals failed because user profile matching '" + searchId + "' not found.");
+            // We will get here if the user has a principal but not a profile
+            // For example, it's a container-managed user who hasn't set up a profile yet
+            log.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
         }
     }
     
