@@ -48,7 +48,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.78 2006-11-09 20:10:49 jalkanen Exp $
+    $Id: build.xml,v 1.79 2006-12-27 05:57:41 arj Exp $
 -->    
        
 <!--   
@@ -1164,6 +1164,8 @@ To automate the JAR signing processs, you can add the property
       userid="${jdbc.admin.id}" password="${jdbc.admin.password}">
       SHUTDOWN
     </sql>
+    <!-- The lock file should be deleted automatically, but just in case... -->
+    <delete file="tests/etc/db/hsql/jspwiki.lck" />
     <echo message="Done." />
   </target>
 
