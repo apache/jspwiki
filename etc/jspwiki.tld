@@ -747,6 +747,7 @@
     </attribute>
     <attribute>
        <name>default</name>
+       <required>false</required>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
