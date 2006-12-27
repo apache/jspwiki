@@ -13,14 +13,14 @@
         AuthenticationManager mgr = wiki.getAuthenticationManager();
         if ( mgr.isContainerAuthenticated() )
         {   
-            postURL = "j_security_check";
+            posturl = "j_security_check";
         }
         else
         {
-            postURL = "Login.jsp";
-        }
+            posturl = "Login.jsp";
+          }
     }
-    String postURL;
+    String posturl = "";
 %>
 
 <h3><fmt:message key="login.heading.login"/></h3>
@@ -33,7 +33,7 @@
     <wiki:Messages div="error" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
   </div>
 
-  <form id="login" action="<%=postURL%>" 
+  <form id="login" action="<%=posturl%>" 
     method="POST" accept-charset="<wiki:ContentEncoding />" >
       
     <!-- User name -->
@@ -49,7 +49,7 @@
     </div>
 
     <div class="block">
-      <input type="hidden" name="page" value="<wiki:Variable var="pagename" />" />
+      <input type="hidden" name="redirect" value="<wiki:Variable var="redirect" default="" />" />
       <input type="submit" name="submitlogin" value="<fmt:message key="login.submit.login"/>" />
     </div>
     

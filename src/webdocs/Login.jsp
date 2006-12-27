@@ -24,12 +24,14 @@
     if( request.getParameter( "redirect" ) != null )
     {
         wikiContext.setVariable( "redirect", request.getParameter( "redirect" ) );
-   	}
-   	else
-   	{
+    }
+    else
+    {
         wikiContext.setVariable( "redirect", wiki.getFrontPage());
     }
     
+    // If NOT using container auth, perform all of the access control logic here...
+    // (Note: if using the container for auth, it will handle all of this for us.)
     if( !mgr.isContainerAuthenticated() )
     {
         // If user got here and is already authenticated, it means
