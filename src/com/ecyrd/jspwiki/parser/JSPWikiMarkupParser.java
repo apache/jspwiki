@@ -105,6 +105,9 @@ public class JSPWikiMarkupParser
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
 
+    /** Parser for extended link functionality. */
+    private LinkParser m_linkParser = new LinkParser();
+
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
@@ -451,7 +454,7 @@ public class JSPWikiMarkupParser
         return el; 
     } 
     
-    private Element makeLink( int type, String link, String text, String section )
+    private Element makeLink( int type, String link, String text, String section, Iterator attributes )
     {
         Element el = null;
         
@@ -568,6 +571,18 @@ public class JSPWikiMarkupParser
 
             default:
                 break;
+        }
+
+        if( el != null && attributes != null )
+        {
+            while( attributes.hasNext() )
+            {
+                Attribute attr = (Attribute)attributes.next();
+                if( attr != null )
+                {
+                    el.setAttribute(attr);
+                }
+            }
         }
 
         if( el != null )
@@ -1075,11 +1090,11 @@ public class JSPWikiMarkupParser
 
         if( (matchedLink = linkExists( wikiname )) != null )
         {
-            makeLink( READ, matchedLink, wikiname, null );
+            makeLink( READ, matchedLink, wikiname, null, null );
         }
         else
         {
-            makeLink( EDIT, wikiname, wikiname, null );
+            makeLink( EDIT, wikiname, wikiname, null, null );
         }
 
         return m_currentElement;
@@ -1145,7 +1160,7 @@ public class JSPWikiMarkupParser
         }
         else
         {
-            result = makeLink( EXTERNAL, StringUtils.replace(url,"&amp;","&"), url, null );
+            result = makeLink( EXTERNAL, StringUtils.replace(url,"&amp;","&"), url, null, null );
             addElement( outlinkImage() );
         }
 
@@ -1178,7 +1193,7 @@ public class JSPWikiMarkupParser
 
         if( isExternalLink( link ) && hasLinkText )
         {
-            return makeLink( IMAGELINK, reallink, link, null );
+            return makeLink( IMAGELINK, reallink, link, null, null );
         }
         else if( ( linkExists( possiblePage ) ) != null &&
                  hasLinkText )
@@ -1186,11 +1201,11 @@ public class JSPWikiMarkupParser
             // System.out.println("Orig="+link+", Matched: "+matchedLink);
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
             
-            return makeLink( IMAGEWIKILINK, reallink, link, null );
+            return makeLink( IMAGEWIKILINK, reallink, link, null, null );
         }
         else
         {
-            return makeLink( IMAGE, reallink, link, null );
+            return makeLink( IMAGE, reallink, link, null, null );
         }
     }
 
@@ -1273,27 +1288,26 @@ public class JSPWikiMarkupParser
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
-    private Element handleHyperlinks( String link, int pos )
+    private Element handleHyperlinks( String linktext, int pos )
     {
-        StringBuffer sb        = new StringBuffer(link.length()+80);
-        String       reallink;
-        int          cutpoint;
+        StringBuffer sb = new StringBuffer(linktext.length()+80);
 
-        if( isAccessRule( link ) )
+        if( isAccessRule( linktext ) )
         {
-            return handleAccessRule( link );
+            return handleAccessRule( linktext );
         }
 
-        if( isMetadata( link ) )
+        if( isMetadata( linktext ) )
         {
-            return handleMetadata( link );
+            return handleMetadata( linktext );
         }
 
-        if( PluginManager.isPluginLink( link ) )
+        if( PluginManager.isPluginLink( linktext ) )
         {
             try
             {
-                Content pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, link, pos );
+                Content pluginContent = m_engine.getPluginManager().parsePluginLine(
+                        m_context, linktext, pos );
 
                 addElement( pluginContent );
             }
@@ -1307,50 +1321,42 @@ public class JSPWikiMarkupParser
             return m_currentElement;
         }
 
-        // link = TextUtil.replaceEntities( link );
+    // linktext = TextUtil.replaceEntities( linktext );
 
-        if( (cutpoint = link.indexOf('|')) != -1 )
-        {                    
-            reallink = link.substring( cutpoint+1 ).trim();
-            link = link.substring( 0, cutpoint );
-        }
-        else
-        {
-            reallink = link.trim();
-        }
-
-        int interwikipoint = -1;
+        LinkParser.Link link = m_linkParser.parse(linktext);
+        linktext       = link.getText();
+        String linkref = link.getReference();
 
         //
         //  Yes, we now have the components separated.
-        //  link     = the text the link should have
-        //  reallink = the url or page name.
+        //  linktext = the text the link should have
+        //  linkref  = the url or page name.
         //
-        //  In many cases these are the same.  [link|reallink].
+        //  In many cases these are the same.  [linktext|linkref].
         //  
-        if( VariableManager.isVariableLink( link ) )
+        if( VariableManager.isVariableLink( linktext ) )
         {
-            Content el = new VariableContent(link);
+            Content el = new VariableContent(linktext);
 
             addElement( el );
         }
-        else if( isExternalLink( reallink ) )
+        else if( isExternalLink( linkref ) )
         {
             // It's an external link, out of this Wiki
 
-            callMutatorChain( m_externalLinkMutatorChain, reallink );
+            callMutatorChain( m_externalLinkMutatorChain, linkref );
 
-            if( isImageLink( reallink ) )
+            if( isImageLink( linkref ) )
             {
-                handleImageLink( reallink, link, (cutpoint != -1) );
+                handleImageLink( linkref, linktext, link.hasReference() );
             }
             else
             {
-                makeLink( EXTERNAL, reallink, link, null );
+                makeLink( EXTERNAL, linkref, linktext, null, link.getAttributes() );
                 addElement( outlinkImage() );
             }
         }
-        else if( (interwikipoint = reallink.indexOf(":")) != -1 )
+        else if( link.isInterwikiLink() )
         {
             // It's an interwiki link
             // InterWiki links also get added to external link chain
@@ -1363,8 +1369,8 @@ public class JSPWikiMarkupParser
             //        is using, so you'll have to write the entire name as it appears
             //        in the URL.  Bugger.
             
-            String extWiki = reallink.substring( 0, interwikipoint );
-            String wikiPage = reallink.substring( interwikipoint+1 );
+            String extWiki  = link.getExternalWiki();
+            String wikiPage = link.getExternalWikiPage();
 
             String urlReference = m_engine.getInterWikiURL( extWiki );
 
@@ -1375,11 +1381,11 @@ public class JSPWikiMarkupParser
 
                 if( isImageLink(urlReference) )
                 {
-                    handleImageLink( urlReference, link, cutpoint != -1 );
+                    handleImageLink( urlReference, linktext, link.hasReference() );
                 }
                 else
                 {
-                    makeLink( INTERWIKI, urlReference, link, null );
+                    makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
                 }
                 
                 if( isExternalLink(urlReference) )
@@ -1389,18 +1395,19 @@ public class JSPWikiMarkupParser
             }
             else
             {
-                addElement( makeError("No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)") );
+                addElement( makeError("No InterWiki reference defined in properties for Wiki called '"
+                        + extWiki + "'!)") );
             }
         }
-        else if( reallink.startsWith("#") )
+        else if( linkref.startsWith("#") )
         {
             // It defines a local footnote
-            makeLink( LOCAL, reallink, link, null );
+            makeLink( LOCAL, linkref, linktext, null, link.getAttributes() );
         }
-        else if( TextUtil.isNumber( reallink ) )
+        else if( TextUtil.isNumber( linkref ) )
         {
             // It defines a reference to a local footnote
-            makeLink( LOCALREF, reallink, link, null );
+            makeLink( LOCALREF, linkref, linktext, null, link.getAttributes() );
         }
         else
         {
@@ -1409,60 +1416,60 @@ public class JSPWikiMarkupParser
             //
             //  Internal wiki link, but is it an attachment link?
             //
-            String attachment = findAttachment( reallink );
+            String attachment = findAttachment( linkref );
             if( attachment != null )
             {
                 callMutatorChain( m_attachmentLinkMutatorChain, attachment );
 
-                if( isImageLink( reallink ) )
+                if( isImageLink( linkref ) )
                 {
                     attachment = m_context.getURL( WikiContext.ATTACH, attachment );
-                    sb.append( handleImageLink( attachment, link, (cutpoint != -1) ) );
+                    sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
                 }
                 else
                 {
-                    makeLink( ATTACHMENT, attachment, link, null );
+                    makeLink( ATTACHMENT, attachment, linktext, null, link.getAttributes() );
                 }
             }
-            else if( (hashMark = reallink.indexOf('#')) != -1 )
+            else if( (hashMark = linkref.indexOf('#')) != -1 )
             {
                 // It's an internal Wiki link, but to a named section
 
-                String namedSection = reallink.substring( hashMark+1 );
-                reallink = reallink.substring( 0, hashMark );
+                String namedSection = linkref.substring( hashMark+1 );
+                linkref = linkref.substring( 0, hashMark );
 
-                reallink     = MarkupParser.cleanLink( reallink );
+                linkref     = MarkupParser.cleanLink( linkref );
 
-                callMutatorChain( m_localLinkMutatorChain, reallink );
+                callMutatorChain( m_localLinkMutatorChain, linkref );
 
                 String matchedLink;
-                if( (matchedLink = linkExists( reallink )) != null )
+                if( (matchedLink = linkExists( linkref )) != null )
                 {
                     String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
                     sectref = sectref.replace('%', '_');
-                    makeLink( READ, matchedLink, link, sectref );
+                    makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
                 }
                 else
                 {
-                    makeLink( EDIT, reallink, link, null );
+                    makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
                 }
             }
             else
             {
                 // It's an internal Wiki link
-                reallink = MarkupParser.cleanLink( reallink );
+                linkref = MarkupParser.cleanLink( linkref );
 
-                callMutatorChain( m_localLinkMutatorChain, reallink );
+                callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                String matchedLink = linkExists( reallink );
+                String matchedLink = linkExists( linkref );
                 
                 if( matchedLink != null )
                 {
-                    makeLink( READ, matchedLink, link, null );
+                    makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
                 }
                 else
                 {
-                    makeLink( EDIT, reallink, link, null );
+                    makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
                 }
             }
         }
@@ -1470,14 +1477,14 @@ public class JSPWikiMarkupParser
         return m_currentElement;
     }
 
-    private String findAttachment( String link )
+    private String findAttachment( String linktext )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
         Attachment att = null;
 
         try
         {
-            att = mgr.getAttachmentInfo( m_context, link );
+            att = mgr.getAttachmentInfo( m_context, linktext );
         }
         catch( ProviderException e )
         {
@@ -1489,9 +1496,9 @@ public class JSPWikiMarkupParser
         {
             return att.getName();
         }
-        else if( link.indexOf('/') != -1 )
+        else if( linktext.indexOf('/') != -1 )
         {
-            return link;
+            return linktext;
         }
 
         return null;
@@ -2441,7 +2448,7 @@ public class JSPWikiMarkupParser
      *  we should ignore this altogether.
      * 
      * @param ch
-     * @return
+     * @return {@link #ELEMENT}, {@link #CHARACTER} or {@link #IGNORE}.
      * @throws IOException
      */
     protected int parseToken( int ch )
