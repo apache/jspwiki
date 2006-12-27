@@ -1,3 +1,15 @@
+2006-12-26  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.5.12
+        
+        * Fixed bug with Login/LoginContent that was preventing
+        page redirection upon login from working properly. The
+        corresponding web unit tests now all work again, too.
+        
+        * Fixed minor bug in Ant Hsql database teardown task
+        that would cause the test db to erroneously think the
+        database didn't need starting, even if it did.
+        
 2006-12-23  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.11
