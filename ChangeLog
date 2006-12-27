@@ -1,3 +1,14 @@
+2006-12-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.13
+        
+        * Added LinkParser class from Murray Altheim.  Thanks!
+        Links now have a new, extended syntax.  You may add metadata
+        to a link by adding a new bar: [text|link|attributes]. Only
+        a subset of attributes is allowed, as described in LinkParser.
+        This allows you to have things like link targets and link
+        relations.
+
 2006-12-26  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.12
