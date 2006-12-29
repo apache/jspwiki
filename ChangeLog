@@ -1,5 +1,10 @@
 2006-12-29  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * v.2.5.14
+
+        * Added patch from Murray to add the "target" attribute to
+        the Image plugin.
+
         * CommentedPropertiesTest no longer requires JDK 1.5.  Thanks
         to Murray for spotting this!
 
