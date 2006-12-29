@@ -152,7 +152,7 @@ public class LinkParser
 {
     private static Logger log = Logger.getLogger(LinkParser.class);
 
-    /** Permitted attributes on links. */
+    /** Permitted attributes on links.  Keep this sorted. */
     public static String[] PERMITTED_ATTRIBUTES = new String[] {
             "accesskey", "charset", "class", "dir", "hreflang", "id", "lang",
             "rel", "rev", "style", "tabindex", "target", "title", "type" };
@@ -225,7 +225,7 @@ public class LinkParser
                 try 
                 {
                     StringTokenizer tok = new StringTokenizer(attribs,DELIMS,true);
-              end : while ( tok.hasMoreTokens() )
+                    while ( tok.hasMoreTokens() )
                     {
                         String token = tok.nextToken(DELIMS).trim(); // get attribute name token
                         while ( isSpace(token) && tok.hasMoreTokens() )
