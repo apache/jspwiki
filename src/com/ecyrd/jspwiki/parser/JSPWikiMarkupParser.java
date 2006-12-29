@@ -649,6 +649,20 @@ public class JSPWikiMarkupParser
     }
 
     /**
+     *  These are all of the HTML 4.01 block-level elements.
+     */
+    private static final String[] BLOCK_ELEMENTS = {
+        "address", "blockquote", "div", "dl", "fieldset", "form", 
+        "h1", "h2", "h3", "h4", "h5", "h6", 
+        "hr", "noscript", "ol", "p", "pre", "table", "ul"
+    };
+    
+    private static final boolean isBlockLevel( String name )
+    {
+        return Arrays.binarySearch( BLOCK_ELEMENTS, name ) >= 0;
+    }
+    
+    /**
      *  This method peeks ahead in the stream until EOL and returns the result.
      *  It will keep the buffers untouched.
      *
@@ -2624,32 +2638,7 @@ public class JSPWikiMarkupParser
         {
             fillBuffer( rootElement );
 
-            //
-            //  Add the paragraph tag to the first paragraph
-            //
-            List kids = rootElement.getContent();
-            
-            if( rootElement.getChild("p") != null )
-            {
-                for( Iterator i = kids.iterator(); i.hasNext(); )
-                {
-                    Content c = (Content) i.next();
-                    if( c instanceof Element )
-                    {
-                        // FIXME: Should test for other block-level elements as well.
-                        String name = ((Element)c).getName();
-                        if( "p".equals(name) || "table".equals(name) ) break; 
-                    }
-                    if( c instanceof Text || c instanceof Element)
-                    {
-                        Element newel = new Element("p");
-                        int idx = rootElement.indexOf(c);
-                        rootElement.setContent(idx, newel);
-                        newel.addContent(c);
-                        break;
-                    }
-                }
-            }
+            paragraphify(rootElement);
                         
         }
         catch( IllegalDataException e )
@@ -2659,6 +2648,56 @@ public class JSPWikiMarkupParser
         }
         
         return d;
+    }
+
+    /**
+     *  Checks out that the first paragraph is correctly installed.
+     *  
+     *  @param rootElement
+     */
+    private void paragraphify(Element rootElement)
+    {
+        //
+        //  Add the paragraph tag to the first paragraph
+        //
+        List kids = rootElement.getContent();
+        
+        if( rootElement.getChild("p") != null )
+        {
+            ArrayList ls = new ArrayList();
+            int idxOfFirstContent = 0, count = 0;
+            
+            for( Iterator i = kids.iterator(); i.hasNext(); count++ )
+            {
+                Content c = (Content) i.next();
+                if( c instanceof Element )
+                {
+                    String name = ((Element)c).getName();
+                    if( isBlockLevel(name) ) break; 
+                }
+            
+                if( !(c instanceof ProcessingInstruction) )
+                {
+                    ls.add( c );
+                    if( idxOfFirstContent == 0 ) idxOfFirstContent = count;
+                }
+            }
+
+            if( ls.size() > 0 )
+            {
+                Element newel = new Element("p");
+                
+                for( Iterator i = ls.iterator(); i.hasNext(); )
+                {
+                    Content c = (Content) i.next();
+                
+                    c.detach();
+                    newel.addContent(c);
+                }
+
+                rootElement.addContent(idxOfFirstContent, newel);
+            }
+        }
     }
     
 
