@@ -35,6 +35,7 @@ import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
+import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
 
@@ -69,8 +70,7 @@ public class SearchManager
         WikiEventUtils.addWikiEventListener(m_engine.getPageManager(), 
                                             WikiPageEvent.PAGE_DELETE_REQUEST, this);
         
-        JSONRPCBridge.getGlobalBridge().setDebug(true);
-        JSONRPCBridge.getGlobalBridge().registerObject( JSON_SEARCH, new JSONSearch() );
+        JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
     }
 
     /**
