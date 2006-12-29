@@ -45,6 +45,7 @@ public class Image
     public static final String PARAM_ALT      = "alt";
     public static final String PARAM_CAPTION  = "caption";
     public static final String PARAM_LINK     = "link";
+    public static final String PARAM_TARGET   = "target";
     public static final String PARAM_STYLE    = "style";
     public static final String PARAM_CLASS    = "class";
     //    public static final String PARAM_MAP      = "map";
@@ -70,6 +71,7 @@ public class Image
         String alt     = getCleanParameter( params, PARAM_ALT );
         String caption = getCleanParameter( params, PARAM_CAPTION );
         String link    = getCleanParameter( params, PARAM_LINK );
+        String target  = getCleanParameter( params, PARAM_TARGET );
         String style   = getCleanParameter( params, PARAM_STYLE );
         String cssclass= getCleanParameter( params, PARAM_CLASS );
         // String map     = getCleanParameter( params, PARAM_MAP );
@@ -81,6 +83,11 @@ public class Image
         }
 
         if( cssclass == null ) cssclass = "imageplugin";
+
+        if( target != null && !validTargetValue(target) )
+        {
+            target = null; // not a valid value so ignore
+        }
 
         try
         {
@@ -139,7 +146,12 @@ public class Image
        
         if( link != null ) 
         {
-            result.append("<a href=\""+link+"\">");
+            result.append("<a href=\""+link+"\"");
+            if( target != null )
+            {
+                result.append(" target=\""+target+"\"");
+            }
+            result.append(">");
         }
 
         result.append( "<img src=\""+src+"\"" );
@@ -158,4 +170,22 @@ public class Image
 
         return result.toString();
     }
+
+    private boolean validTargetValue( String s )
+    {
+        if( s.equals("_blank")
+                || s.equals("_self")
+                || s.equals("_parent")
+                || s.equals("_top") )
+        {
+            return true;
+        } 
+        else if( s.length() > 0 ) // check [a-zA-z]
+        {
+            char c = s.charAt(0);
+            return ( Character.isLowerCase(c) || Character.isUpperCase(c) );
+        }
+        return false;
+    }
+
 }
