@@ -1,6 +1,13 @@
 2006-12-29  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * v.2.5.14
+        
+        * Bug fix: 2.5.9 was breaking unit tests badly, thanks
+        to a missing null check.
+        
+        * Bug fix: Any markup in the first paragraph would break
+        paragraph detection in JSPWikiMarkupParser.parse(). 
+        Reported by Murray Altheim.
 
         * Added patch from Murray to add the "target" attribute to
         the Image plugin.
