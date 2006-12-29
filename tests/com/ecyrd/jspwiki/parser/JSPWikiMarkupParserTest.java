@@ -846,7 +846,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "1\n\n2\n\n3";
         
-        assertEquals( "<p>1</p>\n<p>2\n</p>\n<p>3</p>", translate(src) );
+        assertEquals( "<p>1\n</p><p>2\n</p>\n<p>3</p>", translate(src) );
     }
     
     public void testParagraph2()
@@ -856,7 +856,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         
         newPage( "WikiEtiquette" );        
         
-        assertEquals( "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a></p>\n"+
+        assertEquals( "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>"+
                       "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
     }
     
@@ -885,7 +885,17 @@ public class JSPWikiMarkupParserTest extends TestCase
                       "<a class=\"wikipage\" href=\"/Wiki.jsp?page=UnusedPages\">Unused pages</a></p>",
                       translate(src) );
     }
-    
+
+    public void testParagraph5() throws Exception
+    {
+        String src = "__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
+                     "In UNIX, the file(1) command can be used.";
+        
+        assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>"+
+                      "<p>In UNIX, the file(1) command can be used.</p>",
+                      translate(src) );
+    }
+
     public void testLinebreak()
     throws Exception
     {
@@ -957,7 +967,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "foo\n\nbar{{{2345}}}6";
         
-        assertEquals( "<p>foo</p>\n<p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
+        assertEquals( "<p>foo\n</p><p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
     }
 
     public void testPreEscape()
@@ -1183,7 +1193,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="A\n\n**\n\nB";
         
         // System.out.println(translate(src));
-        assertEquals( "<p>A</p>\n<ul><li><ul><li>\n</li></ul></li></ul><p>B</p>", 
+        assertEquals( "<p>A\n</p><ul><li><ul><li>\n</li></ul></li></ul><p>B</p>", 
                       translate(src) );
     }
     
@@ -1193,7 +1203,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src="A\n\n##\n\nB";
         
         // System.out.println(translate(src));
-        assertEquals( "<p>A</p>\n<ol><li><ol><li>\n</li></ol></li></ol><p>B</p>", 
+        assertEquals( "<p>A\n</p><ol><li><ol><li>\n</li></ol></li></ol><p>B</p>", 
                       translate(src) );
     }
     
