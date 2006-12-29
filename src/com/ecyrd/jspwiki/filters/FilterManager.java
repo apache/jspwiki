@@ -192,10 +192,13 @@ public final class FilterManager
         {
             if( xmlFile == null )
             {
-                log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
-                xmlStream = engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+                if( engine.getServletContext() != null )
+                {
+                    log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
+                    xmlStream = engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+                }
                 
-                if ( xmlStream == null )
+                if( xmlStream == null )
                 {
                     //just a fallback element to the old behaviour prior to 2.5.8
                     log.debug("Attempting to locate filters.xml from class path.");
