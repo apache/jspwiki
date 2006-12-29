@@ -12,6 +12,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.RPCManager;
+import com.ecyrd.jspwiki.search.SearchManager.JSONSearch;
 import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.metaparadigm.jsonrpc.InvocationCallback;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
@@ -55,6 +56,7 @@ public class JSONRPCManager extends RPCManager
     // FIXME: Is returning the global bridge a potential security threat?
     private static JSONRPCBridge getBridge( WikiContext context )
     {
+        JSONRPCBridge bridge = null;
         HttpServletRequest req = context.getHttpRequest();
         
         if( req != null )
@@ -63,7 +65,7 @@ public class JSONRPCManager extends RPCManager
             
             if( hs != null )
             {
-                JSONRPCBridge bridge = (JSONRPCBridge)hs.getAttribute("JSONRPCBridge");
+                bridge = (JSONRPCBridge)hs.getAttribute("JSONRPCBridge");
                 
                 if( bridge == null )
                 {
@@ -71,12 +73,13 @@ public class JSONRPCManager extends RPCManager
                 
                     hs.setAttribute("JSONRPCBridge", new JSONRPCBridge());
                 }
-                
-                return bridge;
             }
         }
         
-        return JSONRPCBridge.getGlobalBridge();
+        if( bridge == null) bridge = JSONRPCBridge.getGlobalBridge();
+        bridge.setDebug(false);
+        
+        return bridge;
     }
     
     /**
@@ -115,6 +118,7 @@ public class JSONRPCManager extends RPCManager
     // FIXME: Does not work yet
     public static class WikiJSONAccessor implements InvocationCallback
     {
+        private static final long serialVersionUID = 1L;
 
         public void postInvoke(Object context, Object instance, Method method, Object result) throws Exception
         {
@@ -140,5 +144,13 @@ public class JSONRPCManager extends RPCManager
             throw new WikiSecurityException("Permission to call this method not given");
         }
         
+    }
+
+    public static void registerGlobalObject(String id, RPCCallable object)
+    {
+        JSONRPCBridge bridge = JSONRPCBridge.getGlobalBridge();
+        
+        bridge.registerObject( id, object );
+        bridge.registerCallback( new WikiJSONAccessor(), HttpServletRequest.class );
     }
 }
