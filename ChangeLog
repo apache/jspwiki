@@ -12,7 +12,7 @@
         being too strict: ("[]") would cause a RuntimeException being
         thrown, which would not be caught until a very high level.
         Fixed LinkParser to use a new declared exception "ParseException".
-        RuntimeExceptions are evil.
+        Reminder to self: RuntimeExceptions are evil.
         
         * This is a biggie: increased the number of allowed characters
         in a wikiname.  Now the list reads " ()&'*+,-=._", so yes,
