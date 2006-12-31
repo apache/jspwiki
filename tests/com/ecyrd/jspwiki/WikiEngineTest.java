@@ -258,8 +258,8 @@ public class WikiEngineTest extends TestCase
 
         Object[] result = m_engine.scanWikiLinks( new WikiPage(m_engine, "Test"), src ).toArray();
         
-        assertEquals( "item 0", result[0], "Foobar" );
-        assertEquals( "item 1", result[1], "ThisIsALink" );
+        assertEquals( "item 0", "Foobar", result[0] );
+        assertEquals( "item 1", "This is a link", result[1] );
     }
 
     public void testBeautifyTitle()

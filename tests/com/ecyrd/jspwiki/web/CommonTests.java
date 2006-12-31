@@ -137,7 +137,7 @@ public abstract class CommonTests extends TestCase
         t.assertSubmitButtonPresent( "ok" );
         t.setFormElement( "assertedName", "Don Quixote" );
         t.submit( "ok" );
-        t.assertTextPresent( "G&apos;day" );
+        t.assertTextPresent( "G&#39;day" );
         t.assertTextPresent( "Don Quixote" );
         t.assertTextPresent( "(not logged in)" );
         String cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
@@ -151,7 +151,7 @@ public abstract class CommonTests extends TestCase
         t.assertFormPresent( "clearCookie" );
         t.assertSubmitButtonPresent( "ok" );
         t.submit( "ok" );
-        t.assertTextNotPresent( "G&apos;day" );
+        t.assertTextNotPresent( "G&#39;day" );
         t.assertTextNotPresent( "Don Quixote" );
         t.assertTextNotPresent( "(not logged in)" );
         cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
@@ -200,7 +200,7 @@ public abstract class CommonTests extends TestCase
         t.setWorkingForm( "setCookie" );
         t.setFormElement( "assertedName", "FredFlintstone" );
         t.submit( "ok" );
-        t.assertTextPresent( "G&apos;day" );
+        t.assertTextPresent( "G&#39;day" );
         t.assertTextPresent( "FredFlintstone" );
         t.assertTextPresent( "(not logged in)" );
         t.gotoPage("/Group.jsp?group=" + group );
@@ -244,7 +244,7 @@ public abstract class CommonTests extends TestCase
     {
         // Start at front page; try to log in
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        t.assertTextNotPresent( "G&apos;day" );
+        t.assertTextNotPresent( "G&#39;day" );
         t.clickLinkWithText( "Log in" );
         t.assertTextPresent( "Please sign in" );
         t.assertFormPresent( "login" );
@@ -272,7 +272,7 @@ public abstract class CommonTests extends TestCase
         t.setFormElement( "j_password", TEST_PASSWORD );
         t.submit( "submitlogin" );
         t.assertTextNotPresent( "Please sign in" );
-        t.assertTextPresent( "G&apos;day" );
+        t.assertTextPresent( "G&#39;day" );
         t.assertTextPresent( "(authenticated)" );
         String cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
         assertNotNull( cookie );
@@ -280,7 +280,7 @@ public abstract class CommonTests extends TestCase
         
         // Log out; we should NOT see any asserted identities
         t.gotoPage( "/Logout.jsp" );
-        t.assertTextNotPresent( "G&apos;day" );
+        t.assertTextNotPresent( "G&#39;day" );
         cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
         assertEquals( "", cookie );
     }
@@ -362,7 +362,7 @@ public abstract class CommonTests extends TestCase
     {
         // Navigate to profile tab
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        t.assertTextNotPresent( "G&apos;day" );
+        t.assertTextNotPresent( "G&#39;day" );
         t.clickLinkWithText( "My Prefs" );
         t.assertFormPresent( "editProfile" );
         t.setWorkingForm( "editProfile" );
