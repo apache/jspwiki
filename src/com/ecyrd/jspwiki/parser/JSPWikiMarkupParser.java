@@ -1335,157 +1335,163 @@ public class JSPWikiMarkupParser
             return m_currentElement;
         }
 
-    // linktext = TextUtil.replaceEntities( linktext );
-
-        LinkParser.Link link = m_linkParser.parse(linktext);
-        linktext       = link.getText();
-        String linkref = link.getReference();
-
-        //
-        //  Yes, we now have the components separated.
-        //  linktext = the text the link should have
-        //  linkref  = the url or page name.
-        //
-        //  In many cases these are the same.  [linktext|linkref].
-        //  
-        if( VariableManager.isVariableLink( linktext ) )
+        try
         {
-            Content el = new VariableContent(linktext);
-
-            addElement( el );
-        }
-        else if( isExternalLink( linkref ) )
-        {
-            // It's an external link, out of this Wiki
-
-            callMutatorChain( m_externalLinkMutatorChain, linkref );
-
-            if( isImageLink( linkref ) )
-            {
-                handleImageLink( linkref, linktext, link.hasReference() );
-            }
-            else
-            {
-                makeLink( EXTERNAL, linkref, linktext, null, link.getAttributes() );
-                addElement( outlinkImage() );
-            }
-        }
-        else if( link.isInterwikiLink() )
-        {
-            // It's an interwiki link
-            // InterWiki links also get added to external link chain
-            // after the links have been resolved.
-            
-            // FIXME: There is an interesting issue here:  We probably should
-            //        URLEncode the wikiPage, but we can't since some of the
-            //        Wikis use slashes (/), which won't survive URLEncoding.
-            //        Besides, we don't know which character set the other Wiki
-            //        is using, so you'll have to write the entire name as it appears
-            //        in the URL.  Bugger.
-            
-            String extWiki  = link.getExternalWiki();
-            String wikiPage = link.getExternalWikiPage();
-
-            String urlReference = m_engine.getInterWikiURL( extWiki );
-
-            if( urlReference != null )
-            {
-                urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
-                urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
-
-                if( isImageLink(urlReference) )
-                {
-                    handleImageLink( urlReference, linktext, link.hasReference() );
-                }
-                else
-                {
-                    makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
-                }
-                
-                if( isExternalLink(urlReference) )
-                {
-                    addElement( outlinkImage() );
-                }
-            }
-            else
-            {
-                addElement( makeError("No InterWiki reference defined in properties for Wiki called '"
-                        + extWiki + "'!)") );
-            }
-        }
-        else if( linkref.startsWith("#") )
-        {
-            // It defines a local footnote
-            makeLink( LOCAL, linkref, linktext, null, link.getAttributes() );
-        }
-        else if( TextUtil.isNumber( linkref ) )
-        {
-            // It defines a reference to a local footnote
-            makeLink( LOCALREF, linkref, linktext, null, link.getAttributes() );
-        }
-        else
-        {
-            int hashMark = -1;
+            LinkParser.Link link = m_linkParser.parse(linktext);
+            linktext       = link.getText();
+            String linkref = link.getReference();
 
             //
-            //  Internal wiki link, but is it an attachment link?
+            //  Yes, we now have the components separated.
+            //  linktext = the text the link should have
+            //  linkref  = the url or page name.
             //
-            String attachment = findAttachment( linkref );
-            if( attachment != null )
+            //  In many cases these are the same.  [linktext|linkref].
+            //  
+            if( VariableManager.isVariableLink( linktext ) )
             {
-                callMutatorChain( m_attachmentLinkMutatorChain, attachment );
+                Content el = new VariableContent(linktext);
+
+                addElement( el );
+            }
+            else if( isExternalLink( linkref ) )
+            {
+                // It's an external link, out of this Wiki
+
+                callMutatorChain( m_externalLinkMutatorChain, linkref );
 
                 if( isImageLink( linkref ) )
                 {
-                    attachment = m_context.getURL( WikiContext.ATTACH, attachment );
-                    sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
+                    handleImageLink( linkref, linktext, link.hasReference() );
                 }
                 else
                 {
-                    makeLink( ATTACHMENT, attachment, linktext, null, link.getAttributes() );
+                    makeLink( EXTERNAL, linkref, linktext, null, link.getAttributes() );
+                    addElement( outlinkImage() );
                 }
             }
-            else if( (hashMark = linkref.indexOf('#')) != -1 )
+            else if( link.isInterwikiLink() )
             {
-                // It's an internal Wiki link, but to a named section
+                // It's an interwiki link
+                // InterWiki links also get added to external link chain
+                // after the links have been resolved.
+            
+                // FIXME: There is an interesting issue here:  We probably should
+                //        URLEncode the wikiPage, but we can't since some of the
+                //        Wikis use slashes (/), which won't survive URLEncoding.
+                //        Besides, we don't know which character set the other Wiki
+                //        is using, so you'll have to write the entire name as it appears
+                //        in the URL.  Bugger.
+                
+                String extWiki  = link.getExternalWiki();
+                String wikiPage = link.getExternalWikiPage();
 
-                String namedSection = linkref.substring( hashMark+1 );
-                linkref = linkref.substring( 0, hashMark );
+                String urlReference = m_engine.getInterWikiURL( extWiki );
 
-                linkref     = MarkupParser.cleanLink( linkref );
-
-                callMutatorChain( m_localLinkMutatorChain, linkref );
-
-                String matchedLink;
-                if( (matchedLink = linkExists( linkref )) != null )
+                if( urlReference != null )
                 {
-                    String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
-                    sectref = sectref.replace('%', '_');
-                    makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
+                    urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
+                    urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
+
+                    if( isImageLink(urlReference) )
+                    {
+                        handleImageLink( urlReference, linktext, link.hasReference() );
+                    }
+                    else
+                    {
+                        makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
+                    }
+                
+                    if( isExternalLink(urlReference) )
+                    {
+                        addElement( outlinkImage() );
+                    }
                 }
                 else
                 {
-                    makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
+                    addElement( makeError("No InterWiki reference defined in properties for Wiki called '"
+                                          + extWiki + "'!)") );
                 }
+            }
+            else if( linkref.startsWith("#") )
+            {
+                // It defines a local footnote
+                makeLink( LOCAL, linkref, linktext, null, link.getAttributes() );
+            }
+            else if( TextUtil.isNumber( linkref ) )
+            {
+                // It defines a reference to a local footnote
+                makeLink( LOCALREF, linkref, linktext, null, link.getAttributes() );
             }
             else
             {
-                // It's an internal Wiki link
-                linkref = MarkupParser.cleanLink( linkref );
+                int hashMark = -1;
 
-                callMutatorChain( m_localLinkMutatorChain, linkref );
-
-                String matchedLink = linkExists( linkref );
-                
-                if( matchedLink != null )
+                //
+                //  Internal wiki link, but is it an attachment link?
+                //
+                String attachment = findAttachment( linkref );
+                if( attachment != null )
                 {
-                    makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
+                    callMutatorChain( m_attachmentLinkMutatorChain, attachment );
+
+                    if( isImageLink( linkref ) )
+                    {
+                        attachment = m_context.getURL( WikiContext.ATTACH, attachment );
+                        sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
+                    }
+                    else
+                    {
+                        makeLink( ATTACHMENT, attachment, linktext, null, link.getAttributes() );
+                    }
+                }
+                else if( (hashMark = linkref.indexOf('#')) != -1 )
+                {
+                    // It's an internal Wiki link, but to a named section
+
+                    String namedSection = linkref.substring( hashMark+1 );
+                    linkref = linkref.substring( 0, hashMark );
+
+                    linkref     = MarkupParser.cleanLink( linkref );
+
+                    callMutatorChain( m_localLinkMutatorChain, linkref );
+
+                    String matchedLink;
+                    if( (matchedLink = linkExists( linkref )) != null )
+                    {
+                        String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
+                        sectref = sectref.replace('%', '_');
+                        makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
+                    }
+                    else
+                    {
+                        makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
+                    }
                 }
                 else
                 {
-                    makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
+                    // It's an internal Wiki link
+                    linkref = MarkupParser.cleanLink( linkref );
+                    
+                    callMutatorChain( m_localLinkMutatorChain, linkref );
+
+                    String matchedLink = linkExists( linkref );
+                
+                    if( matchedLink != null )
+                    {
+                        makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
+                    }
+                    else
+                    {
+                        makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
+                    }
                 }
             }
+        }
+        catch( ParseException e )
+        {
+            log.info("Parser failure: ",e);
+            addElement( makeError( "Parser failed: "+e.getMessage() ) );
         }
 
         return m_currentElement;
