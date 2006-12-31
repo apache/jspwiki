@@ -442,10 +442,7 @@ public class PageManager extends ModuleManager
         {
             throw new ProviderException("Illegal page name");
         }
-/*
-        if( m_provider instanceof VersioningProvider )
-            return ((VersioningProvider)m_provider).pageExists( pageName, version );
-  */      
+     
         return m_provider.getPageInfo( pageName, version ) != null;
     }
 
