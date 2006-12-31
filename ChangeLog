@@ -1,5 +1,33 @@
 2006-12-29  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.5.15
+        
+        * English resource files had some &apos;'s in them.  Replaced
+        with &#39;.  Turns out that &apos; is an entity in XML, but
+        not in HTML - and therefore IE does not recognize it.  Fun,
+        but for once IE is correct in their standards support.  Found
+        by Harry Metske.
+        
+        * The LinkParser would not boot jspwiki.org content due to
+        being too strict: ("[]") would cause a RuntimeException being
+        thrown, which would not be caught until a very high level.
+        Fixed LinkParser to use a new declared exception "ParseException".
+        RuntimeExceptions are evil.
+        
+        * This is a biggie: increased the number of allowed characters
+        in a wikiname.  Now the list reads " ()&'*+,-=._", so yes,
+        spaces are allowed now.  Added MarkupParser.wikifyLink() to
+        keep compatibility with previous versions, and also enhanced
+        CommandResolver to be able to figure out old-style links.
+        Please be aware that this is not yet a final set of characters,
+        so using this version may cause a legacy you might have to 
+        deal with it painfully later on.  Also, note that the code is
+        largely untested right now, and many unit tests are failing
+        right now, so consider this now "bleeding edge".  Please give
+        feedback on what the proper set of characters should be.
+
+2006-12-29  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * v.2.5.14
         
         * Bug fix: 2.5.9 was breaking unit tests badly, thanks
