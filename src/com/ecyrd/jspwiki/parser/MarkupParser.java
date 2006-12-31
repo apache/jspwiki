@@ -65,9 +65,13 @@ public abstract class MarkupParser
     public static final String     PROP_RUNPLUGINS       = "jspwiki.translatorReader.runPlugins";
     
     /** Lists all punctuation characters allowed in WikiMarkup. These
-        will not be cleaned away. */
+        will not be cleaned away. This is for compatibility for older versions
+        of JSPWiki. */
     
-    protected static final String           PUNCTUATION_CHARS_ALLOWED = "._";
+    protected static final String           LEGACY_CHARS_ALLOWED      = "._";
+    
+    /** Lists all punctuation characters allowed in page names. */
+    protected static final String           PUNCTUATION_CHARS_ALLOWED = " ()&'*+,-=._";
 
     protected MarkupParser( WikiContext context, Reader in )
     {
@@ -217,9 +221,11 @@ public abstract class MarkupParser
     }
 
     /**
-     *  Cleans a Wiki name.
+     *  Cleans a Wiki name.  The functionality of this method was changed in 2.6
+     *  so that the list of allowed characters is much larger.  Use wikifyLink()
+     *  to get the legacy behaviour.
      *  <P>
-     *  [ This is a link ] -&gt; ThisIsALink
+     *  [ This is a link ] -&gt; This is a link
      *
      *  @param link Link to be cleared. Null is safe, and causes this to return null.
      *  @return A cleaned link.
@@ -228,8 +234,23 @@ public abstract class MarkupParser
      */
     public static String cleanLink( String link )
     {
+        return cleanLink(link, PUNCTUATION_CHARS_ALLOWED);
+    }
+
+    /**
+     *  Cleans a Wiki name based on a list of characters.
+     *
+     *  @param link Link to be cleared. Null is safe, and causes this to return null.
+     * @param allowedChars TODO
+     *  @return A cleaned link.
+     *
+     *  @since 2.6
+     */
+    public static String cleanLink( String link, String allowedChars )
+    {
         if( link == null ) return null;
 
+        link = link.trim();
         StringBuffer clean = new StringBuffer(link.length());
 
         //
@@ -248,7 +269,7 @@ public abstract class MarkupParser
         {
             char ch = link.charAt(i);
 
-            if( Character.isLetterOrDigit( ch ) || MarkupParser.PUNCTUATION_CHARS_ALLOWED.indexOf(ch) != -1 )
+            if( Character.isLetterOrDigit( ch ) || allowedChars.indexOf(ch) != -1 )
             {
                 // Is a letter
                 
@@ -263,6 +284,21 @@ public abstract class MarkupParser
         }
     
         return clean.toString();
+    }
+
+    /**
+     *  Cleans away extra legacy characters.  This method functions exactly
+     *  like pre-2.6 cleanLink()
+     *  <P>
+     *  [ This is a link ] -&gt; ThisIsALink
+     *
+     *  @param link Link to be cleared. Null is safe, and causes this to return null.
+     *  @return A cleaned link.
+     *  @since 2.6
+     */
+    public static String wikifyLink(String link)
+    {
+        return MarkupParser.cleanLink(link, MarkupParser.LEGACY_CHARS_ALLOWED);
     }
 
 }
