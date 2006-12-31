@@ -280,22 +280,29 @@ public final class CommandResolver
     public final String getFinalPageName( String page ) throws ProviderException
     {
         boolean isThere = simplePageExists( page );
-
+        String  finalName = page;
+        
         if ( !isThere && m_matchEnglishPlurals )
         {
             if ( page.endsWith( "s" ) )
             {
-                page = page.substring( 0, page.length() - 1 );
+                finalName = page.substring( 0, page.length() - 1 );
             }
             else
             {
-                page += "s";
+                finalName += "s";
             }
 
-            isThere = simplePageExists( page );
+            isThere = simplePageExists( finalName );
         }
 
-        return isThere ? page : null;
+        if( !isThere )
+        {
+            finalName = MarkupParser.wikifyLink( page );
+            isThere = simplePageExists(finalName);
+        }
+        
+        return isThere ? finalName : null;
     }
 
     /**
