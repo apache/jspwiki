@@ -20,7 +20,6 @@
 
 package com.ecyrd.jspwiki.parser;
 
-import java.text.ParseException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -174,24 +173,19 @@ public class LinkParser
      *
      * @param  linktext  the wiki link text to be parsed
      * @return a Link object containing the link text, reference, and any valid Attributes
-     * @throws RuntimeException if the parameter is null or an empty String
+     * @throws ParseException if the parameter is null
      */
-    public Link parse( String linktext )
+    public Link parse( String linktext ) throws ParseException
     {
-        if ( linktext == null )
+        if( linktext == null )
         {
-            throw new RuntimeException("null value passed to link parser");
-        }
-        else if ( linktext.trim().length() == 0 )
-        {
-            throw new RuntimeException("empty value passed to link parser");
+            throw new ParseException("null value passed to link parser");
         }
 
         Link link = null;
 
-//System.err.println("\nLink.parse() 1. linktext='" + linktext + "'" );
-        try {
-
+        try 
+        {
             // establish link text and link ref
             int cut1   = linktext.indexOf('|');
             if( cut1 == -1 ) 
@@ -251,19 +245,19 @@ public class LinkParser
                                 else
                                 {
                                     throw new ParseException("unknown target attribute value='"
-                                            + value + "' on link",-1);
+                                                             + value + "' on link");
                                 }
                             }
                             else
                             {
                                 throw new ParseException("unknown attribute name '"
-                                        + token + "' on link",-1);
+                                                         + token + "' on link");
                             }
                         } 
                         else 
                         {
                             throw new ParseException("unable to parse link attributes '"
-                                    + attribs + "'",-1);
+                                                     + attribs + "'");
 
                         }
                     }
@@ -282,7 +276,9 @@ public class LinkParser
                 }
             }
 
-        } catch( Exception e ) {
+        } 
+        catch( Exception e ) 
+        {
             log.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
         //  throw new RuntimeException( e.getClass().getName() + " thrown by link parser: " 
         //          + e.getMessage() );
@@ -298,7 +294,7 @@ public class LinkParser
         String s = tok.nextToken(required);
         if( !s.equals(required) )
         {
-            throw new ParseException("expected '"+required+"' not '"+s+"'",-1); // I18N
+            throw new ParseException("expected '"+required+"' not '"+s+"'"); // I18N
         }
         return s;
     }
@@ -343,8 +339,8 @@ public class LinkParser
     {
         private String m_text;
         private String m_ref = null;
-        private int m_interwiki_point = -1;
-        private List m_attribs = null;
+        private int    m_interwiki_point = -1;
+        private List   m_attribs = null;
 
         protected Link( String text ) throws ParseException
         {
@@ -359,9 +355,9 @@ public class LinkParser
 
         protected void setText( String text ) throws ParseException
         {
-            if( text == null || text.trim().length() == 0 )
+            if( text == null )
             {
-                throw new ParseException("null or empty link text",0);
+                throw new ParseException("null link text");
             }
             m_text = text;
         }
@@ -373,9 +369,9 @@ public class LinkParser
 
         protected void setReference( String ref ) throws ParseException
         {
-            if( ref == null || ref.trim().length() == 0 )
+            if( ref == null )
             {
-                throw new ParseException("null or empty link reference value",0);
+                throw new ParseException("null link reference value");
             }
             m_ref = ref;
             m_interwiki_point = m_ref.indexOf(':');
