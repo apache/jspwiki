@@ -1023,7 +1023,7 @@ public class JSPWikiMarkupParser
     private String makeHeadingAnchor( String baseName, String title, Heading hd )
     {
         hd.m_titleText = title;
-        title = MarkupParser.cleanLink( title );
+        title = MarkupParser.wikifyLink( title );
         hd.m_titleSection = m_engine.encodeName(title);
         hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
                            "-"+hd.m_titleSection;
@@ -1452,7 +1452,7 @@ public class JSPWikiMarkupParser
                     String namedSection = linkref.substring( hashMark+1 );
                     linkref = linkref.substring( 0, hashMark );
 
-                    linkref     = MarkupParser.cleanLink( linkref );
+                    linkref = MarkupParser.cleanLink( linkref );
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
@@ -2689,6 +2689,10 @@ public class JSPWikiMarkupParser
                 }
             }
 
+            //
+            //  If there were any elements, then add a new <p> (unless it would
+            //  be an empty one)
+            //
             if( ls.size() > 0 )
             {
                 Element newel = new Element("p");
@@ -2701,7 +2705,11 @@ public class JSPWikiMarkupParser
                     newel.addContent(c);
                 }
 
-                rootElement.addContent(idxOfFirstContent, newel);
+                //
+                // Make sure there are no empty <p/> tags added.
+                //
+                if( newel.getTextTrim().length() > 0 || !newel.getChildren().isEmpty() )
+                    rootElement.addContent(idxOfFirstContent, newel);
             }
         }
     }
