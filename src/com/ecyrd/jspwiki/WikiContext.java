@@ -870,7 +870,11 @@ public class WikiContext
     // FIXME: This method should really cache the ResourceBundles or something...
     public ResourceBundle getBundle( String bundle )
     {
-        Locale loc = m_request.getLocale();
+        Locale loc = null;
+        
+        if( m_request != null ) 
+            loc = m_request.getLocale();
+            
         ResourceBundle b = m_engine.getInternationalizationManager().getBundle(bundle, loc);
         
         return b;
