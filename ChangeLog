@@ -1,3 +1,16 @@
+2007-01-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.16
+        
+        * If there was no default locale set, I18NManager.getBundle()
+        would fail.
+        
+        * Attachment links with new character set work now.
+        
+        * Section titles are now returned back to 2.5.14 behaviour.
+        
+        * Some tiny i18n work on TableOfContents.
+
 2006-12-31  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.15
