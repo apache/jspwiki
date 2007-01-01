@@ -2268,7 +2268,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "[Brightness (apical)]";
 
-        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=BrightnessApical\" title=\"Create 'BrightnessApical'\">Brightness (apical)</a>", translate(src) );        
+        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=Brightness%20%28apical%29\" title=\"Create 'Brightness (apical)'\">Brightness (apical)</a>", translate(src) );        
     }
 
     public void testDeadlySpammer()
