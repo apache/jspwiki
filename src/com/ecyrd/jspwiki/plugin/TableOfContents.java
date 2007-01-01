@@ -131,7 +131,7 @@ public class TableOfContents
         ResourceBundle rb = context.getBundle("com.ecyrd.jspwiki.plugin.PluginResources");
         
         if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
-            return "Table of Contents";
+            return rb.getString("tableofcontents.title");
         
         StringBuffer sb = new StringBuffer();
 
