@@ -253,6 +253,17 @@ public class AttachmentManager
             if(parentPage.length() == 0) return null;
             
             currentPage = m_engine.getPage( parentPage );
+            
+            //
+            // Go check for legacy name
+            //
+            // FIXME: This should be resolved using CommandResolver,
+            //        not this adhoc way.  This also assumes that the
+            //        legacy charset is a subset of the full allowed set.
+            if( currentPage == null )
+            {
+                currentPage = m_engine.getPage( MarkupParser.wikifyLink( parentPage ) );
+            }
         }
 
         // 
