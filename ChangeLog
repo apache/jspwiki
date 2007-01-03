@@ -1,3 +1,35 @@
+2006-01-02  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * Happy New Year everyone!
+        
+        * This release adds a significant new package for modeling
+        workflow operations (com.ecyrd.jspwiki.workflow). This package allows
+        arbitrary combinations of "steps" to be modeled, with support for
+        unlimited branching and support for human intervention. The core class
+        is the Workflow class. Workflows are composed of Steps, which can be
+        Tasks (which run uninterrupted) and Decisions (which require input
+        from named Principals -- users, roles or groups). This initial checkin
+        is well-tested and solid code, but the API should not be considered
+        stable... yet. There are NO user-interface classes as yet. 
+        Additional front-end JSPs that provide a UI will follow in the coming weeks.
+        
+        * The initial sample Workflow subclass, checked in today, implements moderated
+        page changes (SaveWikiPageWorkflow). It has an undocumented configuration
+        interface, which I will detail more fully when the UI is closer to completion.
+        
+        * See the (very complete) JavaDoc for more details. I'm VERY psyched
+        about this new capability, and once we get flesh out the interface you all
+        will be too!
+        
+        * Enhancement: changed throws clause in I18NManager methods.
+        
+        * Enhancement: added new dir (etc/i18n) and a resource file called 
+        CoreResources.properties for message strings for the core JSPWiki packages
+        (that is, not plugins, tags or JSPs).
+        
+        * Enhancement: added new event class, WorkflowEvent, to support workflow
+        create/run/pause/restart/halt/complete events.
+
 2007-01-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.16
