@@ -48,7 +48,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.79 2006-12-27 05:57:41 arj Exp $
+    $Id: build.xml,v 1.80 2007-01-03 05:07:55 arj Exp $
 -->    
        
 <!--   
@@ -77,6 +77,9 @@
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
   <property name="code.build" value ="build" />
+  
+  <!-- The internationalization strings for the core JSPWiki classes -->
+  <property name="code.i18n" value="etc/i18n" />
   
   <!-- The location for the JAR file for the core JSPWiki classes -->
   <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
@@ -279,6 +282,7 @@
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
          <fileset dir="${code.src}" includes="templates/**/*.properties" /> 
+         <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml" />
       </jar>
       <sign-jar jar="${jarfile}" />
