@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.Principal;
 import java.util.*;
 
 import javax.servlet.ServletConfig;
@@ -64,6 +63,9 @@ import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.workflow.Workflow;
+import com.ecyrd.jspwiki.workflow.WorkflowManager;
+import com.ecyrd.jspwiki.workflow.impl.SaveWikiPageWorkflow;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -262,6 +264,9 @@ public class WikiEngine
 
     private boolean          m_isConfigured = false; // Flag.
   
+
+    /** Each engine has its own workflow manager. */
+    private WorkflowManager m_workflowMgr = null;
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -564,6 +569,10 @@ public class WikiEngine
             m_userManager.initialize( this, props );
             m_groupManager.initialize( this, props );
             m_aclManager = getAclManager();
+
+            // Start the Workflow manager
+            m_workflowMgr = new WorkflowManager();
+            m_workflowMgr.initialize(this, props);
 
             //
             //  ReferenceManager has the side effect of loading all
@@ -1198,6 +1207,17 @@ public class WikiEngine
     }
 
     /**
+     * Returns the {@link com.ecyrd.jspwiki.workflow.WorkflowManager} associated with this 
+     * WikiEngine. If the WIkiEngine has not been initialized, this method will return
+     * <code>null</code>.
+     * @return the task queue
+     */
+    public WorkflowManager getWorkflowManager()
+    {
+        return m_workflowMgr;
+    }
+
+    /**
      *  Returns the un-HTMLized text of the latest version of a page.
      *  This method also replaces the &lt; and &amp; -characters with
      *  their respective HTML entities, thus making it suitable
@@ -1527,51 +1547,9 @@ public class WikiEngine
     public void saveText( WikiContext context, String text )
         throws WikiException
     {
-        WikiPage page = context.getPage();
-
-        //
-        //  Figure out who the author was.  Prefer the author
-        //  set programmatically; otherwise get from the
-        //  current logged in user
-        //
-        if( page.getAuthor() == null )
-        {
-            Principal wup = context.getCurrentUser();
-
-            if( wup != null ) page.setAuthor( wup.getName() );
-        }
-
-        //
-        //  Prepare text for saving
-        //
-        text = TextUtil.normalizePostData(text);
-
-        text = m_filterManager.doPreSaveFiltering( context, text );
-
-        //
-        //  Check if page data actually changed
-        //
-        
-        String oldData = getPureText( page );
-        if( oldData != null && oldData.equals(text) )
-        {
-            return;
-        }
-        
-        //
-        //  Let the rest of the engine handle actual saving.
-        //
-        m_pageManager.putPageText( page, text );
-        
-        //
-        //  Refresh the context for post save filtering.
-        //
-        
-        page = getPage( page.getName() );
-        context.setPage( page );
-        textToHTML( context, text );
-
-        m_filterManager.doPostSaveFiltering( context, text );
+      // Create workflow for page save
+      Workflow workflow = new SaveWikiPageWorkflow(context, text);
+      m_workflowMgr.start(workflow);
     }
 
     /**
