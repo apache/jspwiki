@@ -22,10 +22,7 @@ package com.ecyrd.jspwiki;
 import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -868,7 +865,7 @@ public class WikiContext
     }
     
     // FIXME: This method should really cache the ResourceBundles or something...
-    public ResourceBundle getBundle( String bundle )
+    public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
         Locale loc = null;
         
