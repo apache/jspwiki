@@ -1,5 +1,38 @@
+2006-01-08  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.5.18
+        
+        * Bug fix: fixed DefaultResources.properties trailing space in multi-line
+        property that was causing Role and Group memberships on the Profile
+        tab of UserPreferences to fail to display. If you were wondering why
+        UserPrefs wasn't showing group memberships -- well, it's fixed now.
+        
+        * Bug fix: PageActions.jsp now links to UserPreferences as a JSP, not
+        as a wiki page. Also gains a Workflow link for authenticated users.
+        
+        * Minor enhancement: WikiEngine gains an accessor for the DifferenceManager
+        (getDifferenceManager). This is used by the workflow classes.
+        
+        * Minor enhancement: To support workflow, WikiContext gains new a context,
+        WORKFLOW. It does not require special privileges to access. WikiCommand
+        gains a corresponding WORKFLOW command.
+        
+        * Second major checkin of the workflow package. The API is mostly stable, 
+        but it should still be regarded as volatile. Workflow now includes
+        a working user interface (Workflow.jsp). UI has a workflow "inbox" (for 
+        decisions a user has been asked to make) and an "outbox" (for workflows
+        a user has started). Users must be authenticated to see their workflows. 
+        
+        * 'SaveWikiPageWorkflow' is now operational. It provides moderation for
+        saving wiki pages, and is turned off by default. See jspwiki.properties 
+        for configuration guidelines.
+        
+        * TestEngine gains accessors for the 'admin' and 'Janne' sessions.
+
 2006-01-02  Andrew Jaquith <andrew AT freshcookies DOT org>
 
+        * 2.5.17
+        
         * Happy New Year everyone!
         
         * This release adds a significant new package for modeling
