@@ -17,10 +17,10 @@ public abstract class AbstractStep implements Step
 {
 
     /** Timestamp of when the step started. */
-    private long m_start;
+    private Date m_start;
 
     /** Timestamp of when the step ended. */
-    private long m_end;
+    private Date m_end;
 
     private final String m_key;
 
@@ -59,7 +59,7 @@ public abstract class AbstractStep implements Step
         m_workflow = workflow;
         m_outcome = Outcome.STEP_CONTINUE;
         m_key = messageKey;
-        m_successors = new HashMap();
+        m_successors = new LinkedHashMap();
     }
 
     public final void addSuccessor(Outcome outcome, Step step)
@@ -67,24 +67,32 @@ public abstract class AbstractStep implements Step
         m_successors.put(outcome, step);
     }
 
-    public final Outcome[] availableOutcomes()
+    public final Collection getAvailableOutcomes()
     {
         Set outcomes = m_successors.keySet();
-        return (Outcome[]) outcomes.toArray(new Outcome[outcomes.size()]);
+        return Collections.unmodifiableCollection(outcomes);
     }
 
-    public final String[] errors()
+    public final List getErrors()
     {
-        return (String[]) m_errors.toArray(new String[m_errors.size()]);
+        return Collections.unmodifiableList(m_errors);
     }
 
     public abstract Outcome execute() throws WikiException;
 
     public abstract Principal getActor();
 
-    public final long getEndTime()
+    public final Date getEndTime()
     {
         return m_end;
+    }
+
+    public final Object[] getMessageArguments()
+    {
+        if (m_workflow == null) {
+            return new Object[0];
+        }
+        return m_workflow.getMessageArguments();
     }
 
     public final String getMessageKey()
@@ -97,7 +105,15 @@ public abstract class AbstractStep implements Step
         return m_outcome;
     }
 
-    public final long getStartTime()
+    public Principal getOwner()
+    {
+        if (m_workflow == null) {
+            return null;
+        }
+        return m_workflow.getOwner();
+    }
+
+    public final Date getStartTime()
     {
         return m_start;
     }
@@ -119,6 +135,15 @@ public abstract class AbstractStep implements Step
 
     public final synchronized void setOutcome(Outcome outcome)
     {
+        // Is this an allowed Outcome?
+        if (!m_successors.containsKey(outcome)) {
+            if (!Outcome.STEP_CONTINUE.equals(outcome) &&
+                !Outcome.STEP_ABORT.equals(outcome)) {
+                throw new IllegalArgumentException("Outcome " + outcome.getMessageKey() + " is not supported for this Step.");
+            }
+        }
+        
+        // Is this a "completion" outcome?
         if (outcome.isCompletion())
         {
             if (m_completed)
@@ -126,7 +151,7 @@ public abstract class AbstractStep implements Step
                 throw new IllegalStateException("Step has already been marked complete; cannot set again.");
             }
             m_completed = true;
-            m_end = System.currentTimeMillis();
+            m_end = new Date(System.currentTimeMillis());
         }
         m_outcome = outcome;
     }
@@ -138,10 +163,10 @@ public abstract class AbstractStep implements Step
             throw new IllegalStateException("Step already started.");
         }
         m_started = true;
-        m_start = System.currentTimeMillis();
+        m_start = new Date(System.currentTimeMillis());
     }
 
-    public final Step successor(Outcome outcome)
+    public final Step getSuccessor(Outcome outcome)
     {
         return (Step) m_successors.get(outcome);
     }

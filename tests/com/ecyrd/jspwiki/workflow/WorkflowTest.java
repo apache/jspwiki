@@ -52,13 +52,13 @@ public class WorkflowTest extends TestCase
     public void testWorkflow()
     {
         // Make sure everything is set to their proper default values
-        assertNull(w.currentStep());
-        assertNull(w.currentActor());
-        assertEquals(0, w.history().length);
+        assertNull(w.getCurrentStep());
+        assertNull(w.getCurrentActor());
+        assertEquals(0, w.getHistory().size());
         assertEquals(Workflow.ID_NOT_SET, w.getId());
         assertNull(w.getWorkflowManager());
         assertEquals(new WikiPrincipal("Owner1"), w.getOwner());
-        assertEquals(Workflow.CREATED, w.currentState());
+        assertEquals(Workflow.CREATED, w.getCurrentState());
         assertEquals(Workflow.TIME_NOT_SET, w.getStartTime());
         assertEquals(Workflow.TIME_NOT_SET, w.getEndTime());
     }
@@ -148,7 +148,7 @@ public class WorkflowTest extends TestCase
 
         // Default workflow should have hit the Decision step and put itself
         // into WAITING
-        assertEquals(Workflow.WAITING, w.currentState());
+        assertEquals(Workflow.WAITING, w.getCurrentState());
     }
 
     public void testRestart()
@@ -157,9 +157,9 @@ public class WorkflowTest extends TestCase
 
         // Default workflow should have hit the Decision step and put itself
         // into WAITING
-        assertEquals(Workflow.WAITING, w.currentState());
+        assertEquals(Workflow.WAITING, w.getCurrentState());
         w.restart();
-        assertEquals(Workflow.WAITING, w.currentState());
+        assertEquals(Workflow.WAITING, w.getCurrentState());
     }
 
     public void testAbortBeforeStart()
@@ -210,7 +210,7 @@ public class WorkflowTest extends TestCase
         // Start workflow, then abort after completion
         assertFalse(w.isAborted());
         w.start();
-        Decision d = (Decision) w.currentStep();
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
 
         // Try to abort anyway
@@ -230,33 +230,33 @@ public class WorkflowTest extends TestCase
 
     public void testCurrentState()
     {
-        assertEquals(Workflow.CREATED, w.currentState());
+        assertEquals(Workflow.CREATED, w.getCurrentState());
         w.start();
-        assertEquals(Workflow.WAITING, w.currentState());
-        Decision d = (Decision) w.currentStep();
+        assertEquals(Workflow.WAITING, w.getCurrentState());
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
-        assertEquals(Workflow.COMPLETED, w.currentState());
+        assertEquals(Workflow.COMPLETED, w.getCurrentState());
     }
 
     public void testCurrentStep()
     {
-        assertNull(w.currentStep());
+        assertNull(w.getCurrentStep());
         w.start();
 
         // Workflow stops at the decision step
-        assertEquals(decision, w.currentStep());
-        Decision d = (Decision) w.currentStep();
+        assertEquals(decision, w.getCurrentStep());
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
 
         // After we decide, it blows through step 3 and leaves us with a null
         // step (done)
-        assertNull(w.currentStep());
+        assertNull(w.getCurrentStep());
     }
 
     public void testPreviousStep()
     {
         // If not started, no previous steps available for anything
-        assertNull(w.previousStep());
+        assertNull(w.getPreviousStep());
         assertEquals(null, w.previousStep(initTask));
         assertEquals(null, w.previousStep(decision));
         assertEquals(null, w.previousStep(finishTask));
@@ -269,7 +269,7 @@ public class WorkflowTest extends TestCase
         assertEquals(null, w.previousStep(finishTask));
 
         // Once we decide, the finish task returns the correct predecessor
-        Decision d = (Decision) w.currentStep();
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
         assertEquals(null, w.previousStep(initTask));
         assertEquals(initTask, w.previousStep(decision));
@@ -279,26 +279,26 @@ public class WorkflowTest extends TestCase
     public void testCurrentActor()
     {
         // Before starting, actor should be null
-        assertNull(w.currentActor());
+        assertNull(w.getCurrentActor());
 
         // After starting, actor should be GroupPrincipal Admin
         w.start();
-        assertEquals(new GroupPrincipal("Admin"), w.currentActor());
+        assertEquals(new GroupPrincipal("Admin"), w.getCurrentActor());
 
         // After decision, actor should be null again
-        Decision d = (Decision) w.currentStep();
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
-        assertNull(w.currentActor());
+        assertNull(w.getCurrentActor());
     }
 
     public void testHistory()
     {
-        assertEquals(0, w.history().length);
+        assertEquals(0, w.getHistory().size());
         w.start();
-        assertEquals(2, w.history().length);
-        Decision d = (Decision) w.currentStep();
+        assertEquals(2, w.getHistory().size());
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
-        assertEquals(3, w.history().length);
+        assertEquals(3, w.getHistory().size());
     }
 
     public void testGetStartTime()
@@ -307,7 +307,7 @@ public class WorkflowTest extends TestCase
         assertEquals(Workflow.TIME_NOT_SET, w.getStartTime());
         w.start();
         assertFalse(Workflow.TIME_NOT_SET == w.getStartTime());
-        Decision d = (Decision) w.currentStep();
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
         assertFalse(Workflow.TIME_NOT_SET == w.getStartTime());
     }
@@ -318,7 +318,7 @@ public class WorkflowTest extends TestCase
         assertEquals(Workflow.TIME_NOT_SET, w.getEndTime());
         w.start();
         assertEquals(Workflow.TIME_NOT_SET, w.getEndTime());
-        Decision d = (Decision) w.currentStep();
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
         assertFalse(Workflow.TIME_NOT_SET == w.getEndTime());
     }
@@ -329,7 +329,7 @@ public class WorkflowTest extends TestCase
         assertFalse(w.isCompleted());
         w.start();
         assertFalse(w.isCompleted());
-        Decision d = (Decision) w.currentStep();
+        Decision d = (Decision) w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
         assertTrue(w.isCompleted());
     }

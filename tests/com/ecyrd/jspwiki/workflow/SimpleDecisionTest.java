@@ -1,8 +1,9 @@
 package com.ecyrd.jspwiki.workflow;
 
-import junit.framework.TestCase;
+import java.util.Collection;
+import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
+import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
@@ -17,6 +18,21 @@ public class SimpleDecisionTest extends TestCase
         super.setUp();
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
         d = new SimpleDecision(w, "decision.key", new WikiPrincipal("Actor1"));
+    }
+    
+    public void testAddFacts() {
+        Fact f1 = new Fact("fact1",new Integer(1));
+        Fact f2 = new Fact("fact2","A factual String");
+        Fact f3 = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
+        d.addFact(f1);
+        d.addFact(f2);
+        d.addFact(f3);
+
+        // The facts should be available, and returned in order
+        List facts = d.getFacts();
+        assertEquals(f1, facts.get(0));
+        assertEquals(f2, facts.get(1));
+        assertEquals(f3, facts.get(2));
     }
 
     public void testGetActor()
@@ -50,13 +66,13 @@ public class SimpleDecisionTest extends TestCase
         Step d3 = new SimpleDecision(w, "decision3.key", new WikiPrincipal("Actor1"));
         d.addSuccessor(Outcome.DECISION_DENY, d3);
         
-        assertEquals(d2, d.successor(Outcome.DECISION_APPROVE));
-        assertEquals(d3, d.successor(Outcome.DECISION_DENY));
+        assertEquals(d2, d.getSuccessor(Outcome.DECISION_APPROVE));
+        assertEquals(d3, d.getSuccessor(Outcome.DECISION_DENY));
         
         // The other Outcomes should return null when looked up
-        assertNull(d.successor(Outcome.DECISION_HOLD));
-        assertNull(d.successor(Outcome.DECISION_REASSIGN));
-        assertNull(d.successor(Outcome.STEP_ABORT));
+        assertNull(d.getSuccessor(Outcome.DECISION_HOLD));
+        assertNull(d.getSuccessor(Outcome.DECISION_REASSIGN));
+        assertNull(d.getSuccessor(Outcome.STEP_ABORT));
     }
 
     public void testErrors()
@@ -64,20 +80,21 @@ public class SimpleDecisionTest extends TestCase
         d.addError("Error deciding something.");
         d.addError("Error deciding something else.");
         
-        assertEquals(2, d.errors().length);
-        assertEquals("Error deciding something.", d.errors()[0]);
-        assertEquals("Error deciding something else.", d.errors()[1]);
+        List errors = d.getErrors();
+        assertEquals(2, errors.size());
+        assertEquals("Error deciding something.", errors.get(0));
+        assertEquals("Error deciding something else.", errors.get(1));
     }
 
     public void testAvailableOutcomes()
     {
-        Outcome[] outcomes = d.availableOutcomes();
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.DECISION_APPROVE));
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.DECISION_DENY));
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.DECISION_HOLD));
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.DECISION_REASSIGN));
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.STEP_ABORT));
-        assertFalse(ArrayUtils.contains(outcomes,Outcome.STEP_COMPLETE));
+        Collection outcomes = d.getAvailableOutcomes();
+        assertTrue(outcomes.contains(Outcome.DECISION_APPROVE));
+        assertTrue(outcomes.contains(Outcome.DECISION_DENY));
+        assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
+        assertFalse(outcomes.contains(Outcome.DECISION_REASSIGN));
+        assertFalse(outcomes.contains(Outcome.STEP_ABORT));
+        assertFalse(outcomes.contains(Outcome.STEP_COMPLETE));
     }
 
     public void testGetEndTime()

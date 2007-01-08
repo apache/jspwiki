@@ -20,6 +20,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite( "Workflow tests" );
         suite.addTestSuite( DecisionQueueTest.class );
+        suite.addTestSuite( FactTest.class );
         suite.addTestSuite( OutcomeTest.class );
         suite.addTestSuite( SimpleDecisionTest.class );
         suite.addTestSuite( TaskTest.class );

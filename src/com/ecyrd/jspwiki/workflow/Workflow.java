@@ -15,7 +15,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * Principal that represents its owner.
  * </p>
  * <h2>Workflow lifecycle</h2>
- * A Workflow's state (obtained by {@link #currentState()}) will be one of the
+ * A Workflow's state (obtained by {@link #getCurrentState()}) will be one of the
  * following:
  * </p>
  * <ul>
@@ -71,7 +71,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * a whole. When this happens, the Workflow will set the current Step's Outcome
  * to {@link Outcome#STEP_ABORT} and invoke the Workflow's {@link #abort()}
  * method. The Step's processing errors, if any, can be retrieved by
- * {@link Step#errors()}.</li>
+ * {@link Step#getErrors()}.</li>
  * </ul>
  * <li>The Outcome of the <code>execute</code> method also affects what
  * happens next. Depending on the result (and assuming the Step did not abort),
@@ -81,7 +81,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * <li>If the Outcome denoted "completion" (<em>i.e.</em>, its
  * {@link Step#isCompleted()} method returns <code>true</code>) then the Step
  * is considered complete; the Workflow looks up the next Step by calling the
- * current Step's {@link Step#successor(Outcome)} method. If
+ * current Step's {@link Step#getSuccessor(Outcome)} method. If
  * <code>successor()</code> returns a non-<code>null</code> Step, the
  * return value is marked as the current Step and added to the Workflow's Step
  * history. If <code>successor()</code> returns <code>null</code>, then the
@@ -94,8 +94,8 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * </ul>
  * </p>
  * <p>
- * The currently executing Step can be obtained by {@link #currentStep()}. The
- * actor for the current Step is returned by {@link #currentActor()}.
+ * The currently executing Step can be obtained by {@link #getCurrentStep()}. The
+ * actor for the current Step is returned by {@link #getCurrentActor()}.
  * </p>
  * <p>
  * To provide flexibility for specific implementations, the Workflow class
@@ -181,7 +181,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
 public class Workflow
 {
     /** Time value: the start or end time has not been set. */
-    public static final int TIME_NOT_SET = -1;
+    public static final Date TIME_NOT_SET = new Date(0);
 
     /** ID value: the workflow ID has not been set. */
     public static final int ID_NOT_SET = 0;
@@ -262,7 +262,8 @@ public class Workflow
      * Aborts the Workflow by setting the current Step's Outcome to
      * {@link Outcome#STEP_ABORT}, and the Workflow's overall state to
      * {@link #ABORTED}. It also appends the aborted Step into the workflow
-     * history, and sets the current step to <code>null</code>. This method
+     * history, and sets the current step to <code>null</code>. If the Step
+     * is a Decision, it is removed from the DecisionQueue. This method
      * can be called at any point in the lifecycle prior to completion, but it
      * cannot be called twice. It finishes by calling the {@link #cleanup()}
      * method to flush retained objects.
@@ -284,6 +285,10 @@ public class Workflow
 
         if (m_currentStep != null)
         {
+            if (m_manager != null && m_currentStep instanceof Decision) {
+                Decision d = (Decision)m_currentStep;
+                m_manager.getDecisionQueue().remove(d);
+            }
             m_currentStep.setOutcome(Outcome.STEP_ABORT);
             m_history.addLast(m_currentStep);
         }
@@ -318,7 +323,7 @@ public class Workflow
      * 
      * @return the current actor
      */
-    public final Principal currentActor()
+    public final Principal getCurrentActor()
     {
         if (m_currentStep == null)
         {
@@ -333,7 +338,7 @@ public class Workflow
      * 
      * @return the workflow state
      */
-    public final int currentState()
+    public final int getCurrentState()
     {
         return m_state;
     }
@@ -344,7 +349,7 @@ public class Workflow
      * 
      * @return the current step
      */
-    public final Step currentStep()
+    public final Step getCurrentStep()
     {
         return m_currentStep;
     }
@@ -374,7 +379,7 @@ public class Workflow
      * 
      * @return the end time
      */
-    public final long getEndTime()
+    public final Date getEndTime()
     {
         if (isCompleted())
         {
@@ -406,7 +411,7 @@ public class Workflow
      * </p>
      * <ul>
      * <li>String representing the name of the workflow owner (<em>i.e.</em>,{@link #getOwner()})</li>
-     * <li>String representing the name of the current actor (<em>i.e.</em>,{@link #currentActor()}).
+     * <li>String representing the name of the current actor (<em>i.e.</em>,{@link #getCurrentActor()}).
      * If the current step is <code>null</code> because the workflow hasn't started or has already
      * finished, the value of this argument will be a dash character (<code>-</code>)</li>
      * </ul>
@@ -421,7 +426,7 @@ public class Workflow
     {
         List args = new ArrayList();
         args.add(m_owner.getName());
-        Principal actor = currentActor();
+        Principal actor = getCurrentActor();
         args.add((actor == null ? "-" : actor.getName()));
         args.addAll(m_messageArgs);
         return args.toArray(new Object[args.size()]);
@@ -457,7 +462,7 @@ public class Workflow
      * 
      * @return the start time
      */
-    public final long getStartTime()
+    public final Date getStartTime()
     {
         return (isStarted() ? m_firstStep.getStartTime() : TIME_NOT_SET);
     }
@@ -473,7 +478,7 @@ public class Workflow
     }
 
     /**
-     * Returns the Step history for this Workflow, chronologically, from the
+     * Returns a Step history for this Workflow as a List, chronologically, from the
      * first Step to the currently executing one. The first step is the first
      * item in the array. If the Workflow has not started, this method returns a
      * zero-length array.
@@ -481,9 +486,9 @@ public class Workflow
      * @return an array of Steps representing those that have executed, or are
      *         currently executing
      */
-    public final Step[] history()
+    public final List getHistory()
     {
-        return (Step[]) m_history.toArray(new Step[m_history.size()]);
+        return Collections.unmodifiableList(m_history);
     }
 
     /**
@@ -530,7 +535,7 @@ public class Workflow
      * @return the predecessor, or <code>null</code> if the first Step is
      *         currently executing
      */
-    public final Step previousStep()
+    public final Step getPreviousStep()
     {
         return previousStep(m_currentStep);
     }
@@ -741,7 +746,7 @@ public class Workflow
             }
 
             // Get the next Step; if null, we're done
-            Step nextStep = m_currentStep.successor(outcome);
+            Step nextStep = m_currentStep.getSuccessor(outcome);
             if (nextStep == null)
             {
                 complete();

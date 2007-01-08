@@ -1,8 +1,9 @@
 package com.ecyrd.jspwiki.workflow;
 
-import junit.framework.TestCase;
+import java.util.Collection;
+import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
+import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -62,15 +63,15 @@ public class TaskTest extends TestCase
         Step d2 = new SimpleDecision(w, "decision2.key", new WikiPrincipal("Actor2"));
         t.addSuccessor(Outcome.STEP_ABORT, d2);
         
-        assertEquals(d1, t.successor(Outcome.STEP_COMPLETE));
-        assertEquals(d2, t.successor(Outcome.STEP_ABORT));
+        assertEquals(d1, t.getSuccessor(Outcome.STEP_COMPLETE));
+        assertEquals(d2, t.getSuccessor(Outcome.STEP_ABORT));
         
         // The other Outcomes should return null when looked up
-        assertNull(t.successor(Outcome.DECISION_APPROVE));
-        assertNull(t.successor(Outcome.DECISION_DENY));
-        assertNull(t.successor(Outcome.DECISION_HOLD));
-        assertNull(t.successor(Outcome.DECISION_REASSIGN));
-        assertNull(t.successor(Outcome.STEP_CONTINUE));
+        assertNull(t.getSuccessor(Outcome.DECISION_APPROVE));
+        assertNull(t.getSuccessor(Outcome.DECISION_DENY));
+        assertNull(t.getSuccessor(Outcome.DECISION_HOLD));
+        assertNull(t.getSuccessor(Outcome.DECISION_REASSIGN));
+        assertNull(t.getSuccessor(Outcome.STEP_CONTINUE));
     }
 
     public void testErrors()
@@ -78,20 +79,21 @@ public class TaskTest extends TestCase
         t.addError("Error deciding something.");
         t.addError("Error deciding something else.");
         
-        assertEquals(2, t.errors().length);
-        assertEquals("Error deciding something.", t.errors()[0]);
-        assertEquals("Error deciding something else.", t.errors()[1]);
+        List errors = t.getErrors();
+        assertEquals(2, errors.size());
+        assertEquals("Error deciding something.", errors.get(0));
+        assertEquals("Error deciding something else.", errors.get(1));
     }
 
     public void testAvailableOutcomes()
     {
-        Outcome[] outcomes = t.availableOutcomes();
-        assertFalse(ArrayUtils.contains(outcomes,Outcome.DECISION_APPROVE));
-        assertFalse(ArrayUtils.contains(outcomes,Outcome.DECISION_DENY));
-        assertFalse(ArrayUtils.contains(outcomes,Outcome.DECISION_HOLD));
-        assertFalse(ArrayUtils.contains(outcomes,Outcome.DECISION_REASSIGN));
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.STEP_ABORT));
-        assertTrue(ArrayUtils.contains(outcomes,Outcome.STEP_COMPLETE));
+        Collection outcomes = t.getAvailableOutcomes();
+        assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
+        assertFalse(outcomes.contains(Outcome.DECISION_DENY));
+        assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
+        assertFalse(outcomes.contains(Outcome.DECISION_REASSIGN));
+        assertTrue(outcomes.contains(Outcome.STEP_ABORT));
+        assertTrue(outcomes.contains(Outcome.STEP_COMPLETE));
     }
 
     public void testGetEndTime() throws WikiException

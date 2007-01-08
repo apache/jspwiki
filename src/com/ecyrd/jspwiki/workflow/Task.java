@@ -63,7 +63,7 @@ public abstract class Task extends AbstractStep
      * 
      * @return the next step
      */
-    public final Step successor()
+    public final Step getSuccessor()
     {
         return m_successor;
     }

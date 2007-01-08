@@ -56,5 +56,44 @@ public class OutcomeTest extends TestCase
         o = Outcome.DECISION_REASSIGN;
         assertEquals("Reassign", i18n.get(core, english, o.getMessageKey()));
     }
+    
+    public void testIsCompletion() {
+        assertTrue(Outcome.DECISION_ACKNOWLEDGE.isCompletion());
+        assertTrue(Outcome.DECISION_APPROVE.isCompletion());
+        assertTrue(Outcome.DECISION_DENY.isCompletion());
+        assertFalse(Outcome.DECISION_HOLD.isCompletion());
+        assertFalse(Outcome.DECISION_REASSIGN.isCompletion());
+        assertTrue(Outcome.STEP_ABORT.isCompletion());
+        assertTrue(Outcome.STEP_COMPLETE.isCompletion());
+        assertFalse(Outcome.STEP_CONTINUE.isCompletion());
+    }
+    
+    public void testForName()
+    {
+        try {
+            assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("outcome.decision.acknowledge"));
+            assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("outcome.decision.approve"));
+            assertEquals(Outcome.DECISION_DENY, Outcome.forName("outcome.decision.deny"));
+            assertEquals(Outcome.DECISION_HOLD, Outcome.forName("outcome.decision.hold"));
+            assertEquals(Outcome.DECISION_REASSIGN, Outcome.forName("outcome.decision.reassign"));
+            assertEquals(Outcome.STEP_ABORT, Outcome.forName("outcome.step.abort"));
+            assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("outcome.step.complete"));
+            assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("outcome.step.continue"));
+        }
+        catch (NoSuchOutcomeException e) {
+            // We should never get here
+            fail("Could not look up an Outcome...");
+        }
+        
+        // Look for a non-existent one
+        try {
+            Outcome.forName("outcome.decision.nonexistent");
+        }
+        catch (NoSuchOutcomeException e) {
+            return;
+        }
+        // We should never get here
+        fail("Could not look up an Outcome...");
+    }
 
 }

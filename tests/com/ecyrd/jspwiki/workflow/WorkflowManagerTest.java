@@ -52,22 +52,22 @@ public class WorkflowManagerTest extends TestCase
     public void testWorkflows() throws WikiException
     {
         // There should be no workflows in the cache, and none in completed list
-        assertEquals(0, wm.workflows().size());
-        assertEquals(0, wm.completedWorkflows().size());
+        assertEquals(0, wm.getWorkflows().size());
+        assertEquals(0, wm.getCompletedWorkflows().size());
         
         // After starting, there should be 1 in the cache, with ID=1
         wm.start(w);
-        assertEquals(1, wm.workflows().size());
-        assertEquals(0, wm.completedWorkflows().size());
-        Workflow workflow = (Workflow)wm.workflows().iterator().next();
+        assertEquals(1, wm.getWorkflows().size());
+        assertEquals(0, wm.getCompletedWorkflows().size());
+        Workflow workflow = (Workflow)wm.getWorkflows().iterator().next();
         assertEquals(w, workflow);
         assertEquals(1, workflow.getId());
         
         // After forcing a decision on step 2, the workflow should complete and vanish from the cache
-        Decision d = (Decision)w.currentStep();
+        Decision d = (Decision)w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
-        assertEquals(0, wm.workflows().size());
-        assertEquals(1, wm.completedWorkflows().size());
+        assertEquals(0, wm.getWorkflows().size());
+        assertEquals(1, wm.getCompletedWorkflows().size());
     }
     
     public void testRequiresApproval()
@@ -96,20 +96,6 @@ public class WorkflowManagerTest extends TestCase
         }
         // We should never get here
         fail("Workflow.bar doesn't need approval!");
-    }
-
-    public void testGetMessage()
-    {
-        // Current step is the decision step
-        w.start();
-        
-        // Make sure we get the right message key for the Step
-        Step s = w.currentStep();
-        assertEquals("decision.editWikiApproval", s.getMessageKey());
-        
-        // Now, let's see if it creates the correct message...
-        String message = wm.getMessage(w.currentStep(), Locale.ENGLISH);
-        assertEquals("Edit page MyPage by user Owner1 (required approver: Actor1)", message);
     }
 
 }

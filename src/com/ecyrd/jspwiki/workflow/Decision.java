@@ -1,16 +1,26 @@
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.ecyrd.jspwiki.WikiException;
 
 /**
  * <p>
- * AbstractStep subclass that asks an actor Principal to choose an Outcome
- * on behalf of an owner (also a Principal). When a Decision completes, its
+ * AbstractStep subclass that asks an actor Principal to choose an Outcome on
+ * behalf of an owner (also a Principal). When a Decision completes, its
  * {@link #isCompleted()} method returns <code>true</code>. It also tells its
  * parent WorkflowManager to remove it from the list of pending tasks by calling
  * {@link DecisionQueue#remove(Decision)}.
+ * </p>
+ * <p>
+ * To enable actors to choose an appropriate Outcome, Decisions can store
+ * arbitrary key-value pairs called "facts." These facts can be presented by the
+ * user interface to show details the actor needs to know about. Facts are added
+ * by calling classes to the Decision, in order of expected presentation, by the
+ * {@link } method. They can be retrieved, in order, via {@link }.
  * </p>
  * 
  * @author Andrew Jaquith
@@ -20,14 +30,30 @@ public abstract class Decision extends AbstractStep
 {
     private Principal m_actor;
 
+    private int m_id;
+
     private final Outcome m_defaultOutcome;
+
+    private final List m_facts;
 
     public Decision(Workflow workflow, String messageKey, Principal actor, Outcome defaultOutcome)
     {
         super(workflow, messageKey);
         m_actor = actor;
         m_defaultOutcome = defaultOutcome;
+        m_facts = new ArrayList();
         addSuccessor(defaultOutcome, null);
+    }
+
+    /**
+     * Appends a Fact to the list of Facts associated with this Decision.
+     * 
+     * @param fact
+     *            the new fact to add
+     */
+    public final void addFact(Fact fact)
+    {
+        m_facts.add(fact);
     }
 
     /**
@@ -41,6 +67,9 @@ public abstract class Decision extends AbstractStep
      * @throws IllegalStateException
      *             if invoked when this Decision is not the parent Workflow's
      *             currently active Step
+     * @throws IllegalArgumentException
+     *             if the Outcome is not one of the Outcomes returned by
+     *             {@link #getAvailableOutcomes()}
      */
     public void decide(Outcome outcome)
     {
@@ -49,7 +78,7 @@ public abstract class Decision extends AbstractStep
         // If current workflow is waiting for input, restart it and remove
         // Decision from DecisionQueue
         Workflow w = getWorkflow();
-        if (w.currentState() == Workflow.WAITING && this.equals(w.currentStep()))
+        if (w.getCurrentState() == Workflow.WAITING && this.equals(w.getCurrentStep()))
         {
             WorkflowManager wm = w.getWorkflowManager();
             if (wm != null)
@@ -92,14 +121,37 @@ public abstract class Decision extends AbstractStep
 
     /**
      * Returns the default or suggested outcome, which must be one of those
-     * returned by {@link #availableOutcomes()}. This method is guaranteed to
-     * return a non-<code>null</code> Outcome.
+     * returned by {@link #getAvailableOutcomes()}. This method is guaranteed
+     * to return a non-<code>null</code> Outcome.
      * 
      * @return the default outcome.
      */
     public Outcome getDefaultOutcome()
     {
         return m_defaultOutcome;
+    }
+
+    /**
+     * Returns the Facts associated with this Decision, in the order in which
+     * they were added.
+     * 
+     * @return the list of Facts
+     */
+    public final List getFacts()
+    {
+        return Collections.unmodifiableList(m_facts);
+    }
+
+    /**
+     * Returns the unique identifier for this Decision. Normally, this ID is
+     * programmatically assigned when the Decision is added to the
+     * DecisionQueue.
+     * 
+     * @return the identifier
+     */
+    public final int getId()
+    {
+        return m_id;
     }
 
     /**
@@ -131,5 +183,16 @@ public abstract class Decision extends AbstractStep
         {
             throw new IllegalArgumentException("Decision cannot be reassigned.");
         }
+    }
+
+    /**
+     * Sets the unique identfier for this Decision.
+     * 
+     * @param id
+     *            the identifier
+     */
+    public final void setId(int id)
+    {
+        m_id = id;
     }
 }

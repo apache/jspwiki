@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki.workflow.impl;
 import java.security.Principal;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.workflow.*;
 
 /**
@@ -15,10 +16,11 @@ public class SaveWikiPageWorkflow extends Workflow
 
     public static final String EDIT_WORKFLOW = "workflow.saveWikiPage";
     public static final String EDIT_REJECT = "notification.saveWikiPage.reject";
-    public static final String ATTR_CURRENT_TEXT = "currentText";
-    public static final String ATTR_PROPOSED_TEXT = "proposedText";
+    public static final String FACT_DIFF_TEXT = "fact.diffText";
+    public static final String FACT_CURRENT_TEXT = "fact.currentText";
+    public static final String FACT_PROPOSED_TEXT = "fact.proposedText";
     public static final String ATTR_WIKI_CONTEXT = "wikiContext";
-    public static final String EDIT_DECISION = "decision.editWikiApproval";
+    public static final String EDIT_DECISION = "decision.saveWikiPage";
 
     /**
      * Inner class that handles the page pre-save actions. If the proposed page
@@ -40,8 +42,10 @@ public class SaveWikiPageWorkflow extends Workflow
         {
             // Retrieve attributes
             WikiContext context = (WikiContext) getWorkflow().getAttribute(SaveWikiPageWorkflow.ATTR_WIKI_CONTEXT);
-            String proposedText = (String) getWorkflow().getAttribute(SaveWikiPageWorkflow.ATTR_PROPOSED_TEXT);
+            String proposedText = (String) getWorkflow().getAttribute(SaveWikiPageWorkflow.FACT_PROPOSED_TEXT);
             WikiEngine engine = context.getEngine();
+            Workflow workflow = getWorkflow();
+            WorkflowManager mgr = workflow.getWorkflowManager();
 
             // Get the wiki page
             WikiPage page = context.getPage();
@@ -68,9 +72,37 @@ public class SaveWikiPageWorkflow extends Workflow
                 return Outcome.STEP_ABORT;
             }
             
-            // Save old and new text for the approver
-            getWorkflow().setAttribute(ATTR_CURRENT_TEXT, oldText);
-            getWorkflow().setAttribute(ATTR_PROPOSED_TEXT, proposedText);
+            // Save old and new text for the successor steps
+            workflow.setAttribute(FACT_CURRENT_TEXT, oldText);
+            workflow.setAttribute(FACT_PROPOSED_TEXT, proposedText);
+
+            // Figure out what our next Step should be: save page, or get approval?
+            Step saveTask = new SaveWikiPageTask(workflow);
+            boolean decisionRequired = mgr.requiresApproval(workflow.getMessageKey());
+            if (decisionRequired)
+            {
+                // Approvals go to the actor's decision cue
+                Principal actor = mgr.getApprover(EDIT_WORKFLOW);
+                Decision decision = new SimpleDecision(workflow, EDIT_DECISION, actor);
+                addSuccessor(Outcome.STEP_COMPLETE, decision);
+                
+                // Add the diffed, proposed and old text versions as Facts
+                DifferenceManager differ = engine.getDifferenceManager();
+                String diffText = differ.makeDiff(oldText, proposedText);
+                decision.addSuccessor(Outcome.DECISION_APPROVE, saveTask);
+                decision.addFact(new Fact(FACT_DIFF_TEXT, diffText));
+                decision.addFact(new Fact(FACT_PROPOSED_TEXT, proposedText));
+                decision.addFact(new Fact(FACT_CURRENT_TEXT, oldText));
+                
+                // If the approval is rejected, sent a notification
+                Step reject = new SimpleNotification(workflow, EDIT_REJECT, context.getCurrentUser());
+                decision.addSuccessor(Outcome.DECISION_DENY, reject);
+            }
+            else
+            {
+                addSuccessor(Outcome.STEP_COMPLETE, saveTask);
+            }
+
             return Outcome.STEP_COMPLETE;
         }
     }
@@ -93,7 +125,7 @@ public class SaveWikiPageWorkflow extends Workflow
         {
             // Retrieve attributes
             WikiContext context = (WikiContext) getWorkflow().getAttribute(SaveWikiPageWorkflow.ATTR_WIKI_CONTEXT);
-            String proposedText = (String) getWorkflow().getAttribute(SaveWikiPageWorkflow.ATTR_PROPOSED_TEXT);
+            String proposedText = (String) getWorkflow().getAttribute(SaveWikiPageWorkflow.FACT_PROPOSED_TEXT);
 
             WikiEngine engine = context.getEngine();
             WikiPage page = context.getPage();
@@ -115,37 +147,13 @@ public class SaveWikiPageWorkflow extends Workflow
     {
         // Create workflow and stash attributes we'll need later; owner is current user
         super(EDIT_WORKFLOW, context.getCurrentUser());
-        this.setWorkflowManager(context.getEngine().getWorkflowManager());
+        setWorkflowManager(context.getEngine().getWorkflowManager());
+        addMessageArgument(context.getPage().getName());
         setAttribute(ATTR_WIKI_CONTEXT, context);
-        setAttribute(ATTR_PROPOSED_TEXT, proposedText);
+        setAttribute(FACT_PROPOSED_TEXT, proposedText);
 
         // Create pre-save task
         Step preSaveTask = new PreSaveWikiPageTask(this);
-
-        // Create save/post-save task
-        Step saveTask = new SaveWikiPageTask(this);
-
-        // Create an intermediate decision step if we need to
-        WorkflowManager mgr = getWorkflowManager();
-        boolean decisionRequired = mgr.requiresApproval(getMessageKey());
-        if (decisionRequired)
-        {
-            // Approvals simply go to the actor's decision cue
-            Principal actor = mgr.getApprover(EDIT_WORKFLOW);
-            Step decision = new SimpleDecision(this, EDIT_DECISION, actor);
-            preSaveTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
-            decision.addSuccessor(Outcome.DECISION_APPROVE, saveTask);
-            
-            // If the approval is rejected, sent a notification
-            Step reject = new SimpleDecision(this, EDIT_REJECT, context.getCurrentUser());
-            decision.addSuccessor(Outcome.DECISION_DENY, reject);
-        }
-        else
-        {
-            preSaveTask.addSuccessor(Outcome.STEP_COMPLETE, saveTask);
-        }
-
-        // Add to workflow
         this.setFirstStep(preSaveTask);
     }
 }

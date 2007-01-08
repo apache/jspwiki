@@ -180,6 +180,7 @@ a.footnote               { color: #0044AA; }
 	                       vertical-align: top;
 	                       empty-cells: show; }
 .wikitable * tr.odd td   { background-color: #e3f0ee; }
+.wikitable * td.split    { border-top: 1px solid #D9D9D9; }
 
 .zebra-table th          { background:  #e0e0e0; }
 .zebra-table tr.odd td   { background:  #e3f0ee; }
@@ -499,3 +500,6 @@ div.collapse li          { list-style: none; position: relative; }
 * html .block            { height: 1%;}
 .block                   { display: block; }
 
+/* Items of class "hideDiv" will be hidden initially, until toggled 
+  with JS function "toggleHidden(nodeId)" */
+.hideDiv                 { margin: 0px 20px 0px 20px; display: none; }

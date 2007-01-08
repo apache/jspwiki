@@ -7,7 +7,7 @@ package com.ecyrd.jspwiki.workflow;
  * @author Andrew Jaquith
  * @since 2.5
  */
-public final class Outcome implements Cloneable
+public final class Outcome
 {
 
     /** Complete workflow step (without errors) */
@@ -29,10 +29,22 @@ public final class Outcome implements Cloneable
 
     public static final Outcome DECISION_REASSIGN = new Outcome("outcome.decision.reassign", false);
 
+    private static final Outcome[] c_outcomes = new Outcome[] { STEP_COMPLETE, STEP_ABORT, STEP_CONTINUE, DECISION_ACKNOWLEDGE,
+                                                               DECISION_APPROVE, DECISION_DENY, DECISION_HOLD, DECISION_REASSIGN };
+
     private final String m_key;
 
     private final boolean m_completion;
 
+    /**
+     * Private constructor to prevent direct instantiation.
+     * 
+     * @param key
+     *            message key for the Outcome
+     * @param completion
+     *            whether this Outcome should be interpreted as the logical
+     *            completion of a Step.
+     */
     private Outcome(String key, boolean completion)
     {
         if (key == null)
@@ -67,16 +79,18 @@ public final class Outcome implements Cloneable
         return m_key;
     }
 
-    public Object clone()
-    {
-        return new Outcome(m_key, m_completion);
-    }
-
+    /**
+     * The hashcode of an Outcome is identical to the hashcode of its message
+     * key, multiplied by 2 if it is a "completion" Outcome.
+     */
     public int hashCode()
     {
         return m_key.hashCode() * (m_completion ? 1 : 2);
     }
 
+    /**
+     * Two Outcome objects are
+     */
     public boolean equals(Object obj)
     {
         if (!(obj instanceof Outcome))
@@ -84,6 +98,35 @@ public final class Outcome implements Cloneable
             return false;
         }
         return m_key.equals(((Outcome) obj).getMessageKey());
+    }
+
+    /**
+     * Returns a named Outcome. If an Outcome matching the supplied key is not
+     * found, this method throws a {@link NoSuchOutcomeException}.
+     * 
+     * @param key
+     *            the name of the outcome
+     * @return the Outcome
+     * @throws NoSuchOutcomeException
+     *             if an Outcome matching the key isn't found.
+     */
+    public static Outcome forName(String key) throws NoSuchOutcomeException
+    {
+        if (key != null) {
+            for (int i = 0; i < c_outcomes.length; i++)
+            {
+                if (c_outcomes[i].m_key.equals(key))
+                {
+                    return c_outcomes[i];
+                }
+            }
+        }
+        throw new NoSuchOutcomeException("Outcome " + key + " not found.");
+    }
+    
+    public String toString()
+    {
+        return "[Outcome:" + m_key + "]";
     }
 
 }

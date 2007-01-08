@@ -6,6 +6,7 @@ import java.util.*;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -67,7 +68,7 @@ public class WorkflowManager implements WikiEventListener
      * 
      * @return the current workflows
      */
-    public Collection workflows()
+    public Collection getWorkflows()
     {
         return new HashSet(m_workflows);
     }
@@ -76,7 +77,7 @@ public class WorkflowManager implements WikiEventListener
      * Returns a collection of finished workflows; that is, those that have aborted or completed.
      * @return the finished workflows
      */
-    public Collection completedWorkflows() {
+    public List getCompletedWorkflows() {
         return new ArrayList(m_completed);
     }
 
@@ -116,14 +117,6 @@ public class WorkflowManager implements WikiEventListener
                 }
             }
         }
-    }
-
-    public String getMessage(Step step, Locale locale)
-    {
-        InternationalizationManager i18n = m_engine.getInternationalizationManager();
-        String mask = i18n.get(InternationalizationManager.CORE_BUNDLE, locale, step.getMessageKey());
-        Object[] arguments = step.getWorkflow().getMessageArguments();
-        return MessageFormat.format(mask, arguments);
     }
 
     /**
@@ -215,6 +208,33 @@ public class WorkflowManager implements WikiEventListener
         int current = next;
         next++;
         return current;
+    }
+    
+    /**
+     * Returns the current workflows a wiki session owns. These are workflows whose 
+     * {@link Workflow#getOwner()} method returns a Principal also possessed by the 
+     * wiki session (see {@see com.ecyrd.jspwiki.WikiSession#getPrincipals()}). If the
+     * wiki session is not authenticated, this method returns an empty Collection.
+     * @param session the wiki session
+     * @return the collection workflows the wiki session owns, which may be empty
+     */
+    public Collection getOwnerWorkflows(WikiSession session) {
+        List workflows = new ArrayList();
+        if (session.isAuthenticated())
+        {
+            Principal[] sessionPrincipals = session.getPrincipals();
+            for (Iterator it = m_workflows.iterator(); it.hasNext();) {
+                Workflow w = (Workflow)it.next();
+                Principal owner = w.getOwner();
+                for (int i = 0; i < sessionPrincipals.length; i++) {
+                    if (sessionPrincipals[i].equals(owner)) {
+                        workflows.add(w);
+                        break;
+                    }
+                }
+            }
+        }
+        return workflows;
     }
 
     /**
