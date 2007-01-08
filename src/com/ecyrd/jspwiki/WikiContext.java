@@ -89,6 +89,9 @@ public class WikiContext
         contents. */
     public static final String    VIEW     = PageCommand.VIEW.getRequestContext();
 
+    /** User wants to view or administer workflows. */
+    public static final String    WORKFLOW = WikiCommand.WORKFLOW.getRequestContext();
+
     /** The EDIT context - the user is editing the page. */
     public static final String    EDIT     = PageCommand.EDIT.getRequestContext();
 

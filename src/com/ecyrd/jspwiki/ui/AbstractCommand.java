@@ -36,6 +36,7 @@ public abstract class AbstractCommand implements Command
         WikiCommand.LOGIN, 
         WikiCommand.LOGOUT, 
         WikiCommand.PREFS, 
+        WikiCommand.WORKFLOW,
         RedirectCommand.REDIRECT
     };
 

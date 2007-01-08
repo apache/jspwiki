@@ -39,6 +39,9 @@ public class WikiCommand extends AbstractCommand
     public static final Command PREFS
         = new WikiCommand( "prefs", "%uUserPreferences.jsp", "PreferencesContent.jsp", null, WikiPermission.EDIT_PROFILE_ACTION );
 
+    public static final Command WORKFLOW
+        = new WikiCommand( "workflow", "%uWorkflow.jsp", "WorkflowContent.jsp", null, null );
+    
     private final String m_action;
     
     private final Permission m_permission;
