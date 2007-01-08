@@ -2062,6 +2062,15 @@ public class WikiEngine
         return m_aclManager;
     }
 
+    /**
+     * Returns the DifferenceManager so that texts can be compared.
+     * @return the difference manager
+     */
+    public DifferenceManager getDifferenceManager()
+    {
+        return m_differenceManager;
+    }
+    
     public EditorManager getEditorManager()
     {
         return m_editorManager;
