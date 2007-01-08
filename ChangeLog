@@ -27,6 +27,11 @@
         saving wiki pages, and is turned off by default. See jspwiki.properties 
         for configuration guidelines.
         
+        * To test workflow, enable SaveWikiPageWorkflow via jspwiki.properties.
+        Note: a cosmetic NullPointerException occurs in some cases after approving
+        page saves; this does not prevent the actual page save. This will be
+        fixed very soon. Other than this, approve/deny/abort features work nicely. 
+        
         * TestEngine gains accessors for the 'admin' and 'Janne' sessions.
 
 2006-01-02  Andrew Jaquith <andrew AT freshcookies DOT org>
