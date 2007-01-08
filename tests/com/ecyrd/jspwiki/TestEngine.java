@@ -19,6 +19,27 @@ public class TestEngine extends WikiEngine
     static Logger log = Logger.getLogger( TestEngine.class );
     
     private HttpSession m_adminSession;
+    private HttpSession m_janneSession;
+    private WikiSession m_adminWikiSession;
+    private WikiSession m_janneWikiSession;
+    
+    /**
+     * Creates WikiSession with the privileges of the administrative user.
+     * For testing purposes, obviously.
+     * @return the wiki session
+     */
+    public WikiSession adminSession() {
+        return m_adminWikiSession;
+    }
+    
+    /**
+     * Creates WikiSession with the privileges of the Janne.
+     * For testing purposes, obviously.
+     * @return the wiki session
+     */
+    public WikiSession janneSession() {
+        return m_janneWikiSession;
+    }
     
     public TestEngine( Properties props )
         throws WikiException
@@ -28,11 +49,20 @@ public class TestEngine extends WikiEngine
         // Set up long-running admin session
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.setRemoteAddr( "53.33.128.9" );
-        WikiSession session = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( session, 
+        m_adminWikiSession = WikiSession.getWikiSession( this, request );
+        this.getAuthenticationManager().login( m_adminWikiSession, 
                 Users.ADMIN, 
                 Users.ADMIN_PASS );
         m_adminSession = request.getSession();
+        
+        // Set up a test Janne session
+        request = new TestHttpServletRequest();
+        request.setRemoteAddr( "42.22.17.8" );
+        m_janneWikiSession = WikiSession.getWikiSession( this, request );
+        this.getAuthenticationManager().login( m_janneWikiSession, 
+                Users.JANNE, 
+                Users.JANNE_PASS );
+        m_janneSession = request.getSession();
     }
 
     public static void emptyWorkDir()
@@ -206,6 +236,19 @@ public class TestEngine extends WikiEngine
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.m_session = m_adminSession;
         
+        // Create page and wiki context
+        WikiPage page = new WikiPage( this, pageName );
+        WikiContext context = new WikiContext( this, request, page );
+        saveText( context, content );
+    }
+    
+    public void saveTextAsJanne( String pageName, String content )
+        throws WikiException
+    {
+        // Build new request and associate our Janne session
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        request.m_session = m_janneSession;
+    
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
         WikiContext context = new WikiContext( this, request, page );
