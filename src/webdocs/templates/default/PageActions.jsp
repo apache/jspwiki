@@ -64,7 +64,7 @@
     <wiki:CheckRequestContext context='!prefs'>
       <wiki:CheckRequestContext context='!preview'>
         <span>
-          <wiki:LinkTo page="UserPreferences"><fmt:message key="actions.prefs"/></wiki:LinkTo>
+          <wiki:Link jsp="UserPreferences.jsp"><fmt:message key="actions.prefs"/></wiki:Link>
         </span>
       </wiki:CheckRequestContext>
     </wiki:CheckRequestContext>
@@ -109,6 +109,9 @@
     </wiki:Permission>
 
     <wiki:UserCheck status="authenticated">
+      <span>
+        <wiki:Link jsp="Workflow.jsp"><fmt:message key="actions.workflow"/></wiki:Link>
+      </span>
       <span>
         <wiki:Link jsp="Logout.jsp"><fmt:message key="actions.logout"/></wiki:Link>
       </span>
