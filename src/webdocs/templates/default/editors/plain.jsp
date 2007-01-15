@@ -31,6 +31,7 @@
         <input name="action" type="hidden" value="save" />
         <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
                                                                        PageContext.REQUEST_SCOPE )%>" />
+        <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
     </p>
     <textarea style="width:100%;" class="editor" 
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" rows="25" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
