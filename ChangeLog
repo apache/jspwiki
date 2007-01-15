@@ -1,3 +1,14 @@
+2007-01-15  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.88
+        
+        * Comment.jsp now requires that you post from the same IP address
+        that you did a GET to the page.  This should only affect some
+        bots.
+        
+        * RecentChangesPlugin now uses ECS (in preparation for some new
+        code).
+
 2006-12-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.87
