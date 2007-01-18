@@ -26,12 +26,18 @@
         latestversion = wikiContext.getPage();
     }
 
+    // If deleting an attachment, go to the parent page.
+    String redirTo = pagereq;
+    if( wikipage instanceof Attachment ) {
+        redirTo = ((Attachment)wikipage).getParentName();
+    }
+
     if( deleteall != null )
     {
         log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
 
         wiki.deletePage( pagereq );
-        response.sendRedirect(wiki.getViewURL(pagereq));
+        response.sendRedirect(wiki.getViewURL(redirTo));
         return;
     }
     else if( delete != null )
@@ -53,7 +59,7 @@
             }
         }
         
-        response.sendRedirect(wiki.getURL( WikiContext.INFO, pagereq, null, false ));
+        response.sendRedirect(wiki.getURL( WikiContext.INFO, redirTo, null, false ));
         return; 
     }
 
