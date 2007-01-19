@@ -1,3 +1,10 @@
+2007-01-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.89
+        
+        * Security fix: changeNote field did not properly encode HTML
+        entities, making JSPWiki vulnerable to XSS attacks on PageInfo.jsp.
+
 2007-01-15  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.88
