@@ -204,7 +204,9 @@ function confirmDelete()
     <%
        String changeNote = (String)currentPage.getAttribute(WikiPage.CHANGENOTE);
        if( changeNote != null )
-       { %>
+       {
+           changeNote = TextUtil.replaceEntities(changeNote);
+       %>
        <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=changeNote%></td></tr>
        <% } %>
     <% } %>
