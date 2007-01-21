@@ -506,7 +506,7 @@ public class WikiEventManager
                 //
                 //  We don't die, we just don't do notifications in that case.
                 //
-                log.info("Concurrent modification of event list; please report this.");
+                log.info("Concurrent modification of event list; please report this.",e);
             }
 
         }
