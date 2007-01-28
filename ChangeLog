@@ -1,3 +1,22 @@
+2007-01-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.91
+        
+        * Bug fix: WeblogPlugin would cause ConcurrentModificationExceptions
+        whenever two threads would access it at the same time.  This was due
+        to improper synchronization in WikiEventDelegate.
+        
+        * Performance: JSPWikiMarkupParser startup is now about two orders of
+        magnitude faster than before, as we move to pre-caching of regexp
+        patterns.  This should be provide a significant improvement in startup
+        times.
+        
+        * Performance: MarkupParser.nextToken() is now slightly faster though 
+        more insecure.  It has also been made final to help the compiler a bit.
+
+        * WikiEngine gains the ability to store attributes.  These can be used
+        e.g. to cache things.
+
 2007-01-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.90
