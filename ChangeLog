@@ -1,4 +1,4 @@
-2006-01-08  Andrew Jaquith <andrew AT freshcookies DOT org>
+2007-01-08  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.18
         
@@ -34,7 +34,7 @@
         
         * TestEngine gains accessors for the 'admin' and 'Janne' sessions.
 
-2006-01-02  Andrew Jaquith <andrew AT freshcookies DOT org>
+2007-01-02  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.17
         
