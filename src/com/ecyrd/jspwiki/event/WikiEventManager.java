@@ -394,11 +394,10 @@ public class WikiEventManager
         /* A list of event listeners for this instance. */
         //private final EventListenerList m_listenerList = new EventListenerList();
 
-        private SortedSet m_listenerList = Collections.synchronizedSortedSet(new TreeSet(new WikiEventListenerComparator()));
+        private TreeSet m_listenerList = new TreeSet(new WikiEventListenerComparator());
         
         private Class  m_class  = null;
         private Object m_client = null;
-
 
         /**
          *  Constructor for an WikiEventDelegateImpl, provided
@@ -448,7 +447,10 @@ public class WikiEventManager
          */
         public Set getWikiEventListeners()
         {
-            return Collections.unmodifiableSet(m_listenerList);
+            synchronized( m_listenerList )
+            {
+                return Collections.unmodifiableSet(m_listenerList);
+            }
         }
 
 
@@ -458,9 +460,12 @@ public class WikiEventManager
          * @param listener   the WikiEventListener to be added
          * @return true if the listener was added (i.e., it was not already in the list and was added)
          */
-        public synchronized boolean addWikiEventListener( WikiEventListener listener )
+        public boolean addWikiEventListener( WikiEventListener listener )
         {
-            return m_listenerList.add( listener );
+            synchronized( m_listenerList )
+            {
+                return m_listenerList.add( listener );
+            }
         }
 
 
@@ -470,9 +475,12 @@ public class WikiEventManager
          * @param listener   the WikiEventListener to be removed
          * @return true if the listener was removed (i.e., it was actually in the list and was removed)
          */
-        public synchronized boolean removeWikiEventListener( WikiEventListener listener )
+        public boolean removeWikiEventListener( WikiEventListener listener )
         {
-            return m_listenerList.remove(listener);
+            synchronized( m_listenerList )
+            {
+                return m_listenerList.remove(listener);
+            }
         }
 
 
@@ -480,9 +488,12 @@ public class WikiEventManager
          *  Returns true if there are one or more listeners registered
          *  with this instance.
          */
-        public synchronized boolean isListening()
+        public boolean isListening()
         {
-            return !m_listenerList.isEmpty();
+            synchronized( m_listenerList )
+            {
+                return !m_listenerList.isEmpty();
+            }
         }
 
 
@@ -494,11 +505,14 @@ public class WikiEventManager
         {
             try
             {
-                for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                synchronized( m_listenerList )
                 {
-                    WikiEventListener listener = (WikiEventListener) i.next();
+                    for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                    {
+                        WikiEventListener listener = (WikiEventListener) i.next();
                 
-                    listener.actionPerformed( event );
+                        listener.actionPerformed( event );
+                    }
                 }
             }
             catch( ConcurrentModificationException e )
@@ -508,7 +522,6 @@ public class WikiEventManager
                 //
                 log.info("Concurrent modification of event list; please report this.",e);
             }
-
         }
 
 
