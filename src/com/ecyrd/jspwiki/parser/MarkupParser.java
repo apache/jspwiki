@@ -194,10 +194,10 @@ public abstract class MarkupParser
         return m_pos;
     }
 
-    protected int nextToken()
+    protected final int nextToken()
         throws IOException
     {
-        if( m_in == null ) return -1;
+        // if( m_in == null ) return -1;
         m_pos++;
         return m_in.read();
     }
