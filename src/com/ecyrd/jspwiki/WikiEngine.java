@@ -2112,4 +2112,38 @@ public class WikiEngine
         }
     }
 
+    private Map m_attributes = Collections.synchronizedMap(new HashMap());
+    
+    /**
+     * Adds an attribute to the engine for the duration of this engine.  The
+     * value is not persisted.
+     * 
+     * @since 2.4.91
+     * @param key
+     * @param value
+     */
+    public void setAttribute( String key, Object value )
+    {
+        m_attributes.put( key, value );
+    }
+    
+    /**
+     *  Gets an attribute from the engine.
+     *  @param key
+     *  @return
+     */
+    public Object getAttribute( String key )
+    {
+        return m_attributes.get( key );
+    }
+    
+    /**
+     *  Removes an attribute.
+     * @param key
+     * @return The previous attribute, if it existed.
+     */
+    public Object removeAttribute( String key )
+    {
+        return m_attributes.remove( key );
+    }
 }

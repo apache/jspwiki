@@ -86,6 +86,7 @@ function callback(result,exception)
         <input name="action" type="hidden" value="save" />
         <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
                                                                        PageContext.REQUEST_SCOPE )%>" />
+        <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
     </p>
     <textarea style="width:100%;" class="editor" onkeyup="getSuggestions(this.id)"
               onclick="setCursorPos(this.id)" onchange="setCursorPos(this.id)"

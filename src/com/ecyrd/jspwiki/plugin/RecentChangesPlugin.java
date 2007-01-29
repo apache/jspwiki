@@ -24,6 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.TextUtil;
@@ -90,7 +91,6 @@ public class RecentChangesPlugin
         // FIXME: Should really have a since date on the getRecentChanges
         // method.
         Collection   changes = engine.getRecentChanges();
-        StringWriter out     = new StringWriter();
 
         if( changes != null )
         {
@@ -99,7 +99,8 @@ public class RecentChangesPlugin
             DateFormat fmt = getDateFormat(params);
             DateFormat tfmt = getTimeFormat(params);
 
-            out.write("<table border=\"0\" cellpadding=\""+spacing+"\" class='recentchanges'>\n");
+            table rt = new table();
+            rt.setBorder(0).setCellPadding(spacing).setClass("recentchanges");
 
             for( Iterator i = changes.iterator(); i.hasNext(); )
             {
@@ -114,46 +115,50 @@ public class RecentChangesPlugin
                 
                 if( !isSameDay( lastmod, olddate ) )
                 {
-                    out.write("<tr>\n");
-                    out.write("  <td colspan=\"3\" class='date'><b>"+
-                              fmt.format(lastmod)+
-                              "</b></td>\n");
-                    out.write("</tr>\n");
+                    tr row = new tr();
+                    td col = new td();
+                    
+                    col.setColSpan(3).setClass("date");
+                    col.addElement( new b().addElement(fmt.format(lastmod)) );
+
+                    rt.addElement(row);
+                    row.addElement(col);                    
                     olddate = lastmod;
                 }
 
                 String link = context.getURL( ((pageref instanceof Attachment) ? WikiContext.ATTACH : WikiContext.VIEW), 
                                               pageref.getName() ) ;
                 
-                link = "<a href=\""+link+"\">"+engine.beautifyTitle(pageref.getName())+"</a>";
+                a linkel = new a(link,engine.beautifyTitle(pageref.getName()));;
+                
+                tr row = new tr();
+                
+                td col = new td().setWidth("30%").addElement(linkel);
 
                 //
                 //  Add the direct link to the attachment info.
                 //
                 if( pageref instanceof Attachment )
                 {
-                    link += "<a href='"+context.getURL( WikiContext.INFO, pageref.getName() )+"'>"+
-                            "<img border='0' src='"+context.getURL( WikiContext.NONE, "images/attachment_small.png" )+
-                            "' /></a>";
+                    linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
+                    linkel.addElement( new img().setBorder(0).setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
+
+                    col.addElement( linkel );
                 }
+
                 
-                out.write("<tr>\n");
-
-                out.write("<td width=\"30%\">"+
-                          link+
-                          "</td>\n");
-
+                row.addElement(col);
+                rt.addElement(row);
+                
                 if( pageref instanceof Attachment )
                 {
-                    out.write("<td class='lastchange'>"+tfmt.format(lastmod)+"</td>");
+                    row.addElement( new td(tfmt.format(lastmod)).setClass("lastchange") );
                 }
                 else
                 {
-                    out.write("<td class='lastchange'><a href=\""+context.getURL(WikiContext.DIFF,
-                                                              pageref.getName(),
-                                                              "r1=-1")+"\">"+
-                              tfmt.format(lastmod)+
-                              "</a></td>\n");
+                    td infocol = (td) new td().setClass("lastchange");
+                    infocol.addElement( new a(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)) );
+                    row.addElement(infocol);
                 }
 
                 //
@@ -164,36 +169,50 @@ public class RecentChangesPlugin
                 {
                     String author = pageref.getAuthor();
 
+                    td authorinfo = new td();
+                    authorinfo.setClass("author");
+                    
                     if( author != null )
                     {
                         if( engine.pageExists(author) )
                         {
-                            author = "<a href=\""+
-                                     context.getURL(WikiContext.VIEW, author )
-                                     +"\">"+author+"</a>";
+                            authorinfo.addElement( new a(context.getURL(WikiContext.VIEW, author),author) );
+                        }
+                        else
+                        {
+                            authorinfo.addElement(author);
                         }
                     }
                     else
                     {
-                        author = "unknown";
+                        authorinfo.addElement("unknown");
                     }
 
-                    out.write("<td class='author'>"+author+"</td>");
+                    row.addElement( authorinfo );
                 }
 
                 // Change note
                 if( showChangenote )
                 {
                     String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
-                    out.write("<td class='changenote'>"+(changenote != null ? TextUtil.replaceEntities(changenote) : "")+"<td>");
+                    
+                    row.addElement( new td((changenote != null ? TextUtil.replaceEntities(changenote) : "")).setClass("changenote") );
                 }
-                out.write("</tr>\n");
+                
+                //  Revert note
+/*                
+                if( context.hasAdminPermissions() )
+                {
+                    row.addElement( new td("Revert") );
+                }
+ */
             }
 
-            out.write("</table>\n");
+            rt.setPrettyPrint(true);
+            return rt.toString();
         }
         
-        return out.toString();
+        return "";
     }
 
     

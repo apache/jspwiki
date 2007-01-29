@@ -24,7 +24,7 @@
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String storedUser = wikiSession.getUserPrincipal().getName();
 
-    if ( wikiSession.isAnonymous() ) 
+    if( wikiSession.isAnonymous() ) 
     {
         storedUser  = request.getParameter( "author" );
     }
@@ -107,6 +107,18 @@
             return;
         }
 
+        //
+        //  Do a basic check that the IP address is the same as to where
+        //  the page was originally requested.  This curbs some bots.
+        //
+        String ipaddr = request.getParameter("addr");
+        if( !request.getRemoteAddr().equals(ipaddr) )
+        {
+            wikiSession.addMessage( "Attempt to post from a different IP address than where the page was originally fetched.");
+            pageContext.forward( "Error.jsp" );
+            return;
+        }
+        
         //
         //  We expire ALL locks at this moment, simply because someone has
         //  already broken it.

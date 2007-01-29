@@ -103,7 +103,7 @@ public class JSPWikiMarkupParser
     private boolean        m_isOpenParagraph = false;
 
     /** Keeps image regexp Patterns */
-    private ArrayList      m_inlineImagePatterns;
+    private List           m_inlineImagePatterns;
 
     /** Parser for extended link functionality. */
     private LinkParser m_linkParser = new LinkParser();
@@ -190,6 +190,10 @@ public class JSPWikiMarkupParser
         "h323:", "ipp:", "tftp:", "mupdate:", "pres:",
         "im:", "mtqp", "smb:" };
 
+    private static final String INLINE_IMAGE_PATTERNS = "JSPWikiMarkupParser.inlineImagePatterns";
+
+    private static final String CAMELCASE_PATTERN     = "JSPWikiMarkupParser.camelCasePattern";
+
     private static String[] CLASS_TYPES =
     {
        CLASS_WIKIPAGE,
@@ -235,38 +239,56 @@ public class JSPWikiMarkupParser
     private void initialize()
     {
         PatternCompiler compiler         = new GlobCompiler();
-        ArrayList       compiledpatterns = new ArrayList();
-
-        Collection ptrns = getImagePatterns( m_engine );
+        List            compiledpatterns;
 
         //
-        //  Make them into Regexp Patterns.  Unknown patterns
-        //  are ignored.
+        //  We cache compiled patterns in the engine, since their creation is
+        //  really expensive
         //
-        for( Iterator i = ptrns.iterator(); i.hasNext(); )
+        compiledpatterns = (List)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
+        
+        if( compiledpatterns == null )
+        {
+            compiledpatterns = new ArrayList(20);
+            Collection ptrns = getImagePatterns( m_engine );
+
+            //
+            //  Make them into Regexp Patterns.  Unknown patterns
+            //  are ignored.
+            //
+            for( Iterator i = ptrns.iterator(); i.hasNext(); )
+            {
+                try
+                {       
+                    compiledpatterns.add( compiler.compile( (String)i.next(), 
+                                                            GlobCompiler.DEFAULT_MASK|GlobCompiler.READ_ONLY_MASK ) );
+                }
+                catch( MalformedPatternException e )
+                {
+                    log.error("Malformed pattern in properties: ", e );
+                }
+            }
+            
+            m_engine.setAttribute( INLINE_IMAGE_PATTERNS, compiledpatterns );
+        }
+        
+        m_inlineImagePatterns = Collections.unmodifiableList(compiledpatterns);
+
+        m_camelCasePattern = (Pattern) m_engine.getAttribute( CAMELCASE_PATTERN );
+        if( m_camelCasePattern == null )
         {
             try
-            {       
-                compiledpatterns.add( compiler.compile( (String)i.next() ) );
+            {
+                m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX, 
+                                                         Perl5Compiler.DEFAULT_MASK|Perl5Compiler.READ_ONLY_MASK );
             }
             catch( MalformedPatternException e )
             {
-                log.error("Malformed pattern in properties: ", e );
+                log.fatal("Internal error: Someone put in a faulty pattern.",e);
+                throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader");
             }
+            m_engine.setAttribute( CAMELCASE_PATTERN, m_camelCasePattern );
         }
-
-        m_inlineImagePatterns = compiledpatterns;
-
-        try
-        {
-            m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX );
-        }
-        catch( MalformedPatternException e )
-        {
-            log.fatal("Internal error: Someone put in a faulty pattern.",e);
-            throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader");
-        }
-
         //
         //  Set the properties.
         //
