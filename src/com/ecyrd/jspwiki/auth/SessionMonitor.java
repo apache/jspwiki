@@ -144,7 +144,7 @@ public class SessionMonitor implements HttpSessionListener
             {
                 m_sessions.put( sid, new WeakReference( wikiSession ) );
             }
-            session.setAttribute( wikiSessionName, wikiSession );
+            session.setAttribute( wikiSessionName, new WeakReference( wikiSession ) );
         }
         return wikiSession;
     }
