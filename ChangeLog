@@ -1,3 +1,21 @@
+2007-01-30  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.5.20
+        
+        * Minor tweak to the i18n properties file to add in some whitespace
+        between words for several messages (DefaultResources.properties).
+        
+        * Corrected a SessionMonitor failure to correctly stash a WeakReference 
+        in the user's HttpSession, which was causing downstream ClassCastExceptions. 
+        Thanks to Marc Pateet for isolating the issues. I haven't tested this
+        fix extensively, so please let me know if it fixes (or does not fix)
+        the issue.
+        
+        * I continue to be flabbergasted at the speed at which my new dual-core
+        MBP runs the 737 JUnit tests in the JSPWiki test suite: about 2min 45s, 
+        compared to 7min on my old machine. This has no place in a ChangeLog, I know.
+        But still.
+        
 2007-01-29  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.19
