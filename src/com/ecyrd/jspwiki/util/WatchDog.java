@@ -52,12 +52,12 @@ public class WatchDog
     private Watchable m_watchable;
     private Stack     m_stateStack = new Stack();
     private boolean   m_enabled    = true;
-    private WikiBackgroundThread m_thread;
     private WikiEngine m_engine;
     
     Logger log = Logger.getLogger(WatchDog.class.getName());
     
-    private static HashMap c_kennel = new HashMap();
+    private static HashMap              c_kennel = new HashMap();
+    private static WikiBackgroundThread c_watcherThread;
     
     /**
      *  Returns the current watchdog for the current thread. This
@@ -71,6 +71,8 @@ public class WatchDog
      */
     public static WatchDog getCurrentWatchDog( WikiEngine engine )
     {
+        scrub();
+        
         Thread t = Thread.currentThread();
         
         WeakReference w = (WeakReference)c_kennel.get( new Integer(t.hashCode()) );
@@ -97,12 +99,18 @@ public class WatchDog
      */
     public WatchDog(WikiEngine engine, Watchable watch)
     {
-        m_engine = engine;
+        m_engine    = engine;
         m_watchable = watch;
 
-        m_thread = new WatchDogThread( engine );
+        synchronized(this.getClass())
+        {
+            if( c_watcherThread == null )
+            {
+                c_watcherThread = new WatchDogThread( engine );
         
-        m_thread.start();
+                c_watcherThread.start();
+            }
+        }
     }
 
     /**
@@ -116,27 +124,13 @@ public class WatchDog
     {
         this( engine, new ThreadWrapper(thread) );
     }
-
-    protected void finalize() throws Throwable
-    {
-        super.finalize();
-        
-        release();
-    }
     
     /**
      *  Hopefully finalizes this properly.  This is rather untested
      *  for now...
      */
-    private void release()
+    private static void scrub()
     {
-        log.debug("Finalizing watch on "+m_watchable.getName());
-        if( m_thread != null )
-        {
-            m_thread.shutdown();
-            m_thread = null;
-        }
-        
         synchronized( c_kennel )
         {
             for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
@@ -146,11 +140,12 @@ public class WatchDog
                 WeakReference w = (WeakReference) e.getValue();
 
                 //
-                //  Remove expired and this as well
+                //  Remove expired as well
                 //
-                if( w.get() == null || w.get() == this )
+                if( w.get() == null )
                 {
                     c_kennel.remove( e.getKey() );
+                    scrub();
                     break;
                 }
             }
@@ -164,10 +159,14 @@ public class WatchDog
      */
     public void enable()
     {
-        if( !m_enabled )
+        synchronized(this.getClass())
         {
-            m_enabled = true;
-            m_thread = new WatchDogThread( m_engine );
+            if( !m_enabled )
+            {
+                m_enabled = true;
+                c_watcherThread = new WatchDogThread( m_engine );
+                c_watcherThread.start();
+            }
         }
     }
     
@@ -178,11 +177,14 @@ public class WatchDog
      */
     public void disable()
     {
-        if( m_enabled )
+        synchronized(this.getClass())
         {
-            m_enabled = false;
-            m_thread.shutdown();
-            m_thread = null;
+            if( m_enabled )
+            {
+                m_enabled = false;
+                c_watcherThread.shutdown();
+                c_watcherThread = null;
+            }
         }
     }
     
@@ -275,6 +277,35 @@ public class WatchDog
         
     }
     
+    private void check()
+    {
+        log.debug("Checking watchdog '"+m_watchable.getName()+"'");
+        synchronized( m_stateStack )
+        {
+            try
+            {
+                WatchDog.State st = (WatchDog.State)m_stateStack.peek();
+   
+                long now = System.currentTimeMillis();
+     
+                if( now > st.getExpiryTime() )
+                {
+                    log.error("Watchable '"+m_watchable.getName()+
+                              "' exceeded timeout in state '"+
+                              st.getState()+
+                              "' by "+
+                              (now-st.getExpiryTime())/1000+" seconds");
+                    
+                    m_watchable.timeoutExceeded( st.getState() );
+                }
+            }
+            catch( EmptyStackException e )
+            {
+                // FIXME: Do something?
+            }
+        }
+    } 
+    
     /**
      *  Strictly for debugging/informative purposes.
      */
@@ -300,23 +331,21 @@ public class WatchDog
      *  @author jalkanen
      *
      */
-    private class WatchDogThread extends WikiBackgroundThread
+    private static class WatchDogThread extends WikiBackgroundThread
     {
-        public WatchDogThread(WikiEngine engine)
+        public WatchDogThread( WikiEngine engine )
         {
-            super(engine, 60);
-            
-            setName("WatchDog for '"+m_watchable.getName()+"'");
+            super(engine, 10);
+            setName("WatchDog for '"+engine.getApplicationName()+"'");
         }
 
         public void startupTask()
         {
-            log.debug("Started watching '"+m_watchable.getName()+"'");
         }
         
         public void shutdownTask()
         {
-            log.debug("Stopped watching '"+m_watchable.getName()+"'");
+            WatchDog.scrub();
         }
         
         /**
@@ -328,38 +357,32 @@ public class WatchDog
          */
         public void backgroundTask() throws Exception
         {
-            if( m_watchable != null && m_watchable.isAlive() )
+            synchronized( c_kennel )
             {
-                synchronized( m_stateStack )
+                for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
                 {
-                    try
+                    Map.Entry entry = (Map.Entry) i.next();
+                
+                    WeakReference wr = (WeakReference) entry.getValue();
+                    
+                    WatchDog w = (WatchDog) wr.get();
+                    
+                    if( w != null )
                     {
-                        WatchDog.State st = (WatchDog.State)m_stateStack.peek();
-         
-                        long now = System.currentTimeMillis();
-            
-                        if( now > st.getExpiryTime() )
+                        if( w.m_watchable != null && w.m_watchable.isAlive() )
                         {
-                            log.error("Watchable '"+m_watchable.getName()+
-                                      "' exceeded timeout in state '"+
-                                      st.getState()+
-                                      "' by "+
-                                      (now-st.getExpiryTime())/1000+" seconds");
-                            
-                            m_watchable.timeoutExceeded( st.getState() );
+                            w.check();
+                        }
+                        else
+                        {
+                            c_kennel.remove( entry.getKey() );
+                            break;
                         }
                     }
-                    catch( EmptyStackException e )
-                    {
-                        // FIXME: Do something?
-                    }
-                }
-            }
-            else
-            {
-                shutdown();
-                release();
-            }
+                } // for
+            } // synchronized
+            
+            WatchDog.scrub();
         }
     }
 
@@ -408,7 +431,7 @@ public class WatchDog
         }
         
         public void timeoutExceeded( String state )
-        {
+        {            
             // TODO: Figure out something sane to do here.
         }
         
