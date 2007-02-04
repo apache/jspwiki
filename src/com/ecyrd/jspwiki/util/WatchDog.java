@@ -19,6 +19,7 @@
 */
 package com.ecyrd.jspwiki.util;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -72,19 +73,20 @@ public class WatchDog
     {
         Thread t = Thread.currentThread();
         
-        WatchDog w = (WatchDog)c_kennel.get( new Integer(t.hashCode()) );
+        WeakReference w = (WeakReference)c_kennel.get( new Integer(t.hashCode()) );
         
         if( w == null )
         {
-            w = new WatchDog( engine, t );
+            WatchDog wd = new WatchDog( engine, t );
             
+            w = new WeakReference(wd);
             synchronized( c_kennel )
             {
                 c_kennel.put( new Integer(t.hashCode()), w );
             }
         }
         
-        return w;
+        return (WatchDog)w.get();
     }
     
     /**
@@ -115,11 +117,18 @@ public class WatchDog
         this( engine, new ThreadWrapper(thread) );
     }
 
+    protected void finalize() throws Throwable
+    {
+        super.finalize();
+        
+        release();
+    }
+    
     /**
      *  Hopefully finalizes this properly.  This is rather untested
      *  for now...
      */
-    protected void release()
+    private void release()
     {
         log.debug("Finalizing watch on "+m_watchable.getName());
         if( m_thread != null )
@@ -134,7 +143,12 @@ public class WatchDog
             {
                 Map.Entry e = (Map.Entry) i.next();
             
-                if( e.getValue() == this )
+                WeakReference w = (WeakReference) e.getValue();
+
+                //
+                //  Remove expired and this as well
+                //
+                if( w.get() == null || w.get() == this )
                 {
                     c_kennel.remove( e.getKey() );
                     break;
