@@ -324,7 +324,7 @@ public class WatchDog
          
                         long now = System.currentTimeMillis();
             
-                        if( st.getExpiryTime() > now )
+                        if( now > st.getExpiryTime() )
                         {
                             log.error("Watchable '"+m_watchable.getName()+"' exceeded timeout in state "+st.getState());
                             m_watchable.timeoutExceeded( st.getState() );
