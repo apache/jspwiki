@@ -63,6 +63,7 @@ import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.WatchDog;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -2148,5 +2149,14 @@ public class WikiEngine
     public Object removeAttribute( String key )
     {
         return m_attributes.remove( key );
+    }
+    
+    /**
+     * Returns a WatchDog for current thread.
+     * @since 2.4.92
+     */
+    public WatchDog getCurrentWatchDog()
+    {
+        return WatchDog.getCurrentWatchDog(this);
     }
 }
