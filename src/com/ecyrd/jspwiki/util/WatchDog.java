@@ -119,7 +119,7 @@ public class WatchDog
      *  Hopefully finalizes this properly.  This is rather untested
      *  for now...
      */
-    protected void shutdown()
+    protected void release()
     {
         log.debug("Finalizing watch on "+m_watchable.getName());
         if( m_thread != null )
@@ -141,8 +141,6 @@ public class WatchDog
                 }
             }
         }
-        
-        m_watchable = null;
     }
 
     /**
@@ -340,8 +338,8 @@ public class WatchDog
             }
             else
             {
-                m_watchable = null;
                 shutdown();
+                release();
             }
         }
     }
