@@ -98,6 +98,7 @@
     if( !hasChanged && changed.size() > 0 )
     {
         response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+        w.exitState();
         return;
     }
 
