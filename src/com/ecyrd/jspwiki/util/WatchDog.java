@@ -279,7 +279,8 @@ public class WatchDog
     
     private void check()
     {
-        log.debug("Checking watchdog '"+m_watchable.getName()+"'");
+        if( log.isDebugEnabled() ) log.debug("Checking watchdog '"+m_watchable.getName()+"'");
+        
         synchronized( m_stateStack )
         {
             try
