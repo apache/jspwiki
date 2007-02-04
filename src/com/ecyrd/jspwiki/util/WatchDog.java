@@ -330,7 +330,7 @@ public class WatchDog
                                       "' exceeded timeout in state '"+
                                       st.getState()+
                                       "' by "+
-                                      (now-st.getExpiryTime())/1000+"seconds");
+                                      (now-st.getExpiryTime())/1000+" seconds");
                             
                             m_watchable.timeoutExceeded( st.getState() );
                         }
