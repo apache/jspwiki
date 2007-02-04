@@ -26,7 +26,7 @@
     StopWatch sw = new StopWatch();
     sw.start();
     WatchDog w = wiki.getCurrentWatchDog();
-    w.enterState("Generating VIEW response",60);
+    w.enterState("Generating VIEW response for "+wikiContext.getPage(),60);
     
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
