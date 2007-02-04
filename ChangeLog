@@ -6,6 +6,9 @@
         Wiki.jsp, rss.jsp, PageInfo.jsp, Diff.jsp RSSThread and Lucene updater 
         for watchdog capability.
 
+        * Fixed an issue with SessionMonitor trying to do a getAttribute()
+        on an expired session.
+
 2007-01-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.91
