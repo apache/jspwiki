@@ -1,3 +1,17 @@
+2007-02-05  Christoph Sauer <sauer AT hs-heilbronn DOT de>
+
+       * 2.5.21
+       
+       * Added possibility to specify cascading properties
+         in the context-mapping for multiple wiki setups. Added
+         method to WikiEngine that will check for
+         jspwiki.propertyfile.cascade.x context properties, where
+         x is a number from 1 to n. Properties specified in those 
+         files will overwrite values specified in the default jspwiki.properties
+         file or a properties file of a lower cascade.
+         This is based on an idea by Olaf Kaus, see [JSPWiki:MultipleWikis] 
+         discussion.
+
 2007-01-30  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.20
