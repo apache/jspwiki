@@ -104,6 +104,11 @@ public class WikiEngine
 
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
 
+    /** The web.xml parameter that defines where cascading properties can be 
+     * found. Contents of those files will overwrite default properties.
+     */
+    public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.propertyfile.cascade.";
+
     /** Property for application name */
     public static final String PROP_APPNAME      = "jspwiki.applicationName";
     
@@ -396,6 +401,11 @@ public class WikiEngine
 
             Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
             props.load( propertyStream );
+            
+            //this will add additional properties to the default ones:
+            context.log("Loading cascading properties...");
+            loadWebAppPropsCascade(context, props);
+            
             return( props );
         }
         catch( Exception e )
@@ -415,6 +425,84 @@ public class WikiEngine
         }
 
         return( null );
+    }
+
+    /**
+     * This method will read additional property files and merge them to the
+     * default properties file. This way it will overwrite the default values
+     * giving you the oportunity to only specify the properties you need to
+     * change in a multiple wiki environment. You define a cascade in the
+     * context mapping of your servlet container. jspwiki.properties.cascade.1
+     * jspwiki.properties.cascade.2 You have to number your cascade in an
+     * decending way starting with one. This means you cannot leave out numbers
+     * in your cascade... This method is based on an idea by Olaf Kaus, see
+     * [JSPWiki:MultipleWikis]
+     * 
+     * @param context -
+     *            where to read the cascade from
+     * @param defaultProperties -
+     *            properties to merge the cascading properties to
+     * @author Christoph Sauer
+     * @since 2.5.x
+     */
+    private static void loadWebAppPropsCascade(ServletContext context, Properties defaultProperties)
+    {
+        if (context.getInitParameter(PARAM_PROPERTYFILE_CASCADEPREFIX + "1") == null)
+        {
+            context.log(" No cascading properties defined for this context");
+            return;
+        }
+
+        // get into cascade...
+        int depth = 0;
+        boolean more = true;
+        InputStream propertyStream = null;
+        while (more)
+        {
+            depth++;
+            String propertyFile = context.getInitParameter(PARAM_PROPERTYFILE_CASCADEPREFIX + depth);
+
+            if (propertyFile == null)
+            {
+                more = false;
+                break;
+            }
+
+            try
+            {
+                context.log(" Reading additional properties from " + propertyFile + " and merge to cascade.");
+                Properties additionalProps = new Properties();
+                propertyStream = new FileInputStream(new File(propertyFile));
+                if (propertyStream == null)
+                {
+                    throw new WikiException(" Property file cannot be found!" + propertyFile);
+                }
+                additionalProps.load(propertyStream);
+                defaultProperties.putAll(additionalProps);
+            }
+            catch (Exception e)
+            {
+                context.log(" " + Release.APPNAME + ": Unable to load and setup properties from " + propertyFile + "."
+                            + e.getMessage());
+            }
+            finally
+            {
+                try
+                {
+                    propertyStream.close();
+                    if (propertyStream != null)
+                    {
+                        propertyStream.close();
+                    }
+                }
+                catch (IOException e)
+                {
+                    context.log(" Unable to close property stream - something must be seriously wrong.");
+                }
+            }
+        }
+
+        return;
     }
 
     
