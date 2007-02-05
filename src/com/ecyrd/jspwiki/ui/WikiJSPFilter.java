@@ -24,11 +24,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.log4j.NDC;
+
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.util.WatchDog;
 
 /**
  * This filter goes through the generated page response prior and
@@ -66,30 +70,52 @@ public class WikiJSPFilter extends WikiServletFilter
                           FilterChain     chain )
         throws ServletException, IOException
     {
-        ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
-        
-        super.doFilter( request, responseWrapper, chain );
-
-        // The response is now complete. Lets replace the markers now.
-        
-        // WikiContext is only available after doFilter! (That is after
-        //   interpreting the jsp)
-
-        WikiContext wikiContext = getWikiContext( request );
-        String r = filter( wikiContext, responseWrapper.toString() );
-        
-        //String encoding = "UTF-8";
-        //if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
-        
-        // Only now write the (real) response to the client.
-        // response.setContentLength(r.length());
-        // response.setContentType(encoding);
-        response.getWriter().write(r);
-            
-        // Clean up the UI messages and loggers
-        if ( wikiContext != null )
+        WatchDog w = m_engine.getCurrentWatchDog();
+        try
         {
-            wikiContext.getWikiSession().clearMessages();
+            NDC.push( m_engine.getApplicationName()+":"+((HttpServletRequest)request).getRequestURI() );
+
+            w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
+          
+            ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
+        
+            super.doFilter( request, responseWrapper, chain );
+
+            // The response is now complete. Lets replace the markers now.
+        
+            // WikiContext is only available after doFilter! (That is after
+            //   interpreting the jsp)
+
+            try
+            {
+                w.enterState( "Delivering response", 30 );
+                WikiContext wikiContext = getWikiContext( request );
+                String r = filter( wikiContext, responseWrapper.toString() );
+        
+                //String encoding = "UTF-8";
+                //if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
+        
+                // Only now write the (real) response to the client.
+                // response.setContentLength(r.length());
+                // response.setContentType(encoding);
+                response.getWriter().write(r);
+            
+                // Clean up the UI messages and loggers
+                if ( wikiContext != null )
+                {
+                    wikiContext.getWikiSession().clearMessages();
+                }
+            }
+            finally
+            {
+                w.exitState();
+            }
+        }
+        finally
+        {
+            w.exitState();
+            NDC.pop();
+            NDC.remove();
         }
     }
 
