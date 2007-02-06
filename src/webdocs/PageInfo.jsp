@@ -16,6 +16,7 @@
     String pagereq = wikiContext.getName();
     
     WatchDog w = wiki.getCurrentWatchDog();
+    try{
     w.enterState("Generating INFO response",60);
     
     // Set the content type and include the response content
@@ -25,4 +26,4 @@
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 
-<% w.exitState(); %>
+<% } finally { w.exitState(); } %>
