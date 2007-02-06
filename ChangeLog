@@ -1,3 +1,19 @@
+2007-02-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.93
+        
+        * WikiEventManager was synchronizing too aggressively, causing bad
+        starvation under high-load conditions.  This should help performance
+        quite a bit.
+        
+        * Also speeded up WikiEventDelegate by switching to ArrayList, since
+        we don't need to do the sorting.  This allows us to also to get rid
+        of an Iterator (to please Murray ;-).
+        
+        * WatchDog.getCurrentWatchDog() would sometimes return a null
+        watchdog due to a brain fart (yes, garbage collection can happen
+        at *any* time!)
+
 2007-02-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.92
