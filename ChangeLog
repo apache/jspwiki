@@ -2,7 +2,7 @@
 
         * 2.4.93
         
-        * WikiEventManager was synchronizing too aggressively, causing bad
+        * WikiEventManager was synchronizing too aggressively, causing
         starvation under high-load conditions.  This should help performance
         quite a bit.
         
