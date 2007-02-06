@@ -144,7 +144,7 @@ public class WikiEventManager
     private final Vector m_preloadCache = new Vector();
 
     /* Singleton instance of the WikiEventManager. */
-    private static WikiEventManager instance = null;
+    private static WikiEventManager c_instance = null;
 
     // ............
 
@@ -153,7 +153,7 @@ public class WikiEventManager
      */
     private WikiEventManager()
     {
-        instance = this;
+        c_instance = this;
         log.debug("instantiated WikiEventManager");
     }
 
@@ -164,11 +164,11 @@ public class WikiEventManager
      */
     public static WikiEventManager getInstance()
     {
-        if ( instance == null )
+        if( c_instance == null )
         {
-            synchronized ( WikiEventManager.class ) // see Larman/Guthrie, Java 2 Perf/Idiom Guide, p.100
+            synchronized( WikiEventManager.class ) // see Larman/Guthrie, Java 2 Perf/Idiom Guide, p.100
             {
-                if ( instance == null )
+                if( c_instance == null )
                 {
                     WikiEventManager mgr = new WikiEventManager();
                     // start up any post-instantiation services here
@@ -176,7 +176,7 @@ public class WikiEventManager
                 }
             }
         }
-        return instance;
+        return c_instance;
     }
 
 
@@ -191,7 +191,7 @@ public class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was added (i.e., it was not already in the list and was added)
      */
-    public static synchronized final boolean addWikiEventListener(
+    public static final boolean addWikiEventListener(
             Object client, WikiEventListener listener )
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
@@ -207,7 +207,7 @@ public class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was found and removed.
      */
-    public static synchronized final boolean removeWikiEventListener(
+    public static final boolean removeWikiEventListener(
             Object client, WikiEventListener listener )
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
@@ -252,16 +252,16 @@ public class WikiEventManager
      * @param listener the event listener
      * @return true if the listener was found and removed.
      */
-    public static synchronized final boolean removeWikiEventListener( WikiEventListener listener )
+    public static final boolean removeWikiEventListener( WikiEventListener listener )
     {
         // get the Map.entry object for the entire Map, then check match on entry (listener)
         WikiEventManager mgr = getInstance();
         Map sources = mgr.getDelegates();
-        synchronized ( sources )
+        synchronized( sources )
         {
             // get an iterator over the Map.Enty objects in the map
             Iterator it = sources.entrySet().iterator();
-            while ( it.hasNext() )
+            while( it.hasNext() )
             {
                 Map.Entry entry = (Map.Entry)it.next();
                 // the entry value is the delegate
@@ -269,7 +269,7 @@ public class WikiEventManager
 
                 // now see if we can remove the listener from the delegate
                 // (delegate may be null because this is a weak reference)
-                if ( delegate != null && delegate.removeWikiEventListener(listener) )
+                if( delegate != null && delegate.removeWikiEventListener(listener) )
                 {
                     return true; // was removed
                 }
@@ -286,7 +286,7 @@ public class WikiEventManager
      *
      * @param client the client Object
      */
-    public static synchronized boolean isListening( Object client )
+    public static boolean isListening( Object client )
     {
         WikiEventDelegate source = getInstance().getDelegateFor(client);
         return source != null ? source.isListening() : false ;
@@ -333,28 +333,28 @@ public class WikiEventManager
      * @param client   the client Object, or alternately a Class reference
      * @return the WikiEventDelegate.
      */
-    private synchronized WikiEventDelegate getDelegateFor( Object client )
+    private WikiEventDelegate getDelegateFor( Object client )
     {
-        synchronized ( m_delegates )
+        synchronized( m_delegates )
         {
-            if ( client == null || client instanceof Class ) // then preload the cache
+            if( client == null || client instanceof Class ) // then preload the cache
             {
                 WikiEventDelegate delegate = new WikiEventDelegate(client);
                 m_preloadCache.add(delegate);
                 m_delegates.put( client, delegate );
                 return delegate;
             }
-            else if ( !m_preloadCache.isEmpty() )
+            else if( !m_preloadCache.isEmpty() )
             {
                 // then see if any of the cached delegates match the class of the incoming client
-                for ( int i = m_preloadCache.size()-1 ; i >= 0 ; i-- ) // start with most-recently added
+                for( int i = m_preloadCache.size()-1 ; i >= 0 ; i-- ) // start with most-recently added
                 {
                     WikiEventDelegate delegate = (WikiEventDelegate)m_preloadCache.elementAt(i);
-                    if ( delegate.getClientClass() == null
-                            || delegate.getClientClass().equals(client.getClass()) )
+                    if( delegate.getClientClass() == null
+                        || delegate.getClientClass().equals(client.getClass()) )
                     {
                         // we have a hit, so use it, but only on a client we haven't seen before
-                        if ( !m_delegates.keySet().contains(client) ) 
+                        if( !m_delegates.keySet().contains(client) ) 
                         {
                             m_preloadCache.remove(delegate);
                             delegate.setClient( client );
@@ -366,7 +366,7 @@ public class WikiEventManager
             }
             // otherwise treat normally...
             WikiEventDelegate delegate = (WikiEventDelegate)m_delegates.get( client );
-            if ( delegate == null ) 
+            if( delegate == null ) 
             {
                 delegate = new WikiEventDelegate( client );
                 m_delegates.put( client, delegate );
@@ -394,7 +394,7 @@ public class WikiEventManager
         /* A list of event listeners for this instance. */
         //private final EventListenerList m_listenerList = new EventListenerList();
 
-        private TreeSet m_listenerList = new TreeSet(new WikiEventListenerComparator());
+        private ArrayList m_listenerList = new ArrayList();
         
         private Class  m_class  = null;
         private Object m_client = null;
@@ -407,7 +407,7 @@ public class WikiEventManager
          */
         protected WikiEventDelegate( Object client )
         {
-            if ( client instanceof Class ) 
+            if( client instanceof Class ) 
             {
                 m_class = (Class)client;
             } 
@@ -449,7 +449,9 @@ public class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                return Collections.unmodifiableSet(m_listenerList);
+                TreeSet set = new TreeSet( new WikiEventListenerComparator() );
+                set.addAll( m_listenerList );
+                return Collections.unmodifiableSet(set);
             }
         }
 
@@ -507,9 +509,9 @@ public class WikiEventManager
             {
                 synchronized( m_listenerList )
                 {
-                    for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                    for( int i = 0; i < m_listenerList.size(); i++ )
                     {
-                        WikiEventListener listener = (WikiEventListener) i.next();
+                        WikiEventListener listener = (WikiEventListener) m_listenerList.get(i);
                 
                         listener.actionPerformed( event );
                     }
