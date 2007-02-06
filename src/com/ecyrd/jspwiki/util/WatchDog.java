@@ -71,24 +71,25 @@ public class WatchDog
      */
     public static WatchDog getCurrentWatchDog( WikiEngine engine )
     {
-        scrub();
-        
         Thread t = Thread.currentThread();
+        WatchDog wd = null;
         
         WeakReference w = (WeakReference)c_kennel.get( new Integer(t.hashCode()) );
         
-        if( w == null )
+        if( w != null ) wd = (WatchDog)w.get();
+        
+        if( w == null || wd == null )
         {
-            WatchDog wd = new WatchDog( engine, t );
-            
+            wd = new WatchDog( engine, t );
             w = new WeakReference(wd);
+            
             synchronized( c_kennel )
             {
                 c_kennel.put( new Integer(t.hashCode()), w );
             }
         }
         
-        return (WatchDog)w.get();
+        return wd;
     }
     
     /**
@@ -334,9 +335,12 @@ public class WatchDog
      */
     private static class WatchDogThread extends WikiBackgroundThread
     {
+        /** How often the watchdog thread should wake up (in seconds) */
+        private static final int CHECK_INTERVAL = 30;
+
         public WatchDogThread( WikiEngine engine )
         {
-            super(engine, 10);
+            super(engine, CHECK_INTERVAL);
             setName("WatchDog for '"+engine.getApplicationName()+"'");
         }
 
