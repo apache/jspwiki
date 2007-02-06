@@ -26,17 +26,22 @@
     StopWatch sw = new StopWatch();
     sw.start();
     WatchDog w = wiki.getCurrentWatchDog();
-    w.enterState("Generating VIEW response for "+wikiContext.getPage(),60);
+    try {
+        w.enterState("Generating VIEW response for "+wikiContext.getPage(),60);
     
-    // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+        // Set the content type and include the response content
+        response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+        String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                                wikiContext.getTemplate(),
+                                                                "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" /><%
-    sw.stop();
-    if( log.isDebugEnabled() ) log.debug("Total response time from server on page "+pagereq+": "+sw);
-    w.exitState();
+    }
+    finally
+    {
+        sw.stop();
+        if( log.isDebugEnabled() ) log.debug("Total response time from server on page "+pagereq+": "+sw);
+        w.exitState();
+    }
 %>
 
