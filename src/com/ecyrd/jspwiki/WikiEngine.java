@@ -97,18 +97,6 @@ public class WikiEngine
     /** Stores properties. */
     private Properties       m_properties;
 
-    /** The web.xml parameter that defines where the config file is to be found. 
-     *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE. 
-     *  {@value #DEFAULT_PROPERTYFILE}
-     */
-
-    public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
-
-    /** The web.xml parameter that defines where cascading properties can be 
-     * found. Contents of those files will overwrite default properties.
-     */
-    public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.propertyfile.cascade.";
-
     /** Property for application name */
     public static final String PROP_APPNAME      = "jspwiki.applicationName";
     
@@ -151,27 +139,9 @@ public class WikiEngine
 
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
-
-    /** Path to the default property file. 
-     * {@value #DEFAULT_PROPERTYFILE}
-     */
-    public static final String  DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
     
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
-
-    /**
-     *  Contains the default properties for JSPWiki.
-     */
-    private static final String[] DEFAULT_PROPERTIES = 
-    { "jspwiki.specialPage.Login",           "Login.jsp",
-      "jspwiki.specialPage.Logout",          "Logout.jsp",
-      "jspwiki.specialPage.CreateGroup",     "NewGroup.jsp",
-      "jspwiki.specialPage.CreateProfile",   "Register.jsp",
-      "jspwiki.specialPage.EditProfile",     "UserPreferences.jsp",
-      "jspwiki.specialPage.Preferences",     "UserPreferences.jsp",
-      "jspwiki.specialPage.Search",          "Search.jsp",
-      "jspwiki.specialPage.FindPage",        "FindPage.jsp"};
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
@@ -337,7 +307,7 @@ public class WikiEngine
             {
                 if( props == null )
                 {
-                    props = loadWebAppProps( context );
+                    props = PropertyReader.loadWebAppProps( context );
                 }
                 
                 engine = new WikiEngine( context, appid, props );
@@ -364,147 +334,6 @@ public class WikiEngine
     {
         initialize( properties );
     }
-
-    /**
-     * Loads the webapp properties based on servlet context information.
-     * Returns a Properties object containing the settings, or null if unable
-     * to load it. (The default file is WEB-INF/jspwiki.properties, and can
-     * be overridden by setting PARAM_PROPERTYFILE in the server or webapp
-     * configuration.)
-     */
-    private static Properties loadWebAppProps( ServletContext context )
-    {
-        String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
-        InputStream propertyStream = null;
-
-        try
-        {
-            //
-            //  Figure out where our properties lie.
-            //
-            if( propertyFile == null )
-            {
-                context.log("No "+PARAM_PROPERTYFILE+" defined for this context, using default from "+DEFAULT_PROPERTYFILE);
-                //  Use the default property file.
-                propertyStream = context.getResourceAsStream(DEFAULT_PROPERTYFILE);
-            }
-            else
-            {
-                context.log("Reading properties from "+propertyFile+" instead of default.");
-                propertyStream = new FileInputStream( new File(propertyFile) );
-            }
-
-            if( propertyStream == null )
-            {
-                throw new WikiException("Property file cannot be found!"+propertyFile);
-            }
-
-            Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
-            props.load( propertyStream );
-            
-            //this will add additional properties to the default ones:
-            context.log("Loading cascading properties...");
-            loadWebAppPropsCascade(context, props);
-            
-            return( props );
-        }
-        catch( Exception e )
-        {
-            context.log( Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
-        }
-        finally
-        {
-            try
-            {
-                if( propertyStream != null ) propertyStream.close();
-            }
-            catch( IOException e )
-            {
-                context.log("Unable to close property stream - something must be seriously wrong.");
-            }
-        }
-
-        return( null );
-    }
-
-    /**
-     * This method will read additional property files and merge them to the
-     * default properties file. This way it will overwrite the default values
-     * giving you the oportunity to only specify the properties you need to
-     * change in a multiple wiki environment. You define a cascade in the
-     * context mapping of your servlet container. jspwiki.properties.cascade.1
-     * jspwiki.properties.cascade.2 You have to number your cascade in an
-     * decending way starting with one. This means you cannot leave out numbers
-     * in your cascade... This method is based on an idea by Olaf Kaus, see
-     * [JSPWiki:MultipleWikis]
-     * 
-     * @param context -
-     *            where to read the cascade from
-     * @param defaultProperties -
-     *            properties to merge the cascading properties to
-     * @author Christoph Sauer
-     * @since 2.5.x
-     */
-    private static void loadWebAppPropsCascade(ServletContext context, Properties defaultProperties)
-    {
-        if (context.getInitParameter(PARAM_PROPERTYFILE_CASCADEPREFIX + "1") == null)
-        {
-            context.log(" No cascading properties defined for this context");
-            return;
-        }
-
-        // get into cascade...
-        int depth = 0;
-        boolean more = true;
-        InputStream propertyStream = null;
-        while (more)
-        {
-            depth++;
-            String propertyFile = context.getInitParameter(PARAM_PROPERTYFILE_CASCADEPREFIX + depth);
-
-            if (propertyFile == null)
-            {
-                more = false;
-                break;
-            }
-
-            try
-            {
-                context.log(" Reading additional properties from " + propertyFile + " and merge to cascade.");
-                Properties additionalProps = new Properties();
-                propertyStream = new FileInputStream(new File(propertyFile));
-                if (propertyStream == null)
-                {
-                    throw new WikiException(" Property file cannot be found!" + propertyFile);
-                }
-                additionalProps.load(propertyStream);
-                defaultProperties.putAll(additionalProps);
-            }
-            catch (Exception e)
-            {
-                context.log(" " + Release.APPNAME + ": Unable to load and setup properties from " + propertyFile + "."
-                            + e.getMessage());
-            }
-            finally
-            {
-                try
-                {
-                    propertyStream.close();
-                    if (propertyStream != null)
-                    {
-                        propertyStream.close();
-                    }
-                }
-                catch (IOException e)
-                {
-                    context.log(" Unable to close property stream - something must be seriously wrong.");
-                }
-            }
-        }
-
-        return;
-    }
-
     
     /**
      *  Instantiate using this method when you're running as a servlet and
