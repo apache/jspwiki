@@ -51,6 +51,7 @@ public class AllTests extends TestCase
         suite.addTest( WikiEngineTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( PageRenamerTest.suite() );
+        suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( com.ecyrd.jspwiki.plugin.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.xmlrpc.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.providers.AllTests.suite() );

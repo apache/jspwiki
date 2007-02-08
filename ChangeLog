@@ -1,5 +1,18 @@
 2007-02-05  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
+       * 2.5.22
+       
+       * Added variable mechanism in property files. You now
+         can declare a variable as a regular property with
+         prefix 'var.' and then use it with the '$' prefix 
+         in other property values within the property files cascade.
+         
+       * Factored out property reading from WikiEngine into a new
+         class called PropertyReader, since it now represents a distinct
+         concept. Added UnitTest for it.
+
+2007-02-05  Christoph Sauer <sauer AT hs-heilbronn DOT de>
+
        * 2.5.21
        
        * Added possibility to specify cascading properties
