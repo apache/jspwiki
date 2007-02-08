@@ -12,10 +12,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.PageManager;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.UserManager;
@@ -65,7 +62,7 @@ public class Installer
         // Get the servlet context, and file for properties
         ServletContext context = config.getServletContext();
         String path = context.getRealPath("/");
-        m_propertyFile = new File( path, WikiEngine.DEFAULT_PROPERTYFILE );
+        m_propertyFile = new File( path, PropertyReader.DEFAULT_PROPERTYFILE );
         m_props = new CommentedProperties();
         
         // Stash the request
