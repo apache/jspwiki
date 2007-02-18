@@ -41,7 +41,10 @@ public class WikiCommand extends AbstractCommand
 
     public static final Command WORKFLOW
         = new WikiCommand( "workflow", "%uWorkflow.jsp", "WorkflowContent.jsp", null, null );
-    
+
+    public static final Command ADMIN
+        = new WikiCommand( "admin", "%uadmin/Admin.jsp", "AdminContent.jsp", null, null );
+
     private final String m_action;
     
     private final Permission m_permission;
