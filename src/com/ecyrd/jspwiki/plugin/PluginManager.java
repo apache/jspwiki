@@ -154,9 +154,9 @@ public class PluginManager extends ModuleManager
      */
     public static final String PARAM_DEBUG     = "debug";
 
-    Vector  m_searchPath = new Vector();
+    private ArrayList  m_searchPath = new ArrayList();
 
-    Pattern m_pluginPattern;
+    private Pattern m_pluginPattern;
 
     private boolean m_pluginsEnabled = true;
     private boolean m_initStage      = false;
@@ -232,7 +232,7 @@ public class PluginManager extends ModuleManager
      */
     public boolean pluginsEnabled()
     {
-        return( m_pluginsEnabled );
+        return m_pluginsEnabled;
     }
 
     /**
@@ -783,6 +783,7 @@ public class PluginManager extends ModuleManager
         
         private WikiPluginInfo( String className )
         {
+            super(className);
             setClassName( className );
         }
         
@@ -922,4 +923,11 @@ public class PluginManager extends ModuleManager
             return "Plugin :[name=" + m_name + "][className=" + m_className + "]";
         }
     } // WikiPluginClass
+
+    public Collection modules()
+    {
+        ArrayList ls = new ArrayList();
+        ls.addAll( m_pluginClassMap.values() );
+        return ls;
+    }
 }
