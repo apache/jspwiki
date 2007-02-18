@@ -529,4 +529,11 @@ public class PageManager extends ModuleManager
         }
     }
 
+
+    public Collection modules()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

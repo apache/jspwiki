@@ -457,4 +457,10 @@ public class TemplateManager
         
         return res;
     }
+
+    // There are no modules managed by this instance
+    public Collection modules()
+    {
+        return new ArrayList();
+    }
 }

@@ -1,5 +1,7 @@
 package com.ecyrd.jspwiki.modules;
 
+import java.util.Collection;
+
 import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiEngine;
 
@@ -39,4 +41,13 @@ public abstract class ModuleManager
         
         return true;
     }
+    
+    /**
+     * Returns a collection of modules currently managed by this ModuleManager.  Each
+     * entry is an instance of the WikiModuleInfo class.  This method should return something
+     * which is safe to iterate over, even if the underlying collection changes.
+     * 
+     * @return A Collection of WikiModuleInfo instances.
+     */
+    public abstract Collection modules();
 }

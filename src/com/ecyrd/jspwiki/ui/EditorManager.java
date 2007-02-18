@@ -292,7 +292,6 @@ public class EditorManager extends ModuleManager
         extends WikiModuleInfo
     {
         private String m_path;
-        private String m_name;
         
         protected static WikiEditorInfo newInstance( String name, Element el )
         {
@@ -311,13 +310,22 @@ public class EditorManager extends ModuleManager
         
         private WikiEditorInfo( String name )
         {
-            m_name = name;
+            super(name);
         }
         
         public String getPath()
         {
             return m_path;
         }
+    }
+
+    public Collection modules()
+    {
+        ArrayList ls = new ArrayList();
+        
+        ls.addAll( m_editors.values() );
+        
+        return ls;
     }
     
 }
