@@ -198,6 +198,14 @@ public abstract class MarkupParser
         return m_pos;
     }
 
+    /**
+     * Returns the next token in the stream.  This is the most called method
+     * in the entire parser, so it needs to be lean and mean.
+     * 
+     * @return The next token in the stream; or, if the stream is ended, -1.
+     * @throws IOException If something bad happens
+     * @throws NullPointerException If you have not yet created an input document.
+     */
     protected final int nextToken()
         throws IOException
     {
