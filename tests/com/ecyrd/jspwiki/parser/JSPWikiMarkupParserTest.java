@@ -896,6 +896,36 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
+    public void testParagraph6() throws Exception
+    {
+        String src = "[{Counter}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
+                     "In UNIX, the file(1) command can be used.";
+        
+        assertEquals( "<p>1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+                      "<p>In UNIX, the file(1) command can be used.</p>",
+                      translate(src) );
+    }
+
+    public void testParagraph7() throws Exception
+    {
+        String src = "[{$encoding}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
+                     "In UNIX, the file(1) command can be used.";
+        
+        assertEquals( "<p>ISO-8859-1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+                      "<p>In UNIX, the file(1) command can be used.</p>",
+                      translate(src) );
+    }
+
+    public void testParagraph8() throws Exception
+    {
+        String src = "[{SET foo=bar}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n"+
+                     "In UNIX, the file(1) command can be used.";
+        
+        assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n"+
+                      "<p>In UNIX, the file(1) command can be used.</p>",
+                      translate(src) );
+    }
+    
     public void testLinebreak()
     throws Exception
     {
