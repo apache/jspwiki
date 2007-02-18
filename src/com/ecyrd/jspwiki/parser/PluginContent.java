@@ -69,43 +69,80 @@ public class PluginContent extends Text
     {
         String result;
         
-        WikiContext context = ((WikiDocument)getDocument()).getContext();
-        
-        Boolean b = (Boolean)context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
-        if( b != null && !b.booleanValue() ) return "";
-        
+        WikiDocument doc = (WikiDocument)getDocument();
+
+        if( doc == null )
+        {
+            //
+            // This element has not yet been attached anywhere, so we simply assume there is
+            // no rendering and return the plugin name.  This is required e.g. when the 
+            // paragraphify() checks whether the element is empty or not.  We can't of course
+            // know whether the rendering would result in an empty string or not, but let us
+            // assume it does not.
+            //
+            
+            return getPluginName();
+        }
+               
+        WikiContext context = doc.getContext();
+
         try
         {
-            WikiEngine engine = context.getEngine();
-            
-            HashMap parsedParams = new HashMap();
-            
+            Boolean wysiwygEditorMode = (Boolean)context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
+
             //
-            //  Parse any variable instances from the string
+            //  Determine whether we should emit the actual code for this plugin or
+            //  whether we should execute it.  For some plugins we always execute it,
+            //  since they can be edited visually.
             //
-            for( Iterator i = m_params.entrySet().iterator(); i.hasNext(); )
-            {
-                Map.Entry e = (Map.Entry) i.next();
-                
-                Object val = e.getValue();
-                
-                if( val instanceof String )
-                {
-                    val = engine.getVariableManager().expandVariables( context, (String)val );
-                }
-                
-                parsedParams.put( e.getKey(), val );
+            // FIXME: The plugin name matching should not be done here, but in a per-editor resource
+            if( wysiwygEditorMode != null && wysiwygEditorMode.booleanValue() 
+                && !m_pluginName.matches( "Image|FormOpen|FormClose|FormInput|FormTextarea|FormSelect" ) )
+            {        
+                result = "[{" + m_pluginName + " ";            
+            
+                // convert newlines to <br> in case the plugin has a body.
+                String cmdLine = ( (String)m_params.get( "_cmdline" ) ).replaceAll( "\n", "<br/>" );
+            
+                result = result + cmdLine + "}]";
             }
+            else
+            {
+                Boolean b = (Boolean)context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
+                if( b != null && !b.booleanValue() ) return "";
+
+                WikiEngine engine = context.getEngine();
             
-            result = engine.getPluginManager().execute( context,
-                                                        m_pluginName,
-                                                        parsedParams );
+                HashMap parsedParams = new HashMap();
+            
+                //
+                //  Parse any variable instances from the string
+                //
+                for( Iterator i = m_params.entrySet().iterator(); i.hasNext(); )
+                {
+                    Map.Entry e = (Map.Entry) i.next();
+                
+                    Object val = e.getValue();
+                
+                    if( val instanceof String )
+                    {
+                        val = engine.getVariableManager().expandVariables( context, (String)val );
+                    }
+                
+                    parsedParams.put( e.getKey(), val );
+                }
+            
+                result = engine.getPluginManager().execute( context,
+                                                            m_pluginName,
+                                                            parsedParams );
+            }
         }
         catch( Exception e )
         {
             // log.info("Failed to execute plugin",e);
-            return JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage()).getText();
+            result = JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage()).getText();
         }
+        
         
         return result;
     }

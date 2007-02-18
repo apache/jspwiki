@@ -24,6 +24,7 @@ import org.jdom.Text;
 
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  Stores the contents of a WikiVariable in a WikiDocument DOM tree.
@@ -46,20 +47,36 @@ public class VariableContent extends Text
      */
     public String getValue()
     {
+        String result = "";
         WikiDocument root = (WikiDocument) getDocument();
+
+        if( root == null )
+        {
+            // See similar note in PluginContent
+            return m_varName;
+        }
+        
         WikiContext context = root.getContext();
 
-        if( context == null )
-            return "No WikiContext available: INTERNAL ERROR";
+        Boolean wysiwygEditorMode = (Boolean)context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
         
-        String result = "";
-        try
+        if( wysiwygEditorMode != null && wysiwygEditorMode.booleanValue() )
         {
-            result = context.getEngine().getVariableManager().parseAndGetValue( context, m_varName );
+            result = "[" + m_varName + "]";
         }
-        catch( NoSuchVariableException e )
+        else
         {
-            result = JSPWikiMarkupParser.makeError("No such variable: "+e.getMessage()).getText(); 
+            if( context == null )
+                return "No WikiContext available: INTERNAL ERROR";
+        
+            try
+            {
+                result = context.getEngine().getVariableManager().parseAndGetValue( context, m_varName );
+            }
+            catch( NoSuchVariableException e )
+            {
+                result = JSPWikiMarkupParser.makeError("No such variable: "+e.getMessage()).getText(); 
+            }
         }
 
         return StringEscapeUtils.escapeXml( result );
