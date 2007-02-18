@@ -16,6 +16,7 @@
       <path>editors/plain.jsp</path>
       <minVersion>2.4</minVersion>
       <maxVersion>2.5</maxVersion>
+      <adminBean>com.ecyrd.jspwiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
    
    <editor name="WikiWizard">
