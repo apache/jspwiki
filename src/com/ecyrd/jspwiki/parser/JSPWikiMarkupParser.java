@@ -2659,6 +2659,8 @@ public class JSPWikiMarkupParser
         throws IOException
     {
         WikiDocument d = new WikiDocument( m_context.getPage() );
+        d.setContext( m_context );
+        
         Element rootElement = new Element("domroot");
         
         d.setRootElement( rootElement );
