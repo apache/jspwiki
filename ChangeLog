@@ -1,3 +1,29 @@
+2007-02-18  Janne Jalkanen <jalkanen@ecyrd.com>
+
+       * 2.5.23
+       
+       * Added David Au's patches to re-enable FCK.  All you now need
+       to do is to install FCK, and enable it in the ini/jspwiki_modules.xml.
+       This also added a new mode for RenderingManager: WYSIWYG_EDITOR_MODE,
+       which will not render plugins (except some), but keep them in plain
+       text format.
+       
+       * web.xml now explicitly declares Java Servlet API 2.4.
+       
+       * Added AdminBeanIteratorTag
+       
+       * Bug fix: putting a plugin or a variable on the first line would
+       cause a crash, if there were more than one paragraph on the page.
+       Thanks to Terry Steichen for debugging.
+       
+       * There is now a rudimentary plugin-based administration interface
+       in admin/Admin.jsp (and the corresponding template files).  It does not
+       quite work yet, and it's definitely unstable, but it's been submitted
+       to get some comments.  The idea is that you can declare in your
+       jspwiki_module.xml an "adminBean" class, which then offers an
+       administrative interface to your plugin.  As an example, a 
+       PlainEditorAdminBean is implemented (partly).
+
 2007-02-05  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
        * 2.5.22
