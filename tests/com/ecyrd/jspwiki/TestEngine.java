@@ -94,7 +94,11 @@ public class TestEngine extends WikiEngine
 
     public static final InputStream findTestProperties( String properties )
     {
-        return TestEngine.class.getResourceAsStream( properties );
+        InputStream in = TestEngine.class.getResourceAsStream( properties );
+        
+        if( in == null ) throw new InternalWikiException("Unable to locate test property resource: "+properties);
+        
+        return in;
     }
 
     /**
