@@ -14,6 +14,21 @@
   <shortname>jspwiki</shortname>
 
   <tag>
+    <name>AdminBeanIterator</name>
+    <tagclass>com.ecyrd.jspwiki.tags.AdminBeanIteratorTag</tagclass>
+    <teiclass>com.ecyrd.jspwiki.tags.AdminBeanIteratorInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+       <name>id</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>type</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>  
+
+  <tag>
     <name>AttachmentsIterator</name>
     <tagclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorTag</tagclass>
     <teiclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorInfo</teiclass>
