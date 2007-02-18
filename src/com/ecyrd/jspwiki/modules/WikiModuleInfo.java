@@ -26,16 +26,28 @@ public class WikiModuleInfo
     protected URL    m_resource;
     protected String m_minVersion;
     protected String m_maxVersion;
+    protected String m_adminBeanClass;
+    
+    public WikiModuleInfo( String name )
+    {
+        m_name = name;
+    }
     
     protected void initializeFromXML( Element el )
     {
-        m_scriptLocation = el.getChildText("script");
+        m_scriptLocation     = el.getChildText("script");
         m_stylesheetLocation = el.getChildText("stylesheet");
-        m_author = el.getChildText("author");
-        m_minVersion = el.getChildText("minVersion");
-        m_maxVersion = el.getChildText("maxVersion");
+        m_author             = el.getChildText("author");
+        m_minVersion         = el.getChildText("minVersion");
+        m_maxVersion         = el.getChildText("maxVersion");
+        m_adminBeanClass     = el.getChildText("adminBean");
     }
 
+    public String getAdminBeanClass()
+    {
+        return m_adminBeanClass;
+    }
+    
     /**
      *  Returns the common name for this particular module.  Note that
      *  this is not the class name, nor is it an alias.  For different modules
