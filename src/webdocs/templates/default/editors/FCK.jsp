@@ -8,8 +8,11 @@
     This provides the FCK editor for JSPWiki.
 --%>
 <%  WikiContext context = WikiContext.findContext( pageContext );
+    context.setVariable("WYSIWYG_EDITOR_MODE", Boolean.TRUE);
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
+    String changenote = (String)session.getAttribute("changenote");
+    changenote = changenote != null ? TextUtil.replaceEntities(changenote) : "";    
  %>   
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
@@ -37,9 +40,10 @@
    oFCKeditor.BasePath = 'scripts/fckeditor/';
    oFCKeditor.Value = '<%=pageAsHtml%>';
    oFCKeditor.Width  = '100%';
-   oFCKeditor.Height = '500';
-   oFCKeditor.ToolbarSet = 'JSPWiki';
-   oFCKeditor.Config['CustomConfigurationsPath'] = '<wiki:Link format="url" jsp="scripts/fckconfig.js"/>';
+   oFCKeditor.Height = '450';
+   oFCKeditor.Config['CustomConfigurationsPath'] = '<%=request.getContextPath()%>/scripts/fckconfig.js';
+   oFCKeditor.Config['StylesXmlPath'] = '<%=request.getContextPath()%>/scripts/fckstyles.xml';
+   oFCKeditor.Config['TemplatesXmlPath'] = '<%=request.getContextPath()%>/scripts/fcktemplates.xml';
    oFCKeditor.Create();
 </script>
 <noscript>
@@ -47,6 +51,12 @@
   <div class="error">You need to enable Javascript in your browser to use the WYSIWYG editor</div>
 </noscript>
 
+   <wiki:CheckRequestContext context="edit">
+   	<p>
+       <label for="changenote">Change note</label>
+       <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
+    </p>
+   </wiki:CheckRequestContext>
    <wiki:CheckRequestContext context="comment">
 
         <table border="0" class="small">
@@ -67,8 +77,10 @@
     <p>
         <input name='ok' type='submit' value='Save' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <%--
         <input name='preview' type='submit' value='Preview' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        --%>
         <input name='cancel' type='submit' value='Cancel' />
     </p>
 </div>

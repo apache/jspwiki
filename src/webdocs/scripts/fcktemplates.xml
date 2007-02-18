@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Templates imagesBasePath="fck_template/images/">
+
+	<Template title="Table of Contents Plugin">
+		<Description>
+		This plugin will automatically generate a table of contents
+		that provides links to all headings on your page. Put this at the top of your page.
+		</Description>
+		<Html>
+			<![CDATA[
+				[{TableOfContents numbered='true'}]
+			]]>
+		</Html>
+	</Template>
+
+	<Template title="Insert Page Plugin">
+		<Description>
+			This plugin will insert a copy of another page into the current page.
+			You'll have to specify the name of the page to insert.
+		</Description>
+		<Html>
+			<![CDATA[
+				[{InsertPage page='name of page to insert'}]
+			]]>
+		</Html>
+	</Template>
+
+	<Template title="Current Time Plugin">
+		<Description>
+		This plugin will display the current date and local time of the server when the page is viewed.
+		</Description>
+		<Html>
+			<![CDATA[
+				The current date and local time on this server is [{CurrentTimePlugin format='MMMM dd, yyyy hh:mm a z'}].
+			]]>
+		</Html>
+	</Template>
+
+	<Template title="Sortable Table">
+		<Description>
+		Insert a new table that can be sorted when you click on its column headers.
+		</Description>
+		<Html>
+			<![CDATA[
+				<div class="sortable">
+					<table border="1" class="wikitable">
+							<tbody>
+									<tr class="odd">
+											<th class="sortAscending">header1</th>
+											<th class="sort">header2</th>
+											<th class="sort">header3</th>
+									</tr>
+									<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+									</tr>
+									<tr class="odd">
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+									</tr>
+									<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+									</tr>
+									<tr class="odd">
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+									</tr>
+									<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+									</tr>
+									<tr class="odd">
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+									</tr>
+							</tbody>
+					</table>
+				</div>
+			]]>
+		</Html>
+	</Template>
+
+</Templates>

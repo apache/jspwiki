@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom.Element;
+import org.jdom.Attribute;
 import org.jdom.JDOMException;
 import org.jdom.Text;
 import org.jdom.xpath.XPath;
@@ -80,35 +81,52 @@ public class XHtmlElementToWikiTranslator
         else if( element instanceof Element )
         {
             Element base = (Element)element;
+            String n = base.getName().toLowerCase();
             if( "imageplugin".equals( base.getAttributeValue( "class" ) ) )
             {
                 printImage( base );
+            }
+            else if( "wikiform".equals( base.getAttributeValue( "class" ) ) )
+            {
+                // only print the children if the div's class="wikiform", but not the div itself.
+                printChildren( base );
             }
             else
             {
                 boolean bold = false;
                 boolean italic = false;
-                boolean monospace = false;
                 String cssSpecial = null;
+                String cssClass = base.getAttributeValue( "class" );
                 Map styleProps = getStylePropertiesLowerCase( base );
                 if( styleProps != null )
                 {
                     String weight = (String)styleProps.remove( "font-weight" );
                     String style = (String)styleProps.remove( "font-style" );
-                    String font = (String)styleProps.remove( "font-family" );
-                    String center = (String)styleProps.get( "text-align" );
-                    if( "center".equals( center ) )
+                    
+                    if( n.equals( "p" ) )
                     {
-                        styleProps.put( "display", "block" );
-                    }
+                        // change it so we can print out the css styles for <p>
+                        n = "div";
+                    } 
+                    
                     italic = "oblique".equals( style ) || "italic".equals( style );
                     bold = "bold".equals( weight ) || "bolder".equals( weight );
-                    monospace = font != null && (font.indexOf( "mono" ) >= 0 || font.indexOf( "courier" ) >= 0);
                     if( !styleProps.isEmpty() )
                     {
                         cssSpecial = propsToStyleString( styleProps );
                     }
                 }
+                if( cssClass != null )
+                {
+                    if( n.equals( "div" ) )
+                    {
+                        m_out.print( "\n%%" + cssClass + " \n" );
+                    }
+                    else if( n.equals( "span" ) )
+                    {
+                        m_out.print( "%%" + cssClass + " " );
+                    }
+                }
                 if( bold )
                 {
                     m_out.print( "__" );
@@ -117,24 +135,28 @@ public class XHtmlElementToWikiTranslator
                 {
                     m_out.print( "''" );
                 }
-                if( monospace )
-                {
-                    m_out.print( "{{{" );
-                    m_preStack.push();
-                }
                 if( cssSpecial != null )
                 {
-                    m_out.print( "%%(" + cssSpecial + " )" );
+                    if( n.equals( "div" ) )
+                    {
+                        m_out.print( "\n%%(" + cssSpecial + " )\n" );
+                    }
+                    else
+                    {
+                        m_out.print( "%%(" + cssSpecial + " )" );
+                    }                    
                 }
                 printChildren( base );
                 if( cssSpecial != null )
                 {
-                    m_out.print( "%%" );
-                }
-                if( monospace )
-                {
-                    m_preStack.pop();
-                    m_out.print( "}}}" );
+                    if( n.equals( "div" ) )
+                    {
+                        m_out.print( "\n%%\n" );
+                    }
+                    else
+                    {
+                        m_out.print( "%%" );
+                    }
                 }
                 if( italic )
                 {
@@ -143,6 +165,17 @@ public class XHtmlElementToWikiTranslator
                 if( bold )
                 {
                     m_out.print( "__" );
+                }
+                if( cssClass != null )
+                {
+                    if( n.equals( "div" ) )
+                    {
+                        m_out.print( "\n%%\n" );
+                    }
+                    else if( n.equals( "span" ) )
+                    {
+                        m_out.print( "%%" );
+                    }
                 }
             }
         }
@@ -165,13 +198,13 @@ public class XHtmlElementToWikiTranslator
                 }
                 else if( n.equals( "h2" ) )
                 {
-                    m_out.print( "!!" );
+                    m_out.print( "!!!" );
                     print( e );
                     m_out.println();
                 }
                 else if( n.equals( "h3" ) )
                 {
-                    m_out.print( "!" );
+                    m_out.print( "!!" );
                     print( e );
                     m_out.println();
                 }
@@ -241,7 +274,13 @@ public class XHtmlElementToWikiTranslator
                 }
                 else if( n.equals( "a" ) )
                 {
-                    if( !isIgnorableWikiMarkupLink( e ) )
+                    if( isUndefinedPageLink( e ) )
+                    {
+                        m_out.print( "[" );   
+                        printChildren( e );
+                        m_out.print( "]" );
+                    }
+                    else if( !isIgnorableWikiMarkupLink( e ) )
                     {
                         if( e.getChild( "IMG" ) != null )
                         {
@@ -286,11 +325,51 @@ public class XHtmlElementToWikiTranslator
                     print( e );
                     m_out.print( "__" );
                 }
-                else if( n.equals( "i" ) || n.equals("em") )
+                else if( n.equals( "i" ) || n.equals("em") || n.equals( "address" ) )
                 {
                     m_out.print( "''" );
                     print( e );
                     m_out.print( "''" );
+                }
+                else if( n.equals( "u" ) )
+                {
+                    m_out.print( "%%(text-decoration:underline;) " );
+                    print( e );
+                    m_out.print( "%%" );
+                }
+                else if( n.equals( "strike" ) )
+                {
+                    m_out.print( "%%strike " );
+                    print( e );
+                    m_out.print( "%%" );
+                    // NOTE: don't print a space before or after the double percents because that can break words into two.
+                    // For example: %%(color:red)ABC%%%%(color:green)DEF%% is different from %%(color:red)ABC%% %%(color:green)DEF%%
+                }
+                else if( n.equals( "sup" ) )
+                {
+                    m_out.print( "%%sup " );
+                    print( e );
+                    m_out.print( "%%" );
+                }
+                else if( n.equals( "sub" ) )
+                {
+                    m_out.print( "%%sub " );
+                    print( e );
+                    m_out.print( "%%" );
+                }
+                else if( n.equals("dl") )
+                {
+                    print( e );
+                }
+                else if( n.equals("dt") )
+                {
+                    m_out.print( ";" );
+                    print( e );
+                }
+                else if( n.equals("dd") )
+                {
+                    m_out.print( ":" );
+                    print( e );
                 }
                 else if( n.equals( "ul" ) )
                 {
@@ -314,7 +393,7 @@ public class XHtmlElementToWikiTranslator
                 }
                 else if( n.equals( "pre" ) )
                 {
-                    m_out.print( "{{{" );
+                    m_out.print( "\n{{{" ); // start JSPWiki "code blocks" on a new line
                     m_preStack.push();
                     print( e );
                     m_preStack.pop();
@@ -326,7 +405,9 @@ public class XHtmlElementToWikiTranslator
                     m_preStack.push();
                     print( e );
                     m_preStack.pop();
-                    m_out.println( "}}" );
+                    m_out.print( "}}" );
+                    // NOTE: don't print a newline after the closing brackets because if the Text is inside 
+                    // a table or list, it would break it if there was a subsequent row or list item.
                 }
                 else if( n.equals( "img" ) )
                 {
@@ -337,6 +418,120 @@ public class XHtmlElementToWikiTranslator
                         m_out.print( "]" );
                         m_out.print( " " );
                     }
+                }
+                else if( n.equals( "form" ) )
+                {
+                    // remove the hidden input where name="formname" since a new one will be generated again when the xhtml is rendered.
+                    Element formName = (Element)XPath.selectSingleNode( e, "INPUT[@name='formname']" );
+                    if( formName != null ){
+                        formName.detach();
+                    }
+                    
+                    String name = e.getAttributeValue( "name" );
+                    
+                    m_out.print( "[{FormOpen" );
+                    
+                    if( name != null )
+                    {
+                        m_out.print( " form='" + name + "'" );
+                    }
+                    
+                    m_out.print( "}]" );
+                    
+                    print( e );
+                    m_out.print( "[{FormClose}]" );
+                }
+                else if( n.equals( "input" ) )
+                {
+                    String type = e.getAttributeValue( "type" );
+                    String name = e.getAttributeValue( "name" );
+                    String value = e.getAttributeValue( "value" );
+                    String checked = e.getAttributeValue( "checked" );
+                    
+                    m_out.print( "[{FormInput" );
+                    
+                    if( type != null )
+                    {
+                        m_out.print( " type='" + type + "'" );
+                    }
+                    if( name != null )
+                    {
+                        // remove the "nbf_" that was prepended since new one will be generated again when the xhtml is rendered.                        
+                        if( name.startsWith( "nbf_" ) )
+                        {
+                            name = name.substring( 4, name.length( ));
+                        }
+                        m_out.print( " name='" + name + "'" );
+                    }
+                    if( value != null )
+                    {
+                        m_out.print( " value='" + value + "'" );
+                    }
+                    if( checked != null )
+                    {
+                        m_out.print( " checked='" + checked + "'" );
+                    }
+                    
+                    m_out.print( "}]" );
+                    
+                    print( e );
+                }
+                else if( n.equals( "textarea" ) )
+                {
+                    String name = e.getAttributeValue( "name" );
+                    String rows = e.getAttributeValue( "rows" );
+                    String cols = e.getAttributeValue( "cols" );
+                    
+                    m_out.print( "[{FormTextarea" );
+                    
+                    if( name != null )
+                    {
+                        if( name.startsWith( "nbf_" ) )
+                        {
+                            name = name.substring( 4, name.length( ));
+                        }
+                        m_out.print( " name='" + name + "'" );
+                    }
+                    if( rows != null )
+                    {
+                        m_out.print( " rows='" + rows + "'" );
+                    }
+                    if( cols != null )
+                    {
+                        m_out.print( " cols='" + cols + "'" );
+                    }
+                    
+                    m_out.print( "}]" );
+                    print( e );
+                }
+                else if( n.equals( "select" ) )
+                {
+                    String name = e.getAttributeValue( "name" );
+                    
+                    m_out.print( "[{FormSelect" );
+                    
+                    if( name != null )
+                    {
+                        if( name.startsWith( "nbf_" ) )
+                        {
+                            name = name.substring( 4, name.length( ));
+                        }
+                        m_out.print( " name='" + name + "'" );
+                    }
+                    
+                    m_out.print( " value='" );
+                    print( e );
+                    m_out.print( "'}]" );
+                }
+                else if( n.equals( "option" ) )
+                {
+                    Attribute selected = e.getAttribute( "selected" );
+                    if( selected !=  null )
+                    {
+                        m_out.print( "*" );
+                    }
+                    print( e );
+                    m_out.print( ";" );
                 }
                 else
                 {
@@ -426,12 +621,91 @@ public class XHtmlElementToWikiTranslator
         return (ref != null && ref.startsWith( m_config.getPageInfoJsp() ))
                || (class_ != null && class_.trim().equalsIgnoreCase( m_config.getOutlink() ));
     }
+    
+    /**
+     * Checks if the link points to an undefined page.
+     */
+    private boolean isUndefinedPageLink( Element a)
+    {
+        String ref = a.getAttributeValue( "href" );
+        String classVal = a.getAttributeValue( "class" );
+        
+        return ( ref != null && classVal != null && classVal.equals( "editpage" ) ); 
+    }
 
     private Map getStylePropertiesLowerCase( Element base ) throws IOException
     {
+        String n = base.getName().toLowerCase();
+        
         //"font-weight: bold; font-style: italic;"
         String style = base.getAttributeValue( "style" );
         if( style == null )
+        {
+            style = "";
+        }
+        
+        if( n.equals( "p" ) || n.equals( "div" ) )
+        {
+            String align = base.getAttributeValue( "align" );
+            if( align != null )
+            {
+                // only add the value of the align attribute if the text-align style didn't already exist.
+                if( style.indexOf( "text-align" ) == -1 )
+                {
+                    style = style + ";text-align:" + align + ";";
+                }
+            }
+        }
+
+        
+        
+        if( n.equals( "font" ) )
+        {
+            String color = base.getAttributeValue( "color" );
+            String face = base.getAttributeValue( "face" );
+            String size = base.getAttributeValue( "size" );
+            if( color != null )
+            {
+                style = style + "color:" + color + ";";
+            }
+            if( face != null )
+            {
+                style = style + "font-family:" + face + ";";
+            }
+            if( size != null )
+            {
+                if( size.equals( "1" ) )
+                {
+                    style = style + "font-size:xx-small;";
+                }
+                else if( size.equals( "2" ) )
+                {
+                    style = style + "font-size:x-small;";
+                }
+                else if( size.equals( "3" ) )
+                {
+                    style = style + "font-size:small;";
+                }
+                else if( size.equals( "4" ) )
+                {
+                    style = style + "font-size:medium;";
+                }
+                else if( size.equals( "5" ) )
+                {
+                    style = style + "font-size:large;";
+                }
+                else if( size.equals( "6" ) )
+                {
+                    style = style + "font-size:x-large;";
+                }
+                else if( size.equals( "7" ) )
+                {
+                    style = style + "font-size:xx-large;";
+                }
+            }
+        }
+
+        if( style.equals( "" ) )
         {
             return null;
         }
@@ -459,6 +733,11 @@ public class XHtmlElementToWikiTranslator
             if( ref.startsWith( m_config.getWikiJspPage() ) )
             {
                 ref = ref.substring( m_config.getWikiJspPage().length() );
+                
+                // Handle links with section anchors. 
+                // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
+                // to this wiki string "TargetPage#Heading2".
+                ref = ref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" );                
             }
             if( m_config.getPageName() != null )
             {
