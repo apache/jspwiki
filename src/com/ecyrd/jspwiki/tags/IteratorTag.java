@@ -84,10 +84,21 @@ public abstract class IteratorTag
         m_iterator = null;
     }
 
+    /**
+     *  Override this method to reset your own iterator.
+     */
+    public void resetIterator()
+    {
+        // No operation here
+    }
+    
     public int doStartTag()
     {
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
                                                                 PageContext.REQUEST_SCOPE );
+        
+        resetIterator();
+        
         if( m_iterator == null ) return SKIP_BODY;
 
         if( m_iterator.hasNext() )
@@ -107,7 +118,11 @@ public abstract class IteratorTag
         //  Build a clone of the current context
         //
         WikiContext context = (WikiContext)m_wikiContext.clone();
-        context.setPage( (WikiPage)m_iterator.next() );
+        
+        Object o = m_iterator.next();
+        
+        if( o instanceof WikiPage )
+            context.setPage( (WikiPage)o );
 
         //
         //  Push it to the iterator stack, and set the id.
@@ -116,7 +131,7 @@ public abstract class IteratorTag
                                   context,
                                   PageContext.REQUEST_SCOPE );
         pageContext.setAttribute( getId(),
-                                  context.getPage() );
+                                  o );
     }
 
     public int doEndTag()
