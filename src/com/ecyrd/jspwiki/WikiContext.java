@@ -147,7 +147,9 @@ public class WikiContext
     
     /** Same as NONE; this is just a clarification. */
     public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
-    
+
+    public static final String    ADMIN    = WikiCommand.ADMIN.getRequestContext();
+
     private static final Logger   log      = Logger.getLogger( WikiContext.class );
     
     private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
