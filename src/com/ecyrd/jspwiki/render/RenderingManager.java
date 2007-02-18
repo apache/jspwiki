@@ -85,6 +85,8 @@ public class RenderingManager implements WikiEventListener, InternalModule
      */
     private         Constructor m_rendererConstructor;
 
+    public static final String WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
+
     public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
     
     /**
