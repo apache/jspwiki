@@ -19,7 +19,9 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
@@ -57,10 +59,11 @@ import com.ecyrd.jspwiki.render.RenderingManager;
 import com.ecyrd.jspwiki.rss.RSSGenerator;
 import com.ecyrd.jspwiki.rss.RSSThread;
 import com.ecyrd.jspwiki.search.SearchManager;
+import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.ui.CommandResolver;
 import com.ecyrd.jspwiki.ui.EditorManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
-import com.ecyrd.jspwiki.ui.Command;
+import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.workflow.Workflow;
@@ -242,6 +245,8 @@ public class WikiEngine
 
     /** Each engine has its own workflow manager. */
     private WorkflowManager m_workflowMgr = null;
+
+    private AdminBeanManager m_adminBeanManager;
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
@@ -507,6 +512,8 @@ public class WikiEngine
             getFilterManager().addPageFilter(m_searchManager, -1002 );
             
             m_internationalizationManager = new InternationalizationManager(this);
+            
+            m_adminBeanManager = new AdminBeanManager(this);
 
         }
         
@@ -1964,6 +1971,11 @@ public class WikiEngine
         return m_groupManager;
     }
 
+    public AdminBeanManager getAdminBeanManager()
+    {
+        return m_adminBeanManager;
+    }
+    
     /**
      * Returns the AclManager employed by this WikiEngine.
      * The AclManager is lazily initialized.
