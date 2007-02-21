@@ -1,11 +1,8 @@
 
 package com.ecyrd.jspwiki.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
@@ -45,14 +42,14 @@ public class CommentedPropertiesTest extends TestCase
         
         // Length of stored string should now be 5 bytes more
         assertEquals( 208+5, m_props.toString().length() );
-        assertTrue( m_props.toString().contains( "newValue" ) );
+        assertTrue( m_props.toString().indexOf( "newValue" ) != -1 );
         
         // Create new property; should add 21 (1+7+3+9+1) bytes
         m_props.setProperty( "newProp", "newValue2" );
         m_props.containsKey( "newProp" );
         m_props.containsValue( "newValue2" );
         assertEquals( 208+5+21, m_props.toString().length() );
-        assertTrue( m_props.toString().contains( "newProp = newValue2" ) );
+        assertTrue( m_props.toString().indexOf( "newProp = newValue2" ) != -1 );
     }
     
     public void testRemove()
@@ -140,7 +137,7 @@ public class CommentedPropertiesTest extends TestCase
         }
         
         // Construct new file in same directory
-        File testFile = new File( url.toURI() );
+        File testFile = new File( new URI(url.toString()) );
         File dir = testFile.getParentFile();
         return new File( dir, file );
     }
@@ -157,7 +154,7 @@ public class CommentedPropertiesTest extends TestCase
         File file = null;
         try
         {
-            file = new File( url.toURI() );
+            file = new File( new URI(url.toString()) );
         }
         catch ( URISyntaxException e )
         {
