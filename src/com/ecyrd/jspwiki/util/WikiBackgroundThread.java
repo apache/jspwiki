@@ -77,6 +77,18 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     }
     
     /**
+     *  Requests the shutdown of this background thread.  Note that the shutdown
+     *  is not immediate.
+     *  
+     *  @since 2.4.92
+     *
+     */
+    public void shutdown()
+    {
+        m_killMe = true;
+    }
+    
+    /**
      * Runs the background thread's {@link #backgroundTask()} method
      * at the interval specified at construction.
      * The thread will initially pause for a full sleep interval

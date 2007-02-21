@@ -50,6 +50,7 @@ import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.WatchDog;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
@@ -597,7 +598,9 @@ public class LuceneSearchProvider implements SearchProvider
         protected static final int INITIAL_DELAY = 60;
         private final LuceneSearchProvider m_provider;
         
-        private int initialDelay;
+        private int m_initialDelay;
+        
+        private WatchDog m_watchdog;
         
         private LuceneUpdater( WikiEngine engine, LuceneSearchProvider provider, 
                                int initialDelay, int indexDelay )
@@ -609,22 +612,28 @@ public class LuceneSearchProvider implements SearchProvider
         
         public void startupTask() throws Exception
         {
+            m_watchdog = getEngine().getCurrentWatchDog();
+            
             // Sleep initially...
             try
             {
-                Thread.sleep( initialDelay * 1000L );
+                Thread.sleep( m_initialDelay * 1000L );
             }
             catch( InterruptedException e ) 
             { 
                 throw new InternalWikiException("Interrupted while waiting to start."); 
             }
             
+            m_watchdog.enterState("Full reindex");
             // Reindex everything
             m_provider.doFullLuceneReindex();
+            m_watchdog.exitState();
         }
         
         public void backgroundTask() throws Exception
         {
+            m_watchdog.enterState("Emptying index queue", 60);
+            
             synchronized ( m_provider.m_updates )
             {
                 while( m_provider.m_updates.size() > 0 )
@@ -635,6 +644,8 @@ public class LuceneSearchProvider implements SearchProvider
                     m_provider.updateLuceneIndex(page, text);
                 }
             }
+            
+            m_watchdog.exitState();
         }
         
     }

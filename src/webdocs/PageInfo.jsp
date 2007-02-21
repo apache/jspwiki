@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -14,6 +15,10 @@
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getName();
     
+    WatchDog w = wiki.getCurrentWatchDog();
+    try{
+    w.enterState("Generating INFO response",60);
+    
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
@@ -21,4 +26,4 @@
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 
-
+<% } finally { w.exitState(); } %>

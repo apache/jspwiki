@@ -37,6 +37,9 @@
         return;
     }
 
+    WatchDog w = wiki.getCurrentWatchDog();
+    w.enterState("Generating RSS",60);
+    
     // Set the mode and type for the feed
     String      mode        = request.getParameter("mode");
     String      type        = request.getParameter("type");
@@ -95,6 +98,7 @@
     if( !hasChanged && changed.size() > 0 )
     {
         response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+        w.exitState();
         return;
     }
 
@@ -106,3 +110,4 @@
     out.println(wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type ));
 %>
 <%-- </oscache:cache> --%>
+<% w.exitState(); %>

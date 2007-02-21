@@ -41,7 +41,7 @@ function confirmDelete()
 
 <wiki:PageExists>
 
-<wiki:TabbedSection defaultTab="<%=request.getParameter("tab")%>">
+<wiki:TabbedSection defaultTab='<%=request.getParameter("tab")%>'>
 <%-- part 1 : normal wiki pages --%>
 
 <wiki:PageType type="page">

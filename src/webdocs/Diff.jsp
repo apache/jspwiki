@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.InsertDiffTag" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -15,6 +16,11 @@
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getName();
 
+    WatchDog w = wiki.getCurrentWatchDog();
+    try
+    {
+    w.enterState("Generating INFO response",60);
+    
     String pageurl = wiki.encodeName( pagereq );
 
     // If "r1" is null, then assume current version (= -1)
@@ -64,3 +70,4 @@
                                                             wikiContext.getTemplate(),
                                                             "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
+<% } finally { w.exitState(); } %>

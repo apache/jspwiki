@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -24,15 +25,23 @@
     
     StopWatch sw = new StopWatch();
     sw.start();
+    WatchDog w = wiki.getCurrentWatchDog();
+    try {
+        w.enterState("Generating VIEW response for "+wikiContext.getPage(),60);
     
-    // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+        // Set the content type and include the response content
+        response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+        String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                                wikiContext.getTemplate(),
+                                                                "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" /><%
-    sw.stop();
-    if( log.isDebugEnabled() ) log.debug("Total response time from server on page "+pagereq+": "+sw);
+    }
+    finally
+    {
+        sw.stop();
+        if( log.isDebugEnabled() ) log.debug("Total response time from server on page "+pagereq+": "+sw);
+        w.exitState();
+    }
 %>
 
