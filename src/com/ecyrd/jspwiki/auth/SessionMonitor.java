@@ -95,8 +95,44 @@ public class SessionMonitor implements HttpSessionListener
         m_engine = engine;
     }
 
+    /**
+     *  Just looks for a WikiSession, does not create a new one.
+     *  
+     *  @param session
+     *  @return
+     */
+    private WikiSession findSession( HttpSession session )
+    {
+        WikiSession wikiSession = null;
+        String sid = ( session == null ) ? "(null)" : session.getId();
+        WeakReference storedSession = ((WeakReference)m_sessions.get( sid ));
+        String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
+        
+        if( storedSession == null ) 
+        {
+            try
+            {
+                storedSession = (WeakReference)session.getAttribute( wikiSessionName );
+            }
+            catch( IllegalStateException e )
+            {
+                // We just tried calling on an invalidated session.  This only
+                // happens in very special circumstances, so we can just return
+            }
+        }
 
-    
+        // If the weak reference returns a wiki session, return it
+        if( storedSession != null && storedSession.get() instanceof WikiSession )
+        {
+            if( log.isDebugEnabled() )
+            {
+                log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
+            }
+            wikiSession = (WikiSession) storedSession.get();
+        }
+
+        return wikiSession;
+    }
     /**
      * <p>Looks up the wiki session associated with a user's Http session
      * and adds it to the session cache. This method will return the 
@@ -111,29 +147,12 @@ public class SessionMonitor implements HttpSessionListener
      */
     public final WikiSession find( HttpSession session )
     {
-        // Look for a WikiSession associated with the user's Http Session
-        // and create one if it isn't there yet.
-        WikiSession wikiSession;
+        WikiSession wikiSession = findSession(session);
         String sid = ( session == null ) ? "(null)" : session.getId();
-        WeakReference storedSession = ((WeakReference)m_sessions.get( sid ));
         String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
-        if( storedSession == null ) 
-        {
-            storedSession = (WeakReference)session.getAttribute( wikiSessionName );
-        }
-
-        // If the weak reference returns a wiki session, return it
-        if( storedSession != null && storedSession.get() instanceof WikiSession )
-        {
-            if( log.isDebugEnabled() )
-            {
-                log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
-            }
-            wikiSession = (WikiSession) storedSession.get();
-        }
         
         // Otherwise, create a new guest session and stash it.
-        else
+        if( wikiSession == null )
         {
             if( log.isDebugEnabled() )
             {
@@ -144,8 +163,9 @@ public class SessionMonitor implements HttpSessionListener
             {
                 m_sessions.put( sid, new WeakReference( wikiSession ) );
             }
-            session.setAttribute( wikiSessionName, new WeakReference( wikiSession ) );
+            session.setAttribute( wikiSessionName, new WeakReference(wikiSession) );
         }
+
         return wikiSession;
     }
     
@@ -251,7 +271,7 @@ public class SessionMonitor implements HttpSessionListener
         {
             SessionMonitor monitor = (SessionMonitor)it.next();
             
-            WikiSession storedSession = monitor.find(session);
+            WikiSession storedSession = monitor.findSession(session);
             
             monitor.remove(session);
             
