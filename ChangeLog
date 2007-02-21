@@ -1,3 +1,10 @@
+2007-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+       * 2.5.24
+       
+       * Forward ported features from 2.4.94, including the WatchDog,
+       and the new, faster WikiEventManager.
+
 2007-02-18  Janne Jalkanen <jalkanen@ecyrd.com>
 
        * 2.5.23
