@@ -619,7 +619,9 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Admin modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
         assertTrue( "Admin upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertTrue( "Admin rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
-        assertTrue( "Admin delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        // Even though we grant AllPermission in the policy, 'delete' isn't explicit so the check
+        // for delete privileges will fail (but it will succeed if requested via the checkPermission())
+        assertFalse( "Admin delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
         assertTrue( "Admin prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
         assertTrue( "Admin profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
         assertTrue( "Admin pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
