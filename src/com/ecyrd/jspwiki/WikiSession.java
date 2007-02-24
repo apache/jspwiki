@@ -202,12 +202,29 @@ public final class WikiSession implements WikiEventListener
     /**
      * Returns the authentication status of the user's session. The user is
      * considered authenticated if the Subject contains the Principal
-     * Role.AUTHENTICATED;
+     * Role.AUTHENTICATED. If this method determines that an earlier
+     * LoginModule did not inject Role.AUTHENTICATED, it will inject one
+     * if the user is not anonymous <em>and</em> not asserted.
      * @return Returns <code>true</code> if the user is authenticated
      */
     public final boolean isAuthenticated()
     {
-        return ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) );
+        // If Role.AUTHENTICATED is in principals set, always return true.
+        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) ) 
+        {
+            return true;
+        }
+        
+        // With non-JSPWiki LoginModules, the role may not be there, so 
+        // we need to add it if the user really is authenticated.
+        if ( !isAnonymous() && !isAsserted() )
+        {
+            // Inject AUTHENTICATED role
+            m_subject.getPrincipals().add( Role.AUTHENTICATED );
+            return true;
+        }
+        
+        return false;
     }
 
     /**
