@@ -464,10 +464,14 @@ public class WikiEventManager
          */
         public boolean addWikiEventListener( WikiEventListener listener )
         {
-            synchronized( m_listenerList )
+            if ( !m_listenerList.contains( listener ) )
             {
-                return m_listenerList.add( listener );
+                synchronized( m_listenerList )
+                {
+                    return m_listenerList.add( listener );
+                }
             }
+            return false;
         }
 
 
