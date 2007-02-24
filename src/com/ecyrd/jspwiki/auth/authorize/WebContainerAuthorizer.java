@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
@@ -36,6 +37,8 @@ import com.ecyrd.jspwiki.WikiSession;
  */
 public class WebContainerAuthorizer implements WebAuthorizer
 {
+    private static final String J2EE_SCHEMA_24_NAMESPACE = "http://java.sun.com/xml/ns/j2ee";
+
     protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
 
     protected WikiEngine          m_engine;
@@ -82,6 +85,9 @@ public class WebContainerAuthorizer implements WebAuthorizer
             m_webxml = getWebXml();
             if ( m_webxml != null )
             {
+                // Add the J2EE 2.4 schema namespace
+                m_webxml.getRootElement().setNamespace( Namespace.getNamespace( J2EE_SCHEMA_24_NAMESPACE ) );
+                
                 m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL )
                         && isConstrained( "/Login.jsp", Role.ALL );
             }
@@ -200,14 +206,22 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     public boolean isConstrained( String url, Role role ) throws JDOMException
     {
-        // Get all constraints that have our URL pattern
+        Element root = m_webxml.getRootElement();
+        XPath xpath;
         String selector;
-        selector = "//web-app/security-constraint[web-resource-collection/url-pattern=\"" + url + "\"]";
-        List constraints = XPath.selectNodes( m_webxml, selector);
+
+        // Get all constraints that have our URL pattern
+        // (Note the crazy j: prefix to denote the 2.4 j2ee schema)
+        selector = "//j:web-app/j:security-constraint[j:web-resource-collection/j:url-pattern=\"" + url + "\"]";
+        xpath = XPath.newInstance( selector );
+        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        List constraints = xpath.selectNodes( root );
         
         // Get all constraints that match our Role pattern
-        selector = "//web-app/security-constraint[auth-constraint/role-name=\"" + role.getName() + "\"]";
-        List roles = XPath.selectNodes( m_webxml, selector );
+        selector = "//j:web-app/j:security-constraint[j:auth-constraint/j:role-name=\"" + role.getName() + "\"]";
+        xpath = XPath.newInstance( selector );
+        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        List roles = xpath.selectNodes( root );
         
         // If we can't find either one, we must not be constrained
         if ( constraints.size() == 0 )
@@ -287,10 +301,13 @@ public class WebContainerAuthorizer implements WebAuthorizer
     protected Role[] getRoles( Document webxml ) throws JDOMException
     {
         Set roles = new HashSet();
+        Element root = webxml.getRootElement();
         
         // Get roles referred to by constraints
-        String selector = "//web-app/security-constraint/auth-constraint/role-name";
-        List nodes = XPath.selectNodes( webxml, selector );
+        String selector = "//j:web-app/j:security-constraint/j:auth-constraint/j:role-name";
+        XPath xpath = XPath.newInstance( selector );
+        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        List nodes = xpath.selectNodes( root );
         for( Iterator it = nodes.iterator(); it.hasNext(); )
         {
             String role = ( (Element) it.next() ).getTextTrim();
@@ -298,8 +315,10 @@ public class WebContainerAuthorizer implements WebAuthorizer
         }
         
         // Get all defined roles
-        selector = "//web-app/security-role/role-name";
-        nodes = XPath.selectNodes( webxml, selector );
+        selector = "//j:web-app/j:security-role/j:role-name";
+        xpath = XPath.newInstance( selector );
+        xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
+        nodes = xpath.selectNodes( root );
         for( Iterator it = nodes.iterator(); it.hasNext(); )
         {
             String role = ( (Element) it.next() ).getTextTrim();
@@ -325,6 +344,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
         SAXBuilder builder = new SAXBuilder();
         builder.setValidation( false );
         builder.setEntityResolver( new LocalEntityResolver() );
+        builder.setFeature("http://apache.org/xml/features/validation/schema", false);
         Document doc = null;
         if ( m_engine.getServletContext() == null )
         {
