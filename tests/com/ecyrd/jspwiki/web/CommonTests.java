@@ -257,7 +257,7 @@ public abstract class CommonTests extends TestCase
         t.assertSubmitButtonPresent("submitlogin");
         t.submit( "submitlogin" );
         t.assertTextNotPresent( "Please sign in" );
-        t.assertTextPresent( "G&apos;day" );
+        t.assertTextPresent( "G&#39;day" );
         t.assertTextPresent( "Janne" ); // This is a hack: detecting full
                                             // name isn't working (?)
         t.assertTextPresent( "(authenticated)" );

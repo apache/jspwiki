@@ -36,6 +36,8 @@ public class CommandResolverTest extends TestCase
     protected void tearDown() throws Exception
     {
         testEngine.deletePage( "TestPage" );
+        testEngine.deletePage( "SinglePage" );
+        testEngine.deletePage( "PluralPage" );
     }
     
     public void testFindStaticWikiAction()

@@ -59,6 +59,9 @@ public class SaveWikiPageWorkflowTest extends TestCase
         assertTrue( m_engine.pageExists(pageName));
         decisions = dq.getActorDecisions(adminSession);
         assertEquals(0, decisions.size());
+        
+        // Delete the page we created
+        m_engine.deletePage( pageName );
     }
     
     public void testSaveWithRejection() throws WikiException {
