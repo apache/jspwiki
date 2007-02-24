@@ -20,14 +20,17 @@
 package com.ecyrd.jspwiki.auth;
 
 
-import java.security.AccessControlException;
-import java.security.AccessController;
-import java.security.Permission;
-import java.security.Principal;
-import java.security.PrivilegedAction;
+import java.io.File;
+import java.net.URL;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.freshcookies.security.policy.LocalPolicy;
+import org.freshcookies.security.policy.PolicyException;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -88,14 +91,22 @@ public final class AuthorizationManager
      */
     public static final String                DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
 
+    /** Name of the default security policy file, in WEB-INF. */
+    protected static final String             DEFAULT_POLICY      = "jspwiki.policy";    
+    
     /**
      * The property name in jspwiki.properties for specifying the external {@link Authorizer}.
      */
     public static final String                PROP_AUTHORIZER   = "jspwiki.authorizer";
 
     private Authorizer                        m_authorizer      = null;
+    
+    /** Cache for storing ProtectionDomains used to evaluate the local policy. */
+    private Map                               m_cachedPds       = new HashMap();
 
     private WikiEngine                        m_engine          = null;
+    
+    private LocalPolicy                       m_localPolicy     = null;
     
     private boolean                           m_useJAAS         = true;
     
@@ -386,6 +397,21 @@ public final class AuthorizationManager
         //
         m_authorizer = getAuthorizerImplementation( properties );
         m_authorizer.initialize( engine, properties );
+        
+        // Initialize local security policy
+        try 
+        {
+            URL policyURL = AuthenticationManager.findConfigFile( engine, DEFAULT_POLICY );
+            File policyFile = new File( policyURL.getPath() );
+            m_localPolicy = new LocalPolicy( policyFile );
+            m_localPolicy.refresh();
+            log.info("Initialized local security policy: " + policyFile.getAbsolutePath());
+        }
+        catch ( PolicyException e )
+        {
+            log.error("Could not initialize local security policy: " + e.getMessage() );
+            throw new WikiException( e.getMessage() );
+        }
     }
 
     /** 
@@ -445,6 +471,37 @@ public final class AuthorizationManager
     }
 
     /**
+     * Checks to see if the local security policy allows a particular static Permission.
+     * Do not use this method for normal permission checks; use 
+     * {@link #checkPermission(WikiSession, Permission)} instead.
+     * @param principals the Principals to check
+     * @param permission the Permission
+     * @return the result
+     */
+    protected boolean allowedByLocalPolicy( Principal[] principals, Permission permission )
+    {
+        for ( int i = 0; i < principals.length; i++ )
+        {
+            // Get ProtectionDomain for this Principal from cache, or create new one
+            ProtectionDomain pd = (ProtectionDomain)m_cachedPds.get( principals[i] );
+            if ( pd == null )
+            {
+                ClassLoader cl = this.getClass().getClassLoader();
+                CodeSource cs = new CodeSource( null, (Certificate[])null );
+                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principals[i] } );
+                m_cachedPds.put( principals[i], pd );
+            }
+            
+            // Consult the local policy and get the answer
+            if ( m_localPolicy.implies( pd, permission ) ) 
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Determines whether a Subject posesses a given "static" Permission as
      * defined in the security policy file. This method uses standard Java 2
      * security calls to do its work. Note that the current access control
@@ -462,26 +519,35 @@ public final class AuthorizationManager
      * @return <code>true</code> if the Subject posesses the permission,
      *         <code>false</code> otherwise
      */
-    protected final boolean checkStaticPermission( WikiSession session, final Permission permission )
+    protected final boolean checkStaticPermission( final WikiSession session, final Permission permission )
     {
         if( !m_useJAAS ) return true;
         
-        try
+        Boolean allowed = (Boolean)WikiSession.doPrivileged( session, new PrivilegedAction()
         {
-            WikiSession.doPrivileged( session, new PrivilegedAction()
+            public Object run()
             {
-                public Object run()
+                try
                 {
+                    // Check the JVM-wide security policy first
                     AccessController.checkPermission( permission );
-                    return null;
+                    return Boolean.TRUE;
                 }
-            } );
-            return true;
-        }
-        catch( AccessControlException e )
-        {
-            return false;
-        }
+                catch( AccessControlException e )
+                {
+                    // Global policy denied the permission
+                }
+                
+                // Try the local policy - check each Role/Group and User Principal
+                if ( allowedByLocalPolicy( session.getRoles(), permission ) ||
+                     allowedByLocalPolicy( session.getPrincipals(), permission ) )
+                {
+                    return Boolean.TRUE;
+                }
+                return Boolean.FALSE;
+            }
+        } );
+        return allowed.booleanValue();
     }
     
     /**

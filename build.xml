@@ -48,7 +48,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.80 2007-01-03 05:07:55 arj Exp $
+    $Id: build.xml,v 1.81 2007-02-24 16:24:19 arj Exp $
 -->    
        
 <!--   
@@ -493,7 +493,6 @@
         </classpath>
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-        <sysproperty key="java.security.policy" value="tests/etc/jspwiki.policy"/>
 		<sysproperty key="jspwiki.tests.auth" value="true" />
 
         <formatter type="plain" />
@@ -528,7 +527,6 @@
         </classpath>
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-        <sysproperty key="java.security.policy" value="tests/etc/jspwiki.policy"/>
         <sysproperty key="jspwiki.tests.auth" value="true" />
         <jvmarg value="-Xdebug" />
         <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y" />
@@ -561,7 +559,6 @@
         </classpath>
 
         <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-        <sysproperty key="java.security.policy" value="tests/etc/jspwiki.policy"/>
 		<sysproperty key="jspwiki.tests.auth" value="true" />
          
         <arg value="com.ecyrd.jspwiki.AllTests" />

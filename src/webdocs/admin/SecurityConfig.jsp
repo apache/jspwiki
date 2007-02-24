@@ -185,29 +185,9 @@ and everyone in between. You have been warned.</strong></p>
   *********************************************
 -->
 <h3>Security Policy</h3>
-<p>JSPWiki's authorizes user actions by consulting a standard Java 2 security policy file. By default, JSPWiki installs its standard policy file at startup time by setting the system property.<code>java.security.policy</code> and then refreshing the system policy. However, because many application servers and other Java applications sometimes also set their own policies, JSPWiki will respect the system property if it is already set.</p>
+<p>JSPWiki's authorizes user actions by consulting a standard Java 2 security policy file. By default, JSPWiki installs its local security policy file at startup time. This policy file is independent of your global, JVM-wide security policy, if you have one. When checking for authorization, JSPWiki consults the global policy first, then the local policy.</p>
 
-<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO+"java.security.policy"%>" prefix="Good news: "/>
-<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING+"java.security.policy"%>" prefix="We found some potential problems with your configuration: "/>
-<wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR+"java.security.policy"%>" prefix="We found some errors with your configuration: " />
-
-<!-- Let the admin know if something other than JSPWiki set the policy first -->
-<%
-  if ( verifier.isSecurityPolicyConfiguredAtStartup() )
-  {
-%>
-    <div class="warning">Note: some other application set the <code>java.security.policy</code> system property before JSPWiki started up. It could have been done by a prior installation of JSPWiki, or possibly by your web container's startup script. This is not necessary a bad thing, but we thought you should be aware of it in case you are seeing behavior you don't expect. You can ignore this message if our policy checks are all working ok (below).</div>
-<%
-  }
-  else
-  {
-%>
-    <div class="information">Note: this instance of JSPWiki set the system property at startup.</div>
-<%
-  }
-%>
-
-<p>Now we are going to validate the security policy file. To do this, we parse
+<p>Let's validate the local security policy file. To do this, we parse
 the security policy and examine each <code>grant</code> block. If we see
 a <code>permission</code> entry that is signed, we verify that the certificate
 alias exists in our keystore. The keystore itself must also exist in the file system.

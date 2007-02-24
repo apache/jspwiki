@@ -23,12 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.AccessControlException;
-import java.security.AccessController;
-import java.security.KeyStore;
-import java.security.Permission;
-import java.security.Principal;
-import java.security.PrivilegedAction;
+import java.security.*;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,7 +34,6 @@ import javax.security.auth.login.LoginContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.freshcookies.security.policy.Grantee;
 import org.freshcookies.security.policy.PolicyReader;
 import org.jdom.JDOMException;
 
@@ -479,19 +473,6 @@ public final class SecurityVerifier
     }
 
     /**
-     * Returns <code>true</code> if the Java security policy file was already
-     * set when JSPWiki started up. We determine this value by consulting a
-     * protected member field of {@link AuthenticationManager}, which was set
-     * at in initialization by {@link PolicyLoader}.
-     * @return <code>true</code> if {@link PolicyLoader} successfully set the
-     *         policy, or <code>false</code> for any other reason.
-     */
-    public final boolean isSecurityPolicyConfiguredAtStartup()
-    {
-        return m_engine.getAuthenticationManager().m_isJavaPolicyConfiguredAtStartup;
-    }
-
-    /**
      * If the active Authorizer is the WebContainerAuthorizer, returns the roles
      * it knows about; otherwise, a zero-length array.
      * @return the roles parsed from <code>web.xml</code>, or a zero-length array
@@ -732,76 +713,78 @@ public final class SecurityVerifier
 
     /**
      * Verfies the Java security policy configuration. The configuration is
-     * valid if value of the system property <code>java.security.policy</code>
-     * resolves to an existing file, and the policy file that this file
+     * valid if value of the local policy (at <code>WEB-INF/jspwiki.policy</code>
+     * resolves to an existing file, and the policy file contained therein
      * represents a valid policy.
      */
     protected final void verifyPolicy()
     {
-        // Look up the policy property and set the status text.
-        m_securityPolicy = getFileFromProperty( "java.security.policy" );
+        // Look up the policy file and set the status text.
+        URL policyURL = AuthenticationManager.findConfigFile( m_engine, AuthorizationManager.DEFAULT_POLICY );
+        String path = policyURL.getPath();
+        if ( path.startsWith("file:") ) {
+            path = path.substring( 5 );
+        }
+        File policyFile = new File( path );
 
         // Next, verify the policy
-        if ( m_securityPolicy != null )
+        try
         {
             // Get the file
-            PolicyReader policy = new PolicyReader( m_securityPolicy );
+            PolicyReader policy = new PolicyReader( policyFile );
             m_session.addMessage( INFO_POLICY, "The security policy '" + policy.getFile() + "' exists." );
-            try
+            
+            // See if there is a keystore that's valid
+            KeyStore ks = policy.getKeyStore();
+            if ( ks == null )
             {
-                // See if there is a keystore that's valid
-                KeyStore ks = policy.getKeyStore();
-                if ( ks == null )
-                {
-                    m_session.addMessage( ERROR_POLICY,
-                            "Policy file does not have a keystore... at least not one that we can locate." );
-                }
-                else
-                {
-                    m_session
-                            .addMessage( INFO_POLICY,
-                                    "The security policy specifies a keystore, and we were able to locate it in the filesystem." );
-                }
-
-                // Verify the file
-                policy.read();
-                List errors = policy.getMessages();
-                if ( errors.size() > 0 )
-                {
-                    for( Iterator it = errors.iterator(); it.hasNext(); )
-                    {
-                        Exception e = (Exception) it.next();
-                        m_session.addMessage( ERROR_POLICY, e.getMessage() );
-                    }
-                }
-                else
-                {
-                    m_session.addMessage( INFO_POLICY, "The security policy looks fine." );
-                    m_isSecurityPolicyConfigured = true;
-                }
-
-                // Stash the unique principals mentioned in the file,
-                // plus our standard roles.
-                Set principals = new LinkedHashSet();
-                principals.add( Role.ALL );
-                principals.add( Role.ANONYMOUS );
-                principals.add( Role.ASSERTED );
-                principals.add( Role.AUTHENTICATED );
-                Grantee[] grantees = policy.grantees();
-                for( int i = 0; i < grantees.length; i++ )
-                {
-                    Principal[] granteePrincipals = grantees[i].getPrincipals();
-                    for( int j = 0; j < granteePrincipals.length; j++ )
-                    {
-                        principals.add( granteePrincipals[j] );
-                    }
-                }
-                m_policyPrincipals = (Principal[]) principals.toArray( new Principal[principals.size()] );
+                m_session.addMessage( ERROR_POLICY,
+                    "Policy file does not have a keystore... at least not one that we can locate." );
             }
-            catch( IOException e )
+            else
             {
-                m_session.addMessage( ERROR_POLICY, e.getMessage() );
+                m_session.addMessage( INFO_POLICY,
+                    "The security policy specifies a keystore, and we were able to locate it in the filesystem." );
             }
+
+            // Verify the file
+            policy.read();
+            List errors = policy.getMessages();
+            if ( errors.size() > 0 )
+            {
+                for( Iterator it = errors.iterator(); it.hasNext(); )
+                {
+                    Exception e = (Exception) it.next();
+                    m_session.addMessage( ERROR_POLICY, e.getMessage() );
+                }
+            }
+            else
+            {
+                m_session.addMessage( INFO_POLICY, "The security policy looks fine." );
+                m_isSecurityPolicyConfigured = true;
+            }
+
+            // Stash the unique principals mentioned in the file,
+            // plus our standard roles.
+            Set principals = new LinkedHashSet();
+            principals.add( Role.ALL );
+            principals.add( Role.ANONYMOUS );
+            principals.add( Role.ASSERTED );
+            principals.add( Role.AUTHENTICATED );
+            ProtectionDomain[] domains = policy.getProtectionDomains();
+            for ( int i = 0; i < domains.length; i++ )
+            {
+                Principal[] domainPrincipals = domains[i].getPrincipals();
+                for( int j = 0; j < domainPrincipals.length; j++ )
+                {
+                    principals.add( domainPrincipals[j] );
+                }
+            }
+            m_policyPrincipals = (Principal[]) principals.toArray( new Principal[principals.size()] );
+        }
+        catch( IOException e )
+        {
+            m_session.addMessage( ERROR_POLICY, e.getMessage() );
         }
     }
 
@@ -817,22 +800,30 @@ public final class SecurityVerifier
     {
         Subject subject = new Subject();
         subject.getPrincipals().add( principal );
-        try 
-        {
+        boolean allowedByGlobalPolicy = ((Boolean)
             Subject.doAsPrivileged( subject, new PrivilegedAction()
             {
                 public Object run()
                 {
+                    try 
+                    {
                         AccessController.checkPermission( permission );
-                        return null;
+                        return Boolean.TRUE;
+                    }
+                    catch ( AccessControlException e )
+                    {
+                        return Boolean.FALSE;
+                    }
                 }
-            }, null );
+            }, null )).booleanValue();
+        
+        if ( allowedByGlobalPolicy ) {
             return true;
         }
-        catch ( AccessControlException e )
-        {
-            return false;
-        }
+        
+        // Check local policy
+        Principal[] principals = new Principal[]{ principal };
+        return m_engine.getAuthorizationManager().allowedByLocalPolicy( principals, permission );
     }
     
     /**

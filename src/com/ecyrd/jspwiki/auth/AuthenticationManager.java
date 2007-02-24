@@ -75,9 +75,6 @@ public final class AuthenticationManager
     /** Was JAAS login config already set before we startd up? */
     protected boolean m_isJaasConfiguredAtStartup = false;
     
-    /** Was Java security policy already set before we startd up? */
-    protected boolean m_isJavaPolicyConfiguredAtStartup = false;
-    
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private static Boolean                     m_allowsAssertions  = null;
 
@@ -108,11 +105,8 @@ public final class AuthenticationManager
      */
     
     public  static final String                PROP_SECURITY       = "jspwiki.security";
-
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
-    private static final String                PROP_POLICY_CONFIG  = "java.security.policy";
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
-    private static final String                DEFAULT_POLICY      = "jspwiki.policy";    
     
     private static       boolean               m_useJAAS = true;
     
@@ -126,8 +120,7 @@ public final class AuthenticationManager
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
         m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
-        m_isJavaPolicyConfiguredAtStartup = PolicyLoader.isSecurityPolicyConfigured();
-
+        
         // Yes, writing to a static field is done here on purpose.
         m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
         
@@ -141,7 +134,7 @@ public final class AuthenticationManager
 
         if (! m_isJaasConfiguredAtStartup ) 
         {
-            URL config = findConfigFile( DEFAULT_JAAS_CONFIG );
+            URL config = findConfigFile( engine, DEFAULT_JAAS_CONFIG );
             log.info("JAAS not configured. Installing default configuration: " + config
                 + ". You can set the "+PROP_JAAS_CONFIG+" system property to point to your "
                 + "jspwiki.jaas file, or add the entries from jspwiki.jaas to your own " 
@@ -158,22 +151,6 @@ public final class AuthenticationManager
         else
         {
             log.info("JAAS already configured by some other application (leaving it alone...)");
-        }
-        
-        log.info( "Checking security policy configuration..." );
-        if (! m_isJavaPolicyConfiguredAtStartup )
-        {
-            URL policy = findConfigFile( DEFAULT_POLICY );
-            log.info("Security policy not configured. Installing default policy: " + policy
-                + ". Please set the "+PROP_POLICY_CONFIG+" system property, if you're not happy with the default.");
-            try 
-            { 
-                PolicyLoader.setSecurityPolicy( policy );
-            }
-            catch ( SecurityException e)
-            {
-                log.error("Could not install security policy: " + e.getMessage());
-            }
         }
     }
     
@@ -475,13 +452,20 @@ public final class AuthenticationManager
         }
     }
     
-    private final URL findConfigFile( String name )
+    /**
+     * Looks up and obtains a configuration file inside the WEB-INF folder of a 
+     * wiki webapp.
+     * @param engine the wiki engine
+     * @param name the file to obtain, <em>e.g.</em>, <code>jspwiki.policy</code>
+     * @return the URL to the file
+     */
+    protected static final URL findConfigFile( WikiEngine engine, String name )
     {
         // Try creating an absolute path first
         File defaultFile = null;
-        if( m_engine.getRootPath() != null )
+        if( engine.getRootPath() != null )
         {
-            defaultFile = new File( m_engine.getRootPath() + "/WEB-INF/" + name );
+            defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + name );
         }
         if ( defaultFile != null && defaultFile.exists() ) 
         {
@@ -507,11 +491,11 @@ public final class AuthenticationManager
         if( path == null )
             path = cl.getResource(name);
         
-        if( path == null && m_engine.getServletContext() != null )
+        if( path == null && engine.getServletContext() != null )
         {
             try
             {
-                path = m_engine.getServletContext().getResource("/WEB-INF/"+name);
+                path = engine.getServletContext().getResource("/WEB-INF/"+name);
             }
             catch( MalformedURLException e )
             {
