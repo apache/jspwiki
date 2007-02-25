@@ -163,10 +163,8 @@ public class WorkflowManager implements WikiEventListener
             {
                 throw new WikiException("Workflow approver '" + name + "' count not be resolved.");
             }
-            else
-            {
-                m_approvers.put(messageKey, approver);
-            }
+            
+            m_approvers.put(messageKey, approver);
         }
         return approver;
     }

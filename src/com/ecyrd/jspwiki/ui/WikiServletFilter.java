@@ -31,7 +31,6 @@ import org.apache.log4j.NDC;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
-import com.ecyrd.jspwiki.util.WatchDog;
 
 /**
  *  Provides basic filtering for JSPWiki.  This filter only makes sure

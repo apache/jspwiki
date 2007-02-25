@@ -12,7 +12,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.RPCManager;
-import com.ecyrd.jspwiki.search.SearchManager.JSONSearch;
 import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.metaparadigm.jsonrpc.InvocationCallback;
 import com.metaparadigm.jsonrpc.JSONRPCBridge;
