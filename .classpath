@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry kind="lib" path="lib/ecs.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
 	<classpathentry kind="lib" path="lib/jsonrpc-1.0.jar" sourcepath="/Users/jalkanen/Java/json-rpc-java-1.0/src"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
@@ -30,6 +30,6 @@
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4"/>
 	<classpathentry kind="lib" path="etc/i18n"/>
-	<classpathentry kind="lib" path="lib/freshcookies-security-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/freshcookies-security-0.51.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
