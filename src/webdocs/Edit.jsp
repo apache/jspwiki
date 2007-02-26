@@ -29,6 +29,8 @@
     String author  = request.getParameter( "author" );
     String changenote = request.getParameter( "changenote" );
     String text    = EditorManager.getEditedText( pageContext );
+    String link    = request.getParameter("link");
+    
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() 
          && author != null )
     {
@@ -166,7 +168,10 @@
         log.debug("Previewing "+pagereq);
         session.setAttribute(EditorManager.REQ_EDITEDTEXT,
                              EditorManager.getEditedText(pageContext));
-        if( changenote != null ) session.setAttribute("changenote", changenote);
+        session.setAttribute("author",user);
+        session.setAttribute("link",link != null ? link : "" );
+        
+        session.setAttribute("changenote", changenote != null ? changenote : "" );
         response.sendRedirect( wiki.getURL(WikiContext.PREVIEW,pagereq,null,false) );
         return;
     }
