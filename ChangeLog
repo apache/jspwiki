@@ -1,3 +1,68 @@
+2007-02-25  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.27
+       
+       * Upgraded bundled log4j to 1.2.14; freshcookies-security to 0.51.
+       
+       * Fixed 2 failing RPCHandlerTest tests by counting changes relative
+       to beginning of test, rather than absolute changes.
+       
+       * Changed all JSP taglib declarations to use JSP 2.0-compatible tags.
+       Also upgraded jstl.jar and standard.jar to JSTL 1.1 versions. Note:
+       if you are a template developer, you should change your taglib
+       declarations as follows:
+       
+         New:
+         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+         <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+         
+         Old:
+         <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+         <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
+
+2007-02-24  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.26
+       
+       * Major enhancement: replaced JSPWiki's dependency on the global,
+       JVM-wide security policy with a "local policy" that is always 
+       read from WEB-INF/jspwiki.policy. If you have a JVM-wide policy,
+       the local policy will supplement it. The practical upshot of this
+       change is that the most common configuration challenge that most
+       first-time admins face (why won't any pages display?) is gone,
+       and gone forever. No more fiddling with the java.security.policy
+       property! The syntax for the local policy is exactly the same
+       as what it's always been; but now it Just Works instead of
+       Mostly Works.
+
+       * Fixed bug in WebContainerAuthorizer introduced by change to
+       Java Servlet API 2.4. The parsing class now explictly includes
+       namespaces in XPath searches. This was not something we needed
+       to worry about with 2.3 (which used a DTD). The result of this
+       problem was causing container-managed logins to fail.
+       
+       * Fixed failing unit tests WebContainerAuthorizer; web tests
+       CommonCustomTests, CommonTests.
+       
+       * Minor enhancement to WikiSession now allows full use of non-JSPWiki
+       supplied JAAS LoginModules in the JSPWiki-custom configuration. Previously,
+       we considered a user to be authenticated only if a LoginModule had added
+       Role.AUTHENTICATED to the Subject's principal set. This is clearly
+       unreasonable for LoginModules that have no knowledge of JSPWiki, such
+       as Sun's supplied modules or third-party modules used for LDAP 
+       authentication. Now, we consider a user authenticated if they are
+       not anonymous and not asserted, and we lazily add Role.AUTHENTICATED 
+       in these cases, after login.
+       
+       * Bug fix: WikiEventManager refactoring in 2.5.24 caused duplicate
+       listeners to be added in some cases. This has been fixed.
+       
+       * The security policy file has been simplified to remove redundant
+       grants that don't vary across roles. It should be simpler to read
+       and understand.
+       
+       * Did I mention that local security policies are a big deal?
+       
 2007-02-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
        * 2.5.25
