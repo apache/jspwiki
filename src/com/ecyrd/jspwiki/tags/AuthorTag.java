@@ -47,7 +47,7 @@ public class AuthorTag
 
         String author = page.getAuthor();
 
-        if( author != null )
+        if( author != null && author.length() > 0 )
         {
             if( engine.pageExists(author) )
             {
