@@ -56,73 +56,41 @@ public class RPCHandlerTest extends TestCase
     public void testRecentChanges()
         throws Exception
     {
-        String text = "Foo";
-        String pageName = NAME1;
-
-        m_engine.saveText( pageName, text );
-
-        WikiPage directInfo = m_engine.getPage( NAME1 );
-
-        Date modDate = directInfo.getLastModified();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime( modDate );
-        cal.add( Calendar.HOUR, -1 );
-
-        // Go to UTC
-        cal.add( Calendar.MILLISECOND, 
-                 -(cal.get( Calendar.ZONE_OFFSET )+
-                  (cal.getTimeZone().inDaylightTime( modDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+        Date time = getCalendarTime( Calendar.getInstance().getTime() );
+        Vector previousChanges = m_handler.getRecentChanges( time );
         
+        m_engine.saveText( NAME1, "Foo" );
+        WikiPage directInfo = m_engine.getPage( NAME1 );
+        time = getCalendarTime( directInfo.getLastModified() );
+        Vector recentChanges = m_handler.getRecentChanges( time );
 
-        Vector v = m_handler.getRecentChanges( cal.getTime() );
-
-        assertEquals( "wrong number of changes", 1, v.size() );
+        assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
     }
 
     public void testRecentChangesWithAttachments()
         throws Exception
     {
-        String text = "Foo";
-        String pageName = NAME1;
-
-        m_engine.saveText( pageName, text );
-
+        Date time = getCalendarTime( Calendar.getInstance().getTime() );
+        Vector previousChanges = m_handler.getRecentChanges( time );
+        
+        m_engine.saveText( NAME1, "Foo" );
         Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
-
         WikiPage directInfo = m_engine.getPage( NAME1 );
+        time = getCalendarTime( directInfo.getLastModified() );
+        Vector recentChanges = m_handler.getRecentChanges( time );
 
-        Date modDate = directInfo.getLastModified();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime( modDate );
-        cal.add( Calendar.HOUR, -1 );
-
-        // Go to UTC
-        cal.add( Calendar.MILLISECOND, 
-                 -(cal.get( Calendar.ZONE_OFFSET )+
-                  (cal.getTimeZone().inDaylightTime( modDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
-        
-
-        Vector v = m_handler.getRecentChanges( cal.getTime() );
-
-        assertEquals( "wrong number of changes", 1, v.size() );
+        assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
     }
 
     public void testPageInfo()
         throws Exception
     {
-        String text = "Foobar.[{ALLOW view Anonymous}]";
-        String pageName = NAME1;
-
-        m_engine.saveText( pageName, text );
-
+        m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
         WikiPage directInfo = m_engine.getPage( NAME1 );
-
+        
         Hashtable ht = m_handler.getPageInfo( NAME1 );
-
         assertEquals( "name", (String)ht.get( "name" ), NAME1 );
         
         Date d = (Date) ht.get( "lastModified" );
@@ -198,6 +166,21 @@ public class RPCHandlerTest extends TestCase
         assertEquals( "att href", "http://localhost/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href") );
     }
 
+    private Date getCalendarTime( Date modifiedDate ) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( modifiedDate );
+        cal.add( Calendar.HOUR, -1 );
+
+        // Go to UTC
+        // Offset the ZONE offset and DST offset away.  DST only
+        // if we're actually in DST.
+        cal.add( Calendar.MILLISECOND, 
+                 -(cal.get( Calendar.ZONE_OFFSET )+
+                  (cal.getTimeZone().inDaylightTime( modifiedDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+        
+        return cal.getTime();
+    }
+    
     /*
      * TODO: ENABLE
     public void testPermissions()
