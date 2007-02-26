@@ -48,7 +48,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.77.2.1 2006-11-10 18:49:11 jalkanen Exp $
+    $Id: build.xml,v 1.77.2.2 2007-02-26 19:22:49 jalkanen Exp $
 -->    
        
 <!--   
@@ -1064,7 +1064,7 @@ To automate the JAR signing processs, you can add the property
     <!-- Bulk-copy the table setup/teardown scripts -->
     <property name="tests.db.scripts" value="${tests.src}/etc/db/${jdbc.driver.id}" />
     <mkdir dir="${tests.db.scripts}" />
-    <copy toDir="${tests.db.scripts}" overwrite="true">
+    <copy todir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
       <filterset>
         <filtersfile file="tests/etc/jspwiki.properties" />
