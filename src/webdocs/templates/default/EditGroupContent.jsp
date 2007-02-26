@@ -1,5 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="templates.DefaultResources"/>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>

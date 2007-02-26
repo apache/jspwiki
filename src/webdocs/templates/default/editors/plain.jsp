@@ -5,7 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.rpc.*" %>
 <%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="templates.DefaultResources"/>
 <%--
         This is a plain editor for JSPWiki.
