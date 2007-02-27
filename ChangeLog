@@ -1,3 +1,12 @@
+2007-02-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.96
+        
+        * Arg, 2.4.92 overwrote an earlier fix, causing ClassCastExceptions
+        when logging out.  Now fixed again.
+        
+        * WatchDog no longer screams an error, if it fails.
+
 2007-02-26  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.95
