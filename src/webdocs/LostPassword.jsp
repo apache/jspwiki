@@ -46,10 +46,12 @@
                     + wiki.getURLConstructor().makeURL(WikiContext.NONE, "Login.jsp", true, "") + ".\n\n"
                     + "--" + wiki.getApplicationName();
                     
-			MailUtil.sendMessage( wiki.getWikiProperties(),
-                                   email,
-			                      "New password for " + wiki.getApplicationName(),
-			                      mailMessage );
+            WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
+ 			 
+  			MailUtil.sendMessage( wikiContext,
+                                  email,
+  			                      "New password for " + wiki.getApplicationName(),
+  			                      mailMessage );
 		
             log.info("User "+email+" requested and received a new password.");
             
@@ -64,6 +66,11 @@
         {
             message = "No user or email '" + name + "' was found.";
             log.info("Tried to reset password for non-existent user '" + name + "'");
+        }
+        catch (AuthenticationFailedException e) 
+        {
+            message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
+            log.error("Tried to reset password and got AuthenticationFailedException: " + e);            
         }
         catch (SendFailedException e) 
         {
