@@ -1,3 +1,12 @@
+2007-02-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.97
+        
+        * Fixed issue with leaking WikiSessions: WikiEventDelegate now
+        stores all listeners as WeakReferences.  There is no need to
+        explicitly remove a listener anymore; once your object is gone,
+        it will be silently removed from the listener lists as well.
+
 2007-02-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.96
