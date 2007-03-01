@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.log4j.Logger;
 
@@ -37,15 +38,10 @@ import com.ecyrd.jspwiki.WikiContext;
  *
  */
 public abstract class WikiBodyTag extends BodyTagSupport
+    implements TryCatchFinally
 {
     protected WikiContext m_wikiContext;
     static    Logger    log = Logger.getLogger( WikiBodyTag.class );
-
-    public void release()
-    {
-        super.release();
-        m_wikiContext = null;
-    }
 
     public int doStartTag() throws JspException
     {
@@ -75,5 +71,16 @@ public abstract class WikiBodyTag extends BodyTagSupport
      * @throws JspException
      * @throws IOException
      */
-    public abstract int doWikiStartTag() throws JspException, IOException;   
+    public abstract int doWikiStartTag() throws JspException, IOException;
+
+    public void doCatch(Throwable arg0) throws Throwable
+    {
+    }
+
+    public void doFinally()
+    {
+        m_wikiContext = null;
+    }  
+    
+    
 }

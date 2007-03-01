@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.tagext.TryCatchFinally;
+
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
@@ -38,6 +40,7 @@ import com.ecyrd.jspwiki.WikiContext;
  */
 public abstract class WikiTagBase
     extends TagSupport
+    implements TryCatchFinally
 {
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
@@ -102,4 +105,14 @@ public abstract class WikiTagBase
     {
         return EVAL_PAGE;
     }
+
+    public void doCatch(Throwable arg0) throws Throwable
+    {
+    }
+
+    public void doFinally()
+    {
+        m_wikiContext = null;
+    }
+
 }

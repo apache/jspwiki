@@ -1,5 +1,14 @@
 2007-03-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.4.99
+
+        * Another fix: our Tag base classes (IteratorTag, WikiBodyTag,
+        WikiTagBase) now implement the TryCatchFinally interface, which
+        allows them to cleanup any extraneous WikiContext references
+        which might be left dangling due to tag pooling.  doFinally()
+        is especially useful because it is called regardless of the
+        exit status (or exceptions thrown) of doStartTag().
+
         * 2.4.98
         
         * Experimental fix for the "Gazillion WikiSessions At Startup"
