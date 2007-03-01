@@ -122,6 +122,8 @@ public final class WikiSession implements WikiEventListener
     
     private static final String ALL                   = "*";
     
+    private static ThreadLocal  c_guestSession        = new ThreadLocal();
+    
     private final Subject       m_subject             = new Subject();
 
     private final Map           m_messages            = new HashMap();
@@ -841,7 +843,7 @@ public final class WikiSession implements WikiEventListener
             {
                 log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
             }
-            return guestSession( engine );
+            return staticGuestSession( engine );
         }
 
         // Look for a WikiSession associated with the user's Http Session
@@ -876,6 +878,32 @@ public final class WikiSession implements WikiEventListener
         AuthenticationManager authMgr = engine.getAuthenticationManager();
         groupMgr.addWikiEventListener( session );
         authMgr.addWikiEventListener( session );
+        
+        return session;
+    }
+    
+    /**
+     *  Returns a static guest session, which is available for this
+     *  thread only.  This guest session is used internally whenever
+     *  there is no HttpServletRequest involved, but the request is
+     *  done e.g. when embedding JSPWiki code.
+     *   
+     *  @param engine WikiEngine for this session
+     *  @return A static WikiSession which is shared by all in this
+     *          same Thread.
+     */
+    // FIXME: Should really use WeakReferences to clean away unused sessions.
+    
+    private static WikiSession staticGuestSession( WikiEngine engine )
+    {
+        WikiSession session = (WikiSession) c_guestSession.get();
+        
+        if( session == null )
+        {
+            session = guestSession( engine );
+            
+            c_guestSession.set( session );
+        }
         
         return session;
     }

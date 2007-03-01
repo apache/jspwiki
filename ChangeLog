@@ -1,3 +1,12 @@
+2007-03-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.98
+        
+        * Experimental fix for the "Gazillion WikiSessions At Startup"
+        problem reported by Murray Altheim.  Now, if there is no
+        HttpServletRequest attached, we use a static, thread local
+        session.  This seems to somewhat speed startup.
+
 2007-02-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.97
