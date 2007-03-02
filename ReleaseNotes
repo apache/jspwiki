@@ -23,6 +23,13 @@ NEW FEATURES
 
 * (2.4.86) Ability to allow/disallow certain file types from being uploaded
 
+* 2.4.100 fixes several stability and performance issues, as well as
+  some long-standing bugs (like the null author issue, as well as
+  randomly appearing ACLs.)
+  
+* 2.4.100 also adds a WatchDog class.  Please see the javadocs for
+  that class for an explanation.
+
 UPGRADE NOTES
 =============
 

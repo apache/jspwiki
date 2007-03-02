@@ -1,3 +1,17 @@
+2007-03-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.100
+        
+        * Fixes the leaking ACLs issue - you can now use ACLs on
+        your LeftMenu or any other included page without having to
+        worry about it actually influencing the master page.
+        
+        * Also fixed leaking variables issue - this was exactly
+        the same problem as with ACLs.
+        
+        * Improved javadocs for both WikiContext.get/setRealPage()
+        and InsertPageTag.
+
 2007-03-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.99
