@@ -39,6 +39,7 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.tags.InsertPageTag;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.ui.GroupCommand;
@@ -306,10 +307,21 @@ public class WikiContext
     }
 
     /**
+     *  Sets a reference to the real page whose content is currently being
+     *  rendered.
+     *  <p>
      *  Sometimes you may want to render the page using some other page's context.
      *  In those cases, it is highly recommended that you set the setRealPage()
-     *  to point at the real page you are rendering.
-     *  
+     *  to point at the real page you are rendering.  Please see InsertPageTag
+     *  for an example.
+     *  <p>
+     *  Also, if your plugin e.g. does some variable setting, be aware that if it
+     *  is embedded in the LeftMenu or some other page added with InsertPageTag,
+     *  you should consider what you want to do - do you wish to really reference
+     *  the "master" page or the included page.
+     *
+     *  @see InsertPageTag
+     *   
      *  @param page  The real page which is being rendered.
      *  @since 2.3.14
      *  @return The previous real page
@@ -322,6 +334,23 @@ public class WikiContext
         return old;
     }
     
+    /**
+     *  Gets a reference to the real page whose content is currently being rendered.
+     *  If your plugin e.g. does some variable setting, be aware that if it
+     *  is embedded in the LeftMenu or some other page added with InsertPageTag,
+     *  you should consider what you want to do - do you wish to really reference
+     *  the "master" page or the included page.
+     *  <p>
+     *  For example, in the default template, there is a page called "LeftMenu".
+     *  Whenever you access a page, e.g. "Main", the master page will be Main, and
+     *  that's what the getPage() will return - regardless of whether your plugin
+     *  resides on the LeftMenu or on the Main page.  However, getRealPage()
+     *  will return "LeftMenu".
+     *  
+     *  @return A reference to the real page.
+     *  @see InsertPageTag
+     *  @see JSPWikiMarkupParser
+     */
     public WikiPage getRealPage()
     {
         return m_realPage;
