@@ -1219,12 +1219,20 @@ public class JSPWikiMarkupParser
             return makeLink( IMAGE, reallink, link, null );
         }
     }
-
+    
+    /** 
+     *  Parses an access rule.
+     *
+     *  Note that this method
+     *  manages the realPage instead of the page declared in the context. This
+     *  ensures that variable definitions do not leak when included when InsertPageTag.
+     *  
+     */
     private Element handleAccessRule( String ruleLine )
     {
         if( !m_parseAccessRules ) return m_currentElement;
         Acl acl;
-        WikiPage          page = m_context.getPage();
+        WikiPage          page = m_context.getRealPage();
         // UserDatabase      db = m_context.getEngine().getUserDatabase();
 
         if( ruleLine.startsWith( "{" ) )
@@ -1251,7 +1259,9 @@ public class JSPWikiMarkupParser
     }
 
     /**
-     *  Handles metadata setting [{SET foo=bar}]
+     *  Handles metadata setting [{SET foo=bar}].  Note that this method
+     *  handles the realPage instead of the page declared in the context. This
+     *  ensures that variable definitions do not leak when included when InsertPageTag.
      */
     private Element handleMetadata( String link )
     {
@@ -1275,7 +1285,7 @@ public class JSPWikiMarkupParser
                 val = m_engine.getVariableManager().expandVariables( m_context,
                                                                      val );
             
-                m_context.getPage().setAttribute( name, val );
+                m_context.getRealPage().setAttribute( name, val );
             }
         }
         catch( Exception e )
