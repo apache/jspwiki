@@ -24,6 +24,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 // FIXME: Does not implement equals().
+// FIXME3.0: move to util package
 public class PageTimeComparator
     implements Comparator, Serializable
 {

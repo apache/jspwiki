@@ -26,7 +26,7 @@ import java.util.*;
  *  Simple class that decides which search results are more
  *  important than others.
  */
-// FIXME: move to the search package
+// FIXME3.0: move to the search package
 public class SearchResultComparator
     implements Comparator, Serializable
 {

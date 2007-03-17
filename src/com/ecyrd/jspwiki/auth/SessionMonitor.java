@@ -105,7 +105,7 @@ public class SessionMonitor implements HttpSessionListener
     {
         WikiSession wikiSession = null;
         String sid = ( session == null ) ? "(null)" : session.getId();
-        WeakReference storedSession = ((WeakReference)m_sessions.get( sid ));
+        WeakReference storedSession = (WeakReference)m_sessions.get( sid );
         String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
         
         if( storedSession == null ) 

@@ -33,7 +33,7 @@ import java.io.StringReader;
  * @since 2.1.5
  * @author ebu at ecyrd dot com
  */
-// FIXME: Move to the "search" -package
+// FIXME3.0: Move to the "search" -package
 public class SearchMatcher
 {
     private QueryItem[] m_queries;

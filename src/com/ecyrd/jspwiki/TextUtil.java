@@ -28,6 +28,7 @@ import java.util.Random;
 /**
  *  Contains a number of static utility methods.
  */
+// FIXME3.0: Move to the "util" package
 public class TextUtil
 {
     static final String   HEX_DIGITS = "0123456789ABCDEF";

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.TryCatchFinally;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
@@ -44,21 +45,14 @@ import com.ecyrd.jspwiki.WikiPage;
  */
 public abstract class IteratorTag
     extends BodyTagSupport
+    implements TryCatchFinally
 {
+
     protected String      m_pageName;
     protected Iterator    m_iterator;
     protected WikiContext m_wikiContext;
 
     private static Logger log = Logger.getLogger( IteratorTag.class );
-
-    public void release()
-    {
-        super.release();
-        m_iterator = null;
-        m_pageName = null;
-        m_wikiContext = null;
-    }
-
 
     /**
      *  Sets the collection that is used to form the iteration.
@@ -79,11 +73,15 @@ public abstract class IteratorTag
     }
     */
 
+    /**
+     *  Clears the iterator away.  After calling this method doStartTag()
+     *  will always return SKIP_BODY
+     */
     public void clearList()
     {
         m_iterator = null;
     }
-
+    
     /**
      *  Override this method to reset your own iterator.
      */
@@ -169,4 +167,18 @@ public abstract class IteratorTag
 
         return SKIP_BODY;
     }
+    
+    public void doCatch(Throwable arg0) throws Throwable
+    {
+    }
+
+
+    public void doFinally()
+    {
+        resetIterator();
+        m_iterator = null;
+        m_pageName = null;
+        m_wikiContext = null;        
+    }
+
 }

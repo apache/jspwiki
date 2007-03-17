@@ -20,6 +20,7 @@
 
 package com.ecyrd.jspwiki.event;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -129,7 +130,15 @@ import org.apache.log4j.Logger;
  *  listeners. The only check is for a Class match, so be aware if others
  *  might be populating the client-less cache with listeners.
  *  </p>
- *
+ *  <h3>Listener lifecycle</h3>
+ *  <p>
+ *  Note that in most cases it is not necessary to remove a listener.
+ *  As of 2.4.97, the listeners are stored as WeakReferences, and will be
+ *  automatically cleaned at the next garbage collection, if you no longer
+ *  hold a reference to them.  Of course, until the garbage is collected,
+ *  your object might still be getting events, so if you wish to avoid that,
+ *  please remove it explicitly as described above.
+ *  </p>
  * @author Murray Altheim
  * @since 2.4.20
  */
@@ -450,7 +459,17 @@ public class WikiEventManager
             synchronized( m_listenerList )
             {
                 TreeSet set = new TreeSet( new WikiEventListenerComparator() );
-                set.addAll( m_listenerList );
+                
+                for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                {
+                    WikiEventListener l = (WikiEventListener) ((WeakReference)i.next()).get();
+                    
+                    if( l != null )
+                    {
+                        set.add( l );
+                    }
+                }                
+                
                 return Collections.unmodifiableSet(set);
             }
         }
@@ -464,14 +483,10 @@ public class WikiEventManager
          */
         public boolean addWikiEventListener( WikiEventListener listener )
         {
-            if ( !m_listenerList.contains( listener ) )
+            synchronized( m_listenerList )
             {
-                synchronized( m_listenerList )
-                {
-                    return m_listenerList.add( listener );
-                }
+                return m_listenerList.add( new WeakReference(listener) );
             }
-            return false;
         }
 
 
@@ -485,8 +500,19 @@ public class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                return m_listenerList.remove(listener);
+                for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
+                {
+                    WikiEventListener l = (WikiEventListener) ((WeakReference)i.next()).get();
+                    
+                    if( l == listener )
+                    {
+                        i.remove();
+                        return true;
+                    }
+                }
             }
+            
+            return false;
         }
 
 
@@ -509,16 +535,39 @@ public class WikiEventManager
          */
         public void fireEvent( WikiEvent event )
         {
+            boolean needsCleanup = false;
+            
             try
             {
                 synchronized( m_listenerList )
                 {
                     for( int i = 0; i < m_listenerList.size(); i++ )
                     {
-                        WikiEventListener listener = (WikiEventListener) m_listenerList.get(i);
-                
-                        listener.actionPerformed( event );
+                        WikiEventListener listener = (WikiEventListener) ((WeakReference)m_listenerList.get(i)).get();
+
+                        if( listener != null )
+                        {
+                            listener.actionPerformed( event );
+                        }
+                        else
+                        {
+                            needsCleanup  = true;
+                        }
                     }
+                    
+                    //
+                    //  Remove all such listeners which have expired
+                    //
+                    if( needsCleanup )
+                    {
+                        for( int i = 0; i < m_listenerList.size(); i++ )
+                        {
+                            WeakReference w = (WeakReference)m_listenerList.get(i);
+                            
+                            if( w.get() == null ) m_listenerList.remove(i--);
+                        }
+                    }
+
                 }
             }
             catch( ConcurrentModificationException e )
@@ -528,8 +577,8 @@ public class WikiEventManager
                 //
                 log.info("Concurrent modification of event list; please report this.",e);
             }
+            
         }
-
 
     } // end inner class WikiEventDelegate
 

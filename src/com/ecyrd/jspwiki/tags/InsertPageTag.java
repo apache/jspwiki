@@ -27,7 +27,18 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  Writes page content in HTML.
+ *  Renders WikiPage content.  For InsertPage tag and the InsertPage plugin
+ *  the difference is that the tag will always render in the context of the page
+ *  which is referenced (i.e. a LeftMenu inserted on a JSP page with the InsertPage tag
+ *  will always render in the context of the actual URL, e.g. Main.), whereas
+ *  the InsertPage plugin always renders in local context.  This allows this like
+ *  ReferringPagesPlugin to really refer to the Main page instead of having to
+ *  resort to any trickery.
+ *  <p>
+ *  This tag sets the "realPage" field of the WikiContext to point at the inserted
+ *  page, while the "page" will contain the actual page in which the rendering
+ *  is being made.
+ *   
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>page - Page name to refer to.  Default is the current page.
@@ -82,7 +93,7 @@ public class InsertPageTag
                ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
+        WikiPage   insertedPage;
 
         //
         //  NB: The page might not really exist if the user is currently
@@ -92,32 +103,32 @@ public class InsertPageTag
 
         if( m_pageName == null )
         {
-            page = m_wikiContext.getPage();
-            if( !engine.pageExists(page) ) return SKIP_BODY;
+            insertedPage = m_wikiContext.getPage();
+            if( !engine.pageExists(insertedPage) ) return SKIP_BODY;
         }
         else
         {
-            page = engine.getPage( m_pageName );
+            insertedPage = engine.getPage( m_pageName );
         }
 
-        if( page != null )
+        if( insertedPage != null )
         {
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
-            log.debug("Inserting page "+page);
+            log.debug("Inserting page "+insertedPage);
 
             JspWriter out = pageContext.getOut();
 
-            WikiPage oldPage = m_wikiContext.setRealPage( page );
+            WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
             
-            switch(m_mode)
+            switch( m_mode )
             {
               case HTML:
-                out.print( engine.getHTML(m_wikiContext, page) );
+                out.print( engine.getHTML( m_wikiContext, insertedPage ) );
                 break;
               case PLAIN:
-                out.print( engine.getText(m_wikiContext, page) );
+                out.print( engine.getText( m_wikiContext, insertedPage ) );
                 break;
             }
             

@@ -1,3 +1,9 @@
+2007-03-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.29
+       
+       * Forward ported fixes from 2.4.100.
+
 2007-02-28  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
        * 2.5.28

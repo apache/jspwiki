@@ -49,7 +49,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *  @author Janne Jalkanen
  *  @deprecated
  */
-
+//FIXME2.6: Make use JSPWikiMarkupParser
+//FIXME3.0: Remove
 public class TranslatorReader extends Reader
 {
     public  static final int              READ          = 0;

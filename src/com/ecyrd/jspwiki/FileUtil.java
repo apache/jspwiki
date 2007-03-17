@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 /**
  *  Generic utilities related to file and stream handling.
  */
+// FIXME3.0: This class will move to "util" directory in 3.0
 public class FileUtil
 {
     private static final Logger   log      = Logger.getLogger(FileUtil.class);
