@@ -721,7 +721,7 @@ public class ReferenceManager
      */
     protected Map getRefersTo()
     {
-        return( m_refersTo );
+        return m_refersTo;
     }
 
     /**
@@ -729,7 +729,7 @@ public class ReferenceManager
      */
     protected Map getReferredBy()
     {
-        return( m_referredBy );
+        return m_referredBy;
     }
 
     /**
@@ -862,6 +862,25 @@ public class ReferenceManager
     {
         pagename = getFinalPageName(pagename);
         
+        //
+        //  Remove this item from the referredBy list of any page
+        //  which this item refers to.
+        //
+        Collection c = (Collection)m_refersTo.get( pagename );
+        
+        if( c != null )
+        {
+            for( Iterator i = c.iterator(); i.hasNext(); )
+            {
+                Collection dref = (Collection) m_referredBy.get( i.next() );
+                
+                dref.remove( pagename );
+            }
+        }
+        
+        //
+        //  Finally, remove direct references.
+        //
         m_referredBy.remove( pagename );
         m_refersTo.remove( pagename );
     }
