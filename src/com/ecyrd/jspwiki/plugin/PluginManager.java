@@ -27,7 +27,6 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -159,7 +158,6 @@ public class PluginManager extends ModuleManager
     private Pattern m_pluginPattern;
 
     private boolean m_pluginsEnabled = true;
-    private boolean m_initStage      = false;
 
     /** 
      *  Keeps a list of all known plugin classes.
@@ -215,14 +213,6 @@ public class PluginManager extends ModuleManager
     public void enablePlugins( boolean enabled )
     {
         m_pluginsEnabled = enabled;
-    }
-
-    /**
-     *  Sets the initialization stage for the initial page scan.
-     */
-    public void setInitStage( boolean value )
-    {
-        m_initStage = value;
     }
 
     /**
@@ -368,15 +358,6 @@ public class PluginManager extends ModuleManager
             //
             try
             {
-                if( m_initStage )
-                {
-                    if( plugin instanceof InitializablePlugin )
-                    {
-                        ((InitializablePlugin)plugin).initialize( context, params );
-                    }
-                    return "";
-                }
-                
                 return plugin.execute( context, params );
             }
             catch( PluginException e )
@@ -592,7 +573,7 @@ public class PluginManager extends ModuleManager
         return commandline;
     }
 
-   public Content parsePluginLine( WikiContext context, String commandline, int pos )
+   public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
         PatternMatcher  matcher  = new Perl5Matcher();
@@ -673,6 +654,8 @@ public class PluginManager extends ModuleManager
             log.debug("Registering plugin [className]: " + name);
             m_pluginClassMap.put(name, pluginClass);
         }
+
+        pluginClass.initializePlugin( m_engine );
     }
 
     private void registerPlugins()
@@ -751,6 +734,8 @@ public class PluginManager extends ModuleManager
         private String m_alias;
         private Class  m_clazz;
 
+        private boolean m_initialized = false;
+        
         /**
          *  Creates a new plugin info object which can be used to access a plugin.
          *  
@@ -767,7 +752,33 @@ public class PluginManager extends ModuleManager
             info.initializeFromXML( el );
             return info;
         }
-        
+        /**
+         *  Initializes a plugin, if it has not yet been initialized.
+         *  
+         *  @param engine
+         */
+        protected void initializePlugin( WikiEngine engine )
+        {
+            if( !m_initialized )
+            {
+                // This makes sure we only try once per class, even if init fails.
+                m_initialized = true;
+
+                try
+                {
+                    WikiPlugin p = newPluginInstance();
+                    if( p instanceof InitializablePlugin )
+                    {
+                        ((InitializablePlugin)p).initialize( engine );
+                    }
+                }
+                catch( Exception e )
+                {
+                    log.info( "Cannot initialize plugin "+m_className, e );
+                }
+            }
+        }
+
         protected void initializeFromXML( Element el )
         {
             super.initializeFromXML( el );
@@ -929,5 +940,62 @@ public class PluginManager extends ModuleManager
         ArrayList ls = new ArrayList();
         ls.addAll( m_pluginClassMap.values() );
         return ls;
+    }
+
+    // FIXME: This method needs to be reintegrated with execute() above, since they
+    //        share plenty of code.
+    public void executeParse(PluginContent content, WikiContext context)
+        throws PluginException
+    {
+        if( !m_pluginsEnabled )
+            return;
+
+        Map params = content.getParameters();
+        try
+        {
+            WikiPlugin plugin;
+
+            WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get( content.getPluginName() );
+            
+            if(pluginInfo == null)
+            {
+                pluginInfo = WikiPluginInfo.newInstance(findPluginClass( content.getPluginName() ));
+                registerPlugin(pluginInfo);
+            }
+
+            if( !checkCompatibility(pluginInfo) )
+            {
+                String msg = "Plugin '"+pluginInfo.getName()+"' not compatible with this version of JSPWiki";
+                log.info(msg);
+                return;
+            }
+            
+            plugin = pluginInfo.newPluginInstance();
+            
+            if( plugin instanceof ParserStagePlugin )
+            {
+                ((ParserStagePlugin)plugin).executeParser( content, context, params );
+            }
+        }
+        catch( InstantiationException e )
+        {
+            throw new PluginException( "Cannot instantiate plugin "+content.getPluginName(), e );
+        }
+        catch( IllegalAccessException e )
+        {
+            throw new PluginException( "Not allowed to access plugin "+content.getPluginName(), e );
+        }
+        catch( ClassNotFoundException e )
+        {
+            throw new PluginException( "Could not find plugin "+content.getPluginName(), e );
+        }
+        catch( ClassCastException e )
+        {
+            throw new PluginException( "Class "+content.getPluginName()+" is not a Wiki plugin.", e );
+        }     
+        catch( Exception e )
+        {
+            throw new PluginException( "Instantiation of plugin "+content.getPluginName()+" failed.", e );
+        }
     }
 }

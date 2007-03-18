@@ -42,6 +42,7 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.parser.PluginContent;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -74,8 +75,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 // FIXME: Entries arrive in wrong order.
 
 public class WeblogPlugin 
-    implements WikiPlugin,
-               InitializablePlugin
+    implements WikiPlugin, ParserStagePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
     private static final DateFormat DEFAULT_ENTRYFORMAT 
@@ -117,14 +117,6 @@ public class WeblogPlugin
     public static String makeEntryPage( String pageName, String date )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
-    }
-
-    /**
-     *  Just sets the "I am a weblog" mark.
-     */
-    public void initialize( WikiContext context, Map params )
-    {
-        context.getPage().setAttribute(ATTR_ISWEBLOG, "true");
     }
 
     public String execute( WikiContext context, Map params )
@@ -444,5 +436,11 @@ public class WeblogPlugin
 
             return page2.getLastModified().compareTo( page1.getLastModified() );
         }
+    }
+
+    /** Mark us as being a real weblog. */
+    public void executeParser(PluginContent element, WikiContext context, Map params)
+    {
+        context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }
 }

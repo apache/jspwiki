@@ -19,8 +19,9 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
 import java.util.Map;
+
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Defines an interface for plugins.  Any instance of a wiki plugin
