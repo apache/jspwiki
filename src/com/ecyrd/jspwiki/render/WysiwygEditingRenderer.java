@@ -53,7 +53,8 @@ public class WysiwygEditingRenderer
      * Recursively walk the XHTML DOM tree and manipulate specific elements to
      * make them better for WYSIWYG editing.
      */
-    private void processChildren(Element baseElement){
+    private void processChildren(Element baseElement)
+    {
         for( Iterator itr = baseElement.getChildren().iterator(); itr.hasNext(); )
         {
             Object childElement = itr.next();
