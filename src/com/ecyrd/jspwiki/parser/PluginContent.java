@@ -27,6 +27,7 @@ import org.jdom.Text;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
@@ -58,6 +59,11 @@ public class PluginContent extends Text
     public Object getParameter( String name )
     {
         return m_params.get(name);
+    }
+    
+    public Map getParameters()
+    {
+        return m_params;
     }
     
     public String getValue()
@@ -145,6 +151,17 @@ public class PluginContent extends Text
         
         
         return result;
+    }
+    
+    /**
+     *  Executes the executeParse() method.
+     *  
+     *  @param m_context
+     */
+    public void executeParse(WikiContext m_context)
+        throws PluginException
+    {
+        m_context.getEngine().getPluginManager().executeParse( this, m_context );
     }
 
 }
