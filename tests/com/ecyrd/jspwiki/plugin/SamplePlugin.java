@@ -1,7 +1,9 @@
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import java.util.*;
+import java.util.Map;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.parser.PluginContent;
 
 /**
  *  Implements a simple plugin that just returns its text.
@@ -12,13 +14,10 @@ import java.util.*;
  *  @author Janne Jalkanen
  */
 public class SamplePlugin
-    implements WikiPlugin
+    implements WikiPlugin, ParserStagePlugin
 {
-    public void initialize( WikiEngine engine )
-        throws PluginException
-    {
-    }
-
+    public static boolean c_rendered = false;
+    
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -38,6 +37,11 @@ public class SamplePlugin
         }
 
         return sb.toString();
+    }
+
+    public void executeParser(PluginContent element, WikiContext context, Map params)
+    {
+        if( element.getParameter("render") != null ) c_rendered = true;
     }
 
 }

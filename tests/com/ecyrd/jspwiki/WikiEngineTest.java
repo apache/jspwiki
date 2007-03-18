@@ -856,7 +856,17 @@ public class WikiEngineTest extends TestCase
         engine.deletePage( NAME1 );
     }
     
-    
+    public void testSpacedNames1()
+        throws Exception
+    {
+        m_engine.saveText("This is a test", "puppaa");
+        
+        assertEquals( "normal", "puppaa", m_engine.getText("This is a test").trim() );
+        assertEquals( "lowercase", "puppaa", m_engine.getText("this is a test").trim() );
+        assertEquals( "randomcase", "puppaa", m_engine.getText("ThiS Is a teSt").trim() );
+    }
+
+
     public void testParsedVariables() throws Exception
     {
         m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
@@ -866,4 +876,30 @@ public class WikiEngineTest extends TestCase
         assertEquals( "bar\n", res );
     }
     
+    /**
+     * Tests BugReferenceToRenamedPageNotCleared
+     * 
+     * @throws Exception
+     */
+    public void testRename() throws Exception
+    {
+        m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
+        m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
+       
+        Collection pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
+        
+        WikiContext ctx = new WikiContext( m_engine, m_engine.getPage("OldNameTestPage") );
+        
+        m_engine.renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
+            
+        assertFalse( "did not vanish", m_engine.pageExists( "OldNameTestPage") );
+        assertTrue( "did not appear", m_engine.pageExists( "NewNameTestPage") );
+        
+        pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        
+        assertEquals( "wrong # of referrers", 1, pages.size() );
+        
+        assertEquals( "has wrong referrer", "NewNameTestPage", pages.iterator().next() );        
+    }
 }

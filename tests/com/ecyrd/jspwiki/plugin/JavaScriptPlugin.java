@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+
 import java.util.*;
 
 /**
@@ -11,17 +12,19 @@ import java.util.*;
  *  @author Janne Jalkanen
  */
 public class JavaScriptPlugin
-    implements WikiPlugin
+    implements WikiPlugin, InitializablePlugin
 {
-    public void initialize( WikiEngine engine )
-        throws PluginException
-    {
-    }
-
+    public static boolean c_inited = false;
+    
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         return "<script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n";
+    }
+
+    public void initialize(WikiEngine engine) throws PluginException
+    {
+        c_inited = true;
     }
 
 }

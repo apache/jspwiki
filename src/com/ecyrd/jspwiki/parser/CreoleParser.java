@@ -20,7 +20,6 @@ public class CreoleParser
         };
         
         int idx;
-        int begin = 0;
         
         while( (idx = StringUtils.indexOfAny(creole, patterns) ) != -1 )
         {

@@ -1621,6 +1621,24 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
+    /**
+     * Tests BugTableHeaderNotXHMTLCompliant
+     * @throws Exception
+     */
+    public void testTable5()
+    throws Exception
+    {
+        String src="Testtable\n||header|cell\n\n|cell||header";
+        
+        assertEquals( "<p>Testtable\n</p>"+
+                      "<table class=\"wikitable\" border=\"1\">"+
+                      "<tr class=\"odd\"><th>header</th><td>cell</td></tr>\n</table><p />\n"+
+                      "<table class=\"wikitable\" border=\"1\">"+
+                      "<tr class=\"odd\"><td>cell</td><th>header</th></tr>"+
+                      "</table>",
+                      translate(src) );
+    }
+
     public void testTableLink()
     throws Exception
     {

@@ -2,6 +2,8 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.providers.ProviderException;
+
 import junit.framework.*;
 import java.util.*;
 
@@ -28,12 +30,13 @@ public class PluginManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         engine = new TestEngine(props);
-        context = new WikiContext( engine, new WikiPage(engine, "testpage") );
+        context = new WikiContext( engine, new WikiPage(engine, "Testpage") );
         manager = new PluginManager( engine, props );
     }
 
-    public void tearDown()
+    public void tearDown() throws ProviderException
     {
+        engine.deletePage("Testpage");
     }
 
     public void testSimpleInsert()
@@ -171,6 +174,22 @@ public class PluginManagerTest extends TestCase
         String res = manager.execute( context, "{samplealias2 text=xyzzy}");
     
         assertEquals( "xyzzy", res );
+    }
+
+    public void testInitPlugin() throws Exception
+    {
+        manager.execute( context, "{JavaScriptPlugin}");
+        
+        assertTrue( JavaScriptPlugin.c_inited );
+    }
+
+    public void testParserPlugin() throws Exception
+    {
+        engine.saveText(context, "[{SamplePlugin render=true}]");
+        
+        engine.getHTML( "Testpage" );
+        
+        assertTrue( SamplePlugin.c_rendered );
     }
 
     public static Test suite()

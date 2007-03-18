@@ -1,3 +1,25 @@
+2007-03-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.30
+       
+       * Fixed BugReferenceToRenamedPageNotCleared
+       
+       * Fixed BugTableHeaderNotXHMTLCompliant
+       
+       * Fixed BugInitializablePluginNotInitialized
+
+       * API Change: The signature of PageFilter.initialize() now
+       also includes the WikiEngine.  This was necessary, because otherwise
+       the initialize() -method was essentially useless for most use
+       cases.
+       
+       * Added ParserStagePlugin interface.  This allows a plugin to be
+       executed even during parsing of the wiki page, not until the render
+       stage.
+       
+       * Added David Au's patches to get the FCK support back up to speed
+       again.
+
 2007-03-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.29

@@ -1,12 +1,14 @@
 
 package com.ecyrd.jspwiki;
 
-import junit.framework.*;
-import java.util.*;
+import java.util.Properties;
 
-import org.apache.log4j.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.providers.*;
+import org.apache.log4j.PropertyConfigurator;
+
 import com.ecyrd.jspwiki.util.MailUtil;
 
 /**

@@ -1,6 +1,5 @@
 package com.ecyrd.jspwiki.workflow;
 
-import java.util.Locale;
 import java.util.Properties;
 
 import junit.framework.TestCase;
