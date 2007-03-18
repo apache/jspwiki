@@ -585,8 +585,6 @@ public class WikiEngine
      */
     public void initReferenceManager()
     {
-        m_pluginManager.setInitStage( true );
-
         try
         {
             ArrayList pages = new ArrayList();
@@ -605,8 +603,6 @@ public class WikiEngine
         {
             log.fatal("PageProvider is unable to list pages: ", e);
         }
-
-        m_pluginManager.setInitStage( false );
     }
 
 
