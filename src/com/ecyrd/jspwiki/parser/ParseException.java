@@ -10,6 +10,8 @@ import com.ecyrd.jspwiki.WikiException;
  */
 public class ParseException extends WikiException
 {
+    private static final long serialVersionUID = 1L;
+
     public ParseException(String msg)
     {
         super(msg);
