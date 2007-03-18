@@ -42,6 +42,7 @@ import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.CleanTextRenderer;
+import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
@@ -106,7 +107,7 @@ public class JSPWikiMarkupParser
     private List           m_inlineImagePatterns;
 
     /** Parser for extended link functionality. */
-    private LinkParser m_linkParser = new LinkParser();
+    private LinkParser     m_linkParser = new LinkParser();
 
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
@@ -139,6 +140,9 @@ public class JSPWikiMarkupParser
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
+    
+    /** If true, then generate special output for wysiwyg editing in certain cases */ 
+    private boolean                m_wysiwygEditorMode     = false;
 
     /** If true, consider URIs that have no brackets as well. */
     // FIXME: Currently reserved, but not used.
@@ -305,6 +309,14 @@ public class JSPWikiMarkupParser
             m_camelCaseLinks  = TextUtil.getBooleanProperty( props,
                                                              PROP_CAMELCASELINKS, 
                                                              m_camelCaseLinks );
+        }
+        
+        
+        
+        Boolean wysiwygVariable = (Boolean)m_context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        if( wysiwygVariable != null )
+        {
+            m_wysiwygEditorMode = wysiwygVariable.booleanValue();
         }
 
         m_plainUris           = getLocalBooleanProperty( m_context,
@@ -783,7 +795,14 @@ public class JSPWikiMarkupParser
                         //
                         if( prefix.endsWith("~") || prefix.indexOf('[') != -1 )
                         {
-                            if( prefix.endsWith("~") ) prefix = prefix.substring(0,prefix.length()-1);
+                            if( prefix.endsWith("~") )
+                            {
+                                if( m_wysiwygEditorMode )
+                                {
+                                    m_currentElement.addContent( "~" );
+                                }
+                                prefix = prefix.substring(0,prefix.length()-1);
+                            }
                             if( camelCase != null )
                             {
                                 m_currentElement.addContent( prefix+camelCase );
@@ -920,6 +939,13 @@ public class JSPWikiMarkupParser
         "area", "base", "br", "col", "hr", "img", "input", "link", "meta", "p", "param"
     };
     
+    /**
+     *  Goes through the current element stack and pops all elements until this
+     *  element is found - this essentially "closes" and element.
+     *  
+     *  @param s
+     *  @return The new current element, or null, if there was no such element in the entire stack.
+     */
     private Element popElement( String s )
     {
         int flushedBytes = flushPlainText();
@@ -950,7 +976,7 @@ public class JSPWikiMarkupParser
             currEl = currEl.getParentElement();
         }
         
-        return m_currentElement;
+        return null;
     }
 
 
@@ -1247,6 +1273,11 @@ public class JSPWikiMarkupParser
 
     private Element handleAccessRule( String ruleLine )
     {
+        if( m_wysiwygEditorMode )
+        {
+            m_currentElement.addContent( "[" + ruleLine + "]" );
+        }
+        
         if( !m_parseAccessRules ) return m_currentElement;
         Acl acl;
         WikiPage          page = m_context.getPage();
@@ -1280,6 +1311,11 @@ public class JSPWikiMarkupParser
      */
     private Element handleMetadata( String link )
     {
+        if( m_wysiwygEditorMode )
+        {
+            m_currentElement.addContent( "[" + link + "]" );
+        }
+        
         try
         {
             String args = link.substring( link.indexOf(' '), link.length()-1 );
@@ -1342,10 +1378,13 @@ public class JSPWikiMarkupParser
         {
             try
             {
-                Content pluginContent = m_engine.getPluginManager().parsePluginLine(
-                        m_context, linktext, pos );
+                PluginContent pluginContent = m_engine.getPluginManager().parsePluginLine( m_context, 
+                                                                                           linktext, 
+                                                                                           pos );
 
                 addElement( pluginContent );
+                
+                pluginContent.executeParse( m_context );
             }
             catch( PluginException e )
             {
@@ -2042,13 +2081,24 @@ public class JSPWikiMarkupParser
     {
         StringBuffer sb = new StringBuffer(40);
         int pos = getPosition();
-        int ch;
+        int ch = nextToken();
         boolean isPlugin = false;
-
-        while( (ch = nextToken()) == '[' )
+        
+        if( ch == '[' )
         {
+            if( m_wysiwygEditorMode )
+            {
+                sb.append( '[' );
+            }
+            
             sb.append( (char)ch );
+
+            while( (ch = nextToken()) == '[' )
+            {
+                sb.append( (char)ch );
+            }
         }
+
 
         if( ch == '{' )
         {
@@ -2294,6 +2344,11 @@ public class JSPWikiMarkupParser
             return null;
         }
 
+        //
+        //  If the bar is in the first column, we will either start
+        //  a new table or continue the old one.
+        //
+        
         if( newLine )
         {
             if( !m_istable )
@@ -2309,9 +2364,12 @@ public class JSPWikiMarkupParser
                        ? new Element("tr").setAttribute("class", "odd")
                        : new Element("tr");
             el = pushElement( tr );
-            // m_closeTag = m_renderer.closeTableItem()+m_renderer.closeTableRow();
         }
         
+        //
+        //  Check out which table cell element to start;
+        //  a header element (th) or a regular element (td).
+        //
         int ch = nextToken();
 
         if( ch == '|' )
@@ -2319,6 +2377,7 @@ public class JSPWikiMarkupParser
             if( !newLine ) 
             {
                 el = popElement("th");
+                if( el == null ) popElement("td");
             }
             el = pushElement( new Element("th") );
         }
@@ -2327,6 +2386,7 @@ public class JSPWikiMarkupParser
             if( !newLine ) 
             {
                 el = popElement("td");
+                if( el == null ) popElement("th");
             }
             
             el = pushElement( new Element("td") );
@@ -2346,12 +2406,23 @@ public class JSPWikiMarkupParser
         int ch = nextToken();
 
         if( ch == ' ' )
+        {
+            if( m_wysiwygEditorMode )
+            {
+                m_plainTextBuf.append( "~ " );
+            }
             return m_currentElement;
+        }
         
         if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' || 
             ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
             ch == '{' || ch == ']' || ch == '}' || ch == '%' )
         {
+            if( m_wysiwygEditorMode )
+            {
+                m_plainTextBuf.append( '~' );
+            }
+            
             m_plainTextBuf.append( (char)ch );
             m_plainTextBuf.append(readWhile( ""+(char)ch ));
             return m_currentElement;
