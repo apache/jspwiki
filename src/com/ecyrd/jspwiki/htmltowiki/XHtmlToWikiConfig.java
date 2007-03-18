@@ -18,6 +18,8 @@ public class XHtmlToWikiConfig
 
     private String m_wikiJspPage = "Wiki.jsp?page=";
 
+    private String m_editJspPage = "Edit.jsp?page=";
+
     private String m_attachPage = "attach?page=";
 
     private String m_pageName;
@@ -45,6 +47,9 @@ public class XHtmlToWikiConfig
         
         String href = wikiContext.getURL( WikiContext.VIEW, page );
         m_wikiJspPage = removeLast(href,page);
+        
+        href = wikiContext.getURL( WikiContext.EDIT, page );
+        m_editJspPage = removeLast( href, page );
         
         href = wikiContext.getURL( WikiContext.ATTACH, page );
         m_attachPage = removeLast( href, page );
@@ -121,5 +126,15 @@ public class XHtmlToWikiConfig
     public void setWikiJspPage( String wikiJspPage )
     {
         m_wikiJspPage = wikiJspPage;
+    }
+    
+    public String getEditJspPage()
+    {
+        return m_editJspPage;
+    }
+
+    public void setEditJspPage( String editJspPage )
+    {
+        m_editJspPage = editJspPage;
     }
 }

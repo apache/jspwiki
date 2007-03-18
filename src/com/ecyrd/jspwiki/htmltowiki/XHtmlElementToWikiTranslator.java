@@ -95,11 +95,26 @@ public class XHtmlElementToWikiTranslator
             {
                 boolean bold = false;
                 boolean italic = false;
+                boolean monospace = false;
                 String cssSpecial = null;
                 String cssClass = base.getAttributeValue( "class" );
+                
+                // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
+                boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|editpage|external" );
+                
                 Map styleProps = getStylePropertiesLowerCase( base );
                 if( styleProps != null )
                 {
+                    String fontFamily = (String)styleProps.get( "font-family" );
+                    String whiteSpace = (String)styleProps.get( "white-space" );
+                    if( fontFamily != null && ( fontFamily.indexOf( "monospace" ) >= 0 
+                            && whiteSpace != null && whiteSpace.indexOf( "pre" ) >= 0  ) )
+                    {
+                        styleProps.remove( "font-family" );
+                        styleProps.remove( "white-space" );
+                        monospace = true;
+                    }
+                    
                     String weight = (String)styleProps.remove( "font-weight" );
                     String style = (String)styleProps.remove( "font-style" );
                     
@@ -116,7 +131,7 @@ public class XHtmlElementToWikiTranslator
                         cssSpecial = propsToStyleString( styleProps );
                     }
                 }
-                if( cssClass != null )
+                if( cssClass != null && !ignoredCssClass )
                 {
                     if( n.equals( "div" ) )
                     {
@@ -134,6 +149,11 @@ public class XHtmlElementToWikiTranslator
                 if( italic )
                 {
                     m_out.print( "''" );
+                }
+                if( monospace )
+                {
+                    m_out.print( "{{{" );
+                    m_preStack.push();
                 }
                 if( cssSpecial != null )
                 {
@@ -158,6 +178,11 @@ public class XHtmlElementToWikiTranslator
                         m_out.print( "%%" );
                     }
                 }
+                if( monospace )
+                {
+                    m_preStack.pop();
+                    m_out.print( "}}}" );
+                }
                 if( italic )
                 {
                     m_out.print( "''" );
@@ -166,7 +191,7 @@ public class XHtmlElementToWikiTranslator
                 {
                     m_out.print( "__" );
                 }
-                if( cssClass != null )
+                if( cssClass != null && !ignoredCssClass )
                 {
                     if( n.equals( "div" ) )
                     {
@@ -274,13 +299,7 @@ public class XHtmlElementToWikiTranslator
                 }
                 else if( n.equals( "a" ) )
                 {
-                    if( isUndefinedPageLink( e ) )
-                    {
-                        m_out.print( "[" );   
-                        printChildren( e );
-                        m_out.print( "]" );
-                    }
-                    else if( !isIgnorableWikiMarkupLink( e ) )
+                    if( !isIgnorableWikiMarkupLink( e ) )
                     {
                         if( e.getChild( "IMG" ) != null )
                         {
@@ -291,7 +310,16 @@ public class XHtmlElementToWikiTranslator
                             String ref = e.getAttributeValue( "href" );
                             if( ref == null )
                             {
-                                print( e );
+                                if( isUndefinedPageLink( e ) )
+                                {
+                                    m_out.print( "[" );
+                                    print( e );
+                                    m_out.print( "]" );
+                                }
+                                else
+                                {
+                                    print( e );
+                                }
                             }
                             else
                             {
@@ -304,13 +332,27 @@ public class XHtmlElementToWikiTranslator
                                     }
                                     else
                                     {
+                                        String target = e.getAttributeValue( "target" );
+
                                         m_out.print( " [" );
                                         print( e );
                                         if( !e.getTextTrim().replaceAll( "\\s", "" ).equals( ref ) )
                                         {
                                             m_out.print( "|" );
                                             print( ref );
+
+                                            if( target != null )
+                                            {
+                                                m_out.print( "|target='" +  target + "'" );
+                                            }
                                         }
+                                        else if( target != null )
+                                        {
+                                            // if the ref has the same value as the text and also if there's
+                                            // a target attribute, then just print [ref|ref|target='targetValue']
+                                            m_out.print( "|" + ref + "|target='" +  target + "'" );
+                                        }
+                                        
                                         m_out.print( "]" );
                                     }
                                 }
@@ -360,6 +402,10 @@ public class XHtmlElementToWikiTranslator
                 else if( n.equals("dl") )
                 {
                     print( e );
+                    
+                    // print a newline after the definition list. If we don't,
+                    // it may cause problems for the subsequent element.
+                    m_out.print( "\n" );
                 }
                 else if( n.equals("dt") )
                 {
@@ -397,7 +443,10 @@ public class XHtmlElementToWikiTranslator
                     m_preStack.push();
                     print( e );
                     m_preStack.pop();
-                    m_out.println( "}}}" );
+                    
+                    // print a newline before the closing braces for aesthetics and a newline after it
+                    // to avoid breaking any subsequent wiki markup that follows.
+                    m_out.print( "\n}}}\n" );
                 }
                 else if( n.equals( "code" ) || n.equals( "tt" ) )
                 {
@@ -436,10 +485,10 @@ public class XHtmlElementToWikiTranslator
                         m_out.print( " form='" + name + "'" );
                     }
                     
-                    m_out.print( "}]" );
+                    m_out.print( "}]\n" );
                     
                     print( e );
-                    m_out.print( "[{FormClose}]" );
+                    m_out.print( "[{FormClose}]\n" );
                 }
                 else if( n.equals( "input" ) )
                 {
@@ -627,10 +676,9 @@ public class XHtmlElementToWikiTranslator
      */
     private boolean isUndefinedPageLink( Element a)
     {
-        String ref = a.getAttributeValue( "href" );
         String classVal = a.getAttributeValue( "class" );
-        
-        return ( ref != null && classVal != null && classVal.equals( "editpage" ) ); 
+
+        return ( classVal != null && classVal.equals( "editpage" ) );
     }
 
     private Map getStylePropertiesLowerCase( Element base ) throws IOException
