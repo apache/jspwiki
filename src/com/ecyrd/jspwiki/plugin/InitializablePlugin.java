@@ -19,12 +19,17 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import java.util.Map;
-import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 
 /**
- *  If a plugin defines this interface, it is called during JSPWiki
- *  initialization, if it occurs on a page.
+ *  If a plugin defines this interface, it is called exactly once
+ *  prior to the actual execute() routine.  If the plugin has its
+ *  own declaration in jspwiki_modules.xml, then it is called during
+ *  startup - otherwise it is called the first time the plugin is
+ *  encountered.
+ *  <p>
+ *  This method did not actually work until 2.5.30.  The method signature
+ *  has been changed in 2.6 to reflect the new operation.
  *
  *  @since 2.2
  *
@@ -33,12 +38,10 @@ import com.ecyrd.jspwiki.WikiContext;
 public interface InitializablePlugin
 {
     /**
-     *  The initialization routine.  The context is to a Wiki page,
-     *  and the parameters are exactly like in the execute() -routine.
-     *  However, this routine is not expected to return anything,
-     *  as any output will be discarded. 
+     *  Called whenever the plugin is being instantiated for
+     *  the first time.
      */
 
-    public void initialize( WikiContext context, Map params )
+    public void initialize( WikiEngine engine )
         throws PluginException;
 }
