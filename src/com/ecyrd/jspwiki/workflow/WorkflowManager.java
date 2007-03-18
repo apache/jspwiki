@@ -1,7 +1,6 @@
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
-import java.text.MessageFormat;
 import java.util.*;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -11,7 +10,6 @@ import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WorkflowEvent;
-import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 /**
  * <p>
