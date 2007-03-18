@@ -401,7 +401,6 @@ public class WikiEventManager
     private static final class WikiEventDelegate
     {
         /* A list of event listeners for this instance. */
-        //private final EventListenerList m_listenerList = new EventListenerList();
 
         private ArrayList m_listenerList = new ArrayList();
         
@@ -598,7 +597,6 @@ public class WikiEventManager
             }
             
             throw new ClassCastException( arg1.getClass().getName() + " != " + arg0.getClass().getName() );
-        }
-        
+        }   
     }
 } // end com.ecyrd.jspwiki.event.WikiEventManager
