@@ -107,12 +107,10 @@ public class PageRenamer
         throws WikiException
     {
         // Work out the clean version of the new name of the page
-        newName = newName.trim();
-
+        newName = MarkupParser.cleanLink( newName.trim() );
+        
         // Get the collection of pages that the refered to the old name (the From name)...
         Collection referrers = getReferrersCollection( oldName );
-        
-        newName = MarkupParser.cleanLink( newName );
         
         log.debug( "Rename request for page '"+ oldName +"' to '" + newName + "'" );
            
