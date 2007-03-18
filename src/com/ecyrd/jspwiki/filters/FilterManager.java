@@ -150,7 +150,7 @@ public final class FilterManager
 
             PageFilter filter = (PageFilter)cl.newInstance();
 
-            filter.initialize( props );
+            filter.initialize( m_engine, props );
 
             addPageFilter( filter, priority );
             log.info("Added page filter "+cl.getName()+" with priority "+priority);

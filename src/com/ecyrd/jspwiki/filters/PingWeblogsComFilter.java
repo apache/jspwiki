@@ -25,7 +25,7 @@ public class PingWeblogsComFilter
 
     public static final String PROP_PINGURL = "pingurl";
 
-    public void initialize( Properties props )
+    public void initialize( WikiEngine engine, Properties props )
     {
         m_pingURL = props.getProperty( PROP_PINGURL, "http://rpc.weblogs.com/RPC2" );
     }

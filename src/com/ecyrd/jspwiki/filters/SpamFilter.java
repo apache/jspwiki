@@ -118,7 +118,7 @@ public class SpamFilter
      */
     private boolean         m_ignoreAuthenticated = false;
     
-    public void initialize( Properties properties )
+    public void initialize( WikiEngine engine, Properties properties )
     {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST, 
                                                        m_forbiddenWordsPage );

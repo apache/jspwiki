@@ -1,7 +1,9 @@
 package com.ecyrd.jspwiki.filters;
 
-import com.ecyrd.jspwiki.WikiContext;
 import java.util.Properties;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Provides a definition for a page filter.  A page filter is a class
@@ -17,6 +19,8 @@ import java.util.Properties;
  *  PageFilters must be thread-safe!  There is only one instance of each PageFilter 
  *  per each WikiEngine invocation.  If you need to store data persistently, use
  *  VariableManager, or WikiContext.
+ *  <p>
+ *  As of 2.5.30, initialize() gains accesso to the WikiEngine.
  *
  *  @author Janne Jalkanen
  */
@@ -26,7 +30,7 @@ public interface PageFilter
      *  Is called whenever the a new PageFilter is instantiated and
      *  reset.
      */
-    public void initialize( Properties properties )
+    public void initialize( WikiEngine engine, Properties properties )
         throws FilterException;
 
     /**
