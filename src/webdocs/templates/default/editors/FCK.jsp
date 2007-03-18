@@ -1,6 +1,9 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
+<%@ page import="java.util.Properties"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.render.*" %>
+<%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 
@@ -8,7 +11,13 @@
     This provides the FCK editor for JSPWiki.
 --%>
 <%  WikiContext context = WikiContext.findContext( pageContext );
-    context.setVariable("WYSIWYG_EDITOR_MODE", Boolean.TRUE);
+    context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+    context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
+
+    WikiPage wikiPage = context.getPage();
+    String originalCCLOption = (String)wikiPage.getAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS );
+    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
+    
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
     String changenote = (String)session.getAttribute("changenote");
@@ -17,11 +26,26 @@
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
     {
-        usertext = context.getEngine().getText( context, context.getPage() );
+        usertext = context.getEngine().getPureText( context.getPage() );
     }%>
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = "";
-   String pageAsHtml = StringEscapeUtils.escapeJavaScript( context.getEngine().textToHTML( context, usertext ) );
+
+   WikiEngine engine = context.getEngine();
+   RenderingManager renderingManager = new RenderingManager();
+   
+   // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
+   Properties copyOfWikiProperties = new Properties( engine.getWikiProperties() );
+   copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
+   renderingManager.initialize( engine, copyOfWikiProperties );
+	
+   String pageAsHtml = StringEscapeUtils.escapeJavaScript( renderingManager.getHTML( context, usertext ) );
+   
+   // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
+   // after the XHTML for FCK has been rendered.
+   context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
+   context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
+   wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 %>
 
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
@@ -44,6 +68,7 @@
    oFCKeditor.Config['CustomConfigurationsPath'] = '<%=request.getContextPath()%>/scripts/fckconfig.js';
    oFCKeditor.Config['StylesXmlPath'] = '<%=request.getContextPath()%>/scripts/fckstyles.xml';
    oFCKeditor.Config['TemplatesXmlPath'] = '<%=request.getContextPath()%>/scripts/fcktemplates.xml';
+   oFCKeditor.Config['BaseHref'] = 'http://<%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/';
    oFCKeditor.Create();
 </script>
 <noscript>
@@ -77,10 +102,8 @@
     <p>
         <input name='ok' type='submit' value='Save' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <%--
         <input name='preview' type='submit' value='Preview' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        --%>
         <input name='cancel' type='submit' value='Cancel' />
     </p>
 </div>

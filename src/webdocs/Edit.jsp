@@ -171,6 +171,8 @@
         session.setAttribute("author",user);
         session.setAttribute("link",link != null ? link : "" );
         
+        if( htmlText != null ) session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
+        
         session.setAttribute("changenote", changenote != null ? changenote : "" );
         response.sendRedirect( wiki.getURL(WikiContext.PREVIEW,pagereq,null,false) );
         return;

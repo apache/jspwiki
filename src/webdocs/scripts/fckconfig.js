@@ -44,7 +44,8 @@ FCKConfig.ToolbarComboPreviewCSS = '' ;
 
 FCKConfig.DocType = '' ;
 
-FCKConfig.BaseHref = '' ;
+// JSPWiki: this option is dynamically set in the 'FCK.jsp' file.
+//FCKConfig.BaseHref = '' ;
 
 FCKConfig.FullPage = false ;
 
