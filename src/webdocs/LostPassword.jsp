@@ -7,6 +7,7 @@
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 
 <%! 
     Logger log = Logger.getLogger("JSPWiki");
@@ -46,12 +47,10 @@
                     + wiki.getURLConstructor().makeURL(WikiContext.NONE, "Login.jsp", true, "") + ".\n\n"
                     + "--" + wiki.getApplicationName();
                     
-            WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
- 			 
-  			MailUtil.sendMessage( wikiContext,
-                                  email,
-  			                      "New password for " + wiki.getApplicationName(),
-  			                      mailMessage );
+			MailUtil.sendMessage( wiki.getWikiProperties(),
+                                   email,
+			                      "New password for " + wiki.getApplicationName(),
+			                      mailMessage );
 		
             log.info("User "+email+" requested and received a new password.");
             
@@ -66,11 +65,6 @@
         {
             message = "No user or email '" + name + "' was found.";
             log.info("Tried to reset password for non-existent user '" + name + "'");
-        }
-        catch (AuthenticationFailedException e) 
-        {
-            message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
-            log.error("Tried to reset password and got AuthenticationFailedException: " + e);            
         }
         catch (SendFailedException e) 
         {
@@ -88,10 +82,20 @@
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
-    if(!wikiContext.hasAccess( response )) return;
-    
+
+	//Create wiki context like in Login.jsp: 
+    //don't check for access permissions: if you have lost your password you cannot login!
+	WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+	
+	// If no context, it means we're using container auth.  So, create one anyway
+	if( wikiContext == null )
+	{
+	    wikiContext = wiki.createContext( request, WikiContext.LOGIN );
+	    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+	                              wikiContext,
+	                              PageContext.REQUEST_SCOPE );
+	}
+
     WikiSession wikiSession = wikiContext.getWikiSession(); 
     String action  = request.getParameter("action");
 
@@ -120,16 +124,9 @@
 <div id="wikibody" >
   <wiki:Include page="Header.jsp" />
 
-  <div id="applicationlogo">
-    <a href="<wiki:LinkTo page='SystemInfo' format='url'/>"
-         onmouseover="document.fav_logo.src='<wiki:Link format="url" jsp="images/jspwiki_logo.png"/>'"
-         onmouseout="document.fav_logo.src='<wiki:Link format="url" jsp="images/jspwiki_logo_s.png"/>'">
-        <img src="<wiki:Link format="url" jsp="images/jspwiki_logo_s.png"/>"
-             name="fav_logo" alt="JSPWiki logo" border="0"/>
-    </a>
-  </div>
-
-  <div id="companylogo"></div>
+  <!-- Removed application logo here since it may conflict with other templates.
+       TODO: LostPassword.jsp needs to be properly integrated into the templating system 
+       in order to be translatable -->
 
   <div id="page">
   <%
