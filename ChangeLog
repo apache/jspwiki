@@ -1,3 +1,23 @@
+2007-03-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.32
+       
+       * Fixed a bunch of Eclipse warnings; hopefully no functionality
+       changes.
+       
+       * Fixed BugInlineImagesCaseSensitive - inline image lists are now
+       case insensitive (yay!).  Thanks to Harry Metske.
+       
+       * Fixed BugMultiWikiCreatesRSSFileInWrongPlace.  Thanks to Harry Metske
+       again.   Now, if the rssFile property is set to an absolute path, it is
+       used instead of a relative path to the wikiengine home.  This allows you
+       to have separate paths for multi-wikis.
+       
+       * Fixed BugReferringPagesPluginLinksNonExistingPages, thanks to 
+       Candid Dauth.
+       
+       * Implemented IdeaRemoveDuplicatesFromSessionsPlugin from Harry Metske.
+
 2007-03-19  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
        * 2.5.31
