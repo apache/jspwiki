@@ -92,6 +92,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  <pre>
  *  [{Counter name='foo'}]
  *  </pre>
+ *  <h3>Plugin property files</h3>
  *  <p>
  *  Since 2.3.25 you can also define a generic plugin XML properties file per
  *  each JAR file.
@@ -108,6 +109,24 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *   </plugin>
  *   </modules>
  *  </pre>
+ *  <h3>Plugin lifecycle</h3>
+ *  
+ *  <p>Plugin can implement multiple interfaces to let JSPWiki know at which stages they should
+ *  be invoked:
+ *  <ul>
+ *  <li>InitializablePlugin: If your plugin implements this interface, the initialize()-method is 
+ *      called once for this class
+ *      before any actual execute() methods are called.  You should use the initialize() for e.g.
+ *      precalculating things.  But notice that this method is really called only once during the
+ *      entire WikiEngine lifetime.  The InitializablePlugin is available from 2.5.30 onwards.</li>
+ *  <li>ParserStagePlugin: If you implement this interface, the executeParse() method is called
+ *      when JSPWiki is forming the DOM tree.  You will receive an incomplete DOM tree, as well
+ *      as the regular parameters.  However, since JSPWiki caches the DOM tree to speed up later
+ *      places, which means that whatever this method returns would be irrelevant.  You can do some DOM
+ *      tree manipulation, though.  The ParserStagePlugin is available from 2.5.30 onwards.</li>
+ *  <li>WikiPlugin: The regular kind of plugin which is executed at every rendering stage.  Each
+ *      new page load is guaranteed to invoke the plugin, unlike with the ParserStagePlugins.</li>
+ *  </ul>
  *  
  *  @author Janne Jalkanen
  *  @since 1.6.1
