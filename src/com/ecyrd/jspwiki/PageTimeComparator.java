@@ -23,8 +23,15 @@ import java.io.Serializable;
 import java.util.*;
 import org.apache.log4j.Logger;
 
+/**
+ *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
+ *  be WikiPage objects, or else you will receive a ClassCastException.
+ *  
+ *  @author jalkanen
+ */
 // FIXME: Does not implement equals().
 // FIXME3.0: move to util package
+
 public class PageTimeComparator
     implements Comparator, Serializable
 {
