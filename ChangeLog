@@ -1,3 +1,11 @@
+2007-03-19  Christoph Sauer <sauer AT hs-heilbronn DOT de>
+
+       * 2.5.31
+       
+       * Fixed Bug with LostPassword.jsp: If you set access priviledges for
+         a wiki completely private (even view) then you where not able to restore
+         the password since LostPassword.jsp required login.
+
 2007-03-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.30
