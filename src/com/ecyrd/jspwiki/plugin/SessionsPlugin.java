@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.ecyrd.jspwiki.WikiContext;
@@ -35,6 +37,8 @@ import com.ecyrd.jspwiki.WikiSession;
  *  <ul>
  *    <li><code>users</code> - returns a comma-separated list of
  *    users</li>
+ *    <li><code>distinctUsers</code> - will only show
+ *    distinct users.
  *  </ul>
  *  @since 2.3.84
  *  @author Andrew Jaquith
@@ -56,14 +60,50 @@ public class SessionsPlugin
             StringBuffer s = new StringBuffer();
             for ( int i = 0; i < principals.length; i++ )
             {
-                s.append( principals[i].getName() );
-                if ( i < ( principals.length - 1 ) )
+                s.append(principals[i].getName() + ", ");
+            }
+            // remove the last comma and blank :
+            return s.substring(0, s.length() - 2);
+        }
+
+        //
+        // show each user session only once (with a counter that indicates the
+        // number of sessions for each user)
+        if ("distinctUsers".equals(prop))
+        {
+            Principal[] principals = WikiSession.userPrincipals(engine);
+            // we do not assume that the principals are sorted, so first count
+            // them :
+            HashMap distinctPrincipals = new HashMap();
+            for (int i = 0; i < principals.length; i++)
+            {
+                String principalName = principals[i].getName();
+
+                if (distinctPrincipals.containsKey(principalName))
                 {
-                    s.append( ',' );
-                    s.append( ' ' );
+                    // we already have an entry, increase the counter:
+                    int numSessions = ((Integer) distinctPrincipals.get(principalName)).intValue();
+                    // store the new value:
+                    distinctPrincipals.put(principalName, new Integer(++numSessions));
+                }
+                else
+                {
+                    // first time we see this entry, add entry to HashMap with
+                    // value 1
+                    distinctPrincipals.put(principalName, new Integer(1));
                 }
             }
-            return s.toString();
+            //
+            //
+            StringBuffer s = new StringBuffer();
+            Iterator keys = distinctPrincipals.keySet().iterator();
+            while (keys.hasNext())
+            {
+                String entry = (String) keys.next();
+                s.append((entry + "(" + distinctPrincipals.get(entry) + "), "));
+            }
+            // remove the last comma and blank :
+            return s.substring(0, s.length() - 2);
         }
 
         return String.valueOf( WikiSession.sessions( engine ) );
