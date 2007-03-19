@@ -44,7 +44,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 public class UserDatabaseLoginModule extends AbstractLoginModule
 {
 
-    protected static final Logger log = Logger.getLogger( UserDatabaseLoginModule.class );
+    private static final Logger log = Logger.getLogger( UserDatabaseLoginModule.class );
     
     /**
      * @see javax.security.auth.spi.LoginModule#login()

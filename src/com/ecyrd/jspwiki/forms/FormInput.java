@@ -79,13 +79,10 @@ public class FormInput
         field.setChecked( TextUtil.isPositive(checked)
                           || "checked".equalsIgnoreCase(checked) );
         
-        if( previousValues != null )
+        String oldValue = (String)previousValues.get( inputName );
+        if( oldValue != null )
         {
-            String oldValue = (String)previousValues.get( inputName );
-            if( oldValue != null )
-            {
-                field.setValue( oldValue );
-            }
+            field.setValue( oldValue );
         }
 
         if( size != null ) field.setSize( size );

@@ -279,7 +279,7 @@ public class BasicAttachmentProvider
 
         File propertyFile = new File( findAttachmentDir(att), PROPERTY_FILE );
 
-        if( propertyFile != null && propertyFile.exists() )
+        if( propertyFile.exists() )
         {
             InputStream in = new FileInputStream( propertyFile );
 

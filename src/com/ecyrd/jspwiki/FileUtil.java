@@ -248,7 +248,7 @@ public class FileUtil
         {
             try
             {
-                if( out != null ) out.close();
+                out.close();
             }
             catch( Exception e ) 
             {

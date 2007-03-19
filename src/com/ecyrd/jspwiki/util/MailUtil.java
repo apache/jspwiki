@@ -248,8 +248,8 @@ class SmtpAuthenticator extends javax.mail.Authenticator
     {
         if (pass.equals(""))
             return null;
-        else
-            return new PasswordAuthentication(login, pass);
+        
+        return new PasswordAuthentication(login, pass);
     }
 
 }

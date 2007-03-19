@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
 public abstract class AbstractLoginModule implements LoginModule
 {
 
-    protected final static Logger   log = Logger.getLogger( AbstractLoginModule.class );
+    private   final static Logger   log = Logger.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
 

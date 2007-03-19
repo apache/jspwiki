@@ -164,9 +164,9 @@ public final class GroupManager implements Authorizer
             cause = e;
         }
 
-        if ( dbInstantiationError != null )
+        if( dbInstantiationError != null )
         {
-            throw new WikiSecurityException( dbInstantiationError + " Cause: " + cause.getMessage() );
+            throw new WikiSecurityException( dbInstantiationError + " Cause: " + (cause != null ? cause.getMessage() : "") );
         }
 
         return m_groupDatabase;

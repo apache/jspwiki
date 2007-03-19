@@ -187,7 +187,7 @@ public class VersioningFileProvider
     {
         File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
 
-        if( propertyFile != null && propertyFile.exists() )
+        if( propertyFile.exists() )
         {
             long lastModified = propertyFile.lastModified();
 
@@ -511,7 +511,7 @@ public class VersioningFileProvider
 
             File file = new File( dir, version+FILE_EXT );
 
-            if( file != null && file.exists() )
+            if( file.exists() )
             {
                 p = new WikiPage( m_engine, page );
 
@@ -668,7 +668,7 @@ public class VersioningFileProvider
             
             try
             {
-                if( previousFile != null && previousFile.exists() )
+                if( previousFile.exists() )
                 {
                     in = new BufferedInputStream( new FileInputStream( previousFile ) );
                     File pageFile = findPage(page);

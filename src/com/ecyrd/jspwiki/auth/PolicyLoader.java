@@ -113,7 +113,7 @@ public final class PolicyLoader
                 }
                 catch (SecurityException e) {}
                 return (Boolean.valueOf(isConfigured));
-            };
+            }
         });
         return configured.booleanValue();
     }

@@ -128,7 +128,7 @@ public class RecentChangesPlugin
                 String link = context.getURL( ((pageref instanceof Attachment) ? WikiContext.ATTACH : WikiContext.VIEW), 
                                               pageref.getName() ) ;
                 
-                a linkel = new a(link,engine.beautifyTitle(pageref.getName()));;
+                a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
                 
                 tr row = new tr();
                 

@@ -598,8 +598,8 @@ public final class SecurityVerifier
         // Now delete the group; should be back to old count
         if ( group == null )
         {
-          m_session.addMessage( ERROR_GROUPS, "Skipped group deletion test." );
-          return;
+            m_session.addMessage( ERROR_GROUPS, "Skipped group deletion test." );
+            return;
         }
         
         try 
@@ -839,7 +839,9 @@ public final class SecurityVerifier
         {
             m_session.addMessage( ERROR_DB, "UserDatabase is null; JSPWiki could not " +
                     "initialize it. Check the error logs." );
+            return;
         }
+        
         if ( db instanceof UserManager.DummyUserDatabase )
         {
             m_session.addMessage( ERROR_DB, "UserDatabase is DummyUserDatabase; JSPWiki " +

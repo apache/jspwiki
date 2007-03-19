@@ -277,7 +277,7 @@ public class SessionMonitor implements HttpSessionListener
             
             log.debug("Removed session "+session.getId()+".");
             
-            if( storedSession != null && storedSession instanceof WikiSession )
+            if( storedSession != null )
             {
                 fireEvent( WikiSecurityEvent.SESSION_EXPIRED, 
                            storedSession.getLoginPrincipal(), 

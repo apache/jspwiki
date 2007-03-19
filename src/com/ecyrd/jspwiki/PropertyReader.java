@@ -182,10 +182,6 @@ public class PropertyReader
                 context.log(" Reading additional properties from " + propertyFile + " and merge to cascade.");
                 Properties additionalProps = new Properties();
                 propertyStream = new FileInputStream(new File(propertyFile));
-                if (propertyStream == null)
-                {
-                    throw new WikiException(" Property file cannot be found!" + propertyFile);
-                }
                 additionalProps.load(propertyStream);
                 defaultProperties.putAll(additionalProps);
             }
@@ -198,8 +194,7 @@ public class PropertyReader
             {
                 try
                 {
-                    propertyStream.close();
-                    if (propertyStream != null)
+                    if( propertyStream != null )
                     {
                         propertyStream.close();
                     }

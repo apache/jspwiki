@@ -58,6 +58,9 @@ public class VariableContent extends Text
         
         WikiContext context = root.getContext();
 
+        if( context == null )
+            return "No WikiContext available: INTERNAL ERROR";
+    
         Boolean wysiwygEditorMode = (Boolean)context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
         
         if( wysiwygEditorMode != null && wysiwygEditorMode.booleanValue() )
@@ -66,9 +69,6 @@ public class VariableContent extends Text
         }
         else
         {
-            if( context == null )
-                return "No WikiContext available: INTERNAL ERROR";
-        
             try
             {
                 result = context.getEngine().getVariableManager().parseAndGetValue( context, m_varName );

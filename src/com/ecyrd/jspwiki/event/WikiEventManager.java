@@ -247,7 +247,7 @@ public class WikiEventManager
      */
     public static final Set getWikiEventListeners( Object client )
     {
-        WikiEventDelegate delegate = (WikiEventDelegate)getInstance().getDelegateFor(client);
+        WikiEventDelegate delegate = getInstance().getDelegateFor(client);
         return delegate.getWikiEventListeners();
     }
 
@@ -312,7 +312,7 @@ public class WikiEventManager
     public static void fireEvent( Object client, WikiEvent event )
     {
         WikiEventDelegate source = getInstance().getDelegateFor(client);
-        if ( source != null ) ((WikiEventDelegate)source).fireEvent(event);
+        if ( source != null ) source.fireEvent(event);
     }
 
 

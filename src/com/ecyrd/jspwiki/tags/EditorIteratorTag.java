@@ -59,6 +59,7 @@ public class EditorIteratorTag
         {
             if( mgr != null )
             {
+                // FIXME3.0: This makes no sense.
                 String[] editorList = mgr.getEditorList();
                 
                 Collection editors = new ArrayList();
@@ -68,7 +69,7 @@ public class EditorIteratorTag
                     editors.add(new Editor(m_wikiContext, editorList[i]));
                 } 
 
-                if( editors == null )
+                if( editors.size() == 0 )
                 {
                     log.debug("No editors configured.");
 
