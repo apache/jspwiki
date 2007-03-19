@@ -243,7 +243,7 @@ public abstract class AbstractReferralPlugin
             output.append( m_before );
             
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + m_engine.beautifyTitle(value) + "]" );
+            output.append( "[" + m_engine.beautifyTitle(value) + "|" + value + "]" );
             count++;
         }
 
