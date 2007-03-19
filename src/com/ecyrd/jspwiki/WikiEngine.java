@@ -566,7 +566,17 @@ public class WikiEngine
             m_rssGenerator = new RSSGenerator( this, props );
             m_rssFile = TextUtil.getStringProperty( props, 
                     RSSGenerator.PROP_RSSFILE, "rss.rdf" );
-            File rssFile = new File( getRootPath(), m_rssFile );
+            File rssFile=null;
+            if (m_rssFile.startsWith(File.separator)) 
+            {
+                // honor absolute pathnames:
+                rssFile = new File(m_rssFile );
+            } 
+            else
+            {
+                // relative path names are anchored from the webapp root path:
+                rssFile = new File( getRootPath(), m_rssFile );
+            }
             int rssInterval = TextUtil.getIntegerProperty( props,
                     RSSGenerator.PROP_INTERVAL, 3600 );
             RSSThread rssThread = new RSSThread( this, rssFile, rssInterval );
