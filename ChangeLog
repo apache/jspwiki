@@ -1,3 +1,11 @@
+2007-03-19  Christoph Sauer <sauer AT hs-heilbronn DOT de>
+
+      * 2.5.33
+      
+      * Changed signature of sendMail in MailUtil from using WikiContext to use WikiEngine.
+        WikiContext was not needed. This enables us to use the mail util, even if no 
+        Wiki Context is available.
+
 2007-03-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.32
