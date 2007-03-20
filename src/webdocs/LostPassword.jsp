@@ -46,11 +46,11 @@
                     "You may log in at "
                     + wiki.getURLConstructor().makeURL(WikiContext.NONE, "Login.jsp", true, "") + ".\n\n"
                     + "--" + wiki.getApplicationName();
-                    
-			MailUtil.sendMessage( wiki.getWikiProperties(),
-                                   email,
-			                      "New password for " + wiki.getApplicationName(),
-			                      mailMessage );
+ 			 
+ 			MailUtil.sendMessage( wiki,
+                                    email,
+ 			                      "New password for " + wiki.getApplicationName(),
+ 			                      mailMessage );
 		
             log.info("User "+email+" requested and received a new password.");
             
@@ -70,6 +70,11 @@
         {
             message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
             log.error("Tried to reset password and got SendFailedException: " + e);
+        }
+        catch (AuthenticationFailedException e) 
+        {
+            message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
+            log.error("Tried to reset password and got AuthenticationFailedException: " + e);            
         }
         catch (Exception e) 
         {
