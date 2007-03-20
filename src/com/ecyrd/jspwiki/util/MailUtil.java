@@ -4,17 +4,14 @@ import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.*;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import com.ecyrd.jspwiki.WikiContext;
+
+import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  * Contains utilities for emailing.
@@ -41,19 +38,19 @@ public class MailUtil
      * 
      * @author Christoph Sauer
      *  
-     * @param context - in order to read jspwiki.properties
+     * @param engine - in order to read jspwiki.properties
      * @param to - receiver
      * @param subject - subjectline of message
      * @param content - the actual mail message
      */
-    public static void sendMessage(WikiContext context, 
+    public static void sendMessage(WikiEngine engine, 
                                    String to, 
                                    String subject, 
                                    String content)
                 throws AddressException,
                 MessagingException 
     {
-        sendMessage(context, to, getProperty(context, MAIL_SENDER), subject, content);
+        sendMessage(engine, to, getProperty(engine, MAIL_SENDER), subject, content);
     }
 
 
@@ -65,13 +62,13 @@ public class MailUtil
      * 
      * @author Christoph Sauer
      * 
-     * @param context - Used to read jspwiki.properties
+     * @param engine - Used to read jspwiki.properties
      * @param to - Receiver
      * @param from - The address from which the email appears to come 
      * @param subject - Subjectline of message
      * @param content - The actual mail message
      */
-    public static void sendMessage(WikiContext context, String to, String from, String subject, String content)
+    public static void sendMessage(WikiEngine engine, String to, String from, String subject, String content)
                                                                                                                throws MessagingException
     {
         try
@@ -79,13 +76,13 @@ public class MailUtil
             Properties props = System.getProperties();
 
             // Overwrite JVM defaults
-            String host = getProperty(context, MAIL_HOST);
+            String host = getProperty(engine, MAIL_HOST);
             if (host != null)
             {
                 props.put(MAIL_HOST, host);
             }
 
-            String port = getProperty(context, MAIL_PORT);
+            String port = getProperty(engine, MAIL_PORT);
             if (port != null)
             {
                 props.put(MAIL_PORT, port);
@@ -97,13 +94,13 @@ public class MailUtil
                 props.put("mail.transport.protocol", "smtp");
             }
 
-            log.info("send mail using host " + getProperty(context, MAIL_HOST) );
+            log.info("send mail using host " + getProperty(engine, MAIL_HOST) );
             log.info("send mail to " + to);
             log.info("send mail from " + from);
 
             // check if we authenticate:
-            String account = getProperty(context, MAIL_ACCOUNT);
-            String password = getProperty(context, MAIL_PASSWORD);
+            String account = getProperty(engine, MAIL_ACCOUNT);
+            String password = getProperty(engine, MAIL_PASSWORD);
 
             Session session = null;
             if (account != null)
@@ -169,9 +166,9 @@ public class MailUtil
      * @param name
      * @return
      */
-    private static String getProperty(WikiContext context, String name) 
+    private static String getProperty(WikiEngine engine, String name) 
     {
-        return context.getEngine().getWikiProperties().getProperty(name).trim();
+        return engine.getWikiProperties().getProperty(name).trim();
     }
 
     /**
@@ -248,8 +245,8 @@ class SmtpAuthenticator extends javax.mail.Authenticator
     {
         if (pass.equals(""))
             return null;
-        
-        return new PasswordAuthentication(login, pass);
+        else
+            return new PasswordAuthentication(login, pass);
     }
 
 }
