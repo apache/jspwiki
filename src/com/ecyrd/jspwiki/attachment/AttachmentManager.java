@@ -32,6 +32,8 @@ import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiAttachmentProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  Provides facilities for handling attachments.  All attachment
@@ -277,7 +279,20 @@ public class AttachmentManager
         
         // System.out.println("Seeking info on "+currentPage+"::"+attachmentname);
 
-        return m_provider.getAttachmentInfo( currentPage, attachmentname, version );
+        //
+        //  Finally, figure out whether this is a real attachment or a generated
+        //  attachment.
+        //
+        Attachment att;
+        
+        att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
+
+        if( att == null )
+        {
+            att = m_provider.getAttachmentInfo( currentPage, attachmentname, version );
+        }
+        
+        return att;
     }
 
     /**
@@ -340,14 +355,50 @@ public class AttachmentManager
         throws IOException,
                ProviderException
     {
+        return getAttachmentStream( null, att );
+    }
+
+    public InputStream getAttachmentStream( WikiContext ctx, Attachment att ) 
+        throws ProviderException, IOException
+    {
         if( m_provider == null )
         {
             return( null );
         }
 
+        if( att instanceof DynamicAttachment )
+        {
+            return ((DynamicAttachment)att).getProvider().getAttachmentData( ctx, att );
+        }
+        
         return m_provider.getAttachmentData( att );
     }
 
+    private Cache m_dynamicAttachments = new Cache( true, false, false );
+    
+    public void storeDynamicAttachment( WikiContext ctx, DynamicAttachment att )
+    {
+        m_dynamicAttachments.putInCache( att.getName(),  att );
+    }
+
+    
+    public DynamicAttachment getDynamicAttachment( String name )
+    {
+        try
+        {
+            return (DynamicAttachment) m_dynamicAttachments.getFromCache( name );
+        }
+        catch( NeedsRefreshException e )
+        {
+            //
+            //  Remove from cache, it has expired.
+            //
+            m_dynamicAttachments.putInCache( name, null );
+            
+            return null;
+        }
+    }
+    
     /**
      *  Stores an attachment that lives in the given file.
      *  If the attachment did not exist previously, this method
