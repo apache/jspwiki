@@ -1,13 +1,10 @@
 package com.ecyrd.jspwiki.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.TextUtil;
@@ -51,9 +48,17 @@ public class CommentedProperties extends Properties
         m_propertyString = FileUtil.readContents( inStream, "ISO-8859-1" );
         
         // Now load it into the properties object as normal
-        super.load( new ByteArrayInputStream( m_propertyString.getBytes() ) );
+        super.load( new ByteArrayInputStream( m_propertyString.getBytes("ISO-8859-1") ) );
     }
 
+    public synchronized void load( Reader in ) throws IOException
+    {
+        m_propertyString = FileUtil.readContents( in );
+        
+        // Now load it into the properties object as normal
+        super.load( new ByteArrayInputStream( m_propertyString.getBytes("ISO-8859-1") ) );    
+    }
+    
     /**
      * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
      */
