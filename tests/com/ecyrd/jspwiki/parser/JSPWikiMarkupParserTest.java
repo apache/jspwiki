@@ -573,7 +573,18 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLinks\">HyperLink</a>",
                       translate(src) );
     }
-    
+
+    public void testHyperlinksPluralMatch4()
+    throws Exception
+    {
+        String src = "This should be a [Hyper links]";
+        
+        newPage("HyperLink");
+        
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink\">Hyper links</a>",
+                      translate(src) );
+    }
+
     
     public void testHyperlinkJS1()
     throws Exception
