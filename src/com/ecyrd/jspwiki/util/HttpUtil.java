@@ -80,9 +80,17 @@ public class HttpUtil
         return( null );
     }
 
+    /**
+     *  Creates an ETag based on page information.  An ETag is unique to each page
+     *  and version, so it can be used to check if the page has changed.  Do not
+     *  assume that the ETag is in any particular format.
+     *  
+     *  @param p  The page for which the ETag should be created.
+     *  @return A String depiction of an ETag.
+     */
     public static String createETag( WikiPage p )
     {
-        return Long.toString(p.getLastModified().getTime());
+        return Long.toString(p.getName().hashCode() ^ p.getLastModified().getTime());
     }
     
     /**
