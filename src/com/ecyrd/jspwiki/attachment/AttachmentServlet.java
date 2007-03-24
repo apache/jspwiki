@@ -49,18 +49,18 @@ import http.utils.multipartrequest.*;
 
 
 /**
- * This is a simple file upload servlet customized for JSPWiki. It receives 
- * a mime/multipart POST message, as sent by an Attachment page, stores it
- * temporarily, figures out what WikiName to use to store it, checks for
- * previously existing versions.
+ *  This is the chief JSPWiki attachment management servlet.  It is used for
+ *  both uploading new content and downloading old content.  It can handle
+ *  most common cases, e.g. check for modifications and return 304's as necessary.
+ *  <p>
+ *  Authentication is done using JSPWiki's normal AAA framework.
+ *  <p>
+ *  This servlet is also capable of managing dynamically created attachments.
  *
- * <p>This servlet does not worry about authentication; we leave that to the 
- * container, or a previous servlet that chains to us.
+ *  @author Erik Bunn
+ *  @author Janne Jalkanen
  *
- * @author Erik Bunn
- * @author Janne Jalkanen
- *
- * @since 1.9.45.
+ *  @since 1.9.45.
  */
 public class AttachmentServlet
     extends WebdavServlet
@@ -273,6 +273,12 @@ public class AttachmentServlet
 
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
+                if( !att.isCacheable() )
+                {
+                    res.addHeader( "Pragma", "no-cache" );
+                    res.addHeader( "Cache-control", "no-cache" );
+                }
+
                 // If a size is provided by the provider, report it.
                 if( att.getSize() >= 0 )
                 {
@@ -281,7 +287,7 @@ public class AttachmentServlet
                 }
 
                 out = res.getOutputStream();
-                in  = mgr.getAttachmentStream( att );
+                in  = mgr.getAttachmentStream( context, att );
 
                 int read = 0;
                 byte buffer[] = new byte[BUFFER_SIZE];
@@ -515,10 +521,11 @@ public class AttachmentServlet
             //  Go through all files being uploaded.
             //
             Enumeration files = multi.getFileParameterNames();
-
+            long fileSize = 0L;
             while( files.hasMoreElements() )
             {
                 String part = (String) files.nextElement();
+                fileSize += multi.getFileSize(part);
                 File   f    = multi.getFile( part );
                 InputStream in;
 
@@ -542,7 +549,7 @@ public class AttachmentServlet
                         in = multi.getFileContents( part );
                     }
 
-                    executeUpload( context, in, filename, nextPage, wikipage, changeNote, req.getContentLength() );
+                    executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
                 }
                 finally
                 {
@@ -676,6 +683,7 @@ public class AttachmentServlet
             att = new Attachment( m_engine, parentPage, filename );
             created = true;
         }
+        att.setSize( contentLength );
         
         //
         //  Check if we're allowed to do this?
