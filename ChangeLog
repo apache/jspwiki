@@ -1,89 +1,105 @@
+2007-03-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.34
+      
+        * Added Mikkel Troest's patch to AttachmentServlet to fix issues
+        with uploading and file size.
+
+        * Added DynamicAttachments and their generation.  You can now go
+        and build attachments which do not exist in the repository, but
+        are generated on-the-fly.  See the attachments package and related
+        documentation.
+        
+        * Bug fix: [open bugs] would not be recognized as wikipage OpenBug.
+
+        * Changed ETag generation to make it unique per page.
+
 2007-03-19  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
-      * 2.5.33
+        * 2.5.33
       
-      * Changed signature of sendMail in MailUtil from using WikiContext to use WikiEngine.
-        WikiContext was not needed. This enables us to use the mail util, even if no 
-        Wiki Context is available.
+        * Changed signature of sendMail in MailUtil from using WikiContext 
+        to use WikiEngine.  WikiContext was not needed. This enables us 
+        to use the mail util, even if no Wiki Context is available.
 
 2007-03-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
-       * 2.5.32
+        * 2.5.32
        
-       * Fixed a bunch of Eclipse warnings; hopefully no functionality
-       changes.
+        * Fixed a bunch of Eclipse warnings; hopefully no functionality
+        changes.
        
-       * Fixed BugInlineImagesCaseSensitive - inline image lists are now
-       case insensitive (yay!).  Thanks to Harry Metske.
+        * Fixed BugInlineImagesCaseSensitive - inline image lists are now
+        case insensitive (yay!).  Thanks to Harry Metske.
        
-       * Fixed BugMultiWikiCreatesRSSFileInWrongPlace.  Thanks to Harry Metske
-       again.   Now, if the rssFile property is set to an absolute path, it is
-       used instead of a relative path to the wikiengine home.  This allows you
-       to have separate paths for multi-wikis.
+        * Fixed BugMultiWikiCreatesRSSFileInWrongPlace.  Thanks to Harry Metske
+        again.   Now, if the rssFile property is set to an absolute path, it is
+        used instead of a relative path to the wikiengine home.  This allows you
+        to have separate paths for multi-wikis.
        
-       * Fixed BugReferringPagesPluginLinksNonExistingPages, thanks to 
-       Candid Dauth.
+        * Fixed BugReferringPagesPluginLinksNonExistingPages, thanks to 
+        Candid Dauth.
        
-       * Implemented IdeaRemoveDuplicatesFromSessionsPlugin from Harry Metske.
+        * Implemented IdeaRemoveDuplicatesFromSessionsPlugin from Harry Metske.
 
 2007-03-19  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
-       * 2.5.31
+        * 2.5.31
        
-       * Fixed Bug with LostPassword.jsp: If you set access priviledges for
-         a wiki completely private (even view) then you where not able to restore
-         the password since LostPassword.jsp required login.
+        * Fixed Bug with LostPassword.jsp: If you set access priviledges for
+          a wiki completely private (even view) then you where not able to restore
+          the password since LostPassword.jsp required login.
 
 2007-03-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
-       * 2.5.30
+        * 2.5.30
        
-       * Fixed BugReferenceToRenamedPageNotCleared
+        * Fixed BugReferenceToRenamedPageNotCleared
        
-       * Fixed BugTableHeaderNotXHMTLCompliant
+        * Fixed BugTableHeaderNotXHMTLCompliant
        
-       * Fixed BugInitializablePluginNotInitialized
+        * Fixed BugInitializablePluginNotInitialized
 
-       * API Change: The signature of PageFilter.initialize() now
-       also includes the WikiEngine.  This was necessary, because otherwise
-       the initialize() -method was essentially useless for most use
-       cases.
+        * API Change: The signature of PageFilter.initialize() now
+        also includes the WikiEngine.  This was necessary, because otherwise
+        the initialize() -method was essentially useless for most use
+        cases.
        
-       * Added ParserStagePlugin interface.  This allows a plugin to be
-       executed even during parsing of the wiki page, not until the render
-       stage.
+        * Added ParserStagePlugin interface.  This allows a plugin to be
+        executed even during parsing of the wiki page, not until the render
+        stage.
        
-       * Added David Au's patches to get the FCK support back up to speed
-       again.
+        * Added David Au's patches to get the FCK support back up to speed
+        again.
 
 2007-03-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
-       * 2.5.29
+        * 2.5.29
        
-       * Forward ported fixes from 2.4.100.
+        * Forward ported fixes from 2.4.100.
 
 2007-02-28  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
-       * 2.5.28
+        * 2.5.28
        
-       * Improved MailUtil: Added authentication support, so
-         that you can use mail servers that require an account
-         (the OpenRelay issue...). You now also can indicate
-         a different smtp port. Changed LostPassword.jsp accordingly.
+        * Improved MailUtil: Added authentication support, so
+          that you can use mail servers that require an account
+          (the OpenRelay issue...). You now also can indicate
+          a different smtp port. Changed LostPassword.jsp accordingly.
 
 2007-02-25  Andrew Jaquith <andrew AT freshcookies DOT org>
 
-       * 2.5.27
+        * 2.5.27
        
-       * Upgraded bundled log4j to 1.2.14; freshcookies-security to 0.51.
+        * Upgraded bundled log4j to 1.2.14; freshcookies-security to 0.51.
        
-       * Fixed 2 failing RPCHandlerTest tests by counting changes relative
-       to beginning of test, rather than absolute changes.
+        * Fixed 2 failing RPCHandlerTest tests by counting changes relative
+        to beginning of test, rather than absolute changes.
        
-       * Changed all JSP taglib declarations to use JSP 2.0-compatible tags.
-       Also upgraded jstl.jar and standard.jar to JSTL 1.1 versions. Note:
-       if you are a template developer, you should change your taglib
-       declarations as follows:
+        * Changed all JSP taglib declarations to use JSP 2.0-compatible tags.
+        Also upgraded jstl.jar and standard.jar to JSTL 1.1 versions. Note:
+        if you are a template developer, you should change your taglib
+        declarations as follows:
        
          New:
          <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -95,112 +111,112 @@
 
 2007-02-24  Andrew Jaquith <andrew AT freshcookies DOT org>
 
-       * 2.5.26
+        * 2.5.26
        
-       * Major enhancement: replaced JSPWiki's dependency on the global,
-       JVM-wide security policy with a "local policy" that is always 
-       read from WEB-INF/jspwiki.policy. If you have a JVM-wide policy,
-       the local policy will supplement it. The practical upshot of this
-       change is that the most common configuration challenge that most
-       first-time admins face (why won't any pages display?) is gone,
-       and gone forever. No more fiddling with the java.security.policy
-       property! The syntax for the local policy is exactly the same
-       as what it's always been; but now it Just Works instead of
-       Mostly Works.
+        * Major enhancement: replaced JSPWiki's dependency on the global,
+        JVM-wide security policy with a "local policy" that is always 
+        read from WEB-INF/jspwiki.policy. If you have a JVM-wide policy,
+        the local policy will supplement it. The practical upshot of this
+        change is that the most common configuration challenge that most
+        first-time admins face (why won't any pages display?) is gone,
+        and gone forever. No more fiddling with the java.security.policy
+        property! The syntax for the local policy is exactly the same
+        as what it's always been; but now it Just Works instead of
+        Mostly Works.
 
-       * Fixed bug in WebContainerAuthorizer introduced by change to
-       Java Servlet API 2.4. The parsing class now explictly includes
-       namespaces in XPath searches. This was not something we needed
-       to worry about with 2.3 (which used a DTD). The result of this
-       problem was causing container-managed logins to fail.
+        * Fixed bug in WebContainerAuthorizer introduced by change to
+        Java Servlet API 2.4. The parsing class now explictly includes
+        namespaces in XPath searches. This was not something we needed
+        to worry about with 2.3 (which used a DTD). The result of this
+        problem was causing container-managed logins to fail.
        
-       * Fixed failing unit tests WebContainerAuthorizer; web tests
-       CommonCustomTests, CommonTests.
+        * Fixed failing unit tests WebContainerAuthorizer; web tests
+        CommonCustomTests, CommonTests.
        
-       * Minor enhancement to WikiSession now allows full use of non-JSPWiki
-       supplied JAAS LoginModules in the JSPWiki-custom configuration. Previously,
-       we considered a user to be authenticated only if a LoginModule had added
-       Role.AUTHENTICATED to the Subject's principal set. This is clearly
-       unreasonable for LoginModules that have no knowledge of JSPWiki, such
-       as Sun's supplied modules or third-party modules used for LDAP 
-       authentication. Now, we consider a user authenticated if they are
-       not anonymous and not asserted, and we lazily add Role.AUTHENTICATED 
-       in these cases, after login.
+        * Minor enhancement to WikiSession now allows full use of non-JSPWiki
+        supplied JAAS LoginModules in the JSPWiki-custom configuration. Previously,
+        we considered a user to be authenticated only if a LoginModule had added
+        Role.AUTHENTICATED to the Subject's principal set. This is clearly
+        unreasonable for LoginModules that have no knowledge of JSPWiki, such
+        as Sun's supplied modules or third-party modules used for LDAP 
+        authentication. Now, we consider a user authenticated if they are
+        not anonymous and not asserted, and we lazily add Role.AUTHENTICATED 
+        in these cases, after login.
        
-       * Bug fix: WikiEventManager refactoring in 2.5.24 caused duplicate
-       listeners to be added in some cases. This has been fixed.
+        * Bug fix: WikiEventManager refactoring in 2.5.24 caused duplicate
+        listeners to be added in some cases. This has been fixed.
        
-       * The security policy file has been simplified to remove redundant
-       grants that don't vary across roles. It should be simpler to read
-       and understand.
+        * The security policy file has been simplified to remove redundant
+        grants that don't vary across roles. It should be simpler to read
+        and understand.
        
-       * Did I mention that local security policies are a big deal?
+        * Did I mention that local security policies are a big deal?
        
 2007-02-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
-       * 2.5.25
-       
-       * Added SisterSites.jsp to support the SisterSites standard.
+        * 2.5.25
+        
+        * Added SisterSites.jsp to support the SisterSites standard.
 
 2007-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
-       * 2.5.24
+        * 2.5.24
        
-       * Forward ported features from 2.4.94, including the WatchDog,
-       and the new, faster WikiEventManager.
+        * Forward ported features from 2.4.94, including the WatchDog,
+        and the new, faster WikiEventManager.
 
 2007-02-18  Janne Jalkanen <jalkanen@ecyrd.com>
 
-       * 2.5.23
+        * 2.5.23
        
-       * Added David Au's patches to re-enable FCK.  All you now need
-       to do is to install FCK, and enable it in the ini/jspwiki_modules.xml.
-       This also added a new mode for RenderingManager: WYSIWYG_EDITOR_MODE,
-       which will not render plugins (except some), but keep them in plain
-       text format.
+        * Added David Au's patches to re-enable FCK.  All you now need
+        to do is to install FCK, and enable it in the ini/jspwiki_modules.xml.
+        This also added a new mode for RenderingManager: WYSIWYG_EDITOR_MODE,
+        which will not render plugins (except some), but keep them in plain
+        text format.
        
-       * web.xml now explicitly declares Java Servlet API 2.4.
+        * web.xml now explicitly declares Java Servlet API 2.4.
        
-       * Added AdminBeanIteratorTag
+        * Added AdminBeanIteratorTag
        
-       * Bug fix: putting a plugin or a variable on the first line would
-       cause a crash, if there were more than one paragraph on the page.
-       Thanks to Terry Steichen for debugging.
+        * Bug fix: putting a plugin or a variable on the first line would
+        cause a crash, if there were more than one paragraph on the page.
+        Thanks to Terry Steichen for debugging.
        
-       * There is now a rudimentary plugin-based administration interface
-       in admin/Admin.jsp (and the corresponding template files).  It does not
-       quite work yet, and it's definitely unstable, but it's been submitted
-       to get some comments.  The idea is that you can declare in your
-       jspwiki_module.xml an "adminBean" class, which then offers an
-       administrative interface to your plugin.  As an example, a 
-       PlainEditorAdminBean is implemented (partly).
+        * There is now a rudimentary plugin-based administration interface
+        in admin/Admin.jsp (and the corresponding template files).  It does not
+        quite work yet, and it's definitely unstable, but it's been submitted
+        to get some comments.  The idea is that you can declare in your
+        jspwiki_module.xml an "adminBean" class, which then offers an
+        administrative interface to your plugin.  As an example, a 
+        PlainEditorAdminBean is implemented (partly).
 
 2007-02-05  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
-       * 2.5.22
+        * 2.5.22
        
-       * Added variable mechanism in property files. You now
-         can declare a variable as a regular property with
-         prefix 'var.' and then use it with the '$' prefix 
-         in other property values within the property files cascade.
+        * Added variable mechanism in property files. You now
+          can declare a variable as a regular property with
+          prefix 'var.' and then use it with the '$' prefix 
+          in other property values within the property files cascade.
          
-       * Factored out property reading from WikiEngine into a new
-         class called PropertyReader, since it now represents a distinct
-         concept. Added UnitTest for it.
+        * Factored out property reading from WikiEngine into a new
+          class called PropertyReader, since it now represents a distinct
+          concept. Added UnitTest for it.
 
 2007-02-05  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
-       * 2.5.21
+        * 2.5.21
        
-       * Added possibility to specify cascading properties
-         in the context-mapping for multiple wiki setups. Added
-         method to WikiEngine that will check for
-         jspwiki.propertyfile.cascade.x context properties, where
-         x is a number from 1 to n. Properties specified in those 
-         files will overwrite values specified in the default jspwiki.properties
-         file or a properties file of a lower cascade.
-         This is based on an idea by Olaf Kaus, see [JSPWiki:MultipleWikis] 
-         discussion.
+        * Added possibility to specify cascading properties
+        in the context-mapping for multiple wiki setups. Added
+        method to WikiEngine that will check for
+        jspwiki.propertyfile.cascade.x context properties, where
+        x is a number from 1 to n. Properties specified in those 
+        files will overwrite values specified in the default jspwiki.properties
+        file or a properties file of a lower cascade.
+        This is based on an idea by Olaf Kaus, see [JSPWiki:MultipleWikis] 
+        discussion.
 
 2007-01-30  Andrew Jaquith <andrew AT freshcookies DOT org>
 
