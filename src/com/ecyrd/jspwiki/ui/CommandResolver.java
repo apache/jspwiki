@@ -300,6 +300,20 @@ public final class CommandResolver
         {
             finalName = MarkupParser.wikifyLink( page );
             isThere = simplePageExists(finalName);
+
+            if( !isThere && m_matchEnglishPlurals )
+            {
+                if( finalName.endsWith( "s" ) )
+                {
+                    finalName = finalName.substring( 0, finalName.length() - 1 );
+                }
+                else
+                {
+                    finalName += "s";
+                }
+
+                isThere = simplePageExists( finalName );
+            }
         }
         
         return isThere ? finalName : null;
