@@ -132,7 +132,7 @@ public class WikiJSPFilter extends WikiServletFilter
         
         for( int i = 0; i < resourceTypes.length; i++ )
         {
-            string = filter( wikiContext, string, resourceTypes[i] );
+            string = insertResources( wikiContext, string, resourceTypes[i] );
         }
         
         return string;
@@ -148,7 +148,7 @@ public class WikiJSPFilter extends WikiServletFilter
      *  @param type Type identifier for insertion
      *  @return The filtered string.
      */
-    private String filter(WikiContext wikiContext, String string, String type )
+    private String insertResources(WikiContext wikiContext, String string, String type )
     {
         if( wikiContext == null )
         {
@@ -192,7 +192,7 @@ public class WikiJSPFilter extends WikiServletFilter
     private static class MyServletResponseWrapper
         extends HttpServletResponseWrapper
     {
-        private CharArrayWriter output;
+        private CharArrayWriter m_output;
       
         /** 
          *  How large the initial buffer should be.  This should be tuned to achieve
@@ -203,7 +203,7 @@ public class WikiJSPFilter extends WikiServletFilter
         public MyServletResponseWrapper( HttpServletResponse r )
         {
             super(r);
-            output = new CharArrayWriter( INIT_BUFFER_SIZE );
+            m_output = new CharArrayWriter( INIT_BUFFER_SIZE );
         }
 
         /**
@@ -212,12 +212,12 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         public PrintWriter getWriter()
         {
-            return new PrintWriter(output);
+            return new PrintWriter( m_output );
         }
 
         public ServletOutputStream getOutputStream()
         {
-            return new MyServletOutputStream(output);
+            return new MyServletOutputStream( m_output );
         }
 
         class MyServletOutputStream extends ServletOutputStream
@@ -232,7 +232,7 @@ public class WikiJSPFilter extends WikiServletFilter
 
             public void write(int aInt)
             {
-                buffer.write(aInt);
+                buffer.write( aInt );
             }
 
         }
@@ -242,7 +242,7 @@ public class WikiJSPFilter extends WikiServletFilter
          */
         public String toString()
         {
-            return output.toString();
+            return m_output.toString();
         }
     }
 }
