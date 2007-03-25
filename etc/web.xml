@@ -114,7 +114,7 @@
    <!-- Atom Publishing Protocol -->
    <servlet>
        <servlet-name>ATOM</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.atom.AtomAPIServlet</servlet-class>       
+       <servlet-class>com.ecyrd.jspwiki.rpc.atom.AtomAPIServlet</servlet-class>       
    </servlet>
 
    <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
