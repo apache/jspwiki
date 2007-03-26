@@ -1,3 +1,12 @@
+2007-03-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.35
+        
+        * Refactored the XML-RPC implementation a bit to provide proper
+        authentication/authorization.
+        
+        * Upgraded to Apache XML-RPC 2.0.1.
+
 2007-03-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.34

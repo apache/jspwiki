@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
 	<classpathentry kind="lib" path="lib/jsonrpc-1.0.jar" sourcepath="/Users/jalkanen/Java/json-rpc-java-1.0/src"/>
-	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
+	<classpathentry kind="lib" path="lib/xmlrpc.jar" sourcepath="/Users/jalkanen/Java/xmlrpc-2.0.1/xmlrpc-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
