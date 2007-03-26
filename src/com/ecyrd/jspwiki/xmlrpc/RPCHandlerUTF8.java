@@ -43,11 +43,15 @@ public class RPCHandlerUTF8
 
     public String getApplicationName()
     {
+        checkPermission( PagePermission.VIEW );
+        
         return m_engine.getApplicationName();
     }
 
     public Vector getAllPages()
     {
+        checkPermission( PagePermission.VIEW );
+        
         Collection pages = m_engine.getRecentChanges();
         Vector result = new Vector();
 
@@ -101,6 +105,8 @@ public class RPCHandlerUTF8
 
     public Vector getRecentChanges( Date since )
     {
+        checkPermission( PagePermission.VIEW );
+        
         Collection pages = m_engine.getRecentChanges();
         Vector result = new Vector();
 
@@ -144,15 +150,9 @@ public class RPCHandlerUTF8
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
-        AuthorizationManager mgr = m_engine.getAuthorizationManager();
-        WikiPage page = m_engine.getPage(pagename);
+        WikiPage p = m_engine.getPage( pagename );
         
-        if( !mgr.checkPermission( WikiSession.guestSession( m_engine ),
-                                  new PagePermission( page, "view") ) )
-        {
-            throw new XmlRpcException( ERR_NOPERMISSION, "No permission to view page "+pagename+", o master");
-        }
-
+        checkPermission( new PagePermission( p, PagePermission.VIEW_ACTION ) );
         return pagename;
     }
 
@@ -160,6 +160,7 @@ public class RPCHandlerUTF8
         throws XmlRpcException
     {
         pagename = parsePageCheckCondition( pagename );
+        
         return encodeWikiPage( m_engine.getPage(pagename) );
     }
 

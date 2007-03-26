@@ -19,7 +19,7 @@
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
-import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Any wiki RPC handler should implement this so that they can be properly
@@ -32,5 +32,5 @@ import com.ecyrd.jspwiki.WikiEngine;
 //        in 3.0
 public interface WikiRPCHandler
 {
-    public void initialize( WikiEngine engine );
+    public void initialize( WikiContext context );
 }

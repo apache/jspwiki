@@ -50,10 +50,10 @@ public class MetaWeblogHandler
     Logger log = Logger.getLogger( MetaWeblogHandler.class ); 
 
     private WikiEngine m_engine;
-
-    public void initialize( WikiEngine engine )
+    
+    public void initialize( WikiContext context )
     {
-        m_engine = engine;
+        m_engine = context.getEngine();
     }
 
     /**

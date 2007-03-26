@@ -19,8 +19,17 @@
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
-import com.ecyrd.jspwiki.*;
+import java.security.Permission;
 import java.util.*;
+
+import org.apache.xmlrpc.AuthenticationFailed;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 
 /**
  *  Provides definitions for RPC handler routines.
@@ -52,21 +61,25 @@ public abstract class AbstractRPCHandler
     public static final String LINK_INLINE   = "inline";
 
     protected WikiEngine m_engine;
-
+    protected WikiContext m_context;
+    
+    
     /**
      *  This is the currently implemented JSPWiki XML-RPC code revision.
      */
     public static final int RPC_VERSION = 1;
 
-    public void initialize( WikiEngine engine )
+    public void initialize( WikiContext context )
     {
-        m_engine = engine;
+        m_context = context;
+        m_engine  = context.getEngine();
     }
 
     protected abstract Hashtable encodeWikiPage( WikiPage p );
 
     public Vector getRecentChanges( Date since )
     {
+        checkPermission( PagePermission.VIEW );
         Collection pages = m_engine.getRecentChanges();
         Vector result    = new Vector();
 
@@ -90,12 +103,32 @@ public abstract class AbstractRPCHandler
         return result;
     }
 
-
+    /**
+     *  Checks whether you have permission to perform this and throws an exception
+     *  if you do not have the permission.
+     *  
+     *  @throws AuthenticationFailed A RuntimeException, if the authentication fails and the user has no permission.
+     *  @param ctx
+     *  @param page
+     *  @param perm
+     */
+    protected void checkPermission( Permission perm )
+    {
+        AuthorizationManager mgr = m_engine.getAuthorizationManager();
+        
+        if( mgr.checkPermission( m_context.getWikiSession(), perm ) )
+            return;
+        
+        throw new AuthenticationFailed( "You have no access to this resource, o master" );
+    }
+    
     /**
      *  Returns the current supported JSPWiki XML-RPC API.
      */
     public int getRPCVersionSupported()
     {
+        checkPermission( WikiPermission.LOGIN );
+        
         return RPC_VERSION;
     }
 }

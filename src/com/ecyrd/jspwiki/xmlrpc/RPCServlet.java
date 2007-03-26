@@ -19,16 +19,24 @@
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Vector;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
-import org.apache.xmlrpc.XmlRpcServer;
 
-import com.ecyrd.jspwiki.*;
+import org.apache.log4j.Logger;
+import org.apache.xmlrpc.*;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Handles all incoming servlet requests for XML-RPC calls.
@@ -61,10 +69,14 @@ public class RPCServlet extends HttpServlet
                InstantiationException,
                IllegalAccessException
     {
+        /*
         Class handlerClass = Class.forName( handlerName );
         WikiRPCHandler rpchandler = (WikiRPCHandler) handlerClass.newInstance();
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
+        */
+        Class handlerClass = Class.forName( handlerName );
+        m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
     }
 
     /**
@@ -109,7 +121,12 @@ public class RPCServlet extends HttpServlet
 
         try
         {
-            byte[] result = m_xmlrpcServer.execute( request.getInputStream() );
+            WikiContext ctx = m_engine.createContext( request, WikiContext.NONE );
+                        
+            XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(),
+                                                                 ctx );
+            
+            byte[] result = m_xmlrpcServer.execute( request.getInputStream(), xmlrpcContext );
 
             //
             //  I think it's safe to write the output as UTF-8:
@@ -159,4 +176,59 @@ public class RPCServlet extends HttpServlet
         }
     }
 
+    private class LocalHandler
+        implements ContextXmlRpcHandler
+    {
+        private Class m_clazz;
+        
+        public LocalHandler( Class clazz )
+        {
+            m_clazz = clazz;
+        }
+        
+        public Object execute(String method, Vector params, XmlRpcContext context) throws Exception
+        {
+            WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
+            rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
+       
+            Invoker invoker = new Invoker( rpchandler );
+            
+            return invoker.execute( method, params );
+        }
+    }
+    
+    private static class WikiXmlRpcContext
+        implements XmlRpcContext
+    {
+        private XmlRpcHandlerMapping m_mapping;
+        private WikiContext m_context;
+
+        public WikiXmlRpcContext( XmlRpcHandlerMapping map, WikiContext ctx )
+        {
+            m_mapping = map;
+            m_context = ctx;
+        }
+        
+        public XmlRpcHandlerMapping getHandlerMapping()
+        {
+            return m_mapping;
+        }
+
+        public String getPassword()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public String getUserName()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public WikiContext getWikiContext()
+        {
+            return m_context;
+        }
+    }
 }
