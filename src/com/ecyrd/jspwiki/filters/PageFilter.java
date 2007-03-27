@@ -68,4 +68,14 @@ public interface PageFilter
      */
     public void postSave( WikiContext wikiContext, String content )
         throws FilterException;
+
+    /**
+     * Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
+     * clean up or close global ressources you allocated in the initialize() method.
+     * 
+     * @since 2.5.36
+     */
+    public void destroy( WikiEngine engine );
+
+
 }
