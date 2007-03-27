@@ -1,3 +1,16 @@
+2007-03-19  Christoph Sauer <sauer AT hs-heilbronn DOT de>
+
+        * 2.5.36
+        
+        * Moved FilterManager initialisation in the wiki engine to the bottom,
+          so that all object references to modules are already available to a page filters
+          initialize method. This is important to register event listeners
+          there.
+        
+        * Added a destroy method to the PageFilter interface. Destroy is called upon
+          engine shutdown. You can use this to close global ressources that you opened in
+          the PageFilters initialize method.
+
 2007-03-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.35
