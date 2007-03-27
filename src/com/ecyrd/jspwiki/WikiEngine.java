@@ -506,16 +506,21 @@ public class WikiEngine
 
             m_templateManager   = new TemplateManager( this, props );
 
+            m_internationalizationManager = new InternationalizationManager(this);
+            
+            m_adminBeanManager = new AdminBeanManager(this);
+            
+            // Since we want to use a page filters initilize() method
+            // as a engine startup listener where we can initialize global event listeners, 
+            // it must be called lastly, so that all object references in the engine
+            // are availabe to the initialize() method
+            m_filterManager     = new FilterManager( this, props );
+            
             //
             //  Hook the different manager routines into the system.
             //
             getFilterManager().addPageFilter(m_referenceManager, -1001 );
             getFilterManager().addPageFilter(m_searchManager, -1002 );
-            
-            m_internationalizationManager = new InternationalizationManager(this);
-            
-            m_adminBeanManager = new AdminBeanManager(this);
-
         }
         
         catch( RuntimeException e )
@@ -1352,6 +1357,7 @@ public class WikiEngine
     protected void shutdown()
     {
         fireEvent( WikiEngineEvent.SHUTDOWN );
+        m_filterManager.destroy();
     }
     
     /**
