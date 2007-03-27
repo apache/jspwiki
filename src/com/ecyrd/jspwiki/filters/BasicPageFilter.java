@@ -48,4 +48,8 @@ public class BasicPageFilter
         throws FilterException
     {
     }
+    
+    public void destroy( WikiEngine engine ) 
+    {
+    }
 }
