@@ -353,7 +353,21 @@ public final class FilterManager
         return m_pageFilters;
     }
 
+    /**
+     * 
+     * Notifies PageFilters to clean up their ressources.
+     *
+     */
+    public void destroy()
+    {
+        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        {
+            PageFilter f = (PageFilter) i.next();
 
+            f.destroy( m_engine );
+        }        
+    }
+    
     // events processing .......................................................
 
     /**
