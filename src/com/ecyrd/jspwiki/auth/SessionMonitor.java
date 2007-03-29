@@ -19,7 +19,6 @@
 */
 package com.ecyrd.jspwiki.auth;
 
-import java.lang.ref.WeakReference;
 import java.security.Principal;
 import java.util.*;
 
@@ -105,14 +104,14 @@ public class SessionMonitor implements HttpSessionListener
     {
         WikiSession wikiSession = null;
         String sid = ( session == null ) ? "(null)" : session.getId();
-        WeakReference storedSession = (WeakReference)m_sessions.get( sid );
+        WikiSession storedSession = (WikiSession)m_sessions.get( sid );
         String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
         
         if( storedSession == null ) 
         {
             try
             {
-                storedSession = (WeakReference)session.getAttribute( wikiSessionName );
+                storedSession = (WikiSession)session.getAttribute( wikiSessionName );
             }
             catch( IllegalStateException e )
             {
@@ -122,13 +121,13 @@ public class SessionMonitor implements HttpSessionListener
         }
 
         // If the weak reference returns a wiki session, return it
-        if( storedSession != null && storedSession.get() instanceof WikiSession )
+        if( storedSession != null )
         {
             if( log.isDebugEnabled() )
             {
                 log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
             }
-            wikiSession = (WikiSession) storedSession.get();
+            wikiSession = storedSession;
         }
 
         return wikiSession;
@@ -161,9 +160,9 @@ public class SessionMonitor implements HttpSessionListener
             wikiSession = WikiSession.guestSession( m_engine );
             synchronized( m_sessions )
             {
-                m_sessions.put( sid, new WeakReference( wikiSession ) );
+                m_sessions.put( sid, wikiSession );
             }
-            session.setAttribute( wikiSessionName, new WeakReference(wikiSession) );
+            session.setAttribute( wikiSessionName, wikiSession );
         }
 
         return wikiSession;
@@ -213,12 +212,9 @@ public class SessionMonitor implements HttpSessionListener
         Collection principals = new ArrayList();
         for ( Iterator it = m_sessions.values().iterator(); it.hasNext(); )
         {
-            WeakReference ref = (WeakReference)it.next();
-            if ( ref != null && ref.get() instanceof WikiSession )
-            {
-                WikiSession session = (WikiSession)ref.get();
-                principals.add( session.getUserPrincipal() );
-            }
+            WikiSession session = (WikiSession)it.next();
+
+            principals.add( session.getUserPrincipal() );
         }
         Principal[] p = (Principal[])principals.toArray( new Principal[principals.size()] );
         Arrays.sort( p, m_comparator );
@@ -277,7 +273,7 @@ public class SessionMonitor implements HttpSessionListener
             
             log.debug("Removed session "+session.getId()+".");
             
-            if( storedSession != null && storedSession instanceof WikiSession )
+            if( storedSession != null )
             {
                 fireEvent( WikiSecurityEvent.SESSION_EXPIRED, 
                            storedSession.getLoginPrincipal(), 

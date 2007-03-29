@@ -1,3 +1,9 @@
+2007-03-29  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.101
+        
+        * Fix for BugUsersPrematurelyLoggedOutAtRandom.
+
 2007-03-02  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.100
