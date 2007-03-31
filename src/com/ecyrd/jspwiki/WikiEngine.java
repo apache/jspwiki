@@ -497,6 +497,8 @@ public class WikiEngine
             m_workflowMgr = new WorkflowManager();
             m_workflowMgr.initialize(this, props);
 
+            m_internationalizationManager = new InternationalizationManager(this);
+
             //
             //  ReferenceManager has the side effect of loading all
             //  pages.  Therefore after this point, all page attributes
@@ -505,8 +507,6 @@ public class WikiEngine
             initReferenceManager();
 
             m_templateManager   = new TemplateManager( this, props );
-
-            m_internationalizationManager = new InternationalizationManager(this);
             
             m_adminBeanManager = new AdminBeanManager(this);
             

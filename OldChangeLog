@@ -1,3 +1,2733 @@
+2006-04-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.104
+        
+        * Tiny beautification: the attachment URLs no longer have %2F
+        but a slash.  Reported by Mikkel Troest.
+        
+        * LockReaper and RSSThread actually start now; we were calling the
+        setDaemon() in a wrong place.  Reported by Mikkel Troest.
+        
+        * Removed a dumb auth statement from SandBox. Thanks to
+        Murray Altheim.
+
+2006-04-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.103
+        
+        * Great URL mixup fix: we're now using %20 to encode spaces
+        instead of "+".  This is because of
+        http://issues.apache.org/bugzilla/show_bug.cgi?id=39278.
+        In addition, we're moving away from using TextUtil.urlEncode().
+        This fix should by the way also fix plenty of issues with
+        non-latin1 page names.
+        
+        * All JSPWiki daemon threads are now, well, official daemon
+        threads, so they should not hold up any exit.  This should fix
+        an issue with Tomcat not quitting properly.
+
+        * When login failed, you would get the URLEncoded page name
+        instead of plain text.
+        
+        * If the java.security.policy is already set, makes a sanity
+        check and tries to find also the keystore file in the same directory.
+        If it's not there, prints out a warning to the log.  Otherwise,
+        there's no way to know about this: Java itself won't mention
+        this at all - it would just fail silently when instantiating
+        permissions.  Boo hiss!
+
+2006-04-17  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.102
+        
+        * DavServlet was not properly reading UTF-8 file names
+        
+        * CachingProvider was calling cancelUpdate() accidentally
+        when it wasn't supposed to.
+        
+        * BreadCrumbsTag default icon is now "," instead of ">", since
+        it was not a) proper XHTML, and b) it was confusing people.
+        Reported by Dirk Fredericx et al.
+        
+        * DefaultURLConstructor was still assuming all URIs are in
+        Latin1 instead of relying on the request encoding.  This would
+        cause problems with non-Latin1 page names (even when using UTF-8).
+        Reported and fixed by Mikkel Troest.
+        
+        * 2.3.101
+        
+        * Upgraded to OSCache 2.3.1 to fix some issues with stability
+        
+        * VariableManager is now slightly faster.
+        
+        * VariableManager no longer outputs HTML (due to the new
+        rendering system which thinks that HTML is dangerous).
+        
+        * WebContainerAuthorizer is now a bit more verbose if
+        there is no internet connection and it cannot find local
+        DTDs.  It also throws a InternalWikiExcepton instead of
+        a generic RuntimeException or a NullPointerException... 
+        
+        * I don't know why, but SpamFilter.Host was a public class;
+        made it private for now...
+        
+        * JSPWikiMarkupParser now caches the outlink image, and
+        does not generate it new each time.  This gives us roughly
+        a 2% saving on each rendering...  Oh, the things you
+        learn when you run a profiler against your app!
+        
+        * Added plenty'o'javadocs to parser/rendering routines.
+        
+        * Tiny cleanups and tweaks all around; mostly concerning
+        allocating proper size StringBuffers to avoid resizing
+        overhead.
+        
+        * CachingAttachmentProvider no longer outputs HTML when
+        asked about the cache size.
+        
+        * CachingProvider would fail to call Cache.cancelUpdate()
+        in some certain rare conditions.  Over time on a busy wiki
+        they would accumulate and hang all the HTTP responder 
+        threads.
+        
+        * VersioningFileProvider was a bit relaxed about closing
+        streams in error situations.  Now handles them properly.
+        
+        * RenderingManager cleaned up a lot; new parameter
+        jspwiki.renderingManager.capacity added.  Also the
+        renderingManager.useCache is now gone; set the capacity
+        to zero to turn off caching.
+        
+        * WikiServletFilter is now a bit more tolerant towards
+        Exceptions - it actually restores the NDC now...
+        
+        * Rename.jsp had an extraneous encodeName(), causing
+        page rename failing if it was renamed to anything outside
+        the ASCII range.  Fix contributed by Mikkel Troest.
+        
+        * TestHttpServletRequest now implements the required
+        extra methods for the newest servlet API, so it can be
+        compiled in newer environments.
+
+2006-04-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.100
+
+        * Fixed BugOptimizeFileUtil.copyContents.  FileUtil ops
+        are now way faster.  Thanks to Kees Kuip!
+
+        * Typo fixed in BasicSearchProvider; thanks to Chuck Smith.
+
+2006-04-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.99
+        
+        * Variables in plugin parameters and body are now expanded.
+        e.g. [{SamplePlugin text='{$jspwiki.baseurl}'}]
+        
+        * Added missing accessKey parameter to LinkTag.  Reported
+        by Dirk Fredericx. 
+
+2006-04-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.98
+        
+        * Killed extra <param> tag definition from jspwiki.tld; it was
+        there twice.
+        
+        * AuthorizationManager.resolvePrincipal() no longer dies if JAAS
+        is not in use and someone still tries to set an Acl.
+        
+        * WikiSecurityEvent now uses Jakarta Lang ArrayUtils.  Hooray
+        for code reuse!
+        
+        * SpamFilter rewritten so that it can use the usual format of
+        a blacklist; default is to use SpamFilterWordList/blacklist.txt,
+        but you can control it with a filter parameter "blacklist".
+        
+        * Both CachingAttachmentProvider and CachingProvider had issues
+        in case the underlying provider would fail, and might hang.
+        
+        * LinkTag was not properly parsing the Param tag in case you just
+        specified a context.
+        
+        * Fixed a huge bunch of Javascript and CSS issues from Dirk
+        Fredericx.  Fixes BugV2.3.90SomeJavascriptBugfixes.
+        
+        * InfoContent.jsp was behaving erratically with attachments;
+        e.g. the version history was missing altogether.  Thanks to DF!
+
+2006-04-10  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.97
+        
+        * Fixed PageRenamer.renamePage(): pages referring to renamed page
+        are now looked up before that information is destroyed. Makes 
+        updating referring pages much easier.
+
+2006-04-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.96
+
+        * Split the wikipages to corepages and documentation.  We
+        now generate two zip files into the binary distro:
+        JSPWiki-doc.zip, which contains all the javadocs, plain-text
+        documentation and documentation-related wikipages, and
+        JSPWiki-corepages.zip, which contains the pages which are
+        necessary for JSPWiki to run.  This should make it easier
+        for people to get going.  The file which determines which
+        pages belong to the "corepages" set is under src/webdocs/.corepages
+        
+        * Added patch from Mikkel Troest to fix an attachment delete issue.
+        
+        * Added patch from Lars Orta to create a HTML report for all
+        JUnit tests.
+
+2006-04-05  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.95
+        
+        * Added missing call to super.initTag in LinkTag.initTag
+        
+        * 2.3.94
+        
+        * Added initTag() to all tags extending WikiTagBase, and
+        release() to all extending regular tag support classes.
+        (Switched release() to initTag() in WikiLinkTag, accordingly.)
+
+        * Added release() to WikiLinkTag to clear page etc. from cached
+        tags. This caused the wrong page name to be used in certain uses
+        of LinkTag.
+
+2006-04-03  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.93
+        
+        * RenderingManager would hang if rendering would fail.  This
+        might explain some hangs.
+        
+        * With relation to the above: JSPWikiMarkupParser is now protected
+        against lines which are too long (the PushBackReader would
+        overflow).  Interestingly, this and the above bug were exposed
+        by a spammer advertising mobile ringtones with a really, really,
+        really long line and lots of links.
+        
+        * Added "jspwiki.security" to turn off jspwiki security model.
+        Allowed values are "jaas" (default) to use built-in JAAS security
+        model, or "container" to use the old 2.2 model.  Please note
+        that using "container" does not yet disable any UI functionality.
+
+2006-04-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.92
+        
+        * Fixed BIG issue with LinkTag: it did not clean its parameters
+        properly in case it was pooled.  Added initTag() method to
+        WikiTagBase.  Reported by Terry Steichen; found by Frank Fischer.
+
+2006-03-29  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.91
+        
+        * Enhancement: Added a new PagePermission target "update" that 
+        serves as a shorthand for "edit the text on the page" AND 
+        "upload files". The "edit" target, meanwhile, has been changed 
+        to mean ONLY "edit the text on the page." The default policy file 
+        now states that anonymous and asserted users can edit all pages 
+        (but they cannot upload files). Authenticated users can, by default, 
+        modify all pages (i.e., edit AND upload).
+        
+        * Bugfix: Fixed PolicyLoader so that there are no import dependencies on
+        private Sun classes for PolicyFile and Configuration (JAAS). Instead,
+        we read the appropriate security provider properties from the JVM and 
+        instantiate the classes using Class.forName().newInstance. This is MUCH 
+        cleaner and portable, and it *should* enable JSPWiki to work on WebSphere, 
+        Resin and other containers that use non-Sun JDKs, JAAS configuration 
+        implementations or J2SE PolicyFile implementations. As fixes go, 
+        this is a good'un. If you have been having trouble making JSPWiki work
+        on combinations other than Sun JDK + Tomcat, you should give this
+        version a try.
+        
+        * BugFix: Added a new PermissionCollection implementation that
+        fixes a subtle corner-case bug with the security policy file.
+        If only the JSPWiki AllPermission was granted to a particular group
+        (i.e., the grant block did not specify any other permissions), the 
+        implied WikiPermissions and PagePermissions were NOT inferred as 
+        they should have been.
+        
+        * Bugfix: Found and killed an NPE in TextUtil that was causing NewGroups.jsp
+        to fail.
+        
+        * Minor changes to test security policy file.
+        
+2006-03-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.90
+        
+        * Fixes BugTemplateManagerRESOURCESTYLESHEETNok
+        
+        * Adds a new resource request type RESOURCE_INLINECSS at
+        the request of Dirk Fredericx.
+        
+        * Added the necessary include to INLINECSS to commonheader.jsp
+        
+        * WikiEngine.getViewURL() is now null-protected.  Some
+        templates were actually using it, but code wasn't working
+        as expected.
+        
+        * Added patch from Kalle Kivimaa to flush the referring
+        rendered pages if page started to exist.
+        
+        * Tabs for UserPreferences did not work due to a slight
+        mistake in previous patch...
+        
+2006-03-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.89
+        
+        * Bug fix: in certain cases DefaultURLConstructor would get
+        a null name and have a seizure.  Thanks to Terry Steichen.
+        
+        * Incorporated patch from Chuck Smith to support multiple
+        editors.
+        
+        * Bug fix: BugDefaultTemplateViolatesJSPSpecification.
+
+2006-03-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.88
+
+        * Previews are now fixed.  We no longer use pageContext.forward()
+        but we send an honest, hardworking redirect (and store the 
+        edited text in the session).
+
+        * Ditto for PageModified.
+
+2006-03-16  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.87
+
+        * Bug fix: XmlUserDatabase would default to the distro
+        user database in /WEB-INF/ if the user-set database was not
+        found.  However, this made it practically impossible to
+        bootstrap a new user database, as you needed to create the
+        file by hand...
+        
+        * Bug fix: Page attributes were not available, if the page
+        data was saved by ReferenceManager.  Now ReferenceManager
+        also caches the page data under $workDir.  This should
+        resolve quite a few problems relating to user groups
+        not being valid until they are modified, etc.
+        
+        * Made the ACCESS_DENIED event an INFO level event, simply
+        because my mailbox started to fill with JSPWiki ACCESS_DENIED
+        events (they are generated in a bit too chatty fashion).
+        
+        * DefaultURLConstructor now gets Delete.jsp as well
+        
+        * Mucked about in InfoContent.jsp to fix a problem with
+        it actually sending the wrong context...  Credit to 
+        Terry Steichen.
+
+2006-03-07  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * src/webdocs/templates/default/InfoContent.jsp: Moved delete 
+        forms into single td blocks. Fixes weird rendering problem 
+        that sometimes caused delete tr to be invisible in firefox.
+
+2006-02-23  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.86
+        
+        * Removed HttpUtil.getBaseURL().  It just did not work,
+        and was causing major pains with people.  However:
+        
+        * Got rid of <wiki:BaseURL/> from the default template.  Now,
+        if you specify jspwiki.referenceStyle=relative, you should
+        be getting relative URLs everywhere, if possible.  This was
+        a major change, so there might still be bugs related to this.
+        To be precise, you are likely to get absolute paths, but 
+        with no hostname (this depends on your URLConstructor).
+        
+        * LinkTag gained a new parameter: templatefile (which is a
+        shortcut to point at a file in the current template)
+        
+        * Added missing Param tag in the jspwiki.tld
+        
+        * Bug fix: Attachments would generate an illegal id for
+        headings.  Removed the "/" and replaced it with "_".
+        
+        * Deprecated RSSCoffeeCupImageTag.  No point in coding for
+        a single platform.  It will be removed in 2.6...
+        
+        * Added a new RSS feed icon.
+        
+        * Fixed problem with LinkTag forgetting to close anchor
+        (reported by many people, sorry I totally missed this).
+
+2006-02-28  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.85
+        
+        * Added an informational logging message to PolicyLoader
+        that makes it clear when JSPWiki can't install its security
+        policy because another one is already in use.
+        Credit: Terry Steichen
+        
+        * Bug fix: PermissionTag didn't recognize the new root-like
+        AllPermission. It now accepts it as an argument to the
+        "permission" attribute (the first letter is lowercase). Thus, 
+        <wiki:Permission permission="allPermission"> will evaluate
+        the tag body if the current user posseses AllPermission for
+        the wiki; if not, the contents will be skipped.
+        Credit: Terry Steichen
+        
+2006-02-26  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.84
+        
+        * Cosmetic: added NewGroup.jsp and Login.jsp as "special page"
+        references in jspwiki.properties. This prevents these pages
+        from displaying the name "Main" at odd times.
+        
+        * Bug fix: eliminated that annoying "User 'null' has started
+        editing this page...." bug. Embarassingly dumb error.
+        
+        * Bug fix: in WikiSession class, wrapped cached WikiSessions
+        with WeakRefererences to allow garbage collection when user's
+        HttpSession expires. 
+        
+        * Enhancement: added a static method sessions() to WikiSession
+        that counts the number of active wiki sessions. Added a
+        simple wiki plugin, SessionsPlugin, that returns the same.
+        Slight re-organization of WikiSession (static methods now 
+        at bottom). Sample usage: 
+        
+        There are [{INSERT SessionsPlugin}] active wiki sessions
+         
+2006-02-25  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.83
+        
+        * The jspwiki.policy file now includes a sample 'Admin' group
+        that demonstrates how to grant administrative privileges
+        (AllPermission). It is *not* enabled by default.
+        
+        * Bug fix: Authenticated users belonging to wiki groups were
+        erroneously seeing the group name, not their full names, added
+        as authors to comments and pages. WikiSession was not checking
+        for GroupPrincipals in several places. This has been fixed. 
+        Credit: Janne Jalkanen
+        
+        * Bug fix: Group principals are now only injected if a user
+        has successfully authenticated.
+        
+        * Enhancement: build.properties and jspwiki.properties now
+        support configuration of a log4j-based security log. The
+        default name is security.log. Use it to view error conditions
+        or more detailed trace information about login/logout events,
+        authorization decisions and more. To provide this capability,
+        WikiSecurityEvent constructors were modified to add log entries
+        to the Log4J Logger "SecurityLog".
+        
+        * AuthenticationManager and AuthorizationManager gain support
+        for wiki security events: login/logout, and access granted/denied,
+        respectively. These classes also were lightly re-organized;
+        the classes themselves, and all of their methods, were made final.
+        
+        * All add/removeWikiEventListener() methods, in all classes,
+        are now synchronized.
+        
+        * Due to the addition of logout events to WikiSecurityEvent,
+        the method AuthenticationManager.logout() is no longer static.
+        As a result, Logout.jsp changed slightly.
+
+2006-02-23  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.82
+
+        * BreadcrumbsTag.doWikiStartTag() is no longer final.
+        I don't understand why it was final in the first place...
+        
+        * Tiny refactoring: moved Event routines to a 
+        new com.ecyrd.jspwiki.event package.  No functionality
+        changes today.
+
+2006-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.81
+        
+        * Bug fix: BugPreformattedTextDoesntWorkAnyMore
+        
+        * Bug fix: BugPleaseMakePaperclipPicsConfigurableJustLikeOutlinks by
+        making the "jspwiki.translatorReader.useAttachmentImage" available. 
+        Set to "false" to turn paperclip images disappear.
+        
+        * Bug fix: page deletion would screw up Refmgr internal databases,
+        and not serialize on disk.
+        
+        * Bug fix: BugTableOfContentsCausesHeapdump
+        
+        * Bug fix: BugTimingErrorInVersioningFileProvider.getPageProviderString
+        (Thanks to BobKerns!)
+        
+        * Tinkered around a bit more with RefMgr, hoping to fix these
+        "disappearing references" -issues.
+
+        * Bug fix: BugStrangePageNameLogic (Fixed by changing
+        MarkupParser.cleanLink() to a far more efficient version.  It's a whole
+        lotta faster, too.)
+        
+        * Bug fix: If the local entity resolver cannot resolve the entities,
+        it now reverts to default operation (instead of dying with an NPE).
+        
+        * Added a bunch of Javascript issues from Dirk Fredericx.  Thanks, man!
+
+2006-02-21  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.80
+        
+        * Bug fix: Granting default permissions to wiki groups in the jspwiki.policy
+        security policy file is now supported. To do this, AuthenticationManager
+        injects 'GroupPrincipal' tokens into the wiki session's Subject at
+        login time. GroupPrincipals are also dynamically injected into the 
+        appropriate sessions when groups are created or changed -- this means 
+        that users do not need to log out in order to see the effect of group
+        membership changes on default policies. This is a rather clever bit of
+        programming if I do say so myself.
+        
+        * Enhancement/API change: to support dynamic GroupPrincipal injection,
+        the core jspwiki package receives a new top-level class WikiEvent,
+        a subclass auth.WikiSecurityEvent, and a listener class
+        WikiEventListener. GroupManager and the Group interface gain a new
+        method to register listeners (addWikiEventListener()), and a 
+        corresponding method for removal (removeWikiEventListener()). 
+        DefaultGroupManager and DefaultGroup fire security events to these 
+        listeners whenever wiki groups are added, changed or deleted.
+        
+        * Enhancement: the JSPWiki security policy now supports permission grants
+        to wiki group principals (GroupPrincipal). In addition, a new Permission class,
+        auth.permissions.AllPermission, grants administrative rights to specific wikis
+        (or all, with the wildcard). The combination of these two enhancements means
+        that wiki groups can now possess administrative rights. See the security policy
+        for a sample grant block.
+        
+        * Deprecation: the built-in Role.ADMIN enum has been eliminated. Use
+        com.ecyrd.jspwiki.auth.GroupPrincipal in jspwiki.properties instead.
+        
+        * Deprecation: the jspwiki.properties property 'jspwiki.admin.user' is 
+        now irrelevant because all administrative grants are handled exclusively
+        via the policy file.
+        
+        * Bug fix: added a "local entity resolver" to WebContainerAuthorizer
+        to prevent the need to call out to the network for the webapp 2.3 DTD
+        when parsing web.xml. Also, refactored the parsing logic to use the JDom
+        SAX parser (and XPath) instead of JAXP. Added new directory etc/dtd;
+        this is copied to tests/etc/WEB-INF at test-time, and also into the WAR.
+        Credit: Marc Patteet
+        
+        * Bug fix: patched WikiSession to treat null messages as empty strings.
+        Credit: Dan Frankowski.
+        
+        * Build.xml now uses its own security policy file for testing rather than
+        the production version in etc. The build file also copies the webapp 2.3
+        DTD to the WAR.
+        
+2006-02-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.79.  Moved to new apartment, now back on coding
+        track...
+        
+        * WikiEngine.deletePage() is now protected against trying to
+        delete pages that don't exist.
+        
+        * FileSystemProvider did not delete associated metadata files
+        during deletePage().
+        
+        * ReferenceManagerTest is now a lot more careful about not leaving
+        a corrupted refmgr.ser file behind.  Unfortunately, this exposed
+        a consistent bug somewhere...
+        
+        * Some tests tweaks and iterations.
+
+2006-02-12  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.78
+        
+        * Pulled JSP scriptlet code that stashes WikiContexts into
+        into the WikiContext method hasAccess().
+        
+        * Bug fix: added "temporary" fix to WikiContext.hasAccess()
+        to redirect users to the login page, rather than send a 
+        "forbidden" error, for authenticated users failing to access a
+        page. This resolves a case where access to pages fail "open" due to
+        WikiServletFilter's response wrapping.
+        
+        * Bug fix: modified the way WikiSession.getUserPrincipal()
+        parses Principal objects that was causing this method to 
+        return either "full name" or "wiki name" principals,
+        seemingly randomly. The method is now guaranteed to return
+        a "full name" principal for users who have logged in.
+        
+2006-02-09  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.77
+        
+        * Added option jspwiki.renderingManager.useCache to properties;
+        set to false to prevent RenderingManager from caching DOM trees.
+
+2006-02-04  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.76
+        
+        * Bug fix: changed behavior of AuthorizationManager
+        to prevent privilege escalation with Asserted users.
+        The method AuthorizationManager.hasRoleOrPrincipal() now
+        ALWAYS returns false when the user isn't authenticated, AND
+        the principal/role being queried isn't a built-in role like
+        Anonymous, Asserted etc. Thus, to gain access to pages that
+        name a specific user, that user is now REQUIRED to log in.
+        Ditto for groups he or she belongs to. The exception is
+        for ACLs that contain built-in roles; e.g., "allow Asserted
+        users to view" is allowed. Adjusted several unit tests
+        and created a new web unit test to verify.
+        
+        NOTE: a consequence of this change is that ALCs that
+        specify "ALLOW Guest" **will not work** any longer (because
+        Guest is a principal, not a built-in role). Please use
+        "ALLOW Anonymous" instead.
+
+        * Bug fix: build.xml's web unit tests were not guaranteeing
+        use of XMLUserDatabase for non-JDBC tests. If built with
+        a jspwiki.properties.tmpl that specified the JDBC database,
+        this caused certain web unit tests to fail. We now force
+        the user database implementation for all web unit tests.
+        
+        * Bug fix: Ebu's 2.3.75 fix had the undesirable side
+        effect of hosing all relative URLs (while fixing all of
+        the absolute ones). WikiContext has been reverted to
+        its previous state. The real culprit turns out to
+        be in DefaultURLConstructor.doReplacement(). We have
+        added a web unit test suite to test for absolute URLs,
+        and also for relative URLs (these are manipulated in
+        jspwiki.properties prior to deployment of the test WARs).
+        
+        * WebContainerAuthorizer now throws a RuntimeException
+        if it cannot somehow parse the web.xml. This isn't ideal,
+        but it's better than ignoring the error. Credit: J?rgen Weber.
+        
+        * Removed unused imports and unreferenced objects in
+        multiple classes. This does not affect functionality.
+        
+        * Removed obsolete "useOldAuth" refs from test
+        jspwiki.properties.
+        
+        * Many Javadoc tweaks and additional comments.
+
+2006-02-02  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.75 
+        
+        * Fixed WikiContext.getURL(...) test for absolute reference style.
+
+2006-01-29  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.74
+        
+        * Web unit test scripts gain 3 more tests, which verify that
+        JSPWiki users can 1) create new pages (no ACL), 2) create new pages
+        with unrestricted view permissions and 3) create new
+        pages with restricted view permissions.
+
+        * Slightly tweaked WikiContext to make hasAccess() more 
+        flexible; redirection-on-failure can optionally be turned
+        off. Removed WikiContext.REGISTER; it is obsolete. Also,
+        removed WikiPermission.REGISTER target; please use EDIT_PROFILE
+        instead.
+        
+        * WikiServletFilter now takes responsibility for setting
+        Log4J NDC logging contexts. It also now takes care of WikiSession
+        message cleanup. All top-level JSPs changed (very) slightly,
+        and are simpler, as a result.
+        
+        * Bug fix: CommentContent.jsp now defaults to the "Add Comment"
+        tab. Credit: Dirk Frederickx.
+       
+        * Bug fix: quick2Top and quick2Bottom markers no longer have
+        an annoying underline. Credit: Dirk Frederickx.
+        
+        * Bug fix: inlined images were not being displayed due to the
+        attachment not being considered in PagePermission.implies().
+        We now discard the attachment name completely when constructing
+        PagePermissions, which means that a page's permissions now 
+        ALWAYS imply the same permission on its attachments, and vice-versa.
+        
+        * Bug fix: LoginContent's error message now correctly displays
+        a "you don't have access to page __(foo)__" if the user
+        needs to log in.
+        
+        * Bug fix: test version of userdatabase.xml modified to include
+        dummy created/lastModified timestamps. The lack thereof was
+        creating scary (but entirely harmless) messages in jspwiki.log.
+        
+        * Bug fix: added WikiPermission "*", "login" to jspwiki.policy.
+        It should have been there previously...
+        
+        * Bug fix: changed WikiServletFilterMappings to explicitly
+        list URL patterns, rather than the wildcard (/*). This fixes
+        the infamous "disappearing images" problem with Tomcat 4.1.
+        Also removed Register.jsp as protected resource, since it
+        vanished a long time ago anyhow.
+                
+2006-01-23  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * 2.3.73
+        
+        * Added ParamTag (provide name-value pairs to enclosing
+        ParamHandler tag) and ParamHandler (capability to accept
+        contained name-value pairs). 
+        
+        * Modified LinkTag to implement ParamHandler and accept
+        body content. The purpose is to support linking to custom
+        JSPs with any parameters.
+        
+2006-01-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.72
+        
+        * Changed WikiContext.checkAccess() to return a boolean, so
+        that JSP pages can actually check whether they should return
+        from processing or not.  This should fix a number of strange
+        bugs.
+        
+        * Renamed WikiContext.checkAccess() to WikiContext.hasAccess()
+        to reflect its new role.
+        
+        * Added TabTag and TabbedSectionTag, which cleaned up the default
+        templates *enormously*.  Thanks heaps to Dirk Fredericx!
+        
+        * Added some extra safeties to URL Constructors to make sure the
+        proper encoding is being used in UTF-8.
+        
+        * The Ant war-task did not properly place jspwiki.jks in the
+        WAR file, causing problems if the keystore was somewhere else
+        than in the default location.
+
+2006-01-16  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.71
+        
+        * Weblogentry-related CSS are now less fugly.
+        
+2006-01-14  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * DefaultPermissions.txt is now gone.  Thanks to Frank Fischer.
+
+2006-01-13  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.70
+        
+        * Tweaks to web unit tests to make auto-deploy scripts
+        work with Tomcat 4.1.
+        
+        * Bug fix: XMLUserDatbase was dying horribly in
+        certain cases with WAR deployments.
+        
+        * Added more 'create wiki group' unit tests
+        
+2006-01-11  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.69
+        
+        * Minor tweaks to web unit tests; they now use the same
+        test user and password as the unit tests. Small adjiustments
+        to JDBC setup scripts to inject test users into database
+        at setup time.
+        
+        * Added 'create wiki group' web unit test
+        
+2006-01-10  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.68
+        
+        * We now have basic web unit tests, courtesy of the integration
+        of JWebUnit into build.xml and tests/etc/webtests.xml.
+        Four jars were added to the 'lib' dir for testing. Web unit
+        testing simulates a browser's experience and verifies that
+        the following test cases run properly:
+        - Anonymous viewing (Main and About pages)
+        - Setting asserted name via cookies
+        - Creating user profiles
+        - Logging in to JSPWiki using a password
+        Four combinations are explicitly tested: custom and container
+        authentication, each of these with both the XML and JDBC user
+        database types. Note to developers: the Ant task
+        "webtests" should be part of your test plan. Learn, love
+        and embrace JWebUnit. It's easy to express test cases
+        with it, and we will (no doubt) be creating more test cases
+        as we go... see examples in package com.ecyrd.jspwiki.web.
+        
+        * Rules for accessing UserPreferences in container-mananged
+        environments have been relaxed significantly: users do not
+        have to be logged in to edit preferences or their profiles.
+        Instead, unauthenticated users attempting to create a profile
+        receive a polite error message directing them to log in first.
+        If the container shares user data with JSPWiki, the profile
+        will be saved, and the user will as a result be registered
+        with the container.
+        
+        * UserDatabase interface receives one new method:
+        isSharedWithContainer(), to permit JSPWiki to serve
+        as a web container user registrar (see previous bullet).
+        Also, jspwiki.properties receives a new property: 
+          jspwiki.userdatabase.isSharedWithContainer
+        which defaults to false. Only JDBCUserDatabase uses it now. 
+          
+        * UserCheckTag gains an extra status type: "setPassword"
+        which identifies whether users are allowed to change their
+        JSPWiki passwords. For custom-auth configurations and
+        container-auth configurations with shared user databases,
+        this will be true. For most container auth scenarios (i.e.,
+        where user data is not shared), this will be false.
+        
+        * WikiPermission receives a new permission type, "editProfile"
+        that is better aligned with the streamlined profile pages
+        introduced in 2.3.48; "registerUser" is officially deprecated
+        and will be completely eliminated in a future build. To
+        register users, you MUST add the "editProfile" permission
+        for each required Role, otherwise the profile tab will be blank.
+        I am sorry about this -- but I promise this will absolutely be
+        the last change we make to the policy grammar prior to 
+        official release. See the sample jspwiki.properties.
+        
+        * Bug fix: UserDatabase contract now specifies that setting
+        created/modified timestamps is now the responsibility of
+        the implementation, and is no longer done by UserManager.
+
+        * Bug fix: email field on profile form now obeys the docs:
+        is is now, in fact, optional, and won't prevent profile
+        saving if omitted.
+        
+        * Bug fix: PreferencesContent's tab highlighting works better,
+        if not perfectly. Credit: Dirk Frederickx.
+        
+        * Bug fix: etc/db was erroneously (if harmlessly) being
+        included in WAR builds.
+        
+        * JBoss login-config.xml JAAS sample snippet appended to
+        jspwiki.jaas. Credit: Milt Taylor.
+
+2006-01-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.67
+        
+        * XHTMLToWikiTranslator now supports <strong> and <em>
+        
+        * XHTMLToWikiTranslator now supports different URL Constructors
+        (which makes FCK run again)
+        
+        * Fix for BugRSSHasInvalidDccreatorProperty (well, not really
+        a fix, but it should play nicer with aggregators).
+        
+        * Refactored XHTMLToWikiTranslator tests - they were actually
+        not working at all... Shame on me for not noticing earlier.
+
+2006-01-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.66
+        
+        * WikiEngine now checks whether a page has changed before
+        committing it.  This should help reduce all the empty changes
+        that people do when they just click "save" in panic.
+        
+        * InputValidator now accepts email addresses of the form
+        "firstname.lastname@something" and "name+extension@something".
+        
+        * Added a tiny sanity check in WikiServletFilter
+        
+        * Added EditFindReplaceHelp which was missing...
+
+2006-01-05  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.3.65
+		
+        * Bug fix: XMLUserDatabase now commits using proper UTF-8.
+          It was not doing so previously, in spite of an XML header that 
+          suggested otherwise. 
+		  
+        * Bug fix: InputValidator's validate() was rejecting
+          null or blank strings as invalid. This is incorrect
+          behavior, and these values now validate. Note that the
+          validateNotNull() method should be used if checking for
+          blank/null strings is required.
+		  
+        * JDBCUserDatabase gets basic support for inserting
+          an "initial role" row into a admin-defined roles table.
+          This is designed to enable JSPWiki to serve as an 
+          enrollment mechanism for container-managed users, in 
+          those cases where the container and JSPWiki share
+          user information. A future set of commits will include 
+          adjustments to WikiPermission, UserManager and
+          UserPreferences to support the UI aspects of container 
+          enrollment functionality. We do *not* envison broader 
+          role management capabilities for JDBCUserDatabase, 
+          other than just this initial role row insert support.  
+
+2006-01-02  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.64
+        
+        * Fixed a relatively serious bug which was caused by 
+        FormSet doing a very selective remove() on its parameters;
+        this was relying on the fact that the FormSet parameters
+        are not stored (which was true on the old TranslatorReader).
+        The new RenderingManager stores the parsed parameter arrays,
+        which means that plugins Shall Not Modify their parameters,
+        or risk getting the same data back again the next time.
+        (However, if the page data expires, then you shall get the
+        original parameters.)  I am not sure whether this is good
+        behaviour...
+        
+        In effect, this fixes problems with jspwiki.org bug reporting
+        system.
+
+2006-01-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.63
+        
+        * Fixed a number of failing tests (table and refmgr)
+        
+        * Fixed table of contents generating faulty section
+        references for percent-encoded headings.
+
+2005-12-30  Erik Bunn  <ebu@memecry.net>
+
+        * 2.3.62
+
+        * Modified AttachmentServlet, LinkTag, InfoContent.jsp to fix
+        attachment revision upload bug. 
+
+2005-12-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.61
+
+        * Quick fix from Dirk: table sorting works again.
+        
+        * Favourites menu looks a bit better now.
+        
+        * Added link to the Favourites menu in the UserPreferences.
+
+        * Bug fix: trying to upload a new revision of an attachment
+        resulted in a broken directory structure.  This is still
+        buggy, you can't upload a new revision of a file.
+        
+        * Did some tweaking of the jspwiki.css to make it a bit
+        more accessible (the link underlines are back, and you
+        can now actually read the titles, if you made the array
+        sortable).
+
+2005-12-20  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Modified jspwiki-common.js: overriding Array prototype
+        potentially breaks 3rd party scripts using arrays as maps.
+        Use ExtArray, instead.
+
+2005-12-19  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.60 aka the "Neat and Tidy" release
+         
+        * Complete, radical overhaul of the standard CSS jspwiki.css.
+          It is organized (!) and significantly trimmed back from its
+          former sprawling self. Note the new <div> classes "error"
+          "information" and "warning". These have been substituted into
+          one-timer classes like "versionnote". The styles, overall,
+          have had most of the rough edges rubbed out... not perfect
+          but it's a start -- not all of Dirk's recommendations made
+          it in.
+          
+        * Tweaked PageActions by substituting page up/down icons for
+          webdings. Also, comment permissions are checked instead
+          of assuming edit (credit: Benedikt Rausch).
+        
+        * Adjusted table generation routines in JSPWikiMarkupParser
+          and ListLocksPlugin to inject class="odd" attributes
+          into generated table rows. LLP also gives tables 
+          the style "wikitable" and now emits XHTML-compliant markup.
+        
+        * Added attribute "div" to <wiki:Messages> tag to allow
+          messages to be neatly wrapped. Default class is "information".
+          This required minor tweaks to several JSPs.
+          
+        * Turned LeftMenuFooter into a blank page, which makes the left
+          menu area nicer and cleaner. The default did nothing but display
+          referring pages, which we already know how to do via the
+          PageContent tabs. Less clutter, mo' better!
+          
+        * LeftMenu.jsp and LeftMenuFooter.jsp are laid to rest, with honors.
+        
+        * Commented out the <resource-ref> in web.xml for jdbc/UserDatabase;
+          it isn't on by default anyway, and it was causing JBoss to emit
+          a harmless (but annoying) error messages (credit: Milt Taylor).
+          
+2005-12-19  Erik Bunn  <ebu@basen.net>
+
+        * 2.3.59
+
+        * Bug fix: reordered AttachmentServlet to get rid of an
+        HttpServletRequest reader/input stream access error when running
+        under Jetty. The Multipart library in the servlet fetched the
+        input, WikiEngine.createContext() attempted to modify it, and 
+        Jetty, being strict about this, threw an exception.	
+
+2005-12-17  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.58
+        
+        * Bug fix: Comment preview no longer views double
+        
+        * Bug fix: Comment preview no longer loses author/link
+        information.
+
+2005-12-14  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.57
+        
+        * Just improved some output coming from the AttachmentServlet.
+        
+        * Fixed a few instances of still using Category instead of
+        Logger.
+
+2005-12-13  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.56
+        
+        * Lots of cleanup to the top-level JSP pages: all of
+          the permission-checking is now in a new WikiContext
+          method called checkAccess(HttpServletResponse).
+          The workflow now goes like this: if a non-authenticated
+          user tries to access an unauthorized page, he or she is
+          redirected to the login page. If already logged in,
+          JSPWiki returns a standard 403 (forbidden) code. We
+          will likely use a nicer error page in the future.
+          LoginError.txt goes away; it is not needed any more.
+        
+        * User profile save operations now have *actual* input
+          validation, courtesy of InputValidator. The email 
+          address is checked for conformance, and the other 
+          fields (except password) are checked for nasty
+          characters like angle brackets. Yes, yes, we know...
+          what took us so long? There's more to do but it's a
+          good start.
+          
+        * UserProfile.jsp gets some clever scriptlet hackery
+          via the 'tab' parameter to activate (or preserve)
+          a particular tab. This fixes the "disappearing profile"
+          issue during save operations.
+        
+        * WikiSession receives a series of new methods for
+          stashing, retrieving and clearing UI messages. These
+          are used primarily for auth-related messages but
+          are generic. All of the JSP pages that previously
+          stashed "msg" objects in the HttpSession now use these
+          methods. A companion JSP tag <wiki:Messages> makes
+          printing messages dead-simple.
+          
+        * AuthManager's logout() method resets the entire HTTP
+          session, like it used to.
+          
+        * UserManager validation routines were moved into new UI
+          class InputValidator; additional refactorings including
+          the new validation classes and WikiSession messages.
+          
+        * XMLUserDatabase now relies on its own cheap-and-cheerful
+          DOM writing routine. Errors using the standard J2SE
+          TRAX APIs were previously causing the users not to be
+          written to disk.
+          
+        * Fixed several failing auth.* tests.
+
+2005-12-12  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.55
+        
+        * ReferringPagesPlugin and the like now also have the "include"
+        -parameter.
+        
+        * Preview was showing things twice (missing return -statement
+        in Edit.jsp... oops.)
+
+2005-12-10  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.54
+        
+        * AttachmentServlet no longer throws an exception with
+        overzealous clients.
+
+2005-12-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.53
+        
+        * Unknown file types would cause an exception when generating
+        enclosures in RSS feed.
+        
+        * Wiki page RSS feeds are now a bit more descriptive.
+        
+        * Removed extra attributes for EditorTag from jspwiki.tld.
+        
+        * AuthenticationManager now uses less invasive logging levels
+        if someone typos their username...  Less email for me, hooray!
+        
+        * DiffLinkTag has now some small NPE protection... Fixes
+        symptoms, not cause.
+        
+        * RSS now also supports ETags.
+        
+        * Fixed an issue with Javascript - HighlightWord would sometimes
+        die (thanks Dirk!)
+
+2005-12-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.52
+        
+        * Removed some extra crud from jspwiki.css.
+        
+        * Removed extra quotes from LinkTag.  Oops...
+        
+        * Fixed an issue with Diff.jsp (page names were not recorded,
+        if you changed from it).
+        
+        * Hopefully fixed an issue with IE and leftmenu disappearing.
+
+        * 2.3.51
+        
+        * Added "accesskey" parameter to LinkTag.  Thanks to Gregor
+        Hagedorn!
+        
+        * InfoContent.jsp would fail if there was only one
+        version of a page.  Thanks to Dirk for pointing this out!
+
+2005-12-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.50 alpha.
+        
+        * Added collapsebox from BrushedTemplate.  Also synced
+        some search stuff from Brushed.
+        
+        * TableOfContents are now collapsable.
+        
+        * Moved the layout around a bit - actions are now a part of
+        Header.jsp and Footer.jsp.  This allows us to do a slightly
+        nicer layout, I think.
+
+2005-12-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.3.49
+        
+        * Added LinkTag at the request of Gregor Hagedorn.  It
+        does pretty much everything.  Adding documentation later...
+        This class also needs some serious working so that the 
+        functionality could be offered to other classes as well
+        (such as the Image plugin).
+        
+        * Hopefully fixed the "my username is null" -problem, which
+        would occur, if you were both logged in and had a cookie.
+        
+        * Added a patch from Matt Luker to allow numbering in 
+        TableOfContents.
+        
+        * InterWiki links are now also checked for image inlining.
+        Merry Christmas :)
+        
+        * FCK.jsp had two elements reversed.  Thanks Dirk Fredericx!
+        
+        * Diffs now use code from BrushedTemplate by Dirk.
+        
+        * WikiServletFilter was letting only US-ASCII through - oops...
+        
+        * WikiForms can now handle UTF-8.
+        
+        * TableOfContentsPlugin font size was set accidentally to zero
+        in jspwiki.css.  WTF?
+        
+        * Reworked the jolly old "include correct CSS based on browser"
+        to be a proper Javascript method call.
+
+2005-11-29  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.48
+        
+        * Major refactoring of UserPreferences.jsp. The separate
+          registration page is now *gone* and merged into the
+          prefs page. The prefs page itself now has tabs -- 
+          one for the user profile, and one for prefs. This
+          means we can relax a few of the security assumptions
+          at the JSP level, since they are already baked into
+          the core UserManager APIs. (Addresses Dirk's requests.)
+        
+        * Setting the user name via cookies is back!
+        
+        * The security policy was loosened to allow anonymous
+          users to edit their pref. WikiPermission "EditPreferences"
+          has been broadened in meaning to include prefs AND
+          profiles, while "RegisterUser" means simply the ability
+          to create a profile. RegisterUser will *probably* vanish
+          or be renamed in the near future.
+          
+        * SpecialPage REGISTER now points to UserPreferences.jsp
+        
+        * UserPreferences now implements a caching scheme for user
+          profiles that downstream classes like UserProfileTag
+          need. Also, UserPreferences gets a second password
+          (confirmation) field. UserManager receives additional
+          validation logic for processing same.
+          Everybody's happy, but especially Dirk.
+          
+        * Bugfix for XMLUserDatabase that caused funny auth
+          problems if the jspwiki.properties userdatabase prop
+          was commented out. (Credit: Janne)
+        
+        * Favorites/PageActions get context-sensitive 
+          "Log in" "Logout" and "Create group" links.
+         
+        * Build.xml gets some stub code for HTTP/web unit testing.
+          There aren't any tests just yet, but we do have a
+          snappy Tomcat auto-deploy mechanism now.
+          
+        * Thanks to the magic of XyleScope, the default
+          jspwiki.css gets some small tweaks to make the overall
+          styles a bit more aesthetically pleasing and consistent.
+          
+        * "You are anonymous" discreetly disappears.
+        
+        * Temporary bugfix for infinite-redirection loop issue with
+          Login.jsp... introduces another one...
+          
+        * This release introduces a known bugs: a "redirect loop"
+          occurs when using container-managed auth and accessing
+          a forbidden page. This will be fixed in my next
+          checkin.
+
+2005-11-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.47
+        
+        * Added "type" parameter to IncludeResourcesTag.  This allows you
+        now to include multiple types of resources in different places.
+        
+        * Quite a few top-level JSPs had the old EditorManager package,
+        oops.
+        
+        * Added quite a lot of stuff from BrushedTemplate, including
+        collapsible lists, sortable tables, etc.
+        
+2005-11-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.46
+
+        * Reworked EditContent.jsp to account for changes in editor
+        system.
+
+        * Variable content is now escaped before shown.  Thanks to
+        Gregor Hagedorn for pointing this out.
+
+        * Added new package: module, containing ModuleManager and
+        WikiModuleInfo classes.
+
+        * Added WikiContext.findContext() to make life a bit easier
+        for template writers.
+        
+        * Moved TemplateManager to new package: ui.
+
+        * Added etc/ini/jspwiki_module.xml to contain some defaults.
+
+        * Added WikiServletFilter and the ability for plugins, etc to
+        request an injection of things in the header.  This is done by
+        adding <wiki:InsertResources> in commonheader.jsp.  It inserts
+        a particularly formatted comment in the header, which is then
+        replaced by WikiServletFilter.  A plugin may request a script
+        or a CSS file by using new methods in TemplateManager. Based
+        on ideas and code by Kees Kuip.
+
+        * Removed editors from Java files and put them in JSP files
+        under templates/default/editors/.  It's now possible for a template
+        to override any editor, or to use any editor they like.  It
+        should also make editors pluggable components.
+
+        * Continuing template rework.  Reworked EditorTag, removed 
+        EditorAreaTag. Added RequestResourceTag and InsertResourcesTag.
+
+2005-11-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.45 aka "The Great Template Break"
+        
+        * Added serialVersionUID to most classes that were missing it.
+        
+        * Added EditorManager class.  It's currently somewhat dummy,
+        but it should allow fully pluginizable editors in the future.
+        Incidentally, this means that we got rid of EditorAreaTag...
+        Sorry - this breaks quite a few templates out there.  But now,
+        if you want to create your editor, take a copy of 
+        editors/plain.jsp, put it in your own template directory, and
+        modify the blazes out of it.
+        
+        * Got finally rid of the very confusing "text" parameter for
+        all editors.  The new parameter name is 
+        EditorManager.REQ_EDITEDTEXT.  Note that this may break your
+        current configurations.
+        
+        * Hopefully finally fixed BugHtmlCharEntitiesMishandledInPreview.
+        
+        * Fixed BugIncorrectServletAPIVersionInREADME.
+
+2005-11-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.44
+        
+        * Tiny JSPWikiMarkupParser speed optimizations.
+        
+        * Added build.xml patch from DaveSB to fix signing issues on 
+        Windows.
+
+        * Added patch from DaveSB to support nested plugins.
+        
+        * Added support in ReferringPagesPlugin for "exclude" -parameter:
+        use "exclude='pattern1,pattern2,pattern3'".
+
+2005-11-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.43
+        
+        * Fixed HTMLEntitiesAreGettingEscapedByamp and
+        BugHtmlCharEntitiesMishandledInPreview.  It was a nasty bug
+        in the new rendering engine.
+
+2005-11-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.42
+
+        * Bold and italic markup are now carried across paragraph
+        breaks.  This is a convinience factor - XHTML does not
+        allow it, but we store the state.
+
+2005-11-08  Andrew Jaquith  <arjaquith@mindspring.com>
+
+        * v2.3.41
+        
+        * Fixed a nasty, serious authentication bug introduced
+          in 2.3.35 code for checking for cookie changes. Cookie
+          changes were triggering "container logins", which
+          caused the JAAS Subject to be rebuilt from scratch.
+          Instead of blowing away the Subject (and associated 
+          WikiSession) at logout time (or when the user's auth
+          status changes), the Subject is now preserved for the
+          life of the Http Session. In addition, executing
+          Logout.jsp no longer invalidates the HTTP session;
+          instead, the AuthenticationManager logout() method
+          simply resets the Subject's principal set instead.
+       
+        * Added an invalidate() method to WikiSession that
+          resets user wiki session principals when requested
+          by AuthManager.logout(). Resetting principals
+          means making a user an anonymous guest user.
+          Refactored WikiSession's cookie-change detection code.
+        
+        * All of the *LoginModule classes received
+          tweaks to make them work with long-lived
+          Subjects. In particular, login modules that 
+          inject Role principals now remove less-prileged ones.
+          For example, the UserDatabaseLoginModule injects
+          Role.AUTHENTICATED upon login; it also explicitly
+          removes Role.ANONYMOUS and Role.ASSERTED
+          if these are found.
+          
+        * <wiki:UserCheck> regains the venerable status attribute
+          "known", which denotes an authentication status of
+          "not anonymous", aka either authenticated or asserted.
+          This fixes an issue in the new JSP templates from 2.3.37.
+          
+        * HttpUtil gets an *even more* reliable fix to
+          the BaseURL issue patched in 2.3.40.
+          
+        * Added "SpecialPage" mappings to WikiEngine for Logout,
+          CreateGroup, CreateProfile, EditProfile, and Prefences.
+          These map to Logout.jsp, NewGroup.jsp, Register.jsp
+          and UserPreferences.jsp (x2).
+          
+        * Login.jsp, NewGroup.jsp, Register.jsp and
+          UserPreferences.jsp all now use ViewTemplate 
+          as the master template. This removes the need for
+          AdminTemplate.jsp, which was a kludge anyway.
+          That means one less template to maintain, and to hack.
+          Hooray!
+          
+        * Favorites.jsp receives the G'day treatment.
+        
+        * Cookie identities (cookie assertions) are now
+          set to the value of the user's full name during
+          custom auth login, and when user preferences
+          are initially set (Register.jsp) and after
+          user registration (UserPreferences.jsp).
+          Previously, we used the WikiName. However, the
+          full name is what's returned first by WikiSession's
+          getUserPrincipal() method, so we are now consistent
+          with that. This should partly resolve the issue JohnV
+          reported about user names "jumping around" between
+          wiki names, full names and login names. (But there
+          is still one more bug out there...)
+          
+        * Fixed compilation errors in Rename.jsp, and added
+          back code to hide rename fields on InfoContent.jsp
+          for users who aren't entitled to see them. This
+          had regressed a few revisions ago...
+        
+2005-11-03  Andrew Jaquith  <arjaquith@mindspring.com>
+
+        * v2.3.40
+        
+        * Fixed a subtle bug with HttpUtil that was 
+          causing BaseURLs to always print as the name
+          of the host as known to the web container,
+          which in default Tomcat deployments (99%)
+          is called "localhost". Rather than rely on
+          the fact that the user's HttpServletRequest
+          will *actually* return an accurate host name,
+          we do a quick, one-time host name resolution
+          lookup just to make sure.
+          
+        * Added WikiContext-to-*Content template mappings 
+          for the login and "create group" contexts. Added
+          wiki contexts for both.
+        
+        * Corrected potetial bug with WikiSession's 
+          getStatus() method. It now delegates to isAnonymous(),
+          as it should.
+        
+        * WikiContext's getURL() method now defaults to
+          HttpUtil's method of building the base URL from user
+          session request information, rather than from 
+          jspwiki.baseURL. We do this so that JSPWiki will
+          work nicely with HTTPS sessions. This method is 
+          transparent to downstream JSP tags like EditLink; 
+          they get HTTP compatibility "for free". If the
+          associated HTTPServletRequest is null, we default 
+          to the old method of looking up getBaseURL() from
+          WikiEngine.
+          
+        * NewGroup.jsp and Login.jsp now put their content
+          pages inside of AdminTemplate, which means they are
+          wrapped with standard headers and footers. Note that
+          LoginForm may be look a bit ugly until we get a few
+          kinks worked out.
+
+2005-11-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.39
+        
+        * Default RSS version is now 2.0
+        
+        * Cleaned some ambiguities in the CSS file
+        
+        * Moved the app and company logos into a separate div of their
+        own to make layout easier.
+        
+        * Enabled personal favourites in the Favorites.jsp
+        
+        * General cleanup and poking around in the CSS
+
+2005-11-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.38
+
+        * Added missing search-replace Javascript code
+        
+        * Added missing AttachmentTab.jsp to default template.
+
+        * NB: While most of the code comes from BrushedTemplate, I'm
+        cleaning it up a bit - it's not XHTML compliant, for example.
+
+2005-10-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.37
+        
+        * Bug fix: RSS feeds no longer generate &amp;quot; whenever there
+        is a quote (") in the stream.
+        
+        * Rearranged some code relating to search and reference managing;
+        hopefully squashing some hard-to-find bugs.
+        
+        * Bug fix: safeGetParameter() is now deprecated, as createContext()
+        now does the proper request.setCharacterEncoding() as per Servlet
+        API 2.3.  Fixes BugClobberedUTF8InWikiBody.  Thanks to Chris Wilson
+        and msb0b!
+        
+        * Mass commit of new default template code, based on the
+        BrushedTemplate from Dirk Frederix.  Note that this thing is
+        probably pretty broken, so please be careful.
+
+2005-10-25  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.36
+        
+        * Cosmetic fix: cookie-asserted identities containing spaces were 
+          passing enclosing double-quotes on to the LoginModule, which had
+          the effect of "scare-quoting" the user's name. The offending
+          quotes are now snipped if detected, in HttpUtil.
+          
+        * Added a bang (!) to a particular line in XMLUserDatabase
+          that was causing a spurious error message.
+          (Credit: John Volkar)
+          
+        * Changed JDBC init tests so that they use column and table
+          mappings from tests/etc/jspwiki.properties, not 
+          jspwiki.properties. This was confusing the JDBCUserDatabaseTest
+          class big-time, when custom mappings were used. Also,
+          added JDBC test properties to the various test/etc templates.
+          
+        * Added an optional property 'jspwiki.userdatabase.hashPrefix'
+          that tells JDBCUserDatabase whether or not to prepend
+          its hash algorithm to the password hash (e.g., {SHA}).
+          This should increase compatibility with certain 
+          third-party applications that might wish to share the
+          user database, such as Tomcat.
+          
+        * Fixed a NPE in JDBCUserDatabase that was triggered by
+          a user editing a profile, but electing not to change the
+          password. It now exhibits correct behavoir: no password
+          means "use the old one", just like with XMLUserDatabase.
+          
+        * Added 'drop user' to the Postgres and Mckoi database
+          scripts; it was causing an error in some cases.
+
+2005-10-22  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.35
+        
+        * Fixed issue in that prevented users checking the
+          'remember me' box Comment.jsp from seeing their identity
+          assertion reflected in the WikiSession. This feature
+          now works as it should. Reworked a WikiSession method,
+          and added a WikiSessionTest unit test. WikiSession now
+          senses when the 'asserted' user cookie in the user's
+          session appears, changes, or disappears.
+          
+        * Clarified the logic in WikiSession.isAnonymous() for 
+          determining when a user is considered "anonymous". This 
+          will be the case when any of these conditions are true,
+          as evaluted in this order:
+          - The session's Principal set contains Role.ANONYMOUS
+          - The session's Principal set contains WikiPrincipal.GUEST
+          - The Principal returned by WikiSession.getUserPrincipal()
+            evaluates to an IP address
+          WikiSession includes a new, fast method for determining 
+          whether a string represents an IP address. The previous
+          technique was totally b0rked. These are the sorts of things
+          one discovers when writing unit tests...
+          
+        * Fixed minor issue with AbstractUserDatabase that
+          inadvertently introduced a bug into the way users
+          are found (or not). This was causing AuthorizationManager's
+          resolvePrincipal() method to fail in certain cases.
+        
+2005-10-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.34
+
+        * Did a general sweep of a bunch of classes to make
+        sure they use TextUtil.getStringProperty() instead of
+        Properties.getProperty().  Also fixed 
+        BugTextUtil.parseIntParameterFailsInCaseOfTrailingBanks
+        to get rid of all space-related issues in jspwiki.properties.
+
+		* No longer generates empty <b/> -elements for markup "____".
+		The parser is now smart enough to check if a markup would
+		result in something that would not be recommended in XHTML 1.0.
+		Fixes BugEmptyMarkupDoesntWorkForBoldAndItalic.
+		
+		* RSS 2.0 and Atom feeds no longer double-encode ampersands.  
+		Oops. :)
+		
+		* PageModified.jsp now properly escape XHTML markup.
+		
+		* JSPWiki Auth tests are run now only if "jspwiki.tests.auth"
+		system property is set.  This helps everyone that is using
+		Eclipse...
+		
+		* Bug fix: exclamation marks are no longer doubled.
+
+2005-10-19  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.33
+        
+        * Initial JDBC support for storing user profiles has
+          landed. See the build.xml file for details on
+          configuring unit testing with JDBC. See also the
+          Javadoc for com.ecyrd.jspwiki.auth.user.JDBCUserDatabase.
+
+        * Changed VariableManager and BaseURLTag to use a new 
+          makeBaseURL method in HTTPUtil so that HTTPS-related 
+          URLs are generated correctly. This partially supercedes
+          the WikiEngine.getBaseURL method, but the changes are
+          completely transparent to the <wiki:BaseURL> 
+          and <wiki:Variable> tags. So you shouldn't notice any
+          differences unless using HTTPS.
+          
+        * Several small Javadoc fixes.
+
+2005-10-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.32
+        
+        * Changed the way TableOfContents is created - it
+        no longer creates a nested list.  Thanks to Gregory
+        Pentz and Gregor Hagedorn.
+
+2005-10-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.31
+        
+        * Bug fix: JSPWikiMarkupParser was not calling
+        link text mutators at all, so ReferringPagesPlugin
+        (among others) were ignoring maxlength.
+        
+        * Bug fix: WikiRenderer did not set context properly,
+        which killed TableOfContents plugin.
+
+        * Improved RSS generation for blogs: now it's also
+        possible to set the channel title, description, language
+        and author by using the SET directive.
+
+        * 2.3.30
+        
+        * Removed dependencies of TranslatorReader from a number
+        of classes.
+        
+        * Added new "VersioningProvider" interface to fix a
+        serious problem with page info listings.  Based on an
+        idea by Kees Kuip.  A Provider can now declare it
+        supports VersioningProvider if it wants to be able
+        to support pageExists( name, version).  Yes, it's
+        a kludge, but it does speed up things considerably
+        until we refactor the entire provider interface.
+
+2005-10-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.29
+        
+        * Security fix: it was possible to inject javascript
+        using CSS.  Reported by Martijn Brinkers.
+        
+        * Bug fix: In certain cases, }}} would loop forever.
+        
+        * CachingProvider should now be a bit smarter about
+        refreshing metadata.
+        
+        * Added patch from Kees Kuip to cache the file properties
+        in VersioningFileProvider, providing faster performance.
+        
+        * Rearranged quite a lot of code in URL providers to fix
+        a bunch of problems.  Unfortunately, it also means that
+        URLs are no longer relative at all; they're always absolute,
+        but they don't always include the host name (depending
+        on the setting with jspwiki.referenceStyle).
+
+2005-10-09  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.28
+        
+        * For once, no public auth API changes! 
+        
+        * CMA and custom authentication JSPs re-factored
+          so that they use the same "special page" for
+          logins: Login.jsp. This makes for much cleaner
+          JSP code; for example, LeftMenu.jsp no longer needs
+          conditional logic for Login.jsp v. LoginRedirect.jsp.
+        
+        * The web.xml file's constrained resources for CMA
+          expanded to include NewGroup.jsp, Upload.jsp
+          and Login.jsp. Constraint for LoginRedirect.jsp
+          removed (the page no longer exists). The login
+          form for CMA now uses the same as for custom 
+          auth (LoginForm.jsp).
+          
+        * WebContainerAuthorizer now tests for Login.jsp
+          constraints rather than LoginRedirect.jsp
+          when determining whether CMA is used.
+          WebContainerAuthorizerTest changed accordingly.
+          
+        * Security fix: Authorization algorithm fixed to prevent
+          privilege escalation with asserted Principals when
+          wiki page contains ACL. Authorization now checks to
+          make sure the security allows the requested permission
+          /in addition to/ matching the user's principals
+          with those in the ACL. This meant we needed to
+          add PagePermission "*:Group*", "edit" entries
+          to the Authenticated policy block.
+        
+        * Bug fix: AuthenticationManager no longer flushes
+          Principals during custom logins. This was hosing
+          user sessions if the user failed to log in.
+          
+        * Bug fix: AuthorizationManagerTest's testGetRoles()
+          method no longer b0rks.
+        
+        * Bug fix: default/LoginContent.jsp whitespace goof.
+        
+        * Bug fix: both custom and container successful
+          logins set the user cookie, like they should.
+          (Credit: John Volkar)
+          
+        * Bug fix: group creation page (NewGroup.jsp)
+          checks for previous existence of group before
+          saving, and gives user chance to change the
+          name if it does.
+          
+        * Bug fix: NewGroup.jsp no longer triggers the
+          'direct access to login form' error when
+          CMA is used. This is due to the refactoring
+          mentioned above.
+        
+2005-10-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.27
+
+        * Bug fix: RenderingManager would cache old versions on
+        top of new ones.
+
+        * Bug fix: CheckVersionTag would cause unnecessary page
+        rendering.  Reported by Kees Kuip.
+
+        * Switched most of the code to use the new RenderingManager
+        to find problems with the code.
+
+2005-10-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.26
+
+        * Restored the the Ant "guitests" target, who had gone MIA
+        accidentally.
+
+        * Added (and modified a bit) a patch from Kees Kuip which
+        allows plugin writers to just specify properties in the plugin
+        archive itself.
+
+        * Added TemplateManager.listSkins(), which lists any and all
+        skins from templates/<yourtemplate>/skins/
+
+2005-09-28  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.25
+
+        * Added ReferredPagesPlugin from Dirk Fredericx.
+
+2005-09-27  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.24
+
+        * IncludeTag now prints an error to the screen instead of
+        a NPE when the template file in question does not exist.
+
+        * CheckRequestContextTag now supports an extended parameter
+        list: <wiki:CheckRequestContext context='view|info|edit'>
+        evaluates its body, if the current context matches ANY of
+        the contexts.  It also supports negation with !, i.e.
+        <wiki:CheckRequestContext context='!view'> evaluates the
+        body in every context but "view".
+
+        * JSPWikiMarkupParser is now a lot more XHTML compliant,
+        thanks to Gregor Hagedorn.
+
+        * RSS Generator Thread now has a proper name.
+
+        * Moved TranslatorReader.Heading to com.ecyrd.jspwiki.parser.
+        This should not really cause any compatibility issues.
+        
+        * Moved HeadingListener to com.ecyrd.jspwiki.parser
+
+        * Added two new methods from John Volkar to ReferenceManager.
+
+2005-09-26  Erik Bunn  <Erik.Bunn@memecry.net>
+
+        * Added CookieTag. See the class for documentation.
+        Intended for custom JSPWiki installations, mostly useful for
+        doing conditional logic based on e.g. a custom preferences cookie.
+
+2005-09-24  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.23
+        
+        * WikiContext, WikiSession and the auth.login.* login
+          modules gain significantly enhanced debugging code.
+          Changing Log4J settings in jspwiki.properties
+          to DEBUG will dump a large amount of information
+          about user session IDs and Principal creation
+          activities.
+        
+        * In the continued spirit of clowing-back little-used methods
+          that clutter the API, WikiContext's setHttpRequest() method
+          goes the way of the dodo bird. It was used by WikiEngine,
+          and only in one place, and it was redundant to boot.
+
+2005-09-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.22
+        
+        * Added patch from John Volkar to: 
+        
+        * Puts a catch block in DifferenceManager in case 
+  		an underlying provider throws.
+
+		* Adds some unit tests
+
+		* Handles whitespace "better" (see the tests), words and 
+		whitespace are both elements that get diffed.  Whitespace 
+  		edits show up in the diff output. (This is an interesting point of 
+  		debate, after bruising battles whitespace in wiki-text is 
+  		significant and deserves to be diffed. Consider two lines '* foo' 
+  		and ' * foo')
+
+		* Adds a optional property 
+        'jspwiki.contextualDiffProvider.unchangedContextLimit" that 
+  		is the number of *elements* to be emitted before and after 
+  		each change. (element=word or space or newline, so if you 
+ 		want ~50 'words' of leading context set the limit to 100)
+  		This defaults to a huge number, so it essentially doesn't
+  		serve as much of a limit (Preserves a 1 word change in 10 
+  		pages by default returns the whole 10 pages.)
+
+2005-09-17  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.21
+
+        * Added a simple web test plan to docs.
+        
+        * WikiPermission gains support for wiki namespaces.
+          This introduces what I hope is the "final" tweak 
+          required to jspwiki.policy. The WikiPermission syntax
+          ...WikiPermission "*", "registerUser";
+          replaces the previous format. The wiki name may contain
+          wildcards. This change was made to support wiki farms. 
+          See the WikiPermission Javadoc for more details.
+
+        * PagePermission constructor WikiPage(String,WikiPage,String)
+          eliminated in favor of WikiPage(WikiPage,String) because
+          wiki name is now carried inside WikiPage. This means
+          we don't need to pass the wiki name into the constructor,
+          which is nice and simple. This change was propagated 
+          to 8 other classes and about a half-dozen top-level JSPs.
+
+        * Fixed return values in various WikiContext/WikiSession
+          get*Principal methods so that they return
+          WikiSession.GUEST if not otherwise set. This removes
+          neeed to check for nulls in calling code.
+          (Credit: John Volkar)
+          
+        * Assitional WikiSession/WikiContext cleanup:
+          Fixed bug preventing initial HttpRequest 'login'. 
+          Removed public WikiSession.isUnknown(); was only used
+          by one caller. Also, reduced visibility of 
+          WikiSession.isContainerStatusChanged() to protected.
+          Bug fix: added Role.ALL to guestSession(). 
+          
+        * Rename.jsp now checks for the rename permission
+          before actually undertaking the action. 
+          InfoContent.jsp now checks for the same permission 
+          also when rendering the info page UI for renaming.
+          
+        * Bugfix for NPE in PagePermission.
+        
+        * Much cleanup of web.xml, and tweaked the Ant script
+          to use this during tests (reduces maintenance).
+
+        * build.xml slightly refactored to better account
+          for using signed JARs during test runs.
+          Certain static files (web.xml/policy/jaas/jks)
+          in tests/etc eliminated in favor of dynamic files
+          copied from etc at test-time. This means we only
+          have to maintain one version of each file, instead of two.
+        
+        * WebContainerAuthorizer includes an improved heuristic
+          for detecting CMA. Instead of looking for specific 
+          role names contrained to Register.jsp, Delete.jsp
+          and UserPreferences.jsp, we just look for ANY role.
+          This means you can use your container's preferred
+          role names, instead forcing you to use "Admin" 
+          and "Authenticated".
+        
+        * DefaultGroupManager.getRoles() returns an array of
+          Group[] (downcasted to Principal[] by interface.
+          This should make 'instanceof' checks easier.
+          (Credit: John Volkar)
+        
+        * Bugfix for Register.jsp so that authenticated users
+          who already have profiles are always redirected to
+          EditPreferences. This wasn't a security risk 
+          but it was non-intuitive.
+        
+        * Replaced that old Wiki.jsp favorite, the "looped config"
+          message, with something more appropriate to 2.3.
+          
+        * Weblog plugin now accepts additional parameter for 
+          customizing the date format. It also tries to extract 
+          the "headline" of the blog and puts it at the top of the 
+          entry section.
+    
+        * Tweaks to Ant script to better encapsulate Jar-signing 
+          operations. Also, test-prep activities more automated.
+
+2005-09-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.20
+
+        * Both default ShortURLConstructors now check if the NONE
+        -context already has some parameters.  Requested by 
+        Erik Bunn.
+
+        * PageLock is now serializable.  This should reduce some
+        warnings on some containers.
+
+        * Forms are now XHTML conformant instead of HTML 4.01.
+
+2005-09-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.19.
+        
+        * Fixed the rest of the new renderer tests, and turned
+        the new renderer on by default.  You can now turn it off
+        with "jspwiki.newRenderingEngine=false" in your property
+        file.
+
+        * FormInput now also accepts XHTML-like "checked=checked".
+        Suggested by Murray Altheim.
+
+        * Added patch from Erik Bunn to allow clean compilation
+        on JDK 5.0.
+
+        * Included patch from JohnV to add time and date format
+        parameters to RecentChangesPlugin.
+
+        * Incorporated even more patches from Patrik to fix
+        some problems with tests targets and diff noise.  Thanks
+        a heap!
+
+        * Added patch from Patrik Woodworth to fix tests
+        compilation failing due to jar file signing.
+
+2005-09-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.18
+
+        * Two patches from Patrick Woodworth to fix broken URL
+        in jspwiki.tld and compilation directives.  This removes
+        the jar-optimized target and makes it an option for
+        build.properties.
+        
+        * Fixed problem with ReferenceManager: unmodifiable
+        maps were not updated at unserialization time.  Reported
+        by JohnV.
+        
+        * Removing misc debug code from auth.
+        
+        * Moved to StopWatch() instead of System.currentTimeMillis()
+        in all places ;-)
+
+2005-09-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.17
+
+        * Massive import of patches from 2.2.33.
+
+        * Added two new methods in ReferenceManager to facilitate
+        LinkIndexPlugin.
+
+        * Added patch from Joerg Luedecker to fix a problem
+        with pages deleted not affecting RefMgr.
+
+        * Added a small note to the ShortURLConstructor: do NOT
+        use without baseURL.
+
+        * Fixes BugAttachFilesEvenIfPageDoesNotExist.  It is
+        no longer possible to upload a file if the page does
+        not exist.
+
+        * Install.jsp was Tomcat-specific.  Fixes
+        BugInstall.jspDoesNotCompileOnWebLogic8.1.  Reported by
+        JoachimMaes.
+
+        * Fixed BugAttachmentWithHashCannotBeViewed by replacing
+        now all illegal character values during upload.
+
+        * Undid change for 
+        BugShortViewURLConstructorAndShortURLConstructorProblems -
+        it apparently broke quite a lot of stuff.
+
+        * Changed to OSCache 2.2.1 to protect against a pretty
+        nasty memory leak.
+
+        * Added generic null protection to CachingProvider, and
+        also protected against spurious input in RCSFileProvider
+        as a stopgap measure to some probable scaling issues.
+
+        * It was possible to get the authentication master password
+        by inserting simply it on a page as a variable.  Oops.
+        The master password is now saved under a different name
+        (jspwiki-s.auth.masterPassword), which may break existing
+        installations.  Also added a check in the VariableManager
+        to prevent reporting of that variable.
+        Reported by Trevor Yann.
+
+        * Bug fix: Attachments might get looping forever, if the page did
+        not exist.  Fixes 
+        BugHasAttachmentsAndAttachmentsIteratorTagsWhenPageDoesntExist
+
+        * Bug fix: You can now set the 'checked' attribute of checkboxes
+ 		in WikiForms with the parameter 'checked=true'.  Reported by JohnV.
+
+        * Bug fix: BugWrongRecognitionOfWikiWords.  A CamelCase
+        WikiWord would not be escaped correctly, if the word would
+        have two capital letters.
+
+        * Bug fix: BugShortViewURLConstructorAndShortURLConstructorProblems
+        ShortViewURLConstructor did not have a default prefix.
+        Reported by Olaf Kock.
+
+        * Added patch from Patrick Woodworth to fix a FIXME in javadoc
+        creation.
+
+2005-08-20  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * v2.3.16
+        
+        * This release introduces a number of changes to the AAA
+          (package auth.*) APIs. If you have created custom top-level
+          templates, they will break. However, the changes are not 
+          major. Regular template JSPs like *Content.jsp should 
+          work without requiring changes.
+          
+        * jspwiki.policy has changed. The PagePermission syntax
+          ....PagePermission "mywiki:Group*", "edit";
+          replaces the previous format, and adds support for wiki
+          name spaces. Either the wiki name or the page name
+          may contain wildcards. This change was made to support wiki
+          farms. See the PagePermission Javadoc for more details.
+          You should update your policy files accordingly, since
+          the change will "probably" break your existing policies.
+        
+        * AuthenticationManager supports named admin user in
+          jspwiki.properties: jspwiki.admin.user
+          
+        * AuthenticationManager public methods have changed:
+            a. public boolean login(HttpServletRequest)
+               replaces boolean loginContainer(WikiContext)
+            b. public boolean login(WikiSession, String, String)
+               replaces boolean loginCustom( String, String, HttpServletRequest)
+              
+        * AuthorizationManager public methods have changed:
+            a. checkPermission(WikiSession, Permission)
+               replaces checkPermission(WikiContext, Permission)
+            b. isUserInRole(WikiSession, Principal)
+               replaces isUserInRole(WikiContext, Subject, Principal)
+            c. new getRoles() method returns Principal[]; delegates
+               to GroupManager and Authorizer and returns union
+            d. public method getAuthorizer() changed to protected access
+          
+        * Authorizer public methods have changed:
+            a. isUserInRole(WikiSession, Principal)
+               replaces isUserInRole(WikiContext, Subject, Principal)
+            b. new getRoles() method returns Principal[]
+          These changes were propagated to WebContainerAuthorizer,
+          GroupManager and DefaultGroupManager.
+          
+        * GroupManager public methods have changed:
+           a. Enumeration members() removed.
+          
+        * WikiPrincipal adds static inner Comparator class
+          for sorting arrays of Principals.
+           
+        * WikiContext public methods have changed:
+           a. void setHttpRequest(HttpServletRequest) changed to protected access
+           b. void setWikiSession(WikiSession) removed.
+            
+        * WikiSession was refactored to allow independence from WikiContext.
+          Public GUEST_SESSION static instance eliminated in favor 
+          of public static factory method guestSesssion().
+
+        * UserManager get/setUserProfile(WikiSession...) replaces same
+          methods with WikiContext parameter. 
+           
+        * PagePermission now includes a wiki namespace. Syntax
+          is wiki:pagename. Wildcards are allowed as prefixes or
+          suffixes for either part.
+              
+        * WikiPermission now accepts a "login" target
+         
+        * LeftMenu slightly tweaked
+        
+        * PreferencesContent.jsp for default template now displays 
+          roles and groups user possesses.
+          
+        * <wiki:UserProfile property="roles"> will print the user's
+          current set of group and role memberships, nicely sorted.
+          Pretty nifty.
+          
+        * Many, many unit test changes.
+
+2005-08-20  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * Minor changes to TestAuthorizer, AuthorizationManagerTest 
+        and build.xml to correct test failures in AuthorizationManagerTest.
+        This also fixes XMLRPC test failures. No version bump.
+
+2005-08-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.15
+        
+        * The "Wow, instead of sleep you can code and chat on
+        IRC thanks to WiFi on airplanes" -release.
+
+        * Added patch from Mark Rawlings to get rid of Javascript
+        errors in cssinclude.js
+
+        * Added support for generating Atom 1.0 feeds.  There
+        is still a bit of a problem in generating proper Atom
+        ID's, as our metadata storage does not work too well.
+
+2005-08-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.14
+
+        * Fixed plugin and variable evaluation policy: because 
+        using clone() on the entire DOM tree is very expensive,
+        what we do is that we store new, specific elements 
+        PluginContent and VariableContent into the DOM tree,
+        which at evaluation time produce the actual content.
+
+        * v2.3.13
+        
+        * RenderingManager cache did not work correctly, because
+        it was relying in WikiContext.getPage() to get the page
+        under which things should be cached.  Of course, if the 
+        wiki template includes any other page using IncludePageTag,
+        the context is always the same, and therefore the cache
+        is never valid.  Fixed this by adding a new getRealPage()
+        in WikiContext, which should always point at the real page
+       	which is being rendered.
+       	
+       	* Added some simple profiling/stopwatch code to rendering.
+       	You can now see the speed results by setting the WikiEngine
+       	log level to DEBUG.
+
+        * Fixed CamelCase parsing.  There are still a few
+        inconsistencies between old TranslatorReader and the new
+        JSPWikiMarkupParser.
+
+2005-08-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.3.12
+
+        * Even more tweaks.  It is now possible to test the new
+        rendering engine by setting "jspwiki.newRenderingEngine" to true
+        in your jspwiki.properties (this will be gone in near future;
+        it really is for testing only).  Note, however, that CamelCase
+        does not currently work.
+
+        * Some more tweaks of the new renderer.  isExternalLink()
+        is now about 3x faster than it was before (it was the biggest
+        bottleneck so far).  Still not usable (lists don't work).
+        
+        * Change test property files to use BasicSearchProvider
+        (Lucene startup was taking too much time), and TestAuthorizer
+        (WebContainerAuthorizer takes about a second to start each
+        time). 
+
+2005-08-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * Did a mass commit of the new rendering engine.  It is
+        not enabled yet, but I wanted to save the code to a very
+        safe place :-).  Please look at the code in the new parser
+        and render -packages.  There is still time to change the
+        API...  (No version bump; there is no changes in JSPWiki
+        functionality with this).
+
+2005-08-12  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.11
+        
+        * Changed WebContainerAuthorizer to auto-detect whether
+          web container authorization is used; it does this by looking
+          for certain constraints in web.xml. The effect of this change
+          is to make the out-of-the box configuration default to
+          custom authentication. Also, changing to container auth
+          is now very easy -- just uncomment the constraints and
+          JSPWiki will know what to do without needing to fiddle
+          with jspwiki.properties. Added a unit test and
+          tests/WEB-INF/web.xml sample file also.
+          
+        * Added new "super-template" for administrative pages:
+          AdminTemplate.jsp. This is a peer of ViewTemplate and
+          EditTemplate, and is used by the registration and
+          user preferences pages.
+        
+        * Loosened the default security policy to permit edits
+          by anonymous uses. This is good for getting up and
+          running, but a bad idea for Internet-facing wikis.
+          The adminstrator is suitably forewarned in the policy file.
+          
+        * Added an initialize() method to the Authorizer interface.
+          We probably needed one anyway, and the tweaks to
+          WebContainerAuthorizer forced the issue.
+          
+        * Minor tweak to LeftMenu to replace the geeky 
+          "you are authenticated/asserted" messages with something 
+          more friendly.
+
+2005-08-11  Erik Bunn  <Erik.Bunn@basen.net>
+
+        * Added WikiPage.getAttributes().
+        This will be useful for external code that wants to 
+        display page attributes; for example, a hypothetical "MetaData.jsp"
+        that would allow editing of page attributes without content-inlined
+        [{SET...}] tags. 
+
+2005-08-07  Andrew Jaquith <arjaquith@mindspring.com>
+
+        * 2.3.10
+        
+        * Major fixes to the authentication and authorization codebase.
+        Most outstanding issues with the prior commits have been resolved;
+        it should be ready for prime time.
+        
+        * JSPWiki now installs a default Java 2 security policy and JAAS
+        login configuration, which allows JSPWiki AAA to work "out of the box"
+        without additional customization. Admnistrators can override these
+        defaults using the standard policy/JAAS system properties if desired.
+        
+        * UserPreferences.jsp has been significantly tweaked. It also includes
+        support for standard <template>/PreferencesContent.jsp template pages.
+        
+        * Registration.jsp is a new JSP for registering new users. Includes
+        support for standard <template>/RegisterContent.jsp template pages.
+        
+        * NewGroup.jsp is a new JSP for creating wiki groups. By default,
+        the group is pre-populated with the current user's wiki name.
+        In addition, by default group members are allowed to edit
+        its membership. Includes support for standard 
+        <template>/GroupContent.jsp template pages.
+        
+        * UserProfile class now includes timestamps for creation and
+        modification times. XMLUserDatabase time-stamps profiles
+        when they are created and saved.
+        
+        * UserManager changed significantly to support improvements
+        to the AAA code.
+        
+        * JSP tag <wiki:UserProfile> now includes additional properties
+        for modified/created times and new properties "exists" and "new"
+        which evaluate the tag body if the user has already been
+        registered (or not).
+        
+        * JSP tag <wiki:UserCheck> includes additional properties to return
+        vallues that allow certain aspects of the AAA configuration
+        to be queried.
+        
+        * AAA code now tested using container authentication/authorization
+        in addition to JSPWiki's custom auth. Note that the registration
+        and user preference pages work slightly differently in each case.
+        
+2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.9
+
+        * A bunch of miscallaneous fixes to WebDAV to get paths
+        to function correctly.
+
+2005-07-26  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.8
+
+        * Merged in fixes from 2.2.29.
+
+        * Bug fix: Attachments might get looping forever, if the page did
+        not exist.  Fixes 
+        BugHasAttachmentsAndAttachmentsIteratorTagsWhenPageDoesntExist
+
+        * Bug fix: You can now set the 'checked' attribute of checkboxes
+ 		in WikiForms with the parameter 'checked=true'.  Reported by JohnV.
+
+        * Bug fix: BugWrongRecognitionOfWikiWords.  A CamelCase
+        WikiWord would not be escaped correctly, if the word would
+        have two capital letters.
+
+        * Bug fix: BugShortViewURLConstructorAndShortURLConstructorProblems
+        ShortViewURLConstructor did not have a default prefix.
+        Reported by Olaf Kock.
+
+        * Enabled also the attach URL for WebDAV.  You can now
+        browse the full range of attachments at <yoururl>/attach/
+        using a DAV client.
+
+2005-07-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.7
+        
+        * DAV service now offers again the HTML rendered versions of
+        pages under /dav/html/
+        
+        * DAV service now has a two-level structure: pages starting with
+        "a" are in a subdirectory called "a", etc.
+        
+        * Some minor auth refactoring.
+
+2005-07-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.6
+        
+        * Added a bunch of refactorings (including new UserManager class)
+        
+        * AuthenticationManager now attempts to find the jspwiki.jaas
+        and jspwiki.policy files on its own, if the user does not
+        specify them.  JAAS and Java 1.4 suck in this regard - it
+        requires all sorts of trickery with the config files and
+        startup scripts to use built-in authentication.  It makes
+        life very difficult for anyone who deploys the app, as they
+        must have detailed command-line knowledge.  Not to mention the
+        fact that it makes life hard for the developer as well, as they
+        provide no way to do this programmatically...
+
+2005-07-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.5
+
+        * Refactored about 300 minor warnings (unused code,
+        assignment errors, etc)
+
+        * Consolidated routines from FileUtil14.class to
+        FileUtil.class - JSPWiki now requires 1.4, so we can just
+        remove any specifics.
+
+2005-07-03  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.4
+
+        * Bug fix: Doing two empty searches in a row would cause the
+        search_highlight.js to loop and kill the browser.
+        Reported by HolgerHoffst?tte.
+        
+        * Bug fix: Empty or non-Lucene compliant searches would throw
+        a NullPointerException. Reported by HolgerHoffst?tte.
+        Fixes BugSearchAlwaysThrowsNPE.
+        
+        * Bug fix: It was impossible to use the InsertPage plugin to
+        insert the same page twice on a page.  Reported by Murray
+        Altheim (I think - this was not entered in the bug reporting
+        system).
+        
+        * Upgraded to Lucene 1.4.3.
+        
+        * Removed "sign" from build targets to allow decent builds 
+        for now.
+        
+        * Both short url providers now heed the url prefix always...
+        
+2005-06-30  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.3
+
+        * Mass merge of JSPWIKI_ARJ_BRANCH
+        
+        * Added Andrew Jaquith's authentication code, replacing the
+        old system completely.  This is likely to break everything.
+        The merge was not as smooth as I would've liked, so THIS
+        VERSION DOES NOT WORK - IT COMPILES, BUT DO NOT USE IT FOR
+        ANYTHING ELSE THAN HACKING.
+
+2005-06-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.2
+
+        * Merged in JSPWIKI_2_2_BRANCH
+        
+        * RSS 2.0 and enclosures support to rss.jsp.
+        
+        * Removed dead code.
+
+2005-06-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.1
+
+        * Refactoring of FilterManager: now uses XPath and JDOM to parse
+        XML files...
+        
+        * Tiny patch from ajbanck: UserManager no longer complains loudly
+        if something is not a group.
+        
+        * Patch from Joerg Luedecker to delete pages from referencemanager
+        if they're renamed.
+
+2005-06-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.3.0.
+
+        * Included the page rename patch from a number of people. Thanks
+        heaps to Chris Lisle, John Volkar, Joerg Luedeker!
+
+        * Branched off JSPWiki 2.2 development to its own branch,
+        this is now the 2.3 development.
+
+2005-06-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.26
+
+        * Added partial fix for 
+        BugReadingOfVariableNotWorkingForOlderVersions.  This is a deep
+        bug.
+
+        * Added patch from Joerg Luedeker to fix 
+        BugDeleteFailsIfPageHasAttachmens.
+        
+        * PageManager didn't correctly return page text if the
+        page was externally modified (I can't understand how this
+        could've worked earlier...)  This killed an unit test or two.
+
+        * Renamed methods in Search API to be a bit more consistent.
+        Thanks to ajbanck for the suggestion.
+  
+        * ReferenceManager should now notice deleted pages.
+        
+        * rss.jsp now returns a 404, if the RSS generation is disabled.
+        
+        * Bug fix: BugApplicationNameBeGarbledIfThereAreChineseCharactersInIt
+        Install.jsp is now smart enough to mangle the input so that
+        it can be put inside an Latin1 properties file.  Thanks to
+        Dengber for the fix.
+        
+        * Bug fix: BugPageAddedToSearchQueueMultipleTimes. Thanks to
+        ajbanck.
+
+2005-06-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.25
+        
+        * Bug fix: LuceneSearchProvider misspelled the default
+        search provider name, causing exceptions at startup...
+
+        * Bug fix: Page names are now also added in the Lucene
+        index in their canonical form, not just beautified form.
+        Suggested by Michael Smith.
+
+        * Bug fix: there were some concurrency issues whenever
+        iterating through the entire list of pages (causing 
+        ConcurrentModificationExceptions).  Fixed by returning
+        a clone of the array in the CachingProvider.
+
+        * v2.2.24
+
+        * Added Arent-Jan Banck's patch to support attachment
+        searching.  I also changed the SearchProvider API (it's
+        not been released in a stable version) slightly - no
+        need to send the text all the way; let the provider worry
+        about it.
+
+        * BasicSearchProvider now searches attachment names
+        as well.
+
+        * LuceneSearchProvider now indexes attachment names and
+        certain text-based attachments as well.  Currently plain
+        text, XML, .ini and HTML files are indexed.  This will
+        change to a better system, once someone figures out how
+        to do proper Lucene Analyzers.
+
+2005-06-14  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.23
+
+        * Quite a lot more WebDAV refactoring; it works now
+        again.  Still having problems with UTF-8 page names...
+        HTML fetching does not work at the moment either.
+
+2005-06-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.22
+
+        * Broke the WebDAV API for now; I'm changing to a new
+        model to make additions easier.
+
+        * Bug fix: SearchManager didn't behave nicely; there was
+        a circular reference between it and ReferenceManager.
+        LuceneSearchProvider now does not start indexing until
+        PageManager is surely up and running.  Reported by
+        ajbanck.
+
+2005-06-12  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.21
+
+        * Enabled normal Lucene query language if you're using
+        the LuceneSearchProvider.  This, incidentally, also helps
+        a lot if you're using any other language than English, since
+        we now use the same Analyzer for queries than for parsing
+        (which would account to quite a few problems in the past).
+        Unfortunately, I had to break FastSearch (does anyone use it)?
+
+        * Moved searching into com.ecyrd.jspwiki.search package,
+        thanks to an excellent patch from Arent-Jan Banck.
+
+2005-06-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.20.
+
+        * Small bug fix to PluginTag: it should now work on page
+        refreshes.
+
+2005-06-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.19.
+
+        * Bug fix: BugPluginTagNotWritingOutput
+
+        * Bug fix: BugJspwiki.tldEmptyTag
+
+        * Bug fix: BugWikiTranslateTagShouldTrimLeadingSpacesOfFirstSentence
+
+2005-06-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.18.
+
+        * Ebu added a bug fix for oldauth (please specify here...)
+
+        * Fixed two bugs with Install.jsp:
+        BugInstall.jspDoesNotHandleWindowsPathsWell by adding a simple
+        windows path converter (should work also well with UNC paths),
+        and BugInstall.jspDoesNotProvideDefaultBaseURL by commenting
+        out the baseURL parameter in jspwiki.properties.tmpl.
+
+2005-05-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.17
+
+        * The HTML fragment identifiers generated for each heading
+        are now XHTML compliant (no more entities).  Unfortunately,
+        this makes them look like crap, but this method should work
+        for CJK languages (unlike dropping non-USASCII).
+        
+        * Bug fix: HTML fragment identifiers didn't work on pages
+        with non-USASCII names.
+        
+        * 2.2.16
+
+        * Major fix to ISO-8859-1 - it didn't work almost at all
+        if you used anything else but the DefaultURLConstructor - 
+        especially attachments didn't work.
+
+2005-05-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.15
+        
+        * Bug fix: BugReferenceManagerDoesNotFindSingularReferences
+        should now finally be fixed.
+        
+        * Fix of a fix of a bug fix: We no longer generate <a name="foo">
+        tags for headings - instead, we generate an unique "id" for
+        each heading.
+        
+        * Added "overflow: auto" to <pre> tags in jspwiki.css...
+        That makes bug reports far, far more readable.
+
+2005-05-15  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.1.14
+
+        * Somewhere above Pakistan or Afghanistan...
+        
+        * EditorArea has now an id: "editorarea".  It also has now
+        a class "editorarea", simply because "text" was not really
+        very descriptive.  Thanks to, err, someone, for this -
+        I seem to have been very eager in deleting my email...
+        
+        * Bug fix: No more DAV NPEs with certain systems.  Patch
+        thanks to someone - sorry, I forgot...
+        
+        * Bug fix: no longer throws ConcurrentModificationException
+        in certain conditions upon startup.
+        
+        * Bug fix: InsertPage now detects circular references and it
+        is no longer possible to DoS a wiki by including a page in
+        itself.
+        
+        * Bug fix: Odd pages of format "/foo" are now catched and no
+        longer throw horrendous exceptions.
+        
+        * Fix of a bug fix: The changed heading anchor generation in
+        2.2.13 caused plenty of grief to a lot of people working with
+        CSS - instead of an empty tag we now generate an empty tag
+        pair. <a name="foo"></a> instead of <a name="foo"/>.  It seems
+        that the latter confuses quite a few parsers, even though it's
+        valid XHTML.
+
+2005-05-06  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.13
+
+        * Bug fix: Empty links no longer generate warnings.
+        
+        * The non-existing page links are now generated without the
+        annoying underline as a proper hyperlink.  You'll probably
+        want to copy the link code from jspwiki.css...
+        
+        * Bug fix: Headings now generate the link anchor at zero
+        length, so that they should no longer confuse people who
+        write CSS.
+
+2005-05-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.12
+        
+        * Bug fix: FCK editing now disables plugins and filters 
+        properly.
+        
+        * Bug fix: search hilighting didn't work.
+
+        * JSPWiki is now a WebDAV Class-1 server.  The support is not
+        yet complete, nor are we completely Class-1 compliant, but
+        you can now browse your JSPWiki repository by pointing at your
+        $baseurl/dav/.  Attachment support is forthcoming, as soon
+        as I figure out what's the best approach.  Authoring support
+        will also be enabled soon.
+        
+        (To enable this functionality, check out the new web.xml).
+
+2005-05-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.11.
+
+        * Incorporated the FCK editor for WYSIWYG editing, as well
+        as the XHTML import functionality from Sebastian Baltes.
+        Thanks heaps!
+        
+        This is an experimental feature: you need to turn it explicitly
+        on with "jspwiki.editor=FCK" in your jspwiki.properties,
+        and also uncomment the <script> tag in EditTemplate.jsp.  The
+        editor is known to fail or behave really strangely on occasion,
+        and many of the functionalities do not simply work (like
+        image insertion), so I'm disabling quite a lot of work for now.
+        Check out scripts/fckconfig.js and scripts/fckstyles.xml for
+        examples.
+        
+        The WYSIWYG editor will remain an experimental feature for now.
+        
+        You need to install FCKEditor yourself into scripts/fckeditor.
+
+2005-04-29  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.2.10.
+
+        * Added patch from Sebastian Baltes to fix issues with style
+        embedding: %%(color:rgb(1,2,3)) would not work.
+
+2005-04-24  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.9.
+
+        * Added missing attribute of PageDate: format to jspwiki.tld.
+        Oops... This one had been missing for quite some time.
+        
+        * Changed the default template somewhat.
+
+        * UnusedPagesPlugin no longer inlines images.
+
+        * v2.2.8
+
+        * Added 'class="body"' to default template body, as per
+        BugCSSClassForViewTemplate.jspBodyTag
+
+        * Added "link" to Comment.jsp; this should be a lot
+        smarter now about if you want to use comment functionality
+        for the weblog.
+
+        * Hopefully fixed preview issues with IE by rewriting
+        Preview code (it no longer relies on javascript:back(), but
+        it POSTs back to Edit.jsp).  Fixes 
+        BugUsingSSLWithMicrosoftInternetExplorerV6SpoilsPreviewFunction.
+        Hopefully.
+
+        * Added EditorAreaTag.
+
+        * Oops, %% would sometimes end in StackEmptyException;
+        teaches me to read javadocs.
+
+2005-04-23  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.7
+        
+        * Fixed many issues with ~-escaping.  It should now work with
+        practically all WikiMarkup; you should be able to escape
+        anything.  Fixes Bug Back Slashes In Http String In A File
+        Causes File Not To Load, Bug Line Breaks In The Middle Of Text.
+
+        * Fixed some issues with %%-style generation: it now looks
+        at the rest of the line, and if it contains material, it will
+        emit a <span> instead of a <div>.  This should make it 
+        intuitively pretty logical.  This should fix quite a many
+        complaints relating to styles, including
+        BugLineBreaksWithCSSFormating (partial), BugCSSInTables
+
+2005-04-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.6.
+
+        * Added ShortViewURLConstructor and move all 
+        URLConstructors to the url-package.  This makes it
+        possible to have short URLs *and* protect the access
+        to particular JSPs...
+
+2005-04-21  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.5
+
+        * You can now choose which Lucene analyzer to use
+        with "jspwiki.lucene.analyzer".  Choose it according
+        to the primary language of the wiki.
+        
+        * Lucene can now recover, if the index was locked
+        when JSPWiki was shut down.
+
+2005-04-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.4.
+        
+        * Bug fix: TableOfContents plugin now properly calculates
+        the page variables.
+        
+        * Bug fix: Deleted pages are no longer shown in the
+        RecentChanges listings.
+
+        * v2.2.3
+        
+        * Added some sanity checks to the startup concerning
+        the work directory.
+
+2005-04-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.2.
+
+        * CachingProvider does now a bit more sanity checks
+        with the Lucene directory; this was a source of confusion
+        for some people.  It's also more verbose.
+
+2005-04-18  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.1.
+
+        * Bug fix: RSS generation no longer does double encoding.
+
+        * Bug fix: CachingProvider would not notice new files.
+
+2005-04-17  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * v2.2.0-beta.  Yay!  I don't know whether this version is really
+        ripe, but we just HAVE to get it out at some point.
+
+        * Fixed a small off-by-one error in SpamFilter.
+
 2005-04-16  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * v2.1.167
