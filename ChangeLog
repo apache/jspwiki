@@ -1,3 +1,12 @@
+2007-03-31  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.4.102
+        
+        * Added support for include/exclude params in 
+        UnusedPagesPlugin + UndefinedPagesPlugin.  Fixes
+        BugExcludeFailsOnUnusedPagesPlugin.  Repored by Joseph
+        Schmigel.
+
 2007-03-29  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.101

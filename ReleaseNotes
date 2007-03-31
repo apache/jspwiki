@@ -29,6 +29,9 @@ NEW FEATURES
   
 * 2.4.100 also adds a WatchDog class.  Please see the javadocs for
   that class for an explanation.
+  
+* 2.4.102 is a bug-fix release, resolving issues with premature logouts
+  and missing parameters in UnusedPages and UndefinedPages plugins.
 
 UPGRADE NOTES
 =============
