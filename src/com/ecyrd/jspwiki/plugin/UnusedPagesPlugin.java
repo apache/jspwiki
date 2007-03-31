@@ -49,6 +49,7 @@ public class UnusedPagesPlugin
 
         sortedSet.addAll( links );
 
+        links = filterCollection( links );
         String wikitext = wikitizeCollection( sortedSet, m_separator, ALL_ITEMS );
         
         return makeHTML( context, wikitext );
