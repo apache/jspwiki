@@ -71,7 +71,7 @@ public interface PageFilter
 
     /**
      * Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
-     * clean up or close global ressources you allocated in the initialize() method.
+     * clean up or close global resources you allocated in the initialize() method.
      * 
      * @since 2.5.36
      */
