@@ -32,6 +32,8 @@ import org.apache.log4j.NDC;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.event.*;
+import com.ecyrd.jspwiki.url.DefaultURLConstructor;
 import com.ecyrd.jspwiki.util.WatchDog;
 
 /**
@@ -79,6 +81,11 @@ public class WikiJSPFilter extends WikiServletFilter
           
             ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
         
+            // fire PAGE_REQUESTED event
+            String pagename = DefaultURLConstructor.parsePageFromURL(
+                    (HttpServletRequest)request, response.getCharacterEncoding() );
+            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
+
             super.doFilter( request, responseWrapper, chain );
 
             // The response is now complete. Lets replace the markers now.
@@ -105,6 +112,10 @@ public class WikiJSPFilter extends WikiServletFilter
                 {
                     wikiContext.getWikiSession().clearMessages();
                 }
+
+                // fire PAGE_DELIVERED event
+                fireEvent( WikiPageEvent.PAGE_DELIVERED, pagename );
+
             }
             finally
             {
@@ -245,4 +256,25 @@ public class WikiJSPFilter extends WikiServletFilter
             return m_output.toString();
         }
     }
+
+
+    // events processing .......................................................
+
+
+    /**
+     *  Fires a WikiPageEvent of the provided type and page name
+     *  to all registered listeners of the current WikiEngine.
+     *
+     * @see com.ecyrd.jspwiki.event.WikiPageEvent
+     * @param type       the event type to be fired
+     * @param pagename   the wiki page name as a String
+     */
+    protected final void fireEvent( int type, String pagename )
+    {
+        if ( WikiEventManager.isListening(m_engine) )
+        {
+            WikiEventManager.fireEvent(m_engine,new WikiPageEvent(m_engine,type,pagename));
+        }
+    }
+
 }
