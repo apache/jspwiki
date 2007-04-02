@@ -11,9 +11,9 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("TestHtmlStringToWikiTranslator tests");
+        TestSuite suite = new TestSuite("HtmlStringToWikiTranslatorTest tests");
 
-        suite.addTest( TestHtmlStringToWikiTranslator.suite() );
+        suite.addTest( HtmlStringToWikiTranslatorTest.suite() );
 
         return suite;
     }

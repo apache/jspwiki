@@ -9,16 +9,16 @@ import junit.framework.TestSuite;
  * 
  * @author Sebastian Baltes (sbaltes@gmx.com)
  */
-public class TestHtmlStringToWikiTranslator extends TestCase
+public class HtmlStringToWikiTranslatorTest extends TestCase
 {
     HtmlStringToWikiTranslator html2wiki;
 
     public static void main( String[] args )
     {
-        junit.textui.TestRunner.run( TestHtmlStringToWikiTranslator.class );
+        junit.textui.TestRunner.run( HtmlStringToWikiTranslatorTest.class );
     }
 
-    public TestHtmlStringToWikiTranslator( String arg0 )
+    public HtmlStringToWikiTranslatorTest( String arg0 )
     {
         super( arg0 );
     }
@@ -307,7 +307,7 @@ public class TestHtmlStringToWikiTranslator extends TestCase
     
     public static Test suite()
     {
-        return new TestSuite( TestHtmlStringToWikiTranslator.class );
+        return new TestSuite( HtmlStringToWikiTranslatorTest.class );
     }
 
 }
