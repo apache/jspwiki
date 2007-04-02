@@ -114,13 +114,14 @@ public class TemplateManager
     }
 
     /**
-     *  An utility method for finding a JSP page.  It searches only under
-     *  either current context or by the absolute name.
+     *  Tries to locate a given resource from the template directory.
+     *  
+     *  @param sContext
+     *  @param name
+     *  @return
      */
-    public String findJSP( PageContext pageContext, String name )
+    private static String findResource( ServletContext sContext, String name )
     {
-        ServletContext sContext = pageContext.getServletContext();
-        
         InputStream is = sContext.getResourceAsStream( name );
 
         if( is == null )
@@ -139,11 +140,35 @@ public class TemplateManager
 
         return name;
     }
+    
+    private static String findResource( ServletContext sContext, String template, String name )
+    {
+        if( name.charAt(0) == '/' )
+        {
+            // This is already a full path
+            return findResource( sContext, name );
+        }
+
+        String fullname = makeFullJSPName( template, name );
+        
+        return findResource( sContext, fullname );        
+    }
+    
+    /**
+     *  An utility method for finding a JSP page.  It searches only under
+     *  either current context or by the absolute name.
+     */
+    public String findJSP( PageContext pageContext, String name )
+    {
+        ServletContext sContext = pageContext.getServletContext();
+        
+        return findResource( sContext, name );
+    }
 
     /**
      *  Removes the template part of a name.
      */
-    private final String removeTemplatePart( String name )
+    private static final String removeTemplatePart( String name )
     {
         int idx = name.indexOf('/');
         if( idx != -1 )
@@ -159,15 +184,18 @@ public class TemplateManager
         return name;
     }
 
-    private final String makeFullJSPName( String template, String name )
+    private final static String makeFullJSPName( String template, String name )
     {
         return "/"+DIRECTORY+"/"+template+"/"+name;
     }
 
     /**
-     *  Attempts to locate a JSP page under the given template.  If that template
+     *  Attempts to locate a resource under the given template.  If that template
      *  does not exist, or the page does not exist under that template, will
      *  attempt to locate a similarly named file under the default template.
+     *  <p>
+     *  Even though the name suggests only JSP files can be located, but in fact
+     *  this method can find also other resources than JSP files.
      *  
      *  @param pageContext The JSP PageContext
      *  @param template From which template we should seek initially?
@@ -176,8 +204,6 @@ public class TemplateManager
      */
     public String findJSP( PageContext pageContext, String template, String name )
     {
-        ServletContext sContext = pageContext.getServletContext();
-
         if( name == null || template == null )
         {
             log.fatal("findJSP() was asked to find a null template or name ("+template+","+name+")."+
@@ -186,31 +212,34 @@ public class TemplateManager
             throw new InternalWikiException("Illegal arguments to findJSP(); please check logs.");
         }
         
-        if( name.charAt(0) == '/' )
-        {
-            // This is already a full path
-            return findJSP( pageContext, name );
-        }
-
-        String fullname = makeFullJSPName( template, name );
-        InputStream is = sContext.getResourceAsStream( fullname );
-
-        if( is == null )
-        {
-            String defname = makeFullJSPName( DEFAULT_TEMPLATE, name );
-            is = sContext.getResourceAsStream( defname );
-
-            if( is != null )
-                fullname = defname;
-            else
-                fullname = null;
-        }
-
-        if( is != null ) try { is.close(); } catch( IOException e ) {}
-
-        return fullname;
+        return findResource( pageContext.getServletContext(), template, name );
     }
 
+    /**
+     *  Attempts to locate a resource under the given template.  This matches the
+     *  functionality findJSP(), but uses the WikiContext as the argument.  If there
+     *  is no servlet context (i.e. this is embedded), will just simply return
+     *  a best-guess.
+     *  <p>
+     *  This method is typically used to locate any resource, including JSP pages, images,
+     *  scripts, etc.
+     *  
+     *  @since 2.6
+     *  @param ctx
+     *  @param template
+     *  @param name
+     *  @return
+     */
+    public String findResource( WikiContext ctx, String template, String name )
+    {
+        if( m_engine.getServletContext() != null )
+        {
+            return findResource( m_engine.getServletContext(), template, name );
+        }
+        
+        return getPath(template)+"/"+name;
+    }
+    
     /**
      *  Returns a property, as defined in the template.  The evaluation
      *  is lazy, i.e. the properties are not loaded until the template is
@@ -250,6 +279,9 @@ public class TemplateManager
         }
     }
 */
+    /**
+     *  Returns an absolute path to a given template.
+     */
     private static final String getPath( String template )
     {
         return "/"+DIRECTORY+"/"+template+"/";
@@ -458,7 +490,10 @@ public class TemplateManager
         return res;
     }
 
-    // There are no modules managed by this instance
+    /**
+     *  Returns an empty collection, since at the moment the TemplateManager
+     *  does not manage any modules.
+     */
     public Collection modules()
     {
         return new ArrayList();
