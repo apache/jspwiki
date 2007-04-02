@@ -1,3 +1,17 @@
+2007-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.38
+        
+        * Added Note plugin from John Volkar.
+        
+        * Added PAGE_REQUESTED, PAGE_DELIVERED events fired by
+        WikiJSPFilter.  Unfortunately, no such things are fired for
+        attachments.  Note that attaching to these events is very noisy.
+        Thanks to Murray Altheim.
+        
+        * Renamed TestHtmlStringToWikiTranslator to 
+        HtmlStringToWikiTranslatorTest to conform to other tests.
+
 2007-03-31  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.37
