@@ -11,6 +11,9 @@
         * SpamFilter no longer adds Akismet-rejections to the temporary
         ban list.  Akismet is non-deterministic, so it's kinda annoying
         for users who just quite don't know why this is happening.
+        
+        * Fixed also some dumb bugs in the way SpamFilter was
+        computing the delta.
 
 2007-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
