@@ -712,6 +712,18 @@ log4j.rootCategory=INFO,FileLog
 #log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
 #log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
 
+#
+#  Uncomment these lines if you wish to receive detailed spam
+#  filter logging.
+#
+#log4j.logger.SpamLog=INFO,SpamAppender
+#log4j.appender.SpamAppender = org.apache.log4j.RollingFileAppender
+#log4j.appender.SpamAppender.MaxFileSize = 10MB
+#log4j.appender.SpamAppender.MaxBackupIndex = 14
+#log4j.appender.SpamAppender.File = @spamlog@
+#log4j.appender.SpamAppender.layout = org.apache.log4j.PatternLayout
+#log4j.appender.SpamAppender.layout.ConversionPattern=%d{ISO8601} %m%n
+
 ###########################################################################
 #
 # Workflow configuration
