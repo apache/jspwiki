@@ -63,7 +63,7 @@ public class SessionsPlugin
                 s.append(principals[i].getName() + ", ");
             }
             // remove the last comma and blank :
-            return s.substring(0, s.length() - 2);
+            return s.substring(0, s.length() - (s.length() > 2 ? 2 : 0) );
         }
 
         //
