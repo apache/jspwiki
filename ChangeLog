@@ -1,5 +1,19 @@
 2007-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+        * 2.5.39
+        
+        * Fixed bug in SessionsPlugin which threw an Exception
+        at startup.  Reported by Harry Metske.
+
+        * Greatly improved SpamFilter logging.  There's a new SpamLog
+        which can be used to track all changes; accepts and rejects.
+        
+        * SpamFilter no longer adds Akismet-rejections to the temporary
+        ban list.  Akismet is non-deterministic, so it's kinda annoying
+        for users who just quite don't know why this is happening.
+
+2007-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
         * 2.5.38
         
         * Added Note plugin from John Volkar.
