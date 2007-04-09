@@ -1,6 +1,8 @@
 package com.ecyrd.jspwiki.parser;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class MarkupParserTest extends TestCase
 {
@@ -22,7 +24,7 @@ public class MarkupParserTest extends TestCase
 
     public void testCleanLink1()
     {
-        assertEquals( "CleanLink", MarkupParser.cleanLink("--CleanLink--") );
+        assertEquals( "--CleanLink--", MarkupParser.cleanLink("--CleanLink--") );
     }
 
     public void testCleanLink2()
@@ -32,7 +34,13 @@ public class MarkupParserTest extends TestCase
     
     public void testCleanLink3()
     {
-        assertEquals( "CleanLink", MarkupParser.cleanLink("Clean (link)") );
+        assertEquals( "Clean (link)", MarkupParser.cleanLink("Clean (link)") );
     }
 
+    public static Test suite()
+    {
+        TestSuite suite = new TestSuite(MarkupParserTest.class);
+
+        return suite;
+    }
 }

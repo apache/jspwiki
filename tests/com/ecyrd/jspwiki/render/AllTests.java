@@ -19,6 +19,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("rendering tests");
 
+        suite.addTest( CreoleRendererTest.suite() );
         suite.addTest( RenderingManagerTest.suite() );
 
         return suite;

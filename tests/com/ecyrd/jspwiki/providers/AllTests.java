@@ -14,11 +14,11 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("Providers suite");
 
+        suite.addTest( BasicAttachmentProviderTest.suite() );
+        suite.addTest( CachingProviderTest.suite() );
         suite.addTest( FileSystemProviderTest.suite() );
         suite.addTest( RCSFileProviderTest.suite() );
         suite.addTest( VersioningFileProviderTest.suite() );
-        suite.addTest( BasicAttachmentProviderTest.suite() );
-        suite.addTest( CachingProviderTest.suite() );
 
         return suite;
     }

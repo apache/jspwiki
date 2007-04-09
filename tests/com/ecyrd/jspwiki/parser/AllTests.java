@@ -20,6 +20,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("Parser tests");
 
         suite.addTest( JSPWikiMarkupParserTest.suite() );
+        suite.addTest( MarkupParserTest.suite() );
 
         return suite;
     }

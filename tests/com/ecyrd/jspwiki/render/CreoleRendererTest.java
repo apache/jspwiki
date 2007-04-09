@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.parser.MarkupParserTest;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 
 public class CreoleRendererTest extends TestCase
@@ -164,4 +167,11 @@ public class CreoleRendererTest extends TestCase
         assertEquals("a\n----\nb", render(src));
     }
 
+
+    public static Test suite()
+    {
+        TestSuite suite = new TestSuite(CreoleRendererTest.class);
+
+        return suite;
+    }
 }
