@@ -1,3 +1,24 @@
+2007-04-09  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.40
+
+       * Fixed AuthorizationManager failure to add attachment
+       when jspwiki.security=off. [BugAddAttachmentFailsWithContainerAuthentication]
+       
+       * Upgraded freshcookies-security lib to 0.54. This new version accepts
+       a user-supplied charset for parsing security policy files. 
+       Previously, PolicyReader defaulted to the platform default encoding.
+       
+       * AuthorizationManager, when it initializes, supplies the default
+       JSPWiki encoding to the updated freshcookies PolicyReader class.
+       Many thanks to Harry Metske for identifying the need for this, based on his 
+       experiences using JSPWiki on a platform where EBCDIC is the default.
+       (Which is probably a mainframe; yegads.)
+       
+       * Fixed bug that was causing Workflows to be added multiple times
+       to the "history" queue; this was caused by recent changes to the 
+       WikiEventManager classes.
+
 2007-04-02  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.39
