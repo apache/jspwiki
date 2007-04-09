@@ -168,7 +168,7 @@ public final class AuthorizationManager
             //  Nobody can login, if JAAS is turned off.
             //
 
-            if( permission == null || permission.getActions().equals("login") )
+            if( permission == null || "login".equals( permission.getActions() ) )
                 return false;
             
             return true;
@@ -403,7 +403,7 @@ public final class AuthorizationManager
         {
             URL policyURL = AuthenticationManager.findConfigFile( engine, DEFAULT_POLICY );
             File policyFile = new File( policyURL.getPath() );
-            m_localPolicy = new LocalPolicy( policyFile );
+            m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
             m_localPolicy.refresh();
             log.info("Initialized local security policy: " + policyFile.getAbsolutePath());
         }
