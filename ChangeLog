@@ -1,3 +1,9 @@
+2007-04-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * Added a number of unit tests to AllTests runs; they were not being
+       properly included, so a number of them were not run during a regular
+       unit test run...
+
 2007-04-09  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.40
