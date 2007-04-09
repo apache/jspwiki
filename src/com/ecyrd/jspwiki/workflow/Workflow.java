@@ -677,12 +677,15 @@ public class Workflow
      * Protected helper method that changes the Workflow's state to
      * {@link #COMPLETED} and sets the current Step to <code>null</code>. It
      * calls the {@link #cleanup()} method to flush retained objects.
+     * This method will no-op if it has previously been called.
      */
     protected final synchronized void complete()
     {
-        m_state = COMPLETED;
-        fireEvent(WorkflowEvent.COMPLETED);
-        cleanup();
+        if ( !isCompleted() ) {
+            m_state = COMPLETED;
+            fireEvent(WorkflowEvent.COMPLETED);
+            cleanup();
+        }
     }
 
     /**

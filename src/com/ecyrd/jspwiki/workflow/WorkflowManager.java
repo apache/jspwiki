@@ -288,14 +288,17 @@ public class WorkflowManager implements WikiEventListener
 
     /**
      * Protected helper method that removes a specified Workflow from the cache,
-     * and moves it to the workflow history list.
+     * and moves it to the workflow history list. This method defensively
+     * checks to see if the workflow has not yet been removed.
      * 
      * @param workflow
      *            the workflow to remove
      */
     protected synchronized void remove(Workflow workflow)
     {
-        m_workflows.remove(workflow);
-        m_completed.add(workflow);
+        if ( m_workflows.contains( workflow ) ) {
+            m_workflows.remove(workflow);
+            m_completed.add(workflow);
+        }
     }
 }
