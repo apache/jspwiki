@@ -2311,7 +2311,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "[-phobous]";
         
-        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=Phobous\" title=\"Create 'Phobous'\">-phobous</a>", translate(src) );        
+        assertEquals( "<a class=\"editpage\" href=\"/Edit.jsp?page=-phobous\" title=\"Create '-phobous'\">-phobous</a>", translate(src) );        
     }
         
     public void testPunctuatedWikiNames2()
