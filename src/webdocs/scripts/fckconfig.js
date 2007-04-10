@@ -32,11 +32,12 @@
 // version 2.5).
 FCKConfig.DisableEnterKeyHandler = false ;
 
-// JSPWiki: this option has already been configured in the 'FCK.jsp' file.
+// JSPWiki: this option is dynamically configured in the 'FCK.jsp' file
+// to point to this very 'fckconfig.js' file that you are viewing right now.
 //FCKConfig.CustomConfigurationsPath = '' ;
 
-// JSPWiki: changed so that we can see the jspwiki css styles while wysiwyg-editing.
-FCKConfig.EditorAreaCSS = FCKConfig.BasePath + '../../../templates/default/jspwiki.css' ;
+// JSPWiki: this option is dynamically configured in the 'FCK.jsp' file. 
+// The 'jspwiki.css' file for the active jspwiki template will be used.
 //FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'css/fck_editorarea.css' ;
 
 
@@ -44,7 +45,8 @@ FCKConfig.ToolbarComboPreviewCSS = '' ;
 
 FCKConfig.DocType = '' ;
 
-// JSPWiki: this option is dynamically set in the 'FCK.jsp' file.
+// JSPWiki: this option is dynamically configured in the 'FCK.jsp' file
+// so that inlined image attachments can be displayed properly.
 //FCKConfig.BaseHref = '' ;
 
 FCKConfig.FullPage = false ;
@@ -79,7 +81,8 @@ FCKConfig.AdditionalNumericEntities = ''  ;		// Single Quote: "'"
 // JSPWiki: set to false otherwise extraneous <p>nbsp;</p> tags will be inserted when saving.
 FCKConfig.FillEmptyBlocks	= false ;
 
-
+// JSPWiki: setting FormatSource or FormatOutput to false will cause problems
+// for list items and select lists when the page is saved.
 FCKConfig.FormatSource		= true ;
 FCKConfig.FormatOutput		= true ;
 FCKConfig.FormatIndentator	= '    ' ;
@@ -116,7 +119,10 @@ FCKConfig.TemplateReplaceCheckbox = true ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["Default"] = [
-	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
+    // JSPWiki: disabled the 'Save' button until someone can get it to work.
+	['Source','DocProps','-','NewPage','Preview','-','Templates'],
+//	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
+
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
@@ -142,6 +148,8 @@ FCKConfig.ShiftEnterMode = 'br' ;	// p | div | br
 FCKConfig.Keystrokes = [
 	[ CTRL + 65 /*A*/, true ],
 	[ CTRL + 67 /*C*/, true ],
+	[ CTRL + 70 /*F*/, true ],
+	[ CTRL + 83 /*S*/, true ],
 	[ CTRL + 88 /*X*/, true ],
 	[ CTRL + 86 /*V*/, 'Paste' ],
 	[ SHIFT + 45 /*INS*/, 'Paste' ],
@@ -152,12 +160,14 @@ FCKConfig.Keystrokes = [
 	[ CTRL + 66 /*B*/, 'Bold' ],
 	[ CTRL + 73 /*I*/, 'Italic' ],
 	[ CTRL + 85 /*U*/, 'Underline' ],
-	[ CTRL + ALT + 83 /*S*/, 'Save' ],
+	[ CTRL + SHIFT + 83 /*S*/, 'Save' ],
 	[ CTRL + ALT + 13 /*ENTER*/, 'FitWindow' ],
 	[ CTRL + 9 /*TAB*/, 'Source' ]
 ] ;
 
-FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form'] ;
+// JSPWiki: disabled the context menu items that won't work.
+FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','Table','Form'] ;
+//FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form'] ;
 
 FCKConfig.FontColors = '000000,993300,333300,003300,003366,000080,333399,333333,800000,FF6600,808000,808080,008080,0000FF,666699,808080,FF0000,FF9900,99CC00,339966,33CCCC,3366FF,800080,999999,FF00FF,FFCC00,FFFF00,00FF00,00FFFF,00CCFF,993366,C0C0C0,FF99CC,FFCC99,FFFF99,CCFFCC,CCFFFF,99CCFF,CC99FF,FFFFFF' ;
 
@@ -172,12 +182,12 @@ FCKConfig.FontFormats	= 'p;div;h2;h3;h4;pre;address' ;
 //FCKConfig.FontFormats	= 'p;div;pre;address;h1;h2;h3;h4;h5;h6' ;
 
 
-// JSPWiki: these options have already been configured in the 'FCK.jsp' file.
+// JSPWiki: these options are dynamically configured in the 'FCK.jsp' file.
 //FCKConfig.StylesXmlPath		= FCKConfig.EditorPath + 'fckstyles.xml' ;
 //FCKConfig.TemplatesXmlPath	= FCKConfig.EditorPath + 'fcktemplates.xml' ;
 
 FCKConfig.SpellChecker			= 'ieSpell' ;	// 'ieSpell' | 'SpellerPages'
-FCKConfig.IeSpellDownloadUrl	= 'http://wcarchive.cdrom.com/pub/simtelnet/handheld/webbrow1/ieSpellSetup240428.exe' ;
+FCKConfig.IeSpellDownloadUrl	= 'http://www.iespell.com/download.php' ;
 FCKConfig.SpellerPagesServerScript = 'server-scripts/spellchecker.php' ;	// Available extension: .php .cfm .pl
 
 FCKConfig.MaxUndoLevels = 15 ;
@@ -186,9 +196,7 @@ FCKConfig.DisableObjectResizing = false ;
 FCKConfig.DisableFFTableHandles = true ;
 
 FCKConfig.LinkDlgHideTarget		= false ;
-
-// JSPWiki: disabled the advanced tab since the extra attributes aren't supported in wiki syntax.
-FCKConfig.LinkDlgHideAdvanced	= true ;
+FCKConfig.LinkDlgHideAdvanced	= false ;
 
 FCKConfig.ImageDlgHideLink		= false ;
 
@@ -262,7 +270,12 @@ FCKConfig.FlashUploadURL = FCKConfig.BasePath + 'filemanager/upload/' + _QuickUp
 FCKConfig.FlashUploadAllowedExtensions	= ".(swf|fla)$" ;		// empty for all
 FCKConfig.FlashUploadDeniedExtensions	= "" ;					// empty for no one
 
-FCKConfig.SmileyPath	= FCKConfig.BasePath + 'images/smiley/msn/' ;
+// JSPWiki: this option is dynamically configured in the 'FCK.jsp' file.
+// Please note that the smiley images will be referenced in the wikipage using the complete URL.
+// For example: http://www.yourwebsite.com:80/JSPWiki/scripts/fckeditor/editor/images/smiley/msn/regular_smile.gif
+// Therefore if the hostname, port, or jspwiki-dir changes in the future, existing smiley images will be broken.
+//FCKConfig.SmileyPath	= FCKConfig.BasePath + 'images/smiley/msn/' ;
+
 FCKConfig.SmileyImages	= ['regular_smile.gif','sad_smile.gif','wink_smile.gif','teeth_smile.gif','confused_smile.gif','tounge_smile.gif','embaressed_smile.gif','omg_smile.gif','whatchutalkingabout_smile.gif','angry_smile.gif','angel_smile.gif','shades_smile.gif','devil_smile.gif','cry_smile.gif','lightbulb.gif','thumbs_down.gif','thumbs_up.gif','heart.gif','broken_heart.gif','kiss.gif','envelope.gif'] ;
 FCKConfig.SmileyColumns = 8 ;
 FCKConfig.SmileyWindowWidth		= 320 ;
