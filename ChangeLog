@@ -7,6 +7,14 @@
        * WikiEngine.scanWikiLinks() no longer renders the page; it just
        parses it.  This should provide some speedup at startup.
 
+       * Changed the default template resource bundle from
+       webdocs/templates/DefaultResources.properties to
+       etc/i18n/templates/default.properties (more logical).
+       
+       * Added class remapping ability.  See etc/ini/classmappings.xml
+       and ClassUtil.java for further information.  This is not yet a complete
+       feature, but it brings some simple AOP to JSPWiki.
+
 2007-04-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * Added a number of unit tests to AllTests runs; they were not being
