@@ -14,6 +14,10 @@
        * Added class remapping ability.  See etc/ini/classmappings.xml
        and ClassUtil.java for further information.  This is not yet a complete
        feature, but it brings some simple AOP to JSPWiki.
+       
+       * Javascript is now localized.  The key-string mappings reside in
+       templates/<template>.properties; and the correct method to call is
+       "<key>".localize(args).  Thanks to Dirk Fredericx for the help!
 
 2007-04-09  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
