@@ -473,15 +473,15 @@ public class WikiEngine
             m_attachmentManager = new AttachmentManager( this, props );
             m_variableManager   = new VariableManager( props );
             m_filterManager     = new FilterManager( this, props );
-            m_renderingManager  = new RenderingManager();
+            m_renderingManager  = (RenderingManager) ClassUtil.getMappedClass(RenderingManager.class.getName());
             m_renderingManager.initialize( this, props );
             
             m_searchManager     = new SearchManager( this, props );
 
-            m_authenticationManager = new AuthenticationManager();
-            m_authorizationManager  = new AuthorizationManager();
-            m_userManager           = new UserManager();
-            m_groupManager          = new GroupManager();
+            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedClass(AuthenticationManager.class.getName());
+            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedClass( AuthorizationManager.class.getName());
+            m_userManager           = (UserManager) ClassUtil.getMappedClass(UserManager.class.getName());
+            m_groupManager          = (GroupManager) ClassUtil.getMappedClass(GroupManager.class.getName());
 
             m_editorManager     = new EditorManager( this );
             m_editorManager.initialize( props );
