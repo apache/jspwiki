@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki.util;
 
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -160,7 +162,102 @@ public class ClassUtil
      *  @throws WikiException If the class cannot be found or instantiated.
      *  @since 2.5.40
      */
-    public static Object getMappedClass( String requestedClass )
+    public static Object getMappedObject( String requestedClass )
+        throws WikiException
+    {
+        Object[] initargs = {};
+        return getMappedObject(requestedClass, initargs );
+    }
+
+    public static Object getMappedObject( String requestedClass, Object arg1 )
+        throws WikiException
+    {
+        Object[] initargs = { arg1 };
+        return getMappedObject(requestedClass, initargs );
+    }
+
+    public static Object getMappedObject( String requestedClass, Object arg1, Object arg2 )
+        throws WikiException
+    {
+        Object[] initargs = { arg1, arg2 };
+        return getMappedObject(requestedClass, initargs );
+    }
+
+    /**
+     *  This method is used to locate and instantiate a mapped class.
+     *  You may redefine anything in the resource file which is located in your classpath
+     *  under the name <code>{@value #MAPPINGS}</code>.
+     *  <p>
+     *  This is an extremely powerful system, which allows you to remap many of
+     *  the JSPWiki core classes to your own class.  Please read the documentation
+     *  included in the default <code>{@value #MAPPINGS}</code> file to see
+     *  how this method works. 
+     *  
+     *  @param requestedClass The name of the class you wish to instantiate.
+     *  @param param1 First parameter to be passed to the constructor. May be null.
+     *  @param param2 Second parameter to be passed to the constructor. May be null.
+     *  @return An instantiated Object.
+     *  @throws WikiException If the class cannot be found or instantiated.
+     *  @since 2.5.40
+     */
+    public static Object getMappedObject( String requestedClass, Object[] initargs )
+        throws WikiException
+    {
+        try
+        {
+            Class cl = getMappedClass( requestedClass );
+         
+            Constructor[] ctors = cl.getConstructors();
+            
+            //
+            //  Try to find the proper constructor
+            //
+            for( int c = 0; c < ctors.length; c++ )
+            {
+                Class[] params = ctors[c].getParameterTypes();
+                
+                if( params.length == initargs.length )
+                {
+                    for( int arg = 0; arg < initargs.length; arg++ )
+                    {
+                        if( params[arg].isAssignableFrom(initargs[arg].getClass()))
+                        {
+                            return ctors[c].newInstance(initargs);
+                        }
+                    }
+                }
+            }
+            Object o = cl.newInstance();
+            
+            return o;
+        }
+        catch( InstantiationException e )
+        {
+            log.info( "Cannot instantiate requested class", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
+        catch (IllegalAccessException e)
+        {
+            log.info( "Cannot access requested class", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
+        catch (IllegalArgumentException e)
+        {
+            log.info( "Illegal arguments when constructing new object", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
+        catch (InvocationTargetException e)
+        {
+            log.info( "You tried to instantiate an abstract class", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
+    }
+
+    private static Class getMappedClass( String requestedClass )
         throws WikiException
     {
         String mappedClass = (String)c_classMappings.get( requestedClass );
@@ -174,25 +271,11 @@ public class ClassUtil
         {
             Class cl = Class.forName(mappedClass);
             
-            Object o = cl.newInstance();
-            
-            return o;
-        }
-        catch( InstantiationException e )
-        {
-            log.info( "Cannot instantiate requested class", e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            return cl;
         }
         catch (ClassNotFoundException e)
         {
             log.info( "Cannot find requested class", e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass);
-        }
-        catch (IllegalAccessException e)
-        {
-            log.info( "Cannot access requested class", e );
             
             throw new WikiException("Failed to instantiate class "+requestedClass);
         }
