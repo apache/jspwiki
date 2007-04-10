@@ -15,6 +15,8 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 
 /**
  *  Implements DOM-to-Creole rendering.
+ *  <p>
+ *  FIXME: This class is not yet completely done.
  *  
  *  @author Janne Jalkanen
  */
