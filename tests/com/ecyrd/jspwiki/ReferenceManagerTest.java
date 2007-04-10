@@ -5,6 +5,8 @@ import junit.framework.*;
 import java.util.*;
 import java.io.*;
 
+import com.ecyrd.jspwiki.providers.FileSystemProvider;
+
 /**
  *  @author Torsten Hildebrandt.
  */
@@ -36,6 +38,13 @@ public class ReferenceManagerTest extends TestCase
             if( refmgrfile.exists() ) refmgrfile.delete();
         }
 
+        String fileDir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        
+        if( fileDir != null )
+        {
+            TestEngine.deleteAll( new File(fileDir) );
+        }
+        
         engine = new TestEngine(props);
 
         engine.saveText( "TestPage", "Reference to [Foobar]." );
