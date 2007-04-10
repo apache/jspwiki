@@ -52,6 +52,7 @@ import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -1373,7 +1374,8 @@ public class WikiEngine
                     localCollector,
                     null,
                     localCollector,
-                    false );
+                    false,
+                    true );
 
         return localCollector.getLinks();
     }
@@ -1387,7 +1389,7 @@ public class WikiEngine
                               StringTransmutator localLinkHook,
                               StringTransmutator extLinkHook )
     {
-        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null, true );
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, null, true, false );
     }
 
     /**
@@ -1400,7 +1402,7 @@ public class WikiEngine
                               StringTransmutator extLinkHook,
                               StringTransmutator attLinkHook )
     {
-        return textToHTML( context, pagedata, localLinkHook, extLinkHook, attLinkHook, true );
+        return textToHTML( context, pagedata, localLinkHook, extLinkHook, attLinkHook, true, false );
     }
 
     /**
@@ -1411,7 +1413,8 @@ public class WikiEngine
                                StringTransmutator localLinkHook,
                                StringTransmutator extLinkHook,
                                StringTransmutator attLinkHook,
-                               boolean            parseAccessRules )
+                               boolean            parseAccessRules,
+                               boolean            justParse )
     {
         String result = "";
 
@@ -1438,10 +1441,18 @@ public class WikiEngine
             
             if( !parseAccessRules ) mp.disableAccessRules();
 
-            result = m_renderingManager.getHTML( context, mp.parse() );
+            WikiDocument doc = mp.parse();
+            
+            //
+            //  In some cases it's better just to parse, not to render
+            //
+            if( !justParse )
+            {
+                result = m_renderingManager.getHTML( context, doc );
 
-            if( runFilters )
-                result = m_filterManager.doPostTranslateFiltering( context, result );
+                if( runFilters )
+                    result = m_filterManager.doPostTranslateFiltering( context, result );
+            }
             
             sw.stop();
 
