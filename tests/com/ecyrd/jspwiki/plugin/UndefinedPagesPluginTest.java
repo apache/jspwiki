@@ -25,7 +25,7 @@ public class UndefinedPagesPluginTest extends TestCase
         engine = new TestEngine(props);
 
         engine.saveText( "TestPage", "Reference to [Foobar]." );
-        engine.saveText( "Foobar", "Reference to [Foobar2], [Foobars]" );
+        engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
         context = new WikiContext( engine, new WikiPage(engine, "TestPage") );
         manager = new PluginManager( engine, props );
