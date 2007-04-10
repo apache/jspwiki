@@ -1392,7 +1392,10 @@ public class JSPWikiMarkupParser
             {
                 log.info( "Failed to insert plugin", e );
                 log.info( "Root cause:",e.getRootThrowable() );
-                return addElement( makeError("Plugin insertion failed: "+e.getMessage()) );
+                if( !m_wysiwygEditorMode )
+                {
+                    return addElement( makeError("Plugin insertion failed: "+e.getMessage()) );
+                }
             }
             
             return m_currentElement;
@@ -1448,32 +1451,38 @@ public class JSPWikiMarkupParser
                 
                 String extWiki  = link.getExternalWiki();
                 String wikiPage = link.getExternalWikiPage();
-
-                String urlReference = m_engine.getInterWikiURL( extWiki );
-
-                if( urlReference != null )
+                
+                if( m_wysiwygEditorMode )
                 {
-                    urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
-                    urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
-
-                    if( isImageLink(urlReference) )
+                    makeLink( INTERWIKI, extWiki + ":" + wikiPage, linktext, null, link.getAttributes() );
+                }
+                else{
+                    String urlReference = m_engine.getInterWikiURL( extWiki );
+    
+                    if( urlReference != null )
                     {
-                        handleImageLink( urlReference, linktext, link.hasReference() );
+                        urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
+                        urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
+    
+                        if( isImageLink(urlReference) )
+                        {
+                            handleImageLink( urlReference, linktext, link.hasReference() );
+                        }
+                        else
+                        {
+                            makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
+                        }
+                    
+                        if( isExternalLink(urlReference) )
+                        {
+                            addElement( outlinkImage() );
+                        }
                     }
                     else
                     {
-                        makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
+                        addElement( makeError("No InterWiki reference defined in properties for Wiki called '"
+                                              + extWiki + "'!)") );
                     }
-                
-                    if( isExternalLink(urlReference) )
-                    {
-                        addElement( outlinkImage() );
-                    }
-                }
-                else
-                {
-                    addElement( makeError("No InterWiki reference defined in properties for Wiki called '"
-                                          + extWiki + "'!)") );
                 }
             }
             else if( linkref.startsWith("#") )
