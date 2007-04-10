@@ -1,7 +1,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 <div id="attachmentViewer">
   <div class="list">
      <h3><fmt:message key="attach.list"/></h3>

@@ -3,7 +3,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 <%
   /* see commonheader.jsp */
   String prefDateFormat = (String) session.getAttribute("prefDateFormat");

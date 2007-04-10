@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 <% 
   WikiContext c = WikiContext.findContext( pageContext );  
   List history = c.getEngine().getVersionHistory(c.getPage().getName());

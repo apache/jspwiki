@@ -7,7 +7,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 
 <%
   // Extract the group name and members

@@ -1,3 +1,13 @@
+<%-- 
+   This file provides a common header which includes the important JSPWiki scripts and other files.
+   You need to include this in your template, within <head> and </head>.  It is recommended that
+   you don't change this file in your own template, as it is likely to change quite a lot between
+   revisions.
+   
+   Any new functionality, scripts, etc, should be included using the TemplateManager resource
+   include scheme (look below at the <wiki:IncludeResources> tags to see what kind of things
+   can be included).
+--%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
@@ -75,6 +85,25 @@
 <% } %>
 
 <script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>","<wiki:Variable var="pagename" />");</script>
+
+<%-- Get the i18n scripts from the server.  This creates a new global JS variable called
+     "LocalizedStrings", which is an associative array of key-value pairs.  You can then search
+     this array based on the abstract key in the script file. --%>
+
+<script type="text/javascript">
+  var LocalizedStrings = { <%
+     ResourceBundle rb = context.getBundle("templates.default");
+     for( Enumeration en = rb.getKeys(); en.hasMoreElements(); )
+     {
+         String key = (String)en.nextElement();
+         
+         if( key.startsWith("javascript") )
+         {
+             out.println( "\""+key+"\" : \""+rb.getString(key)+"\",");
+         }
+     }
+  %> }
+</script>
 
 <%-- Here we define the "run when the page loads" -script. --%>
 <script type="text/javascript">

@@ -3,7 +3,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 <%--
         This is a special editor component for JSPWiki preview storage.
 --%>

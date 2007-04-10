@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 <%
   /* see commonheader.jsp */
   String prefEditAreaHeight = (String) session.getAttribute("prefEditAreaHeight");

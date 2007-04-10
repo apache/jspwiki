@@ -6,7 +6,7 @@
   String prefTimeZone       = (String) session.getAttribute("prefTimeZone");
   String group              = request.getParameter( "group" );
 %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
   <div class="pageactions">
   
     <span class='quick2Top'><a href="#Top" title='<fmt:message key="actions.gototop"/>' >&nbsp;</a></span>

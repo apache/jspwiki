@@ -5,7 +5,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="java.net.URLEncoder" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 
 <%-- FIXME: Get rid of the scriptlets. --%>
 <%
