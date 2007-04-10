@@ -19,9 +19,16 @@
  */
 package com.ecyrd.jspwiki.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.InputStream;
+import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
+
+import com.ecyrd.jspwiki.WikiException;
 
 /**
  *  Contains useful utilities for class file manipulation.
@@ -31,6 +38,51 @@ import java.util.List;
  */
 public class ClassUtil
 {
+    private static final Logger log = Logger.getLogger(ClassUtil.class);
+    private static final String MAPPINGS = "/ini/classmappings.xml";
+    
+    private static Map c_classMappings = new Hashtable();
+
+    /**
+     *  Initialize the class mappings document.
+     */
+    static
+    {
+        try
+        {
+            InputStream is = ClassUtil.class.getResourceAsStream( MAPPINGS );
+    
+            if( is != null )
+            {
+                Document doc = new SAXBuilder().build( is );
+        
+                XPath xpath = XPath.newInstance("/classmappings/mapping");
+    
+                List nodes = xpath.selectNodes( doc );
+            
+                for( Iterator i = nodes.iterator(); i.hasNext(); )
+                {
+                    Element f = (Element) i.next();
+                
+                    String key = f.getChildText("requestedClass");
+                    String className = f.getChildText("mappedClass");
+                    
+                    c_classMappings.put( key, className );
+                    
+                    log.debug("Mapped class '"+key+"' to class '"+className+"'");
+                }
+            }
+            else
+            {
+                log.info("Didn't find class mapping document in "+MAPPINGS);
+            }
+        }
+        catch( Exception ex )
+        {
+            log.error("Unable to parse mappings document!",ex);
+        }
+    }
+
     /**
      *  Attempts to find a class from a collection of packages.  This will first
      *  attempt to find the class based on just the className parameter, but
@@ -91,5 +143,58 @@ public class ClassUtil
         list.add( packageName );
 
         return findClass( list, className );
+    }
+    
+    /**
+     *  This method is used to locate and instantiate a mapped class.
+     *  You may redefine anything in the resource file which is located in your classpath
+     *  under the name <code>{@value #MAPPINGS}</code>.
+     *  <p>
+     *  This is an extremely powerful system, which allows you to remap many of
+     *  the JSPWiki core classes to your own class.  Please read the documentation
+     *  included in the default <code>{@value #MAPPINGS}</code> file to see
+     *  how this method works. 
+     *  
+     *  @param requestedClass The name of the class you wish to instantiate.
+     *  @return An instantiated Object.
+     *  @throws WikiException If the class cannot be found or instantiated.
+     *  @since 2.5.40
+     */
+    public static Object getMappedClass( String requestedClass )
+        throws WikiException
+    {
+        String mappedClass = (String)c_classMappings.get( requestedClass );
+        
+        if( mappedClass == null )
+        {
+            mappedClass = requestedClass;
+        }
+        
+        try
+        {
+            Class cl = Class.forName(mappedClass);
+            
+            Object o = cl.newInstance();
+            
+            return o;
+        }
+        catch( InstantiationException e )
+        {
+            log.info( "Cannot instantiate requested class", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.info( "Cannot find requested class", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
+        catch (IllegalAccessException e)
+        {
+            log.info( "Cannot access requested class", e );
+            
+            throw new WikiException("Failed to instantiate class "+requestedClass);
+        }
     }
 }
