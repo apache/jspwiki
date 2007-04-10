@@ -21,6 +21,7 @@ public class AllTests extends TestCase
 
         suite.addTest( CreoleRendererTest.suite() );
         suite.addTest( RenderingManagerTest.suite() );
+        suite.addTest( WysiwygEditingRendererTest.suite() );
 
         return suite;
     }
