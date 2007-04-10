@@ -6,6 +6,8 @@
 <%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.DefaultResources"/>
 
 <%--
     This provides the FCK editor for JSPWiki.
@@ -35,7 +37,8 @@
    RenderingManager renderingManager = new RenderingManager();
    
    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
-   Properties copyOfWikiProperties = new Properties( engine.getWikiProperties() );
+   Properties copyOfWikiProperties = new Properties();
+   copyOfWikiProperties.putAll( engine.getWikiProperties() );
    copyOfWikiProperties.setProperty( "jspwiki.renderingManager.renderer", WysiwygEditingRenderer.class.getName() );
    renderingManager.initialize( engine, copyOfWikiProperties );
 	
@@ -46,6 +49,8 @@
    context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.FALSE );
    context.setVariable( WikiEngine.PROP_RUNFILTERS,  null );
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
+   
+   String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
 %>
 
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
@@ -58,7 +63,7 @@
         <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
                                                                        PageContext.REQUEST_SCOPE )%>" />
     </p>
-<div>
+<div style="width:100%"> <%-- Required for IE6 on Windows --%>
 <script type="text/javascript">
    var oFCKeditor = new FCKeditor( 'htmlPageText' );
    oFCKeditor.BasePath = 'scripts/fckeditor/';
@@ -69,6 +74,8 @@
    oFCKeditor.Config['StylesXmlPath'] = '<%=request.getContextPath()%>/scripts/fckstyles.xml';
    oFCKeditor.Config['TemplatesXmlPath'] = '<%=request.getContextPath()%>/scripts/fcktemplates.xml';
    oFCKeditor.Config['BaseHref'] = 'http://<%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/';
+   oFCKeditor.Config['EditorAreaCSS'] = '<%=request.getContextPath()%>/templates/<%=templateDir%>/jspwiki.css';
+   oFCKeditor.Config['SmileyPath'] = oFCKeditor.Config['BaseHref'] + 'scripts/fckeditor/editor/images/smiley/msn/' ;
    oFCKeditor.Create();
 </script>
 <noscript>
@@ -100,11 +107,11 @@
     </wiki:CheckRequestContext>
 
     <p>
-        <input name='ok' type='submit' value='Save' />
+        <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='preview' type='submit' value='Preview' />
+        <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='cancel' type='submit' value='Cancel' />
+        <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
     </p>
 </div>
 </form>
