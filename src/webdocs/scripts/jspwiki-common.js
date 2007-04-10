@@ -44,6 +44,17 @@ String.prototype.escapeXML = function()
   return s;
 }
 
+String.prototype.localize = function()
+{
+  var s = LocalizedStrings["javascript."+this];
+  if( !s ) return(  "§§§" + this + "§§§"  );
+  for (var i = 0; i < arguments.length; i++)
+  {
+    s = s.replace("{" + i + "}", arguments[i]);
+  }  
+  return s;
+}
+
 /**
  ** 020 Array stuff
  **/
@@ -176,7 +187,7 @@ Wiki.showImage = function( attachment, attDELIM, maxWidth, maxHeight )
 
   if( !this.reImageTypes.test( attachArr[0] ) ) 
   { 
-    attachImg.innerHTML  = "No image selected"; 
+    attachImg.innerHTML  = "Wiki.noimage".localize(); 
     return;
   }  
 
@@ -186,7 +197,7 @@ Wiki.showImage = function( attachment, attDELIM, maxWidth, maxHeight )
 
   this.countdown = 30;
   setTimeout( "Wiki.showLoadedImage()" , 200 ); 
-  attachImg.innerHTML= "Loading image";
+  attachImg.innerHTML="Wiki.loadingimage".localize();
 }
 
 Wiki.showLoadedImage = function ()
@@ -209,13 +220,13 @@ Wiki.showLoadedImage = function ()
 
   if( this.countdown <= 0 ) 
   {  
-    attachImg.innerHTML = "Loading image expired<br />Try loading the image manually";
+    attachImg.innerHTML = "Wiki.imageexpired".localize();
     return;
   } 
 
   this.countdown--;
   setTimeout( "Wiki.showLoadedImage()" , 200) ; 
-  attachImg.innerHTML = "Loading image " + this.countdown
+  attachImg.innerHTML = "Wiki.loadingimagecount".localize(this.countdown);
 }
 
 
@@ -458,14 +469,14 @@ SearchBox.onPageLoad = function()
   var div1 = "<div onclick='SearchBox.doSearch(this)'>";
   var div2 = "</div>";
   
-  var s = "Recent Searches:"; 
+  var s = "SearchBox.recentsearches".localize();
   var t = [];
   for( i=0; i < this.recentSearches.length; i++ )
   {
     //todo
   }
   s += div1 + this.recentSearches.join( div2+div1 ) + div2;
-  s += "<br /><div onclick='SearchBox.clearRecentSearches()'>Clear Recent Searches</div>";
+  s += "<br /><div onclick='SearchBox.clearRecentSearches()'>"+"SearchBox.clearrecent".localize()+"</div>";
   this.recentSearchesDIV.innerHTML = s;
 }
 
@@ -753,8 +764,8 @@ Collapsable.cookieNames  = [] ;
 Collapsable.ClassName    = "collapse";
 Collapsable.ClassNameBox = "collapsebox";
 Collapsable.ClassNameBody= "collapsebody";
-Collapsable.OpenTip      = "Click to collapse";
-Collapsable.CloseTip     = "Click to expand";
+Collapsable.OpenTip      = "Collapsable.collapse".localize();
+Collapsable.CloseTip     = "Collapsable.expand".localize();
 Collapsable.CollapseID   = "clps"; //prefix for unique IDs of inserted DOM nodes
 Collapsable.MarkerOpen   = "O";    //cookie state chars 
 Collapsable.MarkerClose  = "C"; 
@@ -768,7 +779,7 @@ Collapsable.onPageLoad = function()
 {
   this.initialise( "favorites",   this.CookiePrefix + "Favorites" );
   this.initialise( "pagecontent", this.CookiePrefix + Wiki.getPageName() );
- }
+}
 
 
 Collapsable.initialise = function( domID, cookieName )
