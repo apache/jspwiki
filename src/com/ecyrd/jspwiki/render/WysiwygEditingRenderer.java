@@ -73,49 +73,48 @@ public class WysiwygEditingRenderer
                         
                         XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
                         
-                        if( classValue.equals( "wikipage" ) )
+                        // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
+                        // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
+                        String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                        String editPageLinkUrl = wikiConfig.getEditJspPage();
+                        
+                        if( classValue.equals( "wikipage" )
+                            || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
                         {
-                            // get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
-                            // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
-                            String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                            String newHref = null;
 
-                            if( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) // we might not need this check
-                            {
-                                String newHref = null;
-
-                                // Remove the leading url string so that users will only see the
-                                // wikipage's name when editing an existing wiki link.
-                                // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
-                                newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
+                            // Remove the leading url string so that users will only see the
+                            // wikipage's name when editing an existing wiki link.
+                            // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
+                            newHref = hrefAttr.getValue().substring( wikiPageLinkUrl.length() );
                                 
-                                // Handle links with section anchors.
-                                // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
-                                // to this wiki string: "TargetPage#Heading2".
-                                hrefAttr.setValue( newHref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" ) );
-                            }
-                        }
-                        else if( classValue.equals( "editpage" ) )
+                            // Handle links with section anchors.
+                            // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
+                            // to this wiki string: "TargetPage#Heading2".
+                            hrefAttr.setValue( newHref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" ) );
+                        }                        
+                        else if ( classValue.equals( "editpage" ) 
+                            || ( hrefAttr != null && hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                         {
-                            String editPageLinkUrl = wikiConfig.getEditJspPage();
-
-                            if( hrefAttr != null && hrefAttr.getValue().startsWith( editPageLinkUrl ) ) // we might not need this check
+                            Attribute titleAttr = element.getAttribute( "title" );
+                            if( titleAttr != null )
                             {
-                                Attribute titleAttr = element.getAttribute( "title" );
+                                // remove the title since we don't want to eventually save the default undefined page title.
                                 titleAttr.detach();
-                                
-                                String newHref = null;
-                                newHref = hrefAttr.getValue().substring( editPageLinkUrl.length() );
-                                hrefAttr.setValue( newHref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" ) );
-                                                             
-                                // only remove the href if it's the same as the link text.
-                                if( hrefAttr.getValue().equals( element.getText() ) )
-                                {
-                                    hrefAttr.detach();
-                                }
                             }
+
+                            hrefAttr.setValue( hrefAttr.getValue().substring( editPageLinkUrl.length() ) );
                         }
                     }
                 } // end of check for "a" element
+                else if( elementName.equals( "pre" ) )
+                {
+                    // We need to trim the surrounding whitespace to accomodate a FCK bug: when the first line 
+                    // of a <pre> tag contains only whitespace, then all the linebreaks in the <pre>
+                    // tag will be lost due to FCK's html tidying.
+                    String text = element.getTextTrim();
+                    element.setText( text );
+                }
 
                 processChildren( element );
             }
