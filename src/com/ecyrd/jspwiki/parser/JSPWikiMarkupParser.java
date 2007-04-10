@@ -1390,8 +1390,8 @@ public class JSPWikiMarkupParser
             }
             catch( PluginException e )
             {
-                log.info( "Failed to insert plugin", e );
-                log.info( "Root cause:",e.getRootThrowable() );
+                log.info( "Failed to insert plugin: "+e.getMessage() );
+                //log.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode )
                 {
                     return addElement( makeError("Plugin insertion failed: "+e.getMessage()) );

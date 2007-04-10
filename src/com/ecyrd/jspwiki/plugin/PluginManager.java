@@ -1006,7 +1006,7 @@ public class PluginManager extends ModuleManager
         }
         catch( ClassNotFoundException e )
         {
-            throw new PluginException( "Could not find plugin "+content.getPluginName(), e );
+            throw new PluginException( "Could not find plugin "+content.getPluginName() );
         }
         catch( ClassCastException e )
         {
