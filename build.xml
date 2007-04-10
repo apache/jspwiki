@@ -48,7 +48,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.81 2007-02-24 16:24:19 arj Exp $
+    $Id: build.xml,v 1.82 2007-04-10 09:22:07 jalkanen Exp $
 -->    
        
 <!--   
@@ -553,7 +553,7 @@
   <target name="guitests" depends="jar,tests-init,jartests"
           description="Runs the tests in a pretty window.">
 
-     <java classname="junit.swingui.TestRunner" fork="yes">
+     <java classname="junit.swingui.TestRunner" fork="yes" maxmemory="512m">
         <classpath>
            <path refid="path.tests" />
         </classpath>
