@@ -467,23 +467,23 @@ public class WikiEngine
             m_urlConstructor = (URLConstructor) urlclass.newInstance();               
             m_urlConstructor.initialize( this, props );
 
-            m_pageManager       = new PageManager( this, props );
-            m_pluginManager     = new PluginManager( this, props );
-            m_differenceManager = new DifferenceManager( this, props );
-            m_attachmentManager = new AttachmentManager( this, props );
-            m_variableManager   = new VariableManager( props );
-            m_filterManager     = new FilterManager( this, props );
-            m_renderingManager  = (RenderingManager) ClassUtil.getMappedClass(RenderingManager.class.getName());
+            m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
+            m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
+            m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
+            m_attachmentManager = (AttachmentManager)ClassUtil.getMappedObject(AttachmentManager.class.getName(), this, props );
+            m_variableManager   = (VariableManager)ClassUtil.getMappedObject(VariableManager.class.getName(), props );
+            m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+            m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName());
             m_renderingManager.initialize( this, props );
             
-            m_searchManager     = new SearchManager( this, props );
+            m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
 
-            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedClass(AuthenticationManager.class.getName());
-            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedClass( AuthorizationManager.class.getName());
-            m_userManager           = (UserManager) ClassUtil.getMappedClass(UserManager.class.getName());
-            m_groupManager          = (GroupManager) ClassUtil.getMappedClass(GroupManager.class.getName());
+            m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName());
+            m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedObject( AuthorizationManager.class.getName());
+            m_userManager           = (UserManager) ClassUtil.getMappedObject(UserManager.class.getName());
+            m_groupManager          = (GroupManager) ClassUtil.getMappedObject(GroupManager.class.getName());
 
-            m_editorManager     = new EditorManager( this );
+            m_editorManager     = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName(), this );
             m_editorManager.initialize( props );
 
             // Initialize the authentication, authorization, user and acl managers
@@ -495,10 +495,11 @@ public class WikiEngine
             m_aclManager = getAclManager();
 
             // Start the Workflow manager
-            m_workflowMgr = new WorkflowManager();
+            m_workflowMgr = (WorkflowManager)ClassUtil.getMappedObject(WorkflowManager.class.getName());
             m_workflowMgr.initialize(this, props);
 
-            m_internationalizationManager = new InternationalizationManager(this);
+            m_internationalizationManager = (InternationalizationManager)
+                ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
 
             //
             //  ReferenceManager has the side effect of loading all
@@ -507,15 +508,18 @@ public class WikiEngine
             //
             initReferenceManager();
 
-            m_templateManager   = new TemplateManager( this, props );
+            m_templateManager   = (TemplateManager)
+                ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
             
-            m_adminBeanManager = new AdminBeanManager(this);
+            m_adminBeanManager = (AdminBeanManager)
+                ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
             
             // Since we want to use a page filters initilize() method
             // as a engine startup listener where we can initialize global event listeners, 
             // it must be called lastly, so that all object references in the engine
             // are availabe to the initialize() method
-            m_filterManager     = new FilterManager( this, props );
+            m_filterManager     = (FilterManager)
+                ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
             
             //
             //  Hook the different manager routines into the system.
@@ -555,10 +559,10 @@ public class WikiEngine
                                              RSSGenerator.PROP_GENERATE_RSS, 
                                              false ) )
             {
-                m_rssGenerator = new RSSGenerator( this, props );
+                m_rssGenerator = (RSSGenerator)ClassUtil.getMappedObject(RSSGenerator.class.getName(), this, props );
             }
             
-            m_pageRenamer       = new PageRenamer( this, props );
+            m_pageRenamer = (PageRenamer)ClassUtil.getMappedObject(PageRenamer.class.getName(), this, props );
         }
         catch( Exception e )
         {
@@ -569,7 +573,6 @@ public class WikiEngine
         // Start the RSS generator & generator thread
         if( m_rssGenerator != null )
         {
-            m_rssGenerator = new RSSGenerator( this, props );
             m_rssFile = TextUtil.getStringProperty( props, 
                     RSSGenerator.PROP_RSSFILE, "rss.rdf" );
             File rssFile=null;
@@ -598,8 +601,9 @@ public class WikiEngine
     /**
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
+     * @throws WikiException 
      */
-    public void initReferenceManager()
+    public void initReferenceManager() throws WikiException
     {
         try
         {
@@ -610,7 +614,8 @@ public class WikiEngine
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
             {
-                m_referenceManager = new ReferenceManager( this );
+                m_referenceManager = 
+                    (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
             }
         
