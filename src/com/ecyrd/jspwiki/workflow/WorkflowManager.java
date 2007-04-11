@@ -209,7 +209,7 @@ public class WorkflowManager implements WikiEventListener
     /**
      * Returns the current workflows a wiki session owns. These are workflows whose 
      * {@link Workflow#getOwner()} method returns a Principal also possessed by the 
-     * wiki session (see {@see com.ecyrd.jspwiki.WikiSession#getPrincipals()}). If the
+     * wiki session (see {@link com.ecyrd.jspwiki.WikiSession#getPrincipals()}). If the
      * wiki session is not authenticated, this method returns an empty Collection.
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty

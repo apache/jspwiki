@@ -6,6 +6,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
@@ -79,7 +80,7 @@ public class WorkflowTest extends TestCase
         assertEquals("Test String", w.getAttribute(ATTR));
     }
 
-    public void testGetMessageArgs()
+    public void testGetMessageArgs() throws WikiException
     {
         Object[] args;
 
@@ -135,14 +136,14 @@ public class WorkflowTest extends TestCase
         assertEquals(new WikiPrincipal("Owner1"), w.getOwner());
     }
 
-    public void testStart()
+    public void testStart() throws WikiException
     {
         assertFalse(w.isStarted());
         w.start();
         assertTrue(w.isStarted());
     }
 
-    public void testWaitstate()
+    public void testWaitstate() throws WikiException
     {
         w.start();
 
@@ -151,7 +152,7 @@ public class WorkflowTest extends TestCase
         assertEquals(Workflow.WAITING, w.getCurrentState());
     }
 
-    public void testRestart()
+    public void testRestart() throws WikiException
     {
         w.start();
 
@@ -162,7 +163,7 @@ public class WorkflowTest extends TestCase
         assertEquals(Workflow.WAITING, w.getCurrentState());
     }
 
-    public void testAbortBeforeStart()
+    public void testAbortBeforeStart() throws WikiException
     {
         // Workflow hasn't been started yet
         assertFalse(w.isAborted());
@@ -183,7 +184,7 @@ public class WorkflowTest extends TestCase
         fail("Workflow allowed itself to be started even though it was aborted!");
     }
 
-    public void testAbortDuringWait()
+    public void testAbortDuringWait() throws WikiException
     {
         // Start workflow, then abort while in WAITING state
         assertFalse(w.isAborted());
@@ -205,7 +206,7 @@ public class WorkflowTest extends TestCase
         fail("Workflow allowed itself to be re-started even though it was aborted!");
     }
 
-    public void testAbortAfterCompletion()
+    public void testAbortAfterCompletion() throws WikiException
     {
         // Start workflow, then abort after completion
         assertFalse(w.isAborted());
@@ -228,7 +229,7 @@ public class WorkflowTest extends TestCase
         fail("Workflow allowed itself to be aborted even though it was completed!");
     }
 
-    public void testCurrentState()
+    public void testCurrentState() throws WikiException
     {
         assertEquals(Workflow.CREATED, w.getCurrentState());
         w.start();
@@ -238,7 +239,7 @@ public class WorkflowTest extends TestCase
         assertEquals(Workflow.COMPLETED, w.getCurrentState());
     }
 
-    public void testCurrentStep()
+    public void testCurrentStep() throws WikiException
     {
         assertNull(w.getCurrentStep());
         w.start();
@@ -253,7 +254,7 @@ public class WorkflowTest extends TestCase
         assertNull(w.getCurrentStep());
     }
 
-    public void testPreviousStep()
+    public void testPreviousStep() throws WikiException
     {
         // If not started, no previous steps available for anything
         assertNull(w.getPreviousStep());
@@ -276,7 +277,7 @@ public class WorkflowTest extends TestCase
         assertEquals(decision, w.previousStep(finishTask));
     }
 
-    public void testCurrentActor()
+    public void testCurrentActor() throws WikiException
     {
         // Before starting, actor should be null
         assertNull(w.getCurrentActor());
@@ -291,7 +292,7 @@ public class WorkflowTest extends TestCase
         assertNull(w.getCurrentActor());
     }
 
-    public void testHistory()
+    public void testHistory() throws WikiException
     {
         assertEquals(0, w.getHistory().size());
         w.start();
@@ -301,7 +302,7 @@ public class WorkflowTest extends TestCase
         assertEquals(3, w.getHistory().size());
     }
 
-    public void testGetStartTime()
+    public void testGetStartTime() throws WikiException
     {
         // Start time should be not be set until we start the workflow
         assertEquals(Workflow.TIME_NOT_SET, w.getStartTime());
@@ -312,7 +313,7 @@ public class WorkflowTest extends TestCase
         assertFalse(Workflow.TIME_NOT_SET == w.getStartTime());
     }
 
-    public void testGetEndTime()
+    public void testGetEndTime() throws WikiException
     {
         // End time should be not set until we finish all 3 steps
         assertEquals(Workflow.TIME_NOT_SET, w.getEndTime());
@@ -323,7 +324,7 @@ public class WorkflowTest extends TestCase
         assertFalse(Workflow.TIME_NOT_SET == w.getEndTime());
     }
 
-    public void testIsCompleted()
+    public void testIsCompleted() throws WikiException
     {
         // Workflow isn't completed until we finish all 3 steps
         assertFalse(w.isCompleted());
@@ -334,14 +335,14 @@ public class WorkflowTest extends TestCase
         assertTrue(w.isCompleted());
     }
 
-    public void testIsStarted()
+    public void testIsStarted() throws WikiException
     {
         assertFalse(w.isStarted());
         w.start();
         assertTrue(w.isStarted());
     }
 
-    public void testStartTwice()
+    public void testStartTwice() throws WikiException
     {
         w.start();
         try

@@ -145,14 +145,15 @@ public class TaskTest extends TestCase
         assertTrue(t.isCompleted());
     }
 
-    public void testIsStarted()
+    public void testIsStarted() throws WikiException
     {
         assertFalse(t.isStarted());
         t.start();
         assertTrue(t.isStarted());
     }
     
-    public void testStartTwice() {
+    public void testStartTwice() throws WikiException
+    {
         t.start();
         try {
             t.start();

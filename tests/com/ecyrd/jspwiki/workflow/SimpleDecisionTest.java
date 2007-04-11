@@ -5,6 +5,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
 public class SimpleDecisionTest extends TestCase
@@ -97,7 +98,7 @@ public class SimpleDecisionTest extends TestCase
         assertFalse(outcomes.contains(Outcome.STEP_COMPLETE));
     }
 
-    public void testGetEndTime()
+    public void testGetEndTime() throws WikiException
     {
         assertEquals(Workflow.TIME_NOT_SET, d.getEndTime());
         d.start();
@@ -110,7 +111,7 @@ public class SimpleDecisionTest extends TestCase
         assertEquals("decision.key",d.getMessageKey());
     }
 
-    public void testGetOutcome()
+    public void testGetOutcome() throws WikiException
     {
         assertEquals(Outcome.STEP_CONTINUE,d.getOutcome());
         d.start();
@@ -118,7 +119,7 @@ public class SimpleDecisionTest extends TestCase
         assertEquals(Outcome.DECISION_APPROVE, d.getOutcome());
     }
 
-    public void testGetStartTime()
+    public void testGetStartTime() throws WikiException
     {
         assertEquals(Workflow.TIME_NOT_SET, d.getStartTime());
         d.start();
@@ -131,7 +132,7 @@ public class SimpleDecisionTest extends TestCase
         assertEquals(w, d.getWorkflow());
     }
 
-    public void testIsCompleted()
+    public void testIsCompleted() throws WikiException
     {
         assertFalse(d.isCompleted());
         d.start();
@@ -139,14 +140,15 @@ public class SimpleDecisionTest extends TestCase
         assertTrue(d.isCompleted());
     }
 
-    public void testIsStarted()
+    public void testIsStarted() throws WikiException
     {
         assertFalse(d.isStarted());
         d.start();
         assertTrue(d.isStarted());
     }
     
-    public void testStartTwice() {
+    public void testStartTwice() throws WikiException
+    {
         d.start();
         try {
             d.start();

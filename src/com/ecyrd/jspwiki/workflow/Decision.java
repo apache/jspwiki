@@ -10,7 +10,15 @@ import com.ecyrd.jspwiki.WikiException;
 /**
  * <p>
  * AbstractStep subclass that asks an actor Principal to choose an Outcome on
- * behalf of an owner (also a Principal). When a Decision completes, its
+ * behalf of an owner (also a Principal). The actor "makes the decision" by
+ * calling the {@link #decide(Outcome)} method. When this method is called,
+ * it will set the Decision's Outcome to the one supplied. If the parent
+ * Workflow is in the {@link Workflow#WAITING} state, it will be re-started.
+ * Any checked WikiExceptions thrown by the workflow after re-start will be
+ * re-thrown to callers.
+ * </p>
+ * <p>
+ * When a Decision completes, its
  * {@link #isCompleted()} method returns <code>true</code>. It also tells its
  * parent WorkflowManager to remove it from the list of pending tasks by calling
  * {@link DecisionQueue#remove(Decision)}.
@@ -20,7 +28,7 @@ import com.ecyrd.jspwiki.WikiException;
  * arbitrary key-value pairs called "facts." These facts can be presented by the
  * user interface to show details the actor needs to know about. Facts are added
  * by calling classes to the Decision, in order of expected presentation, by the
- * {@link } method. They can be retrieved, in order, via {@link }.
+ * {@link #addFact(Fact)} method. They can be retrieved, in order, via {@link #getFacts()}.
  * </p>
  * 
  * @author Andrew Jaquith
@@ -57,10 +65,13 @@ public abstract class Decision extends AbstractStep
     }
 
     /**
-     * Sets this Decision's outcome, but only if the parent Workflow's state is
-     * {@link Workflow#WAITING} and this Decision is its currently active Step.
-     * All other invocations of this method will return an
-     * IllegalStateException.
+     * <p>Sets this Decision's outcome, and restarts the parent Workflow if
+     * it is in the {@link Workflow#WAITING} state and this Decision is 
+     * its currently active Step. Any checked WikiExceptions thrown by 
+     * the workflow after re-start will be re-thrown to callers.</p>
+     * <p>This method cannot be invoked if the Decision is not the 
+     * current Workflow step; all other invocations will throw 
+     * an IllegalStateException.</p>
      * 
      * @param outcome
      *            the Outcome of the Decision
@@ -70,8 +81,10 @@ public abstract class Decision extends AbstractStep
      * @throws IllegalArgumentException
      *             if the Outcome is not one of the Outcomes returned by
      *             {@link #getAvailableOutcomes()}
+     * @throws WikiException
+     *             if the act of restarting the Workflow throws an exception
      */
-    public void decide(Outcome outcome)
+    public void decide(Outcome outcome) throws WikiException
     {
         super.setOutcome(outcome);
 

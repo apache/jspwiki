@@ -375,7 +375,7 @@ public class Workflow
      * The end time for this Workflow, expressed as a system time number. This
      * value is equal to the end-time value returned by the final Step's
      * {@link Step#getEndTime()} method, if the workflow has completed.
-     * Otherwise, this method returns {@link #TIME_NOT_SET} ({@value #TIME_NOT_SET}).
+     * Otherwise, this method returns {@link #TIME_NOT_SET}.
      * 
      * @return the end time
      */
@@ -458,7 +458,7 @@ public class Workflow
      * The start time for this Workflow, expressed as a system time number. This
      * value is equal to the start-time value returned by the first Step's
      * {@link Step#getStartTime()} method, if the workflow has started already.
-     * Otherwise, this method returns {@link #TIME_NOT_SET} ({@value #TIME_NOT_SET}).
+     * Otherwise, this method returns {@link #TIME_NOT_SET}.
      * 
      * @return the start time
      */
@@ -547,8 +547,10 @@ public class Workflow
      * 
      * @throws IllegalStateException
      *             if the Workflow has not previously been paused
+     * @throws WikiException 
+     *             if the current task's 
      */
-    public final synchronized void restart()
+    public final synchronized void restart() throws WikiException
     {
         if (m_state != WAITING)
         {
@@ -556,7 +558,17 @@ public class Workflow
         }
         m_state = RUNNING;
         fireEvent(WorkflowEvent.RUNNING);
-        processCurrentStep();
+        
+        // Process current step
+        try
+        {
+            processCurrentStep();
+        }
+        catch ( WikiException e )
+        {
+            abort();
+            throw e;
+        }
     }
 
     /**
@@ -622,7 +634,7 @@ public class Workflow
      * @throws IllegalStateException
      *             if the Workflow has already been started
      */
-    public final synchronized void start()
+    public final synchronized void start() throws WikiException
     {
         if (m_state == ABORTED)
         {
@@ -641,7 +653,15 @@ public class Workflow
         m_history.add(m_currentStep);
 
         // Process current step
-        processCurrentStep();
+        try
+        {
+            processCurrentStep();
+        }
+        catch ( WikiException e )
+        {
+            abort();
+            throw e;
+        }
     }
 
     /**
@@ -703,13 +723,11 @@ public class Workflow
     }
 
     /**
-     * Protected method that processes a series of Steps, starting with the
-     * current one.
-     * <ul>
-     * <li>Sets the first step as the current step</li>
-     * </ul>
+     * Protected method that processes the current Step by calling
+     * {@link Step#execute()}. Any exceptions thrown by the <code>execute</code>
+     * method will be propagated immediately to callers.
      */
-    protected final void processCurrentStep()
+    protected final void processCurrentStep() throws WikiException
     {
         while (m_currentStep != null)
         {

@@ -88,7 +88,7 @@ public interface Step
      * without errors; <code>false</code> indicates that the Step and its
      * parent Workflow should be aborted (that is, fail silently without error).
      * If the execution step encounters any errors, it should throw a
-     * WikiException.
+     * WikiException or a subclass.
      * </p>
      * <p>
      * Note that successful execution of this methods does not necessarily mean
@@ -131,8 +131,8 @@ public interface Step
     public String getMessageKey();
 
     /**
-     * Returns the message arguments for this Step by delegating to
-     * {@link #getWorkflow()#getMessageArguments()}.
+     * Returns the message arguments for this Step, typically by delegating to the
+     * parent Workflow's {@link Workflow#getMessageArguments()} method.
      * 
      * @return the message arguments.
      */
@@ -147,7 +147,7 @@ public interface Step
     public Outcome getOutcome();
 
     /**
-     * The start time for this Step. Returns {@link Workfloåw#TIME_NOT_SET} if
+     * The start time for this Step. Returns {@link Workflow#TIME_NOT_SET} if
      * not started yet.
      * 
      * @return the start time
@@ -183,12 +183,16 @@ public interface Step
     /**
      * Starts the Step, and sets the start time to the moment when this method
      * is first invoked. If this Step has already been started, this method
-     * throws an {@linkplain IllegalStateException}.
+     * throws an {@linkplain IllegalStateException}. If the Step cannot
+     * be started because the underlying implementation encounters an error,
+     * it the implementation should throw a WikiException.
      * 
      * @throws IllegalStateException
      *             if the Step has already been started
+     * @throws WikiException
+     *             if the step encounters errors while starting
      */
-    public void start();
+    public void start() throws WikiException;
 
     /**
      * Sets the current Outcome for the step. If the Outcome is a "completion"
@@ -212,7 +216,7 @@ public interface Step
      * Convenience method that returns the owner of the Workflow by delegating
      * to {@link Workflow#getOwner()}.
      * 
-     * @return
+     * @return the owner of the Workflow
      */
     public Principal getOwner();
 

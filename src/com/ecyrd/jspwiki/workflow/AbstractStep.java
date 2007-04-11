@@ -156,7 +156,7 @@ public abstract class AbstractStep implements Step
         m_outcome = outcome;
     }
     
-    public final synchronized void start()
+    public final synchronized void start() throws WikiException
     {
         if (m_started)
         {
