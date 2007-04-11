@@ -45,7 +45,7 @@ public class Release
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 5;
-    public static final int        MINORREVISION = 41;
+    public static final int        MINORREVISION = 42;
 
     /**
      *  This is the generic version string you should use

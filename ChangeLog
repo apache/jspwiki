@@ -1,3 +1,28 @@
+2007-04-09  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.42
+
+       * Modified the PagePermission implies() algorithm so that the "rename"
+       permission no longer implies "modify" (or "upload"). This will allow
+       separation of uploading attachments from page edit/rename actions.
+       Thanks to Tim Koop for the suggestion.
+
+       * Added WikiContext.MESSAGE to support workflows and other processes
+       that need to send a non-exception-related UI message in response
+       to user events. Also added a top-level Message.jsp and template.
+       Changed DisplayMessage.jsp slightly to use the <c:out> tag, which
+       gives us protection against cross-site scripting.
+
+       * Added 'throws WikiException' to all methods meant to be
+       implemented by workflow subclases: notably Step.start(),
+       Decision.decide(), Workflow.start()/restart(). Now, if these
+       methods encounter exceptions they will abort the workflow and
+       propagate the exceptions to callers.
+
+       * Many tiny little Javadoc fixes.
+
+       * Fixed failing PageRenamerTest.
+
 2007-04-10  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.41
