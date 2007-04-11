@@ -225,10 +225,10 @@ public class TemplateManager
      *  scripts, etc.
      *  
      *  @since 2.6
-     *  @param ctx
-     *  @param template
-     *  @param name
-     *  @return
+     *  @param ctx the wiki context
+     *  @param template the name of the template to use
+     *  @param name the name of the resource to fine
+     *  @return the path to the resource
      */
     public String findResource( WikiContext ctx, String template, String name )
     {

@@ -2077,8 +2077,8 @@ public class WikiEngine
      * value is not persisted.
      * 
      * @since 2.4.91
-     * @param key
-     * @param value
+     * @param key the attribute name
+     * @param value the value
      */
     public void setAttribute( String key, Object value )
     {
@@ -2087,8 +2087,8 @@ public class WikiEngine
     
     /**
      *  Gets an attribute from the engine.
-     *  @param key
-     *  @return
+     *  @param key the attribute name
+     *  @return the value
      */
     public Object getAttribute( String key )
     {

@@ -65,7 +65,7 @@ public class AdminBeanManager
     /**
      *  Lists all administration beans.
      *  
-     *  @return
+     *  @return all AdminBeans known to the manager
      */
     public List getAllBeans()
     {

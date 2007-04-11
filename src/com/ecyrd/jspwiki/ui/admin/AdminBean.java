@@ -19,7 +19,7 @@ public interface AdminBean
     /**
      *  Return a human-readable title for this AdminBean.
      *  
-     *  @return
+     *  @return the bean's title
      */
     public String getTitle();
     
@@ -27,7 +27,7 @@ public interface AdminBean
      *  Get an identifier for this particular AdminBean.  This id MUST
      *  conform to URI rules.
      *  
-     *  @return
+     *  @return the bean's identifier
      */
     public String getId();
     
@@ -36,15 +36,15 @@ public interface AdminBean
     /**
      *  Returns a type (UNKNOWN, EDITOR, etc).
      *  
-     *  @return
+     *  @return the bean's type
      */
     public int getType();
     
     /**
      *  Return basic HTML.
      *  
-     *  @param context
-     *  @return
+     *  @param context the wiki context
+     *  @return the HTML for the context
      */
     public String getHTML( WikiContext context );
     

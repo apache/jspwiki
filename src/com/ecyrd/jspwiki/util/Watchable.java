@@ -26,11 +26,11 @@ public interface Watchable
     public String getName();
     
     /**
-     *  Returns true, if this Watchable is still alive and can be
-     *  watched; otherwise false.  For example, a stopped Thread
+     *  Returns <code>true</code>, if this Watchable is still alive and can be
+     *  watched; otherwise <code>false</code>. For example, a stopped Thread
      *  is not very interesting to watch.
      *  
-     *  @return
+     *  @return the result
      */
     public boolean isAlive();
 }

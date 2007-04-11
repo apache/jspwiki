@@ -26,12 +26,12 @@ import com.metaparadigm.jsonrpc.JSONRPCBridge;
 public class JSONRPCManager extends RPCManager
 {
     /**
-     *  Emits Javascript to do a JSON RPC Call.  
+     *  Emits JavaScript to do a JSON RPC Call.  
      *  
      *  @param c
      *  @param function Name of the method to call
      *  @param params Parameters to pass to the method
-     *  @return
+     *  @return generated JavasSript code snippet that calls the method
      */
     public static String emitJSONCall( WikiContext context, RPCCallable c, String function, String params )
     {
@@ -85,7 +85,7 @@ public class JSONRPCManager extends RPCManager
      *  Registers a callable to JSON global bridge and requests JSON libraries to be added.
      *  @param context
      *  @param c
-     *  @return
+     *  @return the ID of the registered callable object
      */
     public static String registerJSONObject( WikiContext context, RPCCallable c )
     {

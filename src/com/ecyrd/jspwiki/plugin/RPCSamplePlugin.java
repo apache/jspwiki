@@ -18,7 +18,8 @@ public class RPCSamplePlugin implements WikiPlugin, RPCCallable
      *  This method is called when the Javascript is encountered by
      *  the browser.
      *  @param echo
-     *  @return
+     *  @return the string <code>JSON says:</code>, plus the value 
+     *  supplied by the <code>echo</code> parameter
      */
     public String myFunction(String echo)
     {

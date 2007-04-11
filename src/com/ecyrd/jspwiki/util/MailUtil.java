@@ -36,12 +36,10 @@ public class MailUtil
      * Conveniance method, sets the default "to" sender indicated
      * in the jspwiki.properties file. Authenticates against mailserver
      * 
-     * @author Christoph Sauer
-     *  
-     * @param engine - in order to read jspwiki.properties
-     * @param to - receiver
-     * @param subject - subjectline of message
-     * @param content - the actual mail message
+     * @param engine the WikiEngine, supplied to read <code>jspwiki.properties</code>
+     * @param to the receiver
+     * @param subject the subject line of the message
+     * @param content the contents of the mail message
      */
     public static void sendMessage(WikiEngine engine, 
                                    String to, 
@@ -60,13 +58,11 @@ public class MailUtil
      * together with the indicated password to authenticate against
      * the mail server.
      * 
-     * @author Christoph Sauer
-     * 
-     * @param engine - Used to read jspwiki.properties
-     * @param to - Receiver
-     * @param from - The address from which the email appears to come 
-     * @param subject - Subjectline of message
-     * @param content - The actual mail message
+     * @param engine the WikiEngine, supplied to read <code>jspwiki.properties</code>
+     * @param to the receiver
+     * @param from the address from whom the email will be from
+     * @param subject the subject line of the message
+     * @param content the contents of the mail message
      */
     public static void sendMessage(WikiEngine engine, String to, String from, String subject, String content)
                                                                                                                throws MessagingException
@@ -156,15 +152,15 @@ public class MailUtil
     }
     
     /**
-     * We can't use the engines variable manager to retrieve mail.x properties.
+     * We can't use the engines variable manager to retrieve <code>mail.<var>x</var></code> properties.
      * (engine.getVariable()) If we would add this to the var manager we could
      * get into trouble because by some braindamaged mistake a user could use
      * [{$mail.smtp.password}] to display this very information, we do not want
      * to display. TODO: find a better solution
      * 
-     * @param context
-     * @param name
-     * @return
+     * @param engine the WikiEngine
+     * @param name the name of the property to retrieve
+     * @return the property value
      */
     private static String getProperty(WikiEngine engine, String name) 
     {
@@ -187,17 +183,13 @@ public class MailUtil
      * href="http://docs.sun.com/source/819-0079/dgmail.html">Sun docs</a> for
      * a description of using the JavaMail API.
      * 
-     * @author Dan Frankowski
-     * @see Message
-     * @param to
-     *            Email address from which the message is sent
-     * @param subject
-     *            Subject line
-     * @param content
-     *            Content (plain text)
+     * @param to the email address from whom the message will be from
+     * @param subject the subject line of the message
+     * @param content the contents of the mail message
      * @throws AddressException
      * @throws MessagingException
      * @throws NamingException
+     * @see Message
      */
     public static void sendMessage(Properties props, String to, String subject, String content)
                                                                                                throws AddressException,
@@ -218,7 +210,8 @@ public class MailUtil
 }
 
 /**
- * 
+ * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
+ * an SMTP server.
  * @author Christoph Sauer
  *
  */

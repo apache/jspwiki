@@ -104,13 +104,11 @@ public abstract class AbstractRPCHandler
     }
 
     /**
-     *  Checks whether you have permission to perform this and throws an exception
-     *  if you do not have the permission.
+     *  Checks whether the current user has permission to perform the RPC action; 
+     *  throws an exception if not allowed by {@link com.ecyrd.jspwiki.auth.AuthorizationManager}.
      *  
      *  @throws AuthenticationFailed A RuntimeException, if the authentication fails and the user has no permission.
-     *  @param ctx
-     *  @param page
-     *  @param perm
+     *  @param perm the Permission to check
      */
     protected void checkPermission( Permission perm )
     {

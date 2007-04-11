@@ -194,8 +194,7 @@ public class ClassUtil
      *  how this method works. 
      *  
      *  @param requestedClass The name of the class you wish to instantiate.
-     *  @param param1 First parameter to be passed to the constructor. May be null.
-     *  @param param2 Second parameter to be passed to the constructor. May be null.
+     *  @param initargs The parameters to be passed to the constructor. May be <code>null</code>.
      *  @return An instantiated Object.
      *  @throws WikiException If the class cannot be found or instantiated.
      *  @since 2.5.40

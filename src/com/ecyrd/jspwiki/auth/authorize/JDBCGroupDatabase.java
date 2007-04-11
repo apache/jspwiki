@@ -93,7 +93,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * <p>JDBCGroupDatabase commits changes as transactions if the back-end database supports them.
  * If the database supports transactions, group changes are saved
  * to permanent storage only when the {@link #commit()} method is called. If the database does <em>not</em>
- * support transactions, then changes are made immediately (during the {@link #save(UserProfile)} 
+ * support transactions, then changes are made immediately (during the {@link #save(Group, Principal)} 
  * method), and the {@linkplain #commit()} method no-ops. Thus, callers should always call the
  * {@linkplain #commit()} method after saving a profile to guarantee that changes are applied.</p>
  * @author Andrew R. Jaquith

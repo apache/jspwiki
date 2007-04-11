@@ -45,13 +45,14 @@ public final class WorkflowEvent extends WikiEvent
 
     /**
      * After the Workflow has been instantiated, but before it has been started
-     * using the {@link #start()} method.
+     * using the {@link com.ecyrd.jspwiki.workflow.Workflow#start()} method.
      */
     public static final int STARTED = 10;
 
     /**
      * fter the Workflow has been started (or re-started) using the
-     * {@link #start()} method, but before it has finished processing all Steps.
+     * {@link com.ecyrd.jspwiki.workflow.Workflow#start()} method, 
+     * but before it has finished processing all Steps.
      */
     public static final int RUNNING = 20;
 
@@ -71,17 +72,13 @@ public final class WorkflowEvent extends WikiEvent
      * Constructs a new instance of this event type, which signals a security
      * event has occurred. The <code>source</code> parameter is required, and
      * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link #LOGGER} is notified.
+     * constructed, the security logger {@link WikiSecurityEvent#LOGGER} is notified.
      * 
      * @param source
      *            the source of the event, which can be any object: a wiki page,
      *            group or authentication/authentication/group manager.
      * @param type
      *            the type of event
-     * @param principal
-     *            the subject of the event, which may be <code>null</code>
-     * @param target
-     *            the changed Object, which may be <code>null</code>
      */
     public WorkflowEvent(Object source, int type)
     {
