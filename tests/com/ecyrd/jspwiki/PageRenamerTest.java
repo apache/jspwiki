@@ -42,6 +42,9 @@ public class PageRenamerTest extends TestCase
     public void testSimpleRename()
         throws Exception
     {
+        // Count the numberof existing references
+        int refCount = m_engine.getReferenceManager().findCreated().size();
+        
         m_engine.saveText("TestPage", "the big lazy dog thing" );
         
         WikiPage p = m_engine.getPage("TestPage");
@@ -59,8 +62,8 @@ public class PageRenamerTest extends TestCase
         
         Collection refs = m_engine.getReferenceManager().findCreated();
         
-        assertEquals( "wrong list size", 1, refs.size() );
-        assertEquals( "wrong item", "FooTest", (String)refs.iterator().next() );
+        assertEquals( "wrong list size", refCount+1, refs.size() );
+        assertTrue( refs.contains("FooTest") );
     }
     
     public void testReferrerChange()
@@ -219,7 +222,7 @@ public class PageRenamerTest extends TestCase
         refs = m_engine.getReferenceManager().findReferrers( "FooTest/bar.jpg" );
         assertEquals( "new size", 1, refs.size() );
         assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
-}
+    }
 
     public static Test suite()
     {
