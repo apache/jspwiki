@@ -34,7 +34,7 @@ import com.ecyrd.jspwiki.WikiPage;
  * For a given target, certain permissions imply others: 
  * </p>
  * <ul>
- * <li><code>delete</code>&nbsp;and&nbsp;<code>rename</code>&nbsp;imply&nbsp;<code>modify</code></li>
+ * <li><code>delete</code>&nbsp;and&nbsp;<code>rename</code>&nbsp;imply&nbsp;<code>edit</code></li>
  * <li><code>modify</code>&nbsp;implies&nbsp;<code>edit</code>&nbsp;and&nbsp;<code>upload</code></li>
  * <li><code>edit</code>&nbsp;implies&nbsp;<code>comment</code>&nbsp;and&nbsp;<code>view</code></li>
  * <li><code>comment</code>&nbsp;and&nbsp;<code>upload</code>&nbsp;imply&nbsp;<code>view</code></li>
@@ -311,7 +311,7 @@ public final class PagePermission extends Permission
         }
         if ( ( mask & RENAME_MASK ) > 0 )
         {
-            mask |= MODIFY_MASK;
+            mask |= EDIT_MASK;
         }
         if ( ( mask & MODIFY_MASK ) > 0 )
         {

@@ -280,9 +280,9 @@ public class PagePermissionTest extends TestCase
     
     public final void testImplies()
     {
-        assertTrue( PagePermission.RENAME.implies( PagePermission.MODIFY ) );
+        assertFalse(PagePermission.RENAME.implies( PagePermission.MODIFY ) );
         assertTrue( PagePermission.RENAME.implies( PagePermission.EDIT ) );
-        assertTrue( PagePermission.RENAME.implies( PagePermission.UPLOAD ) );
+        assertFalse(PagePermission.RENAME.implies( PagePermission.UPLOAD ) );
         assertTrue( PagePermission.RENAME.implies( PagePermission.COMMENT ) );
         assertTrue( PagePermission.RENAME.implies( PagePermission.VIEW ) );
         
@@ -311,8 +311,8 @@ public class PagePermissionTest extends TestCase
                 | PagePermission.COMMENT_MASK | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
         assertEquals( result, PagePermission.impliedMask( PagePermission.DELETE_MASK ) );
 
-        result = ( PagePermission.RENAME_MASK | PagePermission.MODIFY_MASK | PagePermission.EDIT_MASK 
-                | PagePermission.COMMENT_MASK | PagePermission.UPLOAD_MASK | PagePermission.VIEW_MASK );
+        result = ( PagePermission.RENAME_MASK | PagePermission.EDIT_MASK | PagePermission.COMMENT_MASK 
+                | PagePermission.VIEW_MASK );
         assertEquals( result, PagePermission.impliedMask( PagePermission.RENAME_MASK ) );
         
         result = ( PagePermission.MODIFY_MASK | PagePermission.EDIT_MASK | PagePermission.COMMENT_MASK
