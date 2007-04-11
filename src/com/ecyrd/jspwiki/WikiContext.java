@@ -101,6 +101,9 @@ public class WikiContext
     /** User is preparing to log out. */
     public static final String    LOGOUT   = WikiCommand.LOGOUT.getRequestContext();
 
+    /** JSPWiki wants to display a message. */
+    public static final String    MESSAGE  = WikiCommand.MESSAGE.getRequestContext();
+    
     /** User is viewing a DIFF between the two versions of the page. */
     public static final String    DIFF     = PageCommand.DIFF.getRequestContext();
 
@@ -314,11 +317,10 @@ public class WikiContext
      *  you should consider what you want to do - do you wish to really reference
      *  the "master" page or the included page.
      *
-     *  @see InsertPageTag
-     *   
      *  @param page  The real page which is being rendered.
-     *  @since 2.3.14
      *  @return The previous real page
+     *  @since 2.3.14
+     *  @see com.ecyrd.jspwiki.tags.InsertPageTag
      */
     public WikiPage setRealPage( WikiPage page )
     {
@@ -342,8 +344,8 @@ public class WikiContext
      *  will return "LeftMenu".
      *  
      *  @return A reference to the real page.
-     *  @see InsertPageTag
-     *  @see JSPWikiMarkupParser
+     *  @see com.ecyrd.jspwiki.tags.InsertPageTag
+     *  @see com.ecyrd.jspwiki.parser.JSPWikiMarkupParser
      */
     public WikiPage getRealPage()
     {

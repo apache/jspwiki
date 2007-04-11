@@ -36,6 +36,9 @@ public class WikiCommand extends AbstractCommand
     public static final Command LOGOUT
         = new WikiCommand( "logout", "%uLogout.jsp", null, null, WikiPermission.LOGIN_ACTION );
 
+    public static final Command MESSAGE
+        = new WikiCommand( "message", "%uMessage.jsp", "DisplayMessage.jsp", null, null );
+    
     public static final Command PREFS
         = new WikiCommand( "prefs", "%uUserPreferences.jsp", "PreferencesContent.jsp", null, WikiPermission.EDIT_PROFILE_ACTION );
 

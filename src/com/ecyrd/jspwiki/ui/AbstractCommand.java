@@ -35,6 +35,7 @@ public abstract class AbstractCommand implements Command
         WikiCommand.INSTALL, 
         WikiCommand.LOGIN, 
         WikiCommand.LOGOUT, 
+        WikiCommand.MESSAGE, 
         WikiCommand.PREFS, 
         WikiCommand.WORKFLOW,
         WikiCommand.ADMIN,
