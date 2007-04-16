@@ -1,11 +1,19 @@
-<%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
-
+<script language="JavaScript">
+  function SubmitOutcomeIfSelected(selectId) 
+  {
+    if ( selectId.selectedIndex > 0 )
+    {
+      // alert(selectId.selectedIndex);
+      selectId.form.submit();
+    }
+  }
+</script>
 <%
   int i = 0;
   String evenOdd;
@@ -51,15 +59,16 @@
           </td>
           <!-- Possible actions (outcomes) -->
           <td align="left">
-            <c:forEach var="outcome" items="${decision.availableOutcomes}">
-              <form id="<c:out value="decision.${decision.id}.${outcome.messageKey}"/>" 
-                action="<wiki:Link jsp="Workflow.jsp" format="url"/>" method="POST" accept-charset="UTF-8">
-                <input type="submit" name="submit" value="<fmt:message key="${outcome.messageKey}" />" />
-                <input type="hidden" name="action" value="decide" />
-                <input type="hidden" name="outcome" value="<c:out value="${outcome.messageKey}" />" />
-                <input type="hidden" name="id" value="<c:out value="${decision.id}" />" />
-              </form>
-            </c:forEach>
+            <form id="<c:out value="decision.${decision.id}"/>" 
+              action="<wiki:Link jsp="Workflow.jsp" format="url"/>" method="POST" accept-charset="UTF-8">
+              <input type="hidden" name="action" value="decide" />
+              <input type="hidden" name="id" value="<c:out value="${decision.id}" />" />
+              <select name="outcome" onchange="SubmitOutcomeIfSelected(this)">
+                <option value="-"><fmt:message key="select.one"/></option>
+                <c:forEach var="outcome" items="${decision.availableOutcomes}"><option value="${outcome.messageKey}"><fmt:message key="${outcome.messageKey}"/></option>
+                </c:forEach>
+              </select>
+            </form>
           </td>
           <!-- Requester -->
           <td align="left"><c:out value="${decision.owner.name}"/></td>
