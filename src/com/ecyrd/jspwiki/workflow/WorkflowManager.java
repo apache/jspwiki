@@ -53,11 +53,11 @@ public class WorkflowManager implements WikiEventListener
      * @param workflow
      *            the workflow to start
      */
-    public void start(Workflow workflow) throws WikiException
+    public void start( Workflow workflow ) throws WikiException
     {
-        m_workflows.add(workflow);
-        workflow.setWorkflowManager(this);
-        workflow.setId(nextId());
+        m_workflows.add( workflow );
+        workflow.setWorkflowManager( this );
+        workflow.setId( nextId() );
         workflow.start();
     }
 
@@ -68,7 +68,7 @@ public class WorkflowManager implements WikiEventListener
      */
     public Collection getWorkflows()
     {
-        return new HashSet(m_workflows);
+        return new HashSet( m_workflows );
     }
     
     /**
@@ -76,7 +76,7 @@ public class WorkflowManager implements WikiEventListener
      * @return the finished workflows
      */
     public List getCompletedWorkflows() {
-        return new ArrayList(m_completed);
+        return new ArrayList( m_completed );
     }
 
     private WikiEngine m_engine = null;
@@ -90,27 +90,27 @@ public class WorkflowManager implements WikiEventListener
      * @param props
      *            the wiki engine's properties
      */
-    public void initialize(WikiEngine engine, Properties props)
+    public void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
 
         // Identify the workflows requiring approvals
-        for (Iterator it = props.keySet().iterator(); it.hasNext();)
+        for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
         {
             String prop = (String) it.next();
-            if (prop.startsWith(PROPERTY_APPROVER_PREFIX))
+            if ( prop.startsWith( PROPERTY_APPROVER_PREFIX ) )
             {
 
                 // For the key, everything after the prefix is the workflow name
-                String key = prop.substring(PROPERTY_APPROVER_PREFIX.length());
-                if (key != null && key.length() > 0)
+                String key = prop.substring( PROPERTY_APPROVER_PREFIX.length() );
+                if ( key != null && key.length() > 0 )
                 {
 
                     // Only use non-null/non-blank approvers
-                    String approver = props.getProperty(prop);
-                    if (approver != null && approver.length() > 0)
+                    String approver = props.getProperty( prop );
+                    if ( approver != null && approver.length() > 0 )
                     {
-                        m_approvers.put(key, new UnresolvedPrincipal(approver));
+                        m_approvers.put( key, new UnresolvedPrincipal( approver ) );
                     }
                 }
             }
@@ -126,9 +126,9 @@ public class WorkflowManager implements WikiEventListener
      *            {@link Workflow#getMessageKey()}.
      * @return the result
      */
-    public boolean requiresApproval(String messageKey)
+    public boolean requiresApproval( String messageKey )
     {
-        return (m_approvers.containsKey(messageKey));
+        return ( m_approvers.containsKey( messageKey ) );
     }
 
     /**
@@ -141,28 +141,28 @@ public class WorkflowManager implements WikiEventListener
      * @return the actor who approves Decisions
      * @throws WikiException
      */
-    public Principal getApprover(String messageKey) throws WikiException
+    public Principal getApprover( String messageKey ) throws WikiException
     {
-        Principal approver = (Principal) m_approvers.get(messageKey);
-        if (approver == null)
+        Principal approver = (Principal) m_approvers.get( messageKey );
+        if ( approver == null )
         {
-            throw new WikiException("Workflow '" + messageKey + "' does not require approval.");
+            throw new WikiException( "Workflow '" + messageKey + "' does not require approval." );
         }
 
         // Try to resolve UnresolvedPrincipals
-        if (approver instanceof UnresolvedPrincipal)
+        if ( approver instanceof UnresolvedPrincipal )
         {
             String name = approver.getName();
-            approver = m_engine.getAuthorizationManager().resolvePrincipal(name);
+            approver = m_engine.getAuthorizationManager().resolvePrincipal( name );
 
             // If still unresolved, throw exception; otherwise, freshen our
             // cache
-            if (approver instanceof UnresolvedPrincipal)
+            if ( approver instanceof UnresolvedPrincipal )
             {
-                throw new WikiException("Workflow approver '" + name + "' count not be resolved.");
+                throw new WikiException( "Workflow approver '" + name + "' cannot not be resolved." );
             }
             
-            m_approvers.put(messageKey, approver);
+            m_approvers.put( messageKey, approver );
         }
         return approver;
     }
@@ -174,9 +174,9 @@ public class WorkflowManager implements WikiEventListener
      */
     protected WikiEngine getEngine()
     {
-        if (m_engine == null)
+        if ( m_engine == null )
         {
-            throw new IllegalStateException("WikiEngine cannot be null; please initialize WorkflowManager first.");
+            throw new IllegalStateException( "WikiEngine cannot be null; please initialize WorkflowManager first." );
         }
         return m_engine;
     }
@@ -216,15 +216,15 @@ public class WorkflowManager implements WikiEventListener
      */
     public Collection getOwnerWorkflows(WikiSession session) {
         List workflows = new ArrayList();
-        if (session.isAuthenticated())
+        if ( session.isAuthenticated() )
         {
             Principal[] sessionPrincipals = session.getPrincipals();
-            for (Iterator it = m_workflows.iterator(); it.hasNext();) {
+            for ( Iterator it = m_workflows.iterator(); it.hasNext(); ) {
                 Workflow w = (Workflow)it.next();
                 Principal owner = w.getOwner();
-                for (int i = 0; i < sessionPrincipals.length; i++) {
-                    if (sessionPrincipals[i].equals(owner)) {
-                        workflows.add(w);
+                for ( int i = 0; i < sessionPrincipals.length; i++ ) {
+                    if ( sessionPrincipals[i].equals(owner) ) {
+                        workflows.add( w );
                         break;
                     }
                 }
@@ -247,19 +247,19 @@ public class WorkflowManager implements WikiEventListener
         if (event instanceof WorkflowEvent)
         {
             Workflow workflow = (Workflow) event.getSource();
-            switch (event.getType())
+            switch ( event.getType() )
             {
                 case WorkflowEvent.ABORTED:
                     // Remove from manager
-                    remove(workflow);
+                    remove( workflow );
                     break;
                 case WorkflowEvent.COMPLETED:
                     // Remove from manager
-                    remove(workflow);
+                    remove( workflow );
                     break;
                 case WorkflowEvent.CREATED:
                     // Add to manager
-                    add(workflow);
+                    add( workflow );
                     break;
             }
         }
@@ -273,17 +273,17 @@ public class WorkflowManager implements WikiEventListener
      * @param workflow
      *            the workflow to add
      */
-    protected synchronized void add(Workflow workflow)
+    protected synchronized void add( Workflow workflow )
     {
-        if (workflow.getWorkflowManager() == null)
+        if ( workflow.getWorkflowManager() == null )
         {
-            workflow.setWorkflowManager(this);
+            workflow.setWorkflowManager( this );
         }
-        if (workflow.getId() == Workflow.ID_NOT_SET)
+        if ( workflow.getId() == Workflow.ID_NOT_SET )
         {
-            workflow.setId(nextId());
+            workflow.setId( nextId() );
         }
-        m_workflows.add(workflow);
+        m_workflows.add( workflow );
     }
 
     /**
@@ -297,8 +297,8 @@ public class WorkflowManager implements WikiEventListener
     protected synchronized void remove(Workflow workflow)
     {
         if ( m_workflows.contains( workflow ) ) {
-            m_workflows.remove(workflow);
-            m_completed.add(workflow);
+            m_workflows.remove( workflow );
+            m_completed.add( workflow );
         }
     }
 }
