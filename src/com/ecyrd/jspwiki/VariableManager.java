@@ -348,7 +348,7 @@ public class VariableManager
             //
 
             HttpServletRequest req = context.getHttpRequest();
-            if( req != null )
+            if( req != null && req.getSession() != null )
             {
                 HttpSession session = req.getSession();
 
