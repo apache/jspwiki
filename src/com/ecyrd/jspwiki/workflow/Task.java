@@ -21,6 +21,25 @@ public abstract class Task extends AbstractStep
     private Step m_successor = null;
 
     /**
+     * Protected constructor that creates a new Task with a specified message key. 
+     * After construction, the protected method {@link #setWorkflow(Workflow)} should be 
+     * called.
+     * 
+     * @param messageKey
+     *            the Step's message key, such as
+     *            <code>decision.editPageApproval</code>. By convention, the
+     *            message prefix should be a lower-case version of the Step's
+     *            type, plus a period (<em>e.g.</em>, <code>task.</code>
+     *            and <code>decision.</code>).
+     */
+    public Task( String messageKey )
+    {
+        super( messageKey );
+        super.addSuccessor(Outcome.STEP_COMPLETE, null);
+        super.addSuccessor(Outcome.STEP_ABORT, null);
+    }
+    
+    /**
      * Constructs a new instance of a Task, with an associated Workflow and
      * message key.
      * 
@@ -31,9 +50,8 @@ public abstract class Task extends AbstractStep
      */
     public Task(Workflow workflow, String messageKey)
     {
-        super(workflow, messageKey);
-        super.addSuccessor(Outcome.STEP_COMPLETE, null);
-        super.addSuccessor(Outcome.STEP_ABORT, null);
+        this( messageKey );
+        setWorkflow( workflow );
     }
 
     public final Principal getActor()

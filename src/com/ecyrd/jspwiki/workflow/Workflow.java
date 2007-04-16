@@ -543,7 +543,9 @@ public class Workflow
     /**
      * Restarts the Workflow from the {@link #WAITING} state and puts it into
      * the {@link #RUNNING} state again. If the Workflow had not previously been
-     * paused, this method throws an IllegalStateException.
+     * paused, this method throws an IllegalStateException. If any of the 
+     * Steps in this Workflow throw a WikiException, the Workflow will abort
+     * and propagate the exception to callers.
      * 
      * @throws IllegalStateException
      *             if the Workflow has not previously been paused
@@ -572,8 +574,10 @@ public class Workflow
     }
 
     /**
-     * Associates an Object with this Workflow, as a named attribute. The passed
-     * Object can be anything required by an executing Step.
+     * Temporarily associates an Object with this Workflow, as a named attribute, for the
+     * duration of workflow execution. The passed Object can be anything required by
+     * an executing Step. Note that when the workflow completes or aborts, all 
+     * attributes will be cleared.
      * 
      * @param attr
      *            the attribute name
@@ -629,7 +633,9 @@ public class Workflow
     /**
      * Starts the Workflow and sets the state to {@link #RUNNING}. If the
      * Workflow has already been started (or previously aborted), this method
-     * returns an {@linkplain IllegalStateException}.
+     * returns an {@linkplain IllegalStateException}. If any of the 
+     * Steps in this Workflow throw a WikiException, the Workflow will abort
+     * and propagate the exception to callers.
      * 
      * @throws IllegalStateException
      *             if the Workflow has already been started
@@ -724,8 +730,9 @@ public class Workflow
 
     /**
      * Protected method that processes the current Step by calling
-     * {@link Step#execute()}. Any exceptions thrown by the <code>execute</code>
-     * method will be propagated immediately to callers.
+     * {@link Step#execute()}. If the <code>execute</code> throws an
+     * exception, this method will propagate the exception immediately 
+     * to callers without aborting.
      */
     protected final void processCurrentStep() throws WikiException
     {
@@ -753,8 +760,7 @@ public class Workflow
             }
             catch (WikiException e)
             {
-                abort();
-                break;
+                throw e;
             }
 
             // Get the execution Outcome; if not complete, pause workflow and

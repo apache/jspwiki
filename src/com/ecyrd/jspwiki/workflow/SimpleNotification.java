@@ -2,6 +2,8 @@ package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
 
+import com.ecyrd.jspwiki.WikiException;
+
 /**
  * Decision subclass used for notifications that includes only one available Outcome:
  * {@link Outcome#DECISION_ACKNOWLEDGE}. The Decision is not reassignable, and
@@ -31,6 +33,15 @@ public final class SimpleNotification extends Decision
     public SimpleNotification(Workflow workflow, String messageKey, Principal actor)
     {
         super(workflow, messageKey, actor, Outcome.DECISION_ACKNOWLEDGE);
+    }
+    
+    /**
+     * Convenience method that simply calls {@link #decide(Outcome)} 
+     * with the value {@link Outcome#DECISION_ACKNOWLEDGE}.
+     */
+    public void acknowledge() throws WikiException
+    {
+        this.decide( Outcome.DECISION_ACKNOWLEDGE );
     }
 
     /**

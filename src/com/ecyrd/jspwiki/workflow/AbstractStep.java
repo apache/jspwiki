@@ -28,13 +28,37 @@ public abstract class AbstractStep implements Step
 
     private final Map m_successors;
 
-    private final Workflow m_workflow;
+    private Workflow m_workflow;
 
     private Outcome m_outcome;
 
     private final List m_errors;
 
     private boolean m_started;
+
+    /**
+     * Protected constructor that creates a new Step with a specified message key. 
+     * After construction, the protected method {@link #setWorkflow(Workflow)} should be 
+     * called.
+     * 
+     * @param messageKey
+     *            the Step's message key, such as
+     *            <code>decision.editPageApproval</code>. By convention, the
+     *            message prefix should be a lower-case version of the Step's
+     *            type, plus a period (<em>e.g.</em>, <code>task.</code>
+     *            and <code>decision.</code>).
+     */
+    protected AbstractStep( String messageKey )
+    {
+        m_started = false;
+        m_start = Workflow.TIME_NOT_SET;
+        m_completed = false;
+        m_end = Workflow.TIME_NOT_SET;
+        m_errors = new ArrayList();
+        m_outcome = Outcome.STEP_CONTINUE;
+        m_key = messageKey;
+        m_successors = new LinkedHashMap();
+    }
 
     /**
      * Constructs a new Step belonging to a specified Workflow and having a
@@ -49,33 +73,26 @@ public abstract class AbstractStep implements Step
      *            type, plus a period (<em>e.g.</em>, <code>task.</code>
      *            and <code>decision.</code>).
      */
-    public AbstractStep(Workflow workflow, String messageKey)
+    public AbstractStep( Workflow workflow, String messageKey )
     {
-        m_started = false;
-        m_start = Workflow.TIME_NOT_SET;
-        m_completed = false;
-        m_end = Workflow.TIME_NOT_SET;
-        m_errors = new ArrayList();
-        m_workflow = workflow;
-        m_outcome = Outcome.STEP_CONTINUE;
-        m_key = messageKey;
-        m_successors = new LinkedHashMap();
+        this( messageKey );
+        setWorkflow( workflow );
     }
 
     public final void addSuccessor(Outcome outcome, Step step)
     {
-        m_successors.put(outcome, step);
+        m_successors.put( outcome, step );
     }
 
     public final Collection getAvailableOutcomes()
     {
         Set outcomes = m_successors.keySet();
-        return Collections.unmodifiableCollection(outcomes);
+        return Collections.unmodifiableCollection( outcomes );
     }
 
     public final List getErrors()
     {
-        return Collections.unmodifiableList(m_errors);
+        return Collections.unmodifiableList( m_errors );
     }
 
     public abstract Outcome execute() throws WikiException;
@@ -89,7 +106,7 @@ public abstract class AbstractStep implements Step
 
     public final Object[] getMessageArguments()
     {
-        if (m_workflow == null) {
+        if ( m_workflow == null ) {
             return new Object[0];
         }
         return m_workflow.getMessageArguments();
@@ -107,7 +124,7 @@ public abstract class AbstractStep implements Step
 
     public Principal getOwner()
     {
-        if (m_workflow == null) {
+        if ( m_workflow == null ) {
             return null;
         }
         return m_workflow.getOwner();
@@ -136,43 +153,50 @@ public abstract class AbstractStep implements Step
     public final synchronized void setOutcome(Outcome outcome)
     {
         // Is this an allowed Outcome?
-        if (!m_successors.containsKey(outcome)) {
-            if (!Outcome.STEP_CONTINUE.equals(outcome) &&
-                !Outcome.STEP_ABORT.equals(outcome)) {
-                throw new IllegalArgumentException("Outcome " + outcome.getMessageKey() + " is not supported for this Step.");
+        if ( !m_successors.containsKey( outcome ) ) {
+            if ( !Outcome.STEP_CONTINUE.equals( outcome ) &&
+                 !Outcome.STEP_ABORT.equals( outcome ) ) {
+                 throw new IllegalArgumentException( "Outcome " + outcome.getMessageKey() + " is not supported for this Step." );
             }
         }
         
         // Is this a "completion" outcome?
-        if (outcome.isCompletion())
+        if ( outcome.isCompletion() )
         {
-            if (m_completed)
+            if ( m_completed )
             {
-                throw new IllegalStateException("Step has already been marked complete; cannot set again.");
+                throw new IllegalStateException( "Step has already been marked complete; cannot set again." );
             }
             m_completed = true;
-            m_end = new Date(System.currentTimeMillis());
+            m_end = new Date( System.currentTimeMillis() );
         }
         m_outcome = outcome;
     }
     
     public final synchronized void start() throws WikiException
     {
-        if (m_started)
+        if ( m_started )
         {
-            throw new IllegalStateException("Step already started.");
+            throw new IllegalStateException( "Step already started." );
         }
         m_started = true;
-        m_start = new Date(System.currentTimeMillis());
+        m_start = new Date( System.currentTimeMillis() );
     }
 
-    public final Step getSuccessor(Outcome outcome)
+    public final Step getSuccessor( Outcome outcome )
     {
-        return (Step) m_successors.get(outcome);
+        return (Step) m_successors.get( outcome );
     }
     
     // --------------------------Helper methods--------------------------
 
+    /**
+     * Protected method that sets the parent Workflow post-construction.
+     */
+    protected synchronized final void setWorkflow( Workflow workflow ) 
+    {
+        m_workflow = workflow;
+    }
 
     /**
      * Protected helper method that adds a String representing an error message
@@ -181,9 +205,9 @@ public abstract class AbstractStep implements Step
      * @param message
      *            the error message
      */
-    protected synchronized final void addError(String message)
+    protected synchronized final void addError( String message )
     {
-        m_errors.add(message);
+        m_errors.add( message );
     }
 
 }

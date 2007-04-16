@@ -20,18 +20,23 @@
 package com.ecyrd.jspwiki;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.*;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
+import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
+import com.ecyrd.jspwiki.workflow.Outcome;
+import com.ecyrd.jspwiki.workflow.Task;
+import com.ecyrd.jspwiki.workflow.Workflow;
 
 /**
  *  Manages the WikiPages.  This class functions as an unified interface towards
@@ -51,6 +56,16 @@ public class PageManager extends ModuleManager
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
+    public static final String PRESAVE_TASK_MESSAGE_KEY = "task.preSaveWikiPage";
+    public static final String PRESAVE_WIKI_CONTEXT = "wikiContext";
+    public static final String SAVE_APPROVER = "workflow.saveWikiPage";
+    public static final String SAVE_DECISION_MESSAGE_KEY = "decision.saveWikiPage";
+    public static final String SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
+    public static final String SAVE_TASK_MESSAGE_KEY = "task.saveWikiPage";
+    public static final String FACT_PAGE_NAME = "fact.pageName";
+    public static final String FACT_DIFF_TEXT = "fact.diffText";
+    public static final String FACT_CURRENT_TEXT = "fact.currentText";
+    public static final String FACT_PROPOSED_TEXT = "fact.proposedText";
 
     static Logger log = Logger.getLogger( PageManager.class );
 
@@ -509,6 +524,102 @@ public class PageManager extends ModuleManager
         }
     }
 
+    // workflow task inner classes....................................................
+    
+    /**
+     * Inner class that handles the page pre-save actions. If the proposed page
+     * text is the same as the current version, the {@link #execute()} method
+     * returns {@link com.ecyrd.jspwiki.workflow.Outcome#STEP_ABORT}. Any
+     * WikiExceptions thrown by page filters will be re-thrown, and the workflow
+     * will abort.
+     * 
+     * @author Andrew Jaquith
+     */
+    public static class PreSaveWikiPageTask extends Task {
+        
+        private final WikiContext context;
+        private final String proposedText;
+        
+        public PreSaveWikiPageTask( WikiContext context, String proposedText )
+        {
+            super( PRESAVE_TASK_MESSAGE_KEY );
+            this.context = context;
+            this.proposedText = proposedText;
+        }
+
+        public Outcome execute() throws WikiException
+        {
+            // Retrieve attributes
+            WikiEngine engine = context.getEngine();
+            Workflow workflow = getWorkflow();
+
+            // Get the wiki page
+            WikiPage page = context.getPage();
+
+            // Figure out who the author was. Prefer the author
+            // set programmatically; otherwise get from the
+            // current logged in user
+            if ( page.getAuthor() == null )
+            {
+                Principal wup = context.getCurrentUser();
+
+                if ( wup != null )
+                    page.setAuthor( wup.getName() );
+            }
+
+            // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
+            String saveText;
+            try
+            {
+                saveText = engine.getFilterManager().doPreSaveFiltering( context, proposedText );
+            }
+            catch ( FilterException e )
+            {
+                throw e;
+            }
+
+            // Stash the wiki context, old and new text as workflow attributes
+            workflow.setAttribute( PRESAVE_WIKI_CONTEXT, context );
+            workflow.setAttribute( FACT_PROPOSED_TEXT, saveText );
+            return Outcome.STEP_COMPLETE;
+        }
+    }
+    
+    /**
+     * Inner class that handles the actual page save and post-save actions. Instances
+     * of this class are assumed to have been added to an approval workflow via
+     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)}; 
+     * they will not function correctly otherwise.
+     * 
+     * @author Andrew Jaquith
+     */
+    public static class SaveWikiPageTask extends Task
+    {
+        public SaveWikiPageTask()
+        {
+            super( SAVE_TASK_MESSAGE_KEY );
+        }
+
+        public Outcome execute() throws WikiException
+        {
+            // Retrieve attributes
+            WikiContext context = (WikiContext) getWorkflow().getAttribute( PRESAVE_WIKI_CONTEXT );
+            String proposedText = (String) getWorkflow().getAttribute( FACT_PROPOSED_TEXT );
+
+            WikiEngine engine = context.getEngine();
+            WikiPage page = context.getPage();
+
+            // Let the rest of the engine handle actual saving.
+            engine.getPageManager().putPageText( page, proposedText );
+
+            // Refresh the context for post save filtering.
+            page = engine.getPage( page.getName() );
+            engine.textToHTML( context, proposedText );
+            engine.getFilterManager().doPostSaveFiltering( context, proposedText );
+
+            return Outcome.STEP_COMPLETE;
+        }
+    }
 
     // events processing .......................................................
 

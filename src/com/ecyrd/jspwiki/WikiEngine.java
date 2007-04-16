@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.Principal;
 import java.util.*;
 
 import javax.servlet.ServletConfig;
@@ -49,6 +50,7 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
+import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -68,9 +70,7 @@ import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WatchDog;
-import com.ecyrd.jspwiki.workflow.Workflow;
-import com.ecyrd.jspwiki.workflow.WorkflowManager;
-import com.ecyrd.jspwiki.workflow.impl.SaveWikiPageWorkflow;
+import com.ecyrd.jspwiki.workflow.*;
 
 /**
  *  Provides Wiki services to the JSP page.
@@ -1491,18 +1491,59 @@ public class WikiEngine
 
     /**
      *  Writes the WikiText of a page into the
-     *  page repository.
+     *  page repository. If the <code>jspwiki.properties</code> file contains
+     *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and
+     *  its value resolves to a valid user, {@link com.ecyrd.jspwiki.auth.authorize.Group}
+     *  or {@link com.ecyrd.jspwiki.auth.authorize.Role}, this method will 
+     *  place a {@link com.ecyrd.jspwiki.workflow.Decision} in the approver's
+     *  workflow inbox and throw a {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}.
      *
      *  @since 2.1.28
      *  @param context The current WikiContext
      *  @param text    The Wiki markup for the page.
+     *  @throws WikiException if the save operation encounters an error during the
+     *  save operation
+     *  @throws DecisionRequiredException if the page save requires approval
      */
     public void saveText( WikiContext context, String text )
         throws WikiException
     {
-      // Create workflow for page save
-      Workflow workflow = new SaveWikiPageWorkflow(context, text);
-      m_workflowMgr.start(workflow);
+        // Check if page data actually changed; bail if not
+        WikiPage page = context.getPage();
+        String oldText = getPureText( page );
+        String proposedText = TextUtil.normalizePostData( text );
+        if ( oldText != null && oldText.equals( proposedText ) )
+        {
+            return;
+        }
+        
+        // Create approval workflow for page save; add the diffed, proposed
+        // and old text versions as Facts for the approver (if approval is required)
+        WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
+        Principal submitter = context.getCurrentUser();
+        Task prepTask = new PageManager.PreSaveWikiPageTask( context, proposedText );
+        Task completionTask = new PageManager.SaveWikiPageTask();
+        String diffText = m_differenceManager.makeDiff( oldText, proposedText );
+        Fact[] facts = new Fact[4];
+        facts[0] = new Fact( PageManager.FACT_PAGE_NAME, page.getName() );
+        facts[1] = new Fact( PageManager.FACT_DIFF_TEXT, diffText );
+        facts[2] = new Fact( PageManager.FACT_PROPOSED_TEXT, proposedText );
+        facts[3] = new Fact( PageManager.FACT_CURRENT_TEXT, oldText);
+        Workflow workflow = builder.buildApprovalWorkflow( submitter, 
+                                                           PageManager.SAVE_APPROVER, 
+                                                           prepTask, 
+                                                           PageManager.SAVE_DECISION_MESSAGE_KEY, 
+                                                           facts, 
+                                                           completionTask, 
+                                                           PageManager.SAVE_REJECT_MESSAGE_KEY );
+        m_workflowMgr.start(workflow);
+        
+        // Let callers know if the page-save requires approval
+        if ( workflow.getCurrentStep() instanceof Decision )
+        {
+            throw new RedirectException( "Approval required.", 
+                                         context.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges") );
+        }
     }
 
     /**
