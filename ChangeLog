@@ -1,3 +1,30 @@
+2007-04-15  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.43
+
+       * Many incremental changes to the workflow package to increase
+       ease of use. A new WorkflowBuilder class includes a factory method
+       for composing simple approval workflows. SaveWikiPageWorkflow and 
+       the workflow.impl package goes away, and instead the workflow code 
+       for saving pages moves to inner classes in PageManager (it is now
+       much smaller because it uses WorkflowBuilder).
+
+       * Unit tests for the page-save workflow now simulate PageFilter failures
+       so that proper propagation of exceptions is verified. Should help Janne a lot.
+
+       * Workflow.jsp receives minor UI tweaks, notably the replacement of submit
+       buttons with a JavaScript-driven dropdown. The default.properties
+       localization file receives properties in preparation for the new user profile
+       workflow (not checked in yet, because it isn't debugged).
+
+       * The UI for approving workflows currently contains a nasty, intermittent NPE
+       that is resisting my best efforts to debug. It usually occurs when selecting
+       the 'approve' option. It results in Decisions being removed from the workflow 
+       inbox, and the page does save correctly -- so it is essentially "cosmetic".
+       However, it's ugly and we need to fix it. Assistance is most welcome.
+
+       * If you are a US citizen, it is that time of year again. Many happy returns.
+
 2007-04-09  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.42
