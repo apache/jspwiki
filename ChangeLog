@@ -1,5 +1,16 @@
 2007-04-15  Andrew Jaquith <andrew AT freshcookies DOT org>
 
+       * 2.5.44
+
+       * Found the b*****d. VariableManager makes an unsafe assumption
+       that WikiContexts will always have an associated request and HttpSession.
+       This isn't always true with a WikiContext passed along in a Workflow,
+       which will come from an earlier point in, and from a potentiallly different,
+       Http session. We now check explictly for the presence of the HttpSession
+       before querying it for wiki variables.
+
+2007-04-15  Andrew Jaquith <andrew AT freshcookies DOT org>
+
        * 2.5.43
 
        * Many incremental changes to the workflow package to increase
