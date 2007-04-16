@@ -238,7 +238,7 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  @param engine The WikiEngine this reader is attached to.  Is
+     *  @param m_engine The WikiEngine this reader is attached to.  Is
      * used to figure out of a page exits.
      */
 
