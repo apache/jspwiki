@@ -84,8 +84,8 @@ public interface Step
      * {@link Outcome#STEP_ABORT}). Processing instructions can do just about
      * anything, such as executing custom business logic or changing the Step's
      * final outcome via {@link #setOutcome(Outcome)}. A return value of
-     * <code>true</code> indicates that the instructions executed completely,
-     * without errors; <code>false</code> indicates that the Step and its
+     * <code>STEP_COMPLETE</code> indicates that the instructions executed completely,
+     * without errors; <code>STEP_ABORT</code> indicates that the Step and its
      * parent Workflow should be aborted (that is, fail silently without error).
      * If the execution step encounters any errors, it should throw a
      * WikiException or a subclass.
