@@ -22,6 +22,7 @@ public class TestEngine extends WikiEngine
     private HttpSession m_janneSession;
     private WikiSession m_adminWikiSession;
     private WikiSession m_janneWikiSession;
+    private WikiSession m_guestWikiSession;
     
     /**
      * Creates WikiSession with the privileges of the administrative user.
@@ -30,6 +31,15 @@ public class TestEngine extends WikiEngine
      */
     public WikiSession adminSession() {
         return m_adminWikiSession;
+    }
+    
+    /**
+     * Creates guest WikiSession with the no privileges.
+     * For testing purposes, obviously.
+     * @return the wiki session
+     */
+    public WikiSession guestSession() {
+        return m_guestWikiSession;
     }
     
     /**
@@ -63,6 +73,11 @@ public class TestEngine extends WikiEngine
                 Users.JANNE, 
                 Users.JANNE_PASS );
         m_janneSession = request.getSession();
+        
+        // Set up guest session
+        request = new TestHttpServletRequest();
+        request.setRemoteAddr( "42.22.17.8" );
+        m_guestWikiSession = WikiSession.getWikiSession( this, request );
     }
 
     public static void emptyWorkDir()
