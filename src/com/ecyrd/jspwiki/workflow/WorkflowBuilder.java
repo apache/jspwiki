@@ -151,7 +151,10 @@ public class WorkflowBuilder
         }
 
         // Make sure our tasks have this workflow as the parent, then return
-        prepTask.setWorkflow( workflow );
+        if ( prepTask != null ) 
+        {
+            prepTask.setWorkflow( workflow );
+        }
         completionTask.setWorkflow( workflow );
         return workflow;
     }

@@ -26,6 +26,10 @@ public final class Fact
      */
     public Fact(String messageKey, Object value)
     {
+        if ( messageKey == null || value == null )
+        {
+            throw new IllegalArgumentException( "Fact message key or value parameters must not be null." );
+        }
         m_key = messageKey;
         m_obj = value;
     }
@@ -38,6 +42,22 @@ public final class Fact
     public Object getValue()
     {
         return m_obj;
+    }
+    
+    public boolean equals( Object obj )
+    {
+        if ( !( obj instanceof Fact ) ) 
+        {
+            return false;
+        }
+        
+        Fact f = (Fact)obj;
+        return ( m_key.equals( f.m_key) && m_obj.equals( f.m_obj ) );
+    }
+    
+    public int hashCode()
+    {
+        return m_key.hashCode() + 41 * m_obj.hashCode();
     }
 
     /**
