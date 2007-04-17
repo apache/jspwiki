@@ -1,3 +1,18 @@
+2007-04-17  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.45
+
+       * Checked in workflow support for user profile creation. Now, new profiles
+       can be routed for approval before they become active. The name of the user, 
+       role or group that approves new profiles is contained in jspwiki.properties
+       under the property jspwiki.approver.workflow.createUserProfile. If not
+       supplied (the default), user profiles are created without requiring approval.
+
+       * UserManager receives a proper unit test, at long last. We test with
+       approval workflows turned on and off.
+
+       * Minor bug fixes to the Fact and WorkflowBuilder classes.
+
 2007-04-15  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.44
