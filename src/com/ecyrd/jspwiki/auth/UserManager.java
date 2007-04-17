@@ -29,11 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
 import com.ecyrd.jspwiki.auth.user.DuplicateUserException;
@@ -42,8 +38,10 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.workflow.*;
 
 /**
  * Provides a facade for obtaining user information.
@@ -56,7 +54,17 @@ public final class UserManager
     
     private static final Logger log = Logger.getLogger(UserManager.class);
 
-    private static final String PROP_DATABASE = "jspwiki.userdatabase";
+    public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
+    private static final String PROP_DATABASE               = "jspwiki.userdatabase";
+    protected static final String SAVE_TASK_MESSAGE_KEY     = "task.createUserProfile";
+    protected static final String SAVED_PROFILE             = "userProfile";
+    protected static final String SAVE_DECISION_MESSAGE_KEY = "decision.createUserProfile";
+    protected static final String SAVE_REJECT_MESSAGE_KEY   = "notification.createUserProfile.reject";
+    protected static final String FACT_SUBMITTER            = "fact.submitter";
+    protected static final String PREFS_LOGIN_NAME          = "prefs.loginname";
+    protected static final String PREFS_WIKI_NAME           = "prefs.wikiname";
+    protected static final String PREFS_FULL_NAME           = "prefs.fullname";
+    protected static final String PREFS_EMAIL               = "prefs.email";
 
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
@@ -235,9 +243,15 @@ public final class UserManager
      * </p>
      * @param session the wiki session, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
+     * @throws RedirectException if the user profile must be approved before it can be saved
+     * @throws DuplicateUserException if the proposed profile's login name, full name 
+     * @throws WikiSecurityException if the current user does not have permission to save the profile
+     * @throws WikiException if approval is required, but this method cannot create a workflow for
+     * some reason; this is not normal, and indicates mis-configuration
+     * or wiki name collides with that of another user
      */
     public final void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
-            DuplicateUserException
+            DuplicateUserException, WikiException
     {
         // Verify user is allowed to save profile!
         Permission p = new WikiPermission( m_engine.getApplicationName(), "editProfile" );
@@ -286,27 +300,75 @@ public final class UserManager
         {
         }
 
-        // Save the profile (userdatabase will take care of timestamps for us)
-        m_database.save( profile );
-        m_database.commit();
-
-        // If the profile is new, log the user in
-        // This will cause all credentials to be reloaded
-        try
+        // For new accounts, create approval workflow for user profile save.
+        if ( newProfile && oldProfile.isNew() )
         {
-            AuthenticationManager mgr = m_engine.getAuthenticationManager();
-            if ( newProfile && !mgr.isContainerAuthenticated() )
+            WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
+            Principal submitter = session.getUserPrincipal();
+            Task completionTask = new SaveUserProfileTask( m_database );
+            
+            // Add user profile attribute as Facts for the approver (if required)
+            boolean hasEmail = ( profile.getEmail() != null );
+            Fact[] facts = new Fact[ hasEmail ? 5 : 4];
+            facts[0] = new Fact( PREFS_FULL_NAME, profile.getFullname() );
+            facts[1] = new Fact( PREFS_WIKI_NAME, profile.getWikiName() );
+            facts[2] = new Fact( PREFS_LOGIN_NAME, profile.getLoginName() );
+            facts[3] = new Fact( FACT_SUBMITTER, submitter.getName() );
+            if ( hasEmail )
             {
-                mgr.login( session, profile.getLoginName(), profile.getPassword() );
+                facts[4] = new Fact( PREFS_EMAIL, profile.getEmail() );
+            }
+            Workflow workflow = builder.buildApprovalWorkflow( submitter, 
+                                                               SAVE_APPROVER, 
+                                                               null, 
+                                                               SAVE_DECISION_MESSAGE_KEY, 
+                                                               facts, 
+                                                               completionTask, 
+                                                               SAVE_REJECT_MESSAGE_KEY );
+            
+            workflow.setAttribute( SAVED_PROFILE, profile );
+            m_engine.getWorkflowManager().start(workflow);
+            
+            boolean approvalRequired = ( workflow.getCurrentStep() instanceof Decision );
+            
+            // If the profile requires approval, redirect user to message page
+            if ( approvalRequired )
+            {
+                throw new RedirectException( "Approval required.", 
+                                             m_engine.getURL(WikiContext.VIEW,"ApprovalRequiredForUserProfiles",null,true) );
+            }
+            
+            // If the profile doesn't need approval, then just log the user in
+            else
+            {
+                try
+                {
+                    AuthenticationManager mgr = m_engine.getAuthenticationManager();
+                    if ( newProfile && !mgr.isContainerAuthenticated() )
+                    {
+                        mgr.login( session, profile.getLoginName(), profile.getPassword() );
+                    }
+                }
+                catch ( WikiException e )
+                {
+                    throw new WikiSecurityException( e.getMessage() );
+                }
+                
+                // Alert all listeners that the profile changed...
+                // ...this will cause credentials to be reloaded in the wiki session
+                fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
             }
         }
-        catch ( WikiException e )
-        {
-            throw new WikiSecurityException( e.getMessage() );
-        }
         
-        // Alert all listeners that the profile changed
-        fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
+        // For existing accounts, just save the profile
+        else
+        {
+            // Save the profile (userdatabase will take care of timestamps for us)
+            // and reload credentials
+            m_database.save( profile );
+            m_database.commit();
+            fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
+        }
     }
 
     /**
@@ -528,7 +590,48 @@ public final class UserManager
         
     }
 
+    // workflow task inner classes....................................................
+    
+    /**
+     * Inner class that handles the actual profile save action. Instances
+     * of this class are assumed to have been added to an approval workflow via
+     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)}; 
+     * they will not function correctly otherwise.
+     * 
+     * @author Andrew Jaquith
+     */
+    public static class SaveUserProfileTask extends Task
+    {
+        private final UserDatabase m_db;
+        
+        /**
+         * Constructs a new Task for saving a user profile.
+         * @param db the user database
+         */
+        public SaveUserProfileTask( UserDatabase db )
+        {
+            super( SAVE_TASK_MESSAGE_KEY );
+            m_db = db;
+        }
 
+        /**
+         * Saves the user profile to the user database. The 
+         */
+        public Outcome execute() throws WikiException
+        {
+            // Retrieve user profile
+            UserProfile profile = (UserProfile) getWorkflow().getAttribute( SAVED_PROFILE );
+            
+            // Save the profile (userdatabase will take care of timestamps for us)
+            m_db.save( profile );
+            m_db.commit();
+
+            //TODO: send e-mail to address indicating success
+            
+            return Outcome.STEP_COMPLETE;
+        }
+    }
+    
     // events processing .......................................................
 
     /**

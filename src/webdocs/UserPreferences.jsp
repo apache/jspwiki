@@ -1,4 +1,5 @@
 <%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.VariableManager" %>
 <%@ page import="com.ecyrd.jspwiki.WikiContext" %>
 <%@ page import="com.ecyrd.jspwiki.WikiSession" %>
 <%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
@@ -7,6 +8,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.DuplicateUserException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.UserProfile" %>
+<%@ page import="com.ecyrd.jspwiki.filters.RedirectException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -43,6 +45,12 @@
             {
                 // User collision! (full name or wiki name already taken)
                 wikiSession.addMessage( "profile", e.getMessage() );
+            }
+            catch( RedirectException e )
+            {
+                session.setAttribute( VariableManager.VAR_MSG, e.getMessage() );
+                response.sendRedirect( e.getRedirect() );
+                return;
             }
             catch( WikiSecurityException e )
             {
