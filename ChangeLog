@@ -1,3 +1,12 @@
+2007-04-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.46 - my birthday release!
+       
+       * PermissionTag now allows a list of permissions just like
+       CheckRequestContextTag, as well as negative permissions.  Based
+       on an idea by Dirk Frederickx (whose last name I will learn to
+       spell one of these days).
+
 2007-04-17  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.45
