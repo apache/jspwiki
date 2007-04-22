@@ -41,7 +41,7 @@ import com.ecyrd.jspwiki.WikiException;
 public class ClassUtil
 {
     private static final Logger log = Logger.getLogger(ClassUtil.class);
-    private static final String MAPPINGS = "/ini/classmappings.xml";
+    protected static final String MAPPINGS = "/ini/classmappings.xml";
     
     private static Map c_classMappings = new Hashtable();
 

@@ -9,7 +9,6 @@ import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
 
 /**
  * This is a mock HttpSession implementation. It is used for testing.
@@ -104,7 +103,7 @@ public class TestHttpSession implements HttpSession
      * @see javax.servlet.http.HttpSession#getSessionContext()
      * @deprecated
      */
-    public HttpSessionContext getSessionContext()
+    public javax.servlet.http.HttpSessionContext getSessionContext()
     {
         return null;
     }

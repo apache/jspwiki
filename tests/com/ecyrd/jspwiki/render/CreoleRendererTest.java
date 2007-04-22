@@ -12,7 +12,6 @@ import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
-import com.ecyrd.jspwiki.parser.MarkupParserTest;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 
 public class CreoleRendererTest extends TestCase
