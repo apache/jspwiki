@@ -66,6 +66,7 @@ public class PageManager extends ModuleManager
     public static final String FACT_DIFF_TEXT = "fact.diffText";
     public static final String FACT_CURRENT_TEXT = "fact.currentText";
     public static final String FACT_PROPOSED_TEXT = "fact.proposedText";
+    public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
     static Logger log = Logger.getLogger( PageManager.class );
 

@@ -1496,14 +1496,15 @@ public class WikiEngine
      *  its value resolves to a valid user, {@link com.ecyrd.jspwiki.auth.authorize.Group}
      *  or {@link com.ecyrd.jspwiki.auth.authorize.Role}, this method will 
      *  place a {@link com.ecyrd.jspwiki.workflow.Decision} in the approver's
-     *  workflow inbox and throw a {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}.
+     *  workflow inbox and throw a {@link com.ecyrd.jspwiki.filters.RedirectException}.
+     *  If the submitting user is authenticated and the page save is rejected,
+     *  a notification will be placed in the user's decision queue.
      *
      *  @since 2.1.28
      *  @param context The current WikiContext
      *  @param text    The Wiki markup for the page.
      *  @throws WikiException if the save operation encounters an error during the
      *  save operation
-     *  @throws DecisionRequiredException if the page save requires approval
      */
     public void saveText( WikiContext context, String text )
         throws WikiException
@@ -1519,23 +1520,27 @@ public class WikiEngine
         
         // Create approval workflow for page save; add the diffed, proposed
         // and old text versions as Facts for the approver (if approval is required)
+        // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
         WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
         Principal submitter = context.getCurrentUser();
         Task prepTask = new PageManager.PreSaveWikiPageTask( context, proposedText );
         Task completionTask = new PageManager.SaveWikiPageTask();
         String diffText = m_differenceManager.makeDiff( oldText, proposedText );
-        Fact[] facts = new Fact[4];
+        boolean isAuthenticated = context.getWikiSession().isAuthenticated();
+        Fact[] facts = new Fact[5];
         facts[0] = new Fact( PageManager.FACT_PAGE_NAME, page.getName() );
         facts[1] = new Fact( PageManager.FACT_DIFF_TEXT, diffText );
         facts[2] = new Fact( PageManager.FACT_PROPOSED_TEXT, proposedText );
         facts[3] = new Fact( PageManager.FACT_CURRENT_TEXT, oldText);
+        facts[4] = new Fact( PageManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
+        String rejectKey = isAuthenticated ? PageManager.SAVE_REJECT_MESSAGE_KEY : null;
         Workflow workflow = builder.buildApprovalWorkflow( submitter, 
                                                            PageManager.SAVE_APPROVER, 
                                                            prepTask, 
                                                            PageManager.SAVE_DECISION_MESSAGE_KEY, 
                                                            facts, 
                                                            completionTask, 
-                                                           PageManager.SAVE_REJECT_MESSAGE_KEY );
+                                                           rejectKey );
         m_workflowMgr.start(workflow);
         
         // Let callers know if the page-save requires approval
