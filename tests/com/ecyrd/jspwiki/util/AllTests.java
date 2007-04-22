@@ -1,6 +1,7 @@
 
 package com.ecyrd.jspwiki.util;
 
+
 import junit.framework.*;
 
 public class AllTests extends TestCase
@@ -16,6 +17,7 @@ public class AllTests extends TestCase
 
         suite.addTest( ClassUtilTest.suite() );
         suite.addTest( CommentedPropertiesTest.suite() );
+        suite.addTest( MailUtilTest.suite() );
         suite.addTest( PriorityListTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         
