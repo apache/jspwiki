@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -41,6 +43,7 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.MailUtil;
 import com.ecyrd.jspwiki.workflow.*;
 
 /**
@@ -59,7 +62,6 @@ public final class UserManager
     protected static final String SAVE_TASK_MESSAGE_KEY     = "task.createUserProfile";
     protected static final String SAVED_PROFILE             = "userProfile";
     protected static final String SAVE_DECISION_MESSAGE_KEY = "decision.createUserProfile";
-    protected static final String SAVE_REJECT_MESSAGE_KEY   = "notification.createUserProfile.reject";
     protected static final String FACT_SUBMITTER            = "fact.submitter";
     protected static final String PREFS_LOGIN_NAME          = "prefs.loginname";
     protected static final String PREFS_WIKI_NAME           = "prefs.wikiname";
@@ -305,7 +307,7 @@ public final class UserManager
         {
             WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
             Principal submitter = session.getUserPrincipal();
-            Task completionTask = new SaveUserProfileTask( m_database );
+            Task completionTask = new SaveUserProfileTask( m_engine );
             
             // Add user profile attribute as Facts for the approver (if required)
             boolean hasEmail = ( profile.getEmail() != null );
@@ -324,7 +326,7 @@ public final class UserManager
                                                                SAVE_DECISION_MESSAGE_KEY, 
                                                                facts, 
                                                                completionTask, 
-                                                               SAVE_REJECT_MESSAGE_KEY );
+                                                               null );
             
             workflow.setAttribute( SAVED_PROFILE, profile );
             m_engine.getWorkflowManager().start(workflow);
@@ -603,15 +605,17 @@ public final class UserManager
     public static class SaveUserProfileTask extends Task
     {
         private final UserDatabase m_db;
+        private final WikiEngine m_engine;
         
         /**
          * Constructs a new Task for saving a user profile.
          * @param db the user database
          */
-        public SaveUserProfileTask( UserDatabase db )
+        public SaveUserProfileTask( WikiEngine engine )
         {
             super( SAVE_TASK_MESSAGE_KEY );
-            m_db = db;
+            m_engine = engine;
+            m_db = engine.getUserManager().getUserDatabase();
         }
 
         /**
@@ -626,7 +630,32 @@ public final class UserManager
             m_db.save( profile );
             m_db.commit();
 
-            //TODO: send e-mail to address indicating success
+            // Send e-mail if user supplied an e-mail address
+            if ( profile.getEmail() != null )
+            {
+                try 
+                {
+                    String app = m_engine.getApplicationName();
+                    String to = profile.getEmail();
+                    String subject = "Welcome to " + app;
+                    String content = "Congratulations! Your new profile on "
+                        + app + " has been created. Your profile details are as follows: \n\n"
+                        + "Login name: " + profile.getLoginName() + "\n"
+                        + "Your name : " + profile.getFullname() + "\n"
+                        + "Wiki name : " + profile.getWikiName() + "\n" 
+                        + "E-mail    : " + profile.getEmail() + "\n\n"
+                        + "If you forget your password, you can re-set it at "
+                        + m_engine.getBaseURL() + "\\LostPassword.jsp";
+                    MailUtil.sendMessage( m_engine, to, subject, content);
+                }
+                catch ( AddressException e) 
+                {
+                }
+                catch ( MessagingException e )
+                {
+                    log.error( "Could not send registration confirmation e-mail. Is the e-mail server running?" );
+                }
+            }
             
             return Outcome.STEP_COMPLETE;
         }
