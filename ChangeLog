@@ -1,3 +1,32 @@
+2007-04-23  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.47 aka the JavaMail refactoring release
+
+       * Enhancement: To increase security, MailUtil gains the ability to use
+       container-managed JNDI JavaMail session factories, in addition to the
+       standalone factory configured via jspwiki.properties. JNDI is now the 
+       preferred method of obtaining mail sessions, and will always be attempted
+       first before falling back to the stand-alone method. See the JavaDocs
+       for MailUtil. All of MailUtil's internal code, test properties
+       and JavaDocs were also totally refactored. A sample JNDI block for JavaMail
+       was added to web.xml; it is commented out by default.
+
+       * Enhancement LostPassword.jsp now uses POST for form submission.
+
+       * Enhancement: Profile registrations now automatically trigger an e-mail confirmation
+       to the user, if an e-mail address was supplied.
+
+       * Bug fix: page-save workflow does no longer sends rejection SimpleNotifications
+       to users unless they have already authenticated when they save the page.
+       Also, the submitter's authentication status is added as a Fact for the
+       approver to consider.
+
+       * WorkflowBuilder.buildApprovalWorkflow now interprets a null value for
+       the rejectedMessageKey parameter as meaning "don't send a notification"
+       upon rejection.
+
+       * MailTest moved to the *.util package, which was where it belonged.
+
 2007-04-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.46 - my birthday release!
