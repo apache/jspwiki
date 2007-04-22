@@ -80,6 +80,7 @@ public class WorkflowBuilder
      * not approved; for example, <code>notification.saveWikiPage.reject</code>. In the 
      * i18n message bundle file, this key might might return
      * text that reads "Your request to save page &lt;strong&gt;{2}&lt;/strong&gt; was rejected."
+     * If this parameter is <code>null</code>, no message will be sent
      * @return the created workflow
      * @throws WikiException if the name of the approving user, Role or Group cannot be determined
      */
@@ -119,8 +120,11 @@ public class WorkflowBuilder
             }
             
             // If rejected, sent a notification
-            SimpleNotification rejectNotification = new SimpleNotification( workflow, rejectedMessageKey, submitter );
-            decision.addSuccessor( Outcome.DECISION_DENY, rejectNotification );
+            if ( rejectedMessageKey != null ) 
+            {
+                SimpleNotification rejectNotification = new SimpleNotification( workflow, rejectedMessageKey, submitter );
+                decision.addSuccessor( Outcome.DECISION_DENY, rejectNotification );
+            }
             
             // If approved, run the 'approved' task
             decision.addSuccessor( Outcome.DECISION_APPROVE, completionTask );
