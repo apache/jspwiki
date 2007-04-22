@@ -170,7 +170,7 @@
       if (!done) {
       %>
       <div>Lost or forgot your password?  Enter your account name or email here:
-      <form>
+      <form method="POST" accept-charset="UTF-8">
         <input type="hidden" name="action" value="resetPassword"/>
         <input type="text" name="name"/>
         <input type="submit" name="Submit" value="Reset password!"/>
