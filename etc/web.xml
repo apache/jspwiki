@@ -232,6 +232,15 @@
    </resource-ref>
    REMOVE ME TO ENABLE JDBC DATABASE  -->
 
+   <!--  REMOVE ME TO ENABLE JAVAMAIL
+   <resource-ref>
+     <description>Resource reference to a container-managed JNDI JavaMail factory for sending e-mails.</description>
+     <res-ref-name>mail/Session</res-ref-name>
+     <res-type>javax.mail.Session</res-type>
+     <res-auth>Container</res-auth>
+   </resource-ref>
+   REMOVE ME TO ENABLE JAVAMAIL  -->
+
    <!--
        CONTAINER-MANAGED AUTHENTICATION & AUTHORIZATION
     

@@ -7,6 +7,8 @@ import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
@@ -14,232 +16,421 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**
- * Contains utilities for emailing.
- * 
- * @author Christoph Sauer, Dan Frankowski
+ * <p>Contains static methods for sending e-mails to recipients using JNDI-supplied
+ * <a href="http://java.sun.com/products/javamail/">JavaMail</a>
+ * Sessions supplied by a web container (preferred) or configured via 
+ * <code>jspwiki.properties</code>; both methods are described below. 
+ * Because most e-mail servers require authentication,
+ * for security reasons implementors are <em>strongly</em> encouraged to use
+ * container-managed JavaMail Sessions so that passwords are not exposed in
+ * <code>jspwiki.properties</code>.</p>
+ * <p>To enable e-mail functions within JSPWiki, administrators must do three things:
+ * ensure that the required JavaMail JARs are on the runtime classpath, configure
+ * JavaMail appropriately, and (recommdended) configure the JNDI JavaMail session factory.</p>
+ * <strong>JavaMail runtime JARs</strong>
+ * <p>The first step is easy: JSPWiki bundles
+ * recent versions of the required JavaMail <code>mail.jar</code> and 
+ * <code>activation.jar</code> into the JSPWiki WAR file; so, out of the box
+ * this is already taken care of. However, when using JNDI-supplied
+ * Session factories, these should be moved, <em>not copied</em>, to a classpath location
+ * where the JARs can be shared by both the JSPWiki webapp and the container. For example,
+ * Tomcat 5 provides the directory <code><var>$CATALINA_HOME></var>/common/lib</code>
+ * for storage of shared JARs; move <code>mail.jar</code> and <code>activation</code>
+ * there instead of keeping them in <code>/WEB-INF/lib</code>.</p>
+ * <strong>JavaMail configuration</strong>
+ * <p>Regardless of the method used for supplying JavaMail sessions (JNDI container-managed
+ * or via <code>jspwiki.properties</code>, JavaMail needs certain properties
+ * set in order to work correctly. Configurable properties are these:</p>
+ * <table border="1">
+ *   <tr>
+ *   <thead>
+ *     <th>Property</th>
+ *     <th>Default</th>
+ *     <th>Definition</th>
+ *   <thead>
+ *   </tr>
+ *   <tr>
+ *     <td><code>jspwiki.mail.jndiname</code></td>
+ *     <td><code>mail/Session</code></td>
+ *     <td>The JNDI name of the JavaMail session factory</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.host</code></td>
+ *     <td><code>127.0.0.1</code></td>
+ *     <td>The SMTP mail server from which messages will be sent.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.port</code></td>
+ *     <td><code>25</code></td>
+ *     <td>The port number of the SMTP mail service.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.account</code></td>
+ *     <td>(not set)</td>
+ *     <td>The user name of the sender. If this value is supplied, the JavaMail
+ *     session will attempt to authenticate to the mail server before sending
+ *     the message. If not supplied, JavaMail will attempt to send the message
+ *     without authenticating (i.e., it will use the server as an open relay). 
+ *     In real-world scenarios, you should set this value.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.password</code></td>
+ *     <td>(not set)</td>
+ *     <td>The password of the sender. In real-world scenarios, you 
+ *     should set this value.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.from</code></td>
+ *     <td><code><var>${user.name}</var>@<var>${mail.smtp.host}</var>*</code></td>
+ *     <td>The e-mail address of the sender.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.timeout</code></td>
+ *     <td><code>5000*</code></td>
+ *     <td>Socket I/O timeout value, in milliseconds. The default is 5 seconds.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.connectiontimeout</code></td>
+ *     <td><code>5000*</code></td>
+ *     <td>Socket connection timeout value, in milliseconds. The default is 5 seconds.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>mail.smtp.starttls.enable</code></td>
+ *     <td><code>true*</code></td>
+ *     <td>If true, enables the use of the STARTTLS command (if 
+ *     supported by the server) to switch the connection to a 
+ *     TLS-protected connection before issuing any login commands. 
+ *     Note that an appropriate trust store must configured so that 
+ *     the client will trust the server's certificate. By default,
+ *     the JRE trust store contains root CAs for most public certificate
+ *     authorities.</td>
+ *   </tr>
+ * </table>
+ * <p>*These defaults apply only if the stand-alone Session factory is used
+ * (that is, these values are obtained from <code>jspwiki.properties</code>).
+ * If using a container-managed JNDI Session factory, the container will
+ * likely supply its own default values, and you should probably override 
+ * them (see the next section).</p>
+ * <strong>Container JNDI Session factory configuration</strong>
+ * <p>You are strongly encouraged to use a container-managed JNDI factory for 
+ * JavaMail sessions, rather than configuring JavaMail through <code>jspwiki.properties</code>.
+ * To do this, you need to two things: uncomment the <code>&lt;resource-ref&gt;</code> block
+ * in <code>/WEB-INF/web.xml</code> that enables container-managed JavaMail, and
+ * configure your container's JavaMail resource factory. The <code>web.xml</code>
+ * part is easy: just uncomment the section that looks like this:</p>
+ * <pre>&lt;resource-ref&gt;
+ *   &lt;description>Resource reference to a container-managed JNDI JavaMail factory for sending e-mails.&lt;/description&gt;
+ *   &lt;res-ref-name>mail/Session&lt;/res-ref-name&gt;
+ *   &lt;res-type>javax.mail.Session&lt;/res-type&gt;
+ *   &lt;res-auth>Container&lt;/res-auth&gt;
+ * &lt;/resource-ref&gt;</pre>
+ * <p>To configure your container's resource factory, follow the directions supplied by
+ * your container's documentation. For example, the
+ * <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html#JavaMail%20Sessions">Tomcat
+ * 5.5 docs</a> state that you need a properly configured <code>&lt;Resource&gt;</code>
+ * element inside the JSPWiki webapp's <code>&lt;Context&gt;</code> declaration. Here's an example shows
+ * how to do it:</p>
+ * <pre>&lt;Context ...&gt;
+ * ...
+ * &lt;Resource name="mail/Session" auth="Container"
+ *           type="javax.mail.Session"
+ *           mail.smtp.host="127.0.0.1"/&gt;
+ *           mail.smtp.port="25"/&gt;
+ *           mail.smtp.account="your-account-name"/&gt;
+ *           mail.smtp.password="your-password"/&gt;
+ *           mail.from="Snoop Dogg &lt;snoop@dogg.org&gt;"/&gt;
+ *           mail.smtp.timeout="5000"/&gt;
+ *           mail.smtp.connectiontimeout="5000"/&gt;
+ *           mail.smtp.starttls.enable="true"/&gt;
+ * ...
+ * &lt;/Context&gt;</pre>
+ * <p>Note that with Tomcat (and most other application containers) you can also declare the JavaMail
+ * JNDI factory as a global resource, shared by all applications, instead of as a local JSPWiki
+ * resource as we have done here. For example, the following entry in
+ * <code><var>$CATALINA_HOME</var>/conf/server.xml</code> creates a global resource:</p>
+ * <pre>&lt;GlobalNamingResources&gt;
+ *   &lt;Resource name="mail/Session" auth="Container"
+ *             type="javax.mail.Session"
+ *             ...
+ *             mail.smtp.starttls.enable="true"/&gt;
+ * &lt;/GlobalNamingResources&gt;</pre>
+ * <p>This approach &#8212; creating a global JNDI resource &#8212; yields somewhat decreased
+ * deployment complexity because the JSPWiki webapp no longer needs its own JavaMail resource
+ * declaration. However, it is slightly less secure because it means that all other applications
+ * can now obtain a JavaMail session if they want to. In many cases, this <em>is</em> what
+ * you want.</p>
+ * <p>NOTE: Versions of Tomcat 5.5 later than 5.5.17, and up to and including 5.5.23 have a 
+ * b0rked version of <code><var>$CATALINA_HOME</var>/common/lib/naming-factory.jar</code>
+ * that prevents usage of JNDI. To avoid this problem, you should patch your 5.5.23 version
+ * of <code>naming-factory.jar</code> with the one from 5.5.17. This is a known issue
+ * and the bug report (#40668) is 
+ * <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=40668">here</a>.
+ *  
+ * @author Christoph Sauer
+ * @author Dan Frankowski
+ * @author Andrew Jaquith
  */
 public class MailUtil
 {
+    private static final String JAVA_COMP_ENV = "java:comp/env";
+
+    private static final String FALSE = "false";
+
+    private static final String TRUE = "true";
+
+    public static final String PROP_MAIL_AUTH = "mail.smtp.auth";
+
     protected static final Logger log = Logger.getLogger(MailUtil.class);
 
-    public static String MAIL_HOST = "mail.smtp.host";
+    protected static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
+    
+    protected static final String DEFAULT_MAIL_HOST            = "localhost";
+    
+    protected static final String DEFAULT_MAIL_PORT            = "25";
 
-    public static String MAIL_PORT = "mail.smtp.port";
+    protected static final String DEFAULT_MAIL_TIMEOUT         = "5000";
+    
+    protected static final String PROP_MAIL_JNDI_NAME          = "jspwiki.mail.jndiname";
 
-    public static String MAIL_ACCOUNT = "mail.smtp.account";
+    protected static final String PROP_MAIL_HOST               = "mail.smtp.host";
 
-    public static String MAIL_PASSWORD = "mail.smtp.password";
+    protected static final String PROP_MAIL_PORT               = "mail.smtp.port";
 
-    public static String MAIL_SENDER = "mail.from";
+    protected static final String PROP_MAIL_ACCOUNT            = "mail.smtp.account";
 
+    protected static final String PROP_MAIL_PASSWORD           = "mail.smtp.password";
+    
+    protected static final String PROP_MAIL_TIMEOUT            = "mail.smtp.timeout";
+    
+    protected static final String PROP_MAIL_CONNECTION_TIMEOUT = "mail.smtp.connectiontimeout";
+
+    protected static final String PROP_MAIL_TRANSPORT          = "smtp";
+    
+    protected static final String PROP_MAIL_SENDER             = "mail.from";
+    
+    protected static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
+    
     /**
-     * Conveniance method, sets the default "to" sender indicated
-     * in the jspwiki.properties file. Authenticates against mailserver
+     * <p>Sends an e-mail to a specified receiver using a  JavaMail Session supplied 
+     * by a JNDI mail session factory (preferred) or a locally initialized 
+     * session based on properties in <code>jspwiki.properties</code>. 
+     * See the top-level JavaDoc for this class for a description of 
+     * required properties and their default values.</p>
+     * <p>The e-mail address used for the <code>to</code> parameter must be in
+     * RFC822 format, as described in the JavaDoc for {@link javax.mail.internet.InternetAddress}
+     * and more fully at 
+     * <a href="http://www.freesoft.org/CIE/RFC/822/index.htm">http://www.freesoft.org/CIE/RFC/822/index.htm</a>.
+     * In other words, e-mail addresses should look like this:</p>
+     * <blockquote><code>Snoop Dog &lt;snoop.dog@shizzle.net&gt;<br/>
+     * snoop.dog@shizzle.net</code></blockquote>
+     * <p>Note that the first form allows a "friendly" user name to be supplied
+     * in addition to the actual e-mail address.</p>
      * 
-     * @param engine the WikiEngine, supplied to read <code>jspwiki.properties</code>
+     * @param engine the WikiEngine for the current wiki
      * @param to the receiver
      * @param subject the subject line of the message
-     * @param content the contents of the mail message
+     * @param content the contents of the mail message, as plain text
      */
-    public static void sendMessage(WikiEngine engine, 
-                                   String to, 
-                                   String subject, 
-                                   String content)
-                throws AddressException,
-                MessagingException 
+    public static void sendMessage( WikiEngine engine, String to, String subject, String content )
+        throws AddressException, MessagingException 
     {
-        sendMessage(engine, to, getProperty(engine, MAIL_SENDER), subject, content);
+        String from = engine.getWikiProperties().getProperty( PROP_MAIL_SENDER ).trim();
+        sendMessage( engine, to, from, subject, content );
     }
 
-
     /**
-     * Sends a message with subject line to receiver. If account information
-     * is indicated in the jspwiki.properties, it uses this information
-     * together with the indicated password to authenticate against
-     * the mail server.
+     * <p>Sends an e-mail to a specified receiver from a specified sender, using a 
+     * JavaMail Session supplied by a JNDI mail session factory (preferred) or 
+     * a locally initialized session based on properties in 
+     * <code>jspwiki.properties</code>. See the top-level JavaDoc for this 
+     * class for a description of required properties and their
+     * default values.</p>
+     * <p>The e-mail addresses used for the <code>to</code> and <code>from</code>
+     * parameters must be in RFC822 format, as described in the JavaDoc for 
+     * {@link javax.mail.internet.InternetAddress} and more fully at 
+     * <a href="http://www.freesoft.org/CIE/RFC/822/index.htm">http://www.freesoft.org/CIE/RFC/822/index.htm</a>.
+     * In other words, e-mail addresses should look like this:</p>
+     * <blockquote><code>Snoop Dog &lt;snoop.dog@shizzle.net&gt;<br/>
+     * snoop.dog@shizzle.net</code></blockquote>
+     * <p>Note that the first form allows a "friendly" user name to be supplied
+     * in addition to the actual e-mail address.</p>
      * 
-     * @param engine the WikiEngine, supplied to read <code>jspwiki.properties</code>
+     * @param engine the WikiEngine for the current wiki
      * @param to the receiver
-     * @param from the address from whom the email will be from
+     * @param from the address the email will be from
      * @param subject the subject line of the message
-     * @param content the contents of the mail message
+     * @param content the contents of the mail message, as plain text
      */
     public static void sendMessage(WikiEngine engine, String to, String from, String subject, String content)
-                                                                                                               throws MessagingException
+        throws MessagingException
     {
+        Properties props = engine.getWikiProperties();
+        String jndiName = props.getProperty( PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME ).trim();
+        Session session = null;
+        boolean useJndi = false;
+        
+        // Try getting the Session from the JNDI factory first
         try
         {
-            Properties props = System.getProperties();
-
-            // Overwrite JVM defaults
-            String host = getProperty(engine, MAIL_HOST);
-            if (host != null)
-            {
-                props.put(MAIL_HOST, host);
-            }
-
-            String port = getProperty(engine, MAIL_PORT);
-            if (port != null)
-            {
-                props.put(MAIL_PORT, port);
-            }
-
-            // Set default if not set by the system...
-            if (props.getProperty("mail.transport.protocol") == null)
-            {
-                props.put("mail.transport.protocol", "smtp");
-            }
-
-            log.info("send mail using host " + getProperty(engine, MAIL_HOST) );
-            log.info("send mail to " + to);
-            log.info("send mail from " + from);
-
-            // check if we authenticate:
-            String account = getProperty(engine, MAIL_ACCOUNT);
-            String password = getProperty(engine, MAIL_PASSWORD);
-
-            Session session = null;
-            if (account != null)
-            {
-
-                log.info("send mail using authentication account " + account);
-
-                // we do not allow unauthenticated sending
-                props.put("mail.smtp.auth", "true");
-
-                SmtpAuthenticator auth = new SmtpAuthenticator(account, password);
-
-                session = Session.getDefaultInstance(props, auth);
-            }
-            else
-            {
-
-                log.info("send mail using no authentication");
-
-                session = Session.getInstance(props);
-            }
-
-            // -- Create a new message --
-            Message msg = new MimeMessage(session);
-
-            // -- Set the FROM and TO fields --
-            msg.setFrom(new InternetAddress(from));
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
-
-            // -- We could include CC recipients too --
-            // if (cc != null)
-            // msg.setRecipients(Message.RecipientType.CC
-            // ,InternetAddress.parse(cc, false));
-
-            // -- Set the subject and body text --
-            msg.setSubject(subject);
-            msg.setText(content);
-
-            // -- Set some other header information --
-            // msg.setHeader("X-Mailer", "JuwiMail");
-            msg.setSentDate(new Date());
-
-            // -- Send the message --
-            Transport.send(msg);
-
-            log.info("Message sent to " + to + " OK.");
+            session = getJNDIMailSession( jndiName );
+            useJndi = true;
         }
-        catch (MessagingException e)
+        catch ( NamingException e )
         {
-            log.error(e);
+            // Oops! JNDI factory must not be set up
+        }
+        
+        // JNDI failed; so, get the Session from the standalone factory
+        if ( session == null ) 
+        {
+            session = getStandaloneMailSession( props );
+        }
+        
+        try
+        {
+            // Create and address the message
+            Message msg = new MimeMessage( session );
+            msg.setFrom( new InternetAddress( from ) );
+            msg.setRecipients( Message.RecipientType.TO, InternetAddress.parse( to, false ) );
+            msg.setSubject( subject );
+            msg.setText( content );
+            msg.setSentDate( new Date() );
+            
+            // Send and log it
+            Transport.send( msg );
+            if ( log.isInfoEnabled() )
+            {
+                log.info( "Sent e-mail to=" + to + ", subject=\"" + subject
+                    + "\", jndi=" + ( useJndi ? TRUE : FALSE ) );
+            }
+        }
+        catch ( MessagingException e )
+        {
+            log.error( e );
             throw e;
         }
     }
     
+    // --------- JavaMail Session Helper methods ---------------------------------
+    
     /**
-     * We can't use the engines variable manager to retrieve <code>mail.<var>x</var></code> properties.
-     * (engine.getVariable()) If we would add this to the var manager we could
-     * get into trouble because by some braindamaged mistake a user could use
-     * [{$mail.smtp.password}] to display this very information, we do not want
-     * to display. TODO: find a better solution
-     * 
-     * @param engine the WikiEngine
-     * @param name the name of the property to retrieve
-     * @return the property value
+     * Returns a stand-alone JavaMail Session by looking up the correct
+     * mail account, password and host from a supplied set of properties.
+     * If the JavaMail property {@value #PROP_MAIL_ACCOUNT} is set to 
+     * a value that is non-<code>null</code> and of non-zero length, the
+     * Session will be initialized with an instance of 
+     * {@link javax.mail.Authenticator}.
+     * @param props the properties that contain mail session properties
+     * @return the initialized JavaMail Session
      */
-    private static String getProperty(WikiEngine engine, String name) 
+    protected static Session getStandaloneMailSession( Properties props )
     {
-        return engine.getWikiProperties().getProperty(name).trim();
-    }
+        // Read the JSPWiki settings from the properties
+        String host     = props.getProperty( PROP_MAIL_HOST, DEFAULT_MAIL_HOST );
+        String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
+        String account  = props.getProperty( PROP_MAIL_ACCOUNT );
+        String password = props.getProperty( PROP_MAIL_PASSWORD );
+        boolean useAuthentication = ( account != null && account.length() > 0 ); 
+        
+        Properties mailProps = new Properties();
+        
+        // Set JavaMail properties
+        mailProps.put( PROP_MAIL_HOST, host );
+        mailProps.put( PROP_MAIL_PORT, port );
+        mailProps.put( PROP_MAIL_TIMEOUT, DEFAULT_MAIL_TIMEOUT );
+        mailProps.put( PROP_MAIL_CONNECTION_TIMEOUT, DEFAULT_MAIL_TIMEOUT );
+        mailProps.put( PROP_MAIL_STARTTLS, TRUE );
 
-    /**
-     * Send an email message. This is the original Implementation by Dan
-     * Frankowski. authentication support is missing. 
-     * 
-     * Use this if you don't need to authenticate. Be aware that mail servers
-     * that do not require authentications are ament to be used as an open relay.
-     * Use this in intranet environments.
-     * 
-     * See <a
-     * href="http://tomcat.apache.org/tomcat-5.0-doc/jndi-resources-howto.html#JavaMail%20Sessions">Tomcat
-     * 5.0 docs</a>, <a
-     * href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html#JavaMail%20Sessions">Tomcat
-     * 5.5 docs</a>, or <a
-     * href="http://docs.sun.com/source/819-0079/dgmail.html">Sun docs</a> for
-     * a description of using the JavaMail API.
-     * 
-     * @param to the email address from whom the message will be from
-     * @param subject the subject line of the message
-     * @param content the contents of the mail message
-     * @throws AddressException
-     * @throws MessagingException
-     * @throws NamingException
-     * @see Message
-     */
-    public static void sendMessage(Properties props, String to, String subject, String content)
-                                                                                               throws AddressException,
-                                                                                                   MessagingException,
-                                                                                                   NamingException
-    {
-        Session session = Session.getInstance(props);
+        // Add SMTP authentication if required
+        Session session = null;
+        if ( useAuthentication )
+        {
+            mailProps.put( PROP_MAIL_AUTH, TRUE );
+            SmtpAuthenticator auth = new SmtpAuthenticator( account, password );
 
-        Message message = new MimeMessage(session);
-        message.setFrom();
-        InternetAddress toAddress[] = new InternetAddress[1];
-        toAddress[0] = new InternetAddress(to);
-        message.setRecipients(Message.RecipientType.TO, toAddress);
-        message.setSubject(subject);
-        message.setContent(content, "text/plain");
-        Transport.send(message);
-    }
-}
-
-/**
- * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
- * an SMTP server.
- * @author Christoph Sauer
- *
- */
-class SmtpAuthenticator extends javax.mail.Authenticator
-{
-
-    String pass = "";
-
-    String login = "";
-
-    public SmtpAuthenticator()
-    {
-        super();
-    }
-
-    public SmtpAuthenticator(String login, String pass)
-    {
-        super();
-        this.login = login;
-        this.pass = pass;
-    }
-
-    public PasswordAuthentication getPasswordAuthentication()
-    {
-        if (pass.equals(""))
-            return null;
+            session = Session.getInstance( mailProps, auth );
+        }
         else
-            return new PasswordAuthentication(login, pass);
+        {
+            session = Session.getInstance( mailProps );
+        }
+        
+        if ( log.isDebugEnabled() ) 
+        {
+            String mailServer = host + ":" + port + ", auth=" + ( useAuthentication ? TRUE : FALSE ); 
+            log.debug( "JavaMail session obtained from standalone mail factory: " + mailServer );
+        }
+        return session;
+    }
+    
+    
+    /**
+     * Returns a JavaMail Session instance from a JNDI container-managed factory.
+     * @param jndiName the JNDI name for the resource. If <code>null</code>, the default value
+     * of <code>mail/Session</code> will be used
+     * @return the initialized JavaMail Session
+     * @throws NamingException if the Session cannot be obtained; for example, if the factory is not configured
+     */
+    protected static Session getJNDIMailSession( String jndiName ) throws NamingException
+    {
+        Session session = null;
+        try
+        {
+            Context initCtx = new InitialContext();
+            Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
+            session = (Session) ctx.lookup( jndiName );
+        }
+        catch( NamingException e )
+        {
+            log.error( "JavaMail initialization error: " + e.getMessage() );
+            throw e;
+        }
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "JavaMail session obtained from JNDI mail factory: " + jndiName );
+        }
+        return session;
     }
 
+    /**
+     * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
+     * an SMTP server.
+     * @author Christoph Sauer
+     */
+    protected static class SmtpAuthenticator extends Authenticator
+    {
+
+        private static final String BLANK = "";
+        private final String pass;
+        private final String login;
+
+        /**
+         * Constructs a new SmtpAuthenticator with a supplied username and password.
+         * @param login the user name
+         * @param pass the password
+         */
+        public SmtpAuthenticator(String login, String pass)
+        {
+            super();
+            this.login = ( login == null ? BLANK : login );
+            this.pass = ( pass == null ? BLANK: pass );
+        }
+
+        /**
+         * Returns the password used to authenticate to the SMTP server.
+         */
+        public PasswordAuthentication getPasswordAuthentication()
+        {
+            if ( BLANK.equals(pass) )
+            {
+                return null;
+            }
+            else
+            {
+                return new PasswordAuthentication( login, pass );
+            }
+        }
+
+    }
+    
 }

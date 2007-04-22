@@ -136,6 +136,13 @@ log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
 log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
 log4j.logger.SecurityLog=INFO, SecurityAppender
 
+# JavaMail properties
+mail.smtp.host = 127.0.0.1
+mail.smtp.port = 25
+mail.from = JSPWiki <JSPWiki@localhost>
+#mail.smtp.account = 
+#mail.smtp.password = 
+
 # Workflow test properties
 jspwiki.approver.workflow.saveWikiPage=
 jspwiki.approver.workflow.foo=janne
