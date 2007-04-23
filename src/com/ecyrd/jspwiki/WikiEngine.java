@@ -501,13 +501,6 @@ public class WikiEngine
             m_internationalizationManager = (InternationalizationManager)
                 ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
 
-            //
-            //  ReferenceManager has the side effect of loading all
-            //  pages.  Therefore after this point, all page attributes
-            //  are available.
-            //
-            initReferenceManager();
-
             m_templateManager   = (TemplateManager)
                 ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
             
@@ -520,6 +513,16 @@ public class WikiEngine
             // are availabe to the initialize() method
             m_filterManager     = (FilterManager)
                 ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+
+            //
+            //  ReferenceManager has the side effect of loading all
+            //  pages.  Therefore after this point, all page attributes
+            //  are available.
+            //  
+            //  initReferenceManager is indirectly using m_filterManager, therefore
+            //  it has to be called after it was initialized.
+            //
+            initReferenceManager();
             
             //
             //  Hook the different manager routines into the system.
