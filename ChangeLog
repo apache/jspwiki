@@ -1,3 +1,12 @@
+2007-04-23  Christoph Sauer <sauer AT hs-heilbronn DOT de>
+
+      * 2.5.48 - Bugfix
+      
+      * Bugfix: NullPointer Exception on initReferenceManager, reason
+        was that it indirectly uses the filterManager -> m_filterManager
+        has to be initialized before.
+
+
 2007-04-23  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.47 aka the JavaMail refactoring release
