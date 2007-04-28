@@ -14,7 +14,7 @@ public abstract class CommonCustomTests extends CommonTests
         
         // We should see the user name & the g'day
         t.assertTextNotPresent( "Could not save profile: You must log in before creating a profile." );
-        t.assertTextPresent( "G&#39;day" );
+        t.assertTextPresent( "G&#8217;day" );
         t.assertTextPresent( "Pancho" ); // This is a hack
         t.assertTextPresent( "(authenticated)" );
     }
