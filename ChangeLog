@@ -1,3 +1,20 @@
+2007-04-28  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * Enhancement: user profile JSPs no longer request a distinct wiki name when 
+       a user registers. The wiki name is now computed automtically; it is the user
+       name without any whitespace. This change should make registration even easier.
+       In the various user manager/database classes, UserProfile/DefaultUserProfile.setWikiName()
+       is hereby deprecated and will be removed in a future release. However,
+       getWikiName() remains, as does the UserDatabase method findByWikiName().
+       The UserDatabase classes do not change their public APIs, and they
+       still persist WikiNames so that they can be searched. However, when 
+       UserManager loads a profile from the UserDatabase, it always re-computes
+       the wiki name.
+
+       * Tweaked i18n resource file to remove references to "wiki names" in
+       favor of just plain old "names." Typographically correct curly quotes
+       were substituted wherever needed.
+
 2007-04-23  Christoph Sauer <sauer AT hs-heilbronn DOT de>
 
       * 2.5.48 - Bugfix
