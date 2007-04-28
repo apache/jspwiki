@@ -125,7 +125,6 @@ public class Installer
             password = TextUtil.generateRandomPassword();
             UserProfile profile = userDb.newProfile();
             profile.setLoginName( ADMIN_ID );
-            profile.setWikiName( ADMIN_NAME );
             profile.setFullname( ADMIN_NAME );
             profile.setPassword( password );
             userDb.save( profile );

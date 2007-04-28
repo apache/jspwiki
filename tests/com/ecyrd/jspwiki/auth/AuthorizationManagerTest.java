@@ -509,7 +509,6 @@ public class AuthorizationManagerTest extends TestCase
         profile.setEmail( "janne@jalkanen.net" );
         profile.setFullname( "Janne Jalkanen" );
         profile.setLoginName( "janne" );
-        profile.setWikiName( "JanneJalkanen" );
         try
         {
             m_engine.getUserManager().getUserDatabase().save( profile );

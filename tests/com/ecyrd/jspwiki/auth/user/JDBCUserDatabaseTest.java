@@ -93,7 +93,6 @@ public class JDBCUserDatabaseTest extends TestCase
         UserProfile profile = new DefaultUserProfile();
         profile.setEmail("testuser@testville.com");
         profile.setLoginName( loginName );
-        profile.setWikiName( "WikiName"+loginName );
         profile.setFullname( "FullName"+loginName );
         profile.setPassword("password");
         m_db.save(profile);
@@ -242,7 +241,6 @@ public class JDBCUserDatabaseTest extends TestCase
             profile.setFullname( "Test User" );
             profile.setLoginName( "user" );
             profile.setPassword( "password" );
-            profile.setWikiName( "TestUser" );
             m_db.save( profile );
             profile = m_db.findByEmail( "user@example.com" );
             assertEquals( "user@example.com", profile.getEmail() );
@@ -260,7 +258,6 @@ public class JDBCUserDatabaseTest extends TestCase
             profile.setFullname( "Test User 2" );
             profile.setLoginName( "user2" );
             profile.setPassword( "password" );
-            profile.setWikiName( "TestUser2" );
             m_db.save( profile );
             profile = m_db.findByEmail( "user2@example.com" );
             assertEquals( "user2@example.com", profile.getEmail() );

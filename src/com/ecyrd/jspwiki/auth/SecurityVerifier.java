@@ -875,7 +875,6 @@ public final class SecurityVerifier
             UserProfile profile = new DefaultUserProfile();
             profile.setEmail("testuser@testville.com");
             profile.setLoginName( loginName );
-            profile.setWikiName( "WikiName"+loginName );
             profile.setFullname( "FullName"+loginName );
             profile.setPassword("password");
             db.save(profile);

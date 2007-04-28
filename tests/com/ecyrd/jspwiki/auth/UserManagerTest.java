@@ -72,7 +72,6 @@ public class UserManagerTest extends TestCase
       UserProfile profile = new DefaultUserProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
-      profile.setWikiName( "WikiName"+loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
       m_mgr.setUserProfile( session, profile );
@@ -101,7 +100,6 @@ public class UserManagerTest extends TestCase
       UserProfile profile = new DefaultUserProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
-      profile.setWikiName( "WikiName"+loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
       
@@ -127,10 +125,9 @@ public class UserManagerTest extends TestCase
       Decision d = (Decision)decisions.iterator().next();
       List facts = d.getFacts();
       assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get(0) );
-      assertEquals( new Fact( UserManager.PREFS_WIKI_NAME, profile.getWikiName() ), facts.get(1) );
-      assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get(2) );
-      assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get(3) );
-      assertEquals( new Fact( UserManager.PREFS_EMAIL, profile.getEmail() ), facts.get(4) );
+      assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get(1) );
+      assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get(2) );
+      assertEquals( new Fact( UserManager.PREFS_EMAIL, profile.getEmail() ), facts.get(3) );
       assertEquals( profile, d.getWorkflow().getAttribute( UserManager.SAVED_PROFILE ) );
       
       // Approve the profile
@@ -158,7 +155,6 @@ public class UserManagerTest extends TestCase
       UserProfile profile = new DefaultUserProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
-      profile.setWikiName( "WikiName"+loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
       
@@ -184,10 +180,9 @@ public class UserManagerTest extends TestCase
       Decision d = (Decision)decisions.iterator().next();
       List facts = d.getFacts();
       assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get(0) );
-      assertEquals( new Fact( UserManager.PREFS_WIKI_NAME, profile.getWikiName() ), facts.get(1) );
-      assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get(2) );
-      assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get(3) );
-      assertEquals( new Fact( UserManager.PREFS_EMAIL, profile.getEmail() ), facts.get(4) );
+      assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get(1) );
+      assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get(2) );
+      assertEquals( new Fact( UserManager.PREFS_EMAIL, profile.getEmail() ), facts.get(3) );
       assertEquals( profile, d.getWorkflow().getAttribute( UserManager.SAVED_PROFILE ) );
       
       // Approve the profile
@@ -208,7 +203,6 @@ public class UserManagerTest extends TestCase
       UserProfile profile = new DefaultUserProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
-      profile.setWikiName( "WikiName"+loginName );
       profile.setFullname( "FullName"+loginName );
       profile.setPassword( "password");
       
@@ -224,20 +218,7 @@ public class UserManagerTest extends TestCase
           // Good! That's what we expected; reset for next test
           profile.setLoginName( loginName );
       }
-      
-      // Set the wiki name to collide with Janne's: should prohibit saving
-      profile.setWikiName( "JanneJalkanen" );
-      try 
-      {
-          m_mgr.setUserProfile( session, profile );
-          fail( "UserManager allowed saving of user with wiki name 'JanneJalkanen', but it shouldn't have." ); 
-      }
-      catch ( DuplicateUserException e )
-      {
-          // Good! That's what we expected; reset for next test
-          profile.setWikiName( "WikiName"+loginName );
-      }
-      
+            
       // Set the login name to collide with Janne's: should prohibit saving
       profile.setFullname( "Janne Jalkanen" );
       try 

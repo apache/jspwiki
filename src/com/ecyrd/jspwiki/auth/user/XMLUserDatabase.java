@@ -513,7 +513,6 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 UserProfile profile = new DefaultUserProfile();
                 profile.setLoginName( user.getAttribute( LOGIN_NAME ) );
                 profile.setFullname( user.getAttribute( FULL_NAME ) );
-                profile.setWikiName( user.getAttribute( WIKI_NAME ) );
                 profile.setPassword( user.getAttribute( PASSWORD ) );
                 profile.setEmail( user.getAttribute( EMAIL ) );
                 String created = user.getAttribute( CREATED );

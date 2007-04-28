@@ -290,7 +290,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(java.lang.String)
+     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(String)
      */
     public UserProfile findByWikiName( String index ) throws NoSuchPrincipalException
     {
@@ -588,7 +588,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 profile.setLastModified( rs.getTimestamp( m_modified ) );
                 profile.setLoginName( rs.getString( m_loginName ) ) ;
                 profile.setPassword( rs.getString( m_password ) );
-                profile.setWikiName( rs.getString( m_wikiName ) );
                 found = true;
             }
         }

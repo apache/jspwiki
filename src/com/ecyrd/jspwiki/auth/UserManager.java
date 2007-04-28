@@ -64,7 +64,6 @@ public final class UserManager
     protected static final String SAVE_DECISION_MESSAGE_KEY = "decision.createUserProfile";
     protected static final String FACT_SUBMITTER            = "fact.submitter";
     protected static final String PREFS_LOGIN_NAME          = "prefs.loginname";
-    protected static final String PREFS_WIKI_NAME           = "prefs.wikiname";
     protected static final String PREFS_FULL_NAME           = "prefs.fullname";
     protected static final String PREFS_EMAIL               = "prefs.email";
 
@@ -226,8 +225,8 @@ public final class UserManager
      * <p>
      * Saves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the user in
      * a wiki session. This method verifies that a user profile to be saved
-     * doesn't collide with existing profiles; that is, the login name, wiki
-     * name or full name is already used by another profile. If the profile
+     * doesn't collide with existing profiles; that is, the login name
+     * or full name is already used by another profile. If the profile
      * collides, a <code>DuplicateUserException</code> is thrown. After saving
      * the profile, the user database changes are committed, and the user's
      * credential set is refreshed; if custom authentication is used, this means
@@ -246,17 +245,17 @@ public final class UserManager
      * @param session the wiki session, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
      * @throws RedirectException if the user profile must be approved before it can be saved
-     * @throws DuplicateUserException if the proposed profile's login name, full name 
+     * @throws DuplicateUserException if the proposed profile's login name or full name collides with another
      * @throws WikiSecurityException if the current user does not have permission to save the profile
      * @throws WikiException if approval is required, but this method cannot create a workflow for
      * some reason; this is not normal, and indicates mis-configuration
-     * or wiki name collides with that of another user
+     * or name collision with another user
      */
     public final void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
             DuplicateUserException, WikiException
     {
         // Verify user is allowed to save profile!
-        Permission p = new WikiPermission( m_engine.getApplicationName(), "editProfile" );
+        Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
         if ( !m_engine.getAuthorizationManager().checkPermission( session, p ) )
         {
             throw new WikiSecurityException( "You are not allowed to save wiki profiles." );
@@ -265,7 +264,7 @@ public final class UserManager
         // Check if profile is new, and see if container allows creation
         boolean newProfile = profile.isNew();
 
-        // User profiles that may already have wikiname, fullname or loginname
+        // User profiles that may already have fullname or loginname
         UserProfile oldProfile = getUserProfile( session );
         UserProfile otherProfile;
         try
@@ -290,17 +289,6 @@ public final class UserManager
         catch( NoSuchPrincipalException e )
         {
         }
-        try
-        {
-            otherProfile = m_database.findByWikiName( profile.getWikiName() );
-            if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
-            {
-                throw new DuplicateUserException( "The wiki name '" + profile.getWikiName() + "' is already taken." );
-            }
-        }
-        catch( NoSuchPrincipalException e )
-        {
-        }
 
         // For new accounts, create approval workflow for user profile save.
         if ( newProfile && oldProfile.isNew() )
@@ -311,14 +299,13 @@ public final class UserManager
             
             // Add user profile attribute as Facts for the approver (if required)
             boolean hasEmail = ( profile.getEmail() != null );
-            Fact[] facts = new Fact[ hasEmail ? 5 : 4];
+            Fact[] facts = new Fact[ hasEmail ? 4 : 3];
             facts[0] = new Fact( PREFS_FULL_NAME, profile.getFullname() );
-            facts[1] = new Fact( PREFS_WIKI_NAME, profile.getWikiName() );
-            facts[2] = new Fact( PREFS_LOGIN_NAME, profile.getLoginName() );
-            facts[3] = new Fact( FACT_SUBMITTER, submitter.getName() );
+            facts[1] = new Fact( PREFS_LOGIN_NAME, profile.getLoginName() );
+            facts[2] = new Fact( FACT_SUBMITTER, submitter.getName() );
             if ( hasEmail )
             {
-                facts[4] = new Fact( PREFS_EMAIL, profile.getEmail() );
+                facts[3] = new Fact( PREFS_EMAIL, profile.getEmail() );
             }
             Workflow workflow = builder.buildApprovalWorkflow( submitter, 
                                                                SAVE_APPROVER, 
@@ -381,9 +368,11 @@ public final class UserManager
      * <code>email</code> or <code>password</code> parameter values differ
      * from those in the existing profile, the passed parameters override the
      * old values.</li> <li>For new profiles, the user-supplied
-     * <code>fullname</code> and <code>wikiname</code> parameters are always
-     * used; for existing profiles the existing values are used, and whatever
-     * values the user supplied are discarded.</li> <li>In all cases, the
+     * <code>fullname</code parameter is always
+     * used; for existing profiles the existing value is used, and whatever
+     * value the user supplied is discarded. The wiki name is automatically
+     * computed by taking the full name and extracting all whitespace.</li>
+     * <li>In all cases, the
      * created/last modified timestamps of the user's existing or new profile
      * always override whatever values the user supplied.</li> <li>If
      * container authentication is used, the login name property of the profile
@@ -402,12 +391,10 @@ public final class UserManager
         // Extract values from request stream (cleanse whitespace as needed)
         String loginName = request.getParameter( "loginname" );
         String password = request.getParameter( "password" );
-        String wikiname = request.getParameter( "wikiname" );
         String fullname = request.getParameter( "fullname" );
         String email = request.getParameter( "email" );
         loginName = InputValidator.isBlank( loginName ) ? null : loginName;
         password = InputValidator.isBlank( password ) ? null : password;
-        wikiname = InputValidator.isBlank( wikiname ) ? null : wikiname.replaceAll( "\\s", "" );
         fullname = InputValidator.isBlank( fullname ) ? null : fullname;
         email = InputValidator.isBlank( email ) ? null : email;
 
@@ -427,7 +414,6 @@ public final class UserManager
             profile.setEmail( email );
             profile.setFullname( fullname );
             profile.setPassword( password );
-            profile.setWikiName( wikiname );
         }
         else
         {
@@ -467,7 +453,6 @@ public final class UserManager
         }
 
         validator.validateNotNull( profile.getLoginName(), "Login name" );
-        validator.validateNotNull( profile.getWikiName(), "Wiki name" );
         validator.validateNotNull( profile.getFullname(), "Full name" );
         validator.validate( profile.getEmail(), "E-mail address", InputValidator.EMAIL );
         
@@ -494,11 +479,10 @@ public final class UserManager
         }
         
         UserProfile otherProfile;
-        String wikiName = profile.getWikiName();
         String fullName = profile.getFullname();
         String loginName = profile.getLoginName();
         
-        // It's illegal to use as a full name someone else's login name or wiki name
+        // It's illegal to use as a full name someone else's login name
         try
         {
             otherProfile = m_database.find( fullName );
@@ -509,7 +493,7 @@ public final class UserManager
         }
         catch ( NoSuchPrincipalException e) { /* It's clean */ }
             
-        // It's illegal to use as a login name someone else's wiki name or full name
+        // It's illegal to use as a login name someone else's full name
         try
         {
             otherProfile = m_database.find( loginName );
@@ -519,18 +503,6 @@ public final class UserManager
             }
         }
         catch ( NoSuchPrincipalException e) { /* It's clean */ }
-            
-        // It's illegal to use as a wikiname someone else's login name or full name
-        try
-        {
-            otherProfile = m_database.find( wikiName );
-            if ( otherProfile != null && !profile.equals( otherProfile ) && !wikiName.equals( otherProfile.getWikiName() ) )
-            {
-                session.addMessage( "profile", "Wiki name '" + wikiName + "' is illegal." );
-            }
-        }
-        catch ( NoSuchPrincipalException e) { /* It's clean */ }
-        
     }
 
     /**
@@ -609,7 +581,7 @@ public final class UserManager
         
         /**
          * Constructs a new Task for saving a user profile.
-         * @param db the user database
+         * @param engine the wiki engine
          */
         public SaveUserProfileTask( WikiEngine engine )
         {
@@ -642,7 +614,6 @@ public final class UserManager
                         + app + " has been created. Your profile details are as follows: \n\n"
                         + "Login name: " + profile.getLoginName() + "\n"
                         + "Your name : " + profile.getFullname() + "\n"
-                        + "Wiki name : " + profile.getWikiName() + "\n" 
                         + "E-mail    : " + profile.getEmail() + "\n\n"
                         + "If you forget your password, you can re-set it at "
                         + m_engine.getBaseURL() + "\\LostPassword.jsp";

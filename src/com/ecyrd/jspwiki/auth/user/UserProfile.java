@@ -4,7 +4,8 @@ import java.util.Date;
 
 /**
  * Class for representing wiki user information, such as the login name, full
- * name, wiki name, and e-mail address.
+ * name, wiki name, and e-mail address. Note that since 2.6 the wiki name is
+ * required to be automatically computed from the full name.
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -55,7 +56,8 @@ public interface UserProfile
     public String getPassword();
 
     /**
-     * Returns the user's wiki name.
+     * Returns the user's wiki name, based on the full name with all
+     * whitespace removed.
      * @return the wiki name.
      */
     public String getWikiName();
@@ -115,9 +117,11 @@ public interface UserProfile
     public void setPassword( String arg );
 
     /**
-     * Sets the user's wiki name. This is typically of type FirstnameLastName
-     * ("JanneJalkanen").
+     * No-op method. In previous versions of JSPWiki, the method 
+     * set the user's wiki name directly. Now, the wiki name is automatically 
+     * calculated based on the full name.
      * @param name the wiki name
+     * @deprecated This method will be removed in a future release.
      */
     public void setWikiName( String name );
 

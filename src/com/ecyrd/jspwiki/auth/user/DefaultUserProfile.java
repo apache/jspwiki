@@ -31,6 +31,10 @@ import java.util.Date;
 
 public class DefaultUserProfile implements UserProfile
 {
+    private static final String EMPTY_STRING = "";
+
+    private static final String WHITESPACE = "\\s";
+
     private Date     m_created   = null;
 
     private String   m_email     = null;
@@ -174,6 +178,12 @@ public class DefaultUserProfile implements UserProfile
     public void setFullname( String arg )
     {
         m_fullname = arg;
+        
+        // Compute wiki name
+        if ( m_fullname != null )
+        {
+            m_wikiname = m_fullname.replaceAll(WHITESPACE, EMPTY_STRING);
+        }
     }
 
     /**
@@ -215,13 +225,14 @@ public class DefaultUserProfile implements UserProfile
     }
 
     /**
-     * Sets the user's wiki name. This is typically of type FirstnameLastName
-     * ("JanneJalkanen").
+     * No-op method. In previous versions of JSPWiki, the method 
+     * set the user's wiki name directly. Now, the wiki name is automatically 
+     * calculated based on the full name.
      * @param name the wiki name
+     * @deprecated This method will be removed in a future release.
      */
     public void setWikiName( String name )
     {
-        m_wikiname = name;
     }
 
     /**

@@ -35,16 +35,16 @@
           <form id="setCookie" action="<wiki:Link jsp="UserPreferences.jsp" format="url"><wiki:Param name="tab" value="prefs"/></wiki:Link>" 
                 method="POST" accept-charset="UTF-8">
             <div class="block">
-              <label><fmt:message key="prefs.wikiname"/></label>
+              <label><fmt:message key="prefs.assertedname"/></label>
               <input type="text" name="assertedName" size="30" value="<wiki:UserProfile property="loginname"/>" />
               <div class="description">
-                <fmt:message key="prefs.wikiname.description">
+                <fmt:message key="prefs.assertedname.description">
                   <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
                 </fmt:message>
               </div>
               <div class="description">
-                <fmt:message key="prefs.wikiname.description2">
-                  <fmt:param><a onclick="TabbedSection.onclick('profile')" ><fmt:message key="prefs.wikiname.create"/></a></fmt:param>
+                <fmt:message key="prefs.assertedname.description2">
+                  <fmt:param><a onclick="TabbedSection.onclick('profile')" ><fmt:message key="prefs.assertedname.create"/></a></fmt:param>
                 </fmt:message>
               </div>
               <input type="submit" name="ok" value="<fmt:message key="prefs.submit.setname"/>" />
@@ -133,23 +133,6 @@
               </div>
             </div>
           </wiki:UserCheck>
-          
-          <!-- Wiki name -->
-          <div class="block">
-            <label><fmt:message key="prefs.wikiname"/></label>
-            <wiki:UserProfile property="new">
-              <input type="text" name="wikiname" size="30" value="<wiki:UserProfile property="wikiname"/>" />
-              <div class="description">
-                <fmt:message key="prefs.wikinameid.description"/>
-              </div>
-            </wiki:UserProfile>
-            <wiki:UserProfile property="exists">
-              <p><wiki:UserProfile property="wikiname"/></p>
-              <div class="description">
-                <fmt:message key="prefs.wikinameid.exists"/>
-              </div>
-            </wiki:UserProfile>
-          </div>
           
           <!-- Full name -->
           <div class="block">
