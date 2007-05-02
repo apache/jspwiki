@@ -1,19 +1,20 @@
 package com.ecyrd.jspwiki.auth.acl;
 
+import java.security.Permission;
 import java.security.Principal;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.PrincipalComparator;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
@@ -27,6 +28,22 @@ public class DefaultAclManager implements AclManager
 
     private AuthorizationManager m_auth = null;
     private WikiEngine m_engine = null;
+    private static final String PERM_REGEX = "(" +
+        PagePermission.COMMENT_ACTION + "|" +
+        PagePermission.DELETE_ACTION  + "|" +
+        PagePermission.EDIT_ACTION    + "|" +
+        PagePermission.MODIFY_ACTION  + "|" +
+        PagePermission.RENAME_ACTION  + "|" +
+        PagePermission.UPLOAD_ACTION  + "|" +
+        PagePermission.VIEW_ACTION    + ")";
+    private static final String ACL_REGEX = "\\[\\{\\s*ALLOW\\s+" + PERM_REGEX + "\\s*(.*?)\\s*\\}\\]";
+    
+    /** 
+     * Identifies ACL strings in wiki text; the first group is the action (view, edit) and
+     * the second is the list of Principals separated by commas. The overall match is 
+     * the ACL string from [{ to }].
+     * */
+    public static final Pattern ACL_PATTERN = Pattern.compile( ACL_REGEX );
     
     /**
      * Initializes the AclManager with a supplied wiki engine and properties.
@@ -160,6 +177,104 @@ public class DefaultAclManager implements AclManager
         }
 
         return acl;
+    }
+    
+    /**
+     * Sets the access control list for the page and persists it by prepending
+     * it to the wiki page markup and saving the page. When this method is
+     * called, all other ACL markup in the page is removed. This method will forcibly
+     * expire locks on the wiki page if they exist. Any ProviderExceptions will be
+     * re-thrown as WikiSecurityExceptions.
+     * @param page the wiki page
+     * @param acl the access control list
+     * @since 2.5
+     * @throws WikiSecurityException of the Acl cannot be set
+     */
+    public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException
+    {
+        PageManager pageManager = m_engine.getPageManager();
+        
+        // Forcibly expire any page locks
+        PageLock lock = pageManager.getCurrentLock( page );
+        if ( lock != null )
+        {
+            pageManager.unlockPage( lock );
+        }
+        
+        // Remove all of the existing ACLs.
+        String pageText = m_engine.getPureText( page );
+        Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
+        String cleansedText = matcher.replaceAll( "" );
+        String newText = DefaultAclManager.printAcl( page.getAcl() ) + cleansedText;
+        try 
+        {
+            pageManager.putPageText( page, newText );
+        }
+        catch ( ProviderException e )
+        {
+            throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage() );
+        }
+    }
+    
+    /**
+     * Generates an ACL string for inclusion in a wiki page, based on a supplied Acl object.
+     * All of the permissions in this Acl are assumed to apply to the same page scope.
+     * The names of the pages are ignored; only the actions and principals matter.
+     * @param acl the ACL
+     * @return the ACL string
+     */
+    protected static String printAcl( Acl acl )
+    {
+        // Extract the ACL entries into a Map with keys == permissions, values == principals
+        Map permissionPrincipals = new TreeMap();
+        Enumeration entries = acl.entries();
+        while ( entries.hasMoreElements() )
+        {
+            AclEntry entry = (AclEntry)entries.nextElement();
+            Principal principal = entry.getPrincipal();
+            Enumeration permissions = entry.permissions();
+            while ( permissions.hasMoreElements() )
+            {
+                Permission permission = (Permission)permissions.nextElement();
+                List principals = (List)permissionPrincipals.get( permission.getActions() );
+                if ( principals == null )
+                {
+                    principals = new ArrayList();
+                    String action = permission.getActions();
+                    if ( action.indexOf(',') != -1 )
+                    {
+                        throw new IllegalStateException( "AclEntry permission cannot have multiple targets." );
+                    }
+                    permissionPrincipals.put( action, principals );
+                }
+                principals.add( principal );
+            }
+        }
+        
+        // Now, iterate through each permission in the map and generate an ACL string
+        
+        StringBuffer s = new StringBuffer();
+        for ( Iterator it = permissionPrincipals.entrySet().iterator(); it.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry)it.next();
+            String action = (String)entry.getKey();
+            List principals = (List)entry.getValue();
+            Collections.sort( principals, new PrincipalComparator() );
+            s.append( "[{ALLOW ");
+            s.append( action );
+            s.append( " ");
+            for ( int i = 0; i < principals.size(); i++ )
+            {
+                Principal principal = (Principal)principals.get( i );
+                s.append( principal.getName() );
+                if ( i < ( principals.size() - 1 ) )
+                {
+                    s.append(",");
+                }
+            }
+            s.append( "}]\n");
+        }
+        return s.toString();
     }
 
 }

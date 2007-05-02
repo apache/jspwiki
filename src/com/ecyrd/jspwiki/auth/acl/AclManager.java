@@ -46,4 +46,13 @@ public interface AclManager
      * @return the Acl representing permissions for the page
      */
     public Acl getPermissions( WikiPage page );
+    
+    /**
+     * Sets the access control list for the page and persists it.
+     * @param page the wiki page
+     * @param acl the access control list
+     * @since 2.5
+     * @throws WikiSecurityException
+     */
+    public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException;
 }
