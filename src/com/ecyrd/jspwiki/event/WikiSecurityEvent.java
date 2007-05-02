@@ -26,6 +26,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
  * <ul>
  *   <li>login succeeded</li>
  *   <li>logout</li>
+ *   <li>user profile name changed</li>
  * </ul>
  * <p>These events are logged with priority <code>DEBUG</code>:</p>
  * <ul>
@@ -90,6 +91,9 @@ public final class WikiSecurityEvent extends WikiEvent
     /** When a user profile is saved. */
     public static final int   PROFILE_SAVE             = 53;
     
+    /** When a user profile name changes. */
+    public static final int   PROFILE_NAME_CHANGED     = 54;
+    
     /** The security logging service. */
     public static final Logger LOGGER = Logger.getLogger( "SecurityLog" );
     
@@ -103,7 +107,7 @@ public final class WikiSecurityEvent extends WikiEvent
                                                 LOGIN_CREDENTIAL_EXPIRED };
     
     private static final int[] INFO_EVENTS  = { LOGIN_AUTHENTICATED,
-                                                SESSION_EXPIRED, LOGOUT };
+                                                SESSION_EXPIRED, LOGOUT, PROFILE_NAME_CHANGED };
     
     /**
      * Constructs a new instance of this event type, which signals a security
@@ -217,6 +221,7 @@ public final class WikiSecurityEvent extends WikiEvent
             case GROUP_CLEAR_GROUPS:        return "GROUP_CLEAR_GROUPS";
             case ACCESS_ALLOWED:            return "ACCESS_ALLOWED";
             case ACCESS_DENIED:             return "ACCESS_DENIED";
+            case PROFILE_NAME_CHANGED:      return "PROFILE_NAME_CHANGED";
             case PROFILE_SAVE:              return "PROFILE_SAVE";
             default:                        return super.eventName();
         }
@@ -242,6 +247,7 @@ public final class WikiSecurityEvent extends WikiEvent
             case GROUP_CLEAR_GROUPS:        return "all groups cleared";
             case ACCESS_ALLOWED:            return "access allowed";
             case ACCESS_DENIED:             return "access denied";
+            case PROFILE_NAME_CHANGED:      return "user profile name changed";
             case PROFILE_SAVE:              return "user profile saved";
             default:                        return super.getTypeDescription();
         }

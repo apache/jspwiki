@@ -94,6 +94,10 @@ public final class UserManager
         m_engine = engine;
         
         m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
+        
+        // Attach the PageManager as a listener
+        // TODO: it would be better if we did this in PageManager directly
+        addWikiEventListener( engine.getPageManager() );
     }
     
     /**
@@ -234,8 +238,14 @@ public final class UserManager
      * </p>
      * <p>
      * When the user's profile is saved succcessfully, this method fires a
-     * {@link WikiSecurityEvent#PROFILE_SAVE} event with the UserManager as the
-     * source and the WikiSession as target.
+     * {@link WikiSecurityEvent#PROFILE_SAVE} event with the WikiSession as the
+     * source and the UserProfile as target. For existing profiles, if the
+     * user's full name changes, this method also fires a "name changed"
+     * event ({@link WikiSecurityEvent#PROFILE_NAME_CHANGED}) with the
+     * WikiSession as the source and an array containing the old and new 
+     * UserProfiles, respectively. The <code>NAME_CHANGED</code> event allows
+     * the GroupManager and PageManager can change group memberships and 
+     * ACLs if needed.
      * </p>
      * <p>
      * Note that WikiSessions normally attach event listeners to the
@@ -264,8 +274,12 @@ public final class UserManager
         // Check if profile is new, and see if container allows creation
         boolean newProfile = profile.isNew();
 
-        // User profiles that may already have fullname or loginname
+        // Check if another user profile already has the fullname or loginname
         UserProfile oldProfile = getUserProfile( session );
+        boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null ) 
+            ? false 
+            : !( oldProfile.getFullname().equals( profile.getFullname() ) &&
+                 oldProfile.getLoginName().equals( profile.getLoginName() ) );
         UserProfile otherProfile;
         try
         {
@@ -352,11 +366,27 @@ public final class UserManager
         // For existing accounts, just save the profile
         else
         {
-            // Save the profile (userdatabase will take care of timestamps for us)
-            // and reload credentials
+            // If login name changed, delete the old profile
+            if ( nameChanged && !oldProfile.getLoginName().equals( profile.getLoginName() ) )
+            {
+                m_database.deleteByLoginName( oldProfile.getLoginName() );
+            }
+            
+            // Save the new profile (userdatabase will take care of timestamps for us)
             m_database.save( profile );
             m_database.commit();
-            fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
+            
+            if ( nameChanged )
+            {
+                // Fire an event if the login name or full name changed
+                UserProfile[] profiles = new UserProfile[] { oldProfile, profile };
+                fireEvent( WikiSecurityEvent.PROFILE_NAME_CHANGED, session, profiles );
+            }
+            else
+            {
+                // Fire an event that says we have new a new profile (new principals)
+                fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
+            }
         }
     }
 
@@ -407,21 +437,11 @@ public final class UserManager
             }
         }
         
-        if ( profile.isNew() )
-        {
-            // If new profile, use whatever values the user supplied
-            profile.setLoginName( loginName );
-            profile.setEmail( email );
-            profile.setFullname( fullname );
-            profile.setPassword( password );
-        }
-        else
-        {
-            // If modifying an existing profile, always override
-            // the timestamp, login name, full name and wiki name properties
-            profile.setEmail( email );
-            profile.setPassword( password );
-        }
+        // Set the profile fields!
+        profile.setLoginName( loginName );
+        profile.setEmail( email );
+        profile.setFullname( fullname );
+        profile.setPassword( password );
         return profile;
     }
 
@@ -661,9 +681,9 @@ public final class UserManager
      * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
      * @param type       the event type to be fired
      * @param session    the wiki session supporting the event
-     * @param profile    the user profile, which may be <code>null</code>
+     * @param profile    the user profile (or array of user profiles), which may be <code>null</code>
      */
-    protected final void fireEvent( int type, WikiSession session, UserProfile profile )
+    protected final void fireEvent( int type, WikiSession session, Object profile )
     {
         if ( WikiEventManager.isListening(this) )
         {

@@ -84,7 +84,7 @@ public class Group
      * @param user the principal to add
      * @return <code>true</code> if the operation was successful
      */
-    public boolean add( Principal user )
+    public synchronized boolean add( Principal user )
     {
         if ( isMember( user ) )
         {
@@ -98,7 +98,7 @@ public class Group
     /**
      * Clears all Principals from the group list. 
      */
-    public void clear()
+    public synchronized void clear()
     {
         m_members.clear();
     }
@@ -241,7 +241,7 @@ public class Group
      * @param user the principal to remove
      * @return <code>true</code> if the operation was successful
      */
-    public boolean remove( Principal user )
+    public synchronized boolean remove( Principal user )
     {
         user = findMember( user.getName() );
 
@@ -257,7 +257,7 @@ public class Group
      * Sets the created date.
      * @param date the creation date
      */
-    public void setCreated( Date date )
+    public synchronized void setCreated( Date date )
     {
         m_created = date;
     }
@@ -266,7 +266,7 @@ public class Group
      * Sets the creator of this Group.
      * @param creator the creator
      */
-    public final void setCreator( String creator )
+    public final synchronized void setCreator( String creator )
     {
         this.m_creator = creator;
     }
@@ -275,7 +275,7 @@ public class Group
      * Sets the last-modified date
      * @param date the last-modified date
      */
-    public void setLastModified( Date date )
+    public synchronized void setLastModified( Date date )
     {
         m_modified = date;
     }
@@ -284,7 +284,7 @@ public class Group
      * Sets the name of the user who last modified this group.
      * @param modifier the modifier
      */
-    public final void setModifier( String modifier )
+    public final synchronized void setModifier( String modifier )
     {
         this.m_modifier = modifier;
     }

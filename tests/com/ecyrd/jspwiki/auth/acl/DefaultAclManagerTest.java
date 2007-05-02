@@ -2,6 +2,7 @@ package com.ecyrd.jspwiki.auth.acl;
 
 import java.security.Principal;
 import java.util.Properties;
+import java.util.regex.Matcher;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -93,6 +94,92 @@ public class DefaultAclManagerTest
         assertEquals( 0, p.length );
     }
 
+    public void testAclRegex() 
+    {
+        String acl;
+        Matcher m;
+
+        acl = "[{ALLOW view Bob, Alice, Betty}] Test text.";
+        m = DefaultAclManager.ACL_PATTERN.matcher( acl );
+        assertTrue ( m.find() );
+        assertEquals( 2, m.groupCount() );
+        assertEquals( "[{ALLOW view Bob, Alice, Betty}]", m.group(0) );
+        assertEquals( "view", m.group(1) );
+        assertEquals( "Bob, Alice, Betty", m.group(2) );
+        assertFalse( m.find() );
+        
+        acl = "[{ALLOW view Alice}] Test text.";
+        m = DefaultAclManager.ACL_PATTERN.matcher( acl );
+        assertTrue ( m.find() );
+        System.out.println( m.group() );
+        assertEquals( 2, m.groupCount() );
+        assertEquals( "[{ALLOW view Alice}]", m.group(0) );
+        assertEquals( "view", m.group(1) );
+        assertEquals( "Alice", m.group(2) );
+        assertFalse( m.find() );
+        
+        acl = "Test text   [{   ALLOW   view   Alice  }]  Test text.";
+        m = DefaultAclManager.ACL_PATTERN.matcher( acl );
+        assertTrue ( m.find() );
+        System.out.println( m.group() );
+        assertEquals( 2, m.groupCount() );
+        assertEquals( "[{   ALLOW   view   Alice  }]", m.group(0) );
+        assertEquals( "view", m.group(1) );
+        assertEquals( "Alice", m.group(2) );
+        assertFalse( m.find() );
+        
+        acl = "Test text   [{   ALLOW   view  Alice  ,  Bob  }]  Test text.";
+        m = DefaultAclManager.ACL_PATTERN.matcher( acl );
+        assertTrue ( m.find() );
+        System.out.println( m.group() );
+        assertEquals( 2, m.groupCount() );
+        assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
+        assertEquals( "view", m.group(1) );
+        assertEquals( "Alice  ,  Bob", m.group(2) );
+        assertFalse( m.find() );
+        
+        acl = "Test text   [{   ALLOW   view  Alice  ,  Bob  }]  Test text  [{ALLOW edit Betty}].";
+        m = DefaultAclManager.ACL_PATTERN.matcher( acl );
+        assertTrue ( m.find() );
+        System.out.println( m.group() );
+        assertEquals( 2, m.groupCount() );
+        assertEquals( "[{   ALLOW   view  Alice  ,  Bob  }]", m.group(0) );
+        assertEquals( "view", m.group(1) );
+        assertEquals( "Alice  ,  Bob", m.group(2) );
+        assertTrue ( m.find() );
+        assertEquals( 2, m.groupCount() );
+        assertEquals( "[{ALLOW edit Betty}]", m.group(0) );
+        assertEquals( "edit", m.group(1) );
+        assertEquals( "Betty", m.group(2) );
+        assertFalse( m.find() );
+    }
+    
+    public void testPrintAcl()
+    {
+        // Verify that the printed Acl for the test page is OK
+        WikiPage page = m_engine.getPage( "TestAclPage" );
+        Acl acl = m_engine.getAclManager().getPermissions( page );
+        String aclString = DefaultAclManager.printAcl( acl );
+        assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );
+        
+        // Create an ACL from scratch
+        acl = new AclImpl();
+        AclEntry entry = new AclEntryImpl();
+        entry.setPrincipal( new WikiPrincipal( "Charlie" ) );
+        entry.addPermission( new PagePermission( "Main:Foo", "view" ) );
+        entry.addPermission( new PagePermission( "Main:Foo", "edit" ) );
+        acl.addEntry( entry );
+        entry = new AclEntryImpl();
+        entry.setPrincipal( new WikiPrincipal( "Devin" ) );
+        entry.addPermission( new PagePermission( "Main:Foo", "edit" ) );
+        entry.addPermission( new PagePermission( "Main:Foo", "delete" ) );
+        acl.addEntry( entry );
+        
+        // Verify that the printed ACL is OK
+        String expectedValue = "[{ALLOW delete Devin}]\n[{ALLOW edit Charlie,Devin}]\n[{ALLOW view Charlie}]\n";
+        assertEquals( expectedValue, DefaultAclManager.printAcl( acl ) );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( DefaultAclManagerTest.class );

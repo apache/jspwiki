@@ -21,12 +21,21 @@ package com.ecyrd.jspwiki;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.security.Permission;
 import java.util.*;
+import java.util.regex.Matcher;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.event.WikiEventManager;
-import com.ecyrd.jspwiki.event.WikiPageEvent;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.auth.acl.AclEntry;
+import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
+import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -49,7 +58,7 @@ import com.ecyrd.jspwiki.workflow.Workflow;
 // FIXME: This class currently only functions just as an extra layer over providers,
 //        complicating things.  We need to move more provider-specific functionality
 //        from WikiEngine (which is too big now) into this class.
-public class PageManager extends ModuleManager
+public class PageManager extends ModuleManager implements WikiEventListener
 {
     private static final long serialVersionUID = 1L;
     
@@ -645,6 +654,114 @@ public class PageManager extends ModuleManager
     {
         // TODO Auto-generated method stub
         return null;
+    }
+
+
+    /**
+     * Listens for {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
+     * events. If a user profile's name changes, each page ACL is inspected. If an entry contains
+     * a name that has changed, it is replaced with the new one. No events are emitted
+     * as a consequence of this method, because the page contents are still the same; it is
+     * only the representations of the names within the ACL that are changing.
+     */
+    public void actionPerformed(WikiEvent event)
+    {
+        if (! ( event instanceof WikiSecurityEvent ) ) {
+            return;
+        }
+        
+        WikiSecurityEvent se = (WikiSecurityEvent)event;
+        if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
+        {
+            UserProfile[] profiles = (UserProfile[])se.getTarget();
+            Principal[] oldPrincipals = new Principal[]
+                { new WikiPrincipal( profiles[0].getLoginName() ),
+                  new WikiPrincipal( profiles[0].getFullname() ),
+                  new WikiPrincipal( profiles[0].getWikiName() ) };
+            Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
+            
+            // Examine each page ACL
+            try 
+            {
+                int pagesChanged = 0;
+                Collection pages = getAllPages();
+                for ( Iterator it = pages.iterator(); it.hasNext(); )
+                {
+                    WikiPage page = (WikiPage)it.next();
+                    boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
+                    if ( aclChanged )
+                    {
+                        // If the Acl needed changing, change it now
+                        try 
+                        {
+                            m_engine.getAclManager().setPermissions( page, page.getAcl() );
+                        }
+                        catch ( WikiSecurityException e )
+                        {
+                            log.error( "Could not change page ACL for page " + page.getName() + ": " + e.getMessage() );
+                        }
+                        pagesChanged++;
+                    }
+                }
+                log.info( "Profile name change for '" + newPrincipal.toString() +
+                          "' caused " + pagesChanged + " page ACLs to change also." );
+            }
+            catch ( ProviderException e )
+            {
+                // Oooo! This is really bad...
+                log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage() );
+            }
+        }
+    }
+    
+    /**
+     * For a single wiki page, replaces all Acl entries matching a supplied array of Principals with a new Principal.
+     * @param page the wiki page whose Acl is to be modified 
+     * @param oldPrincipals an array of Principals to replace; all AclEntry objects whose 
+     * {@link AclEntry#getPrincipal()} method returns one of these Principals will be replaced
+     * @param newPrincipal the Principal that should receive the old Principals' permissions
+     * @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
+     */
+    protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
+    {
+        Acl acl = page.getAcl();
+        boolean pageChanged = false;
+        if ( acl != null )
+        {
+            Enumeration entries = acl.entries();
+            Collection entriesToAdd = new ArrayList();
+            Collection entriesToRemove = new ArrayList();
+            while ( entries.hasMoreElements() )
+            {
+                AclEntry entry = (AclEntry)entries.nextElement();
+                if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) )
+                {
+                    // Create new entry
+                    AclEntry newEntry = new AclEntryImpl();
+                    newEntry.setPrincipal( newPrincipal );
+                    Enumeration permissions = entry.permissions();
+                    while ( permissions.hasMoreElements() )
+                    {
+                        Permission permission = (Permission)permissions.nextElement();
+                        newEntry.addPermission(permission);
+                    }
+                    pageChanged = true;
+                    entriesToRemove.add( entry );
+                    entriesToAdd.add( newEntry );
+                }
+            }
+            for ( Iterator ix = entriesToRemove.iterator(); ix.hasNext(); )
+            {
+                AclEntry entry = (AclEntry)ix.next();
+                acl.removeEntry( entry );
+            }
+            for ( Iterator ix = entriesToAdd.iterator(); ix.hasNext(); )
+            {
+                AclEntry entry = (AclEntry)ix.next();
+                acl.addEntry( entry );
+            }
+        }
+        return pageChanged;
     }
 
 }

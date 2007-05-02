@@ -18,12 +18,9 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.AuthenticationManager;
-import com.ecyrd.jspwiki.auth.Authorizer;
-import com.ecyrd.jspwiki.auth.GroupPrincipal;
-import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
-import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.*;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
@@ -46,7 +43,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * @author Andrew Jaquith
  * @since 2.4.19
  */
-public final class GroupManager implements Authorizer
+public final class GroupManager implements Authorizer, WikiEventListener
 {
     public static final String  MESSAGES_KEY       = "group";
 
@@ -219,6 +216,9 @@ public final class GroupManager implements Authorizer
             }
         }
 
+        // Make the GroupManager listen for WikiEvents (WikiSecurityEvents for changed user profiles)
+        engine.getUserManager().addWikiEventListener( this );
+        
         // Success!
         log.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
 
@@ -667,6 +667,65 @@ public final class GroupManager implements Authorizer
         if ( WikiEventManager.isListening(this) )
         {
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,target));
+        }
+    }
+
+    /**
+     * Listens for {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
+     * events. If a user profile's name changes, each group is inspected. If an entry contains
+     * a name that has changed, it is replaced with the new one. No group events are emitted
+     * as a consequence of this method, because the group memberships are still the same; it is
+     * only the representations of the names within that are changing.
+     */
+    public void actionPerformed(WikiEvent event)
+    {
+        if (! ( event instanceof WikiSecurityEvent ) ) {
+            return;
+        }
+        
+        WikiSecurityEvent se = (WikiSecurityEvent)event;
+        if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
+        {
+            WikiSession session = (WikiSession)se.getSource();
+            UserProfile[] profiles = (UserProfile[])se.getTarget();
+            Principal[] oldPrincipals = new Principal[] { 
+                new WikiPrincipal( profiles[0].getLoginName() ),
+                new WikiPrincipal( profiles[0].getFullname() ),
+                new WikiPrincipal( profiles[0].getWikiName() ) };
+            Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
+            
+            // Examine each group
+            int groupsChanged = 0;
+            try
+            {
+                Group[] groups = m_groupDatabase.groups();
+                for ( int i = 0; i < groups.length; i++ )
+                {
+                    boolean groupChanged = false;
+                    Group group = groups[i];
+                    for ( int j = 0; j < oldPrincipals.length; j++ )
+                    {
+                        if ( group.isMember( oldPrincipals[j] ) )
+                        {
+                            group.remove( oldPrincipals[j] );
+                            group.add( newPrincipal );
+                            groupChanged = true;
+                        }
+                    }
+                    if ( groupChanged )
+                    {
+                        setGroup( session, group );
+                        groupsChanged++;
+                    }
+                }
+            }
+            catch ( WikiException e )
+            {
+                // Oooo! This is really bad...
+                log.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
+            }
+            log.info( "Profile name change for '" + newPrincipal.toString() +
+                      "' caused " + groupsChanged + " groups to change also." );
         }
     }
 

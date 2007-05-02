@@ -1,12 +1,17 @@
 package com.ecyrd.jspwiki.auth;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import junit.framework.TestCase;
 
-import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.authorize.Group;
+import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.user.*;
 import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.workflow.Decision;
@@ -61,6 +66,174 @@ public class UserManagerTest extends TestCase
       m_db = m_mgr.getUserDatabase();
   }
   
+  public void testSetRenamedUserProfile() throws Exception
+  {
+      // First, count the number of users, groups, and pages
+      int oldUserCount = m_db.getWikiNames().length;
+      GroupManager groupManager = m_engine.getGroupManager();
+      PageManager pageManager = m_engine.getPageManager();
+      AuthorizationManager authManager = m_engine.getAuthorizationManager();
+      int oldGroupCount = groupManager.getRoles().length;
+      int oldPageCount = pageManager.getTotalPageCount();
+      
+      // Setup Step 1: create a new user with random name
+      WikiSession session = m_engine.guestSession();
+      long now = System.currentTimeMillis();
+      String oldLogin     = "TestLogin" + now;
+      String oldName      = "Test User " + now;
+      String newLogin     = "RenamedLogin" + now;
+      String newName      = "Renamed User " + now;
+      UserProfile profile = new DefaultUserProfile();
+      profile.setEmail( "testuser@testville.com" );
+      profile.setLoginName( oldLogin );
+      profile.setFullname ( oldName );
+      profile.setPassword ( "password" );
+      m_mgr.setUserProfile( session, profile );
+      
+      // 1a. Make sure the profile saved successfully
+      profile = m_mgr.getUserProfile( session );
+      assertEquals( oldLogin, profile.getLoginName() );
+      assertEquals( oldName, profile.getFullname() );
+      assertEquals( oldUserCount+1, m_db.getWikiNames().length );
+      
+      // Setup Step 2: create a new group with our test user in it
+      String groupName = "Group"+now;
+      Group group = groupManager.parseGroup( groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+      groupManager.setGroup( session, group );
+      
+      // 2a. Make sure the group is created with the user in it, and the role is added to the Subject
+      assertEquals( oldGroupCount+1, groupManager.getRoles().length );
+      assertTrue  ( group.isMember( new WikiPrincipal( oldLogin ) ) );
+      assertTrue  ( group.isMember( new WikiPrincipal( oldName  ) ) );
+      assertFalse ( group.isMember( new WikiPrincipal( newLogin ) ) );
+      assertFalse ( group.isMember( new WikiPrincipal( newName  ) ) );
+      assertTrue  ( groupManager.isUserInRole( session, group.getPrincipal() ) );
+      
+      // Setup Step 3: create a new page with our test user in the ACL
+      String pageName = "TestPage" + now;
+      m_engine.saveText( pageName, "Test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
+      
+      // 3a. Make sure the page got saved, and that ONLY our test user has permission to read it.
+      WikiPage p = m_engine.getPage( pageName );
+      assertEquals ( oldPageCount+1, pageManager.getTotalPageCount() );
+      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
+      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
+      assertTrue   ( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
+      WikiSession bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+      assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      
+      // Setup Step 4: change the user name in the profile and see what happens
+      profile = new DefaultUserProfile();
+      profile.setEmail    ( "testuser@testville.com" );
+      profile.setLoginName( oldLogin );
+      profile.setFullname ( newName );
+      profile.setPassword ( "password" );
+      m_mgr.setUserProfile( session, profile );
+      
+      // Test 1: the wiki session should have the new wiki name in Subject
+      Principal[] principals = session.getPrincipals();
+      assertTrue ( ArrayUtils.contains( principals, new WikiPrincipal( oldLogin ) ) );
+      assertFalse( ArrayUtils.contains( principals, new WikiPrincipal( oldName  ) ) );
+      assertFalse( ArrayUtils.contains( principals, new WikiPrincipal( newLogin ) ) );
+      assertTrue ( ArrayUtils.contains( principals, new WikiPrincipal( newName  ) ) );
+      
+      // Test 2: our group should not contain the old name OR login name any more
+      // (the full name is always used)
+      group = groupManager.getGroup( groupName );
+      assertFalse( group.isMember( new WikiPrincipal( oldLogin ) ) );
+      assertFalse( group.isMember( new WikiPrincipal( oldName  ) ) );
+      assertFalse( group.isMember( new WikiPrincipal( newLogin ) ) );
+      assertTrue ( group.isMember( new WikiPrincipal( newName  ) ) );
+      
+      // Test 3: our page should not contain the old wiki name OR login name
+      // in the ACL any more (the full name is always used)
+      p = m_engine.getPage( pageName );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
+      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
+      assertTrue( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
+      assertFalse( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      
+      // Test 4: our page text should have been re-written
+      // (The new full name should be in the ACL, but the login name should have been removed)
+      String expectedText = "[{ALLOW view Alice," + newName + "}]\nTest text.  More text.\r\n";
+      String actualText = m_engine.getText( pageName );
+      assertEquals( expectedText, actualText );
+      
+      // Remove our test page
+      m_engine.deletePage( pageName );
+      
+      // Setup Step 6: re-create the group with our old test user names in it
+      group = groupManager.parseGroup( groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+      groupManager.setGroup( session, group );
+      
+      // Setup Step 7: Save a new page with the old login/wiki names in the ACL again
+      // The test user should still be able to see the page (because the login name matches...)
+      pageName = "TestPage2" + now;
+      m_engine.saveText( pageName, "More test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
+      p = m_engine.getPage( pageName );
+      assertEquals ( oldPageCount+1, pageManager.getTotalPageCount() );
+      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
+      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
+      assertTrue   ( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
+      assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      
+      // Setup Step 8: re-save the profile with the new login name
+      profile = new DefaultUserProfile();
+      profile.setEmail    ( "testuser@testville.com" );
+      profile.setLoginName( newLogin );
+      profile.setFullname ( oldName );
+      profile.setPassword ( "password" );
+      m_mgr.setUserProfile( session, profile );
+
+      // Test 5: the wiki session should have the new login name in Subject
+      principals = session.getPrincipals();
+      assertFalse( ArrayUtils.contains( principals, new WikiPrincipal( oldLogin ) ) );
+      assertTrue ( ArrayUtils.contains( principals, new WikiPrincipal( oldName  ) ) );
+      assertTrue ( ArrayUtils.contains( principals, new WikiPrincipal( newLogin ) ) );
+      assertFalse( ArrayUtils.contains( principals, new WikiPrincipal( newName  ) ) );
+      
+      // Test 6: our group should not contain the old name OR login name any more
+      // (the full name is always used)
+      group = groupManager.getGroup( groupName );
+      assertFalse( group.isMember( new WikiPrincipal( oldLogin ) ) );
+      assertTrue ( group.isMember( new WikiPrincipal( oldName  ) ) );
+      assertFalse( group.isMember( new WikiPrincipal( newLogin ) ) );
+      assertFalse( group.isMember( new WikiPrincipal( newName  ) ) );
+      
+      // Test 7: our page should not contain the old wiki name OR login name
+      // in the ACL any more (the full name is always used)
+      p = m_engine.getPage( pageName );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
+      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
+      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
+      assertTrue( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
+      assertFalse( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      
+      // Test 8: our page text should have been re-written
+      // (The new full name should be in the ACL, but the login name should have been removed)
+      expectedText = "[{ALLOW view Alice," + oldName + "}]\nMore test text.  More text.\r\n";
+      actualText = m_engine.getText( pageName );
+      assertEquals( expectedText, actualText );
+      
+      // CLEANUP: delete the profile; user and page; should be back to old counts
+      m_db.deleteByLoginName( newLogin );
+      m_db.commit();
+      assertEquals( oldUserCount, m_db.getWikiNames().length );
+      
+      groupManager.removeGroup( group.getName() );
+      assertEquals( oldGroupCount, groupManager.getRoles().length );
+      
+      m_engine.deletePage( pageName );
+      assertEquals( oldPageCount, pageManager.getTotalPageCount() );
+  }
+
   public void testSetUserProfile() throws Exception
   {
       // First, count the number of users in the db now.

@@ -40,12 +40,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.auth.AuthenticationManager;
-import com.ecyrd.jspwiki.auth.Authorizer;
-import com.ecyrd.jspwiki.auth.GroupPrincipal;
-import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
-import com.ecyrd.jspwiki.auth.SessionMonitor;
-import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -547,10 +542,31 @@ public final class WikiSession implements WikiEventListener
                     }
                     case WikiSecurityEvent.PROFILE_SAVE:
                     {
-                        WikiSession target = (WikiSession)e.getTarget();
-                        if ( this.equals( target ) )
+                        WikiSession source = (WikiSession)e.getSource();
+                        if ( this.equals( source ) )
                         {
                             injectUserProfilePrincipals();  // Add principals for the user profile
+                            updatePrincipals();
+                        }
+                        break;
+                    }
+                    case WikiSecurityEvent.PROFILE_NAME_CHANGED:
+                    {
+                        // Refresh user principals based on new user profile
+                        WikiSession source = (WikiSession)e.getSource();
+                        if ( this.equals( source ) )
+                        {
+                            // To prepare for refresh, set the new full name as the primary principal
+                            UserProfile[] profiles = (UserProfile[])e.getTarget();
+                            UserProfile newProfile = profiles[1];
+                            if ( newProfile.getFullname() == null )
+                            {
+                                throw new IllegalStateException( "User profile FullName cannot be null." );
+                            }
+                            m_userPrincipal = new WikiPrincipal( newProfile.getFullname() );
+                            
+                            // Refresh principals for the user profile
+                            injectUserProfilePrincipals();  
                             updatePrincipals();
                         }
                         break;
@@ -881,7 +897,7 @@ public final class WikiSession implements WikiEventListener
      * user Principal {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}, 
      * plus the role principals {@link Role#ALL} and
      * {@link Role#ANONYMOUS}. This method also adds the session as a listener
-     * for GroupManager or AuthenticationManager events.
+     * for GroupManager, AuthenticationManager and UserManager events.
      * @param engine the wiki engine
      * @return the guest wiki session
      */
@@ -891,11 +907,13 @@ public final class WikiSession implements WikiEventListener
         session.m_engine = engine;
         session.invalidate();
         
-        // Add the session as listener for GroupManager, AuthManager events
+        // Add the session as listener for GroupManager, AuthManager, UserManager events
         GroupManager groupMgr = engine.getGroupManager();
         AuthenticationManager authMgr = engine.getAuthenticationManager();
+        UserManager userMgr = engine.getUserManager();
         groupMgr.addWikiEventListener( session );
         authMgr.addWikiEventListener( session );
+        userMgr.addWikiEventListener( session );
         
         return session;
     }
