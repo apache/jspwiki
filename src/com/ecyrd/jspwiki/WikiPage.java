@@ -161,15 +161,23 @@ public class WikiPage
     }
 
     /**
-     *  Returns the Acl for this page.  May return null, 
-     *  in case there is no ACL defined for this page, or it has not
-     *  yet been received.
+     *  Returns the Acl for this page.  May return <code>null</code>, 
+     *  in case there is no Acl defined, or it has not
+     *  yet been set by {@link #setAcl(Acl)}.
      */
     public Acl getAcl()
     {
         return m_accessList;
     }
 
+    /**
+     * Sets the Acl for this page. Note that method does <em>not</em>
+     * persist the Acl itself to back-end storage or in page markup;
+     * it merely sets the internal field that stores the Acl. To
+     * persist the Acl, callers should invoke 
+     * {@link com.ecyrd.jspwiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
+     * @param acl
+     */
     public void setAcl( Acl acl )
     {
         m_accessList = acl;
