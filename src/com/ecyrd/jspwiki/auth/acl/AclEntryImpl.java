@@ -27,7 +27,7 @@ public class AclEntryImpl implements AclEntry
     {
     }
     
-    public boolean addPermission( Permission permission )
+    public synchronized boolean addPermission( Permission permission )
     {
         if ( permission instanceof PagePermission && findPermission( permission ) == null )
         {
@@ -70,7 +70,7 @@ public class AclEntryImpl implements AclEntry
         return m_permissions.elements();
     }
 
-    public boolean removePermission( Permission permission )
+    public synchronized boolean removePermission( Permission permission )
     {
         Permission p = findPermission( permission );
 
@@ -83,7 +83,7 @@ public class AclEntryImpl implements AclEntry
         return false;
     }
 
-    public boolean setPrincipal( Principal user )
+    public synchronized boolean setPrincipal( Principal user )
     {
         if ( m_principal != null || user == null )
             return false;
