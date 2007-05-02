@@ -31,10 +31,9 @@ import java.util.Vector;
  *  @author Andrew Jaquith
  *  @since 2.3
  */
-public class AclImpl
-    implements Acl
+public class AclImpl implements Acl
 {
-    private Vector m_entries = new Vector();
+    private final Vector m_entries = new Vector();
 
     /**
      * Constructs a new AclImpl instance.
@@ -46,7 +45,7 @@ public class AclImpl
     /**
      * @see com.ecyrd.jspwiki.auth.acl.Acl#findPrincipals(java.security.Permission)
      */
-    public Principal[] findPrincipals(Permission permission)
+    public Principal[] findPrincipals( Permission permission )
     {
         Vector principals = new Vector();
         Enumeration entries = entries();
@@ -55,16 +54,16 @@ public class AclImpl
         {
             AclEntry entry = (AclEntry)entries.nextElement();
             Enumeration permissions = entry.permissions();
-            while (permissions.hasMoreElements()) 
+            while ( permissions.hasMoreElements() ) 
             {
                 Permission perm = (Permission)permissions.nextElement();
-                if (perm.implies(permission)) 
+                if ( perm.implies( permission ) ) 
                 {
-                    principals.add(entry.getPrincipal());
+                    principals.add( entry.getPrincipal() );
                 }
             }
         }
-        return (Principal[])principals.toArray(new Principal[principals.size()]);
+        return (Principal[])principals.toArray( new Principal[principals.size()] );
     }
   
     private boolean hasEntry( AclEntry entry )
@@ -83,10 +82,10 @@ public class AclImpl
 
             if( ep == null || entryp == null )
             {
-                throw new IllegalArgumentException("Entry is null; check code, please (entry="+entry+"; e="+e+")");
+                throw new IllegalArgumentException( "Entry is null; check code, please (entry="+entry+"; e="+e+")" );
             }
             
-            if( ep.getName().equals( entryp.getName() ))
+            if( ep.getName().equals( entryp.getName() ) )
             {
                 return true;
             }
@@ -95,11 +94,11 @@ public class AclImpl
         return false;
     }
 
-    public boolean addEntry( AclEntry entry )
+    public synchronized boolean addEntry( AclEntry entry )
     {
         if( entry.getPrincipal() == null )
         {
-            throw new IllegalArgumentException("Entry principal cannot be null");
+            throw new IllegalArgumentException( "Entry principal cannot be null" );
         }
 
         if( hasEntry( entry ) )
@@ -112,7 +111,7 @@ public class AclImpl
         return true;
     }
 
-    public boolean removeEntry( AclEntry entry )
+    public synchronized boolean removeEntry( AclEntry entry )
     {
         return m_entries.remove( entry );
     }
@@ -128,7 +127,7 @@ public class AclImpl
         {
             AclEntry entry = (AclEntry) e.nextElement();
         
-            if( entry.getPrincipal().getName().equals(principal.getName()) )
+            if( entry.getPrincipal().getName().equals( principal.getName() ) )
             {
                 return entry;
             }
@@ -151,17 +150,17 @@ public class AclImpl
             Principal pal = entry.getPrincipal();
 
             if( pal != null )
-                sb.append("  user = "+pal.getName()+": ");
+                sb.append( "  user = "+pal.getName()+": " );
             else
-                sb.append("  user = null: ");
+                sb.append( "  user = null: " );
 
-            sb.append("(");
+            sb.append( "(" );
             for( Enumeration perms = entry.permissions(); perms.hasMoreElements(); )
             {
                 Permission perm = (Permission) perms.nextElement();
                 sb.append( perm.toString() );
             }
-            sb.append(")\n");
+            sb.append( ")\n" );
         }
 
         return sb.toString();
