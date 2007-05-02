@@ -1,3 +1,19 @@
+2007-05-01  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * Enhancement: checked in back-end code that removes the restriction on changing login
+       names and user names ("full names") after registration. To do this, UserManager
+       emits a new WikiSecurityEvent called PROFILE_NAME_CHANGED that signals when
+       the login name or user name changes. PageManager and GroupManager listen
+       for this event, and will make all appropriate changes to page ACLs and groups 
+       that contain the old user name(s). The front-end changes (JSP tweaks) are nearly finished
+       and will be checked in shortly.
+       
+       * Added a new method for AclManager, setPermissions(), that persists Acls. The DefaultAclManager
+       (which extracts Acls from wiki page markup) implements setPermissions() by injecting
+       the [{ALLOW ....}] markup into the wiki page.
+       
+       * Synchronized thread-sensitive methods in the AclImpl/AclEntryImpl class.
+
 2007-04-28  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * Enhancement: user profile JSPs no longer request a distinct wiki name when 
