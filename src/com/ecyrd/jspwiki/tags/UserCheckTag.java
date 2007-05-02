@@ -53,6 +53,8 @@ import com.ecyrd.jspwiki.auth.UserManager;
  * <li>"notAuthenticated"
  *                     - the body of the tag is included 
  *                       if the user is not yet authenticated.</li>
+ * <li>"setLoginName"  - always true if custom auth used; also true for container auth 
+ *                       and current UserDatabase.isSharedWithContainer() is true.</li>
  * <li>"setPassword"   - always true if custom auth used; also true for container auth 
  *                       and current UserDatabase.isSharedWithContainer() is true.</li>
  * </ul>
@@ -82,6 +84,7 @@ public class UserCheckTag
     private static final String CUSTOM_AUTH = "customauth";
     private static final String KNOWN = "known";
     private static final String NOT_AUTHENTICATED = "notauthenticated";
+    private static final String SET_LOGIN_NAME = "setloginname";
     private static final String SET_PASSWORD = "setpassword";
 
     private String m_status;
@@ -204,7 +207,7 @@ public class UserCheckTag
                     return EVAL_BODY_INCLUDE;
                 }
             }
-            else if ( SET_PASSWORD.equals( m_status ) )
+            else if ( SET_PASSWORD.equals( m_status ) || SET_LOGIN_NAME.equals( m_status ) )
             {
                 UserManager userMgr = m_wikiContext.getEngine().getUserManager();
                 if ( !mgr.isContainerAuthenticated() ||
