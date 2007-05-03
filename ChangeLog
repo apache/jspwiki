@@ -1,5 +1,7 @@
 2007-05-03  Dirk Frederickx (dirk.frederickx@gmail.com)
 
+       * 2.5.50
+       
        * Bulk commit of Brushed Template. Expect things to be broken :-)
        JSPWiki now has a tabbed-user interface, skins, slimbox attach-viewer,
        improved jspwiki-styles suchs as table-filters, accordions, tips, etc. etc...
