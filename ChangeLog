@@ -1,3 +1,22 @@
+2007-05-03  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+       * Bulk commit of Brushed Template. Expect things to be broken :-)
+       JSPWiki now has a tabbed-user interface, skins, slimbox attach-viewer,
+       improved jspwiki-styles suchs as table-filters, accordions, tips, etc. etc...
+       Look 'n feel is still very ikea like.  Read the jspwiki.css to change color scheme.
+       Additional menu items are now visible via a "More...." dropdown.
+
+       * Javascript is based on the mootools library.
+
+       * Many JSPs are now driven by JSTL's EL. Not yet 100% completed.
+
+       * Only plain editor has been updated. No work done yet on WikiWizard, FCK
+
+       * The JSPWiki template has been tested on safari and FF. 
+       Feedback on IE 6.x and 7.x. is appreciated.
+
+       * RecentChanges plugin now sets colspan correctly. (formatting of recent changes page)
+
 2007-05-01  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * Enhancement: checked in back-end code that removes the restriction on changing login
