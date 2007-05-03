@@ -1,7 +1,7 @@
 2007-05-03  Dirk Frederickx (dirk.frederickx@gmail.com)
 
-       * 2.5.50
-       
+       * 2.5.51 - Brushed Template incorporated.
+
        * Bulk commit of Brushed Template. Expect things to be broken :-)
        JSPWiki now has a tabbed-user interface, skins, slimbox attach-viewer,
        improved jspwiki-styles suchs as table-filters, accordions, tips, etc. etc...
@@ -18,6 +18,9 @@
        Feedback on IE 6.x and 7.x. is appreciated.
 
        * RecentChanges plugin now sets colspan correctly. (formatting of recent changes page)
+       
+       * Two skins added: Smart and OrderedList. These skins are not yet tested 100%.
+
 
 2007-05-01  Andrew Jaquith <andrew AT freshcookies DOT org>
 
