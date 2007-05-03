@@ -1,68 +1,173 @@
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
 <%! 
-    public void jspInit()
-    {
-        WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-        AuthenticationManager mgr = wiki.getAuthenticationManager();
-        if ( mgr.isContainerAuthenticated() )
-        {   
-            posturl = "j_security_check";
-        }
-        else
-        {
-            posturl = "Login.jsp";
-          }
+  public void jspInit()
+  {
+    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    AuthenticationManager mgr = wiki.getAuthenticationManager();
+    if ( mgr.isContainerAuthenticated() )
+    {   
+      postURL = "j_security_check";
     }
-    String posturl = "";
+    else
+    {
+      postURL = "Login.jsp";
+    }
+  }
+  String postURL="";
 %>
 
-<h3><fmt:message key="login.heading.login"/></h3>
+<wiki:TabbedSection defaultTab="${param.tab}">
 
-<div class="formcontainer">
-  <div class="instructions">
-    <fmt:message key="login.welcome"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message>
-  </div>
-  <div class="instructions">
-    <wiki:Messages div="error" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
-  </div>
+  <wiki:UserCheck status="notauthenticated">
+  <wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.tab")%>">
+    <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
-  <form id="login" action="<%=posturl%>" 
-    method="POST" accept-charset="<wiki:ContentEncoding />" >
-      
-    <!-- User name -->
-    <div class="block">
-      <label><fmt:message key="login.login"/></label>
-      <input type="text" name="j_username" value="<wiki:Variable var="uid" default="" />" />
-    </div>
+<form action="<%=postURL%>"  
+        name="login" id="login"
+       class="wikiform"
+    onsubmit="return Wiki.submitOnce(this);"
+      method="post" accept-charset="<wiki:ContentEncoding />" >
 
-    <!-- Password -->
-    <div class="block">
-      <label><fmt:message key="login.password"/></label>
-      <input type="password" name="j_password" />
-    </div>
+<div align="center">
 
-    <div class="block">
-      <input type="hidden" name="redirect" value="<wiki:Variable var="redirect" default="" />" />
-      <input type="submit" name="submitlogin" value="<fmt:message key="login.submit.login"/>" />
-    </div>
+  <h3><fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
+
+  <div class="formhelp"><fmt:message key="login.help"></fmt:message></div>
+
+  <table>
+    <tr>
+      <td colspan="2" class="formhelp">
+        <wiki:Messages div="error" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+      </td>
+    </tr>
+    <tr>
+      <td><label for="j_username"><fmt:message key="login.login"/></label></td>
+      <td><input type="text" size="24" value="<wiki:Variable var='uid' default='' />" 
+                 name="j_username" id="j_username" /></td>
+    </tr>
+    <tr>
+      <td><label for="j_password"><fmt:message key="login.password"/></label></td>
+      <td><input type="password" size="24" 
+                 name="j_password" id="j_password" /></td>
+    </tr>
+    <tr>
+      <td />
+      <td>
+        <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
+        <input type="submit" name="submitlogin" value="login" style="display:none;"/>
+        <input type="button" name="submitlogix" value="<fmt:message key='login.submit.login'/>" onclick="this.form.submitlogin.click();" />
+      </td>
+    </tr>
+    </table>
     
-  </form>
-  
-    <div class="instructions">
+    <div class="formhelp">
+      <fmt:message key="login.lostpw"/>
+      <%--<a href="LostPassword.jsp">--%>
+      <a href="#" onclick="TabbedSection.onclick('lostpassword');"
+                    title="<fmt:message key='login.lostpw.title'/>" >
+        <fmt:message key="login.lostpw.getnew"/>
+      </a>
+    </div>
+    <div class="formhelp">
       <fmt:message key="login.nopassword"/>
-      <a href="UserPreferences.jsp?tab=profile"><fmt:message key="login.registernow">
-         <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
-         </fmt:message></a>
+      <%--<a href="UserPreferences.jsp?tab=profile">--%>
+      <%--FIXME shold be href"#register"--%>
+      <a href="#" onclick="TabbedSection.onclick('register');"
+                    title="<fmt:message key='login.registernow.title'/>" >
+        <fmt:message key="login.registernow">
+          <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
+        </fmt:message>
+      </a>
     </div>
-    <div class="instructions">
-      <fmt:message key="login.lostpassword"/>
-      <a href="LostPassword.jsp"><fmt:message key="login.getnewpassword"/></a>.
-    </div>
+
 </div>
+</form>
+
+
+  </wiki:Tab>
+  </wiki:UserCheck>
+
+  <wiki:Tab id="lostpassword" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%>">
+
+<%-- FIXME error flow on lostpw nok --%>
+
+<div align="center">
+<form action="LostPassword.jsp"  
+        name="lostpw" id="lostpw"
+       class="wikiform"
+    onsubmit="return Wiki.submitOnce(this);"
+      method="post" accept-charset="<wiki:ContentEncoding />" >
+
+  <h3><fmt:message key="login.lostpw.heading" /></h3>
+
+  <div class="formhelp"><fmt:message key="login.lostpw.help"></fmt:message></div>
+
+  <table>
+    <tr>
+      <td colspan="2" class="formhelp">
+        <wiki:Messages div="error" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+      </td>
+    </tr>
+    <tr>
+      <td><label for="name"><fmt:message key="login.lostpw.name"/></label></td>
+      <td><input type="text" size="24" name="name" id="name" /></td>
+    </tr>
+    <tr>
+      <td />
+      <td>
+        <input type="hidden" name="action" value="resetPassword"/>
+        <input type="submit" name="Submit" value="Reset password!" style="display:none;"/>
+        <input type="button" name="Submix" value="<fmt:message key='login.lostpw.submit'/>" onclick="this.form.Submit.click()"/>
+      </td>
+    </tr>
+  </table>
+
+    <div class="formhelp">
+      <fmt:message key="login.nopassword"/>
+      <%--<a href="UserPreferences.jsp?tab=profile">--%>
+      <a href="#" onclick="TabbedSection.onclick('register');"
+                    title="<fmt:message key='login.registernow.title'/>" >
+        <fmt:message key="login.registernow">
+          <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
+        </fmt:message>
+      </a>
+    </div>
+    <div class="formhelp">
+      Wanna login? 
+      <a href="#" onclick="TabbedSection.onclick('logincontent');"
+                    title="<fmt:message key='login.title'/>" >
+        <fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message>
+      </a>
+    </div>
+
+</form>
+</div>
+
+  </wiki:Tab>
+ 
+  <wiki:Permission permission='editProfile'>
+  <wiki:Tab id="register" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%>">
+    <wiki:Include page='ProfileTab.jsp'/>  
+  </wiki:Tab>
+  </wiki:Permission>
+
+  <wiki:Tab id="loginhelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.tab.help")%>' >
+  <wiki:InsertPage page="LoginHelp" />
+  <wiki:NoSuchPage page="LoginHelp">
+    <div class="error">
+      <fmt:message key="login.loginhelpmissing">
+        <fmt:param><wiki:EditLink page="LoginHelp">LoginHelp</wiki:EditLink></fmt:param>
+      </fmt:message>
+    </div>
+  </wiki:NoSuchPage>  
+</wiki:Tab>
+
+</wiki:TabbedSection>

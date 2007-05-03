@@ -52,7 +52,9 @@ function confirmDelete()
 }
 </script>
 
-<h3>Group <%=name%></h3>
+<wiki:TabbedSection defaultTab="${param.tab}">
+  <wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>">
+  <h3><%=name%></h3>
 
 <%
   if ( group == null )
@@ -85,17 +87,20 @@ function confirmDelete()
   else
   {
 %>
-    <div class="formcontainer">
-      <div class="instructions">
+ <table class="wikitable">
+    <tr>
+      <th>Group Name</th>
+      <td>
         <fmt:message key="group.groupintro">
           <fmt:param><em><%=name%></em></fmt:param>
         </fmt:message>
-      </div>
-    
-      <!-- Members -->
-      <div class="block">
-        <label><fmt:message key="group.members"/></label>
-        <div class="readonly"><%
+      </td>
+    </tr>
+    <!-- Members -->
+    <tr>
+      <th><fmt:message key="group.members"/>
+      </th>
+      <td><%
             for ( int i = 0; i < members.length; i++ )
             {
               out.println( members[i].getName().trim() );
@@ -104,25 +109,28 @@ function confirmDelete()
                 out.println( "<br/>" );
               }
             }
-          %></div>
-        <div class="description">
-          <fmt:message key="group.membership"/>
-        </div>
-      </div>
-      
-      <div class="instructions">
+          %></td>
+          <%--fmt:message key="group.membership"/--%>
+      </tr>
+      <tr>
+        <td colspan="2">
         <fmt:message key="group.modifier">
            <fmt:param><%=modifier%></fmt:param>
            <fmt:param><%=modified%></fmt:param>
         </fmt:message>
-        <br />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
         <fmt:message key="group.creator">
            <fmt:param><%=creator%></fmt:param>
            <fmt:param><%=created%></fmt:param>
         </fmt:message> 
-      </div>
-    </div>
+        </td>
+      </tr>
+    </table>        
 <%
   }
 %>
-
+</wiki:Tab>
+</wiki:TabbedSection>

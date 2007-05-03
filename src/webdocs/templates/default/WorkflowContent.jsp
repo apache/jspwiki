@@ -1,3 +1,4 @@
+<%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -18,6 +19,10 @@
   int i = 0;
   String evenOdd;
 %>
+<wiki:TabbedSection defaultTab='${param.tab} %>' >
+
+<wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "workflow.tab")%>" >
+
 <h3><fmt:message key="workflow.heading" /></h3>
 <p><fmt:message key="workflow.instructions"/></p>
 
@@ -31,7 +36,7 @@
 </c:if>
 
 <c:if test="${!empty decisions}">
-  <div class="instructions">
+  <div class="formhelp">
     <fmt:message key="workflow.actor.instructions"/>
   </div>
   <table class="wikitable">
@@ -109,7 +114,7 @@
 </c:if>
 
 <c:if test="${!empty workflows}">
-  <div class="instructions">
+  <div class="formhelp">
     <fmt:message key="workflow.owner.instructions"/>
   </div>
   <table class="wikitable">
@@ -153,3 +158,6 @@
     </tbody>
   </table>
 </c:if>
+
+</wiki:Tab>
+</wiki:TabbedSection>

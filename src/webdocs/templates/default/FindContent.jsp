@@ -1,12 +1,14 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
+<%-- Make AJAX driven --%>
 <%-- FIXME: Get rid of the scriptlets. --%>
 <%
     String query = (String)pageContext.getAttribute( "query",
@@ -39,18 +41,19 @@
     }
 %>
 
-      <h2>Find pages</h2>
+<wiki:TabbedSection>
+<wiki:Tab id="findquery" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab")%>" accesskey="s">
 
+<form action="<wiki:Link format='url' jsp='Search.jsp'/>"
+       class="wikiform"
+        name="searchform2" id="searchform2"
+         accept-charset="<wiki:ContentEncoding/>">
 
-      <form action="<wiki:Link format="url" jsp="Search.jsp"/>"
-            accept-charset="<wiki:ContentEncoding/>">
-
-      <div>
-      Enter your query here:<br />
-      <input type="text" id="query" name="query" size="40" value="<%=query%>" />
+      <p><label for="query"><fmt:message key="find.input" /></label></p>
+      <input type="text" name="query" id="query2" size="40" value="<%=query%>" />
       <input type="submit" name="ok" value="<fmt:message key="find.submit.find"/>" />
       <input type="submit" name="go" value="<fmt:message key="find.submit.go"/>" />
-      </div>
+      
       </form>
 
       <wiki:SearchResults>
@@ -66,7 +69,7 @@
 
           <div class="zebra-table">
           <div class="graphBars">
-          <table border="0" cellpadding="4" width="80%">
+          <table class="wikitable" xwidth="80%">
 
           <tr>
              <th align="left"><fmt:message key="find.results.page"/></th>
@@ -75,24 +78,27 @@
 
           <wiki:SearchResultIterator id="searchref" start="<%=Integer.toString(startVal)%>" maxItems="20">
               <tr>
-                  <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo>
+                  <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
+                  <td><span class="gBar"><%=searchref.getScore()%></span></td>
+              </tr>
 <%
     String[] contexts = searchref.getContexts();
     if ((contexts != null) && (contexts.length > 0)) {
-      out.println("<br />");
-      out.println("<div class=\"fragment\">");
-      for (int i = 0; i < contexts.length; i++) {
+%>
+            <tr>
+            <td colspan="2"><div class="fragment">
+<%    for (int i = 0; i < contexts.length; i++) {
         if (i > 0)
           out.println("<span class=\"fragment_ellipsis\"> ... </span>");
         out.println(contexts[i]);
       }
-      out.println("</div>");
-    }
+%>
+            </div></td>
+          </tr>
+<%
+     }
 %>
 
-</td>
-                  <td class="gBar"><%=searchref.getScore()%></td>
-              </tr>
           </wiki:SearchResultIterator>
 
           <wiki:IfNoSearchResults>
@@ -128,8 +134,13 @@
           <p>
           <a href="http://www.google.com/search?q=<%=query%>" target="_blank"><fmt:message key="find.googleit"/></a>
           </p>
-          <hr />
       </wiki:SearchResults>
+</wiki:Tab>
 
-      <wiki:InsertPage page="SearchPageHelp"/>
+<wiki:PageExists page="SearchPageHelp">
+<wiki:Tab id="findhelp"  title="Help" accesskey="h">
+  <wiki:InsertPage page="SearchPageHelp"/>
+</wiki:Tab>
+</wiki:PageExists>
 
+</wiki:TabbedSection>

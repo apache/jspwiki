@@ -1,53 +1,32 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
-<%-- Inserts page content. --%>
+<%
+  WikiContext c = WikiContext.findContext( pageContext );
+  int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
+  String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
+  if( attCount != 0 ) attTitle += " (" + attCount + ")";
+%>
 
-<div id="pagecontent">
-  <%-- If the page is an older version, then offer a note and a possibility
-       to restore this version as the latest one. --%>
+<wiki:TabbedSection defaultTab='${param.tab} %>' >
 
-  <wiki:CheckVersion mode="notlatest">
-    <div class="warning">
-      <fmt:message key="view.oldversion">
-        <fmt:param><wiki:PageVersion/></fmt:param>
-      </fmt:message>  
-      <br />
-      <wiki:LinkTo><fmt:message key="view.backtocurrent"/></wiki:LinkTo>&nbsp;&nbsp;
-      <wiki:EditLink version="this"><fmt:message key="view.restore"/></wiki:EditLink>
-    </div>
-  </wiki:CheckVersion>
+  <wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>" accesskey="v">
+    <wiki:Include page="PageTab.jsp"/>
+  </wiki:Tab>
 
-  <%-- Inserts no text if there is no page. --%>
+  <wiki:PageExists>
 
-  <wiki:InsertPage />
+  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
+    <wiki:Include page="AttachmentTab.jsp"/>
+  </wiki:Tab>
+  
+  <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>" accesskey="i" >
+    <wiki:Include page="InfoTab.jsp"/>
+  </wiki:Tab>
+  
+  </wiki:PageExists>
 
-  <wiki:NoSuchPage>
-    <%-- FIXME: Should also note when a wrong version has been fetched. --%>
-
-    <fmt:message key="common.nopage">
-      <fmt:param><wiki:EditLink><fmt:message key="common.createit"/></wiki:EditLink></fmt:param>
-    </fmt:message>
-  </wiki:NoSuchPage>
-
-</div>
-
-<wiki:HasAttachments>
-  <div id="attachments">
-    <h3><fmt:message key="view.heading.attachments"/></h3>
-    <div class="zebra-table">
-      <table>
-        <wiki:AttachmentsIterator id="att">
-          <tr>
-            <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
-            <td><wiki:PageInfoLink><img src="<wiki:Link format="url" jsp="images/attachment_big.png"/>" border="0" alt="Info on <%=att.getFileName()%>" /></wiki:PageInfoLink></td>
-            <td><fmt:formatNumber value="${att.size}"/> <fmt:message key="attach.bytes"/></td>
-          </tr>
-        </wiki:AttachmentsIterator>
-      </table>
-    </div>
-  </div>
-</wiki:HasAttachments>
-
+</wiki:TabbedSection>

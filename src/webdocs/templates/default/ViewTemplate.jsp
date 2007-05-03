@@ -1,48 +1,40 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.default"/>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html>
 
 <head>
-  <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
+  <title>
+    <fmt:message key="view.title.view">
+      <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
+      <fmt:param><wiki:PageName /></fmt:param>
+    </fmt:message>
+  </title>
   <wiki:Include page="commonheader.jsp"/>
   <wiki:CheckVersion mode="notlatest">
-        <meta name="robots" content="noindex,nofollow" />
+    <meta name="robots" content="noindex,nofollow" />
   </wiki:CheckVersion>
 </head>
 
-<body class="view" bgcolor="#FFFFFF">
-<a name="Top"></a>
+<body class="view" id="top">
 
 <div id="wikibody" >
 
   <wiki:Include page="Header.jsp" />
 
-  <div id="applicationlogo">
-    <a href="<wiki:LinkTo page='SystemInfo' format='url'/>"
-         onmouseover="document.fav_logo.src='<wiki:Link format="url" jsp="images/jspwiki_logo.png"/>'"
-         onmouseout="document.fav_logo.src='<wiki:Link format="url" jsp="images/jspwiki_logo_s.png"/>'">
-        <img src="<wiki:Link format="url" jsp="images/jspwiki_logo_s.png"/>"
-             name="fav_logo" alt="JSPWiki logo" border="0"/>
-    </a>
-  </div>
-
-  <div id="companylogo"></div>
+  <wiki:Include page="PageActionsTop.jsp"/>
 
   <div id="page"><wiki:Content/></div>
 
-  <div id="favorites"><wiki:Include page="Favorites.jsp"/></div>
+  <wiki:Include page="Favorites.jsp"/>
+
+  <wiki:Include page="PageActionsBottom.jsp"/>
 
   <wiki:Include page="Footer.jsp" />
 
-  <div style="clear:both; height:0px;" > </div>
-
 </div>
-<a name="Bottom"></a>
 
 </body>
 </html>
-

@@ -6,16 +6,22 @@
 
 <%-- Inserts page content for preview. --%>
 
-<div class="information">
-   <fmt:message key="preview.info"/>
-</div>
+<wiki:TabbedSection>
+<wiki:Tab id="previewcontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "preview.tab")%>">
 
-<div class="previewcontent">
-   <wiki:Translate><%=EditorManager.getEditedText(pageContext)%></wiki:Translate>
-</div>
+  <div class="information">
+    <fmt:message key="preview.info"/>
+    <wiki:Editor/>
+  </div>
 
-<div class="information">
-   <fmt:message key="preview.info"/>
-</div>
+  <div class="previewcontent">
+    <wiki:Translate><%=EditorManager.getEditedText(pageContext)%></wiki:Translate>
+  </div>
 
-<wiki:Editor/>
+  <div class="information">
+    <fmt:message key="preview.info"/>
+  </div>
+
+
+</wiki:Tab>
+</wiki:TabbedSection>

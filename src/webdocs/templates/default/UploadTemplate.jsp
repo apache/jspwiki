@@ -1,78 +1,57 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<%
+  WikiContext c = WikiContext.findContext( pageContext );
+  int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
+  String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
+  if( attCount != 0 ) attTitle += " (" + attCount + ")";
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html>
 
 <head>
   <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
-  <wiki:Include page="commonheader.jsp" />
+  <wiki:Include page="commonheader.jsp"/>
   <meta name="robots" content="noindex">
 </head>
 
-<body class="upload" bgcolor="#FFFFFF">
+<body>
 
-      <h1 class="pagename"><fmt:message key="upload.heading.upload"><fmt:param><wiki:PageName/></fmt:param></fmt:message></h1>
-      <hr /><p>
+<div id="wikibody" >
 
-      <wiki:HasAttachments>
-         <div id="attachments">
-         <h3><fmt:message key="upload.attachments"/></h3>
-         <div class="zebra-table">
-         <table width="90%">
-         <wiki:AttachmentsIterator id="att">
-             <tr>
-             <td><wiki:LinkTo><%=att.getFileName()%></wiki:LinkTo></td>
-             <td><wiki:PageInfoLink><img src="<wiki:Link format="url" jsp="images/attachment_big.png"/>" border="0" alt="Info on <%=att.getFileName()%>"></wiki:PageInfoLink></td>
-             <td><fmt:message key="attach.bytes"><fmt:param><%=att.getSize()%></fmt:param></fmt:message></td>
-             </tr>
-         </wiki:AttachmentsIterator>
-         </table>
-         </div>
-         </div>
-         <hr />
+  <wiki:Include page="Header.jsp" />
+  
+  <wiki:Include page="PageActionsTop.jsp"/>
 
-      </wiki:HasAttachments>
+  <div id="page">
+    <wiki:TabbedSection defaultTab="attachments" >
+      <wiki:Tab id="pagecontent" title="View" accesskey="v">
+        <wiki:Include page="PageTab.jsp"/>
+      </wiki:Tab>
+      <wiki:PageExists>
+      <wiki:Tab id="attachments" title="<%= attTitle %>" accesskey="a">
+        <wiki:Include page="AttachmentTab.jsp"/>
+      </wiki:Tab>
+      <wiki:Tab id="pageinfo" title="Info" accesskey="i">
+        <wiki:Include page="InfoTab.jsp"/>
+      </wiki:Tab>
+      </wiki:PageExists>
+    </wiki:TabbedSection> 
+  </div>
+  
+  <wiki:Include page="Favorites.jsp"/> 
 
-      <table border="0" width="100%">
-      <tr>
-        <td>
-           <form action="<wiki:Link format="url" jsp="attach"/>" method="post" enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>">
+  <wiki:Include page="PageActionsBottom.jsp"/>
 
-           <%-- Do NOT change the order of wikiname and content, otherwise the 
-                servlet won't find its parts. --%>
+  <wiki:Include page="Footer.jsp" />
 
-           <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
-
-           <fmt:message key="upload.info"/>
-           
-           <p>
-           <input type="file" name="content" />
-           <input type="submit" name="upload" value="Upload" />
-           <input type="hidden" name="action" value="upload" /><br />
-           Change note: <input type="text" name="changenote" maxlength="80" width="60" />
-           <input type="hidden" name="nextpage" value="<wiki:UploadLink format="url"/>" />
-           </p>
-           </form>
-
-           <wiki:Messages div="error" />
-
-        </td>
-        </tr>
-        <tr>
-
-        <td>
-           <p><fmt:message key="upload.done"><fmt:param><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></fmt:param></fmt:message>
-           </p>
-        </td>
-        </tr>
-
-      </table>
-
-
+</div>
 </body>
 
 </html>

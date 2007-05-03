@@ -26,19 +26,15 @@
   }
 %>
 
-<h3><fmt:message key="editgroup.heading.edit"><fmt:param><%=name%></fmt:param></fmt:message></h3>
+<wiki:TabbedSection defaultTab="${param.tab}">
+  <wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "editgroup.tab")%>">
 
-<div class="formcontainer">
-  <div class="instructions">
-    <fmt:message key="editgroup.instructions">
-      <fmt:param><%=name%></fmt:param>
-     </fmt:message>
-  </div>
-  <div class="instructions">
-    <wiki:Messages div="error" topic="group" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"editgroup.saveerror") %>" />
-  </div>
-  <form id="editGroup" action="<wiki:Link format="url" jsp="EditGroup.jsp"/>" 
-    method="POST" accept-charset="UTF-8">
+  <h3><%=name%></h3>
+
+  <form action="<wiki:Link format='url' jsp='EditGroup.jsp'/>" 
+         class="wikiform"
+            id="editGroup" 
+        method="POST" accept-charset="UTF-8">
       
     <!-- Members -->
     <%
@@ -49,22 +45,36 @@
         s.append( '\n' );
       }
     %>
-    <div class="block">
-      <label>Members</label>
-      <textarea id="members" name="members" rows="20" cols="40"><%=s.toString()%></textarea>
-      <div class="description">
-        <fmt:message key="editgroup.memberlist"/>
-      </div>
+    <div class="formhelp">
+    <fmt:message key="editgroup.instructions">
+      <fmt:param><%=name%></fmt:param>
+     </fmt:message>
+    </div>
+    <div class="formhelp">
+      <wiki:Messages div="error" topic="group" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"editgroup.saveerror") %>" />
     </div>
 
-    <div class="block">
-      <!-- Any errors? -->
-      <div class="instructions">
-        <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
-      </div>
+    <table class="wikitable">
+    <tr>
+      <th>Group Name</th>
+      <td><%=name%></td>
+    </tr>
+    <tr>
+      <th><label>Members</label></th>
+      <td>
+      <textarea id="members" name="members" rows="10" cols="30"><%=s.toString()%></textarea>
+      <div class="formhelp"><fmt:message key="editgroup.memberlist"/></div>
+      </td>
+    </tr>
+    </table>
       <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save"/>" />
       <input type="hidden" name="group" value="<%=name%>" />
       <input type="hidden" name="action" value="save" />
-    </div>
+      <div class="formhelp">
+        <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
+      </div>
   </form>
-</div>
+
+
+</wiki:Tab>
+</wiki:TabbedSection>

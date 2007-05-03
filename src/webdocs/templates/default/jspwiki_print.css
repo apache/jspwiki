@@ -7,28 +7,51 @@
  */
  
 /* Webpage stuff */
-#applicationlogo,
-#companylogo,
+.applicationlogo,
+.companylogo,
 .searchbox,
 .breadcrumbs,
+.pageactions,
+.quicklinks,
 #actionsTop,
 #actionsBottom,
 #favorites,
-.tabmenu       { display: none; }
+.collapsebox .collapseOpen,
+.collapsebox .collapseClose, 
+.table-filter .filterrow,
+.tabmenu		{ display:none; }
 
+/* seems not to work as expected -- ffs */
+#attachments,   
+#addcomment,
+#pagelinks,
+#pagecontent, 
+#editcontent,
+#previewcontent,
+#diffcontent,
+#infocontent,
+#findquery,
+#userPrefs		{ display: block; visibility: visible; }
 
-/* Wild guess */
-body           { font-size: 10pt; }
+tt,pre			{ overflow: visible;  }
 
 /* Show links as normal text (maybe show urls at the bottom of the page) */
-
-a              { text-decoration: none; }
+a				{ text-decoration: none; }
+/*print href of each link
+a:after 		{ content:attr(href); color:grey;
+          		  font-family:"Courier New", Courier, mono; font-size:8pt; }
+*/
 
 /* Give the content what it deserves. */
-#header,
 .pagename,
+#header,
 #footer,
-#page          { width: 100%; margin: 0; float: none; clear: both; position: static; }
-#footer        { margin-top: 1em; }
+#page			{ width:100%; margin:0; padding:0; float:none; clear:both; position:static; }
 
-/* More to come. */
+.tabs			{ border: none; }
+.tabmenu		{ display: none; }
+.hidetab		{ display: block; border-top: 1px solid gray; }
+
+.accordion .active, 
+.tabbedAccordion .active 
+				{ height: auto !important; }

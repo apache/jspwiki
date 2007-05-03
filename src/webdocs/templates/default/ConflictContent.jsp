@@ -1,31 +1,23 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
-   <div class="error">
-      <fmt:message key="conflict.oops"/>
-   </div>
+<wiki:TabbedSection >
 
-      <p><font color="#0000FF"><fmt:message key="conflict.modified"/></font></p>
+<wiki:Tab id="conflict" title="Oops">
+  <div class="error"><fmt:message key="conflict.oops" /></div>
+  <fmt:message key="conflict.goedit" >
+    <fmt:param><wiki:EditLink><wiki:PageName /></wiki:EditLink></fmt:param>
+  </fmt:message>
+</wiki:Tab>
+ 
+<wiki:Tab id="conflictOther" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.modified")%>" >
+  <tt><%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%></tt>      
+</wiki:Tab>
+ 
+<wiki:Tab id="conflictOwn" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.yourtext")%>" >
+  <tt><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></tt>
+</wiki:Tab>
 
-      <hr />
-
-      <tt>
-        <%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%>
-      </tt>      
-
-      <hr />
-
-      <p><font color="#0000FF"><fmt:message key="conflict.yourtext"/></font></p>
-
-      <tt>
-        <%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%>
-      </tt>
-
-      <hr />
-
-      <p>
-       <i><fmt:message key="conflict.goedit">
-       <fmt:param><wiki:EditLink><wiki:PageName /></wiki:EditLink></fmt:param>
-       </fmt:message></i>
-      </p>
+</wiki:TabbedSection>
