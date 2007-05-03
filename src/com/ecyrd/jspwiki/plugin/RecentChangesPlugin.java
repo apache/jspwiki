@@ -69,6 +69,7 @@ public class RecentChangesPlugin
         int      spacing  = 4;
         boolean  showAuthor = true;
         boolean  showChangenote = true;
+        int      tablewidth = 4;
         
         WikiEngine engine = context.getEngine();
 
@@ -80,6 +81,7 @@ public class RecentChangesPlugin
             spacing  = 0;
             showAuthor = false;
             showChangenote = false;
+            tablewidth = 2;
         }
 
         Calendar sincedate = new GregorianCalendar();
@@ -117,7 +119,7 @@ public class RecentChangesPlugin
                     tr row = new tr();
                     td col = new td();
                     
-                    col.setColSpan(3).setClass("date");
+                    col.setColSpan(tablewidth).setClass("date"); 
                     col.addElement( new b().addElement(fmt.format(lastmod)) );
 
                     rt.addElement(row);
