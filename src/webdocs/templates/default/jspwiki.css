@@ -654,14 +654,13 @@ a.slimbox:hover { background:#ff9933;}
 
 
 /* formatting recent changes */
-.recentchanges tr			{ vertical-align:top; }
-.recentchanges .date		{ border-bottom:2px solid silver; height:3em; vertical-align:bottom;
-							  background-color:white !important;}
-
-.recentchanges .lastchange	{ font-size:90%; width:10%; }
-.recentchanges .author		{ font-size:90%; width:10%; }
-.recentchanges .changenote	{ font-size:90%; width:50%; }
-
+.recentchanges 				{ table-layout:fixed; } /*faster renderer */
+.recentchanges td			{ vertical-align:top; border-bottom:1px solid #bbbbbb; }
+.recentchanges .date 		{ vertical-align:bottom; xfont-size:1.2em;  
+							  border-top:1.5em solid white;
+							  background-color:#d7d7d7 !important;
+							  border-bottom:none; }
+.recentchanges tr.odd td	{ background-color: transparent; } 
 
 .spin,
 #spin	{ background:url("images/spin.gif") no-repeat; width:16px; height:16px; }
