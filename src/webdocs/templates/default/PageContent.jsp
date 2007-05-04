@@ -11,7 +11,7 @@
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 %>
 
-<wiki:TabbedSection defaultTab='${param.tab} %>' >
+<wiki:TabbedSection defaultTab='${param.tab}' >
 
   <wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>" accesskey="v">
     <wiki:Include page="PageTab.jsp"/>
