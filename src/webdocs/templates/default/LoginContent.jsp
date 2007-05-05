@@ -159,12 +159,12 @@
   </wiki:Tab>
   </wiki:Permission>
 
-  <wiki:Tab id="loginhelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.tab.help")%>' >
-  <wiki:InsertPage page="LoginHelp" />
-  <wiki:NoSuchPage page="LoginHelp">
+  <wiki:Tab id="LoginPageHelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.tab.help")%>' >
+  <wiki:InsertPage page="LoginPageHelp" />
+  <wiki:NoSuchPage page="LoginPageHelp">
     <div class="error">
       <fmt:message key="login.loginhelpmissing">
-        <fmt:param><wiki:EditLink page="LoginHelp">LoginHelp</wiki:EditLink></fmt:param>
+        <fmt:param><wiki:EditLink page="LoginPageHelp">LoginHelp</wiki:EditLink></fmt:param>
       </fmt:message>
     </div>
   </wiki:NoSuchPage>  
