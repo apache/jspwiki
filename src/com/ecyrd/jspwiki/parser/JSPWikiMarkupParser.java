@@ -1290,7 +1290,7 @@ public class JSPWikiMarkupParser
         if( ruleLine.endsWith( "}" ) )
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
 
-        log.debug("page="+page.getName()+", ACL = "+ruleLine);
+        if( log.isDebugEnabled() ) log.debug("page="+page.getName()+", ACL = "+ruleLine);
         
         try
         {
@@ -1298,7 +1298,7 @@ public class JSPWikiMarkupParser
 
             page.setAcl( acl );
 
-            log.debug( acl.toString() );
+            if( log.isDebugEnabled() ) log.debug( acl.toString() );
         }
         catch( WikiSecurityException wse )
         {

@@ -329,7 +329,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
                     while (i.hasNext())
                     {
                         String page = (String) i.next();
-                        log.debug( "Flushing " + page );
+                        if( log.isDebugEnabled() ) log.debug( "Flushing " + page );
                         m_documentCache.flushPattern( page );
                     }
                 }
