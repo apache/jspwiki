@@ -292,8 +292,8 @@
 </table>
 </form>
   
-<!-- Clearing the 'asserted name' cookie -->
-<wiki:UserCheck status="asserted">
+<!-- Clearing the 'asserted name' and other perfs in the cookie -->
+<%--wiki:UserCheck status="asserted"--%>
 
 <h3>Removing User Preferences</h3>
 
@@ -310,4 +310,4 @@
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>
 
 </form>
-</wiki:UserCheck>
+<%--/wiki:UserCheck--%>
