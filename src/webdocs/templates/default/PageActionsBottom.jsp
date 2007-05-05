@@ -47,8 +47,22 @@
         </wiki:PageType>
       </span>
     </wiki:Permission>
+  
+    <wiki:Permission permission="comment">
+    <span>
+      <wiki:PageType type="page">
+        <a href="Comment.jsp?page=<wiki:Variable var='pagename' />"
+           title="<fmt:message key="actions.comment.title"/>" ><fmt:message key="actions.comment"/></a>
+      </wiki:PageType>
+      <wiki:PageType type="attachment">
+        <a href="Comment.jsp?page=<wiki:ParentPageName />"
+          title="<fmt:message key="actions.addcommenttoparent"/>" ><fmt:message key="actions.comment"/></a>
+      </wiki:PageType>
+      </span>
+    </wiki:Permission>
   </wiki:CheckRequestContext>
-
+  
+  
   <wiki:CheckRequestContext context='!prefs'>
     <wiki:CheckRequestContext context='!preview'>
       <span class="actionPrefs">
