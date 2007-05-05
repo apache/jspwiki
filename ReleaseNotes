@@ -1,27 +1,17 @@
 
-This is a stable release of JSPWiki 2.4.  It contains a number of
+This is an unstable release of JSPWiki 2.5.  It contains a number of
 bug fixes, which can be found from ChangeLog.
 
 
 NEW FEATURES
 ============
 
-* Authentication and authorization at page level using JAAS.
+* JSPWiki source code requires JDK 1.5 to compile, though it should
+  still run under JDK 1.4.
+  
+* Workflow packages
 
-* New default template, with pluggable editors.
-
-* New rendering engine, which is WAY faster than the old one (the old one
-  is still included for backwards compatibility purposes).
-
-* Loads and loads of under-the-hood changes.
-
-* Atom Feed Format 1.0 support
-
-* WIKIWYG editing using the WikiWizard from University of Heilbronn.
-
-* Advanced SpamFilter which supports Akismet as well.
-
-* (2.4.86) Ability to allow/disallow certain file types from being uploaded
+* Internationalization
 
 UPGRADE NOTES
 =============

@@ -1,50 +1,78 @@
+2007-05-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.52
+       
+       * Fixed TemplateManager.listSkins() so that it returns only 
+       directories, not everything.
+       
+       * Added SearchManager.JSONSearch.findPages(), though be warned that
+       it can be really slow.  An API change to SearchProvider needs to be
+       done before this can be fixed.
+       
+       * Reformatted ChangeLog to word wrap at column 80 to make it more
+       readable...
+       
+       * A major commit of new Admin.jsp and AdminTemplate.jsp and all the
+       related paraphernalia.  It's not yet complete, but the framework is
+       getting there.  Due to the use of JMX, JSPWiki now requires JDK 1.5
+       to compile (though it should happily continue to run under 1.4 as 
+       well).
+
 2007-05-03  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * 2.5.51 - Brushed Template incorporated.
 
        * Bulk commit of Brushed Template. Expect things to be broken :-)
        JSPWiki now has a tabbed-user interface, skins, slimbox attach-viewer,
-       improved jspwiki-styles suchs as table-filters, accordions, tips, etc. etc...
-       Look 'n feel is still very ikea like.  Read the jspwiki.css to change color scheme.
-       Additional menu items are now visible via a "More...." dropdown.
+       improved jspwiki-styles suchs as table-filters, accordions, tips, 
+       etc. etc...  Look 'n feel is still very ikea like.  Read the 
+       jspwiki.css to change color scheme.  Additional menu items are now 
+       visible via a "More...." dropdown.
 
        * Javascript is based on the mootools library.
 
        * Many JSPs are now driven by JSTL's EL. Not yet 100% completed.
 
-       * Only plain editor has been updated. No work done yet on WikiWizard, FCK
+       * Only plain editor has been updated. No work done yet on WikiWizard,
+       FCK
 
        * The JSPWiki template has been tested on safari and FF. 
        Feedback on IE 6.x and 7.x. is appreciated.
 
-       * RecentChanges plugin now sets colspan correctly. (formatting of recent changes page)
+       * RecentChanges plugin now sets colspan correctly. (formatting of 
+       recent changes page)
        
-       * Two skins added: Smart and OrderedList. These skins are not yet tested 100%.
+       * Two skins added: Smart and OrderedList. These skins are not yet
+       tested 100%.
 
 
 2007-05-01  Andrew Jaquith <andrew AT freshcookies DOT org>
 
-       * Enhancement: checked in back-end code that removes the restriction on changing login
-       names and user names ("full names") after registration. To do this, UserManager
-       emits a new WikiSecurityEvent called PROFILE_NAME_CHANGED that signals when
-       the login name or user name changes. PageManager and GroupManager listen
-       for this event, and will make all appropriate changes to page ACLs and groups 
-       that contain the old user name(s). The front-end changes (JSP tweaks) are nearly finished
-       and will be checked in shortly.
+       * Enhancement: checked in back-end code that removes the restriction 
+       on changing login names and user names ("full names") after 
+       registration. To do this, UserManager emits a new WikiSecurityEvent 
+       called PROFILE_NAME_CHANGED that signals when the login name or user
+       name changes. PageManager and GroupManager listen for this event, 
+       and will make all appropriate changes to page ACLs and groups that 
+       contain the old user name(s). The front-end changes (JSP tweaks) 
+       are nearly finished and will be checked in shortly.
        
-       * Added a new method for AclManager, setPermissions(), that persists Acls. The DefaultAclManager
-       (which extracts Acls from wiki page markup) implements setPermissions() by injecting
-       the [{ALLOW ....}] markup into the wiki page.
+       * Added a new method for AclManager, setPermissions(), that persists
+       Acls. The DefaultAclManager (which extracts Acls from wiki page markup)
+       implements setPermissions() by injecting the [{ALLOW ....}] markup 
+       into the wiki page.
        
-       * Synchronized thread-sensitive methods in the AclImpl/AclEntryImpl class.
+       * Synchronized thread-sensitive methods in the AclImpl/AclEntryImpl 
+       class.
 
 2007-04-28  Andrew Jaquith <andrew AT freshcookies DOT org>
 
-       * Enhancement: user profile JSPs no longer request a distinct wiki name when 
-       a user registers. The wiki name is now computed automtically; it is the user
-       name without any whitespace. This change should make registration even easier.
-       In the various user manager/database classes, UserProfile/DefaultUserProfile.setWikiName()
-       is hereby deprecated and will be removed in a future release. However,
+       * Enhancement: user profile JSPs no longer request a distinct wiki 
+       name when a user registers. The wiki name is now computed automtically;
+       it is the user name without any whitespace. This change should make
+       registration even easier.  In the various user manager/database 
+       classes, UserProfile/DefaultUserProfile.setWikiName() is hereby 
+       deprecated and will be removed in a future release. However,
        getWikiName() remains, as does the UserDatabase method findByWikiName().
        The UserDatabase classes do not change their public APIs, and they
        still persist WikiNames so that they can be searched. However, when 
@@ -79,8 +107,8 @@
 
        * Enhancement LostPassword.jsp now uses POST for form submission.
 
-       * Enhancement: Profile registrations now automatically trigger an e-mail confirmation
-       to the user, if an e-mail address was supplied.
+       * Enhancement: Profile registrations now automatically trigger an 
+       e-mail confirmation to the user, if an e-mail address was supplied.
 
        * Bug fix: page-save workflow does no longer sends rejection SimpleNotifications
        to users unless they have already authenticated when they save the page.

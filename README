@@ -3,8 +3,8 @@
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.30 $
-                             $Date: 2006-09-15 19:43:13 $
+                         $Revision: 1.31 $
+                             $Date: 2007-05-05 10:35:45 $
                            $Author: jalkanen $
 
 What is it?
@@ -16,7 +16,7 @@ in its development.  JSPWiki supports all the traditional wiki features,
 as well as very detailed access control and security integration using JAAS. 
 
 
-    Copyright (C) 2001-2006 JSPWiki development team
+    Copyright (C) 2001-2007 JSPWiki development team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public License
