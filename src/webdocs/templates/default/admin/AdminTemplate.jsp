@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <html>
 <head>
-<title>JSPWiki administartion</title>
+<title>JSPWiki administration</title>
   <wiki:Include page="commonheader.jsp"/>
 </head>
 <body class="view">
@@ -20,10 +20,27 @@ in your <tt>jspwiki.properties</tt> file.</div>
     AdminBeanManager mgr = wiki.getAdminBeanManager();
  %>
 
-<wiki:TabbedSection defaultTab='<%=request.getParameter("tab")%>'>
+<wiki:TabbedSection defaultTab="${param['tab-admin']}">
 
 <wiki:Tab id="core" title="Core">
 <p>Contains core setup options.</p>
+   <wiki:TabbedSection defaultTab="${param['tab-core']}">
+
+     <wiki:AdminBeanIterator type="core" id="ab">
+      <wiki:Tab id="${ab.id}" title="${ab.title}">
+      
+      <div class="formcontainer">
+      <form action="Admin.jsp" method="post" accept-charset="UTF-8">
+        <input type="hidden" name="tab-admin" value="core"/>
+        <input type="hidden" name="tab-core" value="${ab.title}" />
+        <%
+         out.write( ab.doGet(ctx) );
+         %>
+       </form>
+       </div>
+      </wiki:Tab>
+     </wiki:AdminBeanIterator>
+   </wiki:TabbedSection>
 </wiki:Tab>
 
 <wiki:Tab id="users" title="Users">
@@ -42,15 +59,19 @@ in your <tt>jspwiki.properties</tt> file.</div>
 
 
 <wiki:Tab id="editors" title="Editors">
-   <wiki:TabbedSection>
+   <wiki:TabbedSection defaultTab="${param['tab-editors']}">
      <wiki:AdminBeanIterator type="editors" id="ab">
-      <wiki:Tab id="${ab.title}" title="${ab.title}">
+      <wiki:Tab id="${ab.id}" title="${ab.title}">
       
+      <div class="formcontainer"> 
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
-      <%
-             out.write(ab.getHTML(ctx));
-       %>
+         <input type="hidden" name="tab-admin" value="editors"/>
+         <input type="hidden" name="tab-editors" value="${ab.title}" />
+         <%
+         out.write( ab.doGet(ctx) );
+         %>
        </form>
+       </div>
       </wiki:Tab>
      </wiki:AdminBeanIterator>
    </wiki:TabbedSection>
