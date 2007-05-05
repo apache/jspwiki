@@ -33,7 +33,8 @@ import org.jdom.xpath.XPath;
 import com.ecyrd.jspwiki.WikiException;
 
 /**
- *  Contains useful utilities for class file manipulation.
+ *  Contains useful utilities for class file manipulation.  This is a static class,
+ *  so there is no need to instantiate it.
  *
  *  @author Janne Jalkanen
  *  @since 2.1.29.
@@ -41,7 +42,11 @@ import com.ecyrd.jspwiki.WikiException;
 public class ClassUtil
 {
     private static final Logger log = Logger.getLogger(ClassUtil.class);
-    protected static final String MAPPINGS = "/ini/classmappings.xml";
+    /**
+     *  The location of the classmappings.xml document. It will be searched for
+     *  in the classpath.  It's value is "{@value}".
+     */
+    public  static final String MAPPINGS = "/ini/classmappings.xml";
     
     private static Map c_classMappings = new Hashtable();
 
@@ -150,7 +155,7 @@ public class ClassUtil
     /**
      *  This method is used to locate and instantiate a mapped class.
      *  You may redefine anything in the resource file which is located in your classpath
-     *  under the name <code>{@value #MAPPINGS}</code>.
+     *  under the name <code>ClassUtil.MAPPINGS ({@value #MAPPINGS})</code>.
      *  <p>
      *  This is an extremely powerful system, which allows you to remap many of
      *  the JSPWiki core classes to your own class.  Please read the documentation
@@ -169,6 +174,22 @@ public class ClassUtil
         return getMappedObject(requestedClass, initargs );
     }
 
+    /**
+     *  This method is used to locate and instantiate a mapped class.
+     *  You may redefine anything in the resource file which is located in your classpath
+     *  under the name <code>ClassUtil.MAPPINGS ({@value #MAPPINGS})</code>.
+     *  <p>
+     *  This is an extremely powerful system, which allows you to remap many of
+     *  the JSPWiki core classes to your own class.  Please read the documentation
+     *  included in the default <code>{@value #MAPPINGS}</code> file to see
+     *  how this method works. 
+     *  
+     *  @param requestedClass The name of the class you wish to instantiate.
+     *  @param arg1 Argument for the constructor.
+     *  @return An instantiated Object.
+     *  @throws WikiException If the class cannot be found or instantiated.
+     *  @since 2.5.40
+     */
     public static Object getMappedObject( String requestedClass, Object arg1 )
         throws WikiException
     {
@@ -176,6 +197,23 @@ public class ClassUtil
         return getMappedObject(requestedClass, initargs );
     }
 
+    /**
+     *  This method is used to locate and instantiate a mapped class.
+     *  You may redefine anything in the resource file which is located in your classpath
+     *  under the name <code>ClassUtil.MAPPINGS ({@value #MAPPINGS})</code>.
+     *  <p>
+     *  This is an extremely powerful system, which allows you to remap many of
+     *  the JSPWiki core classes to your own class.  Please read the documentation
+     *  included in the default <code>{@value #MAPPINGS}</code> file to see
+     *  how this method works. 
+     *  
+     *  @param requestedClass The name of the class you wish to instantiate.
+     *  @param arg1 Argument for the constructor
+     *  @param arg2 A second argument for the constructor
+     *  @return An instantiated Object.
+     *  @throws WikiException If the class cannot be found or instantiated.
+     *  @since 2.5.40
+     */
     public static Object getMappedObject( String requestedClass, Object arg1, Object arg2 )
         throws WikiException
     {
@@ -192,11 +230,14 @@ public class ClassUtil
      *  the JSPWiki core classes to your own class.  Please read the documentation
      *  included in the default <code>{@value #MAPPINGS}</code> file to see
      *  how this method works. 
+     *  <p>
+     *  This method takes in an object array for the constructor arguments for classes
+     *  which have more than two constructors.
      *  
      *  @param requestedClass The name of the class you wish to instantiate.
      *  @param initargs The parameters to be passed to the constructor. May be <code>null</code>.
      *  @return An instantiated Object.
-     *  @throws WikiException If the class cannot be found or instantiated.
+     *  @throws WikiException If the class cannot be found or instantiated.  The error is logged.
      *  @since 2.5.40
      */
     public static Object getMappedObject( String requestedClass, Object[] initargs )
@@ -209,7 +250,8 @@ public class ClassUtil
             Constructor[] ctors = cl.getConstructors();
             
             //
-            //  Try to find the proper constructor
+            //  Try to find the proper constructor by comparing the
+            //  initargs array classes and the constructor types.
             //
             for( int c = 0; c < ctors.length; c++ )
             {
@@ -221,11 +263,19 @@ public class ClassUtil
                     {
                         if( params[arg].isAssignableFrom(initargs[arg].getClass()))
                         {
+                            //
+                            //  Ha, found it!  Instantiating and returning...
+                            //
                             return ctors[c].newInstance(initargs);
                         }
                     }
                 }
             }
+            
+            //
+            //  No arguments, so we can just call a default constructor and
+            //  ignore the arguments.
+            //
             Object o = cl.newInstance();
             
             return o;
@@ -256,6 +306,14 @@ public class ClassUtil
         }
     }
 
+    /**
+     *  Finds a mapped class from the c_classMappings list.  If there is no
+     *  mappped class, will use the requestedClass.
+     *  
+     *  @param requestedClass
+     *  @return A Class object which you can then instantiate.
+     *  @throws WikiException
+     */
     private static Class getMappedClass( String requestedClass )
         throws WikiException
     {
