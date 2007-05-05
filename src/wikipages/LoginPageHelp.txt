@@ -1,0 +1,13 @@
+Here's a quick overview on how to login to [{$applicationname}]. This text is [here|LoginPageHelp] 
+
+! Login
+
+explain
+
+! Lost password
+
+explain
+
+! Register new user
+
+explain
