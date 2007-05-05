@@ -17,7 +17,7 @@ public abstract class WikiFormAdminBean
     
     public abstract void handleResponse( WikiContext context, Map params );
 
-    public String getHTML(WikiContext context)
+    public String doGet(WikiContext context)
     {
         String result = "";
         
