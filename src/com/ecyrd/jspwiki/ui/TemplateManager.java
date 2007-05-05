@@ -44,6 +44,8 @@ import com.ecyrd.jspwiki.modules.ModuleManager;
 public class TemplateManager 
     extends ModuleManager
 {
+    private static final String SKIN_DIRECTORY = "skins";
+
     /**
      * Requests a JavaScript function to be called during window.onload.
      */
@@ -300,14 +302,14 @@ public class TemplateManager
      */
     public Set listSkins( PageContext pageContext, String template )
     {
-        String place = makeFullJSPName( template, "skins" );
+        String place = makeFullJSPName( template, SKIN_DIRECTORY );
      
         ServletContext sContext = pageContext.getServletContext();
 
         Set skinSet = sContext.getResourcePaths( place );
         TreeSet resultSet = new TreeSet();
                
-        log.debug( "Listings skins from "+place );
+        if( log.isDebugEnabled() ) log.debug( "Listings skins from "+place );
         
         if( skinSet != null )
         {
@@ -319,11 +321,11 @@ public class TemplateManager
             {
                 String s[] = StringUtils.split(skins[i],"/");
             
-                if( s.length > 1 )
+                if( s.length > 2 && skins[i].endsWith("/") )
                 {
                     String skinName = s[s.length-1];
                     resultSet.add( skinName );
-                    log.debug("..."+skinName);
+                    if( log.isDebugEnabled() ) log.debug("...adding skin '"+skinName+"'");
                 }
             }
         }
