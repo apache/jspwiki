@@ -79,11 +79,20 @@ public class SearchManager
      */
     public class JSONSearch implements RPCCallable
     {
+        /**
+         *  Provides a list of suggestions to use for a page name.
+         *  Currently the algorithm just looks into the value parameter,
+         *  and returns all page names from that.
+         *  
+         *  @param value
+         *  @param maxLength
+         *  @return
+         */
         public List getSuggestions( String value, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
-            List list = new ArrayList();
+            List list = new ArrayList(maxLength);
          
             if( value.length() > 0 ) 
             {
@@ -107,6 +116,46 @@ public class SearchManager
             
             sw.stop();
             if( log.isDebugEnabled() ) log.debug("Suggestion request for "+value+" done in "+sw);
+            return list;
+        }
+        
+        /**
+         *  Performs a full search of pages.
+         *  
+         *  @param searchString The query string
+         *  @param maxLength How many hits to return
+         *  @return
+         */
+        public List findPages( String searchString, int maxLength )
+        {
+            StopWatch sw = new StopWatch();
+            sw.start();
+            
+            List list = new ArrayList(maxLength);
+            
+            if( searchString.length() > 0 )
+            {
+                try
+                {
+                    Collection c = m_searchProvider.findPages( searchString );
+                    int count = 0;
+                    for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
+                    {
+                        SearchResult sr = (SearchResult)i.next();
+                        HashMap hm = new HashMap();
+                        hm.put( "page", sr.getPage().getName() );
+                        hm.put( "score", new Integer(sr.getScore()) );
+                        list.add( hm );
+                    }
+                }
+                catch(Exception e)
+                {
+                    log.info("AJAX search failed; ",e);
+                }
+            }
+            
+            sw.stop();
+            if( log.isDebugEnabled() ) log.debug("AJAX search complete in "+sw);
             return list;
         }
     }
