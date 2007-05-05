@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 JSPWiki development group
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.ui.admin;
 
 import java.lang.management.ManagementFactory;
@@ -16,6 +35,13 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.ui.admin.beans.CoreBean;
 
+/**
+ *  Provides a manager class for all AdminBeans within JSPWiki.  This class
+ *  also manages registration for any AdminBean which is also a JMX bean.
+ *  
+ *  @author Janne Jalkanen
+ *  @since  2.5.52
+ */
 public class AdminBeanManager
 {
     private WikiEngine m_engine;
@@ -111,6 +137,12 @@ public class AdminBeanManager
         }
     }
     
+    /**
+     *  Registers all the beans from a collection of WikiModuleInfos.  If some of the beans
+     *  fail, logs the message and keeps going to the next bean.
+     *  
+     *  @param c Collection of WikiModuleInfo instances
+     */
     private void registerBeans( Collection c )
     {
         for( Iterator i = c.iterator(); i.hasNext(); )
@@ -166,7 +198,8 @@ public class AdminBeanManager
     }
     
     /**
-     *  Lists all administration beans.
+     *  Lists all administration beans which are currently known
+     *  and instantiated.
      *  
      *  @return all AdminBeans known to the manager
      */
@@ -181,7 +214,7 @@ public class AdminBeanManager
      *  A JDK 1.4 version of something which gets us the MBeanServer.  It
      *  binds to the first server it can find.
      *  
-     *  @author jalkanen
+     *  @author Janne Jalkanen
      *
      */
     private static class MBeanServerFactory14
@@ -206,9 +239,10 @@ public class AdminBeanManager
     }
 
     /**
-     *  A JDK 1.5 version of something which gets use the MBeanServer.
+     *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This
+     *  will simply bind to the platform MBeanServer.
      *  
-     *  @author jalkanen
+     *  @author Janne Jalkanen
      *
      */
     private static class MBeanServerFactory15
@@ -219,6 +253,12 @@ public class AdminBeanManager
         }
     }
 
+    /**
+     *  Returns the type identifier for a string type.
+     *  
+     *  @param type
+     *  @return
+     */
     public static int getTypeFromString(String type)
     {
         if( type.equals("core") )
