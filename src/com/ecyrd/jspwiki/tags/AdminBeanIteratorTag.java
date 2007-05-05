@@ -15,10 +15,7 @@ public class AdminBeanIteratorTag extends IteratorTag
     
     public void setType(String type)
     {
-        if( type.equalsIgnoreCase("editors") )
-            m_type = AdminBean.EDITOR;
-        else
-            m_type = AdminBean.UNKNOWN;
+        m_type = AdminBeanManager.getTypeFromString( type );
     }
     
     public void resetIterator()
