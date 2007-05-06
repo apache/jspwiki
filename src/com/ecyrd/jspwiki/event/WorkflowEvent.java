@@ -72,7 +72,7 @@ public final class WorkflowEvent extends WikiEvent
      * Constructs a new instance of this event type, which signals a security
      * event has occurred. The <code>source</code> parameter is required, and
      * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link WikiSecurityEvent#LOGGER} is notified.
+     * constructed, the security logger {@link WikiSecurityEvent#log} is notified.
      * 
      * @param source
      *            the source of the event, which can be any object: a wiki page,

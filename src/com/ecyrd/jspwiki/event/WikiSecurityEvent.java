@@ -11,7 +11,7 @@ import com.ecyrd.jspwiki.event.WikiEvent;
 /**
  * <p>Event class for security events: login/logout, wiki group adds/changes, and
  * authorization decisions. When a WikiSecurityEvent is constructed, the
- * security logger {@link #LOGGER} is notified.</p>
+ * security logger {@link #log} is notified.</p>
  * <p>These events are logged with priority <code>ERROR</code>:</p>
  * <ul>
  *   <li>login failed - bad credential or password</li>
@@ -95,7 +95,7 @@ public final class WikiSecurityEvent extends WikiEvent
     public static final int   PROFILE_NAME_CHANGED     = 54;
     
     /** The security logging service. */
-    public static final Logger LOGGER = Logger.getLogger( "SecurityLog" );
+    protected static final Logger log = Logger.getLogger( "SecurityLog" );
     
     private final Principal m_principal;
     
@@ -113,7 +113,7 @@ public final class WikiSecurityEvent extends WikiEvent
      * Constructs a new instance of this event type, which signals a security
      * event has occurred. The <code>source</code> parameter is required, and
      * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link #LOGGER} is notified.
+     * constructed, the security logger {@link #log} is notified.
      * @param source the source of the event, which can be any object: a wiki
      *            page, group or authentication/authentication/group manager.
      * @param type the type of event
@@ -129,26 +129,26 @@ public final class WikiSecurityEvent extends WikiEvent
         }
         this.m_principal = principal;
         this.m_target = target;
-        if ( LOGGER.isEnabledFor( Priority.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
+        if ( log.isEnabledFor( Priority.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
         {
-            LOGGER.error( this );
+            log.error( this );
         }
-        else if ( LOGGER.isEnabledFor( Priority.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
+        else if ( log.isEnabledFor( Priority.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
         {
-            LOGGER.warn( this );
+            log.warn( this );
         }
-        else if ( LOGGER.isEnabledFor( Priority.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
+        else if ( log.isEnabledFor( Priority.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
         {
-            LOGGER.info( this );
+            log.info( this );
         }
-        LOGGER.debug( this );
+        log.debug( this );
     }
 
     /**
      * Constructs a new instance of this event type, which signals a security
      * event has occurred. The <code>source</code> parameter is required, and
      * may not be <code>null</code>. When the WikiSecurityEvent is
-     * constructed, the security logger {@link #LOGGER} is notified.
+     * constructed, the security logger {@link #log} is notified.
      * @param source the source of the event, which can be any object: a wiki
      *            page, group or authentication/authentication/group manager.
      * @param type the type of event
