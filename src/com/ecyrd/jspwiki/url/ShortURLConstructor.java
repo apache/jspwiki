@@ -42,6 +42,8 @@ import com.ecyrd.jspwiki.WikiEngine;
 public class ShortURLConstructor
     extends DefaultURLConstructor
 {
+    private static final String DEFAULT_PREFIX = "wiki/";
+
     static Logger log = Logger.getLogger( ShortURLConstructor.class );
     
     /**
@@ -65,7 +67,7 @@ public class ShortURLConstructor
         
         if( m_urlPrefix == null )
         {
-            m_urlPrefix = "wiki/";
+            m_urlPrefix = DEFAULT_PREFIX;
         }
 
         log.info("Short URL prefix path="+m_urlPrefix+" (You can use "+PROP_PREFIX+" to override this)");
