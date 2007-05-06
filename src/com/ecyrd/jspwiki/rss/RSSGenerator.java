@@ -430,7 +430,7 @@ public class RSSGenerator
     protected String generateBlogRSS( WikiContext wikiContext, List changed, Feed feed )
         throws ProviderException
     {
-        log.debug("Generating RSS for blog, size="+changed.size());
+        if( log.isDebugEnabled() ) log.debug("Generating RSS for blog, size="+changed.size());
         
         String ctitle = m_engine.getVariable( wikiContext, PROP_CHANNEL_TITLE );
         
