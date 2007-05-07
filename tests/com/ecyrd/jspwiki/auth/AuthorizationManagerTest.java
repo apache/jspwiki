@@ -506,20 +506,29 @@ public class AuthorizationManagerTest extends TestCase
     {
         // We should be able to resolve a user by login, user, or wiki name
         UserProfile profile = new DefaultUserProfile();
-        profile.setEmail( "janne@jalkanen.net" );
-        profile.setFullname( "Janne Jalkanen" );
-        profile.setLoginName( "janne" );
+        profile.setEmail( "authmanagertest@tester.net" );
+        profile.setFullname( "AuthorizationManagerTest User" );
+        profile.setLoginName( "authmanagertest" );
         try
         {
             m_engine.getUserManager().getUserDatabase().save( profile );
         }
         catch( WikiSecurityException e )
         {
-            assertFalse( "Failed save: " + e.getLocalizedMessage(), true );
+            fail( "Failed save: " + e.getLocalizedMessage() );
         }
-        assertEquals( new WikiPrincipal( "janne",  WikiPrincipal.LOGIN_NAME ), m_auth.resolvePrincipal( "janne" ) );
-        assertEquals( new WikiPrincipal( "Janne Jalkanen", WikiPrincipal.FULL_NAME ), m_auth.resolvePrincipal( "Janne Jalkanen" ) );
-        assertEquals( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ), m_auth.resolvePrincipal( "JanneJalkanen" ) );
+        assertEquals( new WikiPrincipal( "authmanagertest",  WikiPrincipal.LOGIN_NAME ), m_auth.resolvePrincipal( "authmanagertest" ) );
+        assertEquals( new WikiPrincipal( "AuthorizationManagerTest User", WikiPrincipal.FULL_NAME ), m_auth.resolvePrincipal( "AuthorizationManagerTest User" ) );
+        assertEquals( new WikiPrincipal( "AuthorizationManagerTestUser", WikiPrincipal.WIKI_NAME ), m_auth.resolvePrincipal( "AuthorizationManagerTestUser" ) );
+        try
+        {
+            m_engine.getUserManager().getUserDatabase().deleteByLoginName( "authmanagertest" );
+        }
+        catch( WikiSecurityException e )
+        {
+            fail( "Failed delete: " + e.getLocalizedMessage() );
+        }
+        
 
         // A wiki group should resolve to itself
         Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );

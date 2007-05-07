@@ -128,7 +128,6 @@ public class Installer
             profile.setFullname( ADMIN_NAME );
             profile.setPassword( password );
             userDb.save( profile );
-            userDb.commit();
         }
         
         // Create a new admin group

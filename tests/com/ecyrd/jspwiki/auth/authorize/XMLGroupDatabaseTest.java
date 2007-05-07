@@ -48,7 +48,6 @@ public class XMLGroupDatabaseTest extends TestCase {
       group.add( al );
       group.add( bob );
       db.save(group, new WikiPrincipal( "Tester") );
-      db.commit();
       
       // Make sure the profile saved successfully
       group = backendGroup( name );
@@ -57,7 +56,6 @@ public class XMLGroupDatabaseTest extends TestCase {
 
       // Now delete the profile; should be back to old count
       db.delete( group );
-      db.commit();
       assertEquals( oldUserCount, db.groups().length );
   }
   
@@ -113,7 +111,6 @@ public class XMLGroupDatabaseTest extends TestCase {
       group.add( bob );
       group.add( cookie );
       db.save(group, new WikiPrincipal( "Tester" ) );
-      db.commit();
       
       // Make sure the profile saved successfully
       group = backendGroup( name );
@@ -134,7 +131,6 @@ public class XMLGroupDatabaseTest extends TestCase {
       
       // Remove the group
       db.delete( group );
-      db.commit();
   }
   
   public void testResave() throws Exception
@@ -149,7 +145,6 @@ public class XMLGroupDatabaseTest extends TestCase {
       group.add( bob );
       group.add( cookie );
       db.save(group, new WikiPrincipal( "Tester" ) );
-      db.commit();
       
       // Make sure the profile saved successfully
       group = backendGroup( name );
@@ -160,7 +155,6 @@ public class XMLGroupDatabaseTest extends TestCase {
       group.add( al );
       group.add( dave );
       db.save(group, new WikiPrincipal( "SecondTester" ) );
-      db.commit();
       
       // We should see 4 members and new timestamp info
       Principal[] members = group.members();
@@ -185,7 +179,6 @@ public class XMLGroupDatabaseTest extends TestCase {
       
       // Remove the group
       db.delete( group );
-      db.commit();
   }
   
   private Group backendGroup( String name ) throws WikiSecurityException

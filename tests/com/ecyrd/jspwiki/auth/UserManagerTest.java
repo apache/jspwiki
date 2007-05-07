@@ -224,7 +224,6 @@ public class UserManagerTest extends TestCase
       
       // CLEANUP: delete the profile; user and page; should be back to old counts
       m_db.deleteByLoginName( newLogin );
-      m_db.commit();
       assertEquals( oldUserCount, m_db.getWikiNames().length );
       
       groupManager.removeGroup( group.getName() );
@@ -256,7 +255,6 @@ public class UserManagerTest extends TestCase
 
       // Now delete the profile; should be back to old count
       m_db.deleteByLoginName( loginName );
-      m_db.commit();
       assertEquals( oldUserCount, m_db.getWikiNames().length );
   }
 
@@ -311,7 +309,6 @@ public class UserManagerTest extends TestCase
 
       // Now delete the profile; should be back to old count
       m_db.deleteByLoginName( loginName );
-      m_db.commit();
       assertEquals( oldUserCount, m_db.getWikiNames().length );
   }
   

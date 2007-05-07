@@ -96,7 +96,6 @@ public class JDBCUserDatabaseTest extends TestCase
         profile.setFullname( "FullName"+loginName );
         profile.setPassword("password");
         m_db.save(profile);
-        m_db.commit();
         
         // Make sure the profile saved successfully
         profile = m_db.findByLoginName( loginName );
@@ -105,7 +104,6 @@ public class JDBCUserDatabaseTest extends TestCase
 
         // Now delete the profile; should be back to old count
         m_db.deleteByLoginName( loginName );
-        m_db.commit();
         assertEquals( oldUserCount, m_db.getWikiNames().length );
     }
     
@@ -231,6 +229,65 @@ public class JDBCUserDatabaseTest extends TestCase
         assertEquals( 1, principals.length );
     }
 
+    public void testRename() throws Exception
+    {
+        // Try renaming a non-existent profile; it should fail
+        try
+        {
+            m_db.rename( "nonexistentname", "renameduser" );
+            fail( "Should not have allowed rename..." );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+            // Cool; that's what we expect
+        }
+        
+        // Create new user & verify it saved ok
+        UserProfile profile = new DefaultUserProfile();
+        profile.setEmail( "renamed@example.com" );
+        profile.setFullname( "Renamed User" );
+        profile.setLoginName( "olduser" );
+        profile.setPassword( "password" );
+        m_db.save( profile );
+        profile = m_db.findByLoginName( "olduser" );
+        assertNotNull( profile );
+        
+        // Try renaming to a login name that's already taken; it should fail
+        try 
+        {
+            m_db.rename( "olduser", "janne" );
+            fail( "Should not have allowed rename..." );
+        }
+        catch ( DuplicateUserException e )
+        {
+            // Cool; that's what we expect
+        }
+        
+        // Now, rename it to an unused name
+        m_db.rename( "olduser", "renameduser" );
+        
+        // The old user shouldn't be found
+        try 
+        {
+            profile = m_db.findByLoginName( "olduser" );
+            fail( "Old user was found, but it shouldn't have been." );
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+            // Cool, it's gone
+        }
+        
+        // The new profile should be found, and its properties should match the old ones
+        profile = m_db.findByLoginName( "renameduser" );
+        assertEquals( "renamed@example.com", profile.getEmail() );
+        assertEquals( "Renamed User", profile.getFullname() );
+        assertEquals( "renameduser", profile.getLoginName() );
+        assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
+        
+        // Delete the user
+        m_db.deleteByLoginName( "renameduser" );
+    }
+    
     public void testSave()
     {
         try
@@ -268,8 +325,6 @@ public class JDBCUserDatabaseTest extends TestCase
             assertNotNull( profile.getCreated() );
             assertNotNull( profile.getLastModified() );
             assertEquals( profile.getCreated(), profile.getLastModified() );
-
-            m_db.commit();
         }
         catch( NoSuchPrincipalException e )
         {

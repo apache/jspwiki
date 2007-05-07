@@ -76,7 +76,6 @@ public class JDBCGroupDatabaseTest extends TestCase
         group.add( al );
         group.add( bob );
         m_db.save(group, new WikiPrincipal( "Tester") );
-        m_db.commit();
         
         // Make sure the profile saved successfully
         group = backendGroup( name );
@@ -85,7 +84,6 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // Now delete the profile; should be back to old count
         m_db.delete( group );
-        m_db.commit();
         assertEquals( oldUserCount, m_db.groups().length );
     }
     
@@ -141,7 +139,6 @@ public class JDBCGroupDatabaseTest extends TestCase
         group.add( bob );
         group.add( cookie );
         m_db.save(group, new WikiPrincipal( "Tester" ) );
-        m_db.commit();
         
         // Make sure the profile saved successfully
         group = backendGroup( name );
@@ -162,7 +159,6 @@ public class JDBCGroupDatabaseTest extends TestCase
         
         // Remove the group
         m_db.delete( group );
-        m_db.commit();
     }
     
     public void testResave() throws Exception
@@ -177,7 +173,6 @@ public class JDBCGroupDatabaseTest extends TestCase
         group.add( bob );
         group.add( cookie );
         m_db.save(group, new WikiPrincipal( "Tester" ) );
-        m_db.commit();
         
         // Make sure the profile saved successfully
         group = backendGroup( name );
@@ -188,7 +183,6 @@ public class JDBCGroupDatabaseTest extends TestCase
         group.add( al );
         group.add( dave );
         m_db.save(group, new WikiPrincipal( "SecondTester" ) );
-        m_db.commit();
         
         // We should see 4 members and new timestamp info
         Principal[] members = group.members();
@@ -213,7 +207,6 @@ public class JDBCGroupDatabaseTest extends TestCase
         
         // Remove the group
         m_db.delete( group );
-        m_db.commit();
     }
     
     private Group backendGroup( String name ) throws WikiSecurityException
