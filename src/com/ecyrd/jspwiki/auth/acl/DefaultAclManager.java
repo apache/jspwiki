@@ -14,6 +14,7 @@ import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.PrincipalComparator;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.RenderingManager;
 
@@ -92,7 +93,7 @@ public class DefaultAclManager implements AclManager
                 if ( oldEntry != null )
                 {
                     log.debug( "Adding to old acl list: " + principal + ", " + actions );
-                    oldEntry.addPermission( new PagePermission( page, actions ) );
+                    oldEntry.addPermission( PermissionFactory.getPagePermission( page, actions ) );
                 }
                 else
                 {
@@ -100,7 +101,7 @@ public class DefaultAclManager implements AclManager
                     AclEntry entry = new AclEntryImpl();
 
                     entry.setPrincipal( principal );
-                    entry.addPermission( new PagePermission( page, actions ) );
+                    entry.addPermission( PermissionFactory.getPagePermission( page, actions ) );
 
                     acl.addEntry( entry );
                 }

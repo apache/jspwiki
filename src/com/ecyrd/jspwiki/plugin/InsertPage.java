@@ -21,7 +21,8 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
+
 import java.util.*;
 
 /**
@@ -99,7 +100,7 @@ public class InsertPage
                 AuthorizationManager mgr = engine.getAuthorizationManager();
 
                 if( !mgr.checkPermission( context.getWikiSession(),
-                                          new PagePermission( page, "view") ) )
+                                          PermissionFactory.getPagePermission( page, "view") ) )
                 {
                     res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
                     return res.toString();

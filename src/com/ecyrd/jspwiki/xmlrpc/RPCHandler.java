@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import java.util.*;
 import org.apache.xmlrpc.XmlRpcException;
@@ -193,7 +194,7 @@ public class RPCHandler
 
         WikiPage p = m_engine.getPage( pagename );
         
-        checkPermission( new PagePermission( p, PagePermission.VIEW_ACTION ) );
+        checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
         
         return pagename;
     }

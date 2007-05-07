@@ -4,6 +4,7 @@ import java.security.Permission;
 
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 
 /**
  * <p>Defines Commands for editing, renaming, and viewing wiki pages.
@@ -84,7 +85,7 @@ public class PageCommand extends AbstractCommand
         }
         else
         {
-            m_permission = new PagePermission( target, action );
+            m_permission = PermissionFactory.getPagePermission( target, action );
         }
     }
 

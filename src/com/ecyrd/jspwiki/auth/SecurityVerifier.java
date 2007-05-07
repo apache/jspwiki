@@ -48,7 +48,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
@@ -227,7 +227,7 @@ public final class SecurityVerifier
             {
                 for( int k = 0; k < pageActions.length; k++ )
                 {
-                    Permission permission = new PagePermission( wiki + ":" + page, pageActions[k] );
+                    Permission permission = PermissionFactory.getPagePermission( wiki + ":" + page, pageActions[k] );
                     s.append( printPermissionTest( permission, roles[j], 1 ) );
                 }
             }

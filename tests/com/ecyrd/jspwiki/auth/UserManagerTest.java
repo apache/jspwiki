@@ -11,7 +11,7 @@ import junit.framework.TestCase;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.user.*;
 import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.workflow.Decision;
@@ -120,9 +120,9 @@ public class UserManagerTest extends TestCase
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
-      assertTrue   ( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
+      assertTrue   ( "Test User view page", authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ) );
       WikiSession bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
-      assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Setup Step 4: change the user name in the profile and see what happens
       profile = new DefaultUserProfile();
@@ -154,8 +154,8 @@ public class UserManagerTest extends TestCase
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
-      assertTrue( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
-      assertFalse( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      assertTrue( "Test User view page", authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ) );
+      assertFalse( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Test 4: our page text should have been re-written
       // (The new full name should be in the ACL, but the login name should have been removed)
@@ -180,8 +180,8 @@ public class UserManagerTest extends TestCase
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
-      assertTrue   ( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
-      assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      assertTrue   ( "Test User view page", authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ) );
+      assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Setup Step 8: re-save the profile with the new login name
       profile = new DefaultUserProfile();
@@ -213,8 +213,8 @@ public class UserManagerTest extends TestCase
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
-      assertTrue( "Test User view page", authManager.checkPermission( session, new PagePermission( p, "view" ) ) );
-      assertFalse( "Bob !view page", authManager.checkPermission( bobSession, new PagePermission( p, "view" ) ) );
+      assertTrue( "Test User view page", authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ) );
+      assertFalse( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Test 8: our page text should have been re-written
       // (The new full name should be in the ACL, but the login name should have been removed)

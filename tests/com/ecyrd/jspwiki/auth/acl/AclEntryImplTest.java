@@ -6,6 +6,7 @@ import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 
 public class AclEntryImplTest
     extends TestCase
@@ -62,7 +63,7 @@ public class AclEntryImplTest
         m_ae.addPermission( PagePermission.VIEW );
         
         assertTrue( "has view all", m_ae.checkPermission( PagePermission.VIEW ) );
-        assertTrue( "has view on single page", m_ae.checkPermission( new PagePermission( "mywiki:SamplePage", "view" ) ) );
+        assertTrue( "has view on single page", m_ae.checkPermission( PermissionFactory.getPagePermission( "mywiki:SamplePage", "view" ) ) );
     }
 
     public void testRemovePermission()

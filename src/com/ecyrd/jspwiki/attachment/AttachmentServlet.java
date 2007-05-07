@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.HttpUtil;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
@@ -240,7 +240,7 @@ public class AttachmentServlet
                 //  Check if the user has permission for this attachment
                 //
 
-                Permission permission = new PagePermission( att, "view" );
+                Permission permission = PermissionFactory.getPagePermission( att, "view" );
                 if( !authmgr.checkPermission( context.getWikiSession(), permission ) )
                 {
                     log.debug("User does not have permission for this");
@@ -689,7 +689,7 @@ public class AttachmentServlet
         //  Check if we're allowed to do this?
         //
         
-        Permission permission = new PagePermission( att, "upload" );
+        Permission permission = PermissionFactory.getPagePermission( att, "upload" );
         if( m_engine.getAuthorizationManager().checkPermission( context.getWikiSession(),
                                                                 permission ) )
         {

@@ -22,6 +22,7 @@ import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
@@ -91,8 +92,8 @@ public class AuthorizationManagerTest extends TestCase
     {
         // Save a page without an ACL
         m_engine.saveText( "TestDefaultPage", "Foo" );
-        Permission view = new PagePermission( "*:TestDefaultPage", "view" );
-        Permission edit = new PagePermission( "*:TestDefaultPage", "edit" );
+        Permission view = PermissionFactory.getPagePermission( "*:TestDefaultPage", "view" );
+        Permission edit = PermissionFactory.getPagePermission( "*:TestDefaultPage", "edit" );
         WikiSession session;
         
         // Alice is asserted
@@ -268,8 +269,8 @@ public class AuthorizationManagerTest extends TestCase
         m_engine.getAttachmentManager().storeAttachment( att, f );
         
         Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
-        Permission view = new PagePermission( p, "view" );
-        Permission edit = new PagePermission( p, "edit" );
+        Permission view = PermissionFactory.getPagePermission( p, "view" );
+        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
         
         // Create authenticated session with user 'Alice', who can read & edit (in ACL)
         WikiSession session;
@@ -299,8 +300,8 @@ public class AuthorizationManagerTest extends TestCase
         m_engine.getAttachmentManager().storeAttachment( att, f );
 
         Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
-        Permission view = new PagePermission( p, "view" );
-        Permission edit = new PagePermission( p, "edit" );
+        Permission view = PermissionFactory.getPagePermission( p, "view" );
+        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
         
         // Create session with user 'Alice', who can read (in ACL)
         WikiSession session;
@@ -437,8 +438,8 @@ public class AuthorizationManagerTest extends TestCase
         m_engine.saveText( "Test", src );
 
         WikiPage p = m_engine.getPage( "Test" );
-        Permission view = new PagePermission( p, "view" );
-        Permission edit = new PagePermission( p, "edit" );
+        Permission view = PermissionFactory.getPagePermission( p, "view" );
+        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with authenticated user 'Alice', who can read & edit (in ACL)
         WikiSession session;
@@ -554,8 +555,8 @@ public class AuthorizationManagerTest extends TestCase
         m_engine.saveText( "Test", src );
 
         WikiPage p = m_engine.getPage( "Test" );
-        Permission view = new PagePermission( p, "view" );
-        Permission edit = new PagePermission( p, "edit" );
+        Permission view = PermissionFactory.getPagePermission( p, "view" );
+        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with authenticated user 'Alice', who can read & edit
         WikiSession session;

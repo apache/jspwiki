@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class DefaultAclManagerTest
@@ -66,31 +66,31 @@ public class DefaultAclManagerTest
         Principal[] p;
         
         // Charlie is an editor; reading is therefore implied
-        p = acl.findPrincipals( new PagePermission(page, "view") );
+        p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "view") );
         assertEquals( 2, p.length );
         assertTrue( ArrayUtils.contains( p, new WikiPrincipal("Charlie") ) );
         
         // Charlie should be in the ACL as an editor
-        p = acl.findPrincipals( new PagePermission(page, "edit") );
+        p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "edit") );
         assertEquals( 2, p.length );
         assertTrue( ArrayUtils.contains( p, new WikiPrincipal("Charlie") ) );
         
         // Charlie should not be able to delete this page
-        p = acl.findPrincipals( new PagePermission(page, "delete") );
+        p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "delete") );
         assertEquals( 0, p.length );
         
         // Herman is an unregistered user and editor; reading is implied
-        p = acl.findPrincipals( new PagePermission(page, "view") );
+        p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "view") );
         assertEquals( 2, p.length );
         assertTrue( ArrayUtils.contains( p, new UnresolvedPrincipal("Herman") ) );
         
         // Herman should be in the ACL as an editor
-        p = acl.findPrincipals( new PagePermission(page, "edit") );
+        p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "edit") );
         assertEquals( 2, p.length );
         assertTrue( ArrayUtils.contains( p, new UnresolvedPrincipal("Herman") ) );
         
         // Herman should not be able to delete this page
-        p = acl.findPrincipals( new PagePermission(page, "delete") );
+        p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "delete") );
         assertEquals( 0, p.length );
     }
 
@@ -166,13 +166,13 @@ public class DefaultAclManagerTest
         acl = new AclImpl();
         AclEntry entry = new AclEntryImpl();
         entry.setPrincipal( new WikiPrincipal( "Charlie" ) );
-        entry.addPermission( new PagePermission( "Main:Foo", "view" ) );
-        entry.addPermission( new PagePermission( "Main:Foo", "edit" ) );
+        entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "view" ) );
+        entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "edit" ) );
         acl.addEntry( entry );
         entry = new AclEntryImpl();
         entry.setPrincipal( new WikiPrincipal( "Devin" ) );
-        entry.addPermission( new PagePermission( "Main:Foo", "edit" ) );
-        entry.addPermission( new PagePermission( "Main:Foo", "delete" ) );
+        entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "edit" ) );
+        entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "delete" ) );
         acl.addEntry( entry );
         
         // Verify that the printed ACL is OK

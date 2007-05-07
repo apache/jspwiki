@@ -31,7 +31,7 @@ import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.ui.Command;
 import com.ecyrd.jspwiki.ui.GroupCommand;
@@ -159,7 +159,7 @@ public class PermissionTag
                 }
             }
 
-            Permission p = new PagePermission( page, permission );
+            Permission p = PermissionFactory.getPagePermission( page, permission );
             got_permission = mgr.checkPermission( session,
                                                   p );
         }

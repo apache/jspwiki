@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 
 public class PageCommandTest extends TestCase
 {
@@ -78,7 +78,7 @@ public class PageCommandTest extends TestCase
         assertEquals( a.getContentTemplate(), b.getContentTemplate() );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new PagePermission( testPage, "view" ), b.requiredPermission() );
+        assertEquals( PermissionFactory.getPagePermission( testPage, "view" ), b.requiredPermission() );
         assertEquals( testPage, b.getTarget() );
         
         // Do the same with edit command
@@ -87,7 +87,7 @@ public class PageCommandTest extends TestCase
         assertNotSame( a, b );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new PagePermission( testPage, "edit" ), b.requiredPermission() );
+        assertEquals( PermissionFactory.getPagePermission( testPage, "edit" ), b.requiredPermission() );
         assertEquals( testPage, b.getTarget() );
         
         // Do the same with delete command
@@ -96,7 +96,7 @@ public class PageCommandTest extends TestCase
         assertNotSame( a, b );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new PagePermission( testPage, "delete" ), b.requiredPermission() );
+        assertEquals( PermissionFactory.getPagePermission( testPage, "delete" ), b.requiredPermission() );
         assertEquals( testPage, b.getTarget() );
         
         // Do the same with info command
@@ -105,7 +105,7 @@ public class PageCommandTest extends TestCase
         assertNotSame( a, b );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new PagePermission( testPage, "view" ), b.requiredPermission() );
+        assertEquals( PermissionFactory.getPagePermission( testPage, "view" ), b.requiredPermission() );
         assertEquals( testPage, b.getTarget() );
     }
     
