@@ -71,6 +71,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
 
     public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";    
     private static final int    DEFAULT_CACHESIZE = 1000;
+    private static final String VERSION_DELIMITER = "::";
     private static final String OSCACHE_ALGORITHM = "com.opensymphony.oscache.base.algorithm.LRUCache";
     private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
     public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
@@ -180,7 +181,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     protected WikiDocument getRenderedDocument( WikiContext context, String pagedata )
         throws IOException
     {
-        String pageid = context.getRealPage().getName()+"::"+context.getRealPage().getVersion();
+        String pageid = context.getRealPage().getName()+VERSION_DELIMITER+context.getRealPage().getVersion();
 
         boolean wasUpdated = false;
         

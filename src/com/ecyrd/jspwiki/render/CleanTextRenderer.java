@@ -42,6 +42,8 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 public class CleanTextRenderer
     extends WikiRenderer
 {
+    private static final String ALL_TEXT_NODES = "//text()";
+    
     protected static final Logger log = Logger.getLogger( CleanTextRenderer.class );
     
     public CleanTextRenderer( WikiContext context, WikiDocument doc )
@@ -56,7 +58,7 @@ public class CleanTextRenderer
         
         try
         {
-            XPath xp = XPath.newInstance("//text()");
+            XPath xp = XPath.newInstance( ALL_TEXT_NODES );
         
             List nodes = xp.selectNodes(m_document.getDocument());
             

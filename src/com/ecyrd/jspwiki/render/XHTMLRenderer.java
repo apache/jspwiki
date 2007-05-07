@@ -39,6 +39,8 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 public class XHTMLRenderer
     extends WikiRenderer 
 {
+    private static final String LINEBREAK = "\n";
+
     public XHTMLRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
@@ -55,7 +57,7 @@ public class XHTMLRenderer
         
         Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
-        fmt.setLineSeparator("\n");
+        fmt.setLineSeparator( LINEBREAK );
 
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );

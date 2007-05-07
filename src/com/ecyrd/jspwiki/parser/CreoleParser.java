@@ -11,19 +11,18 @@ import org.apache.commons.lang.StringUtils;
 public class CreoleParser
 {
     
+    private static final String SLASH_SLASH = "//";
+    private static final String[] PATTERNS = { SLASH_SLASH, "**", "\n", "<<", "[[", "{{{" };
+                      
     public String translate(String creole)
     {
         StringBuffer sb = new StringBuffer();
         
-        String[] patterns = {
-           "//", "**", "\n", "<<", "[[", "{{{"
-        };
-        
         int idx;
         
-        while( (idx = StringUtils.indexOfAny(creole, patterns) ) != -1 )
+        while( (idx = StringUtils.indexOfAny(creole, PATTERNS) ) != -1 )
         {
-            if( creole.substring(idx).equals("//") )
+            if( creole.substring(idx).equals( SLASH_SLASH ) )
             {
                 
             }

@@ -38,6 +38,15 @@ import com.ecyrd.jspwiki.render.RenderingManager;
  */
 public class PluginContent extends Text
 {
+    private static final String BLANK = "";
+    private static final String CMDLINE = "_cmdline";
+    private static final String ELEMENT_BR = "<br/>";
+    private static final String EMITTABLE_PLUGINS = "Image|FormOpen|FormClose|FormInput|FormTextarea|FormSelect";
+    private static final String LINEBREAK = "\n";
+    private static final String PLUGIN_START = "[{";
+    private static final String PLUGIN_END = "}]";
+    private static final String SPACE = " ";
+
     private static final long serialVersionUID = 1L;
 
     private String m_pluginName;
@@ -103,19 +112,19 @@ public class PluginContent extends Text
             //
             // FIXME: The plugin name matching should not be done here, but in a per-editor resource
             if( wysiwygEditorMode != null && wysiwygEditorMode.booleanValue() 
-                && !m_pluginName.matches( "Image|FormOpen|FormClose|FormInput|FormTextarea|FormSelect" ) )
+                && !m_pluginName.matches( EMITTABLE_PLUGINS ) )
             {        
-                result = "[{" + m_pluginName + " ";            
+                result = PLUGIN_START + m_pluginName + SPACE;            
             
                 // convert newlines to <br> in case the plugin has a body.
-                String cmdLine = ( (String)m_params.get( "_cmdline" ) ).replaceAll( "\n", "<br/>" );
+                String cmdLine = ( (String)m_params.get( CMDLINE ) ).replaceAll( LINEBREAK, ELEMENT_BR );
             
-                result = result + cmdLine + "}]";
+                result = result + cmdLine + PLUGIN_END;
             }
             else
             {
                 Boolean b = (Boolean)context.getVariable( RenderingManager.VAR_EXECUTE_PLUGINS );
-                if( b != null && !b.booleanValue() ) return "";
+                if( b != null && !b.booleanValue() ) return BLANK;
 
                 WikiEngine engine = context.getEngine();
             

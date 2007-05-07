@@ -44,6 +44,17 @@ public class WysiwygEditingRenderer
     extends WikiRenderer
 {
     
+    private static final String A_ELEMENT = "a";
+    private static final String PRE_ELEMENT = "pre";
+    private static final String CLASS_ATTRIBUTE = "class";
+    private static final String HREF_ATTRIBUTE = "href";
+    private static final String TITLE_ATTRIBUTE = "title";
+    private static final String EDITPAGE = "editpage";
+    private static final String WIKIPAGE = "wikipage";
+    private static final String LINEBREAK = "\n";
+    private static final String LINKS_TRANSLATION = "$1#$2";
+    private static final String LINKS_SOURCE = ".+#section-(.+)-(.+)";
+
     public WysiwygEditingRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
@@ -62,14 +73,14 @@ public class WysiwygEditingRenderer
             {
                 Element element = (Element)childElement;
                 String elementName = element.getName().toLowerCase();
-                Attribute classAttr = element.getAttribute( "class" );
+                Attribute classAttr = element.getAttribute( CLASS_ATTRIBUTE );
 
-                if( elementName.equals( "a" ) )
+                if( elementName.equals( A_ELEMENT ) )
                 {
                     if( classAttr != null )
                     {
                         String classValue = classAttr.getValue();
-                        Attribute hrefAttr = element.getAttribute("href");
+                        Attribute hrefAttr = element.getAttribute( HREF_ATTRIBUTE );
                         
                         XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( m_context );
                         
@@ -78,7 +89,7 @@ public class WysiwygEditingRenderer
                         String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
                         String editPageLinkUrl = wikiConfig.getEditJspPage();
                         
-                        if( classValue.equals( "wikipage" )
+                        if( classValue.equals( WIKIPAGE )
                             || ( hrefAttr != null && hrefAttr.getValue().startsWith( wikiPageLinkUrl ) ) )
                         {
                             String newHref = null;
@@ -91,12 +102,12 @@ public class WysiwygEditingRenderer
                             // Handle links with section anchors.
                             // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
                             // to this wiki string: "TargetPage#Heading2".
-                            hrefAttr.setValue( newHref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" ) );
+                            hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
                         }                        
-                        else if ( classValue.equals( "editpage" ) 
+                        else if ( classValue.equals( EDITPAGE ) 
                             || ( hrefAttr != null && hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                         {
-                            Attribute titleAttr = element.getAttribute( "title" );
+                            Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
                             if( titleAttr != null )
                             {
                                 // remove the title since we don't want to eventually save the default undefined page title.
@@ -107,7 +118,7 @@ public class WysiwygEditingRenderer
                         }
                     }
                 } // end of check for "a" element
-                else if( elementName.equals( "pre" ) )
+                else if( elementName.equals( PRE_ELEMENT ) )
                 {
                     // We need to trim the surrounding whitespace to accomodate a FCK bug: when the first line 
                     // of a <pre> tag contains only whitespace, then all the linebreaks in the <pre>
@@ -135,7 +146,7 @@ public class WysiwygEditingRenderer
         
         Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
-        fmt.setLineSeparator("\n");
+        fmt.setLineSeparator( LINEBREAK );
 
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );
