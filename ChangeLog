@@ -1,4 +1,35 @@
-2007-05-01  Andrew Jaquith <andrew AT freshcookies DOT org>
+2007-05-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.54
+       
+       * Several performance optimizations, including:
+       
+       * Added PermissionFactory, which caches the permissions using
+       a WeakHashMap.  Creation of PagePermissions is relatively expensive
+       due to permissions parsing, so this should help a lot.  All routines
+       should be using the PermissionFactory.getPagePermission(), if possible.
+       
+       * Refactored AbstractCommand constructor so that it no longer uses
+       String.replaceAll(), which is a very expensive operation due to
+       regular expressions.  It's still expensive, but the biggest pain
+       point is now resolved.
+       
+       * InfoTab just lists ReferringPages one deep - three-level deep nesting
+       ended up using something like 30% of all CPU power on a moderately
+       link-heavy page.
+       
+       * Bug fix: if the user updated his account (e.g. by requesting a new
+       password) AND his account was created in the old days when 
+       XMLUserDatabase was using platform default formatting for dates,
+       the dates were in different formats, causing XMLUserDatabase to
+       behave irrationally.
+       
+       * ReferredPagesPlugin now allocates a bigger buffer for creating
+       html to avoid allocation overhead.  Ditto for TabbedSectionTag.
+       
+       
+
+2007-05-06  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.53
 
