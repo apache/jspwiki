@@ -43,22 +43,19 @@
      <tr>
        <td><label for="loginname"><fmt:message key="prefs.loginname"/></label></td>
        <td>
-         <wiki:UserCheck status="customAuth">
-           <wiki:UserProfile property="exists">
-             <span class="formvalue"><wiki:UserProfile property="loginname"/></span>
-             <span class="formhelp"><fmt:message key="prefs.loginname.exists"/></span>
-           </wiki:UserProfile>
-           <wiki:UserProfile property="new">
-           <input type="text" name="loginname" id="loginname" 
-                  size="20" value="<wiki:UserProfile property='loginname' />" />                  
-             <span class="formhelp"><fmt:message key="prefs.loginname.description"/></span>
-           </wiki:UserProfile>           
-         </wiki:UserCheck>
+         <wiki:UserProfile property="canChangeLoginName">
+           <input type="text" name="loginname" id="loginname"
+                  size="20" value="<wiki:UserProfile property='loginname' />" />
+         </wiki:UserProfile>
+         <wiki:UserProfile property="!canChangeLoginName">
+           <span class="formvalue"><wiki:UserProfile property="loginname"/></span>
+         </wiki:UserProfile>
+         <span class="formhelp"><fmt:message key="prefs.loginname.description"/></span>
        </td>
      </tr>
 
      <!-- Password; not displayed if container auth used -->
-     <wiki:UserCheck status="setPassword">
+     <wiki:UserProfile property="canChangePassword">
        <tr>
          <td><label for="password"><fmt:message key="prefs.password"/></td>
          <%--
@@ -87,44 +84,15 @@
             --%>
          </td>
        </tr>
-     </wiki:UserCheck>
+     </wiki:UserProfile>
 
-     <%-- Wiki name
-     <tr>
-       <td><label for="wikiname"><fmt:message key="prefs.wikinameid"/></label></td>
-       <td>
-         <wiki:UserProfile property="exists">
-           <span class="formvalue"><wiki:UserProfile property='wikiname' /></span>           
-           <span class="formhelp">
-             <fmt:message key="prefs.wikinameid.exists">
-               <fmt:param>
-               <wiki:Translate>[<wiki:UserProfile property='wikiname' />Favorites]</wiki:Translate>
-               </fmt:param>
-             </fmt:message>
-           </span>
-         </wiki:UserProfile>
-
-         <wiki:UserProfile property="new">
-           <input type="text" name="wikiname" id="wikiname"
-                  size="20" value="<wiki:UserProfile property='wikiname' />" />
-           <span class="formhelp"><fmt:message key="prefs.wikinameid.description" /></span>
-         </wiki:UserProfile>
-       </td>
-     </tr>     
-      --%> 
      <!-- Full name -->
      <tr>
        <td><label for="fullname"><fmt:message key="prefs.fullname"/></label></td>
        <td>
-         <wiki:UserProfile property="exists">
-           <span class="formvalue"><wiki:UserProfile property="fullname"/></span>
-           <span class="formhelp"><fmt:message key="prefs.fullname.exists"/></span>
-         </wiki:UserProfile>
-         <wiki:UserProfile property="new">
-           <input type="text" name="fullname" id="fullname"
-                  size="20" value="<wiki:UserProfile property='fullname'/>" />
-           <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
-         </wiki:UserProfile>
+         <input type="text" name="fullname" id="fullname"
+                size="20" value="<wiki:UserProfile property='fullname'/>" />
+         <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
        </td>
      </tr>
        

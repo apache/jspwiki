@@ -49,10 +49,19 @@ import com.ecyrd.jspwiki.workflow.*;
 /**
  * Provides a facade for obtaining user information.
  * @author Janne Jalkanen
+ * @author Andrew Jaquith
  * @since 2.3
  */
 public final class UserManager
 {
+    private static final String USERDATABASE_PACKAGE = "com.ecyrd.jspwiki.auth.user";
+    private static final String SESSION_MESSAGES = "profile";
+    private static final String PARAM_EMAIL = "email";
+    private static final String PARAM_FULLNAME = "fullname";
+    private static final String PARAM_PASSWORD = "password";
+    private static final String PARAM_LOGINNAME = "loginname";
+    private static final String UNKNOWN_CLASS = "<unknown>";
+
     private WikiEngine m_engine;
     
     private static final Logger log = Logger.getLogger(UserManager.class);
@@ -121,7 +130,7 @@ public final class UserManager
             return m_database;
         }
         
-        String dbClassName = "<unknown>";
+        String dbClassName = UNKNOWN_CLASS;
         
         try
         {
@@ -129,7 +138,7 @@ public final class UserManager
                                                           PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
-            Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.user", dbClassName );
+            Class dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
             m_database = (UserDatabase) dbClass.newInstance();
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
             log.info("UserDatabase initialized.");
@@ -366,15 +375,14 @@ public final class UserManager
         // For existing accounts, just save the profile
         else
         {
-            // If login name changed, delete the old profile
+            // If login name changed, rename it first
             if ( nameChanged && !oldProfile.getLoginName().equals( profile.getLoginName() ) )
             {
-                m_database.deleteByLoginName( oldProfile.getLoginName() );
+                m_database.rename( oldProfile.getLoginName(), profile.getLoginName() );
             }
             
-            // Save the new profile (userdatabase will take care of timestamps for us)
+            // Now, save the profile (userdatabase will take care of timestamps for us)
             m_database.save( profile );
-            m_database.commit();
             
             if ( nameChanged )
             {
@@ -419,10 +427,10 @@ public final class UserManager
         HttpServletRequest request = context.getHttpRequest();
         
         // Extract values from request stream (cleanse whitespace as needed)
-        String loginName = request.getParameter( "loginname" );
-        String password = request.getParameter( "password" );
-        String fullname = request.getParameter( "fullname" );
-        String email = request.getParameter( "email" );
+        String loginName = request.getParameter( PARAM_LOGINNAME );
+        String password = request.getParameter( PARAM_PASSWORD );
+        String fullname = request.getParameter( PARAM_FULLNAME );
+        String email = request.getParameter( PARAM_EMAIL );
         loginName = InputValidator.isBlank( loginName ) ? null : loginName;
         password = InputValidator.isBlank( password ) ? null : password;
         fullname = InputValidator.isBlank( fullname ) ? null : fullname;
@@ -461,7 +469,7 @@ public final class UserManager
     {
         boolean isNew = ( profile.isNew() );
         WikiSession session = context.getWikiSession();
-        InputValidator validator = new InputValidator( "profile", session );
+        InputValidator validator = new InputValidator( SESSION_MESSAGES, session );
         
         // If container-managed auth and user not logged in, throw an error
         // unless we're allowed to add profiles to the container
@@ -469,7 +477,7 @@ public final class UserManager
              && !context.getWikiSession().isAuthenticated() 
              && !m_database.isSharedWithContainer() )
         {
-            session.addMessage( "profile", "You must log in before creating a profile." );
+            session.addMessage( SESSION_MESSAGES, "You must log in before creating a profile." );
         }
 
         validator.validateNotNull( profile.getLoginName(), "Login name" );
@@ -484,7 +492,7 @@ public final class UserManager
             {
                 if ( isNew )
                 {
-                    session.addMessage( "profile", "Password cannot be blank" );
+                    session.addMessage( SESSION_MESSAGES, "Password cannot be blank" );
                 }
             }
             else 
@@ -493,7 +501,7 @@ public final class UserManager
                 String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if ( !password.equals( password2 ) )
                 {
-                    session.addMessage( "profile", "Passwords don't match" );
+                    session.addMessage( SESSION_MESSAGES, "Passwords don't match" );
                 }
             }
         }
@@ -508,7 +516,7 @@ public final class UserManager
             otherProfile = m_database.find( fullName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) )
             {
-                session.addMessage( "profile", "Full name '" + fullName + "' is illegal" );
+                session.addMessage( SESSION_MESSAGES, "Full name '" + fullName + "' is illegal" );
             }
         }
         catch ( NoSuchPrincipalException e) { /* It's clean */ }
@@ -519,7 +527,7 @@ public final class UserManager
             otherProfile = m_database.find( loginName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) )
             {
-                session.addMessage( "profile", "Login name '" + loginName + "' is illegal" );
+                session.addMessage( SESSION_MESSAGES, "Login name '" + loginName + "' is illegal" );
             }
         }
         catch ( NoSuchPrincipalException e) { /* It's clean */ }
@@ -578,6 +586,11 @@ public final class UserManager
             return false;
         }
 
+        public void rename( String loginName, String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException
+        {
+            throw new NoSuchPrincipalException("No user profiles available");
+        }
+
         public void save( UserProfile profile ) throws WikiSecurityException
         {
         }
@@ -620,7 +633,6 @@ public final class UserManager
             
             // Save the profile (userdatabase will take care of timestamps for us)
             m_db.save( profile );
-            m_db.commit();
 
             // Send e-mail if user supplied an e-mail address
             if ( profile.getEmail() != null )
