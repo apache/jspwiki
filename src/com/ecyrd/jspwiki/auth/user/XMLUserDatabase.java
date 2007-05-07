@@ -568,33 +568,46 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 profile.setEmail( user.getAttribute( EMAIL ) );
                 String created = user.getAttribute( CREATED );
                 String modified = user.getAttribute( LAST_MODIFIED );
-                try 
-                {
-                    profile.setCreated( c_format.parse( created ) );                  
-                    profile.setLastModified( c_format.parse( modified ) );                  
-                }
-                catch ( ParseException e )
-                {
-                    // If parsing failed, use the platform default
-                    try 
-                    {
-                        profile.setCreated( c_defaultFormat.parse( created ) );                  
-                        profile.setLastModified( c_defaultFormat.parse( modified ) );                  
-                    }
-                    catch ( ParseException e2)
-                    {
-                        log.warn("Could not parse 'created' or 'lastModified' "
-                            + "attribute for "
-                            + " profile '" + profile.getLoginName() + "'."
-                            + " It may have been tampered with." );
-                    }
-                }
+                
+                profile.setCreated( parseDate( profile, created ) );                  
+                profile.setLastModified( parseDate( profile, modified ) );                  
+
                 return profile;
             }
         }
         return null;
     }
 
+    /**
+     *  Tries to parse a date using the default format - then, for backwards
+     *  compatibility reasons, tries the platform default.
+     *  
+     *  @param profile
+     *  @param date
+     *  @return A parsed date, or null, if both parse attempts fail.
+     */
+    private Date parseDate( UserProfile profile, String date )
+    {
+        try
+        {
+            return c_format.parse( date );
+        }
+        catch( ParseException e )
+        {
+            try
+            {
+                return c_defaultFormat.parse( date );
+            }
+            catch ( ParseException e2)
+            {
+                log.warn("Could not parse 'created' or 'lastModified' "
+                    + "attribute for "
+                    + " profile '" + profile.getLoginName() + "'."
+                    + " It may have been tampered with." );
+            }            
+        }
+        return null;
+    }
     /**
      * Private method that sets an attibute value for a supplied DOM element.
      * @param element the element whose attribute is to be set
