@@ -341,15 +341,7 @@
   </wiki:Tab>
 
   <wiki:Tab id="outgoingLinks" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab.outgoing")%>">
-    <wiki:CheckRequestContext context='!info'>
       <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
-    </wiki:CheckRequestContext>
-
-    <wiki:CheckRequestContext context='info'>
-      <%--div class="collapse"--%>
-      <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='3' type='local'" />
-      <%--/div--%>
-    </wiki:CheckRequestContext>
   </wiki:Tab>
 
   </wiki:TabbedSection> <%-- end of .tabs --%>
