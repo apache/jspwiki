@@ -49,7 +49,7 @@ public class ReferredPagesPlugin implements WikiPlugin
     private WikiEngine     m_engine;
     private int            m_depth;
     private HashSet        m_exists  = new HashSet();
-    private StringBuffer   m_result  = new StringBuffer();
+    private StringBuffer   m_result  = new StringBuffer(1024);
     private PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern        m_includePattern;
     private Pattern        m_excludePattern;
