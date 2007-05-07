@@ -1,3 +1,29 @@
+2007-05-01  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.53
+
+       * Changed the behavior of the UserDatabase and GroupDatabase classes
+       so that the save/delete methods are atomic. Consequently, the
+       commit() methods in these classes are deprecated and will be removed
+       in a future release. The reason for this change is simple: the
+       commit() methods made no sense and were never *not* used. Also, added
+       a new method, rename(), that permits renaming of profile login names.
+       References to commit() were removed from all classes, including
+       test classes.
+
+       * Recently added status flags for UserCheckTag were moved to 
+       UserProfileTag and renamed. The new property values are
+       "canChangePassword" and "canChangeLoginName" and are used in
+       ProfileTab.jsp to selectively display input fields. These
+       properties also allow negation too (e.g., !canChangePassword).
+
+       * UserManager receives final tweaks to allow profile renaming.
+       Modified ProfileTab.jsp slightly to accommodate this new feature.
+
+       * Minor de-stringification and anal-retentive i18n tweaks.
+
+       * Fixed several failing web unit tests. A few still fail, though.
+
 2007-05-05  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.52
