@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -43,22 +44,29 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * case-insensitive values:
  * </p>
  * <ul>
- * <code>created</code> - creation date</li>
- * <code>email</code> - user's e-mail address</li>
- * <code>fullname</code> - user's full name</li>
- * <code>groups</code> - a sorted list of the groups a user belongs to</li>
- * <code>loginname</code> - user's login name. If the current user does not have
+ * <li><code>created</code> - creation date</li>
+ * <li><code>email</code> - user's e-mail address</li>
+ * <li><code>fullname</code> - user's full name</li>
+ * <li><code>groups</code> - a sorted list of the groups a user belongs to</li>
+ * <li><code>loginname</code> - user's login name. If the current user does not have
  * a profile, the user's login principal (such as one provided by a container
  * login module, user cookie, or anonyous IP address), will supply the login 
  * name property</li>
- * <code>roles</code> - a sorted list of the roles a user possesses</li>
- * <code>wikiname</code> - user's wiki name</li>
- * <code>modified</code> - last modification date</li>
- * <code>exists</code> - evaluates the body of the tag if user's profile exists
+ * <li><code>roles</code> - a sorted list of the roles a user possesses</li>
+ * <li><code>wikiname</code> - user's wiki name</li>
+ * <li><code>modified</code> - last modification date</li>
+ * <li><code>exists</code> - evaluates the body of the tag if user's profile exists
  * in the user database
- * <code>new</code> - evaluates the body of the tag if user's profile does not
+ * <li><code>new</code> - evaluates the body of the tag if user's profile does not
  * exist in the user database
+ * <li><code>canChangeLoginName</code> - always true if custom auth used; also true for container auth 
+ * and current UserDatabase.isSharedWithContainer() is true.</li>
+ * <li><code>canChangePassword</code> - always true if custom auth used; also true for container auth 
+ * and current UserDatabase.isSharedWithContainer() is true.</li>
  * </ul>
+ * <p>In addition, the values <code>exists</code>, <code>new</code>, <code>canChangeLoginName</code>
+ * and <code>canChangeLoginName</code> can also be prefixed with <code>!</code> to indicate the
+ * negative condition (for example, <code>!exists</code>).</p>
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -74,6 +82,8 @@ public class UserProfileTag extends WikiTagBase
 
     private static final String EXISTS    = "exists";
     
+    private static final String NOT_EXISTS= "!exists";
+    
     private static final String FULLNAME  = "fullname";
     
     private static final String GROUPS    = "groups";
@@ -84,9 +94,19 @@ public class UserProfileTag extends WikiTagBase
     
     private static final String NEW       = "new";
     
+    private static final String NOT_NEW   = "!new";
+    
     private static final String ROLES     = "roles";
     
     private static final String WIKINAME  = "wikiname";
+    
+    private static final String CHANGE_LOGIN_NAME     = "canchangeloginname";
+    
+    private static final String NOT_CHANGE_LOGIN_NAME = "!canchangeloginname";
+    
+    private static final String CHANGE_PASSWORD       = "canchangepassword";
+    
+    private static final String NOT_CHANGE_PASSWORD   = "!canchangepassword";
     
     private String             m_prop;
 
@@ -102,11 +122,11 @@ public class UserProfileTag extends WikiTagBase
         UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
         
-        if ( EXISTS.equals( m_prop ) )
+        if ( EXISTS.equals( m_prop ) || NOT_NEW.equals( m_prop ) )
         {
             return profile.isNew() ? SKIP_BODY : EVAL_BODY_INCLUDE;
         }
-        else if ( NEW.equals( m_prop ) )
+        else if ( NEW.equals( m_prop ) || NOT_EXISTS.equals( m_prop ) )
         {
             return profile.isNew() ? EVAL_BODY_INCLUDE : SKIP_BODY;
         }
@@ -158,6 +178,25 @@ public class UserProfileTag extends WikiTagBase
                 }
             }
         }
+        else if ( CHANGE_PASSWORD.equals( m_prop ) || CHANGE_LOGIN_NAME.equals( m_prop ) )
+        {
+            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
+            if ( !authMgr.isContainerAuthenticated() ||
+                 manager.getUserDatabase().isSharedWithContainer() )
+            {
+                return EVAL_BODY_INCLUDE;
+            }
+        }
+        else if ( NOT_CHANGE_PASSWORD.equals( m_prop ) || NOT_CHANGE_LOGIN_NAME.equals( m_prop ) )
+        {
+            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
+            if ( authMgr.isContainerAuthenticated() &&
+                 !manager.getUserDatabase().isSharedWithContainer() )
+            {
+                return EVAL_BODY_INCLUDE;
+            }
+        }
+        
         if ( result != null )
         {
             pageContext.getOut().print( result );
