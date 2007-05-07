@@ -26,8 +26,6 @@
        
        * ReferredPagesPlugin now allocates a bigger buffer for creating
        html to avoid allocation overhead.  Ditto for TabbedSectionTag.
-       
-       
 
 2007-05-06  Andrew Jaquith <andrew AT freshcookies DOT org>
 
