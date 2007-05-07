@@ -1,5 +1,7 @@
 package com.ecyrd.jspwiki.ui;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.ecyrd.jspwiki.TextUtil;
 
 
@@ -94,14 +96,14 @@ public abstract class AbstractCommand implements Command
         else
         {
             // For local JSPs, take everything to the left of ?, then
-            // delete all variables
+            // delete all variable substitutions
             String jsp = urlPattern;
             int qPosition = urlPattern.indexOf( '?' );
             if ( qPosition != -1 )
             {
                 jsp = jsp.substring( 0, qPosition );
             }
-            m_jsp = jsp.replaceAll( "\u0025[a-z|A-Z]", "" );
+            m_jsp = removeSubstitutions(jsp);
             
             // Calculate the "friendly name" for the JSP
             if ( m_jsp.toUpperCase().endsWith( ".JSP" ) )
@@ -119,6 +121,27 @@ public abstract class AbstractCommand implements Command
         m_contentTemplate = contentTemplate;
         
         m_target = target;
+    }
+
+    //
+    //  This is just *so* much faster than doing String.replaceAll().  It would, in fact,
+    //  be worth to cache this value.
+    //
+    private String removeSubstitutions(String jsp)
+    {
+        //return jsp.replaceAll( "\u0025[a-z|A-Z]", "" );
+        StringBuffer newjsp = new StringBuffer( jsp.length() );
+        for( int i = 0; i < jsp.length(); i++ )
+        {
+            char c = jsp.charAt(i);
+            if( c == '%' && i < jsp.length()-1 && Character.isLetterOrDigit( jsp.charAt(i+1) ) )
+            {
+                i++;
+                continue;
+            }
+            newjsp.append( c );
+        }
+        return newjsp.toString();
     }
     
     /**
