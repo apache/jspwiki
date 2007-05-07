@@ -127,7 +127,7 @@ public abstract class CommonTests extends TestCase
     {
         // Navigate to Prefs page; set user cookie
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        t.assertTextNotPresent( "G&apos;day" );
+        t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
         t.clickLinkWithText( "My Prefs" );
         t.assertTextPresent( "Set your user preferences here." );
         t.assertFormPresent( "setCookie" );
@@ -244,7 +244,7 @@ public abstract class CommonTests extends TestCase
     {
         // Start at front page; try to log in
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        t.assertTextNotPresent( "G&#8217;day" );
+        t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
         t.clickLinkWithText( "Log in" );
         t.assertTextPresent( "Please sign in" );
         t.assertFormPresent( "login" );
@@ -280,7 +280,7 @@ public abstract class CommonTests extends TestCase
         
         // Log out; we should NOT see any asserted identities
         t.gotoPage( "/Logout.jsp" );
-        t.assertTextNotPresent( "G&#8217;day" );
+        t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
         cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
         assertEquals( "", cookie );
     }
@@ -362,7 +362,7 @@ public abstract class CommonTests extends TestCase
     {
         // Navigate to profile tab
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        t.assertTextNotPresent( "G&#8217;day" );
+        t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
         t.clickLinkWithText( "My Prefs" );
         t.assertFormPresent( "editProfile" );
         t.setWorkingForm( "editProfile" );
