@@ -16,20 +16,21 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 public interface GroupDatabase
 {
     /**
-     * Persists the current state of the group database to back-end storage.
-     * This method is intended to be atomic; results cannot be partially
-     * committed. If the commit fails, it should roll back its state
-     * appropriately. Implementing classes that persist to the file system may
-     * wish to make this method <code>synchronized</code>.
+     * No-op method that in previous versions of JSPWiki was intended to 
+     * atomically commit changes to the user database. Now, the
+     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
+     * are atomic themselves.
      * @throws WikiSecurityException
+     * @deprecated there is no need to call this method because the save and
+     * delete methods contain their own commit logic
      */
     public void commit() throws WikiSecurityException;
 
     /**
      * Looks up and deletes a {@link Group} from the group database. If the
      * group database does not contain the supplied Group. this method throws a
-     * {@link NoSuchPrincipalException}. The method does not commit the results
-     * of the delete; it only alters the database in memory.
+     * {@link NoSuchPrincipalException}. The method commits the results
+     * of the delete to persistent storage.
      * @param group the group to remove
      */
     public void delete( Group group ) throws NoSuchPrincipalException, WikiSecurityException;
@@ -48,6 +49,7 @@ public interface GroupDatabase
      * proposed group is the same name as one of the built-in Roles: e.g.,
      * Admin, Authenticated, etc. The database is responsible for setting
      * create/modify timestamps, upon a successful save, to the Group.
+     * The method commits the results of the delete to persistent storage.
      * @param group the Group to save
      * @param saver the user who saved the Group
      */

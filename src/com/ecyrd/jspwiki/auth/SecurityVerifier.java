@@ -579,7 +579,6 @@ public final class SecurityVerifier
             Principal user = new WikiPrincipal( "TestUser" );
             group.add( user );
             db.save( group, new WikiPrincipal("SecurityVerifier") );
-            db.commit();
             
             // Make sure the group saved successfully
             if ( db.groups().length == oldGroupCount )
@@ -605,7 +604,6 @@ public final class SecurityVerifier
         try 
         {
             db.delete( group );
-            db.commit();
             if ( db.groups().length != oldGroupCount )
             {
                 m_session.addMessage( ERROR_GROUPS, "Could not delete a test group from the database." );
@@ -878,7 +876,6 @@ public final class SecurityVerifier
             profile.setFullname( "FullName"+loginName );
             profile.setPassword("password");
             db.save(profile);
-            db.commit();
             
             // Make sure the profile saved successfully
             if ( db.getWikiNames().length == oldUserCount )
@@ -898,7 +895,6 @@ public final class SecurityVerifier
         try 
         {
             db.deleteByLoginName( loginName );
-            db.commit();
             if ( db.getWikiNames().length != oldUserCount )
             {
                 m_session.addMessage( ERROR_DB, "Could not delete a test user from the database." );

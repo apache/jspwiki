@@ -37,12 +37,13 @@ public interface UserDatabase
 {
 
     /**
-     * Persists the current state of the user database to back-end storage. This
-     * method is intended to be atomic; results cannot be partially committed.
-     * If the commit fails, it should roll back its state appropriately.
-     * Implementing classes that persist to the file system may wish to make
-     * this method <code>synchronized</code>.
+     * No-op method that in previous versions of JSPWiki was intended to 
+     * atomically commit changes to the user database. Now, the {@link #rename(String, String)},
+     * {@link #save(UserProfile)} and {@link #deleteByLoginName(String)} methods
+     * are atomic themselves.
      * @throws WikiSecurityException
+     * @deprecated there is no need to call this method because the save, rename and
+     * delete methods contain their own commit logic
      */
     public void commit() throws WikiSecurityException;
 
@@ -50,8 +51,10 @@ public interface UserDatabase
      * Looks up and deletes the first {@link UserProfile} in the user database
      * that matches a profile having a given login name. If the user database
      * does not contain a user with a matching attribute, throws a
-     * {@link NoSuchPrincipalException}. The method does not commit the
-     * results of the delete; it only alters the database in memory.
+     * {@link NoSuchPrincipalException}. This method is intended to be atomic; 
+     * results cannot be partially committed. If the commit fails, it should 
+     * roll back its state appropriately. Implementing classes that persist 
+     * to the file system may wish to make this method <code>synchronized</code>.
      * @param loginName the login name of the user profile that shall be deleted
      */
     public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException;
@@ -159,6 +162,29 @@ public interface UserDatabase
      * this method should return <code>true</code>.
      */
     public UserProfile newProfile();
+    
+    /**
+     * <p>Renames a {@link UserProfile} in the user database by changing
+     * the profile's login name. Because the login name is the profile's unique
+     * identifier, implementations should verify that the identifier is
+     * "safe" to change before actually changing it. Specifically: the profile
+     * with the supplied login name must already exist, and the proposed new
+     * name must not be in use by another profile.</p>
+     * <p>This method is intended to be atomic; results cannot be partially committed.
+     * If the commit fails, it should roll back its state appropriately.
+     * Implementing classes that persist to the file system may wish to make
+     * this method <code>synchronized</code>.</p>
+     * @param loginName the existing login name for the profile
+     * @param newName the proposed new login name
+     * @throws NoSuchPrincipalException if the user profile identified by
+     * <code>loginName</code> does not exist
+     * @throws DuplicateUserException if another user profile with the
+     * proposed new login name already exists
+     * @throws WikiSecurityException if the profile cannot be renamed for
+     * any reason, such as an I/O error, database connection failure
+     * or lack of support for renames.
+     */
+    public void rename( String loginName, String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException;
 
     /**
      * <p>
@@ -177,6 +203,10 @@ public interface UserDatabase
      * </p>
      * <p>Implementations are <em>required</em> to time-stamp the creation
      * or modification fields of the UserProfile./p>
+     * <p>This method is intended to be atomic; results cannot be partially committed.
+     * If the commit fails, it should roll back its state appropriately.
+     * Implementing classes that persist to the file system may wish to make
+     * this method <code>synchronized</code>.</p>
      * @param profile the user profile to save
      * @throws WikiSecurityException if the profile cannot be saved
      */

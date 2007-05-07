@@ -30,9 +30,15 @@ public abstract class AbstractUserDatabase implements UserDatabase
     
 
     /**
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#commit()
+     * No-op method that in previous versions of JSPWiki was intended to 
+     * atomically commit changes to the user database. Now, the {@link #rename(String, String)},
+     * {@link #save(UserProfile)} and {@link #deleteByLoginName(String)} methods
+     * are atomic themselves.
+     * @throws WikiSecurityException
+     * @deprecated there is no need to call this method because the save, rename and
+     * delete methods contain their own commit logic
      */
-    public abstract void commit() throws WikiSecurityException;
+    public synchronized void commit() throws WikiSecurityException { }
 
     /**
      * Looks up and returns the first {@link UserProfile}in the user database

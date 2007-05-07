@@ -448,7 +448,6 @@ public final class GroupManager implements Authorizer, WikiEventListener
             m_groups.remove( group.getPrincipal() );
         }
         m_groupDatabase.delete( group );
-        m_groupDatabase.commit();
         fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
     }
 
@@ -529,7 +528,6 @@ public final class GroupManager implements Authorizer, WikiEventListener
         try
         {
             m_groupDatabase.save( group, session.getUserPrincipal() );
-            m_groupDatabase.commit();
         }
 
         // We got an exception! Roll back...

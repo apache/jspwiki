@@ -140,32 +140,18 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     private String m_deleteGroup = null;
     private String m_deleteGroupMembers = null;
     private boolean m_supportsCommits = false;
-    private Connection m_conn = null;
     private WikiEngine m_engine = null;
 
     /**
-     * Commits pending additions to the user database. If the JDBC database does not support
-     * transactions, this method does nothing.
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#commit()
+     * No-op method that in previous versions of JSPWiki was intended to 
+     * atomically commit changes to the user database. Now, the
+     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
+     * are atomic themselves.
+     * @throws WikiSecurityException
+     * @deprecated there is no need to call this method because the save and
+     * delete methods contain their own commit logic
      */
-    public void commit() throws WikiSecurityException
-    {
-        if ( !m_supportsCommits )
-        {
-            return;
-        }
-        
-        // Commit the transaction
-        try
-        {
-            m_conn.commit();
-            log.info("Committed transactions.");
-        }
-        catch ( SQLException e )
-        {
-            throw new WikiSecurityException( "Could not commit transaction: " + e.getMessage() );
-        }
-    }
+    public void commit() throws WikiSecurityException { }
 
     /**
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(com.ecyrd.jspwiki.auth.authorize.Group)
@@ -180,12 +166,26 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         String groupName = group.getName();
         try 
         {
-            PreparedStatement ps = m_conn.prepareStatement( m_deleteGroup );
+            // Open the database connection
+            Connection conn = m_ds.getConnection();
+            if ( m_supportsCommits )
+            {
+                conn.setAutoCommit( false );
+            }
+            
+            PreparedStatement ps = conn.prepareStatement( m_deleteGroup );
             ps.setString( 1, groupName);
             ps.execute();
-            ps = m_conn.prepareStatement( m_deleteGroupMembers );
+            ps = conn.prepareStatement( m_deleteGroupMembers );
             ps.setString( 1, groupName);
             ps.execute();
+            
+            // Commit and close connection
+            if ( m_supportsCommits )
+            {
+                conn.commit();
+            }
+            conn.close();
         }
         catch ( SQLException e ) 
         {
@@ -201,7 +201,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         Set groups = new HashSet();
         try 
         {
-            PreparedStatement ps = m_conn.prepareStatement( m_findAll );
+            // Open the database connection
+            Connection conn = m_ds.getConnection();
+            
+            PreparedStatement ps = conn.prepareStatement( m_findAll );
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
             {
@@ -221,6 +224,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     groups.add( group );
                 }
             }
+            
+            // Close connection
+            conn.close();
         }
         catch ( SQLException e )
         {
@@ -244,13 +250,20 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
         try
         {
+            // Open the database connection
+            Connection conn = m_ds.getConnection();
+            if ( m_supportsCommits )
+            {
+                conn.setAutoCommit( false );
+            }
+            
             PreparedStatement ps;
             Timestamp ts = new Timestamp( System.currentTimeMillis() );
             Date modDate = new Date( ts.getTime() );
             if ( !exists )
             {
                 // Group is new: insert new group record
-                ps = m_conn.prepareStatement( m_insertGroup );
+                ps = conn.prepareStatement( m_insertGroup );
                 ps.setString( 1, group.getName() );
                 ps.setTimestamp( 2, ts );
                 ps.setString( 3, modifier.getName() );
@@ -265,7 +278,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             else
             {
                 // Modify existing group record
-                ps = m_conn.prepareStatement( m_updateGroup );
+                ps = conn.prepareStatement( m_updateGroup );
                 ps.setTimestamp( 1, ts);
                 ps.setString( 2, modifier.getName() );
                 ps.setString( 3, group.getName() );
@@ -279,12 +292,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             // Now, update the group member list
             
             // First, delete all existing member records
-            ps = m_conn.prepareStatement( m_deleteGroupMembers );
+            ps = conn.prepareStatement( m_deleteGroupMembers );
             ps.setString( 1, group.getName() );
             ps.execute();
             
             // Insert group member records
-            ps = m_conn.prepareStatement( m_insertGroupMembers );
+            ps = conn.prepareStatement( m_insertGroupMembers );
             Principal[] members = group.members();
             for ( int i = 0; i < members.length; i++ )
             {
@@ -294,6 +307,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.execute();
             }
                 
+            // Commit and close connection
+            if ( m_supportsCommits )
+            {
+                conn.commit();
+            }
+            conn.close();
         }
         catch ( SQLException e )
         {
@@ -391,17 +410,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             log.warn("JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
             throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e.getMessage() );
         }
-        
-        // Nail up the database connection
-        try 
-        {
-            m_conn = m_ds.getConnection();
-            log.info("Opened JDBCGroupDatabase connection." );
-        }
-        catch ( SQLException e )
-        {
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase connection error: " + e.getMessage() );
-        }
     }
     
     /**
@@ -437,7 +445,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         boolean unique = true;
         try 
         {
-            PreparedStatement ps = m_conn.prepareStatement( m_findGroup );
+            // Open the database connection
+            Connection conn = m_ds.getConnection();
+            
+            PreparedStatement ps = conn.prepareStatement( m_findGroup );
             ps.setString( 1, index );
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
@@ -455,6 +466,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 populateGroup( group );
                 found = true;
             }
+            
+            // Close connection
+            conn.close();
         }
         catch ( SQLException e )
         {
@@ -481,7 +495,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     {
         try 
         {
-            PreparedStatement ps = m_conn.prepareStatement( m_findMembers );
+            // Open the database connection
+            Connection conn = m_ds.getConnection();
+            
+            PreparedStatement ps = conn.prepareStatement( m_findMembers );
             ps.setString( 1, group.getName() );
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
@@ -493,6 +510,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     group.add( principal );
                 }
             }
+            
+            // Close connection
+            conn.close();
         }
         catch ( SQLException e )
         {

@@ -98,89 +98,13 @@ public class XMLUserDatabase extends AbstractUserDatabase
     private File                c_file            = null;
 
     /**
-     * Persists database changes to disk.
-     */
-    public synchronized void commit() throws WikiSecurityException
-    {
-        if ( c_dom == null )
-        {
-            log.fatal( "User database doesn't exist in memory." );
-        }
-
-        File newFile = new File( c_file.getAbsolutePath() + ".new" );
-        try
-        {
-            BufferedWriter io = new BufferedWriter( new OutputStreamWriter ( 
-                    new FileOutputStream( newFile ), "UTF-8" ) );
-            
-            // Write the file header and document root
-            io.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            io.write("<users>\n");
-            
-            // Write each profile as a <user> node
-            Element root = c_dom.getDocumentElement();
-            NodeList nodes = root.getElementsByTagName( USER_TAG );  
-            for( int i = 0; i < nodes.getLength(); i++ )
-            {
-                Element user = (Element)nodes.item( i );
-                io.write( "<" + USER_TAG + " ");
-                io.write( LOGIN_NAME );
-                io.write( "=\"" + user.getAttribute( LOGIN_NAME ) + "\" " );
-                io.write( WIKI_NAME );
-                io.write( "=\"" + user.getAttribute( WIKI_NAME ) + "\" " );
-                io.write( FULL_NAME );
-                io.write( "=\"" + user.getAttribute( FULL_NAME ) + "\" " );
-                io.write( EMAIL );
-                io.write( "=\"" + user.getAttribute( EMAIL ) + "\" " );
-                io.write( PASSWORD );
-                io.write( "=\"" + user.getAttribute( PASSWORD ) + "\" " );
-                io.write( CREATED );
-                io.write( "=\"" + user.getAttribute( CREATED ) + "\" " );
-                io.write( LAST_MODIFIED );
-                io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
-                io.write(" />\n");
-            }
-            io.write("</users>");
-            io.close();
-        }
-        catch ( IOException e )
-        {
-            throw new WikiSecurityException( e.getLocalizedMessage() );
-        }
-
-        // Copy new file over old version
-        File backup = new File( c_file.getAbsolutePath() + ".old" );
-        if ( backup.exists() )
-        {
-            if ( !backup.delete() )
-            {
-                log.error( "Could not delete old user database backup: " + backup );
-            }
-        }
-        if ( !c_file.renameTo( backup ) )
-        {
-            log.error( "Could not create user database backup: " + backup );
-        }
-        if ( !newFile.renameTo( c_file ) )
-        {
-            log.error( "Could not save database: " + backup + " restoring backup." );
-            if ( !backup.renameTo( c_file ) )
-            {
-                log.error( "Restore failed. Check the file permissions." );
-            }
-            log.error( "Could not save database: " + c_file + ". Check the file permissions" );
-        }
-    }
-
-    /**
      * Looks up and deletes the first {@link UserProfile} in the user database
      * that matches a profile having a given login name. If the user database
      * does not contain a user with a matching attribute, throws a
-     * {@link NoSuchPrincipalException}. The method does not commit the
-     * results of the delete; it only alters the database in memory.
+     * {@link NoSuchPrincipalException}.
      * @param loginName the login name of the user profile that shall be deleted
      */
-    public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
+    public synchronized void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
     {
         if ( c_dom == null )
         {
@@ -194,6 +118,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
             if ( user.getAttribute( LOGIN_NAME ).equals( loginName ) )
             {
                 c_dom.getDocumentElement().removeChild(user);
+                
+                // Commit to disk
+                saveDOM();
                 return;
             }
         }
@@ -394,6 +321,78 @@ public class XMLUserDatabase extends AbstractUserDatabase
         }
     }
     
+    private void saveDOM() throws WikiSecurityException
+    {
+        if ( c_dom == null )
+        {
+            log.fatal( "User database doesn't exist in memory." );
+        }
+
+        File newFile = new File( c_file.getAbsolutePath() + ".new" );
+        try
+        {
+            BufferedWriter io = new BufferedWriter( new OutputStreamWriter ( 
+                    new FileOutputStream( newFile ), "UTF-8" ) );
+            
+            // Write the file header and document root
+            io.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            io.write("<users>\n");
+            
+            // Write each profile as a <user> node
+            Element root = c_dom.getDocumentElement();
+            NodeList nodes = root.getElementsByTagName( USER_TAG );  
+            for( int i = 0; i < nodes.getLength(); i++ )
+            {
+                Element user = (Element)nodes.item( i );
+                io.write( "<" + USER_TAG + " ");
+                io.write( LOGIN_NAME );
+                io.write( "=\"" + user.getAttribute( LOGIN_NAME ) + "\" " );
+                io.write( WIKI_NAME );
+                io.write( "=\"" + user.getAttribute( WIKI_NAME ) + "\" " );
+                io.write( FULL_NAME );
+                io.write( "=\"" + user.getAttribute( FULL_NAME ) + "\" " );
+                io.write( EMAIL );
+                io.write( "=\"" + user.getAttribute( EMAIL ) + "\" " );
+                io.write( PASSWORD );
+                io.write( "=\"" + user.getAttribute( PASSWORD ) + "\" " );
+                io.write( CREATED );
+                io.write( "=\"" + user.getAttribute( CREATED ) + "\" " );
+                io.write( LAST_MODIFIED );
+                io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
+                io.write(" />\n");
+            }
+            io.write("</users>");
+            io.close();
+        }
+        catch ( IOException e )
+        {
+            throw new WikiSecurityException( e.getLocalizedMessage() );
+        }
+
+        // Copy new file over old version
+        File backup = new File( c_file.getAbsolutePath() + ".old" );
+        if ( backup.exists() )
+        {
+            if ( !backup.delete() )
+            {
+                log.error( "Could not delete old user database backup: " + backup );
+            }
+        }
+        if ( !c_file.renameTo( backup ) )
+        {
+            log.error( "Could not create user database backup: " + backup );
+        }
+        if ( !newFile.renameTo( c_file ) )
+        {
+            log.error( "Could not save database: " + backup + " restoring backup." );
+            if ( !backup.renameTo( c_file ) )
+            {
+                log.error( "Restore failed. Check the file permissions." );
+            }
+            log.error( "Could not save database: " + c_file + ". Check the file permissions" );
+        }
+    }
+    
     private long c_lastCheck    = 0;
     private long c_lastModified = 0;
     
@@ -423,6 +422,55 @@ public class XMLUserDatabase extends AbstractUserDatabase
     }
 
     /**
+     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#rename(String, String)
+     */
+    public synchronized void rename(String loginName, String newName) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException
+    {
+        if ( c_dom == null )
+        {
+            log.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
+            throw new IllegalStateException( "FATAL: database does not exist" );
+        }
+        checkForRefresh();
+        
+        // Get the existing user; if not found, throws NoSuchPrincipalException
+        UserProfile profile = findByLoginName( loginName );
+        
+        // Get user with the proposed name; if found, it's a collision
+        try 
+        {
+            UserProfile otherProfile = findByLoginName( newName );
+            if ( otherProfile != null )
+            {
+                throw ( new DuplicateUserException( "Cannot rename: the login name '" + newName + "' is already taken." ) );
+            }
+        }
+        catch ( NoSuchPrincipalException e )
+        {
+            // Good! That means it's safe to save using the new name
+        }
+        
+        // Find the user with the old login id attribute, and change it
+        NodeList users = c_dom.getElementsByTagName( USER_TAG );
+        for( int i = 0; i < users.getLength(); i++ )
+        {
+            Element user = (Element) users.item( i );
+            if ( user.getAttribute( LOGIN_NAME ).equals( loginName ) )
+            {
+                Date modDate = new Date( System.currentTimeMillis() );
+                setAttribute( user, LOGIN_NAME, newName );
+                setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
+                profile.setLoginName( newName );
+                profile.setLastModified( modDate );
+                break;
+            }
+        }
+        
+        // Commit to disk
+        saveDOM();
+    }
+    
+    /**
      * Saves a {@link UserProfile}to the user database, overwriting the
      * existing profile if it exists. The user name under which the profile
      * should be saved is returned by the supplied profile's
@@ -430,7 +478,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
      * @param profile the user profile to save
      * @throws WikiSecurityException if the profile cannot be saved
      */
-    public void save( UserProfile profile ) throws WikiSecurityException
+    public synchronized void save( UserProfile profile ) throws WikiSecurityException
     {
         if ( c_dom == null )
         {
@@ -486,6 +534,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
             profile.setCreated( modDate );
         }
         profile.setLastModified( modDate );
+        
+        // Commit to disk
+        saveDOM();
     }
 
     /**

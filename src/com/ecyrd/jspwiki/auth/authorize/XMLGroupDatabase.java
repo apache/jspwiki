@@ -97,89 +97,16 @@ public class XMLGroupDatabase implements GroupDatabase
     private Map                   m_groups         = new HashMap();
     
     /**
-     * Writes out the current contents of the groups database.
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#commit()
+     * No-op method that in previous versions of JSPWiki was intended to 
+     * atomically commit changes to the user database. Now, the
+     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
+     * are atomic themselves.
+     * @throws WikiSecurityException
+     * @deprecated there is no need to call this method because the save and
+     * delete methods contain their own commit logic
      */
-    public void commit() throws WikiSecurityException
-    {
-        if ( c_dom == null )
-        {
-            log.fatal( "Group database doesn't exist in memory." );
-        }
-
-        File newFile = new File( c_file.getAbsolutePath() + ".new" );
-        try
-        {
-            BufferedWriter io = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( newFile ), "UTF-8" ) );
-
-            // Write the file header and document root
-            io.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
-            io.write( "<groups>\n" );
-
-            // Write each profile as a <group> node
-            Collection groups = m_groups.values();
-            for( Iterator it = groups.iterator(); it.hasNext(); )
-            {
-                Group group = (Group) it.next();
-                io.write( "  <" + GROUP_TAG + " " );
-                io.write( GROUP_NAME );
-                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getName() )+ "\" " );
-                io.write( CREATOR );
-                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getCreator() ) + "\" " );
-                io.write( CREATED );
-                io.write( "=\"" + c_format.format( group.getCreated() ) + "\" " );
-                io.write( MODIFIER );
-                io.write( "=\"" + group.getModifier() + "\" " );
-                io.write( LAST_MODIFIED );
-                io.write( "=\"" + c_format.format( group.getLastModified() ) + "\"" );
-                io.write( ">\n" );
-
-                // Write each member as a <member> node
-                Principal[] members = group.members();
-                for( int j = 0; j < members.length; j++ )
-                {
-                    Principal member = members[j];
-                    io.write( "    <" + MEMBER_TAG + " " );
-                    io.write( PRINCIPAL );
-                    io.write( "=\"" + StringEscapeUtils.escapeXml(member.getName()) + "\" " );
-                    io.write( "/>\n" );
-                }
-
-                // Close tag
-                io.write( "  </" + GROUP_TAG + ">\n" );
-            }
-            io.write( "</groups>" );
-            io.close();
-        }
-        catch( IOException e )
-        {
-            throw new WikiSecurityException( e.getLocalizedMessage() );
-        }
-
-        // Copy new file over old version
-        File backup = new File( c_file.getAbsolutePath() + ".old" );
-        if ( backup.exists() )
-        {
-            if ( !backup.delete() )
-            {
-                log.error( "Could not delete old group database backup: " + backup );
-            }
-        }
-        if ( !c_file.renameTo( backup ) )
-        {
-            log.error( "Could not create group database backup: " + backup );
-        }
-        if ( !newFile.renameTo( c_file ) )
-        {
-            log.error( "Could not save database: " + backup + " restoring backup." );
-            if ( !backup.renameTo( c_file ) )
-            {
-                log.error( "Restore failed. Check the file permissions." );
-            }
-            log.error( "Could not save database: " + c_file + ". Check the file permissions" );
-        }
-    }
-
+    public void commit() throws WikiSecurityException { }
+    
     /**
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(com.ecyrd.jspwiki.auth.authorize.Group)
      */
@@ -194,6 +121,9 @@ public class XMLGroupDatabase implements GroupDatabase
         }
         
         m_groups.remove( index );
+        
+        // Commit to disk
+        saveDOM();
     }
 
     /**
@@ -249,7 +179,7 @@ public class XMLGroupDatabase implements GroupDatabase
     }
 
     /**
-     * Saves the group by adding it to an internal cache and setting its created/modified dates.
+     * Saves the group to persistent storage and sets its created/modified dates.
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#save(Group, Principal)
      */
     public void save( Group group, Principal modifier ) throws WikiSecurityException
@@ -275,6 +205,9 @@ public class XMLGroupDatabase implements GroupDatabase
 
         // Add the group to the 'saved' list
         m_groups.put( index, group );
+        
+        // Commit to disk
+        saveDOM();
     }
 
     private void buildDOM() throws WikiSecurityException
@@ -424,4 +357,85 @@ public class XMLGroupDatabase implements GroupDatabase
         group.setModifier( modifier );
         return group;
     }
+    
+    private void saveDOM() throws WikiSecurityException
+    {
+        if ( c_dom == null )
+        {
+            log.fatal( "Group database doesn't exist in memory." );
+        }
+
+        File newFile = new File( c_file.getAbsolutePath() + ".new" );
+        try
+        {
+            BufferedWriter io = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( newFile ), "UTF-8" ) );
+
+            // Write the file header and document root
+            io.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
+            io.write( "<groups>\n" );
+
+            // Write each profile as a <group> node
+            Collection groups = m_groups.values();
+            for( Iterator it = groups.iterator(); it.hasNext(); )
+            {
+                Group group = (Group) it.next();
+                io.write( "  <" + GROUP_TAG + " " );
+                io.write( GROUP_NAME );
+                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getName() )+ "\" " );
+                io.write( CREATOR );
+                io.write( "=\"" + StringEscapeUtils.escapeXml( group.getCreator() ) + "\" " );
+                io.write( CREATED );
+                io.write( "=\"" + c_format.format( group.getCreated() ) + "\" " );
+                io.write( MODIFIER );
+                io.write( "=\"" + group.getModifier() + "\" " );
+                io.write( LAST_MODIFIED );
+                io.write( "=\"" + c_format.format( group.getLastModified() ) + "\"" );
+                io.write( ">\n" );
+
+                // Write each member as a <member> node
+                Principal[] members = group.members();
+                for( int j = 0; j < members.length; j++ )
+                {
+                    Principal member = members[j];
+                    io.write( "    <" + MEMBER_TAG + " " );
+                    io.write( PRINCIPAL );
+                    io.write( "=\"" + StringEscapeUtils.escapeXml(member.getName()) + "\" " );
+                    io.write( "/>\n" );
+                }
+
+                // Close tag
+                io.write( "  </" + GROUP_TAG + ">\n" );
+            }
+            io.write( "</groups>" );
+            io.close();
+        }
+        catch( IOException e )
+        {
+            throw new WikiSecurityException( e.getLocalizedMessage() );
+        }
+
+        // Copy new file over old version
+        File backup = new File( c_file.getAbsolutePath() + ".old" );
+        if ( backup.exists() )
+        {
+            if ( !backup.delete() )
+            {
+                log.error( "Could not delete old group database backup: " + backup );
+            }
+        }
+        if ( !c_file.renameTo( backup ) )
+        {
+            log.error( "Could not create group database backup: " + backup );
+        }
+        if ( !newFile.renameTo( c_file ) )
+        {
+            log.error( "Could not save database: " + backup + " restoring backup." );
+            if ( !backup.renameTo( c_file ) )
+            {
+                log.error( "Restore failed. Check the file permissions." );
+            }
+            log.error( "Could not save database: " + c_file + ". Check the file permissions" );
+        }
+    }
+
 }
