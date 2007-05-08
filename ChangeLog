@@ -1,3 +1,11 @@
+2007-05-08  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.55
+       
+       * Tiny optimization for PageManager, improving the performance
+       for pageExists(String,int), if CachingProvider is in use.
+       This should help considerably in listing page histories.
+
 2007-05-07  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.54
