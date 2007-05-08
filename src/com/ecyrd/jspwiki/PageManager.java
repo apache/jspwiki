@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.modules.ModuleManager;
+import com.ecyrd.jspwiki.providers.CachingProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -467,6 +468,14 @@ public class PageManager extends ModuleManager implements WikiEventListener
             throw new ProviderException("Illegal page name");
         }
      
+        if( version == WikiProvider.LATEST_VERSION )
+            return pageExists( pageName );
+        
+        if( m_provider instanceof CachingProvider )
+        {
+            return ((CachingProvider)m_provider).pageExists( pageName , version );
+        }
+        
         return m_provider.getPageInfo( pageName, version ) != null;
     }
 
