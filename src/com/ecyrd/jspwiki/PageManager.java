@@ -20,10 +20,9 @@
 package com.ecyrd.jspwiki;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.security.Permission;
+import java.security.Principal;
 import java.util.*;
-import java.util.regex.Matcher;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -33,7 +32,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
-import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.filters.FilterException;
@@ -556,31 +554,31 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static class PreSaveWikiPageTask extends Task {
         
-        private final WikiContext context;
-        private final String proposedText;
+        private final WikiContext m_context;
+        private final String m_proposedText;
         
         public PreSaveWikiPageTask( WikiContext context, String proposedText )
         {
             super( PRESAVE_TASK_MESSAGE_KEY );
-            this.context = context;
-            this.proposedText = proposedText;
+            m_context = context;
+            m_proposedText = proposedText;
         }
 
         public Outcome execute() throws WikiException
         {
             // Retrieve attributes
-            WikiEngine engine = context.getEngine();
+            WikiEngine engine = m_context.getEngine();
             Workflow workflow = getWorkflow();
 
             // Get the wiki page
-            WikiPage page = context.getPage();
+            WikiPage page = m_context.getPage();
 
             // Figure out who the author was. Prefer the author
             // set programmatically; otherwise get from the
             // current logged in user
             if ( page.getAuthor() == null )
             {
-                Principal wup = context.getCurrentUser();
+                Principal wup = m_context.getCurrentUser();
 
                 if ( wup != null )
                     page.setAuthor( wup.getName() );
@@ -590,7 +588,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             String saveText;
             try
             {
-                saveText = engine.getFilterManager().doPreSaveFiltering( context, proposedText );
+                saveText = engine.getFilterManager().doPreSaveFiltering( m_context, m_proposedText );
             }
             catch ( FilterException e )
             {
@@ -598,7 +596,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             }
 
             // Stash the wiki context, old and new text as workflow attributes
-            workflow.setAttribute( PRESAVE_WIKI_CONTEXT, context );
+            workflow.setAttribute( PRESAVE_WIKI_CONTEXT, m_context );
             workflow.setAttribute( FACT_PROPOSED_TEXT, saveText );
             return Outcome.STEP_COMPLETE;
         }

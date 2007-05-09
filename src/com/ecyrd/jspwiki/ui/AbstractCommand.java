@@ -1,7 +1,5 @@
 package com.ecyrd.jspwiki.ui;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.ecyrd.jspwiki.TextUtil;
 
 
