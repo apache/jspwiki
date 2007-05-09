@@ -34,9 +34,9 @@ public class CommentedProperties extends Properties
     /**
      * @see java.util.Properties#Properties(Properties)
      */
-    public CommentedProperties( Properties defaults )
+    public CommentedProperties( Properties defaultValues )
     {
-        super( defaults );
+        super( defaultValues );
     }
 
     /**

@@ -15,85 +15,85 @@ public class PersistentMapDecorator extends Properties
 {
     private static final long serialVersionUID = 0L;
     
-    private Map delegate;
+    private Map m_delegate;
 
     public PersistentMapDecorator( Map delegate )
     {
-        this.delegate = delegate;
+        this.m_delegate = delegate;
     }
 
     public void clear()
     {
-        delegate.clear();
+        m_delegate.clear();
     }
 
     public boolean containsKey( Object key )
     {
-        return delegate.containsKey( key );
+        return m_delegate.containsKey( key );
     }
 
     public boolean containsValue( Object value )
     {
-        return delegate.containsValue( value );
+        return m_delegate.containsValue( value );
     }
 
     public Set entrySet()
     {
-        return delegate.entrySet();
+        return m_delegate.entrySet();
     }
 
     public boolean equals( Object obj )
     {
-        return delegate.equals( obj );
+        return m_delegate.equals( obj );
     }
 
     public Object get( Object key )
     {
-        return delegate.get( key );
+        return m_delegate.get( key );
     }
 
     public int hashCode()
     {
-        return delegate.hashCode();
+        return m_delegate.hashCode();
     }
 
     public boolean isEmpty()
     {
-        return delegate.isEmpty();
+        return m_delegate.isEmpty();
     }
 
     public Set keySet()
     {
-        return delegate.keySet();
+        return m_delegate.keySet();
     }
 
     public Object put( Object arg0, Object arg1 )
     {
-        return delegate.put( arg0, arg1 );
+        return m_delegate.put( arg0, arg1 );
     }
 
     public void putAll( Map arg0 )
     {
-        delegate.putAll( arg0 );
+        m_delegate.putAll( arg0 );
     }
 
     public Object remove( Object key )
     {
-        return delegate.remove( key );
+        return m_delegate.remove( key );
     }
 
     public int size()
     {
-        return delegate.size();
+        return m_delegate.size();
     }
 
     public String toString()
     {
-        return delegate.toString();
+        return m_delegate.toString();
     }
 
     public Collection values()
     {
-        return delegate.values();
+        return m_delegate.values();
     }
 }

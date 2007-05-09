@@ -13,23 +13,23 @@ import java.util.regex.Pattern;
 public class WhitespaceTrimWriter extends Writer
 {
 
-    private StringBuffer result = new StringBuffer();
+    private StringBuffer m_result = new StringBuffer();
 
-    private StringBuffer buffer = new StringBuffer();
+    private StringBuffer m_buffer = new StringBuffer();
 
-    private boolean trimMode = true;
+    private boolean m_trimMode = true;
 
     private static final Pattern ONLINE_PATTERN = Pattern.compile( ".*?\\n\\s*?", Pattern.MULTILINE );
 
-    private boolean currentlyOnLineBegin = true;
+    private boolean m_currentlyOnLineBegin = true;
 
     public void flush()
     {
-        if( buffer.length() > 0 )
+        if( m_buffer.length() > 0 )
         {
-            String s = buffer.toString();
+            String s = m_buffer.toString();
             s = s.replaceAll( "\r\n", "\n" );
-            if( trimMode )
+            if( m_trimMode )
             {
                 s = s.replaceAll( "(\\w+) \\[\\?\\|Edit\\.jsp\\?page=\\1\\]", "[$1]" );
                 s = s.replaceAll( "\n{2,}", "\n\n" );
@@ -37,8 +37,8 @@ public class WhitespaceTrimWriter extends Writer
                 s = s.replaceAll( "[ ]*\n[ ]*", "\n" );
                 s = replacePluginNewlineBackslashes( s );
             }
-            result.append( s );
-            buffer = new StringBuffer();
+            m_result.append( s );
+            m_buffer = new StringBuffer();
         }
     }
 
@@ -67,22 +67,22 @@ public class WhitespaceTrimWriter extends Writer
 
     public boolean isWhitespaceTrimMode()
     {
-        return trimMode;
+        return m_trimMode;
     }
 
     public void setWhitespaceTrimMode( boolean trimMode )
     {
-        if( this.trimMode != trimMode )
+        if( m_trimMode != trimMode )
         {
             flush();
-            this.trimMode = trimMode;
+            m_trimMode = trimMode;
         }
     }
 
     public void write( char[] arg0, int arg1, int arg2 ) throws IOException
     {
-        buffer.append( arg0, arg1, arg2 );
-        currentlyOnLineBegin = ONLINE_PATTERN.matcher( buffer ).matches();
+        m_buffer.append( arg0, arg1, arg2 );
+        m_currentlyOnLineBegin = ONLINE_PATTERN.matcher( m_buffer ).matches();
     }
 
     public void close() throws IOException
@@ -91,11 +91,11 @@ public class WhitespaceTrimWriter extends Writer
     public String toString()
     {
         flush();
-        return result.toString();
+        return m_result.toString();
     }
 
     public boolean isCurrentlyOnLineBegin()
     {
-        return currentlyOnLineBegin;
+        return m_currentlyOnLineBegin;
     }
 }

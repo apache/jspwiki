@@ -351,25 +351,23 @@ public final class UserManager
             }
             
             // If the profile doesn't need approval, then just log the user in
-            else
+
+            try
             {
-                try
+                AuthenticationManager mgr = m_engine.getAuthenticationManager();
+                if ( newProfile && !mgr.isContainerAuthenticated() )
                 {
-                    AuthenticationManager mgr = m_engine.getAuthenticationManager();
-                    if ( newProfile && !mgr.isContainerAuthenticated() )
-                    {
-                        mgr.login( session, profile.getLoginName(), profile.getPassword() );
-                    }
+                    mgr.login( session, profile.getLoginName(), profile.getPassword() );
                 }
-                catch ( WikiException e )
-                {
-                    throw new WikiSecurityException( e.getMessage() );
-                }
-                
-                // Alert all listeners that the profile changed...
-                // ...this will cause credentials to be reloaded in the wiki session
-                fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
             }
+            catch ( WikiException e )
+            {
+                throw new WikiSecurityException( e.getMessage() );
+            }
+                
+            // Alert all listeners that the profile changed...
+            // ...this will cause credentials to be reloaded in the wiki session
+            fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
         }
         
         // For existing accounts, just save the profile

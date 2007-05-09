@@ -19,15 +19,18 @@
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
-import org.apache.log4j.Logger;
+import java.util.*;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.auth.*;
+import org.apache.log4j.Logger;
+import org.apache.xmlrpc.XmlRpcException;
+
+import com.ecyrd.jspwiki.LinkCollector;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
-import com.ecyrd.jspwiki.attachment.Attachment;
-import java.util.*;
-import org.apache.xmlrpc.XmlRpcException;
 
 /**
  *  Provides handlers for all RPC routines.  These routines are used by

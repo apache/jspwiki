@@ -146,7 +146,7 @@ public class ApprovalWorkflowTest extends TestCase
         Step step = w.getCurrentStep();
         assertTrue( step instanceof Decision );
         Decision decision = (Decision)step;
-        ((Decision)decision).decide( Outcome.DECISION_DENY );
+        decision.decide( Outcome.DECISION_DENY );
         assertFalse( w.isCompleted() );
         
         // Check that the notification is ok, then acknowledge it

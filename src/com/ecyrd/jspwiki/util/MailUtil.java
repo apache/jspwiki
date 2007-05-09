@@ -401,8 +401,8 @@ public class MailUtil
     {
 
         private static final String BLANK = "";
-        private final String pass;
-        private final String login;
+        private final String m_pass;
+        private final String m_login;
 
         /**
          * Constructs a new SmtpAuthenticator with a supplied username and password.
@@ -412,8 +412,8 @@ public class MailUtil
         public SmtpAuthenticator(String login, String pass)
         {
             super();
-            this.login = ( login == null ? BLANK : login );
-            this.pass = ( pass == null ? BLANK: pass );
+            m_login = ( login == null ? BLANK : login );
+            m_pass = ( pass == null ? BLANK: pass );
         }
 
         /**
@@ -421,14 +421,12 @@ public class MailUtil
          */
         public PasswordAuthentication getPasswordAuthentication()
         {
-            if ( BLANK.equals(pass) )
+            if ( BLANK.equals(m_pass) )
             {
                 return null;
             }
-            else
-            {
-                return new PasswordAuthentication( login, pass );
-            }
+
+            return new PasswordAuthentication( m_login, m_pass );
         }
 
     }
