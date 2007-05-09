@@ -170,8 +170,6 @@ public class PermissionTag
     public final int doWikiStartTag()
         throws IOException
     {
-        boolean got_permission = false;
-        
         for( int i = 0; i < m_permissionList.length; i++ )
         {
             String perm = m_permissionList[i];
