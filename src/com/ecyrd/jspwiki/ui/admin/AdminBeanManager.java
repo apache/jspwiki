@@ -47,7 +47,7 @@ public class AdminBeanManager
     private WikiEngine m_engine;
     private ArrayList  m_allBeans;
 
-    private MBeanServer m_mbeanServer;
+    private MBeanServer m_mbeanServer = null;
     
     private static Logger log = Logger.getLogger(AdminBeanManager.class);
     
@@ -61,12 +61,23 @@ public class AdminBeanManager
         else
         {
             log.info("Finding a JDK 1.4 -compatible MBeanServer.");
-            m_mbeanServer = MBeanServerFactory14.getServer();
+            try
+            {
+                m_mbeanServer = MBeanServerFactory14.getServer();
+            }
+            catch( Exception e )
+            {
+                log.error("Unable to locate the JMX libraries from your classpath. "+
+                          "Please make sure that \"jmxri.jar\" can be found in your WEB-INF/lib directory.");
+            }
         }
         m_engine = engine;
-            
-        log.info( m_mbeanServer.getClass().getName() );
-        log.info( m_mbeanServer.getDefaultDomain() );
+
+        if( m_mbeanServer != null )
+        {
+            log.info( m_mbeanServer.getClass().getName() );
+            log.info( m_mbeanServer.getDefaultDomain() );
+        }
         
         initialize();
     }
@@ -102,12 +113,13 @@ public class AdminBeanManager
     {
         try
         {
-            if( ab instanceof DynamicMBean )
+            if( ab instanceof DynamicMBean && m_mbeanServer != null )
             {
                 String component = getJMXTitleString( ab.getType() );
                 String title     = ab.getTitle();
             
                 ObjectName name = new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
+                
                 m_mbeanServer.registerMBean( ab, name );
             }
             
