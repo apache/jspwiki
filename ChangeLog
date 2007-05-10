@@ -3,17 +3,17 @@
        * 2.5.57 - 2nd Brushed Template commit (more to come)
        
        * Remove Info tab from all screens, as it causes overload on the wiki server,
-       but also confusion when similar screens are served from different URLs.
-       The info page has back it own existance, with small optimalisations.
+       but also to avoid confusion when similar screens are served from different URLs.
+       The info page has back it own existence, with small optimalisations.
        
        * Mootools library upgraded to v1.1, just released
        
        * Added code prettifier from Google. (use %%prettify around code blocks)
        
        * Several smaller refactorings on jsp's and i18n default.properties
-       More-Info menu gets replaced by dropdown when browser has javascript on
+       The new more-info menu gets replaced by dropdown when browser has javascript on.
        
-       * Bugfix on dateformat reported by Frank Fisher.
+       * Bugfix on numberformat reported by Frank Fisher.
        See http://www.jspwiki.org/wiki/BugAttachmentAndInfoTabsAreBlank
 
 
