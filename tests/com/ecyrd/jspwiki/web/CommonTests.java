@@ -127,12 +127,15 @@ public abstract class CommonTests extends TestCase
     {
         // Navigate to Prefs page; set user cookie
         t.gotoPage( "/Wiki.jsp?page=Main" );
+        // brushed NOK : anonymous also gets a G'day greeting ????
         t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
-        t.clickLinkWithText( "My Prefs" );
+        // brushed NOK -- link is hidden in dropdown
+        //t.clickLinkWithText( "My Prefs" );
+        t.gotoPage( "/UserPreferences.jsp" );
         t.assertTextPresent( "Set your user preferences here." );
         t.assertFormPresent( "setCookie" );
         t.setWorkingForm( "setCookie" );
-        t.assertFormNotPresent( "clearCookie" );
+        //t.assertFormNotPresent( "clearCookie" ); brushed allows to clear cookie/user prefs at any time
         t.assertFormElementPresent( "assertedName" );
         t.assertSubmitButtonPresent( "ok" );
         t.setFormElement( "assertedName", "Don Quixote" );
@@ -145,7 +148,9 @@ public abstract class CommonTests extends TestCase
         assertEquals( "Don+Quixote", cookie );
 
         // Clear user cookie
-        t.clickLinkWithText( "My Prefs" );
+        // brushed NOK -- link is hidden in dropdown
+        //t.clickLinkWithText( "My Prefs" );
+        t.gotoPage( "/UserPreferences.jsp" );
         t.assertFormNotPresent( "setCookie" );
         t.setWorkingForm( "clearCookie" );
         t.assertFormPresent( "clearCookie" );
@@ -196,7 +201,9 @@ public abstract class CommonTests extends TestCase
         // Verify that asserted user 'Fred' can view the group but not edit
         newSession();
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        t.clickLinkWithText( "My Prefs" );
+        // brushed NOK -- link is hidden in dropdown
+        //t.clickLinkWithText( "My Prefs" );
+        t.gotoPage( "/UserPreferences.jsp" );
         t.setWorkingForm( "setCookie" );
         t.setFormElement( "assertedName", "FredFlintstone" );
         t.submit( "ok" );
