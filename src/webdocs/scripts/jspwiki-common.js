@@ -1,4 +1,4 @@
-﻿/**
+/**
  ** Javascript routines to support the BrushedTemplate
  ** Dirk Frederickx
  ** Nov 06-Mar 07: aligned with MooTools ##
@@ -24,7 +24,7 @@
  ** 280 ZebraTable: color odd/even row of a table ##
  ** 290 HighlightWord: refactored
  ** 295 Typography
- **
+ ** 300 Prettify
  **/
 
 
@@ -71,12 +71,10 @@ Element.extend({
 	toggle: function() {
 		return this.visible() ? this.hide(): this.show();
 	},
-	/*
-	scrollTo: function() {
-		window.scrollTo(this.x||this.offsetLeft,this.y||this.offsetTop);
-		return this;
+	scrollTo: function(x, y){
+		this.scrollLeft = x;
+		this.scrollTop = y;
 	},
-	*/
 	getPositionedOffset: function(what) {
 		what = "offset"+what.capitalize();
 		var el=this, offset=0;
@@ -137,8 +135,8 @@ var QueryString = new Class({
 */
 
 /* Cookie: based on mootools, uses encode/decode stuff iso escape */
+//FIXME :: can this be removed in favour of standard mootools version 
 Cookie = {
-
 	set: function(key, value, path, expires, domain, secure){
 			var c = [], date = new Date();
 			date.setTime(date.getTime() + ((expires || 365)*86400000));
@@ -195,6 +193,7 @@ function $C(color){
 	return new Color(color);
 };
 
+//FIXME
 Color.implement({
 	HTMLColors :
 	{ black  :"000000", green :"008000", silver :"C0C0C0", lime  :"00FF00",
@@ -210,8 +209,6 @@ Color.implement({
 });
 
 
-
-
 /* I18N Support
  * LocalizedStrings takes form { "javascript.resource key":"localised resource key {0}" }
  * Parameters {0..9}
@@ -222,19 +219,16 @@ Color.implement({
  * "imageInfo".localize(2,4); => expects "Image {0} of {1}"
  */
 String.extend({
-
 	localize: function(){
 		var s = LocalizedStrings["javascript."+this], args = arguments;
-		if(!s) return("§§§" + this + "§§§");
+		if(!s) return("???" + this + "???");
         return s.replace(/\{(\d)\}/g, function(m){ 
-        	return args[m.charAt(1)] || "§§§"+m.charAt(1)+"§§§"});
+        	return args[m.charAt(1)] || "???"+m.charAt(1)+"???"});
 	}
 });
-/* LocalizedStrings is found in commonheader.jsp */
 
 
-/* FIXME */
-/* parse number anywhere inside a string */
+/* FIXME parse number anywhere inside a string */
 Number.REparsefloat = new RegExp( "([+-]?\\d+(:?\\.\\d+)?(:?e[-+]?\\d+)?)", "i");
 /* parse a date anywhere inside a string */
 /* todo */
@@ -258,58 +252,6 @@ function getAncestorByTagName( node, tagName )
 }
 
 
-/* 050  URL handling
- * - onPageLoad/interal 500ms: make sure URL#HASH is visible
- * - parseParameters: read parameter from the URL
- * FIXME mootools
- **/
-var URL = {
-
-	parseParameters: function(aParm){  //FIXME: use mootools foo
-		var u = document.URL.split( '&' );
-		for( var i=1; i < u.length; i++ ){
-			var item = u[i].split('=');
-			if( item.length == 1 ) continue;
-			if( item[0] == aParm ) return( item[1] );
-		}
-		return(0);
-	},
-
-	onPageLoad: function(){
-		URL.makeVisible.periodical(500);
-	},
-
-	CurrentURL: null,  //current URL#HASH value
-	makeVisible: function(){
-		if( this.CurrentURL && (this.CurrentURL == location.href) ) return;
-		this.CurrentURL = location.href;
-
-		var h = location.hash; if( h=="" ) return;
-		h = h.substring(1); //drop leading #
-		var node = $(h);
-
-		var needToScroll = false;
-		while( $type(node)=='element' ){
-			if ( node.hasClass('hidetab')){
-				needToScroll = true;
-				TabbedSection.onclick(node); 
-			} else if (node.hasClass('tab')){
-				needToScroll = true;
-				//fixme need to jump to the correct toggler
-				//alert(node.className+' '+node.getPrevious().className);
-				//node.getPrevious().fireEvent('onClick');
-			} else if ( /*(node.style) &&*/ node.visible()){
-				needToScroll = true;
-				//fixme need to find the correct toggler
-				node.show(); //eg collapsedBoxes: fixme
-			}
-			node = node.getParent();
-		}
-		if( needToScroll ) $(h).scrollTo();
-	}
-}
-
-
 /** 100 Wiki functions **/
 var Wiki = {
 
@@ -317,14 +259,16 @@ var Wiki = {
 		Object.extend(Wiki,props || {'DELIM':'\u00A4'}); 
 		this.BasePath = this.BaseURL.slice( this.BaseURL.indexOf( location.host )
 											+ location.host.length, -1 );
-        //this.Language = navigator.language ? navigator.language : navigator.userLanguage;
+        //this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 	},
 	getPageElement: function(){ 
-		return($('page') || $E('.page'));
+		return($('page') || $E('.page')); //FIXME make more simple now 
 	},
 	onPageLoad: function(){
 		this.PermissioneEdit = ( $E('.actionEdit') != undefined ); //deduct permission level
+		this.url = null;
+		this.parseHash.periodical(500);
 
 		// put focus on the first form element within a page
 		var f = $('workarea')	// plain.jsp
@@ -335,9 +279,7 @@ var Wiki = {
 			|| $('query2');		// Search.jsp
 		if(f && f.visible()) f.focus();	//IE chokes when focus on invisible element
 
-		return;
-		/* visual sugar: turn More... select-box into hover dropdown */
-		/* TODO - css is not yet ok*/
+		/* visual sugar: turn More... select-box into a hover dropdown */
 		var more = $('actionsMorePopupItems'),
 			hover = more.getParent().effect('opacity', {wait:false}).set(0),
 			selection = $('actionsMore');
@@ -348,10 +290,41 @@ var Wiki = {
 			.addEvent('mouseover',(function(){ hover.start(0.9) }).bind(this));
 		
 		$A(selection.options).each(function(o){
-			new Element('a').setProperty('href',o.value).addClass(o.className).setHTML(o.text)
+			if(o.value == "") return;
+			if(o.value == "separator"){
+				new Element('li').addClass(o.className).setHTML(o.text).injectInside(more); 
+            } else {
+			  new Element('a').setProperty('href',o.value).addClass(o.className).setHTML(o.text)
 				.injectInside( new Element('li').injectInside(more) );
+			}
 		});
-		//$('actionsmenu').remove();
+		selection.getParent().remove();
+	},
+	parseHash: function(){
+		if(this.url && this.url == location.href ) return;
+		this.url = location.href;
+		var h = location.hash; 
+		if( h=="" ) return;
+		h = h.replace(/^#/,'');
+
+		var target = el = $(h);
+
+		//walk ancestor list to ensure visibility
+		while( $type(el) == 'element' ){
+			if( el.hasClass('hidetab') ){
+				TabbedSection.onclick( el ); 
+			} else if( el.hasClass('tab') ){
+				//fixme need to jump to the correct toggler
+				alert(el.className+' '+el.getPrevious().className);
+				//node.getPrevious().fireEvent('onClick');
+			} else if( /*(node.style) &&*/ el.visible() ){
+				//alert('visible');
+				//fixme need to find the correct toggler
+				el.show(); //eg collapsedBoxes: fixme
+			}
+			el = el.getParent();
+		}
+		if(target) $(target).scrollTo();	
 	},
 
 	/* SubmitOnce: hide the real submit button, add proxy buttons which get disabled on submit */
@@ -400,7 +373,7 @@ var WikiSlimbox = {
 }
 
 /*
-	Slimbox v1.3 - The ultimate lightweight Lightbox clone
+	Slimbox v1.31 - The ultimate lightweight Lightbox clone
 	by Christophe Beyls (http://www.digitalia.be) - MIT-style license.
 	Inspired by the original Lightbox v2 by Lokesh Dhakar.
 
@@ -500,8 +473,11 @@ var Lightbox = {
 
 	setup: function(open){
 		var elements = $A(document.getElementsByTagName('object'));
-		if (window.ie) elements.extend(document.getElementsByTagName('select'));
-		elements.each(function(el){ el.style.visibility = open ? 'hidden' : ''; });
+		elements.extend(document.getElementsByTagName(window.ie ? 'select' : 'embed'));
+		elements.each(function(el){
+			if (open) el.lbBackupStyle = el.style.visibility;
+			el.style.visibility = open ? 'hidden' : el.lbBackupStyle;
+		});
 		var fn = open ? 'addEvent' : 'removeEvent';
 		window[fn]('scroll', this.eventPosition)[fn]('resize', this.eventPosition);
 		document[fn]('keydown', this.eventKeyDown);
@@ -531,6 +507,7 @@ var Lightbox = {
 		this.step = 1;
 		this.activeImage = imageNum;
 
+		this.center.style.backgroundColor = '';
 		this.bottomContainer.style.display = this.prevLink.style.display = this.nextLink.style.display = 'none';
 		this.fx.image.hide();
 		this.center.className = 'lbLoading';
@@ -615,6 +592,7 @@ var Lightbox = {
 
 			break;
 		case 4:
+			//this.center.style.backgroundColor = '#000';
 			this.image.setStyle('overflow','auto');
 			this.bottomContainer.setStyles({ top: (this.top + this.center.clientHeight)+'px', marginLeft: this.center.style.marginLeft });
 			if (this.options.animateCaption){
@@ -827,6 +805,8 @@ var TabbedSection = {
 			tab.removeClass('hidetab').show();
 			break;
 		}
+		
+		//location.hash=tabID;
 	}
 }
 
@@ -942,7 +922,7 @@ var SearchBox = {
       var qv = this.query.value ;
       if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) return;
 
-	  new Ajax( Wiki.TemplateDir+'AjaxSearch.jsp', {
+	  new Ajax( Wiki.TemplateDir+'AJAXSearch.jsp', {
 	  	update: 'searchResult', 
 	  	postBody: $('searchForm').toQueryString(), 
 	  	method: 'post'
@@ -1921,8 +1901,7 @@ var WikiColumns =
 	}
 }
 
-/**
- ** 280 ZebraTable
+/** 280 ZebraTable
  ** Color odd/even rows of table differently
  ** 1) odd rows get css class odd (ref. jspwiki.css )
  **   %%zebra-table ... %%
@@ -1934,7 +1913,6 @@ var WikiColumns =
  ** %%zebra-<odd-color>-<even-color> ... %%
  **
  ** colors are specified in HEX (without #) format or html color names (red, lime, ...)
- **
  **/
 var ZebraTable = {
 
@@ -1961,16 +1939,12 @@ var ZebraTable = {
 }
 
 
-/**
- **
- Highlight Word
- **
+/** Highlight Word
  ** Inspired by http://www.kryogenix.org/code/browser/searchhi/
  ** Modified 21006 to fix query string parsing and add case insensitivity
  ** Modified 20030227 by sgala@hisitech.com to skip words
  **                   with "-" and cut %2B (+) preceding pages
  ** Refactored for JSPWiki -- now based on regexp, by D.Frederickx. Nov 2005
- **
  **/
 var HighlightWord =
 {
@@ -2018,11 +1992,24 @@ var HighlightWord =
 	}
 }
 
+/* 300 Javascript Code Prettifier
+ * based on http://google-code-prettify.googlecode.com/svn/trunk/README.html
+ */
+var WikiPrettify = {
+	onPageLoad : function(){
+
+	var found=false;
+	var elements = $$('.prettify pre, .prettify code')
+	if(!elements) return;
+
+	//load assets .css and .js
+	elements.addClass('prettyprint');
+	prettyPrint();
+
+	}
+}
 
 
-
-
-//window.addEvent('domready', function(){
 window.addEvent('load', function(){
 
 	Wiki.onPageLoad();
@@ -2039,10 +2026,10 @@ window.addEvent('load', function(){
 	HighlightWord.onPageLoad();
 	GraphBar.onPageLoad();
 	Categories.onPageLoad();
-	URL.onPageLoad();
 	//EditTools.onPageLoad();
 
 	WikiSlimbox.onPageLoad();
 	WikiTips.onPageLoad();
 	WikiColumns.onPageLoad();
+	WikiPrettify.onPageLoad();
 });
