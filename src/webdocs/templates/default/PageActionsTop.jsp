@@ -25,6 +25,29 @@
        title="<fmt:message key='actions.home.title' ><fmt:param><%=homepage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
   </span>
   
+  <wiki:CheckRequestContext context='info|diff|upload|edit'>
+    <span>
+      <wiki:PageType type="page">
+        <a href="<wiki:Link format='url' />" accesskey="v" 
+          title="<fmt:message key='actions.view.title'/>"><fmt:message 
+            key='actions.view'/></a>
+      </wiki:PageType>
+      <wiki:PageType type="attachment">
+        <a href="<wiki:LinkToParent format='url' />" accesskey="v" 
+          title="<fmt:message key='actions.viewparent.title'/>"><fmt:message 
+            key='actions.view'/></a>
+      </wiki:PageType>
+    </span>
+  </wiki:CheckRequestContext>
+  
+  <wiki:CheckRequestContext context='!info'>
+  <span class="actionInfo" >
+      <a href="<wiki:PageInfoLink format='url' />" id="moreinfo" accesskey="i" 
+        title="<fmt:message key='actions.info.title'/>"><fmt:message 
+          key='actions.info'/></a>
+  </span>
+  </wiki:CheckRequestContext>
+
   <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:Permission permission="edit">
       <span class="actionEdit">
@@ -59,7 +82,7 @@
   </wiki:UserCheck>
 
 
-  <%-- FIXME --%>
+  <%-- FIXME : to be moved into tabs of UserPreferences --%>
   <wiki:CheckRequestContext context='viewGroup'>
     <wiki:Permission permission="editGroup">
       <span class="actionsEditGroup">
@@ -89,8 +112,7 @@
        so all basic actions are accessible even if js is not avail --%>
   <form class="wikiform" id="actionsmenu" method="get" action="" style="display:inline;">
   <select name="actionsMore" id="actionsMore"
-      onchange="if ((this.selectedIndex != 0) && (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0; ">
-    <option class="actionsMore" value="more" checked='checked'><fmt:message key="actions.more"/></option>
+      onchange="if ((this.selectedIndex != 0) && (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;    <option class="actionsMore" value="" checked='checked'><fmt:message key="actions.more"/></option>
 
     <wiki:CheckRequestContext context='!prefs'>
     <wiki:CheckRequestContext context='!preview'>

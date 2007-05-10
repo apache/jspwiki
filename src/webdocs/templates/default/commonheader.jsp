@@ -16,12 +16,15 @@
 --%>
 <%-- CSS stylesheet --%>
 <link rel="stylesheet" media="screen, projection, print" type="text/css" 
-     href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
+     href="<wiki:Link format='url' templatefile='jspwiki.css'/>"/>
+<link rel="stylesheet" media="screen, projection, print" type="text/css" 
+     href="<wiki:Link format='url' jsp='scripts/prettify.css'/>"/>
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
 
 <%-- JAVASCRIPT --%>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js'/>"></script>
+<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js'/>"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js'/>"></script>
 <wiki:CheckRequestContext context='edit|comment'>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js'/>" ></script>
@@ -119,22 +122,6 @@ Wiki.init({
 
 <wiki:IncludeResources type="jsfunction"/>
 
-/* Define additional stuff to run at page load. */
-/* TODO function runOnLoad()
-{ 
-  TabbedSection.onPageLoad();
-  SearchBox.onPageLoad();
-  Wiki.onPageLoad();
-  Sortable.onPageLoad();
-  ZebraTable.onPageLoad();
-  HighlightWord.onPageLoad();
-  Collapsable.onPageLoad();
-  GraphBar.onPageLoad();
-  <%--wiki:IncludeResources type="jsfunction"/--%>   !!!! FIXME
-}
-window.onload = runOnLoad;
-*/
-
 //]]>
 </script>
 
@@ -154,7 +141,6 @@ window.onload = runOnLoad;
 
 <wiki:FeedDiscovery />
 
-
 <%-- SKINS : extra stylesheets, extra javascript --%>
 <c:if test='${!empty prefSkinName}'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print" 
@@ -163,20 +149,3 @@ window.onload = runOnLoad;
      href="<wiki:Link format='url' templatefile='skins/' /><:cout value='${prefSkinName}/print_skin.css' />" />
 <script type="text/javascript" src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.js' />" ></script>
 </c:if>
-
-<%-- deprecated listSkins -> use cookie instead
-<%  
-   
-    TemplateManager mgr = context.getEngine().getTemplateManager();
-    
-    Set skins = mgr.listSkins(pageContext,context.getTemplate());
-
-    for( Iterator i = skins.iterator(); i.hasNext(); )
-    {
-        String skinName = (String)i.next();
-%>
-        <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='<%="skins/"+skinName+"/skin.css"%>'/> title="<%=skinName%>" /> 
-<%
-    }
-%>
---%>

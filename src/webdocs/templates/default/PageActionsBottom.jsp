@@ -10,6 +10,7 @@
 
   String homepage = "Main";
   WikiContext wikiContext = WikiContext.findContext(pageContext);
+  WikiPage wikiPage = wikiContext.getPage();
   try 
   { 
     homepage = wikiContext.getEngine().getFrontPage(); 
@@ -88,7 +89,19 @@
            <fmt:param><wiki:Author /></fmt:param>
         </fmt:message>
       </wiki:CheckVersion>
-  
+
+      <wiki:PageExists>  
+      <a href="<wiki:Link format='url' jsp='rss.jsp'>
+                 <wiki:Param name='page' value='<%=wikiPage.getName()%>'/>
+                 <wiki:Param name='mode' value='wiki'/>
+               </wiki:Link>"
+        title="<fmt:message key='info.rsspagefeed.title'>
+                 <fmt:param><wiki:PageName /></fmt:param>
+               </fmt:message>" >
+        <img src="<wiki:Link jsp='images/xml.png' format='url'/>" border="0" alt="[RSS]"/>
+      </a>
+      </wiki:PageExists>
+
       <wiki:NoSuchPage><fmt:message key="actions.notcreated"/></wiki:NoSuchPage> 
     </div>
   </wiki:CheckRequestContext>

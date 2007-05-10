@@ -11,11 +11,11 @@
 
 	/* check possible permalink (blogentry) pages */
 	String blogcommentpage="";
-	String blogpage="";
+	String mainblogpage="";
 	if( pagename.indexOf("_blogentry_") != -1 )
 	{
 		blogcommentpage = TextUtil.replaceString( pagename, "blogentry", "comments" );
-		blogpage = pagename.substring(0, pagename.indexOf("_blogentry_"));
+		mainblogpage = pagename.substring(0, pagename.indexOf("_blogentry_"));
 	}
 %>
 
@@ -57,22 +57,26 @@
 <%-- Inserts no text if there is no page. --%>
 <wiki:InsertPage />
 
-<%-- Inserts blogcomment if appropriate --%>
-<wiki:PageExists page="<%= blogpage%>">
+<%-- Inserts blogcomment if appropriate 
+<% if( !blogpage.equals("") ) { %>
+--%>
 
-  <div class="weblogcomments">
-	<wiki:PageExists page="<%= blogcommentpage%>">
-	  <div class="weblogcommentstitle"><fmt:message key="blog.commenttitle"/></div>
-	  <wiki:InsertPage page="<%= blogcommentpage%>" />
-	</wiki:PageExists>
-  </div>
-  <div class="information xweblogcommentsfooter">	
-	<wiki:Link page="<%= blogpage %>"><fmt:message key="blog.backtomain"/></wiki:Link>&nbsp; &nbsp;
+<% if( ! mainblogpage.equals("") ) { %>
+<wiki:PageExists page="<%= mainblogpage%>">
+
+  <% if( ! blogcommentpage.equals("") ) { %>
+  <wiki:PageExists page="<%= blogcommentpage%>">
+	<div class="weblogcommentstitle"><fmt:message key="blog.commenttitle"/></div>
+    <div class="weblogcomments"><wiki:InsertPage page="<%= blogcommentpage%>" /></div>
+  </wiki:PageExists>
+  <% }; %>
+  <div class="information">	
+	<wiki:Link page="<%= mainblogpage %>"><fmt:message key="blog.backtomain"/></wiki:Link>&nbsp; &nbsp;
 	<wiki:Link context="comment" page="<%= blogcommentpage%>" ><fmt:message key="blog.addcomments"/></wiki:Link>
   </div>
 
 </wiki:PageExists>
-
+<% }; %>
 
 <wiki:NoSuchPage>
   <%-- FIXME: Should also note when a wrong version has been fetched. --%>

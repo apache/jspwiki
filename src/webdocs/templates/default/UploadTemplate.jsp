@@ -38,9 +38,6 @@
       <wiki:Tab id="attachments" title="<%= attTitle %>" accesskey="a">
         <wiki:Include page="AttachmentTab.jsp"/>
       </wiki:Tab>
-      <wiki:Tab id="pageinfo" title="Info" accesskey="i">
-        <wiki:Include page="InfoTab.jsp"/>
-      </wiki:Tab>
       </wiki:PageExists>
     </wiki:TabbedSection> 
   </div>

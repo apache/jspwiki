@@ -59,7 +59,7 @@
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
        class="wikiform"
         name="editForm" 
-    onsubmit="return WikiForm.submitOnce( this );"
+    onsubmit="return Wiki.submitOnce( this );"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
 
