@@ -3,18 +3,18 @@
  * Styles can be overwritten by print and skin stylesheets
  * /
 
-/* color scheme   
-   #eeeeee:code, comment, weblogentries, (light grey)
-   #d7d7d7:table header(darker grey)
-   #bbbbbb:table borders,
-   #d9e8ff:edit background
-   #ff9933:highlight colors, searchbars, ...  (amber)
-   #e0e0ff:information (light blue)
-   #ffff80:warning (light yellow)
-   #ffe0e0:error (light pink)
+/* COLOR scheme   
+   #eee code, comment, weblogentries, (light grey)
+   #d7d7d7 table header(darker grey)
+   #bbb table borders,
+   #d9e8ff edit background
+   #f93 highlight colors, searchbars, ...  (amber)
+   #e0e0ff information (light blue)
+   #ffff80 warning (light yellow)
+   #ffe0e0 error (light pink)
  */
- 
-   
+
+
 /* +++ 010 LAYOUT of main ID blocks +++ */
 #wikibody				{ }
 #header,
@@ -54,7 +54,7 @@
 blockquote, body, br, button, dd, fieldset, form, h1, h2, h3, h4, h5, h6,
 html, label, legend, li, ol, p, pre, table, td, th, ul { margin:0; padding:0; }
 
-button, code, input, pre, select, table, td, textarea, th { font-size:1em; }
+button, code, input, pre, select, table, td, textarea, fieldset, th { font-size:1em; }
 
 table {	border-collapse:collapse; border-spacing:0; empty-cells:show; }
 /* yui
@@ -68,7 +68,7 @@ h1, h2, h3, h4,
 p, pre, blockquote, label, 
 ul, ol, dl, hr			{ margin:0.5em 0; }
 th, td					{ padding:0.25em 0.5em; }
-.hr						{ display:block; border-bottom:1px solid #bbbbbb; }
+.hr						{ display:block; border-bottom:1px solid #bbb; }
 
 /* +++ 210 Page titles, headings, and paragraphs +++ */
 html					{ font-family:Arial, Helvetica, sans-serif; }
@@ -87,8 +87,9 @@ dl dd					{ margin-left:5em; }
 .wikiform td 			{ }
 .formvalue   			{ font-weight:bold; }
 .formhelp				{ font-style:italic; margin:0.5em 0;}
-label					{ font-weight:bold;  white-space:nowrap; }
-fieldset				{ border:0; }
+legend,
+label					{ font-weight:bold;  white-space:nowrap; padding-right:0.5em; }
+fieldset				{ margin: 0.5em 0; padding:0.5em; border:1px solid #bbb; }
 
 .wikiform input[type='submit'],
 .wikiform input[type='button']
@@ -99,8 +100,8 @@ fieldset				{ border:0; }
 /* +++ 240 Pre-formatted text blocks and code +++ */
 tt,pre					{ font-family:Monaco, Courier, monospace; 
 						  overflow:auto; line-height:normal; font-size:10pt;}
-pre						{ white-space:pre; margin:1em 2em; padding:0.25em; background:#eeeeee; 
-						  border:1px solid #bbbbbb; }
+pre						{ white-space:pre; margin:1em 2em; padding:0.25em; background:#eee; 
+						  border:1px solid #bbb; }
 
                            
 /* +++ 250 Hyperlinks +++ */
@@ -144,6 +145,8 @@ a.footnote				{ vertical-align:super; color:#0044AA; }
 .invisible				{ display:none; }  /* also used by the TASKS plugin */
 
 /* +++ 280 Convenience styles and info/warning/error dialogs +++ */
+.additinfo				{ background-color:#e0e0ff; }
+
 .diffnote,
 .information,
 .warning,
@@ -163,18 +166,18 @@ td .error				{ margin:0; }
 
 /* +++ 290 Comment boxes (used on some pages) +++ */
 .commentbox				{ float:right; width:25%; overflow:hidden;
-						  border:1px solid #bbbbbb; background:#eeeeee; 
+						  border:1px solid #bbb; background:#eee; 
 						  padding:0.25em; margin-left:0.25em; font-size:90%; }
 .commentbox li			{ margin-left:0; padding-left:0; }
 
 /* +++ 300 Wiki tables and zebra tables +++ */
-.wikitable				{ border:1px solid #bbbbbb; margin:0.5em 0.25em; }
+.wikitable				{ border:1px solid #bbb; margin:0.5em 0.25em; }
 .wikitable tr			{ vertical-align:top; }
-.wikitable * th			{ border:1px solid #bbbbbb; background-color:#d7d7d7; 
+.wikitable * th			{ border:1px solid #bbb; background-color:#d7d7d7; 
 						  vertical-align:top; }
-.wikitable * td			{ border:1px solid #bbbbbb; 
+.wikitable * td			{ border:1px solid #bbb; 
 						  vertical-align:top; text-align:left; word-wrap:break-word;}
-.zebra-table tr.odd td	{ background-color:#eeeeee; }
+.zebra-table tr.odd td	{ background-color:#eee; }
 
 .wikitable * td.split	{ border-top:1px solid #D9D9D9; } /* CHECK */
 
@@ -183,30 +186,30 @@ td .error				{ margin:0; }
 
 .attachtype		{ line-height:18px; font-size:11px; padding-left:20px;
 				  background-repeat:no-repeat; background-position:left; 
-				  background-image:url("images/page_white.png"); }
+				  background-image:url(images/page_white.png); }
 
-#attach-gif		{ background-image:url("images/page_white_magnify.png"); }
-#attach-png		{ background-image:url("images/page_white_magnify.png"); }
-#attach-bmp		{ background-image:url("images/page_white_magnify.png"); }
-#attach-jpg		{ background-image:url("images/page_white_magnify.png"); }
-#attach-jpeg	{ background-image:url("images/page_white_magnify.png"); }
+#attach-gif		{ background-image:url(images/page_white_magnify.png); }
+#attach-png		{ background-image:url(images/page_white_magnify.png); }
+#attach-bmp		{ background-image:url(images/page_white_magnify.png); }
+#attach-jpg		{ background-image:url(images/page_white_magnify.png); }
+#attach-jpeg	{ background-image:url(images/page_white_magnify.png); }
 
-#attach-text	{ background-image:url("images/page_white_text.png"); }
-#attach-txt		{ background-image:url("images/page_white_text.png"); }
+#attach-text	{ background-image:url(images/page_white_text.png); }
+#attach-txt		{ background-image:url(images/page_white_text.png); }
 
-#attach-zip		{ background-image:url("images/page_white_zip.png"); }
-#attach-jar		{ background-image:url("images/page_white_zip.png"); }
-#attach-tar		{ background-image:url("images/page_white_zip.png"); }
+#attach-zip		{ background-image:url(images/page_white_zip.png); }
+#attach-jar		{ background-image:url(images/page_white_zip.png); }
+#attach-tar		{ background-image:url(images/page_white_zip.png); }
 
-#attach-pdf		{ background-image:url("images/page_white_acrobat.png"); }
-#attach-doc		{ background-image:url("images/page_white_word.png"); }
-#attach-xls		{ background-image:url("images/page_white_excel.png"); }
-#attach-ppt		{ background-image:url("images/page_white_powerpoint.png"); }
-#attach-swf		{ background-image:url("images/page_white_flash.png"); }
+#attach-pdf		{ background-image:url(images/page_white_acrobat.png); }
+#attach-doc		{ background-image:url(images/page_white_word.png); }
+#attach-xls		{ background-image:url(images/page_white_excel.png); }
+#attach-ppt		{ background-image:url(images/page_white_powerpoint.png); }
+#attach-swf		{ background-image:url(images/page_white_flash.png); }
 
-#attach-mov		{ background-image:url("images/film.png"); }
-#attach-mp3		{ background-image:url("images/ipod.png"); }
-#attach-wav		{ background-image:url("images/ipod.png"); }
+#attach-mov		{ background-image:url(images/film.png); }
+#attach-mp3		{ background-image:url(images/ipod.png); }
+#attach-wav		{ background-image:url(images/ipod.png); }
 
 
 /* +++ 400 Styles for specific JSPs +++ */
@@ -214,7 +217,7 @@ td .error				{ margin:0; }
 /* +++ 405 AttachmentTab +++ */
 
 /* +++ 410 CommentContent +++ */
-#addcomment				{ }
+#commentcontent			{ }
 
 /* +++ 415 ConflictContent +++ */
 #conflict,
@@ -231,14 +234,14 @@ td.diffrem,
 td.diff					{ font-family:Courier, monospace; 
 						  overflow:auto; line-height:normal; font-size:13px; }
 td.diffadd				{ background:#99ff99; }
-td.diffrem				{ background:#ff9933; }
+td.diffrem				{ background:#f93; }
 td.diff					{ background:#ffffff; }
 
 /* +++ 421 Contextual diff provider +++ */
 .diff-wikitext			{ font-family:Courier, monospace; 
 						  overflow:auto; line-height:normal; font-size:13px;}
 .diff-insertion			{ background:#99ff99; text-decoration:none; color:black; } 
-.diff-deletion			{ background:#ff9933; text-decoration:line-through; color:black; } 
+.diff-deletion			{ background:#f93; text-decoration:line-through; color:black; } 
 .diff-nextprev			{ vertical-align:super; text-decoration:none; }
 
 
@@ -250,17 +253,19 @@ body.comment			{  } /* Comment.jsp BODY element */
 /* +++ 430 Edit/EditContent +++ */
 .edit textarea			{ font-family:Monaco, Courier, monospace; padding:4px; font-size:10pt;} 
 #editorarea				{ width:100%; padding:4px; }
+#editform input 		{ margin-right:2em; }
 
 #editorbar				{ float:right; text-align:right; width:25%; }
+#commentcontent,
 #editcontent			{ width:99%; }
 #edithelp				{ }
 #searchbar				{ margin:1em 0; }
 #searchbarhelp			{ }
 #findSuggestionMenu		{ position:absolute; top:0; left:0; z-index:10;
-						  border:2px solid #bbbbbb; background-color:white; }
+						  border:2px solid #bbb; background-color:white; }
 #findSuggestionMenu ul	{ list-style:none; margin:0; padding:0; }
 #findSuggestionMenu li  { display:block; padding:0.25em;}
-#findSuggestionMenu li:hover { background:#ff9933; }
+#findSuggestionMenu li:hover { background:#f93; }
 
 /* +++ 440 Favorites +++ */
 .username				{ font-style:italic; font-weight:bold; padding:0.25em 1em; }
@@ -269,7 +274,7 @@ body.comment			{  } /* Comment.jsp BODY element */
 
 /* +++ 450 FindContent +++ */
 .gBar					{ position:relative; }
-.graphBar				{ border-color:#ff9933; padding:2px; }
+.graphBar				{ border-color:#f93; padding:2px; }
 
 /* +++ 455 Footer +++ */
 .copyright				{ margin:1em 0; padding:0.25em; font-size:80%; 
@@ -293,14 +298,12 @@ body.comment			{  } /* Comment.jsp BODY element */
 
 /* +++ 470 PageActions +++ */
 .pageactions			{ padding:0.25em 0; line-height:1.5em; }
-.pageactions span		 { }
-.pageactions span.actionsMore,
-
 .pageactions a			{ padding:0.5em; }
-.pageactions .pageInfo a { padding:0; }
+.pageactions .actionsMore { padding:0.5em; color:blue; }
+.pageactions .pageInfo a  { padding:0; }
 
 .pageactions .actionsMore:hover,
-.pageactions a:hover	{ background-color:#ff9933; }
+.pageactions a:hover	{ background-color:#f93; }
 .pageactions .pageInfo a:hover { background-color:transparent; }
 
 .pageinfo,
@@ -316,13 +319,14 @@ body.comment			{  } /* Comment.jsp BODY element */
 .actionLogin,
 .actionLogout			{ }
 
-#actionsMorePopup		{ position:absolute; top:2em; padding:0; z-index:20; overflow:hidden; right:0; 
-						  background:white; border:2px solid #bbbbbb;  }
+#actionsMorePopup		{ position:absolute; right:0; top:2em; z-index:20;
+						  background:white; border:2px solid #bbb; }
 #actionsMorePopup ul	{ list-style:none; margin:0; padding:0; }
-#actionsMorePopup li	{ display:block; }
-#actionsMorePopup li:hover { background:#ff9933; }
-#actionsMorePopup a		{ padding:0.5em; line-height:1.75em; }
-#actionsMorePopup .actionSeparator { height:2px; border-bottom:2px solid #bbbbbb; overflow:hidden; }
+#actionsMorePopup li	{ }
+#actionsMorePopup li:hover	{ background-color:#f93; }
+#actionsMorePopup a:hover	{ background-color:transparent; }
+#actionsMorePopup a		{ line-height:1.75em; }
+#actionsMorePopup .actionSeparator { height:2px; border-bottom:2px solid #bbb; overflow:hidden; }
 
 
 /* +++ 472 PageContent.jsp +++ */
@@ -337,15 +341,17 @@ body.comment			{  } /* Comment.jsp BODY element */
 
 
 /* +++ 485 SearchBox +++ */
-.searchbox				{ margin:1em 0.5em; }
-#searchboxMenu			{ position:absolute; padding:4px; z-index:10;
-						  background:white; border:2px solid #bbbbbb; font-size:90%; }
-#searchResult,
-#recentSearches			{ margin:0.5em 0; }
-#searchResult ul		{ list-style:none;  }
-#recentSearches ul		{ list-style:none; margin-bottom:0.5em; }
-#searchResult li:hover,
-#recentSearches li:hover { background:#ff9933; }
+.searchbox				{ margin:1em 0 1em 0.5em; }
+
+#searchboxMenu			{ position:absolute; padding:0.25em; z-index:10; right:2em; top:3.5em;
+						  background:white; border:2px solid #bbb; }
+#searchboxMenu ul 		{ list-style:none; margin:0; padding:0;}
+#searchboxMenu li		{ padding:0 0.5em; }
+
+#searchTools a:hover,
+#searchboxMenu li:hover { background:#f93; }
+#searchboxMenu div      { margin:0.5em 0; }
+#searchTools { text-align:left;}
 
 /* +++ 490 ViewTemplate +++ */
 body.view				{ /*background-image:white;*/ }
@@ -360,7 +366,7 @@ body.view				{ /*background-image:white;*/ }
 
 /* +++ 620 Index plugin +++ */
 .index					{ }
-.index .header			{ padding:4px; background:#eeeee; border:1px solid #bbbbbb; }
+.index .header			{ padding:4px; background:#eeeee; border:1px solid #bbb; }
 .index .body			{ }
 .index .section			{ color:red; }
 
@@ -399,7 +405,7 @@ div.index .section a	{ display:block; padding:0 0.25em;
 
 .weblogcommentstitle	{ background:#e0e0e0; margin:1em 0.5em 0 0.5em; padding:0.5em;
 						  font-weight:bold; font-size:1.2em; line-height:1.4em; }
-.weblogcomments			{ background:#eeeeee; margin:0 0.5em 1em 0.5em; padding:1em; }
+.weblogcomments			{ background:#eee; margin:0 0.5em 1em 0.5em; padding:1em; }
 
 
 /* +++ 640 RecentChangesPlugin +++ */
@@ -416,7 +422,7 @@ table.calendar			{ }
 table.calendar td		{ text-align:center; }
 table.calendar td.othermonth
 						{ color:#707070; }
-table.calendar td.link	{ background:#eeeeee; }
+table.calendar td.link	{ background:#eee; }
 table.calendar tr.month	{ }
 table.calendar tr.weekdays
 						{ color:#ff0000; }
@@ -433,7 +439,7 @@ table.calendar tr.weekdays
  */
 .searchword,
 .cursor,
-.searchmatch			{ background-color:#ff9933; color:black; text-decoration:inherit; } 
+.searchmatch			{ background-color:#f93; color:black; text-decoration:inherit; } 
 
 /*
  * For fragments in search results (from FindPage), and the search match
@@ -456,16 +462,16 @@ table.calendar tr.weekdays
  */
 .hidetab				{ display:none; }
 .tabs					{ padding:0.5em; 
-						  border:1px solid #bbbbbb; border-top:none; }
+						  border:1px solid #bbb; border-top:none; }
 .tabmenu				{ padding:0.25em 1em; 
 						  font-weight:bold; line-height:normal;
-						  border-bottom:1px solid #bbbbbb; } 
+						  border-bottom:1px solid #bbb; } 
 /* IE only:top 2px to have same size as inside '.tabmenu a' elements */
 * html .tabmenu			{ margin-top:1px; }
 
 .tabmenu a				{ margin-left:-1px; padding:0.25em 0.5em; 
-						  border:1px solid #bbbbbb; border-bottom:none; 
-						  color:gray; background:#eeeeee; 
+						  border:1px solid #bbb; border-bottom:none; 
+						  color:gray; background:#eee; 
 						  text-decoration:none; cursor:pointer; }
 .tabmenu a:hover		{ color:blue;  }
 .tabmenu a.activetab	{ color:black; background:transparent; 
@@ -486,21 +492,21 @@ table.calendar tr.weekdays
 
 /* +++ 910 Accordion +++ */
 .accordion, 
-.tabbedAccordion		{ border:1px solid #bbbbbb; margin-bottom:0.5em;}
+.tabbedAccordion		{ border:1px solid #bbb; margin-bottom:0.5em;}
 .accordion .toggle		{ background:#d7d7d7; cursor:pointer; 
 						  padding:0.25em 1em; font-weight:bold; line-height:1.4em; }
 .toggle:hover			{ color:blue; }
 .accordion .tab			{ padding:0 1em; }
 
 .togglemenu				{ line-height:normal; margin-top:1em;
-						  padding:0.25em 0.5em; font-weight:bold; color:#eeeeee; }
-.togglemenu .toggle		{ border:1px solid #bbbbbb; border-bottom:none; padding:0.25em 0.5em; 
+						  padding:0.25em 0.5em; font-weight:bold; color:#eee; }
+.togglemenu .toggle		{ border:1px solid #bbb; border-bottom:none; padding:0.25em 0.5em; 
 						  background:#dddddd; cursor:pointer; 
 						  display:inline; margin-left:-1px; }
 .togglemenu .toggle.active 
 						{ border-bottom:1px solid white; cursor:default; 
 						  color:black; background:transparent; } 
-.tabbedAccordion		{ border:1px solid #bbbbbb; padding:0.5em; }
+.tabbedAccordion		{ border:1px solid #bbb; padding:0.5em; }
 /* ie only hack no needed ?
 * html .togglemenu		{ margin-top:1px; }  
 */
@@ -543,7 +549,7 @@ div.collapse li			{ list-style:none; position:relative; }
 .quick2Top:hover,
 .quick2Bottom:hover,			
 .collapseOpen:hover,
-.collapseClose:hover	{ background:#ff9933; color:white; }
+.collapseClose:hover	{ background:#f93; color:white; }
 
 .collapseOpen,
 .collapseClose			{ cursor:pointer; }
@@ -558,7 +564,7 @@ div.collapse li			{ list-style:none; position:relative; }
 
 
 /* collapsebox */
-.collapsebox			{ border:1px solid #bbbbbb; position:relative; 
+.collapsebox			{ border:1px solid #bbb; position:relative; 
 						  margin:1em 0; overflow:hidden; }
 /*IE bug -- set width to ensure position:relative working properly */
 * html .collapsebox		{ width:99%; }  
@@ -589,7 +595,7 @@ a.slimbox			{ font-weight:bold; font-size:1.3em; padding:0 0.2em;}
 a.slimbox:visited,
 a.slimbox:active,
 a.slimbox:link		{ text-decoration:none; border:none;}
-a.slimbox:hover 	{ background:#ff9933;}
+a.slimbox:hover 	{ background:#f93;}
 
 #lbOverlay			{ position:absolute; left:0; top:0; width:100%; 
 					  background-color:#000; cursor:pointer; }
@@ -597,7 +603,7 @@ a.slimbox:hover 	{ background:#ff9933;}
 #lbBottomContainer	{ position:absolute; left:50%; overflow:hidden; background-color:#fff; 
 					  font-family:Verdana, Helvetica, sans-serif; font-size:0.9em;
 					  color:#666; line-height:1.4em; text-align:left; }
-.lbLoading			{ background:#fff url("images/spin.gif") no-repeat center; }
+.lbLoading			{ background:#fff url(images/spin.gif) no-repeat center; }
 #lbImage			{ border:10px solid #fff; border-top-width:1.4em; 
 					  background-repeat:no-repeat; background-position:center center;
 					  position:relative;}
@@ -614,7 +620,7 @@ a.slimbox:hover 	{ background:#ff9933;}
 					  color:#666; line-height:1.4em; text-align:left; }*/
 #lbBottom			{ border:10px solid #fff; border-top-style:none; }
 /*#lbCloseLink		{ display:block; float:right; width:66px; height:22px;
-					  background:transparent url("images/closelabel.gif") no-repeat center;
+					  background:transparent url(images/closelabel.gif) no-repeat center;
 					  margin:5px 0; }*/
 #lbBottomContainer *:visited,
 #lbBottomContainer *:active,
@@ -630,7 +636,7 @@ a.slimbox:hover 	{ background:#ff9933;}
 
 /* +++ 950 Categorised +++ */
 .categoryLink			{ border-bottom:2px solid #ffcc33; } 
-.categoryPopup			{ border:2px solid #ff9933; background:#ffcc33; }
+.categoryPopup			{ border:2px solid #f93; background:#ffcc33; }
 .categoryPopup			{ position:absolute; z-index:10; font-size:0.9em; }
 .categoryTitle			{ padding:0.5em; }
 .categoryTitle a:link   { font-weight:bold; }
@@ -638,12 +644,12 @@ a.slimbox:hover 	{ background:#ff9933;}
 .categoryText ul		{ list-style:none; padding:0 !important; }
 .categoryText li		{ padding:0 0.5em; }
 .categoryTitle:hover,
-.categoryText li:hover  { background:#ff9933; opacity:1;}
+.categoryText li:hover  { background:#f93; opacity:1;}
 
 
 /* formatting recent changes */
 .recentchanges			{ table-layout:fixed; } /*faster renderer */
-.recentchanges td		{ vertical-align:top; border-bottom:1px solid #bbbbbb; }
+.recentchanges td		{ vertical-align:top; border-bottom:1px solid #bbb; }
 .recentchanges .date	{ vertical-align:bottom; xfont-size:1.2em;  
 						  border-top:1.5em solid white;
 						  background-color:#d7d7d7 !important;
@@ -652,4 +658,33 @@ a.slimbox:hover 	{ background:#ff9933;}
 
 
 .spin,
-#spin					{ background:url("images/spin.gif") no-repeat; width:16px; height:16px; }
+#spin { background:url(images/spin.gif) no-repeat; width:16px; height:16px; }
+
+
+/* Pretty printing styles. Used with prettify.js. */
+pre.prettyprint {  }
+
+.str { color: #080; }
+.kwd { color: #008; }
+.com { color: #800; }
+.typ { color: #606; }
+.lit { color: #066; }
+.pun { color: #660; }
+.pln { color: #000; }
+.tag { color: #008; }
+.atn { color: #606; }
+.atv { color: #080; }
+.dec { color: #606; }
+
+@media print {
+  .str { color: #060; }
+  .kwd { color: #006; font-weight: bold; }
+  .com { color: #600; font-style: italic; }
+  .typ { color: #404; font-weight: bold; }
+  .lit { color: #044; }
+  .pun { color: #440; }
+  .pln { color: #000; }
+  .tag { color: #006; font-weight: bold; }
+  .atn { color: #404; }
+  .atv { color: #060; }
+}

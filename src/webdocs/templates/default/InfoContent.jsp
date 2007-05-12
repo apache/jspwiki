@@ -95,8 +95,7 @@
     }
     
     //pagination.append( " (Total items: " + itemcount + ")</div>" );
-    pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total" ) );
-    //pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total", [itemcount] ) );
+    pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total", new Object[]{new Integer(itemcount)} ) );
     pagination.append( "</div>" );
     
     return pagination.toString();
@@ -111,7 +110,7 @@
     //if( linkFrom > -1 ) title = "Show page from " + (linkFrom+1) + " to "+ (linkFrom+pagesize) ;
     if( linkFrom > -1 ) 
       title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show" );
-   //   title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.title.show", [linkFrom+1, linkFrom+pagesize] );
+      //FIXME ?? title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show", Object[]{new Integer(linkFrom+1), new Integer(linkFrom+pagesize) } );
 
     sb.append( "<a title=\"" + title + "\" " );
     sb.append( TextUtil.replaceString( linkAttr, "%s", Integer.toString(linkFrom) ) );

@@ -40,9 +40,10 @@
         name="setCookie" id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />" 
     onsubmit="var s=[];
-             ['prefSkin','prefTimeFormat','prefTimeZone','prefEditSize','prefEditorType'].each(function(el){
+             ['prefSkin','prefTimeFormat','prefTimeZone','prefEditSize'].each(function(el){
                s.push($(el).getValue());
              });
+             if(Wiki.PrefFontSize) s.push(Wiki.PrefFontSize);
              Cookie.set( 'JSPWikiUserPrefs',s.join(Wiki.DELIM), Wiki.BasePath); 
              return Wiki.submitOnce( this ); " >
 <table>
@@ -74,7 +75,7 @@
   </wiki:UserCheck>
 
   <tr>
-  <td><label for="prefSkin" accesskey="S"><u>S</u>kin</label></td>
+  <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>
   <td>
 
   <select id="prefSkin" name="prefSkin">
@@ -86,8 +87,6 @@
       for( java.util.Iterator i = skins.iterator(); i.hasNext(); )
       {
         String skinName = (String)i.next();
-        /* FIXME: listSkins lists everything -- hidden dirs, but also non-dirs! */
-        if( skinName.startsWith( "." ) ) continue;
         String selected = ( skinName.equals( prefSkinName ) ? " selected='selected'" : "" ) ;
      %>
         <option value="<%= skinName %>" <%= selected%> ><%= skinName %></option>
@@ -95,6 +94,19 @@
       }
       %>
   </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td><label for="prefFontSize" ><fmt:message key="prefs.user.fontsize"/></label></td>
+  <td>
+	<input type="button" value="-" onclick="Wiki.changeFontSize(-1);"
+		  title="<fmt:message key='pref.fontsize.title.down' />"></input>
+	<input type="button" value="<fmt:message key='pref.fontsize.reset' />
+	  " onclick="Wiki.resetFontSize();" name="prefFontSize"
+		  title="<fmt:message key='pref.fontsize.title.reset' />"></input>
+	<input type="button" value="+" onclick="Wiki.changeFontSize(1);"
+		  title="<fmt:message key='pref.fontsize.title.up' />"></input>
   </td>
   </tr>
   
@@ -112,7 +124,7 @@
   
   
   <tr>
-  <td><label for="prefEditSize" accesskey="h">Editor area <u>h</u>eight</label></td>
+  <td><label for="prefEditSize"><fmt:message key="prefs.user.editorareaheight"/></label></td>
   <td>
   <select id="prefEditSize" name="prefEditSize" >
     <%
@@ -130,7 +142,7 @@
   </tr>
 
   <tr>
-  <td><label for="prefTimeFormat" accesskey="T">Select <u>T</u>ime Format</label></td>
+  <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label></td>
   <td>
   <select id="prefTimeFormat" name="prefTimeFormat" >
     <%
@@ -152,9 +164,9 @@
       ,"EEE, dd-MMM-yyyy"
       ,"EEE, dd-MMM-yyyy, Z"
       ,"EEE, dd-MMM-yyyy, zzzz"
-      ,"dd-MMM-yy hh:mm"
-      ,"dd-MMM-yy HH:mm a"
-      ,"dd-MMM-yy HH:mm a, Z"
+      ,"dd-MMM-yyyy hh:mm"
+      ,"dd-MMM-yyyy HH:mm a"
+      ,"dd-MMM-yyyy HH:mm a, Z"
       ,"MMMM dd, yyyy"
       ,"MMMM dd, yyyy hh:mm"
       ,"MMMM dd, yyyy HH:mm a"
@@ -188,7 +200,7 @@
   </tr>
 
   <tr>
-  <td><label for="prefTimeZone" accesskey="Z">Select Time <u>Z</u>one</label></td>
+  <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label></td>
   <td>
   <select id='prefTimeZone' name='prefTimeZone' class='select'>
     <% 
@@ -299,7 +311,7 @@
 
 <form action="<wiki:Link format='url' jsp='UserPreferences.jsp'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
         name="clearCookie" id="clearCookie"
-    onsubmit="document.setCookie( 'JSPWikiUserPrefs', '' ); 
+    onsubmit="Cookie.remove( 'JSPWikiUserPrefs' ); 
               return Wiki.submitOnce( this );" 
       method="POST" accept-charset="<wiki:ContentEncoding />" >
 

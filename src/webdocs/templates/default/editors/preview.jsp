@@ -20,7 +20,7 @@
 <form action="<%=action%>"
       method="post" accept-charset="<wiki:ContentEncoding/>" 
        class="wikiform"
-        name="editForm" id="editForm"
+        name="editform" id="editform"
     onsubmit="return Wiki.submitOnce( this );"
      enctype="application/x-www-form-urlencoded">
 
@@ -46,13 +46,11 @@
         onclick="this.form.edit.click();" 
       accesskey="e"
           title="<fmt:message key='editor.preview.edit.title'/>" />
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <input type="submit" name="ok" value="Save" style="display:none;"/>
     <input type="button" name="ox" value="<fmt:message key='editor.preview.save.submit'/>" 
         onclick="this.form.ok.click();" 
       accesskey="s"
           title="<fmt:message key='editor.preview.save.title'/>" />
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <input type="submit" name="cancel" value="Cancel" style="display:none;"/>
     <input type="button" name="cancex" value="<fmt:message key='editor.preview.cancel.submit'/>"  
         onclick="this.form.cancel.click();" 

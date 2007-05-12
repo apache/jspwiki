@@ -139,7 +139,7 @@ var EditTools =
     this.onSelectorLoad();
     this.onSelectorChanged();
     this.textarea.focus();
-  } ,
+  }
         
 } 
 
@@ -304,6 +304,12 @@ function insertString(stringToInsert) {
 } 
 
 /*******************************/
+//JSON-RPC
+//POST is
+//{"id": 2, "method": "search.getSuggestions", "params": ["p", 10]}
+//response is
+//{"result":{"list":["Pic\/ruby.jpg","Pic\/telenet-smile.gif","Pic\/spin-greyblocks.gif","Pic\/shadow_transparent2.png","Pic\/monkey-mam-child.jpg","Pic\/brushed-button.jpg","Pic\/resizecursorv.png","Pic\/UserKeychainIcon.tiff","PrototypeJavascriptLibrary","Pizza Margerita"],"javaClass":"java.util.ArrayList"},"id":2}
+
 function getSuggestions(id)
 {
   var textNode = document.getElementById(id);

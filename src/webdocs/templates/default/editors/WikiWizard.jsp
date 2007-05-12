@@ -1,4 +1,6 @@
+<%--
 <script type='text/javascript' src='scripts/wikiwizard-jspwiki.js' language='Javascript'></script>
+--%>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="java.io.Serializable"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
@@ -8,6 +10,9 @@
 <%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ page import="com.ecyrd.jspwiki.providers.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.default"/>
 
 
 <%--
@@ -15,16 +20,15 @@
 --%>
 
 <noscript>
-  <br />
-  <div class="error">You need to enable Javascript in your browser to use the WikiWizard editor</div>
+  <div class="error"><fmt:message key="editor.wikwizard.noscript" /></div>
 </noscript>
 
-<%  WikiContext context = WikiContext.findContext( pageContext );
-    String usertext = EditorManager.getEditedText( pageContext );
-    
-    String changenote = (String)session.getAttribute("changenote");
-    changenote = changenote != null ? TextUtil.replaceEntities(changenote) : "";
- %>   
+<%  
+  WikiContext context = WikiContext.findContext( pageContext );
+  String usertext = EditorManager.getEditedText( pageContext );    
+
+  TemplateManager.addResourceRequest( context, "script", "scripts/wikiwizard-jspwiki.js" );
+%>   
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
     {
@@ -36,24 +40,28 @@
 <form accept-charset="<wiki:ContentEncoding/>"
       method="post" 
       action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
-      name="editForm" enctype="application/x-www-form-urlencoded">
+      name="editform" id="editform" 
+      enctype="application/x-www-form-urlencoded">
 
-    <wiki:CheckRequestContext context="edit">
-        <label for="changenote">Change note</label>
-        <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
-    </wiki:CheckRequestContext>
-
-    <p>
         <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
         <input name="page" type="hidden" value="<wiki:Variable var="pagename"/>" />
         <input name="action" type="hidden" value="save" />
-        <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
-                                                                       PageContext.REQUEST_SCOPE )%>" />
-        <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
-                                                                       
-    </p>
+        <input name="edittime" type="hidden" value="<c:out value='${lastchange}' />" />
+        <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />                                                                       
+    
 
-<textarea style='visibility:hidden;width:100%;height:1px;'  class='editor' id='editorarea' name='<%=EditorManager.REQ_EDITEDTEXT%>' rows='10' cols='80'><%=TextUtil.replaceEntities(usertext)%></textarea>
+  <wiki:CheckRequestContext context="edit">
+    <p>
+    <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
+	<%-- smaller size to fit on one line ;-) --%>
+    <input type="text" id="changenote" name="changenote" size="60" maxlength="80" value="<c:out value='${changenote}'/>"/>
+    </p>
+  </wiki:CheckRequestContext>
+
+<textarea style='visibility:hidden;width:100%;height:1px;'  
+          class='editor' id='editorarea' 
+           name='<%=EditorManager.REQ_EDITEDTEXT%>' 
+           rows='10' cols='80'><%=TextUtil.replaceEntities(usertext)%></textarea>
 
 <div id="editarea">
 
@@ -128,33 +136,31 @@ int maxSize = TextUtil.getIntegerProperty( engine.getWikiProperties(),
 	<param name="page" value="<wiki:PageName />" />
 	<param name="pageexists" value="<wiki:PageExists>true</wiki:PageExists>" />
 	<param name="lang" value="<%=context.getHttpRequest().getHeader("Accept-Language")%>" />
-	Applets are currently not supported by your browser.  Please <a href="http://www.java.com/">download Java</a>, so you can use
-	the WikiWizard editor.
+	<fmt:message key="editor.wikiwizard.noapplet"/>
 </applet>
 
-   <wiki:CheckRequestContext context="comment">
-        <table border="0" class="small">
-          <tr>
-            <td><label for="authorname" accesskey="n">Your <u>n</u>ame</label></td>
-            <td><input type="text" name="author" id="authorname" value="<wiki:UserName/>" /></td>
-            <td><label for="rememberme">Remember me?</label>
-            <input type="checkbox" name="remember" id="rememberme" /></td>
-          </tr>
-          <tr>
-            <td><label for="link" accesskey="m">Homepage or e<u>m</u>ail</label></td>
-            <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=pageContext.getAttribute("link",PageContext.REQUEST_SCOPE)%>" /></td>
-          </tr>
-        </table>
-    </wiki:CheckRequestContext>
-
-    <div style='display:none'>
+  <wiki:CheckRequestContext context="comment">
+  <fieldset>
+	<legend><fmt:message key="editor.commentsignature"/></legend>
     <p>
-        <input name='ok' type='submit' value='Save' />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='preview' type='submit' value='Preview' />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='cancel' type='submit' value='Cancel' />
+    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
+    <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
+    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
+    <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
-    </div>
+	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
+    <p>
+    <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
+    <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
+    </p>
+  </fieldset>
+  </wiki:CheckRequestContext>
+
+  <div style='display:none'>
+    <input name='ok' type='submit' value='Save' />
+    <input name='preview' type='submit' value='Preview' />
+    <input name='cancel' type='submit' value='Cancel' />
+  </div>
 </div>
+
 </form>

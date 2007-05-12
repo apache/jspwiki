@@ -14,11 +14,9 @@
 <% 
    WikiContext context = WikiContext.findContext( pageContext ); 
    WikiEngine engine = context.getEngine();
-   JSONRPCManager.requestJSON( context );
+   JSONRPCManager.requestJSON( context );  //FIXME: to be replace by standard mootools lib
 
    String usertext = EditorManager.getEditedText( pageContext );
-   String changenote = (String)session.getAttribute("changenote");
-   changenote = changenote != null ? TextUtil.replaceEntities(changenote) : ""; 
 
   /* included in jspwiki-edit.js 
   TemplateManager.addResourceRequest( context, "script", 
@@ -58,7 +56,7 @@
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext 
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
        class="wikiform"
-        name="editForm" 
+        name="editform" id="editform" 
     onsubmit="return Wiki.submitOnce( this );"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
@@ -66,8 +64,7 @@
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
   <input name="page" type="hidden" value="<wiki:Variable var='pagename' />" />
   <input name="action" type="hidden" value="save" />
-  <input name="edittime" type="hidden" 
-        value="<c:out value='${lastchange}' />" />
+  <input name="edittime" type="hidden" value="<c:out value='${lastchange}' />" />
   <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
 
   <p>
@@ -76,13 +73,11 @@
       onclick="this.form.ok.click();" 
     accesskey="s"
         title="<fmt:message key='editor.plain.save.title'/>" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <input type="submit" name="preview" value="Preview" style="display:none;"/>
   <input type="button" name="previex" value="<fmt:message key='editor.plain.preview.submit'/>" 
       onclick="this.form.preview.click();" 
     accesskey="v"
         title="<fmt:message key='editor.plain.preview.title'/>" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <input type="submit" name="cancel" value="Cancel" style="display:none;"/>
   <input type="button" name="cancex" value="<fmt:message key='editor.plain.cancel.submit'/>" 
       onclick="this.form.cancel.click();" 
@@ -90,33 +85,43 @@
         title="<fmt:message key='editor.plain.cancel.title'/>" />
   </p>
   
+  <wiki:CheckRequestContext context="edit">
   <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
          class="editor" 
        onkeyup="getSuggestions(this.id)"
        onclick="setCursorPos(this.id)" 
       onchange="setCursorPos(this.id)"
-          rows="<c:out value='${prefEditAreaHeight}' />" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+          rows="<c:out value='${prefEditAreaHeight}' />"
+          cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
-  <wiki:CheckRequestContext context="edit">
     <p>
     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
-    <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
+    <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
     </p>
   </wiki:CheckRequestContext>
 
   <wiki:CheckRequestContext context="comment">
-     <table>
-     <tr>
-       <td><label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
-       <td><input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" /></td>
-       <td><label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
-       <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/></td>
-     </tr>
-     <tr>
-       <td><label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label></td>
-       <td colspan="2"><input type="text" name="link" id="link" size="40" value="<c:out value='${sessionScope.link}' />" /></td>
-      </tr>
-    </table>
+  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
+         class="editor" 
+       onkeyup="getSuggestions(this.id)"
+       onclick="setCursorPos(this.id)" 
+      onchange="setCursorPos(this.id)"
+          rows="10" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+
+    <fieldset>
+	<legend><fmt:message key="editor.commentsignature"/></legend>
+    <p>
+    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
+    <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
+    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
+    <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
+    </p>
+	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
+    <p>
+    <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
+    <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
+    </p>
+    </fieldset>
   </wiki:CheckRequestContext>
 
 </form>

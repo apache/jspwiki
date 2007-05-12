@@ -99,7 +99,7 @@ var Observer = new Class({
 	initialize: function(el, fn, options){
 		this.options = Object.extend({
        	    event: 'keyup',
-		    delay: 1000
+		    delay: 300
 		}, options || {});
 		this.element = $(el);
 		this.callback = fn;
@@ -109,8 +109,8 @@ var Observer = new Class({
 		this.element.addEvent(this.options.event, this.listener);
 	},
 	fired: function() {
-		this.clear();
 		if (this.value == this.element.value) return;
+		this.clear(); /*bugfix*/
 		this.value = this.element.value;
 		this.timeout = this.callback.delay(this.options.delay, null, [this.element]);
 	},
@@ -262,13 +262,15 @@ var Wiki = {
         //this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 	},
+
 	getPageElement: function(){ 
 		return($('page') || $E('.page')); //FIXME make more simple now 
 	},
+	
 	onPageLoad: function(){
 		this.PermissioneEdit = ( $E('.actionEdit') != undefined ); //deduct permission level
 		this.url = null;
-		this.parseHash.periodical(500);
+		this.parseLocationHash.periodical(500);
 
 		// put focus on the first form element within a page
 		var f = $('workarea')	// plain.jsp
@@ -279,12 +281,28 @@ var Wiki = {
 			|| $('query2');		// Search.jsp
 		if(f && f.visible()) f.focus();	//IE chokes when focus on invisible element
 
-		/* visual sugar: turn More... select-box into a hover dropdown */
+		this.DefaultFontSize = $$('body')[0].getStyle('font-size').toFloat();
+		if(this.PrefFontSize) { this.PrefFontSize=this.PrefFontSize.toFloat(); this.changeFontSize(0); } 
+		else this.PrefFontSize = this.DefaultFontSize;
+
+		this.replaceMoreBox(); /* visual sugar */
+	},
+
+	changeFontSize: function(incr){
+	  this.PrefFontSize += incr;
+	  $$('body')[0].setStyle('font-size',this.PrefFontSize);
+	},
+
+	resetFontSize: function(){
+		this.PrefFontSize=this.DefaultFontSize;
+		this.changeFontSize(0);
+	},
+
+	replaceMoreBox: function(){
 		var more = $('actionsMorePopupItems'),
 			hover = more.getParent().effect('opacity', {wait:false}).set(0),
 			selection = $('actionsMore');
-			
-		//selection.getParent().setProperty('visibility','hidden');//hide();
+
 		more.getParent().getParent().show()
 		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
 			.addEvent('mouseover',(function(){ hover.start(0.9) }).bind(this));
@@ -293,14 +311,15 @@ var Wiki = {
 			if(o.value == "") return;
 			if(o.value == "separator"){
 				new Element('li').addClass(o.className).setHTML(o.text).injectInside(more); 
-            } else {
-			  new Element('a').setProperty('href',o.value).addClass(o.className).setHTML(o.text)
+			} else {
+				new Element('a').setProperty('href',o.value).addClass(o.className).setHTML(o.text)
 				.injectInside( new Element('li').injectInside(more) );
 			}
 		});
 		selection.getParent().remove();
 	},
-	parseHash: function(){
+
+	parseLocationHash: function(){
 		if(this.url && this.url == location.href ) return;
 		this.url = location.href;
 		var h = location.hash; 
@@ -334,6 +353,7 @@ var Wiki = {
 		});
 		return true;
 	}
+	
 }
 
 
@@ -866,11 +886,9 @@ var WikiAccordion = {
 
 
 /* 140 SearchBox
- * Remember 10 most recent search topics
- * Uses a cookie to store to 10 most recent search topics
- * Extensions for quick links for view, edit and clone (ref. idea of Ron Howard - Nov 05)
+ * FIXME: remember 10 most recent search topics (cookie based)
+ * Extended with quick links for view, edit and clone (ref. idea of Ron Howard - Nov 05)
  * Refactored for mootools, April 07
- * Add AJAX and hover effect.
  */
 var SearchBox = {
 
@@ -878,34 +896,38 @@ var SearchBox = {
 	
 	onPageLoad: function(){
 		this.form = $('searchForm'); if( !this.form ) return;
-		this.form.addEvent('submit',this.submit.bindAsEventListener(this))
-				 .addEvent('mouseout',(function(){ this.hover.start(0) }).bind(this))
-				 .addEvent('mouseover',(function(){ this.hover.start(0.9) }).bind(this));
-		$('recentClear').addEvent('click', this.clear.bindAsEventListener(this));
-		$('recentSearches').show(); 
-
+		this.form.addEvent('submit',this.submit.bind(this))
+				 //FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
+				 //FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
+				 .addEvent('mouseout',function(){ if(!this.hasfocus) this.hover.start(0) }.bind(this))
+				 .addEvent('mouseover',function(){ this.hover.start(0.9) }.bind(this));
+		$('recentClear').addEvent('click', this.clear.bind(this));
+		
 		this.hover = $('searchboxMenu').setProperty('visibility','visible')
 			.effect('opacity', {wait:false}).set(0);
     
-	    this.query = $('query'); this.query.observe(this.compactSearch.bind(this) ); 
+	    this.query = $('query'); this.query.observe(this.ajaxSearch.bind(this) ); 
 
-		this.recent = (Cookie.get('JSPWikiSearchBox') || "").split(Wiki.DELIM);
-		if( this.recent.length == 0 ) return;
+		this.recent = Cookie.get('JSPWikiSearchBox');
+		if( !this.recent ) return;
+		this.recent = this.recent.split(Wiki.DELIM);
 
 		var ul = $('recentItems'), go = $('advancedSearch'); q = this.form.query;
 		this.recent.each(function(el){
+		    $('recentSearches').show(); 
 			new Element('a').setProperty('href','#').setHTML(el)
-				.addEvent('click',function(){ q.value = el; q.focus(); })
+				.addEvent('click',function(){ q.value = el; q.form.submit(); })
 				.injectInside( new Element('li').injectInside(ul) );
 		});
 	},
 
 	submit: function(){ 
 		var v = this.form.query.value;
+		if( !this.recent ) this.recent=[];
 		if( !this.recent.test(v) ){
 			if(this.recent.length > this.Max) this.recent.pop();
 			this.recent.unshift(v);
-			Cookie.set(this.Cookie, this.recent.join(Wiki.DELIM), Wiki.BasePath);
+			Cookie.set('JSPWikiSearchBox', this.recent.join(Wiki.DELIM), Wiki.BasePath);
 		}
 		if(v.trim() != '') location.href = this.form.action + '?query=' + v;
 		return false;
@@ -917,17 +939,59 @@ var SearchBox = {
 		$('recentSearches').hide();
 	},
 
-	//TODO add spinner
-    compactSearch: function(){ 
-      var qv = this.query.value ;
-      if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) return;
+	jsonID : 1,
+    ajaxSearch: function(){
+		var qv = this.query.value ;
+		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) return;
 
-	  new Ajax( Wiki.TemplateDir+'AJAXSearch.jsp', {
-	  	update: 'searchResult', 
-	  	postBody: $('searchForm').toQueryString(), 
-	  	method: 'post'
-	  }).request();
-    },
+		$('searchTarget').setHTML( "("+qv+") :" );
+		$('searchSpin').show();
+
+		/*
+		new Ajax( Wiki.TemplateDir+'AJAXCompactSearch.jsp', {
+			update: 'searchOutput', 
+			postBody: $('searchForm').toQueryString(), 
+			method: 'post', 
+			onComplete: function(){ $('searchSpin').hide(); }
+		}).request();
+		*/
+
+		/*
+		new Ajax( Wiki.BaseURL+'JSON-RPC', {
+			postBody: Json.toString({
+				"id": this.jsonID++, "method": "search.getSuggestions", "params": [qv, 20]
+			}), 
+			method: 'post', 
+			onComplete: function(result){ 
+				$('searchSpin').hide(); 
+				var s = ["<ul>"];
+				Json.evaluate(result).result.list.each(function(el){
+					s.push( "<li><a href='"+Wiki.BaseURL+"Wiki.jsp?page="+el+"'>"+el+"</a></li>");
+				});
+				s.push("</ul>");
+				$('searchOutput').empty().setHTML(s.join(''));
+			}
+		}).request();
+		*/
+
+		new Ajax( Wiki.BaseURL+'JSON-RPC', {
+			postBody: Json.toString({
+				"id": this.jsonID++, "method": "search.findPages", "params": [qv, 20]
+			}), 
+			method: 'post', 
+			onComplete: function(result){ 
+				$('searchSpin').hide(); 
+				var s = ["<ul>"];
+				Json.evaluate(result).result.list.each(function(el){
+					s.push( "<li><a href='"+Wiki.BaseURL+"Wiki.jsp?page="+el.map.page+"'>"+el.map.page+"</a>");
+					s.push( " <span class='small'>("+el.map.score+")</span></li>");
+				});
+				s.push("</ul>");
+				$('searchOutput').empty().setHTML(s.join(''));
+			}
+		}).request();
+	} ,
+
 
 	/* navigate to url, after smart pagename handling */
 	navigate: function(url, promptText, clone, search){

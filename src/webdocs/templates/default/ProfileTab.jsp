@@ -14,7 +14,8 @@
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>" 
+<form action="<wiki:Link jsp='UserPreferences.jsp' 
+      format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>" 
         name="editProfile" id="editProfile" 
        class="wikiform"
     onsubmit="return Wiki.submitOnce( this );"
@@ -106,13 +107,12 @@
        </td>
      </tr>
       
-     <%-- additional profile info --%>
      <wiki:UserProfile property="exists">
-     <tr>
+     <tr class="additinfo">
        <td><label>Roles</label></td>
        <td><div class="formvalue"><wiki:UserProfile property="roles" /></div></td>
      </tr>
-     <tr>
+     <tr class="additinfo">
        <td><label>Groups</label></td>
        <td>
          <%-- TODO this should become clickable group links so you can immediately go and look at them if you want --%>
@@ -121,14 +121,14 @@
        </td>
      </tr>
 
-     <tr>
+     <tr class="additinfo">
        <td><label>Creation date</label></td>
-      <td class="formvalue">
+       <td class="formvalue">
          <%--<wiki:UserProfile property="created"/>--%>
  	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefDateFormat}" />
        </td>
      </tr>
-     <tr>
+     <tr class="additinfo">
        <td><label>Last modified</label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="modified"/>--%>
@@ -136,7 +136,7 @@
        </td>
      </tr>
      </wiki:UserProfile>
-
+     
      <tr>
        <td />
        <td>
@@ -157,7 +157,7 @@
        </td>
      </tr>
       
-      </table>
+   </table>
 
 </form>
     

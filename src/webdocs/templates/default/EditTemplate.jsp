@@ -7,10 +7,18 @@
 
 <head>
   <title>
+    <wiki:CheckRequestContext context="edit">
     <fmt:message key="edit.title.edit">
       <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
       <fmt:param><wiki:PageName /></fmt:param>
     </fmt:message>
+    </wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context="comment">
+    <fmt:message key="comment.title.comment">
+      <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
+      <fmt:param><wiki:PageName /></fmt:param>
+    </fmt:message>
+    </wiki:CheckRequestContext>
   </title>
   <meta name="ROBOTS" content="NOINDEX" />
   <wiki:Include page="commonheader.jsp"/>

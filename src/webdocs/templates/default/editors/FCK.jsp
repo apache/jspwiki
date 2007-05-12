@@ -6,8 +6,9 @@
 <%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="templates.DefaultResources"/>
+<fmt:setBundle basename="templates.default"/>
 
 <%--
     This provides the FCK editor for JSPWiki.
@@ -22,8 +23,6 @@
     
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
-    String changenote = (String)session.getAttribute("changenote");
-    changenote = changenote != null ? TextUtil.replaceEntities(changenote) : "";    
  %>   
 <wiki:CheckRequestContext context="edit"><%
     if( usertext == null )
@@ -55,16 +54,19 @@
 
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
       action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
-      name="editForm" enctype="application/x-www-form-urlencoded">
+      name="editform" id="editform"
+      enctype="application/x-www-form-urlencoded">
     <p>
         <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
         <input name="page" type="hidden" value="<wiki:Variable var="pagename"/>" />
         <input name="action" type="hidden" value="save" />
-        <input name="edittime" type="hidden" value="<%=pageContext.getAttribute("lastchange",
-                                                                       PageContext.REQUEST_SCOPE )%>" />
+        <input name="edittime" type="hidden" value="<c:out value='${lastchange}' />" />
+        <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
     </p>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 <script type="text/javascript">
+//<![CDATA[
+
    var oFCKeditor = new FCKeditor( 'htmlPageText' );
    oFCKeditor.BasePath = 'scripts/fckeditor/';
    oFCKeditor.Value = '<%=pageAsHtml%>';
@@ -77,41 +79,41 @@
    oFCKeditor.Config['EditorAreaCSS'] = '<%=request.getContextPath()%>/templates/<%=templateDir%>/jspwiki.css';
    oFCKeditor.Config['SmileyPath'] = oFCKeditor.Config['BaseHref'] + 'scripts/fckeditor/editor/images/smiley/msn/' ;
    oFCKeditor.Create();
+
+//]]>
 </script>
+
 <noscript>
-  <br>
-  <div class="error">You need to enable Javascript in your browser to use the WYSIWYG editor</div>
+  <div class="error"><fmt:message key="editor.fck.noscript" /></div>
 </noscript>
 
    <wiki:CheckRequestContext context="edit">
-   	<p>
-       <label for="changenote">Change note</label>
-       <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<%=changenote%>"/>
+    <p>
+    <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
+    <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
     </p>
    </wiki:CheckRequestContext>
    <wiki:CheckRequestContext context="comment">
-
-        <table border="0" class="small">
-          <tr>
-            <td><label for="authorname" accesskey="n">Your <u>n</u>ame</label></td>
-            <td><input type="text" name="author" id="authorname" value="<wiki:UserName/>" /></td>
-            <td><label for="rememberme">Remember me?</label>
-            <input type="checkbox" name="remember" id="rememberme" /></td>
-          </tr>
-          <tr>
-            <td><label for="link" accesskey="m">Homepage or e<u>m</u>ail</label></td>
-            <td colspan="2"><input type="text" name="link" id="link" size="40" value="<%=pageContext.getAttribute("link",PageContext.REQUEST_SCOPE)%>" /></td>
-          </tr>
-        </table>
-   
-    </wiki:CheckRequestContext>
-
+    <fieldset>
+	<legend><fmt:message key="editor.commentsignature"/></legend>
     <p>
-        <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
+    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
+    <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
+    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
+    <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
+	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
+    <p>
+    <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
+    <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
+    </p>
+    </fieldset>
+  </wiki:CheckRequestContext>
+
+  <p>
+        <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
+        <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
+        <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
+  </p>
 </div>
 </form>

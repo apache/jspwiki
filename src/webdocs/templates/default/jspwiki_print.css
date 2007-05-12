@@ -1,57 +1,55 @@
 /*
  * CSS intended specificly for print media
- * e.g: <link rel=stylesheet type="text/css" media="print" href="templates/default/jspwiki_print.css">
- * This stylesheet mainly hides all the webspecific stuff.
- * Shows content in a print friendly way.
- * Author PhilipVanBogaert, Dirk Fredericx
  */
  
-/* Webpage stuff */
-.applicationlogo,
-.companylogo,
-.searchbox,
-.breadcrumbs,
-.pageactions,
-.quicklinks,
-#actionsTop,
-#actionsBottom,
-#favorites,
-.collapsebox .collapseOpen,
-.collapsebox .collapseClose, 
+.applicationlogo, .companylogo,
+.searchbox, .breadcrumbs, .pageactions, .quicklinks,
+#actionsTop, #actionsBottom, #favorites,
+.collapsebox .collapseOpen, .collapsebox .collapseClose, 
 .table-filter .filterrow,
-.tabmenu		{ display:none; }
+.tabmenu { 
+	display:none; 
+}
 
-/* seems not to work as expected -- ffs */
-#attachments,   
-#addcomment,
-#pagelinks,
-#pagecontent, 
-#editcontent,
-#previewcontent,
-#diffcontent,
-#infocontent,
-#findquery,
-#userPrefs		{ display: block; visibility: visible; }
+#attachments, #addcomment,
+#pagelinks, #pagecontent, 
+#editcontent, #previewcontent, #diffcontent, #infocontent,
+#findquery, #userPrefs { 
+	display:block; visibility:visible; 
+}
 
-tt,pre			{ overflow: visible;  }
+tt,pre {
+	overflow:visible; 
+}
 
 /* Show links as normal text (maybe show urls at the bottom of the page) */
-a				{ text-decoration: none; }
+a { 
+	text-decoration:none; 
+}
 /*print href of each link
 a:after 		{ content:attr(href); color:grey;
           		  font-family:"Courier New", Courier, mono; font-size:8pt; }
 */
 
 /* Give the content what it deserves. */
-.pagename,
-#header,
-#footer,
-#page			{ width:100%; margin:0; padding:0; float:none; clear:both; position:static; }
+.pagename, #header, #footer, #page { 
+	width:100%; 
+	margin:0; 
+	padding:0; 
+	float:none;
+	clear:both;
+	position:static;
+}
 
-.tabs			{ border: none; }
-.tabmenu		{ display: none; }
-.hidetab		{ display: block; border-top: 1px solid gray; }
+.tabs { 
+	border:none; 
+}
 
-.accordion .active, 
-.tabbedAccordion .active 
-				{ height: auto !important; }
+.hidetab { 
+	display:block; 
+	border-top:1px solid #bbb; 
+}
+
+.accordion .active, .tabbedAccordion .active { 
+	height:auto !important;
+}

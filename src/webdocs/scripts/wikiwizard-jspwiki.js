@@ -7,13 +7,13 @@ document.addEventListener("DOMContentLoaded", changeWidth, null);
 
 function Cancel(var1)
 {
-    document.editForm.cancel.click();
+    document.editform.cancel.click();
 }
 
 function Preview(var1)
 {
-    document.editForm._editedtext.value=var1;
-    document.editForm.preview.click();
+    document.editform._editedtext.value=var1;
+    document.editform.preview.click();
 }
 
 function Attach(var1)
@@ -23,8 +23,8 @@ function Attach(var1)
 
 function Save(var1)
 {
-    document.editForm._editedtext.value=var1;
-    document.editForm.ok.click();
+    document.editform._editedtext.value=var1;
+    document.editform.ok.click();
 }
 
 function unloadFunction()
@@ -34,12 +34,12 @@ function unloadFunction()
 
 function GetText(var1)
 {
-	document.editForm._editedtext.value=var1;
+	document.editform._editedtext.value=var1;
 }
 
 function setTextPane(var1)
 {
-    document.WikiWizard.setTextPane(document.editForm._editedtext.value);
+    document.WikiWizard.setTextPane(document.editform._editedtext.value);
 }
 
 function onTabChange()

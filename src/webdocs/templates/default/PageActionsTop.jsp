@@ -136,8 +136,10 @@
       </wiki:PageType>
     </wiki:Permission>
     </wiki:CheckRequestContext>
-
+    
+    <wiki:CheckRequestContext context='view|info|diff|upload|login|edit'>
     <option value="separator" disabled="disabled" class="actionSeparator"><fmt:message key='actions.separator' /></option>
+    </wiki:CheckRequestContext>
 
     <option class="actionIndex" value="<wiki:LinkTo page='PageIndex' format='url' />"
        title="<fmt:message key='actions.index.title' />"><fmt:message key='actions.index' />
@@ -171,9 +173,10 @@
   </select>
   </form>
 
-  <span style="display:none;">
-    <span class="actionsMore"><fmt:message key="actions.more"/></span>
-    <div id='actionsMorePopup'><ul id='actionsMorePopupItems' ></ul></div>
+  <span class="actionsMore" style="display:none;"><fmt:message key="actions.more"/>
+    <div id='actionsMorePopup'>
+      <ul id='actionsMorePopupItems' ></ul>
+    </div>
   </span>
 
   <span class="quicklinks quick2Bottom"><a href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a></span>

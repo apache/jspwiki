@@ -164,7 +164,6 @@
       if( parm_compact != null )
       {
 %>
-          <div>Quick Search for '<%= query %>': </div>
           <ul>
 <%
         if( itemcount > 0 )

@@ -10,18 +10,21 @@
         accept-charset="<wiki:ContentEncoding />">
 
   <div>
-  <input onblur="if( this.value == '' ) { this.value = this.defaultValue }; " 
-        onfocus="if( this.value == this.defaultValue ) { this.value = ''}; "
-       onsubmit="SearchBox.submit(this.query.value)"
+  <input onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; " 
+        onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
            type="text" value="<fmt:message key='sbox.search.submit'/>" 
            name="query" id="query" 
            size="20" autocomplete="off"
       accesskey="f"></input>
   <input type="hidden" name="compact" id="compact" value="true"></input>
-  </div>  
+  <input type="image" id="searchSubmit" name="submit" 
+          src="templates/default/images/search2.png" 
+          alt="Search" 
+        title="Search"></input>
+  </div> 
 
   <div id="searchboxMenu" style='visibility:hidden;'>
-    <div>
+    <div id="searchTools">
       <a href="#" id='quickView'
       onclick="SearchBox.navigate( '<wiki:Link format="url" page="__PAGEHERE__"/>','<fmt:message key="sbox.view.title"/>' );"
         title="<fmt:message key="sbox.view.title"/>"><fmt:message key="sbox.view"/></a> 
@@ -39,11 +42,16 @@
         title="<fmt:message key="sbox.find.title"/>"><fmt:message key="sbox.find"/></a>
       [ f ]
     </div>
-    <div id="searchResult" ></div>
+    <div id="searchResult" >
+	  <fmt:message key='sbox.search.result'/>
+      <span id="searchTarget" ><fmt:message key='sbox.search.target'/></span>
+      <span id="searchSpin" class="spin" style="position:absolute;display:none;"></span>
+	  <div id="searchOutput" ></div>
+    </div>
     <div id="recentSearches" style="display:none;"> 
       <fmt:message key="sbox.recentsearches"/>
       <ul id="recentItems"></ul>
-      <a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a>
+      <div><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a></div>
     </div>
   </div>
 

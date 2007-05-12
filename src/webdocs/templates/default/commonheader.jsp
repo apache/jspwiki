@@ -17,8 +17,6 @@
 <%-- CSS stylesheet --%>
 <link rel="stylesheet" media="screen, projection, print" type="text/css" 
      href="<wiki:Link format='url' templatefile='jspwiki.css'/>"/>
-<link rel="stylesheet" media="screen, projection, print" type="text/css" 
-     href="<wiki:Link format='url' jsp='scripts/prettify.css'/>"/>
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
 
@@ -42,9 +40,10 @@
    * skinname DELIM dateformat DELIM timezone DELIM editareaheight DELIM editortype
    */
   String DELIM  = "\u00a0";
-  String prefSkinName = null;
-  String prefDateFormat = "dd-MMM-yyyy HH:mm"; /* TODO should this be part of default.properties ??*/
+  String prefSkinName = "PlainVanilla"; /* FIXME: default skin - should be settable via jspwiki.properties */
+  String prefFontSize = null; 
   String prefTimeZone = java.util.TimeZone.getDefault().getID(); /* TODO */
+  String prefDateFormat = "dd-MMM-yyyy hh:mm"; /* TODO should this be part of default.properties ??*/
   String prefEditAreaHeight = "24"; 
 
   Cookie[] cookies = request.getCookies();
@@ -62,6 +61,7 @@
           if( st.hasMoreTokens() ) prefDateFormat = st.nextToken();
           if( st.hasMoreTokens() ) prefTimeZone = st.nextToken();
           if( st.hasMoreTokens() ) prefEditAreaHeight = st.nextToken();
+          if( st.hasMoreTokens() ) prefFontSize = st.nextToken();
 
           break;
        }
@@ -71,6 +71,7 @@
   session.setAttribute("prefDateFormat",     prefDateFormat );
   session.setAttribute("prefTimeZone",       prefTimeZone );
   session.setAttribute("prefEditAreaHeight", prefEditAreaHeight );
+  session.setAttribute("prefFontSize",       prefFontSize );
 
  %>
 
@@ -82,7 +83,7 @@
    "LocalizedStrings", which is an associative array of key-value pairs.  You can then search
    this array based on the abstract key in the script file. */
 
- var LocalizedStrings = { 
+var LocalizedStrings = { 
 <%
     WikiContext context = WikiContext.findContext( pageContext );
     ResourceBundle rb = context.getBundle("templates.default");
@@ -117,6 +118,7 @@ Wiki.init({
 	'PrefSkinName': '<c:out value="${prefSkinName}" />',
 	'PrefTimeZone': '<c:out value="${prefTimeZone}" />',
 	'PrefDateFormat': '<c:out value="${prefDateFormat}" />',
+	'PrefFontSize': '<c:out value="${prefFontSize}" />',
 	'PrefEditAreaHeight': <c:out value="${prefEditAreaHeight}" />
 	});
 
@@ -147,5 +149,6 @@ Wiki.init({
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.css' />" />
 <link rel="stylesheet" type="text/css" media="print" 
      href="<wiki:Link format='url' templatefile='skins/' /><:cout value='${prefSkinName}/print_skin.css' />" />
-<script type="text/javascript" src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.js' />" ></script>
+<script type="text/javascript" 
+         src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.js' />" ></script>
 </c:if>
