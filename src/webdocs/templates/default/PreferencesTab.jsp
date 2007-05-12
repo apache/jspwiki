@@ -102,8 +102,8 @@
   <td>
 	<input type="button" value="-" onclick="Wiki.changeFontSize(-1);"
 		  title="<fmt:message key='pref.fontsize.title.down' />"></input>
-	<input type="button" value="<fmt:message key='pref.fontsize.reset' />
-	  " onclick="Wiki.resetFontSize();" name="prefFontSize"
+	<input type="button" value="<fmt:message key='pref.fontsize.reset' />"
+        onclick="Wiki.resetFontSize();" name="prefFontSize"
 		  title="<fmt:message key='pref.fontsize.title.reset' />"></input>
 	<input type="button" value="+" onclick="Wiki.changeFontSize(1);"
 		  title="<fmt:message key='pref.fontsize.title.up' />"></input>
