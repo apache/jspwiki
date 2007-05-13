@@ -17,8 +17,8 @@
   <wiki:CheckLock mode="locked" id="lock">
     <div class="error">
       <fmt:message key="edit.locked">
-        <fmt:param><%=lock.getLocker()%></fmt:param>
-        <fmt:param><%=lock.getTimeLeft()%></fmt:param>
+        <fmt:param><c:out value="${lock.locker}"/></fmt:param>
+        <fmt:param><c:out value="${lock.timeLeft}"/></fmt:param>
       </fmt:message>
     </div>
   </wiki:CheckLock>
