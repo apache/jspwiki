@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -91,7 +91,7 @@ public class TranslatorReader extends Reader
 
     /** Contains style information, in multiple forms. */
     private Stack          m_styleStack   = new Stack();
-    
+
      // general list handling
     private int            m_genlistlevel = 0;
     private StringBuffer   m_genlistBulletBuffer = new StringBuffer();  // stores the # and * pattern
@@ -101,11 +101,11 @@ public class TranslatorReader extends Reader
     private boolean        m_isOpenParagraph = false;
 
     /** Tag that gets closed at EOL. */
-    private String         m_closeTag     = null; 
+    private String         m_closeTag     = null;
 
     private WikiEngine     m_engine;
     private WikiContext    m_context;
-    
+
     /** Optionally stores internal wikilinks */
     private ArrayList      m_localLinkMutatorChain    = new ArrayList();
     private ArrayList      m_externalLinkMutatorChain = new ArrayList();
@@ -145,7 +145,7 @@ public class TranslatorReader extends Reader
 
     /** If set to "true", enables plugins during parsing */
     public static final String     PROP_RUNPLUGINS       = "jspwiki.translatorReader.runPlugins";
-    
+
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
 
@@ -165,7 +165,7 @@ public class TranslatorReader extends Reader
     private boolean                m_useRelNofollow      = false;
 
     private boolean                m_inlineImages        = true;
-    
+
     private PatternMatcher         m_matcher  = new Perl5Matcher();
     private PatternCompiler        m_compiler = new Perl5Compiler();
     private Pattern                m_camelCasePtrn;
@@ -186,7 +186,7 @@ public class TranslatorReader extends Reader
     protected static final int BOLD           = 0;
     protected static final int ITALIC         = 1;
     protected static final int TYPED          = 2;
-    
+
     /**
      *  This list contains all IANA registered URI protocol
      *  types as of September 2004 + a few well-known extra types.
@@ -243,8 +243,8 @@ public class TranslatorReader extends Reader
      */
 
     // FIXME: TranslatorReaders should be pooled for better performance.
-    private void initialize( WikiContext context, 
-                             Reader in, 
+    private void initialize( WikiContext context,
+                             Reader in,
                              TextRenderer renderer )
     {
         PatternCompiler compiler         = new GlobCompiler();
@@ -266,7 +266,7 @@ public class TranslatorReader extends Reader
         for( Iterator i = ptrns.iterator(); i.hasNext(); )
         {
             try
-            {       
+            {
                 compiledpatterns.add( compiler.compile( (String)i.next() ) );
             }
             catch( MalformedPatternException e )
@@ -301,7 +301,7 @@ public class TranslatorReader extends Reader
         else
         {
             m_camelCaseLinks  = TextUtil.getBooleanProperty( props,
-                                                             PROP_CAMELCASELINKS, 
+                                                             PROP_CAMELCASELINKS,
                                                              m_camelCaseLinks );
         }
 
@@ -309,24 +309,24 @@ public class TranslatorReader extends Reader
                                                              PROP_PLAINURIS,
                                                              m_plainUris );
         m_useOutlinkImage     = TextUtil.getBooleanProperty( props,
-                                                             PROP_USEOUTLINKIMAGE, 
+                                                             PROP_USEOUTLINKIMAGE,
                                                              m_useOutlinkImage );
         m_allowHTML           = TextUtil.getBooleanProperty( props,
-                                                             PROP_ALLOWHTML, 
+                                                             PROP_ALLOWHTML,
                                                              m_allowHTML );
 
         m_useRelNofollow      = TextUtil.getBooleanProperty( props,
                                                              PROP_USERELNOFOLLOW,
                                                              m_useRelNofollow );
-    
+
         String runplugins = m_engine.getVariable( m_context, PROP_RUNPLUGINS );
         if( runplugins != null ) enablePlugins( TextUtil.isPositive(runplugins));
-        
+
         if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null )
         {
             disableAccessRules();
-        }   
-        
+        }
+
         m_context.getPage().setHasMetadata();
     }
 
@@ -340,7 +340,7 @@ public class TranslatorReader extends Reader
     {
         m_renderer = renderer;
     }
-    
+
     /**
      *  Adds a hook for processing link texts.  This hook is called
      *  when the link text is written into the output stream, and
@@ -432,7 +432,7 @@ public class TranslatorReader extends Reader
     {
         m_inlineImages = toggle;
     }
-    
+
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
@@ -471,7 +471,7 @@ public class TranslatorReader extends Reader
         try
 		{
 			if( page == null || page.length() == 0 ) return null;
-			
+
             return m_engine.getFinalPageName( page );
         }
         catch( ProviderException e )
@@ -515,7 +515,7 @@ public class TranslatorReader extends Reader
         for( Iterator i = list.iterator(); i.hasNext(); )
         {
             HeadingListener h = (HeadingListener) i.next();
-            
+
             h.headingAdded( m_context, param );
         }
     }
@@ -536,7 +536,7 @@ public class TranslatorReader extends Reader
 
         return m_renderer.makeLink( type, link, text );
     }
-    
+
     /**
      *  Just like makeLink, but also adds the section reference (#sect...)
      */
@@ -702,7 +702,7 @@ public class TranslatorReader extends Reader
         if( m_matcher.contains( input, m_camelCasePtrn ) )
         {
             MatchResult res = m_matcher.getMatch();
-  
+
             String link = res.group(2);
 
             if( res.group(1) != null )
@@ -778,7 +778,7 @@ public class TranslatorReader extends Reader
      *  Image links are handled differently:
      *  1. If the text is a WikiName of an existing page,
      *     it gets linked.
-     *  2. If the text is an external link, then it is inlined.  
+     *  2. If the text is an external link, then it is inlined.
      *  3. Otherwise it becomes an ALT text.
      *
      *  @param reallink The link to the image.
@@ -787,7 +787,7 @@ public class TranslatorReader extends Reader
      *                  This means that the link text may be a link to a wiki page,
      *                  or an external resource.
      */
-    
+
     private String handleImageLink( String reallink, String link, boolean hasLinkText )
     {
         String possiblePage = cleanLink( link );
@@ -802,7 +802,7 @@ public class TranslatorReader extends Reader
         {
             // System.out.println("Orig="+link+", Matched: "+matchedLink);
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
-            
+
             res = makeLink( IMAGEWIKILINK, reallink, link );
         }
         else
@@ -826,7 +826,7 @@ public class TranslatorReader extends Reader
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
 
         log.debug("page="+page.getName()+", ACL = "+ruleLine);
-        
+
         try
         {
             acl = m_engine.getAclManager().parseAcl( page, ruleLine );
@@ -851,7 +851,7 @@ public class TranslatorReader extends Reader
         try
         {
             String args = link.substring( link.indexOf(' '), link.length()-1 );
-            
+
             String name = args.substring( 0, args.indexOf('=') );
             String val  = args.substring( args.indexOf('=')+1, args.length() );
 
@@ -867,7 +867,7 @@ public class TranslatorReader extends Reader
             {
                 val = m_engine.getVariableManager().expandVariables( m_context,
                                                                      val );
-            
+
                 m_context.getPage().setAttribute( name, val );
             }
         }
@@ -914,7 +914,7 @@ public class TranslatorReader extends Reader
                 log.info( "Root cause:",e.getRootThrowable() );
                 included = m_renderer.makeError("Plugin insertion failed: "+e.getMessage());
             }
-                            
+
             sb.append( included );
 
             return sb.toString();
@@ -923,7 +923,7 @@ public class TranslatorReader extends Reader
         link = TextUtil.replaceEntities( link );
 
         if( (cutpoint = link.indexOf('|')) != -1 )
-        {                    
+        {
             reallink = link.substring( cutpoint+1 ).trim();
             link = link.substring( 0, cutpoint );
         }
@@ -940,11 +940,11 @@ public class TranslatorReader extends Reader
         //  reallink = the url or page name.
         //
         //  In many cases these are the same.  [link|reallink].
-        //  
+        //
         if( VariableManager.isVariableLink( link ) )
         {
             String value;
-            
+
             try
             {
                 value = m_engine.getVariableManager().parseAndGetValue( m_context, link );
@@ -981,14 +981,14 @@ public class TranslatorReader extends Reader
             // It's an interwiki link
             // InterWiki links also get added to external link chain
             // after the links have been resolved.
-            
+
             // FIXME: There is an interesting issue here:  We probably should
             //        URLEncode the wikiPage, but we can't since some of the
             //        Wikis use slashes (/), which won't survive URLEncoding.
             //        Besides, we don't know which character set the other Wiki
             //        is using, so you'll have to write the entire name as it appears
             //        in the URL.  Bugger.
-            
+
             String extWiki = reallink.substring( 0, interwikipoint );
             String wikiPage = reallink.substring( interwikipoint+1 );
 
@@ -1074,7 +1074,7 @@ public class TranslatorReader extends Reader
                 callMutatorChain( m_localLinkMutatorChain, reallink );
 
                 String matchedLink = linkExists( reallink );
-				
+
                 if( matchedLink != null )
 				{
                     sb.append( makeLink( READ, matchedLink, link ) );
@@ -1156,7 +1156,7 @@ public class TranslatorReader extends Reader
         // cleanup OL and UL lists
         buf.append(unwindGeneralList());
 
-        if( m_isPre ) 
+        if( m_isPre )
         {
             buf.append(m_renderer.closePreformatted());
 	    m_isEscaping   = false;
@@ -1192,7 +1192,7 @@ public class TranslatorReader extends Reader
      */
     private void pushBack( int c )
         throws IOException
-    {        
+    {
         if( c != -1 && m_in != null )
         {
             m_in.unread( c );
@@ -1227,7 +1227,7 @@ public class TranslatorReader extends Reader
             {
                 return m_renderer.lineBreak(true);
             }
-           
+
             pushBack( ch2 );
 
             return m_renderer.lineBreak(false);
@@ -1298,7 +1298,7 @@ public class TranslatorReader extends Reader
             else
             {
                 pushBack( ch2 );
-                
+
                 res = m_renderer.openTextEffect(TYPED);
                 m_isTypedText = true;
            }
@@ -1374,16 +1374,16 @@ public class TranslatorReader extends Reader
             {
                 int ch3 = nextToken();
 
-                if( ch3 == '-' ) 
+                if( ch3 == '-' )
                 {
                     // Empty away all the rest of the dashes.
                     // Do not forget to return the first non-match back.
                     while( (ch = nextToken()) == '-' );
-                    
+
                     pushBack(ch);
                     return startBlockLevel()+m_renderer.makeRuler();
                 }
-        
+
                 pushBack( ch3 );
             }
             pushBack( ch2 );
@@ -1427,7 +1427,7 @@ public class TranslatorReader extends Reader
             if( ch2 == '!' )
             {
                 String title = peekAheadLine();
-                
+
                 buf.append( m_renderer.makeHeading( Heading.HEADING_LARGE, title, hd) );
             }
             else
@@ -1468,7 +1468,7 @@ public class TranslatorReader extends Reader
 
             buf.append( (char) ch );
 
-            if( ch == '\n' ) 
+            if( ch == '\n' )
                 break;
         }
 
@@ -1698,33 +1698,34 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Reads the stream until the current brace is closed or stream end. 
+     *  Reads the stream until the current brace is closed or stream end.
      */
     private String readBraceContent( char opening, char closing )
         throws IOException
     {
         StringBuffer sb = new StringBuffer();
-        int braceLevel = 1;    
-        int ch;        
+        int braceLevel = 1;
+        int ch;
         while(( ch = nextToken() ) != -1 )
         {
-            if( ch == '\\' ) 
+            if( ch == '\\' )
             {
                 continue;
             }
-            else if ( ch == opening ) 
+            else if ( ch == opening )
             {
                 braceLevel++;
             }
-            else if ( ch == closing ) 
+            else if ( ch == closing )
             {
                 braceLevel--;
-                if (braceLevel==0) {
+                if (braceLevel==0)
+                {
                   break;
                 }
             }
             sb.append( (char)ch );
-        }    
+        }
         return sb.toString();
     }
 
@@ -1741,10 +1742,10 @@ public class TranslatorReader extends Reader
 
         while( ch != -1 )
         {
-            if( ch == '\\' ) 
+            if( ch == '\\' )
             {
-                ch = nextToken(); 
-                if( ch == -1 ) 
+                ch = nextToken();
+                if( ch == -1 )
                 {
                     break;
                 }
@@ -1781,7 +1782,7 @@ public class TranslatorReader extends Reader
                 pushBack( ch );
                 break;
             }
-            
+
             sb.append( (char) ch );
             ch = nextToken();
         }
@@ -1789,7 +1790,7 @@ public class TranslatorReader extends Reader
         return sb.toString();
     }
 
-    
+
     /**
      *  Handles constructs of type %%(style) and %%class
      * @param newLine
@@ -1809,12 +1810,12 @@ public class TranslatorReader extends Reader
             String clazz = null;
 
             ch = nextToken();
-            
+
             //
             //  Style or class?
             //
             if( ch == '(' )
-            {                
+            {
                 style = readBraceContent('(',')');
             }
             else if( Character.isLetter( (char) ch ) )
@@ -1822,7 +1823,7 @@ public class TranslatorReader extends Reader
                 pushBack( ch );
                 clazz = readUntil( " \t\n\r" );
                 ch = nextToken();
-                
+
                 //
                 //  Pop out only spaces, so that the upcoming EOL check does not check the
                 //  next line.
@@ -1839,11 +1840,11 @@ public class TranslatorReader extends Reader
                 //
 
                 pushBack(ch);
-                
+
                 try
                 {
                     Boolean isSpan = (Boolean)m_styleStack.pop();
-                
+
                     if( isSpan == null )
                     {
                         // Fail quietly
@@ -1861,7 +1862,7 @@ public class TranslatorReader extends Reader
                 {
                     log.debug("Page '"+m_context.getPage().getName()+"' closes a %%-block that has not been opened.");
                 }
-                
+
                 return sb.toString();
             }
 
@@ -1869,13 +1870,13 @@ public class TranslatorReader extends Reader
             //  Decide if we should open a div or a span?
             //
             String eol = peekAheadLine();
-            
+
             if( eol.trim().length() > 0 )
             {
                 // There is stuff after the class
-                
+
                 sb.append( m_renderer.openSpan( style, clazz ) );
-                
+
                 m_styleStack.push( Boolean.TRUE );
             }
             else
@@ -1884,7 +1885,7 @@ public class TranslatorReader extends Reader
                 sb.append( m_renderer.openDiv( style, clazz ) );
                 m_styleStack.push( Boolean.FALSE );
             }
-            
+
             return sb.toString();
         }
 
@@ -1915,12 +1916,12 @@ public class TranslatorReader extends Reader
             sb.append( m_renderer.openTableRow() );
             m_closeTag = m_renderer.closeTableItem()+m_renderer.closeTableRow();
         }
-        
+
         int ch = nextToken();
 
         if( ch == '|' )
         {
-            if( !newLine ) 
+            if( !newLine )
             {
                 sb.append( m_renderer.closeTableHeading() );
             }
@@ -1929,7 +1930,7 @@ public class TranslatorReader extends Reader
         }
         else
         {
-            if( !newLine ) 
+            if( !newLine )
             {
                 sb.append( m_renderer.closeTableItem() );
             }
@@ -1948,7 +1949,7 @@ public class TranslatorReader extends Reader
     {
         int ch = nextToken();
 
-        if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' || 
+        if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' ||
             ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
             ch == '{' || ch == ']' || ch == '}' )
         {
@@ -1957,7 +1958,7 @@ public class TranslatorReader extends Reader
             sb.append(readWhile( ""+(char)ch ));
             return sb.toString();
         }
-        
+
         if( Character.isUpperCase( (char) ch ) )
         {
             pushBack( ch );
@@ -1977,7 +1978,7 @@ public class TranslatorReader extends Reader
         StringBuffer word = null;
         int previousCh = -2;
         int start = 0;
-        
+
         boolean quitReading = false;
         boolean newLine     = true; // FIXME: not true if reading starts in middle of buffer
 
@@ -1995,12 +1996,12 @@ public class TranslatorReader extends Reader
                 if( ch == '}' )
                 {
                     buf.append( handleClosebrace() );
-                }                
+                }
                 else if( ch == -1 )
                 {
                     quitReading = true;
                 }
-                else 
+                else
                 {
                     m_renderer.doChar( buf, (char)ch );
                 }
@@ -2015,12 +2016,12 @@ public class TranslatorReader extends Reader
             //  of a CamelCase format text string inside the "word", and
             //  if one exists, we replace it with a proper link.
             //
-            
+
             if( m_camelCaseLinks )
             {
                 // Quick parse of start of a word boundary.
 
-                if( word == null &&                    
+                if( word == null &&
                     (Character.isWhitespace( (char)previousCh ) ||
                      WORD_SEPARATORS.indexOf( (char)previousCh ) != -1 ||
                      newLine ) &&
@@ -2036,7 +2037,7 @@ public class TranslatorReader extends Reader
                     //  Check for the end of the word.
                     //
 
-                    if( Character.isWhitespace( (char)ch ) || 
+                    if( Character.isWhitespace( (char)ch ) ||
                         ch == -1 ||
                         WORD_SEPARATORS.indexOf( (char) ch ) != -1 )
                     {
@@ -2095,7 +2096,7 @@ public class TranslatorReader extends Reader
 
                 // Always set the previous character to test for word starts.
                 previousCh = ch;
-		 
+
             } // if m_camelCaseLinks
 
             //
@@ -2127,7 +2128,7 @@ public class TranslatorReader extends Reader
                 //
                 //  Close things like headings, etc.
                 //
-                if( m_closeTag != null ) 
+                if( m_closeTag != null )
                 {
                     buf.append( m_closeTag );
                     m_closeTag = null;
@@ -2145,7 +2146,7 @@ public class TranslatorReader extends Reader
                     //  a <p></p> pair according to XHTML rules.
                     //
                     String nextLine = peekAheadLine();
-                    if( nextLine.length() == 0 || 
+                    if( nextLine.length() == 0 ||
                         (nextLine.length() > 0 &&
                          !nextLine.startsWith("{{{") &&
                          !nextLine.startsWith("----") &&
@@ -2171,7 +2172,7 @@ public class TranslatorReader extends Reader
               case '_':
                 s = handleUnderscore();
                 break;
-                
+
               case '\'':
                 s = handleApostrophe();
                 break;
@@ -2379,9 +2380,9 @@ public class TranslatorReader extends Reader
         {
             if( m_cleanTranslator == null )
             {
-                WikiContext dummyContext = new WikiContext( m_engine, 
+                WikiContext dummyContext = new WikiContext( m_engine,
                                                             m_context.getPage() );
-                m_cleanTranslator = new TranslatorReader( dummyContext, 
+                m_cleanTranslator = new TranslatorReader( dummyContext,
                                                           null,
                                                           new TextRenderer() );
                 m_cleanTranslator.m_allowHTML = true;
@@ -2443,7 +2444,7 @@ public class TranslatorReader extends Reader
         {
             return "</span>";
         }
-        
+
         public String openParagraph()
         {
             return "<p>";
@@ -2515,7 +2516,7 @@ public class TranslatorReader extends Reader
         {
             return "</dl>";
         }
-        
+
 
         /**
          *  Write a HTMLized link depending on its type.
@@ -2579,7 +2580,7 @@ public class TranslatorReader extends Reader
                 break;
 
                 //
-                //  These two are for local references - footnotes and 
+                //  These two are for local references - footnotes and
                 //  references to footnotes.
                 //  We embed the page name (or whatever WikiContext gives us)
                 //  to make sure the links are unique across Wiki.
@@ -2600,7 +2601,7 @@ public class TranslatorReader extends Reader
                 //  With the image, external and interwiki types we need to
                 //  make sure nobody can put in Javascript or something else
                 //  annoying into the links themselves.  We do this by preventing
-                //  a haxor from stopping the link name short with quotes in 
+                //  a haxor from stopping the link name short with quotes in
                 //  fillBuffer().
                 //
               case IMAGE:
@@ -2621,7 +2622,7 @@ public class TranslatorReader extends Reader
                          (m_useRelNofollow ? "rel=\"nofollow\" " : "")+
                          "href=\""+link+section+"\">"+text+"</a>";
                 break;
-                
+
               case INTERWIKI:
                 result = "<a class=\"interwiki\" href=\""+link+section+"\">"+text+"</a>";
                 break;
@@ -2679,7 +2680,7 @@ public class TranslatorReader extends Reader
             hd.m_titleSection = m_engine.encodeName(title);
             hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
                                "-"+hd.m_titleSection;
-            
+
             hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
             return hd.m_titleAnchor;
         }
@@ -2704,13 +2705,13 @@ public class TranslatorReader extends Reader
 
             return outTitle.toString();
         }
-        
+
         /**
          *  Returns XHTML for the start of the heading.  Also sets the
          *  line-end emitter.
-         *  @param level 
+         *  @param level
          *  @param headings A List to which heading should be added.
-         */ 
+         */
         public String makeHeading( int level, String title, Heading hd )
         {
             String res = "";
@@ -2843,7 +2844,7 @@ public class TranslatorReader extends Reader
             {
                 return "<pre>";
             }
-            
+
             return "<span style=\"font-family:monospace; whitespace:pre;\">";
         }
 
@@ -2851,7 +2852,7 @@ public class TranslatorReader extends Reader
         {
             if( m_isPreBlock )
                 return "</pre>\n";
-            
+
             return "</span>";
         }
 
@@ -2877,7 +2878,7 @@ public class TranslatorReader extends Reader
         {
             if( clear )
                 return "<br clear=\"all\" />";
-            
+
             return "<br />";
         }
 
@@ -2890,7 +2891,7 @@ public class TranslatorReader extends Reader
     public class TextRenderer
     {
         public TextRenderer() {}
-        
+
         public void doChar( StringBuffer buf, char ch )
         {
             buf.append( ch );
@@ -2968,7 +2969,7 @@ public class TranslatorReader extends Reader
         {
             return "\n";
         }
-        
+
 
         /**
          *  Write a HTMLized link depending on its type.
@@ -3006,8 +3007,8 @@ public class TranslatorReader extends Reader
         /**
          *  Returns XHTML for the start of the heading.  Also sets the
          *  line-end emitter.
-         *  @param level 
-         */ 
+         *  @param level
+         */
         public String makeHeading( int level, String title, Heading hd )
         {
             String res = "";
@@ -3027,7 +3028,7 @@ public class TranslatorReader extends Reader
                 break;
 
               case Heading.HEADING_MEDIUM:
-                res = title;                
+                res = title;
                 m_closeTag = "\n"+TextUtil.repeatString("-",title.length())+"\n\n";
                 break;
 
@@ -3053,7 +3054,7 @@ public class TranslatorReader extends Reader
 
         public String openListItem()
         {
-            return "- "; 
+            return "- ";
         }
 
         public String closeListItem()

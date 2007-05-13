@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -45,7 +45,7 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  <LI><B>handler</B> : the class which is used to handle the RPC calls.
  *  <LI><B>prefix</B> : The command prefix for that particular handler.
  *  </UL>
- *  
+ *
  *  @author Janne Jalkanen
  *  @since 1.6.6
  */
@@ -61,7 +61,7 @@ public class RPCServlet extends HttpServlet
     private WikiEngine       m_engine;
     private XmlRpcServer     m_xmlrpcServer = new XmlRpcServer();
 
-    Logger log = Logger.getLogger( RPCServlet.class ); 
+    static Logger log = Logger.getLogger( RPCServlet.class );
 
     public void initHandler( String prefix, String handlerName )
         throws ClassNotFoundException,
@@ -99,7 +99,7 @@ public class RPCServlet extends HttpServlet
             //
             // FIXME: The metaweblog API should be possible to turn off.
             //
-            initHandler( "metaWeblog", 
+            initHandler( "metaWeblog",
                          "com.ecyrd.jspwiki.xmlrpc.MetaWeblogHandler" );
         }
         catch( Exception e )
@@ -121,10 +121,10 @@ public class RPCServlet extends HttpServlet
         try
         {
             WikiContext ctx = m_engine.createContext( request, WikiContext.NONE );
-                        
+
             XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(),
                                                                  ctx );
-            
+
             byte[] result = m_xmlrpcServer.execute( request.getInputStream(), xmlrpcContext );
 
             //
@@ -163,7 +163,7 @@ public class RPCServlet extends HttpServlet
             String msg = "We do not support HTTP GET here.  Sorry.";
             response.setContentType( "text/plain" );
             response.setContentLength( msg.length() );
-        
+
             PrintWriter writer = new PrintWriter( new OutputStreamWriter( response.getOutputStream() ) );
 
             writer.println( msg );
@@ -179,23 +179,23 @@ public class RPCServlet extends HttpServlet
         implements ContextXmlRpcHandler
     {
         private Class m_clazz;
-        
+
         public LocalHandler( Class clazz )
         {
             m_clazz = clazz;
         }
-        
+
         public Object execute(String method, Vector params, XmlRpcContext context) throws Exception
         {
             WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
             rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
-       
+
             Invoker invoker = new Invoker( rpchandler );
-            
+
             return invoker.execute( method, params );
         }
     }
-    
+
     private static class WikiXmlRpcContext
         implements XmlRpcContext
     {
@@ -207,7 +207,7 @@ public class RPCServlet extends HttpServlet
             m_mapping = map;
             m_context = ctx;
         }
-        
+
         public XmlRpcHandlerMapping getHandlerMapping()
         {
             return m_mapping;

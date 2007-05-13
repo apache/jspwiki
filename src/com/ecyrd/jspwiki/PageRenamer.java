@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -35,7 +35,7 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
  *  Do all the nitty-gritty work of renaming pages.
- *  
+ *
  *  @since 2.4
  */
 public class PageRenamer
@@ -54,10 +54,10 @@ public class PageRenamer
 
     private Pattern m_longLinkPattern = null;
     private Pattern m_camelCaseLinkPattern = null;
-    
+
     public static final String DIR_EXTENSION   = "-att";
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
-    
+
 
     /**
      * Constructor, ties this renamer instance to a WikiEngine.
@@ -65,26 +65,26 @@ public class PageRenamer
     public PageRenamer( WikiEngine engine, Properties props )
     {
         m_wikiEngine = engine;
-        
+
         // Retrieve relevant options
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( props,
-                                                             WikiEngine.PROP_MATCHPLURALS, 
+                                                             WikiEngine.PROP_MATCHPLURALS,
                                                              false );
- 
+
         m_camelCaseLink = TextUtil.getBooleanProperty( props,
                                                        JSPWikiMarkupParser.PROP_CAMELCASELINKS,
                                                        false );
-                                       
+
         // Compile regular expression patterns
         PatternCompiler compiler = new Perl5Compiler();
-        
+
         try
         {
             m_longLinkPattern = compiler.compile( m_longLinkPatternString );
             m_camelCaseLinkPattern = compiler.compile( m_camelCaseLinkPatternString );
         }
         catch (MalformedPatternException mpe)
-        {            
+        {
             log.error( "Error compiling regexp patterns.", mpe );
         }
     }
@@ -108,24 +108,24 @@ public class PageRenamer
     {
         // Work out the clean version of the new name of the page
         newName = MarkupParser.cleanLink( newName.trim() );
-        
+
         // Get the collection of pages that the refered to the old name (the From name)...
         Collection referrers = getReferrersCollection( oldName );
-        
+
         log.debug( "Rename request for page '"+ oldName +"' to '" + newName + "'" );
-           
+
         // Check if we're attempting to rename to a pagename that already exists
         if( m_wikiEngine.pageExists( newName ) )
         {
             log.debug("Rename request failed because target page '"+newName+"' exists");
-    
+
             throw new WikiException( "Page exists" );
         }
 
         // Tell the providers to actually move the data around...
         movePageData( oldName, newName );
         moveAttachmentData( oldName, newName );
-        
+
         m_wikiEngine.getReferenceManager().clearPageEntries(oldName);
 
         // If there were pages refering to the old name, update them to point to the new name...
@@ -144,31 +144,31 @@ public class PageRenamer
 
         return newName;
     }
-    
+
 
     // Go gather and return a collection of page names that refer to the old name...
     private Collection getReferrersCollection( String oldName )
     {
         TreeSet list = new TreeSet();
-        
+
         WikiPage p = m_wikiEngine.getPage(oldName);
-        
+
         if( p != null )
         {
             Collection c = m_wikiEngine.getReferenceManager().findReferrers(oldName);
-            
+
             if( c != null ) list.addAll(c);
-        
+
             try
             {
                 Collection attachments = m_wikiEngine.getAttachmentManager().listAttachments(p);
-                
+
                 for( Iterator i = attachments.iterator(); i.hasNext(); )
                 {
                     Attachment att = (Attachment) i.next();
-                    
+
                     c = m_wikiEngine.getReferenceManager().findReferrers(att.getName());
-                    
+
                     if( c != null ) list.addAll(c);
                 }
             }
@@ -176,9 +176,9 @@ public class PageRenamer
             {
                 log.error("Cannot list attachments",e);
             }
-            
+
         }
-        
+
         return list;
     }
 
@@ -190,8 +190,8 @@ public class PageRenamer
                                           boolean changeReferrers,
                                           Collection referrers)
     {
-        // Make a new list out of this, otherwise there is a ConcurrentModificationException 
-        // when the referrer is modifed at the end of this loop when it no longer refers to 
+        // Make a new list out of this, otherwise there is a ConcurrentModificationException
+        // when the referrer is modifed at the end of this loop when it no longer refers to
         // the original page.
         List referrersList = new ArrayList( referrers );
         Iterator referrersIterator = referrersList.iterator();
@@ -216,24 +216,24 @@ public class PageRenamer
         log.debug("oldName = "+oldName);
         log.debug("newName = "+newName);
         log.debug("referrerName = "+referrerName);
-        
+
         String text = m_wikiEngine.getPureText(referrerName,WikiProvider.LATEST_VERSION);
-	
+
         if (changeReferrer)
         {
             text = changeReferrerText( oldName, newName, referrerName, text );
         }
-        
+
         try
         {
 
             WikiContext tempCtx = new WikiContext( m_wikiEngine, m_wikiEngine.getPage(referrerName) );
-    
+
             if (context.getPage() != null)
             {
                 PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( m_wikiEngine.getPage(referrerName) );
                 m_wikiEngine.getPageManager().unlockPage( lock );
-  
+
                 tempCtx.getPage().setAuthor( context.getCurrentUser().getName() );
                 m_wikiEngine.saveText( tempCtx, text );
 
@@ -246,11 +246,11 @@ public class PageRenamer
         {
             log.error("Unable to update referer on rename!",e);
         }
-	
+
     }
 
     /**
-     * Change the text of each referer to reflect the renamed page.  There are seven starting cases 
+     * Change the text of each referer to reflect the renamed page.  There are seven starting cases
      * and two differnting ending scenarios depending on if the new name is camel or long.
      * <pre>
      * "Start"                               "A"                                "B"
@@ -262,7 +262,7 @@ public class PageRenamer
      * 6) OldLongLink                    --> NewCleanLink                   --> NewLongLink
      * 7) [OldLongLink]                  --> [NewCleanLink]                 --> [NewLongLink]
      * </pre>
-     * It's important to note that case 6 and 7 can exist, but are not expected since they are 
+     * It's important to note that case 6 and 7 can exist, but are not expected since they are
      * counter intuitive.
      * <br/>
      * When doing any of the above renames these should not get touched...
@@ -290,13 +290,13 @@ public class PageRenamer
         // replacementLink = "["+newName+"]";
         // Replace long format links
         referrerText = replaceLongLinks( referrerText, oldName, newName );
-        
+
         // Replace CamelCase links
         if( m_camelCaseLink == true )
         {
             referrerText = replaceCamelCaseLinks( referrerText, oldName, newName );
         }
-        
+
         return referrerText;
     }
 
@@ -306,43 +306,43 @@ public class PageRenamer
     private String replaceLongLinks( String text, String oldName, String replacementLink )
     {
         int lastMatchEnd = 0;
-    
+
         PatternMatcherInput input = new PatternMatcherInput( text );
-        
+
         StringBuffer ret = new StringBuffer();
-        
+
         while( m_matcher.contains( input, m_longLinkPattern ) )
         {
             MatchResult matchResult = m_matcher.getMatch();
 
             ret.append( input.substring( lastMatchEnd, matchResult.beginOffset( 0 ) ) );
-        
+
             String linkText = matchResult.group( 1 );
             String link = matchResult.group( 2 );
 
             String anchor = "";
             String subpage = "";
-            
+
             int hash;
             if( (hash = link.indexOf('#')) != -1 )
             {
                 anchor = link.substring(hash);
                 link   = link.substring(0,hash);
             }
-            
+
             int slash;
             if( (slash = link.indexOf('/')) != -1 )
             {
                 subpage = link.substring(slash);
                 link    = link.substring(0,slash);
             }
-            
+
             String linkDestinationPage = checkPluralPageName( MarkupParser.cleanLink( link ) );
-            
+
             if( linkDestinationPage.equals( oldName ) )
             {
                 String properReplacement;
-                
+
                 if( linkText != null )
                 {
                     properReplacement = '[' + linkText + replacementLink+subpage+anchor + ']';
@@ -351,43 +351,44 @@ public class PageRenamer
                 {
                     properReplacement = '['+replacementLink+subpage+anchor+']';
                 }
-                
+
                 ret.append( properReplacement );
             }
             else
             {
                 ret.append( input.substring( matchResult.beginOffset( 0 ), matchResult.endOffset( 0 ) ) );
             }
-            
-            lastMatchEnd = matchResult.endOffset(0); 
+
+            lastMatchEnd = matchResult.endOffset(0);
         }
 
         ret.append( input.substring( lastMatchEnd ) );
-        
+
         return ret.toString();
     }
-    
+
     // Replace CamelCase format links in a piece of text
     private String replaceCamelCaseLinks( String text, String oldName, String replacementLink )
     {
         int lastMatchEnd = 0;
-    
+
         PatternMatcherInput input = new PatternMatcherInput( text );
-        
+
         StringBuffer ret = new StringBuffer();
-        
+
         while( m_matcher.contains( input, m_camelCaseLinkPattern ) )
         {
             MatchResult matchResult = m_matcher.getMatch();
 
             ret.append( input.substring( lastMatchEnd, matchResult.beginOffset( 0 ) ) );
-        
+
             // Check if there's the tilde to stop this being a camel case link
             int matchOffset = matchResult.beginOffset( 0 );
 
             char charBefore = 0;
 
-            if( matchOffset != 0 ) {
+            if( matchOffset != 0 )
+            {
                 charBefore = input.charAt( matchOffset - 1 );
             }
 
@@ -400,18 +401,22 @@ public class PageRenamer
                 if( page.equals( oldName ) )
                 {
                     ret.append( replacementLink );
-                } else {
+                }
+                else
+                {
                     ret.append( input.substring( matchResult.beginOffset( 0 ), matchResult.endOffset( 0 ) ) );
                 }
-            } else {
+            }
+            else
+            {
                 ret.append( input.substring( matchResult.beginOffset( 0 ), matchResult.endOffset( 0 ) ) );
             }
-            
+
             lastMatchEnd = matchResult.endOffset(0);
         }
-        
+
         ret.append( input.substring( lastMatchEnd ) );
-        
+
         return ret.toString();
     }
 
@@ -423,7 +428,7 @@ public class PageRenamer
         {
             return null;
         }
-    
+
         if( m_matchEnglishPlurals )
         {
             try
@@ -438,8 +443,8 @@ public class PageRenamer
                 log.error("Unable to check Plural Pagename!",e);
             }
         }
-        
-        return pageName;     
+
+        return pageName;
     }
 
     //Move the page data from the old name to the new name.

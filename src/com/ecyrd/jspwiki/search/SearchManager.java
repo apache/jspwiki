@@ -52,24 +52,24 @@ public class SearchManager
 {
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
-    private static      String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.search.LuceneSearchProvider";
+    private static final String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.search.LuceneSearchProvider";
     public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
     private SearchProvider    m_searchProvider = null;
-    
+
     protected WikiEngine m_engine;
-    
+
     public static final String JSON_SEARCH = "search";
-    
+
     public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
     {
         initialize( engine, properties );
-        
-        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(), 
+
+        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
                                             WikiPageEvent.PAGE_DELETE_REQUEST, this);
-        
+
         JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
     }
 
@@ -83,7 +83,7 @@ public class SearchManager
          *  Provides a list of suggestions to use for a page name.
          *  Currently the algorithm just looks into the value parameter,
          *  and returns all page names from that.
-         *  
+         *
          *  @param value
          *  @param maxLength
          *  @return
@@ -93,35 +93,35 @@ public class SearchManager
             StopWatch sw = new StopWatch();
             sw.start();
             List list = new ArrayList(maxLength);
-         
-            if( value.length() > 0 ) 
+
+            if( value.length() > 0 )
             {
                 value = MarkupParser.cleanLink(value);
                 value = value.toLowerCase();
-                    
+
                 Set allPages = m_engine.getReferenceManager().findCreated();
-            
+
                 int counter = 0;
                 for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
                 {
                     String p = (String) i.next();
                     String pp = p.toLowerCase();
-                    if( pp.startsWith( value ) ) 
+                    if( pp.startsWith( value ) )
                     {
                         list.add( p );
                         counter++;
                     }
                 }
             }
-            
+
             sw.stop();
             if( log.isDebugEnabled() ) log.debug("Suggestion request for "+value+" done in "+sw);
             return list;
         }
-        
+
         /**
          *  Performs a full search of pages.
-         *  
+         *
          *  @param searchString The query string
          *  @param maxLength How many hits to return
          *  @return
@@ -130,9 +130,9 @@ public class SearchManager
         {
             StopWatch sw = new StopWatch();
             sw.start();
-            
+
             List list = new ArrayList(maxLength);
-            
+
             if( searchString.length() > 0 )
             {
                 try
@@ -153,17 +153,17 @@ public class SearchManager
                     log.info("AJAX search failed; ",e);
                 }
             }
-            
+
             sw.stop();
             if( log.isDebugEnabled() ) log.debug("AJAX search complete in "+sw);
             return list;
         }
     }
-    
+
     /**
      *  This particular method starts off indexing and all sorts of various activities,
      *  so you need to run this last, after things are done.
-     *   
+     *
      * @param engine
      * @param properties
      * @throws WikiException
@@ -172,19 +172,19 @@ public class SearchManager
         throws FilterException
     {
         m_engine = engine;
-        
+
         loadSearchProvider(properties);
-       
-        try 
+
+        try
         {
             m_searchProvider.initialize(engine, properties);
-        } 
-        catch (NoRequiredPropertyException e) 
+        }
+        catch (NoRequiredPropertyException e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
-        catch (IOException e) 
+        }
+        catch (IOException e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -204,13 +204,13 @@ public class SearchManager
         if( useLucene != null )
         {
             log.info( PROP_USE_LUCENE+" is deprecated; please use "+PROP_SEARCHPROVIDER+"=<your search provider> instead." );
-            if( TextUtil.isPositive( useLucene ) ) 
+            if( TextUtil.isPositive( useLucene ) )
             {
                 m_searchProvider = new LuceneSearchProvider();
-            } 
-            else 
+            }
+            else
             {
-                m_searchProvider = new BasicSearchProvider();            
+                m_searchProvider = new BasicSearchProvider();
             }
             log.debug("useLucene was set, loading search provider " + m_searchProvider);
             return;
@@ -253,7 +253,7 @@ public class SearchManager
     /**
      *  Sends a search to the current search provider. The query is is whatever native format
      *  the query engine wants to use.
-     *  
+     *
      * @param query The query.  Null is safe, and is interpreted as an empty query.
      * @return A collection of WikiPages that matched.
      */
@@ -274,7 +274,7 @@ public class SearchManager
     {
         m_searchProvider.pageRemoved(page);
     }
-    
+
     public void postSave( WikiContext wikiContext, String content )
     {
         //
@@ -287,7 +287,7 @@ public class SearchManager
 
     /**
      *   Forces the reindex of the given page.
-     *   
+     *
      *   @param page
      */
     public void reindexPage(WikiPage page)
@@ -308,5 +308,5 @@ public class SearchManager
             }
         }
     }
-    
+
 }

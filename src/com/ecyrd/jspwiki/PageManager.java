@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -60,7 +60,7 @@ import com.ecyrd.jspwiki.workflow.Workflow;
 public class PageManager extends ModuleManager implements WikiEventListener
 {
     private static final long serialVersionUID = 1L;
-    
+
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
@@ -83,11 +83,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
     protected HashMap m_pageLocks = new HashMap();
 
     private WikiEngine m_engine;
-    
+
     private int m_expiryTime = 60;
 
     private LockReaper m_reaper = null;
-    
+
     /**
      *  Creates a new PageManager.
      *  @throws WikiException If anything goes wrong, you get this.
@@ -96,7 +96,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         throws WikiException
     {
         super( engine );
-        
+
         String classname;
 
         m_engine = engine;
@@ -154,7 +154,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         {
             log.error("An I/O exception occurred while trying to create a new page provider: "+classname, e );
             throw new WikiException("Unable to start page provider: "+e.getMessage());
-        }        
+        }
 
     }
 
@@ -234,7 +234,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /**
      *  Puts the page text into the repository.  Note that this method does NOT update
      *  JSPWiki internal data structures, and therefore you should always use WikiEngine.saveText()
-     *  
+     *
      * @param page Page to save
      * @param content Wikimarkup to save
      * @throws ProviderException If something goes wrong in the saving phase
@@ -272,7 +272,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             m_reaper = new LockReaper( m_engine );
             m_reaper.start();
         }
-        
+
         synchronized( m_pageLocks )
         {
             fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
@@ -288,7 +288,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
                 lock = new PageLock( page, user, d,
                                      new Date( d.getTime() + m_expiryTime*60*1000L ) );
 
-                m_pageLocks.put( page.getName(), lock );                
+                m_pageLocks.put( page.getName(), lock );
 
                 log.debug( "Locked page "+page.getName()+" for "+user);
             }
@@ -385,7 +385,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             log.info("Repository has been modified externally while fetching info for "+pageName );
 
             WikiPage p = new WikiPage( m_engine, pageName );
-            
+
             m_engine.updateReferences( p );
 
             page = m_provider.getPageInfo( pageName, version );
@@ -418,7 +418,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         {
             return m_provider.getVersionHistory( pageName );
         }
-        
+
         return null;
     }
 
@@ -465,15 +465,15 @@ public class PageManager extends ModuleManager implements WikiEventListener
         {
             throw new ProviderException("Illegal page name");
         }
-     
+
         if( version == WikiProvider.LATEST_VERSION )
             return pageExists( pageName );
-        
+
         if( m_provider instanceof CachingProvider )
         {
             return ((CachingProvider)m_provider).pageExists( pageName , version );
         }
-        
+
         return m_provider.getPageInfo( pageName, version ) != null;
     }
 
@@ -497,7 +497,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
-        m_provider.deletePage( page.getName() );      
+        m_provider.deletePage( page.getName() );
 
         fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
     }
@@ -514,7 +514,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             super( engine, 60 );
             setName("JSPWiki Lock Reaper");
         }
-        
+
         public void backgroundTask() throws Exception
         {
             synchronized( m_pageLocks )
@@ -542,21 +542,21 @@ public class PageManager extends ModuleManager implements WikiEventListener
     }
 
     // workflow task inner classes....................................................
-    
+
     /**
      * Inner class that handles the page pre-save actions. If the proposed page
      * text is the same as the current version, the {@link #execute()} method
      * returns {@link com.ecyrd.jspwiki.workflow.Outcome#STEP_ABORT}. Any
      * WikiExceptions thrown by page filters will be re-thrown, and the workflow
      * will abort.
-     * 
+     *
      * @author Andrew Jaquith
      */
-    public static class PreSaveWikiPageTask extends Task {
-        
+    public static class PreSaveWikiPageTask extends Task
+    {
         private final WikiContext m_context;
         private final String m_proposedText;
-        
+
         public PreSaveWikiPageTask( WikiContext context, String proposedText )
         {
             super( PRESAVE_TASK_MESSAGE_KEY );
@@ -601,13 +601,13 @@ public class PageManager extends ModuleManager implements WikiEventListener
             return Outcome.STEP_COMPLETE;
         }
     }
-    
+
     /**
      * Inner class that handles the actual page save and post-save actions. Instances
      * of this class are assumed to have been added to an approval workflow via
-     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)}; 
+     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)};
      * they will not function correctly otherwise.
-     * 
+     *
      * @author Andrew Jaquith
      */
     public static class SaveWikiPageTask extends Task
@@ -642,9 +642,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
     /**
      *  Fires a WikiPageEvent of the provided type and page name
-     *  to all registered listeners. 
+     *  to all registered listeners.
      *
-     * @see com.ecyrd.jspwiki.event.WikiPageEvent 
+     * @see com.ecyrd.jspwiki.event.WikiPageEvent
      * @param type       the event type to be fired
      * @param pagename   the wiki page name as a String
      */
@@ -673,10 +673,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public void actionPerformed(WikiEvent event)
     {
-        if (! ( event instanceof WikiSecurityEvent ) ) {
+        if (! ( event instanceof WikiSecurityEvent ) )
+        {
             return;
         }
-        
+
         WikiSecurityEvent se = (WikiSecurityEvent)event;
         if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
         {
@@ -686,9 +687,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
                   new WikiPrincipal( profiles[0].getFullname() ),
                   new WikiPrincipal( profiles[0].getWikiName() ) };
             Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
-            
+
             // Examine each page ACL
-            try 
+            try
             {
                 int pagesChanged = 0;
                 Collection pages = getAllPages();
@@ -699,7 +700,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
                     if ( aclChanged )
                     {
                         // If the Acl needed changing, change it now
-                        try 
+                        try
                         {
                             m_engine.getAclManager().setPermissions( page, page.getAcl() );
                         }
@@ -720,11 +721,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
             }
         }
     }
-    
+
     /**
      * For a single wiki page, replaces all Acl entries matching a supplied array of Principals with a new Principal.
-     * @param page the wiki page whose Acl is to be modified 
-     * @param oldPrincipals an array of Principals to replace; all AclEntry objects whose 
+     * @param page the wiki page whose Acl is to be modified
+     * @param oldPrincipals an array of Principals to replace; all AclEntry objects whose
      * {@link AclEntry#getPrincipal()} method returns one of these Principals will be replaced
      * @param newPrincipal the Principal that should receive the old Principals' permissions
      * @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise

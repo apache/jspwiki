@@ -27,11 +27,13 @@ import java.io.ByteArrayOutputStream;
  * @since 2.3
  */
 
-public final class HexUtils {
+public final class HexUtils
+{
     // Code from Ajp11, from Apache's JServ
 
     // Table for HEX to DEC byte translation
-    static final int[] DEC = {
+    static final int[] DEC =
+    {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -60,10 +62,12 @@ public final class HexUtils {
      *  is found, or the input string contains an odd number of hexadecimal
      *  digits
      */
-    public static byte[] convert(String digits) {
+    public static byte[] convert(String digits)
+    {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        for (int i = 0; i < digits.length(); i += 2) {
+        for (int i = 0; i < digits.length(); i += 2)
+        {
             char c1 = digits.charAt(i);
             if ((i+1) >= digits.length())
                 throw new IllegalArgumentException
@@ -160,5 +164,5 @@ public final class HexUtils {
         }
         return ((char) (value + '0'));
     }
-    
+
 }

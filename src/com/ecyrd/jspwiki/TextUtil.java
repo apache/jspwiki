@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -66,7 +66,7 @@ public class TextUtil
                 if( (c >= 'a' && c <= 'z') ||
                     (c >= 'A' && c <= 'Z') ||
                     (c >= '0' && c <= '9') )
-                {                    
+                {
                     result.append( c );
                 }
                 else
@@ -88,12 +88,12 @@ public class TextUtil
      *  Bug parade, bug #4257115</A> for more information.
      *  <P>
      *  Thanks to CJB for this fix.
-     */ 
+     */
     protected static String urlDecode( byte[] bytes, String encoding )
         throws UnsupportedEncodingException,
                IllegalArgumentException
     {
-        if(bytes == null) 
+        if(bytes == null)
         {
             return null;
         }
@@ -101,11 +101,11 @@ public class TextUtil
         byte[] decodeBytes   = new byte[bytes.length];
         int decodedByteCount = 0;
 
-        try 
+        try
         {
-            for( int count = 0; count < bytes.length; count++ ) 
+            for( int count = 0; count < bytes.length; count++ )
             {
-                switch( bytes[count] ) 
+                switch( bytes[count] )
                 {
                   case '+':
                     decodeBytes[decodedByteCount++] = (byte) ' ';
@@ -123,18 +123,18 @@ public class TextUtil
             }
 
         }
-        catch (IndexOutOfBoundsException ae) 
+        catch (IndexOutOfBoundsException ae)
         {
             throw new IllegalArgumentException( "Malformed UTF-8 string?" );
         }
 
         String processedPageName = null ;
 
-        try 
+        try
         {
             processedPageName = new String(decodeBytes, 0, decodedByteCount, encoding) ;
-        } 
-        catch (UnsupportedEncodingException e) 
+        }
+        catch (UnsupportedEncodingException e)
         {
             throw new UnsupportedEncodingException( "UTF-8 encoding not supported on this platform" );
         }
@@ -152,9 +152,9 @@ public class TextUtil
         {
             return "";
         }
-        
+
         byte[] rs;
-        
+
         try
         {
             rs = text.getBytes("UTF-8");
@@ -174,9 +174,9 @@ public class TextUtil
     public static String urlDecodeUTF8( String utf8 )
     {
         String rs = null;
-        
+
         if( utf8 == null ) return null;
-        
+
         try
         {
             rs = urlDecode( utf8.getBytes("ISO-8859-1"), "UTF-8" );
@@ -192,14 +192,14 @@ public class TextUtil
     /**
      * Provides encoded version of string depending on encoding.
      * Encoding may be UTF-8 or ISO-8859-1 (default).
-     * 
-     * <p>This implementation is the same as in 
+     *
+     * <p>This implementation is the same as in
      * FileSystemProvider.mangleName().
      */
     public static String urlEncode( String data, String encoding )
     {
         // Presumably, the same caveats apply as in FileSystemProvider.
-        // Don't see why it would be horribly kludgy, though. 
+        // Don't see why it would be horribly kludgy, though.
         if( "UTF-8".equals( encoding ) )
         {
             return( TextUtil.urlEncodeUTF8( data ) );
@@ -219,7 +219,7 @@ public class TextUtil
      * Provides decoded version of string depending on encoding.
      * Encoding may be UTF-8 or ISO-8859-1 (default).
      *
-     * <p>This implementation is the same as in 
+     * <p>This implementation is the same as in
      * FileSystemProvider.unmangleName().
      */
     public static String urlDecode( String data, String encoding )
@@ -227,7 +227,7 @@ public class TextUtil
                IllegalArgumentException
     {
         // Presumably, the same caveats apply as in FileSystemProvider.
-        // Don't see why it would be horribly kludgy, though. 
+        // Don't see why it would be horribly kludgy, though.
         if( "UTF-8".equals( encoding ) )
         {
             return( TextUtil.urlDecodeUTF8( data ) );
@@ -241,7 +241,7 @@ public class TextUtil
         {
             throw new InternalWikiException("Could not decode String into" + encoding);
         }
-        
+
     }
 
     /**
@@ -317,13 +317,13 @@ public class TextUtil
     public static int parseIntParameter( String value, int defvalue )
     {
         int val = defvalue;
-        
+
         try
         {
             val = Integer.parseInt( value.trim() );
         }
         catch( Exception e ) {}
-            
+
         return val;
     }
 
@@ -333,7 +333,7 @@ public class TextUtil
      *
      *  @since 2.1.48.
      */
-    public static int getIntegerProperty( Properties props, 
+    public static int getIntegerProperty( Properties props,
                                           String key,
                                           int defVal )
     {
@@ -357,8 +357,8 @@ public class TextUtil
      *
      *  @since 2.0.11
      */
-    public static boolean getBooleanProperty( Properties props, 
-                                              String key, 
+    public static boolean getBooleanProperty( Properties props,
+                                              String key,
                                               boolean defval )
     {
         String val = props.getProperty( key );
@@ -372,7 +372,7 @@ public class TextUtil
      *  Fetches a String property from the set of Properties.  This differs from
      *  Properties.getProperty() in a couple of key respects: First, property value
      *  is trim()med (so no extra whitespace back and front), and well, that's it.
-     *  
+     *
      *  @param props The Properties to search through
      *  @param key   The property key
      *  @param defval A default value to return, if the property does not exist.
@@ -384,12 +384,12 @@ public class TextUtil
                                             String defval )
     {
         String val = props.getProperty( key );
-        
+
         if( val == null ) return defval;
-        
+
         return val.trim();
     }
-    
+
     /**
      *  Returns true, if the string "val" denotes a positive string.  Allowed
      *  values are "yes", "on", and "true".  Comparison is case-insignificant.
@@ -405,7 +405,7 @@ public class TextUtil
         if( val == null ) return false;
 
         val = val.trim();
-        
+
         return ( val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
                  val.equalsIgnoreCase("yes") );
     }
@@ -669,12 +669,12 @@ public class TextUtil
 
         return sb.toString();
     }
-    
+
     /**
      *  Converts a string from the Unicode representation into something that can be
-     *  embedded in a java properties file.  All references outside the ASCII range 
+     *  embedded in a java properties file.  All references outside the ASCII range
      *  are replaced with \\uXXXX.
-     *  
+     *
      *  @param s
      *  @return the ASCII string
      */
@@ -684,7 +684,7 @@ public class TextUtil
         for(int i = 0; i < s.length(); i++)
         {
             char aChar = s.charAt(i);
-            if ((aChar < 0x0020) || (aChar > 0x007e)) 
+            if ((aChar < 0x0020) || (aChar > 0x007e))
             {
                 sb.append('\\');
                 sb.append('u');
@@ -692,18 +692,18 @@ public class TextUtil
                 sb.append(toHex((aChar >>  8) & 0xF));
                 sb.append(toHex((aChar >>  4) & 0xF));
                 sb.append(toHex( aChar        & 0xF));
-            } 
-            else 
+            }
+            else
             {
                 sb.append(aChar);
             }
         }
         return sb.toString();
     }
-    
-    private static char toHex(int nibble) 
+
+    private static char toHex(int nibble)
     {
-        final char[] hexDigit = 
+        final char[] hexDigit =
         {
             '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
         };
@@ -714,7 +714,7 @@ public class TextUtil
      *  Generates a hexadecimal string from an array of bytes.  For
      *  example, if the array contains { 0x01, 0x02, 0x3E }, the resulting
      *  string will be "01023E".
-     *  
+     *
      * @param bytes A Byte array
      * @return A String representation
      * @since 2.3.87
@@ -727,32 +727,32 @@ public class TextUtil
             sb.append( toHex(bytes[i] >> 4) );
             sb.append( toHex(bytes[i]) );
         }
-        
+
         return sb.toString();
     }
-    
+
     /**
      *  Returns true, if the argument contains a number, otherwise false.
      *  In a quick test this is roughly the same speed as Integer.parseInt()
      *  if the argument is a number, and roughly ten times the speed, if
      *  the argument is NOT a number.
-     *  
+     *
      *  @since 2.4
      */
-    
+
     public static boolean isNumber( String s )
     {
         if( s == null ) return false;
-    
+
         if( s.length() > 1 && s.charAt(0) == '-' )
             s = s.substring(1);
-    
+
         for( int i = 0; i < s.length(); i++ )
         {
             if( !Character.isDigit(s.charAt(i)) )
                 return false;
         }
-    
+
         return true;
     }
 
@@ -760,17 +760,19 @@ public class TextUtil
     public static final int PASSWORD_LENGTH = 8;
     /**
      * Generate a random String suitable for use as a temporary password.
-     * 
+     *
      * @return String suitable for use as a temporary password
      * @since 2.4
      */
-    public static String generateRandomPassword() {
+    public static String generateRandomPassword()
+    {
         // Pick from some letters that won't be easily mistaken for each
         // other. So, for example, omit o O and 0, 1 l and L.
         String letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
-        
+
         String pw = "";
-        for (int i=0; i<PASSWORD_LENGTH; i++) {
+        for (int i=0; i<PASSWORD_LENGTH; i++)
+        {
             int index = (int)(RANDOM.nextDouble()*letters.length());
             pw += letters.substring(index, index+1);
         }

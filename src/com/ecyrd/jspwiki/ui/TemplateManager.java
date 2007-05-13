@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2003-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -41,7 +41,7 @@ import com.ecyrd.jspwiki.modules.ModuleManager;
  *  @since 2.1.62
  *  @author Janne Jalkanen
  */
-public class TemplateManager 
+public class TemplateManager
     extends ModuleManager
 {
     private static final String SKIN_DIRECTORY = "skins";
@@ -65,7 +65,7 @@ public class TemplateManager
      *  Requests inlined CSS.
      */
     public static final String RESOURCE_INLINECSS  = "inlinecss";
-    
+
     /** The default directory for the properties. */
     public static final String DIRECTORY           = "templates";
 
@@ -76,7 +76,7 @@ public class TemplateManager
     public static final String PROPERTYFILE        = "template.properties";
 
     public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
-    
+
     // private Cache              m_propertyCache;
 
     protected static final Logger log = Logger.getLogger( TemplateManager.class );
@@ -117,7 +117,7 @@ public class TemplateManager
 
     /**
      *  Tries to locate a given resource from the template directory.
-     *  
+     *
      *  @param sContext
      *  @param name
      *  @return
@@ -128,7 +128,7 @@ public class TemplateManager
 
         if( is == null )
         {
-            String defname = makeFullJSPName( DEFAULT_TEMPLATE, 
+            String defname = makeFullJSPName( DEFAULT_TEMPLATE,
                                               removeTemplatePart(name) );
             is = sContext.getResourceAsStream( defname );
 
@@ -142,7 +142,7 @@ public class TemplateManager
 
         return name;
     }
-    
+
     private static String findResource( ServletContext sContext, String template, String name )
     {
         if( name.charAt(0) == '/' )
@@ -152,10 +152,10 @@ public class TemplateManager
         }
 
         String fullname = makeFullJSPName( template, name );
-        
-        return findResource( sContext, fullname );        
+
+        return findResource( sContext, fullname );
     }
-    
+
     /**
      *  An utility method for finding a JSP page.  It searches only under
      *  either current context or by the absolute name.
@@ -163,7 +163,7 @@ public class TemplateManager
     public String findJSP( PageContext pageContext, String name )
     {
         ServletContext sContext = pageContext.getServletContext();
-        
+
         return findResource( sContext, name );
     }
 
@@ -182,7 +182,7 @@ public class TemplateManager
                 return name.substring( idx+1 );
             }
         }
-        
+
         return name;
     }
 
@@ -198,7 +198,7 @@ public class TemplateManager
      *  <p>
      *  Even though the name suggests only JSP files can be located, but in fact
      *  this method can find also other resources than JSP files.
-     *  
+     *
      *  @param pageContext The JSP PageContext
      *  @param template From which template we should seek initially?
      *  @param name Which resource are we looking for (e.g. "ViewTemplate.jsp")
@@ -213,7 +213,7 @@ public class TemplateManager
                       ((HttpServletRequest)pageContext.getRequest()).getRequestURI()+"'");
             throw new InternalWikiException("Illegal arguments to findJSP(); please check logs.");
         }
-        
+
         return findResource( pageContext.getServletContext(), template, name );
     }
 
@@ -225,7 +225,7 @@ public class TemplateManager
      *  <p>
      *  This method is typically used to locate any resource, including JSP pages, images,
      *  scripts, etc.
-     *  
+     *
      *  @since 2.6
      *  @param ctx the wiki context
      *  @param template the name of the template to use
@@ -238,10 +238,10 @@ public class TemplateManager
         {
             return findResource( m_engine.getServletContext(), template, name );
         }
-        
+
         return getPath(template)+"/"+name;
     }
-    
+
     /**
      *  Returns a property, as defined in the template.  The evaluation
      *  is lazy, i.e. the properties are not loaded until the template is
@@ -261,7 +261,7 @@ public class TemplateManager
                 try
                 {
                     props = getTemplateProperties( template );
-                    
+
                     m_propertyCache.putInCache( template, props );
                 }
                 catch( IOException e )
@@ -290,12 +290,12 @@ public class TemplateManager
     }
 
     /**
-     *   Lists the skins available under this template.  Returns an 
+     *   Lists the skins available under this template.  Returns an
      *   empty Set, if there are no extra skins available.  Note that
      *   this method does not check whether there is anything actually
      *   in the directories, it just lists them.  This may change
      *   in the future.
-     *   
+     *
      *   @param template
      *   @return Set of Strings with the skin names.
      *   @since 2.3.26
@@ -303,24 +303,24 @@ public class TemplateManager
     public Set listSkins( PageContext pageContext, String template )
     {
         String place = makeFullJSPName( template, SKIN_DIRECTORY );
-     
+
         ServletContext sContext = pageContext.getServletContext();
 
         Set skinSet = sContext.getResourcePaths( place );
         TreeSet resultSet = new TreeSet();
-               
+
         if( log.isDebugEnabled() ) log.debug( "Listings skins from "+place );
-        
+
         if( skinSet != null )
         {
             String[] skins = {};
-            
-            skins = (String[]) skinSet.toArray(skins);        
-        
+
+            skins = (String[]) skinSet.toArray(skins);
+
             for( int i = 0; i < skins.length; i++ )
             {
                 String s[] = StringUtils.split(skins[i],"/");
-            
+
                 if( s.length > 2 && skins[i].endsWith("/") )
                 {
                     String skinName = s[s.length-1];
@@ -329,7 +329,7 @@ public class TemplateManager
                 }
             }
         }
-        
+
         return resultSet;
     }
 
@@ -359,11 +359,11 @@ public class TemplateManager
 
         return p;
     }
-*/    
+*/
     /**
      *  Returns the include resources marker for a given type.  This is in a
      *  HTML comment format.
-     *   
+     *
      *  @param type the marker
      *  @return the generated marker comment
      */
@@ -378,7 +378,7 @@ public class TemplateManager
 
     /**
      *  Adds a resource request to the current request context.
-     *  The content will be added at the resource-type marker 
+     *  The content will be added at the resource-type marker
      *  (see IncludeResourcesTag) in WikiJSPFilter.
      *  <p>
      *  The resources can be of different types.  For RESOURCE_SCRIPT and RESOURCE_STYLESHEET
@@ -396,7 +396,7 @@ public class TemplateManager
      *  makes a new resource request every time, you'll end up with multiple resource requests
      *  rendered.  It's thus a good idea to make this request only once during the page
      *  life cycle.
-     *  
+     *
      *  @param ctx The current wiki context
      *  @param type What kind of a request should be added?
      *  @param resource The resource to add.
@@ -404,72 +404,72 @@ public class TemplateManager
     public static void addResourceRequest( WikiContext ctx, String type, String resource )
     {
         HashMap resourcemap = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
-       
+
         if( resourcemap == null )
         {
             resourcemap = new HashMap();
         }
-        
+
         Vector resources = (Vector) resourcemap.get( type );
-        
+
         if( resources == null )
         {
             resources = new Vector();
         }
-        
+
         String resourceString = null;
-        
-        if( type == RESOURCE_SCRIPT )
+
+        if( type.equals(RESOURCE_SCRIPT) )
         {
             resourceString = "<script type='text/javascript' src='"+resource+"'></script>";
         }
-        else if( type == RESOURCE_STYLESHEET )
+        else if( type.equals(RESOURCE_STYLESHEET) )
         {
             resourceString = "<link rel='stylesheet' type='text/css' href='"+resource+"' />";
         }
-        else if( type == RESOURCE_INLINECSS )
+        else if( type.equals(RESOURCE_INLINECSS) )
         {
             resourceString = "<style type='text/css'>\n"+resource+"\n</style>\n";
         }
-        else if( type == RESOURCE_JSFUNCTION )
+        else if( type.equals(RESOURCE_JSFUNCTION) )
         {
             resourceString = resource;
         }
-        
+
         if( resourceString != null )
         {
             resources.add( resourceString );
         }
-        
+
         log.debug("Request to add a resource: "+resourceString);
-        
+
         resourcemap.put( type, resources );
         ctx.setVariable( RESOURCE_INCLUDES, resourcemap );
     }
-    
+
     /**
      *  Returns resource requests for a particular type.  If there are no resources,
      *  returns an empty array.
      */
-    
+
     public static String[] getResourceRequests( WikiContext ctx, String type )
     {
         HashMap hm = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
-        
+
         if( hm == null ) return new String[0];
-        
+
         Vector resources = (Vector) hm.get( type );
-        
+
         if( resources == null ) return new String[0];
-        
+
         String[] res = new String[resources.size()];
-        
+
         return (String[]) resources.toArray( res );
     }
-    
+
     /**
      *  returns all those types that have been requested so far.
-     *  
+     *
      * @param ctx the wiki context
      * @return the array of types requested
      */
@@ -480,15 +480,15 @@ public class TemplateManager
         if( ctx != null )
         {
             HashMap hm = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
-        
+
             if( hm != null )
             {
                 Set keys = hm.keySet();
-            
+
                 res = (String[]) keys.toArray( res );
             }
         }
-        
+
         return res;
     }
 

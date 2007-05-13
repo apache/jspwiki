@@ -9,51 +9,51 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 
-<%! 
+<%!
     Logger log = Logger.getLogger("JSPWiki");
-    
+
     String message = null;
-    public boolean resetPassword(WikiEngine wiki, HttpServletRequest request) 
+    public boolean resetPassword(WikiEngine wiki, HttpServletRequest request)
     {
         // Reset pw for account name
         String name = request.getParameter("name");
         UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
         boolean success = false;
-        try 
+        try
         {
             UserProfile profile = null;
-            try 
+            try
             {
                 profile = userDatabase.find(name);
             }
-            catch (NoSuchPrincipalException e) 
+            catch (NoSuchPrincipalException e)
             {
                 // Try email as well
             }
-            if (profile == null) 
+            if (profile == null)
             {
                 profile = userDatabase.findByEmail(name);
             }
-			
+
 			String email = profile.getEmail();
 
 			String randomPassword = TextUtil.generateRandomPassword();
 
 			// Try sending email first, as that is more likely to fail.
-            
+
              String mailMessage = "As requested, your new password for login '"
                     + profile.getLoginName() + "' is '" + randomPassword + "'.\n\n" +
                     "You may log in at "
                     + wiki.getURLConstructor().makeURL(WikiContext.NONE, "Login.jsp", true, "") + ".\n\n"
                     + "--" + wiki.getApplicationName();
- 			 
+
  			MailUtil.sendMessage( wiki,
                                     email,
  			                      "New password for " + wiki.getApplicationName(),
  			                      mailMessage );
-		
+
             log.info("User "+email+" requested and received a new password.");
-            
+
 			// Mail succeeded.  Now reset the password.
 			// If this fails, we're kind of screwed, because we already emailed.
 			profile.setPassword(randomPassword);
@@ -61,22 +61,22 @@
 			userDatabase.commit();
 			success = true;
         }
-        catch (NoSuchPrincipalException e) 
+        catch (NoSuchPrincipalException e)
         {
             message = "No user or email '" + name + "' was found.";
             log.info("Tried to reset password for non-existent user '" + name + "'");
         }
-        catch (SendFailedException e) 
+        catch (SendFailedException e)
         {
             message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
             log.error("Tried to reset password and got SendFailedException: " + e);
         }
-        catch (AuthenticationFailedException e) 
+        catch (AuthenticationFailedException e)
         {
             message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
-            log.error("Tried to reset password and got AuthenticationFailedException: " + e);            
+            log.error("Tried to reset password and got AuthenticationFailedException: " + e);
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
             message = "Internal error. Contact the site administrator, please.";
             log.error("Tried to reset password and got another exception: " + e);
@@ -88,10 +88,10 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
 
-	//Create wiki context like in Login.jsp: 
+	//Create wiki context like in Login.jsp:
     //don't check for access permissions: if you have lost your password you cannot login!
 	WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
-	
+
 	// If no context, it means we're using container auth.  So, create one anyway
 	if( wikiContext == null )
 	{
@@ -101,7 +101,7 @@
 	                              PageContext.REQUEST_SCOPE );
 	}
 
-    WikiSession wikiSession = wikiContext.getWikiSession(); 
+    WikiSession wikiSession = wikiContext.getWikiSession();
     String action  = request.getParameter("action");
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
@@ -112,7 +112,7 @@
 %>
 
 
-<!DOCTYPE html 
+<!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -130,13 +130,13 @@
   <wiki:Include page="Header.jsp" />
 
   <!-- Removed application logo here since it may conflict with other templates.
-       TODO: LostPassword.jsp needs to be properly integrated into the templating system 
+       TODO: LostPassword.jsp needs to be properly integrated into the templating system
        in order to be translatable -->
 
   <div id="page">
   <%
       boolean done = false;
-  
+
       if ((action != null) && (action.equals("resetPassword"))) {
 	      if (resetPassword(wiki, request)) {
 	          done = true;
@@ -162,7 +162,7 @@
               <wiki:Messages div="error" />
 
               <%
-	      }          
+	      }
       }
 
       // Display something to ask for a username
@@ -170,13 +170,13 @@
       if (!done) {
       %>
       <div>Lost or forgot your password?  Enter your account name or email here:
-      <form method="POST" accept-charset="UTF-8">
+      <form method="post" accept-charset="UTF-8">
         <input type="hidden" name="action" value="resetPassword"/>
         <input type="text" name="name"/>
         <input type="submit" name="Submit" value="Reset password!"/>
       </form>
       </div>
-      
+
     <%} %>
   </div>
 

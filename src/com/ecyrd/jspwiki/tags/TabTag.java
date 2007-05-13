@@ -27,41 +27,41 @@ import javax.servlet.jsp.tagext.*;
 public class TabTag extends TagSupport
 {
     private static final long serialVersionUID = -8534125226484616489L;
-    private String accesskey;
-    private String tabID;
-    private String tabTitle;
+    private String m_accesskey;
+    private String m_tabID;
+    private String m_tabTitle;
 
     public void release()
     {
         super.release();
-        accesskey = tabID = tabTitle = null;
+        m_accesskey = m_tabID = m_tabTitle = null;
     }
 
     public void setId(String aTabID)
     {
-        tabID = aTabID;
+        m_tabID = aTabID;
     }
 
     public void setTitle(String aTabTitle)
     {
-        tabTitle = aTabTitle;
+        m_tabTitle = aTabTitle;
     }
 
     public void setAccesskey(String anAccesskey)
     {
-        accesskey = anAccesskey; //take only the first char
+        m_accesskey = anAccesskey; //take only the first char
     }
 
     // insert <u> ..accesskey.. </u> in title
     private boolean handleAccesskey()
     {
-        if( (tabTitle == null) || (accesskey == null) ) return( false );
+        if( (m_tabTitle == null) || (m_accesskey == null) ) return( false );
 
-        int pos = tabTitle.toLowerCase().indexOf( accesskey.toLowerCase() );
+        int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
         if( pos > -1 )
         {
-            tabTitle = tabTitle.substring( 0, pos ) + "<u>" 
-                       + tabTitle.charAt( pos ) + "</u>" + tabTitle.substring( pos+1 );
+            m_tabTitle = m_tabTitle.substring( 0, pos ) + "<u>" 
+                       + m_tabTitle.charAt( pos ) + "</u>" + m_tabTitle.substring( pos+1 );
         }
         return( true );
     }
@@ -70,11 +70,11 @@ public class TabTag extends TagSupport
     {
         TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
 
-        if( tabID == null )
+        if( m_tabID == null )
         {
             throw new JspTagException("Tab Tag without \"id\" attribute");
         }
-        if( tabTitle == null )
+        if( m_tabTitle == null )
         {
             throw new JspTagException("Tab Tag without \"tabTitle\" attribute");
         }
@@ -87,9 +87,9 @@ public class TabTag extends TagSupport
     
         StringBuffer sb = new StringBuffer();
 
-        sb.append( "<div id=\""+ tabID + "\"" );
+        sb.append( "<div id=\""+ m_tabID + "\"" );
 
-        if( !parent.validateDefaultTab( tabID) )
+        if( !parent.validateDefaultTab( m_tabID) )
         {
             sb.append( " style=\"display:none;\"" );
         }
@@ -116,7 +116,7 @@ public class TabTag extends TagSupport
         if( parent.isStateFindDefaultTab() )
         {
             //inform the parent of each tab
-            parent.validateDefaultTab( tabID ); 
+            parent.validateDefaultTab( m_tabID ); 
         }
         else if( parent.isStateGenerateTabBody() )
         {
@@ -126,21 +126,21 @@ public class TabTag extends TagSupport
         {
             sb.append( "<span><a" );
 
-            if( parent.validateDefaultTab( tabID ) )
+            if( parent.validateDefaultTab( m_tabID ) )
             {
                 sb.append( " class=\"activetab\"" );
             }
 
-            sb.append( " id=\"menu-" + tabID + "\"" );
-            sb.append( " onclick=\"TabbedSection.onclick(\'" + tabID + "\')\"" );
+            sb.append( " id=\"menu-" + m_tabID + "\"" );
+            sb.append( " onclick=\"TabbedSection.onclick(\'" + m_tabID + "\')\"" );
 
             if( handleAccesskey() )
             {
-                sb.append( " accesskey=\"" + accesskey + "\"" );
+                sb.append( " accesskey=\"" + m_accesskey + "\"" );
             }
 
             sb.append( " >" );
-            sb.append( tabTitle );
+            sb.append( m_tabTitle );
             sb.append( "</a></span>" );
         }
  

@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Release
 {
+    private static final String VERSION_SEPARATORS = ".-";
+
     /**
      *  This is the default application name.
      */
@@ -76,7 +78,7 @@ public class Release
         throws IllegalArgumentException
     {
         if( version == null ) return true;
-        String[] versionComponents = StringUtils.split(version,".-");
+        String[] versionComponents = StringUtils.split(version,VERSION_SEPARATORS);
         int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
         int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
         int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
@@ -110,7 +112,7 @@ public class Release
     {
         if( version == null ) return true;
 
-        String[] versionComponents = StringUtils.split(version,".-");
+        String[] versionComponents = StringUtils.split(version,VERSION_SEPARATORS);
         int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
         int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
         int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
@@ -143,7 +145,7 @@ public class Release
      *  1.9.26-cvs
      *  </PRE>
      */
-    public static void main( String argv[] )
+    public static void main( String[] argv )
     {
         System.out.println(VERSTR);
     }

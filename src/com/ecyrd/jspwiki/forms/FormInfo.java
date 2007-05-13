@@ -39,89 +39,89 @@ public class FormInfo
     public static final int OK       =  0;
     public static final int ERROR    = -1;
 
-    public int    status;
-    public boolean hide;
-    public String action;
-    public String name;
-    public String handler;
-    public String result;
-    public String error;
+    public int    m_status;
+    public boolean m_hide;
+    public String m_action;
+    public String m_name;
+    public String m_handler;
+    public String m_result;
+    public String m_error;
     //public PluginParameters submission;
-    public Map submission;
+    public Map m_submission;
 
     public FormInfo()
     {
-        status = OK;
+        m_status = OK;
     }
 
     public void setStatus( int val )
     {
-        status = val;
+        m_status = val;
     }
 
     public int getStatus()
     {
-        return( status );
+        return( m_status );
     }
 
     public void setHide( boolean val )
     {
-        hide = val;
+        m_hide = val;
     }
 
     public boolean hide()
     {
-        return( hide );
+        return( m_hide );
     }
 
     public void setAction( String val )
     {
-        action = val;
+        m_action = val;
     }
 
     public String getAction()
     {
-        return( action );
+        return( m_action );
     }
 
     public void setName( String val )
     {
-        name = val;
+        m_name = val;
     }
 
     public String getName()
     {
-        return( name );
+        return( m_name );
     }
 
     public void setHandler( String val )
     {
-        handler = val;
+        m_handler = val;
     }
 
     public String getHandler()
     {
-        return( handler );
+        return( m_handler );
     }
 
     public void setResult( String val )
     {
-        result = val;
+        m_result = val;
     }
 
     public String getResult()
     {
-        return( result );
+        return( m_result );
     }
 
     public void setError( String val )
     {
-        error = val;
+        m_error = val;
     }
 
     public String getError()
     {
-        return( error );
+        return( m_error );
     }
 
     /**
@@ -130,8 +130,8 @@ public class FormInfo
      */
     public void setSubmission( Map val )
     {
-        submission = new HashMap();
-        submission.putAll( val );
+        m_submission = new HashMap();
+        m_submission.putAll( val );
     }
 
     /**
@@ -140,9 +140,9 @@ public class FormInfo
      */
     public void addSubmission( Map val )
     {
-        if( submission == null )
-            submission = new HashMap();
-        submission.putAll( val );
+        if( m_submission == null )
+            m_submission = new HashMap();
+        m_submission.putAll( val );
     }
 
     /**
@@ -155,6 +155,6 @@ public class FormInfo
      */
     public Map getSubmission()
     {
-        return( submission );
+        return( m_submission );
     }
 }

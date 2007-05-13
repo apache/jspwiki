@@ -26,7 +26,7 @@ public class AclEntryImpl implements AclEntry
     public AclEntryImpl()
     {
     }
-    
+
     public synchronized boolean addPermission( Permission permission )
     {
         if ( permission instanceof PagePermission && findPermission( permission ) == null )
@@ -56,7 +56,7 @@ public class AclEntryImpl implements AclEntry
             return aei;
         }
         catch( CloneNotSupportedException e ){}
-        
+
         return null;
     }
 

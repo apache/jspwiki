@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -25,7 +25,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 
 /**
- * SearchMatcher performs the task of matching a search query to a page's 
+ * SearchMatcher performs the task of matching a search query to a page's
  * contents. This utility class is isolated to simplify WikiPageProvider
  * implementations and to offer an easy target for upgrades. The upcoming(?)
  * TranslatorReader rewrite will presumably invalidate this, among other things.
@@ -57,13 +57,13 @@ public class SearchMatcher
     {
         if( m_queries == null )
         {
-            return( null );
+            return null;
         }
 
-        int scores[] = new int[ m_queries.length ];
+        int[] scores = new int[ m_queries.length ];
         BufferedReader in = new BufferedReader( new StringReader( pageText ) );
         String line = null;
-            
+
         while( (line = in.readLine()) != null )
         {
             line = line.toLowerCase();
@@ -71,7 +71,7 @@ public class SearchMatcher
             for( int j = 0; j < m_queries.length; j++ )
             {
                 int index = -1;
-                
+
                 while( (index = line.indexOf( m_queries[j].word, index+1 )) != -1 )
                 {
                     if( m_queries[j].type != QueryItem.FORBIDDEN )
@@ -81,47 +81,47 @@ public class SearchMatcher
                     else
                     {
                         // Found something that was forbidden.
-                        return( null );
+                        return null;
                     }
                 }
             }
         }
-        
+
         //
         //  Check that we have all required words.
         //
-        
+
         int totalscore = 0;
-        
+
         for( int j = 0; j < scores.length; j++ )
         {
             // Give five points for each occurrence
             // of the word in the wiki name.
-            
+
             if( wikiname.toLowerCase().indexOf( m_queries[j].word ) != -1 &&
                 m_queries[j].type != QueryItem.FORBIDDEN )
                 scores[j] += 5;
-            
+
             //  Filter out pages if the search word is marked 'required'
             //  but they have no score.
-            
+
             if( m_queries[j].type == QueryItem.REQUIRED && scores[j] == 0 )
             {
-                return( null );
+                return null;
             }
-            
+
             //
             //  Count the total score for this page.
             //
             totalscore += scores[j];
         }
-        
+
         if( totalscore > 0 )
         {
-            return( new SearchResultImpl( wikiname, totalscore ) );
+            return new SearchResultImpl( wikiname, totalscore );
         }
 
-        return( null );
+        return null;
     }
 
     public class SearchResultImpl
@@ -129,27 +129,28 @@ public class SearchMatcher
     {
         int      m_score;
         WikiPage m_page;
-        
+
         public SearchResultImpl( String name, int score )
         {
             m_page  = new WikiPage( m_engine, name );
             m_score = score;
         }
-        
+
         public WikiPage getPage()
         {
             return m_page;
         }
-        
+
         public int getScore()
         {
             return m_score;
         }
-        
-        public String[] getContexts() {
+
+        public String[] getContexts()
+        {
             // Unimplemented
             return new String[0];
         }
     }
-    
+
 }

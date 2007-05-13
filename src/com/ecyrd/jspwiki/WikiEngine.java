@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -104,7 +104,7 @@ public class WikiEngine
 
     /** Property for application name */
     public static final String PROP_APPNAME      = "jspwiki.applicationName";
-    
+
     /** Property start for any interwiki reference. */
     public static final String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
 
@@ -122,7 +122,7 @@ public class WikiEngine
     /** Property name for the "spaces in titles" -hack. */
     public static final String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
 
-    /** Property name for where the jspwiki work directory should be. 
+    /** Property name for where the jspwiki work directory should be.
         If not specified, reverts to ${java.tmpdir}. */
     public static final String PROP_WORKDIR      = "jspwiki.workDir";
 
@@ -131,7 +131,7 @@ public class WikiEngine
 
     /** Property name for the "match english plurals" -hack. */
     public static final String PROP_MATCHPLURALS     = "jspwiki.translatorReader.matchEnglishPlurals";
-    
+
     /** Property name for the template that is used. */
     public static final String PROP_TEMPLATEDIR  = "jspwiki.templateDir";
 
@@ -144,7 +144,7 @@ public class WikiEngine
 
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
-    
+
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
 
@@ -181,13 +181,13 @@ public class WikiEngine
 
     /** Stores the authentication manager.*/
     private AuthenticationManager      m_authenticationManager = null;
-    
+
     /** Stores the ACL manager. */
     private AclManager       m_aclManager = null;
- 
+
     /** Resolves wiki actions, JSPs and special pages. */
     private CommandResolver m_commandResolver = null;
-    
+
     private TemplateManager  m_templateManager = null;
 
     /** Does all our diffs for us. */
@@ -201,22 +201,22 @@ public class WikiEngine
 
     /** Facade for managing users */
     private UserManager      m_userManager = null;
-    
+
     /** Facade for managing users */
     private GroupManager     m_groupManager = null;
-    
+
     private RenderingManager m_renderingManager;
-    
+
     private EditorManager    m_editorManager;
-    
+
     private InternationalizationManager m_internationalizationManager;
-    
+
 	/** Constructs URLs */
     private URLConstructor   m_urlConstructor;
 
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
-    
+
     /** The RSS file to generate. */
     private String           m_rssFile;
 
@@ -243,7 +243,7 @@ public class WikiEngine
     private String           m_appid = "";
 
     private boolean          m_isConfigured = false; // Flag.
-  
+
 
     /** Each engine has its own workflow manager. */
     private WorkflowManager m_workflowMgr = null;
@@ -254,7 +254,7 @@ public class WikiEngine
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
      *  we throw a RuntimeException if things don't work.
-     *  
+     *
      *  @param config The ServletConfig object for this servlet.
      *
      *  @return A WikiEngine instance.
@@ -270,15 +270,15 @@ public class WikiEngine
     {
         return( getInstance( config.getServletContext(), null ) );
     }
-    
+
     /**
      * Gets a WikiEngine related to the servlet. Works like getInstance(ServletConfig),
      * but does not force the Properties object. This method is just an optional way
      * of initializing a WikiEngine for embedded JSPWiki applications; normally, you
      * should use getInstance(ServletConfig).
-     * 
+     *
      * @param config The ServletConfig of the webapp servlet/JSP calling this method.
-     * @param props  A set of properties, or null, if we are to load JSPWiki's default 
+     * @param props  A set of properties, or null, if we are to load JSPWiki's default
      *               jspwiki.properties (this is the usual case).
      */
     public static synchronized WikiEngine getInstance( ServletConfig config,
@@ -289,17 +289,17 @@ public class WikiEngine
 
     /**
      * Gets a WikiEngine related to the servlet. Works just like getInstance( ServletConfig )
-     * 
+     *
      * @param context The ServletContext of the webapp servlet/JSP calling this method.
-     * @param props  A set of properties, or null, if we are to load JSPWiki's default 
+     * @param props  A set of properties, or null, if we are to load JSPWiki's default
      *               jspwiki.properties (this is the usual case).
      */
 
     // FIXME: Potential make-things-easier thingy here: no need to fetch the wikiengine anymore
     //        Wiki.jsp.jspInit() [really old code]; it's probably even faster to fetch it
     //        using this method every time than go to pageContext.getAttribute().
-    
-    public static synchronized WikiEngine getInstance( ServletContext context, 
+
+    public static synchronized WikiEngine getInstance( ServletContext context,
                                                        Properties props )
         throws InternalWikiException
     {
@@ -316,7 +316,7 @@ public class WikiEngine
                 {
                     props = PropertyReader.loadWebAppProps( context );
                 }
-                
+
                 engine = new WikiEngine( context, appid, props );
                 context.setAttribute( ATTR_WIKIENGINE, engine );
             }
@@ -330,7 +330,7 @@ public class WikiEngine
 
         return engine;
     }
-    
+
 
     /**
      *  Instantiate the WikiEngine using a given set of properties.
@@ -341,7 +341,7 @@ public class WikiEngine
     {
         initialize( properties );
     }
-    
+
     /**
      *  Instantiate using this method when you're running as a servlet and
      *  WikiEngine will figure out where to look for the property
@@ -405,7 +405,7 @@ public class WikiEngine
 
         //  Initializes the CommandResolver
         m_commandResolver  = new CommandResolver( this, props );
-        
+
         //
         //  Create and find the default working directory.
         //
@@ -421,7 +421,7 @@ public class WikiEngine
         {
             File f = new File( m_workDir );
             f.mkdirs();
-            
+
             //
             //  A bunch of sanity checks
             //
@@ -437,9 +437,9 @@ public class WikiEngine
         }
 
         log.info("JSPWiki working directory is '"+m_workDir+"'");
-        
+
         m_saveUserInfo   = TextUtil.getBooleanProperty( props,
-                                                        PROP_STOREUSERNAME, 
+                                                        PROP_STOREUSERNAME,
                                                         m_saveUserInfo );
 
         m_useUTF8        = "UTF-8".equals( TextUtil.getStringProperty( props, PROP_ENCODING, "ISO-8859-1" ) );
@@ -447,7 +447,7 @@ public class WikiEngine
 
 
         m_beautifyTitle  = TextUtil.getBooleanProperty( props,
-                                                        PROP_BEAUTIFYTITLE, 
+                                                        PROP_BEAUTIFYTITLE,
                                                         m_beautifyTitle );
 
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
@@ -464,7 +464,7 @@ public class WikiEngine
         {
             Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
                                                   TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
-            m_urlConstructor = (URLConstructor) urlclass.newInstance();               
+            m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
 
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
@@ -475,7 +475,7 @@ public class WikiEngine
             m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
             m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName());
             m_renderingManager.initialize( this, props );
-            
+
             m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
 
             m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName());
@@ -487,7 +487,7 @@ public class WikiEngine
             m_editorManager.initialize( props );
 
             // Initialize the authentication, authorization, user and acl managers
-            
+
             m_authenticationManager.initialize( this, props );
             m_authorizationManager.initialize( this, props );
             m_userManager.initialize( this, props );
@@ -503,12 +503,12 @@ public class WikiEngine
 
             m_templateManager   = (TemplateManager)
                 ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
-            
+
             m_adminBeanManager = (AdminBeanManager)
                 ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
-            
+
             // Since we want to use a page filters initilize() method
-            // as a engine startup listener where we can initialize global event listeners, 
+            // as a engine startup listener where we can initialize global event listeners,
             // it must be called lastly, so that all object references in the engine
             // are availabe to the initialize() method
             m_filterManager     = (FilterManager)
@@ -518,19 +518,19 @@ public class WikiEngine
             //  ReferenceManager has the side effect of loading all
             //  pages.  Therefore after this point, all page attributes
             //  are available.
-            //  
+            //
             //  initReferenceManager is indirectly using m_filterManager, therefore
             //  it has to be called after it was initialized.
             //
             initReferenceManager();
-            
+
             //
             //  Hook the different manager routines into the system.
             //
             getFilterManager().addPageFilter(m_referenceManager, -1001 );
             getFilterManager().addPageFilter(m_searchManager, -1002 );
         }
-        
+
         catch( RuntimeException e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
@@ -558,13 +558,13 @@ public class WikiEngine
         //
         try
         {
-            if( TextUtil.getBooleanProperty( props, 
-                                             RSSGenerator.PROP_GENERATE_RSS, 
+            if( TextUtil.getBooleanProperty( props,
+                                             RSSGenerator.PROP_GENERATE_RSS,
                                              false ) )
             {
                 m_rssGenerator = (RSSGenerator)ClassUtil.getMappedObject(RSSGenerator.class.getName(), this, props );
             }
-            
+
             m_pageRenamer = (PageRenamer)ClassUtil.getMappedObject(PageRenamer.class.getName(), this, props );
         }
         catch( Exception e )
@@ -576,14 +576,14 @@ public class WikiEngine
         // Start the RSS generator & generator thread
         if( m_rssGenerator != null )
         {
-            m_rssFile = TextUtil.getStringProperty( props, 
+            m_rssFile = TextUtil.getStringProperty( props,
                     RSSGenerator.PROP_RSSFILE, "rss.rdf" );
             File rssFile=null;
-            if (m_rssFile.startsWith(File.separator)) 
+            if (m_rssFile.startsWith(File.separator))
             {
                 // honor absolute pathnames:
                 rssFile = new File(m_rssFile );
-            } 
+            }
             else
             {
                 // relative path names are anchored from the webapp root path:
@@ -604,7 +604,7 @@ public class WikiEngine
     /**
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
-     * @throws WikiException 
+     * @throws WikiException
      */
     public void initReferenceManager() throws WikiException
     {
@@ -617,11 +617,11 @@ public class WikiEngine
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
             {
-                m_referenceManager = 
+                m_referenceManager =
                     (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
             }
-        
+
         }
         catch( ProviderException e )
         {
@@ -637,7 +637,7 @@ public class WikiEngine
      *  @param key   The key to look for.
      *  @return The required property
      *
-     *  @throws NoRequiredPropertyException If the search key is not 
+     *  @throws NoRequiredPropertyException If the search key is not
      *          in the property set.
      */
 
@@ -715,7 +715,7 @@ public class WikiEngine
 
     /**
      *  Returns the moment when this engine was started.
-     * 
+     *
      *  @since 2.0.15.
      */
 
@@ -776,7 +776,7 @@ public class WikiEngine
     {
         return m_urlConstructor.makeURL( context, pageName, absolute, params );
     }
-    
+
     /**
      *  Returns the default front page, if no page is used.
      */
@@ -815,7 +815,7 @@ public class WikiEngine
      *
      *  @since 1.5.3
      *  @deprecated JSPWiki now requires servlet API 2.3, which has a better
-     *              way of dealing with this stuff.  This will be removed in 
+     *              way of dealing with this stuff.  This will be removed in
      *              the near future.
      */
 
@@ -824,7 +824,7 @@ public class WikiEngine
         try
         {
             String res = request.getParameter( name );
-            if( res != null ) 
+            if( res != null )
             {
                 res = new String(res.getBytes("ISO-8859-1"),
                                  getContentEncoding() );
@@ -844,7 +844,7 @@ public class WikiEngine
      *  Returns the query string (the portion after the question mark).
      *
      *  @return The query string.  If the query string is null,
-     *   returns an empty string. 
+     *   returns an empty string.
      *
      *  @since 2.1.3
      */
@@ -858,7 +858,7 @@ public class WikiEngine
         try
         {
             String res = request.getQueryString();
-            if( res != null ) 
+            if( res != null )
             {
                 res = new String(res.getBytes("ISO-8859-1"),
                                  getContentEncoding() );
@@ -867,12 +867,12 @@ public class WikiEngine
                 // Ensure that the 'page=xyz' attribute is removed
                 // FIXME: Is it really the mandate of this routine to
                 //        do that?
-                // 
+                //
                 int pos1 = res.indexOf("page=");
                 if (pos1 >= 0)
                 {
                     String tmpRes = res.substring(0, pos1);
-                    int pos2 = res.indexOf("&",pos1) + 1;   
+                    int pos2 = res.indexOf("&",pos1) + 1;
                     if ( (pos2 > 0) && (pos2 < res.length()) )
                     {
                         tmpRes = tmpRes + res.substring(pos2);
@@ -932,7 +932,7 @@ public class WikiEngine
     /**
      *  <p>If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns <code>null</code>.
-     *  This method delgates requests to 
+     *  This method delgates requests to
      *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getSpecialPageReference(String)}.
      *  </p>
      */
@@ -968,14 +968,14 @@ public class WikiEngine
             try
             {
                 Attachment att = m_attachmentManager.getAttachmentInfo(title);
-                
+
                 if(att == null)
                 {
                     return TextUtil.beautifyString( title );
                 }
-                
+
                 String parent = TextUtil.beautifyString( att.getParentName() );
-                
+
                 return parent + "/" + att.getFileName();
             }
             catch( ProviderException e )
@@ -988,7 +988,7 @@ public class WikiEngine
     }
 
     /**
-     *  Beautifies the title of the page by appending non-breaking spaces 
+     *  Beautifies the title of the page by appending non-breaking spaces
      *  in suitable places.  This is really suitable only for HTML output,
      *  as it uses the &amp;nbsp; -character.
      *
@@ -1001,7 +1001,7 @@ public class WikiEngine
             return TextUtil.beautifyString( title, "&nbsp;" );
         }
 
-        return title;        
+        return title;
     }
 
     /**
@@ -1048,7 +1048,7 @@ public class WikiEngine
         String finalName = getFinalPageName( page );
 
         boolean isThere = false;
-        
+
         if( finalName != null )
         {
             //
@@ -1095,7 +1095,7 @@ public class WikiEngine
     /**
      *  Returns the correct page name, or null, if no such
      *  page can be found.  Aliases are considered. This
-     *  method simply delegates to 
+     *  method simply delegates to
      *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getFinalPageName(String)}.
      *  @since 2.0
      *  @param page Page name.
@@ -1108,7 +1108,7 @@ public class WikiEngine
     }
 
     /**
-     *  Turns a WikiName into something that can be 
+     *  Turns a WikiName into something that can be
      *  called through using an URL.
      *
      *  @since 1.4.1
@@ -1122,7 +1122,7 @@ public class WikiEngine
         catch( UnsupportedEncodingException e )
         {
             throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
-        }        
+        }
     }
 
     public String decodeName( String pagerequest )
@@ -1145,14 +1145,14 @@ public class WikiEngine
      */
     public String getContentEncoding()
     {
-        if( m_useUTF8 ) 
+        if( m_useUTF8 )
             return "UTF-8";
 
         return "ISO-8859-1";
     }
 
     /**
-     * Returns the {@link com.ecyrd.jspwiki.workflow.WorkflowManager} associated with this 
+     * Returns the {@link com.ecyrd.jspwiki.workflow.WorkflowManager} associated with this
      * WikiEngine. If the WIkiEngine has not been initialized, this method will return
      * <code>null</code>.
      * @return the task queue
@@ -1232,7 +1232,7 @@ public class WikiEngine
      *  the page contents.
      *
      *  @param page    The name of the page to fetch.
-     *  @param version If WikiPageProvider.LATEST_VERSION, then uses the 
+     *  @param version If WikiPageProvider.LATEST_VERSION, then uses the
      *  latest version.
      *  @return The page contents.  If the page does not exist,
      *          returns an empty string.
@@ -1265,7 +1265,7 @@ public class WikiEngine
      *  the page. Note that you should always check for page
      *  existence through pageExists() before attempting to fetch
      *  the page contents.
-     *  
+     *
      *  @param page A handle to the WikiPage
      *  @return String of WikiText.
      *  @since 2.1.13.
@@ -1290,7 +1290,7 @@ public class WikiEngine
 
         return res;
     }
-    
+
     /**
      *  Returns the converted HTML of the page.
      *
@@ -1316,7 +1316,7 @@ public class WikiEngine
         WikiContext context = new WikiContext( this,
                                                page );
         context.setRequestContext( WikiContext.NONE );
-        
+
         String res = getHTML( context, page );
 
         return res;
@@ -1332,7 +1332,7 @@ public class WikiEngine
         String result = "";
 
         boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
-        
+
         StopWatch sw = new StopWatch();
         sw.start();
         try
@@ -1352,7 +1352,7 @@ public class WikiEngine
         sw.stop();
         if( log.isDebugEnabled() )
             log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
-            
+
         return( result );
     }
 
@@ -1368,14 +1368,14 @@ public class WikiEngine
         fireEvent( WikiEngineEvent.SHUTDOWN );
         m_filterManager.destroy();
     }
-    
+
     /**
      *  Reads a WikiPageful of data from a String and returns all links
      *  internal to this Wiki in a Collection.
      */
     protected Collection scanWikiLinks( WikiPage page, String pagedata )
     {
-        LinkCollector localCollector = new LinkCollector();        
+        LinkCollector localCollector = new LinkCollector();
 
         textToHTML( new WikiContext(this,page),
                     pagedata,
@@ -1392,8 +1392,8 @@ public class WikiEngine
      *  Just convert WikiText to HTML.
      */
 
-    public String textToHTML( WikiContext context, 
-                              String pagedata, 
+    public String textToHTML( WikiContext context,
+                              String pagedata,
                               StringTransmutator localLinkHook,
                               StringTransmutator extLinkHook )
     {
@@ -1404,8 +1404,8 @@ public class WikiEngine
      *  Just convert WikiText to HTML.
      */
 
-    public String textToHTML( WikiContext context, 
-                              String pagedata, 
+    public String textToHTML( WikiContext context,
+                              String pagedata,
                               StringTransmutator localLinkHook,
                               StringTransmutator extLinkHook,
                               StringTransmutator attLinkHook )
@@ -1416,8 +1416,8 @@ public class WikiEngine
     /**
      *  Helper method for doing the HTML translation.
      */
-    private String textToHTML( WikiContext context, 
-                               String pagedata, 
+    private String textToHTML( WikiContext context,
+                               String pagedata,
                                StringTransmutator localLinkHook,
                                StringTransmutator extLinkHook,
                                StringTransmutator attLinkHook,
@@ -1426,19 +1426,19 @@ public class WikiEngine
     {
         String result = "";
 
-        if( pagedata == null ) 
+        if( pagedata == null )
         {
             log.error("NULL pagedata to textToHTML()");
             return null;
         }
 
         boolean runFilters = "true".equals(m_variableManager.getValue(context,PROP_RUNFILTERS,"true"));
-        
+
         try
         {
             StopWatch sw = new StopWatch();
             sw.start();
-            
+
             if( runFilters )
                 pagedata = m_filterManager.doPreTranslateFiltering( context, pagedata );
 
@@ -1446,11 +1446,11 @@ public class WikiEngine
             mp.addLocalLinkHook( localLinkHook );
             mp.addExternalLinkHook( extLinkHook );
             mp.addAttachmentLinkHook( attLinkHook );
-            
+
             if( !parseAccessRules ) mp.disableAccessRules();
 
             WikiDocument doc = mp.parse();
-            
+
             //
             //  In some cases it's better just to parse, not to render
             //
@@ -1461,7 +1461,7 @@ public class WikiEngine
                 if( runFilters )
                     result = m_filterManager.doPostTranslateFiltering( context, result );
             }
-            
+
             sw.stop();
 
             if( log.isDebugEnabled() )
@@ -1497,7 +1497,7 @@ public class WikiEngine
      *  page repository. If the <code>jspwiki.properties</code> file contains
      *  the property <code>jspwiki.approver.workflow.saveWikiPage</code> and
      *  its value resolves to a valid user, {@link com.ecyrd.jspwiki.auth.authorize.Group}
-     *  or {@link com.ecyrd.jspwiki.auth.authorize.Role}, this method will 
+     *  or {@link com.ecyrd.jspwiki.auth.authorize.Role}, this method will
      *  place a {@link com.ecyrd.jspwiki.workflow.Decision} in the approver's
      *  workflow inbox and throw a {@link com.ecyrd.jspwiki.filters.RedirectException}.
      *  If the submitting user is authenticated and the page save is rejected,
@@ -1520,7 +1520,7 @@ public class WikiEngine
         {
             return;
         }
-        
+
         // Create approval workflow for page save; add the diffed, proposed
         // and old text versions as Facts for the approver (if approval is required)
         // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
@@ -1537,19 +1537,19 @@ public class WikiEngine
         facts[3] = new Fact( PageManager.FACT_CURRENT_TEXT, oldText);
         facts[4] = new Fact( PageManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
         String rejectKey = isAuthenticated ? PageManager.SAVE_REJECT_MESSAGE_KEY : null;
-        Workflow workflow = builder.buildApprovalWorkflow( submitter, 
-                                                           PageManager.SAVE_APPROVER, 
-                                                           prepTask, 
-                                                           PageManager.SAVE_DECISION_MESSAGE_KEY, 
-                                                           facts, 
-                                                           completionTask, 
+        Workflow workflow = builder.buildApprovalWorkflow( submitter,
+                                                           PageManager.SAVE_APPROVER,
+                                                           prepTask,
+                                                           PageManager.SAVE_DECISION_MESSAGE_KEY,
+                                                           facts,
+                                                           completionTask,
                                                            rejectKey );
         m_workflowMgr.start(workflow);
-        
+
         // Let callers know if the page-save requires approval
         if ( workflow.getCurrentStep() instanceof Decision )
         {
-            throw new RedirectException( "Approval required.", 
+            throw new RedirectException( "Approval required.",
                                          context.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges") );
         }
     }
@@ -1577,8 +1577,8 @@ public class WikiEngine
      *  Return information about current provider.  This method just calls
      *  the corresponding PageManager method, which in turn calls the
      *  provider method.
-     *  
-     *  @return A textual description of the current provider. 
+     *
+     *  @return A textual description of the current provider.
      *  @since 1.6.4
      */
     public String getCurrentProviderInfo()
@@ -1590,7 +1590,7 @@ public class WikiEngine
      *  Returns a Collection of WikiPages, sorted in time
      *  order of last change (i.e. first object is the most
      *  recently changed).  This method also includes attachments.
-     *  
+     *
      *  @return Collection of WikiPage objects.  In reality, the returned
      *          collection is a Set, but due to API compatibility reasons,
      *          we're not changing the signature soon...
@@ -1634,14 +1634,14 @@ public class WikiEngine
         throws ProviderException, IOException
     {
         Collection results = m_searchManager.findPages( query );
-        
+
         return results;
     }
 
     /**
      *  Finds the corresponding WikiPage object based on the page name.  It always finds
      *  the latest version of a page.
-     *  
+     *
      *  @param pagereq The name of the page to look for.
      *  @return A WikiPage object, or null, if the page by the name could not be found.
      */
@@ -1653,12 +1653,12 @@ public class WikiEngine
 
     /**
      *  Finds the corresponding WikiPage object base on the page name and version.
-     *  
+     *
      *  @param pagereq The name of the page to look for.
      *  @param version The version number to look for.  May be WikiProvider.LATEST_VERSION,
      *  in which case it will look for the latest version (and this method then becomes
      *  the equivalent of getPage(String).
-     *  
+     *
      *  @return A WikiPage object, or null, if the page could not be found; or if there
      *  is no such version of the page.
      *  @since 1.6.7.
@@ -1688,7 +1688,7 @@ public class WikiEngine
     /**
      *  Returns a Collection of WikiPages containing the
      *  version history of a page.
-     *  
+     *
      *  @param page Name of the page to look for
      *  @return an ordered List of WikiPages, each corresponding to a different
      *          revision of the page.
@@ -1719,9 +1719,9 @@ public class WikiEngine
      *  Returns a diff of two versions of a page.
      *
      *  @param page Page to return
-     *  @param version1 Version number of the old page.  If 
+     *  @param version1 Version number of the old page.  If
      *         WikiPageProvider.LATEST_VERSION (-1), then uses current page.
-     *  @param version2 Version number of the new page.  If 
+     *  @param version2 Version number of the new page.  If
      *         WikiPageProvider.LATEST_VERSION (-1), then uses current page.
      *
      *  @return A HTML-ized difference between two pages.  If there is no difference,
@@ -1756,7 +1756,7 @@ public class WikiEngine
 
     /**
      *  Returns the current rendering manager for this wiki application.
-     *  
+     *
      *  @since 2.3.27
      * @return A RenderingManager object.
      */
@@ -1764,8 +1764,8 @@ public class WikiEngine
     {
         return m_renderingManager;
     }
-    
-    /**      
+
+    /**
      *  Returns the current plugin manager.
      *  @since 1.6.1
      */
@@ -1774,7 +1774,7 @@ public class WikiEngine
     {
         return m_pluginManager;
     }
-    
+
     /**
      *  Returns the current variable manager.
      *  @return The current VariableManager.
@@ -1786,7 +1786,7 @@ public class WikiEngine
     }
 
     /**
-     *  Shortcut to getVariableManager().getValue(). However, this method does not 
+     *  Shortcut to getVariableManager().getValue(). However, this method does not
      *  throw a NoSuchVariableException, but returns null in case the variable does
      *  not exist.
      *
@@ -1815,7 +1815,7 @@ public class WikiEngine
     {
         return m_pageManager;
     }
-    
+
     /**
      * Returns the CommandResolver for this wiki engine.
      * @return the resolver
@@ -1828,7 +1828,7 @@ public class WikiEngine
     /**
      *  Returns the current AttachmentManager, which is responsible for
      *  storing and managing attachments.
-     *  
+     *
      *  @since 1.9.31.
      */
     public AttachmentManager getAttachmentManager()
@@ -1873,7 +1873,7 @@ public class WikiEngine
     /**
      *  Figure out to which page we are really going to.  Considers
      *  special page names from the jspwiki.properties, and possible aliases.
-     *  This method delgates requests to 
+     *  This method delgates requests to
      *  {@link com.ecyrd.jspwiki.WikiContext#getRedirectURL()}.
      *  @param context The Wiki Context in which the request is being made.
      *  @return A complete URL to the new page to redirect to
@@ -1910,7 +1910,7 @@ public class WikiEngine
     /**
      *  Deletes a page or an attachment completely, including all versions.  If the page
      *  does not exist, does nothing.
-     * 
+     *
      * @param pageName
      * @throws ProviderException
      */
@@ -1918,7 +1918,7 @@ public class WikiEngine
         throws ProviderException
     {
         WikiPage p = getPage( pageName );
-        
+
         if( p != null )
         {
             if( p instanceof Attachment )
@@ -1939,10 +1939,10 @@ public class WikiEngine
             }
         }
     }
-    
+
     /**
      *  Deletes a specific version of a page or an attachment.
-     * 
+     *
      * @param page
      * @throws ProviderException
      */
@@ -1958,7 +1958,7 @@ public class WikiEngine
             m_pageManager.deleteVersion( page );
         }
     }
-    
+
     /**
      *  Returns the URL of the global RSS file.  May be null, if the
      *  RSS file generation is not operational.
@@ -1990,7 +1990,7 @@ public class WikiEngine
     {
         return m_urlConstructor;
     }
-    
+
     /**
      * @since 2.1.165
      * @return the RSS generator
@@ -2017,20 +2017,20 @@ public class WikiEngine
      *                          page already existing.
      */
     public String renamePage( WikiContext context,
-                              String renameFrom, 
+                              String renameFrom,
                               String renameTo,
                               boolean changeReferrers)
         throws WikiException
     {
         return m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
     }
-    
+
     /**
      * Returns the UserDatabase employed by this WikiEngine.
      * The UserDatabase is lazily initialized.
      * @since 2.3
      */
-    
+
     /**
      * Returns the UserManager employed by this WikiEngine.
      * @since 2.3
@@ -2039,7 +2039,7 @@ public class WikiEngine
     {
         return m_userManager;
     }
-    
+
     /**
      * Returns the GroupManager employed by this WikiEngine.
      * @since 2.3
@@ -2053,7 +2053,7 @@ public class WikiEngine
     {
         return m_adminBeanManager;
     }
-    
+
     /**
      * Returns the AclManager employed by this WikiEngine.
      * The AclManager is lazily initialized.
@@ -2061,7 +2061,8 @@ public class WikiEngine
      */
     public AclManager getAclManager()
     {
-        if (m_aclManager == null) {
+        if (m_aclManager == null)
+        {
             // TODO: make this pluginizable
             m_aclManager = new DefaultAclManager();
             m_aclManager.initialize( this, m_properties );
@@ -2077,13 +2078,13 @@ public class WikiEngine
     {
         return m_differenceManager;
     }
-    
+
     public EditorManager getEditorManager()
     {
         return m_editorManager;
     }
-    
-    
+
+
     public InternationalizationManager getInternationalizationManager()
     {
         return m_internationalizationManager;
@@ -2097,7 +2098,7 @@ public class WikiEngine
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
-    
+
     /**
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
@@ -2120,11 +2121,11 @@ public class WikiEngine
     }
 
     private Map m_attributes = Collections.synchronizedMap(new HashMap());
-    
+
     /**
      * Adds an attribute to the engine for the duration of this engine.  The
      * value is not persisted.
-     * 
+     *
      * @since 2.4.91
      * @param key the attribute name
      * @param value the value
@@ -2133,7 +2134,7 @@ public class WikiEngine
     {
         m_attributes.put( key, value );
     }
-    
+
     /**
      *  Gets an attribute from the engine.
      *  @param key the attribute name
@@ -2143,7 +2144,7 @@ public class WikiEngine
     {
         return m_attributes.get( key );
     }
-    
+
     /**
      *  Removes an attribute.
      * @param key
@@ -2153,7 +2154,7 @@ public class WikiEngine
     {
         return m_attributes.remove( key );
     }
-    
+
     /**
      * Returns a WatchDog for current thread.
      * @since 2.4.92

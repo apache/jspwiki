@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -56,7 +56,7 @@ public class FileUtil
         try
         {
             f = File.createTempFile( "jspwiki", null );
-            
+
             in = new StringReader( content );
 
             out = new OutputStreamWriter( new FileOutputStream( f ),
@@ -90,7 +90,7 @@ public class FileUtil
         throws IOException,
                InterruptedException
     {
-        StringBuffer result = new StringBuffer();        
+        StringBuffer result = new StringBuffer();
 
         log.info("Running simple command "+command+" in "+directory);
 
@@ -98,7 +98,7 @@ public class FileUtil
 
         BufferedReader stdout = null;
         BufferedReader stderr = null;
-        
+
         try
         {
             stdout = new BufferedReader( new InputStreamReader(process.getInputStream()) );
@@ -107,15 +107,15 @@ public class FileUtil
             String line;
 
             while( (line = stdout.readLine()) != null )
-            { 
+            {
                 result.append( line+"\n");
-            }            
+            }
 
             StringBuffer error = new StringBuffer();
             while( (line = stderr.readLine()) != null )
-            { 
+            {
                 error.append( line+"\n");
-            }            
+            }
 
             if( error.length() > 0 )
             {
@@ -123,16 +123,16 @@ public class FileUtil
             }
 
             process.waitFor();
-        
+
         }
         finally
         {
             // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
             process.getInputStream().close();
             if( stdout != null ) stdout.close();
-            if( stderr != null ) stderr.close(); 
+            if( stderr != null ) stderr.close();
         }
-        
+
         return result.toString();
     }
 
@@ -148,7 +148,7 @@ public class FileUtil
         char[] buf = new char[4096];
         int bytesRead = 0;
 
-        while ((bytesRead = in.read(buf)) > 0) 
+        while ((bytesRead = in.read(buf)) > 0)
         {
             out.write(buf, 0, bytesRead);
         }
@@ -167,7 +167,7 @@ public class FileUtil
         byte[] buf = new byte[4096];
         int bytesRead = 0;
 
-        while ((bytesRead = in.read(buf)) > 0) 
+        while ((bytesRead = in.read(buf)) > 0)
         {
             out.write(buf, 0, bytesRead);
         }
@@ -181,8 +181,8 @@ public class FileUtil
      *  This method is smart and falls back to ISO-8859-1 if the input stream does not
      *  seem to be in the specified encoding.
      */
- 
-    
+
+
     public static String readContents( InputStream input, String encoding )
         throws IOException
     {
@@ -207,7 +207,7 @@ public class FileUtil
         {
             Charset        latin1    = Charset.forName("ISO-8859-1");
             CharsetDecoder l1decoder = latin1.newDecoder();
-            
+
             l1decoder.onMalformedInput( CodingErrorAction.REPORT );
             l1decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
 
@@ -250,7 +250,7 @@ public class FileUtil
             {
                 out.close();
             }
-            catch( Exception e ) 
+            catch( Exception e )
             {
                 log.error("Not able to close the stream while reading contents.");
             }
@@ -261,10 +261,13 @@ public class FileUtil
     {
         StackTraceElement[] trace = t.getStackTrace();
         StringBuffer sb = new StringBuffer();
-        
-        if( trace == null || trace.length == 0 ) {
+
+        if( trace == null || trace.length == 0 )
+        {
             sb.append( "[Stack trace not available]" );
-        } else {
+        }
+        else
+        {
             sb.append( trace[0].isNativeMethod() ? "native method" : "" );
             sb.append( trace[0].getClassName() );
             sb.append(".");

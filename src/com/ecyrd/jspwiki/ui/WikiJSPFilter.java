@@ -233,17 +233,17 @@ public class WikiJSPFilter extends WikiServletFilter
 
         class MyServletOutputStream extends ServletOutputStream
         {
-            CharArrayWriter buffer;
+            CharArrayWriter m_buffer;
 
             public MyServletOutputStream(CharArrayWriter aCharArrayWriter)
             {
                 super();
-                buffer = aCharArrayWriter;
+                m_buffer = aCharArrayWriter;
             }
 
             public void write(int aInt)
             {
-                buffer.write( aInt );
+                m_buffer.write( aInt );
             }
 
         }
