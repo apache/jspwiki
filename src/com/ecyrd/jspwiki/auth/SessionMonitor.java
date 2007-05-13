@@ -1,4 +1,4 @@
-/* 
+/*
   JSPWiki - a JSP-based WikiWiki clone.
 
   Copyright (C) 2001-2006 JSPWiki Development Team
@@ -44,31 +44,31 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  */
 public class SessionMonitor implements HttpSessionListener
 {
-    private static final Logger log = Logger.getLogger( SessionMonitor.class );
-    
+    private static Logger log = Logger.getLogger( SessionMonitor.class );
+
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
-    private static final Map          c_monitors   = new HashMap();
-    
+    private static Map          c_monitors   = new HashMap();
+
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
     private final Map                 m_sessions   = new WeakHashMap();
 
-    private       WikiEngine          m_engine     = null;
-    
+    private       WikiEngine          m_engine;
+
     private final PrincipalComparator m_comparator = new PrincipalComparator();
-    
+
     /**
      * Returns the instance of the SessionMonitor for this wiki.
      * Only one SessionMonitor exists per WikiEngine.
      * @return the session monitor
      */
-    public final static SessionMonitor getInstance( WikiEngine engine ) 
+    public static final SessionMonitor getInstance( WikiEngine engine )
     {
-        if( engine == null ) 
+        if( engine == null )
         {
             throw new IllegalArgumentException( "Engine cannot be null." );
         }
         SessionMonitor monitor;
-        
+
         synchronized( c_monitors )
         {
             monitor = (SessionMonitor) c_monitors.get(engine);
@@ -78,10 +78,10 @@ public class SessionMonitor implements HttpSessionListener
 
                 c_monitors.put( engine, monitor );
             }
-        }        
+        }
         return monitor;
     }
-    
+
     /**
      * Construct the SessionListener
      */
@@ -96,7 +96,7 @@ public class SessionMonitor implements HttpSessionListener
 
     /**
      *  Just looks for a WikiSession, does not create a new one.
-     *  
+     *
      *  @param session
      *  @return
      */
@@ -106,8 +106,8 @@ public class SessionMonitor implements HttpSessionListener
         String sid = ( session == null ) ? "(null)" : session.getId();
         WikiSession storedSession = (WikiSession)m_sessions.get( sid );
         String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
-        
-        if( storedSession == null ) 
+
+        if( storedSession == null )
         {
             try
             {
@@ -134,12 +134,12 @@ public class SessionMonitor implements HttpSessionListener
     }
     /**
      * <p>Looks up the wiki session associated with a user's Http session
-     * and adds it to the session cache. This method will return the 
+     * and adds it to the session cache. This method will return the
      * "guest session" as constructed by {@link WikiSession#guestSession(WikiEngine)}
      * if the HttpSession is not currently associated with a WikiSession.
      * This method is guaranteed to return a non-<code>null</code> WikiSession.</p>
      * <p>Internally, the session is stored in a HashMap; keys are
-     * the HttpSession objects, while the values are 
+     * the HttpSession objects, while the values are
      * {@link java.lang.ref.WeakReference}-wrapped WikiSessions.</p>
      * @param session the HTTP session
      * @return the wiki session
@@ -149,7 +149,7 @@ public class SessionMonitor implements HttpSessionListener
         WikiSession wikiSession = findSession(session);
         String sid = ( session == null ) ? "(null)" : session.getId();
         String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
-        
+
         // Otherwise, create a new guest session and stash it.
         if( wikiSession == null )
         {
@@ -167,9 +167,9 @@ public class SessionMonitor implements HttpSessionListener
 
         return wikiSession;
     }
-    
+
     /**
-     * Removes the wiki session associated with the user's HttpSession 
+     * Removes the wiki session associated with the user's HttpSession
      * from the session cache.
      * @param session the user's HTTP session
      */
@@ -184,7 +184,7 @@ public class SessionMonitor implements HttpSessionListener
             m_sessions.remove( session.getId() );
         }
     }
-    
+
     /**
      * Returns the current number of active wiki sessions.
      * @return the number of sessions
@@ -193,14 +193,14 @@ public class SessionMonitor implements HttpSessionListener
     {
         return userPrincipals().length;
     }
-    
+
     /**
-     * <p>Returns the current wiki users as a sorted array of 
-     * Principal objects. The principals are those returned by 
-     * each WikiSession's {@link WikiSession#getUserPrincipal()}'s 
+     * <p>Returns the current wiki users as a sorted array of
+     * Principal objects. The principals are those returned by
+     * each WikiSession's {@link WikiSession#getUserPrincipal()}'s
      * method.</p>
-     * <p>To obtain the list of current WikiSessions, we iterate 
-     * through our session Map and obtain the list of values, 
+     * <p>To obtain the list of current WikiSessions, we iterate
+     * through our session Map and obtain the list of values,
      * which are WikiSessions wrapped in {@link java.lang.ref.WeakReference}
      * objects. Those <code>WeakReference</code>s whose <code>get()</code>
      * method returns non-<code>null</code> values are valid
@@ -220,17 +220,17 @@ public class SessionMonitor implements HttpSessionListener
         Arrays.sort( p, m_comparator );
         return p;
     }
-    
+
     /**
      * Registers a WikiEventListener with this instance.
      * @param listener the event listener
      * @since 2.4.75
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
-    
+
     /**
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
@@ -253,12 +253,12 @@ public class SessionMonitor implements HttpSessionListener
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,session));
         }
     }
-    
+
     public void sessionCreated( HttpSessionEvent se )
     {
         // No Action Needed when session created
     }
-    
+
     public void sessionDestroyed( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
@@ -266,17 +266,17 @@ public class SessionMonitor implements HttpSessionListener
         while( it.hasNext() )
         {
             SessionMonitor monitor = (SessionMonitor)it.next();
-            
+
             WikiSession storedSession = monitor.findSession(session);
-            
+
             monitor.remove(session);
-            
+
             log.debug("Removed session "+session.getId()+".");
-            
+
             if( storedSession != null )
             {
-                fireEvent( WikiSecurityEvent.SESSION_EXPIRED, 
-                           storedSession.getLoginPrincipal(), 
+                fireEvent( WikiSecurityEvent.SESSION_EXPIRED,
+                           storedSession.getLoginPrincipal(),
                            storedSession );
             }
         }

@@ -1,4 +1,4 @@
-/* 
+/*
   JSPWiki - a JSP-based WikiWiki clone.
 
   Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -63,8 +63,8 @@ public final class UserManager
     private static final String UNKNOWN_CLASS = "<unknown>";
 
     private WikiEngine m_engine;
-    
-    private static final Logger log = Logger.getLogger(UserManager.class);
+
+    private static Logger log = Logger.getLogger(UserManager.class);
 
     public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
     private static final String PROP_DATABASE               = "jspwiki.userdatabase";
@@ -79,13 +79,13 @@ public final class UserManager
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** Associateds wiki sessions with profiles */
-    private final Map        m_profiles     = new WeakHashMap(); 
-    
+    private final Map        m_profiles     = new WeakHashMap();
+
     /** The user database loads, manages and persists user identities */
-    private UserDatabase     m_database     = null;
-    
+    private UserDatabase     m_database;
+
     private boolean          m_useJAAS      = true;
-    
+
     /**
      * Constructs a new UserManager instance.
      */
@@ -101,14 +101,14 @@ public final class UserManager
     public final void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
-        
+
         m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
-        
+
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly
         addWikiEventListener( engine.getPageManager() );
     }
-    
+
     /**
      * Returns the UserDatabase employed by this WikiEngine. The UserDatabase is
      * lazily initialized by this method, if it does not exist yet. If the
@@ -119,22 +119,22 @@ public final class UserManager
     public final UserDatabase getUserDatabase()
     {
         // FIXME: Must not throw RuntimeException, but something else.
-        if( m_database != null ) 
+        if( m_database != null )
         {
             return m_database;
         }
-        
+
         if( !m_useJAAS )
         {
             m_database = new DummyUserDatabase();
             return m_database;
         }
-        
+
         String dbClassName = UNKNOWN_CLASS;
-        
+
         try
         {
-            dbClassName = WikiEngine.getRequiredProperty( m_engine.getWikiProperties(), 
+            dbClassName = WikiEngine.getRequiredProperty( m_engine.getWikiProperties(),
                                                           PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
@@ -167,7 +167,7 @@ public final class UserManager
                 m_database = new DummyUserDatabase();
             }
         }
-        
+
         return m_database;
     }
 
@@ -200,7 +200,7 @@ public final class UserManager
         UserProfile profile = (UserProfile)m_profiles.get( session );
         boolean newProfile = ( profile == null );
         Principal user = null;
-        
+
         // If user is authenticated, figure out if this is an existing profile
         if ( session.isAuthenticated() )
         {
@@ -214,8 +214,8 @@ public final class UserManager
             {
             }
         }
-        
-        if ( newProfile ) 
+
+        if ( newProfile )
         {
             profile = m_database.newProfile();
             if ( user != null )
@@ -228,7 +228,7 @@ public final class UserManager
                         "New profile should be marked 'new'. Check your UserProfile implementation." );
             }
         }
-        
+
         // Stash the profile for next time
         m_profiles.put( session, profile );
         return profile;
@@ -251,9 +251,9 @@ public final class UserManager
      * source and the UserProfile as target. For existing profiles, if the
      * user's full name changes, this method also fires a "name changed"
      * event ({@link WikiSecurityEvent#PROFILE_NAME_CHANGED}) with the
-     * WikiSession as the source and an array containing the old and new 
+     * WikiSession as the source and an array containing the old and new
      * UserProfiles, respectively. The <code>NAME_CHANGED</code> event allows
-     * the GroupManager and PageManager can change group memberships and 
+     * the GroupManager and PageManager can change group memberships and
      * ACLs if needed.
      * </p>
      * <p>
@@ -285,8 +285,8 @@ public final class UserManager
 
         // Check if another user profile already has the fullname or loginname
         UserProfile oldProfile = getUserProfile( session );
-        boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null ) 
-            ? false 
+        boolean nameChanged = ( oldProfile == null  || oldProfile.getFullname() == null )
+            ? false
             : !( oldProfile.getFullname().equals( profile.getFullname() ) &&
                  oldProfile.getLoginName().equals( profile.getLoginName() ) );
         UserProfile otherProfile;
@@ -319,7 +319,7 @@ public final class UserManager
             WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
             Principal submitter = session.getUserPrincipal();
             Task completionTask = new SaveUserProfileTask( m_engine );
-            
+
             // Add user profile attribute as Facts for the approver (if required)
             boolean hasEmail = ( profile.getEmail() != null );
             Fact[] facts = new Fact[ hasEmail ? 4 : 3];
@@ -330,26 +330,26 @@ public final class UserManager
             {
                 facts[3] = new Fact( PREFS_EMAIL, profile.getEmail() );
             }
-            Workflow workflow = builder.buildApprovalWorkflow( submitter, 
-                                                               SAVE_APPROVER, 
-                                                               null, 
-                                                               SAVE_DECISION_MESSAGE_KEY, 
-                                                               facts, 
-                                                               completionTask, 
+            Workflow workflow = builder.buildApprovalWorkflow( submitter,
+                                                               SAVE_APPROVER,
+                                                               null,
+                                                               SAVE_DECISION_MESSAGE_KEY,
+                                                               facts,
+                                                               completionTask,
                                                                null );
-            
+
             workflow.setAttribute( SAVED_PROFILE, profile );
             m_engine.getWorkflowManager().start(workflow);
-            
+
             boolean approvalRequired = ( workflow.getCurrentStep() instanceof Decision );
-            
+
             // If the profile requires approval, redirect user to message page
             if ( approvalRequired )
             {
-                throw new RedirectException( "Approval required.", 
+                throw new RedirectException( "Approval required.",
                                              m_engine.getURL(WikiContext.VIEW,"ApprovalRequiredForUserProfiles",null,true) );
             }
-            
+
             // If the profile doesn't need approval, then just log the user in
 
             try
@@ -364,12 +364,12 @@ public final class UserManager
             {
                 throw new WikiSecurityException( e.getMessage() );
             }
-                
+
             // Alert all listeners that the profile changed...
             // ...this will cause credentials to be reloaded in the wiki session
             fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
         }
-        
+
         // For existing accounts, just save the profile
         else
         {
@@ -378,10 +378,10 @@ public final class UserManager
             {
                 m_database.rename( oldProfile.getLoginName(), profile.getLoginName() );
             }
-            
+
             // Now, save the profile (userdatabase will take care of timestamps for us)
             m_database.save( profile );
-            
+
             if ( nameChanged )
             {
                 // Fire an event if the login name or full name changed
@@ -423,7 +423,7 @@ public final class UserManager
         // Retrieve the user's profile (may have been previously cached)
         UserProfile profile = getUserProfile( context.getWikiSession() );
         HttpServletRequest request = context.getHttpRequest();
-        
+
         // Extract values from request stream (cleanse whitespace as needed)
         String loginName = request.getParameter( PARAM_LOGINNAME );
         String password = request.getParameter( PARAM_PASSWORD );
@@ -438,11 +438,12 @@ public final class UserManager
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated() )
         {
             // If authenticated, login name is always taken from container
-            if ( context.getWikiSession().isAuthenticated() ) {
+            if ( context.getWikiSession().isAuthenticated() )
+            {
                 loginName = context.getWikiSession().getLoginPrincipal().getName();
             }
         }
-        
+
         // Set the profile fields!
         profile.setLoginName( loginName );
         profile.setEmail( email );
@@ -465,14 +466,14 @@ public final class UserManager
      */
     public final void validateProfile( WikiContext context, UserProfile profile )
     {
-        boolean isNew = ( profile.isNew() );
+        boolean isNew = profile.isNew();
         WikiSession session = context.getWikiSession();
         InputValidator validator = new InputValidator( SESSION_MESSAGES, session );
-        
+
         // If container-managed auth and user not logged in, throw an error
         // unless we're allowed to add profiles to the container
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
-             && !context.getWikiSession().isAuthenticated() 
+             && !context.getWikiSession().isAuthenticated()
              && !m_database.isSharedWithContainer() )
         {
             session.addMessage( SESSION_MESSAGES, "You must log in before creating a profile." );
@@ -481,7 +482,7 @@ public final class UserManager
         validator.validateNotNull( profile.getLoginName(), "Login name" );
         validator.validateNotNull( profile.getFullname(), "Full name" );
         validator.validate( profile.getEmail(), "E-mail address", InputValidator.EMAIL );
-        
+
         // If new profile, passwords must match and can't be null
         if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
         {
@@ -493,7 +494,7 @@ public final class UserManager
                     session.addMessage( SESSION_MESSAGES, "Password cannot be blank" );
                 }
             }
-            else 
+            else
             {
                 HttpServletRequest request = context.getHttpRequest();
                 String password2 = ( request == null ) ? null : request.getParameter( "password2" );
@@ -503,11 +504,11 @@ public final class UserManager
                 }
             }
         }
-        
+
         UserProfile otherProfile;
         String fullName = profile.getFullname();
         String loginName = profile.getLoginName();
-        
+
         // It's illegal to use as a full name someone else's login name
         try
         {
@@ -517,8 +518,9 @@ public final class UserManager
                 session.addMessage( SESSION_MESSAGES, "Full name '" + fullName + "' is illegal" );
             }
         }
-        catch ( NoSuchPrincipalException e) { /* It's clean */ }
-            
+        catch ( NoSuchPrincipalException e)
+        { /* It's clean */ }
+
         // It's illegal to use as a login name someone else's full name
         try
         {
@@ -528,7 +530,8 @@ public final class UserManager
                 session.addMessage( SESSION_MESSAGES, "Login name '" + loginName + "' is illegal" );
             }
         }
-        catch ( NoSuchPrincipalException e) { /* It's clean */ }
+        catch ( NoSuchPrincipalException e)
+        { /* It's clean */ }
     }
 
     /**
@@ -574,11 +577,11 @@ public final class UserManager
         {
             return new Principal[0];
         }
-        
+
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
         }
-        
+
         public boolean isSharedWithContainer()
         {
             return false;
@@ -592,24 +595,24 @@ public final class UserManager
         public void save( UserProfile profile ) throws WikiSecurityException
         {
         }
-        
+
     }
 
     // workflow task inner classes....................................................
-    
+
     /**
      * Inner class that handles the actual profile save action. Instances
      * of this class are assumed to have been added to an approval workflow via
-     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)}; 
+     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)};
      * they will not function correctly otherwise.
-     * 
+     *
      * @author Andrew Jaquith
      */
     public static class SaveUserProfileTask extends Task
     {
         private final UserDatabase m_db;
         private final WikiEngine m_engine;
-        
+
         /**
          * Constructs a new Task for saving a user profile.
          * @param engine the wiki engine
@@ -622,20 +625,20 @@ public final class UserManager
         }
 
         /**
-         * Saves the user profile to the user database. The 
+         * Saves the user profile to the user database. The
          */
         public Outcome execute() throws WikiException
         {
             // Retrieve user profile
             UserProfile profile = (UserProfile) getWorkflow().getAttribute( SAVED_PROFILE );
-            
+
             // Save the profile (userdatabase will take care of timestamps for us)
             m_db.save( profile );
 
             // Send e-mail if user supplied an e-mail address
             if ( profile.getEmail() != null )
             {
-                try 
+                try
                 {
                     String app = m_engine.getApplicationName();
                     String to = profile.getEmail();
@@ -649,7 +652,7 @@ public final class UserManager
                         + m_engine.getBaseURL() + "\\LostPassword.jsp";
                     MailUtil.sendMessage( m_engine, to, subject, content);
                 }
-                catch ( AddressException e) 
+                catch ( AddressException e)
                 {
                 }
                 catch ( MessagingException e )
@@ -657,11 +660,11 @@ public final class UserManager
                     log.error( "Could not send registration confirmation e-mail. Is the e-mail server running?" );
                 }
             }
-            
+
             return Outcome.STEP_COMPLETE;
         }
     }
-    
+
     // events processing .......................................................
 
     /**
@@ -669,7 +672,7 @@ public final class UserManager
      * This is a convenience method.
      * @param listener the event listener
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -686,9 +689,9 @@ public final class UserManager
 
     /**
      *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
-     *  to all registered listeners. 
+     *  to all registered listeners.
      *
-     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent
      * @param type       the event type to be fired
      * @param session    the wiki session supporting the event
      * @param profile    the user profile (or array of user profiles), which may be <code>null</code>

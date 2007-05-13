@@ -48,7 +48,7 @@ import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 
 /**
- * Manages authentication activities for a WikiEngine: user login, logout, and 
+ * Manages authentication activities for a WikiEngine: user login, logout, and
  * credential refreshes. This class uses JAAS to determine how users log in.
  * @author Andrew Jaquith
  * @author Janne Jalkanen
@@ -71,10 +71,10 @@ public final class AuthenticationManager
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
 
     protected static final Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
-    
+
     /** Was JAAS login config already set before we startd up? */
     protected boolean m_isJaasConfiguredAtStartup = false;
-    
+
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private static Boolean                     m_allowsAssertions  = null;
 
@@ -90,7 +90,7 @@ public final class AuthenticationManager
 
     /** Just to provide compatibility with the old versions.  The same
      *  as SECURITY_OFF.
-     *   
+     *
      *  @deprecated
      */
     protected static final String             SECURITY_CONTAINER = "container";
@@ -101,15 +101,15 @@ public final class AuthenticationManager
     /**
      *  This property determines whether we use JSPWiki authentication or not.
      *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
-     *  
+     *
      */
-    
+
     public  static final String                PROP_SECURITY       = "jspwiki.security";
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
-    
+
     private static       boolean               m_useJAAS = true;
-    
+
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -120,27 +120,27 @@ public final class AuthenticationManager
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
         m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
-        
+
         // Yes, writing to a static field is done here on purpose.
         m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
-        
+
         if( !m_useJAAS ) return;
-        
+
         //
         //  The rest is JAAS implementation
         //
-        
+
         log.info( "Checking JAAS configuration..." );
 
-        if (! m_isJaasConfiguredAtStartup ) 
+        if (! m_isJaasConfiguredAtStartup )
         {
             URL config = findConfigFile( engine, DEFAULT_JAAS_CONFIG );
             log.info("JAAS not configured. Installing default configuration: " + config
                 + ". You can set the "+PROP_JAAS_CONFIG+" system property to point to your "
-                + "jspwiki.jaas file, or add the entries from jspwiki.jaas to your own " 
+                + "jspwiki.jaas file, or add the entries from jspwiki.jaas to your own "
                 + "JAAS configuration file.");
-            try 
-            { 
+            try
+            {
                 PolicyLoader.setJaasConfiguration( config );
             }
             catch ( SecurityException e)
@@ -153,7 +153,7 @@ public final class AuthenticationManager
             log.info("JAAS already configured by some other application (leaving it alone...)");
         }
     }
-    
+
     /**
      * Returns true if this WikiEngine uses container-managed authentication.
      * This method is used primarily for cosmetic purposes in the JSP tier, and
@@ -166,8 +166,8 @@ public final class AuthenticationManager
     public final boolean isContainerAuthenticated()
     {
         if( !m_useJAAS ) return true;
-        
-        try 
+
+        try
         {
             Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
             if ( authorizer instanceof WebContainerAuthorizer )
@@ -183,10 +183,10 @@ public final class AuthenticationManager
     }
 
     /**
-     * Logs in the user by attempting to populate a WikiSession Subject from 
+     * Logs in the user by attempting to populate a WikiSession Subject from
      * a web servlet request. This method leverages container-managed authentication.
-     * This method logs in the user if the user's status is "unknown" to the 
-     * WikiSession, or if the Http servlet container's authentication status has 
+     * This method logs in the user if the user's status is "unknown" to the
+     * WikiSession, or if the Http servlet container's authentication status has
      * changed. This method assumes that the HttpServletRequest is not null; otherwise,
      * an IllegalStateException is thrown. This method is a <em>privileged</em> action;
      * the caller must posess the (name here) permission.
@@ -205,7 +205,7 @@ public final class AuthenticationManager
         {
             throw new IllegalStateException( "Wiki context's HttpRequest may not be null" );
         }
-        
+
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         if ( wikiSession == null )
         {
@@ -217,8 +217,8 @@ public final class AuthenticationManager
         if( m_useJAAS )
         {
             AuthorizationManager authMgr = m_engine.getAuthorizationManager();
-            CallbackHandler handler = new WebContainerCallbackHandler( 
-                    request, 
+            CallbackHandler handler = new WebContainerCallbackHandler(
+                    request,
                     authMgr.getAuthorizer() );
             login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
         }
@@ -226,7 +226,7 @@ public final class AuthenticationManager
     }
 
     /**
-     * Attempts to perform a WikiSession login for the given username/password 
+     * Attempts to perform a WikiSession login for the given username/password
      * combination. This is custom authentication.
      * @param session the current wiki session; may not be null.
      * @param username The user name. This is a login name, not a WikiName. In
@@ -243,15 +243,15 @@ public final class AuthenticationManager
             log.error( "No wiki session provided, cannot log in." );
             return false;
         }
-        
+
         UserManager userMgr = m_engine.getUserManager();
-        CallbackHandler handler = new WikiCallbackHandler( 
-                userMgr.getUserDatabase(), 
-                username, 
+        CallbackHandler handler = new WikiCallbackHandler(
+                userMgr.getUserDatabase(),
+                username,
                 password );
         return doLogin( session, handler, LOGIN_CUSTOM );
     }
-    
+
     /**
      * Logs the user out by retrieving the WikiSession associated with the
      * HttpServletRequest and unbinding all of the Subject's Principals,
@@ -268,7 +268,7 @@ public final class AuthenticationManager
             log.error( "No HTTP reqest provided; cannot log out." );
             return;
         }
-        
+
         HttpSession session = request.getSession();
         String sid = ( session == null ) ? "(null)" : session.getId();
         if( log.isDebugEnabled() )
@@ -279,17 +279,17 @@ public final class AuthenticationManager
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
-        
+
         // Remove the wikiSession from the WikiSession cache
         WikiSession.removeWikiSession( m_engine, request );
-        
+
         // We need to flush the HTTP session too
         session.invalidate();
-        
+
         // Log the event
         fireEvent( WikiSecurityEvent.LOGOUT, originalPrincipal, null );
     }
-    
+
     /**
      * Determines whether this WikiEngine allows users to assert identities using
      * cookies instead of passwords. This is determined by inspecting
@@ -299,20 +299,21 @@ public final class AuthenticationManager
     public static final boolean allowsCookieAssertions()
     {
         if( !m_useJAAS ) return true;
-        
+
         // Lazily initialize
         if( m_allowsAssertions == null )
         {
             m_allowsAssertions = Boolean.FALSE;
-          
+
             // Figure out whether cookie assertions are allowed
             Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
               {
-                  public Object run() {
+                  public Object run()
+                  {
                       return Configuration.getConfiguration();
                   }
               });
-              
+
             if (loginConfig != null)
             {
                 AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
@@ -326,16 +327,16 @@ public final class AuthenticationManager
                 }
             }
         }
-        
+
         return m_allowsAssertions.booleanValue();
     }
-    
+
     /**
      * Determines whether the supplied Principal is a "role principal".
      * @param principal the principal to test
      * @return <code>true</code> if the Principal is of type
      *         {@link GroupPrincipal} or
-     *         {@link com.ecyrd.jspwiki.auth.authorize.Role}, 
+     *         {@link com.ecyrd.jspwiki.auth.authorize.Role},
      *         <code>false</code> otherwise
      */
     public static final boolean isRolePrincipal( Principal principal )
@@ -343,13 +344,13 @@ public final class AuthenticationManager
         return ( principal instanceof Role ||
                  principal instanceof GroupPrincipal );
     }
-    
+
     /**
      * Determines whether the supplied Principal is a "user principal".
      * @param principal the principal to test
      * @return <code>false</code> if the Principal is of type
      *         {@link GroupPrincipal} or
-     *         {@link com.ecyrd.jspwiki.auth.authorize.Role}, 
+     *         {@link com.ecyrd.jspwiki.auth.authorize.Role},
      *         <code>true</code> otherwise
      */
     public static final boolean isUserPrincipal( Principal principal )
@@ -359,7 +360,7 @@ public final class AuthenticationManager
 
     /**
      * Log in to the application using a given JAAS LoginConfiguration. Any
-     * configuration error 
+     * configuration error
      * @param wikiSession the current wiki session, to which the Subject will be associated
      * @param handler handles callbacks sent by the LoginModules in the configuration
      * @param application the name of the application whose LoginConfiguration should be used
@@ -372,7 +373,8 @@ public final class AuthenticationManager
         {
             LoginContext loginContext  = (LoginContext)AccessController.doPrivileged(new PrivilegedAction()
             {
-                public Object run() {
+                public Object run()
+                {
                     try
                     {
                         return wikiSession.getLoginContext( application, handler );
@@ -385,7 +387,7 @@ public final class AuthenticationManager
                     }
                 }
             });
-            
+
             if( loginContext != null )
             {
                 loginContext.login();
@@ -396,7 +398,7 @@ public final class AuthenticationManager
                 log.error("No login context.  Please double-check that JSPWiki found your 'jspwiki.jaas' file or the contents have been appended to your regular JAAS file.");
                 return false;
             }
-            
+
             // Fire event for the correct authentication event
             if ( wikiSession.isAnonymous() )
             {
@@ -410,7 +412,7 @@ public final class AuthenticationManager
             {
                 fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), wikiSession );
             }
-            
+
             return true;
         }
         catch( FailedLoginException e )
@@ -451,9 +453,9 @@ public final class AuthenticationManager
             return false;
         }
     }
-    
+
     /**
-     * Looks up and obtains a configuration file inside the WEB-INF folder of a 
+     * Looks up and obtains a configuration file inside the WEB-INF folder of a
      * wiki webapp.
      * @param engine the wiki engine
      * @param name the file to obtain, <em>e.g.</em>, <code>jspwiki.policy</code>
@@ -467,9 +469,10 @@ public final class AuthenticationManager
         {
             defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + name );
         }
-        if ( defaultFile != null && defaultFile.exists() ) 
+        if ( defaultFile != null && defaultFile.exists() )
         {
-            try {
+            try
+            {
                 return defaultFile.toURL();
             }
             catch ( MalformedURLException e)
@@ -477,20 +480,20 @@ public final class AuthenticationManager
                 // Shouldn't happen, but log it if it does
                 log.warn( "Malformed URL: " + e.getMessage() );
             }
-            
+
         }
-        
+
         // Ok, the absolute path didn't work; try other methods
         ClassLoader cl = AuthenticationManager.class.getClassLoader();
-        
+
         URL path = cl.getResource("/WEB-INF/"+name);
-        
+
         if( path == null )
             path = cl.getResource("/"+name);
-        
+
         if( path == null )
             path = cl.getResource(name);
-        
+
         if( path == null && engine.getServletContext() != null )
         {
             try
@@ -532,9 +535,9 @@ public final class AuthenticationManager
 
     /**
      *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
-     *  to all registered listeners. 
+     *  to all registered listeners.
      *
-     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent
      * @param type       the event type to be fired
      * @param principal  the subject of the event, which may be <code>null</code>
      * @param target     the changed Object, which may be <code>null</code>

@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -97,19 +97,19 @@ public final class SecurityVerifier
     public static final String    ERROR_ROLES                  = "Error.Roles";
 
     public static final String    INFO_ROLES                   = "Info.Roles";
-    
+
     public static final String    ERROR_DB                     = "Error.UserDatabase";
-    
+
     public static final String    WARNING_DB                   = "Warning.UserDatabase";
-    
+
     public static final String    INFO_DB                      = "Info.UserDatabase";
-    
+
     public static final String    ERROR_GROUPS                 = "Error.GroupDatabase";
-    
+
     public static final String    WARNING_GROUPS               = "Warning.GroupDatabase";
-    
+
     public static final String    INFO_GROUPS                  = "Info.GroupDatabase";
-    
+
     public static final String    INFO_JAAS                    = "Info.Jaas";
 
     private static final String[] CONTAINER_ACTIONS            = new String[]
@@ -134,7 +134,7 @@ public final class SecurityVerifier
         m_session.clearMessages();
         verifyJaas();
         verifyPolicy();
-        try 
+        try
         {
             verifyPolicyAndContainerRoles();
         }
@@ -172,17 +172,17 @@ public final class SecurityVerifier
         { "Main", "Index", "GroupTest", "GroupAdmin" };
         String[] pageActions = new String[]
         { "view", "edit", "modify", "rename", "delete" };
- 
+
         String[] groups = new String[]
         { "Admin", "TestGroup", "Foo" };
         String[] groupActions = new String[]
         { "view", "edit", null, null, "delete" };
-               
+
         // Calculate column widths
         String colWidth;
         if ( pageActions.length > 0 && roles.length > 0 )
         {
-            colWidth = String.valueOf( (double) ( 67 / ( pageActions.length * roles.length ) ) ) + "%";
+            colWidth = String.valueOf( 67f / ( pageActions.length * roles.length ) ) + "%";
         }
         else
         {
@@ -233,7 +233,7 @@ public final class SecurityVerifier
             }
             s.append( "  </tr>\n" );
         }
-        
+
         // Now do the group tests
         for( int i = 0; i < groups.length; i++ )
         {
@@ -254,7 +254,7 @@ public final class SecurityVerifier
             }
             s.append( "  </tr>\n" );
         }
-        
+
 
         // Now check the wiki-wide permissions
         String[] wikiPerms = new String[]
@@ -517,14 +517,14 @@ public final class SecurityVerifier
     }
 
     /**
-     * Verifies that the group datbase was initialized properly, and that 
+     * Verifies that the group datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
     protected final void verifyGroupDatabase()
     {
         GroupManager mgr = m_engine.getGroupManager();
         GroupDatabase db = null;
-        try 
+        try
         {
             db = m_engine.getGroupManager().getGroupDatabase();
         }
@@ -532,7 +532,7 @@ public final class SecurityVerifier
         {
             m_session.addMessage( ERROR_GROUPS, "Could not retrieve GroupManager: " + e.getMessage() );
         }
-        
+
         // Check for obvious error conditions
         if ( mgr == null || db == null )
         {
@@ -548,16 +548,16 @@ public final class SecurityVerifier
             }
             return;
         }
-        
+
         // Everything initialized OK...
-        
+
         // Tell user what class of database this is.
-        m_session.addMessage( INFO_GROUPS, "GroupDatabase is of type '" + db.getClass().getName() + 
+        m_session.addMessage( INFO_GROUPS, "GroupDatabase is of type '" + db.getClass().getName() +
                 "'. It appears to be initialized properly." );
-        
+
         // Now, see how many groups we have.
         int oldGroupCount = 0;
-        try 
+        try
         {
             Group[] groups = db.groups();
             oldGroupCount = groups.length;
@@ -568,7 +568,7 @@ public final class SecurityVerifier
             m_session.addMessage( ERROR_GROUPS, "Could not obtain a list of current groups: " + e.getMessage() );
             return;
         }
-        
+
         // Try adding a bogus group with random name
         String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
         Group group = null;
@@ -579,7 +579,7 @@ public final class SecurityVerifier
             Principal user = new WikiPrincipal( "TestUser" );
             group.add( user );
             db.save( group, new WikiPrincipal("SecurityVerifier") );
-            
+
             // Make sure the group saved successfully
             if ( db.groups().length == oldGroupCount )
             {
@@ -600,8 +600,8 @@ public final class SecurityVerifier
             m_session.addMessage( ERROR_GROUPS, "Skipped group deletion test." );
             return;
         }
-        
-        try 
+
+        try
         {
             db.delete( group );
             if ( db.groups().length != oldGroupCount )
@@ -616,10 +616,10 @@ public final class SecurityVerifier
             m_session.addMessage( ERROR_GROUPS, "Could not delete a test group from the database: " + e.getMessage() );
             return;
         }
-        
+
         m_session.addMessage( INFO_GROUPS, "The group database configuration looks fine." );
     }
-    
+
     /**
      * Verfies the JAAS configuration. The configuration is valid if value of
      * the system property <code>java.security.auth.login.config</code>
@@ -641,7 +641,7 @@ public final class SecurityVerifier
                     "be reliable as a result. You should set this to 'jaas' " +
                     "so that security works properly." );
         }
-        
+
         // Validate the property is set correctly
         m_jaasConfig = getFileFromProperty( "java.security.auth.login.config" );
 
@@ -665,7 +665,7 @@ public final class SecurityVerifier
                 m_session.addMessage( "Error." + property, "The system property '" + property + "' is null." );
                 return null;
             }
-            
+
             //
             //  It's also possible to use "==" to mark a property.  We remove that
             //  here so that we can actually find the property file, then.
@@ -674,12 +674,12 @@ public final class SecurityVerifier
             {
                 propertyValue = propertyValue.substring(1);
             }
-            
+
             try
             {
                 m_session.addMessage( "Info." + property, "The system property '" + property + "' is set to: "
                         + propertyValue + "." );
-               
+
                 // Prepend a file: prefix if not there already
                 if ( !propertyValue.startsWith( "file:" ) )
                 {
@@ -720,7 +720,8 @@ public final class SecurityVerifier
         // Look up the policy file and set the status text.
         URL policyURL = AuthenticationManager.findConfigFile( m_engine, AuthorizationManager.DEFAULT_POLICY );
         String path = policyURL.getPath();
-        if ( path.startsWith("file:") ) {
+        if ( path.startsWith("file:") )
+        {
             path = path.substring( 5 );
         }
         File policyFile = new File( path );
@@ -731,7 +732,7 @@ public final class SecurityVerifier
             // Get the file
             PolicyReader policy = new PolicyReader( policyFile );
             m_session.addMessage( INFO_POLICY, "The security policy '" + policy.getFile() + "' exists." );
-            
+
             // See if there is a keystore that's valid
             KeyStore ks = policy.getKeyStore();
             if ( ks == null )
@@ -803,7 +804,7 @@ public final class SecurityVerifier
             {
                 public Object run()
                 {
-                    try 
+                    try
                     {
                         AccessController.checkPermission( permission );
                         return Boolean.TRUE;
@@ -814,24 +815,25 @@ public final class SecurityVerifier
                     }
                 }
             }, null )).booleanValue();
-        
-        if ( allowedByGlobalPolicy ) {
+
+        if ( allowedByGlobalPolicy )
+        {
             return true;
         }
-        
+
         // Check local policy
         Principal[] principals = new Principal[]{ principal };
         return m_engine.getAuthorizationManager().allowedByLocalPolicy( principals, permission );
     }
-    
+
     /**
-     * Verifies that the user datbase was initialized properly, and that 
+     * Verifies that the user datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
     protected final void verifyUserDatabase()
     {
         UserDatabase db = m_engine.getUserManager().getUserDatabase();
-        
+
         // Check for obvious error conditions
         if ( db == null )
         {
@@ -839,7 +841,7 @@ public final class SecurityVerifier
                     "initialize it. Check the error logs." );
             return;
         }
-        
+
         if ( db instanceof UserManager.DummyUserDatabase )
         {
             m_session.addMessage( ERROR_DB, "UserDatabase is DummyUserDatabase; JSPWiki " +
@@ -847,14 +849,14 @@ public final class SecurityVerifier
                     "jspwiki.properties, or you left the 'jspwiki.userdatabase' property " +
                     "blank. Check the error logs." );
         }
-        
+
         // Tell user what class of database this is.
-        m_session.addMessage( INFO_DB, "UserDatabase is of type '" + db.getClass().getName() + 
+        m_session.addMessage( INFO_DB, "UserDatabase is of type '" + db.getClass().getName() +
                 "'. It appears to be initialized properly." );
-        
+
         // Now, see how many users we have.
         int oldUserCount = 0;
-        try 
+        try
         {
             Principal[] users = db.getWikiNames();
             oldUserCount = users.length;
@@ -865,7 +867,7 @@ public final class SecurityVerifier
             m_session.addMessage( ERROR_DB, "Could not obtain a list of current users: " + e.getMessage() );
             return;
         }
-        
+
         // Try adding a bogus user with random name
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         try
@@ -876,7 +878,7 @@ public final class SecurityVerifier
             profile.setFullname( "FullName"+loginName );
             profile.setPassword("password");
             db.save(profile);
-            
+
             // Make sure the profile saved successfully
             if ( db.getWikiNames().length == oldUserCount )
             {
@@ -892,7 +894,7 @@ public final class SecurityVerifier
         }
 
         // Now delete the profile; should be back to old count
-        try 
+        try
         {
             db.deleteByLoginName( loginName );
             if ( db.getWikiNames().length != oldUserCount )
@@ -907,7 +909,7 @@ public final class SecurityVerifier
             m_session.addMessage( ERROR_DB, "Could not delete a test user to the database: " + e.getMessage() );
             return;
         }
-        
+
         m_session.addMessage( INFO_DB, "The user database configuration looks fine." );
     }
 

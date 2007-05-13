@@ -1,3 +1,22 @@
+/*
+   JSPWiki - a JSP-based WikiWiki clone.
+
+   Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as published by
+   the Free Software Foundation; either version 2.1 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth;
 
 import java.io.File;
@@ -33,7 +52,7 @@ import org.apache.log4j.Logger;
  * </p>
  * <p>
  * The security policy-related methods {@link #isSecurityPolicyConfigured()}
- * &nbsp;and {@link #setSecurityPolicy(URL)}) assumes that the web container 
+ * &nbsp;and {@link #setSecurityPolicy(URL)}) assumes that the web container
  * doesn't use a "double-equals" command-line assignment
  * to override the security policy ( <i>e.g. </i>,
  * <code>-Djava.security.policy==jspwiki.policy</code>). Note that Tomcat 4
@@ -61,21 +80,21 @@ import org.apache.log4j.Logger;
  * If the full path to the keystore is not suppled, it is assumed to be in the
  * same directory as the policy file.
  * </p>
- * 
+ *
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class PolicyLoader 
-{    
-    protected static final Logger log = Logger.getLogger( PolicyLoader.class );
+public final class PolicyLoader
+{
+    protected static Logger log = Logger.getLogger( PolicyLoader.class );
 
     /**
      * Private constructor to prevent direct instantiation.
      */
-    private PolicyLoader() 
+    private PolicyLoader()
     {
     }
-    
+
     /**
      * <p>
      * Returns <code>true</code> if the JAAS login configuration exists.
@@ -91,33 +110,33 @@ public final class PolicyLoader
      * <li>permission javax.security.auth.AuthPermission,
      * "getLoginConfiguration"</li>
      * </ul></code>
-     * 
+     *
      * @return <code>true</code> if
      *         {@link javax.security.auth.login.Configuration#getConfiguration()}
      *         is not <code>null</code> ;&nbsp; <code>false</code> otherwise.
      * @throws SecurityException if the codesource containing this class posesses
      *           insufficient permmissions when running with a SecurityManager
      */
-    public final static boolean isJaasConfigured() throws SecurityException 
+    public static final boolean isJaasConfigured() throws SecurityException
     {
         Boolean configured = (Boolean) AccessController
         .doPrivileged(new PrivilegedAction() {
-            
-            public Object run() 
+
+            public Object run()
             {
                 boolean isConfigured = false;
-                try 
+                try
                 {
                     Configuration config = Configuration.getConfiguration();
                     isConfigured = (config != null);
                 }
                 catch (SecurityException e) {}
-                return (Boolean.valueOf(isConfigured));
+                return Boolean.valueOf(isConfigured);
             }
         });
         return configured.booleanValue();
     }
-    
+
     /**
      * <p>
      * Returns <code>true</code> if a custom Java security policy configuration
@@ -133,44 +152,44 @@ public final class PolicyLoader
      * <li>permission java.util.PropertyPermission
      * "java.security.policy", "read"</li>
      * </ul></code>
-     * 
+     *
      * @return <code>true</code> if the system property
      *         <code>java.security.policy</code> is not <code>null</code>;
      *         &nbsp; <code>false</code> otherwise.
      * @throws SecurityException if the codesource containing this class posesses
      *           insufficient permmissions when running with a SecurityManager
      */
-    public final static boolean isSecurityPolicyConfigured() throws SecurityException 
+    public static final boolean isSecurityPolicyConfigured() throws SecurityException
     {
         String policy = (String) AccessController
         .doPrivileged(new PrivilegedAction() {
-            
-            public Object run() 
+
+            public Object run()
             {
                 return System.getProperty("java.security.policy");
             }
         });
-        
+
         if ( policy != null )
         {
             log.info( "Java security policy already set to: " + policy + ". (Leaving it alone...)" );
-            
+
             //
             //  Do a bit of a sanity checks to help people who are not familiar with JAAS.
             //
             if( policy.startsWith("file:") ) policy = policy.substring("file:".length());
-            
+
             File f = new File(policy);
-            
+
             if( !f.exists() )
             {
                 log.warn("You have set your 'java.security.policy' to point at '"+f.getAbsolutePath()+"', "+
                          "but that file does not seem to exist.  I'll continue anyway, since this may be "+
                          "something specific to your servlet container.  Just consider yourself warned." );
             }
-            
+
             File jks = new File( f.getParentFile(), "jspwiki.jks" );
-            
+
             if( !jks.exists() || !jks.canRead() )
             {
                 log.warn("I could not locate the JSPWiki keystore ('jspwiki.jks') in the same directory "+
@@ -184,11 +203,11 @@ public final class PolicyLoader
                          "permission issues after an upgrade, please make sure that this file matches the one that "+
                          "came with your distribution archive.");
             }
-            
+
         }
         return (policy != null);
     }
-    
+
     /**
      * Sets the JAAS login configuration file, overwriting the existing
      * configuration. If the configuration file pointed to by the URL does not
@@ -206,7 +225,7 @@ public final class PolicyLoader
      * <li>permission javax.security.auth.AuthPermission,
      * "setLoginConfiguration"</li>
      * </ul></code>
-     * 
+     *
      * @param url the URL of the login configuration file. If the URL contains
      *          properties such as <code>${java.home}</code>, they will be
      *          expanded.
@@ -219,34 +238,38 @@ public final class PolicyLoader
      *           </ul>
      */
     public final static void setJaasConfiguration(final URL url)
-    throws SecurityException 
+    throws SecurityException
     {
-        if (url == null) 
+        if (url == null)
         {
             throw new SecurityException("URL for JAAS configuration cannot be null.");
         }
-        
+
         // Get JAAS configuration class; default is Sun provider
         String default_config_class;
         default_config_class = (String)AccessController.doPrivileged(
-            new PrivilegedAction() {
-                public Object run() {
+            new PrivilegedAction()
+            {
+                public Object run()
+                {
                     return Security.getProperty("login.configuration.provider");
                 }
             });
-        
-        if (default_config_class == null) {
+
+        if (default_config_class == null)
+        {
             default_config_class = "com.sun.security.auth.login.ConfigFile";
         }
-        
+
         // Now, set the new config
         final String config_class = default_config_class;
         AccessController.doPrivileged(new PrivilegedAction() {
-            
-            public Object run() 
+
+            public Object run()
             {
-                // Remove old policy, then set our config URL and instantiate new instance 
-                try {
+                // Remove old policy, then set our config URL and instantiate new instance
+                try
+                {
                     Configuration.setConfiguration(null);
                     System.setProperty("java.security.auth.login.config", url.toExternalForm());
                     Configuration config = (Configuration)Class.forName(config_class).newInstance();
@@ -260,7 +283,7 @@ public final class PolicyLoader
             }
         });
     }
-    
+
     /**
      * <p>
      * Sets the Java security policy, overwriting any custom policy settings. This
@@ -287,7 +310,7 @@ public final class PolicyLoader
      * <li>permission java.util.PropertyPermission}
      * "java.security.policy", "write"</li>
      * </ul></code>
-     * 
+     *
      * @param url the URL of the security policy file. If the URL contains
      *          properties such as <code>${java.home}</code>, they will be
      *          expanded.
@@ -301,37 +324,40 @@ public final class PolicyLoader
      *           <code>sun.security.provider.PolicyFile</code></li>
      *           </ul>
      */
-    public final static void setSecurityPolicy(final URL url) throws SecurityException 
+    public static final void setSecurityPolicy(final URL url) throws SecurityException
     {
-        if (url == null) 
+        if (url == null)
         {
             throw new SecurityException("URL for security policy cannot be null.");
         }
-        
+
         // Get policy class; default is Sun provider
         String default_policy_class;
         default_policy_class = (String)AccessController.doPrivileged(
             new PrivilegedAction() {
-                public Object run() {
+                public Object run()
+                {
                     return Security.getProperty("policy.provider");
                 }
             });
-        
-        if (default_policy_class == null) {
+
+        if (default_policy_class == null)
+        {
             default_policy_class = "sun.security.provider.PolicyFile";
         }
-        
+
         // Now, set the new policy
         final String policy_class = default_policy_class;
         AccessController.doPrivileged(new PrivilegedAction() {
-            
-            public Object run() 
+
+            public Object run()
             {
-                // Remove old policy, then set our policy URL and instantiate new instance 
-                try {
+                // Remove old policy, then set our policy URL and instantiate new instance
+                try
+                {
                     Policy.setPolicy(null);
                     System.setProperty("java.security.policy", url.toExternalForm());
-                    
+
                     Policy policy = (Policy)Class.forName(policy_class).newInstance();
                     Policy.setPolicy(policy);
                     return null;
@@ -343,5 +369,5 @@ public final class PolicyLoader
             }
         });
     }
-    
+
 }
