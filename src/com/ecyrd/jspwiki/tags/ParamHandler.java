@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -21,11 +21,12 @@ package com.ecyrd.jspwiki.tags;
 
 
 /**
- * Interface to be implemented by any tag that wishes to contain 
+ * Interface to be implemented by any tag that wishes to contain
  * a wiki:param tag for passing dynamic name-value pairs.
  * <p>
  * Note that the implementing tag must also accept body content.
  */
-public interface ParamHandler {
+public interface ParamHandler
+{
     public void setContainedParameter( String n, String v );
 }

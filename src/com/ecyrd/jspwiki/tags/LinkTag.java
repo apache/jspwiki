@@ -26,12 +26,12 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  <p>
  *  @since 2.3.50
  */
-public class LinkTag 
+public class LinkTag
     extends WikiLinkTag
     implements ParamHandler, BodyTag
 {
     static final long serialVersionUID = 0L;
-    
+
     private String m_version = null;
     private String m_class   = null;
     private String m_style   = null;
@@ -44,14 +44,14 @@ public class LinkTag
     private String m_context = WikiContext.VIEW;
     private String m_accesskey = null;
     private String m_templatefile = null;
-    
+
     private boolean m_absolute = false;
     private boolean m_overrideAbsolute = false;
-    
+
     private Map m_containedParams;
 
     private BodyContent m_bodyContent;
-    
+
     public void initTag()
     {
         super.initTag();
@@ -64,12 +64,12 @@ public class LinkTag
     {
         m_templatefile = key;
     }
-    
+
     public void setAccessKey( String key )
     {
         m_accesskey = key;
     }
-    
+
     public void setAbsolute( String arg )
     {
         m_overrideAbsolute = true;
@@ -90,67 +90,67 @@ public class LinkTag
     {
         m_class = arg;
     }
-    
+
     public void setStyle( String style )
     {
         m_style = style;
     }
-    
+
     public void setTitle( String title )
     {
         m_title = title;
     }
-    
+
     public void setTarget( String target )
     {
         m_target = target;
     }
-    
+
     public void setCompareToVersion( String ver )
     {
         m_compareToVersion = ver;
     }
-    
+
     public void setRel( String rel )
     {
         m_rel = rel;
     }
-    
+
     public void setRef( String ref )
     {
         m_ref = ref;
     }
-    
+
     public void setJsp( String jsp )
     {
         m_jsp = jsp;
     }
-    
+
     public void setContext( String context )
     {
         m_context = context;
     }
-    
+
     /**
      * Support for ParamTag supplied parameters in body.
      */
     public void setContainedParameter( String name, String value )
     {
-        if( name != null ) 
+        if( name != null )
         {
-            if( m_containedParams == null ) 
+            if( m_containedParams == null )
             {
                 m_containedParams = new HashMap();
             }
             m_containedParams.put( name, value );
         }
     }
-    
-    
+
+
     /**
      *  This method figures out what kind of an URL should be output.  It mirrors heavily
      *  on JSPWikiMarkupParser.handleHyperlinks();
-     *  
+     *
      * @return
      * @throws ProviderException
      */
@@ -159,17 +159,17 @@ public class LinkTag
     {
         String url = null;
         WikiEngine engine = m_wikiContext.getEngine();
-        
-        if( m_pageName == null ) 
+
+        if( m_pageName == null )
         {
             WikiPage page = m_wikiContext.getPage();
-            
+
             if( page != null )
             {
                 m_pageName = page.getName();
             }
         }
-        
+
         if( m_templatefile != null )
         {
             String params = addParamsForRecipient( null, m_containedParams );
@@ -185,7 +185,7 @@ public class LinkTag
         else if( m_ref != null )
         {
             int interwikipoint;
-            
+
             if( JSPWikiMarkupParser.isExternalLink(m_ref) )
             {
                 url = m_ref;
@@ -214,7 +214,7 @@ public class LinkTag
             {
                 int hashMark = -1;
 
-                String parms = (m_version != null) ? "version="+getVersion() : null; 
+                String parms = (m_version != null) ? "version="+getVersion() : null;
 
                 //
                 //  Internal wiki link, but is it an attachment link?
@@ -245,7 +245,7 @@ public class LinkTag
                     {
                         matchedLink = reallink;
                     }
-                    
+
                     url = makeBasicURL( m_context, matchedLink, parms, m_absolute ) + sectref;
                 }
                 else
@@ -259,17 +259,17 @@ public class LinkTag
         else if( m_pageName != null && m_pageName.length() > 0 )
         {
             WikiPage p = engine.getPage( m_pageName );
-            
-            String parms = (m_version != null) ? "version="+getVersion() : null; 
-                
+
+            String parms = (m_version != null) ? "version="+getVersion() : null;
+
             parms = addParamsForRecipient( parms, m_containedParams );
-            
+
             if( p instanceof Attachment )
             {
                 String ctx = m_context;
                 // Switch context appropriately when attempting to view an
                 // attachment, but don't override the context setting otherwise
-                if( m_context == null || m_context.equals( WikiContext.VIEW ) ) 
+                if( m_context == null || m_context.equals( WikiContext.VIEW ) )
                 {
                     ctx = WikiContext.ATTACH;
                 }
@@ -286,13 +286,13 @@ public class LinkTag
             String page = engine.getFrontPage();
             url = makeBasicURL( m_context, page, null, m_absolute );
         }
-        
+
         return url;
     }
-    
+
     private String addParamsForRecipient( String addTo, Map params )
     {
-        if( params == null || params.size() == 0 ) 
+        if( params == null || params.size() == 0 )
         {
             return addTo;
         }
@@ -306,30 +306,32 @@ public class LinkTag
             buf.append( n );
             buf.append( "=" );
             buf.append( v );
-            if( it.hasNext() ) 
+            if( it.hasNext() )
             {
                 buf.append( "&amp;" );
             }
         }
-        if( addTo == null ) 
+        if( addTo == null )
         {
             return buf.toString();
         }
-        if( !addTo.endsWith( "&amp;" ) ) {
+        if( !addTo.endsWith( "&amp;" ) )
+        {
             return addTo + "&amp;" + buf.toString();
         }
         return addTo + buf.toString();
     }
-    
+
     private String makeBasicURL( String context, String page, String parms, boolean absolute )
     {
         String url;
         WikiEngine engine = m_wikiContext.getEngine();
-        
+
         if( context.equals( WikiContext.DIFF ) )
         {
-            int r1 = 0, r2 = 0;
-            
+            int r1 = 0;
+            int r2 = 0;
+
             if( DiffLinkTag.VER_LATEST.equals(getVersion()) )
             {
                 WikiPage latest = engine.getPage( page, WikiProvider.LATEST_VERSION );
@@ -372,23 +374,23 @@ public class LinkTag
 
             parms = "r1="+r1+"&amp;r2="+r2;
         }
-        
+
         //url = m_wikiContext.getURL( m_context, m_pageName, parms );
         url = engine.getURL( m_context, m_pageName, parms, m_absolute );
-        
+
         return url;
     }
-    
+
     public int doWikiStartTag() throws Exception
     {
         return EVAL_BODY_BUFFERED;
     }
-    
+
     public int doEndTag()
     {
-        try 
+        try
         {
-            if( !m_overrideAbsolute ) 
+            if( !m_overrideAbsolute )
             {
                 // TODO: see WikiContext.getURL(); this check needs to be specified somewhere.
                 WikiEngine engine = m_wikiContext.getEngine();
@@ -397,52 +399,53 @@ public class LinkTag
 
             JspWriter out = pageContext.getOut();
             String url = figureOutURL();
-            
+
             StringBuffer sb = new StringBuffer( 20 );
-            
+
             sb.append( (m_class != null)   ? "class=\""+m_class+"\" " : "" );
             sb.append( (m_style != null)   ? "style=\""+m_style+"\" " : "" );
             sb.append( (m_target != null ) ? "target=\""+m_target+"\" " : "" );
             sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );
             sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
             sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
-            
+
             switch( m_format )
             {
-              case ANCHOR:
-                out.print("<a "+sb.toString()+" href=\""+url+"\">");
-                break;
               case URL:
                 out.print( url );
                 break;
+              default:
+              case ANCHOR:
+                out.print("<a "+sb.toString()+" href=\""+url+"\">");
+                break;
             }
-            
+
             // Add any explicit body content. This is not the intended use
             // of LinkTag, but happens to be the way it has worked previously.
-            if( m_bodyContent != null ) 
+            if( m_bodyContent != null )
             {
                 String linktext = m_bodyContent.getString().trim();
                 out.write( linktext );
             }
-            
+
             //  Finish off by closing opened anchor
             if( m_format == ANCHOR ) out.print("</a>");
-        } 
+        }
         catch( Exception e )
         {
             // Yes, we want to catch all exceptions here, including RuntimeExceptions
             log.error( "Tag failed", e );
         }
-        
-        return EVAL_PAGE;    
+
+        return EVAL_PAGE;
     }
 
-    public void setBodyContent( BodyContent bc ) 
+    public void setBodyContent( BodyContent bc )
     {
         m_bodyContent = bc;
     }
 
-    public void doInitBody() throws JspException 
+    public void doInitBody() throws JspException
     {
     }
 }
