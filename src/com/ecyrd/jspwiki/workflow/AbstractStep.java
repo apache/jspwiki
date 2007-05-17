@@ -9,7 +9,7 @@ import com.ecyrd.jspwiki.WikiException;
  * Abstact superclass that provides a complete implementation of most
  * Step methods; subclasses need only implement {@link #execute()} and
  * {@link #getActor()}.
- * 
+ *
  * @author Andrew Jaquith
  * @since 2.5
  */
@@ -37,10 +37,10 @@ public abstract class AbstractStep implements Step
     private boolean m_started;
 
     /**
-     * Protected constructor that creates a new Step with a specified message key. 
-     * After construction, the protected method {@link #setWorkflow(Workflow)} should be 
+     * Protected constructor that creates a new Step with a specified message key.
+     * After construction, the protected method {@link #setWorkflow(Workflow)} should be
      * called.
-     * 
+     *
      * @param messageKey
      *            the Step's message key, such as
      *            <code>decision.editPageApproval</code>. By convention, the
@@ -63,7 +63,7 @@ public abstract class AbstractStep implements Step
     /**
      * Constructs a new Step belonging to a specified Workflow and having a
      * specified message key.
-     * 
+     *
      * @param workflow
      *            the workflow the Step belongs to
      * @param messageKey
@@ -106,7 +106,8 @@ public abstract class AbstractStep implements Step
 
     public final Object[] getMessageArguments()
     {
-        if ( m_workflow == null ) {
+        if ( m_workflow == null )
+        {
             return new Object[0];
         }
         return m_workflow.getMessageArguments();
@@ -124,7 +125,8 @@ public abstract class AbstractStep implements Step
 
     public Principal getOwner()
     {
-        if ( m_workflow == null ) {
+        if ( m_workflow == null )
+        {
             return null;
         }
         return m_workflow.getOwner();
@@ -153,13 +155,15 @@ public abstract class AbstractStep implements Step
     public final synchronized void setOutcome(Outcome outcome)
     {
         // Is this an allowed Outcome?
-        if ( !m_successors.containsKey( outcome ) ) {
+        if ( !m_successors.containsKey( outcome ) )
+        {
             if ( !Outcome.STEP_CONTINUE.equals( outcome ) &&
-                 !Outcome.STEP_ABORT.equals( outcome ) ) {
+                 !Outcome.STEP_ABORT.equals( outcome ) )
+            {
                  throw new IllegalArgumentException( "Outcome " + outcome.getMessageKey() + " is not supported for this Step." );
             }
         }
-        
+
         // Is this a "completion" outcome?
         if ( outcome.isCompletion() )
         {
@@ -172,7 +176,7 @@ public abstract class AbstractStep implements Step
         }
         m_outcome = outcome;
     }
-    
+
     public final synchronized void start() throws WikiException
     {
         if ( m_started )
@@ -187,13 +191,13 @@ public abstract class AbstractStep implements Step
     {
         return (Step) m_successors.get( outcome );
     }
-    
+
     // --------------------------Helper methods--------------------------
 
     /**
      * Protected method that sets the parent Workflow post-construction.
      */
-    protected synchronized final void setWorkflow( Workflow workflow ) 
+    protected synchronized final void setWorkflow( Workflow workflow )
     {
         m_workflow = workflow;
     }
@@ -201,7 +205,7 @@ public abstract class AbstractStep implements Step
     /**
      * Protected helper method that adds a String representing an error message
      * to the Step's cached errors list.
-     * 
+     *
      * @param message
      *            the error message
      */

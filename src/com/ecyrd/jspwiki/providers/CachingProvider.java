@@ -413,7 +413,10 @@ public class CachingProvider
             {
                 p = getPageInfoFromCache( pageName );
             }
-            catch( Exception ex ) { return false; } // This should not happen
+            catch( Exception ex )
+            {
+                return false; // This should not happen
+            }
         }
         catch( ProviderException e )
         {
@@ -744,12 +747,12 @@ public class CachingProvider
 
     public synchronized String getProviderInfo()
     {
-        return("Real provider: "+m_provider.getClass().getName()+
+        return "Real provider: "+m_provider.getClass().getName()+
                ". Cache misses: "+m_cacheMisses+
                ". Cache hits: "+m_cacheHits+
                ". History cache hits: "+m_historyCacheHits+
                ". History cache misses: "+m_historyCacheMisses+
-               ". Cache consistency checks: "+m_expiryPeriod+"s");
+               ". Cache consistency checks: "+m_expiryPeriod+"s";
     }
 
     public void deleteVersion( String pageName, int version )

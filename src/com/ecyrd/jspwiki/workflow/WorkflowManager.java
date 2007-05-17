@@ -17,7 +17,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * track of the names of users or groups expected to approve particular
  * Workflows.
  * </p>
- * 
+ *
  * @author Andrew Jaquith
  */
 public class WorkflowManager implements WikiEventListener
@@ -39,7 +39,7 @@ public class WorkflowManager implements WikiEventListener
      */
     public WorkflowManager()
     {
-        next = 1;
+        m_next = 1;
         m_workflows = new HashSet();
         m_approvers = new HashMap();
         m_completed = new ArrayList();
@@ -49,7 +49,7 @@ public class WorkflowManager implements WikiEventListener
      * Adds a new workflow to the set of workflows and starts it. The new
      * workflow is automatically assigned a unique ID. If another workflow with
      * the same ID already exists, this method throws a WikIException.
-     * 
+     *
      * @param workflow
      *            the workflow to start
      */
@@ -63,19 +63,20 @@ public class WorkflowManager implements WikiEventListener
 
     /**
      * Returns a collection of the currently active workflows.
-     * 
+     *
      * @return the current workflows
      */
     public Collection getWorkflows()
     {
         return new HashSet( m_workflows );
     }
-    
+
     /**
      * Returns a collection of finished workflows; that is, those that have aborted or completed.
      * @return the finished workflows
      */
-    public List getCompletedWorkflows() {
+    public List getCompletedWorkflows()
+    {
         return new ArrayList( m_completed );
     }
 
@@ -84,7 +85,7 @@ public class WorkflowManager implements WikiEventListener
     /**
      * Initializes the WorkflowManager using a specfied WikiEngine and
      * properties.
-     * 
+     *
      * @param engine
      *            the wiki engine to associate with this WorkflowManager
      * @param props
@@ -120,7 +121,7 @@ public class WorkflowManager implements WikiEventListener
     /**
      * Returns <code>true</code> if a workflow matching a particular key
      * contains an approval step.
-     * 
+     *
      * @param messageKey
      *            the name of the workflow; corresponds to the value returned by
      *            {@link Workflow#getMessageKey()}.
@@ -128,7 +129,7 @@ public class WorkflowManager implements WikiEventListener
      */
     public boolean requiresApproval( String messageKey )
     {
-        return ( m_approvers.containsKey( messageKey ) );
+        return  m_approvers.containsKey( messageKey );
     }
 
     /**
@@ -136,7 +137,7 @@ public class WorkflowManager implements WikiEventListener
      * Workflow, based on the Workflow's message key. If not found, or if
      * Principal is Unresolved, throws WikiException. This particular
      * implementation always returns the GroupPrincipal <code>Admin</code>
-     * 
+     *
      * @param messageKey
      * @return the actor who approves Decisions
      * @throws WikiException
@@ -161,7 +162,7 @@ public class WorkflowManager implements WikiEventListener
             {
                 throw new WikiException( "Workflow approver '" + name + "' cannot not be resolved." );
             }
-            
+
             m_approvers.put( messageKey, approver );
         }
         return approver;
@@ -169,7 +170,7 @@ public class WorkflowManager implements WikiEventListener
 
     /**
      * Protected helper method that returns the associated WikiEngine
-     * 
+     *
      * @return the wiki engine
      */
     protected WikiEngine getEngine()
@@ -183,7 +184,7 @@ public class WorkflowManager implements WikiEventListener
 
     /**
      * Returns the DecisionQueue associated with this WorkflowManager
-     * 
+     *
      * @return the decision queue
      */
     public DecisionQueue getDecisionQueue()
@@ -191,39 +192,43 @@ public class WorkflowManager implements WikiEventListener
         return m_queue;
     }
 
-    private volatile int next;
+    private volatile int m_next;
 
     /**
      * Returns the next available unique identifier, which is subsequently
      * incremented.
-     * 
+     *
      * @return the id
      */
     private synchronized int nextId()
     {
-        int current = next;
-        next++;
+        int current = m_next;
+        m_next++;
         return current;
     }
-    
+
     /**
-     * Returns the current workflows a wiki session owns. These are workflows whose 
-     * {@link Workflow#getOwner()} method returns a Principal also possessed by the 
+     * Returns the current workflows a wiki session owns. These are workflows whose
+     * {@link Workflow#getOwner()} method returns a Principal also possessed by the
      * wiki session (see {@link com.ecyrd.jspwiki.WikiSession#getPrincipals()}). If the
      * wiki session is not authenticated, this method returns an empty Collection.
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    public Collection getOwnerWorkflows(WikiSession session) {
+    public Collection getOwnerWorkflows(WikiSession session)
+    {
         List workflows = new ArrayList();
         if ( session.isAuthenticated() )
         {
             Principal[] sessionPrincipals = session.getPrincipals();
-            for ( Iterator it = m_workflows.iterator(); it.hasNext(); ) {
+            for ( Iterator it = m_workflows.iterator(); it.hasNext(); )
+            {
                 Workflow w = (Workflow)it.next();
                 Principal owner = w.getOwner();
-                for ( int i = 0; i < sessionPrincipals.length; i++ ) {
-                    if ( sessionPrincipals[i].equals(owner) ) {
+                for ( int i = 0; i < sessionPrincipals.length; i++ )
+                {
+                    if ( sessionPrincipals[i].equals(owner) )
+                    {
                         workflows.add( w );
                         break;
                     }
@@ -269,7 +274,7 @@ public class WorkflowManager implements WikiEventListener
      * Protected helper method that adds a newly created Workflow to the cache,
      * and sets its <code>workflowManager</code> and <code>Id</code>
      * properties if not set.
-     * 
+     *
      * @param workflow
      *            the workflow to add
      */
@@ -290,13 +295,14 @@ public class WorkflowManager implements WikiEventListener
      * Protected helper method that removes a specified Workflow from the cache,
      * and moves it to the workflow history list. This method defensively
      * checks to see if the workflow has not yet been removed.
-     * 
+     *
      * @param workflow
      *            the workflow to remove
      */
     protected synchronized void remove(Workflow workflow)
     {
-        if ( m_workflows.contains( workflow ) ) {
+        if ( m_workflows.contains( workflow ) )
+        {
             m_workflows.remove( workflow );
             m_completed.add( workflow );
         }

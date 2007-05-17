@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -63,7 +63,7 @@ public class RCSFileProvider
     private String m_fullLogCommand  = "rlog -zLT %s";
     private String m_checkoutVersionCommand = "co -p -r1.%v %s";
     private String m_deleteVersionCommand = "rcs -o1.%v %s";
-    
+
     private static final Logger   log = Logger.getLogger(RCSFileProvider.class);
 
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";
@@ -96,7 +96,7 @@ public class RCSFileProvider
         m_logCommand     = props.getProperty( PROP_LOG, m_logCommand );
         m_fullLogCommand = props.getProperty( PROP_FULLLOG, m_fullLogCommand );
         m_checkoutVersionCommand = props.getProperty( PROP_CHECKOUTVERSION, m_checkoutVersionCommand );
-        
+
         File rcsdir = new File( getPageDirectory(), "RCS" );
 
         if( !rcsdir.exists() )
@@ -142,15 +142,15 @@ public class RCSFileProvider
             Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
             Pattern datepattern = compiler.compile( PATTERN_DATE );
             Pattern notepattern = compiler.compile( PATTERN_CHANGENOTE );
-            
+
             boolean found = false;
 
             while( (line = stdout.readLine()) != null )
             {
                 if( matcher.contains( line, headpattern ) )
-                {                    
+                {
                     MatchResult result = matcher.getMatch();
-                    
+
                     try
                     {
                         int vernum = Integer.parseInt( result.group(1) );
@@ -188,18 +188,18 @@ public class RCSFileProvider
                     // End of line sign from RCS
                     break;
                 }
-                
+
                 if( found && matcher.contains( line, userpattern ) )
                 {
                     MatchResult result = matcher.getMatch();
                     info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
-                
+
                 if( found && matcher.contains( line, notepattern ) )
                 {
                     MatchResult result = matcher.getMatch();
-                    
-                    info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );                    
+
+                    info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
             }
 
@@ -209,8 +209,8 @@ public class RCSFileProvider
             //  standard output.  So we make sure it's all emptied.
             //
 
-            while( (line = stdout.readLine()) != null ) 
-            { 
+            while( (line = stdout.readLine()) != null )
+            {
             }
 
             process.waitFor();
@@ -218,7 +218,7 @@ public class RCSFileProvider
             // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
             process.getInputStream().close();
             process.getOutputStream().close();
-            process.getErrorStream().close(); 
+            process.getErrorStream().close();
 
         }
         catch( Exception e )
@@ -245,7 +245,7 @@ public class RCSFileProvider
         InputStream stdout = null;
         BufferedReader stderr = null;
         Process process = null;
-        
+
         // Let parent handle latest fetches, since the FileSystemProvider
         // can do the file reading just as well.
 
@@ -287,7 +287,7 @@ public class RCSFileProvider
             process.waitFor();
 
             int exitVal = process.exitValue();
-            
+
             log.debug("Done, returned = "+exitVal);
 
             //
@@ -312,7 +312,7 @@ public class RCSFileProvider
                 //
                 //  Check which version we actually got out!
                 //
-            
+
                 if( checkedOutVersion != version )
                 {
                     throw new NoSuchVersionException( "Page: "+page+", version="+version);
@@ -340,7 +340,7 @@ public class RCSFileProvider
                 // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
                 if( stdout != null ) stdout.close();
                 if( stderr != null ) stderr.close();
-                if( process != null ) process.getInputStream().close(); 
+                if( process != null ) process.getInputStream().close();
             }
             catch( Exception e )
             {
@@ -368,13 +368,13 @@ public class RCSFileProvider
         try
         {
             String cmd = m_checkinCommand;
-            
+
             String author = page.getAuthor();
             if( author == null ) author = "unknown";
 
             String changenote = (String)page.getAttribute(WikiPage.CHANGENOTE);
             if( changenote == null ) changenote = "";
-            
+
             cmd = TextUtil.replaceString( cmd, "%s", mangleName(pagename)+FILE_EXT );
             cmd = TextUtil.replaceString( cmd, "%u", TextUtil.urlEncodeUTF8(author) );
             cmd = TextUtil.replaceString( cmd, "%c", TextUtil.urlEncodeUTF8(changenote) );
@@ -387,15 +387,15 @@ public class RCSFileProvider
             //
             //  Collect possible error output
             //
-            BufferedReader error = null; 
+            BufferedReader error = null;
             String elines = "";
             error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String line = null;
-            while ((line = error.readLine()) != null) 
+            while ((line = error.readLine()) != null)
             {
                 elines = elines + line +"\n";
             }
-            
+
             log.debug("Done, returned = "+process.exitValue());
             log.debug(elines);
             if (process.exitValue() != 0)
@@ -408,7 +408,7 @@ public class RCSFileProvider
             log.error("RCS checkin failed",e);
             ProviderException pe = new ProviderException("RCS checkin failed");
             pe.initCause(e);
-            throw pe;        
+            throw pe;
         }
         finally
         {
@@ -443,7 +443,7 @@ public class RCSFileProvider
 
         log.debug("Getting RCS version history");
 
-        ArrayList list = new ArrayList();        
+        ArrayList list = new ArrayList();
 
         try
         {
@@ -454,11 +454,11 @@ public class RCSFileProvider
             Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
 
             Pattern notepattern = compiler.compile( PATTERN_CHANGENOTE );
-            
+
             String cmd = TextUtil.replaceString( m_fullLogCommand,
                                                  "%s",
                                                  mangleName(page)+FILE_EXT );
-            
+
             Process process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
             // FIXME: Should this use encoding as well?
@@ -469,7 +469,7 @@ public class RCSFileProvider
             WikiPage info = null;
 
             while( (line = stdout.readLine()) != null )
-            { 
+            {
                 if( matcher.contains( line, revpattern ) )
                 {
                     info = new WikiPage( m_engine, page );
@@ -497,11 +497,11 @@ public class RCSFileProvider
 
                     info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
-                
+
                 if( matcher.contains( line, notepattern ) )
                 {
                     MatchResult result = matcher.getMatch();
-                    
+
                     info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
             }
@@ -511,7 +511,7 @@ public class RCSFileProvider
             // we must close all by exec(..) opened streams: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4784692
             process.getInputStream().close();
             process.getOutputStream().close();
-            process.getErrorStream().close(); 
+            process.getErrorStream().close();
 
             //
             // FIXME: This is very slow
@@ -576,7 +576,7 @@ public class RCSFileProvider
     }
 
     public void deleteVersion( String page, int version )
-    {        
+    {
         String         line = "<rcs not run>";
         BufferedReader stderr  = null;
         boolean        success = false;
@@ -589,19 +589,19 @@ public class RCSFileProvider
 
         log.debug("Running command "+cmd);
         Process process = null;
-        
+
         try
         {
             process = Runtime.getRuntime().exec( cmd, null, new File(getPageDirectory()) );
 
-            // 
+            //
             // 'rcs' command outputs to stderr methinks.
             //
 
             // FIXME: Should this use encoding as well?
-            
+
             stderr = new BufferedReader( new InputStreamReader(process.getErrorStream() ) );
-        
+
             while( (line = stderr.readLine()) != null )
             {
                 log.debug( "LINE="+line );
@@ -626,11 +626,12 @@ public class RCSFileProvider
                     process.getOutputStream().close();
                 }
             }
-            catch( IOException e ) {
+            catch( IOException e )
+            {
                 log.error("Cannot close streams for process while deleting page version.");
             }
         }
-        
+
         if( !success )
         {
             log.error("Version deletion failed. Last info from RCS is: "+line);
@@ -640,7 +641,7 @@ public class RCSFileProvider
     /**
      *  util method to parse a date string in Local and UTC formats.  This method is synchronized
      *  because SimpleDateFormat is not thread-safe.
-     *  
+     *
      *  @see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4228335
      */
     private synchronized Date parseDate( String str )
@@ -652,34 +653,36 @@ public class RCSFileProvider
             d = m_rcsdatefmt.parse( str );
             return d;
         }
-        catch ( ParseException pe ) { }
+        catch ( ParseException pe )
+        { }
 
         try
         {
             d = m_rcsdatefmt_utc.parse( str );
             return d;
         }
-        catch ( ParseException pe ) { }
+        catch ( ParseException pe )
+        { }
 
         return d;
     }
-    
+
     public void movePage( String from,
                           String to )
         throws ProviderException
     {
-        // XXX: Error checking could be better throughout this method.       
+        // XXX: Error checking could be better throughout this method.
         File fromFile = findPage( from );
         File toFile = findPage( to );
-        
+
         fromFile.renameTo( toFile );
 
         String fromRCSName = "RCS/"+mangleName( from )+FILE_EXT+",v";
         String toRCSName = "RCS/"+mangleName( to )+FILE_EXT+",v";
-        
+
         File fromRCSFile = new File( getPageDirectory(), fromRCSName );
         File toRCSFile = new File( getPageDirectory(), toRCSName );
-    
+
         fromRCSFile.renameTo( toRCSFile );
-    } 
+    }
 }

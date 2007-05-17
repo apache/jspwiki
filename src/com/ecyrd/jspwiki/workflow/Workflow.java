@@ -112,7 +112,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * <li><strong>Message arguments</strong> are used in combination with
  * JSPWiki's {@link com.ecyrd.jspwiki.i18n.InternationalizationManager} to
  * create language-independent user interface messages. The message argument
- * array is retrieved via {@link #getMessageArguments()}; the first two array 
+ * array is retrieved via {@link #getMessageArguments()}; the first two array
  * elements will always be these: a String representing work flow owner's name,
  * and a String representing the current actor's name. Workflow participants
  * can add to this array by invoking {@link #addMessageArgument(Object)}.</li>
@@ -132,29 +132,29 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * approval Decision from a user in the Admin group, and if approved, (c)
  * executes a "finish" Task. Here's sample code that illustrates how to do it:
  * </p>
- * 
+ *
  * <pre>
  *    // Create workflow; owner is current user
  * 1  Workflow workflow = new Workflow(&quot;workflow.myworkflow&quot;, context.getCurrentUser());
- *                      
+ *
  *    // Create custom initialization task
  * 2  Step initTask = new InitTask(this);
- *                  
+ *
  *    // Create finish task
  * 3  Step finishTask = new FinishTask(this);
- *                  
+ *
  *    // Create an intermediate decision step
  * 4  Principal actor = new GroupPrincipal(&quot;Admin&quot;);
  * 5  Step decision = new SimpleDecision(this, &quot;decision.AdminDecision&quot;, actor);
- *                  
+ *
  *    // Hook the steps together
  * 6  initTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
  * 7  decision.addSuccessor(Outcome.DECISION_APPROVE, finishTask);
- *            
+ *
  *    // Set workflow's first step
  * 8  workflow.setFirstStep(initTask);
  * </pre>
- * 
+ *
  * <p>
  * Some comments on the source code:
  * </p>
@@ -175,7 +175,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * <li>Line 8 adds the InitTask (and all of its successor Steps, nicely wired
  * together) to the workflow</li>
  * </ul>
- * 
+ *
  * @author Andrew Jaquith
  */
 public class Workflow
@@ -235,7 +235,7 @@ public class Workflow
      * instantiated the Workflow is considered to be in the {@link #CREATED}
      * state; a caller must explicitly invoke the {@link #start()} method to
      * begin processing.
-     * 
+     *
      * @param messageKey
      *            the message key used to construct a localized workflow name,
      *            such as <code>workflow.saveWikiPage</code>
@@ -267,7 +267,7 @@ public class Workflow
      * can be called at any point in the lifecycle prior to completion, but it
      * cannot be called twice. It finishes by calling the {@link #cleanup()}
      * method to flush retained objects.
-     * 
+     *
      * @throws IllegalStateException
      *             if the Workflow had been previously aborted
      */
@@ -285,7 +285,8 @@ public class Workflow
 
         if (m_currentStep != null)
         {
-            if (m_manager != null && m_currentStep instanceof Decision) {
+            if (m_manager != null && m_currentStep instanceof Decision)
+            {
                 Decision d = (Decision)m_currentStep;
                 m_manager.getDecisionQueue().remove(d);
             }
@@ -302,7 +303,7 @@ public class Workflow
      * {@link #getMessageArguments()}. The object <em>must</em> be an type
      * used by the {@link java.text.MessageFormat}: String, Date, or Number
      * (BigDecimal, BigInteger, Byte, Double, Float, Integer, Long, Short).
-     * 
+     *
      * @param obj the object to add
      * @throws IllegalArgumentException if the object is not of type
      * String, Number or Date
@@ -320,7 +321,7 @@ public class Workflow
     /**
      * Returns the actor Principal responsible for the current Step. If there is
      * no current Step, this method returns <code>null</code>.
-     * 
+     *
      * @return the current actor
      */
     public final Principal getCurrentActor()
@@ -335,7 +336,7 @@ public class Workflow
     /**
      * Returns the workflow state: {@link #CREATED}, {@link #RUNNING},
      * {@link #WAITING}, {@link #COMPLETED} or {@link #ABORTED}.
-     * 
+     *
      * @return the workflow state
      */
     public final int getCurrentState()
@@ -346,7 +347,7 @@ public class Workflow
     /**
      * Returns the current Step, or <code>null</code> if the workflow has not
      * started or already completed.
-     * 
+     *
      * @return the current step
      */
     public final Step getCurrentStep()
@@ -357,7 +358,7 @@ public class Workflow
     /**
      * Retrieves a named Object associated with this Workflow. If the Workflow
      * has completed or aborted, this method always returns <code>null</code>.
-     * 
+     *
      * @param attr
      *            the name of the attribute
      * @return the value
@@ -376,7 +377,7 @@ public class Workflow
      * value is equal to the end-time value returned by the final Step's
      * {@link Step#getEndTime()} method, if the workflow has completed.
      * Otherwise, this method returns {@link #TIME_NOT_SET}.
-     * 
+     *
      * @return the end time
      */
     public final Date getEndTime()
@@ -395,7 +396,7 @@ public class Workflow
     /**
      * Returns the unique identifier for this Workflow. If not set, this method
      * returns ID_NOT_SET ({@value #ID_NOT_SET}).
-     * 
+     *
      * @return the unique identifier
      */
     public final int getId()
@@ -419,7 +420,7 @@ public class Workflow
      * Workflow and Step subclasses are free to append items to this collection
      * with {@link #addMessageArgument(Object)}.
      * </p>
-     * 
+     *
      * @return the array of message arguments
      */
     public final Object[] getMessageArguments()
@@ -435,7 +436,7 @@ public class Workflow
     /**
      * Returns an i18n message key for the name of this workflow; for example,
      * <code>workflow.saveWikiPage</code>.
-     * 
+     *
      * @return the name
      */
     public final String getMessageKey()
@@ -446,7 +447,7 @@ public class Workflow
     /**
      * The owner Principal on whose behalf this Workflow is being executed; that
      * is, the user who created the workflow.
-     * 
+     *
      * @return the name of the Principal who owns this workflow
      */
     public final Principal getOwner()
@@ -459,17 +460,17 @@ public class Workflow
      * value is equal to the start-time value returned by the first Step's
      * {@link Step#getStartTime()} method, if the workflow has started already.
      * Otherwise, this method returns {@link #TIME_NOT_SET}.
-     * 
+     *
      * @return the start time
      */
     public final Date getStartTime()
     {
-        return (isStarted() ? m_firstStep.getStartTime() : TIME_NOT_SET);
+        return isStarted() ? m_firstStep.getStartTime() : TIME_NOT_SET;
     }
 
     /**
      * Returns the WorkflowManager that contains this Workflow.
-     * 
+     *
      * @return the workflow manager
      */
     public final WorkflowManager getWorkflowManager()
@@ -482,7 +483,7 @@ public class Workflow
      * first Step to the currently executing one. The first step is the first
      * item in the array. If the Workflow has not started, this method returns a
      * zero-length array.
-     * 
+     *
      * @return an array of Steps representing those that have executed, or are
      *         currently executing
      */
@@ -493,45 +494,45 @@ public class Workflow
 
     /**
      * Returns <code>true</code> if the workflow had been previously aborted.
-     * 
+     *
      * @return the result
      */
     public final boolean isAborted()
     {
-        return (m_state == ABORTED);
+        return m_state == ABORTED;
     }
 
     /**
      * Determines whether this Workflow is completed; that is, if it has no
      * additional Steps to perform. If the last Step in the workflow is
      * finished, this method will return <code>true</code>.
-     * 
+     *
      * @return <code>true</code> if the workflow has been started but has no
      *         more steps to perform; <code>false</code> if not.
      */
     public final boolean isCompleted()
     {
         // If current step is null, then we're done
-        return (m_started && m_state == COMPLETED);
+        return m_started && m_state == COMPLETED;
     }
 
     /**
      * Determines whether this Workflow has started; that is, its
      * {@link #start()} method has been executed.
-     * 
+     *
      * @return <code>true</code> if the workflow has been started;
      *         <code>false</code> if not.
      */
     public final boolean isStarted()
     {
-        return (m_started);
+        return m_started;
     }
 
     /**
      * Convenience method that returns the predecessor of the current Step. This
      * method simply examines the Workflow history and returns the
      * second-to-last Step.
-     * 
+     *
      * @return the predecessor, or <code>null</code> if the first Step is
      *         currently executing
      */
@@ -543,14 +544,14 @@ public class Workflow
     /**
      * Restarts the Workflow from the {@link #WAITING} state and puts it into
      * the {@link #RUNNING} state again. If the Workflow had not previously been
-     * paused, this method throws an IllegalStateException. If any of the 
+     * paused, this method throws an IllegalStateException. If any of the
      * Steps in this Workflow throw a WikiException, the Workflow will abort
      * and propagate the exception to callers.
-     * 
+     *
      * @throws IllegalStateException
      *             if the Workflow has not previously been paused
-     * @throws WikiException 
-     *             if the current task's 
+     * @throws WikiException
+     *             if the current task's
      */
     public final synchronized void restart() throws WikiException
     {
@@ -560,7 +561,7 @@ public class Workflow
         }
         m_state = RUNNING;
         fireEvent(WorkflowEvent.RUNNING);
-        
+
         // Process current step
         try
         {
@@ -576,9 +577,9 @@ public class Workflow
     /**
      * Temporarily associates an Object with this Workflow, as a named attribute, for the
      * duration of workflow execution. The passed Object can be anything required by
-     * an executing Step. Note that when the workflow completes or aborts, all 
+     * an executing Step. Note that when the workflow completes or aborts, all
      * attributes will be cleared.
-     * 
+     *
      * @param attr
      *            the attribute name
      * @param obj
@@ -598,7 +599,7 @@ public class Workflow
      * after the {@link #start()} method executes. Note than the Step is not
      * marked as the "current" step or added to the Workflow history until the
      * {@link #start()} method is called.
-     * 
+     *
      * @param step
      *            the first step for the workflow
      */
@@ -609,7 +610,7 @@ public class Workflow
 
     /**
      * Sets the unique identifier for this Workflow.
-     * 
+     *
      * @param id
      *            the unique identifier
      */
@@ -620,7 +621,7 @@ public class Workflow
 
     /**
      * Sets the WorkflowManager that contains this Workflow.
-     * 
+     *
      * @param manager
      *            the workflow manager
      */
@@ -633,10 +634,10 @@ public class Workflow
     /**
      * Starts the Workflow and sets the state to {@link #RUNNING}. If the
      * Workflow has already been started (or previously aborted), this method
-     * returns an {@linkplain IllegalStateException}. If any of the 
+     * returns an {@linkplain IllegalStateException}. If any of the
      * Steps in this Workflow throw a WikiException, the Workflow will abort
      * and propagate the exception to callers.
-     * 
+     *
      * @throws IllegalStateException
      *             if the Workflow has already been started
      */
@@ -675,7 +676,7 @@ public class Workflow
      * running or has already been paused, this method throws an
      * IllegalStateException. Once paused, the Workflow can be un-paused by
      * executing the {@link #restart()} method.
-     * 
+     *
      * @throws IllegalStateException
      *             if the Workflow has already been paused
      */
@@ -707,7 +708,8 @@ public class Workflow
      */
     protected final synchronized void complete()
     {
-        if ( !isCompleted() ) {
+        if ( !isCompleted() )
+        {
             m_state = COMPLETED;
             fireEvent(WorkflowEvent.COMPLETED);
             cleanup();
@@ -716,7 +718,7 @@ public class Workflow
 
     /**
      * Protected method that returns the predecessor for a supplied Step.
-     * 
+     *
      * @param step
      *            the Step for which the predecessor is requested
      * @return its predecessor, or <code>null</code> if the first Step was
@@ -731,7 +733,7 @@ public class Workflow
     /**
      * Protected method that processes the current Step by calling
      * {@link Step#execute()}. If the <code>execute</code> throws an
-     * exception, this method will propagate the exception immediately 
+     * exception, this method will propagate the exception immediately
      * to callers without aborting.
      */
     protected final void processCurrentStep() throws WikiException
@@ -792,7 +794,7 @@ public class Workflow
     /**
      * Registers a WikiEventListener with this instance. This is a convenience
      * method.
-     * 
+     *
      * @param listener
      *            the event listener
      */
@@ -804,7 +806,7 @@ public class Workflow
     /**
      * Un-registers a WikiEventListener with this instance. This is a
      * convenience method.
-     * 
+     *
      * @param listener
      *            the event listener
      */
@@ -815,7 +817,7 @@ public class Workflow
 
     /**
      * Fires a WorkflowEvent of the provided type to all registered listeners.
-     * 
+     *
      * @see com.ecyrd.jspwiki.event.WorkflowEvent
      * @param type
      *            the event type to be fired
