@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>JSPWiki-2.4</name>
+	<name>JSPWiki</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -11,17 +11,24 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.ibm.etools.validation.validationbuilder</name>
+			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.ibm.sse.model.structuredbuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<triggers>full,incremental,</triggers>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/net.sourceforge.metrics.builder.launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+		<nature>net.sourceforge.metrics.nature</nature>
 	</natures>
 </projectDescription>

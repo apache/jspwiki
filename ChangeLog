@@ -1,5 +1,7 @@
 2007-05-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
+       * 2.5.59
+
        * Again, a number of CheckStyle issues fixed.
 
        * Switched to new HttpMultipartRequest library (2.00b9)
