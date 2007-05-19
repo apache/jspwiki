@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -51,9 +51,9 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *    <li>bantime - How long an IP address stays on the temporary ban list (default is 60 for 60 minutes).</li>
  *    <li>maxurls - How many URLs can be added to the page before it is considered spam (default is 5)</li>
  *  </ul>
- *  
+ *
  *  <p>Changes by admin users are ignored.</p>
- *  
+ *
  *  @since 2.1.112
  *  @author Janne Jalkanen
  */
@@ -70,13 +70,13 @@ public class SpamFilter
     public static final String  PROP_MAXURLS   = "maxurls";
     public static final String  PROP_AKISMET_API_KEY = "akismet-apikey";
     public static final String  PROP_IGNORE_AUTHENTICATED = "ignoreauthenticated";
-    
-    private String          URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
-    
+
+    private static final String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
+
     private String          m_forbiddenWordsPage = "SpamFilterWordList";
     private String          m_errorPage          = "RejectedMessage";
     private String          m_blacklist          = "SpamFilterWordList/blacklist.txt";
-    
+
     private PatternMatcher  m_matcher = new Perl5Matcher();
     private PatternCompiler m_compiler = new Perl5Compiler();
 
@@ -87,43 +87,43 @@ public class SpamFilter
     static  Logger          spamlog = Logger.getLogger( "SpamLog" );
     static  Logger          log = Logger.getLogger( SpamFilter.class );
 
-    
+
     private Vector          m_temporaryBanList = new Vector();
-    
+
     private int             m_banTime = 60; // minutes
-    
+
     private Vector          m_lastModifications = new Vector();
-    
+
     /**
      *  How many times a single IP address can change a page per minute?
      */
     private int             m_limitSinglePageChanges = 5;
-    
+
     /**
      *  How many times can you add the exact same string to a page?
      */
     private int             m_limitSimilarChanges = 2;
-    
+
     /**
      *  How many URLs can be added at maximum.
      */
     private int             m_maxUrls = 10;
-    
+
     private Pattern         m_UrlPattern;
     private Akismet         m_akismet;
 
     private String          m_akismetAPIKey = null;
-    
+
     /**
      * If set to true, will ignore anyone who is in Authenticated role.
      */
     private boolean         m_ignoreAuthenticated = false;
-    
+
     public void initialize( WikiEngine engine, Properties properties )
     {
-        m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST, 
+        m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST,
                                                        m_forbiddenWordsPage );
-        m_errorPage = properties.getProperty( PROP_ERRORPAGE, 
+        m_errorPage = properties.getProperty( PROP_ERRORPAGE,
                                               m_errorPage );
 
         m_limitSinglePageChanges = TextUtil.getIntegerProperty( properties,
@@ -141,9 +141,9 @@ public class SpamFilter
         m_banTime = TextUtil.getIntegerProperty( properties,
                                                  PROP_BANTIME,
                                                  m_banTime );
-    
+
         m_blacklist = properties.getProperty( PROP_BLACKLIST, m_blacklist );
-        
+
         m_ignoreAuthenticated = TextUtil.getBooleanProperty( properties,
                                                              PROP_IGNORE_AUTHENTICATED,
                                                              m_ignoreAuthenticated );
@@ -160,26 +160,26 @@ public class SpamFilter
         m_akismetAPIKey = TextUtil.getStringProperty( properties,
                                                       PROP_AKISMET_API_KEY,
                                                       m_akismetAPIKey );
-        
+
         log.info("# Spam filter initialized.  Temporary ban time "+m_banTime+
                  " mins, max page changes/minute: "+m_limitSinglePageChanges );
-        
-        
+
+
     }
 
     private static final int REJECT = 0;
     private static final int ACCEPT = 1;
     private static final int NOTE   = 2;
-    
+
     private String log( WikiContext ctx, int type, String source, String message )
     {
         message = TextUtil.replaceString( message, "\r\n", "\\r\\n" );
         message = TextUtil.replaceString( message, "\"", "\\\"" );
-        
+
         String uid = getUniqueID();
-        
+
         String page = ctx.getPage().getName();
-        
+
         switch( type )
         {
             case REJECT:
@@ -192,14 +192,14 @@ public class SpamFilter
                 spamlog.info("NOTE "+source+" "+uid+" "+page+" "+message);
                 break;
         }
-        
+
         return uid;
     }
-    
+
     /**
      *  Parses a list of patterns and returns a Collection of compiled Pattern
      *  objects.
-     *  
+     *
      * @param source
      * @param list
      * @return
@@ -223,7 +223,7 @@ public class SpamFilter
                 catch( MalformedPatternException e )
                 {
                     log.debug( "Malformed spam filter pattern "+pattern );
-                
+
                     source.setAttribute("error", "Malformed spam filter pattern "+pattern);
                 }
             }
@@ -235,34 +235,34 @@ public class SpamFilter
     /**
      *  Takes a MT-Blacklist -formatted blacklist and returns a list of compiled
      *  Pattern objects.
-     *  
+     *
      *  @param list
      *  @return
      */
     private Collection parseBlacklist( String list )
     {
         ArrayList compiledpatterns = new ArrayList();
-        
+
         if( list != null )
         {
             try
             {
                 BufferedReader in = new BufferedReader( new StringReader(list) );
-            
+
                 String line;
-            
+
                 while( (line = in.readLine()) != null )
                 {
                     line = line.trim();
                     if( line.length() == 0 ) continue; // Empty line
                     if( line.startsWith("#") ) continue; // It's a comment
-                    
+
                     int ws = line.indexOf(' ');
-                    
+
                     if( ws == -1 ) ws = line.indexOf('\t');
-                    
+
                     if( ws != -1 ) line = line.substring(0,ws);
-                    
+
                     try
                     {
                         compiledpatterns.add( m_compiler.compile( line ) );
@@ -270,7 +270,7 @@ public class SpamFilter
                     catch( MalformedPatternException e )
                     {
                         log.debug( "Malformed spam filter pattern "+line );
-                    }                    
+                    }
                 }
             }
             catch( IOException e )
@@ -278,29 +278,29 @@ public class SpamFilter
                 log.info("Could not read patterns; returning what I got",e);
             }
         }
-        
+
         return compiledpatterns;
     }
-    
+
     private String getUniqueID()
     {
         StringBuffer sb = new StringBuffer();
         Random rand = new Random();
-        
+
         for( int i = 0; i < 6; i++ )
         {
             char x = (char)('A'+rand.nextInt(26));
-            
+
             sb.append(x);
         }
-        
+
         return sb.toString();
     }
-        
+
     /**
      *  Takes a single page change and performs a load of tests on the content change.
      *  An admin can modify anything.
-     *  
+     *
      *  @param context
      *  @param content
      *  @throws RedirectException
@@ -319,11 +319,11 @@ public class SpamFilter
             log.debug("Change is "+change);
 
             long time = System.currentTimeMillis()-60*1000L; // 1 minute
-            
+
             for( Iterator i = m_lastModifications.iterator(); i.hasNext(); )
             {
                 Host host = (Host)i.next();
-                
+
                 //
                 //  Check if this item is invalid
                 //
@@ -333,26 +333,26 @@ public class SpamFilter
                     i.remove();
                     continue;
                 }
-         
+
                 //
                 // Check if this IP address has been seen before
                 //
-                
+
                 if( host.getAddress().equals(addr) )
                 {
                     hostCounter++;
                 }
-                
+
                 //
                 //  Check, if this change has been seen before
                 //
-                
+
                 if( host.getChange() != null && host.getChange().equals(change) )
                 {
                     changeCounter++;
                 }
             }
-            
+
             //
             //  Now, let's check against the limits.
             //
@@ -360,63 +360,63 @@ public class SpamFilter
             {
                 Host host = new Host( addr, null );
 
-                
+
                 m_temporaryBanList.add( host );
-                
+
                 String uid = log( context, REJECT, "TooManyModifications", change );
                 log.info( "SPAM:TooManyModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
                 throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
-                                             context.getViewURL( m_errorPage ) );
+                                             getRedirectPage(context) );
             }
-            
+
             if( changeCounter >= m_limitSimilarChanges )
             {
                 Host host = new Host( addr, null );
-                
+
                 m_temporaryBanList.add( host );
 
                 String uid = log( context, REJECT, "SimilarModifications", change );
-                
+
                 log.info("SPAM:SimilarModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many similar modifications" );
                 throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
-                                             context.getViewURL( m_errorPage ) );                
+                                             getRedirectPage(context) );
             }
-            
+
             //
             //  Calculate the number of links in the addition.
             //
-            
+
             String tstChange = change;
             int    urlCounter = 0;
-            
+
             while( m_matcher.contains(tstChange,m_UrlPattern) )
             {
                 MatchResult m = m_matcher.getMatch();
-                
+
                 tstChange = tstChange.substring( m.endOffset(0) );
-                
+
                 urlCounter++;
             }
-            
+
             if( urlCounter > m_maxUrls )
             {
                 Host host = new Host( addr, null );
-                
+
                 m_temporaryBanList.add( host );
-                
+
                 String uid = log( context, REJECT, "TooManyUrls", change );
 
                 log.info("SPAM:TooManyUrls ("+uid+"). Added host "+addr+" to temporary ban list for adding too many URLs" );
                 throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
-                                             context.getViewURL( m_errorPage ) );                
+                                             getRedirectPage(context) );
             }
-            
+
             //
             //  Do Akismet check
             //
-            
+
             checkAkismet( context, change );
-            
+
             m_lastModifications.add( new Host( addr, change ) );
         }
     }
@@ -432,13 +432,18 @@ public class SpamFilter
         {
             return true;
         }
-        
+
+        if( context.getVariable("captcha") != null )
+        {
+            return true;
+        }
+
         return false;
     }
 
     /**
      *  Checks against the akismet system.
-     *  
+     *
      * @param context
      * @param change
      * @throws RedirectException
@@ -451,7 +456,7 @@ public class SpamFilter
             if( m_akismet == null )
             {
                 log.info("Initializing Akismet spam protection.");
-                
+
                 m_akismet = new Akismet( m_akismetAPIKey, context.getEngine().getBaseURL() );
 
                 if( !m_akismet.verifyAPIKey() )
@@ -461,16 +466,16 @@ public class SpamFilter
                     m_akismet = null;
                 }
             }
-            
+
             HttpServletRequest req = context.getHttpRequest();
-                
+
             if( req != null && m_akismet != null )
             {
                 log.debug("Calling Akismet to check for spam...");
-                
+
                 StopWatch sw = new StopWatch();
                 sw.start();
-                
+
                 String ipAddress     = req.getRemoteAddr();
                 String userAgent     = req.getHeader("User-Agent");
                 String referrer      = req.getHeader( "Referer");
@@ -479,7 +484,7 @@ public class SpamFilter
                 String commentAuthor = context.getCurrentUser().getName();
                 String commentAuthorEmail = null;
                 String commentAuthorURL   = null;
-                    
+
                 boolean isSpam = m_akismet.commentCheck( ipAddress,
                                                          userAgent,
                                                          referrer,
@@ -490,39 +495,39 @@ public class SpamFilter
                                                          commentAuthorURL,
                                                          change,
                                                          null );
-                
+
                 sw.stop();
-                
+
                 log.debug("Akismet request done in: "+sw);
-                
+
                 if( isSpam )
                 {
                     // Host host = new Host( ipAddress, null );
-                    
+
                     // m_temporaryBanList.add( host );
 
                     String uid = log( context, REJECT, "Akismet", change );
 
                     log.info("SPAM:Akismet ("+uid+"). Akismet thinks this change is spam; added host to temporary ban list.");
-                    
+
                     throw new RedirectException("Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code "+uid+")",
-                                                context.getViewURL( m_errorPage ) );                
+                                                getRedirectPage(context) );
                 }
             }
         }
     }
-    
+
     /**
      *  Goes through the ban list and cleans away any host which has expired from it.
      */
     private synchronized void cleanBanList()
     {
         long now = System.currentTimeMillis();
-        
+
         for( Iterator i = m_temporaryBanList.iterator(); i.hasNext(); )
         {
             Host host = (Host)i.next();
-            
+
             if( host.getReleaseTime() < now )
             {
                 log.debug("Removed host "+host.getAddress()+" from temporary ban list (expired)");
@@ -530,47 +535,47 @@ public class SpamFilter
             }
         }
     }
-    
+
     /**
      *  Checks the ban list if the IP address of the changer is already on it.
-     *  
+     *
      *  @param context
      *  @throws RedirectException
      */
-    
+
     private void checkBanList( WikiContext context, String change )
         throws RedirectException
     {
         HttpServletRequest req = context.getHttpRequest();
-        
+
         if( req != null )
         {
             String remote = req.getRemoteAddr();
-            
+
             long now = System.currentTimeMillis();
-            
+
             for( Iterator i = m_temporaryBanList.iterator(); i.hasNext(); )
             {
                 Host host = (Host)i.next();
-                
+
                 if( host.getAddress().equals(remote) )
                 {
                     long timeleft = (host.getReleaseTime() - now) / 1000L;
-                    
+
                     log( context, REJECT, "IPBannedTemporarily", change );
-                    
+
                     throw new RedirectException( "You have been temporarily banned from modifying this wiki. ("+timeleft+" seconds of ban left)",
-                                                 context.getViewURL( m_errorPage ) );
+                                                 getRedirectPage(context) );
                 }
             }
         }
-        
+
     }
-    
+
     /**
      *  If the spam filter notices changes in the black list page, it will refresh
      *  them automatically.
-     *  
+     *
      *  @param context
      */
     private void refreshBlacklists( WikiContext context )
@@ -579,9 +584,9 @@ public class SpamFilter
         {
             WikiPage source = context.getEngine().getPage( m_forbiddenWordsPage );
             Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
-        
+
             boolean rebuild = false;
-        
+
             //
             //  Rebuild, if the page or the attachment has changed since.
             //
@@ -600,34 +605,34 @@ public class SpamFilter
                     rebuild = true;
                 }
             }
-  
-            
+
+
             //
             //  Do the actual rebuilding.  For simplicity's sake, we always rebuild the complete
             //  filter list regardless of what changed.
             //
-            
+
             if( rebuild )
             {
                 m_lastRebuild = new Date();
 
-                m_spamPatterns = parseWordList( source, 
+                m_spamPatterns = parseWordList( source,
                                                 (String)source.getAttribute( LISTVAR ) );
 
                 log.info("Spam filter reloaded - recognizing "+m_spamPatterns.size()+" patterns from page "+m_forbiddenWordsPage);
-            
+
                 if( att != null )
                 {
                     InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
-            
+
                     StringWriter out = new StringWriter();
-            
+
                     FileUtil.copyContents( new InputStreamReader(in,"UTF-8"), out );
-            
+
                     Collection blackList = parseBlacklist( out.toString() );
 
                     log.info("...recognizing additional "+blackList.size()+" patterns from blacklist "+m_blacklist);
-            
+
                     m_spamPatterns.addAll( blackList );
                 }
             }
@@ -642,13 +647,13 @@ public class SpamFilter
         }
 
     }
-    
+
     public String preSave( WikiContext context, String content )
         throws RedirectException
     {
         cleanBanList();
-        refreshBlacklists(context);        
-        
+        refreshBlacklists(context);
+
         String change = getChange( context, content );
 
         if(!ignoreThisUser(context))
@@ -657,7 +662,7 @@ public class SpamFilter
             checkSinglePageChange( context, content, change );
             checkPatternList(context, content, change);
         }
-        
+
         log( context, ACCEPT, "-", change );
         return content;
     }
@@ -687,16 +692,21 @@ public class SpamFilter
                 String uid = log( context, REJECT, "Regexp("+p.getPattern()+")", change);
 
                 log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.getPattern()+"'");
-                
-                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")", 
-                                             context.getURL(WikiContext.VIEW,m_errorPage) );
+
+                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")",
+                                             getRedirectPage(context) );
             }
         }
     }
-    
+
+    private String getRedirectPage( WikiContext ctx )
+    {
+        return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page="+ctx.getEngine().encodeName(ctx.getPage().getName()) );
+    }
+
     /**
      *  Creates a simple text string describing the added content.
-     *  
+     *
      *  @param context
      *  @param newText
      *  @return Empty string, if there is no change.
@@ -707,11 +717,11 @@ public class SpamFilter
         StringBuffer change = new StringBuffer();
         WikiEngine engine = context.getEngine();
         // Get current page version
-        
+
         try
         {
             String oldText = engine.getPureText(page.getName(), WikiProvider.LATEST_VERSION);
-        
+
             String[] first  = Diff.stringToArray(oldText);
             String[] second = Diff.stringToArray(newText);
             Revision rev = Diff.diff(first, second, new MyersDiff());
@@ -721,11 +731,11 @@ public class SpamFilter
                 return "";
             }
 
-            
+
             for( int i = 0; i < rev.size(); i++ )
             {
                 Delta d = rev.getDelta(i);
-                
+
                 if( d instanceof AddDelta )
                 {
                     d.getRevised().toString( change, "", "\r\n" );
@@ -745,28 +755,28 @@ public class SpamFilter
         //  Don't forget to include the change note, too
         //
         String changeNote = (String)page.getAttribute(WikiPage.CHANGENOTE);
-        
+
         if( changeNote != null )
         {
             change.append("\r\n");
             change.append(changeNote);
         }
-        
+
         //
         //  And author as well
         //
-        
+
         if( page.getAuthor() != null )
         {
             change.append("\r\n"+page.getAuthor());
         }
-        
+
         return change.toString();
     }
-    
+
     /**
      *  A local class for storing host information.
-     * 
+     *
      *  @author jalkanen
      *
      *  @since
@@ -777,32 +787,32 @@ public class SpamFilter
         private  long m_releaseTime;
         private  String m_address;
         private  String m_change;
-        
+
         public String getAddress()
         {
             return m_address;
         }
-        
+
         public long getReleaseTime()
         {
             return m_releaseTime;
         }
-        
+
         public long getAddedTime()
         {
             return m_addedTime;
         }
-        
+
         public String getChange()
         {
             return m_change;
         }
-        
+
         public Host( String ipaddress, String change )
         {
             m_address = ipaddress;
             m_change  = change;
-            
+
             m_releaseTime = System.currentTimeMillis() + m_banTime * 60 * 1000L;
         }
     }
