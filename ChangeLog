@@ -1,3 +1,15 @@
+2007-05-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.60
+
+       * New, improved SpamFilter with Captcha recognition, if we
+       suspect you to be a spammer.  Captcha system is currently based
+       on Microsoft Research's Asirra, though we will probably want
+       to make it pluggable.  I have to admit that this required
+       far too much surgery in Edit.jsp to be nothing but a hack,
+       but I have to get it off my hard drive.  In addition,
+       commenting does not work, if spam is detected.
+
 2007-05-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.59
