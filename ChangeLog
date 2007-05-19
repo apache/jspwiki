@@ -1,25 +1,38 @@
+2007-05-19  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * Again, a number of CheckStyle issues fixed.
+
+       * Switched to new HttpMultipartRequest library (2.00b9)
+
+       * Added upload progress bar.  Unfortunately, it's still kinda
+       kludgy, but we'll try to fix it.  The backend stuff works; it's just
+       the UI which looks like a brick of legos built by a two-year old.
+
+       * New package: com.ecyrd.jspwiki.ui.progress, which manages different
+       kinds of progress systems.
+
 2007-05-14  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * i18n default.properties included, inline with last BrushedTemplate commit
-       
+
 2007-05-11  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * 2.5.58 - 3nd Brushed Template commit (still more to come)
-       
+
        * Quick Navigation box has been refactored and now uses the new RPC-JSON in the backend.
        Search icon added.
 
        * Update of all Editors, including FCK and WikiWizard. (i18n alignment)
-       you can now also use wysiwyg editors in the Comment.jsp. There is still a 
+       you can now also use wysiwyg editors in the Comment.jsp. There is still a
        widht/heigh bug in the combination WikiWizard & FireFox (visible in Comment.jsp)
-       
+
        * Font-size is based on the default browser settings. For FF this is pretty large.
-       You can now adjust the font-size in the UserPreferences. 
-       
+       You can now adjust the font-size in the UserPreferences.
+
        * Many bugfixes: e.g cookie handling.
 
 
-007-05-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+2007-05-13  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * Installed "FindBugs" and "Checkstyle", and found about 1500
        problems.  This update fixes a number of minor code style issues.
@@ -29,18 +42,18 @@
 2007-05-11  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * 2.5.57 - 2nd Brushed Template commit (more to come)
-       
+
        * Remove Info tab from all screens, as it causes overload on the wiki server,
        but also to avoid confusion when similar screens are served from different URLs.
        The info page has back it own existence, with small optimalisations.
-       
+
        * Mootools library upgraded to v1.1, just released
-       
+
        * Added code prettifier from Google. (use %%prettify around code blocks)
-       
+
        * Several smaller refactorings on jsp's and i18n default.properties
        The new more-info menu gets replaced by dropdown when browser has javascript on.
-       
+
        * Bugfix on numberformat reported by Frank Fisher.
        See http://www.jspwiki.org/wiki/BugAttachmentAndInfoTabsAreBlank
 
