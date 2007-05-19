@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.attachment;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -14,19 +33,19 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  version.
  *  <p>
  *  Usage:
- *  
+ *
  *  <pre>
- *  
+ *
  *  class MyDynamicComponent implements DynamicAttachmentProvider
  *  {
  *  ...
- *  
+ *
  *     DynamicAttachment destatt = mgr.getDynamicAttachment( destattname );
- *           
+ *
  *     if( destatt == null )
  *     {
- *         destatt = new DynamicAttachment( context.getEngine(), 
- *                                          context.getPage().getName(), 
+ *         destatt = new DynamicAttachment( context.getEngine(),
+ *                                          context.getPage().getName(),
  *                                          destfilename,
  *                                          this );
  *         destatt.setCacheable( false );
@@ -35,38 +54,38 @@ import com.ecyrd.jspwiki.WikiEngine;
  *     // This is used to check whether the attachment is modified or not
  *     // so don't forget to update this if your attachment source changes!
  *     // Else JSPWiki will be serving 304s to anyone who asks...
- *     
+ *
  *     destatt.setLastModified( context.getPage().getLastModified() );
  *     mgr.storeDynamicAttachment( context,  destatt );
  *  ...
- *  
- *      public InputStream getAttachmentData( WikiContext context, Attachment att ) 
+ *
+ *      public InputStream getAttachmentData( WikiContext context, Attachment att )
  *          throws IOException
  *      {
  *          byte[] bytes = "This is a test".getBytes();
- *       
+ *
  *          return new ByteArrayInputStream( bytes );
  *      }
  *  </pre>
- *  
+ *
  *  @author Janne Jalkanen
  *  @since 2.5.34
  */
 public class DynamicAttachment extends Attachment
 {
     private DynamicAttachmentProvider m_provider  = null;
-    
+
     /**
      *  Creates a DynamicAttachment.
-     *  
+     *
      *  @param engine
      *  @param parentPage
      *  @param fileName
      *  @param provider The provider which will be used to generate the attachment.
      */
-    public DynamicAttachment(WikiEngine engine, 
-                             String parentPage, 
-                             String fileName, 
+    public DynamicAttachment(WikiEngine engine,
+                             String parentPage,
+                             String fileName,
                              DynamicAttachmentProvider provider)
     {
         super(engine, parentPage, fileName);
@@ -75,7 +94,7 @@ public class DynamicAttachment extends Attachment
 
     /**
      *  Returns the provider which is used to generate this attachment.
-     *  
+     *
      *  @return A Provider component for this attachment.
      */
     public DynamicAttachmentProvider getProvider()

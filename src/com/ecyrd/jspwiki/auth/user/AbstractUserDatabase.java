@@ -23,14 +23,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  */
 public abstract class AbstractUserDatabase implements UserDatabase
 {
-    
-    protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
+
+    protected static Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String  PROP_SHARED_WITH_CONTAINER = "jspwiki.userdatabase.isSharedWithContainer";
-    
+
 
     /**
-     * No-op method that in previous versions of JSPWiki was intended to 
+     * No-op method that in previous versions of JSPWiki was intended to
      * atomically commit changes to the user database. Now, the {@link #rename(String, String)},
      * {@link #save(UserProfile)} and {@link #deleteByLoginName(String)} methods
      * are atomic themselves.
@@ -38,7 +38,8 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @deprecated there is no need to call this method because the save, rename and
      * delete methods contain their own commit logic
      */
-    public synchronized void commit() throws WikiSecurityException { }
+    public synchronized void commit() throws WikiSecurityException
+    { }
 
     /**
      * Looks up and returns the first {@link UserProfile}in the user database
@@ -52,9 +53,10 @@ public abstract class AbstractUserDatabase implements UserDatabase
     public UserProfile find( String index ) throws NoSuchPrincipalException
     {
         UserProfile profile = null;
-        
+
         // Try finding by full name
-        try {
+        try
+        {
             profile = findByFullName( index );
         }
         catch ( NoSuchPrincipalException e )
@@ -64,9 +66,10 @@ public abstract class AbstractUserDatabase implements UserDatabase
         {
             return profile;
         }
-        
+
         // Try finding by wiki name
-        try {
+        try
+        {
             profile = findByWikiName( index );
         }
         catch ( NoSuchPrincipalException e )
@@ -76,9 +79,10 @@ public abstract class AbstractUserDatabase implements UserDatabase
         {
             return profile;
         }
-        
+
         // Try finding by login name
-        try {
+        try
+        {
             profile = findByLoginName( index );
         }
         catch ( NoSuchPrincipalException e )
@@ -88,7 +92,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         {
             return profile;
         }
-        
+
         throw new NoSuchPrincipalException( "Not in database: " + index );
     }
 
@@ -165,12 +169,12 @@ public abstract class AbstractUserDatabase implements UserDatabase
     {
         return new DefaultUserProfile();
     }
-    
+
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#save(com.ecyrd.jspwiki.auth.user.UserProfile)
      */
     public abstract void save( UserProfile profile ) throws WikiSecurityException;
-    
+
     /**
      * Validates the password for a given user. If the user does not exist in
      * the user database, this method always returns <code>false</code>. If
@@ -196,14 +200,14 @@ public abstract class AbstractUserDatabase implements UserDatabase
             {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
             }
-            return ( hashedPassword.equals( storedPassword ) );
+            return hashedPassword.equals( storedPassword );
         }
         catch( NoSuchPrincipalException e )
         {
             return false;
         }
     }
-    
+
     /**
      * Private method that calculates the SHA-1 hash of a given
      * <code>String</code>
@@ -217,7 +221,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         {
             MessageDigest md = MessageDigest.getInstance( "SHA" );
             md.update( text.getBytes() );
-            byte digestedBytes[] = md.digest();
+            byte[] digestedBytes = md.digest();
             hash = HexUtils.convert( digestedBytes );
         }
         catch( NoSuchAlgorithmException e )
@@ -227,5 +231,5 @@ public abstract class AbstractUserDatabase implements UserDatabase
         }
         return hash;
     }
-    
+
 }

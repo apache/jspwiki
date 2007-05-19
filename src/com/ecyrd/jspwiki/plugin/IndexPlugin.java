@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -45,7 +45,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class IndexPlugin implements WikiPlugin
 {
-    protected static final Logger log = Logger.getLogger(IndexPlugin.class);
+    protected static Logger log = Logger.getLogger(IndexPlugin.class);
 
     public  static final String INITIALS_COLOR                  = "red" ;
     private static final int    DEFAULT_ITEMS_PER_LINE          = 0     ;
@@ -53,7 +53,7 @@ public class IndexPlugin implements WikiPlugin
     private static final String PARAM_ITEMS_PER_LINE            = "itemsPerLine";
     private static final String PARAM_INCLUDE                   = "include";
     private static final String PARAM_EXCLUDE                   = "exclude";
-    
+
     private int                 m_currentNofPagesOnLine         = 0;
     private int                 m_itemsPerLine;
     protected String            m_previousPageFirstLetter       = "";
@@ -61,24 +61,24 @@ public class IndexPlugin implements WikiPlugin
     protected StringWriter      m_headerPart    =   new StringWriter();
     private Pattern             m_includePattern;
     private Pattern             m_excludePattern;
-    
 
-    public String execute( WikiContext i_context , Map i_params )
+
+    public String execute( WikiContext wikiContext , Map params )
         throws PluginException
     {
         //
         //  Parse arguments and create patterns.
         //
         PatternCompiler compiler = new GlobCompiler();
-        m_itemsPerLine = TextUtil.parseIntParameter( (String) i_params.get(PARAM_ITEMS_PER_LINE),
+        m_itemsPerLine = TextUtil.parseIntParameter( (String) params.get(PARAM_ITEMS_PER_LINE),
                                                      DEFAULT_ITEMS_PER_LINE );
         try
         {
-            String ptrn = (String) i_params.get(PARAM_INCLUDE);
+            String ptrn = (String) params.get(PARAM_INCLUDE);
             if( ptrn == null ) ptrn = "*";
             m_includePattern = compiler.compile(ptrn);
 
-            ptrn = (String) i_params.get(PARAM_EXCLUDE);
+            ptrn = (String) params.get(PARAM_EXCLUDE);
             if( ptrn == null ) ptrn = "";
             m_excludePattern = compiler.compile(ptrn);
         }
@@ -86,17 +86,17 @@ public class IndexPlugin implements WikiPlugin
         {
             throw new PluginException("Illegal pattern detected."); // FIXME, make a proper error.
         }
-        
+
         //
         //  Get pages, then sort.
         //
-        
-        final Collection        allPages      = getAllPagesSortedByName( i_context );
-               
+
+        final Collection        allPages      = getAllPagesSortedByName( wikiContext );
+
         //
         //  Build the page.
         //
-        buildIndexPageHeaderAndBody( i_context, allPages );
+        buildIndexPageHeaderAndBody( wikiContext, allPages );
 
         StringBuffer res = new StringBuffer();
 
@@ -107,17 +107,17 @@ public class IndexPlugin implements WikiPlugin
         res.append( "<div class=\"body\">\n" );
         res.append( m_bodyPart.toString() );
         res.append( "</div>\n</div>\n" );
-    
+
         return res.toString();
     }
 
 
-    private void buildIndexPageHeaderAndBody( WikiContext context, 
-                                              final Collection i_allPages )
+    private void buildIndexPageHeaderAndBody( WikiContext context,
+                                              final Collection allPages )
     {
         PatternMatcher matcher = new Perl5Matcher();
-        
-        for( Iterator i = i_allPages.iterator (); i.hasNext ();)
+
+        for( Iterator i = allPages.iterator (); i.hasNext ();)
         {
             WikiPage curPage = (WikiPage) i.next();
 
@@ -126,11 +126,11 @@ public class IndexPlugin implements WikiPlugin
                 if( !matcher.matches( curPage.getName(), m_excludePattern ) )
                 {
                     ++m_currentNofPagesOnLine;
-            
+
                     String    pageNameFirstLetter           = curPage.getName().substring(0,1).toUpperCase();
                     boolean   sameFirstLetterAsPreviousPage = m_previousPageFirstLetter.equals(pageNameFirstLetter);
 
-                    if( !sameFirstLetterAsPreviousPage ) 
+                    if( !sameFirstLetterAsPreviousPage )
                     {
                         addLetterToIndexHeader( pageNameFirstLetter );
                         addLetterHeaderWithLine( pageNameFirstLetter );
@@ -150,9 +150,9 @@ public class IndexPlugin implements WikiPlugin
     /**
      *  Gets all pages, then sorts them.
      */
-    static Collection getAllPagesSortedByName( WikiContext i_context )
+    static Collection getAllPagesSortedByName( WikiContext wikiContext )
     {
-        final WikiEngine engine = i_context.getEngine();
+        final WikiEngine engine = wikiContext.getEngine();
 
         final PageManager pageManager = engine.getPageManager();
         if( pageManager == null )
@@ -161,21 +161,21 @@ public class IndexPlugin implements WikiPlugin
         Collection result = new TreeSet( new Comparator() {
             public int compare( Object o1, Object o2 )
             {
-                if( o1 == null || o2 == null ) { return 0; }
+                if( o1 == null || o2 == null ) return 0;
 
-                WikiPage page1 = (WikiPage)o1,
-                         page2 = (WikiPage)o2;
+                WikiPage page1 = (WikiPage)o1;
+                WikiPage page2 = (WikiPage)o2;
 
                 return page1.getName().compareTo( page2.getName() );
             }
         });
 
-        try 
+        try
         {
             Collection allPages = pageManager.getAllPages();
             result.addAll( allPages );
         }
-        catch( ProviderException e ) 
+        catch( ProviderException e )
         {
             log.fatal("PageProvider is unable to list pages: ", e);
         }
@@ -184,48 +184,48 @@ public class IndexPlugin implements WikiPlugin
     }
 
 
-    private void addLetterToIndexHeader( final String i_firstLetter )
+    private void addLetterToIndexHeader( final String firstLetter )
     {
         final boolean noLetterYetInTheIndex = ! "".equals(m_previousPageFirstLetter);
 
-        if( noLetterYetInTheIndex ) 
+        if( noLetterYetInTheIndex )
         {
             m_headerPart.write(" - " );
         }
 
-        m_headerPart.write("<a href=\"#"  + i_firstLetter + "\">" + i_firstLetter + "</a>" );
+        m_headerPart.write("<a href=\"#"  + firstLetter + "\">" + firstLetter + "</a>" );
     }
 
 
-    private void addLetterHeaderWithLine( final String i_firstLetter )
+    private void addLetterHeaderWithLine( final String firstLetter )
     {
         m_bodyPart.write("\n<br /><br />" +
                          "<span class=\"section\">"+
-                         "<a name=\"" + i_firstLetter + "\">"+
-                         i_firstLetter+"</a></span>" +
+                         "<a name=\"" + firstLetter + "\">"+
+                         firstLetter+"</a></span>" +
                          "<hr />\n" );
     }
 
-    protected void addPageToIndex( WikiContext context, WikiPage i_curPage )
+    protected void addPageToIndex( WikiContext context, WikiPage curPage )
     {
         final boolean notFirstPageOnLine = 2 <= m_currentNofPagesOnLine;
 
-        if( notFirstPageOnLine ) 
+        if( notFirstPageOnLine )
         {
-            m_bodyPart.write(",&nbsp; "); 
+            m_bodyPart.write(",&nbsp; ");
         }
-        
+
         m_bodyPart.write("<a href=\""+
-                         context.getURL(WikiContext.VIEW, i_curPage.getName())+"\">"+
-                         context.getEngine().beautifyTitleNoBreak(i_curPage.getName())+
+                         context.getURL(WikiContext.VIEW, curPage.getName())+"\">"+
+                         context.getEngine().beautifyTitleNoBreak(curPage.getName())+
                          "</a>");
     }
 
     protected void breakLineIfTooLong()
     {
-        final boolean limitReached = (m_itemsPerLine == m_currentNofPagesOnLine);
+        final boolean limitReached = m_itemsPerLine == m_currentNofPagesOnLine;
 
-        if( limitReached ) 
+        if( limitReached )
         {
             m_bodyPart.write( "<br />\n" );
             m_currentNofPagesOnLine = 0;

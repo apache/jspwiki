@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.io.BufferedWriter;
@@ -58,7 +77,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  */
 public class XMLGroupDatabase implements GroupDatabase
 {
-    protected static final Logger log              = Logger.getLogger( XMLGroupDatabase.class );
+    protected static Logger log              = Logger.getLogger( XMLGroupDatabase.class );
 
     /**
      * The jspwiki.properties property specifying the file system location of
@@ -71,7 +90,7 @@ public class XMLGroupDatabase implements GroupDatabase
     private static final String   CREATED          = "created";
 
     private static final String   CREATOR          = "creator";
-    
+
     private static final String   GROUP_TAG        = "group";
 
     private static final String   GROUP_NAME       = "name";
@@ -79,7 +98,7 @@ public class XMLGroupDatabase implements GroupDatabase
     private static final String   LAST_MODIFIED    = "lastModified";
 
     private static final String   MODIFIER         = "modifier";
-    
+
     private static final String   MEMBER_TAG       = "member";
 
     private static final String   PRINCIPAL        = "principal";
@@ -91,13 +110,13 @@ public class XMLGroupDatabase implements GroupDatabase
     private DateFormat            c_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
 
     private File                  c_file           = null;
-    
+
     private WikiEngine            m_engine         = null;
-    
+
     private Map                   m_groups         = new HashMap();
-    
+
     /**
-     * No-op method that in previous versions of JSPWiki was intended to 
+     * No-op method that in previous versions of JSPWiki was intended to
      * atomically commit changes to the user database. Now, the
      * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
      * are atomic themselves.
@@ -105,8 +124,9 @@ public class XMLGroupDatabase implements GroupDatabase
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
-    public void commit() throws WikiSecurityException { }
-    
+    public void commit() throws WikiSecurityException
+    { }
+
     /**
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(com.ecyrd.jspwiki.auth.authorize.Group)
      */
@@ -114,14 +134,14 @@ public class XMLGroupDatabase implements GroupDatabase
     {
         String index = group.getName();
         boolean exists = m_groups.containsKey( index );
-        
+
         if ( !exists )
         {
             throw new NoSuchPrincipalException( "Not in database: " + group.getName() );
         }
-        
+
         m_groups.remove( index );
-        
+
         // Commit to disk
         saveDOM();
     }
@@ -148,7 +168,7 @@ public class XMLGroupDatabase implements GroupDatabase
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
         m_engine = engine;
-        
+
         File defaultFile = null;
         if ( engine.getRootPath() == null )
         {
@@ -159,7 +179,7 @@ public class XMLGroupDatabase implements GroupDatabase
         {
             defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_DATABASE );
         }
-        
+
         // Get database file location
         String file = props.getProperty( PROP_DATABASE );
         if ( file == null )
@@ -188,9 +208,9 @@ public class XMLGroupDatabase implements GroupDatabase
         {
             throw new IllegalArgumentException( "Group or modifier cannot be null." );
         }
-        
+
         checkForRefresh();
-        
+
         String index = group.getName();
         boolean isNew = !( m_groups.containsKey( index ) );
         Date modDate = new Date( System.currentTimeMillis() );
@@ -205,7 +225,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
         // Add the group to the 'saved' list
         m_groups.put( index, group );
-        
+
         // Commit to disk
         saveDOM();
     }
@@ -255,7 +275,7 @@ public class XMLGroupDatabase implements GroupDatabase
                 log.fatal( "Could not create in-memory DOM" );
             }
         }
-        
+
         // Ok, now go and read this sucker in
         if ( c_dom != null )
         {
@@ -276,18 +296,18 @@ public class XMLGroupDatabase implements GroupDatabase
             }
         }
     }
-    
+
     private long c_lastCheck    = 0;
     private long c_lastModified = 0;
-    
+
     private void checkForRefresh()
     {
         long time = System.currentTimeMillis();
-        
+
         if( time - c_lastCheck > 60*1000L )
         {
             long lastModified = c_file.lastModified();
-            
+
             if( lastModified > c_lastModified )
             {
                 try
@@ -315,7 +335,7 @@ public class XMLGroupDatabase implements GroupDatabase
         {
             throw new IllegalArgumentException( "DOM element or name cannot be null." );
         }
-        
+
         // Construct a new group
         Group group = new Group( name, m_engine.getApplicationName() );
 
@@ -342,10 +362,10 @@ public class XMLGroupDatabase implements GroupDatabase
         catch ( ParseException e )
         {
             // If parsing failed, use the platform default
-            try 
+            try
             {
-                group.setCreated( c_defaultFormat.parse( created ) );                  
-                group.setLastModified( c_defaultFormat.parse( modified ) );                  
+                group.setCreated( c_defaultFormat.parse( created ) );
+                group.setLastModified( c_defaultFormat.parse( modified ) );
             }
             catch ( ParseException e2)
             {
@@ -357,7 +377,7 @@ public class XMLGroupDatabase implements GroupDatabase
         group.setModifier( modifier );
         return group;
     }
-    
+
     private void saveDOM() throws WikiSecurityException
     {
         if ( c_dom == null )

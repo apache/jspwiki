@@ -1,6 +1,6 @@
 /*
  * (C) Janne Jalkanen 2005
- * 
+ *
  */
 package com.ecyrd.jspwiki.dav.items;
 
@@ -23,12 +23,12 @@ import com.ecyrd.jspwiki.parser.MarkupParser;
  * Represents a DAV HTML page item.
  *  @author jalkanen
  *
- *  @since 
+ *  @since
  */
 public class HTMLPageDavItem extends PageDavItem
 {
     private long m_cachedLength = -1;
-    
+
     /**
      * @param provider the DAV provider
      * @param path the DAV path
@@ -44,9 +44,9 @@ public class HTMLPageDavItem extends PageDavItem
      */
     public String getHref()
     {
-        return m_provider.getURL( m_path );    
+        return m_provider.getURL( m_path );
     }
- 
+
     /**
      * Returns the content type for the item. Always returns
      * <code>text/html; charset=UTF-8</code>.
@@ -60,7 +60,7 @@ public class HTMLPageDavItem extends PageDavItem
     private byte[] getText()
     {
         WikiEngine engine = ((WikiDavProvider)m_provider).getEngine();
-        
+
         WikiContext context = new WikiContext( engine, m_page );
         context.setRequestContext( WikiContext.VIEW );
 
@@ -68,35 +68,38 @@ public class HTMLPageDavItem extends PageDavItem
         context.setVariable( WikiEngine.PROP_RUNFILTERS, "false" );
 
         String text = engine.getHTML( context, m_page );
-        
+
         try
         {
             return text.getBytes("UTF-8");
         }
-        catch( UnsupportedEncodingException e ) { return null; } // Should never happen
+        catch( UnsupportedEncodingException e )
+        {
+            return null; // Should never happen
+        }
     }
-    
+
     public InputStream getInputStream()
     {
         byte[] text = getText();
-        
+
         ByteArrayInputStream in = new ByteArrayInputStream( text );
-            
+
         return in;
     }
 
     public long getLength()
     {
         if( m_cachedLength == -1 )
-        {       
+        {
             byte[] text = getText();
-        
+
             m_cachedLength = text.length;
         }
-        
+
         return m_cachedLength;
     }
-    
+
     public Collection getPropertySet()
     {
         Collection set = getCommonProperties();

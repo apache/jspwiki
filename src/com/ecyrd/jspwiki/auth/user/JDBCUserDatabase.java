@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 JSPWiki Development Group
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.user;
 
 import java.security.Principal;
@@ -21,9 +40,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**
  * <p>Implementation of UserDatabase that persists {@link DefaultUserProfile}
- * objects to a JDBC DataSource, as might typically be provided by a web 
- * container. This implementation looks up the JDBC DataSource using JNDI. 
- * The JNDI name of the datasource, backing table and mapped columns used 
+ * objects to a JDBC DataSource, as might typically be provided by a web
+ * container. This implementation looks up the JDBC DataSource using JNDI.
+ * The JNDI name of the datasource, backing table and mapped columns used
  * by this class are configured via settings in <code>jspwiki.properties</code>.</p>
  * <p>Configurable properties are these:</p>
  * <table>
@@ -83,7 +102,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *     <td><code>jspwiki.userdatabase.roleTable</code></td>
  *     <td><code>roles</code></td>
  *     <td>The table that stores user roles. When a new user is created,
- *       a new record is inserted containing user's initial role. The 
+ *       a new record is inserted containing user's initial role. The
  *       table will have an ID column whose name and values correspond
  *       to the contents of the user table's login name column. It will
  *       also contain a role column (see next row).</td>
@@ -92,7 +111,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *     <td><code>jspwiki.userdatabase.role</code></td>
  *     <td><code>role</code></td>
  *     <td>The column in the role table that stores user roles. When a new user
- *       is created, this column will be populated with the value 
+ *       is created, this column will be populated with the value
  *       <code>Authenticated</code>. Once created, JDBCUserDatabase does not
  *       use this column again; it is provided strictly for the convenience
  *       of container-managed authentication services.</td>
@@ -119,13 +138,13 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *  &nbsp;...<br/>
  * &lt;/Context&gt;</code></blockquote>
  * <p>JDBC driver JARs should be added to Tomcat's <code>common/lib</code> directory.
- * For more Tomcat 5.5 JNDI configuration examples, 
+ * For more Tomcat 5.5 JNDI configuration examples,
  * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
  * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.</p>
  * <p>JDBCUserDatabase commits changes as transactions if the back-end database supports them.
  * If the database supports transactions, user profile changes are saved
  * to permanent storage only when the {@link #commit()} method is called. If the database does <em>not</em>
- * support transactions, then changes are made immediately (during the {@link #save(UserProfile)} 
+ * support transactions, then changes are made immediately (during the {@link #save(UserProfile)}
  * method), and the {@linkplain #commit()} method no-ops. Thus, callers should always call the
  * {@linkplain #commit()} method after saving a profile to guarantee that changes are applied.</p>
  * @author Andrew R. Jaquith
@@ -142,21 +161,21 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public static final String DEFAULT_DB_FULL_NAME  = "full_name";
 
     public static final String DEFAULT_DB_HASH_PREFIX = "true";
-    
+
     public static final String DEFAULT_DB_JNDI_NAME  = "jdbc/UserDatabase";
 
     public static final String DEFAULT_DB_MODIFIED   = "modified";
 
     public static final String DEFAULT_DB_ROLE       = "role";
-    
+
     public static final String DEFAULT_DB_ROLE_TABLE = "roles";
-    
+
     public static final String DEFAULT_DB_TABLE      = "users";
 
     public static final String DEFAULT_DB_LOGIN_NAME = "login_name";
- 
+
     public static final String DEFAULT_DB_PASSWORD   = "password";
-    
+
     public static final String DEFAULT_DB_WIKI_NAME  = "wiki_name";
 
     public static final String PROP_DB_CREATED       = "jspwiki.userdatabase.created";
@@ -166,7 +185,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public static final String PROP_DB_FULL_NAME     = "jspwiki.userdatabase.fullName";
 
     public static final String PROP_DB_DATASOURCE    = "jspwiki.userdatabase.datasource";
-    
+
     public static final String PROP_DB_HASH_PREFIX   = "jspwiki.userdatabase.hashPrefix";
 
     public static final String PROP_DB_LOGIN_NAME    = "jspwiki.userdatabase.loginName";
@@ -176,9 +195,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public static final String PROP_DB_PASSWORD      = "jspwiki.userdatabase.password";
 
     public static final String PROP_DB_ROLE          = "jspwiki.userdatabase.role";
-    
+
     public static final String PROP_DB_ROLE_TABLE    = "jspwiki.userdatabase.roleTable";
-    
+
     public static final String PROP_DB_TABLE         = "jspwiki.userdatabase.table";
 
     public static final String PROP_DB_WIKI_NAME     = "jspwiki.userdatabase.wikiName";
@@ -216,9 +235,9 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      * Looks up and deletes the first {@link UserProfile} in the user database
      * that matches a profile having a given login name. If the user database
      * does not contain a user with a matching attribute, throws a
-     * {@link NoSuchPrincipalException}. This method is intended to be atomic; 
-     * results cannot be partially committed. If the commit fails, it should 
-     * roll back its state appropriately. Implementing classes that persist 
+     * {@link NoSuchPrincipalException}. This method is intended to be atomic;
+     * results cannot be partially committed. If the commit fails, it should
+     * roll back its state appropriately. Implementing classes that persist
      * to the file system may wish to make this method <code>synchronized</code>.
      * @param loginName the login name of the user profile that shall be deleted
      */
@@ -226,7 +245,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         findByLoginName( loginName );
-        
+
         try
         {
             // Open the database connection
@@ -235,18 +254,18 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.setAutoCommit( false );
             }
-            
+
             PreparedStatement ps;
             // Delete user record
             ps = conn.prepareStatement( m_deleteUserByLoginName );
             ps.setString(1, loginName );
             ps.execute();
-            
+
             // Delete role record
             ps = conn.prepareStatement( m_deleteRoleByLoginName );
             ps.setString(1, loginName );
             ps.execute();
-            
+
             // Commit and close connection
             if ( m_supportsCommits )
             {
@@ -258,8 +277,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             throw new WikiSecurityException( e.getMessage() );
         }
-    }        
-    
+    }
+
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
@@ -302,7 +321,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public Principal[] getWikiNames() throws WikiSecurityException
     {
         Set principals = new HashSet();
-        try {
+        try
+        {
             Connection conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
             ResultSet rs = ps.executeQuery();
@@ -325,10 +345,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             throw new WikiSecurityException( e.getMessage() );
         }
-        
+
         return (Principal[])principals.toArray( new Principal[principals.size()] );
     }
-    
+
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
      * java.util.Properties)
@@ -341,7 +361,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             Context initCtx = new InitialContext();
             Context ctx = (Context) initCtx.lookup("java:comp/env");
             m_ds = (DataSource) ctx.lookup( jndiName );
-            
+
             // Prepare the SQL selectors
             m_userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
             m_email     = props.getProperty( PROP_DB_EMAIL, DEFAULT_DB_EMAIL );
@@ -358,10 +378,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             m_findByFullName  = "SELECT * FROM " + m_userTable + " WHERE " + m_fullName + "=?";
             m_findByLoginName = "SELECT * FROM " + m_userTable + " WHERE " + m_loginName + "=?";
             m_findByWikiName  = "SELECT * FROM " + m_userTable + " WHERE " + m_wikiName + "=?";
-            
+
             // Prepare the user isert/update SQL
             m_insertProfile   = "INSERT INTO " + m_userTable + " ("
-                              + m_email + "," 
+                              + m_email + ","
                               + m_fullName + ","
                               + m_password + ","
                               + m_wikiName + ","
@@ -375,7 +395,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                               + m_password + "=?,"
                               + m_wikiName + "=?,"
                               + m_modified + "=? WHERE " + m_loginName + "=?";
-            
+
             // Prepare the role insert SQL
             m_roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
             m_role = props.getProperty( PROP_DB_ROLE, DEFAULT_DB_ROLE );
@@ -384,20 +404,20 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                               + m_role
                               + ") VALUES (?,?)";
             m_findRoles       = "SELECT * FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
-            
+
             // Prepare the user delete SQL
             m_deleteUserByLoginName = "DELETE FROM " + m_userTable + " WHERE " + m_loginName + "=?";
-            
+
             // Prepare the role delete SQL
             m_deleteRoleByLoginName = "DELETE FROM " + m_roleTable + " WHERE " + m_loginName + "=?";
-            
+
             // Prepare the rename user/roles SQL
             m_renameProfile   = "UPDATE " + m_userTable + " SET "
                               + m_loginName + "=?,"
                               + m_modified  + "=? WHERE " + m_loginName + "=?";
             m_renameRoles     = "UPDATE " + m_roleTable + " SET "
                               + m_loginName + "=? WHERE " + m_loginName + "=?";
-             
+
             // Set the "share users with container flag"
             m_sharedWithContainer = TextUtil.isPositive( props.getProperty( PROP_SHARED_WITH_CONTAINER, "false" ) );
         }
@@ -406,7 +426,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             log.error( "JDBCUserDatabase initialization error: " + e.getMessage() );
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
-        
+
         // Test connection by doing a quickie select
         try
         {
@@ -421,7 +441,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
         log.info( "JDBCUserDatabase initialized from JNDI DataSource: " + jndiName );
-        
+
         // Determine if the datasource supports commits
         try
         {
@@ -452,29 +472,30 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     {
         return m_sharedWithContainer;
     }
-    
+
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#rename(String, String)
      */
-    public void rename(String loginName, String newName) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException
+    public void rename(String loginName, String newName)
+        throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException
     {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         UserProfile profile = findByLoginName( loginName );
-        
+
         // Get user with the proposed name; if found, it's a collision
-        try 
+        try
         {
             UserProfile otherProfile = findByLoginName( newName );
             if ( otherProfile != null )
             {
-                throw ( new DuplicateUserException( "Cannot rename: the login name '" + newName + "' is already taken." ) );
+                throw new DuplicateUserException( "Cannot rename: the login name '" + newName + "' is already taken." );
             }
         }
         catch ( NoSuchPrincipalException e )
         {
             // Good! That means it's safe to save using the new name
         }
-        
+
         PreparedStatement ps = null;
         try
         {
@@ -484,27 +505,27 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.setAutoCommit( false );
             }
-            
+
             Timestamp ts = new Timestamp( System.currentTimeMillis() );
             Date modDate = new Date( ts.getTime() );
-            
+
             // Change the login ID for the user record
             ps = conn.prepareStatement( m_renameProfile );
             ps.setString( 1, newName );
             ps.setTimestamp( 2, ts );
             ps.setString( 3, loginName );
             ps.execute();
-        
+
             // Change the login ID for the role records
             ps = conn.prepareStatement( m_renameRoles );
             ps.setString( 1, newName );
             ps.setString( 2, loginName );
             ps.execute();
-            
+
             // Set the profile name and mod time
             profile.setLoginName( newName );
             profile.setLastModified( modDate );
-            
+
             // Commit and close connection
             if ( m_supportsCommits )
             {
@@ -527,7 +548,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         String loginName = profile.getLoginName();
         PreparedStatement ps = null;
         UserProfile existingProfile = null;
-        try 
+        try
         {
             existingProfile = findByLoginName( loginName );
         }
@@ -535,7 +556,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             // Existing profile will be null
         }
-        
+
         // Get a clean password from the passed profile.
         // Blank password is the same as null, which means we re-use the existing one.
         String password = profile.getPassword();
@@ -544,17 +565,17 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             password = null;
         }
-        if ( password == null) 
+        if ( password == null)
         {
             password = existingPassword;
         }
-        
+
         // If password changed, hash it before we save
         if ( !password.equals( existingPassword ) )
         {
-            password =  ( m_hashPrefix ) ? SHA_PREFIX + getHash( password ) : getHash( password );
+            password =  m_hashPrefix ? SHA_PREFIX + getHash( password ) : getHash( password );
         }
-        
+
         try
         {
             // Open the database connection
@@ -563,7 +584,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.setAutoCommit( false );
             }
-            
+
             Timestamp ts = new Timestamp( System.currentTimeMillis() );
             Date modDate = new Date( ts.getTime() );
             if ( existingProfile == null )
@@ -578,7 +599,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.setString(6, profile.getLoginName() );
                 ps.setTimestamp(7, ts );
                 ps.execute();
-                
+
                 // Insert role record if no roles yet
                 if ( m_sharedWithContainer )
                 {
@@ -598,7 +619,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                         ps.execute();
                     }
                 }
-                
+
                 // Set the profile creation time
                 profile.setCreated( modDate );
             }
@@ -616,7 +637,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             }
             // Set the profile mod time
             profile.setLastModified( modDate );
-            
+
             // Commit and close connection
             if ( m_supportsCommits )
             {
@@ -631,7 +652,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
-     * 
+     *
      * @param rs
      * @return
      * @throws SQLException
@@ -641,7 +662,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         UserProfile profile = null;
         boolean found = false;
         boolean unique = true;
-        try 
+        try
         {
             // Open the database connection
             Connection conn = m_ds.getConnection();
@@ -649,7 +670,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.setAutoCommit( false );
             }
-            
+
             PreparedStatement ps = conn.prepareStatement( sql );
             ps.setString( 1, index );
             ResultSet rs = ps.executeQuery();
@@ -669,7 +690,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 profile.setPassword( rs.getString( m_password ) );
                 found = true;
             }
-            
+
             // Close connection
             conn.close();
         }
@@ -677,7 +698,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         {
             throw new NoSuchPrincipalException( e.getMessage() );
         }
-        
+
         if ( !found )
         {
             throw new NoSuchPrincipalException("Could not find profile in database!");

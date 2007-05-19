@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -181,7 +181,7 @@ public class AttachmentManager
      *  @return Attachment, or null, if no such attachment or version exists.
      *  @throws ProviderException If something goes wrong.
      */
-    
+
     public Attachment getAttachmentInfo( String name, int version )
         throws ProviderException
     {
@@ -221,14 +221,14 @@ public class AttachmentManager
      *  @throws ProviderException If something goes wrong.
      */
 
-    public Attachment getAttachmentInfo( WikiContext context, 
-                                         String attachmentname, 
+    public Attachment getAttachmentInfo( WikiContext context,
+                                         String attachmentname,
                                          int version )
         throws ProviderException
     {
         if( m_provider == null )
         {
-            return( null );
+            return null;
         }
 
         WikiPage currentPage = null;
@@ -243,19 +243,19 @@ public class AttachmentManager
         //  we'll assume this refers directly to the attachment.
         //
         int cutpt = attachmentname.lastIndexOf('/');
-        
+
         if( cutpt != -1 )
         {
             String parentPage = attachmentname.substring(0,cutpt);
             parentPage = MarkupParser.cleanLink( parentPage );
             attachmentname = attachmentname.substring(cutpt+1);
 
-            // If we for some reason have an empty parent page name; 
+            // If we for some reason have an empty parent page name;
             // this can't be an attachment
             if(parentPage.length() == 0) return null;
-            
+
             currentPage = m_engine.getPage( parentPage );
-            
+
             //
             // Go check for legacy name
             //
@@ -268,15 +268,15 @@ public class AttachmentManager
             }
         }
 
-        // 
-        //  If the page cannot be determined, we cannot possibly find the 
+        //
+        //  If the page cannot be determined, we cannot possibly find the
         //  attachments.
         //
         if( currentPage == null || currentPage.getName().length() == 0 )
         {
             return null;
         }
-        
+
         // System.out.println("Seeking info on "+currentPage+"::"+attachmentname);
 
         //
@@ -284,14 +284,14 @@ public class AttachmentManager
         //  attachment.
         //
         Attachment att;
-        
+
         att = getDynamicAttachment( currentPage.getName()+"/"+attachmentname );
 
         if( att == null )
         {
             att = m_provider.getAttachmentInfo( currentPage, attachmentname, version );
         }
-        
+
         return att;
     }
 
@@ -302,7 +302,7 @@ public class AttachmentManager
      *  @param wikipage The wiki page from which you are seeking attachments for.
      *  @return a valid collection of attachments.
      */
-    
+
     // FIXME: This API should be changed to return a List.
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
@@ -311,9 +311,9 @@ public class AttachmentManager
         {
             return new ArrayList();
         }
-        
+
         Collection atts = m_provider.listAttachments( wikipage );
-        
+
         //
         //  This is just a sanity check; all of our providers return a Collection.
         //
@@ -321,7 +321,7 @@ public class AttachmentManager
         {
             Collections.sort( (List) atts );
         }
-        
+
         return atts;
     }
 
@@ -329,7 +329,7 @@ public class AttachmentManager
      *  Returns true, if the page has any attachments at all.  This is
      *  a convinience method.
      *
-     *  
+     *
      *  @param wikipage The wiki page from which you are seeking attachments for.
      *  @return True, if the page has attachments, else false.
      */
@@ -358,30 +358,30 @@ public class AttachmentManager
         return getAttachmentStream( null, att );
     }
 
-    public InputStream getAttachmentStream( WikiContext ctx, Attachment att ) 
+    public InputStream getAttachmentStream( WikiContext ctx, Attachment att )
         throws ProviderException, IOException
     {
         if( m_provider == null )
         {
-            return( null );
+            return null;
         }
 
         if( att instanceof DynamicAttachment )
         {
             return ((DynamicAttachment)att).getProvider().getAttachmentData( ctx, att );
         }
-        
+
         return m_provider.getAttachmentData( att );
     }
 
     private Cache m_dynamicAttachments = new Cache( true, false, false );
-    
+
     public void storeDynamicAttachment( WikiContext ctx, DynamicAttachment att )
     {
         m_dynamicAttachments.putInCache( att.getName(),  att );
     }
 
-    
+
     public DynamicAttachment getDynamicAttachment( String name )
     {
         try
@@ -394,11 +394,11 @@ public class AttachmentManager
             //  Remove from cache, it has expired.
             //
             m_dynamicAttachments.putInCache( name, null );
-            
+
             return null;
         }
     }
-    
+
     /**
      *  Stores an attachment that lives in the given file.
      *  If the attachment did not exist previously, this method
@@ -413,10 +413,10 @@ public class AttachmentManager
     public void storeAttachment( Attachment att, File source )
         throws IOException,
                ProviderException
-    {        
+    {
         FileInputStream in = null;
 
-        try 
+        try
         {
             in = new FileInputStream( source );
             storeAttachment( att, in );
@@ -454,7 +454,7 @@ public class AttachmentManager
 
         WikiPage parent = new WikiPage( m_engine, att.getParentName() );
         m_engine.updateReferences( parent );
-        
+
         m_engine.getSearchManager().reindexPage( att );
     }
 
@@ -472,16 +472,16 @@ public class AttachmentManager
     {
         if( m_provider == null )
         {
-            return( null );
+            return null;
         }
-        
+
         Attachment att = getAttachmentInfo( (WikiContext)null, attachmentName );
 
         if( att != null )
         {
             return m_provider.getVersionHistory( att );
         }
-       
+
         return null;
     }
 
@@ -494,7 +494,7 @@ public class AttachmentManager
      */
     public Collection getAllAttachments()
         throws ProviderException
-    {        
+    {
         if( attachmentsEnabled() )
         {
             return m_provider.listAllChanged( new Date(0L) );
@@ -512,28 +512,28 @@ public class AttachmentManager
     {
         return m_provider;
     }
-    
+
     /**
      * Deletes the given attachment version.
      */
     public void deleteVersion( Attachment att )
-    	throws ProviderException
+        throws ProviderException
     {
         m_provider.deleteVersion( att );
     }
 
-    /** 
+    /**
      * Deletes all versions of the given attachment.
      */
     // FIXME: Should also use events!
     public void deleteAttachment( Attachment att )
-    	throws ProviderException
+        throws ProviderException
     {
         m_provider.deleteAttachment( att );
 
         m_engine.getSearchManager().pageRemoved( att );
-        
+
         m_engine.getReferenceManager().clearPageEntries( att.getName() );
-        
+
     }
 }

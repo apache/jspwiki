@@ -37,13 +37,13 @@ public class AuthorizationManagerTest extends TestCase
     private AuthorizationManager m_auth;
 
     private TestEngine           m_engine;
-    
+
     private GroupManager         m_groupMgr;
 
     private WikiSession          m_session;
-    
+
     private String               m_wiki;
-    
+
     private static class TestPrincipal implements Principal
     {
         private final String m_name;
@@ -95,7 +95,7 @@ public class AuthorizationManagerTest extends TestCase
         Permission view = PermissionFactory.getPagePermission( "*:TestDefaultPage", "view" );
         Permission edit = PermissionFactory.getPagePermission( "*:TestDefaultPage", "edit" );
         WikiSession session;
-        
+
         // Alice is asserted
         session = WikiSessionTest.assertedSession( m_engine, Users.ALICE );
         assertTrue( "Alice view", m_auth.checkPermission( session, view ) );
@@ -146,10 +146,10 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Bob in ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
         assertFalse( "Bob not in ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
         assertFalse( "Bob in Test", ArrayUtils.contains( principals, test.getPrincipal() ) );
-        
+
         // Elevate Bob to "authenticated" status
         session = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
-        
+
         // Re-save the group; Bob should possess the role now
         test = m_groupMgr.parseGroup( "Test", "Alice \n Bob \n Charlie", true );
         m_groupMgr.setGroup( m_session, test );
@@ -158,7 +158,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Bob in ASSERTED", ArrayUtils.contains( principals, Role.ASSERTED ) );
         assertFalse( "Bob not in ANONYMOUS", ArrayUtils.contains( principals, Role.ANONYMOUS ) );
         assertTrue( "Bob in Test", ArrayUtils.contains( principals, test.getPrincipal() ) );
-        
+
         // Cleanup
         m_groupMgr.removeGroup( "Test" );
     }
@@ -172,8 +172,8 @@ public class AuthorizationManagerTest extends TestCase
         Role finance = new Role( "Finance" );
         Principal admin = new GroupPrincipal( m_wiki, "Admin" );
         WikiSession session = WikiSessionTest.assertedSession(
-                m_engine, 
-                Users.ALICE, 
+                m_engine,
+                Users.ALICE,
                 new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
@@ -182,7 +182,7 @@ public class AuthorizationManagerTest extends TestCase
         barGroup.add( alice );
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
-        
+
         // Test user principal posession: Alice isn't considered to
         // have the "Alice" principal because she's not authenticated
         assertFalse ( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ) );
@@ -195,7 +195,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice not in ANONYMOUS", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
         assertTrue( "Alice in ASSERTED", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
         assertFalse( "Alice not in AUTHENTICATED", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
-        
+
         // Custom roles should be FALSE because Alice is asserted
         assertFalse( "Alice not in IT", m_auth.hasRoleOrPrincipal( session, it ) );
         assertFalse( "Alice not in Engineering", m_auth.hasRoleOrPrincipal( session, engineering ) );
@@ -204,12 +204,12 @@ public class AuthorizationManagerTest extends TestCase
         // Group memberships should be FALSE because Alice is asserted
         assertFalse( "Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup.getPrincipal() ) );
         assertFalse( "Alice not in Bar", m_auth.hasRoleOrPrincipal( session, barGroup.getPrincipal() ) );
-        
+
         // Clean up
         m_groupMgr.removeGroup( "Foo" );
         m_groupMgr.removeGroup( "Bar" );
     }
-    
+
     public void testAuthenticatedSession() throws Exception
     {
         // Create Alice and her roles
@@ -219,7 +219,7 @@ public class AuthorizationManagerTest extends TestCase
         Role finance = new Role( "Finance" );
         Principal admin = new GroupPrincipal( m_wiki, "Admin" );
         WikiSession session = WikiSessionTest.containerAuthenticatedSession(
-                m_engine, 
+                m_engine,
                 Users.ALICE,
                 new Principal[] { it, engineering, admin } );
 
@@ -229,20 +229,20 @@ public class AuthorizationManagerTest extends TestCase
         barGroup.add( alice );
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
-        
+
         // Test user principal posession: user principals of different
         // types should still be "the same" if their names are equal
         assertTrue( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ) );
         assertTrue( "Alice has Alice", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.ALICE ) ) );
         assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.BOB ) ) );
         assertFalse( "Alice not has Bob", m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.BOB ) ) );
-        
+
         // Built-in role membership
         assertTrue( "Alice in ALL", m_auth.hasRoleOrPrincipal( session, Role.ALL ) );
         assertFalse( "Alice not in ANONYMOUS", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
         assertFalse( "Alice not in ASSERTED", m_auth.hasRoleOrPrincipal( session, Role.ASSERTED ) );
         assertTrue( "Alice in AUTHENTICATED", m_auth.hasRoleOrPrincipal( session, Role.AUTHENTICATED ) );
-        
+
         // Custom roles
         assertTrue( "Alice in IT", m_auth.hasRoleOrPrincipal( session, it ) );
         assertTrue( "Alice in Engineering", m_auth.hasRoleOrPrincipal( session, engineering ) );
@@ -251,7 +251,7 @@ public class AuthorizationManagerTest extends TestCase
         // Group memberships
         assertFalse( "Alice not in Foo", m_auth.hasRoleOrPrincipal( session, fooGroup.getPrincipal() ) );
         assertTrue( "Alice in Bar", m_auth.hasRoleOrPrincipal( session, barGroup.getPrincipal() ) );
-        
+
         // Cleanup
         m_groupMgr.removeGroup( "Foo" );
         m_groupMgr.removeGroup( "Bar" );
@@ -267,11 +267,11 @@ public class AuthorizationManagerTest extends TestCase
         Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, f );
-        
+
         Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
         Permission view = PermissionFactory.getPagePermission( p, "view" );
         Permission edit = PermissionFactory.getPagePermission( p, "edit" );
-        
+
         // Create authenticated session with user 'Alice', who can read & edit (in ACL)
         WikiSession session;
         session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
@@ -302,7 +302,7 @@ public class AuthorizationManagerTest extends TestCase
         Attachment p = (Attachment) m_engine.getPage( "Test/test1.txt" );
         Permission view = PermissionFactory.getPagePermission( p, "view" );
         Permission edit = PermissionFactory.getPagePermission( p, "edit" );
-        
+
         // Create session with user 'Alice', who can read (in ACL)
         WikiSession session;
         session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
@@ -325,7 +325,7 @@ public class AuthorizationManagerTest extends TestCase
         Principal alice = new WikiPrincipal( Users.ALICE );
         Role it = new Role( "IT" );
         Role finance = new Role( "Finance" );
-        
+
         // Create Group1 with Alice in it, Group2 without
         WikiSession session = WikiSessionTest.adminSession( m_engine );
         Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
@@ -334,7 +334,7 @@ public class AuthorizationManagerTest extends TestCase
         Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
         m_groupMgr.setGroup( session, g2 );
         Principal group2 = g2.getPrincipal();
-        
+
         // Create anonymous session; not in ANY custom roles or groups
         session = WikiSessionTest.anonymousSession( m_engine );
         assertTrue ( "Anon anonymous", m_auth.hasRoleOrPrincipal( session, Role.ANONYMOUS ) );
@@ -345,7 +345,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Anon not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
         assertFalse( "Anon not in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
         assertFalse( "Anon not in Group2", m_auth.hasRoleOrPrincipal( session, group2 ) );
-        
+
         // Create asserted session with 1 GroupPrincipal & 1 custom Role
         // Alice is asserted, and thus not in ANY custom roles or groups
         session = WikiSessionTest.assertedSession( m_engine, Users.ALICE, new Principal[] { it } );
@@ -357,7 +357,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
         assertFalse( "Alice not in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
         assertFalse( "Alice not in Group2", m_auth.hasRoleOrPrincipal( session, group2 ) );
-        
+
         // Create authenticated session with 1 GroupPrincipal & 1 custom Role
         // Alice is authenticated, and thus part of custom roles and groups
         session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it } );
@@ -369,19 +369,19 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice not in Finance", m_auth.hasRoleOrPrincipal( session, finance ) );
         assertTrue ( "Alice in Group1", m_auth.hasRoleOrPrincipal( session, group1 ) );
         assertFalse( "Alice not in Group2", m_auth.hasRoleOrPrincipal( session, group2 ) );
-        
+
         // Clean up
         m_groupMgr.removeGroup( "Group1" );
         m_groupMgr.removeGroup( "Group2" );
     }
-    
+
     public void testIsUserInRole() throws Exception
     {
         // Create new user Alice and 2 sample roles
         Principal alice = new WikiPrincipal( Users.ALICE );
         Role it = new Role( "IT" );
         Role finance = new Role( "Finance" );
-        
+
         // Create Group1 with Alice in it, Group2 without
         WikiSession session = WikiSessionTest.adminSession( m_engine );
         Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
@@ -401,7 +401,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Anon not in Finance", m_auth.isUserInRole( session, finance ) );
         assertFalse( "Anon not in Group1", m_auth.isUserInRole( session, group1 ) );
         assertFalse( "Anon not in Group2", m_auth.isUserInRole( session, group2 ) );
-        
+
         // Create asserted session with 1 GroupPrincipal & 1 custom Role
         // Alice is asserted, and thus not in ANY custom roles or groups
         session = WikiSessionTest.assertedSession( m_engine, Users.ALICE, new Principal[] { it } );
@@ -413,7 +413,7 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice not in Finance", m_auth.isUserInRole( session, finance ) );
         assertFalse( "Alice not in Group1", m_auth.isUserInRole( session, group1 ) );
         assertFalse( "Alice not in Group2", m_auth.isUserInRole( session, group2 ) );
-        
+
         // Create authenticated session with 1 GroupPrincipal & 1 custom Role
         // Ernie is authenticated, and thus part of custom roles and groups
         session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it } );
@@ -425,12 +425,12 @@ public class AuthorizationManagerTest extends TestCase
         assertFalse( "Alice not in Finance", m_auth.isUserInRole( session, finance ) );
         assertTrue ( "Alice in Group1", m_auth.isUserInRole( session, group1 ) );
         assertFalse( "Alice not in Group2", m_auth.isUserInRole( session, group2 ) );
-        
+
         // Clean up
         m_groupMgr.removeGroup( "Group1" );
         m_groupMgr.removeGroup( "Group2" );
     }
-    
+
     public void testPrincipalAcl() throws Exception
     {
         // Create test page & attachment
@@ -492,7 +492,8 @@ public class AuthorizationManagerTest extends TestCase
         m_groupMgr.removeGroup( "SampleGroup" );
 
         // We shouldn't be able to spoof a built-in role
-        try {
+        try
+        {
             Group group2 = m_groupMgr.parseGroup( "Authenticated", "", true );
             assertNotSame( group2.getPrincipal(), m_auth.resolvePrincipal( "Authenticated" ) );
         }
@@ -529,14 +530,14 @@ public class AuthorizationManagerTest extends TestCase
         {
             fail( "Failed delete: " + e.getLocalizedMessage() );
         }
-        
+
 
         // A wiki group should resolve to itself
         Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
         m_groupMgr.setGroup( m_session, group1 );
         assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
         m_groupMgr.removeGroup( "SampleGroup" );
-        
+
         // A built-in role should resolve to itself
         assertEquals( Role.AUTHENTICATED, m_auth.resolvePrincipal( "Authenticated" ) );
 
@@ -568,7 +569,7 @@ public class AuthorizationManagerTest extends TestCase
         session = WikiSessionTest.assertedSession( m_engine, Users.BOB );
         assertFalse( "Bob !view Test", m_auth.checkPermission( session, view ) );
         assertFalse( "Bob !edit Test", m_auth.checkPermission( session, edit ) );
-        
+
         // Cleanup
         try
         {

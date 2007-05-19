@@ -59,7 +59,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
     /** Map with GroupPrincipals as keys, and Groups as values */
     private final Map           m_groups           = new HashMap();
-    
+
     /** The name of this wiki. */
     private String              m_wiki             = null;
 
@@ -218,7 +218,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
         // Make the GroupManager listen for WikiEvents (WikiSecurityEvents for changed user profiles)
         engine.getUserManager().addWikiEventListener( this );
-        
+
         // Success!
         log.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
 
@@ -306,7 +306,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
     {
         // If null name parameter, it's because someone's creating a new group
         if ( name == null )
-        {   
+        {
             if ( create )
             {
                 name = "MyGroup";
@@ -315,7 +315,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
             {
                 throw new WikiSecurityException( "Group name cannot be blank." );
             }
-        } 
+        }
         else if ( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) )
         {
             // Certain names are forbidden
@@ -612,7 +612,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
     protected final void checkGroupName( WikiSession session, String name ) throws WikiSecurityException
     {
         //TODO: groups cannot have the same name as a user
-        
+
         if( session == null )
         {
             throw new WikiSecurityException( "Session cannot be null." );
@@ -654,9 +654,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
     /**
      *  Fires a WikiSecurityEvent of the provided type, Principal and target Object
-     *  to all registered listeners. 
+     *  to all registered listeners.
      *
-     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent 
+     * @see com.ecyrd.jspwiki.event.WikiSecurityEvent
      * @param type       the event type to be fired
      * @param target     the changed Object, which may be <code>null</code>
      */
@@ -677,21 +677,22 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public void actionPerformed(WikiEvent event)
     {
-        if (! ( event instanceof WikiSecurityEvent ) ) {
+        if (! ( event instanceof WikiSecurityEvent ) )
+        {
             return;
         }
-        
+
         WikiSecurityEvent se = (WikiSecurityEvent)event;
         if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
         {
             WikiSession session = (WikiSession)se.getSource();
             UserProfile[] profiles = (UserProfile[])se.getTarget();
-            Principal[] oldPrincipals = new Principal[] { 
+            Principal[] oldPrincipals = new Principal[] {
                 new WikiPrincipal( profiles[0].getLoginName() ),
                 new WikiPrincipal( profiles[0].getFullname() ),
                 new WikiPrincipal( profiles[0].getWikiName() ) };
             Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
-            
+
             // Examine each group
             int groupsChanged = 0;
             try

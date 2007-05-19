@@ -17,63 +17,66 @@ import com.ecyrd.jspwiki.providers.*;
 public class TestEngine extends WikiEngine
 {
     static Logger log = Logger.getLogger( TestEngine.class );
-    
+
     private HttpSession m_adminSession;
     private HttpSession m_janneSession;
     private WikiSession m_adminWikiSession;
     private WikiSession m_janneWikiSession;
     private WikiSession m_guestWikiSession;
-    
+
     /**
      * Creates WikiSession with the privileges of the administrative user.
      * For testing purposes, obviously.
      * @return the wiki session
      */
-    public WikiSession adminSession() {
+    public WikiSession adminSession()
+    {
         return m_adminWikiSession;
     }
-    
+
     /**
      * Creates guest WikiSession with the no privileges.
      * For testing purposes, obviously.
      * @return the wiki session
      */
-    public WikiSession guestSession() {
+    public WikiSession guestSession()
+    {
         return m_guestWikiSession;
     }
-    
+
     /**
      * Creates WikiSession with the privileges of the Janne.
      * For testing purposes, obviously.
      * @return the wiki session
      */
-    public WikiSession janneSession() {
+    public WikiSession janneSession()
+    {
         return m_janneWikiSession;
     }
-    
+
     public TestEngine( Properties props )
         throws WikiException
     {
         super( props );
-        
+
         // Set up long-running admin session
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.setRemoteAddr( "53.33.128.9" );
         m_adminWikiSession = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( m_adminWikiSession, 
-                Users.ADMIN, 
+        this.getAuthenticationManager().login( m_adminWikiSession,
+                Users.ADMIN,
                 Users.ADMIN_PASS );
         m_adminSession = request.getSession();
-        
+
         // Set up a test Janne session
         request = new TestHttpServletRequest();
         request.setRemoteAddr( "42.22.17.8" );
         m_janneWikiSession = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( m_janneWikiSession, 
-                Users.JANNE, 
+        this.getAuthenticationManager().login( m_janneWikiSession,
+                Users.JANNE,
                 Users.JANNE_PASS );
         m_janneSession = request.getSession();
-        
+
         // Set up guest session
         request = new TestHttpServletRequest();
         request.setRemoteAddr( "42.22.17.8" );
@@ -83,25 +86,25 @@ public class TestEngine extends WikiEngine
     public static void emptyWorkDir()
     {
         Properties properties = new Properties();
-        
+
         try
         {
             properties.load( findTestProperties() );
-        
+
             String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
             if( workdir != null )
             {
                 File f = new File( workdir );
-                
+
                 if( f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists() )
                 {
                     deleteAll( f );
                 }
             }
         }
-        catch( IOException e ) {} // Fine   
+        catch( IOException e ) {} // Fine
     }
-    
+
     public static final InputStream findTestProperties()
     {
         return findTestProperties( "/jspwiki.properties" );
@@ -110,9 +113,9 @@ public class TestEngine extends WikiEngine
     public static final InputStream findTestProperties( String properties )
     {
         InputStream in = TestEngine.class.getResourceAsStream( properties );
-        
+
         if( in == null ) throw new InternalWikiException("Unable to locate test property resource: "+properties);
-        
+
         return in;
     }
 
@@ -127,7 +130,7 @@ public class TestEngine extends WikiEngine
             {
                 File[] files = file.listFiles();
 
-                if( files != null ) 
+                if( files != null )
                 {
                     for( int i = 0; i < files.length; i++ )
                     {
@@ -140,7 +143,7 @@ public class TestEngine extends WikiEngine
                     }
                 }
             }
-            
+
             file.delete();
         }
     }
@@ -167,23 +170,23 @@ public class TestEngine extends WikiEngine
     public static void deleteTestPage( String name )
     {
         Properties properties = new Properties();
-        
+
         try
         {
             properties.load( findTestProperties() );
             String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
             File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
-            
+
             f.delete();
-            
+
             // Remove the property file, too
             f = new File( files, mangleName(name)+".properties" );
-            
+
             if( f.exists() )
                 f.delete();
         }
-        catch( Exception e ) 
+        catch( Exception e )
         {
             log.error("Couldn't delete "+name, e );
         }
@@ -218,11 +221,11 @@ public class TestEngine extends WikiEngine
         tmpFile.deleteOnExit();
 
         FileWriter out = new FileWriter( tmpFile );
-        
+
         FileUtil.copyContents( new StringReader( "asdfa???dfzbvasdjkfbwfkUg783gqdwog" ), out );
 
         out.close();
-        
+
         return tmpFile;
     }
 
@@ -236,10 +239,10 @@ public class TestEngine extends WikiEngine
         throws ProviderException, IOException
     {
         Attachment att = new Attachment(this,pageName,attachmentName);
-        
+
         getAttachmentManager().storeAttachment(att, new ByteArrayInputStream(data));
     }
-    
+
     /**
      * Convenience method that saves a wiki page by constructing a fake
      * WikiContext and HttpServletRequest. We always want to do this using a
@@ -254,20 +257,20 @@ public class TestEngine extends WikiEngine
         // Build new request and associate our admin session
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.m_session = m_adminSession;
-        
+
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
         WikiContext context = new WikiContext( this, request, page );
         saveText( context, content );
     }
-    
+
     public void saveTextAsJanne( String pageName, String content )
         throws WikiException
     {
         // Build new request and associate our Janne session
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.m_session = m_janneSession;
-    
+
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
         WikiContext context = new WikiContext( this, request, page );

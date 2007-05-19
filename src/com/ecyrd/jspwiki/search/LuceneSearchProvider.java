@@ -59,7 +59,7 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
  *  @author Arent-Jan Banck for Informatica
  *  @since 2.2.21.
  */
-public class LuceneSearchProvider implements SearchProvider 
+public class LuceneSearchProvider implements SearchProvider
 {
     protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
 
@@ -72,7 +72,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     private static final String PROP_LUCENE_INDEXDELAY   = "jspwiki.lucene.indexdelay";
     private static final String PROP_LUCENE_INITIALDELAY = "jspwiki.lucene.initialdelay";
-    
+
     private String m_analyzerClass = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 
     private static final String LUCENE_DIR             = "lucene";
@@ -88,12 +88,12 @@ public class LuceneSearchProvider implements SearchProvider
     private String           m_luceneDirectory = null;
     private int              m_updateCount = 0;
     protected Vector         m_updates = new Vector(); // Vector because multi-threaded.
-    
+
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
-    
+
     public void initialize(WikiEngine engine, Properties props)
-            throws NoRequiredPropertyException, IOException 
+            throws NoRequiredPropertyException, IOException
     {
         m_engine = engine;
 
@@ -101,7 +101,7 @@ public class LuceneSearchProvider implements SearchProvider
 
         int initialDelay = TextUtil.getIntegerProperty( props, PROP_LUCENE_INITIALDELAY, LuceneUpdater.INITIAL_DELAY );
         int indexDelay   = TextUtil.getIntegerProperty( props, PROP_LUCENE_INDEXDELAY, LuceneUpdater.INDEX_DELAY );
-        
+
         m_analyzerClass = TextUtil.getStringProperty( props, PROP_LUCENE_ANALYZER, m_analyzerClass );
         // FIXME: Just to be simple for now, we will do full reindex
         // only if no files are in lucene directory.
@@ -143,7 +143,7 @@ public class LuceneSearchProvider implements SearchProvider
     }
 
     /**
-     *  Returns the handling engine. 
+     *  Returns the handling engine.
      */
     protected WikiEngine getEngine()
     {
@@ -158,9 +158,9 @@ public class LuceneSearchProvider implements SearchProvider
         throws IOException
     {
         File dir = new File(m_luceneDirectory);
-        
+
         String[] filelist = dir.list();
-        
+
         if( filelist == null )
         {
             throw new IOException( "Invalid Lucene directory: cannot produce listing: "+dir.getAbsolutePath());
@@ -254,7 +254,7 @@ public class LuceneSearchProvider implements SearchProvider
         {
             log.error("Unable to start lucene",e);
         }
-        
+
     }
 
     /**
@@ -264,17 +264,17 @@ public class LuceneSearchProvider implements SearchProvider
     private String getAttachmentContent( String attachmentName, int version )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
-        
-        try 
+
+        try
         {
             Attachment att = mgr.getAttachmentInfo( attachmentName, version );
             //FIXME: Find out why sometimes att is null
             if(att != null)
             {
-                return getAttachmentContent( att );             
+                return getAttachmentContent( att );
             }
-        } 
-        catch (ProviderException e) 
+        }
+        catch (ProviderException e)
         {
             log.error("Attachment cannot be loaded", e);
         }
@@ -286,23 +286,23 @@ public class LuceneSearchProvider implements SearchProvider
      * @param att Attachment to get content for. Filename extension is used to determine the type of the attachment.
      * @return String representing the content of the file.
      * FIXME This is a very simple implementation of some text-based attachment, mainly used for testing.
-     * This should be replaced /moved to Attachment search providers or some other 'plugable' wat to search attachments  
+     * This should be replaced /moved to Attachment search providers or some other 'plugable' wat to search attachments
      */
     private String getAttachmentContent( Attachment att )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
         //FIXME: Add attachment plugin structure
-        
+
         String filename = att.getFileName();
-        
+
         if(filename.endsWith(".txt") ||
            filename.endsWith(".xml") ||
            filename.endsWith(".ini") ||
            filename.endsWith(".html"))
         {
             InputStream attStream;
-            
-            try 
+
+            try
             {
                 attStream = mgr.getAttachmentStream( att );
 
@@ -313,13 +313,13 @@ public class LuceneSearchProvider implements SearchProvider
                 sout.close();
 
                 return sout.toString();
-            } 
-            catch (ProviderException e) 
+            }
+            catch (ProviderException e)
             {
                 log.error("Attachment cannot be loaded", e);
                 return null;
-            } 
-            catch (IOException e) 
+            }
+            catch (IOException e)
             {
                 log.error("Attachment cannot be loaded", e);
                 return null;
@@ -387,47 +387,47 @@ public class LuceneSearchProvider implements SearchProvider
         Document doc = new Document();
 
         if( text == null ) return;
-        
+
         // Raw name is the keyword we'll use to refer to this document for updates.
         Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED);
         doc.add( field );
 
         // Body text.  It is stored in the doc for search contexts.
-        field = new Field(LUCENE_PAGE_CONTENTS, text, 
+        field = new Field(LUCENE_PAGE_CONTENTS, text,
                           Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
-        field = new Field(LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + " " + page.getName(), 
+        field = new Field(LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + " " + page.getName(),
                           Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
         doc.add( field );
 
         // Allow searching by authorname
-        
+
         if( page.getAuthor() != null )
         {
-            field = new Field(LUCENE_AUTHOR, page.getAuthor(), 
+            field = new Field(LUCENE_AUTHOR, page.getAuthor(),
                               Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
             doc.add( field );
         }
 
         // Now add the names of the attachments of this page
-        try 
+        try
         {
             Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
             String attachmentNames = "";
-        
+
             for( Iterator it = attachments.iterator(); it.hasNext(); )
             {
                 Attachment att = (Attachment) it.next();
                 attachmentNames += att.getName() + ";";
             }
-            field = new Field(LUCENE_ATTACHMENTS, attachmentNames, 
+            field = new Field(LUCENE_ATTACHMENTS, attachmentNames,
                               Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
             doc.add( field );
 
-        } 
-        catch(ProviderException e) 
+        }
+        catch(ProviderException e)
         {
         	// Unable to read attachments
         	log.error("Failed to get attachments for page", e);
@@ -464,13 +464,13 @@ public class LuceneSearchProvider implements SearchProvider
 
             if( page instanceof Attachment )
             {
-                text = getAttachmentContent( (Attachment) page ); 
+                text = getAttachmentContent( (Attachment) page );
             }
             else
             {
                 text = m_engine.getPureText( page );
             }
-            
+
             if( text != null )
             {
                 // Add work item to m_updates queue.
@@ -488,15 +488,15 @@ public class LuceneSearchProvider implements SearchProvider
     {
         Searcher  searcher = null;
         ArrayList list     = null;
-              
+
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
             QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
-            
+
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
-            
+
             Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
                                                       new SimpleHTMLEncoder(),
                                                       new QueryScorer(luceneQuery));
@@ -519,23 +519,23 @@ public class LuceneSearchProvider implements SearchProvider
                 Document doc = hits.doc(curr);
                 String pageName = doc.get(LUCENE_ID);
                 WikiPage page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
-                
+
                 if(page != null)
                 {
-                    if(page instanceof Attachment) 
+                    if(page instanceof Attachment)
                     {
                         // Currently attachments don't look nice on the search-results page
                         // When the search-results are cleaned up this can be enabled again.
                     }
-                    
+
                     int score = (int)(hits.score(curr) * 100);
-           
-                    
+
+
                     // Get highlighted search contexts
                     String text = doc.get(LUCENE_PAGE_CONTENTS);
 
                     String fragments[] = new String[0];
-                    if (text != null) 
+                    if (text != null)
                     {
                         TokenStream tokenStream = getLuceneAnalyzer()
                         .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
@@ -543,7 +543,7 @@ public class LuceneSearchProvider implements SearchProvider
                                                                  text, MAX_FRAGMENTS);
 
                     }
-                    
+
                     SearchResult result = new SearchResultImpl( page, score, fragments );                    list.add(result);
                 }
                 else
@@ -572,14 +572,22 @@ public class LuceneSearchProvider implements SearchProvider
         catch( ParseException e )
         {
             log.info("Broken query; cannot parse",e);
-            
+
             throw new ProviderException("You have entered a query Lucene cannot process: "+e.getMessage());
         }
         finally
         {
-            if( searcher != null ) try { searcher.close(); } catch( IOException e ) {}
+            if( searcher != null )
+            {
+                try
+                {
+                    searcher.close();
+                }
+                catch( IOException e )
+                {}
+            }
         }
-        
+
         return list;
     }
 
@@ -588,52 +596,52 @@ public class LuceneSearchProvider implements SearchProvider
     {
         return "LuceneSearchProvider";
     }
-    
+
     /**
      * Updater thread that updates Lucene indexes.
      */
-    private static class LuceneUpdater extends WikiBackgroundThread
+    private static final class LuceneUpdater extends WikiBackgroundThread
     {
         protected static final int INDEX_DELAY    = 1;
         protected static final int INITIAL_DELAY = 60;
         private final LuceneSearchProvider m_provider;
-        
+
         private int m_initialDelay;
-        
+
         private WatchDog m_watchdog;
-        
-        private LuceneUpdater( WikiEngine engine, LuceneSearchProvider provider, 
+
+        private LuceneUpdater( WikiEngine engine, LuceneSearchProvider provider,
                                int initialDelay, int indexDelay )
         {
             super( engine, indexDelay );
             m_provider = provider;
             setName("JSPWiki Lucene Indexer");
         }
-        
+
         public void startupTask() throws Exception
         {
             m_watchdog = getEngine().getCurrentWatchDog();
-            
+
             // Sleep initially...
             try
             {
                 Thread.sleep( m_initialDelay * 1000L );
             }
-            catch( InterruptedException e ) 
-            { 
-                throw new InternalWikiException("Interrupted while waiting to start."); 
+            catch( InterruptedException e )
+            {
+                throw new InternalWikiException("Interrupted while waiting to start.");
             }
-            
+
             m_watchdog.enterState("Full reindex");
             // Reindex everything
             m_provider.doFullLuceneReindex();
             m_watchdog.exitState();
         }
-        
+
         public void backgroundTask() throws Exception
         {
             m_watchdog.enterState("Emptying index queue", 60);
-            
+
             synchronized ( m_provider.m_updates )
             {
                 while( m_provider.m_updates.size() > 0 )
@@ -644,12 +652,12 @@ public class LuceneSearchProvider implements SearchProvider
                     m_provider.updateLuceneIndex(page, text);
                 }
             }
-            
+
             m_watchdog.exitState();
         }
-        
+
     }
-    
+
     // FIXME: This class is dumb; needs to have a better implementation
     private static class SearchResultImpl
         implements SearchResult
@@ -657,7 +665,7 @@ public class LuceneSearchProvider implements SearchProvider
         private WikiPage m_page;
         private int      m_score;
         private String[] m_contexts;
-        
+
         public SearchResultImpl( WikiPage page, int score, String[] contexts )
         {
             m_page  = page;
@@ -677,9 +685,9 @@ public class LuceneSearchProvider implements SearchProvider
         {
             return m_score;
         }
-        
-        
-        public String[] getContexts() 
+
+
+        public String[] getContexts()
         {
             return m_contexts;
         }

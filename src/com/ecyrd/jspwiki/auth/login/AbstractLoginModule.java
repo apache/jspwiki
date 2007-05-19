@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.security.Principal;
@@ -34,7 +53,7 @@ public abstract class AbstractLoginModule implements LoginModule
     protected Map             m_options;
 
     /**
-     * Collection of Principals set during login module initialization. 
+     * Collection of Principals set during login module initialization.
      * These represent the user's identities prior to the overall login.
      * Typically these will contain earlier, less-authoritative principals
      * like a WikiPrincipal for the user cookie, or an IP address.
@@ -42,10 +61,10 @@ public abstract class AbstractLoginModule implements LoginModule
      * if login succeeds.
      */
     protected Collection      m_previousWikiPrincipals;
-    
+
     /**
      * Implementing classes should add Principals to this collection; these
-     * will be added to the principal set when the overall login succeeds. 
+     * will be added to the principal set when the overall login succeeds.
      * These Principals will be added to the Subject
      * during the {@link #commit()} phase of login.
      */
@@ -59,27 +78,27 @@ public abstract class AbstractLoginModule implements LoginModule
      * {@link com.ecyrd.jspwiki.auth.authorize.Role}.
      */
     protected Collection      m_principalsToRemove;
-    
+
     /**
      * Implementing classes should add Principals to this collection to specify
      * what Principals, perhaps suppled by other LoginModules, <em>must</em>
      * be removed if login for this module, or for the entire login
      * configuration overall, succeeds. Generally, these will be Principals of
      * type {@link com.ecyrd.jspwiki.auth.authorize.Role}. For example,
-     * {@link CookieAssertionLoginModule} adds 
+     * {@link CookieAssertionLoginModule} adds
      * {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS} to its
      * <code>m_principalsToOverwrite</code> collection because when it
      * succeeds, its own {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED}
      * should over-write {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
      */
     protected Collection      m_principalsToOverwrite;
-    
+
     protected Map             m_state;
 
     protected Subject         m_subject;
 
     protected static final String NULL           = "(null)";
-    
+
     /**
      * Aborts the login; called if the LoginContext's overall authentication
      * failed. (the relevant REQUIRED, REQUISITE, SUFFICIENT and OPTIONAL
@@ -99,7 +118,7 @@ public abstract class AbstractLoginModule implements LoginModule
         // Clear the principals/principalsToRemove sets
         m_principals.clear();
         m_principalsToRemove.clear();
-        
+
         return true;
     }
 
@@ -139,7 +158,7 @@ public abstract class AbstractLoginModule implements LoginModule
             removePrincipals( m_principalsToOverwrite );
             return true;
         }
-        
+
         // If login did not succeed, clean up after ourselves
         removePrincipals( m_principals );
         removePrincipals( m_principalsToRemove );
@@ -208,7 +227,7 @@ public abstract class AbstractLoginModule implements LoginModule
         // Clear the principals/principalsToRemove sets
         m_principals.clear();
         m_principalsToRemove.clear();
-        
+
         return true;
     }
 
@@ -218,13 +237,14 @@ public abstract class AbstractLoginModule implements LoginModule
      * <code>false</code> otherwise.
      * @return
      */
-    private final boolean succeeded() {
+    private final boolean succeeded()
+    {
         return ( m_principals.size() > 0 );
     }
-    
+
     /**
      * Removes a specified collection of Principals from the Subject's
-     * Principal set. 
+     * Principal set.
      * @param principals the principals to remove
      */
     private final void removePrincipals( Collection principals )
@@ -242,5 +262,5 @@ public abstract class AbstractLoginModule implements LoginModule
             }
         }
     }
-    
+
 }

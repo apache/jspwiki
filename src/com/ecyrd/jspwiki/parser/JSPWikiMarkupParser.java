@@ -1136,6 +1136,9 @@ public class JSPWikiMarkupParser
           case Heading.HEADING_LARGE:
             el = new Element("h2").setAttribute("id",makeHeadingAnchor( pageName, outTitle, hd ));
             break;
+
+          default:
+            throw new InternalWikiException("Illegal heading type "+level);
         }
 
         return el;
@@ -1456,7 +1459,8 @@ public class JSPWikiMarkupParser
                 {
                     makeLink( INTERWIKI, extWiki + ":" + wikiPage, linktext, null, link.getAttributes() );
                 }
-                else{
+                else
+                {
                     String urlReference = m_engine.getInterWikiURL( extWiki );
 
                     if( urlReference != null )
@@ -2555,6 +2559,7 @@ public class JSPWikiMarkupParser
                     break;
 
                 case IGNORE:
+                default:
                     break;
             }
         }
@@ -2732,6 +2737,9 @@ public class JSPWikiMarkupParser
           case '/':
             el = handleSlash( m_newLine );
             break;
+
+          default:
+            break;
         }
 
         return el != null ? ELEMENT : CHARACTER;
@@ -2777,7 +2785,8 @@ public class JSPWikiMarkupParser
         if( rootElement.getChild("p") != null )
         {
             ArrayList ls = new ArrayList();
-            int idxOfFirstContent = 0, count = 0;
+            int idxOfFirstContent = 0;
+            int count = 0;
 
             for( Iterator i = kids.iterator(); i.hasNext(); count++ )
             {

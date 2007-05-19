@@ -1,8 +1,8 @@
-/* 
+/*
         ReferredPagesPlugin
         Dirk Frederickx Aug 2004, Jan 2005
         Janne Jalkanen 2005
-        
+
         This program is free software; you can redistribute it and/or modify
         it under the terms of the GNU Lesser General Public License as published by
         the Free Software Foundation; either version 2.1 of the License, or
@@ -55,7 +55,7 @@ public class ReferredPagesPlugin implements WikiPlugin
     private Pattern        m_excludePattern;
     private boolean m_formatCompact  = true;
     private boolean m_formatSort     = false;
-    
+
     public static final String PARAM_ROOT    = "page";
     public static final String PARAM_DEPTH   = "depth";
     public static final String PARAM_TYPE    = "type";
@@ -64,33 +64,33 @@ public class ReferredPagesPlugin implements WikiPlugin
     public static final String PARAM_FORMAT  = "format";
     public static final int    MIN_DEPTH = 1;
     public static final int    MAX_DEPTH = 8;
-    
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         m_engine = context.getEngine();
-            
+
         WikiPage         page   = context.getPage();
-        if( page == null ) return ""; 
+        if( page == null ) return "";
 
         // parse parameters
         String rootname = (String)params.get( PARAM_ROOT );
         if( rootname == null ) rootname = page.getName() ;
- 
+
         String format = (String)params.get( PARAM_FORMAT );
         if( format == null) format = "";
-        if( format.indexOf( "full" ) >=0 ) m_formatCompact = false ;        
-        if( format.indexOf( "sort" ) >=0 ) m_formatSort    = true  ;        
+        if( format.indexOf( "full" ) >=0 ) m_formatCompact = false ;
+        if( format.indexOf( "sort" ) >=0 ) m_formatSort    = true  ;
 
         m_depth = TextUtil.parseIntParameter( (String)params.get( PARAM_DEPTH ), MIN_DEPTH );
         if( m_depth > MAX_DEPTH )  m_depth = MAX_DEPTH;
-            
+
         String includePattern = (String) params.get(PARAM_INCLUDE);
         if( includePattern == null ) includePattern = ".*";
 
         String excludePattern = (String) params.get(PARAM_EXCLUDE);
         if( excludePattern == null ) excludePattern = "^$";
-            
+
         log.debug( "Fetching referred pages for "+ rootname +
                    " with a depth of "+ m_depth +
                    " with include pattern of "+ includePattern +
@@ -99,12 +99,12 @@ public class ReferredPagesPlugin implements WikiPlugin
         //
         // do the actual work
         //
-        String href  = context.getViewURL(rootname);  
+        String href  = context.getViewURL(rootname);
         String title = "ReferredPagesPlugin: depth["+m_depth+
                        "] include["+includePattern+"] exclude["+excludePattern+
                        "] format["+(m_formatCompact ? "compact" : "full") +
                        (m_formatSort ? " sort" : "") + "]";
-        
+
         m_result.append("<div class=\"ReferredPagesPlugin\">\n");
         m_result.append("<a class=\"wikipage\" href=\""+ href +
                         "\" title=\"" + title +
@@ -112,7 +112,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         m_exists.add(rootname);
 
         // pre compile all needed patterns
-        // glob compiler :  * is 0..n instance of any char  -- more convenient as input 
+        // glob compiler :  * is 0..n instance of any char  -- more convenient as input
         // perl5 compiler : .* is 0..n instances of any char -- more powerful
         //PatternCompiler g_compiler = new GlobCompiler();
         PatternCompiler compiler = new Perl5Compiler();
@@ -120,16 +120,16 @@ public class ReferredPagesPlugin implements WikiPlugin
         try
         {
             m_includePattern = compiler.compile(includePattern);
-            
+
             m_excludePattern = compiler.compile(excludePattern);
         }
         catch( MalformedPatternException e )
         {
-            if (m_includePattern == null ) 
-            { 
+            if (m_includePattern == null )
+            {
                 throw new PluginException("Illegal include pattern detected.");
-            } 
-            else if (m_excludePattern == null ) 
+            }
+            else if (m_excludePattern == null )
             {
                 throw new PluginException("Illegal exclude pattern detected.");
             }
@@ -138,17 +138,17 @@ public class ReferredPagesPlugin implements WikiPlugin
                 throw new PluginException("Illegal internal pattern detected.");
             }
         }
-                    
+
         // go get all referred links
         getReferredPages(context,rootname, 0);
 
         // close and finish
         m_result.append ("</div>\n" ) ;
-              
+
         return m_result.toString() ;
     }
-        
-        
+
+
     /**
      * Retrieves a list of all referred pages. Is called recursively
      * depending on the depth parameter
@@ -160,26 +160,26 @@ public class ReferredPagesPlugin implements WikiPlugin
         if( !m_engine.pageExists(pagename) ) return;
 
         ReferenceManager mgr = m_engine.getReferenceManager();
-          
+
         Collection allPages = mgr.findRefersTo( pagename );
-        
+
         handleLinks( context, allPages, ++depth, pagename );
     }
-       
+
     protected void handleLinks(WikiContext context,Collection links, int depth, String pagename)
     {
-        boolean UL = false;
+        boolean isUL = false;
         HashSet localLinkSet = new HashSet();  // needed to skip multiple
         // links to the same page
         localLinkSet.add(pagename);
-          
+
         ArrayList allLinks = new ArrayList();
-        
+
         if( links != null )
             allLinks.addAll( links );
-        
+
         if( m_formatSort ) Collections.sort(allLinks);
-          
+
         for( Iterator i = allLinks.iterator(); i.hasNext(); )
         {
             String link = (String) i.next() ;
@@ -191,17 +191,20 @@ public class ReferredPagesPlugin implements WikiPlugin
 
             if( !m_engine.pageExists( link ) ) continue; // hide links to non
                                                          // existing pages
-          
+
             if(  m_matcher.matches( link , m_excludePattern ) ) continue;
             if( !m_matcher.matches( link , m_includePattern ) ) continue;
 
-            if( m_exists.contains( link ) ) 
+            if( m_exists.contains( link ) )
             {
-                if( !m_formatCompact ) 
+                if( !m_formatCompact )
                 {
-                    if( !UL ) { UL = true; m_result.append("<ul>\n");  }
+                    if( !isUL )
+                    {
+                        isUL = true; m_result.append("<ul>\n");
+                    }
 
-                    m_result.append("<li> " + link + " </li>\n");          
+                    m_result.append("<li> " + link + " </li>\n");
 
                     getReferredPages( context, link, depth );  // added recursive
                                                       // call - on general
@@ -210,18 +213,21 @@ public class ReferredPagesPlugin implements WikiPlugin
             }
             else
             {
-                if( !UL ) { UL = true; m_result.append("<ul>\n");  }
+                if( !isUL )
+                {
+                    isUL = true; m_result.append("<ul>\n");
+                }
 
-                String href = context.getURL(WikiContext.VIEW,link);  
+                String href = context.getURL(WikiContext.VIEW,link);
                 m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a></li>\n" );
 
                 m_exists.add( link );
-       
+
                 getReferredPages( context, link, depth );
             }
         }
 
-        if( UL ) m_result.append("</ul>\n");
+        if( isUL ) m_result.append("</ul>\n");
     }
 }
 

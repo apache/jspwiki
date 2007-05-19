@@ -40,7 +40,7 @@ import javax.servlet.ServletContext;
  * @since 2.5.x
  *
  */
-public class PropertyReader
+public final class PropertyReader
 {
 
     /** The web.xml parameter that defines where the config file is to be found.
@@ -74,6 +74,12 @@ public class PropertyReader
       "jspwiki.specialPage.Search",          "Search.jsp",
       "jspwiki.specialPage.FindPage",        "FindPage.jsp"};
 
+
+    /**
+     *  Private constructor to prevent instantiation.
+     */
+    private PropertyReader()
+    {}
 
     /**
      * Loads the webapp properties based on servlet context information.
@@ -141,7 +147,7 @@ public class PropertyReader
             //finally expand the variables (new in 2.5)
             expandVars(props);
 
-            return( props );
+            return props;
         }
         catch( Exception e )
         {
@@ -159,7 +165,7 @@ public class PropertyReader
             }
         }
 
-        return( null );
+        return null;
     }
 
 

@@ -170,7 +170,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
-    public void commit() throws WikiSecurityException { }
+    public void commit() throws WikiSecurityException
+    { }
 
     /**
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(com.ecyrd.jspwiki.auth.authorize.Group)
