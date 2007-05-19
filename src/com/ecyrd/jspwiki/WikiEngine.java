@@ -67,6 +67,7 @@ import com.ecyrd.jspwiki.ui.CommandResolver;
 import com.ecyrd.jspwiki.ui.EditorManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
+import com.ecyrd.jspwiki.ui.progress.ProgressManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WatchDog;
@@ -210,6 +211,8 @@ public class WikiEngine
     private EditorManager    m_editorManager;
 
     private InternationalizationManager m_internationalizationManager;
+
+    private ProgressManager  m_progressManager;
 
 	/** Constructs URLs */
     private URLConstructor   m_urlConstructor;
@@ -485,6 +488,8 @@ public class WikiEngine
 
             m_editorManager     = (EditorManager)ClassUtil.getMappedObject(EditorManager.class.getName(), this );
             m_editorManager.initialize( props );
+
+            m_progressManager   = new ProgressManager();
 
             // Initialize the authentication, authorization, user and acl managers
 
@@ -1868,6 +1873,16 @@ public class WikiEngine
     public SearchManager getSearchManager()
     {
         return m_searchManager;
+    }
+
+    /**
+     *  Returns the progress manager we're using
+     *  @return A ProgressManager
+     *  @since 2.6
+     */
+    public ProgressManager getProgressManager()
+    {
+        return m_progressManager;
     }
 
     /**
