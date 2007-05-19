@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
  *
  *  @author Janne Jalkanen
  */
-public class Release
+public final class Release
 {
     private static final String VERSION_SEPARATORS = ".-";
 
@@ -47,7 +47,7 @@ public class Release
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 5;
-    public static final int        MINORREVISION = 58;
+    public static final int        MINORREVISION = 59;
 
     /**
      *  This is the generic version string you should use
@@ -55,6 +55,12 @@ public class Release
      */
     public static final String     VERSTR        =
         VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;
+
+    /**
+     *  Private constructor prevents instantiation.
+     */
+    private Release()
+    {}
 
     /**
      *  This method is useful for templates, because hopefully it will
