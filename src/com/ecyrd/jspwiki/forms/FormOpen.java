@@ -1,7 +1,7 @@
 /*
     WikiForms - a WikiPage FORM handler for JSPWiki.
- 
-    Copyright (C) 2003 BaseN. 
+
+    Copyright (C) 2003 BaseN.
 
     JSPWiki Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
@@ -9,12 +9,12 @@
     it under the terms of the GNU Lesser General Public License as published
     by the Free Software Foundation; either version 2.1 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
- 
+
     You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
 */
@@ -41,13 +41,13 @@ import java.util.*;
  * </pre>
  *
  * <p>Mandatory parameters:
- * <br>The <i>name</i> field identifies this particular form to the 
+ * <br>The <i>name</i> field identifies this particular form to the
  * Form plugin across pages.
- * <br>The <i>handler</i> field is a WikiPlugin name; it will be 
+ * <br>The <i>handler</i> field is a WikiPlugin name; it will be
  * invoked with the form field values.
  *
  * <p>Optional parameters:
- * <p>The submitservlet is the name of a JSP/servlet capable of 
+ * <p>The submitservlet is the name of a JSP/servlet capable of
  * handling the input from this form. It is optional; the default
  * value is the current page (which can handle the input by using
  * this Plugin.)
@@ -64,8 +64,8 @@ import java.util.*;
 public class FormOpen
     extends FormElement
 {
-    private static org.apache.log4j.Logger log = 
-	org.apache.log4j.Logger.getLogger( FormOpen.class );
+    private static org.apache.log4j.Logger log =
+        org.apache.log4j.Logger.getLogger( FormOpen.class );
 
     public static final String PARAM_METHOD = "method";
 
@@ -76,7 +76,7 @@ public class FormOpen
     {
         String formName = (String)params.get( PARAM_FORM );
         if( formName == null )
-            throw new PluginException( "The FormOpen element is missing the '"+PARAM_FORM+"' parameter." ); 
+            throw new PluginException( "The FormOpen element is missing the '"+PARAM_FORM+"' parameter." );
         String hide     = (String)params.get( PARAM_HIDEFORM );
         String sourcePage = ctx.getPage().getName();
         String submitServlet = (String)params.get( PARAM_SUBMITHANDLER );
@@ -85,12 +85,12 @@ public class FormOpen
 
         String method = (String)params.get( PARAM_METHOD );
         if( method == null ) method="post";
-        
+
         if( !(method.equalsIgnoreCase("get") || method.equalsIgnoreCase("post")) )
         {
             throw new PluginException("Method must be either 'post' or 'get'");
         }
-        
+
         FormInfo info = getFormInfo( ctx );
         if( info != null )
         {
@@ -102,8 +102,8 @@ public class FormOpen
                 log.debug( "Previous FormInfo for this form was found in context." );
                 // If the FormInfo exists, and if we're supposed to display on
                 // error only, we need to exit now.
-                if( hide != null && 
-                    HIDE_SUCCESS.equals( hide ) && 
+                if( hide != null &&
+                    HIDE_SUCCESS.equals( hide ) &&
                     info.getStatus() == FormInfo.EXECUTED )
                 {
                     info.setHide( true );

@@ -1,4 +1,4 @@
-/* 
+/*
    JSPWiki - a JSP-based WikiWiki clone.
 
    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -33,7 +33,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 
 /**
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
- * 
+ *
  * @author John Volkar
  */
 public class DifferenceManager
@@ -41,24 +41,24 @@ public class DifferenceManager
     private static final Logger log = Logger.getLogger(DifferenceManager.class);
 
     public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";
-    
-    
+
+
     private DiffProvider m_provider;
 
     public DifferenceManager(WikiEngine engine, Properties props)
     {
-        loadProvider(props); 
+        loadProvider(props);
 
         initializeProvider(engine, props);
-        
-        log.info("Using difference provider: " + m_provider.getProviderInfo());   
+
+        log.info("Using difference provider: " + m_provider.getProviderInfo());
     }
 
     private void loadProvider(Properties props)
     {
-        String providerClassName = props.getProperty( PROP_DIFF_PROVIDER, 
+        String providerClassName = props.getProperty( PROP_DIFF_PROVIDER,
                                                       TraditionalDiffProvider.class.getName() );
-        
+
         try
         {
             Class providerClass = ClassUtil.findClass( "com.ecyrd.jspwiki.diff", providerClassName );
@@ -76,14 +76,14 @@ public class DifferenceManager
         {
             log.warn("Failed loading DiffProvider, will use NullDiffProvider.", e);
         }
-		
+
         if( null == m_provider )
         {
             m_provider = new DiffProvider.NullDiffProvider();
         }
     }
 
-    
+
     private void initializeProvider(WikiEngine engine, Properties props)
     {
         try
@@ -104,7 +104,7 @@ public class DifferenceManager
 
     /**
      *   Returns valid XHTML string to be used in any way you please.
-     * 
+     *
      *   @return XHTML, or empty string, if no difference detected.
      */
     public String makeDiff(String firstWikiText, String secondWikiText)
@@ -113,7 +113,7 @@ public class DifferenceManager
         try
         {
             diff = m_provider.makeDiffHtml( firstWikiText, secondWikiText);
-        
+
             if( diff == null )
                 diff = "";
         }
@@ -123,6 +123,6 @@ public class DifferenceManager
             log.warn( diff, e);
         }
         return diff;
-    }    
+    }
 }
 

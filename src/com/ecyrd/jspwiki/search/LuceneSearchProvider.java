@@ -429,8 +429,8 @@ public class LuceneSearchProvider implements SearchProvider
         }
         catch(ProviderException e)
         {
-        	// Unable to read attachments
-        	log.error("Failed to get attachments for page", e);
+            // Unable to read attachments
+            log.error("Failed to get attachments for page", e);
         }
         writer.addDocument(doc);
     }

@@ -184,7 +184,8 @@ public class ContextualDiffProvider implements DiffProvider
         {
             String line = linesArray[i];
 
-            String lastToken = null; String token=null;
+            String lastToken = null;
+            String token = null;
             // StringTokenizer might be discouraged but it still is perfect here...
             for (StringTokenizer st = new StringTokenizer( line, " ", true ); st.hasMoreTokens();)
             {

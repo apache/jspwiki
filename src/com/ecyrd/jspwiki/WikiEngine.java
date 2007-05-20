@@ -214,7 +214,7 @@ public class WikiEngine
 
     private ProgressManager  m_progressManager;
 
-	/** Constructs URLs */
+    /** Constructs URLs */
     private URLConstructor   m_urlConstructor;
 
     /** Generates RSS feed when requested. */

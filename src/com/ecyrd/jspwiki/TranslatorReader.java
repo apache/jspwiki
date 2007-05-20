@@ -1159,7 +1159,7 @@ public class TranslatorReader extends Reader
         if( m_isPre )
         {
             buf.append(m_renderer.closePreformatted());
-	    m_isEscaping   = false;
+            m_isEscaping   = false;
             m_isPre = false;
         }
 
@@ -1169,11 +1169,11 @@ public class TranslatorReader extends Reader
             m_istable = false;
         }
 
-	if( m_isOpenParagraph )
-	{
-	    buf.append( m_renderer.closeParagraph() );
-	    m_isOpenParagraph = false;
-	}
+        if( m_isOpenParagraph )
+        {
+            buf.append( m_renderer.closeParagraph() );
+            m_isOpenParagraph = false;
+        }
 
         return buf.toString();
     }
@@ -1330,7 +1330,7 @@ public class TranslatorReader extends Reader
                 if( m_isPre )
                 {
                     m_isPre = false;
-		    m_isEscaping = false;
+                    m_isEscaping = false;
                     res = m_renderer.closePreformatted();
                 }
                 else
@@ -2571,8 +2571,8 @@ public class TranslatorReader extends Reader
 
               case EDIT:
                 result = "<a class=\"editpage\" title=\"Create '"+link+"'\" href=\""+
-                		  getURL(WikiContext.EDIT, link)+"\">"+
-                		  text+"</a>";
+                         getURL(WikiContext.EDIT, link)+"\">"+
+                         text+"</a>";
                 break;
 
               case EMPTY:

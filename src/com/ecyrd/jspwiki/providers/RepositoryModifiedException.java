@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -35,22 +35,22 @@ public class RepositoryModifiedException
     extends ProviderException
 {
     private static final long serialVersionUID = 0L;
-    
-    protected String m_page;
-    
+
+    protected final String m_page;
+
     /**
      * Constructs the exception.
-     * 
+     *
      * @param msg
      * @param pageName  The name of the page which was modified
      */
     public RepositoryModifiedException( String msg, String pageName )
     {
         super( msg );
-        
+
         m_page = pageName;
     }
-    
+
     public String getPageName()
     {
         return m_page;

@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -25,12 +25,12 @@ package com.ecyrd.jspwiki.filters;
  *
  *  @since 2.1.112
  */
-public class RedirectException 
+public class RedirectException
     extends FilterException
 {
     private static final long serialVersionUID = 0L;
-    
-    private String m_where;
+
+    private final String m_where;
 
     public RedirectException( String msg, String redirect )
     {

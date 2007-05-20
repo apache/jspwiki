@@ -1,7 +1,7 @@
 /*
     WikiForms - a WikiPage FORM handler for JSPWiki.
- 
-    Copyright (C) 2003 BaseN. 
+
+    Copyright (C) 2003 BaseN.
 
     JSPWiki Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
@@ -9,12 +9,12 @@
     it under the terms of the GNU Lesser General Public License as published
     by the Free Software Foundation; either version 2.1 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
- 
+
     You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
 */
@@ -64,12 +64,12 @@ public class FormTextarea
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
             return field.toString( ctx.getEngine().getContentEncoding() );
-        
+
         return "";
     }
 
     private textarea buildTextArea( Map params,
-				    Map previousValues )
+                                    Map previousValues )
         throws PluginException
     {
         String inputName = (String)params.get( PARAM_INPUTNAME );
@@ -78,14 +78,14 @@ public class FormTextarea
 
         if( inputName == null )
             throw new PluginException( "Textarea element is missing " +
-				       "parameter 'name'." );
-	
+                                       "parameter 'name'." );
+
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped
         // when the handler plugin is executed.
         textarea field = new textarea( HANDLERPARAM_PREFIX + inputName,
                                        rows, cols);
-	
+
         if( previousValues != null )
         {
             String oldValue = (String)previousValues.get( inputName );
@@ -99,6 +99,6 @@ public class FormTextarea
                 if( oldValue != null ) field.addElement( oldValue );
             }
         }
-        return( field );
+        return field;
     }
 }

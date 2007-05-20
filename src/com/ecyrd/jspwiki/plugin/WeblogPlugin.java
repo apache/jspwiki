@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -65,7 +65,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  </ul>
  *  <p>The "days" and "startDate" can also be sent in HTTP parameters,
  *  and the names are "weblog.days" and "weblog.startDate", respectively.</p>
- *  <p>The weblog plugin also adds an attribute to each page it is on: 
+ *  <p>The weblog plugin also adds an attribute to each page it is on:
  *  "weblogplugin.isweblog" is set to "true".  This can be used to quickly
  *  peruse pages which have weblogs.</p>
  *  @since 1.9.21
@@ -74,14 +74,14 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 // FIXME: Add "entries" param as an alternative to "days".
 // FIXME: Entries arrive in wrong order.
 
-public class WeblogPlugin 
+public class WeblogPlugin
     implements WikiPlugin, ParserStagePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
-    private static final DateFormat DEFAULT_ENTRYFORMAT 
+    private static final DateFormat DEFAULT_ENTRYFORMAT
                                 = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
     private static final Pattern headingPattern;
-    
+
     public static final int     DEFAULT_DAYS = 7;
     public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
 
@@ -95,10 +95,10 @@ public class WeblogPlugin
     public static final String  PARAM_PAGE         = "page";
 
     public static final String  ATTR_ISWEBLOG      = "weblogplugin.isweblog";
-    
+
     static
     {
-    	    // This is a pretty ugly, brute-force regex. But it will do for now...
+        // This is a pretty ugly, brute-force regex. But it will do for now...
         headingPattern = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
     }
 
@@ -146,7 +146,7 @@ public class WeblogPlugin
         {
             days = (String) params.get( PARAM_DAYS );
         }
-        
+
         if( ( params.get(PARAM_ENTRYFORMAT)) == null )
         {
             entryFormat = DEFAULT_ENTRYFORMAT;
@@ -220,7 +220,7 @@ public class WeblogPlugin
         stopTime.set( Calendar.SECOND, 59 );
 
         StringBuffer sb = new StringBuffer();
-        
+
         try
         {
             List blogEntries = findBlogEntries( engine.getPageManager(),
@@ -256,7 +256,7 @@ public class WeblogPlugin
                 entryCtx.setPage( p );
 
                 String html = engine.getHTML( entryCtx, engine.getPage(p.getName()) );
-                
+
                 // Extract the first h1/h2/h3 as title, and replace with null
                 sb.append("<div class=\"weblogentrytitle\">\n");
                 Matcher matcher = headingPattern.matcher( html );
@@ -271,7 +271,7 @@ public class WeblogPlugin
                     sb.append( p.getName() );
                 }
                 sb.append("</div>\n");
-                
+
                 sb.append("<div class=\"weblogentrybody\">\n");
                 sb.append( html );
                 sb.append("</div>\n");
@@ -319,7 +319,7 @@ public class WeblogPlugin
                                numComments+
                                ")</a>" );
                 }
-                
+
                 sb.append("</div>\n");
 
                 //
@@ -327,7 +327,7 @@ public class WeblogPlugin
                 //
                 sb.append("</div>\n");
             }
-            
+
             sb.append("</div>\n");
         }
         catch( ProviderException e )
@@ -348,12 +348,12 @@ public class WeblogPlugin
         {
             return 0;
         }
-        
+
         return TextUtil.countSections( pagedata );
     }
 
     /**
-     *  Attempts to locate all pages that correspond to the 
+     *  Attempts to locate all pages that correspond to the
      *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
      *
      *  Returns a list of pages with their FIRST revisions.
@@ -367,7 +367,7 @@ public class WeblogPlugin
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
- 
+
         for( Iterator i = everyone.iterator(); i.hasNext(); )
         {
             WikiPage p = (WikiPage)i.next();
@@ -396,7 +396,7 @@ public class WeblogPlugin
                             //log.debug("   Creation date: "+creationDate);
 
                             Date pageDay = fmt.parse( creationDate );
-                
+
                             //
                             //  Add the first version of the page into the list.  This way
                             //  the page modified date becomes the page creation date.
@@ -415,7 +415,7 @@ public class WeblogPlugin
                 }
             }
         }
-        
+
         return result;
     }
 
@@ -426,11 +426,11 @@ public class WeblogPlugin
     {
         public int compare( Object o1, Object o2 )
         {
-            if( o1 == null || o2 == null ) 
-            { 
-                return 0; 
+            if( o1 == null || o2 == null )
+            {
+                return 0;
             }
-            
+
             WikiPage page1 = (WikiPage)o1;
             WikiPage page2 = (WikiPage)o2;
 

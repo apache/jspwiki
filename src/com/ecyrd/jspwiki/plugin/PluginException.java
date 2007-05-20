@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -21,16 +21,17 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.WikiException;
 
-public class PluginException 
+public class PluginException
     extends WikiException
 {
     private static final long serialVersionUID = 0L;
-    
-    private Throwable m_throwable;
-    
+
+    private final Throwable m_throwable;
+
     public PluginException( String message )
     {
         super( message );
+        m_throwable = null;
     }
 
     public PluginException( String message, Throwable original )
