@@ -105,10 +105,12 @@ public final class HexUtils
      *
      * @param bytes Byte array representation
      */
-    public static String convert(byte bytes[]) {
+    public static String convert(byte[] bytes)
+    {
 
         StringBuffer sb = new StringBuffer(bytes.length * 2);
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0; i < bytes.length; i++)
+        {
             sb.append(convertDigit((bytes[i] >> 4)));
             sb.append(convertDigit((bytes[i] & 0x0f)));
         }
@@ -125,7 +127,8 @@ public final class HexUtils
      * @exception IllegalArgumentException if an invalid hexadecimal digit
      *  is included
      */
-    public static int convert2Int( byte[] hex ) {
+    public static int convert2Int( byte[] hex )
+    {
         // Code from Ajp11, from Apache's JServ
 
         // assert b.length==4
@@ -156,10 +159,12 @@ public final class HexUtils
      *
      * @param value Value to be converted
      */
-    private static char convertDigit(int value) {
+    private static char convertDigit(int value)
+    {
 
         value &= 0x0f;
-        if (value >= 10) {
+        if (value >= 10)
+        {
             return ((char) (value - 10 + 'a'));
         }
         return ((char) (value + '0'));

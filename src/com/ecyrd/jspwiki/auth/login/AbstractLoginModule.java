@@ -46,7 +46,7 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
 public abstract class AbstractLoginModule implements LoginModule
 {
 
-    private   final static Logger   log = Logger.getLogger( AbstractLoginModule.class );
+    private static final Logger   log = Logger.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
 
@@ -239,7 +239,7 @@ public abstract class AbstractLoginModule implements LoginModule
      */
     private final boolean succeeded()
     {
-        return ( m_principals.size() > 0 );
+        return m_principals.size() > 0;
     }
 
     /**

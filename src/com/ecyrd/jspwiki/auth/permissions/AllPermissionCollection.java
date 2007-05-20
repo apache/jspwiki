@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.permissions;
 
 import java.security.Permission;
@@ -14,9 +33,9 @@ public class AllPermissionCollection extends PermissionCollection
 
     private static final long serialVersionUID = 1L;
 
-    private boolean           m_not_empty      = false;
+    private boolean           m_notEmpty      = false;
 
-    private boolean           m_read_only      = false;
+    private boolean           m_readOnly      = false;
 
     protected final Hashtable m_permissions    = new Hashtable();
 
@@ -34,14 +53,14 @@ public class AllPermissionCollection extends PermissionCollection
             throw new IllegalArgumentException(
                     "Permission must be of type com.ecyrd.jspwiki.permissions.*Permission." );
         }
-        
-        if ( m_read_only )
+
+        if ( m_readOnly )
         {
             throw new SecurityException( "attempt to add a Permission to a readonly PermissionCollection" );
         }
-        
-        m_not_empty = true;
-        
+
+        m_notEmpty = true;
+
         // This is a filthy hack, but it keeps us from having to write our own
         // Enumeration implementation
         m_permissions.put( permission, permission );
@@ -74,7 +93,7 @@ public class AllPermissionCollection extends PermissionCollection
     public boolean implies( Permission permission )
     {
         // If nothing in the collection yet, fail fast
-        if ( !m_not_empty )
+        if ( !m_notEmpty )
         {
             return false;
         }
@@ -103,7 +122,7 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public boolean isReadOnly()
     {
-        return m_read_only;
+        return m_readOnly;
     }
 
     /**
@@ -111,6 +130,6 @@ public class AllPermissionCollection extends PermissionCollection
      */
     public void setReadOnly()
     {
-        m_read_only = true;
+        m_readOnly = true;
     }
 }

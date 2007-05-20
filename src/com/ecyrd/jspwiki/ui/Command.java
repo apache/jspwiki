@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.ui;
 
 import java.security.Permission;
@@ -86,8 +105,8 @@ public interface Command
     public String getContentTemplate();
 
     /**
-     * Returns the JSP associated with the Command. The JSP is 
-     * a "local" JSP within the JSPWiki webapp; it is not 
+     * Returns the JSP associated with the Command. The JSP is
+     * a "local" JSP within the JSPWiki webapp; it is not
      * a general HTTP URL. If it exists, the JSP will be expressed
      * relative to the webapp root, without a leading slash.
      * This method is guaranteed to return a non-<code>null</code>
@@ -125,8 +144,8 @@ public interface Command
     /**
      * Returns the target associated with a Command, if it was created with one.
      * Commands created with {@link #targetedCommand(Object)} will
-     * <em>always</em> return a non-<code>null</code> object. <em>Calling 
-     * methods should always check to see if the result of this method 
+     * <em>always</em> return a non-<code>null</code> object. <em>Calling
+     * methods should always check to see if the result of this method
      * is <code>null</code></em>.
      * @return the wiki page
      */

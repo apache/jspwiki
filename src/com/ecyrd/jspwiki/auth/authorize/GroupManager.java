@@ -637,7 +637,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * This is a convenience method.
      * @param listener the event listener
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }

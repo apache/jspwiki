@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
@@ -30,7 +49,7 @@ import com.ecyrd.jspwiki.WikiException;
  * by calling classes to the Decision, in order of expected presentation, by the
  * {@link #addFact(Fact)} method. They can be retrieved, in order, via {@link #getFacts()}.
  * </p>
- * 
+ *
  * @author Andrew Jaquith
  * @since 2.5
  */
@@ -55,7 +74,7 @@ public abstract class Decision extends AbstractStep
 
     /**
      * Appends a Fact to the list of Facts associated with this Decision.
-     * 
+     *
      * @param fact
      *            the new fact to add
      */
@@ -66,13 +85,13 @@ public abstract class Decision extends AbstractStep
 
     /**
      * <p>Sets this Decision's outcome, and restarts the parent Workflow if
-     * it is in the {@link Workflow#WAITING} state and this Decision is 
-     * its currently active Step. Any checked WikiExceptions thrown by 
+     * it is in the {@link Workflow#WAITING} state and this Decision is
+     * its currently active Step. Any checked WikiExceptions thrown by
      * the workflow after re-start will be re-thrown to callers.</p>
-     * <p>This method cannot be invoked if the Decision is not the 
-     * current Workflow step; all other invocations will throw 
+     * <p>This method cannot be invoked if the Decision is not the
+     * current Workflow step; all other invocations will throw
      * an IllegalStateException.</p>
-     * 
+     *
      * @param outcome
      *            the Outcome of the Decision
      * @throws IllegalStateException
@@ -136,7 +155,7 @@ public abstract class Decision extends AbstractStep
      * Returns the default or suggested outcome, which must be one of those
      * returned by {@link #getAvailableOutcomes()}. This method is guaranteed
      * to return a non-<code>null</code> Outcome.
-     * 
+     *
      * @return the default outcome.
      */
     public Outcome getDefaultOutcome()
@@ -147,7 +166,7 @@ public abstract class Decision extends AbstractStep
     /**
      * Returns the Facts associated with this Decision, in the order in which
      * they were added.
-     * 
+     *
      * @return the list of Facts
      */
     public final List getFacts()
@@ -159,7 +178,7 @@ public abstract class Decision extends AbstractStep
      * Returns the unique identifier for this Decision. Normally, this ID is
      * programmatically assigned when the Decision is added to the
      * DecisionQueue.
-     * 
+     *
      * @return the identifier
      */
     public final int getId()
@@ -170,7 +189,7 @@ public abstract class Decision extends AbstractStep
     /**
      * Returns <code>true</code> if the Decision can be reassigned to another
      * actor. This implementation always returns <code>true</code>.
-     * 
+     *
      * @return the result
      */
     public boolean isReassignable()
@@ -180,7 +199,7 @@ public abstract class Decision extends AbstractStep
 
     /**
      * Reassigns the Decision to a new actor (that is, provide an outcome).
-     * 
+     *
      * @param actor
      *            the actor to reassign the Decision to
      * @throws IllegalArgumentException
@@ -200,7 +219,7 @@ public abstract class Decision extends AbstractStep
 
     /**
      * Sets the unique identfier for this Decision.
-     * 
+     *
      * @param id
      *            the identifier
      */

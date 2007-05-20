@@ -10,10 +10,11 @@ public class TextUtilTest extends TestCase
     {
         super( s );
     }
-    
+
     public void testGenerateRandomPassword()
     {
-        for (int i=0; i<1000; i++) {
+        for (int i=0; i<1000; i++)
+        {
             assertEquals("pw", TextUtil.PASSWORD_LENGTH, TextUtil.generateRandomPassword().length());
         }
     }

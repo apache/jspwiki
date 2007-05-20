@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2007 JSPWiki development group
@@ -27,7 +27,7 @@ import com.ecyrd.jspwiki.ui.admin.SimpleAdminBean;
 
 /**
  *  An AdminBean which manages the JSPWiki core operations.
- *  
+ *
  *  @author jalkanen
  */
 public class CoreBean
@@ -36,37 +36,37 @@ public class CoreBean
     private static final String[] ATTRIBUTES = { "pages", "version" };
     private static final String[] METHODS = { };
     private WikiEngine m_engine;
-    
+
     public CoreBean( WikiEngine engine ) throws NotCompliantMBeanException
     {
         m_engine = engine;
     }
-       
+
     /**
      *  Return the page count in the Wiki.
-     *  
+     *
      *  @return
      */
     public int getPages()
     {
         return m_engine.getPageCount();
     }
-    
+
     public String getPagesDescription()
     {
         return "The total number of pages in this wiki";
     }
-    
+
     public String getVersion()
     {
         return Release.VERSTR;
     }
-    
+
     public String getVersionDescription()
     {
         return "The JSPWiki engine version";
     }
-    
+
     public String getTitle()
     {
         return "Core bean";
@@ -82,7 +82,7 @@ public class CoreBean
     {
         return "corebean";
     }
-    
+
     public String[] getAttributeNames()
     {
         return ATTRIBUTES;
@@ -92,5 +92,5 @@ public class CoreBean
     {
         return METHODS;
     }
-    
+
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -42,7 +42,7 @@ public class DefaultUserProfile implements UserProfile
     private String   m_fullname  = null;
 
     private String   m_loginName = null;
-    
+
     private Date     m_modified  = null;
 
     private String   m_password  = null;
@@ -54,23 +54,23 @@ public class DefaultUserProfile implements UserProfile
         if ( ( o != null ) && ( o instanceof UserProfile ) )
         {
             DefaultUserProfile u = (DefaultUserProfile) o;
-            return ( same( m_fullname, u.m_fullname ) && same( m_password, u.m_password )
+            return  same( m_fullname, u.m_fullname ) && same( m_password, u.m_password )
                     && same( m_loginName, u.m_loginName ) && same( m_email, u.m_email ) && same( m_wikiname,
-                    u.m_wikiname ) );
+                    u.m_wikiname );
         }
 
         return false;
     }
-    
+
     public int hashCode()
     {
-        return (m_fullname  != null ? m_fullname.hashCode()  : 0) ^ 
-               (m_password  != null ? m_password.hashCode()  : 0) ^ 
-               (m_loginName != null ? m_loginName.hashCode() : 0) ^ 
-               (m_wikiname  != null ? m_wikiname.hashCode()  : 0) ^ 
+        return (m_fullname  != null ? m_fullname.hashCode()  : 0) ^
+               (m_password  != null ? m_password.hashCode()  : 0) ^
+               (m_loginName != null ? m_loginName.hashCode() : 0) ^
+               (m_wikiname  != null ? m_wikiname.hashCode()  : 0) ^
                (m_email     != null ? m_email.hashCode()     : 0);
     }
-    
+
     /**
      * Returns the creation date
      * @return the creation date
@@ -98,7 +98,7 @@ public class DefaultUserProfile implements UserProfile
     {
         return m_fullname;
     }
-    
+
     /**
      * Returns the last-modified date.
      * @return the last-modified date
@@ -143,25 +143,25 @@ public class DefaultUserProfile implements UserProfile
 
     /**
      * Returns <code>true</code> if the user profile is
-     * new. This implementation checks whether 
+     * new. This implementation checks whether
      * {@link #getLastModified()} returns <code>null</code>
      * to determine the status.
      * @see com.ecyrd.jspwiki.auth.user.UserProfile#isNew()
      */
     public boolean isNew()
     {
-        return ( m_modified == null );
+        return  m_modified == null;
     }
-    
+
     /**
      * @param date the creation date
      * @see com.ecyrd.jspwiki.auth.user.UserProfile#setCreated(java.util.Date)
      */
-    public void setCreated(Date date) 
+    public void setCreated(Date date)
     {
         m_created = date;
     }
-    
+
     /**
      * Sets the user's e-mail address.
      * @param email the e-mail address
@@ -178,7 +178,7 @@ public class DefaultUserProfile implements UserProfile
     public void setFullname( String arg )
     {
         m_fullname = arg;
-        
+
         // Compute wiki name
         if ( m_fullname != null )
         {
@@ -191,11 +191,11 @@ public class DefaultUserProfile implements UserProfile
      * @param date the last-modified date
      * @see com.ecyrd.jspwiki.auth.user.UserProfile#setLastModified(java.util.Date)
      */
-    public void setLastModified( Date date ) 
+    public void setLastModified( Date date )
     {
         m_modified = date;
     }
-    
+
     /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
@@ -225,8 +225,8 @@ public class DefaultUserProfile implements UserProfile
     }
 
     /**
-     * No-op method. In previous versions of JSPWiki, the method 
-     * set the user's wiki name directly. Now, the wiki name is automatically 
+     * No-op method. In previous versions of JSPWiki, the method
+     * set the user's wiki name directly. Now, the wiki name is automatically
      * calculated based on the full name.
      * @param name the wiki name
      * @deprecated This method will be removed in a future release.
@@ -261,6 +261,6 @@ public class DefaultUserProfile implements UserProfile
         {
             return false;
         }
-        return ( arg1.equals( arg2 ) );
+        return arg1.equals( arg2 );
     }
 }

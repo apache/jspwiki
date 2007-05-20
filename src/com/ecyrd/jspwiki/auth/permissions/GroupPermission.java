@@ -48,13 +48,13 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
  * <code>&lt;groupmember&gt;</code> that means &#8220;all groups that a user is a
  * member of.&#8221; When included in a policy file <code>grant</code> block, it
  * functions like a wildcard. Thus, this block:
- * 
+ *
  * <pre>
- *  grant signedBy &quot;jspwiki&quot;, 
+ *  grant signedBy &quot;jspwiki&quot;,
  *    principal com.ecyrd.jspwiki.auth.authorize.Role &quot;Authenticated&quot; {
  *      permission com.ecyrd.jspwiki.auth.permissions.GroupPermission &quot;*:&lt;groupmember&gt;&quot;, &quot;edit&quot;;
  * </pre>
- * 
+ *
  * means, &#8220;allow Authenticated users to edit any groups they are members of.&#8221;
  * The wildcard target (*) does <em>not</em> imply <code>&lt;groupmember&gt;</code>; it
  * must be granted explicitly.
@@ -130,7 +130,7 @@ public final class GroupPermission extends Permission
 
         // Parse wiki and group (which may include wiki name and group)
         // Strip out attachment separator; it is irrelevant.
-        String pathParams[] = group.split( WIKI_SEPARATOR );
+        String[] pathParams = group.split( WIKI_SEPARATOR );
         String groupName;
         if ( pathParams.length >= 2 )
         {
@@ -145,7 +145,7 @@ public final class GroupPermission extends Permission
         m_group = groupName;
 
         // Parse actions
-        String groupActions[] = actions.toLowerCase().split( ACTION_SEPARATOR );
+        String[] groupActions = actions.toLowerCase().split( ACTION_SEPARATOR );
         Arrays.sort( groupActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         StringBuffer buffer = new StringBuffer();
@@ -172,7 +172,7 @@ public final class GroupPermission extends Permission
             return false;
         }
         GroupPermission p = (GroupPermission) obj;
-        return ( p.m_mask == m_mask && p.m_group.equals( m_group ) && p.m_wiki != null && p.m_wiki.equals( m_wiki ) );
+        return  p.m_mask == m_mask && p.m_group.equals( m_group ) && p.m_wiki != null && p.m_wiki.equals( m_wiki );
     }
 
     /**
@@ -214,7 +214,7 @@ public final class GroupPermission extends Permission
         // If the wiki has not been set, uses a dummy value for the hashcode
         // calculation. This may occur if the page given does not refer
         // to any particular wiki
-        String wiki = ( m_wiki != null ? m_wiki : "dummy_value" );
+        String wiki =  m_wiki != null ? m_wiki : "dummy_value";
         return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * wiki.hashCode() );
     }
 
@@ -264,7 +264,7 @@ public final class GroupPermission extends Permission
         boolean impliedGroup;
         if ( MEMBER_TOKEN.equals( p.m_group ) )
         {
-            impliedGroup = ( MEMBER_TOKEN.equals( m_group ) );
+            impliedGroup = MEMBER_TOKEN.equals( m_group );
         }
         else
         {
@@ -275,7 +275,7 @@ public final class GroupPermission extends Permission
         // GroupPrincipal matching the implied GroupPermission's group
         boolean impliedMember = impliesMember( p );
 
-        return ( impliedWiki && ( impliedGroup || impliedMember ) );
+        return  impliedWiki && ( impliedGroup || impliedMember );
     }
 
     /**

@@ -14,13 +14,13 @@ public class EditorIteratorInfo extends TagExtraInfo
 {
     public VariableInfo[] getVariableInfo(TagData data)
     {
-        VariableInfo var[] = { new VariableInfo( data.getAttributeString("id"),
+        VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
                                                  "com.ecyrd.jspwiki.ui.Editor",
                                                  true,
                                                  VariableInfo.NESTED )
         };
 
-        return var;        
+        return var;
     }
 
 }

@@ -23,7 +23,7 @@ import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Describes an editor.
- *  
+ *
  *  @author Chuck Smith
  *  @since 2.4.12
  */
@@ -32,7 +32,7 @@ public class Editor
     private String m_editorName;
     private WikiContext m_wikiContext;
     private EditorManager m_editorManager;
-    
+
     public Editor( WikiContext wikiContext, String editorName )
     {
         m_wikiContext = wikiContext;
@@ -44,12 +44,12 @@ public class Editor
     {
         return m_editorName;
     }
-    
+
     public String getURL()
     {
         String uri = m_wikiContext.getHttpRequest().getRequestURI();
         String para = m_wikiContext.getHttpRequest().getQueryString();
-        
+
         // if para already contains editor parameter, replace instead of append it
         // FIXME: Should cut out parameter instead of simple setting strin to null, maybe
         // in futur releases it may change and theres the danger that trailing parameters get lost
@@ -58,7 +58,7 @@ public class Editor
         {
             para = para.substring(0, idx-1);
         }
-        
+
         return uri + "?" + para + "&amp;" + EditorManager.PARA_EDITOR + "=" + m_editorName;
     }
 
@@ -66,16 +66,16 @@ public class Editor
      *  Convinience method which returns XHTML for an option element.
      * @return "selected='selected'", if this editor is selected.
      */
-    public String isSelected( ) 
+    public String isSelected( )
     {
         return isSelected( "selected='selected'", "" );
     }
-    
+
     public String isSelected( String ifSelected )
     {
         return isSelected( ifSelected, "" );
     }
-    
+
     public String isSelected( String ifSelected, String ifNotSelected )
     {
         if ( m_editorName.equals(m_editorManager.getEditorName(m_wikiContext) ) )

@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
@@ -29,7 +48,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * </ol>
  * <p>
  * After authentication, a generic WikiPrincipal based on the IP address will be
- * created and associated with the Subject. Principals 
+ * created and associated with the Subject. Principals
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS} will be added.
  * @see javax.security.auth.spi.LoginModule#commit()
@@ -45,8 +64,8 @@ public class AnonymousLoginModule extends AbstractLoginModule
      */
     public static final String PROMPT            = "User name";
 
-    protected final static Logger log            = Logger.getLogger( AnonymousLoginModule.class );
-    
+    protected static final Logger log            = Logger.getLogger( AnonymousLoginModule.class );
+
     /**
      * Logs in the user by calling back to the registered CallbackHandler with an
      * HttpRequestCallback. The CallbackHandler must supply the current servlet
@@ -60,14 +79,14 @@ public class AnonymousLoginModule extends AbstractLoginModule
     public boolean login() throws LoginException
     {
         // If already logged in or asserted, ignore this login module
-        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) 
+        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED )
              || m_subject.getPrincipals().contains( Role.ASSERTED ) )
         {
             // If login ignored, remove anonymous role
             m_principalsToRemove.add( Role.ANONYMOUS );
             return false;
         }
-        
+
         // Otherwise, let's go and make a Principal based on the IP address
         HttpRequestCallback hcb = new HttpRequestCallback();
         Callback[] callbacks = new Callback[]
@@ -80,7 +99,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
             if ( log.isDebugEnabled() )
             {
                 HttpSession session = request.getSession( false );
-                String sid = (session == null) ? NULL : session.getId(); 
+                String sid = (session == null) ? NULL : session.getId();
                 log.debug("Logged in session ID=" + sid);
                 log.debug("Added Principals " + ipAddr + ",Role.ANONYMOUS,Role.ALL" );
             }
@@ -88,13 +107,13 @@ public class AnonymousLoginModule extends AbstractLoginModule
             m_principals.add( ipAddr );
             m_principals.add( Role.ANONYMOUS );
             m_principals.add( Role.ALL );
-            
+
             // If login succeeds, overwrite these principals/roles
             m_principalsToOverwrite.add( WikiPrincipal.GUEST );
-            
+
             // If login fails, remove these roles
             m_principalsToRemove.add( Role.ANONYMOUS );
-            
+
             return true;
         }
         catch( IOException e )

@@ -534,7 +534,7 @@ public class LuceneSearchProvider implements SearchProvider
                     // Get highlighted search contexts
                     String text = doc.get(LUCENE_PAGE_CONTENTS);
 
-                    String fragments[] = new String[0];
+                    String[] fragments = new String[0];
                     if (text != null)
                     {
                         TokenStream tokenStream = getLuceneAnalyzer()

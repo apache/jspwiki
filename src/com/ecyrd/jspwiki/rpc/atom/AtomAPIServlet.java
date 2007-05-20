@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -50,10 +50,10 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class AtomAPIServlet extends HttpServlet
 {
-    Logger log = Logger.getLogger( AtomAPIServlet.class ); 
-    
+    static final Logger log = Logger.getLogger( AtomAPIServlet.class );
+
     private static final long serialVersionUID = 0L;
-    
+
     private WikiEngine       m_engine;
 
     /**
@@ -115,7 +115,7 @@ public class AtomAPIServlet extends HttpServlet
 
             //FIXME: Do authentication here
             Entry entry = Sandler.unmarshallEntry( request.getInputStream() );
-            
+
             //
             //  Fetch the obligatory parts of the content.
             //
@@ -123,7 +123,7 @@ public class AtomAPIServlet extends HttpServlet
             Content content = entry.getContent(0);
 
             Person  author  = entry.getAuthor();
-            
+
             //FIXME: Sandler 0.5 does not support generator
 
             //
@@ -224,7 +224,7 @@ public class AtomAPIServlet extends HttpServlet
         {
             title = pageText.substring( 0, firstLine );
         }
-            
+
         if( title.trim().length() == 0 ) title = page.getName();
 
         // Remove wiki formatting
@@ -236,9 +236,9 @@ public class AtomAPIServlet extends HttpServlet
         entry.setAuthor( SyndicationFactory.createPerson( page.getAuthor(),
                                                           null,
                                                           null ) );
-        
+
         entry.addContent( SyndicationFactory.createEscapedContent(pageText) );
-        
+
         return entry;
     }
 
@@ -284,7 +284,7 @@ public class AtomAPIServlet extends HttpServlet
             Link editlink = createLink( "service.edit",
                                         m_engine.getBaseURL()+"atom/"+encodedName,
                                         title );
-            
+
             Link feedlink = createLink( "service.feed",
                                         m_engine.getBaseURL()+"atom.jsp?page="+encodedName,
                                         title );

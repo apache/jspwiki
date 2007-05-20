@@ -798,7 +798,7 @@ public class Workflow
      * @param listener
      *            the event listener
      */
-    public synchronized final void addWikiEventListener(WikiEventListener listener)
+    public final synchronized void addWikiEventListener(WikiEventListener listener)
     {
         WikiEventManager.addWikiEventListener(this, listener);
     }

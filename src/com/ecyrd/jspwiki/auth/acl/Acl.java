@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -80,9 +80,9 @@ public interface Acl
      * Returns true, if this Acl is empty.
      * @since 2.4.68
      */
-    
+
     public boolean isEmpty();
-    
+
     /**
      * Returns all Principal objects assigned a given Permission in the access
      * control list. The Princiapls returned are those that have been granted

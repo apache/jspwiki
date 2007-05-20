@@ -10,7 +10,7 @@ public class Util
     /**
      * Check that a collection contains the required string.
      */
-    static public boolean collectionContains( Collection container,
+    public static boolean collectionContains( Collection container,
                                               String captive )
     {
         Iterator i = container.iterator();

@@ -20,7 +20,7 @@ public final class WebContainerCallbackHandler implements CallbackHandler
     private final HttpServletRequest m_request;
 
     private final Authorizer         m_authorizer;
-    
+
     public WebContainerCallbackHandler( HttpServletRequest request, Authorizer authorizer )
     {
         m_request = request;

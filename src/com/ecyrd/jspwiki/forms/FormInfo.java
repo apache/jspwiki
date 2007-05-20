@@ -1,7 +1,7 @@
 /*
     WikiForms - a WikiPage FORM handler for JSPWiki.
- 
-    Copyright (C) 2003 BaseN. 
+
+    Copyright (C) 2003 BaseN.
 
     JSPWiki Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
@@ -9,12 +9,12 @@
     it under the terms of the GNU Lesser General Public License as published
     by the Free Software Foundation; either version 2.1 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
- 
+
     You should have received a copy of the GNU Lesser General Public License
     along with this program; if not, write to the Free Software
 */
@@ -34,7 +34,7 @@ public class FormInfo
     implements Serializable
 {
     private static final long serialVersionUID = 0L;
-    
+
     public static final int EXECUTED =  1;
     public static final int OK       =  0;
     public static final int ERROR    = -1;
@@ -61,7 +61,7 @@ public class FormInfo
 
     public int getStatus()
     {
-        return( m_status );
+        return m_status;
     }
 
     public void setHide( boolean val )
@@ -71,7 +71,7 @@ public class FormInfo
 
     public boolean hide()
     {
-        return( m_hide );
+        return m_hide;
     }
 
     public void setAction( String val )
@@ -81,7 +81,7 @@ public class FormInfo
 
     public String getAction()
     {
-        return( m_action );
+        return m_action;
     }
 
     public void setName( String val )
@@ -91,7 +91,7 @@ public class FormInfo
 
     public String getName()
     {
-        return( m_name );
+        return m_name;
     }
 
     public void setHandler( String val )
@@ -101,7 +101,7 @@ public class FormInfo
 
     public String getHandler()
     {
-        return( m_handler );
+        return m_handler;
     }
 
     public void setResult( String val )
@@ -111,7 +111,7 @@ public class FormInfo
 
     public String getResult()
     {
-        return( m_result );
+        return m_result;
     }
 
     public void setError( String val )
@@ -121,7 +121,7 @@ public class FormInfo
 
     public String getError()
     {
-        return( m_error );
+        return m_error;
     }
 
     /**
@@ -148,13 +148,13 @@ public class FormInfo
     /**
      * Returns parameter name-value pairs for a Form handler WikiPlugin.
      * The names are those of Form input fields, and the values whatever
-     * the user selected in the form. The FormSet plugin can also be used 
+     * the user selected in the form. The FormSet plugin can also be used
      * to provide initial values.
-     * 
+     *
      * @return Handler parameter name-value pairs.
      */
     public Map getSubmission()
     {
-        return( m_submission );
+        return m_submission;
     }
 }

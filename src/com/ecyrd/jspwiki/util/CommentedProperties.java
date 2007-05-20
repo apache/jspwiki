@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.util;
 
 import java.io.*;
@@ -20,7 +39,7 @@ import com.ecyrd.jspwiki.TextUtil;
 public class CommentedProperties extends Properties
 {
     private static final long serialVersionUID = 8057284636436329669L;
-    
+
     private String m_propertyString;
 
     /**
@@ -30,7 +49,7 @@ public class CommentedProperties extends Properties
     {
         super();
     }
-    
+
     /**
      * @see java.util.Properties#Properties(Properties)
      */
@@ -46,7 +65,7 @@ public class CommentedProperties extends Properties
     {
         // Load the file itself into a string
         m_propertyString = FileUtil.readContents( inStream, "ISO-8859-1" );
-        
+
         // Now load it into the properties object as normal
         super.load( new ByteArrayInputStream( m_propertyString.getBytes("ISO-8859-1") ) );
     }
@@ -54,11 +73,11 @@ public class CommentedProperties extends Properties
     public synchronized void load( Reader in ) throws IOException
     {
         m_propertyString = FileUtil.readContents( in );
-        
+
         // Now load it into the properties object as normal
-        super.load( new ByteArrayInputStream( m_propertyString.getBytes("ISO-8859-1") ) );    
+        super.load( new ByteArrayInputStream( m_propertyString.getBytes("ISO-8859-1") ) );
     }
-    
+
     /**
      * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
      */
@@ -84,7 +103,7 @@ public class CommentedProperties extends Properties
     {
         // Write the property to the stored string
         writeProperty( arg0, arg1 );
-        
+
         // Return the result of from the superclass properties object
         return super.put(arg0, arg1);
     }
@@ -112,7 +131,7 @@ public class CommentedProperties extends Properties
     {
         // Remove from the property string
         deleteProperty( key );
-        
+
         // Call the superclass method
         return super.remove(key);
     }
@@ -124,7 +143,7 @@ public class CommentedProperties extends Properties
     {
         return m_propertyString;
     }
-    
+
     private void deleteProperty( Object arg0 )
     {
         // Get key and value
@@ -133,7 +152,7 @@ public class CommentedProperties extends Properties
             throw new IllegalArgumentException( "Key cannot be null." );
         }
         String key = arg0.toString();
-        
+
         // Iterate through each line and replace anything matching our key
         int idx = 0;
         while( ( idx < m_propertyString.length() ) && ( ( idx = m_propertyString.indexOf( key, idx ) ) != -1 ) )
@@ -148,7 +167,7 @@ public class CommentedProperties extends Properties
                     continue;
                 }
             }
-            
+
             // If "=" present, delete the entire line
             int eqsign = m_propertyString.indexOf( "=", idx );
             if ( eqsign != -1 )
@@ -159,7 +178,7 @@ public class CommentedProperties extends Properties
             }
         }
     }
-    
+
     private void writeProperty( Object arg0, Object arg1 )
     {
         // Get key and value
@@ -173,7 +192,7 @@ public class CommentedProperties extends Properties
         }
         String key = arg0.toString();
         String value = TextUtil.native2Ascii( arg1.toString() );
-        
+
         // Iterate through each line and replace anything matching our key
         int idx = 0;
         while( ( idx < m_propertyString.length() ) && ( ( idx = m_propertyString.indexOf( key, idx ) ) != -1 ) )
@@ -188,7 +207,7 @@ public class CommentedProperties extends Properties
                     continue;
                 }
             }
-            
+
             // If "=" present, replace everything in line after it
             int eqsign = m_propertyString.indexOf( "=", idx );
             if ( eqsign != -1 )

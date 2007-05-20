@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2007 JSPWiki development group
@@ -40,7 +40,7 @@ public final class WikiPermission extends Permission
 {
     private static final long          serialVersionUID        = 1L;
 
-    public static final String         CREATE_GROUPS_ACTION    = "createGroups"; 
+    public static final String         CREATE_GROUPS_ACTION    = "createGroups";
 
     public static final String         CREATE_PAGES_ACTION     = "createPages";
 
@@ -71,7 +71,7 @@ public final class WikiPermission extends Permission
     public static final WikiPermission EDIT_PREFERENCES        = new WikiPermission( WILDCARD, EDIT_PREFERENCES_ACTION );
 
     public static final WikiPermission EDIT_PROFILE            = new WikiPermission( WILDCARD, EDIT_PROFILE_ACTION );
-    
+
     private final String               m_actionString;
 
     private final String               m_wiki;
@@ -85,7 +85,7 @@ public final class WikiPermission extends Permission
     public WikiPermission( String wiki, String actions )
     {
         super( wiki );
-        String pageActions[] = actions.toLowerCase().split( "," );
+        String[] pageActions = actions.toLowerCase().split( "," );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         StringBuffer buffer = new StringBuffer();
@@ -185,7 +185,7 @@ public final class WikiPermission extends Permission
     {
         return new AllPermissionCollection();
     }
-    
+
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()

@@ -1,4 +1,4 @@
-/* 
+/*
    JSPWiki - a JSP-based WikiWiki clone.
 
    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -42,7 +42,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 /**
  * This is the JSPWiki 'traditional' diff.
  * @author Janne Jalkanen
- * @author Erik Bunn 
+ * @author Erik Bunn
  * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
  */
 
@@ -76,7 +76,7 @@ public class TraditionalDiffProvider implements DiffProvider
         throws NoRequiredPropertyException, IOException
     {
     }
-    
+
     /**
      * Makes a diff using the BMSI utility package. We use our own diff printer,
      * which makes things easier.
@@ -90,14 +90,14 @@ public class TraditionalDiffProvider implements DiffProvider
             String[] first  = Diff.stringToArray(TextUtil.replaceEntities(p1));
             String[] second = Diff.stringToArray(TextUtil.replaceEntities(p2));
             Revision rev = Diff.diff(first, second, new MyersDiff());
-            
+
             if( rev == null || rev.size() == 0 )
             {
                 // No difference
 
                 return "";
             }
-            
+
             StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
 
             ret.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
@@ -116,11 +116,11 @@ public class TraditionalDiffProvider implements DiffProvider
     }
 
 
-    public static class RevisionPrint
+    public static final class RevisionPrint
         implements RevisionVisitor
     {
         private StringBuffer m_result = null;
-       
+
         private RevisionPrint(StringBuffer sb)
         {
             m_result = sb;
@@ -145,14 +145,14 @@ public class TraditionalDiffProvider implements DiffProvider
             changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
             delta.getRevised().toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
         }
-      
+
         public void visit(DeleteDelta delta)
         {
             Chunk changed = delta.getOriginal();
             print(changed, " removed ");
             changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
         }
-        
+
         private void print(Chunk changed, String type)
         {
             m_result.append(CSS_DIFF_UNCHANGED);

@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -125,7 +125,7 @@ public class PageEventFilter extends BasicPageFilter
      *
      * @param listener the event listener
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
@@ -147,7 +147,7 @@ public class PageEventFilter extends BasicPageFilter
      *  <tt>PAGE_UNLOCK</tt> event types will fire an event; other
      *  event types are ignored.
      *
-     * @see com.ecyrd.jspwiki.event.WikiPageEvent 
+     * @see com.ecyrd.jspwiki.event.WikiPageEvent
      * @param type      the WikiPageEvent type to be fired.
      * @param context   the WikiContext of the event.
      */

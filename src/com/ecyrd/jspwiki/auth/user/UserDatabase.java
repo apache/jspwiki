@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -37,7 +37,7 @@ public interface UserDatabase
 {
 
     /**
-     * No-op method that in previous versions of JSPWiki was intended to 
+     * No-op method that in previous versions of JSPWiki was intended to
      * atomically commit changes to the user database. Now, the {@link #rename(String, String)},
      * {@link #save(UserProfile)} and {@link #deleteByLoginName(String)} methods
      * are atomic themselves.
@@ -51,14 +51,14 @@ public interface UserDatabase
      * Looks up and deletes the first {@link UserProfile} in the user database
      * that matches a profile having a given login name. If the user database
      * does not contain a user with a matching attribute, throws a
-     * {@link NoSuchPrincipalException}. This method is intended to be atomic; 
-     * results cannot be partially committed. If the commit fails, it should 
-     * roll back its state appropriately. Implementing classes that persist 
+     * {@link NoSuchPrincipalException}. This method is intended to be atomic;
+     * results cannot be partially committed. If the commit fails, it should
+     * roll back its state appropriately. Implementing classes that persist
      * to the file system may wish to make this method <code>synchronized</code>.
      * @param loginName the login name of the user profile that shall be deleted
      */
     public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException;
-    
+
     /**
      * <p>
      * Looks up the Principals representing a user from the user database. These
@@ -93,7 +93,7 @@ public interface UserDatabase
      * @return the WikiNames
      */
     public Principal[] getWikiNames() throws WikiSecurityException;
-    
+
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
      * that whose login name, full name, or wiki name matches the supplied
@@ -155,14 +155,14 @@ public interface UserDatabase
      * @return the result
      */
     public boolean isSharedWithContainer();
-    
+
     /**
      * Factory method that instantiates a new user profile.
      * The {@link UserProfile#isNew()} method of profiles created using
      * this method should return <code>true</code>.
      */
     public UserProfile newProfile();
-    
+
     /**
      * <p>Renames a {@link UserProfile} in the user database by changing
      * the profile's login name. Because the login name is the profile's unique

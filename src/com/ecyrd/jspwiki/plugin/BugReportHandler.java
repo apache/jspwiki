@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -48,7 +48,7 @@ public class BugReportHandler
     implements WikiPlugin
 {
     private static Logger log = Logger.getLogger( BugReportHandler.class );
-    
+
     public static final String TITLE          = "title";
     public static final String DESCRIPTION    = "description";
     public static final String VERSION        = "version";
@@ -149,13 +149,13 @@ public class BugReportHandler
             //
             //  Now create a new page for this bug report
             //
-            String pageName = findNextPage( context, title, 
+            String pageName = findNextPage( context, title,
                                             (String)params.get( PAGE ) );
 
             WikiPage newPage = new WikiPage( context.getEngine(), pageName );
             WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );
-            
+
             context.getEngine().saveText( newContext,
                                           str.toString() );
 
@@ -164,7 +164,7 @@ public class BugReportHandler
         catch( RedirectException e )
         {
             log.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
-            
+
             throw new PluginException("Saving not allowed, reason: "+e.getMessage());
         }
         catch( WikiException e )
@@ -174,19 +174,19 @@ public class BugReportHandler
             return "Unable to create bug report";
         }
     }
-    
+
     /**
      *  Finds a free page name for adding the bug report.  Tries to construct a page,
      *  and if it's found, adds a number to it and tries again.
      */
-    private synchronized String findNextPage( WikiContext context, 
+    private synchronized String findNextPage( WikiContext context,
                                               String title,
                                               String baseName )
     {
         String basicPageName = ((baseName != null)?baseName:"Bug")+MarkupParser.cleanLink(title);
 
         WikiEngine engine = context.getEngine();
-        
+
         String pageName = basicPageName;
         long   lastbug  = 2;
 
@@ -194,7 +194,7 @@ public class BugReportHandler
         {
             pageName = basicPageName + lastbug++;
         }
-        
+
         return pageName;
     }
 
@@ -217,7 +217,8 @@ public class BugReportHandler
 
             int colon = t.indexOf("=");
 
-            String key, value;
+            String key;
+            String value;
 
             if( colon > 0 )
             {
@@ -229,7 +230,7 @@ public class BugReportHandler
                 key = t;
                 value = "";
             }
-            
+
             props.setProperty( key, value );
         }
 

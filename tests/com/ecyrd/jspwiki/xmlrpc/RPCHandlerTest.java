@@ -26,7 +26,7 @@ public class RPCHandlerTest extends TestCase
     {
         m_props = new Properties();
         m_props.load( TestEngine.findTestProperties() );
-        
+
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
@@ -48,7 +48,7 @@ public class RPCHandlerTest extends TestCase
             m_handler.getPage( "NoSuchPage" );
             fail("No exception for missing page.");
         }
-        catch( XmlRpcException e ) 
+        catch( XmlRpcException e )
         {
             assertEquals( "Wrong error code.", RPCHandler.ERR_NOPAGE, e.code );
         }
@@ -59,7 +59,7 @@ public class RPCHandlerTest extends TestCase
     {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
         Vector previousChanges = m_handler.getRecentChanges( time );
-        
+
         m_engine.saveText( NAME1, "Foo" );
         WikiPage directInfo = m_engine.getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
@@ -73,7 +73,7 @@ public class RPCHandlerTest extends TestCase
     {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
         Vector previousChanges = m_handler.getRecentChanges( time );
-        
+
         m_engine.saveText( NAME1, "Foo" );
         Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -90,10 +90,10 @@ public class RPCHandlerTest extends TestCase
     {
         m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
         WikiPage directInfo = m_engine.getPage( NAME1 );
-        
+
         Hashtable ht = m_handler.getPageInfo( NAME1 );
         assertEquals( "name", (String)ht.get( "name" ), NAME1 );
-        
+
         Date d = (Date) ht.get( "lastModified" );
 
         Calendar cal = Calendar.getInstance();
@@ -104,12 +104,12 @@ public class RPCHandlerTest extends TestCase
 
         // Offset the ZONE offset and DST offset away.  DST only
         // if we're actually in DST.
-        cal.add( Calendar.MILLISECOND, 
+        cal.add( Calendar.MILLISECOND,
                  (cal.get( Calendar.ZONE_OFFSET )+
                   (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         System.out.println("RPC2: "+cal.getTime() );
 
-        assertEquals( "date", cal.getTime().getTime(), 
+        assertEquals( "date", cal.getTime().getTime(),
                       directInfo.getLastModified().getTime() );
     }
 
@@ -167,7 +167,8 @@ public class RPCHandlerTest extends TestCase
         assertEquals( "att href", "http://localhost/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href") );
     }
 
-    private Date getCalendarTime( Date modifiedDate ) {
+    private Date getCalendarTime( Date modifiedDate )
+    {
         Calendar cal = Calendar.getInstance();
         cal.setTime( modifiedDate );
         cal.add( Calendar.HOUR, -1 );
@@ -175,13 +176,13 @@ public class RPCHandlerTest extends TestCase
         // Go to UTC
         // Offset the ZONE offset and DST offset away.  DST only
         // if we're actually in DST.
-        cal.add( Calendar.MILLISECOND, 
+        cal.add( Calendar.MILLISECOND,
                  -(cal.get( Calendar.ZONE_OFFSET )+
                   (cal.getTimeZone().inDaylightTime( modifiedDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
-        
+
         return cal.getTime();
     }
-    
+
     /*
      * TODO: ENABLE
     public void testPermissions()
@@ -206,7 +207,7 @@ public class RPCHandlerTest extends TestCase
         catch( XmlRpcException e ) {}
     }
 */
-    
+
     public static Test suite()
     {
         return new TestSuite( RPCHandlerTest.class );

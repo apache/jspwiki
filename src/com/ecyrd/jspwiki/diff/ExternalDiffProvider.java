@@ -1,4 +1,4 @@
-/* 
+/*
    JSPWiki - a JSP-based WikiWiki clone.
 
    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -49,7 +49,7 @@ public class ExternalDiffProvider implements DiffProvider
 
     private String m_diffCommand = null;
     private String m_encoding;
-    
+
     private static final char DIFF_ADDED_SYMBOL    = '+';
     private static final char DIFF_REMOVED_SYMBOL  = '-';
 
@@ -59,10 +59,10 @@ public class ExternalDiffProvider implements DiffProvider
     private static final String CSS_DIFF_CLOSE     = "</td></tr>";
 
     //FIXME This could/should be a property for this provider, there is not guarentee that
-    //the external program generates a format suitible for the colorization code of the 
-    //TraditionalDiffProvider, currently set to true for legacy compatibility.  
+    //the external program generates a format suitible for the colorization code of the
+    //TraditionalDiffProvider, currently set to true for legacy compatibility.
     //I don't think this 'feature' ever worked right, did it?...
-    private boolean m_traditionalColorization = true; 
+    private boolean m_traditionalColorization = true;
 
 
     public ExternalDiffProvider()
@@ -80,7 +80,7 @@ public class ExternalDiffProvider implements DiffProvider
     /**
      * @see com.ecyrd.jspwiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
      */
-    public void initialize( WikiEngine engine, Properties properties ) 
+    public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException, IOException
     {
         m_diffCommand = properties.getProperty( PROP_DIFFCOMMAND );
@@ -92,14 +92,15 @@ public class ExternalDiffProvider implements DiffProvider
 
         m_encoding = engine.getContentEncoding();
     }
-    
-    
+
+
     /**
      * Makes the diff by calling "diff" program.
      */
     public String makeDiffHtml(String p1, String p2)
     {
-        File f1 = null, f2 = null;
+        File f1 = null;
+        File f2 = null;
         String diff = null;
 
         try
@@ -114,14 +115,14 @@ public class ExternalDiffProvider implements DiffProvider
 
             // FIXME: Should this rely on the system default encoding?
             String rawWikiDiff = new String(output.getBytes("ISO-8859-1"), m_encoding);
-            
+
             String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
 
             if (m_traditionalColorization) //FIXME, see comment near declaration...
-            	diff = colorizeDiff(diff);
+                diff = colorizeDiff(diff);
             else
                 diff = htmlWikiDiff;
-            
+
         }
         catch (IOException e)
         {

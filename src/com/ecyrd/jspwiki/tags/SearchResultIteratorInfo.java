@@ -13,13 +13,13 @@ public class SearchResultIteratorInfo extends TagExtraInfo
 {
     public VariableInfo[] getVariableInfo(TagData data)
     {
-        VariableInfo var[] = { new VariableInfo( data.getAttributeString("id"),
+        VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
                                                  "com.ecyrd.jspwiki.SearchResult",
                                                  true,
                                                  VariableInfo.NESTED )
         };
 
         return var;
-        
+
     }
 }

@@ -1,4 +1,4 @@
-/* 
+/*
    JSPWiki - a JSP-based WikiWiki clone.
 
    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -39,7 +39,7 @@ import com.ecyrd.jspwiki.WikiEngine;
  * CSS.
  *
  * Suggested by John Volkar.
- * 
+ *
  * @author John Volkar
  * @author Janne Jalkanen
  * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
@@ -62,9 +62,9 @@ public class ContextualDiffProvider implements DiffProvider
     public String m_changeEndHtml      = ""; //and an image for an end '<' marker
     public String m_diffStart          = "<div class=\"diff-wikitext\">";
     public String m_diffEnd            = "</div>";
-    
+
     // Unfortunately we need to do dumb HTML here for RSS feeds.
-    
+
     public String m_insertionStartHtml = "<font color=\"#8000FF\"><span class=\"diff-insertion\">";
     public String m_insertionEndHtml   = "</span></font>";
     public String m_deletionStartHtml  = "<strike><font color=\"red\"><span class=\"diff-deletion\">";
@@ -79,7 +79,7 @@ public class ContextualDiffProvider implements DiffProvider
     public String m_elidedTailIndicatorHtml = "<b>...</b><br/><br/>";
     public String m_lineBreakHtml = "<br />";
     public String m_alternatingSpaceHtml = "&nbsp;";
-    
+
     // This one, I will make property file based...
     private static final int LIMIT_MAX_VALUE = (Integer.MAX_VALUE /2) - 1;
     private int m_unchangedContextLimit = LIMIT_MAX_VALUE;
@@ -122,7 +122,7 @@ public class ContextualDiffProvider implements DiffProvider
 
     /**
      * Do a colored diff of the two regions. This. is. serious. fun. ;-)
-     * 
+     *
      * @see com.ecyrd.jspwiki.diff.DiffProvider#makeDiffHtml(java.lang.String,
      *      java.lang.String)
      */
@@ -167,11 +167,11 @@ public class ContextualDiffProvider implements DiffProvider
     }
 
     /**
-     * Take the string and create an array from it, split it first on newlines, making 
-     * sure to preserve the newlines in the elements, split each resulting element on 
+     * Take the string and create an array from it, split it first on newlines, making
+     * sure to preserve the newlines in the elements, split each resulting element on
      * spaces, preserving the spaces.
-     * 
-     * All this preseving of newlines and spaces is so the wikitext when diffed will have fidelity 
+     *
+     * All this preseving of newlines and spaces is so the wikitext when diffed will have fidelity
      * to it's original form.  As a side affect we see edits of purely whilespace.
      */
     private String[] sequence( String wikiText )
@@ -192,11 +192,11 @@ public class ContextualDiffProvider implements DiffProvider
 
                 if(" ".equals( lastToken) && " ".equals( token ))
                     token = m_alternatingSpaceHtml;
-                
+
                 list.add(token);
                 lastToken = token;
             }
-            
+
             list.add(m_lineBreakHtml); // Line Break
         }
 
@@ -209,7 +209,7 @@ public class ContextualDiffProvider implements DiffProvider
      * whole change process is threadsafe by encapsulating
      * all necessary variables.
      */
-    private class ChangeMerger implements RevisionVisitor
+    private final class ChangeMerger implements RevisionVisitor
     {
         private StringBuffer m_sb = null;
 
@@ -264,7 +264,7 @@ public class ContextualDiffProvider implements DiffProvider
                     if (m_firstElem > 0)
                     {
                         int endIndex = Math.min( m_firstElem + m_unchangedContextLimit, m_origStrings.length -1 );
-                        
+
                         for (int j = m_firstElem; j < endIndex; j++)
                             m_sb.append(m_origStrings[j]);
 
@@ -327,7 +327,7 @@ public class ContextualDiffProvider implements DiffProvider
                 m_mode = 2;
             }
 
-            // Add the Changes to the buffers. 
+            // Add the Changes to the buffers.
             addOrig( delta.getOriginal() );
             addNew( delta.getRevised() );
         }
@@ -367,7 +367,7 @@ public class ContextualDiffProvider implements DiffProvider
                 if ((m_origStrings.length - m_firstElem) > m_unchangedContextLimit)
                 {
                     int endIndex = Math.min( m_firstElem + m_unchangedContextLimit, m_origStrings.length -1 );
-                    
+
                     for (int j = m_firstElem; j < endIndex; j++)
                     m_sb.append( m_origStrings[j] );
 

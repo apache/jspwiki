@@ -67,7 +67,7 @@ public abstract class AbstractFileProvider
 
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
 
-    private boolean m_WindowsHackNeeded = false;
+    private boolean m_windowsHackNeeded = false;
     
     /**
      *  @throws FileNotFoundException If the specified page directory does not exist.
@@ -100,7 +100,7 @@ public abstract class AbstractFileProvider
         
         if( os.startsWith("windows") || os.equals("nt") )
         {
-            m_WindowsHackNeeded = true;
+            m_windowsHackNeeded = true;
         }
         
         log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
@@ -128,7 +128,7 @@ public abstract class AbstractFileProvider
         
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
 
-        if( m_WindowsHackNeeded )
+        if( m_windowsHackNeeded )
         {
             String pn = pagename.toLowerCase();
             for( int i = 0; i < WINDOWS_DEVICE_NAMES.length; i++ )
@@ -151,7 +151,7 @@ public abstract class AbstractFileProvider
         // The exception should never happen.
         try
         {
-            if( m_WindowsHackNeeded && filename.startsWith( "$$$") && filename.length() > 3 )
+            if( m_windowsHackNeeded && filename.startsWith( "$$$") && filename.length() > 3 )
             {
                 filename = filename.substring(3);
             }

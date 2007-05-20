@@ -19,7 +19,7 @@ public interface UserProfile
      * @return the creation date
      */
     public Date getCreated();
-    
+
     /**
      * Returns the user's e-mail address.
      * @return the e-mail address
@@ -31,7 +31,7 @@ public interface UserProfile
      * @return the full name
      */
     public String getFullname();
-    
+
     /**
      * Returns the last-modified date.
      * @return the date and time of last modification
@@ -63,18 +63,18 @@ public interface UserProfile
     public String getWikiName();
 
     /**
-     * Returns <code>true</code> if the profile has never been 
+     * Returns <code>true</code> if the profile has never been
      * saved before. Implementing classes might check the
      * last modified date, for example, to determine this.
      */
     public boolean isNew();
-    
+
     /**
      * Sets the created date.
      * @param date the creation date
      */
     public void setCreated( Date date );
-    
+
     /**
      * Sets the user's e-mail address.
      * @param email the e-mail address
@@ -92,7 +92,7 @@ public interface UserProfile
      * @param date the last-modified date
      */
     public void setLastModified( Date date );
-    
+
     /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
@@ -117,8 +117,8 @@ public interface UserProfile
     public void setPassword( String arg );
 
     /**
-     * No-op method. In previous versions of JSPWiki, the method 
-     * set the user's wiki name directly. Now, the wiki name is automatically 
+     * No-op method. In previous versions of JSPWiki, the method
+     * set the user's wiki name directly. Now, the wiki name is automatically
      * calculated based on the full name.
      * @param name the wiki name
      * @deprecated This method will be removed in a future release.

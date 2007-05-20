@@ -1,6 +1,21 @@
 /*
- * (C) Janne Jalkanen 2005
- * 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package com.ecyrd.jspwiki.rss;
 
@@ -14,31 +29,31 @@ import com.ecyrd.jspwiki.WikiContext;
 /**
  *  @author jalkanen
  *
- *  @since 
+ *  @since
  */
 public abstract class Feed
 {
     protected List m_entries = new ArrayList();
-    
+
     protected String m_feedURL;
     protected String m_channelTitle;
     protected String m_channelDescription;
     protected String m_channelLanguage;
 
     protected WikiContext m_wikiContext;
-    
+
     protected String m_mode = RSSGenerator.MODE_WIKI;
-    
+
     public Feed( WikiContext context )
     {
         m_wikiContext = context;
     }
-    
+
     public void setMode( String mode )
     {
         m_mode = mode;
     }
-    
+
     public void addEntry( Entry e )
     {
         m_entries.add( e );
@@ -87,7 +102,7 @@ public abstract class Feed
     {
         m_channelTitle = title;
     }
- 
+
     /**
      * @return Returns the m_feedURL.
      */
@@ -96,19 +111,19 @@ public abstract class Feed
         return m_feedURL;
     }
     /**
-     * @param m_feedurl The m_feedURL to set.
+     * @param feedurl The m_feedURL to set.
      */
-    public void setFeedURL( String m_feedurl )
+    public void setFeedURL( String feedurl )
     {
-        m_feedURL = m_feedurl;
+        m_feedURL = feedurl;
     }
-    
+
     protected String getMimeType(ServletContext c, String name)
     {
         String type = c.getMimeType(name);
-        
+
         if( type == null ) type = "application/octet-stream";
-        
+
         return type;
     }
 

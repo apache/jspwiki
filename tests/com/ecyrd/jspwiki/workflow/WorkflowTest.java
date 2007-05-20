@@ -89,14 +89,14 @@ public class WorkflowTest extends TestCase
         assertEquals("Owner1", args[0]);
         assertEquals("-",      args[1]);
         assertEquals("MyPage", args[2]);
-        
+
         // After start (at Decision), arg1=Owner1, arg2=Admin, arg3=MyPage
         w.start();
         args = w.getMessageArguments();
         assertEquals("Owner1", args[0]);
         assertEquals("Admin", args[1]);
         assertEquals("MyPage", args[2]);
-        
+
         // After end, arg1=Owner1, arg2=-, arg3=MyPage
         decision.decide(Outcome.DECISION_APPROVE);
         args = w.getMessageArguments();
@@ -112,9 +112,10 @@ public class WorkflowTest extends TestCase
         w.addMessageArgument(new Integer(1));
         w.addMessageArgument(new Double(2));
         w.addMessageArgument(new BigDecimal(3.14));
-        
+
         // Try passing an invalid one: e.g., a Workflow (it should fail)
-        try {
+        try
+        {
             w.addMessageArgument(w);
         }
         catch (IllegalArgumentException e)
@@ -125,7 +126,7 @@ public class WorkflowTest extends TestCase
         // We should never get here
         fail("Illegal argument passed...");
     }
-    
+
     public void testGetMessageKey()
     {
         assertEquals("workflow.myworkflow", w.getMessageKey());

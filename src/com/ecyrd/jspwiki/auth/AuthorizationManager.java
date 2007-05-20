@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -63,8 +63,8 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * </ul>
  * <p>Calling classes determine whether they are entitled to perform a particular action
  * by constructing the appropriate permission first, then passing it and the current
- * {@link com.ecyrd.jspwiki.WikiSession} to the 
- * {@link #checkPermission(WikiSession, Permission)} method. If the session's 
+ * {@link com.ecyrd.jspwiki.WikiSession} to the
+ * {@link #checkPermission(WikiSession, Permission)} method. If the session's
  * Subject possesses the permission, the action is allowed.</p>
  * <p>For WikiPermissions, the decision criteria is relatively simple: the caller either
  * possesses the permission, as granted by the wiki security policy -- or not.</p>
@@ -72,11 +72,11 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  * does not have an access control list. However, if the page does have an ACL, the
  * authorization decision is made based the <em>union</em> of the permissions
  * granted in the ACL and in the security policy. In other words, the user must
- * be named in the ACL (or belong to a group or role that is named in the ACL) 
+ * be named in the ACL (or belong to a group or role that is named in the ACL)
  * <em>and</em> be granted (at least) the same permission in the security policy. We
  * do this to prevent a user from gaining more permissions than they already
  * have, based on the security policy.</p>
- * <p>See the {@link #checkPermission(WikiSession, Permission)} and 
+ * <p>See the {@link #checkPermission(WikiSession, Permission)} and
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
  * @author Andrew Jaquith
@@ -92,31 +92,31 @@ public final class AuthorizationManager
     public static final String                DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
 
     /** Name of the default security policy file, in WEB-INF. */
-    protected static final String             DEFAULT_POLICY      = "jspwiki.policy";    
-    
+    protected static final String             DEFAULT_POLICY      = "jspwiki.policy";
+
     /**
      * The property name in jspwiki.properties for specifying the external {@link Authorizer}.
      */
     public static final String                PROP_AUTHORIZER   = "jspwiki.authorizer";
 
     private Authorizer                        m_authorizer      = null;
-    
+
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
     private Map                               m_cachedPds       = new HashMap();
 
     private WikiEngine                        m_engine          = null;
-    
+
     private LocalPolicy                       m_localPolicy     = null;
-    
+
     private boolean                           m_useJAAS         = true;
-    
+
     /**
      * Constructs a new AuthorizationManager instance.
      */
     public AuthorizationManager()
     {
     }
-    
+
     /**
      * Returns <code>true</code> or <code>false</code>, depending on
      * whether a Permission is allowed for the Subject associated with
@@ -128,7 +128,7 @@ public final class AuthorizationManager
      * <li>If the Subject's Principal set includes the Role Principal that is
      * the administrator group, always allow the Permission</li>
      * <li>For all permissions, check to see if the Permission is allowed according
-     * to the default security policy. If it isn't, deny the permission and halt 
+     * to the default security policy. If it isn't, deny the permission and halt
      * further processing.</li>
      * <li>If there is an Acl, get the list of Principals assigned this
      * Permission in the Acl: these will be role, group or user Principals, or
@@ -162,7 +162,7 @@ public final class AuthorizationManager
      */
     public final boolean checkPermission( WikiSession session, Permission permission )
     {
-        if( !m_useJAAS ) 
+        if( !m_useJAAS )
         {
             //
             //  Nobody can login, if JAAS is turned off.
@@ -170,10 +170,10 @@ public final class AuthorizationManager
 
             if( permission == null || "login".equals( permission.getActions() ) )
                 return false;
-            
+
             return true;
         }
-        
+
         //
         //  A slight sanity check.
         //
@@ -182,9 +182,9 @@ public final class AuthorizationManager
             fireEvent( WikiSecurityEvent.ACCESS_DENIED, null, permission );
             return false;
         }
-        
+
         Principal user = session.getLoginPrincipal();
-        
+
         // Always allow the action if user has AllPermission
         Permission allPermission = new AllPermission( m_engine.getApplicationName() );
         boolean hasAllPermission = checkStaticPermission( session, allPermission );
@@ -193,7 +193,7 @@ public final class AuthorizationManager
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
         }
-        
+
         // If the user doesn't have *at least* the permission
         // granted by policy, return false.
         boolean hasPolicyPermission = checkStaticPermission( session, permission );
@@ -202,7 +202,7 @@ public final class AuthorizationManager
             fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
             return false;
         }
-        
+
         // If this isn't a PagePermission, it's allowed
         if ( ! ( permission instanceof PagePermission ) )
         {
@@ -221,7 +221,7 @@ public final class AuthorizationManager
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
         }
-        
+
         //
         //  Next, iterate through the Principal objects assigned
         //  this permission. If the context's subject possesses
@@ -237,7 +237,7 @@ public final class AuthorizationManager
         for( int i = 0; i < aclPrincipals.length; i++ )
         {
             Principal aclPrincipal = aclPrincipals[i];
-            
+
             // If the ACL principal we're looking at is unresolved,
             // try to resolve it here & correct the Acl
             if ( aclPrincipal instanceof UnresolvedPrincipal )
@@ -249,7 +249,7 @@ public final class AuthorizationManager
                     aclEntry.setPrincipal( aclPrincipal );
                 }
             }
-            
+
             if ( hasRoleOrPrincipal( session, aclPrincipal ) )
             {
                 fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
@@ -259,16 +259,16 @@ public final class AuthorizationManager
         fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
         return false;
     }
-    
+
     /**
-     * <p>Determines if the Subject associated with a 
-     * supplied WikiSession contains a desired Role or GroupPrincipal. 
-     * The algorithm simply checks to see if the Subject possesses 
+     * <p>Determines if the Subject associated with a
+     * supplied WikiSession contains a desired Role or GroupPrincipal.
+     * The algorithm simply checks to see if the Subject possesses
      * the Role or GroupPrincipal it in its Principal set. Note that
      * any user (anyonymous, asserted, authenticated) can possess
-     * a built-in role. But a user <em>must</em> be authenticated to 
+     * a built-in role. But a user <em>must</em> be authenticated to
      * possess a role other than one of the built-in ones.
-     * We do this to prevent privilege escalation.</p> 
+     * We do this to prevent privilege escalation.</p>
      * <p>For all other cases, this method returns <code>false</code>.</p>
      * <p>Note that this method does <em>not</em> consult the external
      * Authorizer or GroupManager; it relies on the Principals that
@@ -295,7 +295,7 @@ public final class AuthorizationManager
         {
             return session.hasPrincipal( principal );
         }
-        
+
         // Only authenticated users can posssess groups or custom roles
         if ( session.isAuthenticated() && AuthenticationManager.isRolePrincipal( principal ) )
         {
@@ -303,7 +303,7 @@ public final class AuthorizationManager
         }
         return false;
     }
-    
+
     /**
      * Returns the current external {@link Authorizer} in use. This method
      * is guaranteed to return a properly-initialized Authorizer, unless
@@ -321,13 +321,13 @@ public final class AuthorizationManager
         }
         throw new WikiSecurityException( "Authorizer did not initialize properly. Check the logs." );
     }
-    
+
     /**
      * <p>Determines if the Subject associated with a supplied WikiSession contains
      * a desired user Principal or built-in Role principal, OR is a member a
      * Group or external Role. The rules are as follows:</p>
      * <ol>
-     * <li>First, if desired Principal is a Role or GroupPrincipal, delegate to 
+     * <li>First, if desired Principal is a Role or GroupPrincipal, delegate to
      * {@link #isUserInRole(WikiSession, Principal)} and
      * return the result.</li>
      * <li>Otherwise, we're looking for a user Principal,
@@ -353,15 +353,15 @@ public final class AuthorizationManager
         {
             return false;
         }
-        
+
         // If principal is role, delegate to isUserInRole
         if( AuthenticationManager.isRolePrincipal( principal ) )
         {
             return isUserInRole( session, principal );
         }
-        
+
         // We must be looking for a user principal, assuming that the user
-        // has been properly logged in. 
+        // has been properly logged in.
         // So just look for a name match.
         if( session.isAuthenticated() && AuthenticationManager.isUserPrincipal( principal ) )
         {
@@ -387,19 +387,19 @@ public final class AuthorizationManager
     public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
-        
+
         m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( properties.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
-        
+
         if( !m_useJAAS ) return;
-        
+
         //
         //  JAAS authorization continues
         //
         m_authorizer = getAuthorizerImplementation( properties );
         m_authorizer.initialize( engine, properties );
-        
+
         // Initialize local security policy
-        try 
+        try
         {
             URL policyURL = AuthenticationManager.findConfigFile( engine, DEFAULT_POLICY );
             File policyFile = new File( policyURL.getPath() );
@@ -414,8 +414,8 @@ public final class AuthorizationManager
         }
     }
 
-    /** 
-     * Returns <code>true</code> if JSPWiki's JAAS authorization system 
+    /**
+     * Returns <code>true</code> if JSPWiki's JAAS authorization system
      * is used for authorization in addition to container controls.
      * @return the result
      */
@@ -423,7 +423,7 @@ public final class AuthorizationManager
     {
         return m_useJAAS;
     }
-    
+
     /**
      * Attempts to locate and initialize a Authorizer to use with this manager.
      * Throws a WikiException if no entry is found, or if one fails to
@@ -472,7 +472,7 @@ public final class AuthorizationManager
 
     /**
      * Checks to see if the local security policy allows a particular static Permission.
-     * Do not use this method for normal permission checks; use 
+     * Do not use this method for normal permission checks; use
      * {@link #checkPermission(WikiSession, Permission)} instead.
      * @param principals the Principals to check
      * @param permission the Permission
@@ -491,16 +491,16 @@ public final class AuthorizationManager
                 pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principals[i] } );
                 m_cachedPds.put( principals[i], pd );
             }
-            
+
             // Consult the local policy and get the answer
-            if ( m_localPolicy.implies( pd, permission ) ) 
+            if ( m_localPolicy.implies( pd, permission ) )
             {
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      * Determines whether a Subject posesses a given "static" Permission as
      * defined in the security policy file. This method uses standard Java 2
@@ -522,7 +522,7 @@ public final class AuthorizationManager
     protected final boolean checkStaticPermission( final WikiSession session, final Permission permission )
     {
         if( !m_useJAAS ) return true;
-        
+
         Boolean allowed = (Boolean)WikiSession.doPrivileged( session, new PrivilegedAction()
         {
             public Object run()
@@ -537,7 +537,7 @@ public final class AuthorizationManager
                 {
                     // Global policy denied the permission
                 }
-                
+
                 // Try the local policy - check each Role/Group and User Principal
                 if ( allowedByLocalPolicy( session.getRoles(), permission ) ||
                      allowedByLocalPolicy( session.getPrincipals(), permission ) )
@@ -549,7 +549,7 @@ public final class AuthorizationManager
         } );
         return allowed.booleanValue();
     }
-    
+
     /**
      * <p>Given a supplied string representing a Principal's name from an Acl, this
      * method resolves the correct type of Principal (role, group, or user).
@@ -560,7 +560,7 @@ public final class AuthorizationManager
      * return that built-in Role</li>
      * <li>If the name matches one supplied by the current
      * {@link com.ecyrd.jspwiki.auth.Authorizer}, return that Role</li>
-     * <li>If the name matches a group managed by the 
+     * <li>If the name matches a group managed by the
      * current {@link com.ecyrd.jspwiki.auth.authorize.GroupManager}, return that Group</li>
      * <li>Otherwise, assume that the name represents a user
      * principal. Using the current {@link com.ecyrd.jspwiki.auth.user.UserDatabase}, find the
@@ -572,34 +572,34 @@ public final class AuthorizationManager
      * @param name the name of the Principal to resolve
      * @return the fully-resolved Principal
      */
-    public final Principal resolvePrincipal( String name ) 
-    {  
+    public final Principal resolvePrincipal( String name )
+    {
         if( !m_useJAAS )
         {
             return new UnresolvedPrincipal(name);
         }
-        
+
         // Check built-in Roles first
         Role role = new Role(name);
         if ( Role.isBuiltInRole( role ) )
         {
             return role;
         }
-        
+
         // Check Authorizer Roles
         Principal principal = m_authorizer.findRole( name );
-        if ( principal != null ) 
+        if ( principal != null )
         {
             return principal;
         }
-        
+
         // Check Groups
         principal = m_engine.getGroupManager().findRole( name );
         if ( principal != null )
         {
             return principal;
         }
-        
+
         // Ok, no luck---this must be a user principal
         Principal[] principals = null;
         UserProfile profile = null;
@@ -608,7 +608,7 @@ public final class AuthorizationManager
         {
             profile = db.find( name );
             principals = db.getPrincipals( profile.getLoginName() );
-            for (int i = 0; i < principals.length; i++) 
+            for (int i = 0; i < principals.length; i++)
             {
                 principal = principals[i];
                 if ( principal.getName().equals( name ) )
@@ -632,11 +632,11 @@ public final class AuthorizationManager
      * Registers a WikiEventListener with this instance.
      * @param listener the event listener
      */
-    public synchronized final void addWikiEventListener( WikiEventListener listener )
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
     {
         WikiEventManager.addWikiEventListener( this, listener );
     }
-    
+
     /**
      * Un-registers a WikiEventListener with this instance.
      * @param listener the event listener
@@ -648,7 +648,7 @@ public final class AuthorizationManager
 
     /**
      *  Fires a WikiSecurityEvent of the provided type, user,
-     *  and permission to all registered listeners. 
+     *  and permission to all registered listeners.
      *
      * @see com.ecyrd.jspwiki.event.WikiSecurityEvent
      * @param type        the event type to be fired

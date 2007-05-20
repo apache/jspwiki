@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -110,11 +110,11 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *   </modules>
  *  </pre>
  *  <h3>Plugin lifecycle</h3>
- *  
+ *
  *  <p>Plugin can implement multiple interfaces to let JSPWiki know at which stages they should
  *  be invoked:
  *  <ul>
- *  <li>InitializablePlugin: If your plugin implements this interface, the initialize()-method is 
+ *  <li>InitializablePlugin: If your plugin implements this interface, the initialize()-method is
  *      called once for this class
  *      before any actual execute() methods are called.  You should use the initialize() for e.g.
  *      precalculating things.  But notice that this method is really called only once during the
@@ -127,7 +127,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  <li>WikiPlugin: The regular kind of plugin which is executed at every rendering stage.  Each
  *      new page load is guaranteed to invoke the plugin, unlike with the ParserStagePlugins.</li>
  *  </ul>
- *  
+ *
  *  @author Janne Jalkanen
  *  @since 1.6.1
  */
@@ -142,7 +142,7 @@ public class PluginManager extends ModuleManager
      *  fails.
      */
     public static final String DEFAULT_PACKAGE = "com.ecyrd.jspwiki.plugin";
- 
+
     public static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
 
     /**
@@ -178,7 +178,7 @@ public class PluginManager extends ModuleManager
 
     private boolean m_pluginsEnabled = true;
 
-    /** 
+    /**
      *  Keeps a list of all known plugin classes.
      */
     private Map m_pluginClassMap = new HashMap();
@@ -235,7 +235,7 @@ public class PluginManager extends ModuleManager
     }
 
     /**
-     * Returns plugin execution status. If false, plugins are not 
+     * Returns plugin execution status. If false, plugins are not
      * executed when they are encountered on a WikiPage, and an
      * empty string is returned in their place.
      */
@@ -256,7 +256,7 @@ public class PluginManager extends ModuleManager
      */
     public static boolean isPluginLink( String link )
     {
-        return link.startsWith("{INSERT") || 
+        return link.startsWith("{INSERT") ||
                (link.startsWith("{") && !link.startsWith("{$"));
     }
 
@@ -290,7 +290,7 @@ public class PluginManager extends ModuleManager
         t.printStackTrace( new PrintWriter(out) );
         d.addElement( new pre( out.toString() ) );
         d.addElement( new b( "Parameters to the plugin" ) );
-        
+
         ul list = new ul();
         for( Iterator i = params.entrySet().iterator(); i.hasNext(); )
         {
@@ -338,7 +338,7 @@ public class PluginManager extends ModuleManager
             boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
 
             WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get(classname);
-            
+
             if(pluginInfo == null)
             {
                 pluginInfo = WikiPluginInfo.newInstance(findPluginClass( classname ));
@@ -351,7 +351,7 @@ public class PluginManager extends ModuleManager
                 log.info(msg);
                 return msg;
             }
-            
+
             //
             //   Create...
             //
@@ -400,7 +400,7 @@ public class PluginManager extends ModuleManager
 
                 throw new PluginException( "Plugin failed", t );
             }
-            
+
         }
         catch( ClassNotFoundException e )
         {
@@ -449,7 +449,8 @@ public class PluginManager extends ModuleManager
         int             type;
 
 
-        String param = null, value = null;
+        String param = null;
+        String value = null;
 
         tok.eolIsSignificant( true );
 
@@ -499,14 +500,14 @@ public class PluginManager extends ModuleManager
             //
             if( s != null )
             {
-                if( param == null ) 
+                if( param == null )
                 {
                     param = s;
                 }
                 else
                 {
                     value = s;
-                            
+
                     arglist.put( param, value );
 
                     // log.debug("ARG: "+param+"="+value);
@@ -531,10 +532,10 @@ public class PluginManager extends ModuleManager
                 arglist.put( PARAM_BODY, bodyContent );
             }
         }
-        
+
         return arglist;
     }
-    
+
     /**
      *  Parses a plugin.  Plugin commands are of the form:
      *  [{INSERT myplugin WHERE param1=value1, param2=value2}]
@@ -564,7 +565,7 @@ public class PluginManager extends ModuleManager
             {
                 MatchResult res = matcher.getMatch();
 
-                String plugin   = res.group(2);                
+                String plugin   = res.group(2);
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
@@ -603,7 +604,7 @@ public class PluginManager extends ModuleManager
             {
                 MatchResult res = matcher.getMatch();
 
-                String plugin   = res.group(2);                
+                String plugin   = res.group(2);
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
@@ -618,7 +619,7 @@ public class PluginManager extends ModuleManager
                 }
 
                 PluginContent result = new PluginContent( plugin, arglist );
-                
+
                 return result;
             }
         }
@@ -642,14 +643,14 @@ public class PluginManager extends ModuleManager
 
         return null;
     }
-    
-    /** 
+
+    /**
      *  Register a plugin.
      */
     private void registerPlugin(WikiPluginInfo pluginClass)
     {
         String name;
-        
+
         // Registrar the plugin with the className without the package-part
         name = pluginClass.getName();
         if(name != null)
@@ -682,7 +683,7 @@ public class PluginManager extends ModuleManager
         log.info( "Registering plugins" );
 
         SAXBuilder builder = new SAXBuilder();
-        
+
         try
         {
             //
@@ -690,13 +691,13 @@ public class PluginManager extends ModuleManager
             //
             // Get all resources of all plugins.
             //
-            
+
             Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
-            
+
             while( resources.hasMoreElements() )
             {
                 URL resource = (URL) resources.nextElement();
-            
+
                 try
                 {
                     log.debug( "Processing XML: " + resource );
@@ -704,13 +705,13 @@ public class PluginManager extends ModuleManager
                     Document doc = builder.build( resource );
 
                     List plugins = XPath.selectNodes( doc, "/modules/plugin");
-                    
+
                     for( Iterator i = plugins.iterator(); i.hasNext(); )
                     {
                         Element pluginEl = (Element) i.next();
-                        
+
                         String className = pluginEl.getAttributeValue("class");
-                        
+
                         WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl );
 
                         if( pluginInfo != null )
@@ -737,7 +738,7 @@ public class PluginManager extends ModuleManager
 
     /**
      *  Contains information about a bunch of plugins.
-     *  
+     *
      *  @author Kees Kuip
      *  @author Janne Jalkanen
      *
@@ -748,16 +749,16 @@ public class PluginManager extends ModuleManager
     //        some sort of a superclass system.
     protected static class WikiPluginInfo
         extends WikiModuleInfo
-    {       
+    {
         private String m_className;
         private String m_alias;
         private Class  m_clazz;
 
         private boolean m_initialized = false;
-        
+
         /**
          *  Creates a new plugin info object which can be used to access a plugin.
-         *  
+         *
          *  @param className Either a fully qualified class name, or a "short" name which is then
          *                   checked against the internal list of plugin packages.
          *  @param el A JDOM Element containing the information about this class.
@@ -767,13 +768,13 @@ public class PluginManager extends ModuleManager
         {
             if( className == null || className.length() == 0 ) return null;
             WikiPluginInfo info = new WikiPluginInfo( className );
-            
+
             info.initializeFromXML( el );
             return info;
         }
         /**
          *  Initializes a plugin, if it has not yet been initialized.
-         *  
+         *
          *  @param engine
          */
         protected void initializePlugin( WikiEngine engine )
@@ -803,20 +804,20 @@ public class PluginManager extends ModuleManager
             super.initializeFromXML( el );
             m_alias = el.getChildText("alias");
         }
-        
+
         protected static WikiPluginInfo newInstance( Class clazz )
         {
             WikiPluginInfo info = new WikiPluginInfo( clazz.getName() );
-            
+
             return info;
         }
-        
+
         private WikiPluginInfo( String className )
         {
             super(className);
             setClassName( className );
         }
-        
+
         private void setClassName( String fullClassName )
         {
             m_name = ClassUtils.getShortClassName( fullClassName );
@@ -840,10 +841,10 @@ public class PluginManager extends ModuleManager
         {
             return m_alias;
         }
-       
+
         /**
          *  Creates a new plugin instance.
-         *  
+         *
          *  @return A new plugin.
          *  @throws ClassNotFoundException If the class declared was not found.
          *  @throws InstantiationException If the class cannot be instantiated-
@@ -861,10 +862,10 @@ public class PluginManager extends ModuleManager
 
             return (WikiPlugin) m_clazz.newInstance();
         }
-        
+
         /**
          *  Returns a text for IncludeResources.
-         *  
+         *
          *  @param type Either "script" or "stylesheet"
          *  @return Text, or an empty string, if there is nothing to be included.
          */
@@ -916,7 +917,7 @@ public class PluginManager extends ModuleManager
 
             return m_scriptText;
         }
-        
+
         private String getStylesheetText()
             throws IOException
         {
@@ -943,7 +944,7 @@ public class PluginManager extends ModuleManager
 
             return m_stylesheetText;
         }
-        
+
         /**
          *  Returns a string suitable for debugging.  Don't assume that the format
          *  would stay the same.
@@ -975,7 +976,7 @@ public class PluginManager extends ModuleManager
             WikiPlugin plugin;
 
             WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get( content.getPluginName() );
-            
+
             if(pluginInfo == null)
             {
                 pluginInfo = WikiPluginInfo.newInstance(findPluginClass( content.getPluginName() ));
@@ -988,9 +989,9 @@ public class PluginManager extends ModuleManager
                 log.info(msg);
                 return;
             }
-            
+
             plugin = pluginInfo.newPluginInstance();
-            
+
             if( plugin instanceof ParserStagePlugin )
             {
                 ((ParserStagePlugin)plugin).executeParser( content, context, params );
@@ -1011,7 +1012,7 @@ public class PluginManager extends ModuleManager
         catch( ClassCastException e )
         {
             throw new PluginException( "Class "+content.getPluginName()+" is not a Wiki plugin.", e );
-        }     
+        }
         catch( Exception e )
         {
             throw new PluginException( "Instantiation of plugin "+content.getPluginName()+" failed.", e );

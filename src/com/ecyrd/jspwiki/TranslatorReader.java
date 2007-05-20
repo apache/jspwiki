@@ -469,8 +469,8 @@ public class TranslatorReader extends Reader
     private String linkExists( String page )
     {
         try
-		{
-			if( page == null || page.length() == 0 ) return null;
+        {
+            if( page == null || page.length() == 0 ) return null;
 
             return m_engine.getFinalPageName( page );
         }
@@ -1076,7 +1076,7 @@ public class TranslatorReader extends Reader
                 String matchedLink = linkExists( reallink );
 
                 if( matchedLink != null )
-				{
+                {
                     sb.append( makeLink( READ, matchedLink, link ) );
                 }
                 else

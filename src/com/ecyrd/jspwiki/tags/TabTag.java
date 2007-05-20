@@ -1,8 +1,22 @@
 /*
- * Tab tag 
- * Dirk Frederickx, Jan 06
- */
+    JSPWiki - a JSP-based WikiWiki clone.
 
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 package com.ecyrd.jspwiki.tags;
 
@@ -60,7 +74,7 @@ public class TabTag extends TagSupport
         int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
         if( pos > -1 )
         {
-            m_tabTitle = m_tabTitle.substring( 0, pos ) + "<u>" 
+            m_tabTitle = m_tabTitle.substring( 0, pos ) + "<u>"
                        + m_tabTitle.charAt( pos ) + "</u>" + m_tabTitle.substring( pos+1 );
         }
         return( true );
@@ -84,7 +98,7 @@ public class TabTag extends TagSupport
         }
 
         if( !parent.isStateGenerateTabBody() ) return SKIP_BODY;
-    
+
         StringBuffer sb = new StringBuffer();
 
         sb.append( "<div id=\""+ m_tabID + "\"" );
@@ -116,7 +130,7 @@ public class TabTag extends TagSupport
         if( parent.isStateFindDefaultTab() )
         {
             //inform the parent of each tab
-            parent.validateDefaultTab( m_tabID ); 
+            parent.validateDefaultTab( m_tabID );
         }
         else if( parent.isStateGenerateTabBody() )
         {
@@ -143,7 +157,7 @@ public class TabTag extends TagSupport
             sb.append( m_tabTitle );
             sb.append( "</a></span>" );
         }
- 
+
         try
         {
             pageContext.getOut().write( sb.toString() );
@@ -152,7 +166,7 @@ public class TabTag extends TagSupport
         {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }
- 
+
         return EVAL_PAGE;
     }
 }

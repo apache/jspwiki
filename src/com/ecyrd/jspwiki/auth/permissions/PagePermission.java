@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2007 JSPWiki development group
@@ -30,7 +30,7 @@ import com.ecyrd.jspwiki.WikiPage;
  * Permission to perform an operation on a single page or collection of pages in
  * a given wiki. Permission actions include: <code>view</code>,&nbsp;
  * <code>edit</code> (edit the text of a wiki page),&nbsp;<code>comment</code>,&nbsp;
- * <code>upload</code>,&nbsp;<code>modify</code>&nbsp;(edit text and upload 
+ * <code>upload</code>,&nbsp;<code>modify</code>&nbsp;(edit text and upload
  * attachments),&nbsp;<code>delete</code>&nbsp;
  * and&nbsp;<code>rename</code>.
  * </p>
@@ -50,7 +50,7 @@ import com.ecyrd.jspwiki.WikiPage;
  * mywiki:Janne*</code>
  * </blockquote>
  * <p>
- * For a given target, certain permissions imply others: 
+ * For a given target, certain permissions imply others:
  * </p>
  * <ul>
  * <li><code>delete</code>&nbsp;and&nbsp;<code>rename</code>&nbsp;imply&nbsp;<code>edit</code></li>
@@ -73,7 +73,7 @@ public final class PagePermission extends Permission
     public static final String         EDIT_ACTION    = "edit";
 
     public static final String         MODIFY_ACTION  = "modify";
-    
+
     public static final String         RENAME_ACTION  = "rename";
 
     public static final String         UPLOAD_ACTION  = "upload";
@@ -109,13 +109,13 @@ public final class PagePermission extends Permission
     public static final PagePermission VIEW           = new PagePermission( VIEW_ACTION );
 
     private static final String        ACTION_SEPARATOR = ",";
-    
+
     private static final String        WILDCARD       = "*";
-    
+
     private static final String        WIKI_SEPARATOR = ":";
 
     private static final String        ATTACHMENT_SEPARATOR = "/";
-    
+
     private final String               m_actionString;
 
     private final int                  m_mask;
@@ -149,8 +149,8 @@ public final class PagePermission extends Permission
 
         // Parse wiki and page (which may include wiki name and page)
         // Strip out attachment separator; it is irrelevant.
-        String pathParams[] = page.split( WIKI_SEPARATOR );
-        String pageName; 
+        String[] pathParams = page.split( WIKI_SEPARATOR );
+        String pageName;
         if ( pathParams.length >= 2 )
         {
             m_wiki = pathParams[0].length() > 0 ? pathParams[0] : null;
@@ -165,7 +165,7 @@ public final class PagePermission extends Permission
         m_page = ( pos == -1 ) ? pageName : pageName.substring( 0, pos );
 
         // Parse actions
-        String pageActions[] = actions.toLowerCase().split( ACTION_SEPARATOR );
+        String[] pageActions = actions.toLowerCase().split( ACTION_SEPARATOR );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         StringBuffer buffer = new StringBuffer();
@@ -202,8 +202,8 @@ public final class PagePermission extends Permission
             return false;
         }
         PagePermission p = (PagePermission) obj;
-        return ( p.m_mask == m_mask && p.m_page.equals( m_page ) 
-                 && p.m_wiki != null && p.m_wiki.equals( m_wiki ));
+        return  p.m_mask == m_mask && p.m_page.equals( m_page )
+                && p.m_wiki != null && p.m_wiki.equals( m_wiki );
     }
 
     /**
@@ -216,7 +216,7 @@ public final class PagePermission extends Permission
     {
         return m_actionString;
     }
-    
+
     /**
      * Returns the name of the wiki page represented by this permission.
      * @return the page name
@@ -225,7 +225,7 @@ public final class PagePermission extends Permission
     {
         return m_page;
     }
-    
+
     /**
      * Returns the name of the wiki containing the page represented by
      * this permission; may return the wildcard string.
@@ -245,7 +245,7 @@ public final class PagePermission extends Permission
         //  If the wiki has not been set, uses a dummy value for the hashcode
         //  calculation.  This may occur if the page given does not refer
         //  to any particular wiki
-        String wiki = (m_wiki != null ? m_wiki : "dummy_value");
+        String wiki = m_wiki != null ? m_wiki : "dummy_value";
         return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * wiki.hashCode() );
     }
 
@@ -294,7 +294,7 @@ public final class PagePermission extends Permission
         // page is implied
         boolean impliedPage = isSubset( m_page, p.m_page );
 
-        return ( impliedWiki && impliedPage );
+        return  impliedWiki && impliedPage;
     }
 
     /**
@@ -305,7 +305,7 @@ public final class PagePermission extends Permission
     {
         return new AllPermissionCollection();
     }
-    
+
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()
@@ -334,11 +334,11 @@ public final class PagePermission extends Permission
         }
         if ( ( mask & MODIFY_MASK ) > 0 )
         {
-            mask |= ( EDIT_MASK | UPLOAD_MASK );
+            mask |= EDIT_MASK | UPLOAD_MASK;
         }
         if ( ( mask & EDIT_MASK ) > 0 )
         {
-            mask |= ( COMMENT_MASK );
+            mask |= COMMENT_MASK;
         }
         if ( ( mask & COMMENT_MASK ) > 0 )
         {

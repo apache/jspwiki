@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2007 JSPWiki development group
@@ -38,7 +38,7 @@ import com.ecyrd.jspwiki.ui.admin.beans.CoreBean;
 /**
  *  Provides a manager class for all AdminBeans within JSPWiki.  This class
  *  also manages registration for any AdminBean which is also a JMX bean.
- *  
+ *
  *  @author Janne Jalkanen
  *  @since  2.5.52
  */
@@ -48,9 +48,9 @@ public class AdminBeanManager
     private ArrayList  m_allBeans;
 
     private MBeanServer m_mbeanServer = null;
-    
+
     private static Logger log = Logger.getLogger(AdminBeanManager.class);
-    
+
     public AdminBeanManager( WikiEngine engine )
     {
         if( SystemUtils.isJavaVersionAtLeast(1.5f) )
@@ -78,10 +78,10 @@ public class AdminBeanManager
             log.info( m_mbeanServer.getClass().getName() );
             log.info( m_mbeanServer.getDefaultDomain() );
         }
-        
+
         initialize();
     }
-    
+
     public void initialize()
     {
         reload();
@@ -91,25 +91,25 @@ public class AdminBeanManager
     {
         switch( title )
         {
-            case AdminBean.UNKNOWN:
-            default:
-                return "Unknown";
-                
             case AdminBean.CORE:
                 return "Core";
 
             case AdminBean.EDITOR:
                 return "Editors";
+
+            case AdminBean.UNKNOWN:
+            default:
+                return "Unknown";
         }
     }
-    
+
     /**
      *  Register an AdminBean.  If the AdminBean is also a JMX MBean, it
      *  also gets registered to the MBeanServer we've found.
-     *  
+     *
      *  @param ab AdminBean to register.
      */
-    private void registerAdminBean( AdminBean ab ) 
+    private void registerAdminBean( AdminBean ab )
     {
         try
         {
@@ -117,14 +117,14 @@ public class AdminBeanManager
             {
                 String component = getJMXTitleString( ab.getType() );
                 String title     = ab.getTitle();
-            
+
                 ObjectName name = new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
-                
+
                 m_mbeanServer.registerMBean( ab, name );
             }
-            
+
             m_allBeans.add( ab );
-            
+
             log.info("Registered new admin bean "+ab.getTitle());
         }
         catch( InstanceAlreadyExistsException e )
@@ -148,11 +148,11 @@ public class AdminBeanManager
             log.error("Evil NPE occurred",e);
         }
     }
-    
+
     /**
      *  Registers all the beans from a collection of WikiModuleInfos.  If some of the beans
      *  fail, logs the message and keeps going to the next bean.
-     *  
+     *
      *  @param c Collection of WikiModuleInfo instances
      */
     private void registerBeans( Collection c )
@@ -160,15 +160,15 @@ public class AdminBeanManager
         for( Iterator i = c.iterator(); i.hasNext(); )
         {
             String abname = ((WikiModuleInfo)i.next()).getAdminBeanClass();
-            
+
             try
             {
                 if( abname != null && abname.length() > 0 )
                 {
                     Class abclass = Class.forName(abname);
-                
+
                     AdminBean ab = (AdminBean) abclass.newInstance();
-                
+
                     registerAdminBean( ab );
                 }
             }
@@ -186,16 +186,16 @@ public class AdminBeanManager
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            }    
+            }
         }
-        
+
     }
-    
+
     // FIXME: Should unload the beans first.
     private void reload()
     {
         m_allBeans = new ArrayList();
-        
+
         try
         {
             registerAdminBean( new CoreBean(m_engine) );
@@ -208,34 +208,37 @@ public class AdminBeanManager
         registerBeans( m_engine.getEditorManager().modules() );
         registerBeans( m_engine.getPluginManager().modules() );
     }
-    
+
     /**
      *  Lists all administration beans which are currently known
      *  and instantiated.
-     *  
+     *
      *  @return all AdminBeans known to the manager
      */
     public List getAllBeans()
     {
         if( m_allBeans == null ) reload();
-        
+
         return m_allBeans;
     }
-    
+
     /**
      *  A JDK 1.4 version of something which gets us the MBeanServer.  It
      *  binds to the first server it can find.
-     *  
+     *
      *  @author Janne Jalkanen
      *
      */
-    private static class MBeanServerFactory14
+    private static final class MBeanServerFactory14
     {
+        private MBeanServerFactory14()
+        {}
+
         public static MBeanServer getServer()
         {
             MBeanServer server;
             ArrayList servers = MBeanServerFactory.findMBeanServer(null);
-            
+
             if( servers == null || servers.size() == 0 )
             {
                 log.info("Creating a new MBeanServer...");
@@ -245,7 +248,7 @@ public class AdminBeanManager
             {
                 server = (MBeanServer)servers.get(0);
             }
-  
+
             return server;
         }
     }
@@ -253,12 +256,15 @@ public class AdminBeanManager
     /**
      *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This
      *  will simply bind to the platform MBeanServer.
-     *  
+     *
      *  @author Janne Jalkanen
      *
      */
-    private static class MBeanServerFactory15
+    private static final class MBeanServerFactory15
     {
+        private MBeanServerFactory15()
+        {}
+
         public static MBeanServer getServer()
         {
             return ManagementFactory.getPlatformMBeanServer();
@@ -267,7 +273,7 @@ public class AdminBeanManager
 
     /**
      *  Returns the type identifier for a string type.
-     *  
+     *
      *  @param type
      *  @return
      */

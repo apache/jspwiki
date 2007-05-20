@@ -11,7 +11,7 @@ public class ReferringPagesPluginTest extends TestCase
     TestEngine engine;
     WikiContext context;
     PluginManager manager;
-    
+
     public ReferringPagesPluginTest( String s )
     {
         super( s );
@@ -57,7 +57,7 @@ public class ReferringPagesPluginTest extends TestCase
 
     private String mkFullLink( String page, String link )
     {
-        return "<a class=\"wikipage\" href=\"/Wiki.jsp?page="+link+"\">"+page+"</a>";        
+        return "<a class=\"wikipage\" href=\"/Wiki.jsp?page="+link+"\">"+page+"</a>";
     }
 
     public void testSingleReferral()
@@ -78,7 +78,8 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
-        int count = 0, index = -1;
+        int count = 0;
+        int index = -1;
 
         // Count the number of hyperlinks.  We could check their
         // correctness as well, though.
@@ -92,7 +93,7 @@ public class ReferringPagesPluginTest extends TestCase
 
         String expected = "...and 2 more<br />";
 
-        assertEquals( "End", expected, 
+        assertEquals( "End", expected,
                       res.substring( res.length()-expected.length() ) );
     }
 
@@ -105,7 +106,7 @@ public class ReferringPagesPluginTest extends TestCase
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
 
         assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />",
-                      res );        
+                      res );
     }
 
     public void testInclude()
@@ -113,15 +114,15 @@ public class ReferringPagesPluginTest extends TestCase
     {
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin include='*7'}" );
-        
-        assertTrue( "7", res.indexOf("Foobar7") != -1 );        
-        assertTrue( "6", res.indexOf("Foobar6") == -1 );        
-        assertTrue( "5", res.indexOf("Foobar5") == -1 );        
-        assertTrue( "4", res.indexOf("Foobar4") == -1 );        
-        assertTrue( "3", res.indexOf("Foobar3") == -1 );        
-        assertTrue( "2", res.indexOf("Foobar2") == -1 );        
+
+        assertTrue( "7", res.indexOf("Foobar7") != -1 );
+        assertTrue( "6", res.indexOf("Foobar6") == -1 );
+        assertTrue( "5", res.indexOf("Foobar5") == -1 );
+        assertTrue( "4", res.indexOf("Foobar4") == -1 );
+        assertTrue( "3", res.indexOf("Foobar3") == -1 );
+        assertTrue( "2", res.indexOf("Foobar2") == -1 );
     }
-    
+
     public void testExclude()
         throws Exception
     {
@@ -129,7 +130,7 @@ public class ReferringPagesPluginTest extends TestCase
                                       "{ReferringPagesPlugin exclude='*'}");
 
         assertEquals( "...nobody",
-                      res );        
+                      res );
     }
 
     public void testExclude2()
@@ -138,7 +139,7 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7'}");
 
-        assertTrue( res.indexOf("Foobar7") == -1 );        
+        assertTrue( res.indexOf("Foobar7") == -1 );
     }
 
     public void testExclude3()
@@ -147,12 +148,12 @@ public class ReferringPagesPluginTest extends TestCase
         String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7,*5,*4'}");
 
-        assertTrue( "7", res.indexOf("Foobar7") == -1 );        
-        assertTrue( "6", res.indexOf("Foobar6") != -1 );        
-        assertTrue( "5", res.indexOf("Foobar5") == -1 );        
-        assertTrue( "4", res.indexOf("Foobar4") == -1 );        
-        assertTrue( "3", res.indexOf("Foobar3") != -1 );        
-        assertTrue( "2", res.indexOf("Foobar2") != -1 );        
+        assertTrue( "7", res.indexOf("Foobar7") == -1 );
+        assertTrue( "6", res.indexOf("Foobar6") != -1 );
+        assertTrue( "5", res.indexOf("Foobar5") == -1 );
+        assertTrue( "4", res.indexOf("Foobar4") == -1 );
+        assertTrue( "3", res.indexOf("Foobar3") != -1 );
+        assertTrue( "2", res.indexOf("Foobar2") != -1 );
     }
 
 

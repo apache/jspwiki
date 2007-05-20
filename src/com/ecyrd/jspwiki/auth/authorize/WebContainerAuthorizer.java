@@ -60,7 +60,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
     protected boolean           m_containerAuthorized = false;
 
     private Document            m_webxml = null;
-    
+
     /**
      * Constructs a new instance of the WebContainerAuthorizer class.
      */
@@ -80,14 +80,14 @@ public class WebContainerAuthorizer implements WebAuthorizer
         m_containerAuthorized = false;
 
         // FIXME: Error handling here is not very verbose
-        try 
+        try
         {
             m_webxml = getWebXml();
             if ( m_webxml != null )
             {
                 // Add the J2EE 2.4 schema namespace
                 m_webxml.getRootElement().setNamespace( Namespace.getNamespace( J2EE_SCHEMA_24_NAMESPACE ) );
-                
+
                 m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL )
                         && isConstrained( "/Login.jsp", Role.ALL );
             }
@@ -111,7 +111,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
             log.error("Malformed XML in web.xml",e);
             throw new InternalWikiException( e.getClass().getName()+": "+e.getMessage() );
         }
-        
+
         if ( m_containerRoles.length > 0 )
         {
             String roles = "";
@@ -131,23 +131,23 @@ public class WebContainerAuthorizer implements WebAuthorizer
     {
         return request.isUserInRole( role.getName() );
     }
-    
+
     /**
      * Determines whether the Subject associated with a WikiSession is in a
      * particular role. This method takes two parameters: the WikiSession
      * containing the subject and the desired role ( which may be a Role or a
      * Group). If either parameter is <code>null</code>, this method must
-     * return <code>false</code>. 
+     * return <code>false</code>.
      * This method simply examines the WikiSession subject to see if it
      * possesses the desired Principal. We assume that the method
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}
      * previously executed at user login time, and that it has injected
-     * the role Principals that were in force at login time. 
+     * the role Principals that were in force at login time.
      * This is definitely a hack,
-     * but it eliminates the need for WikiSession to keep dangling 
+     * but it eliminates the need for WikiSession to keep dangling
      * references to the last WikiContext hanging around, just
      * so we can look up the HttpServletRequest.
-     * 
+     *
      * @param session the current WikiSession
      * @param role the role to check
      * @return <code>true</code> if the user is considered to be in the role,
@@ -216,31 +216,31 @@ public class WebContainerAuthorizer implements WebAuthorizer
         xpath = XPath.newInstance( selector );
         xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
         List constraints = xpath.selectNodes( root );
-        
+
         // Get all constraints that match our Role pattern
         selector = "//j:web-app/j:security-constraint[j:auth-constraint/j:role-name=\"" + role.getName() + "\"]";
         xpath = XPath.newInstance( selector );
         xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
         List roles = xpath.selectNodes( root );
-        
+
         // If we can't find either one, we must not be constrained
         if ( constraints.size() == 0 )
         {
             return false;
         }
-        
+
         // Shortcut: if the role is ALL, we are constrained
         if ( role.equals( Role.ALL ) )
         {
             return true;
         }
-        
+
         // If no roles, we must not be constrained
         if ( roles.size() == 0 )
         {
             return false;
         }
-        
+
         // If a constraint is contained in both lists, we must be constrained
         for ( Iterator c = constraints.iterator(); c.hasNext(); )
         {
@@ -248,7 +248,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
             for ( Iterator r = roles.iterator(); r.hasNext(); )
             {
                 Element roleConstraint = (Element)r.next();
-                if ( constraint.equals( roleConstraint ) ) 
+                if ( constraint.equals( roleConstraint ) )
                 {
                     return true;
                 }
@@ -256,7 +256,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
         }
         return false;
     }
-    
+
     /**
      * Returns <code>true</code> if the web container is configured to protect
      * certain JSPWiki resources by requiring authentication. Specifically, this
@@ -264,7 +264,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * and identifies whether the string representation of
      * {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} is required
      * to access <code>/Delete.jsp</code> and <code>LoginRedirect.jsp</code>.
-     * If the administrator has uncommented the large 
+     * If the administrator has uncommented the large
      * <code>&lt;security-constraint&gt;</code> section of <code>web.xml</code>,
      * this will be true. This is admittedly an indirect way to go about it, but
      * it should be an accurate test for default installations, and also in 99%
@@ -278,7 +278,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
     }
 
     /**
-     * Returns an array of role Principals this Authorizer knows about. 
+     * Returns an array of role Principals this Authorizer knows about.
      * This method will return an array of Role objects corresponding to
      * the logical roles enumerated in the <code>web.xml</code>.
      * This method actually returns a defensive copy of an internally stored
@@ -302,7 +302,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
     {
         Set roles = new HashSet();
         Element root = webxml.getRootElement();
-        
+
         // Get roles referred to by constraints
         String selector = "//j:web-app/j:security-constraint/j:auth-constraint/j:role-name";
         XPath xpath = XPath.newInstance( selector );
@@ -313,7 +313,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
             String role = ( (Element) it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
-        
+
         // Get all defined roles
         selector = "//j:web-app/j:security-role/j:role-name";
         xpath = XPath.newInstance( selector );
@@ -324,7 +324,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
             String role = ( (Element) it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
-        
+
         return (Role[]) roles.toArray( new Role[roles.size()] );
     }
 
@@ -361,12 +361,12 @@ public class WebContainerAuthorizer implements WebAuthorizer
         }
         if( url == null )
             throw new IOException("Unable to find web.xml for processing.");
-            
+
         log.debug( "Processing web.xml at " + url.toExternalForm() );
         doc = builder.build( url );
         return doc;
     }
-    
+
     /**
      * <p>XML entity resolver that redirects resolution requests by JDOM, JAXP and
      * other XML parsers to locally-cached copies of the resources. Local
@@ -403,14 +403,14 @@ public class WebContainerAuthorizer implements WebAuthorizer
             {
                 url = m_engine.getServletContext().getResource( "/WEB-INF/dtd/" + file );
             }
-            
+
             if( url != null )
             {
                 InputSource is = new InputSource( url.openStream() );
                 log.debug( "Resolved systemID=" + systemId + " using local file " + url );
                 return is;
             }
-            
+
             //
             //  Let's fall back to default behaviour of the container, and let's
             //  also let the user know what is going on.  This caught me by surprise
@@ -422,8 +422,8 @@ public class WebContainerAuthorizer implements WebAuthorizer
             log.info("Please note: There are no local DTD references in /WEB-INF/dtd/"+file+"; falling back to default behaviour."+
                      " This may mean that the XML parser will attempt to connect to the internet to find the DTD."+
                      " If you are running JSPWiki locally in an unconnected network, you might want to put the DTD files in place to avoid nasty UnknownHostExceptions.");
-            
-            
+
+
             // Fall back to default behaviour
             return null;
         }

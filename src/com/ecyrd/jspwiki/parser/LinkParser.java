@@ -54,9 +54,9 @@ import org.jdom.Attribute;
  *  and have no effect on parsing, nor show up in the resulting attribute
  *  list). The 'href' and 'name' attributes are also ignored as spurious.
  *  The permitted list is: 'accesskey', 'charset', 'class', 'hreflang',
- *  'id', 'lang', 'dir', 'rel', 'rev', 'style' , 'tabindex', 'target' , 
- *  'title', and 'type'. The declared attributes that will be ignored 
- *  are: 'href', 'name', 'shape', 'coords', 'onfocus', 'onblur', or any 
+ *  'id', 'lang', 'dir', 'rel', 'rev', 'style' , 'tabindex', 'target' ,
+ *  'title', and 'type'. The declared attributes that will be ignored
+ *  are: 'href', 'name', 'shape', 'coords', 'onfocus', 'onblur', or any
  *  of the other 'on*' event attributes.
  *  </p>
  *  <p>
@@ -152,16 +152,20 @@ public class LinkParser
     private static Logger log = Logger.getLogger(LinkParser.class);
 
     /** Permitted attributes on links.  Keep this sorted. */
-    public static String[] PERMITTED_ATTRIBUTES = new String[] {
+    public static final String[] PERMITTED_ATTRIBUTES = new String[] {
             "accesskey", "charset", "class", "dir", "hreflang", "id", "lang",
             "rel", "rev", "style", "tabindex", "target", "title", "type" };
 
     /** Permitted values on the 'target' attribute. */
-    public static String[] PERMITTED_TARGET_VALUES = new String[] {
+    public static final String[] PERMITTED_TARGET_VALUES = new String[] {
             "_blank", "_self", "_parent", "_top" };
 
-    private final String EQSQUO = "='", SQUO = "'", EQ   = "=",
-                         TARGET = "target", DELIMS = " \t\n\r\f=";
+    private static final String EQSQUO = "='";
+    private static final String SQUO   = "'";
+    private static final String EQ     = "=";
+    private static final String TARGET = "target";
+    private static final String DELIMS = " \t\n\r\f=";
+
     private static final List m_EMPTY = new ArrayList();
 
     // ............
@@ -184,12 +188,12 @@ public class LinkParser
 
         Link link = null;
 
-        try 
+        try
         {
             // establish link text and link ref
             int cut1   = linktext.indexOf('|');
-            if( cut1 == -1 ) 
-            { 
+            if( cut1 == -1 )
+            {
                 //  link form 1:  [Acme]
                 return new Link( linktext );
             }
@@ -197,9 +201,9 @@ public class LinkParser
             int cut2 = cut1+1 < linktext.length()
                     ? linktext.indexOf('|', cut1+1 )
                     : -1 ;
-            
-            if ( cut2 == -1 ) 
-            { 
+
+            if ( cut2 == -1 )
+            {
                 //  link form 2:  [Acme | http://www.acme.com/]
                 String text = linktext.substring( 0, cut1 ).trim(); // to cut1
                 String ref  = linktext.substring( cut1+1 ).trim();  // cut1 to end
@@ -216,7 +220,7 @@ public class LinkParser
             // parse attributes
             if( attribs.indexOf(EQSQUO) != -1 ) // contains "='" that looks like attrib spec
             {
-                try 
+                try
                 {
                     StringTokenizer tok = new StringTokenizer(attribs,DELIMS,true);
                     while ( tok.hasMoreTokens() )
@@ -253,8 +257,8 @@ public class LinkParser
                                 throw new ParseException("unknown attribute name '"
                                                          + token + "' on link");
                             }
-                        } 
-                        else 
+                        }
+                        else
                         {
                             throw new ParseException("unable to parse link attributes '"
                                                      + attribs + "'");
@@ -276,11 +280,11 @@ public class LinkParser
                 }
             }
 
-        } 
-        catch( Exception e ) 
+        }
+        catch( Exception e )
         {
             log.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
-        //  throw new RuntimeException( e.getClass().getName() + " thrown by link parser: " 
+        //  throw new RuntimeException( e.getClass().getName() + " thrown by link parser: "
         //          + e.getMessage() );
         }
 
@@ -339,7 +343,7 @@ public class LinkParser
     {
         private String m_text;
         private String m_ref = null;
-        private int    m_interwiki_point = -1;
+        private int    m_interwikiPoint = -1;
         private List   m_attribs = null;
 
         protected Link( String text ) throws ParseException
@@ -374,12 +378,12 @@ public class LinkParser
                 throw new ParseException("null link reference value");
             }
             m_ref = ref;
-            m_interwiki_point = m_ref.indexOf(':');
+            m_interwikiPoint = m_ref.indexOf(':');
         }
 
         public boolean hasReference()
         {
-            return ( m_ref != null );
+            return m_ref != null;
         }
 
         /** Returns the link reference, or the link text if null. */
@@ -392,22 +396,22 @@ public class LinkParser
 
         public boolean isInterwikiLink()
         {
-            return ( m_interwiki_point != -1 );
+            return m_interwikiPoint != -1;
         }
 
         /** Used only with interwiki links. */
         public String getExternalWiki()
         {
-            return m_interwiki_point != -1
-                    ? m_ref.substring( 0, m_interwiki_point )
+            return m_interwikiPoint != -1
+                    ? m_ref.substring( 0, m_interwikiPoint )
                     : null ;
         }
 
         /** Used only with interwiki links. */
         public String getExternalWikiPage()
         {
-            return m_interwiki_point != -1
-                    ? m_ref.substring( m_interwiki_point+1 )
+            return m_interwikiPoint != -1
+                    ? m_ref.substring( m_interwikiPoint+1 )
                     : null ;
         }
 
@@ -441,21 +445,21 @@ public class LinkParser
             StringBuffer sb = new StringBuffer();
             sb.append( '[' );
             sb.append( m_text );
-            
-            if( m_ref != null ) 
+
+            if( m_ref != null )
             {
                 sb.append( ' ' );
                 sb.append( '|' );
                 sb.append( ' ' );
                 sb.append( m_ref );
             }
-            
+
             if( m_attribs != null )
             {
                 sb.append( ' ' );
                 sb.append( '|' );
                 Iterator it = getAttributes();
-                while ( it.hasNext() ) 
+                while ( it.hasNext() )
                 {
                     Attribute a = (Attribute)it.next();
                     sb.append( ' ' );

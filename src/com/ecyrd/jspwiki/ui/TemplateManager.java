@@ -138,7 +138,15 @@ public class TemplateManager
                 name = null;
         }
 
-        if( is != null ) try { is.close(); } catch( IOException e ) {}
+        if( is != null )
+        {
+            try
+            {
+                is.close();
+            }
+            catch( IOException e )
+            {}
+        }
 
         return name;
     }
@@ -186,7 +194,7 @@ public class TemplateManager
         return name;
     }
 
-    private final static String makeFullJSPName( String template, String name )
+    private static final String makeFullJSPName( String template, String name )
     {
         return "/"+DIRECTORY+"/"+template+"/"+name;
     }
@@ -319,7 +327,7 @@ public class TemplateManager
 
             for( int i = 0; i < skins.length; i++ )
             {
-                String s[] = StringUtils.split(skins[i],"/");
+                String[] s = StringUtils.split(skins[i],"/");
 
                 if( s.length > 2 && skins[i].endsWith("/") )
                 {

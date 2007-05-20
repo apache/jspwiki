@@ -43,21 +43,22 @@ public class OutcomeTest extends TestCase
         String core = InternationalizationManager.CORE_BUNDLE;
         Locale english = Locale.ENGLISH;
         Outcome o;
-        
+
         o = Outcome.DECISION_APPROVE;
         assertEquals("Approve", i18n.get(core, english, o.getMessageKey()));
-        
+
         o = Outcome.DECISION_DENY;
         assertEquals("Deny", i18n.get(core, english, o.getMessageKey()));
-        
+
         o = Outcome.DECISION_HOLD;
         assertEquals("Hold", i18n.get(core, english, o.getMessageKey()));
-        
+
         o = Outcome.DECISION_REASSIGN;
         assertEquals("Reassign", i18n.get(core, english, o.getMessageKey()));
     }
-    
-    public void testIsCompletion() {
+
+    public void testIsCompletion()
+    {
         assertTrue(Outcome.DECISION_ACKNOWLEDGE.isCompletion());
         assertTrue(Outcome.DECISION_APPROVE.isCompletion());
         assertTrue(Outcome.DECISION_DENY.isCompletion());
@@ -67,10 +68,11 @@ public class OutcomeTest extends TestCase
         assertTrue(Outcome.STEP_COMPLETE.isCompletion());
         assertFalse(Outcome.STEP_CONTINUE.isCompletion());
     }
-    
+
     public void testForName()
     {
-        try {
+        try
+        {
             assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("outcome.decision.acknowledge"));
             assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("outcome.decision.approve"));
             assertEquals(Outcome.DECISION_DENY, Outcome.forName("outcome.decision.deny"));
@@ -80,16 +82,19 @@ public class OutcomeTest extends TestCase
             assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("outcome.step.complete"));
             assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("outcome.step.continue"));
         }
-        catch (NoSuchOutcomeException e) {
+        catch (NoSuchOutcomeException e)
+        {
             // We should never get here
             fail("Could not look up an Outcome...");
         }
-        
+
         // Look for a non-existent one
-        try {
+        try
+        {
             Outcome.forName("outcome.decision.nonexistent");
         }
-        catch (NoSuchOutcomeException e) {
+        catch (NoSuchOutcomeException e)
+        {
             return;
         }
         // We should never get here

@@ -237,7 +237,7 @@ public final class PolicyLoader
      *           sufficient permmissions when running with a SecurityManager</li>
      *           </ul>
      */
-    public final static void setJaasConfiguration(final URL url)
+    public static final void setJaasConfiguration(final URL url)
     throws SecurityException
     {
         if (url == null)
@@ -246,8 +246,8 @@ public final class PolicyLoader
         }
 
         // Get JAAS configuration class; default is Sun provider
-        String default_config_class;
-        default_config_class = (String)AccessController.doPrivileged(
+        String defaultConfigClass;
+        defaultConfigClass = (String)AccessController.doPrivileged(
             new PrivilegedAction()
             {
                 public Object run()
@@ -256,13 +256,13 @@ public final class PolicyLoader
                 }
             });
 
-        if (default_config_class == null)
+        if (defaultConfigClass == null)
         {
-            default_config_class = "com.sun.security.auth.login.ConfigFile";
+            defaultConfigClass = "com.sun.security.auth.login.ConfigFile";
         }
 
         // Now, set the new config
-        final String config_class = default_config_class;
+        final String config_class = defaultConfigClass;
         AccessController.doPrivileged(new PrivilegedAction() {
 
             public Object run()

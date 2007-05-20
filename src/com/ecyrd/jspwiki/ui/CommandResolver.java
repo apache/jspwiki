@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.ui;
 
 import java.io.IOException;
@@ -23,30 +42,30 @@ import com.ecyrd.jspwiki.url.URLConstructor;
 /**
  * <p>Resolves special pages, JSPs and Commands on behalf of a
  * WikiEngine. CommandResolver will automatically resolve page names
- * with singular/plural variants. It can also detect the correct Command 
+ * with singular/plural variants. It can also detect the correct Command
  * based on parameters supplied in an HTTP request, or due to the
  * JSP being accessed.</p>
  * <p>
  * <p>CommandResolver's static {@link #findCommand(String)} method is
- * the simplest method; it looks up and returns the Command matching 
- * a supplied wiki context. For example, looking up the request context 
+ * the simplest method; it looks up and returns the Command matching
+ * a supplied wiki context. For example, looking up the request context
  * <code>view</code> returns {@link PageCommand#VIEW}. Use this method
  * to obtain static Command instances that aren't targeted at a particular
  * page or group.</p>
- * <p>For more complex lookups in which the caller supplies an HTTP 
+ * <p>For more complex lookups in which the caller supplies an HTTP
  * request, {@link #findCommand(HttpServletRequest, String)} will
  * look up and return the correct Command. The String parameter
  * <code>defaultContext</code> supplies the request context to use
- * if it cannot be detected. However, note that the default wiki 
+ * if it cannot be detected. However, note that the default wiki
  * context may be over-ridden if the request was for a "special page."</p>
- * <p>For example, suppose the WikiEngine's properties specify a 
+ * <p>For example, suppose the WikiEngine's properties specify a
  * special page called <code>UserPrefs</code>
  * that redirects to <code>UserPreferences.jsp</code>. The ordinary
  * lookup method {@linkplain #findCommand(String)} using a supplied
  * context <code>view</code> would return {@link PageCommand#VIEW}. But
- * the {@linkplain #findCommand(HttpServletRequest, String)} method, 
+ * the {@linkplain #findCommand(HttpServletRequest, String)} method,
  * when passed the same context (<code>view</code>) and an HTTP request
- * containing the page parameter value <code>UserPrefs</code>, 
+ * containing the page parameter value <code>UserPrefs</code>,
  * will instead return {@link WikiCommand#PREFS}.</p>
  * @author Andrew Jaquith
  * @since 2.4.22
@@ -170,10 +189,10 @@ public final class CommandResolver
      * specifies an actual wiki page (rather than a special page), this method
      * will return a "targeted" Command that includes the resolved WikiPage
      * as the target. (See {@link #resolvePage(HttpServletRequest, String)}
-     * for the resolution algorithm). Specifically, the Command will 
+     * for the resolution algorithm). Specifically, the Command will
      * return a non-<code>null</code> value for its {@link AbstractCommand#getTarget()} method.
      * </p>
-     * <p><em>Note: if this method determines that the Command is the VIEW PageCommand, 
+     * <p><em>Note: if this method determines that the Command is the VIEW PageCommand,
      * then the Command returned will always be targeted to the front page.</em></p>
      * @param request the HTTP request; if <code>null</code>, delegates
      * to {@link #findCommand(String)}
@@ -187,9 +206,9 @@ public final class CommandResolver
         {
             return findCommand( defaultContext );
         }
-        
+
         Command command = null;
-        
+
         // Determine the name of the page (which may be null)
         String pageName = extractPageFromParameter( defaultContext, request );
 
@@ -204,7 +223,7 @@ public final class CommandResolver
         if ( command == null )
         {
             command = extractCommandFromPath( request );
-            
+
             // Otherwise: use the default context
             if ( command == null )
             {
@@ -215,15 +234,15 @@ public final class CommandResolver
                 }
             }
         }
-        
+
         // For PageCommand.VIEW, default to front page if a page wasn't supplied
         if( PageCommand.VIEW.equals( command ) && pageName == null )
         {
             pageName = m_engine.getFrontPage();
         }
-        
+
         // These next blocks handle targeting requirements
-        
+
         // If we were passed a page parameter, try to resolve it
         if ( command instanceof PageCommand && pageName != null )
         {
@@ -234,14 +253,14 @@ public final class CommandResolver
                 return command.targetedCommand( page );
             }
         }
-        
+
         // If "create group" command, target this wiki
         String wiki = m_engine.getApplicationName();
         if ( WikiCommand.CREATE_GROUP.equals( command ) )
         {
             return WikiCommand.CREATE_GROUP.targetedCommand( wiki );
         }
-        
+
         // If group command, see if we were passed a group name
         if ( command instanceof GroupCommand )
         {
@@ -252,7 +271,7 @@ public final class CommandResolver
                 return command.targetedCommand( group );
             }
         }
-        
+
         // No page provided; return an "ordinary" command
         return command;
     }
@@ -281,7 +300,7 @@ public final class CommandResolver
     {
         boolean isThere = simplePageExists( page );
         String  finalName = page;
-        
+
         if ( !isThere && m_matchEnglishPlurals )
         {
             if ( page.endsWith( "s" ) )
@@ -315,7 +334,7 @@ public final class CommandResolver
                 isThere = simplePageExists( finalName );
             }
         }
-        
+
         return isThere ? finalName : null;
     }
 
@@ -370,7 +389,7 @@ public final class CommandResolver
         {
             jsp = jsp.substring( 1 );
         }
-        
+
         // Find special page reference?
         for( Iterator i = m_specialPages.entrySet().iterator(); i.hasNext(); )
         {
@@ -381,17 +400,17 @@ public final class CommandResolver
                 return specialCommand;
             }
         }
-        
-        // Still haven't found a matching command? 
+
+        // Still haven't found a matching command?
         // Ok, see if we match against our standard list of JSPs
         if ( jsp.length() > 0 && c_jsps.containsKey( jsp ) )
         {
             return (Command)c_jsps.get( jsp );
         }
-        
+
         return null;
     }
-    
+
     /**
      * Determines the correct wiki page based on a supplied request context and
      * HTTP request. This method attempts to determine the page requested by a
@@ -405,7 +424,7 @@ public final class CommandResolver
      * if a "special page" was intended by examining the servlet path. For
      * example, the request path "/UserPreferences.jsp" will resolve to
      * "UserPreferences."</li>
-     * <li>If neither of these methods work, this method returns 
+     * <li>If neither of these methods work, this method returns
      * <code>null</code></li>
      * </ul>
      * @param requestContext the request context
@@ -448,7 +467,7 @@ public final class CommandResolver
         // Didn't resolve; return null
         return null;
     }
-    
+
     /**
      * Looks up and returns the correct, versioned WikiPage based on a supplied
      * page name and optional <code>version</code> parameter passed in an HTTP

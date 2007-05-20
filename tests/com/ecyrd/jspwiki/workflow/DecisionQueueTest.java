@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
@@ -26,9 +45,9 @@ public class DecisionQueueTest extends TestCase
     Decision d2;
 
     Decision d3;
-    
+
     WikiSession janneSession;
-    
+
     WikiSession adminSession;
 
     protected void setUp() throws Exception
@@ -126,7 +145,7 @@ public class DecisionQueueTest extends TestCase
     {
         Collection decisions = m_queue.getActorDecisions(adminSession);
         assertEquals(1, decisions.size());
-        
+
         decisions = m_queue.getActorDecisions(janneSession);
         assertEquals(1, decisions.size());
     }
@@ -134,12 +153,12 @@ public class DecisionQueueTest extends TestCase
     public void testDecisionWorkflow() throws WikiException
     {
         Principal janne = janneSession.getUserPrincipal();
-        
+
         // Clean out the queue first
         m_queue.remove(d1);
         m_queue.remove(d2);
         m_queue.remove(d3);
-        
+
         // Create a workflow with 3 steps, with a Decision for Janne in the middle
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
         w.setWorkflowManager(m_engine.getWorkflowManager());
@@ -149,17 +168,17 @@ public class DecisionQueueTest extends TestCase
         startTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
         decision.addSuccessor(Outcome.DECISION_APPROVE, endTask);
         w.setFirstStep(startTask);
-        
+
         // Start the workflow, and verify that the Decision is the current Step
         w.start();
         assertEquals(decision, w.getCurrentStep());
-        
+
         // Verify that it's also in Janne's DecisionQueue
         Collection decisions = m_queue.getActorDecisions(janneSession);
         assertEquals(1, decisions.size());
         Decision d = (Decision)decisions.iterator().next();
         assertEquals(decision, d);
-        
+
         // Make Decision, and verify that it's gone from the queue
         m_queue.decide(decision, Outcome.DECISION_APPROVE);
         decisions = m_queue.getActorDecisions(janneSession);

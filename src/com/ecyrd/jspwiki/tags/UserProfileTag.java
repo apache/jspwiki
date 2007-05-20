@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -39,8 +39,8 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 /**
  * <p>
  * Returns user profile attributes, or empty strings if the user has not been
- * validated. This tag has a single attribute, "property." 
- * The <code>property</code> attribute may contain one of the following 
+ * validated. This tag has a single attribute, "property."
+ * The <code>property</code> attribute may contain one of the following
  * case-insensitive values:
  * </p>
  * <ul>
@@ -50,7 +50,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * <li><code>groups</code> - a sorted list of the groups a user belongs to</li>
  * <li><code>loginname</code> - user's login name. If the current user does not have
  * a profile, the user's login principal (such as one provided by a container
- * login module, user cookie, or anonyous IP address), will supply the login 
+ * login module, user cookie, or anonyous IP address), will supply the login
  * name property</li>
  * <li><code>roles</code> - a sorted list of the roles a user possesses</li>
  * <li><code>wikiname</code> - user's wiki name</li>
@@ -59,9 +59,9 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * in the user database
  * <li><code>new</code> - evaluates the body of the tag if user's profile does not
  * exist in the user database
- * <li><code>canChangeLoginName</code> - always true if custom auth used; also true for container auth 
+ * <li><code>canChangeLoginName</code> - always true if custom auth used; also true for container auth
  * and current UserDatabase.isSharedWithContainer() is true.</li>
- * <li><code>canChangePassword</code> - always true if custom auth used; also true for container auth 
+ * <li><code>canChangePassword</code> - always true if custom auth used; also true for container auth
  * and current UserDatabase.isSharedWithContainer() is true.</li>
  * </ul>
  * <p>In addition, the values <code>exists</code>, <code>new</code>, <code>canChangeLoginName</code>
@@ -75,39 +75,39 @@ public class UserProfileTag extends WikiTagBase
     private static final long serialVersionUID = 3258410625431582003L;
 
     public  static final String BLANK = "(not set)";
-    
+
     private static final String CREATED   = "created";
 
     private static final String EMAIL     = "email";
 
     private static final String EXISTS    = "exists";
-    
+
     private static final String NOT_EXISTS= "!exists";
-    
+
     private static final String FULLNAME  = "fullname";
-    
+
     private static final String GROUPS    = "groups";
-    
+
     private static final String LOGINNAME = "loginname";
-        
+
     private static final String MODIFIED  = "modified";
-    
+
     private static final String NEW       = "new";
-    
+
     private static final String NOT_NEW   = "!new";
-    
+
     private static final String ROLES     = "roles";
-    
+
     private static final String WIKINAME  = "wikiname";
-    
+
     private static final String CHANGE_LOGIN_NAME     = "canchangeloginname";
-    
+
     private static final String NOT_CHANGE_LOGIN_NAME = "!canchangeloginname";
-    
+
     private static final String CHANGE_PASSWORD       = "canchangepassword";
-    
+
     private static final String NOT_CHANGE_PASSWORD   = "!canchangepassword";
-    
+
     private String             m_prop;
 
     public void initTag()
@@ -121,7 +121,7 @@ public class UserProfileTag extends WikiTagBase
         UserManager manager = m_wikiContext.getEngine().getUserManager();
         UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
-        
+
         if ( EXISTS.equals( m_prop ) || NOT_NEW.equals( m_prop ) )
         {
             return profile.isNew() ? SKIP_BODY : EVAL_BODY_INCLUDE;
@@ -162,7 +162,7 @@ public class UserProfileTag extends WikiTagBase
         else if ( WIKINAME.equals( m_prop ) )
         {
             result = profile.getWikiName();
-            
+
             if( result == null )
             {
                 //
@@ -196,7 +196,7 @@ public class UserProfileTag extends WikiTagBase
                 return EVAL_BODY_INCLUDE;
             }
         }
-        
+
         if ( result != null )
         {
             pageContext.getOut().print( result );
@@ -208,7 +208,7 @@ public class UserProfileTag extends WikiTagBase
     {
         m_prop = property.toLowerCase().trim();
     }
-    
+
     /**
      * Returns a sorted list of the {@link com.ecyrd.jspwiki.auth.authorize.Group} objects a user possesses
      * in his or her WikiSession. The result is computed by consulting
@@ -231,23 +231,23 @@ public class UserProfileTag extends WikiTagBase
         {
             return "(none)";
         }
-        
+
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = (String)tempRoles.get( i );
+
+            sb.append( name );
+            if ( i < ( tempRoles.size() - 1 ) )
             {
-                sb.append( name );
-                if ( i < ( tempRoles.size() - 1 ) ) 
-                {
-                    sb.append(',');
-                    sb.append(' ');
-                }
+                sb.append(',');
+                sb.append(' ');
             }
+
         }
         return sb.toString();
     }
-    
+
     /**
      * Returns a sorted list of the {@link com.ecyrd.jspwiki.auth.authorize.Role} objects a user possesses
      * in his or her WikiSession. The result is computed by consulting
@@ -270,19 +270,19 @@ public class UserProfileTag extends WikiTagBase
         {
             return "(none)";
         }
-        
+
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = (String)tempRoles.get( i );
+
+            sb.append( name );
+            if ( i < ( tempRoles.size() - 1 ) )
             {
-                sb.append( name );
-                if ( i < ( tempRoles.size() - 1 ) ) 
-                {
-                    sb.append(',');
-                    sb.append(' ');
-                }
+                sb.append(',');
+                sb.append(' ');
             }
+
         }
         return sb.toString();
     }

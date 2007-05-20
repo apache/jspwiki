@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.dav;
 
 import java.util.ArrayList;
@@ -20,7 +39,7 @@ public class AttachmentDavProvider implements DavProvider
 {
     protected WikiEngine m_engine;
     protected static final Logger log = Logger.getLogger( AttachmentDavProvider.class );
-    
+
     public AttachmentDavProvider( WikiEngine engine )
     {
         m_engine = engine;
@@ -34,17 +53,17 @@ public class AttachmentDavProvider implements DavProvider
     private Collection listAllPagesWithAttachments()
     {
         ArrayList pageNames = new ArrayList();
-        
+
         try
         {
             Collection atts = m_engine.getAttachmentManager().getAllAttachments();
-            
+
             for( Iterator i = atts.iterator(); i.hasNext(); )
             {
                 Attachment att = (Attachment)i.next();
-                
+
                 String pageName = att.getParentName();
-                
+
                 if( !pageNames.contains(pageName) )
                     pageNames.add( pageName );
             }
@@ -53,15 +72,15 @@ public class AttachmentDavProvider implements DavProvider
         {
             log.error("Unable to get all attachments",e);
         }
-        
+
         Collections.sort( pageNames );
-        
+
         ArrayList result = new ArrayList();
-        
+
         for( Iterator i = pageNames.iterator(); i.hasNext(); )
         {
             DirectoryItem di = new DirectoryItem( this, new DavPath( (String)i.next() ));
-            
+
             result.add( di );
         }
         return result;
@@ -70,25 +89,25 @@ public class AttachmentDavProvider implements DavProvider
     protected Collection listAttachmentsOfPage( DavPath path )
     {
         String pageName = path.getName();
-        
+
         log.debug("Listing attachments for page "+pageName);
-        
+
         ArrayList result = new ArrayList();
         try
         {
             WikiPage page = m_engine.getPage( pageName );
             Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
-            
+
             for( Iterator i = attachments.iterator(); i.hasNext(); )
             {
                 Attachment att = (Attachment) i.next();
-            
+
                 DavPath thisPath = new DavPath( "/" );
-                
+
                 thisPath.append( att.getName() );
-            
+
                 AttachmentItem ai = new AttachmentItem( this, thisPath, att );
-                
+
                 result.add( ai );
             }
         }
@@ -97,39 +116,39 @@ public class AttachmentDavProvider implements DavProvider
             log.error("Unable to list attachments, returning what I got",e);
             // FIXME: Not a good way to handle errors
         }
-        
+
         return result;
     }
-    
+
     public DavItem getItem(DavPath path)
     {
         if( path.isRoot() )
         {
             DirectoryItem di = new DirectoryItem( this, new DavPath("") );
-            
+
             di.addDavItems( listAllPagesWithAttachments() );
             return di;
         }
         else if( path.isDirectory() )
         {
             DirectoryItem di = new DirectoryItem( this, path );
-            
+
             di.addDavItems( listAttachmentsOfPage(path) );
-            
+
             return di;
         }
         else
         {
             String attName = path.getPath();
-            
+
             try
             {
                 Attachment att = m_engine.getAttachmentManager().getAttachmentInfo( attName );
-            
+
                 if( att != null )
                 {
                     AttachmentItem ai = new AttachmentItem( this, path, att );
-                
+
                     return ai;
                 }
             }
@@ -150,9 +169,9 @@ public class AttachmentDavProvider implements DavProvider
     public String getURL(DavPath path)
     {
         String p = path.getPath();
-        
+
         if( p.startsWith("/") ) p = p.substring( 1 );
-        
+
         return m_engine.getURL( WikiContext.ATTACH, p, null, true );
     }
 

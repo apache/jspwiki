@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -55,18 +55,18 @@ public abstract class AbstractReferralPlugin
     public static final String PARAM_SEPARATOR = "separator";
     public static final String PARAM_AFTER     = "after";
     public static final String PARAM_BEFORE    = "before";
- 
+
     public static final String PARAM_EXCLUDE   = "exclude";
     public static final String PARAM_INCLUDE   = "include";
-    
+
     protected           int      m_maxwidth = Integer.MAX_VALUE;
     protected           String   m_before = ""; // null not blank
-    protected           String   m_separator = ""; // null not blank 
+    protected           String   m_separator = ""; // null not blank
     protected           String   m_after = "\\\\";
-    
+
     protected           Pattern[]  m_exclude;
     protected           Pattern[]  m_include;
-    
+
     protected           WikiEngine m_engine;
 
     /**
@@ -76,12 +76,12 @@ public abstract class AbstractReferralPlugin
      */
 
     // FIXME: The compiled pattern strings should really be cached somehow.
-    
+
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
         m_engine = context.getEngine();
-        m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE ); 
+        m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
         if( m_maxwidth < 0 ) m_maxwidth = 0;
 
         String s = (String) params.get( PARAM_SEPARATOR );
@@ -90,27 +90,27 @@ public abstract class AbstractReferralPlugin
         {
             m_separator = s;
             // pre-2.1.145 there was a separator at the end of the list
-            // if they set the parameters, we use the new format of 
+            // if they set the parameters, we use the new format of
             // before Item1 after separator before Item2 after separator before Item3 after
             m_after = "";
         }
 
         s = (String) params.get( PARAM_BEFORE );
-        
+
         if( s != null )
         {
             m_before = s;
         }
 
         s = (String) params.get( PARAM_AFTER );
-        
+
         if( s != null )
         {
             m_after = s;
         }
-  
+
         s = (String) params.get( PARAM_EXCLUDE );
-        
+
         if( s != null )
         {
             try
@@ -118,9 +118,9 @@ public abstract class AbstractReferralPlugin
                 PatternCompiler pc = new GlobCompiler();
 
                 String[] ptrns = StringUtils.split( s, "," );
-                
+
                 m_exclude = new Pattern[ptrns.length];
-                
+
                 for( int i = 0; i < ptrns.length; i++ )
                 {
                     m_exclude[i] = pc.compile( ptrns[i] );
@@ -134,7 +134,7 @@ public abstract class AbstractReferralPlugin
 
         // TODO: Cut-n-paste, refactor
         s = (String) params.get( PARAM_INCLUDE );
-        
+
         if( s != null )
         {
             try
@@ -142,9 +142,9 @@ public abstract class AbstractReferralPlugin
                 PatternCompiler pc = new GlobCompiler();
 
                 String[] ptrns = StringUtils.split( s, "," );
-                
+
                 m_include = new Pattern[ptrns.length];
-                
+
                 for( int i = 0; i < ptrns.length; i++ )
                 {
                     m_include[i] = pc.compile( ptrns[i] );
@@ -158,13 +158,13 @@ public abstract class AbstractReferralPlugin
 
         // log.debug( "Requested maximum width is "+m_maxwidth );
     }
-    
+
     protected Collection filterCollection( Collection c )
     {
         ArrayList result = new ArrayList();
-        
+
         PatternMatcher pm = new Perl5Matcher();
-        
+
         for( Iterator i = c.iterator(); i.hasNext(); )
         {
             String pageName = (String) i.next();
@@ -176,9 +176,9 @@ public abstract class AbstractReferralPlugin
             //  include='*' means the same as no include.
             //
             boolean includeThis = (m_include == null);
-            
+
             if( m_include != null )
-            {       
+            {
                 for( int j = 0; j < m_include.length; j++ )
                 {
                     if( pm.matches( pageName, m_include[j] ) )
@@ -200,16 +200,16 @@ public abstract class AbstractReferralPlugin
                     }
                 }
             }
-            
+
             if( includeThis )
             {
                 result.add( pageName );
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      *  Makes WikiText from a Collection.
      *
@@ -220,13 +220,13 @@ public abstract class AbstractReferralPlugin
     protected String wikitizeCollection( Collection links, String separator, int numItems )
     {
         if( links == null || links.isEmpty() )
-            return( "" );
+            return "";
 
         StringBuffer output = new StringBuffer();
-        
+
         Iterator it     = links.iterator();
         int      count  = 0;
-        
+
         //
         //  The output will be B Item[1] A S B Item[2] A S B Item[3] A
         //
@@ -239,20 +239,20 @@ public abstract class AbstractReferralPlugin
                 output.append( m_after );
                 output.append( m_separator );
             }
-            
+
             output.append( m_before );
-            
+
             // Make a Wiki markup link. See TranslatorReader.
             output.append( "[" + m_engine.beautifyTitle(value) + "|" + value + "]" );
             count++;
         }
 
-        // 
+        //
         //  Output final item - if there have been none, no "after" is printed
         //
         if( count > 0 ) output.append( m_after );
-        
-        return( output.toString() );
+
+        return output.toString();
     }
 
     /**
@@ -263,18 +263,18 @@ public abstract class AbstractReferralPlugin
     protected String makeHTML( WikiContext context, String wikitext )
     {
         String result = "";
-        
+
         RenderingManager mgr = m_engine.getRenderingManager();
-        
+
         try
         {
             MarkupParser parser = mgr.getParser(context, wikitext);
-            
+
             parser.addLinkTransmutator( new CutMutator(m_maxwidth) );
             parser.enableImageInlining( false );
-            
+
             WikiDocument doc = parser.parse();
-            
+
             result = mgr.getHTML( context, doc );
         }
         catch( IOException e )
@@ -284,7 +284,7 @@ public abstract class AbstractReferralPlugin
 
         return result;
     }
-    
+
     /**
      *  A simple class that just cuts a String to a maximum
      *  length, adding three dots after the cutpoint.

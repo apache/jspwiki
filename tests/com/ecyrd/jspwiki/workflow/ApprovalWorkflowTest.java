@@ -17,39 +17,40 @@ import com.ecyrd.jspwiki.filters.RedirectException;
 
 public class ApprovalWorkflowTest extends TestCase
 {
-    WorkflowBuilder builder;
+    WorkflowBuilder m_builder;
     TestEngine m_engine;
-    WorkflowManager wm;
-    Workflow w;
-    DecisionQueue dq;
-    Principal admin;
-    WikiSession adminSession;
-    WikiSession janneSession;
+    WorkflowManager m_wm;
+    Workflow m_workflow;
+    DecisionQueue m_dq;
+    Principal m_admin;
+    WikiSession m_adminSession;
+    WikiSession m_janneSession;
 
-    
+
     protected void setUp() throws Exception
     {
         super.setUp();
         Properties props = new Properties();
         props.load(TestEngine.findTestProperties());
-        
+
         // Explicitly turn on Admin approvals for page saves and our sample approval workflow
         props.put("jspwiki.approver.workflow.saveWikiPage", "Admin");
         props.put( "jspwiki.approver.workflow.approvalWorkflow", Users.JANNE );
-        
+
         // Start the wiki engine
         m_engine = new TestEngine(props);
-        wm = m_engine.getWorkflowManager();
-        adminSession = m_engine.adminSession();
-        janneSession = m_engine.janneSession();
-        dq = wm.getDecisionQueue();
-        admin = new GroupPrincipal(m_engine.getApplicationName(), "Admin");
-        builder = WorkflowBuilder.getBuilder( m_engine );
+        m_wm = m_engine.getWorkflowManager();
+        m_adminSession = m_engine.adminSession();
+        m_janneSession = m_engine.janneSession();
+        m_dq = m_wm.getDecisionQueue();
+        m_admin = new GroupPrincipal(m_engine.getApplicationName(), "Admin");
+        m_builder = WorkflowBuilder.getBuilder( m_engine );
     }
-    
-    
-    public void testBuildApprovalWorkflow() throws WikiException {
-        
+
+
+    public void testBuildApprovalWorkflow() throws WikiException
+    {
+
         Principal submitter = new WikiPrincipal( "Submitter" );
         String workflowApproverKey = "workflow.approvalWorkflow";
         Task prepTask = new TestPrepTask( "task.preSaveWikiPage" );
@@ -60,12 +61,12 @@ public class ApprovalWorkflowTest extends TestCase
         facts[2] = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
         Task completionTask = new TestPrepTask( "task.saveWikiPage" );
         String rejectedMessageKey = "notification.saveWikiPage.reject";
-        
-        Workflow w = builder.buildApprovalWorkflow(submitter, workflowApproverKey, 
-                                                   prepTask, decisionKey, facts, 
+
+        Workflow w = m_builder.buildApprovalWorkflow(submitter, workflowApproverKey,
+                                                   prepTask, decisionKey, facts,
                                                    completionTask, rejectedMessageKey);
         w.setWorkflowManager( m_engine.getWorkflowManager() );
-        
+
         // Check to see if the workflow built correctly
         assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
         assertNull( w.getCurrentStep() );
@@ -74,14 +75,14 @@ public class ApprovalWorkflowTest extends TestCase
         assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
         assertEquals( m_engine.getWorkflowManager(), w.getWorkflowManager() );
         assertEquals( 0, w.getHistory().size() );
-        
+
         // Our dummy "task complete" attributes should still be null
         assertNull( w.getAttribute( "task.preSaveWikiPage") );
         assertNull( w.getAttribute( "task.saveWikiPage") );
-        
+
         // Start the workflow
         w.start();
-        
+
         // Presave complete attribute should be set now, and current step should be Decision
         Step decision = w.getCurrentStep();
         assertTrue( decision instanceof Decision );
@@ -91,12 +92,12 @@ public class ApprovalWorkflowTest extends TestCase
         assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
         assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
         assertEquals( decisionKey, decision.getMessageKey() );
-        List decisionFacts = ((Decision)decision).getFacts(); 
+        List decisionFacts = ((Decision)decision).getFacts();
         assertEquals( 3, decisionFacts.size() );
-        assertEquals( facts[0], decisionFacts.get(0) ); 
-        assertEquals( facts[1], decisionFacts.get(1) ); 
-        assertEquals( facts[2], decisionFacts.get(2) ); 
-        
+        assertEquals( facts[0], decisionFacts.get(0) );
+        assertEquals( facts[1], decisionFacts.get(1) );
+        assertEquals( facts[2], decisionFacts.get(2) );
+
         // Check that our predecessor/successor relationships are ok
         assertEquals( decision, prepTask.getSuccessor( Outcome.STEP_COMPLETE ) );
         assertEquals( null, prepTask.getSuccessor( Outcome.STEP_ABORT ) );
@@ -105,13 +106,13 @@ public class ApprovalWorkflowTest extends TestCase
         assertEquals( null, decision.getSuccessor( Outcome.DECISION_HOLD ) );
         assertEquals( null, decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
         assertEquals( completionTask, decision.getSuccessor( Outcome.DECISION_APPROVE ) );
-        
+
         // The "deny" notification should use the right key
         Step notification = decision.getSuccessor( Outcome.DECISION_DENY );
         assertNotNull( notification );
         assertEquals( rejectedMessageKey, notification.getMessageKey() );
         assertTrue( notification instanceof SimpleNotification );
-        
+
         // Now, approve the Decision and everything should complete
         ((Decision)decision).decide( Outcome.DECISION_APPROVE );
         assertTrue( w.isCompleted() );
@@ -121,8 +122,9 @@ public class ApprovalWorkflowTest extends TestCase
         assertTrue( completionTask.isCompleted() );
         assertEquals( Outcome.STEP_COMPLETE, completionTask.getOutcome() );
     }
-    
-    public void testBuildApprovalWorkflowDeny() throws WikiException {
+
+    public void testBuildApprovalWorkflowDeny() throws WikiException
+    {
         Principal submitter = new WikiPrincipal( "Submitter" );
         String workflowApproverKey = "workflow.approvalWorkflow";
         Task prepTask = new TestPrepTask( "task.preSaveWikiPage" );
@@ -133,41 +135,42 @@ public class ApprovalWorkflowTest extends TestCase
         facts[2] = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
         Task completionTask = new TestPrepTask( "task.saveWikiPage" );
         String rejectedMessageKey = "notification.saveWikiPage.reject";
-        
-        Workflow w = builder.buildApprovalWorkflow(submitter, workflowApproverKey, 
-                                                   prepTask, decisionKey, facts, 
+
+        Workflow w = m_builder.buildApprovalWorkflow(submitter, workflowApproverKey,
+                                                   prepTask, decisionKey, facts,
                                                    completionTask, rejectedMessageKey);
         w.setWorkflowManager( m_engine.getWorkflowManager() );
-        
+
         // Start the workflow
         w.start();
-        
+
         // Now, deny the Decision and the submitter should see a notification
         Step step = w.getCurrentStep();
         assertTrue( step instanceof Decision );
         Decision decision = (Decision)step;
         decision.decide( Outcome.DECISION_DENY );
         assertFalse( w.isCompleted() );
-        
+
         // Check that the notification is ok, then acknowledge it
         step = w.getCurrentStep();
         assertTrue( step instanceof SimpleNotification );
         assertEquals( rejectedMessageKey, step.getMessageKey() );
         SimpleNotification notification = (SimpleNotification)step;
         notification.acknowledge();
-        
+
         // Workflow should be complete now
         assertTrue( w.isCompleted() );
         assertNull( w.getCurrentStep() );
         assertEquals( 3, w.getHistory().size() );
         assertEquals( notification, w.getHistory().get( 2 ) );
     }
-    
-    public void testSaveWikiPageWithApproval() throws WikiException {
+
+    public void testSaveWikiPageWithApproval() throws WikiException
+    {
         // Create a sample test page and try to save it
         String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
         String text = "This is a test!";
-        try 
+        try
         {
             m_engine.saveTextAsJanne(pageName, text);
         }
@@ -175,30 +178,31 @@ public class ApprovalWorkflowTest extends TestCase
         {
             // Swallow exception, because it is expected...
         }
-        
+
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
         assertFalse( m_engine.pageExists(pageName));
-        
+
         // Second, GroupPrincipal Admin should see a Decision in its queue
-        Collection decisions = dq.getActorDecisions(adminSession);
+        Collection decisions = m_dq.getActorDecisions(m_adminSession);
         assertEquals(1, decisions.size());
-        
+
         // Now, approve the decision and it should go away, and page should apppear.
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
         assertTrue( m_engine.pageExists(pageName));
-        decisions = dq.getActorDecisions(adminSession);
+        decisions = m_dq.getActorDecisions(m_adminSession);
         assertEquals(0, decisions.size());
-        
+
         // Delete the page we created
         m_engine.deletePage( pageName );
     }
-    
-    public void testSaveWikiPageWithRejection() throws WikiException {
+
+    public void testSaveWikiPageWithRejection() throws WikiException
+    {
         // Create a sample test page and try to save it
         String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
         String text = "This is a test!";
-        try 
+        try
         {
             m_engine.saveTextAsJanne(pageName, text);
         }
@@ -206,35 +210,36 @@ public class ApprovalWorkflowTest extends TestCase
         {
             // Swallow exception, because it is expected...
         }
-        
+
         // How do we know the workflow works? Well, first of all the page shouldn't exist yet...
         assertFalse( m_engine.pageExists(pageName));
-        
+
         // ...and there should be a Decision in GroupPrincipal Admin's queue
-        Collection decisions = dq.getActorDecisions(adminSession);
+        Collection decisions = m_dq.getActorDecisions(m_adminSession);
         assertEquals(1, decisions.size());
-        
+
         // Now, DENY the decision and the page should still not exist...
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_DENY);
         assertFalse( m_engine.pageExists(pageName) );
-        
+
         // ...but there should also be a notification decision in Janne's queue
-        decisions = dq.getActorDecisions(janneSession);
+        decisions = m_dq.getActorDecisions(m_janneSession);
         assertEquals(1, decisions.size());
         decision = (Decision)decisions.iterator().next();
         assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
-        
+
         // Once Janne disposes of the notification, his queue should be empty
         decision.decide(Outcome.DECISION_ACKNOWLEDGE);
-        decisions = dq.getActorDecisions(janneSession);
+        decisions = m_dq.getActorDecisions(m_janneSession);
         assertEquals(0, decisions.size());
     }
-    
-    public void testSaveWikiPageWithException() throws WikiException {
+
+    public void testSaveWikiPageWithException() throws WikiException
+    {
         // Add a PageFilter that rejects all save attempts
         m_engine.getFilterManager().addPageFilter( new AbortFilter(), 0 );
-        
+
         // Create a sample test page and try to save it
         String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
         String text = "This is a test!";
@@ -250,15 +255,17 @@ public class ApprovalWorkflowTest extends TestCase
         }
         fail( "Page save should have thrown a FilterException, but didn't." );
     }
-    
+
     /**
-     * Sample "prep task" that sets an attribute in the workflow indicating 
+     * Sample "prep task" that sets an attribute in the workflow indicating
      * that it ran successfully,
      * @author Andrew Jaquith
      */
-    public static class TestPrepTask extends Task {
-        
-        public TestPrepTask( String messageKey ) {
+    public static class TestPrepTask extends Task
+    {
+
+        public TestPrepTask( String messageKey )
+        {
             super( messageKey );
         }
 
@@ -268,9 +275,9 @@ public class ApprovalWorkflowTest extends TestCase
             setOutcome( Outcome.STEP_COMPLETE );
             return Outcome.STEP_COMPLETE;
         }
-        
+
     }
-    
+
     /**
      * Dummy PageFilter that always throws a FilterException during preSave operations.
      * @author Andrew Jaquith

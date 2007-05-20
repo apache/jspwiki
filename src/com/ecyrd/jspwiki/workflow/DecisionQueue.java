@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
@@ -12,7 +31,7 @@ import com.ecyrd.jspwiki.WikiSession;
 /**
  * Keeps a queue of pending Decisions that need to be acted on by named
  * Principals.
- * 
+ *
  * @author Andrew Jaquith
  * @since 2.5
  */
@@ -21,17 +40,17 @@ public class DecisionQueue
 
     private LinkedList m_queue = new LinkedList();
 
-    private volatile int next;
+    private volatile int m_next;
 
     public DecisionQueue()
     {
-        next = 1000;
+        m_next = 1000;
     }
 
     /**
      * Adds a Decision to the DecisionQueue; also sets the Decision's unique
      * identifier.
-     * 
+     *
      * @param decision
      *            the Decision to add
      */
@@ -45,7 +64,7 @@ public class DecisionQueue
      * Protected method that returns all pending Decisions in the queue, in
      * order of submission. If no Decisions are pending, this method returns a
      * zero-length array.
-     * 
+     *
      * @return the pending decisions TODO: explore whether this method could be
      *         made protected
      */
@@ -69,7 +88,7 @@ public class DecisionQueue
      * WikiSession's Principals and selecting those Decisions whose
      * {@link Decision#getActor()} value match. If the wiki session is not
      * authenticated, this method returns an empty Collection.
-     * 
+     *
      * @param session
      *            the wiki session
      * @return the collection of Decisions, which may be empty
@@ -111,7 +130,7 @@ public class DecisionQueue
      * {@link Decision#decide(Outcome)}. If the decision completes
      * successfully, this method also removes the completed decision from the
      * queue.
-     * 
+     *
      * @param decision
      * @param outcome
      * @throws WikiException
@@ -131,7 +150,7 @@ public class DecisionQueue
     /**
      * Reassigns the owner of the Decision to a new owner. Under the covers,
      * this method calls {@link Decision#reassign(Principal)}.
-     * 
+     *
      * @param decision
      *            the Decision to reassign
      * @param owner
@@ -153,13 +172,13 @@ public class DecisionQueue
     /**
      * Returns the next available unique identifier, which is subsequently
      * incremented.
-     * 
+     *
      * @return the id
      */
     private synchronized int nextId()
     {
-        int current = next;
-        next++;
+        int current = m_next;
+        m_next++;
         return current;
     }
 

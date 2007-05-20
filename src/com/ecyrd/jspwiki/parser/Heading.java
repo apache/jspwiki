@@ -1,4 +1,4 @@
-/* 
+/*
   JSPWiki - a JSP-based WikiWiki clone.
 
   Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -22,7 +22,7 @@ package com.ecyrd.jspwiki.parser;
 /**
  *  This class is used to store the headings in a manner which
  *  allow the building of a Table Of Contents.
- *  
+ *
  *  @since 2.4
  *  @author Janne Jalkanen
  */

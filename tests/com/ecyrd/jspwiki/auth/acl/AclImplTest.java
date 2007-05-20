@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.acl;
 
 import java.security.Principal;
@@ -27,13 +46,13 @@ public class AclImplTest extends TestCase
     private AclImpl      m_acl;
 
     private AclImpl      m_aclGroup;
-    
+
     private Map          m_groups;
-    
+
     private GroupManager m_groupMgr;
-    
+
     private WikiSession  m_session;
-    
+
     public AclImplTest( String s )
     {
         super( s );
@@ -52,36 +71,36 @@ public class AclImplTest extends TestCase
         WikiEngine engine  = new TestEngine( props );
         m_groupMgr = engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( engine );
-        
+
         m_acl = new AclImpl();
         m_aclGroup = new AclImpl();
         m_groups = new HashMap();
-        Principal u_alice = new WikiPrincipal( "Alice" );
-        Principal u_bob = new WikiPrincipal( "Bob" );
-        Principal u_charlie = new WikiPrincipal( "Charlie" );
-        Principal u_dave = new WikiPrincipal( "Dave" );
+        Principal uAlice = new WikiPrincipal( "Alice" );
+        Principal uBob = new WikiPrincipal( "Bob" );
+        Principal uCharlie = new WikiPrincipal( "Charlie" );
+        Principal uDave = new WikiPrincipal( "Dave" );
 
         //  Alice can view
         AclEntry ae = new AclEntryImpl();
         ae.addPermission( PagePermission.VIEW );
-        ae.setPrincipal( u_alice );
+        ae.setPrincipal( uAlice );
 
         //  Charlie can view
         AclEntry ae2 = new AclEntryImpl();
         ae2.addPermission( PagePermission.VIEW );
-        ae2.setPrincipal( u_charlie );
+        ae2.setPrincipal( uCharlie );
 
         //  Bob can view and edit (and by implication, comment)
         AclEntry ae3 = new AclEntryImpl();
         ae3.addPermission( PagePermission.VIEW );
         ae3.addPermission( PagePermission.EDIT );
-        ae3.setPrincipal( u_bob );
+        ae3.setPrincipal( uBob );
 
         // Dave can view and comment
         AclEntry ae4 = new AclEntryImpl();
         ae4.addPermission( PagePermission.VIEW );
         ae4.addPermission( PagePermission.COMMENT );
-        ae4.setPrincipal( u_dave );
+        ae4.setPrincipal( uDave );
 
         // Create ACL with Alice, Bob, Charlie, Dave
         m_acl.addEntry( ae );
@@ -92,8 +111,8 @@ public class AclImplTest extends TestCase
         // Foo group includes Alice and Bob
         Group foo = m_groupMgr.parseGroup( "FooGroup", "", true );
         m_groupMgr.setGroup( m_session, foo );
-        foo.add( u_alice );
-        foo.add( u_bob );
+        foo.add( uAlice );
+        foo.add( uBob );
         AclEntry ag1 = new AclEntryImpl();
         ag1.setPrincipal( foo.getPrincipal() );
         ag1.addPermission( PagePermission.EDIT );
@@ -103,8 +122,8 @@ public class AclImplTest extends TestCase
         // Bar group includes Bob and Charlie
         Group bar = m_groupMgr.parseGroup( "BarGroup", "", true );
         m_groupMgr.setGroup( m_session, bar );
-        bar.add( u_bob );
-        bar.add( u_charlie );
+        bar.add( uBob );
+        bar.add( uCharlie );
         AclEntry ag2 = new AclEntryImpl();
         ag2.setPrincipal( bar.getPrincipal() );
         ag2.addPermission( PagePermission.VIEW );
@@ -134,7 +153,7 @@ public class AclImplTest extends TestCase
     {
         for( int i = 0; i < array.length; i++ )
         {
-            if ( array[i] instanceof GroupPrincipal ) 
+            if ( array[i] instanceof GroupPrincipal )
             {
                 String groupName = ((GroupPrincipal)array[i]).getName();
                 Group group = (Group)m_groups.get( groupName );

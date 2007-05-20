@@ -45,14 +45,14 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
  *  @author Arent-Jan Banck for Informatica
  *  @since 2.2.21.
  */
-public class BasicSearchProvider implements SearchProvider 
+public class BasicSearchProvider implements SearchProvider
 {
     private static final Logger log = Logger.getLogger(BasicSearchProvider.class);
 
     private WikiEngine m_engine;
 
     public void initialize(WikiEngine engine, Properties props)
-            throws NoRequiredPropertyException, IOException 
+            throws NoRequiredPropertyException, IOException
     {
         m_engine = engine;
     }
@@ -112,15 +112,15 @@ public class BasicSearchProvider implements SearchProvider
         if(m_engine.getAttachmentManager().hasAttachments(page))
         {
             Collection attachments;
-			try 
+            try
             {
-				attachments = m_engine.getAttachmentManager().listAttachments(page);
-			} 
-            catch (ProviderException e) 
+                attachments = m_engine.getAttachmentManager().listAttachments(page);
+            }
+            catch (ProviderException e)
             {
-				log.error("Unable to get attachments for page", e);
-				return "";
-			}
+                log.error("Unable to get attachments for page", e);
+                return "";
+            }
 
             StringBuffer attachmentNames = new StringBuffer();
             for( Iterator it = attachments.iterator(); it.hasNext(); )
@@ -132,10 +132,10 @@ public class BasicSearchProvider implements SearchProvider
             }
             return attachmentNames.toString();
         }
-        
+
         return "";
     }
-    
+
     private Collection findPages( QueryItem[] query )
     {
         TreeSet res = new TreeSet( new SearchResultComparator() );
@@ -144,12 +144,12 @@ public class BasicSearchProvider implements SearchProvider
         Collection allPages = null;
         try
         {
-        	allPages = m_engine.getPageManager().getAllPages();
+            allPages = m_engine.getPageManager().getAllPages();
         }
         catch( ProviderException pe )
         {
             log.error( "Unable to retrieve page list", pe );
-            return( null );
+            return null;
         }
 
         Iterator it = allPages.iterator();
@@ -181,10 +181,10 @@ public class BasicSearchProvider implements SearchProvider
             }
         }
 
-        return( res );
+        return res;
     }
 
-    public Collection findPages(String query) 
+    public Collection findPages(String query)
     {
         return findPages(parseQuery(query));
     }

@@ -11,26 +11,27 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
 public class SimpleDecisionTest extends TestCase
 {
 
-    Workflow w;
-    Decision d;
-    
+    Workflow m_workflow;
+    Decision m_decision;
+
     protected void setUp() throws Exception
     {
         super.setUp();
-        w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
-        d = new SimpleDecision(w, "decision.key", new WikiPrincipal("Actor1"));
+        m_workflow = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
+        m_decision = new SimpleDecision(m_workflow, "decision.key", new WikiPrincipal("Actor1"));
     }
-    
-    public void testAddFacts() {
+
+    public void testAddFacts()
+    {
         Fact f1 = new Fact("fact1",new Integer(1));
         Fact f2 = new Fact("fact2","A factual String");
         Fact f3 = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
-        d.addFact(f1);
-        d.addFact(f2);
-        d.addFact(f3);
+        m_decision.addFact(f1);
+        m_decision.addFact(f2);
+        m_decision.addFact(f3);
 
         // The facts should be available, and returned in order
-        List facts = d.getFacts();
+        List facts = m_decision.getFacts();
         assertEquals(f1, facts.get(0));
         assertEquals(f2, facts.get(1));
         assertEquals(f3, facts.get(2));
@@ -38,50 +39,50 @@ public class SimpleDecisionTest extends TestCase
 
     public void testGetActor()
     {
-       assertEquals(new WikiPrincipal("Actor1"), d.getActor());
+       assertEquals(new WikiPrincipal("Actor1"), m_decision.getActor());
     }
 
     public void testGetDefaultOutcome()
     {
-        assertEquals(Outcome.DECISION_APPROVE, d.getDefaultOutcome());
+        assertEquals(Outcome.DECISION_APPROVE, m_decision.getDefaultOutcome());
     }
 
     public void testIsReassignable()
     {
-        assertTrue(d.isReassignable());
+        assertTrue(m_decision.isReassignable());
     }
 
     public void testReassign()
     {
-        d.reassign(new WikiPrincipal("Actor2"));
-        assertEquals(new WikiPrincipal("Actor2"), d.getActor());
+        m_decision.reassign(new WikiPrincipal("Actor2"));
+        assertEquals(new WikiPrincipal("Actor2"), m_decision.getActor());
     }
 
     public void testSuccessors()
     {
         // If the decision is approved, branch to another decision (d2)
-        Step d2 = new SimpleDecision(w, "decision2.key", new WikiPrincipal("Actor1"));
-        d.addSuccessor(Outcome.DECISION_APPROVE, d2);
-        
+        Step d2 = new SimpleDecision(m_workflow, "decision2.key", new WikiPrincipal("Actor1"));
+        m_decision.addSuccessor(Outcome.DECISION_APPROVE, d2);
+
         // If the decision is denied, branch to another decision (d3)
-        Step d3 = new SimpleDecision(w, "decision3.key", new WikiPrincipal("Actor1"));
-        d.addSuccessor(Outcome.DECISION_DENY, d3);
-        
-        assertEquals(d2, d.getSuccessor(Outcome.DECISION_APPROVE));
-        assertEquals(d3, d.getSuccessor(Outcome.DECISION_DENY));
-        
+        Step d3 = new SimpleDecision(m_workflow, "decision3.key", new WikiPrincipal("Actor1"));
+        m_decision.addSuccessor(Outcome.DECISION_DENY, d3);
+
+        assertEquals(d2, m_decision.getSuccessor(Outcome.DECISION_APPROVE));
+        assertEquals(d3, m_decision.getSuccessor(Outcome.DECISION_DENY));
+
         // The other Outcomes should return null when looked up
-        assertNull(d.getSuccessor(Outcome.DECISION_HOLD));
-        assertNull(d.getSuccessor(Outcome.DECISION_REASSIGN));
-        assertNull(d.getSuccessor(Outcome.STEP_ABORT));
+        assertNull(m_decision.getSuccessor(Outcome.DECISION_HOLD));
+        assertNull(m_decision.getSuccessor(Outcome.DECISION_REASSIGN));
+        assertNull(m_decision.getSuccessor(Outcome.STEP_ABORT));
     }
 
     public void testErrors()
     {
-        d.addError("Error deciding something.");
-        d.addError("Error deciding something else.");
-        
-        List errors = d.getErrors();
+        m_decision.addError("Error deciding something.");
+        m_decision.addError("Error deciding something else.");
+
+        List errors = m_decision.getErrors();
         assertEquals(2, errors.size());
         assertEquals("Error deciding something.", errors.get(0));
         assertEquals("Error deciding something else.", errors.get(1));
@@ -89,7 +90,7 @@ public class SimpleDecisionTest extends TestCase
 
     public void testAvailableOutcomes()
     {
-        Collection outcomes = d.getAvailableOutcomes();
+        Collection outcomes = m_decision.getAvailableOutcomes();
         assertTrue(outcomes.contains(Outcome.DECISION_APPROVE));
         assertTrue(outcomes.contains(Outcome.DECISION_DENY));
         assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
@@ -100,60 +101,62 @@ public class SimpleDecisionTest extends TestCase
 
     public void testGetEndTime() throws WikiException
     {
-        assertEquals(Workflow.TIME_NOT_SET, d.getEndTime());
-        d.start();
-        d.decide(Outcome.DECISION_APPROVE);
-        assertTrue((Workflow.TIME_NOT_SET  !=  d.getEndTime()));
+        assertEquals(Workflow.TIME_NOT_SET, m_decision.getEndTime());
+        m_decision.start();
+        m_decision.decide(Outcome.DECISION_APPROVE);
+        assertTrue((Workflow.TIME_NOT_SET  !=  m_decision.getEndTime()));
     }
 
     public void testGetMessageKey()
     {
-        assertEquals("decision.key",d.getMessageKey());
+        assertEquals("decision.key",m_decision.getMessageKey());
     }
 
     public void testGetOutcome() throws WikiException
     {
-        assertEquals(Outcome.STEP_CONTINUE,d.getOutcome());
-        d.start();
-        d.decide(Outcome.DECISION_APPROVE);
-        assertEquals(Outcome.DECISION_APPROVE, d.getOutcome());
+        assertEquals(Outcome.STEP_CONTINUE,m_decision.getOutcome());
+        m_decision.start();
+        m_decision.decide(Outcome.DECISION_APPROVE);
+        assertEquals(Outcome.DECISION_APPROVE, m_decision.getOutcome());
     }
 
     public void testGetStartTime() throws WikiException
     {
-        assertEquals(Workflow.TIME_NOT_SET, d.getStartTime());
-        d.start();
-        d.decide(Outcome.DECISION_APPROVE);
-        assertTrue((Workflow.TIME_NOT_SET  !=  d.getStartTime()));
+        assertEquals(Workflow.TIME_NOT_SET, m_decision.getStartTime());
+        m_decision.start();
+        m_decision.decide(Outcome.DECISION_APPROVE);
+        assertTrue((Workflow.TIME_NOT_SET  !=  m_decision.getStartTime()));
     }
 
     public void testGetWorkflow()
     {
-        assertEquals(w, d.getWorkflow());
+        assertEquals(m_workflow, m_decision.getWorkflow());
     }
 
     public void testIsCompleted() throws WikiException
     {
-        assertFalse(d.isCompleted());
-        d.start();
-        d.decide(Outcome.DECISION_APPROVE);
-        assertTrue(d.isCompleted());
+        assertFalse(m_decision.isCompleted());
+        m_decision.start();
+        m_decision.decide(Outcome.DECISION_APPROVE);
+        assertTrue(m_decision.isCompleted());
     }
 
     public void testIsStarted() throws WikiException
     {
-        assertFalse(d.isStarted());
-        d.start();
-        assertTrue(d.isStarted());
+        assertFalse(m_decision.isStarted());
+        m_decision.start();
+        assertTrue(m_decision.isStarted());
     }
-    
+
     public void testStartTwice() throws WikiException
     {
-        d.start();
-        try {
-            d.start();
+        m_decision.start();
+        try
+        {
+            m_decision.start();
         }
-        catch (IllegalStateException e) {
+        catch (IllegalStateException e)
+        {
             // Swallow
             return;
         }

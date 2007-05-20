@@ -22,13 +22,13 @@ public class GroupManagerTest extends TestCase
     private TestEngine        m_engine;
 
     private GroupManager      m_groupMgr;
-    
+
     private SecurityEventTrap m_trap = new SecurityEventTrap();
 
     private WikiSession       m_session;
-    
+
     private String            m_wiki;
-    
+
     public GroupManagerTest( String s )
     {
         super( s );
@@ -43,9 +43,10 @@ public class GroupManagerTest extends TestCase
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
         m_wiki = m_engine.getApplicationName();
-        
+
         // Flush any pre-existing groups (left over from previous failures, perhaps)
-        try {
+        try
+        {
             m_groupMgr.removeGroup( "Test" );
             m_groupMgr.removeGroup( "Test2" );
             m_groupMgr.removeGroup( "Test3" );
@@ -54,7 +55,7 @@ public class GroupManagerTest extends TestCase
         {
             // It's not a problem if we can't find the principals...
         }
-        
+
         m_groupMgr.addWikiEventListener( m_trap );
         m_trap.clearEvents();
 
@@ -85,7 +86,7 @@ public class GroupManagerTest extends TestCase
         Group group = m_groupMgr.parseGroup( "Group1", members, true );
         assertEquals( 1, group.members().length );
         assertTrue ( group.isMember( new WikiPrincipal( "Biff" ) ) );
-        
+
         members = "Biff \n SteveAustin \n FredFlintstone";
         group = m_groupMgr.parseGroup( "Group2", members, true );
         assertEquals( 3, group.members().length );
@@ -93,7 +94,7 @@ public class GroupManagerTest extends TestCase
         assertTrue ( group.isMember( new WikiPrincipal( "SteveAustin" ) ) );
         assertTrue ( group.isMember( new WikiPrincipal( "FredFlintstone" ) ) );
     }
-    
+
     public void testGetRoles()
     {
         Principal[] roles = m_groupMgr.getRoles();
@@ -105,14 +106,14 @@ public class GroupManagerTest extends TestCase
     public void testGroupMembership() throws Exception
     {
         WikiSession s;
-        
+
         // Anonymous; should belong to NO groups
         s = WikiSessionTest.anonymousSession( m_engine );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
-        
+
         // Alice is asserted; should belong to NO groups
         s = WikiSessionTest.assertedSession( m_engine, Users.ALICE );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
@@ -126,7 +127,7 @@ public class GroupManagerTest extends TestCase
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
-        
+
         // Bob is authenticated; should belong to Test & Test2
         s = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
         assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
@@ -147,7 +148,7 @@ public class GroupManagerTest extends TestCase
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
         assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
-        
+
         // Nobody loves Biff!
         s = WikiSessionTest.authenticatedSession( m_engine, Users.BIFF, Users.BIFF_PASS );
         assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
@@ -159,7 +160,8 @@ public class GroupManagerTest extends TestCase
     public void testGroupAddEvents() throws Exception
     {
         // Flush any pre-existing groups (left over from previous failures, perhaps)
-        try {
+        try
+        {
             m_groupMgr.removeGroup( "Events" );
         }
         catch ( NoSuchPrincipalException e )
@@ -175,7 +177,7 @@ public class GroupManagerTest extends TestCase
         group.add( new WikiPrincipal( "Alice" ) );
         group.add( new WikiPrincipal( "Bob" ) );
         group.add( new WikiPrincipal( "Charlie" ) );
-        
+
         // We should see a GROUP_ADD event
         WikiSecurityEvent[] events = m_trap.events();
         assertEquals( 1, events.length );
@@ -183,16 +185,16 @@ public class GroupManagerTest extends TestCase
         assertEquals( m_groupMgr, event.getSource() );
         assertEquals( WikiSecurityEvent.GROUP_ADD, event.getType() );
         assertEquals( group, event.getTarget() );
-        
+
         // Clean up
         m_groupMgr.removeGroup( "Events" );
     }
-    
+
     public static Test suite()
     {
         TestSuite suite = new TestSuite("Group manager tests");
         suite.addTestSuite( GroupManagerTest.class );
         return suite;
     }
-    
+
 }

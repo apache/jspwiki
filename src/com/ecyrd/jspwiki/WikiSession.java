@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 The JSPWiki Development Group
@@ -59,12 +59,12 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  * and the user principal is set to <code>null</code>.</p>
  * <p>The WikiSession class allows callers to:</p>
  * <ul>
- *   <li>Obtain the authentication status of the user via 
+ *   <li>Obtain the authentication status of the user via
  *     {@link #isAnonymous()} and {@link #isAuthenticated()}</li>
  *   <li>Query the session for Principals representing the
  *     user's identity via {@link #getLoginPrincipal()},
  *     {@link #getUserPrincipal()} and {@link #getPrincipals()}</li>
- *   <li>Store, retrieve and clear UI messages via 
+ *   <li>Store, retrieve and clear UI messages via
  *     {@link #addMessage(String)}, {@link #getMessages(String)}
  *     and {@link #clearMessages(String)}</li>
  * </ul>
@@ -73,16 +73,16 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
  * when users authenticate or log out.</p>
  * <p>WikiSession implements the {@link com.ecyrd.jspwiki.event.WikiEventListener}
  * interface and listens for group add/change/delete events fired by
- * event sources the WikiSession is registered with. Normally, 
+ * event sources the WikiSession is registered with. Normally,
  * {@link com.ecyrd.jspwiki.auth.AuthenticationManager} registers each WikiSession
  * with the {@link com.ecyrd.jspwiki.auth.authorize.GroupManager}
- * so it can catch group events. Thus, when a user is added to a 
+ * so it can catch group events. Thus, when a user is added to a
  * {@link com.ecyrd.jspwiki.auth.authorize.Group}, a corresponding
  * {@link com.ecyrd.jspwiki.auth.GroupPrincipal} is injected into
- * the Subject's Principal set. Likewise, when the user is removed from 
+ * the Subject's Principal set. Likewise, when the user is removed from
  * the Group or the Group is deleted, the GroupPrincipal is removed
  * from the Subject. The effect that this strategy produces is extremely
- * beneficial: when someone adds a user to a wiki group, that user 
+ * beneficial: when someone adds a user to a wiki group, that user
  * <em>immediately</em> gains the privileges associated with that
  * group; he or she does not need to re-authenticate.
  * </p>
@@ -106,7 +106,7 @@ public final class WikiSession implements WikiEventListener
 
     /** An authenticated user's session status. */
     public static final String  AUTHENTICATED         = "authenticated";
-    
+
     private static final int    ONE                   = 48;
 
     private static final int    NINE                  = 57;
@@ -114,32 +114,32 @@ public final class WikiSession implements WikiEventListener
     private static final int    DOT                   = 46;
 
     private static final Logger log                   = Logger.getLogger( WikiSession.class );
-    
+
     private static final String ALL                   = "*";
-    
+
     private static ThreadLocal  c_guestSession        = new ThreadLocal();
-    
+
     private final Subject       m_subject             = new Subject();
 
     private final Map           m_messages            = new HashMap();
 
     private String              m_cachedCookieIdentity= null;
-    
+
     private String              m_cachedRemoteUser    = null;
 
     private Principal           m_cachedUserPrincipal = null;
 
     /** The WikiEngine that created this session. */
     private WikiEngine          m_engine              = null;
-    
+
     private boolean             m_isNew               = true;
-    
+
     private String              m_status              = ANONYMOUS;
-    
+
     private Principal           m_userPrincipal       = WikiPrincipal.GUEST;
-    
+
     private Principal           m_loginPrincipal      = WikiPrincipal.GUEST;
-    
+
     /**
      * Returns <code>true</code> if one of this WikiSession's user Principals
      * can be shown to belong to a particular wiki group. If the user is
@@ -159,7 +159,7 @@ public final class WikiSession implements WikiEventListener
         }
         return false;
     }
-    
+
     /**
      * Returns <code>true</code> if the wiki session is newly initialized.
      */
@@ -195,7 +195,7 @@ public final class WikiSession implements WikiEventListener
     {
         return ( m_subject.getPrincipals().contains( Role.ASSERTED ) );
     }
-    
+
     /**
      * Returns the authentication status of the user's session. The user is
      * considered authenticated if the Subject contains the Principal
@@ -207,12 +207,12 @@ public final class WikiSession implements WikiEventListener
     public final boolean isAuthenticated()
     {
         // If Role.AUTHENTICATED is in principals set, always return true.
-        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) ) 
+        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) )
         {
             return true;
         }
-        
-        // With non-JSPWiki LoginModules, the role may not be there, so 
+
+        // With non-JSPWiki LoginModules, the role may not be there, so
         // we need to add it if the user really is authenticated.
         if ( !isAnonymous() && !isAsserted() )
         {
@@ -220,7 +220,7 @@ public final class WikiSession implements WikiEventListener
             m_subject.getPrincipals().add( Role.AUTHENTICATED );
             return true;
         }
-        
+
         return false;
     }
 
@@ -228,14 +228,14 @@ public final class WikiSession implements WikiEventListener
      * <p>Determines whether the current session is anonymous. This will be
      * true if any of these conditions are true:</p>
      * <ul>
-     *   <li>The session's Principal set contains 
+     *   <li>The session's Principal set contains
      *       {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}</li>
-     *   <li>The session's Principal set contains 
+     *   <li>The session's Principal set contains
      *       {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}</li>
      *   <li>The Principal returned by {@link #getUserPrincipal()} evaluates
-     *       to an IP address.</li> 
+     *       to an IP address.</li>
      * </ul>
-     * <p>The criteria above are listed in the order in which they are 
+     * <p>The criteria above are listed in the order in which they are
      * evaluated.</p>
      * @return whether the current user's identity is equivalent to an IP
      * address
@@ -249,8 +249,8 @@ public final class WikiSession implements WikiEventListener
     }
 
     /**
-     * Creates and returns a new login context for this wiki session. 
-     * This method is called by 
+     * Creates and returns a new login context for this wiki session.
+     * This method is called by
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager}.
      * @param application the name of the application
      * @param handler the callback handler
@@ -259,7 +259,7 @@ public final class WikiSession implements WikiEventListener
     {
         return new LoginContext( application, m_subject, handler );
     }
-    
+
     /**
      * <p> Returns the Principal used to log in to an authenticated session. The
      * login principal is determined by examining the Subject's Principal set
@@ -289,7 +289,7 @@ public final class WikiSession implements WikiEventListener
      * <code>FULL_NAME</code> is the primary Principal.</li>
      *   <li>For all other cases, the first Principal in the Subject's principal
      *       collection that that isn't of type Role or GroupPrincipal is the primary.</li>
-     * </ol> 
+     * </ol>
      * If no primary user Principal is found, this method returns
      * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
      * @return the primary user Principal
@@ -302,7 +302,7 @@ public final class WikiSession implements WikiEventListener
         }
         return m_userPrincipal;
     }
-    
+
     /**
      * Adds a message to the generic list of messages associated with the
      * session. These messages retain their order of insertion and remain until
@@ -313,13 +313,13 @@ public final class WikiSession implements WikiEventListener
     {
         addMessage( ALL, message );
     }
-    
-    
+
+
     /**
      * Adds a message to the specific set of messages associated with the
      * session. These messages retain their order of insertion and remain until
      * the {@link #clearMessages()} method is called.
-     * @param topic the topic to associate the message to; 
+     * @param topic the topic to associate the message to;
      * @param message the message to add
      */
     public final void addMessage(String topic, String message)
@@ -333,14 +333,14 @@ public final class WikiSession implements WikiEventListener
             message = "";
         }
         Set messages = (Set)m_messages.get( topic );
-        if (messages == null ) 
+        if (messages == null )
         {
             messages = new LinkedHashSet();
             m_messages.put( topic, messages );
         }
         messages.add( message );
     }
-    
+
     /**
      * Clears all messages associated with this session.
      */
@@ -348,7 +348,7 @@ public final class WikiSession implements WikiEventListener
     {
         m_messages.clear();
     }
-    
+
     /**
      * Clears all messages associated with a session topic.
      * @param topic the topic whose messages should be cleared.
@@ -361,14 +361,14 @@ public final class WikiSession implements WikiEventListener
             m_messages.clear();
         }
     }
-    
+
     /**
      * Returns all generic messages associated with this session.
      * The messages stored with the session persist throughout the
      * session unless they have been reset with {@link #clearMessages()}.
      * @return the current messsages.
      */
-    public final String[] getMessages() 
+    public final String[] getMessages()
     {
         return getMessages( ALL );
     }
@@ -379,7 +379,7 @@ public final class WikiSession implements WikiEventListener
      * session unless they have been reset with {@link #clearMessages(String)}.
      * @return the current messsages.
      */
-    public final String[] getMessages( String topic ) 
+    public final String[] getMessages( String topic )
     {
         Set messages = (Set)m_messages.get( topic );
         if ( messages == null || messages.size() == 0 )
@@ -388,7 +388,7 @@ public final class WikiSession implements WikiEventListener
         }
         return (String[])messages.toArray( new String[messages.size()] );
     }
-    
+
     /**
      * Returns all user Principals associated with this session. User principals
      * are those in the Subject's principal collection that aren't of type Role or
@@ -399,17 +399,17 @@ public final class WikiSession implements WikiEventListener
     public final Principal[] getPrincipals()
     {
         ArrayList principals = new ArrayList();
+
+        // Take the first non Role as the main Principal
+        for( Iterator it = m_subject.getPrincipals().iterator(); it.hasNext(); )
         {
-            // Take the first non Role as the main Principal
-            for( Iterator it = m_subject.getPrincipals().iterator(); it.hasNext(); )
+            Principal principal = (Principal) it.next();
+            if ( AuthenticationManager.isUserPrincipal( principal ) )
             {
-                Principal principal = (Principal) it.next();
-                if ( AuthenticationManager.isUserPrincipal( principal ) )
-                {
-                    principals.add( principal );
-                }
+                principals.add( principal );
             }
         }
+
         return (Principal[]) principals.toArray( new Principal[principals.size()] );
     }
 
@@ -429,22 +429,22 @@ public final class WikiSession implements WikiEventListener
     public final Principal[] getRoles()
     {
         Set roles = new HashSet();
-        
+
         // Add all of the Roles possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( Role.class ) );
-        
+
         // Add all of the GroupPrincipals possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( GroupPrincipal.class ) );
-        
+
         // Return a defensive copy
         Principal[] roleArray = ( Principal[] )roles.toArray( new Principal[roles.size()] );
         Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
         return roleArray;
     }
-    
+
     /**
      * Removes the wiki session associated with the user's HTTP request
-     * from the cache of wiki sessions, typically as part of a logout 
+     * from the cache of wiki sessions, typically as part of a logout
      * process.
      * @param engine the wiki engine
      * @param request the users's HTTP request
@@ -453,12 +453,12 @@ public final class WikiSession implements WikiEventListener
     {
         if ( engine == null || request == null )
         {
-            throw new IllegalArgumentException( "Request or engine cannot be null." ); 
+            throw new IllegalArgumentException( "Request or engine cannot be null." );
         }
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         monitor.remove( request.getSession() );
     }
-    
+
     /**
      * Returns <code>true</code> if the WikiSession's Subject
      * possess a supplied Principal. This method eliminates the need
@@ -469,7 +469,7 @@ public final class WikiSession implements WikiEventListener
     public final boolean hasPrincipal( Principal principal )
     {
         return m_subject.getPrincipals().contains( principal );
-        
+
     }
 
     /**
@@ -491,17 +491,17 @@ public final class WikiSession implements WikiEventListener
                     {
                         Group group = (Group)e.getTarget();
                         if ( isInGroup( group ) )
-                        {   
-                            m_subject.getPrincipals().add( group.getPrincipal() ); 
+                        {
+                            m_subject.getPrincipals().add( group.getPrincipal() );
                         }
                         break;
                     }
-                    case WikiSecurityEvent.GROUP_REMOVE:  
+                    case WikiSecurityEvent.GROUP_REMOVE:
                     {
                         Group group = (Group)e.getTarget();
                         if ( m_subject.getPrincipals().contains( group.getPrincipal() ) )
-                        {   
-                            m_subject.getPrincipals().remove( group.getPrincipal() ); 
+                        {
+                            m_subject.getPrincipals().remove( group.getPrincipal() );
                         }
                         break;
                     }
@@ -564,9 +564,9 @@ public final class WikiSession implements WikiEventListener
                                 throw new IllegalStateException( "User profile FullName cannot be null." );
                             }
                             m_userPrincipal = new WikiPrincipal( newProfile.getFullname() );
-                            
+
                             // Refresh principals for the user profile
-                            injectUserProfilePrincipals();  
+                            injectUserProfilePrincipals();
                             updatePrincipals();
                         }
                         break;
@@ -575,9 +575,9 @@ public final class WikiSession implements WikiEventListener
             }
         }
     }
-    
-    /** 
-     * Invalidates the WikiSession and resets its Subject's 
+
+    /**
+     * Invalidates the WikiSession and resets its Subject's
      * Principals to the equivalent of a "guest session".
      */
     public final void invalidate()
@@ -590,13 +590,13 @@ public final class WikiSession implements WikiEventListener
         m_cachedRemoteUser = null;
         m_cachedUserPrincipal = null;
     }
-    
+
     /**
      * Returns whether the HTTP servlet container's authentication status has
      * changed. Used to detect whether the container has logged in a user since
      * the last call to this function. This method is stateful. After calling
      * this function, the cached values are set to those in the current request.
-     * If the servlet request is <code>null</code>, this method always returns 
+     * If the servlet request is <code>null</code>, this method always returns
      * <code>false</code>. Note that once a user authenticates, the container
      * status for the session will <em>never</em> change again, unless the
      * session is invalidated by timeout or logout.
@@ -610,12 +610,12 @@ public final class WikiSession implements WikiEventListener
         {
             return false;
         }
-        
+
         String remoteUser = request.getRemoteUser();
         Principal userPrincipal = request.getUserPrincipal();
         String cookieIdentity = CookieAssertionLoginModule.getUserCookie( request );
         boolean changed = false;
-        
+
         // If request contains non-null remote user, update cached value if changed
         if ( remoteUser != null && !remoteUser.equals( m_cachedRemoteUser) )
         {
@@ -623,7 +623,7 @@ public final class WikiSession implements WikiEventListener
             log.info( "Remote user changed to " + remoteUser );
             changed = true;
         }
-        
+
         // If request contains non-null user principal, updated cached value if changed
         if ( userPrincipal != null && !userPrincipal.equals( m_cachedUserPrincipal ) )
         {
@@ -631,7 +631,7 @@ public final class WikiSession implements WikiEventListener
             log.info( "User principal changed to " + userPrincipal.getName() );
             changed = true;
         }
-        
+
         // If cookie identity changed (to a different value or back to null), update cache
         if ( ( cookieIdentity != null && !cookieIdentity.equals( m_cachedCookieIdentity ) )
                || ( cookieIdentity == null && m_cachedCookieIdentity != null ) )
@@ -645,12 +645,12 @@ public final class WikiSession implements WikiEventListener
 
     /**
      * Injects GroupPrincipal and Role objects into the user's Principal set
-     * based on the groups and roles the user belongs to. 
-     * For Roles, the algorithm first calls the 
+     * based on the groups and roles the user belongs to.
+     * For Roles, the algorithm first calls the
      * {@link Authorizer#getRoles()} to obtain the array of
      * Principals the authorizer knows about. Then, the method
      * {@link Authorizer#isUserInRole(WikiSession, Principal)} is
-     * called for each Principal. If the user possesses the role, 
+     * called for each Principal. If the user possesses the role,
      * an equivalent role Principal is injected into the user's
      * principal set.
      * Reloads user Principals into the suppplied WikiSession's Subject.
@@ -673,9 +673,9 @@ public final class WikiSession implements WikiEventListener
                 m_subject.getPrincipals().add( groups[i] );
             }
         }
-        
+
         // Get the authorizer's known roles, then test for each
-        try 
+        try
         {
             Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
             Principal[] roles = authorizer.getRoles();
@@ -697,7 +697,7 @@ public final class WikiSession implements WikiEventListener
             log.error( "Could not refresh role principals: " + e.getMessage() );
         }
     }
-   
+
     /**
      * Adds Principal objects to the Subject that correspond to the
      * logged-in user's profile attributes for the wiki name, full name
@@ -725,14 +725,14 @@ public final class WikiSession implements WikiEventListener
             log.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
             return;
         }
-      
+
         // Look up the user and go get the new Principals
         UserDatabase database = m_engine.getUserManager().getUserDatabase();
         if ( database == null )
         {
             throw new IllegalStateException( "User database cannot be null." );
         }
-        try 
+        try
         {
             UserProfile profile = database.find( searchId );
             Principal[] principals = database.getPrincipals( profile.getLoginName() );
@@ -741,7 +741,7 @@ public final class WikiSession implements WikiEventListener
                 Principal principal = principals[i];
                 newPrincipals.add( principal );
             }
-        
+
             // Replace the Subject's old Principals with the new ones
             oldPrincipals.clear();
             oldPrincipals.addAll( newPrincipals );
@@ -753,10 +753,10 @@ public final class WikiSession implements WikiEventListener
             log.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
         }
     }
-    
+
     /**
-     * Updates the internally cached principals returned by {@link #getUserPrincipal()} and 
-     * {@link #getLoginPrincipal()}. This method is called when the WikiSession receives 
+     * Updates the internally cached principals returned by {@link #getUserPrincipal()} and
+     * {@link #getLoginPrincipal()}. This method is called when the WikiSession receives
      * the {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#LOGIN_INITIATED} message.
      */
     protected final void updatePrincipals()
@@ -795,7 +795,7 @@ public final class WikiSession implements WikiEventListener
                     {
                         fullnamePrincipal = currentPrincipal;
                     }
-                    else 
+                    else
                     {
                         otherPrincipal = currentPrincipal;
                     }
@@ -810,7 +810,7 @@ public final class WikiSession implements WikiEventListener
         {
             otherPrincipal = WikiPrincipal.GUEST;
         }
-        
+
         // If no login principal, use wiki name, full name or other principal (in that order)
         if ( m_loginPrincipal == null )
         {
@@ -824,7 +824,7 @@ public final class WikiSession implements WikiEventListener
                 }
             }
         }
-        
+
         // If no user principal, use wiki name, full name or login principal (in that order)
         if ( m_userPrincipal == null )
         {
@@ -839,12 +839,12 @@ public final class WikiSession implements WikiEventListener
             }
         }
     }
-    
+
     /**
      * <p>Returns the status of the wiki session as a text string. Valid values are:</p>
      * <ul>
-     *   <li>{@link #AUTHENTICATED}</li> 
-     *   <li>{@link #ASSERTED}</li> 
+     *   <li>{@link #AUTHENTICATED}</li>
+     *   <li>{@link #ASSERTED}</li>
      *   <li>{@link #ANONYMOUS}</li>
      * </ul>
      * @return the user's session status
@@ -862,13 +862,13 @@ public final class WikiSession implements WikiEventListener
      * WikiSession, although the authentication status is unpredictable until
      * the user attempts to log in. If the servlet request parameter is
      * <code>null</code>, a synthetic {@link #guestSession(WikiEngine)}is returned.</p>
-     * <p>When a session is created, this method attaches a WikiEventListener 
+     * <p>When a session is created, this method attaches a WikiEventListener
      * to the GroupManager so that changes to groups are detected automatically.</p>
      * @param engine the wiki engine
      * @param request the servlet request object
      * @return the existing (or newly created) wiki session
      */
-    public final static WikiSession getWikiSession( WikiEngine engine, HttpServletRequest request )
+    public static final WikiSession getWikiSession( WikiEngine engine, HttpServletRequest request )
     {
         // If request is null, return guest session
         if ( request == null )
@@ -885,16 +885,16 @@ public final class WikiSession implements WikiEventListener
         HttpSession session = request.getSession();
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         WikiSession wikiSession = monitor.find( session );
-        
+
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;
-        
+
         return wikiSession;
     }
 
     /**
      * Static factory method that creates a new "guest" session containing a single
-     * user Principal {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}, 
+     * user Principal {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST},
      * plus the role principals {@link Role#ALL} and
      * {@link Role#ANONYMOUS}. This method also adds the session as a listener
      * for GroupManager, AuthenticationManager and UserManager events.
@@ -906,7 +906,7 @@ public final class WikiSession implements WikiEventListener
         WikiSession session = new WikiSession();
         session.m_engine = engine;
         session.invalidate();
-        
+
         // Add the session as listener for GroupManager, AuthManager, UserManager events
         GroupManager groupMgr = engine.getGroupManager();
         AuthenticationManager authMgr = engine.getAuthenticationManager();
@@ -914,36 +914,36 @@ public final class WikiSession implements WikiEventListener
         groupMgr.addWikiEventListener( session );
         authMgr.addWikiEventListener( session );
         userMgr.addWikiEventListener( session );
-        
+
         return session;
     }
-    
+
     /**
      *  Returns a static guest session, which is available for this
      *  thread only.  This guest session is used internally whenever
      *  there is no HttpServletRequest involved, but the request is
      *  done e.g. when embedding JSPWiki code.
-     *   
+     *
      *  @param engine WikiEngine for this session
      *  @return A static WikiSession which is shared by all in this
      *          same Thread.
      */
     // FIXME: Should really use WeakReferences to clean away unused sessions.
-    
+
     private static WikiSession staticGuestSession( WikiEngine engine )
     {
         WikiSession session = (WikiSession) c_guestSession.get();
-        
+
         if( session == null )
         {
             session = guestSession( engine );
-            
+
             c_guestSession.set( session );
         }
-        
+
         return session;
     }
-    
+
     /**
      * Returns the total number of active wiki sessions for a
      * particular wiki. This method delegates to the wiki's
@@ -956,7 +956,7 @@ public final class WikiSession implements WikiEventListener
         SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.sessions();
     }
-    
+
     /**
      * Returns Principals representing the current users known
      * to a particular wiki. Each Principal will correspond to the
@@ -972,7 +972,7 @@ public final class WikiSession implements WikiEventListener
     }
 
     /**
-     * Wrapper for 
+     * Wrapper for
      * {@link javax.security.auth.Subject#doAsPrivileged(Subject, java.security.PrivilegedExceptionAction, java.security.AccessControlContext)}
      * that executes an action with the privileges posssessed by a
      * WikiSession's Subject. The action executes with a <code>null</code>
@@ -988,7 +988,7 @@ public final class WikiSession implements WikiEventListener
     {
         return Subject.doAsPrivileged( session.m_subject, action, null );
     }
-    
+
     /**
      * Verifies whether a String represents an IPv4 address. The algorithm is
      * extremely efficient and does not allocate any objects.
@@ -1033,5 +1033,5 @@ public final class WikiSession implements WikiEventListener
         }
         return ( currentOctet == 3 );
     }
-    
+
 }
