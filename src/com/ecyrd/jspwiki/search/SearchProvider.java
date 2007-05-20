@@ -44,7 +44,7 @@ public interface SearchProvider extends WikiProvider
      *  Adds a WikiPage for indexing queue.  This is called a queue, since
      *  this method is expected to return pretty quickly, and indexing to
      *  be done in a separate thread.
-     *  
+     *
      *  @param page The WikiPage to be indexed.
      */
     public void reindexPage(WikiPage page);
@@ -53,8 +53,8 @@ public interface SearchProvider extends WikiProvider
      * Search for pages matching a search query
      * @param query query to search for
      * @return collection of pages that match query
-     * @throws ProviderException, if the search provider failed.
-     * @throws IOException, if for some reason the query could not be executed.
+     * @throws ProviderException if the search provider failed.
+     * @throws IOException if for some reason the query could not be executed.
      */
     public Collection findPages(String query) throws ProviderException, IOException;
 }

@@ -38,14 +38,14 @@ public class DefaultAclManager implements AclManager
         PagePermission.UPLOAD_ACTION  + "|" +
         PagePermission.VIEW_ACTION    + ")";
     private static final String ACL_REGEX = "\\[\\{\\s*ALLOW\\s+" + PERM_REGEX + "\\s*(.*?)\\s*\\}\\]";
-    
-    /** 
+
+    /**
      * Identifies ACL strings in wiki text; the first group is the action (view, edit) and
-     * the second is the list of Principals separated by commas. The overall match is 
+     * the second is the list of Principals separated by commas. The overall match is
      * the ACL string from [{ to }].
      * */
     public static final Pattern ACL_PATTERN = Pattern.compile( ACL_REGEX );
-    
+
     /**
      * Initializes the AclManager with a supplied wiki engine and properties.
      * @param engine the wiki engine
@@ -68,7 +68,7 @@ public class DefaultAclManager implements AclManager
      *            creation of a new one.
      * @param ruleLine The rule line, as described above.
      * @return A valid Access Control List. May be empty.
-     * @throws WikiSecurityException, if the ruleLine was faulty somehow.
+     * @throws WikiSecurityException if the ruleLine was faulty somehow.
      * @since 2.1.121
      */
     public Acl parseAcl( WikiPage page, String ruleLine ) throws WikiSecurityException
@@ -161,14 +161,14 @@ public class DefaultAclManager implements AclManager
                 //  Or, try parsing the page
                 //
                 WikiContext ctx = new WikiContext( m_engine, page );
-              
+
                 ctx.setVariable( RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
-                
+
                 m_engine.getHTML( ctx, page );
-              
+
                 page = m_engine.getPage( page.getName(), page.getVersion() );
                 acl = page.getAcl();
-                
+
                 if( acl == null )
                 {
                     acl = new AclImpl();
@@ -179,7 +179,7 @@ public class DefaultAclManager implements AclManager
 
         return acl;
     }
-    
+
     /**
      * Sets the access control list for the page and persists it by prepending
      * it to the wiki page markup and saving the page. When this method is
@@ -194,20 +194,20 @@ public class DefaultAclManager implements AclManager
     public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException
     {
         PageManager pageManager = m_engine.getPageManager();
-        
+
         // Forcibly expire any page locks
         PageLock lock = pageManager.getCurrentLock( page );
         if ( lock != null )
         {
             pageManager.unlockPage( lock );
         }
-        
+
         // Remove all of the existing ACLs.
         String pageText = m_engine.getPureText( page );
         Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
         String cleansedText = matcher.replaceAll( "" );
         String newText = DefaultAclManager.printAcl( page.getAcl() ) + cleansedText;
-        try 
+        try
         {
             pageManager.putPageText( page, newText );
         }
@@ -216,7 +216,7 @@ public class DefaultAclManager implements AclManager
             throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage() );
         }
     }
-    
+
     /**
      * Generates an ACL string for inclusion in a wiki page, based on a supplied Acl object.
      * All of the permissions in this Acl are assumed to apply to the same page scope.
@@ -251,9 +251,9 @@ public class DefaultAclManager implements AclManager
                 principals.add( principal );
             }
         }
-        
+
         // Now, iterate through each permission in the map and generate an ACL string
-        
+
         StringBuffer s = new StringBuffer();
         for ( Iterator it = permissionPrincipals.entrySet().iterator(); it.hasNext(); )
         {

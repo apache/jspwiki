@@ -299,7 +299,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      *            <code>NoSuchPrincipalException</code> to be thrown
      * @return a new, populated group
      * @see com.ecyrd.jspwiki.auth.authorize.Group#RESTRICTED_GROUPNAMES
-     * @throws WikiSecuityException if the group name isn't allowed
+     * @throws WikiSecurityException if the group name isn't allowed
      */
     public final Group parseGroup( String name, String memberLine, boolean create ) throws NoSuchPrincipalException,
             WikiSecurityException
@@ -394,7 +394,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      *            groups that do not exist will cause a
      *            <code>NoSuchPrincipalException</code> to be thrown
      * @return a new, populated group
-     * @throws WikiSecuityException if the group name isn't allowed
+     * @throws WikiSecurityException if the group name isn't allowed
      */
     public final Group parseGroup( WikiContext context, boolean create ) throws NoSuchPrincipalException,
             WikiSecurityException

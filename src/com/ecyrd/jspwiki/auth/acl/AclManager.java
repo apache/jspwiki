@@ -49,7 +49,7 @@ public interface AclManager
      *            creation of a new one.
      * @param ruleLine The rule line, as described above.
      * @return A valid Access Control List. May be empty.
-     * @throws WikiSecurityException, if the ruleLine was faulty somehow.
+     * @throws WikiSecurityException if the ruleLine was faulty somehow.
      * @since 2.1.121
      */
     public Acl parseAcl( WikiPage page, String ruleLine ) throws WikiSecurityException;
