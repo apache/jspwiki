@@ -14,13 +14,13 @@
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' 
-      format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>" 
-        name="editProfile" id="editProfile" 
+<form action="<wiki:Link jsp='UserPreferences.jsp'
+      format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>"
+        name="editProfile" id="editProfile"
        class="wikiform"
     onsubmit="return Wiki.submitOnce( this );"
       method="post" accept-charset="UTF-8">
-          
+
       <h3>
       <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
       <wiki:UserProfile property="new"><fmt:message key="prefs.newprofile"/></wiki:UserProfile>
@@ -63,12 +63,11 @@
                <wiki:UserProfile property="exists">Change Password</wiki:UserProfile>
                <wiki:UserProfile property="new">Set Password</wiki:UserProfile>
          --%>
-         </td>
          <td>
             <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
             <label for="password0">Old</label>&nbsp;
             <input type="password" name="password0" id="password0" size="20" value="" />
-            &nbsp;&nbsp;--%>            
+            &nbsp;&nbsp;--%>
             <input type="password" name="password" id="password" size="20" value="" />
           </td>
         </tr>
@@ -77,7 +76,7 @@
           <td>
             <input type="password" name="password2" id="password2" size="20" value="" />
             <%-- extra validation ? min size, allowed chars? --%>
-            <%-- trivial help 
+            <%-- trivial help
             <div class="formhelp">
               <fmt:message key="prefs.password.description"/>
               <fmt:message key="prefs.password2.description"/>
@@ -96,17 +95,17 @@
          <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
        </td>
      </tr>
-       
+
      <!-- E-mail -->
      <tr>
        <td><label for="email"><fmt:message key="prefs.email"/></label></td>
        <td>
-         <input type="text" name="email" id="email" 
+         <input type="text" name="email" id="email"
                 size="20" value="<wiki:UserProfile property='email' />" />
          <span class="formhelp"><fmt:message key="prefs.email.description"/></span>
        </td>
      </tr>
-      
+
      <wiki:UserProfile property="exists">
      <tr class="additinfo">
        <td><label>Roles</label></td>
@@ -136,7 +135,7 @@
        </td>
      </tr>
      </wiki:UserProfile>
-     
+
      <tr>
        <td />
        <td>
@@ -156,8 +155,8 @@
        <%-- trivial msg <fmt:message key="prefs.save.description"/> --%>
        </td>
      </tr>
-      
+
    </table>
 
 </form>
-    
+

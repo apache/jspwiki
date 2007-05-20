@@ -3,4 +3,10 @@
     <fileset name="all" enabled="true" check-config-name="Janne's coding style" local="false">
         <file-match-pattern match-pattern="." include-pattern="true"/>
     </fileset>
+    <filter name="FilesFromPackage" enabled="true">
+        <filter-data value="tests"/>
+        <filter-data value="tests/etc"/>
+        <filter-data value="etc/i18n"/>
+    </filter>
+    <filter name="NonSrcDirs" enabled="true"/>
 </fileset-config>

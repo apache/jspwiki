@@ -14,7 +14,7 @@
   String name = request.getParameter( "group" );
   Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
   Principal[] members = null;
-  
+
   if ( group != null )
   {
     name = group.getName();
@@ -30,9 +30,9 @@
 
 <wiki:Messages div='error' topic='<%=GroupManager.MESSAGES_KEY%>' prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"newgroup.errorprefix")%>' />
 
-  <form id="createGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp"/>" 
+  <form id="createGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp"/>"
     method="POST" accept-charset="UTF-8">
-      
+
   <div class="formhelp">
      <fmt:message key="newgroup.instructions.start"/>
   </div>
@@ -47,7 +47,7 @@
       </div>
       </td>
     </tr>
-    
+
     <!-- Members -->
     <%
       StringBuffer s = new StringBuffer();
@@ -72,7 +72,7 @@
          <fmt:message key="newgroup.instructions.end"/>
     </div>
   </form>
-</div>
+
 
 </wiki:Tab>
 </wiki:TabbedSection>

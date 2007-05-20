@@ -10,7 +10,7 @@
 
 <%!
   int MAXATTACHNAMELENGTH = 30;
-  
+
   // FIXME: this should better be something like a wiki:Pagination TLD tag
   // FIXME: how to i18n
   //
@@ -19,7 +19,7 @@
   // previous 20 40 *60* 80 100 next
   // previous 40 60 80 100 120
 
-  /* makePagination : return html string with pagination links 
+  /* makePagination : return html string with pagination links
    *    (eg:  previous 1 2 3 next)
    * startitem  : cursor
    * itemcount  : total number of items
@@ -28,9 +28,9 @@
    * linkAttr : html attributes of the generated links: use '%s' to replace with item offset
    */
   String wiki_Pagination( int startitem, int itemcount, int pagesize, int maxpages, String linkAttr, PageContext pageContext )
-  {    
-    if( itemcount <= pagesize ) return null; 
-  
+  {
+    if( itemcount <= pagesize ) return null;
+
     int maxs = pagesize * maxpages;
     int mids = pagesize * ( maxpages / 2 );
 
@@ -41,66 +41,66 @@
 
     int cursor = 0;
     int cursormax = itemcount;
- 
+
     if( itemcount > maxs )   //need to calculate real window ends
-    { 
+    {
       if( startitem > mids ) cursor = startitem - mids;
-      if( (cursor + maxs) > itemcount ) 
-        cursor = ( ( 1 + itemcount/pagesize ) * pagesize ) - maxs ; 
-      
+      if( (cursor + maxs) > itemcount )
+        cursor = ( ( 1 + itemcount/pagesize ) * pagesize ) - maxs ;
+
       cursormax = cursor + maxs;
     }
-               
-    if( (startitem == -1) || (cursor > 0) ) 
-      appendLink ( pagination, linkAttr, 0, pagesize, 
+
+    if( (startitem == -1) || (cursor > 0) )
+      appendLink ( pagination, linkAttr, 0, pagesize,
                    LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.first"), pageContext );
-    if( (startitem != -1 ) && (startitem-pagesize >= 0) ) 
-      appendLink( pagination, linkAttr, startitem-pagesize, pagesize, 
+    if( (startitem != -1 ) && (startitem-pagesize >= 0) )
+      appendLink( pagination, linkAttr, startitem-pagesize, pagesize,
                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.previous"), pageContext );
 
     if( startitem != -1 )
     {
       while( cursor < cursormax )
       {
-        if( cursor == startitem ) 
-        { 
-          pagination.append( "<span class='cursor'>" + (1+cursor/pagesize)+ "</span>&nbsp;&nbsp;" ); 
-        } 
-        else 
-        { 
+        if( cursor == startitem )
+        {
+          pagination.append( "<span class='cursor'>" + (1+cursor/pagesize)+ "</span>&nbsp;&nbsp;" );
+        }
+        else
+        {
           appendLink( pagination, linkAttr, cursor, pagesize, Integer.toString(1+cursor/pagesize), pageContext );
         }
         cursor += pagesize;
-      }     
+      }
     }
 
-    if( (startitem != -1) && (startitem + pagesize < itemcount) ) 
-      appendLink( pagination, linkAttr, startitem+pagesize, pagesize, 
+    if( (startitem != -1) && (startitem + pagesize < itemcount) )
+      appendLink( pagination, linkAttr, startitem+pagesize, pagesize,
                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.next"), pageContext );
 
-    if( (startitem == -1) || (cursormax < itemcount) ) 
-      appendLink ( pagination, linkAttr, ( (itemcount/pagesize) * pagesize ), pagesize, 
+    if( (startitem == -1) || (cursormax < itemcount) )
+      appendLink ( pagination, linkAttr, ( (itemcount/pagesize) * pagesize ), pagesize,
                    LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.last"), pageContext );
 
-    if( startitem == -1 ) 
-    { 
-      pagination.append( "<span class='cursor'>" ); 
+    if( startitem == -1 )
+    {
+      pagination.append( "<span class='cursor'>" );
       pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.all") );
-      pagination.append( "</span>&nbsp;&nbsp;" ); 
-    } 
+      pagination.append( "</span>&nbsp;&nbsp;" );
+    }
     else
     {
-      appendLink ( pagination, linkAttr, -1 , -1, 
+      appendLink ( pagination, linkAttr, -1 , -1,
                    LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.all"), pageContext );
     }
-    
+
     //pagination.append( " (Total items: " + itemcount + ")</div>" );
     pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total" ) );
     //pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total", [itemcount] ) );
     pagination.append( "</div>" );
-    
+
     return pagination.toString();
-  } 
+  }
 
   // linkAttr : use '%s' to replace with cursor offset
   // eg :
@@ -109,7 +109,7 @@
   {
     String title =  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.title.showall");
     //if( linkFrom > -1 ) title = "Show page from " + (linkFrom+1) + " to "+ (linkFrom+pagesize) ;
-    if( linkFrom > -1 ) 
+    if( linkFrom > -1 )
       title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.title.show" );
    //   title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.title.show", [linkFrom+1, linkFrom+pagesize] );
 
@@ -128,7 +128,7 @@
   int pagesize  = 20; //default #revisions shown per page
   int maxpages  = 9;  //max #paginations links -- choose odd figure
   int itemcount = 0;  //number of page versions
-  
+
   WikiContext wikiContext = WikiContext.findContext(pageContext);
   WikiPage wikiPage = wikiContext.getPage();
 
@@ -142,20 +142,20 @@
     //creationDate   = wiki_PageDate( firstPage, prefDateFormat, prefTimeZone );
   }
 
-  try 
-  { 
+  try
+  {
     itemcount = wikiPage.getVersion(); /* highest version */
-  } 
+  }
   catch( Exception  e )  { /* dont care */ }
 
-  int startitem = itemcount;  
+  int startitem = itemcount;
 
   String parm_start = (String)request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
   if( startitem > itemcount ) startitem = itemcount;
   if( startitem < -1 ) startitem = 0;
 
-  String parm_pagesize = (String)request.getParameter( "pagesize" ); 
+  String parm_pagesize = (String)request.getParameter( "pagesize" );
   if( parm_pagesize != null ) pagesize = Integer.parseInt( parm_pagesize ) ;
 
   if( startitem > -1 ) startitem = ( (startitem/pagesize) * pagesize );
@@ -191,7 +191,7 @@
            </fmt:message>" >
     <img src="<wiki:Link jsp='images/xml.png' format='url'/>" border="0" alt="[RSS]"/>
   </a>
-    
+
   <wiki:CheckVersion mode="notfirst">
     <br />
     <fmt:message key='info.createdon'>
@@ -204,13 +204,12 @@
       <fmt:param><%= creationAuthor %></fmt:param>
     </fmt:message>
   </wiki:CheckVersion>
-  </p>    
+  </p>
 
 
   <wiki:Permission permission="rename">
-    <p>
-    <form action="<wiki:Link format='url' jsp='Rename.jsp'/>" 
-           class="wikiform" 
+    <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
+           class="wikiform"
             name="renameform"
         onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
@@ -224,26 +223,23 @@
       <fmt:message key="info.updatereferrers"/>
 
     </form>
-    </p>
   </wiki:Permission>
 
 
   <wiki:Permission permission="delete">
-    <p>
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
-           class="wikiform" 
+           class="wikiform"
             name="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />" 
+          method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
 
       <input type="submit" name="delete-all" value="Delete" id="delete-all" style="display:none;"/>
-      <input type="button" name="delete-alx" value="<fmt:message key='info.delete.submit'/>" 
+      <input type="button" name="delete-alx" value="<fmt:message key='info.delete.submit'/>"
           onclick="$('delete-all').click();"
           <wiki:HasAttachments>disabled</wiki:HasAttachments> />
-      <wiki:HasAttachments><fmt:message key='info.delete.attachmentwarning'/></wiki:HasAttachments>   
+      <wiki:HasAttachments><fmt:message key='info.delete.attachmentwarning'/></wiki:HasAttachments>
 
     </form>
-    </p>
   </wiki:Permission>
 
 
@@ -285,10 +281,10 @@
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
-      <% if( ( startitem == -1 ) || 
-             (  ( currentPage.getVersion() >= startitem ) 
-             && ( currentPage.getVersion() < startitem + pagesize ) ) ) 
-         {  
+      <% if( ( startitem == -1 ) ||
+             (  ( currentPage.getVersion() >= startitem )
+             && ( currentPage.getVersion() < startitem + pagesize ) ) )
+         {
        %>
       <tr>
         <td>
@@ -316,18 +312,18 @@
         </td>
 
          <td class="changenote">
-           <% 
-              String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE ); 
+           <%
+              String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
               changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
-           %> 
+           %>
            <%= changeNote %>
          </td>
-        
+
       </tr>
       <% } %>
       </wiki:HistoryIterator>
 
-    </table>  
+    </table>
     </div>
     <%= (pagination == null) ? "" : pagination %>
 
@@ -357,14 +353,14 @@
   <h3><fmt:message key="info.uploadnew"/></h3>
 
   <%-- FIXME <wiki:Permission permission="upload"> --%>
-  <form action="<wiki:Link context='att' format='url' absolute='true'/>" 
+  <form action="<wiki:Link context='att' format='url' absolute='true'/>"
          class="wikiform"
           name="uploadform"
       onsubmit="return Wiki.submitOnce( this );"
         method="post" accept-charset="<wiki:ContentEncoding/>"
        enctype="multipart/form-data" >
 
-  <%-- Do NOT change the order of wikiname and content, otherwise the 
+  <%-- Do NOT change the order of wikiname and content, otherwise the
        servlet won't find its parts. --%>
 
 
@@ -374,11 +370,11 @@
     <td colspan="2"><div class="formhelp"><fmt:message key="info.uploadnew.help" /></div></td>
   </tr>
   <tr>
-    <td><label for="content"><fmt:message key="info.uploadnew.filename" /></label></td> 
+    <td><label for="content"><fmt:message key="info.uploadnew.filename" /></label></td>
     <td><input type="file" name="content" size="60"/></td>
   </tr>
   <tr>
-    <td><label for="changenote"><fmt:message key="info.uploadnew.changenote" /></label></td> 
+    <td><label for="changenote"><fmt:message key="info.uploadnew.changenote" /></label></td>
     <td>
     <input type="text" name="changenote" maxlength="80" size="60" />
     </td>
@@ -393,9 +389,9 @@
     </td>
   </tr>
   </table>
-  
+
   </form>
-  <%-- </wiki:Permission> 
+  <%-- </wiki:Permission>
 
 <%
   /* java hacking coz cant check for negative permission */
@@ -414,13 +410,13 @@
 
     <h3><fmt:message key="info.deleteattachment"/></h3>
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
-           class="wikiform" 
+           class="wikiform"
             name="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />" 
+          method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
 
      <input type="submit" name="delete-all" value="Delete" id="delete-all" style="display:none;"/>
-     <input type="button" name="delete-alx" value="<fmt:message key='info.deleteattachment.submit' />" 
+     <input type="button" name="delete-alx" value="<fmt:message key='info.deleteattachment.submit' />"
           onclick="$('delete-all').click();" />
 
     </form>
@@ -432,7 +428,7 @@
     <fmt:param><a href="<wiki:LinkToParent format='url' />&tab=attachments"><wiki:ParentPageName /></a></fmt:param>
   </fmt:message>
   </p>
-  
+
 
   <%-- FIXME why not add pagination here - no need for large amounts of attach versions on one page --%>
   <h3><fmt:message key='info.attachment.history' /></h3>
@@ -449,27 +445,27 @@
       <%--<th style="display:none;">Actions</th>--%>
       <th width="30%"><fmt:message key="info.changenote"/></th>
     </tr>
-    
+
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
     <%
       String name = att.getName(); //att.getFileName();
       int dot = name.lastIndexOf(".");
       String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "";
-      
+
       String sname = name;
-      if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";      
+      if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
     %>
 
     <tr>
       <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
       <%--<td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>--%>
       <%--FIXME classs parameter throws java exception
-      <td><wiki:Link version='<%=Integer.toString(att.getVersion())%>' 
-                       title="<%= name %>" 
+      <td><wiki:Link version='<%=Integer.toString(att.getVersion())%>'
+                       title="<%= name %>"
                        class="attachment" ><wiki:PageVersion /></wiki:Link></td>
       --%>
-      <td><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />" 
-                       title="<%= name %>" 
+      <td><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />"
+                       title="<%= name %>"
                        class="attachment" ><wiki:PageVersion /></a></td>
       <td style="text-align:right;">
         <fmt:formatNumber value='<%=((float)att.getSize())/1000 %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;Kb
@@ -478,8 +474,8 @@
       <td><wiki:Author /></td>
       <%--<td>  Deletion of a single version is not yet supported? FIXME
         &nbsp;&nbsp;
-        <wiki:Permission permission="delete"> 
-            <input type="button" 
+        <wiki:Permission permission="delete">
+            <input type="button"
                 value="Delete"
                 url="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
             onclick="AttachTable.remove(this.url);" />
@@ -488,9 +484,9 @@
       <td>
       <%
          String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
-         if( changeNote != null ) { 
-         %><%=changeNote%><% 
-         } 
+         if( changeNote != null ) {
+         %><%=changeNote%><%
+         }
       %>
       </td>
     </tr>
