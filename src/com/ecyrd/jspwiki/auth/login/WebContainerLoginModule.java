@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
@@ -45,7 +64,7 @@ import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL}
  * and {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED},
  * plus the Principal that represents the logged-in user.</p>
- * 
+ *
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -53,7 +72,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
 {
 
     protected static final Logger log      = Logger.getLogger( WebContainerLoginModule.class );
-    
+
     /**
      * Logs in the user.
      * @see javax.security.auth.spi.LoginModule#login()
@@ -77,7 +96,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
                 throw new LoginException( "No Http request supplied." );
             }
             HttpSession session = request.getSession(false);
-            String sid = (session == null) ? NULL : session.getId(); 
+            String sid = (session == null) ? NULL : session.getId();
             Principal principal = request.getUserPrincipal();
             if ( principal == null )
             {
@@ -102,22 +121,22 @@ public class WebContainerLoginModule extends AbstractLoginModule
                 log.debug("Added Principal " + principal.getName() + ",Role.ANONYMOUS,Role.ALL" );
             }
             m_principals.add( new PrincipalWrapper( principal ) );
-            
+
             // Add any container roles
             injectWebAuthorizerRoles( acb.getAuthorizer(), request );
-            
+
             // If login succeeds, commit these roles
             m_principals.add( Role.AUTHENTICATED );
             m_principals.add( Role.ALL );
-            
+
             // If login succeeds, remove these principals/roles
             m_principalsToOverwrite.add( WikiPrincipal.GUEST );
             m_principalsToOverwrite.add( Role.ANONYMOUS );
             m_principalsToOverwrite.add( Role.ASSERTED );
-            
+
             // If login fails, remove these roles
             m_principalsToRemove.add( Role.AUTHENTICATED );
-                        
+
             return true;
         }
         catch( IOException e )
@@ -133,10 +152,10 @@ public class WebContainerLoginModule extends AbstractLoginModule
     }
 
     /**
-     * If the current Authorizer is a 
+     * If the current Authorizer is a
      * {@link com.ecyrd.jwpwiki.auth.authorize.WebAuthorizer},
-     * this method iterates through each role returned by the 
-     * authorizer (via 
+     * this method iterates through each role returned by the
+     * authorizer (via
      * {@link com.ecyrd.jwpwiki.auth.authorize.WebAuthorizer#isUserInRole( HttpServletRequest, Role)})
      * and injects the appropriate ones into the Subject.
      * @param acb the authorizer callback
@@ -161,7 +180,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
                 }
             }
         }
-        
+
         // Add these container roles if login succeeds
         m_principals.addAll( foundRoles );
 
