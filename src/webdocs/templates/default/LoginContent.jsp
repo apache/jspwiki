@@ -7,13 +7,13 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
-<%! 
+<%!
   public void jspInit()
   {
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     AuthenticationManager mgr = wiki.getAuthenticationManager();
     if ( mgr.isContainerAuthenticated() )
-    {   
+    {
       postURL = "j_security_check";
     }
     else
@@ -23,14 +23,14 @@
   }
   String postURL="";
 %>
-
+<% boolean supportsCookieAuthentication = WikiEngine.getInstance(getServletConfig()).getAuthenticationManager().allowsCookieAuthentication(); %>
 <wiki:TabbedSection defaultTab="${param.tab}">
 
   <wiki:UserCheck status="notauthenticated">
   <wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.tab")%>">
     <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
-<form action="<%=postURL%>"  
+<form action="<%=postURL%>"
         name="login" id="login"
        class="wikiform"
     onsubmit="return Wiki.submitOnce(this);"
@@ -50,14 +50,21 @@
     </tr>
     <tr>
       <td><label for="j_username"><fmt:message key="login.login"/></label></td>
-      <td><input type="text" size="24" value="<wiki:Variable var='uid' default='' />" 
+      <td><input type="text" size="24" value="<wiki:Variable var='uid' default='' />"
                  name="j_username" id="j_username" /></td>
     </tr>
     <tr>
       <td><label for="j_password"><fmt:message key="login.password"/></label></td>
-      <td><input type="password" size="24" 
+      <td><input type="password" size="24"
                  name="j_password" id="j_password" /></td>
     </tr>
+    <% if( supportsCookieAuthentication ) { %>
+    <tr>
+      <td><label for="j_remember"><fmt:message key="login.remember"/></label></td>
+      <td><input type="checkbox"
+                 name="j_remember" id="j_remember" /></td>
+    </tr>
+    <% } %>
     <tr>
       <td />
       <td>
@@ -67,7 +74,7 @@
       </td>
     </tr>
     </table>
-    
+
     <div class="formhelp">
       <fmt:message key="login.lostpw"/>
       <%--<a href="LostPassword.jsp">--%>
@@ -100,7 +107,7 @@
 <%-- FIXME error flow on lostpw nok --%>
 
 <div align="center">
-<form action="LostPassword.jsp"  
+<form action="LostPassword.jsp"
         name="lostpw" id="lostpw"
        class="wikiform"
     onsubmit="return Wiki.submitOnce(this);"
@@ -141,7 +148,7 @@
       </a>
     </div>
     <div class="formhelp">
-      Wanna login? 
+      Wanna login?
       <a href="#" onclick="TabbedSection.onclick('logincontent');"
                     title="<fmt:message key='login.title'/>" >
         <fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message>
@@ -152,10 +159,10 @@
 </div>
 
   </wiki:Tab>
- 
+
   <wiki:Permission permission='editProfile'>
   <wiki:Tab id="register" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%>">
-    <wiki:Include page='ProfileTab.jsp'/>  
+    <wiki:Include page='ProfileTab.jsp'/>
   </wiki:Tab>
   </wiki:Permission>
 
@@ -167,7 +174,7 @@
         <fmt:param><wiki:EditLink page="LoginPageHelp">LoginHelp</wiki:EditLink></fmt:param>
       </fmt:message>
     </div>
-  </wiki:NoSuchPage>  
+  </wiki:NoSuchPage>
 </wiki:Tab>
 
 </wiki:TabbedSection>
