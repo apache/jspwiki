@@ -1,11 +1,24 @@
+2007-05-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.62
+
+       * Added CookieAuthenticationLoginModule.  This module stores
+       an UID in the user's browser, and automatically logs the user
+       in, if the cookie exists.  This can be a security hazard, so
+       it is a good idea to disable it in jspwiki.jaas, if you are
+       worried about local users being able to spoof identities.
+       For this reason, it's by default disabled in jspwiki.jaas
+
+       * Modified LoginContent.jsp to contain "Remember me?" checkbox.
+
 2007-05-20  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.61
-       
+
        * Fixed the last of the failing JWebUnit tests. Also added a new one
        that verifies that profile renaming operations correctly re-set group
        memberships and page ACLs.
-       
+
 2007-05-20  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.60
