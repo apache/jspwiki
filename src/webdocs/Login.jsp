@@ -3,12 +3,13 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
-<%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+<%!
+    Logger log = Logger.getLogger("JSPWiki");
 %>
 
 <%
@@ -19,7 +20,7 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
-    
+
     // Set the redirect-page variable if one was passed as a parameter
     if( request.getParameter( "redirect" ) != null )
     {
@@ -29,7 +30,7 @@
     {
         wikiContext.setVariable( "redirect", wiki.getFrontPage());
     }
-    
+
     // If NOT using container auth, perform all of the access control logic here...
     // (Note: if using the container for auth, it will handle all of this for us.)
     if( !mgr.isContainerAuthenticated() )
@@ -42,7 +43,7 @@
             response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
             return;
         }
-    
+
         // If using custom auth, we need to do the login now
 
         String action = request.getParameter("action");
@@ -51,7 +52,7 @@
             String uid    = request.getParameter( "j_username" );
             String passwd = request.getParameter( "j_password" );
             log.debug( "Attempting to authenticate user " + uid );
-            
+
             // Log the user in!
             if ( mgr.login( wikiSession, uid, passwd ) )
             {
@@ -71,7 +72,7 @@
             }
         }
     }
-    else 
+    else
     {
         //
         //  Have we already been submitted?  If yes, then we can assume that
@@ -82,31 +83,38 @@
         {
             response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
             session.removeAttribute("_redirect");
-            return;             
+            return;
         }
         session.setAttribute("_redirect","I love Outi"); // Just any marker will do
-        
+
         // If using container auth, the container will have automatically
         // attempted to log in the user before Login.jsp was loaded.
-        // Thus, if we got here, the container must have authenticated 
+        // Thus, if we got here, the container must have authenticated
         // the user already. All we do is simply record that fact.
         // Nice and easy.
-        
+
         Principal user = wikiSession.getLoginPrincipal();
         log.info( "Successfully authenticated user " + user.getName() + " (container auth)" );
-    }    
-    
+    }
+
     // If user logged in, set the user cookie with the wiki principal's name.
     // redirect to wherever we're supposed to go. If login.jsp
     // was called without parameters, this will be the front page. Otherwise,
     // there's probably a 'page' parameter telling us where to go.
-    
+
     if( wikiSession.isAuthenticated() )
     {
+        String rember = request.getParameter( "j_remember" );
+
         // Set user cookie
         Principal principal = wikiSession.getUserPrincipal();
         CookieAssertionLoginModule.setUserCookie( response, principal.getName() );
-        
+
+        if( rember != null )
+        {
+            CookieAuthenticationLoginModule.setLoginCookie( wiki, response, principal.getName() );
+        }
+
         // If wiki page was "Login", redirect to main, otherwise use the page supplied
         String redirectPage = request.getParameter( "redirect" );
         if ( redirectPage == null )
@@ -114,17 +122,18 @@
            redirectPage = wiki.getFrontPage();
         }
         String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
-    
+
         // Redirect!
         log.info( "Redirecting user to " + viewUrl );
         response.sendRedirect( viewUrl );
         return;
     }
-    
+
     // If we've gotten here, the user hasn't authenticated yet.
     // So, find the login form and include it. This should be in the same directory
     // as this page. We don't need to use the wiki:Include tag.
-    
+
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    
-%><jsp:include page="LoginForm.jsp" />
+
+%>
+<jsp:include page="LoginForm.jsp" />
