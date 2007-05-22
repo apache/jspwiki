@@ -41,6 +41,7 @@ import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
+import com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule;
 import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
 import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -58,8 +59,11 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 public final class AuthenticationManager
 {
 
-    /** The name of the built-in cookie authentication module */
+    /** The name of the built-in cookie assertion module */
     public static final String                 COOKIE_MODULE       =  CookieAssertionLoginModule.class.getName();
+
+    /** The name of the built-in cookie authentication module */
+    public static final String                 COOKIE_AUTHENTICATION_MODULE =  CookieAuthenticationLoginModule.class.getName();
 
     /** The JAAS application name for the web container authentication stack. */
     public static final String                 LOGIN_CONTAINER     = "JSPWiki-container";
@@ -70,13 +74,16 @@ public final class AuthenticationManager
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
 
-    protected static final Logger                              log                 = Logger.getLogger( AuthenticationManager.class );
+    protected static final Logger              log                 = Logger.getLogger( AuthenticationManager.class );
 
     /** Was JAAS login config already set before we startd up? */
     protected boolean m_isJaasConfiguredAtStartup = false;
 
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private static Boolean                     m_allowsAssertions  = null;
+
+    /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
+    private static Boolean                     m_allowsAuthentication = null;
 
     private WikiEngine                         m_engine            = null;
 
@@ -218,6 +225,7 @@ public final class AuthenticationManager
         {
             AuthorizationManager authMgr = m_engine.getAuthorizationManager();
             CallbackHandler handler = new WebContainerCallbackHandler(
+                    m_engine,
                     request,
                     authMgr.getAuthorizer() );
             login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
@@ -331,6 +339,47 @@ public final class AuthenticationManager
         return m_allowsAssertions.booleanValue();
     }
 
+    /**
+     *  Determines whether this WikiEngine allows users to authenticate using
+     *  cookies instead of passwords. This is determined by inspecting
+     *  the LoginConfiguration for application <code>JSPWiki-container</code>.
+     *  @return <code>true</code> if cookies are allowed for authentication
+     *  @since 2.5.62
+     */
+    public static final boolean allowsCookieAuthentication()
+    {
+        if( !m_useJAAS ) return true;
+
+        // Lazily initialize
+        if( m_allowsAuthentication == null )
+        {
+            m_allowsAuthentication = Boolean.FALSE;
+
+            // Figure out whether cookie assertions are allowed
+            Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
+              {
+                  public Object run()
+                  {
+                      return Configuration.getConfiguration();
+                  }
+              });
+
+            if (loginConfig != null)
+            {
+                AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
+                for ( int i = 0; i < configs.length; i++ )
+                {
+                    AppConfigurationEntry config = configs[i];
+                    if ( COOKIE_AUTHENTICATION_MODULE.equals( config.getLoginModuleName() ) )
+                    {
+                        m_allowsAuthentication = Boolean.TRUE;
+                    }
+                }
+            }
+        }
+
+        return m_allowsAuthentication.booleanValue();
+    }
     /**
      * Determines whether the supplied Principal is a "role principal".
      * @param principal the principal to test
