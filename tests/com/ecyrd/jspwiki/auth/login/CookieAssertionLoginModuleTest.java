@@ -29,10 +29,12 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
 public class CookieAssertionLoginModuleTest extends TestCase
 {
     Authorizer authorizer;
-    
+
     UserDatabase db;
 
     Subject      subject;
+
+    private WikiEngine m_engine;
 
     public final void testLogin()
     {
@@ -42,13 +44,13 @@ public class CookieAssertionLoginModuleTest extends TestCase
         {
             // We can use cookies right?
             assertTrue( AuthenticationManager.allowsCookieAssertions() );
-            
+
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
             Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
             request.setCookies( new Cookie[]
             { cookie } );
             subject = new Subject();
-            CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             Set principals = subject.getPrincipals();
@@ -70,7 +72,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
         request.setRemoteAddr( "53.33.128.9" );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             Set principals = subject.getPrincipals();
@@ -96,7 +98,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
-        WikiEngine m_engine  = new TestEngine(props);
+        m_engine = new TestEngine(props);
         authorizer = new TestAuthorizer();
         authorizer.initialize( m_engine, props );
         db = new XMLUserDatabase();

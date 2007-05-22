@@ -32,6 +32,8 @@ public class AnonymousLoginModuleTest extends TestCase
 
     Subject      subject;
 
+    private WikiEngine m_engine;
+
     public final void testLogin()
     {
         TestHttpServletRequest request = new TestHttpServletRequest();
@@ -39,7 +41,7 @@ public class AnonymousLoginModuleTest extends TestCase
         try
         {
             // Test using IP address (AnonymousLoginModule succeeds)
-            CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             Set principals = subject.getPrincipals();
@@ -61,7 +63,7 @@ public class AnonymousLoginModuleTest extends TestCase
         request.setRemoteAddr( "53.33.128.9" );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
             Set principals = subject.getPrincipals();
@@ -87,7 +89,7 @@ public class AnonymousLoginModuleTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
-        WikiEngine m_engine  = new TestEngine(props);
+        m_engine = new TestEngine(props);
         authorizer = new TestAuthorizer();
         authorizer.initialize( m_engine, props );
         db = new XMLUserDatabase();
