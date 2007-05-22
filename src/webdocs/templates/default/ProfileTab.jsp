@@ -47,11 +47,19 @@
          <wiki:UserProfile property="canChangeLoginName">
            <input type="text" name="loginname" id="loginname"
                   size="20" value="<wiki:UserProfile property='loginname' />" />
+           <span class="formhelp"><fmt:message key="prefs.loginname.description"/></span>
          </wiki:UserProfile>
+         
          <wiki:UserProfile property="!canChangeLoginName">
-           <span class="formvalue"><wiki:UserProfile property="loginname"/></span>
+           <!-- If user can't change their login name, it's because the container manages the login -->
+           <wiki:UserProfile property="new">
+             <div class="warning"><fmt:message key="prefs.loginname.cannotset.new"/></div>
+           </wiki:UserProfile>
+           <wiki:UserProfile property="exists">
+             <span class="formvalue"><wiki:UserProfile property="loginname"/></span>
+             <div class="warning"><fmt:message key="prefs.loginname.cannotset.exists"/></div>
+           </wiki:UserProfile>
          </wiki:UserProfile>
-         <span class="formhelp"><fmt:message key="prefs.loginname.description"/></span>
        </td>
      </tr>
 

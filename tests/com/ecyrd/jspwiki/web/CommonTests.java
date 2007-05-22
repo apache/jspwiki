@@ -125,21 +125,23 @@ public abstract class CommonTests extends TestCase
     
     public void testAssertedName()
     {
-        // Navigate to Prefs page; set user cookie
+        // Navigate to Prefs page; see the 'G'day message' for the anonymous user
         t.gotoPage( "/Wiki.jsp?page=Main" );
-        // brushed NOK : anonymous also gets a G'day greeting ????
         t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
-        // brushed NOK -- link is hidden in dropdown
-        //t.clickLinkWithText( "My Prefs" );
+        
+        // Go to the UserPreferences page; see the set-cookie form, plus welcome text that invites user to set cookie
         t.gotoPage( "/UserPreferences.jsp" );
-        t.assertTextPresent( "Set your user preferences here." );
+        t.assertTextPresent( "You wouldn&#8217;t lie to us would you?" );
         t.assertFormPresent( "setCookie" );
+        
+        // Set the cookie to our test user name
         t.setWorkingForm( "setCookie" );
-        //t.assertFormNotPresent( "clearCookie" ); brushed allows to clear cookie/user prefs at any time
         t.assertFormElementPresent( "assertedName" );
         t.assertSubmitButtonPresent( "ok" );
         t.setFormElement( "assertedName", "Don Quixote" );
         t.submit( "ok" );
+        
+        // Now navigate back to the main page; see the 'G'day message' for the test user
         t.assertTextPresent( "G&#8217;day" );
         t.assertTextPresent( "Don Quixote" );
         t.assertTextPresent( "(not logged in)" );
@@ -148,17 +150,16 @@ public abstract class CommonTests extends TestCase
         assertEquals( "Don+Quixote", cookie );
 
         // Clear user cookie
-        // brushed NOK -- link is hidden in dropdown
-        //t.clickLinkWithText( "My Prefs" );
         t.gotoPage( "/UserPreferences.jsp" );
-        t.assertFormNotPresent( "setCookie" );
+        t.assertFormPresent( "setCookie" );
         t.setWorkingForm( "clearCookie" );
         t.assertFormPresent( "clearCookie" );
         t.assertSubmitButtonPresent( "ok" );
         t.submit( "ok" );
-        t.assertTextNotPresent( "G&#8217;day" );
+        
+        // Go back to the main page, and see the 'G'day message for the anonymous user again
+        t.assertTextPresent( "G&#8217;day <br />(anonymous guest)" );
         t.assertTextNotPresent( "Don Quixote" );
-        t.assertTextNotPresent( "(not logged in)" );
         cookie = getCookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME );
         assertEquals( "", cookie );
     }
@@ -220,17 +221,17 @@ public abstract class CommonTests extends TestCase
     
     public void testCreateGroupFullName()
     {
-        createGroup( "Janne Jalkanen" );
+        createGroup( TEST_LOGINNAME, "Janne Jalkanen" );
     }
     
     public void testCreateGroupLoginName()
     {
-        createGroup( TEST_LOGINNAME );
+        createGroup( TEST_LOGINNAME, TEST_LOGINNAME );
     }
 
     public void testCreateGroupWikiName()
     {
-        createGroup( "JanneJalkanen" );
+        createGroup( TEST_LOGINNAME, "JanneJalkanen" );
     }
     
     public void testCreatePage()
@@ -320,10 +321,79 @@ public abstract class CommonTests extends TestCase
         t.assertTextPresent( redirectText );
     }
     
-    protected void createGroup( String members ) 
+    public void testRenameProfile()
+    {
+        // Create a new user and group (and log in)
+        String loginName = createProfile("TestRenameProfileUser", "TestRenameProfileUser");
+        t.assertTextNotPresent( "Please sign in" );
+        t.assertTextPresent( "G&#8217;day" );
+        t.assertTextPresent( loginName );
+        
+        newSession();
+        String group = createGroup( loginName, loginName );
+        
+        // Create a page with a view ACL restricted to the new user
+        String page = "TestRenameProfilePage" + System.currentTimeMillis();
+        t.beginAt( "/Edit.jsp?page=" + page );
+        String text = "[{ALLOW edit " + loginName + "}]\nThis page was created with an ACL by " + loginName;
+        t.setFormElement( "_editedtext", text );
+        t.submit( "ok" );
+        
+        // Anonymous editing should fail
+        newSession();
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertTextPresent( "Please sign in" );
+        
+        // Now log in as the test user and view/edit it successfully
+        login( loginName, TEST_PASSWORD );
+        t.gotoPage( "/Wiki.jsp?page=" + page );
+        t.assertTextPresent( "This page was created with an ACL by " + loginName );
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.assertFormPresent( "editForm" );
+        
+        // Verify that our ACL test is present (note the extra linebreak at the end of the text
+        t.setWorkingForm( "editForm" );
+        t.assertSubmitButtonPresent( "ok" );
+        t.assertFormElementPresent("_editedtext" );
+        String response = t.getDialog().getResponseText();
+        assertTrue( response.contains("[{ALLOW edit " + loginName + "}]" ) );
+        
+        // OK -- now that we've got a user, a protected page and a group  successfully set up, let's change the profile name
+        t.gotoPage("/UserPreferences.jsp");
+        t.setWorkingForm( "editProfile" );
+        t.assertFormElementPresent( "loginname" );
+        t.assertSubmitButtonPresent( "ok" );
+        String newLoginName = "Renamed" + loginName;
+        t.setFormElement( "loginname", newLoginName );
+        t.setFormElement( "fullname", newLoginName );
+        t.submit( "ok" );
+        
+        // Now, the main page should show the new authenticated user name
+        t.assertTextNotPresent( "Please sign in" );
+        t.assertTextPresent( "G&#8217;day" );
+        t.assertTextPresent( newLoginName );
+        
+        // When we navigate to the protected page, the ACL should have the NEW name in it
+        t.gotoPage( "/Edit.jsp?page=" + page );
+        t.setWorkingForm( "editForm" );
+        response = t.getDialog().getResponseText();
+        assertTrue( response.contains("[{ALLOW edit " + newLoginName + "}]" ) );
+        
+        // Also, when we navigate to the group page, the group member should be the NEW name (we will see this inside a <td> element)
+        t.gotoPage("/Group.jsp?group=" + group );
+        t.assertTextNotPresent( "Please sign in" );
+        response = t.getDialog().getResponseText();
+        assertTrue( response.contains( "<td>" + newLoginName ));
+    }
+    
+    protected String createGroup( String user, String members ) 
     {
         t.gotoPage( "/Wiki.jsp" );
-        login( TEST_LOGINNAME, TEST_PASSWORD );
+        login( user, TEST_PASSWORD );
+        t.assertTextNotPresent( "Please sign in" );
+        t.assertTextPresent( "G&#8217;day" );
+        t.assertTextPresent( "(authenticated)" );
+        
         String group = "Test" + String.valueOf( System.currentTimeMillis() );
         
         // First, name the group
@@ -349,7 +419,7 @@ public abstract class CommonTests extends TestCase
         t.assertTextPresent( "Please sign in" );
         
         // Log in again and verify we can read it
-        login( TEST_LOGINNAME, TEST_PASSWORD );
+        login( user, TEST_PASSWORD );
         t.gotoPage("/Group.jsp?group=" + group );
         t.assertTextPresent( "This is the wiki group called" );
         
@@ -357,6 +427,8 @@ public abstract class CommonTests extends TestCase
         t.gotoPage("/EditGroup.jsp?group=" + group );
         t.assertTextNotPresent( "Please sign in" );
         t.assertFormPresent( "editGroup" );
+        
+        return group;
     }
     
     protected String createProfile( String loginname, String fullname )
@@ -385,8 +457,8 @@ public abstract class CommonTests extends TestCase
         {
             t.assertFormElementPresent( "password" );
             t.assertFormElementPresent( "password2" );
-            t.setFormElement( "password", TEST_PASSWORD + suffix );
-            t.setFormElement( "password2", TEST_PASSWORD + suffix );
+            t.setFormElement( "password", TEST_PASSWORD  );
+            t.setFormElement( "password2", TEST_PASSWORD );
         }
         t.submit( "ok" );
         return loginname + suffix;
