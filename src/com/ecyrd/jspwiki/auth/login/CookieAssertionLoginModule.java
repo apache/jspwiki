@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
@@ -33,7 +52,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * </ol>
  * <p>
  * After authentication, a generic WikiPrincipal based on the username will be
- * created and associated with the Subject. Principals 
+ * created and associated with the Subject. Principals
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ASSERTED} will be added.
  * @see javax.security.auth.spi.LoginModule#commit()
@@ -50,7 +69,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
     public static final String PROMPT            = "User name";
 
     protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
-    
+
     /**
      * Logs in the user by calling back to the registered CallbackHandler with
      * an HttpRequestCallback. The CallbackHandler must supply the current
@@ -71,7 +90,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
             m_principalsToRemove.add( Role.ASSERTED );
             return false;
         }
-        
+
         // Otherwise, let's go and look for the cookie!
         HttpRequestCallback hcb = new HttpRequestCallback();
         Callback[] callbacks = new Callback[]
@@ -91,7 +110,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
                 }
                 throw new FailedLoginException( "The user cookie was not found." );
             }
-            
+
             if ( log.isDebugEnabled() )
             {
                 log.debug( "Logged in session ID=" + sid );
@@ -101,11 +120,11 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
             m_principals.add( Role.ASSERTED );
             m_principals.add( Role.ALL );
-            
+
             // If login succeeds, overwrite these principals/roles
             m_principalsToOverwrite.add( WikiPrincipal.GUEST );
             m_principalsToOverwrite.add( Role.ANONYMOUS );
-            
+
             // If login fails, remove these roles
             m_principalsToRemove.add( Role.ASSERTED );
             return true;
@@ -132,7 +151,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
     public static String getUserCookie( HttpServletRequest request )
     {
         String cookie = HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
-        
+
         return TextUtil.urlDecodeUTF8(cookie);
     }
 

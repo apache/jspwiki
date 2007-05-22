@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
@@ -32,7 +51,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * {@link com.ecyrd.jspwiki.auth.user.UserDatabase}</li>
  * </ol>
  * <p>
- * After authentication, a Principals based on the login name will be created 
+ * After authentication, a Principals based on the login name will be created
  * and associated with the Subject.
  * Also, principals {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added to
@@ -45,7 +64,7 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
 {
 
     private static final Logger log = Logger.getLogger( UserDatabaseLoginModule.class );
-    
+
     /**
      * @see javax.security.auth.spi.LoginModule#login()
      */
@@ -77,20 +96,20 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
                     log.debug( "Logged in loginName=" + username );
                     log.debug( "Added Principals Role.AUTHENTICATED,Role.ALL" );
                 }
-                
+
                 // If login succeeds, commit these principals/roles
                 m_principals.add( new PrincipalWrapper( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) ) );
                 m_principals.add( Role.AUTHENTICATED );
                 m_principals.add( Role.ALL );
-                
+
                 // If login succeeds, overwrite these principals/roles
                 m_principalsToOverwrite.add( WikiPrincipal.GUEST );
                 m_principalsToOverwrite.add( Role.ANONYMOUS );
                 m_principalsToOverwrite.add( Role.ASSERTED );
-                
+
                 // If login fails, remove these roles
                 m_principalsToRemove.add( Role.AUTHENTICATED );
-                
+
                 return true;
             }
             throw new FailedLoginException( "The username or password is incorrect." );
