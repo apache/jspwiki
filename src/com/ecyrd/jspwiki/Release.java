@@ -23,9 +23,21 @@ package com.ecyrd.jspwiki;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *  Contains release and version information.
- *
+ *  Contains release and version information.  You may also invoke this
+ *  class directly, in which case it prints out the version string.  This
+ *  is a handy way of checking which JSPWiki version you have - just type
+ *  from a command line:
+ *  <pre>
+ *  % java -cp JSPWiki.jar com.ecyrd.jspwiki.Release
+ *  2.5.38
+ *  </pre>
+ *  <p>
+ *  As a historical curiosity, this is the oldest JSPWiki file.  According
+ *  to the CVS history, it dates from 6.7.2001, and it really hasn't changed
+ *  much since.
+ *  </p>
  *  @author Janne Jalkanen
+ *  @since  1.0
  */
 public final class Release
 {
@@ -45,9 +57,14 @@ public final class Release
      */
     private static final String    POSTFIX       = "-cvs";
 
+    /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
+
+    /** The JSPWiki revision. */
     public static final int        REVISION      = 5;
-    public static final int        MINORREVISION = 62;
+
+    /** The minor revision, or a "build number", if you wish. */
+    public static final int        MINORREVISION = 63;
 
     /**
      *  This is the generic version string you should use
@@ -68,6 +85,7 @@ public final class Release
      *  need recompiling the pages.
      *
      *  @since 2.1.26.
+     *  @return The version string (e.g. 2.5.23).
      */
     public static String getVersionString()
     {
@@ -79,6 +97,7 @@ public final class Release
      *  @param version A version parameter string (a.b.c-something). B and C are optional.
      *  @return A boolean value describing whether the given version is newer than the current JSPWiki.
      *  @since 2.4.57
+     *  @throws IllegalArgumentException If the version string could not be parsed.
      */
     public static boolean isNewerOrEqual( String version )
         throws IllegalArgumentException
@@ -112,6 +131,7 @@ public final class Release
      *  @param version A version parameter string (a.b.c-something)
      *  @return A boolean value describing whether the given version is older than the current JSPWiki version
      *  @since 2.4.57
+     *  @throws IllegalArgumentException If the version string could not be parsed.
      */
     public static boolean isOlderOrEqual( String version )
         throws IllegalArgumentException
@@ -150,6 +170,8 @@ public final class Release
      *  % java com.ecyrd.jspwiki.Release
      *  1.9.26-cvs
      *  </PRE>
+     *
+     *  @param argv The argument string.  This class takes in no arguments.
      */
     public static void main( String[] argv )
     {
