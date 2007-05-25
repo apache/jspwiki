@@ -47,7 +47,8 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  *  otherwise people having read access to this directory may be able to spoof
  *  other users.
  *  <p>
- *  The cookie directory is scrubbed of old entries every {@value SCRUB_PERIOD} milliseconds.
+ *  The cookie directory is scrubbed of old entries every {@value SCRUB_PERIOD}
+ *  milliseconds.
  *  <p>
  *   This module must be used with a CallbackHandler (such as
  *   {@link WebContainerCallbackHandler}) that supports the following Callback

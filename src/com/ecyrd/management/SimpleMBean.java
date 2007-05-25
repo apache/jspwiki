@@ -348,9 +348,9 @@ public abstract class SimpleMBean
      *     public void setFoo( String foo ) ...
      *     public String getFoo() ...
      *     
-     *     public String[] getAttributeNames()
+     *     public String[] getAttributeNames()
      *     {
-     *         String[] attrs = { "foo" };
+     *         String[] attrs = { "foo" };
      *         
      *         return attrs;
      *     }
