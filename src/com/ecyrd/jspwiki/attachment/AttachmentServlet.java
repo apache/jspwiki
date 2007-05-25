@@ -19,11 +19,15 @@
  */
 package com.ecyrd.jspwiki.attachment;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.SocketException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -49,7 +53,6 @@ import com.ecyrd.jspwiki.dav.methods.DavMethod;
 import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
 import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.search.SearchManager.JSONSearch;
 import com.ecyrd.jspwiki.ui.progress.ProgressItem;
 import com.ecyrd.jspwiki.util.HttpUtil;
 

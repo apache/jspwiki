@@ -40,8 +40,8 @@ import java.util.LinkedList;
  * </p>
  *
  * <p>
- * This class is implemented by storing a breadcrumb trail, which is a 
- * fixed size queue, into a session variable "breadCrumbTrail".  
+ * This class is implemented by storing a breadcrumb trail, which is a
+ * fixed size queue, into a session variable "breadCrumbTrail".
  * This queue is displayed as a series of links separated by a separator
  * character.
  * </p>
@@ -50,7 +50,7 @@ import java.util.LinkedList;
 public class BreadcrumbsTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
+
     private static final Logger log = Logger.getLogger(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
@@ -135,10 +135,10 @@ public class BreadcrumbsTag extends WikiTagBase
 
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
-            out.print("<a class=\"" + linkclass + "\" href=\"" + 
+            out.print("<a class=\"" + linkclass + "\" href=\"" +
                       m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
 
-            if( i < queueSize - 2 ) 
+            if( i < queueSize - 2 )
             {
                 out.print(m_separator);
             }
@@ -150,13 +150,13 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
-    public static class FixedQueue 
+    public static class FixedQueue
         extends LinkedList
         implements Serializable
     {
         private int m_size;
         private static final long serialVersionUID = 0L;
-        
+
         FixedQueue(int size)
         {
             m_size = size;
@@ -169,7 +169,7 @@ public class BreadcrumbsTag extends WikiTagBase
             {
                 return removeFirst();
             }
-            
+
             return null;
         }
     }

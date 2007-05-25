@@ -42,13 +42,12 @@ import com.ecyrd.jspwiki.util.HttpUtil;
 /**
  *  Logs in an user based on a cookie stored in the user's computer.  The cookie
  *  information is stored in the <code>jspwiki.workDir</code>, under the directory
- *  "{@value COOKIE_DIR}".  For security purposes it is a very, very good idea
+ *  {@value #COOKIE_DIR}.  For security purposes it is a very, very good idea
  *  to prevent access to this directory by everyone except the web server process;
  *  otherwise people having read access to this directory may be able to spoof
  *  other users.
  *  <p>
- *  The cookie directory is scrubbed of old entries every {@value SCRUB_PERIOD}
- *  milliseconds.
+ *  The cookie directory is scrubbed of old entries at regular intervals.
  *  <p>
  *   This module must be used with a CallbackHandler (such as
  *   {@link WebContainerCallbackHandler}) that supports the following Callback
@@ -57,15 +56,16 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  *   <ol>
  *   <li>{@link HttpRequestCallback}- supplies the cookie, which should contain
  *       an unique id for fetching the UID.</li>
- *   <li>{@link WikiEngineCallBack} - allows access to the WikiEngine itself.
+ *   <li>{@link WikiEngineCallback} - allows access to the WikiEngine itself.
  *   </ol>
  *  <p>
  *  After authentication, a generic WikiPrincipal based on the username will be
  *  created and associated with the Subject. Principals
  *  {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
- *  {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHORIZED} will be added.
+ *  {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added.
+ *  </p>
  *  @see javax.security.auth.spi.LoginModule#commit()
- *      </p>
+ *  @see CookieAssertionLoginModule
  *  @author Janne Jalkanen
  *  @since  2.5.62
  */
@@ -74,10 +74,13 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
     private static final Logger log = Logger.getLogger( CookieAuthenticationLoginModule.class );
     private static final String LOGIN_COOKIE_NAME = "JSPWikiUID";
-    private static final String COOKIE_DIR        = "logincookies";
+
+    /** The directory name under which the cookies are stored.  The value is {@value}. */
+    protected static final String COOKIE_DIR        = "logincookies";
 
     /**
      *  User property for setting how long the cookie is stored on the user's computer.
+     *  The value is {@value}.  The default expiry time is 14 days.
      */
     public static final  String PROP_LOGIN_EXPIRY_DAYS  = "jspwiki.cookieAuthorization.expiry";
 
@@ -321,6 +324,8 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
     /**
      *  Goes through the cookie directory and removes any obsolete files.
      *  The scrubbing takes place one day after the cookie was supposed to expire.
+     *  However, if the user has logged in during the expiry period, the expiry is
+     *  reset, and the cookie file left here.
      *
      *  @param days
      *  @param cookieDir

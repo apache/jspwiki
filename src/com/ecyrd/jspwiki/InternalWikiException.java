@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -31,6 +31,11 @@ public class InternalWikiException extends RuntimeException
 {
     private static final long          serialVersionUID = 1L;
 
+    /**
+     *  Create a new InternalWikiException.
+     *
+     *  @param msg The Exception message.
+     */
     public InternalWikiException( String msg )
     {
         super( msg );

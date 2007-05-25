@@ -55,8 +55,9 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * created and associated with the Subject. Principals
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
  * {@link com.ecyrd.jspwiki.auth.authorize.Role#ASSERTED} will be added.
+ * </p>
  * @see javax.security.auth.spi.LoginModule#commit()
- *      </p>
+ * @see CookieAuthenticationLoginModule
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -66,6 +67,8 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiAssertedName";
 
+    /** Believed to be unused.
+     *  @deprecated */
     public static final String PROMPT            = "User name";
 
     protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
@@ -144,9 +147,10 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
     }
 
     /**
-     * Returns the username cookie value.
-     * @param request
-     * @return the username, as retrieved from the cookie
+     *  Returns the username cookie value.
+     *
+     *  @param request The Servlet request, as usual.
+     *  @return the username, as retrieved from the cookie
      */
     public static String getUserCookie( HttpServletRequest request )
     {
@@ -156,7 +160,10 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
     }
 
     /**
-     * Sets the username cookie.  The cookie value is URLEncoded in UTF-8.
+     *  Sets the username cookie.  The cookie value is URLEncoded in UTF-8.
+     *
+     *  @param response The Servlet response
+     *  @param name     The name to write into the cookie.
      */
     public static void setUserCookie( HttpServletResponse response, String name )
     {
@@ -166,6 +173,12 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
         response.addCookie( userId );
     }
 
+    /**
+     *  Removes the user cookie from the response.  This makes the user appear
+     *  again as an anonymous coward.
+     *
+     *  @param response The servlet response.
+     */
     public static void clearUserCookie( HttpServletResponse response )
     {
         Cookie userId = new Cookie( PREFS_COOKIE_NAME, "" );

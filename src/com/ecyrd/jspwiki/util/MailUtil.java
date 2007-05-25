@@ -170,7 +170,7 @@ import com.ecyrd.jspwiki.WikiEngine;
  * @author Dan Frankowski
  * @author Andrew Jaquith
  */
-public class MailUtil
+public final class MailUtil
 {
     private static final String JAVA_COMP_ENV = "java:comp/env";
 
