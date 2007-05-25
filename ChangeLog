@@ -1,3 +1,13 @@
+2007-05-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.63
+
+       * Fixed a couple of typos in default template (thanks to Frank Fischer).
+
+       * Fixed a couple of typos in code (thanks to Murray Altheim).
+
+       * Fixed HTML editor crashing when editing (thanks to David Au).
+
 2007-05-22  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.62
