@@ -56,7 +56,7 @@
     //
     //  WYSIWYG editor sends us its greetings
     //
-    String htmlText = (String)pageContext.findAttribute( "htmlPageText" );
+    String htmlText = findParam( pageContext, "htmlPageText" );
     if( htmlText != null && cancel == null )
     {
         text = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
