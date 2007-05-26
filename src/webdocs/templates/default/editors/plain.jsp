@@ -17,11 +17,6 @@
    JSONRPCManager.requestJSON( context );  //FIXME: to be replace by standard mootools lib
 
    String usertext = EditorManager.getEditedText( pageContext );
-
-  /* included in jspwiki-edit.js 
-  TemplateManager.addResourceRequest( context, "script", 
-                                       context.getURL(WikiContext.NONE,"scripts/searchreplace.js") );
-  */
 %>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>

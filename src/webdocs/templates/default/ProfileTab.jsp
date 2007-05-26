@@ -14,9 +14,9 @@
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp'
-      format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>"
-        name="editProfile" id="editProfile"
+<form action="<wiki:Link jsp='UserPreferences.jsp' 
+      format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>" 
+        name="editProfile" id="editProfile" 
        class="wikiform"
     onsubmit="return Wiki.submitOnce( this );"
       method="post" accept-charset="UTF-8">
@@ -47,9 +47,7 @@
          <wiki:UserProfile property="canChangeLoginName">
            <input type="text" name="loginname" id="loginname"
                   size="20" value="<wiki:UserProfile property='loginname' />" />
-           <span class="formhelp"><fmt:message key="prefs.loginname.description"/></span>
          </wiki:UserProfile>
-         
          <wiki:UserProfile property="!canChangeLoginName">
            <!-- If user can't change their login name, it's because the container manages the login -->
            <wiki:UserProfile property="new">

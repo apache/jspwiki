@@ -1,3 +1,27 @@
+2007-05-26  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+       * 2.5.64 - 4th Brushed Template commit (still more to come)
+       
+       * Font size fixed. Various css enhancements. Skins not yet finished.
+       
+       * Enhanced Find page, including search scope (author, pagename, attachement),
+       and on/off checkbox for find details. Find page is now ajax driven, but also
+       functions properly when javascript is off.
+       
+       * Edit textarea is resizeable, with a cool drag effect.
+
+       * GoToBottom and GoToTop links have icons instead of >> and <<
+       
+       * Refactoring of Collapse and CollapseBox. New icons (+ and -) are being used.
+       
+       * Bugfixes on Tips JSPWiki style 
+       
+       * Test Plugin added, to enhance use of JSPWiki variables.
+       EG you can now use [{TEST name="context" match="edit"  ...some body... }]
+       for specific content in your leftmenu.
+       More info at http://www.jspwiki.org/wiki/BrushedConditionalPlugin
+       
+
 2007-05-25  Janne Jalkanen  <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.63

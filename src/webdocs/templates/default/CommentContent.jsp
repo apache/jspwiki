@@ -4,11 +4,11 @@
 <fmt:setBundle basename="templates.default"/>
 
 <wiki:TabbedSection defaultTab="commentcontent">
-  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.discussionpage")%>'>
+  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.discussionpage")%>'>
     <wiki:InsertPage/>
   </wiki:Tab>
 
-  <wiki:Tab id="commentcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.comment")%>'>
+  <wiki:Tab id="commentcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.addcomment")%>'>
   <div id="editorbar">  
     <fmt:message key="edit.chooseeditor"/>
     <select onchange="location.href=this.value">

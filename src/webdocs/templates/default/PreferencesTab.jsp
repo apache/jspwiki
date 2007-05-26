@@ -8,27 +8,17 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   /* see commonheader.jsp */
-  String prefSkinName       = (String) session.getAttribute("prefSkinName");
   String prefDateFormat     = (String) session.getAttribute("prefDateFormat");
   String prefTimeZone       = (String) session.getAttribute("prefTimeZone");
-  String prefEditAreaHeight = (String) session.getAttribute("prefEditAreaHeight");
-  String prefEditorType     = (String) session.getAttribute("prefEditorType");
+  String prefEditorType     = (String) session.getAttribute("prefEditorType"); //TODO
 
-  //  Determine the name for the user's favorites page
   WikiContext c = WikiContext.findContext( pageContext );
-  String pagename = c.getName();
-  String username = null;
- 
-  username = c.getEngine().getVariable( c, "username" );
-  if( username == null ) username = "";
+  pageContext.setAttribute( "skins", c.getEngine().getTemplateManager().listSkins(pageContext, c.getTemplate() ) );
 
-  String myFav = username + "Favorites";
 %>
 
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></h3>
-<%-- trivial message
-<div class="formhelp"><fmt:message key="prefs.instructions"/></div>
---%>
+
 <c:if test="${param.tab eq 'prefs'}" >
   <div class="formhelp">
     <wiki:Messages div="error" topic="prefs" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.prefs")%>'/>
@@ -41,10 +31,10 @@
       method="post" accept-charset="<wiki:ContentEncoding />" 
     onsubmit="var s=[];
              ['prefSkin','prefTimeFormat','prefTimeZone','prefEditSize'].each(function(el){
-               s.push($(el).getValue());
+               if($(el)) s.push($(el).getValue());
              });
              if(Wiki.PrefFontSize) s.push(Wiki.PrefFontSize);
-             Cookie.set( 'JSPWikiUserPrefs',s.join(Wiki.DELIM), Wiki.BasePath); 
+             Cookie.set( 'JSPWikiUserPrefs', s.join(Wiki.DELIM), Wiki.BasePath); 
              return Wiki.submitOnce( this ); " >
 <table>
 
@@ -77,22 +67,10 @@
   <tr>
   <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>
   <td>
-
   <select id="prefSkin" name="prefSkin">
-    <%
-      WikiContext wikiContext = WikiContext.findContext(pageContext);
-      TemplateManager mgr = wikiContext.getEngine().getTemplateManager();
-      java.util.Set skins = mgr.listSkins(pageContext, wikiContext.getTemplate());
-      //java.util.Collections.sort(skins);
-      for( java.util.Iterator i = skins.iterator(); i.hasNext(); )
-      {
-        String skinName = (String)i.next();
-        String selected = ( skinName.equals( prefSkinName ) ? " selected='selected'" : "" ) ;
-     %>
-        <option value="<%= skinName %>" <%= selected%> ><%= skinName %></option>
-     <%
-      }
-      %>
+    <c:forEach items="${skins}" var="i">
+      <option value='<c:out value='${i}'/>' <c:if test='${i == prefSkinName}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
+    </c:forEach>
   </select>
   </td>
   </tr>
@@ -103,15 +81,15 @@
 	<input type="button" value="-" onclick="Wiki.changeFontSize(-1);"
 		  title="<fmt:message key='pref.fontsize.title.down' />"></input>
 	<input type="button" value="<fmt:message key='pref.fontsize.reset' />"
-        onclick="Wiki.resetFontSize();" name="prefFontSize"
+	    onclick="Wiki.resetFontSize();" name="prefFontSize"
 		  title="<fmt:message key='pref.fontsize.title.reset' />"></input>
 	<input type="button" value="+" onclick="Wiki.changeFontSize(1);"
 		  title="<fmt:message key='pref.fontsize.title.up' />"></input>
   </td>
   </tr>
   
-  <%-- FIXME: temoporary removed; "editor" session parameter to be set - see EditContent.jsp, editorManager.java --%>
-  <tr style="display:none;">
+  <%-- FIXME: temporary removed; "editor" session parameter to be set - see EditContent.jsp, editorManager.java 
+  <tr>
   <td><label for="prefEditorType"><u>E</u>ditor Type</label></td>
   <td>
   <select id="prefEditorType" name="prefEditorType" >
@@ -121,26 +99,8 @@
   </select>
   </td>
   </tr>
+  --%>
   
-  
-  <tr>
-  <td><label for="prefEditSize"><fmt:message key="prefs.user.editorareaheight"/></label></td>
-  <td>
-  <select id="prefEditSize" name="prefEditSize" >
-    <%
-      String[] editsizes = { "20", "24", "28", "32", "36", "72" } ;
-      for( int i=0; i < editsizes.length; i++ )
-      {
-        String selected = ( prefEditAreaHeight.equals( editsizes[i] ) ? " selected='selected'" : "" ) ;
-     %>
-        <option <%=selected%> ><%= editsizes[i] %></option>
-     <%
-      }
-    %>
-  </select>
-  </td>
-  </tr>
-
   <tr>
   <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label></td>
   <td>

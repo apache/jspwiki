@@ -16,12 +16,11 @@
            name="query" id="query" 
            size="20" autocomplete="off"
       accesskey="f"></input>
-  <input type="hidden" name="compact" id="compact" value="true"></input>
-  <input type="image" id="searchSubmit" name="submit" 
-          src="templates/default/images/search2.png" 
-          alt="Search" 
-        title="Search"></input>
-  </div> 
+  <button type="submit"
+  		 name="go" id="searchSubmit"
+  		value="<fmt:message key='find.submit.go'/>"
+  		title="<fmt:message key='find.submit.go'/>"></button>
+  </div>
 
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
@@ -50,8 +49,8 @@
     </div>
     <div id="recentSearches" style="display:none;"> 
       <fmt:message key="sbox.recentsearches"/>
+      <span><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a></span>
       <ul id="recentItems"></ul>
-      <div><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a></div>
     </div>
   </div>
 

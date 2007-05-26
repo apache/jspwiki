@@ -52,17 +52,23 @@
  <meta http-equiv="refresh" content="1">
  </head>
  <body>
- <p style="font-size:200%; background:yellow;">
+ <p style="font-style:monospace;font-size:200%; ">
+ <span style="background:lime;color:lime;">
  <%
     for( int i = 0; i < progress/5; i++ )
     {
         out.print('+');
     }
+ %>
+ </span>
+ <span style="background:yellow;color:yellow;">
+ <%
     for( int i = progress/5; i < 20; i++ )
     {
         out.print('-');
     }
  %>
+ </span>
  </p>
  </body>
  </html>

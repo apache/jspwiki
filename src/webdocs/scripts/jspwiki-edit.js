@@ -33,8 +33,13 @@ var EditTools =
    */
   onPageLoad : function()
   {
-    this.mainarea = $( this.MainareaID ); if( !this.mainarea ) return;
+    this.mainarea = $('editorarea'); if( !this.mainarea ) return;
     this.textarea = this.mainarea;
+    
+    /* add textarea resize drag bar */
+	var h = new Element('div',{'class':'textarea-resizer', 'title':'edit.resize'.localize()})
+		.injectAfter(this.textarea);	
+	this.textarea.makeResizable({handle:h, modifiers: {x:false, y:'height'} });			
   } ,
     
   /**

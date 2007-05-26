@@ -1,13 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="templates.default"/>
 <%
-  /* see commonheader.jsp */
-  String prefDateFormat = (String) session.getAttribute("prefDateFormat");
-  String prefTimeZone   = (String) session.getAttribute("prefTimeZone");
-  String group              = request.getParameter( "group" );
-
   String homepage = "Main";
   WikiContext wikiContext = WikiContext.findContext(pageContext);
   try 
@@ -87,14 +83,14 @@
     <wiki:Permission permission="editGroup">
       <span class="actionsEditGroup">
         <wiki:Link jsp="EditGroup.jsp">
-          <wiki:Param name="group" value="<%=group%>" />
+          <wiki:Param name="group" value="${param.group}" />
           <fmt:message key="actions.editgroup"/>
         </wiki:Link>
       </span>
     </wiki:Permission>
     <wiki:Permission permission="deleteGroup"> 
       <span class="actionsDeleteGroup">
-        <a onclick="return confirmDelete()" href="<wiki:Link jsp='DeleteGroup.jsp' format='url'><wiki:Param name='group' value='<%=group%>' /></wiki:Link>"><fmt:message key="actions.deletegroup"/></a>
+        <a onclick="return confirmDelete()" href="<wiki:Link jsp='DeleteGroup.jsp' format='url'><wiki:Param name='group' value="${param.group}" /></wiki:Link>"><fmt:message key="actions.deletegroup"/></a>
       </span>
     </wiki:Permission>
   </wiki:CheckRequestContext>
@@ -102,7 +98,7 @@
   <wiki:CheckRequestContext context='editGroup'>
     <span class="actionsEditGroup">
       <wiki:Link jsp="Group.jsp">
-        <wiki:Param name="group" value="<%=group%>" />
+        <wiki:Param name="group" value="${param.group}" />
         <fmt:message key="actions.viewgroup"/>
       </wiki:Link>
     </span>
@@ -179,6 +175,6 @@
     </div>
   </span>
 
-  <span class="quicklinks quick2Bottom"><a href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a></span>
+  <span class="quick2bottom"><a href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a></span>
 
 </div>

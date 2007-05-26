@@ -38,6 +38,7 @@
 <%
   /* cookie-format:
    * skinname DELIM dateformat DELIM timezone DELIM editareaheight DELIM editortype
+   * FIXME: move to JSON object  -- but how to parse in java
    */
   String DELIM  = "\u00a0";
   String prefSkinName = "PlainVanilla"; /* FIXME: default skin - should be settable via jspwiki.properties */
@@ -102,10 +103,11 @@ var LocalizedStrings = {
             { 
               out.println(","); 
             }
-            out.println( "\""+key+"\" : \""+rb.getString(key)+"\"");
+            out.print( "\""+key+"\" : \""+rb.getString(key)+"\"");
         }         
     }
-%>};
+%>
+};
 
 /* Initialise glboal Wiki js object with server and page dependent variables */
 /* FIXME : better is to add this to the window.onload handler */

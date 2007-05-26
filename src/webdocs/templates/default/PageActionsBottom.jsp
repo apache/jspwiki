@@ -1,13 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="templates.default"/>
 <%
-  /* see commonheader.jsp */
-  String prefDateFormat = (String) session.getAttribute("prefDateFormat");
-  String prefTimeZone   = (String) session.getAttribute("prefTimeZone");
-  String group              = request.getParameter( "group" );
-
   String homepage = "Main";
   WikiContext wikiContext = WikiContext.findContext(pageContext);
   WikiPage wikiPage = wikiContext.getPage();
@@ -23,10 +19,6 @@
      ** no Login/Logout, quick2Bottom 
   --%>
 <div id='actionsBottom' class="pageactions"> 
-
-  <span class="quick2Top">
-    <a href="#top" title="<fmt:message key='actions.gototop'/>" >&laquo;</a>
-  </span>
 
   <span class="actionHome">
     <a href="<wiki:LinkTo page='<%= homepage %>' format='url' />"
@@ -72,9 +64,12 @@
     </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
 
+  <span class="quick2top"><a href="#top" 
+        title="<fmt:message key='actions.gototop'/>" >&laquo;</a></span>
+
   <%-- summary page info--%>
   <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
-    <div class="pageInfo">
+    <div class="pageinfo">
       <wiki:CheckVersion mode="latest">
          <fmt:message key="info.lastmodified">
             <fmt:param><wiki:PageVersion /></fmt:param>

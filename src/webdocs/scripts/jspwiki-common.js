@@ -123,17 +123,6 @@ var Observer = new Class({
 	}
 });
 
-//ref http://forum.mootools.net/topic.php?id=1038 --not yet used
-/*
-var QueryString = new Class({
-    initialize: function(){
-        $A(window.location.search.replace(/^?/,'').split('&')).each(function(s){
-            this[s.split('=')[0]] = unescape(s.split('=')[1]);
-        }.bind(this));
-    }
-});
-*/
-
 /* Cookie: based on mootools, uses encode/decode stuff iso escape */
 //FIXME :: can this be removed in favour of standard mootools version 
 Cookie = {
@@ -211,9 +200,6 @@ Color.implement({
 
 /* I18N Support
  * LocalizedStrings takes form { "javascript.resource key":"localised resource key {0}" }
- * Parameters {0..9}
- * Use: "resource key".localize(parameters)
- *
  * Examples:
  * "moreInfo".localize();
  * "imageInfo".localize(2,4); => expects "Image {0} of {1}"
@@ -255,6 +241,7 @@ function getAncestorByTagName( node, tagName )
 /** 100 Wiki functions **/
 var Wiki = {
 
+	JSONid : 1,
 	init: function(props){
 		Object.extend(Wiki,props || {'DELIM':'\u00A4'}); 
 		this.BasePath = this.BaseURL.slice( this.BaseURL.indexOf( location.host )
@@ -281,16 +268,17 @@ var Wiki = {
 			|| $('query2');		// Search.jsp
 		if(f && f.visible()) f.focus();	//IE chokes when focus on invisible element
 
-		this.DefaultFontSize = $$('body')[0].getStyle('font-size').toFloat();
+		/*
+		this.DefaultFontSize = $E('body').getStyle('font-size').toFloat();
 		if(this.PrefFontSize) { this.PrefFontSize=this.PrefFontSize.toFloat(); this.changeFontSize(0); } 
 		else this.PrefFontSize = this.DefaultFontSize;
-
+		*/
 		this.replaceMoreBox(); /* visual sugar */
 	},
 
 	changeFontSize: function(incr){
 	  this.PrefFontSize += incr;
-	  $$('body')[0].setStyle('font-size',this.PrefFontSize);
+	  $E('body').setStyle('font-size',this.PrefFontSize);
 	},
 
 	resetFontSize: function(){
@@ -310,10 +298,10 @@ var Wiki = {
 		$A(selection.options).each(function(o){
 			if(o.value == "") return;
 			if(o.value == "separator"){
-				new Element('li').addClass(o.className).setHTML(o.text).injectInside(more); 
+				new Element('li',{'class':o.className}).setHTML(o.text).inject(more); 
 			} else {
-				new Element('a').setProperty('href',o.value).addClass(o.className).setHTML(o.text)
-				.injectInside( new Element('li').injectInside(more) );
+				new Element('a',{'class':o.className, 'href':o.value}).setHTML(o.text)
+				.inject( new Element('li').inject(more) );
 			}
 		});
 		selection.getParent().remove();
@@ -368,7 +356,7 @@ var WikiSlimbox = {
 
 	onPageLoad: function(){
 		var i=0,
-			lnk=new Element('a').addClass('slimbox').setHTML('&raquo;');
+			lnk=new Element('a',{'class':'slimbox'}).setHTML('&raquo;');
 			
 		$$('*[class^=slimbox]').each(function(slim){
 			var group = 'lightbox'+ i++,
@@ -384,7 +372,7 @@ var WikiSlimbox = {
 				lnk.clone().setProperties({'href':href, 'rel':group+' '+rel,'title':el.alt||el.getText()})
 					.injectBefore(el);
 				if(el.src) 
-					el.replaceWith(new Element('a').addClass('attachment').setProperty('href',el.src).setHTML(el.alt||el.getText()));
+					el.replaceWith(new Element('a',{'class':'attachment','href':el.src}).setHTML(el.alt||el.getText()));
 			});
 		});
 		if(i) Lightbox.init({errorMessage:"slimbox.error".localize()});
@@ -431,23 +419,23 @@ var Lightbox = {
 		this.eventKeyDown = this.keyboardListener.bindAsEventListener(this);
 		this.eventPosition = this.position.bind(this);
 
-		this.overlay = new Element('div').setProperty('id', 'lbOverlay').injectInside(document.body);
+		this.overlay = new Element('div').setProperty('id', 'lbOverlay').inject(document.body);
 
-		this.center = new Element('div').setProperty('id', 'lbCenter').setStyles({width: this.options.initialWidth+'px', height: this.options.initialHeight+'px', marginLeft: '-'+(this.options.initialWidth/2)+'px', display: 'none'}).injectInside(document.body);
-		this.image = new Element('div').setProperty('id', 'lbImage').injectInside(this.center);
-		this.prevLink = new Element('a').setProperties({id: 'lbPrevLink', href: '#', title:'Previous [up arrow] [<-left arrow]'}).setStyle('display', 'none').setHTML('&laquo; Prev').injectInside(this.center);
-		this.nextLink = this.prevLink.clone().setProperties({id:'lbNextLink', title:'Next [space] [down arrow] [right arrow->]'}).setHTML('Next &raquo;').injectInside(this.center);
+		this.center = new Element('div').setProperty('id', 'lbCenter').setStyles({width: this.options.initialWidth+'px', height: this.options.initialHeight+'px', marginLeft: '-'+(this.options.initialWidth/2)+'px', display: 'none'}).inject(document.body);
+		this.image = new Element('div').setProperty('id', 'lbImage').inject(this.center);
+		this.prevLink = new Element('a').setProperties({id: 'lbPrevLink', href: '#', title:'Previous [up arrow] [<-left arrow]'}).setStyle('display', 'none').setHTML('&laquo; Prev').inject(this.center);
+		this.nextLink = this.prevLink.clone().setProperties({id:'lbNextLink', title:'Next [space] [down arrow] [right arrow->]'}).setHTML('Next &raquo;').inject(this.center);
 		this.prevLink.onclick = this.previous.bind(this);
 		this.nextLink.onclick = this.next.bind(this);
 
-		this.bottomContainer = new Element('div').setProperty('id', 'lbBottomContainer').setStyle('display', 'none').injectInside(document.body);
-		this.bottom = new Element('div').setProperty('id', 'lbBottom').injectInside(this.bottomContainer);
-		new Element('a').setProperties({id: 'lbCloseLink', href: '#', title:'Close [Esc]'}).setHTML('Close &#215;').injectInside(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
-		this.caption = new Element('div').setProperty('id', 'lbCaption').injectInside(this.bottom);
-		this.number = new Element('div').setProperty('id', 'lbNumber').injectInside(this.bottom);
+		this.bottomContainer = new Element('div').setProperty('id', 'lbBottomContainer').setStyle('display', 'none').inject(document.body);
+		this.bottom = new Element('div').setProperty('id', 'lbBottom').inject(this.bottomContainer);
+		new Element('a').setProperties({id: 'lbCloseLink', href: '#', title:'Close [Esc]'}).setHTML('Close &#215;').inject(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
+		this.caption = new Element('div').setProperty('id', 'lbCaption').inject(this.bottom);
+		this.number = new Element('div').setProperty('id', 'lbNumber').inject(this.bottom);
 		this.error = new Element('div').setProperty('id', 'lbError').setHTML(this.options.errorMessage);
 		
-		new Element('div').setStyle('clear', 'both').injectInside(this.bottom);
+		new Element('div').setStyle('clear', 'both').inject(this.bottom);
 
 		var nextEffect = this.nextEffect.bind(this);
 		this.fx = {
@@ -740,12 +728,12 @@ var QuickLinks = {
 		
 		var ql,qlPrev,qlEdit,qlNext;
 		function qql(clazz,title,text,href){
-			var a = new Element('a').setProperty('title',title.localize()).setHTML(text);
+			var a = new Element('a',{'title':title.localize()}).setHTML(text);
 			if(href) a.setProperty('href',href);
-			ql.adopt(new Element('span').addClass(clazz).adopt(a));
+			ql.adopt(new Element('span',{'class':clazz}).adopt(a));
 			return(a);
 		}
-		ql = new Element('div').addClass('quicklinks');
+		ql = new Element('div',{'class':'quicklinks'});
 		qql('quick2Top','quick.top','&laquo;','#wikibody');
 		qlPrev = qql('quick2Prev','quick.previous','&lsaquo;');
 
@@ -786,7 +774,7 @@ var TabbedSection = {
 	onPageLoad: function(){
 		$$('.tabbedSection').each( function(tt){
 			tt.addClass('tabs'); //css styling is on tabs
-			var tabmenu = new Element('div').addClass('tabmenu').injectBefore(tt);
+			var tabmenu = new Element('div',{'class':'tabmenu'}).injectBefore(tt);
 
 			tt.getChildren().each(function(tab,i) {
 				if( !tab.className.test('^tab-') ) return;
@@ -797,12 +785,12 @@ var TabbedSection = {
 				//use class to make tabs visible during printing !
 				(i==0) ? tab.removeClass('hidetab'): tab.addClass('hidetab');
 
-				var span = new Element('span').injectInside(tabmenu);
+				var span = new Element('span').inject(tabmenu);
 				var menu = new Element('a')
 					.setProperties({'id':'menu-'+tab.id, 'href':'javascript:void(0)'})
 					.addEvent('click',function(){ TabbedSection.onclick(tab.id); })
 					.appendText(title)
-					.injectInside(span);
+					.inject(span);
 				if( i==0 ) menu.addClass('activetab');        
 			});
 		}, this);
@@ -852,7 +840,7 @@ var WikiAccordion = {
 		$$('.accordion, .tabbedAccordion').each( function(tt){
 			
 			var toggles=[], contents=[], togglemenu=false;
-			if(tt.hasClass('tabbedAccordion')) togglemenu = new Element('div').addClass('togglemenu').injectBefore(tt);
+			if(tt.hasClass('tabbedAccordion')) togglemenu = new Element('div',{'class':'togglemenu'}).injectBefore(tt);
 			
 			tt.getChildren().each(function(tab) {
 				if( !tab.className.test('^tab-') ) return;
@@ -862,9 +850,9 @@ var WikiAccordion = {
 
 				var title = tab.className.substr(4).deCamelize();
 				if(togglemenu) {
-					toggles.push(new Element('div').addClass('toggle').injectInside(togglemenu).appendText(title));
+					toggles.push(new Element('div',{'class':'toggle'}).inject(togglemenu).appendText(title));
 				} else {
-					toggles.push(new Element('div').addClass('toggle').injectBefore(tab).appendText(title));
+					toggles.push(new Element('div',{'class':'toggle'}).injectBefore(tab).appendText(title));
 				}        
 				contents.push(tab.addClass('tab'));
 			});
@@ -892,45 +880,94 @@ var WikiAccordion = {
  */
 var SearchBox = {
 
-	Max:     9, //max recent search items
-	
 	onPageLoad: function(){
-		this.form = $('searchForm'); if( !this.form ) return;
-		this.form.addEvent('submit',this.submit.bind(this))
-				 //FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
-				 //FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
-				 .addEvent('mouseout',function(){ if(!this.hasfocus) this.hover.start(0) }.bind(this))
-				 .addEvent('mouseover',function(){ this.hover.start(0.9) }.bind(this));
-		$('recentClear').addEvent('click', this.clear.bind(this));
+		this.onPageLoadQuickSearch();
+		this.onPageLoadFullSearch();
+	},
+
+	onPageLoadQuickSearch : function(){
+		var q = $('query'); if( !q ) return;
+	    this.query = q; 
+	    q.observe(this.ajaxQuickSearch.bind(this) ); 
+
+		q.form.addEvent('submit',this.submit.bind(this))
+			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
+			//FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
+			  .addEvent('mouseout',function(){ if(!this.hasfocus) this.hover.start(0) }.bind(this))
+			  .addEvent('mouseover',function(){ this.hover.start(0.9) }.bind(this));
 		
 		this.hover = $('searchboxMenu').setProperty('visibility','visible')
 			.effect('opacity', {wait:false}).set(0);
     
-	    this.query = $('query'); this.query.observe(this.ajaxSearch.bind(this) ); 
+		/* FIXME: recentSearches; use advanced search-input on safari */
+		if(window.xwebkit){
+			q.setProperties({type:"search",autosave:q.form.action,results:"9",placeholder:q.defaultValue});
+		} else {
+			$('recentClear').addEvent('click', this.clear.bind(this));
+			var ul = $('recentItems');
 
-		this.recent = Cookie.get('JSPWikiSearchBox');
-		if( !this.recent ) return;
-		this.recent = this.recent.split(Wiki.DELIM);
+			this.recent = Cookie.get('JSPWikiSearchBox');
+			if( !this.recent ) return;
+			this.recent = this.recent.split(Wiki.DELIM);
 
-		var ul = $('recentItems'), go = $('advancedSearch'); q = this.form.query;
-		this.recent.each(function(el){
-		    $('recentSearches').show(); 
-			new Element('a').setProperty('href','#').setHTML(el)
-				.addEvent('click',function(){ q.value = el; q.form.submit(); })
-				.injectInside( new Element('li').injectInside(ul) );
-		});
+			this.recent.each(function(el){
+			    $('recentSearches').show(); 
+				new Element('a',{
+					'href':'#', 
+					'events': {'click':function(){ q.value = el; q.form.submit(); }}
+					}).setHTML(el).inject( new Element('li').inject(ul) );
+			});
+		}
+	},
+
+	onPageLoadFullSearch : function(){
+		var q2 = $("query2"); if( !q2 ) return;
+		this.query2 = q2;
+		//q2.form.addEvent('submit',this.submit.bind(this))
+		
+		var runquery = function(){
+			var q2 = this.query2.value;
+			if( !q2 || (q2.trim()=='') ) return;
+			$('spin').show();
+
+			var scope = $('scope'), 
+				match= q2.match(/^(?:author:|name:|contents:|attachment:)/) ||"";
+			$each(scope.options, function(option){
+				if (option.value == match) option.selected = true;
+			});
+
+			new Ajax(Wiki.TemplateDir+'AJAXSearch.jsp', {
+				postBody: $('searchform2').toQueryString(),
+				update: 'searchResult2', 
+				method: 'post',
+				onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); } 
+			}).request();
+
+    	}.bind(this);
+
+    	var changescope = function(){
+	    	var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
+			this.query2.value = $('scope').getValue() + qq;
+			runquery();
+		}.bind(this);
+    	
+    	q2.observe( runquery );
+		
+		$('scope').addEvent('change', changescope);
+		$('details').addEvent('change', runquery);
+		//$('go').hide();
+		//$('ok').hide();
 	},
 
 	submit: function(){ 
-		var v = this.form.query.value;
+		var v = this.query.value;
 		if( !this.recent ) this.recent=[];
 		if( !this.recent.test(v) ){
-			if(this.recent.length > this.Max) this.recent.pop();
+			if(this.recent.length > 9) this.recent.pop();
 			this.recent.unshift(v);
 			Cookie.set('JSPWikiSearchBox', this.recent.join(Wiki.DELIM), Wiki.BasePath);
 		}
-		if(v.trim() != '') location.href = this.form.action + '?query=' + v;
-		return false;
+		if(v.trim() != '') location.href = this.query.form.action + '?query=' + v;
 	},
 
 	clear: function(){
@@ -939,8 +976,7 @@ var SearchBox = {
 		$('recentSearches').hide();
 	},
 
-	jsonID : 1,
-    ajaxSearch: function(){
+    ajaxQuickSearch: function(){
 		var qv = this.query.value ;
 		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) return;
 
@@ -959,7 +995,7 @@ var SearchBox = {
 		/*
 		new Ajax( Wiki.BaseURL+'JSON-RPC', {
 			postBody: Json.toString({
-				"id": this.jsonID++, "method": "search.getSuggestions", "params": [qv, 20]
+				"id": Wiki.JSONid++, "method": "search.getSuggestions", "params": [qv, 20]
 			}), 
 			method: 'post', 
 			onComplete: function(result){ 
@@ -976,13 +1012,16 @@ var SearchBox = {
 
 		new Ajax( Wiki.BaseURL+'JSON-RPC', {
 			postBody: Json.toString({
-				"id": this.jsonID++, "method": "search.findPages", "params": [qv, 20]
+				"id": Wiki.JSONid++, "method": "search.findPages", "params": [qv, 20]
 			}), 
 			method: 'post', 
 			onComplete: function(result){ 
 				$('searchSpin').hide(); 
-				var s = ["<ul>"];
-				Json.evaluate(result).result.list.each(function(el){
+				var r = Json.evaluate(result,true),
+					s = ["<ul>"];
+				if(!r || !r.result || !r.result.list) return; /*not safe*/
+				//FIXME : to be mootooled
+				r.result.list.each(function(el){
 					s.push( "<li><a href='"+Wiki.BaseURL+"Wiki.jsp?page="+el.map.page+"'>"+el.map.page+"</a>");
 					s.push( " <span class='small'>("+el.map.score+")</span></li>");
 				});
@@ -1278,190 +1317,135 @@ var GraphBar =
 	}
 }
 
-/**
- ** 200 Collapsable list items
- **
+/** 200 Collapsable list and boxes
  ** See also David Lindquist <first name><at><last name><dot><net>
  ** See: http://www.gazingus.org/html/DOM-Scripted_Lists_Revisited.html
  **
- ** Add stuff to support collabsable boxes, Nov 05, D.Frederickx
- **
+ ** Add support for collabsable boxes, Nov 05, D.Frederickx
+ ** Refactored on mootools, including effects, May 07, D.Frederickx
  **/
 var Collapsable =
 {
-	tmpcookie   : null,
-	cookies     : [],
-	cookieNames : [],
-
-	ClassName       : "collapse",
-	ClassNameBox    : "collapsebox",
-	REClassNameBox  : new RegExp( "(?:^| )collapsebox(-closed)?" ),
-	ClassNameBody   : "collapsebody",
-	CollapseID      : "clps", //prefix for unique IDs of inserted DOM nodes
-	MarkerOpen      : "O",    //cookie state chars
-	MarkerClose     : "C",
-	CookiePrefix    : "JSPWikiCollapse",
+	pims : [], // all me cookies
 
 	onPageLoad: function(){
-		this.OpenTip  = "collapse".localize();
-		this.CloseTip = "expand".localize();
-
-		this.bullet = new Element('div').addClass('collapseBullet').setHTML('&bull;');
-
-		this.initialise( "favorites",   this.CookiePrefix + "Favorites" );
-		this.initialise( "pagecontent", this.CookiePrefix + Wiki.PageName );
+		this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');
+		this.initialise( "favorites",   "JSPWikiCollapseFavorites" );
+		this.initialise( "pagecontent", "JSPWikiCollapse" + Wiki.PageName );
 	},
 
-	initialise: function(domID, cookieName){
-		var page = $(domID); if(!page) return;
-		this.tmpcookie = Cookie.get(cookieName);
-		this.cookies.push( "" ) ; //initialise new empty collapse cookie
-		this.cookieNames.push( cookieName );
+	initialise: function( page, cookie){
+		page = $(page); if(!page) return;
 
-		$ES('.collapse', page).each(function(el){ Collapsable.collapseNode(el); });   
-		$ES('*[class^=collapsebox]', page).each(function(el){ Collapsable.collapseBox(el); });
+		this.pims.push({
+			'name':cookie,
+			'value':'',
+			'initial':Cookie.get(cookie) 
+		});
+		$ES('.collapse', page).each(function(el){ 
+			this.collapseNode(el); 
+		}, this);
+		$ES('.collapsebox,.collapsebox-closed', page).each(function(el){ 
+			this.collapseBox(el); 
+		}, this);	
 	},
 
-	collapseBox: function(node){
-		var title = node.getFirst(); if( !title ) return;
-		/*while( (title != null) && (!this.REboxtitle.test( title.nodeName.toLowerCase() )) )
-		{
-			title = title.nextSibling;
-		}
-		if( !title || !title.nextSibling ) return;
-		*/
+	collapseBox: function(el){
+		var title = el.getFirst(); if( !title ) return;
+		var body = new Element('div', {'class':'collapsebody'}); // wrap other siblings
 
-		/*put wrapper around all remaining siblings*/
-		var body = new Element('div').addClass('collapsebody');
 		while(title.nextSibling) body.appendChild(title.nextSibling);
-		node.appendChild(body);
+		el.appendChild(body);
 		
-		var isClosed = node.hasClass('collapsebox-closed');
-		node.className = node.className.replace( this.REClassNameBox, this.ClassNameBox ) ;
+		var isclosed = el.hasClass('collapsebox-closed');
+		if(isclosed) el.removeClass('collapsebox-closed').addClass('collapsebox');
 
-		var bullet  = this.bullet.clone();//.injectAfter(title);
-		this.initBullet( bullet, body, (isClosed) ? this.MarkerClose : this.MarkerOpen );
-		title.appendChild( bullet ).addClass('collapseboxtitle');
+		var bullet  = this.bullet.clone();
+		this.newBullet( bullet, body, !isclosed );
+		title.adopt( bullet ).addClass('collapsetitle');
 	},
 
-	// Modifies the list such that sublists can be hidden/shown by clicking the listitem   bullet
+	// Modifies the list such that sublists can be hidden/shown by clicking the listitem bullet
 	// The listitem bullet is a node inserted into the DOM tree as the first child of the
 	// listitem containing the sublist.
 	collapseNode: function(node){
-		var items = node.getElementsByTagName("li");
-		for( i=0; i < items.length; i++ )
-		{
-			var nodeLI = items[i];
-			var nodeXL = ( nodeLI.getElementsByTagName("ul")[0] ||
-										 nodeLI.getElementsByTagName("ol")[0] );
-
-			//dont insert bullet when LI is "empty" -- iow it has no text or no non ulol tags inside
-			//eg. * a listitem
-			//    *** a nested list item - intermediate level is empty
+		$ES('li',node).each(function(li){
+			var ulol = $E('ul',li) || $E('ol',li);
+			
+			//dont insert bullet when LI is 'empty': no text or no non-ul/ol tags			
 			var emptyLI = true;
-			for( var n = nodeLI.firstChild; n ; n = n.nextSibling )
-			{
+			for( var n = li.firstChild; n ; n = n.nextSibling ) {
 				if((n.nodeType == 3 ) && ( n.nodeValue.trim() == "" ) ) continue; //keep searching
 				if((n.nodeName == "UL") || (n.nodeName == "OL")) break; //seems like an empty li
 				emptyLI = false;
 				break;
 			}
-			if( emptyLI ) continue; //do not insert a bullet
-
+			if( emptyLI ) return;
+			
 			var bullet = this.bullet.clone();
-
-			if( nodeXL )
-			{
-				var defaultState = (nodeXL.nodeName == "UL") ? this.MarkerOpen: this.MarkerClose ;
-				this.initBullet( bullet, nodeXL, defaultState );
-			}
-			nodeLI.insertBefore( bullet, nodeLI.firstChild );
-		}
+			if(ulol) this.newBullet(bullet, ulol, (ulol.getTag()=='ul'));
+			bullet.injectTop(li);
+		},this);
 	},
 
+	newBullet: function(bullet, body, isopen){
+		var ck = this.pims.getLast();
+		isopen = this.parseCookie(isopen);
 
-	// initialise bullet according to parser settings
-	initBullet: function( bullet, body, defaultState )
-	{
-		var collapseState = this.parseCookie( defaultState );
-		bullet.onclick = this.toggleBullet;
-		bullet.id = this.CollapseID + "." + (this.cookies.length-1) +
-												          "." + (this.cookies.getLast().length-1);
-		this.setOpenOrClose( bullet, ( collapseState == this.MarkerOpen ), body );
+		var bodyfx = body.setStyle('overflow','hidden')
+			.effect('height', { 
+				wait:false,
+				onStart:this.toggleBullet.bind(bullet),
+				onComplete:function(){ if(bullet.hasClass('collapseOpen')) body.setStyle('height','auto'); } 
+			});
+
+		bullet.addEvent('click', this.clickBullet.bind(bullet, [ck, ck.value.length-1, bodyfx]))
+			  .className = (isopen ? 'collapseClose' : 'collapseOpen'); //ready for first toggle
+
+		bodyfx.fireEvent('onStart');
+		if(!isopen) bodyfx.set(0); //.set( isopen ? body.scrollHeight : 0 );	
 	},
 
-	setOpenOrClose: function( bullet, setToOpen, body )
-	{ 
-		var fx = $(body).setStyle('overflow','hidden')
-						.effect('height', { wait:false,
-							onComplete:function(){ if(setToOpen) $(body).setStyle('height','auto'); } 
-						});
-		if(setToOpen){
-			$(bullet).setProperties({'title':this.OpenTip, 'class':'collapseOpen'}).setHTML('&raquo;');
-			fx.start(body.scrollHeight);
-		} else {
-			$(bullet).setProperties({'title':this.CloseTip, 'class':'collapseClose'}).setHTML('&laquo;');
-			fx.start(body.scrollHeight, 0);
-		} 
-	},
-
-	// parse cookie
-	// this.tmpcookie contains cookie being validated agains the document
-	// this.cookies.last contains actual cookie being constructed
-	//    this cookie is stored in the cookies[]
-	//    and only persisted when the user opens/closes something
-	// returns collapseState MarkerOpen, MarkerClose
-	parseCookie: function( token )
-	{
-		var currentcookie = this.cookies.getLast();
-		var cookieToken = token; //default value
-
-		if( (this.tmpcookie) && (this.tmpcookie.length > currentcookie.length) )
-		{
-			cookieToken = this.tmpcookie.charAt( currentcookie.length );
-			if(  ( (token == this.MarkerOpen) && (cookieToken == this.MarkerClose) )
-				|| ( (token == this.MarkerClose) && (cookieToken == this.MarkerOpen) ) ) //##fixed
-					token = cookieToken ;
-			if( token != cookieToken )  //mismatch between tmpcookie and expected token
-					this.tmpcookie = null;
-		}
-		this.cookies[this.cookies.length - 1] += token; //append and save currentcookie
-
-		return( token );
-	},
-
-	// toggle bullet and update corresponding cookie
-	// format of ID of bullet = "collapse.<cookies-index>.<cookie-charAt>"
 	toggleBullet: function(){
-		var ctx = Collapsable; //avoid confusion with this == clicked bullet
-
-		var idARR  = this.id.split(".");  if( idARR.length != 3 ) return;
-		var cookie = ctx.cookies[idARR[1]]; // index in cookies array
-
-		var body = $(this.parentNode);
-		if( body.getTag().test('h2|h3|h') ){
-			body = body.getNext();
+		if(this.hasClass('collapseClose')){
+			this.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).setHTML('-'); /* &raquo; */
 		} else {
-			body = $E('ul,ol', body);
+			this.setProperties({'title':'expand'.localize(), 'class':'collapseClose'}).setHTML('+'); /* &laquo; */
 		}
-		if( !body ) return;
+	},
 
-		//ctx.setOpenOrClose( this, (body.style.display == "none"), body );
-		ctx.setOpenOrClose( this, (body.offsetHeight == 0), body );
+	clickBullet: function( ck, bulletidx, bodyfx){
+		var collapse = this.hasClass('collapseOpen'),
+			bodyHeight = bodyfx.element.scrollHeight; 
 
-		var i = parseInt(idARR[2]); // position inside cookie
-		var c = ( cookie.charAt(i) == ctx.MarkerOpen ) ? ctx.MarkerClose: ctx.MarkerOpen;
-		cookie = cookie.substring(0,i) + c + cookie.substring(i+1) ;
+		if(collapse) bodyfx.start(bodyHeight, 0); else bodyfx.start(bodyHeight);
+		
+		ck.value = ck.value.substring(0,bulletidx) + (collapse ? 'c' : 'o') + ck.value.substring(bulletidx+1) ;
+		Cookie.set(ck.name, ck.value, Wiki.BasePath);
+	},
 
-		Cookie.set(ctx.cookieNames[idARR[1]], cookie, Wiki.BasePath);
-		ctx.cookies[idARR[1]] = cookie;
+	// parse initial cookie versus actual document 
+	// returns true if collapse status is open
+	parseCookie: function( isopen ){
+		var ck = this.pims.getLast(),
+			cursor = ck.value.length,
+			token = (isopen ? 'o' : 'c');
 
-		return false;
+		if(ck.initial && (ck.initial.length > cursor)){
+			var cookieToken = ck.initial.charAt( cursor );
+
+			if(  ( isopen && (cookieToken == 'c') )
+			  || ( !isopen && (cookieToken == 'o') ) ) token = cookieToken ;
+
+			if(token != cookieToken) ck.initial = null; //mismatch with initial cookie
+		}
+		ck.value += token; //append and save currentcookie
+
+		return(token == 'o');
 	}
 }
 
-/**
- ** 220 RoundedCorners --experimental
+/** 220 RoundedCorners --experimental
  ** based on Nifty corners by Allesandro Fulciniti
  ** www.pro.html.it
  ** Refactored for JSPWiki
@@ -1480,7 +1464,6 @@ var Collapsable =
  **                    "n": Normal square corner
  **
  **/
-
 var RoundedCorners =
 {
 	/** Definition of CORNER dimensions
@@ -1760,7 +1743,7 @@ var TableFilter =
 				var s = new Element('select');
 				s.onchange = TableFilter.filter;
 				s.fCol     = j; //store index
-				new Element('th').adopt(s).injectInside(r);
+				new Element('th').adopt(s).inject(r);
 			}
 			table.filterStack = [];
 			TableFilter.buildEmptyFilters(table);
@@ -1849,7 +1832,7 @@ var Categories =
 			var page = Wiki.href2pagename(link.href );
 
 			var wrap = new Element('span').injectBefore(link).adopt(link);
-			var popup = new Element('div').addClass('categoryPopup').injectInside(wrap);
+			var popup = new Element('div',{'class':'categoryPopup'}).inject(wrap);
 			var popeff = popup.effect('opacity',{wait:false}).set(0);
 
 			link.addClass('categoryLink')
@@ -1891,10 +1874,9 @@ var WikiTips =
 
 			var body = new Element('span').injectWrapper(t).hide();
 			var caption = (parms[1]) ? parms[1].deCamelize(): "tip.default.title".localize();
-			var tt = new Element('span').setHTML(caption).addClass('tip-anchor')
-				.injectInside(t);
+			var tt = new Element('span',{'class':'tip-anchor'}).setHTML(caption).inject(t);
 			tt.title  = caption+'::';
-			tt.$.myBody = body;
+			tt.$tmp = {myBody:body};
 			tips.push(tt);
 		});
 		if( tips.length>0 ) new Tips( tips , {'className':'tip'} );
@@ -1905,20 +1887,20 @@ var WikiTips =
 Tips.implement({
 	start: function(el){		
 		this.wrapper.empty();
-		if (el.$.myTitle){
+		if (el.$tmp.myTitle){
 			this.title = new Element('span').inject(
 				new Element('div', {'class': this.options.className + '-title'}).inject(this.wrapper)
-			).setHTML(el.$.myTitle);
+			).setHTML(el.$tmp.myTitle);
 		}
-		if (el.$.myText){
+		if (el.$tmp.myText){
 			this.text = new Element('span').inject(
 				new Element('div', {'class': this.options.className + '-text'}).inject(this.wrapper)
-			).setHTML(el.$.myText);
+			).setHTML(el.$tmp.myText);
 		}
 		/* BrushedTemplate extension */
-		if (el.$.myBody){
-			el.$.myBody.clone().injectInside(
-				new Element('div').addClass(this.options.className+'-text').injectInside(this.wrapper)
+		if (el.$tmp.myBody){
+			el.$tmp.myBody.clone().inject(
+				new Element('div', {'class': this.options.className + '-text'}).inject(this.wrapper)
 			).show();
 		}
 
@@ -1950,7 +1932,7 @@ var WikiColumns =
         var colCount = breaks.length+1;
         width = (width=='auto') ? 99/colCount+'%' : width/colCount+'px';
 
-		var colDef = new Element('div').setStyle('width',width).addClass('col'),
+		var colDef = new Element('div',{'class':'col','styles':{'width':width}}),
 			col = colDef.clone().injectBefore(el.getFirst()),
         	n;
         while(n = col.nextSibling){
@@ -1961,7 +1943,7 @@ var WikiColumns =
 			}
 			col.appendChild(n);
         }
-        new Element('div').setStyle('clear','both').injectInside(el);
+        new Element('div',{'styles':{'clear':'both'}}).inject(el);
 	}
 }
 
@@ -2056,20 +2038,17 @@ var HighlightWord =
 	}
 }
 
+
 /* 300 Javascript Code Prettifier
  * based on http://google-code-prettify.googlecode.com/svn/trunk/README.html
  */
 var WikiPrettify = {
 	onPageLoad : function(){
+		var els = $$('.prettify pre, .prettify code'); if(!els) return;
 
-	var found=false;
-	var elements = $$('.prettify pre, .prettify code')
-	if(!elements) return;
-
-	//load assets .css and .js
-	elements.addClass('prettyprint');
-	prettyPrint();
-
+		//TODO: load assets .css and .js
+		els.addClass('prettyprint');
+		prettyPrint();
 	}
 }
 
@@ -2078,7 +2057,9 @@ window.addEvent('load', function(){
 
 	Wiki.onPageLoad();
 	//WikiReflection.onPageLoad(); //before accordion cause impacts height!
+	//console.profile();
 	WikiAccordion.onPageLoad();
+
 	TabbedSection.onPageLoad(); //after coordion or safari
 	QuickLinks.onPageLoad();
 	Collapsable.onPageLoad();
@@ -2090,6 +2071,8 @@ window.addEvent('load', function(){
 	HighlightWord.onPageLoad();
 	GraphBar.onPageLoad();
 	Categories.onPageLoad();
+
+	//console.profileEnd();
 	//EditTools.onPageLoad();
 
 	WikiSlimbox.onPageLoad();
