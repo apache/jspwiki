@@ -86,7 +86,7 @@ import org.apache.log4j.Logger;
  */
 public final class PolicyLoader
 {
-    protected static Logger log = Logger.getLogger( PolicyLoader.class );
+    protected static final Logger log = Logger.getLogger( PolicyLoader.class );
 
     /**
      * Private constructor to prevent direct instantiation.

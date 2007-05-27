@@ -4,25 +4,12 @@
  */
 package com.ecyrd.jspwiki.ui;
 
-import java.util.Properties;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.TestEngine;
-
 public class RedirectCommandTest extends TestCase
 {
-    TestEngine     testEngine;
-
-    protected void setUp() throws Exception
-    {
-        Properties props = new Properties();
-        props.load( TestEngine.findTestProperties() );
-        testEngine = new TestEngine( props );
-    }
-    
     protected void tearDown() throws Exception
     {
     }

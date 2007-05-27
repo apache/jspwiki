@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -22,7 +24,7 @@ import javax.sql.DataSource;
  */
 public class TestJDBCDataSource implements DataSource
 {
-    protected static Driver       m_driver;
+    private static Driver       m_driver;
 
     protected static final String PROPERTY_DRIVER_CLASS  = "jdbc.driver.class";
 
@@ -132,7 +134,9 @@ public class TestJDBCDataSource implements DataSource
         // Load the properties JDBC properties file
         Properties properties;
         properties = new Properties();
-        properties.load( new FileInputStream( file ) );
+        FileInputStream is = new FileInputStream( file );
+        properties.load( is );
+        is.close();
         m_jdbcURL = properties.getProperty( PROPERTY_DRIVER_URL );
         m_jdbcUser = properties.getProperty( PROPERTY_USER_ID );
         m_jdbcPassword = properties.getProperty( PROPERTY_USER_PASSWORD );
@@ -142,12 +146,15 @@ public class TestJDBCDataSource implements DataSource
         String driverFile = properties.getProperty( PROPERTY_DRIVER_JAR );
 
         // Construct an URL for loading the file
-        URL driverURL = new URL( "file:" + driverFile );
+        final URL driverURL = new URL( "file:" + driverFile );
 
         // Load the driver using the sytem class loader
-        ClassLoader parent = ClassLoader.getSystemClassLoader();
-        URLClassLoader loader = new URLClassLoader( new URL[]
-        { driverURL }, parent );
+        final ClassLoader parent = ClassLoader.getSystemClassLoader();
+        URLClassLoader loader = (URLClassLoader)AccessController.doPrivileged( new PrivilegedAction() {
+            public Object run() {
+                return new URLClassLoader( new URL[] { driverURL }, parent );
+            }
+        });
         Class driverClass = loader.loadClass( clazz );
 
         // Cache the driver

@@ -43,7 +43,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 public abstract class AbstractUserDatabase implements UserDatabase
 {
 
-    protected static Logger log = Logger.getLogger( AbstractUserDatabase.class );
+    protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String  PROP_SHARED_WITH_CONTAINER = "jspwiki.userdatabase.isSharedWithContainer";
 

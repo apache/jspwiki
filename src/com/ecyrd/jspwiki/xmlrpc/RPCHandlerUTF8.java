@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.xmlrpc;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 
 import com.ecyrd.jspwiki.LinkCollector;
@@ -43,8 +42,6 @@ import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 public class RPCHandlerUTF8
     extends AbstractRPCHandler
 {
-    Logger log = Logger.getLogger( RPCHandlerUTF8.class ); 
-
     public String getApplicationName()
     {
         checkPermission( PagePermission.VIEW );

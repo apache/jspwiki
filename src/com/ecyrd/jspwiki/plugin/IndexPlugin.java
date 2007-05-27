@@ -45,7 +45,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class IndexPlugin implements WikiPlugin
 {
-    protected static Logger log = Logger.getLogger(IndexPlugin.class);
+    protected static final Logger log = Logger.getLogger(IndexPlugin.class);
 
     public  static final String INITIALS_COLOR                  = "red" ;
     private static final int    DEFAULT_ITEMS_PER_LINE          = 0     ;

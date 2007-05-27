@@ -630,7 +630,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             engine.getPageManager().putPageText( page, proposedText );
 
             // Refresh the context for post save filtering.
-            page = engine.getPage( page.getName() );
+            engine.getPage( page.getName() );
             engine.textToHTML( context, proposedText );
             engine.getFilterManager().doPostSaveFiltering( context, proposedText );
 

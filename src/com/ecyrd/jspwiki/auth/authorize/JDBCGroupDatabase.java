@@ -139,7 +139,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public static final String PROP_GROUPDB_MODIFIED     = "jspwiki.groupdatabase.modified";
     public static final String PROP_GROUPDB_MODIFIER     = "jspwiki.groupdatabase.modifier";
 
-    protected static Logger log                     = Logger.getLogger( JDBCGroupDatabase.class );
+    protected static final Logger log                     = Logger.getLogger( JDBCGroupDatabase.class );
 
     private DataSource m_ds = null;
     private String m_table = null;
@@ -196,9 +196,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             PreparedStatement ps = conn.prepareStatement( m_deleteGroup );
             ps.setString( 1, groupName);
             ps.execute();
+            ps.close();
+            
             ps = conn.prepareStatement( m_deleteGroupMembers );
             ps.setString( 1, groupName);
             ps.execute();
+            ps.close();
 
             // Commit and close connection
             if ( m_supportsCommits )
@@ -244,6 +247,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     groups.add( group );
                 }
             }
+            ps.close();
 
             // Close connection
             conn.close();
@@ -294,6 +298,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 // Set the group creation time
                 group.setCreated( modDate );
                 group.setCreator( modifier.getName() );
+                ps.close();
             }
             else
             {
@@ -303,7 +308,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.setString( 2, modifier.getName() );
                 ps.setString( 3, group.getName() );
                 ps.execute();
-
+                ps.close();
             }
             // Set the group modified time
             group.setLastModified( modDate );
@@ -315,7 +320,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             ps = conn.prepareStatement( m_deleteGroupMembers );
             ps.setString( 1, group.getName() );
             ps.execute();
-
+            ps.close();
+            
             // Insert group member records
             ps = conn.prepareStatement( m_insertGroupMembers );
             Principal[] members = group.members();
@@ -326,6 +332,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.setString( 2, member.getName() );
                 ps.execute();
             }
+            ps.close();
 
             // Commit and close connection
             if ( m_supportsCommits )
@@ -403,6 +410,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             Connection conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
             ps.executeQuery();
+            ps.close();
             conn.close();
         }
         catch ( SQLException e )
@@ -486,6 +494,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 populateGroup( group );
                 found = true;
             }
+            ps.close();
 
             // Close connection
             conn.close();
@@ -530,7 +539,8 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     group.add( principal );
                 }
             }
-
+            ps.close();
+            
             // Close connection
             conn.close();
         }

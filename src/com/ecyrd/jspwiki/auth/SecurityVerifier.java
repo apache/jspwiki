@@ -41,11 +41,7 @@ import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.authorize.Group;
-import com.ecyrd.jspwiki.auth.authorize.GroupDatabase;
-import com.ecyrd.jspwiki.auth.authorize.GroupManager;
-import com.ecyrd.jspwiki.auth.authorize.Role;
-import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
+import com.ecyrd.jspwiki.auth.authorize.*;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
@@ -69,8 +65,6 @@ public final class SecurityVerifier
     private File                  m_jaasConfig                 = null;
 
     private boolean               m_isJaasConfigured           = false;
-
-    private File                  m_securityPolicy             = null;
 
     private boolean               m_isSecurityPolicyConfigured = false;
 
@@ -923,17 +917,5 @@ public final class SecurityVerifier
     public final File jaasConfiguration()
     {
         return m_jaasConfig;
-    }
-
-    /**
-     * Returns the location of the Java security policy file if and only if the
-     * <code>java.security.policy</code> is set <em>and</em> the file it
-     * points to exists in the file system; returns <code>null</code> in all
-     * other cases.
-     * @return the location of the Java security polifile
-     */
-    public final File securityPolicy()
-    {
-        return m_securityPolicy;
     }
 }

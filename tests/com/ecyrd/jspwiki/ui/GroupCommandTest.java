@@ -16,13 +16,11 @@ import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 
 public class GroupCommandTest extends TestCase
 {
-    TestEngine     testEngine;
-    
     protected void setUp() throws Exception
     {
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        testEngine = new TestEngine( props );
+        new TestEngine( props );
     }
     
     protected void tearDown() throws Exception

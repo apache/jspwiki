@@ -96,11 +96,11 @@ public class SessionsPlugin
             //
             //
             StringBuffer s = new StringBuffer();
-            Iterator keys = distinctPrincipals.keySet().iterator();
-            while (keys.hasNext())
+            Iterator entries = distinctPrincipals.entrySet().iterator();
+            while (entries.hasNext())
             {
-                String entry = (String) keys.next();
-                s.append((entry + "(" + distinctPrincipals.get(entry) + "), "));
+                Map.Entry entry = (Map.Entry)entries.next();
+                s.append((entry.getKey().toString() + "(" + entry.getValue().toString() + "), "));
             }
             // remove the last comma and blank :
             return s.substring(0, s.length() - 2);

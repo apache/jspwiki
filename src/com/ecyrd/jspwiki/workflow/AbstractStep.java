@@ -137,7 +137,7 @@ public abstract class AbstractStep implements Step
         return m_key;
     }
 
-    public final Outcome getOutcome()
+    public final synchronized Outcome getOutcome()
     {
         return m_outcome;
     }
@@ -156,7 +156,7 @@ public abstract class AbstractStep implements Step
         return m_start;
     }
 
-    public final Workflow getWorkflow()
+    public final synchronized Workflow getWorkflow()
     {
         return m_workflow;
     }

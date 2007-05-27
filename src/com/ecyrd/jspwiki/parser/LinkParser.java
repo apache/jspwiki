@@ -152,12 +152,12 @@ public class LinkParser
     private static Logger log = Logger.getLogger(LinkParser.class);
 
     /** Permitted attributes on links.  Keep this sorted. */
-    public static final String[] PERMITTED_ATTRIBUTES = new String[] {
+    private static final String[] PERMITTED_ATTRIBUTES = new String[] {
             "accesskey", "charset", "class", "dir", "hreflang", "id", "lang",
             "rel", "rev", "style", "tabindex", "target", "title", "type" };
 
     /** Permitted values on the 'target' attribute. */
-    public static final String[] PERMITTED_TARGET_VALUES = new String[] {
+    private static final String[] PERMITTED_TARGET_VALUES = new String[] {
             "_blank", "_self", "_parent", "_top" };
 
     private static final String EQSQUO = "='";

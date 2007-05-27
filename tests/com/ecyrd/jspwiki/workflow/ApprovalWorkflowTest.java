@@ -8,7 +8,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
@@ -20,9 +19,7 @@ public class ApprovalWorkflowTest extends TestCase
     WorkflowBuilder m_builder;
     TestEngine m_engine;
     WorkflowManager m_wm;
-    Workflow m_workflow;
     DecisionQueue m_dq;
-    Principal m_admin;
     WikiSession m_adminSession;
     WikiSession m_janneSession;
 
@@ -43,7 +40,6 @@ public class ApprovalWorkflowTest extends TestCase
         m_adminSession = m_engine.adminSession();
         m_janneSession = m_engine.janneSession();
         m_dq = m_wm.getDecisionQueue();
-        m_admin = new GroupPrincipal(m_engine.getApplicationName(), "Admin");
         m_builder = WorkflowBuilder.getBuilder( m_engine );
     }
 

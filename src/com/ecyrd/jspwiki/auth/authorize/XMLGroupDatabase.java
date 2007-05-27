@@ -77,7 +77,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  */
 public class XMLGroupDatabase implements GroupDatabase
 {
-    protected static Logger log              = Logger.getLogger( XMLGroupDatabase.class );
+    protected static final Logger log              = Logger.getLogger( XMLGroupDatabase.class );
 
     /**
      * The jspwiki.properties property specifying the file system location of

@@ -16,7 +16,7 @@ import com.ecyrd.jspwiki.parser.PluginContent;
 public class SamplePlugin
     implements WikiPlugin, ParserStagePlugin
 {
-    public static boolean c_rendered = false;
+    protected static boolean c_rendered = false;
     
     public String execute( WikiContext context, Map params )
         throws PluginException

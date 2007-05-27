@@ -324,7 +324,7 @@ public class Workflow
      *
      * @return the current actor
      */
-    public final Principal getCurrentActor()
+    public final synchronized Principal getCurrentActor()
     {
         if (m_currentStep == null)
         {
@@ -363,7 +363,7 @@ public class Workflow
      *            the name of the attribute
      * @return the value
      */
-    public final Object getAttribute(String attr)
+    public final synchronized Object getAttribute(String attr)
     {
         if (m_attributes == null)
         {
@@ -399,7 +399,7 @@ public class Workflow
      *
      * @return the unique identifier
      */
-    public final int getId()
+    public final synchronized int getId()
     {
         return m_id;
     }
@@ -473,7 +473,7 @@ public class Workflow
      *
      * @return the workflow manager
      */
-    public final WorkflowManager getWorkflowManager()
+    public final synchronized WorkflowManager getWorkflowManager()
     {
         return m_manager;
     }
@@ -510,7 +510,7 @@ public class Workflow
      * @return <code>true</code> if the workflow has been started but has no
      *         more steps to perform; <code>false</code> if not.
      */
-    public final boolean isCompleted()
+    public final synchronized boolean isCompleted()
     {
         // If current step is null, then we're done
         return m_started && m_state == COMPLETED;

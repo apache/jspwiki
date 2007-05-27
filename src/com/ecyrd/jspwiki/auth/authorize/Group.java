@@ -155,7 +155,7 @@ public class Group
      * Returns the creation date.
      * @return the creation date
      */
-    public Date getCreated()
+    public synchronized Date getCreated()
     {
         return m_created;
     }
@@ -164,7 +164,7 @@ public class Group
      * Returns the creator of this Group.
      * @return the creator
      */
-    public final String getCreator()
+    public synchronized final String getCreator()
     {
         return m_creator;
     }
@@ -173,7 +173,7 @@ public class Group
      * Returns the last-modified date.
      * @return the date and time of last modification
      */
-    public Date getLastModified()
+    public synchronized Date getLastModified()
     {
         return m_modified;
     }
@@ -182,7 +182,7 @@ public class Group
      * Returns the name of the user who last modified this group.
      * @return the modifier
      */
-    public final String getModifier()
+    public synchronized final String getModifier()
     {
         return m_modifier;
     }

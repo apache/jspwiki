@@ -79,7 +79,7 @@ public class AclEntryImpl implements AclEntry
         return null;
     }
 
-    public Principal getPrincipal()
+    public synchronized Principal getPrincipal()
     {
         return m_principal;
     }

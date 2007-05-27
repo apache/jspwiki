@@ -292,7 +292,10 @@ public final class AuthenticationManager
         WikiSession.removeWikiSession( m_engine, request );
 
         // We need to flush the HTTP session too
-        session.invalidate();
+        if ( session != null )
+        {
+            session.invalidate();
+        }
 
         // Log the event
         fireEvent( WikiSecurityEvent.LOGOUT, originalPrincipal, null );

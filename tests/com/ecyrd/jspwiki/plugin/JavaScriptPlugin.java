@@ -14,7 +14,7 @@ import java.util.*;
 public class JavaScriptPlugin
     implements WikiPlugin, InitializablePlugin
 {
-    public static boolean c_inited = false;
+    protected static boolean c_inited = false;
     
     public String execute( WikiContext context, Map params )
         throws PluginException

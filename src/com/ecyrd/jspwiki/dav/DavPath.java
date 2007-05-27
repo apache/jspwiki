@@ -56,7 +56,6 @@ public class DavPath
     {
         if( path == null )
         {
-            path = "/";
             m_isDirectory = true;
             m_isAbsolute = true;
             return;

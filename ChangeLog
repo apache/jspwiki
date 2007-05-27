@@ -1,3 +1,9 @@
+2007-05-26  Andrew Jaquith <andrew AT freshcookies DOT org>
+       
+       * 2.5.65
+       
+       * Lots of little fixes for bugs FindBugs found.
+       
 2007-05-26  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * 2.5.64 - 4th Brushed Template commit (still more to come)

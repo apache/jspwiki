@@ -58,8 +58,6 @@ public class SearchManager
 
     private SearchProvider    m_searchProvider = null;
 
-    protected WikiEngine m_engine;
-
     public static final String JSON_SEARCH = "search";
 
     public SearchManager( WikiEngine engine, Properties properties )

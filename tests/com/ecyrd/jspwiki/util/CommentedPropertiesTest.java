@@ -90,6 +90,7 @@ public class CommentedPropertiesTest extends TestCase
         File outFile = createFile( "test2.properties" );
         OutputStream out = new FileOutputStream( outFile );
         m_props.store( out, null );
+        out.close();
         
         // Load the file into new props object; should return identical strings
         Properties props2 = new CommentedProperties();
@@ -105,6 +106,7 @@ public class CommentedPropertiesTest extends TestCase
         outFile = createFile( "test3.properties" );
         out = new FileOutputStream( outFile );
         m_props.store( out, null );
+        out.close();
         
         // Load the new file; should not have props1/2/3 & is shorter
         Properties props3 = new CommentedProperties();

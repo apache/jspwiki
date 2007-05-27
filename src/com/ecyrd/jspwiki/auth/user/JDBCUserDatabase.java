@@ -260,11 +260,13 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             ps = conn.prepareStatement( m_deleteUserByLoginName );
             ps.setString(1, loginName );
             ps.execute();
+            ps.close();
 
             // Delete role record
             ps = conn.prepareStatement( m_deleteRoleByLoginName );
             ps.setString(1, loginName );
             ps.execute();
+            ps.close();
 
             // Commit and close connection
             if ( m_supportsCommits )
@@ -339,6 +341,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     principals.add( principal );
                 }
             }
+            ps.close();
             conn.close();
         }
         catch ( SQLException e )
@@ -433,6 +436,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             Connection conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
             ps.executeQuery();
+            ps.close();
             conn.close();
         }
         catch ( SQLException e )
@@ -496,7 +500,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             // Good! That means it's safe to save using the new name
         }
 
-        PreparedStatement ps = null;
         try
         {
             // Open the database connection
@@ -510,17 +513,19 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             Date modDate = new Date( ts.getTime() );
 
             // Change the login ID for the user record
-            ps = conn.prepareStatement( m_renameProfile );
+            PreparedStatement ps = conn.prepareStatement( m_renameProfile );
             ps.setString( 1, newName );
             ps.setTimestamp( 2, ts );
             ps.setString( 3, loginName );
             ps.execute();
+            ps.close();
 
             // Change the login ID for the role records
             ps = conn.prepareStatement( m_renameRoles );
             ps.setString( 1, newName );
             ps.setString( 2, loginName );
             ps.execute();
+            ps.close();
 
             // Set the profile name and mod time
             profile.setLoginName( newName );
@@ -599,6 +604,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.setString(6, profile.getLoginName() );
                 ps.setTimestamp(7, ts );
                 ps.execute();
+                ps.close();
 
                 // Insert role record if no roles yet
                 if ( m_sharedWithContainer )
@@ -611,12 +617,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                     {
                         roles++;
                     }
+                    ps.close();
                     if ( roles == 0 )
                     {
                         ps = conn.prepareStatement( m_insertRole );
                         ps.setString( 1, profile.getLoginName() );
                         ps.setString( 2, m_initialRole );
                         ps.execute();
+                        ps.close();
                     }
                 }
 
@@ -634,6 +642,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 ps.setTimestamp(5, ts );
                 ps.setString(6, profile.getLoginName() );
                 ps.execute();
+                ps.close();
             }
             // Set the profile mod time
             profile.setLastModified( modDate );
@@ -690,6 +699,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 profile.setPassword( rs.getString( m_password ) );
                 found = true;
             }
+            ps.close();
 
             // Close connection
             conn.close();

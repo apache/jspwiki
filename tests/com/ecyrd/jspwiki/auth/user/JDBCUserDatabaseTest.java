@@ -24,12 +24,29 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  */
 public class JDBCUserDatabaseTest extends TestCase
 {
-    private Connection       m_conn = null;
-
     private JDBCUserDatabase m_db   = null;
 
-    private Date             m_createStamp;
+    private static final String INSERT_JANNE = "INSERT INTO users (" +
+          JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
+          JDBCUserDatabase.DEFAULT_DB_FULL_NAME + "," +
+          JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
+          JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
+          JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + "," +
+          JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
+          "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne'," +
+          "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," +
+          "'JanneJalkanen'," +
+          "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
 
+    private static final String INSERT_USER = "INSERT INTO users (" +
+        JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
+        JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
+        JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
+        JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
+        "'user@example.com'," + "'user'," +
+        "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +
+        "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
+    
     /**
      * @see junit.framework.TestCase#setUp()
      */
@@ -46,41 +63,25 @@ public class JDBCUserDatabaseTest extends TestCase
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
-        m_conn = ds.getConnection();
-        Statement stmt = m_conn.createStatement();
+        Connection conn = ds.getConnection();
+        Statement stmt = conn.createStatement();
         String sql;
 
         sql = "DELETE FROM " + JDBCUserDatabase.DEFAULT_DB_TABLE + ";";
         stmt.executeUpdate( sql );
 
         // Create a new test user 'janne'
-        m_createStamp = new Timestamp( System.currentTimeMillis() );
-        sql = "INSERT INTO users (" + JDBCUserDatabase.DEFAULT_DB_EMAIL + "," + JDBCUserDatabase.DEFAULT_DB_FULL_NAME
-                + "," + JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," + JDBCUserDatabase.DEFAULT_DB_PASSWORD + ","
-                + JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + "," + JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES ("
-                + "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne',"
-                + "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," + "'JanneJalkanen'," + "'"
-                + new Timestamp( m_createStamp.getTime() ).toString() + "'" + ");";
-        stmt.executeUpdate( sql );
+        stmt.executeUpdate( INSERT_JANNE );
 
         // Create a new test user 'user'
-        sql = "INSERT INTO users (" + JDBCUserDatabase.DEFAULT_DB_EMAIL + "," + JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME
-                + "," + JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," + JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES ("
-                + "'user@example.com'," + "'user'," + "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," + "'"
-                + new Timestamp( m_createStamp.getTime() ).toString() + "'" + ");";
-        stmt.executeUpdate( sql );
-
+        stmt.executeUpdate( INSERT_USER );
+        stmt.close();
+        
+        conn.close();
+        
         // Initialize the user database
         m_db = new JDBCUserDatabase();
         m_db.initialize( null, new Properties() );
-    }
-
-    public void tearDown() throws Exception
-    {
-        if ( m_conn != null )
-        {
-            m_conn.close();
-        }
     }
 
     public void testDeleteByLoginName() throws WikiSecurityException

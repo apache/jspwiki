@@ -46,7 +46,7 @@ public class UndefinedPagesPlugin
         TreeSet sortedSet = new TreeSet();
         sortedSet.addAll( links );
         
-        links = filterCollection( links );
+        filterCollection( links );
         
         String wikitext = wikitizeCollection( sortedSet, m_separator, ALL_ITEMS );
         
