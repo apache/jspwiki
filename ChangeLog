@@ -1,5 +1,11 @@
 2007-05-27  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
+       * 2.5.67
+       
+       * WeblogPlugin now considers ACLs - if the user does not have
+       view permission on an entry, it's ignored on display.  Also
+       refactored the WeblogPlugin slightly to be more legible.
+
        * 2.5.66
 
        * Added "url" parameter to TabTag to allow for Javascript-less
