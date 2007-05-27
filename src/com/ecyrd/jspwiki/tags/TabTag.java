@@ -25,30 +25,42 @@ import javax.servlet.jsp.tagext.*;
 
 /**
  *  Generates single tabbed page layout.
- *  Works together with the tabbedSection javacript.
+ *  Works together with the tabbedSection javascript.  Note that if you do not
+ *  specify an url, the body contents of the tag are loaded by the tag itself.
  *
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>id - ID for this tab. (mandatory)
  *    <LI>title - Title of this tab. (mandatory)
  *    <LI>accesskey - Single char usable as quick accesskey (alt- or ctrl-) (optional)
+ *    <li>url - If you <i>don't</i> want to create a Javascript-enabled tag, you can use this
+ *              to make the tab look just the usual tag, but instead, it will actually link
+ *              to that page.  This can be useful in certain cases where you have something
+ *              that you want to look like a part of a tag, but for example, due to it being
+ *              very big in size, don't want to include it as a part of the page content
+ *              every time.
  *  </UL>
  *
  *  @author Dirk Frederickx
  *  @since v2.3.63
  */
 
-public class TabTag extends TagSupport
+public class TabTag extends WikiTagBase
 {
     private static final long serialVersionUID = -8534125226484616489L;
     private String m_accesskey;
     private String m_tabID;
     private String m_tabTitle;
+    private String m_url;
 
-    public void release()
+    public void doFinally()
     {
-        super.release();
-        m_accesskey = m_tabID = m_tabTitle = null;
+        super.doFinally();
+
+        m_accesskey = null;
+        m_tabID     = null;
+        m_tabTitle  = null;
+        m_url       = null;
     }
 
     public void setId(String aTabID)
@@ -66,6 +78,11 @@ public class TabTag extends TagSupport
         m_accesskey = anAccesskey; //take only the first char
     }
 
+    public void setUrl( String url )
+    {
+        m_url = url;
+    }
+
     // insert <u> ..accesskey.. </u> in title
     private boolean handleAccesskey()
     {
@@ -80,10 +97,13 @@ public class TabTag extends TagSupport
         return( true );
     }
 
-    public int doStartTag() throws JspTagException
+    public int doWikiStartTag() throws JspTagException
     {
         TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
 
+        //
+        //  Sanity checks
+        //
         if( m_tabID == null )
         {
             throw new JspTagException("Tab Tag without \"id\" attribute");
@@ -99,7 +119,7 @@ public class TabTag extends TagSupport
 
         if( !parent.isStateGenerateTabBody() ) return SKIP_BODY;
 
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(32);
 
         sb.append( "<div id=\""+ m_tabID + "\"" );
 
@@ -146,7 +166,15 @@ public class TabTag extends TagSupport
             }
 
             sb.append( " id=\"menu-" + m_tabID + "\"" );
-            sb.append( " onclick=\"TabbedSection.onclick(\'" + m_tabID + "\')\"" );
+
+            if( m_url != null )
+            {
+                sb.append( "href='"+m_url+"'" );
+            }
+            else
+            {
+                sb.append( " onclick=\"TabbedSection.onclick(\'" + m_tabID + "\')\"" );
+            }
 
             if( handleAccesskey() )
             {
