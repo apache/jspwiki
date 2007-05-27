@@ -26,23 +26,23 @@
 <div id="wikibody" >
 
   <wiki:Include page="Header.jsp" />
-  
+
   <wiki:Include page="PageActionsTop.jsp"/>
 
   <div id="page">
     <wiki:TabbedSection defaultTab="attachments" >
-      <wiki:Tab id="pagecontent" title="View" accesskey="v">
-        <wiki:Include page="PageTab.jsp"/>
+      <wiki:Tab id="pagecontent" title="View" accesskey="v" url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
+        <%--<wiki:Include page="PageTab.jsp"/> --%>
       </wiki:Tab>
       <wiki:PageExists>
       <wiki:Tab id="attachments" title="<%= attTitle %>" accesskey="a">
         <wiki:Include page="AttachmentTab.jsp"/>
       </wiki:Tab>
       </wiki:PageExists>
-    </wiki:TabbedSection> 
+    </wiki:TabbedSection>
   </div>
-  
-  <wiki:Include page="Favorites.jsp"/> 
+
+  <wiki:Include page="Favorites.jsp"/>
 
   <wiki:Include page="PageActionsBottom.jsp"/>
 
