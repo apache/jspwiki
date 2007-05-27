@@ -446,6 +446,9 @@
       <th><fmt:message key="info.size"/></th>
       <th><fmt:message key="info.date"/></th>
       <th><fmt:message key="info.author"/></th>
+      <wiki:Permission permission="upload">
+        <th><fmt:message key="info.restore"/></th>
+      </wiki:Permission>
       <%--<th style="display:none;">Actions</th>--%>
       <th width="30%"><fmt:message key="info.changenote"/></th>
     </tr>
@@ -472,10 +475,16 @@
                        title="<%= name %>" 
                        class="attachment" ><wiki:PageVersion /></a></td>
       <td style="text-align:right;">
-        <fmt:formatNumber value='<%=((float)att.getSize())/1000 %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;Kb
+        <fmt:formatNumber value='<%=((float)att.getSize())/1000 %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
 	  <td><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefDateFormat}" /></td>
       <td><wiki:Author /></td>
+
+      <wiki:Permission permission="upload">
+      <td>
+         &nbsp;&nbsp;<button type="button" value="Restore" name="restore-${att.version}"/>
+      </td>
+      </wiki:Permission>
       <%--<td>  Deletion of a single version is not yet supported? FIXME
         &nbsp;&nbsp;
         <wiki:Permission permission="delete"> 
