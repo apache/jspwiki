@@ -19,11 +19,13 @@
  */
 package com.ecyrd.jspwiki.ui.progress;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUIDGenerator;
 
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
@@ -56,12 +58,11 @@ public class ProgressManager
 
     /**
      *  You can use this to get an unique process identifier.
-     *  @return
+     *  @return A new random value
      */
     public String getNewProgressIdentifier()
     {
-        // FIXME: Not very good UUID
-        return Long.toString( new Random().nextLong() );
+        return UUIDGenerator.getInstance().generateRandomBasedUUID().toString();
     }
 
     /**
@@ -73,7 +74,7 @@ public class ProgressManager
      */
     public void startProgress( ProgressItem pi, String id )
     {
-        log.info("Adding "+id+" to progress queue");
+        log.debug("Adding "+id+" to progress queue");
         m_progressingTasks.put( id, pi );
         pi.setState( ProgressItem.STARTED );
     }
@@ -87,7 +88,7 @@ public class ProgressManager
      */
     public void stopProgress( String id )
     {
-        log.info("Removed "+id+" from progress queue");
+        log.debug("Removed "+id+" from progress queue");
         ProgressItem pi = (ProgressItem) m_progressingTasks.remove( id );
         if( pi != null ) pi.setState( ProgressItem.STOPPED );
     }
