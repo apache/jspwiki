@@ -170,19 +170,18 @@ public class WikiEventManager
      *  As this is a singleton class, this returns the single
      *  instance of this class provided with the property file
      *  filename and bit-wise application settings.
+     *
+     *  @return A shared instance of the WikiEventManager
      */
     public static WikiEventManager getInstance()
     {
         if( c_instance == null )
         {
-            synchronized( WikiEventManager.class ) // see Larman/Guthrie, Java 2 Perf/Idiom Guide, p.100
+            synchronized( WikiEventManager.class )
             {
-                if( c_instance == null )
-                {
-                    WikiEventManager mgr = new WikiEventManager();
-                    // start up any post-instantiation services here
-                    return mgr;
-                }
+                WikiEventManager mgr = new WikiEventManager();
+                // start up any post-instantiation services here
+                return mgr;
             }
         }
         return c_instance;
@@ -246,6 +245,7 @@ public class WikiEventManager
      * @throws java.lang.UnsupportedOperationException  if any attempt is made to modify the Set
      */
     public static final Set getWikiEventListeners( Object client )
+        throws UnsupportedOperationException
     {
         WikiEventDelegate delegate = getInstance().getDelegateFor(client);
         return delegate.getWikiEventListeners();
@@ -293,7 +293,8 @@ public class WikiEventManager
      *  the provided client Object (undelegated event source). This locates
      *  any delegate and checks to see if it has any listeners attached.
      *
-     * @param client the client Object
+     *  @param client the client Object
+     *  @return True, if there is a listener for this client object.
      */
     public static boolean isListening( Object client )
     {
@@ -332,8 +333,8 @@ public class WikiEventManager
      *  Returns a WikiEventDelegate for the provided client Object.
      *  If the parameter is a class reference, will generate and return a
      *  client-less WikiEventDelegate. If the parameter is not a Class and
-     *  the delegate cache contains any objects matching the Class of any 
-     *  delegates in the cache, the first Class-matching delegate will be 
+     *  the delegate cache contains any objects matching the Class of any
+     *  delegates in the cache, the first Class-matching delegate will be
      *  used in preference to creating a new delegate.
      *  If a null parameter is supplied, this will create a client-less
      *  delegate that will attach to the first incoming client (i.e.,
@@ -363,10 +364,9 @@ public class WikiEventManager
                         || delegate.getClientClass().equals(client.getClass()) )
                     {
                         // we have a hit, so use it, but only on a client we haven't seen before
-                        if( !m_delegates.keySet().contains(client) ) 
+                        if( !m_delegates.keySet().contains(client) )
                         {
                             m_preloadCache.remove(delegate);
-                            delegate.setClient( client );
                             m_delegates.put( client, delegate );
                             return delegate;
                         }
@@ -375,7 +375,7 @@ public class WikiEventManager
             }
             // otherwise treat normally...
             WikiEventDelegate delegate = (WikiEventDelegate)m_delegates.get( client );
-            if( delegate == null ) 
+            if( delegate == null )
             {
                 delegate = new WikiEventDelegate( client );
                 m_delegates.put( client, delegate );
@@ -403,36 +403,21 @@ public class WikiEventManager
         /* A list of event listeners for this instance. */
 
         private ArrayList m_listenerList = new ArrayList();
-        
+
         private Class  m_class  = null;
-        private Object m_client = null;
 
         /**
          *  Constructor for an WikiEventDelegateImpl, provided
-         *  with the client Object it will service, or the Class 
+         *  with the client Object it will service, or the Class
          *  of client, the latter when used to preload a future
          *  incoming delegate.
          */
         protected WikiEventDelegate( Object client )
         {
-            if( client instanceof Class ) 
+            if( client instanceof Class )
             {
                 m_class = (Class)client;
-            } 
-            else 
-            {
-                m_client = client;
             }
-        }
-
-
-        /**
-         *  Set this WikiEventDelegateImpl's client Object to <tt>client</tt>.
-         */
-        protected void setClient( Object client )
-        {
-            m_class  = null;
-            m_client = client;
         }
 
         /**
@@ -458,17 +443,17 @@ public class WikiEventManager
             synchronized( m_listenerList )
             {
                 TreeSet set = new TreeSet( new WikiEventListenerComparator() );
-                
+
                 for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
                 {
                     WikiEventListener l = (WikiEventListener) ((WeakReference)i.next()).get();
-                    
+
                     if( l != null )
                     {
                         set.add( l );
                     }
-                }                
-                
+                }
+
                 return Collections.unmodifiableSet(set);
             }
         }
@@ -502,7 +487,7 @@ public class WikiEventManager
                 for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
                 {
                     WikiEventListener l = (WikiEventListener) ((WeakReference)i.next()).get();
-                    
+
                     if( l == listener )
                     {
                         i.remove();
@@ -510,7 +495,7 @@ public class WikiEventManager
                     }
                 }
             }
-            
+
             return false;
         }
 
@@ -535,7 +520,7 @@ public class WikiEventManager
         public void fireEvent( WikiEvent event )
         {
             boolean needsCleanup = false;
-            
+
             try
             {
                 synchronized( m_listenerList )
@@ -553,7 +538,7 @@ public class WikiEventManager
                             needsCleanup  = true;
                         }
                     }
-                    
+
                     //
                     //  Remove all such listeners which have expired
                     //
@@ -562,7 +547,7 @@ public class WikiEventManager
                         for( int i = 0; i < m_listenerList.size(); i++ )
                         {
                             WeakReference w = (WeakReference)m_listenerList.get(i);
-                            
+
                             if( w.get() == null ) m_listenerList.remove(i--);
                         }
                     }
@@ -576,7 +561,7 @@ public class WikiEventManager
                 //
                 log.info("Concurrent modification of event list; please report this.",e);
             }
-            
+
         }
 
     } // end inner class WikiEventDelegate
@@ -590,13 +575,13 @@ public class WikiEventManager
             {
                 WikiEventListener w0 = (WikiEventListener) arg0;
                 WikiEventListener w1 = (WikiEventListener) arg1;
-                
+
                 if( w1 == w0 || w0.equals(w1) ) return 0;
-                
+
                 return w1.hashCode() - w0.hashCode();
             }
-            
+
             throw new ClassCastException( arg1.getClass().getName() + " != " + arg0.getClass().getName() );
-        }   
+        }
     }
 } // end com.ecyrd.jspwiki.event.WikiEventManager
