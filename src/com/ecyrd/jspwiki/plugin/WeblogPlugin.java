@@ -36,12 +36,9 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.PageManager;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.parser.PluginContent;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -82,6 +79,7 @@ public class WeblogPlugin
                                 = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
     private static final Pattern headingPattern;
 
+    /** How many days are considered by default.  Default value is {@value} */
     public static final int     DEFAULT_DAYS = 7;
     public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
 
@@ -124,9 +122,10 @@ public class WeblogPlugin
     {
         Calendar   startTime;
         Calendar   stopTime;
-        int        numDays;
+        int        numDays = DEFAULT_DAYS;
         WikiEngine engine = context.getEngine();
-
+        AuthorizationManager mgr = engine.getAuthorizationManager();
+        
         //
         //  Parse parameters.
         //
@@ -156,13 +155,16 @@ public class WeblogPlugin
             entryFormat = new SimpleDateFormat( (String)params.get(PARAM_ENTRYFORMAT) );
         }
 
-        if( days != null && days.equalsIgnoreCase("all") )
+        if( days != null )
         {
-            numDays = Integer.MAX_VALUE;
-        }
-        else
-        {
-            numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
+            if( days.equalsIgnoreCase("all") )
+            {
+                numDays = Integer.MAX_VALUE;
+            }
+            else
+            {
+                numDays = TextUtil.parseIntParameter( days, DEFAULT_DAYS );
+            }
         }
 
 
@@ -231,101 +233,16 @@ public class WeblogPlugin
             Collections.sort( blogEntries, new PageDateComparator() );
 
             sb.append("<div class=\"weblog\">\n");
+            
             for( Iterator i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; )
             {
                 WikiPage p = (WikiPage) i.next();
 
-                sb.append("<div class=\"weblogentry\">\n");
-
-                //
-                //  Heading
-                //
-                sb.append("<div class=\"weblogentryheading\">\n");
-
-                Date entryDate = p.getLastModified();
-                sb.append( entryFormat.format(entryDate) );
-
-                sb.append("</div>\n");
-
-                //
-                //  Append the text of the latest version.  Reset the
-                //  context to that page.
-                //
-
-                WikiContext entryCtx = (WikiContext) context.clone();
-                entryCtx.setPage( p );
-
-                String html = engine.getHTML( entryCtx, engine.getPage(p.getName()) );
-
-                // Extract the first h1/h2/h3 as title, and replace with null
-                sb.append("<div class=\"weblogentrytitle\">\n");
-                Matcher matcher = headingPattern.matcher( html );
-                if ( matcher.find() )
+                if( mgr.checkPermission( context.getWikiSession(), 
+                                         new PagePermission(p, PagePermission.VIEW_ACTION) ) )
                 {
-                    String title = matcher.group(2);
-                    html = matcher.replaceFirst("");
-                    sb.append( title );
+                    addEntryHTML(context, entryFormat, hasComments, sb, p);
                 }
-                else
-                {
-                    sb.append( p.getName() );
-                }
-                sb.append("</div>\n");
-
-                sb.append("<div class=\"weblogentrybody\">\n");
-                sb.append( html );
-                sb.append("</div>\n");
-
-                //
-                //  Append footer
-                //
-                sb.append("<div class=\"weblogentryfooter\">\n");
-
-                String author = p.getAuthor();
-
-                if( author != null )
-                {
-                    if( engine.pageExists(author) )
-                    {
-                        author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.beautifyTitle(author)+"</a>";
-                    }
-                }
-                else
-                {
-                    author = "AnonymousCoward";
-                }
-
-                sb.append("By "+author+"&nbsp;&nbsp;");
-                sb.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, p.getName())+"\">Permalink</a>" );
-                String commentPageName = TextUtil.replaceString( p.getName(),
-                                                                 "blogentry",
-                                                                 "comments" );
-
-                if( hasComments )
-                {
-                    int numComments = guessNumberOfComments( engine, commentPageName );
-
-                    //
-                    //  We add the number of comments to the URL so that
-                    //  the user's browsers would realize that the page
-                    //  has changed.
-                    //
-                    sb.append( "&nbsp;&nbsp;" );
-                    sb.append( "<a target=\"_blank\" href=\""+
-                               entryCtx.getURL(WikiContext.COMMENT,
-                                               commentPageName,
-                                               "nc="+numComments)+
-                               "\">Comments? ("+
-                               numComments+
-                               ")</a>" );
-                }
-
-                sb.append("</div>\n");
-
-                //
-                //  Done, close
-                //
-                sb.append("</div>\n");
             }
 
             sb.append("</div>\n");
@@ -337,6 +254,113 @@ public class WeblogPlugin
         }
 
         return sb.toString();
+    }
+
+    /**
+     *  Generates HTML for an entry.
+     *  
+     *  @param context
+     *  @param entryFormat
+     *  @param hasComments  True, if comments are enabled.
+     *  @param buffer       The buffer to which we add.
+     *  @param entry
+     *  @throws ProviderException
+     */
+    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments, StringBuffer buffer, WikiPage entry) 
+        throws ProviderException
+    {
+        WikiEngine engine = context.getEngine();
+        buffer.append("<div class=\"weblogentry\">\n");
+
+        //
+        //  Heading
+        //
+        buffer.append("<div class=\"weblogentryheading\">\n");
+
+        Date entryDate = entry.getLastModified();
+        buffer.append( entryFormat.format(entryDate) );
+
+        buffer.append("</div>\n");
+
+        //
+        //  Append the text of the latest version.  Reset the
+        //  context to that page.
+        //
+
+        WikiContext entryCtx = (WikiContext) context.clone();
+        entryCtx.setPage( entry );
+
+        String html = engine.getHTML( entryCtx, engine.getPage(entry.getName()) );
+
+        // Extract the first h1/h2/h3 as title, and replace with null
+        buffer.append("<div class=\"weblogentrytitle\">\n");
+        Matcher matcher = headingPattern.matcher( html );
+        if ( matcher.find() )
+        {
+            String title = matcher.group(2);
+            html = matcher.replaceFirst("");
+            buffer.append( title );
+        }
+        else
+        {
+            buffer.append( entry.getName() );
+        }
+        buffer.append("</div>\n");
+
+        buffer.append("<div class=\"weblogentrybody\">\n");
+        buffer.append( html );
+        buffer.append("</div>\n");
+
+        //
+        //  Append footer
+        //
+        buffer.append("<div class=\"weblogentryfooter\">\n");
+            
+        String author = entry.getAuthor();
+
+        if( author != null )
+        {
+            if( engine.pageExists(author) )
+            {
+                author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.beautifyTitle(author)+"</a>";
+            }
+        }
+        else
+        {
+            author = "AnonymousCoward";
+        }
+
+        buffer.append("By "+author+"&nbsp;&nbsp;");
+        buffer.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">Permalink</a>" );
+        String commentPageName = TextUtil.replaceString( entry.getName(),
+                                                         "blogentry",
+                                                         "comments" );
+
+        if( hasComments )
+        {
+            int numComments = guessNumberOfComments( engine, commentPageName );
+
+            //
+            //  We add the number of comments to the URL so that
+            //  the user's browsers would realize that the page
+            //  has changed.
+            //
+            buffer.append( "&nbsp;&nbsp;" );
+            buffer.append( "<a target=\"_blank\" href=\""+
+                       entryCtx.getURL(WikiContext.COMMENT,
+                                       commentPageName,
+                                       "nc="+numComments)+
+                       "\">Comments? ("+
+                       numComments+
+                       ")</a>" );
+        }
+
+        buffer.append("</div>\n");
+
+        //
+        //  Done, close
+        //
+        buffer.append("</div>\n");
     }
 
     private int guessNumberOfComments( WikiEngine engine, String commentpage )
@@ -356,7 +380,12 @@ public class WeblogPlugin
      *  Attempts to locate all pages that correspond to the
      *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
      *
-     *  Returns a list of pages with their FIRST revisions.
+     *  @param mgr A PageManager which is used to get the pages
+     *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
+     *  @param start The date which is the first to be considered
+     *  @param end   The end date which is the last to be considered
+     *  @return a list of pages with their FIRST revisions.
+     *  @throws ProviderException If something goes wrong
      */
     public List findBlogEntries( PageManager mgr,
                                  String baseName, Date start, Date end )
