@@ -26,7 +26,7 @@
        <name>type</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>AttachmentsIterator</name>
@@ -36,14 +36,14 @@
     <attribute>
        <name>id</name>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>Author</name>
     <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
     <bodycontent>empty</bodycontent>
-  </tag>  
-  
+  </tag>
+
   <tag>
     <name>BaseURL</name>
     <tagclass>com.ecyrd.jspwiki.tags.BaseURLTag</tagclass>
@@ -80,7 +80,7 @@
        <name>monthurlformat</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>CheckLock</name>
@@ -93,7 +93,7 @@
     <attribute>
        <name>id</name>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>CheckRequestContext</name>
@@ -103,7 +103,7 @@
        <name>context</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>CheckVersion</name>
@@ -112,7 +112,7 @@
     <attribute>
        <name>mode</name>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>CommentLink</name>
@@ -125,7 +125,7 @@
     <attribute>
        <name>format</name>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>Content</name>
@@ -198,7 +198,7 @@
        <name>newVersion</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>EditLink</name>
@@ -223,14 +223,14 @@
        <name>accesskey</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>Editor</name>
     <tagclass>com.ecyrd.jspwiki.tags.EditorTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
-  
+
   <tag>
     <name>EditorIterator</name>
     <tagclass>com.ecyrd.jspwiki.tags.EditorIteratorTag</tagclass>
@@ -240,7 +240,7 @@
        <name>id</name>
     </attribute>
   </tag>
-    
+
   <tag>
     <name>FeedDiscovery</name>
     <tagclass>com.ecyrd.jspwiki.tags.FeedDiscoveryTag</tagclass>
@@ -251,7 +251,7 @@
     <name>HasAttachments</name>
     <tagclass>com.ecyrd.jspwiki.tags.HasAttachmentsTag</tagclass>
     <bodycontent>JSP</bodycontent>
-  </tag>  
+  </tag>
 
   <tag>
     <name>HistoryIterator</name>
@@ -261,13 +261,13 @@
     <attribute>
        <name>id</name>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>IfNoSearchResults</name>
     <tagclass>com.ecyrd.jspwiki.tags.IfNoSearchResultsTag</tagclass>
     <bodycontent>JSP</bodycontent>
-  </tag>  
+  </tag>
 
   <tag>
     <name>Include</name>
@@ -277,7 +277,7 @@
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>IncludeResources</name>
@@ -287,7 +287,7 @@
        <name>type</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-   </tag>  
+   </tag>
 
   <tag>
     <name>InsertDiff</name>
@@ -297,7 +297,7 @@
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>InsertPage</name>
@@ -311,7 +311,7 @@
        <name>mode</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>Link</name>
@@ -331,23 +331,23 @@
     <attribute>
        <name>class</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>style</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>title</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>target</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>compareToVersion</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>rel</name>
        <rtexprvalue>true</rtexprvalue>
@@ -355,28 +355,28 @@
         <attribute>
        <name>jsp</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
         <attribute>
        <name>ref</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
         <attribute>
        <name>context</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>absolute</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>templatefile</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
+    </attribute>
     <attribute>
        <name>accessKey</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>LinkTo</name>
@@ -405,7 +405,7 @@
        <name>accesskey</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>LinkToParent</name>
@@ -422,7 +422,7 @@
        <name>version</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>Messages</name>
@@ -445,7 +445,7 @@
        <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
-  
+
   <tag>
     <name>NextVersion</name>
     <tagclass>com.ecyrd.jspwiki.tags.NextVersionTag</tagclass>
@@ -460,7 +460,7 @@
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>PageExists</name>
@@ -470,7 +470,7 @@
        <name>page</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>PageInfoLink</name>
@@ -493,7 +493,7 @@
     </attribute>
   </tag>
 
-  
+
   <tag>
     <name>PageDate</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageDateTag</tagclass>
@@ -503,7 +503,7 @@
         <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
-  
+
   <tag>
     <name>PageName</name>
     <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
@@ -597,8 +597,8 @@
     <attribute>
        <name>resource</name>
        <rtexprvalue>true</rtexprvalue>
-    </attribute>    
-  </tag>  
+    </attribute>
+  </tag>
 
   <tag>
     <name>RSSLink</name>
@@ -648,19 +648,19 @@
        <required>false</required>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
-  </tag>  
+  </tag>
 
   <tag>
     <name>SearchResults</name>
     <tagclass>com.ecyrd.jspwiki.tags.SearchResultsTag</tagclass>
     <bodycontent>JSP</bodycontent>
-  </tag>  
+  </tag>
 
   <tag>
     <name>SearchResultsSize</name>
     <tagclass>com.ecyrd.jspwiki.tags.SearchResultsSizeTag</tagclass>
     <bodycontent>empty</bodycontent>
-  </tag>  
+  </tag>
 
   <tag>
     <name>TabbedSection</name>
@@ -673,7 +673,7 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
-    
+
   <tag>
     <name>Tab</name>
     <tagclass>com.ecyrd.jspwiki.tags.TabTag</tagclass>
@@ -691,6 +691,11 @@
     </attribute>
     <attribute>
       <name>accesskey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>url</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
@@ -758,7 +763,7 @@
     <attribute>
        <name>var</name>
        <required>true</required>
-       <rtexprvalue>true</rtexprvalue> 
+       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
        <name>default</name>
