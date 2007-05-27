@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fileset-config file-format-version="1.2.0" simple-config="true">
-    <fileset name="all" enabled="true" check-config-name="Janne's coding style" local="false">
+    <local-check-config name="JSPWiki coding style" location="doc/eclipse/jspwiki-checkstyle" type="project" description="JSPWiki coding style for Checkstyle Eclipse plugin.">
+        <additional-data name="protect-config-file" value="false"/>
+    </local-check-config>
+    <fileset name="all" enabled="true" check-config-name="JSPWiki coding style" local="true">
         <file-match-pattern match-pattern="." include-pattern="true"/>
     </fileset>
     <filter name="FilesFromPackage" enabled="true">
