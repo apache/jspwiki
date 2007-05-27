@@ -19,10 +19,8 @@
  */
 package com.ecyrd.jspwiki.ui.progress;
 
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUIDGenerator;
@@ -51,6 +49,9 @@ public class ProgressManager
 
     private static Logger log = Logger.getLogger( ProgressManager.class );
 
+    /**
+     *  Creates a new ProgressManager.
+     */
     public ProgressManager()
     {
         JSONRPCManager.registerGlobalObject( JSON_PROGRESSTRACKER, new JSONTracker() );
@@ -69,8 +70,8 @@ public class ProgressManager
      *  Call this method to get your ProgressItem into the ProgressManager queue.
      *  The ProgressItem will be moved to state STARTED.
      *
-     *  @param pi
-     *  @param id
+     *  @param pi ProgressItem to start
+     *  @param id The progress identifier
      */
     public void startProgress( ProgressItem pi, String id )
     {
@@ -84,7 +85,7 @@ public class ProgressManager
      *  getProgress() will no longer find it.  The ProgressItem will be moved to state
      *  STOPPED.
      *
-     *  @param id
+     *  @param id The progress identifier
      */
     public void stopProgress( String id )
     {
@@ -96,11 +97,12 @@ public class ProgressManager
     /**
      *  Get the progress in percents.
      *
-     *  @param id
-     *  @return
+     *  @param id The progress identifier.
+     *  @return A value between 0 to 100 indicating the progress.
      *  @throws IllegalArgumentException If no such progress item exists.
      */
     public int getProgress( String id )
+        throws IllegalArgumentException
     {
         ProgressItem pi = (ProgressItem)m_progressingTasks.get( id );
 
