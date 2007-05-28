@@ -149,8 +149,10 @@ Wiki.init({
 <c:if test='${!empty prefSkinName}'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print" 
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.css' />" />
+<%--
 <link rel="stylesheet" type="text/css" media="print" 
-     href="<wiki:Link format='url' templatefile='skins/' /><:cout value='${prefSkinName}/print_skin.css' />" />
+     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/print_skin.css' />" />
+--%>
 <script type="text/javascript" 
          src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.js' />" ></script>
 </c:if>

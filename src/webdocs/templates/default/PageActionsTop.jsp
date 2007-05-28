@@ -22,7 +22,7 @@
   </span>
   
   <wiki:CheckRequestContext context='info|diff|upload|edit'>
-    <span>
+    <span class="actionView">
       <wiki:PageType type="page">
         <a href="<wiki:Link format='url' />" accesskey="v" 
           title="<fmt:message key='actions.view.title'/>"><fmt:message 

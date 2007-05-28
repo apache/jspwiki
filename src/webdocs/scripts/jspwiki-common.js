@@ -2,8 +2,10 @@
  ** Javascript routines to support the BrushedTemplate
  ** Dirk Frederickx
  ** Nov 06-Mar 07: aligned with MooTools ##
+ ** moo v1.1 selection needed:  
+ **   Core, Class,  Native, Element(ex. Dimensions), Window,
+ **   Effects(ex. Scroll, Slide), Drag(Base), Remote, Plugins(Tips, Accordion)
  **
- ** 050 URL Handling
  ** 100 Wiki object (page parms, UserPrefs and setting focus) ##
  ** 110 WikiSlimbox : attachment viewer ##
  ** 114 Reflection (adds reflection to images) ##
@@ -268,11 +270,11 @@ var Wiki = {
 			|| $('query2');		// Search.jsp
 		if(f && f.visible()) f.focus();	//IE chokes when focus on invisible element
 
-		/*
+		/* */
 		this.DefaultFontSize = $E('body').getStyle('font-size').toFloat();
 		if(this.PrefFontSize) { this.PrefFontSize=this.PrefFontSize.toFloat(); this.changeFontSize(0); } 
 		else this.PrefFontSize = this.DefaultFontSize;
-		*/
+		/* */
 		this.replaceMoreBox(); /* visual sugar */
 	},
 
@@ -2057,12 +2059,15 @@ window.addEvent('load', function(){
 
 	Wiki.onPageLoad();
 	//WikiReflection.onPageLoad(); //before accordion cause impacts height!
-	//console.profile();
 	WikiAccordion.onPageLoad();
 
 	TabbedSection.onPageLoad(); //after coordion or safari
 	QuickLinks.onPageLoad();
+	
+	//console.profile();
 	Collapsable.onPageLoad();
+	//console.profileEnd();
+
 	SearchBox.onPageLoad();
 	Sortable.onPageLoad();
 	TableFilter.onPageLoad();
@@ -2072,7 +2077,6 @@ window.addEvent('load', function(){
 	GraphBar.onPageLoad();
 	Categories.onPageLoad();
 
-	//console.profileEnd();
 	//EditTools.onPageLoad();
 
 	WikiSlimbox.onPageLoad();

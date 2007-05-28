@@ -109,9 +109,6 @@
     String title =  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.showall");
     //if( linkFrom > -1 ) title = "Show page from " + (linkFrom+1) + " to "+ (linkFrom+pagesize) ;
     if( linkFrom > -1 )
-      title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show" );
-      //FIXME ?? title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show", Object[]{new Integer(linkFrom+1), new Integer(linkFrom+pagesize) } );
-    if( linkFrom > -1 ) 
       title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show", new Object[]{new Integer(linkFrom+1), new Integer(linkFrom+pagesize) } );
 
     sb.append( "<a title=\"" + title + "\" " );

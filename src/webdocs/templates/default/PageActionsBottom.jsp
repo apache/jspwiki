@@ -42,7 +42,7 @@
     </wiki:Permission>
   
     <wiki:Permission permission="comment">
-    <span>
+    <span class="actionComment">
       <wiki:PageType type="page">
         <a href="Comment.jsp?page=<wiki:Variable var='pagename' />"
            title="<fmt:message key="actions.comment.title"/>" ><fmt:message key="actions.comment"/></a>

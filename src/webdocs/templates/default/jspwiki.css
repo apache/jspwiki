@@ -56,8 +56,6 @@
 }
 #footer .copyright { 
 }
-
-/* +++ 020 LOOK and FEEL of main blocks with IDs +++ */
 #page { 
 	margin-top:1em;
 }
@@ -92,7 +90,7 @@ body {
 	color:black; 
 	background:white; 
 	margin: 0;
-	xxfont: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;
+	/*font: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;*/
 	font:76%/140% Verdana,Arial,Helvetica,sans-serif;
 }
 table {	
@@ -158,7 +156,7 @@ dl dd {
 }
 legend, label {
 	font-weight:bold;
-	font-size:0.9;
+	font-size:90%;
 	white-space:nowrap;
 	padding-right:0.5em;
 }
@@ -167,7 +165,6 @@ fieldset {
 	padding:0.5em;
 	border:1px solid #bbb;
 }
-
 .wikiform input[type='submit'], .wikiform input[type='button'] {
 	cursor:pointer;
 }
@@ -206,7 +203,7 @@ a:focus {
 a.wikipage {
 }
 a.editpage {
-	color:#ff0000;
+	color:red;
 	text-decoration:none;
 	border-bottom:1px dashed red;
 }
@@ -225,7 +222,7 @@ a.feed {
 /* +++ 260 Image styles +++ */
 img {
 	border:0;
-	max-width:99%; /* ff ok to fit in parent */
+	/* max-width:99%; FIXME ff ok to fit in parent */
 }
 img.inline {
 }
@@ -252,7 +249,7 @@ a.footnoteref {
 }
 a.footnote {
 	vertical-align:super;
-	color:#0044AA;
+	color:#04A;
 }
 .small {
 	font-size:85%;
@@ -372,7 +369,6 @@ td .error {
 /* +++ 350 Attachments +++ */
 #attachments {
 }
-
 .attachtype {
 	line-height:1.6;
 	font-size:11px;
@@ -381,7 +377,6 @@ td .error {
 	background-position:left;
 	background-image:url(images/page_white.png);
 }
-
 #attach-gif {
 	background-image:url(images/page_white_magnify.png);
 }
@@ -465,7 +460,6 @@ td .error {
 	padding:0.25em;
 }
 /* .diffnote equals .information */
-
 td.diffadd,
 td.diffrem,
 td.diff {
@@ -474,7 +468,7 @@ td.diff {
 	line-height:1;
 }
 td.diffadd {
-	background:#99ff99;
+	background:#9f9;
 }
 td.diffrem {
 	background:#f93;
@@ -490,7 +484,7 @@ td.diff {
 	overflow:auto;
 }
 .diff-insertion {
-	background:#99ff99;
+	background:#9f9;
 	text-decoration:none;
 	color:black;
 } 
@@ -507,19 +501,16 @@ td.diff {
 
 /* +++ 425 Edit/EditContent and CommentContent +++ */
 body.edit {
-	 
-} /* Edit.jsp BODY element */
+} 
 body.comment {
-	 
-} /* Comment.jsp BODY element */
-#edithelp {
-	 
+} 
+#edithelp {	 
 }
 
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
 	background:#bbb; 
-	cursor:s-resize;
+	cursor:s-resize; /* css3 row-resize */ 
 	height:4px; 
 }
 .edit textarea {
@@ -609,9 +600,7 @@ body.comment {
    in the results.
    <span class="searchword">thingy</span>
  */
-.searchword,
-.cursor,
-.searchmatch {
+.searchword, .cursor, .searchmatch {
 	background-color:#f93;
 	color:black;
 	text-decoration:inherit;
@@ -644,7 +633,6 @@ body.comment {
 	padding:.5em;
 	background:#e0e0ff;	 
 }
-
 .changenote {
 	font-style:italic;
 } /* fixme */
@@ -655,11 +643,10 @@ body.comment {
 	padding:0.25em 2em 0 0;
 	line-height:1.5;
 }
-.pageactions a {
+.pageactions a, .pageactions .actionsMore {
 	padding:0.5em;
 }
 .pageactions .actionsMore { 
-	padding:0.5em;
 	color:blue;
 }
 .pageactions .pageinfo a  { 
@@ -672,9 +659,8 @@ body.comment {
 	background-color:transparent;
 }
 .pageactions .pageinfo {
-	margin:0.25em 0.5em 0 0;
+	margin:0.25em 0 0 0;
 }
-
 .pageinfo,
 .actionHome,
 .actionView,
@@ -688,7 +674,6 @@ body.comment {
 .actionLogin,
 .actionLogout {
 }
-
 #actionsMorePopup {
 	position:absolute;
 	right:0;
@@ -713,7 +698,8 @@ body.comment {
 #actionsMorePopup a {
 	line-height:1.75;
 }
-#actionsMorePopup .actionSeparator { height:2px;
+#actionsMorePopup .actionSeparator { 
+	height:2px;
 	border-bottom:2px solid #bbb;
 	overflow:hidden;
 }
@@ -732,7 +718,7 @@ body.comment {
  	width:20px; 
 }
 .quick2top a {
- 	background:url(images/arrup.png) no-repeat center;
+ 	background-image:url(images/arrup.png) no-repeat center;
 }
 .quick2bottom a {
  	background:url(images/arrdown.png) no-repeat center;
@@ -891,25 +877,22 @@ div.index .section a {
 .weblogentry {
 }
 .weblogentryheading {
-	font-size:1.2;
 	margin-top:1em;
 	padding:0 0.5em;
-	line-height:1.1;
 	background:#e0e0e0;
 }
 .weblogentrytitle {
-	margin:0.25em 0;
-	font-size:1.2;
+	padding:0.25em 0.5em;
+	font-size:120%;
 	font-weight:bold;
-	line-height:1.1;
 }
 .weblogentrybody {
-	font-size:90%;
-	margin-left:1em;
+	margin-left:0.5em;
 }
 .weblogentryfooter {
 	font-size:90%;
-	margin-left:1em;
+	padding:0 0.5em;
+	background:#e0e0e0;
 	clear:both;
 }
 .weblogarchive {
@@ -924,7 +907,7 @@ div.index .section a {
 .archiveyea {
 	font-weight:bold;
 	text-decoration:none;
-	margin-left:0px !important;
+	margin-left:0 !important;
 }
 .archiveyear:after {
 	content:" AD" 
@@ -989,7 +972,7 @@ table.calendar td.link {
 table.calendar tr.month {
 }
 table.calendar tr.weekdays {
-	color:#ff0000;
+	color:red;
 }
 
 /* +++ 900 "Special-effects" JavaScript styles +++ */
@@ -1045,31 +1028,10 @@ table.calendar tr.weekdays {
 	cursor:default;
 	 
 }
-/* CHECK */
-/*
-.edit .tabmenu a {
-	background:white;
-}
-.edit .tabmenu .activetab {
-	background:transparent;
-	border-bottom-color:#d9e8ff;
-}
-
-.tabmenu .alerttab a, .edit .tabmenu .alerttab a {
-	color:white;
-	background:red;
-}
-.tabmenu .alerttab .activetab, .edit .tabmenu .alerttab .activetab {
-	color:red;
-	background:#D9E8FF;
-                           border-bottom:1px solid #d9e8ff;
-}
-*/
 
 
 /* +++ 910 Accordion +++ */
-.accordion, 
-.tabbedAccordion {
+.accordion,  .tabbedAccordion {
 	border:1px solid #bbb;
 	margin-bottom:0.5em;
 }
@@ -1355,13 +1317,11 @@ a.slimbox:hover {
 
 /* +++ 950 Categorised +++ */
 .categoryLink {
-	border-bottom:2px solid #ffcc33;
+	border-bottom:2px solid #fc3;
 } 
 .categoryPopup {
 	border:2px solid #f93;
-	background:#ffcc33;
-}
-.categoryPopup {
+	background:#fc3;
 	position:absolute;
 	z-index:10;
 	font-size:0.9em;
@@ -1381,10 +1341,8 @@ a.slimbox:hover {
 .categoryText li {
 	padding:0 0.5em;
 }
-.categoryTitle:hover,
-.categoryText li:hover { 
+.categoryTitle:hover, .categoryText li:hover { 
 	background:#f93;
-	opacity:1;
 }
 
 
