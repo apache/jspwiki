@@ -1,9 +1,15 @@
 
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import junit.framework.*;
-import java.util.*;
+import java.util.Properties;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import junit.framework.Test;
+
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
 
 public class UndefinedPagesPluginTest extends TestCase
 {
@@ -11,7 +17,7 @@ public class UndefinedPagesPluginTest extends TestCase
     TestEngine engine;
     WikiContext context;
     PluginManager manager;
-    
+
     public UndefinedPagesPluginTest( String s )
     {
         super( s );

@@ -1,11 +1,17 @@
 
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.ProviderException;
+import java.util.Properties;
 
-import junit.framework.*;
-import java.util.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class PluginManagerTest extends TestCase
 {
@@ -18,7 +24,7 @@ public class PluginManagerTest extends TestCase
     WikiContext context;
 
     PluginManager manager;
-    
+
     public PluginManagerTest( String s )
     {
         super( s );
@@ -164,7 +170,7 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         String res = manager.execute( context, "{samplealias text=15}");
-        
+
         assertEquals( "15", res );
     }
 
@@ -172,23 +178,23 @@ public class PluginManagerTest extends TestCase
         throws Exception
     {
         String res = manager.execute( context, "{samplealias2 text=xyzzy}");
-    
+
         assertEquals( "xyzzy", res );
     }
 
     public void testInitPlugin() throws Exception
     {
         manager.execute( context, "{JavaScriptPlugin}");
-        
+
         assertTrue( JavaScriptPlugin.c_inited );
     }
 
     public void testParserPlugin() throws Exception
     {
         engine.saveText(context, "[{SamplePlugin render=true}]");
-        
+
         engine.getHTML( "Testpage" );
-        
+
         assertTrue( SamplePlugin.c_rendered );
     }
 

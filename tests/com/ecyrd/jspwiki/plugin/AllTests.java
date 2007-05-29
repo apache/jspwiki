@@ -1,7 +1,11 @@
 
 package com.ecyrd.jspwiki.plugin;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+
 
 public class AllTests extends TestCase
 {
@@ -21,7 +25,7 @@ public class AllTests extends TestCase
         suite.addTest( ReferringPagesPluginTest.suite() );
         suite.addTest( TableOfContentsTest.suite() );
         suite.addTest( UndefinedPagesPluginTest.suite() );
-        
+
         return suite;
     }
 }
