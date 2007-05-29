@@ -48,7 +48,7 @@
         |___com 
             |___[...and the rest of the test source code]
                   
-    $Id: build.xml,v 1.83 2007-05-27 11:04:18 jalkanen Exp $
+    $Id: build.xml,v 1.84 2007-05-29 05:14:51 arj Exp $
 -->    
        
 <!--   
@@ -279,7 +279,7 @@
 
   <!--  Builds the jar of all compiled class files -->
 
-  <target name="jar" depends="compile,sign-init">
+  <target name="jar" depends="compile">
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
@@ -287,10 +287,9 @@
          <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml" />
       </jar>
-      <sign-jar jar="${jarfile}" />
   </target>
 
-  <target name="jartests" depends="compiletests,sign-init">
+  <target name="jartests" depends="compiletests">
     <jar jarfile="${testjarfile}" update="false">
       <fileset dir="${tests.build}">
         <include name="**/*.class"/>
@@ -299,7 +298,47 @@
         <include name="com/**/*.properties"/>
       </fileset>
     </jar>
-    <sign-jar jar="${testjarfile}" />
+  </target>
+  
+  <!--  Signs the JSPWiki JAR file with a self-issued digital certificate.
+        This should only be needed when your JVM starts with a global security
+        policy. By this we mean a standard J2SE policy that is set at JVM startup
+      	using the -Djava.security.policy=/some/policy/file VM argument. If this
+      	global policy file contains references to JSPWiki permission classes
+      	(PagePermission, GroupPermission, etc) **and** you set it before JSPWiki
+      	is loaded, **then** you must do four things:
+      	  0) run this target (signjar)
+      	  1) through 3) see below
+  -->
+   
+  <target name="signjar" depends="jar,sign-init" description="Signs jar: for use with global JVM security policies">
+    <sign-jar jar="${jarfile}" />
+    <echo>
+  Congratulations -- you just signed your JAR file. We assume
+  you did this because you want to create a global security
+  policy for your entire JVM. That's fine, but please make
+  sure you configure your JVM (and container) correctly.
+  Normally, this means you should:
+
+    1) Copy ${jarfile} to a place where its classes will be
+       read at startup. (Example: for Tomcat, this is
+       $CATALINA_HOME/common/lib)
+
+    2) Copy the keystore from ${jks.keystore} to the same
+       location as your global policy. (Example: Tomcat's
+       policy is in $CATALINA_HOME/conf/catalina.policy,
+       so you would copy it to $CATALINA_HOME/conf.)
+
+    3) Add a reference to the keystore as the *first* line of
+       the global policy. It should read
+
+       keystore "jspwiki.jks";
+
+       ... or something similar.
+       
+  If you have no idea what this is all about, we assume
+  that you ran this target just for fun. In that case, we
+  hope you enjoyed the experience.</echo>
   </target>
 
   <!--  Builds a Web Archive - basically a JAR file which
@@ -333,8 +372,7 @@
        <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
-       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class" />
-       <webinf file="${jks.keystore}"/>
+       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
@@ -461,9 +499,6 @@
       <copy toDir="tests/etc/WEB-INF/dtd">
         <fileset dir="${basedir}/etc/dtd/" />
       </copy>
-      
-      <!-- Copy the keystore to the test dir -->
-      <copy file="${jks.keystore}" toDir="tests/etc" />
   </target>
     
   <!-- This target runs the JUnit tests that are available
@@ -1137,12 +1172,18 @@ To automate the JAR signing processs, you can add the property
   <target name="hsql-init" depends="hsql-check-start,hsql-start" />
   
   <target name="hsql-check-start">
-    <available file="tests/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
+    <echo message="Checking to see if Hypersonic JDBC server is running already." />
+    <property file="tests/etc/db/hsql/server.properties" prefix="hsql" />
+    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from tests/etc/db/hsql/server.properties</fail>
+    <condition property="hsql.up">
+      <socket server="localhost" port="${hsql.server.port}" />
+    </condition>
   </target>
   
   <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
     description="Starts the Hypersonic database for testing.">
     <echo message="Starting up Hypersonic JDBC server on localhost." />
+    <delete file="tests/etc/db/hsql/jspwiki.lck"/>
     <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
       dir="tests/etc/db/hsql">
       <classpath>
