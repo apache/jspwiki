@@ -21,6 +21,7 @@ import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
@@ -637,4 +638,34 @@ public class AuthorizationManagerTest extends TestCase
         assertTrue( "Admin pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
         assertTrue( "Admin groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
     }
+    
+    public void testAdminView()
+       throws Exception
+    {
+        m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
+        
+        Principal admin = new GroupPrincipal( m_wiki, "Admin" );
+        WikiSession session = WikiSessionTest.containerAuthenticatedSession(
+                m_engine,
+                Users.ALICE,
+                new Principal[] { admin } );
+
+        assertTrue( "Alice has AllPermission", m_auth.checkPermission( session, 
+                                                                       new AllPermission( m_engine.getApplicationName() )));
+        assertTrue( "Alice cannot read", m_auth.checkPermission( session, 
+                                                                 new PagePermission("TestDefaultPage","view") ) );
+    }
+
+    public void testAdminView2() throws Exception 
+    {
+        m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
+     
+        WikiSession session = WikiSessionTest.adminSession(m_engine);
+
+        assertTrue( "Alice has AllPermission", m_auth.checkPermission( session, 
+                                                                       new AllPermission( m_engine.getApplicationName() )));
+        assertTrue( "Alice cannot read", m_auth.checkPermission( session, 
+                                                                 new PagePermission("TestDefaultPage","view") ) );
+    }
+
 }
