@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki.auth.user;
 import java.io.File;
 import java.security.Principal;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class JDBCUserDatabaseTest extends TestCase
         "'user@example.com'," + "'user'," +
         "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +
         "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
-    
+
     /**
      * @see junit.framework.TestCase#setUp()
      */
@@ -63,32 +64,43 @@ public class JDBCUserDatabaseTest extends TestCase
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
-        Connection conn = ds.getConnection();
-        Statement stmt = conn.createStatement();
-        String sql;
+        try
+        {
+            Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+            String sql;
 
-        sql = "DELETE FROM " + JDBCUserDatabase.DEFAULT_DB_TABLE + ";";
-        stmt.executeUpdate( sql );
+            sql = "DELETE FROM " + JDBCUserDatabase.DEFAULT_DB_TABLE + ";";
+            stmt.executeUpdate( sql );
 
-        // Create a new test user 'janne'
-        stmt.executeUpdate( INSERT_JANNE );
+            // Create a new test user 'janne'
+            stmt.executeUpdate( INSERT_JANNE );
 
-        // Create a new test user 'user'
-        stmt.executeUpdate( INSERT_USER );
-        stmt.close();
-        
-        conn.close();
-        
-        // Initialize the user database
-        m_db = new JDBCUserDatabase();
-        m_db.initialize( null, new Properties() );
+            // Create a new test user 'user'
+            stmt.executeUpdate( INSERT_USER );
+            stmt.close();
+
+            conn.close();
+
+            // Initialize the user database
+            m_db = new JDBCUserDatabase();
+            m_db.initialize( null, new Properties() );
+        }
+        catch( SQLException e )
+        {
+            System.err.println("Looks like your database could not be connected to - "+
+                               "please make sure that you have started your database "+
+                               "(e.g. by running ant hsql-start)");
+
+            throw (SQLException) e.fillInStackTrace();
+        }
     }
 
     public void testDeleteByLoginName() throws WikiSecurityException
     {
         // First, count the number of users in the db now.
         int oldUserCount = m_db.getWikiNames().length;
-        
+
         // Create a new user with random name
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = new DefaultUserProfile();
@@ -97,7 +109,7 @@ public class JDBCUserDatabaseTest extends TestCase
         profile.setFullname( "FullName"+loginName );
         profile.setPassword("password");
         m_db.save(profile);
-        
+
         // Make sure the profile saved successfully
         profile = m_db.findByLoginName( loginName );
         assertEquals( loginName, profile.getLoginName() );
@@ -107,7 +119,7 @@ public class JDBCUserDatabaseTest extends TestCase
         m_db.deleteByLoginName( loginName );
         assertEquals( oldUserCount, m_db.getWikiNames().length );
     }
-    
+
     public void testFindByEmail()
     {
         try
@@ -242,7 +254,7 @@ public class JDBCUserDatabaseTest extends TestCase
         {
             // Cool; that's what we expect
         }
-        
+
         // Create new user & verify it saved ok
         UserProfile profile = new DefaultUserProfile();
         profile.setEmail( "renamed@example.com" );
@@ -252,9 +264,9 @@ public class JDBCUserDatabaseTest extends TestCase
         m_db.save( profile );
         profile = m_db.findByLoginName( "olduser" );
         assertNotNull( profile );
-        
+
         // Try renaming to a login name that's already taken; it should fail
-        try 
+        try
         {
             m_db.rename( "olduser", "janne" );
             fail( "Should not have allowed rename..." );
@@ -263,12 +275,12 @@ public class JDBCUserDatabaseTest extends TestCase
         {
             // Cool; that's what we expect
         }
-        
+
         // Now, rename it to an unused name
         m_db.rename( "olduser", "renameduser" );
-        
+
         // The old user shouldn't be found
-        try 
+        try
         {
             profile = m_db.findByLoginName( "olduser" );
             fail( "Old user was found, but it shouldn't have been." );
@@ -277,18 +289,18 @@ public class JDBCUserDatabaseTest extends TestCase
         {
             // Cool, it's gone
         }
-        
+
         // The new profile should be found, and its properties should match the old ones
         profile = m_db.findByLoginName( "renameduser" );
         assertEquals( "renamed@example.com", profile.getEmail() );
         assertEquals( "Renamed User", profile.getFullname() );
         assertEquals( "renameduser", profile.getLoginName() );
         assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
-        
+
         // Delete the user
         m_db.deleteByLoginName( "renameduser" );
     }
-    
+
     public void testSave()
     {
         try

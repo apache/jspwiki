@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki.auth.authorize;
 import java.io.File;
 import java.security.Principal;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -48,7 +49,19 @@ public class JDBCGroupDatabaseTest extends TestCase
         ctx.bind( JDBCGroupDatabase.DEFAULT_GROUPDB_DATASOURCE, ds );
 
         // Get the JDBC connection and init tables
-        m_conn = ds.getConnection();
+
+        try
+        {
+            m_conn = ds.getConnection();
+        }
+        catch( SQLException e )
+        {
+            System.err.println("Looks like your database could not be connected to - "+
+                               "please make sure that you have started your database "+
+                               "(e.g. by running ant hsql-start)");
+
+            throw (SQLException) e.fillInStackTrace();
+        }
 
         // Initialize the user database
         m_db = new JDBCGroupDatabase();
