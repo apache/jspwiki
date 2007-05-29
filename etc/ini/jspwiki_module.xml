@@ -9,7 +9,7 @@
 <modules>
 
    <!--
-       Define the editors that we ship with. 
+       Define the editors that we ship with.
    -->
    <editor name="plain">
       <author>Janne Jalkanen</author>
@@ -18,12 +18,18 @@
       <maxVersion>2.5</maxVersion>
       <adminBean>com.ecyrd.jspwiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
-   
+
    <editor name="WikiWizard">
       <author>i3G Institut Hochschule Heilbronn</author>
       <path>editors/WikiWizard.jsp</path>
       <minVersion>2.4</minVersion>
       <maxVersion>2.5</maxVersion>
    </editor>
+
+   <plugin class="com.ecyrd.jspwiki.plugin.Test">
+      <author>Dirk Fredericx</author>
+      <minVersion>2.5</minVersion>
+      <alias>TEST</alias>
+   </plugin>
 
 </modules>
