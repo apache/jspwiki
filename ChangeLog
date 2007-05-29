@@ -1,3 +1,14 @@
+2007-05-29  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.69
+
+       * Renamed TEST plugin as Test to be more in line with
+       Java class naming conventions.  Updated jspwiki_module.xml
+       to still use TEST as an alias.
+
+       * Tiny tweaks to some tests, who should now tell you
+       what to do if they cannot connect to a database.
+
 2007-05-29  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.68
@@ -11,24 +22,24 @@
        case where you need to sign them, now, is when you wish
        to create a JVM-wide, consolidated security policy. We have
        retained an Ant target "signjar" for that purpose. If you
-       are upgrading from an earlier version of JSPWiki and are 
-       using a customized policy, however, you MUST MUST MUST 
+       are upgrading from an earlier version of JSPWiki and are
+       using a customized policy, however, you MUST MUST MUST
        remove any "signedBy jspwiki" and "keystore" references,
        otherwise JSPWiki might act odd.
 
        * The container-specific/JVM-wide parts of the Java
-       security policy have been moved to a new file, 
+       security policy have been moved to a new file,
        etc/jspwiki-container.policy. This is NOT bundled into
        the WAR because it isn't needed there in any event...
 
 2007-05-28  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * SMART skin updated. Few bugfixes
- 
+
 2007-05-27  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.67
-       
+
        * WeblogPlugin now considers ACLs - if the user does not have
        view permission on an entry, it's ignored on display.  Also
        refactored the WeblogPlugin slightly to be more legible.
