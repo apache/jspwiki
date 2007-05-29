@@ -1,4 +1,4 @@
-// $Id: jspwiki.policy,v 1.10 2007-05-29 05:10:54 arj Exp $
+// $Id: jspwiki.policy,v 1.11 2007-05-29 05:18:53 arj Exp $
 //
 // This file contains the local security policy for JSPWiki.
 // It provides the permissions rules for the JSPWiki
