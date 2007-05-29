@@ -1,3 +1,26 @@
+2007-05-29  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.68
+
+       * Fixed a bug in the Ant script that were causing tests
+       to refuse to run sometimes because of an (erroneous)
+       Hypersonic error.
+
+       * As of this build, we have eliminated the need to sign
+       JSPWiki JARs for 95% of most users' deployments. The only
+       case where you need to sign them, now, is when you wish
+       to create a JVM-wide, consolidated security policy. We have
+       retained an Ant target "signjar" for that purpose. If you
+       are upgrading from an earlier version of JSPWiki and are 
+       using a customized policy, however, you MUST MUST MUST 
+       remove any "signedBy jspwiki" and "keystore" references,
+       otherwise JSPWiki might act odd.
+
+       * The container-specific/JVM-wide parts of the Java
+       security policy have been moved to a new file, 
+       etc/jspwiki-container.policy. This is NOT bundled into
+       the WAR because it isn't needed there in any event...
+
 2007-05-28  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * SMART skin updated. Few bugfixes
