@@ -127,7 +127,7 @@ the <code>jspwiki.properties</code> file directly.  You can find a sample config
   <h3>Security</h3>
   <div class="block">
   
-    <label>Security configuration</label>
+    <label>Security configuration</label><br/>
     <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked"/>
       JAAS plus container security (default)<br/>
     <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_OFF%>"/>
