@@ -27,7 +27,7 @@
    </editor>
 
    <plugin class="com.ecyrd.jspwiki.plugin.Test">
-      <author>Dirk Fredericx</author>
+      <author>Dirk Frederickx</author>
       <minVersion>2.5</minVersion>
       <alias>TEST</alias>
    </plugin>
