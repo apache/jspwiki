@@ -2,6 +2,7 @@ package com.ecyrd.jspwiki.ui;
 
 import java.security.Permission;
 
+import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 
 /**
@@ -46,7 +47,7 @@ public class WikiCommand extends AbstractCommand
         = new WikiCommand( "workflow", "%uWorkflow.jsp", "WorkflowContent.jsp", null, null );
 
     public static final Command ADMIN
-        = new WikiCommand( "admin", "%uadmin/Admin.jsp", "AdminContent.jsp", null, null );
+        = new WikiCommand( "admin", "%uadmin/Admin.jsp", "AdminContent.jsp", null );
 
     private final String m_action;
     
@@ -60,10 +61,15 @@ public class WikiCommand extends AbstractCommand
      * @param urlPattern the URL pattern
      * @param type the type
      * @param contentTemplate the content template; may be <code>null</code>
+     * @param action The action
      * @return IllegalArgumentException if the request content, URL pattern, or
      *         type is <code>null</code>
      */
-    private WikiCommand( String requestContext, String urlPattern, String contentTemplate, String target, String action )
+    private WikiCommand( String requestContext, 
+                         String urlPattern, 
+                         String contentTemplate, 
+                         String target, 
+                         String action )
     {
         super( requestContext, urlPattern, contentTemplate, target );
         m_action = action;
@@ -77,6 +83,23 @@ public class WikiCommand extends AbstractCommand
         }
     }
 
+    /**
+     *  Constructs an admin command.
+     *  
+     *  @param requestContext
+     *  @param urlPattern
+     *  @param contentTemplate
+     */
+    private WikiCommand( String requestContext, 
+                         String urlPattern, 
+                         String contentTemplate,
+                         String target )
+    {
+        super( requestContext, urlPattern, contentTemplate, target );
+        m_action = null;
+
+        m_permission = new AllPermission( target );
+    }
     /**
      * Creates and returns a targeted Command by combining a wiki
      * (a String) with this Command. The supplied <code>target</code>
