@@ -1,5 +1,6 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -7,6 +8,8 @@
 <head>
 <title>JSPWiki administration</title>
   <wiki:Include page="commonheader.jsp"/>
+  <link rel="stylesheet" media="screen, projection, print" type="text/css" 
+        href="<wiki:Link format='url' templatefile='admin/admin.css'/>"/>
 </head>
 <body class="view">
 <div id="wikibody">
@@ -44,7 +47,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
 </wiki:Tab>
 
 <wiki:Tab id="users" title="Users">
-<p>Contains users management.</p>
+   <wiki:Include page="admin/UserManagement.jsp"/>
 </wiki:Tab>
 
 <wiki:Tab id="groups" title="Groups">
