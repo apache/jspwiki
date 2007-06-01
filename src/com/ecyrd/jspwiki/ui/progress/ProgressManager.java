@@ -119,7 +119,7 @@ public class ProgressManager
      *
      *  @author Janne Jalkanen
      */
-    private class JSONTracker implements RPCCallable
+    public class JSONTracker implements RPCCallable
     {
         /**
          *  Returns upload progress in percents so far.
