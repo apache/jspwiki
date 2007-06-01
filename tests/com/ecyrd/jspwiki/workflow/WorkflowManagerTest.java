@@ -81,12 +81,12 @@ public class WorkflowManagerTest extends TestCase
     {
         // Test properties says workflow.saveWikiPage approver is GP Admin; workflow.foo is 'janne'
         assertEquals(new WikiPrincipal("janne", WikiPrincipal.LOGIN_NAME), wm.getApprover("workflow.foo"));
-        assertEquals(new GroupPrincipal("JSPWiki","Admin"), wm.getApprover("workflow.bar"));
+        assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.bar"));
         
         // 'saveWikiPage' workflow doesn't require approval, so we will need to catch an Exception
         try 
         {
-            assertEquals(new GroupPrincipal("JSPWiki","Admin"), wm.getApprover("workflow.saveWikiPage"));
+            assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.saveWikiPage"));
         }
         catch (WikiException e)
         {

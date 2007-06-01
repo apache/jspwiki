@@ -61,7 +61,7 @@ public class DecisionQueueTest extends TestCase
         janneSession = m_engine.janneSession();
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
         w.setWorkflowManager(m_engine.getWorkflowManager());
-        d1 = new SimpleDecision(w, "decision1.key", new GroupPrincipal(m_engine.getApplicationName(),"Admin"));
+        d1 = new SimpleDecision(w, "decision1.key", new GroupPrincipal("Admin"));
         d2 = new SimpleDecision(w, "decision2.key", new WikiPrincipal("Owner2"));
         d3 = new SimpleDecision(w, "decision3.key", janneSession.getUserPrincipal());
         m_queue.add(d1);

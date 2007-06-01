@@ -52,7 +52,7 @@ public class GroupPermissionTest extends TestCase
     {
         GroupPermission p;
         p = new GroupPermission( "Test", "view,edit,delete" );
-        assertEquals( "(\"com.ecyrd.jspwiki.auth.permissions.GroupPermission\",\":Test\",\"delete,edit,view\")", p
+        assertEquals( "(\"com.ecyrd.jspwiki.auth.permissions.GroupPermission\",\"*:Test\",\"delete,edit,view\")", p
                 .toString() );
         p = new GroupPermission( "mywiki:Test", "view,edit,delete" );
         assertEquals( "(\"com.ecyrd.jspwiki.auth.permissions.GroupPermission\",\"mywiki:Test\",\"delete,edit,view\")", p
@@ -67,12 +67,11 @@ public class GroupPermissionTest extends TestCase
         GroupPermission p1;
         GroupPermission p2;
 
-        // Permissions without prepended wiki name should never imply themselves
-        // or others
+        // Permissions without prepended wiki name should imply themselves
         p1 = new GroupPermission( "Test", "edit" );
         p2 = new GroupPermission( "Test", "edit" );
-        assertFalse( p1.implies( p1 ) );
-        assertFalse( p1.implies( p2 ) );
+        assertTrue( p1.implies( p1 ) );
+        assertTrue( p1.implies( p2 ) );
 
         // Permissions with a wildcard wiki should imply other wikis
         p1 = new GroupPermission( "*:Test", "edit" );
@@ -80,11 +79,11 @@ public class GroupPermissionTest extends TestCase
         assertTrue( p1.implies( p2 ) );
         assertFalse( p2.implies( p1 ) );
 
-        // Permissions that start with ":" are just like null
-        p1 = new GroupPermission( ":Test", "edit" );
+        // Permissions that start with ":" are just like "*:"
+        p1 = new GroupPermission( "*:Test", "edit" );
         p2 = new GroupPermission( "Test", "edit" );
-        assertFalse( p1.implies( p1 ) );
-        assertFalse( p1.implies( p2 ) );
+        assertTrue( p1.implies( p1 ) );
+        assertTrue( p1.implies( p2 ) );
     }
 
     public final void testImpliesMember()
@@ -97,7 +96,7 @@ public class GroupPermissionTest extends TestCase
         p1 = new GroupPermission( "*:<groupmember>", "view" );
         p2 = new GroupPermission ("*:TestGroup", "view" );
         s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "MyWiki", "TestGroup" ) );
+        s.getPrincipals().add( new GroupPrincipal( "TestGroup" ) );
         assertTrue( subjectImplies( s, p1, p2 ) );
         
         // <groupmember> doesn't imply it if Subject has no GroupPermission("TestGroup")
@@ -107,13 +106,13 @@ public class GroupPermissionTest extends TestCase
         
         // <groupmember> doesn't imply it if Subject's GP doesn't match
         s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "MyWiki", "FooGroup" ) );
+        s.getPrincipals().add( new GroupPrincipal( "FooGroup" ) );
         assertFalse( subjectImplies( s, p1, p2 ) );
         
         // <groupmember> doesn't imply it if p2 isn't GroupPermission type
         p2 = new PagePermission ("*:TestGroup", "view" );
         s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "MyWiki", "TestGroup" ) );
+        s.getPrincipals().add( new GroupPrincipal( "TestGroup" ) );
         assertFalse( subjectImplies( s, p1, p2 ) );
         
         // <groupmember> implies TestGroup if not called with Subject combiner
@@ -142,9 +141,9 @@ public class GroupPermissionTest extends TestCase
         p1 = new GroupPermission( "Test", "view,edit,delete" );
         p2 = new GroupPermission( "*:Test", "view,edit,delete" );
         p3 = new GroupPermission( "mywiki:Test", "view,edit,delete" );
-        assertFalse( p1.implies( p2 ) );
-        assertFalse( p2.implies( p1 ) );
-        assertFalse( p1.implies( p3 ) );
+        assertTrue( p1.implies( p2 ) );
+        assertTrue( p2.implies( p1 ) );
+        assertTrue( p1.implies( p3 ) );
         assertTrue( p2.implies( p3 ) );
         assertFalse( p3.implies( p1 ) );
         assertFalse( p3.implies( p2 ) );

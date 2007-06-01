@@ -1,3 +1,22 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.ui;
 
 import java.security.Permission;
@@ -14,15 +33,18 @@ import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
  * @author Andrew Jaquith
  * @since 2.4.22
  */
-public class GroupCommand extends AbstractCommand
+public final class GroupCommand extends AbstractCommand
 {
 
+    /** GroupCommand for deleting a group. */
     public static final Command DELETE_GROUP 
         = new GroupCommand( "deleteGroup", "%uDeleteGroup.jsp?group=%n", null, null, GroupPermission.DELETE_ACTION );
 
-    public static final Command EDIT_GROUP   
+    /** GroupCommand for editing a group. */
+       public static final Command EDIT_GROUP   
         = new GroupCommand( "editGroup", "%uEditGroup.jsp?group=%n", "EditGroupContent.jsp", null, GroupPermission.EDIT_ACTION );
 
+       /** GroupCommand for viewing a group. */
     public static final Command VIEW_GROUP   
         = new GroupCommand( "viewGroup", "%uGroup.jsp?group=%n", "GroupContent.jsp", null, GroupPermission.VIEW_ACTION );
 
@@ -52,7 +74,7 @@ public class GroupCommand extends AbstractCommand
         }
         else
         {
-            m_permission = new GroupPermission( target.getWiki() + ":" + target.getName(), action );
+            m_permission = new GroupPermission( target.getName(), action );
         }
     }
 
@@ -60,9 +82,10 @@ public class GroupCommand extends AbstractCommand
      * Creates and returns a targeted Command by combining a GroupPrincipal 
      * with this Command. The supplied <code>target</code> object 
      * must be non-<code>null</code> and of type GroupPrincipal.
+     * If the target is not of the correct type, this method throws an
+     * {@link IllegalArgumentException}.
      * @param target the GroupPrincipal to combine into the current Command
      * @return the new, targeted command
-     * @throws IllegalArgumentException if the target is not of the correct type
      */
     public final Command targetedCommand( Object target )
     {
@@ -74,6 +97,9 @@ public class GroupCommand extends AbstractCommand
     }
     
     /**
+     * Returns the name of the command, which will either be
+     * the target (if specified), or the "friendly name" for the JSP.
+     * @return the name
      * @see com.ecyrd.jspwiki.ui.Command#getName()
      */
     public final String getName()
@@ -87,6 +113,8 @@ public class GroupCommand extends AbstractCommand
     }
 
     /**
+     * Returns the permission required to execute this GroupCommand.
+     * @return the permission
      * @see com.ecyrd.jspwiki.ui.Command#requiredPermission()
      */
     public final Permission requiredPermission()

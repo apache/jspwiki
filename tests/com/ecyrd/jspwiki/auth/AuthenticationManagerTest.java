@@ -28,8 +28,6 @@ public class AuthenticationManagerTest extends TestCase
  
     private WikiSession           m_session;
     
-    private String                m_wiki;
-    
     public AuthenticationManagerTest( String s )
     {
         super( s );
@@ -43,13 +41,12 @@ public class AuthenticationManagerTest extends TestCase
         m_auth = m_engine.getAuthenticationManager();
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
-        m_wiki = m_engine.getApplicationName();
     }
     
     public void testIsUserPrincipal()
     {
         assertTrue( AuthenticationManager.isUserPrincipal( new WikiPrincipal( "Foo" ) ) );
-        assertFalse( AuthenticationManager.isUserPrincipal( new GroupPrincipal( m_wiki, "Group1" ) ) );
+        assertFalse( AuthenticationManager.isUserPrincipal( new GroupPrincipal( "Group1" ) ) );
         assertFalse( AuthenticationManager.isUserPrincipal( new Role( "Role1" ) ) );
         assertFalse( AuthenticationManager.isUserPrincipal( Role.ANONYMOUS ) );
     }

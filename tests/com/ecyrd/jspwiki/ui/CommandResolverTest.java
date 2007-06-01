@@ -161,7 +161,7 @@ public class CommandResolverTest extends TestCase
         assertEquals( "GroupContent.jsp", a.getContentTemplate() );
         assertEquals( "Group.jsp", a.getJSP() );
         assertEquals( "%uGroup.jsp?group=%n", a.getURLPattern() );
-        assertEquals( new GroupPrincipal( "JSPWiki", "Foo" ), a.getTarget() );
+        assertEquals( new GroupPrincipal( "Foo" ), a.getTarget() );
     }
     
     public void testFindWikiActionWithPath()

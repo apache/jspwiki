@@ -1,3 +1,16 @@
+/*
+ * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
+ * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version. This program is distributed
+ * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details. You should have
+ * received a copy of the GNU Lesser General Public License along with this
+ * program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
@@ -45,6 +58,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public final class GroupManager implements Authorizer, WikiEventListener
 {
+    /** Key used for adding UI messages to a user's WikiSession. */
     public static final String  MESSAGES_KEY       = "group";
 
     private static final String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
@@ -59,10 +73,6 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
     /** Map with GroupPrincipals as keys, and Groups as values */
     private final Map           m_groups           = new HashMap();
-
-    /** The name of this wiki. */
-    private String              m_wiki             = null;
-
 
     /**
      * <p>
@@ -90,10 +100,11 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * this method throws a <code>NoSuchPrincipalException</code>.
      * @param name the name of the group to find
      * @return the group
+     * @throws NoSuchPrincipalException if the group cannot be found
      */
     public final Group getGroup( String name ) throws NoSuchPrincipalException
     {
-        Group group = (Group) m_groups.get( new GroupPrincipal( m_wiki, name ) );
+        Group group = (Group) m_groups.get( new GroupPrincipal( name ) );
         if ( group != null )
         {
             return group;
@@ -184,9 +195,12 @@ public final class GroupManager implements Authorizer, WikiEventListener
     /**
      * Initializes the group cache by initializing the group database and
      * obtaining a list of all of the groups it stores.
+     * @param engine the wiki engine
+     * @param props the properties used to initialize the wiki engine
      * @see GroupDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
      *      java.util.Properties)
      * @see GroupDatabase#groups()
+     * @throws WikiSecurityException if GroupManager cannot be initialized
      */
     public final void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException
     {
@@ -200,8 +214,6 @@ public final class GroupManager implements Authorizer, WikiEventListener
         {
             throw new WikiSecurityException( e.getMessage() );
         }
-
-        m_wiki = engine.getApplicationName();
 
         // Load all groups from the database into the cache
         Group[] groups = m_groupDatabase.groups();
@@ -299,10 +311,11 @@ public final class GroupManager implements Authorizer, WikiEventListener
      *            <code>NoSuchPrincipalException</code> to be thrown
      * @return a new, populated group
      * @see com.ecyrd.jspwiki.auth.authorize.Group#RESTRICTED_GROUPNAMES
-     * @throws WikiSecurityException if the group name isn't allowed
+     * @throws WikiSecurityException if the group name isn't allowed, or if
+     * <code>create</code> is <code>false</code>
+     * and the Group named <code>name</code> does not exist
      */
-    public final Group parseGroup( String name, String memberLine, boolean create ) throws NoSuchPrincipalException,
-            WikiSecurityException
+    public final Group parseGroup( String name, String memberLine, boolean create ) throws WikiSecurityException
     {
         // If null name parameter, it's because someone's creating a new group
         if ( name == null )
@@ -394,10 +407,11 @@ public final class GroupManager implements Authorizer, WikiEventListener
      *            groups that do not exist will cause a
      *            <code>NoSuchPrincipalException</code> to be thrown
      * @return a new, populated group
-     * @throws WikiSecurityException if the group name isn't allowed
+     * @throws WikiSecurityException if the group name isn't allowed, or if
+     * <code>create</code> is <code>false</code>
+     * and the Group does not exist
      */
-    public final Group parseGroup( WikiContext context, boolean create ) throws NoSuchPrincipalException,
-            WikiSecurityException
+    public final Group parseGroup( WikiContext context, boolean create ) throws WikiSecurityException
     {
         // Extract parameters
         HttpServletRequest request = context.getHttpRequest();
@@ -423,10 +437,12 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * commit the delete to the back-end group database. It will also fire a
      * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#GROUP_REMOVE} event with
      * the GroupManager instance as the source and the Group as target.
+     * If <code>index</code> is <code>null</code>, this method throws
+     * an {@link IllegalArgumentException}.
      * @param index the group to remove
+     * @throws WikiSecurityException if the Group cannot be removed by
+     * the back-end
      * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(Group)
-     * @throws IllegalArgumentException if <code>index</code> is
-     *             <code>null</code>
      */
     public final void removeGroup( String index ) throws WikiSecurityException
     {
@@ -435,7 +451,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
             throw new IllegalArgumentException( "Group cannot be null." );
         }
 
-        Group group = (Group) m_groups.get( new GroupPrincipal( m_wiki, index ) );
+        Group group = (Group) m_groups.get( new GroupPrincipal( index ) );
         if ( group == null )
         {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
@@ -489,6 +505,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * </p>
      * @param session the wiki session, which may not be <code>null</code>
      * @param group the Group, which may not be <code>null</code>
+     * @throws WikiSecurityException if the Group cannot be saved by the back-end
      */
     public final void setGroup( WikiSession session, Group group ) throws WikiSecurityException
     {
@@ -496,8 +513,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
         // If group already exists, delete it; fire GROUP_REMOVE event
         Group oldGroup = (Group) m_groups.get( group.getPrincipal() );
-        boolean groupExists = ( oldGroup != null );
-        if ( groupExists )
+        if ( oldGroup != null )
         {
             fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
             synchronized( m_groups )
@@ -507,7 +523,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
 
         // Copy existing modifier info & timestamps
-        if ( groupExists )
+        if ( oldGroup != null )
         {
             group.setCreator( oldGroup.getCreator() );
             group.setCreated( oldGroup.getCreated() );
@@ -533,7 +549,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         // We got an exception! Roll back...
         catch( WikiSecurityException e )
         {
-            if ( groupExists )
+            if ( oldGroup != null )
             {
                 // Restore previous version, re-throw...
                 fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
@@ -606,7 +622,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * Checks if a String is blank or a restricted Group name, and if it is,
      * appends an error to the WikiSession's message list.
      * @param session the wiki session
-     * @param name the group name to test
+     * @param name the Group name to test
+     * @throws WikiSecurityException if <code>session</code> is
+     * <code>null</code> or the Group name is illegal
      * @see Group#RESTRICTED_GROUPNAMES
      */
     protected final void checkGroupName( WikiSession session, String name ) throws WikiSecurityException
@@ -674,6 +692,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * a name that has changed, it is replaced with the new one. No group events are emitted
      * as a consequence of this method, because the group memberships are still the same; it is
      * only the representations of the names within that are changing.
+     * @param event the incoming event
      */
     public void actionPerformed(WikiEvent event)
     {

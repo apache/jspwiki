@@ -1,3 +1,22 @@
+/*
+  JSPWiki - a JSP-based WikiWiki clone.
+
+  Copyright (C) 2001-2006 JSPWiki Development Team
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation; either version 2.1 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 package com.ecyrd.jspwiki.auth.permissions;
 
 import java.security.AccessControlContext;
@@ -120,7 +139,7 @@ public final class GroupPermission extends Permission
      * Creates a new GroupPermission for a specified group and set of actions.
      * Group should include a prepended wiki name followed by a colon (:). If
      * the wiki name is not supplied or starts with a colon, the group refers to
-     * no wiki in particular, and will never imply any other GroupPermission.
+     * all wikis.
      * @param group the wiki group
      * @param actions the allowed actions for this group
      */
@@ -139,7 +158,7 @@ public final class GroupPermission extends Permission
         }
         else
         {
-            m_wiki = null;
+            m_wiki = WILDCARD;
             groupName = pathParams[0];
         }
         m_group = groupName;
@@ -163,6 +182,8 @@ public final class GroupPermission extends Permission
     /**
      * Two PagePermission objects are considered equal if their actions (after
      * normalization), wiki and target are equal.
+     * @param obj the object to compare
+     * @return the result of the comparison
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public final boolean equals( Object obj )
@@ -179,6 +200,7 @@ public final class GroupPermission extends Permission
      * Returns the actions for this permission: &#8220;view&#8221;, &#8220;edit&#8221;, or &#8220;delete&#8221;. The
      * actions will always be sorted in alphabetic order, and will always appear
      * in lower case.
+     * @return the actions
      * @see java.security.Permission#getActions()
      */
     public final String getActions()
@@ -207,6 +229,7 @@ public final class GroupPermission extends Permission
 
     /**
      * Returns the hash code for this GroupPermission.
+     * @return the hash code
      * @see java.lang.Object#hashCode()
      */
     public final int hashCode()
@@ -236,6 +259,9 @@ public final class GroupPermission extends Permission
      * <li>All of other GroupPermission&#8217;s actions are equal to, or a subset of,
      * those of this permission</li>
      * </ol>
+     * @param permission the Permission to examine
+     * @return <code>true</code> if the GroupPermission implies the
+     * supplied Permission; <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
     public final boolean implies( Permission permission )
@@ -280,6 +306,7 @@ public final class GroupPermission extends Permission
 
     /**
      * Prints a human-readable representation of this permission.
+     * @return the string
      * @see java.lang.Object#toString()
      */
     public final String toString()

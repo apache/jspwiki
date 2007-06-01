@@ -27,8 +27,6 @@ public class GroupManagerTest extends TestCase
 
     private WikiSession       m_session;
 
-    private String            m_wiki;
-
     public GroupManagerTest( String s )
     {
         super( s );
@@ -42,7 +40,6 @@ public class GroupManagerTest extends TestCase
         m_engine = new TestEngine( props );
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
-        m_wiki = m_engine.getApplicationName();
 
         // Flush any pre-existing groups (left over from previous failures, perhaps)
         try
@@ -98,9 +95,9 @@ public class GroupManagerTest extends TestCase
     public void testGetRoles()
     {
         Principal[] roles = m_groupMgr.getRoles();
-        assertTrue( "Found Test", ArrayUtils.contains( roles, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertTrue( "Found Test2", ArrayUtils.contains( roles, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertTrue( "Found Test3", ArrayUtils.contains( roles, new GroupPrincipal( m_wiki, "Test3" ) ) );
+        assertTrue( "Found Test", ArrayUtils.contains( roles, new GroupPrincipal( "Test" ) ) );
+        assertTrue( "Found Test2", ArrayUtils.contains( roles, new GroupPrincipal( "Test2" ) ) );
+        assertTrue( "Found Test3", ArrayUtils.contains( roles, new GroupPrincipal( "Test3" ) ) );
     }
 
     public void testGroupMembership() throws Exception
@@ -109,52 +106,52 @@ public class GroupManagerTest extends TestCase
 
         // Anonymous; should belong to NO groups
         s = WikiSessionTest.anonymousSession( m_engine );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
 
         // Alice is asserted; should belong to NO groups
         s = WikiSessionTest.assertedSession( m_engine, Users.ALICE );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
 
         // Alice is authenticated; should belong to Test
         s = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
-        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
 
         // Bob is authenticated; should belong to Test & Test2
         s = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
-        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
 
         // Charlie is authenticated; should belong to Test
         s = WikiSessionTest.authenticatedSession( m_engine, Users.CHARLIE, Users.CHARLIE_PASS );
-        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
 
         // Fred is authenticated; should belong to Test3
         s = WikiSessionTest.authenticatedSession( m_engine, Users.FRED, Users.FRED_PASS );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertTrue( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
 
         // Nobody loves Biff!
         s = WikiSessionTest.authenticatedSession( m_engine, Users.BIFF, Users.BIFF_PASS );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test2" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "Test3" ) ) );
-        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( m_wiki, "NonExistant" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
+        assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "NonExistant" ) ) );
     }
 
     public void testGroupAddEvents() throws Exception

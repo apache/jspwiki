@@ -43,8 +43,6 @@ public class AuthorizationManagerTest extends TestCase
 
     private WikiSession          m_session;
 
-    private String               m_wiki;
-
     private static class TestPrincipal implements Principal
     {
         private final String m_name;
@@ -80,7 +78,6 @@ public class AuthorizationManagerTest extends TestCase
         m_auth = m_engine.getAuthorizationManager();
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
-        m_wiki = m_engine.getApplicationName();
     }
 
     /**
@@ -171,7 +168,7 @@ public class AuthorizationManagerTest extends TestCase
         Role it = new Role( "IT" );
         Role engineering = new Role( "Engineering" );
         Role finance = new Role( "Finance" );
-        Principal admin = new GroupPrincipal( m_wiki, "Admin" );
+        Principal admin = new GroupPrincipal( "Admin" );
         WikiSession session = WikiSessionTest.assertedSession(
                 m_engine,
                 Users.ALICE,
@@ -218,7 +215,7 @@ public class AuthorizationManagerTest extends TestCase
         Role it = new Role( "IT" );
         Role engineering = new Role( "Engineering" );
         Role finance = new Role( "Finance" );
-        Principal admin = new GroupPrincipal( m_wiki, "Admin" );
+        Principal admin = new GroupPrincipal( "Admin" );
         WikiSession session = WikiSessionTest.containerAuthenticatedSession(
                 m_engine,
                 Users.ALICE,
@@ -644,7 +641,7 @@ public class AuthorizationManagerTest extends TestCase
     {
         m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
         
-        Principal admin = new GroupPrincipal( m_wiki, "Admin" );
+        Principal admin = new GroupPrincipal( "Admin" );
         WikiSession session = WikiSessionTest.containerAuthenticatedSession(
                 m_engine,
                 Users.ALICE,

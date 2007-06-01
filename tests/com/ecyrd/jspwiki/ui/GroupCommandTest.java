@@ -63,7 +63,7 @@ public class GroupCommandTest extends TestCase
     {
         // Get view command
         Command a = GroupCommand.VIEW_GROUP;
-        GroupPrincipal group = new GroupPrincipal( "MyWiki", "Test" );
+        GroupPrincipal group = new GroupPrincipal( "Test" );
         
         // Combine with wiki group; make sure it's not equal to old command
         Command b = a.targetedCommand( group );
@@ -74,7 +74,7 @@ public class GroupCommandTest extends TestCase
         assertEquals( a.getContentTemplate(), b.getContentTemplate() );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new GroupPermission( "MyWiki:Test", "view" ), b.requiredPermission() );
+        assertEquals( new GroupPermission( "*:Test", "view" ), b.requiredPermission() );
         assertEquals( group, b.getTarget() );
         
         // Do the same with edit command
@@ -83,7 +83,7 @@ public class GroupCommandTest extends TestCase
         assertNotSame( a, b );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new GroupPermission( "MyWiki:Test", "edit" ), b.requiredPermission() );
+        assertEquals( new GroupPermission( "*:Test", "edit" ), b.requiredPermission() );
         assertEquals( group, b.getTarget() );
         
         // Do the same with delete command
@@ -92,7 +92,7 @@ public class GroupCommandTest extends TestCase
         assertNotSame( a, b );
         assertNotNull( b.getTarget() );
         assertNotNull( b.requiredPermission() );
-        assertEquals( new GroupPermission( "MyWiki:Test", "delete" ), b.requiredPermission() );
+        assertEquals( new GroupPermission( "*:Test", "delete" ), b.requiredPermission() );
         assertEquals( group, b.getTarget() );
     }
     

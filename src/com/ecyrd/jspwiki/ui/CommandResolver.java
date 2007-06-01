@@ -76,25 +76,25 @@ public final class CommandResolver
     private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
     /** Private map with request contexts as keys, Commands as values */
-    private static final Map    c_contexts;
+    private static final Map    CONTEXTS;
 
     /** Private map with JSPs as keys, Commands as values */
-    private static final Map    c_jsps;
+    private static final Map    JSPS;
 
     /** Store the JSP-to-Command and context-to-Command mappings */
     static
     {
-        c_contexts = new HashMap();
-        c_jsps = new HashMap();
+        CONTEXTS = new HashMap();
+        JSPS = new HashMap();
         Command[] commands = AbstractCommand.allCommands();
         for( int i = 0; i < commands.length; i++ )
         {
-            c_jsps.put( commands[i].getJSP(), commands[i] );
-            c_contexts.put( commands[i].getRequestContext(), commands[i] );
+            JSPS.put( commands[i].getJSP(), commands[i] );
+            CONTEXTS.put( commands[i].getRequestContext(), commands[i] );
         }
     }
 
-    private final Logger        log = Logger.getLogger( CommandResolver.class );
+    private final Logger        m_log = Logger.getLogger( CommandResolver.class );
 
     private final WikiEngine    m_engine;
 
@@ -132,7 +132,7 @@ public final class CommandResolver
                 {
                     specialPage = specialPage.trim();
                     jsp = jsp.trim();
-                    Command command = (Command) c_jsps.get( jsp );
+                    Command command = (Command) JSPS.get( jsp );
                     if ( command == null )
                     {
                         Command redirect = RedirectCommand.REDIRECT;
@@ -152,15 +152,14 @@ public final class CommandResolver
      * The resolution technique is simple: we examine the list of
      * Commands returned by {@link AbstractCommand#allCommands()} and
      * return the one whose <code>requestContext</code> matches the
-     * supplied context.
+     * supplied context. If the supplied context does not resolve to a known
+     * Command, this method throws an {@link IllegalArgumentException}.
      * @param context the request context
      * @return the resolved context
-     * @throws IllegalArgumentException if the supplied request context does not
-     *             resolve to a known Command
      */
     public static Command findCommand( String context )
     {
-        Command command = (Command) c_contexts.get( context );
+        Command command = (Command) CONTEXTS.get( context );
         if ( command == null )
         {
             throw new IllegalArgumentException( "Unsupported wiki context: " + context + "." );
@@ -227,7 +226,7 @@ public final class CommandResolver
             // Otherwise: use the default context
             if ( command == null )
             {
-                command = (AbstractCommand) c_contexts.get( defaultContext );
+                command = (AbstractCommand) CONTEXTS.get( defaultContext );
                 if ( command == null )
                 {
                     throw new IllegalArgumentException( "Wiki context " + defaultContext + " is illegal." );
@@ -267,7 +266,7 @@ public final class CommandResolver
             String groupName = request.getParameter( "group" );
             if ( groupName != null && groupName.length() > 0 )
             {
-                GroupPrincipal group = new GroupPrincipal( wiki, groupName );
+                GroupPrincipal group = new GroupPrincipal( groupName );
                 return command.targetedCommand( group );
             }
         }
@@ -295,6 +294,8 @@ public final class CommandResolver
      * @since 2.4.20
      * @param page the page name.
      * @return The rewritten page name, or <code>null</code>, if the page does not exist.
+     * @throws ProviderException if the underlyng page provider that locates pages
+     * throws an exception
      */
     public final String getFinalPageName( String page ) throws ProviderException
     {
@@ -349,6 +350,8 @@ public final class CommandResolver
      * always be redirected to "RecentChanges.jsp" instead of trying to find a
      * Wiki page called "RecentChanges".
      * </p>
+     * @param page the page name ro search for
+     * @return the URL of the special page, if the supplied page is one, or <code>null</code>
      */
     public final String getSpecialPageReference( String page )
     {
@@ -403,9 +406,9 @@ public final class CommandResolver
 
         // Still haven't found a matching command?
         // Ok, see if we match against our standard list of JSPs
-        if ( jsp.length() > 0 && c_jsps.containsKey( jsp ) )
+        if ( jsp.length() > 0 && JSPS.containsKey( jsp ) )
         {
-            return (Command)c_jsps.get( jsp );
+            return (Command)JSPS.get( jsp );
         }
 
         return null;
@@ -460,7 +463,7 @@ public final class CommandResolver
         }
         catch( IOException e )
         {
-            log.error( "Unable to create context", e );
+            m_log.error( "Unable to create context", e );
             throw new InternalWikiException( "Big internal booboo, please check logs." );
         }
 
@@ -505,6 +508,8 @@ public final class CommandResolver
      * @param page the page to seek
      * @return <code>true</code> if the page exists, <code>false</code>
      *         otherwise
+     * @throws ProviderException if the underlyng page provider that locates pages
+     * throws an exception
      */
     protected final boolean simplePageExists( String page ) throws ProviderException
     {
