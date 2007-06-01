@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.rpc.json;
 
 import java.lang.reflect.Method;
+import java.security.Permission;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -76,7 +77,7 @@ public class JSONRPCManager extends RPCManager
         }
         
         if( bridge == null) bridge = JSONRPCBridge.getGlobalBridge();
-        bridge.setDebug(false);
+        bridge.setDebug(true);
         
         return bridge;
     }
@@ -118,7 +119,16 @@ public class JSONRPCManager extends RPCManager
     public static class WikiJSONAccessor implements InvocationCallback
     {
         private static final long serialVersionUID = 1L;
-
+        private Permission m_permission = PagePermission.VIEW;
+        
+        public WikiJSONAccessor()
+        {}
+        
+        public WikiJSONAccessor( Permission perm )
+        {
+            m_permission = perm;
+        }
+        
         public void postInvoke(Object context, Object instance, Method method, Object result) throws Exception
         {
         }
@@ -132,7 +142,7 @@ public class JSONRPCManager extends RPCManager
                 WikiEngine e = WikiEngine.getInstance( req.getSession().getServletContext(), null );
                 
                 boolean canDo = e.getAuthorizationManager().checkPermission( WikiSession.getWikiSession(e, req), 
-                                                                             PagePermission.VIEW );
+                                                                             m_permission );
                 
                 if( canDo )
                 {
@@ -152,4 +162,13 @@ public class JSONRPCManager extends RPCManager
         bridge.registerObject( id, object );
         bridge.registerCallback( new WikiJSONAccessor(), HttpServletRequest.class );
     }
+
+    public static void registerGlobalObject(String id, RPCCallable object, Permission perm )
+    {
+        JSONRPCBridge bridge = JSONRPCBridge.getGlobalBridge();
+        
+        bridge.registerObject( id, object );
+        bridge.registerCallback( new WikiJSONAccessor(perm), HttpServletRequest.class );
+    }
+
 }
