@@ -1,3 +1,16 @@
+/*
+ * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
+ * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version. This program is distributed
+ * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details. You should have
+ * received a copy of the GNU Lesser General Public License along with this
+ * program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
@@ -70,12 +83,13 @@ public class Group
      * {@link GroupManager#parseGroup(com.ecyrd.jspwiki.WikiContext, boolean)}.
      * instead.
      * @param name the name of the group
+     * @param wiki the wiki the group belongs to
      */
     protected Group( String name, String wiki )
     {
         m_name = name;
         m_wiki = wiki;
-        m_principal = new GroupPrincipal( wiki, name );
+        m_principal = new GroupPrincipal( name );
     }
 
     /**
@@ -106,6 +120,8 @@ public class Group
     /**
      * Two DefaultGroups are equal if they contain identical member Principals
      * and have the same name.
+     * @param o the object to compare
+     * @return the comparison
      */
     public boolean equals( Object o )
     {
@@ -140,6 +156,7 @@ public class Group
     /**
      *  The hashcode is calculated as a XOR sum over all members of
      *  the Group.
+     *  @return the hash code
      */
     public int hashCode()
     {
@@ -164,7 +181,7 @@ public class Group
      * Returns the creator of this Group.
      * @return the creator
      */
-    public synchronized final String getCreator()
+    public final synchronized String getCreator()
     {
         return m_creator;
     }
@@ -182,7 +199,7 @@ public class Group
      * Returns the name of the user who last modified this group.
      * @return the modifier
      */
-    public synchronized final String getModifier()
+    public final synchronized String getModifier()
     {
         return m_modifier;
     }
@@ -229,6 +246,7 @@ public class Group
 
     /**
      * Returns the members of the group as an array of Principal objects.
+     * @return the members
      */
     public Principal[] members()
     {
@@ -290,11 +308,8 @@ public class Group
     }
 
     /**
-     * Provides a String representation.
-     * @return the string
-     */
-    /**
      * Returns a string representation of the Group.
+     * @return the string
      * @see java.lang.Object#toString()
      */
     public String toString()

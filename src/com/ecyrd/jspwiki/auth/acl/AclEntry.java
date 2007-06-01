@@ -53,8 +53,9 @@ public interface AclEntry
      * can have multiple permissions.
      * @param permission the permission to be associated with the principal in
      *            this entry
-     * @return true if the permission was added, false if the permission was
-     *         already part of this entry's permission set, and false if
+     * @return <code>true</code> if the permission was added, 
+     *         <code>false</code> if the permission was
+     *         already part of this entry's permission set, and <code>false</code> if
      *         the permission is not of type PagePermission
      */
     public boolean addPermission(Permission permission);
@@ -69,13 +70,7 @@ public interface AclEntry
     public boolean checkPermission(Permission permission);
 
     /**
-     * Returns a string representation of the contents of this ACL entry.
-     * @return a string representation of the contents.
-     */
-    public Object clone();
-
-    /**
-     * Returns the principal for which permissions are granted or denied by this
+     * Returns the principal for which permissions are granted by this
      * ACL entry. Returns null if there is no principal set for this entry yet.
      * @return the principal associated with this entry.
      */
@@ -83,7 +78,7 @@ public interface AclEntry
 
     /**
      * Returns an enumeration of the permissions in this ACL entry.
-     * @return an enumeration of the permissions in this ACL entry.
+     * @return an enumeration of the permissions
      */
     public Enumeration permissions();
 
@@ -94,6 +89,7 @@ public interface AclEntry
      *         part of this entry's permission set.
      */
     public boolean removePermission(Permission permission);
+
     /**
      * Specifies the principal for which permissions are granted or denied by
      * this ACL entry. If a principal was already set for this ACL entry, false
@@ -105,8 +101,8 @@ public interface AclEntry
     public boolean setPrincipal(Principal user);
 
     /**
-     * Clones this ACL entry.
-     * @return a clone of this ACL entry.
+     * Returns a string representation of the contents of this ACL entry.
+     * @return a string representation of the contents.
      */
     public String toString();
 }

@@ -46,6 +46,18 @@ public class AclEntryImpl implements AclEntry
     {
     }
 
+    /**
+     * Adds the specified permission to this ACL entry. The permission
+     * <em>must</em> be of type
+     * {@link com.ecyrd.jspwiki.auth.permissions.PagePermission}. Note: An entry
+     * can have multiple permissions.
+     * @param permission the permission to be associated with the principal in
+     *            this entry
+     * @return <code>true</code> if the permission was added, 
+     *         <code>false</code> if the permission was
+     *         already part of this entry's permission set, and <code>false</code> if
+     *         the permission is not of type PagePermission
+     */
     public synchronized boolean addPermission( Permission permission )
     {
         if ( permission instanceof PagePermission && findPermission( permission ) == null )
@@ -57,38 +69,43 @@ public class AclEntryImpl implements AclEntry
         return false;
     }
 
+    /**
+     * Checks if the specified permission is part of the permission set in this
+     * entry.
+     * @param permission the permission to be checked for.
+     * @return true if the permission is part of the permission set in this entry,
+     *         false otherwise.
+     */
     public boolean checkPermission( Permission permission )
     {
         return findPermission( permission ) != null;
     }
 
-    public Object clone()
-    {
-        try
-        {
-            AclEntryImpl aei = (AclEntryImpl)super.clone();
-
-            aei.setPrincipal( m_principal );
-
-            aei.m_permissions = (Vector) m_permissions.clone();
-
-            return aei;
-        }
-        catch( CloneNotSupportedException e ){}
-
-        return null;
-    }
-
+    /**
+     * Returns the principal for which permissions are granted by this
+     * ACL entry. Returns null if there is no principal set for this entry yet.
+     * @return the principal associated with this entry.
+     */
     public synchronized Principal getPrincipal()
     {
         return m_principal;
     }
 
+    /**
+     * Returns an enumeration of the permissions in this ACL entry.
+     * @return an enumeration of the permissions
+     */
     public Enumeration permissions()
     {
         return m_permissions.elements();
     }
 
+    /**
+     * Removes the specified permission from this ACL entry.
+     * @param permission the permission to be removed from this entry.
+     * @return true if the permission is removed, false if the permission was not
+     *         part of this entry's permission set.
+     */
     public synchronized boolean removePermission( Permission permission )
     {
         Permission p = findPermission( permission );
@@ -102,6 +119,14 @@ public class AclEntryImpl implements AclEntry
         return false;
     }
 
+    /**
+     * Specifies the principal for which permissions are granted or denied by
+     * this ACL entry. If a principal was already set for this ACL entry, false
+     * is returned, otherwise true is returned.
+     * @param user the principal to be set for this entry
+     * @return true if the principal is set, false if there was already a
+     *         principal set for this entry
+     */
     public synchronized boolean setPrincipal( Principal user )
     {
         if ( m_principal != null || user == null )
@@ -112,6 +137,10 @@ public class AclEntryImpl implements AclEntry
         return true;
     }
 
+    /**
+     * Returns a string representation of the contents of this ACL entry.
+     * @return a string representation of the contents.
+     */
     public String toString()
     {
         StringBuffer sb = new StringBuffer();

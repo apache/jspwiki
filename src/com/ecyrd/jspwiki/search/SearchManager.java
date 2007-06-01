@@ -82,9 +82,9 @@ public class SearchManager
          *  Currently the algorithm just looks into the value parameter,
          *  and returns all page names from that.
          *
-         *  @param value
-         *  @param maxLength
-         *  @return
+         *  @param value the page name
+         *  @param maxLength maximum number of suggestions
+         *  @return the suggestions
          */
         public List getSuggestions( String value, int maxLength )
         {
@@ -122,7 +122,7 @@ public class SearchManager
          *
          *  @param searchString The query string
          *  @param maxLength How many hits to return
-         *  @return
+         *  @return the pages found
          */
         public List findPages( String searchString, int maxLength )
         {
@@ -162,9 +162,9 @@ public class SearchManager
      *  This particular method starts off indexing and all sorts of various activities,
      *  so you need to run this last, after things are done.
      *
-     * @param engine
-     * @param properties
-     * @throws WikiException
+     * @param engine the wiki engine
+     * @param properties the properties used to initialize the wiki engine
+     * @throws FilterException if the search provider failed to initialize
      */
     public void initialize(WikiEngine engine, Properties properties)
         throws FilterException

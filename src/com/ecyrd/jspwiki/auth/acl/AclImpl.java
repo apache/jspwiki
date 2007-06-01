@@ -43,7 +43,12 @@ public class AclImpl implements Acl
     }
     
     /**
-     * @see com.ecyrd.jspwiki.auth.acl.Acl#findPrincipals(java.security.Permission)
+     * Returns all Principal objects assigned a given Permission in the access
+     * control list. The Princiapls returned are those that have been granted
+     * either the supplied permission, or a permission implied by the supplied
+     * permission. Principals are not "expanded" if they are a role or group.
+     * @param permission the permission to search for
+     * @return an array of Principals posessing the permission
      */
     public Principal[] findPrincipals( Permission permission )
     {
@@ -94,6 +99,16 @@ public class AclImpl implements Acl
         return false;
     }
 
+    /**
+     * Adds an ACL entry to this ACL. An entry associates a principal (e.g., an
+     * individual or a group) with a set of permissions. Each principal can have
+     * at most one positive ACL entry, specifying permissions to be granted to
+     * the principal. If there is already an ACL entry already in the ACL, false
+     * is returned.
+     * @param entry - the ACL entry to be added to this ACL
+     * @return true on success, false if an entry of the same type (positive or
+     *         negative) for the same principal is already present in this ACL
+     */
     public synchronized boolean addEntry( AclEntry entry )
     {
         if( entry.getPrincipal() == null )
@@ -111,16 +126,32 @@ public class AclImpl implements Acl
         return true;
     }
 
+    /**
+     * Removes an ACL entry from this ACL.
+     * @param entry the ACL entry to be removed from this ACL
+     * @return true on success, false if the entry is not part of this ACL
+     */
     public synchronized boolean removeEntry( AclEntry entry )
     {
         return m_entries.remove( entry );
     }
 
+    /**
+     * Returns an enumeration of the entries in this ACL. Each element in the
+     * enumeration is of type AclEntry.
+     * @return an enumeration of the entries in this ACL.
+     */
     public Enumeration entries()
     {
         return m_entries.elements();
     }
 
+    /**
+     * Returns an AclEntry for a supplied Principal, or <code>null</code> if
+     * the Principal does not have a matching AclEntry.
+     * @param principal the principal to search for
+     * @return the AclEntry associated with the principal, or <code>null</code>
+     */
     public AclEntry getEntry( Principal principal )
     {
         for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
@@ -137,7 +168,8 @@ public class AclImpl implements Acl
     }
 
     /**
-     *  Returns a string representation of the contents of this Acl.
+     * Returns a string representation of the contents of this Acl.
+     * @return the string representation
      */
     public String toString()
     {
@@ -166,6 +198,11 @@ public class AclImpl implements Acl
         return sb.toString();
     }
 
+    /**
+     * Returns <code>true</code>, if this Acl is empty.
+     * @return the result
+     * @since 2.4.68
+     */
     public boolean isEmpty()
     {
         return m_entries.isEmpty();

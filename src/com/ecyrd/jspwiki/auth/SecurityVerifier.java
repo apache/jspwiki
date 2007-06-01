@@ -72,38 +72,55 @@ public final class SecurityVerifier
 
     private WikiSession           m_session;
 
+    /** Message prefix for errors. */
     public static final String    ERROR                        = "Error.";
 
+    /** Message prefix for warnings. */
     public static final String    WARNING                      = "Warning.";
 
+    /** Message prefix for information messages. */
     public static final String    INFO                         = "Info.";
 
+    /** Message topic for policy errors. */
     public static final String    ERROR_POLICY                 = "Error.Policy";
 
+    /** Message topic for policy warnings. */
     public static final String    WARNING_POLICY               = "Warning.Policy";
 
+    /** Message topic for policy information messages. */
     public static final String    INFO_POLICY                  = "Info.Policy";
 
+    /** Message topic for JAAS errors. */
     public static final String    ERROR_JAAS                   = "Error.Jaas";
 
+    /** Message topic for JAAS warnings. */
     public static final String    WARNING_JAAS                 = "Warning.Jaas";
 
+    /** Message topic for role-checking errors. */
     public static final String    ERROR_ROLES                  = "Error.Roles";
 
+    /** Message topic for role-checking information messages. */
     public static final String    INFO_ROLES                   = "Info.Roles";
 
+    /** Message topic for user database errors. */
     public static final String    ERROR_DB                     = "Error.UserDatabase";
 
+    /** Message topic for user database warnings. */
     public static final String    WARNING_DB                   = "Warning.UserDatabase";
 
+    /** Message topic for user database information messages. */
     public static final String    INFO_DB                      = "Info.UserDatabase";
 
+    /** Message topic for group database errors. */
     public static final String    ERROR_GROUPS                 = "Error.GroupDatabase";
 
+    /** Message topic for group database warnings. */
     public static final String    WARNING_GROUPS               = "Warning.GroupDatabase";
 
+    /** Message topic for group database information messages. */
     public static final String    INFO_GROUPS                  = "Info.GroupDatabase";
 
+    /** Message topic for JAAS information messages. */
     public static final String    INFO_JAAS                    = "Info.Jaas";
 
     private static final String[] CONTAINER_ACTIONS            = new String[]
@@ -118,8 +135,13 @@ public final class SecurityVerifier
 
     private static final String   BG_RED                       = "bgcolor=\"#ffc0c0\"";
 
-    Logger                        log                          = Logger.getLogger( this.getClass().getName() );
+    private static final Logger LOG                          = Logger.getLogger( SecurityVerifier.class.getName() );
 
+    /**
+     * Constructs a new SecurityVerifier for a supplied WikiEngine and WikiSession.
+     * @param engine the wiki engine
+     * @param session the wiki session (typically, that of an administrator)
+     */
     public SecurityVerifier( WikiEngine engine, WikiSession session )
     {
         super();
@@ -145,6 +167,7 @@ public final class SecurityVerifier
      * file. This array will be zero-length if the policy file was not
      * successfully located, or if the file did not specify any Principals in
      * the policy.
+     * @return the array of principals
      */
     public final Principal[] policyPrincipals()
     {
@@ -153,9 +176,10 @@ public final class SecurityVerifier
 
     /**
      * Formats and returns an HTML table containing sample permissions and what
-     * roles are allowed to have them.
-     * @throws IllegalStateException if the authorizer is not of type
-     *             {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
+     * roles are allowed to have them. This method will throw an
+     * {@link IllegalStateException} if the authorizer is not of type
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
+     * @return the formatted HTML table containing the result of the tests
      */
     public final String policyRoleTable()
     {
@@ -314,7 +338,7 @@ public final class SecurityVerifier
             s.append( principal.getName() );
             s.append( "&quot;" );
             s.append( "\"" );
-            s.append( ( allowed ? BG_GREEN + ">" : BG_RED + ">" ) );
+            s.append( allowed ? BG_GREEN + ">" : BG_RED + ">" );
             s.append( "&nbsp;</td>\n" );
         }
         return s.toString();
@@ -322,9 +346,11 @@ public final class SecurityVerifier
 
     /**
      * Formats and returns an HTML table containing the roles the web container
-     * is aware of, and whether each role maps to particular JSPs.
-     * @throws IllegalStateException if the authorizer is not of type
-     *             {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
+     * is aware of, and whether each role maps to particular JSPs. This method
+     * throws an {@link IllegalStateException} if the authorizer is not of type
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
+     * @return the formatted HTML table containing the result of the tests
+     * @throws WikiException if tests fail for unexpected reasons
      */
     public final String containerRoleTable() throws WikiException
     {
@@ -378,7 +404,7 @@ public final class SecurityVerifier
                 s.append( jsp );
                 s.append( " Anonymous" );
                 s.append( "\"" );
-                s.append( ( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" ) );
+                s.append( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" );
                 s.append( "&nbsp;</td>\n" );
                 for( int j = 0; j < roles.length; j++ )
                 {
@@ -393,7 +419,7 @@ public final class SecurityVerifier
                     s.append( role.getName() );
                     s.append( "&quot;" );
                     s.append( "\"" );
-                    s.append( ( allowed ? BG_GREEN + ">" : BG_RED + ">" ) );
+                    s.append( allowed ? BG_GREEN + ">" : BG_RED + ">" );
                     s.append( "&nbsp;</td>\n" );
                 }
                 s.append( "  </tr>\n" );
@@ -403,7 +429,7 @@ public final class SecurityVerifier
         {
             // If we couldn't evaluate constraints it means
             // there's some sort of IO mess or parsing issue
-            log.error( "Malformed XML in web.xml", e );
+            LOG.error( "Malformed XML in web.xml", e );
             throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage() );
         }
 
@@ -470,6 +496,7 @@ public final class SecurityVerifier
      * If the active Authorizer is the WebContainerAuthorizer, returns the roles
      * it knows about; otherwise, a zero-length array.
      * @return the roles parsed from <code>web.xml</code>, or a zero-length array
+     * @throws WikiException if the web authorizer cannot obtain the list of roles
      */
     public final Principal[] webContainerRoles() throws WikiException
     {
@@ -484,6 +511,7 @@ public final class SecurityVerifier
     /**
      * Verifies that the roles given in the security policy are reflected by the
      * container <code>web.xml</code> file.
+     * @throws WikiException if the web authorizer cannot verify the roles
      */
     protected final void verifyPolicyAndContainerRoles() throws WikiException
     {
@@ -589,12 +617,6 @@ public final class SecurityVerifier
         }
 
         // Now delete the group; should be back to old count
-        if ( group == null )
-        {
-            m_session.addMessage( ERROR_GROUPS, "Skipped group deletion test." );
-            return;
-        }
-
         try
         {
             db.delete( group );
@@ -645,9 +667,17 @@ public final class SecurityVerifier
         // Look for the JSPWiki-custom config
         boolean foundJaasCustomConfig = isJaasConfigurationAvailable( "JSPWiki-custom" );
 
-        m_isJaasConfigured = ( m_jaasConfig != null && foundJaasContainerConfig && foundJaasCustomConfig );
+        m_isJaasConfigured = m_jaasConfig != null && foundJaasContainerConfig && foundJaasCustomConfig;
     }
 
+    /**
+     * Looks up a file name based on a JRE system property and returns the associated
+     * File object if it exists. This method adds messages with the topic prefix 
+     * {@link #ERROR} and {@link #INFO} as appropriate, with the suffix matching the 
+     * supplied property.
+     * @param property the system property to look up
+     * @return the file object, or <code>null</code> if not found
+     */
     protected final File getFileFromProperty( String property )
     {
         String propertyValue = null;

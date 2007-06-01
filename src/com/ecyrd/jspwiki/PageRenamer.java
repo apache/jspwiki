@@ -44,23 +44,28 @@ public class PageRenamer
 
     private final WikiEngine m_wikiEngine;
 
-    private static final PatternMatcher m_matcher = new Perl5Matcher();
+    private static final PatternMatcher MATCHER = new Perl5Matcher();
 
     private boolean m_camelCaseLink;
     private boolean m_matchEnglishPlurals;
 
-    private static final String m_longLinkPatternString = "\\[([\\w\\s]+\\|)?([\\w\\s\\+-/\\?&;@:=%\\#<>$\\.,\\(\\)'\\*]+)?\\]";
-    private static final String m_camelCaseLinkPatternString = "([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)";
+    private static final String LONG_LINK_PATTERN = "\\[([\\w\\s]+\\|)?([\\w\\s\\+-/\\?&;@:=%\\#<>$\\.,\\(\\)'\\*]+)?\\]";
+    private static final String CAMELCASE_LINK_PATTERN = "([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*)";
 
     private Pattern m_longLinkPattern = null;
     private Pattern m_camelCaseLinkPattern = null;
 
+    /** Extension to be appended onto directories to denote they contain attachments. */
     public static final String DIR_EXTENSION   = "-att";
+    
+    /** Property key denoting storage directory for attachments. */
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
 
 
     /**
      * Constructor, ties this renamer instance to a WikiEngine.
+     * @param engine the wiki engine
+     * @param props the properties used to initialize the wiki engine
      */
     public PageRenamer( WikiEngine engine, Properties props )
     {
@@ -80,8 +85,8 @@ public class PageRenamer
 
         try
         {
-            m_longLinkPattern = compiler.compile( m_longLinkPatternString );
-            m_camelCaseLinkPattern = compiler.compile( m_camelCaseLinkPatternString );
+            m_longLinkPattern = compiler.compile( LONG_LINK_PATTERN );
+            m_camelCaseLinkPattern = compiler.compile( CAMELCASE_LINK_PATTERN );
         }
         catch (MalformedPatternException mpe)
         {
@@ -311,9 +316,9 @@ public class PageRenamer
 
         StringBuffer ret = new StringBuffer();
 
-        while( m_matcher.contains( input, m_longLinkPattern ) )
+        while( MATCHER.contains( input, m_longLinkPattern ) )
         {
-            MatchResult matchResult = m_matcher.getMatch();
+            MatchResult matchResult = MATCHER.getMatch();
 
             ret.append( input.substring( lastMatchEnd, matchResult.beginOffset( 0 ) ) );
 
@@ -376,9 +381,9 @@ public class PageRenamer
 
         StringBuffer ret = new StringBuffer();
 
-        while( m_matcher.contains( input, m_camelCaseLinkPattern ) )
+        while( MATCHER.contains( input, m_camelCaseLinkPattern ) )
         {
-            MatchResult matchResult = m_matcher.getMatch();
+            MatchResult matchResult = MATCHER.getMatch();
 
             ret.append( input.substring( lastMatchEnd, matchResult.beginOffset( 0 ) ) );
 
@@ -420,8 +425,12 @@ public class PageRenamer
         return ret.toString();
     }
 
-    // Check if a name is plural, and if so, checks if the page with plural
-    // exists, otherwise it returns the singular version of the name.
+    /**
+     * Checks if a name is plural, and if so, checks if the page with plural
+     * exists, otherwise it returns the singular version of the name.
+     * @param pageName the name of the page
+     * @return the corrected page name
+     */
     public String checkPluralPageName( String pageName )
     {
         if( pageName == null )

@@ -35,6 +35,7 @@ public class WikiSecurityException
 
     /**
      *  Constructs an exception.
+     *  @param msg the message to supply to the exception
      */
     public WikiSecurityException( String msg )
     {

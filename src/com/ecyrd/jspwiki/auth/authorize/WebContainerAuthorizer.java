@@ -1,3 +1,16 @@
+/*
+ * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
+ * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version. This program is distributed
+ * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details. You should have
+ * received a copy of the GNU Lesser General Public License along with this
+ * program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.io.IOException;
@@ -125,7 +138,14 @@ public class WebContainerAuthorizer implements WebAuthorizer
     }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, java.security.Principal)
+     * Determines whether a user associated with an HTTP request possesses
+     * a particular role. This method simply delegates to 
+     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}
+     * by converting the Principal's name to a String.
+     * @param request the HTTP request
+     * @param role the role to check
+     * @return <code>true</code> if the user is considered to be in the role,
+     *         <code>false</code> otherwise
      */
     public boolean isUserInRole( HttpServletRequest request, Principal role )
     {
@@ -203,6 +223,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * @param role the role
      * @return <code>true</code> if the resource is constrained to the role,
      *         <code>false</code> otherwise
+     * @throws JDOMException if elements cannot be parsed correctly
      */
     public boolean isConstrained( String url, Role role ) throws JDOMException
     {
@@ -297,6 +318,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * <code>new Role("Administrator")</code>.
      * @param webxml the web application deployment descriptor
      * @return an array of Role objects
+     * @throws JDOMException if elements cannot be parsed correctly
      */
     protected Role[] getRoles( Document webxml ) throws JDOMException
     {
@@ -337,6 +359,8 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * {@link ClassLoader#getResource(java.lang.String)} and requesting
      * <code>WEB-INF/web.xml</code>.
      * @return the descriptor
+     * @throws IOException if the deployment descriptor cannot be found or opened
+     * @throws JDOMException if the deployment descriptor cannot be parsed correctly
      */
     protected Document getWebXml() throws JDOMException, IOException
     {
@@ -387,8 +411,11 @@ public class WebContainerAuthorizer implements WebAuthorizer
          *            <code>-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN</code>
          * @param systemId the system ID, such as
          *            <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>
+         * @return the InputSource containing the resolved resource
          * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
          *      java.lang.String)
+         * @throws SAXException if the resource cannot be resolved locally
+         * @throws IOException if the resource cannot be opened
          */
         public InputSource resolveEntity( String publicId, String systemId ) throws SAXException, IOException
         {

@@ -103,13 +103,13 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private static final String   PRINCIPAL        = "principal";
 
-    private Document              c_dom            = null;
+    private Document              m_dom            = null;
 
-    private DateFormat            c_defaultFormat  = DateFormat.getDateTimeInstance();
+    private DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
 
-    private DateFormat            c_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
+    private DateFormat            m_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
 
-    private File                  c_file           = null;
+    private File                  m_file           = null;
 
     private WikiEngine            m_engine         = null;
 
@@ -120,7 +120,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * atomically commit changes to the user database. Now, the
      * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
      * are atomic themselves.
-     * @throws WikiSecurityException
+     * @throws WikiSecurityException never...
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
@@ -128,9 +128,16 @@ public class XMLGroupDatabase implements GroupDatabase
     { }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(com.ecyrd.jspwiki.auth.authorize.Group)
+      * Looks up and deletes a {@link Group} from the group database. If the
+     * group database does not contain the supplied Group. this method throws a
+     * {@link NoSuchPrincipalException}. The method commits the results
+     * of the delete to persistent storage.
+     * @param group the group to remove
+    * @throws WikiSecurityException if the database does not contain the
+     * supplied group (thrown as {@link NoSuchPrincipalException}) or if
+     * the commit did not succeed
      */
-    public void delete( Group group ) throws NoSuchPrincipalException, WikiSecurityException
+    public void delete( Group group ) throws WikiSecurityException
     {
         String index = group.getName();
         boolean exists = m_groups.containsKey( index );
@@ -147,7 +154,13 @@ public class XMLGroupDatabase implements GroupDatabase
     }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#groups()
+     * Returns all wiki groups that are stored in the GroupDatabase as an array
+     * of Group objects. If the database does not contain any groups, this
+     * method will return a zero-length array. This method causes back-end
+     * storage to load the entire set of group; thus, it should be called
+     * infrequently (e.g., at initialization time).
+     * @return the wiki groups
+     * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
     public Group[] groups() throws WikiSecurityException
     {
@@ -160,10 +173,11 @@ public class XMLGroupDatabase implements GroupDatabase
      * Initializes the group database based on values from a Properties object.
      * The properties object must contain a file path to the XML database file
      * whose key is {@link #PROP_DATABASE}.
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
-     *      java.util.Properties)
+     * @param engine the wiki engine
+     * @param props the properties used to initialize the group database
      * @throws NoRequiredPropertyException if the user database cannot be
      *             located, parsed, or opened
+     * @throws WikiSecurityException if the database could not be initialized successfully
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
@@ -185,22 +199,29 @@ public class XMLGroupDatabase implements GroupDatabase
         if ( file == null )
         {
             log.error( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
-            c_file = defaultFile;
+            m_file = defaultFile;
         }
         else
         {
-            c_file = new File( file );
+            m_file = new File( file );
         }
 
-        log.info( "XML group database at " + c_file.getAbsolutePath() );
+        log.info( "XML group database at " + m_file.getAbsolutePath() );
 
         // Read DOM
         buildDOM();
     }
 
     /**
-     * Saves the group to persistent storage and sets its created/modified dates.
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#save(Group, Principal)
+     * Saves a Group to the group database. Note that this method <em>must</em>
+     * fail, and throw an <code>IllegalArgumentException</code>, if the
+     * proposed group is the same name as one of the built-in Roles: e.g.,
+     * Admin, Authenticated, etc. The database is responsible for setting
+     * create/modify timestamps, upon a successful save, to the Group.
+     * The method commits the results of the delete to persistent storage.
+     * @param group the Group to save
+     * @param modifier the user who saved the Group
+     * @throws WikiSecurityException if the Group could not be saved successfully
      */
     public void save( Group group, Principal modifier ) throws WikiSecurityException
     {
@@ -239,10 +260,10 @@ public class XMLGroupDatabase implements GroupDatabase
         factory.setNamespaceAware( false );
         try
         {
-            c_dom = factory.newDocumentBuilder().parse( c_file );
+            m_dom = factory.newDocumentBuilder().parse( m_file );
             log.debug( "Database successfully initialized" );
-            c_lastModified = c_file.lastModified();
-            c_lastCheck    = System.currentTimeMillis();
+            m_lastModified = m_file.lastModified();
+            m_lastCheck    = System.currentTimeMillis();
         }
         catch( ParserConfigurationException e )
         {
@@ -260,15 +281,15 @@ public class XMLGroupDatabase implements GroupDatabase
         {
             log.error( "IO error: " + e.getMessage() );
         }
-        if ( c_dom == null )
+        if ( m_dom == null )
         {
             try
             {
                 //
                 // Create the DOM from scratch
                 //
-                c_dom = factory.newDocumentBuilder().newDocument();
-                c_dom.appendChild( c_dom.createElement( "groups" ) );
+                m_dom = factory.newDocumentBuilder().newDocument();
+                m_dom.appendChild( m_dom.createElement( "groups" ) );
             }
             catch( ParserConfigurationException e )
             {
@@ -277,9 +298,9 @@ public class XMLGroupDatabase implements GroupDatabase
         }
 
         // Ok, now go and read this sucker in
-        if ( c_dom != null )
+        if ( m_dom != null )
         {
-            NodeList groupNodes = c_dom.getElementsByTagName( GROUP_TAG );
+            NodeList groupNodes = m_dom.getElementsByTagName( GROUP_TAG );
             for( int i = 0; i < groupNodes.getLength(); i++ )
             {
                 Element groupNode = (Element) groupNodes.item( i );
@@ -297,18 +318,18 @@ public class XMLGroupDatabase implements GroupDatabase
         }
     }
 
-    private long c_lastCheck    = 0;
-    private long c_lastModified = 0;
+    private long m_lastCheck    = 0;
+    private long m_lastModified = 0;
 
     private void checkForRefresh()
     {
         long time = System.currentTimeMillis();
 
-        if( time - c_lastCheck > 60*1000L )
+        if( time - m_lastCheck > 60*1000L )
         {
-            long lastModified = c_file.lastModified();
+            long lastModified = m_file.lastModified();
 
-            if( lastModified > c_lastModified )
+            if( lastModified > m_lastModified )
             {
                 try
                 {
@@ -328,7 +349,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @throws NoSuchPrincipalException
      * @throws WikiSecurityException
      */
-    private Group buildGroup( Element groupNode, String name ) throws NoSuchPrincipalException, WikiSecurityException
+    private Group buildGroup( Element groupNode, String name )
     {
         // It's an error if either param is null (very odd)
         if ( groupNode == null || name == null )
@@ -356,16 +377,16 @@ public class XMLGroupDatabase implements GroupDatabase
         String modified = groupNode.getAttribute( LAST_MODIFIED );
         try
         {
-            group.setCreated( c_format.parse( created ) );
-            group.setLastModified( c_format.parse( modified ) );
+            group.setCreated( m_format.parse( created ) );
+            group.setLastModified( m_format.parse( modified ) );
         }
         catch ( ParseException e )
         {
             // If parsing failed, use the platform default
             try
             {
-                group.setCreated( c_defaultFormat.parse( created ) );
-                group.setLastModified( c_defaultFormat.parse( modified ) );
+                group.setCreated( m_defaultFormat.parse( created ) );
+                group.setLastModified( m_defaultFormat.parse( modified ) );
             }
             catch ( ParseException e2)
             {
@@ -380,12 +401,12 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private void saveDOM() throws WikiSecurityException
     {
-        if ( c_dom == null )
+        if ( m_dom == null )
         {
             log.fatal( "Group database doesn't exist in memory." );
         }
 
-        File newFile = new File( c_file.getAbsolutePath() + ".new" );
+        File newFile = new File( m_file.getAbsolutePath() + ".new" );
         try
         {
             BufferedWriter io = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( newFile ), "UTF-8" ) );
@@ -405,11 +426,11 @@ public class XMLGroupDatabase implements GroupDatabase
                 io.write( CREATOR );
                 io.write( "=\"" + StringEscapeUtils.escapeXml( group.getCreator() ) + "\" " );
                 io.write( CREATED );
-                io.write( "=\"" + c_format.format( group.getCreated() ) + "\" " );
+                io.write( "=\"" + m_format.format( group.getCreated() ) + "\" " );
                 io.write( MODIFIER );
                 io.write( "=\"" + group.getModifier() + "\" " );
                 io.write( LAST_MODIFIED );
-                io.write( "=\"" + c_format.format( group.getLastModified() ) + "\"" );
+                io.write( "=\"" + m_format.format( group.getLastModified() ) + "\"" );
                 io.write( ">\n" );
 
                 // Write each member as a <member> node
@@ -435,7 +456,7 @@ public class XMLGroupDatabase implements GroupDatabase
         }
 
         // Copy new file over old version
-        File backup = new File( c_file.getAbsolutePath() + ".old" );
+        File backup = new File( m_file.getAbsolutePath() + ".old" );
         if ( backup.exists() )
         {
             if ( !backup.delete() )
@@ -443,18 +464,18 @@ public class XMLGroupDatabase implements GroupDatabase
                 log.error( "Could not delete old group database backup: " + backup );
             }
         }
-        if ( !c_file.renameTo( backup ) )
+        if ( !m_file.renameTo( backup ) )
         {
             log.error( "Could not create group database backup: " + backup );
         }
-        if ( !newFile.renameTo( c_file ) )
+        if ( !newFile.renameTo( m_file ) )
         {
             log.error( "Could not save database: " + backup + " restoring backup." );
-            if ( !backup.renameTo( c_file ) )
+            if ( !backup.renameTo( m_file ) )
             {
                 log.error( "Restore failed. Check the file permissions." );
             }
-            log.error( "Could not save database: " + c_file + ". Check the file permissions" );
+            log.error( "Could not save database: " + m_file + ". Check the file permissions" );
         }
     }
 

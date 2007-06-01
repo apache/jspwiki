@@ -60,7 +60,7 @@ public interface AclManager
      * on-the-fly. If the page has a parent page, then that is tried also.
      * This method was moved from Authorizer;
      * it was consolidated with some code from AuthorizationManager.
-     * @param page
+     * @param page the wiki page
      * @since 2.2.121
      * @return the Acl representing permissions for the page
      */
@@ -71,7 +71,7 @@ public interface AclManager
      * @param page the wiki page
      * @param acl the access control list
      * @since 2.5
-     * @throws WikiSecurityException
+     * @throws WikiSecurityException if the ACL cannot be set or persisted
      */
     public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException;
 }

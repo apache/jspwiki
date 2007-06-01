@@ -73,6 +73,11 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *     <td>The column containing the group's creation timestamp</td>
  *   </tr>
  *   <tr>
+ *     <td><code>jspwiki.groupdatabase.creator</code></td>
+ *     <td><code>creator</code></td>
+ *     <td>The column containing the group creator's name</td>
+ *   </tr>
+ *   <tr>
  *     <td><code>jspwiki.groupdatabase.name</code></td>
  *     <td><code>name</code></td>
  *     <td>The column containing the group's name</td>
@@ -80,7 +85,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *   <tr>
  *     <td><code>jspwiki.groupdatabase.member</code></td>
  *     <td><code>member</code></td>
- *     <td>The column containing the group member's Principal name</td>
+ *     <td>The column containing the group member's name</td>
  *   </tr>
  *   <tr>
  *     <td><code>jspwiki.groupdatabase.modified</code></td>
@@ -117,26 +122,45 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * {@linkplain #commit()} method after saving a profile to guarantee that changes are applied.</p>
  * @author Andrew R. Jaquith
  * @since 2.3
- */public class JDBCGroupDatabase implements GroupDatabase
+ */
+public class JDBCGroupDatabase implements GroupDatabase
 {
+     /** Default column name that stores the JNDI name of the DataSource. */
     public static final String DEFAULT_GROUPDB_DATASOURCE   = "jdbc/GroupDatabase";
+    /** Default table name for the table that stores groups. */
     public static final String DEFAULT_GROUPDB_TABLE        = "groups";
+    /** Default column name that stores the names of group members. */
     public static final String DEFAULT_GROUPDB_MEMBER_TABLE = "group_members";
+    /** Default column name that stores the the group creation timestamps. */
     public static final String DEFAULT_GROUPDB_CREATED      = "created";
+    /** Default column name that stores group creator names. */
     public static final String DEFAULT_GROUPDB_CREATOR      = "creator";
+    /** Default column name that stores the group names. */
     public static final String DEFAULT_GROUPDB_NAME         = "name";
+    /** Default column name that stores group member names. */
     public static final String DEFAULT_GROUPDB_MEMBER       = "member";
+    /** Default column name that stores group last-modified timestamps. */
     public static final String DEFAULT_GROUPDB_MODIFIED     = "modified";
+    /** Default column name that stores names of users who last modified groups. */
     public static final String DEFAULT_GROUPDB_MODIFIER     = "modifier";
 
+    /** The JNDI name of the DataSource. */
     public static final String PROP_GROUPDB_DATASOURCE   = "jspwiki.groupdatabase.datasource";
+    /** The table that stores the groups. */
     public static final String PROP_GROUPDB_TABLE        = "jspwiki.groupdatabase.table";
+    /** The table that stores the names of group members. */
     public static final String PROP_GROUPDB_MEMBER_TABLE = "jspwiki.groupdatabase.membertable";
+    /** The column containing the group's creation timestamp. */
     public static final String PROP_GROUPDB_CREATED      = "jspwiki.groupdatabase.created";
+    /** The column containing the group creator's name. */
     public static final String PROP_GROUPDB_CREATOR      = "jspwiki.groupdatabase.creator";
+    /** The column containing the group's name. */
     public static final String PROP_GROUPDB_NAME         = "jspwiki.groupdatabase.name";
+    /** The column containing the group member's name. */
     public static final String PROP_GROUPDB_MEMBER       = "jspwiki.groupdatabase.member";
+    /** The column containing the group's last-modified timestamp. */
     public static final String PROP_GROUPDB_MODIFIED     = "jspwiki.groupdatabase.modified";
+    /** The column containing the name of the user who last modified the group. */
     public static final String PROP_GROUPDB_MODIFIER     = "jspwiki.groupdatabase.modifier";
 
     protected static final Logger log                     = Logger.getLogger( JDBCGroupDatabase.class );
@@ -166,7 +190,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
      * atomically commit changes to the user database. Now, the
      * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
      * are atomic themselves.
-     * @throws WikiSecurityException
+     * @throws WikiSecurityException never...
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
@@ -174,9 +198,16 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     { }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#delete(com.ecyrd.jspwiki.auth.authorize.Group)
+     * Looks up and deletes a {@link Group} from the group database. If the
+     * group database does not contain the supplied Group. this method throws a
+     * {@link NoSuchPrincipalException}. The method commits the results
+     * of the delete to persistent storage.
+     * @param group the group to remove
+     * @throws WikiSecurityException if the database does not contain the
+     * supplied group (thrown as {@link NoSuchPrincipalException}) or if
+     * the commit did not succeed
      */
-    public void delete( Group group ) throws NoSuchPrincipalException, WikiSecurityException
+    public void delete( Group group ) throws WikiSecurityException
     {
         if ( !exists( group ) )
         {
@@ -217,7 +248,13 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#groups()
+     * Returns all wiki groups that are stored in the GroupDatabase as an array
+     * of Group objects. If the database does not contain any groups, this
+     * method will return a zero-length array. This method causes back-end
+     * storage to load the entire set of group; thus, it should be called
+     * infrequently (e.g., at initialization time).
+     * @return the wiki groups
+     * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
     public Group[] groups() throws WikiSecurityException
     {
@@ -261,7 +298,15 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.authorize.GroupDatabase#save(Group, Principal)
+     * Saves a Group to the group database. Note that this method <em>must</em>
+     * fail, and throw an <code>IllegalArgumentException</code>, if the
+     * proposed group is the same name as one of the built-in Roles: e.g.,
+     * Admin, Authenticated, etc. The database is responsible for setting
+     * create/modify timestamps, upon a successful save, to the Group.
+     * The method commits the results of the delete to persistent storage.
+     * @param group the Group to save
+     * @param modifier the user who saved the Group
+     * @throws WikiSecurityException if the Group could not be saved successfully
      */
     public void save( Group group, Principal modifier ) throws WikiSecurityException
     {
@@ -348,10 +393,13 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     }
 
     /**
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine,
-     * java.util.Properties)
+     * Initializes the group database based on values from a Properties object.
+     * @param engine the wiki engine
+     * @param props the properties used to initialize the group database
+     * @throws WikiSecurityException if the database could not be initialized successfully
+     * @throws NoRequiredPropertyException if a required property is not present
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException
+    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
     {
         m_engine = engine;
 

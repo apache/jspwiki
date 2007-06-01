@@ -87,6 +87,7 @@ public final class Role implements Principal
 
     /**
      * Returns a unique hashcode for the Role.
+     * @return the hashcode
      */
     public final int hashCode()
     {
@@ -95,6 +96,7 @@ public final class Role implements Principal
 
     /**
      * Two Role objects are considered equal if their names are identical.
+     * @param obj the object to test
      * @return <code>true</code> if both objects are of type Role and have identical names
      * @see java.lang.Object#equals(java.lang.Object)
      */

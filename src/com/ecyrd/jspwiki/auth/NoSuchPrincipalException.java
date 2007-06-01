@@ -29,6 +29,10 @@ public final class NoSuchPrincipalException
 {
     private static final long serialVersionUID = 3257849895976186169L;
 
+    /**
+     * Constructs a new exception object with a supplied message.
+     * @param msg the message
+     */
     public NoSuchPrincipalException( String msg )
     {
         super(msg);

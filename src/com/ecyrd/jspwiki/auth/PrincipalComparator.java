@@ -35,6 +35,10 @@ public class PrincipalComparator
     private static final long serialVersionUID = 1L;
 
     /**
+     * Compares two Principal objects.
+     * @param o1 the first Principal
+     * @param o2 the second Principal
+     * @return the result of the comparison
      * @see java.util.Comparator#compare(Object, Object)
      */
     public int compare( Object o1, Object o2 )

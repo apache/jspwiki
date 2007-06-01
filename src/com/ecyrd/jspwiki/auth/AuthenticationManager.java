@@ -80,10 +80,10 @@ public final class AuthenticationManager
     protected boolean m_isJaasConfiguredAtStartup = false;
 
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
-    private static Boolean                     m_allowsAssertions  = null;
+    private static Boolean                     c_allowsAssertions  = null;
 
     /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
-    private static Boolean                     m_allowsAuthentication = null;
+    private static Boolean                     c_allowsAuthentication = null;
 
     private WikiEngine                         m_engine            = null;
 
@@ -115,12 +115,15 @@ public final class AuthenticationManager
     private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
     private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
 
-    private static       boolean               m_useJAAS = true;
+    private static       boolean               c_useJAAS = true;
 
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
      * done here.
+     * @param engine the wiki engine
+     * @param props the properties used to initialize the wiki engine
+     * @throws WikiException if the AuthenticationManager cannot be initialized
      */
     public final void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
@@ -129,9 +132,9 @@ public final class AuthenticationManager
         m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
 
         // Yes, writing to a static field is done here on purpose.
-        m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
+        c_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
 
-        if( !m_useJAAS ) return;
+        if( !c_useJAAS ) return;
 
         //
         //  The rest is JAAS implementation
@@ -172,7 +175,7 @@ public final class AuthenticationManager
      */
     public final boolean isContainerAuthenticated()
     {
-        if( !m_useJAAS ) return true;
+        if( !c_useJAAS ) return true;
 
         try
         {
@@ -190,19 +193,19 @@ public final class AuthenticationManager
     }
 
     /**
-     * Logs in the user by attempting to populate a WikiSession Subject from
+     * <p>Logs in the user by attempting to populate a WikiSession Subject from
      * a web servlet request. This method leverages container-managed authentication.
      * This method logs in the user if the user's status is "unknown" to the
      * WikiSession, or if the Http servlet container's authentication status has
      * changed. This method assumes that the HttpServletRequest is not null; otherwise,
      * an IllegalStateException is thrown. This method is a <em>privileged</em> action;
-     * the caller must posess the (name here) permission.
-     * @param request servlet request for this user
-     * @throws IllegalStateException if the wiki context's
-     *             <code>getHttpRequest</code> or <code>getWikiSession</code>
+     * the caller must posess the (name here) permission.</p>
+     * <p>If <code>request</code> is <code>null</code>, or the WikiSession
+     * cannot be located for this request, this method throws an {@link IllegalStateException}.</p>
      *             methods return null
-     * @throws IllegalArgumentException if the <code>context</code> parameter
-     *             is null
+     * @param request servlet request for this user
+     * @return the result of the login operation: <code>true</code> if the user logged in
+     * successfully; <code>false</code> otherwise
      * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      * @since 2.3
      */
@@ -221,7 +224,7 @@ public final class AuthenticationManager
 
         // If using JAAS, try to log in; otherwise logins "always" succeed
         boolean login = true;
-        if( m_useJAAS )
+        if( c_useJAAS )
         {
             AuthorizationManager authMgr = m_engine.getAuthorizationManager();
             CallbackHandler handler = new WebContainerCallbackHandler(
@@ -309,12 +312,12 @@ public final class AuthenticationManager
      */
     public static final boolean allowsCookieAssertions()
     {
-        if( !m_useJAAS ) return true;
+        if( !c_useJAAS ) return true;
 
         // Lazily initialize
-        if( m_allowsAssertions == null )
+        if( c_allowsAssertions == null )
         {
-            m_allowsAssertions = Boolean.FALSE;
+            c_allowsAssertions = Boolean.FALSE;
 
             // Figure out whether cookie assertions are allowed
             Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
@@ -333,13 +336,13 @@ public final class AuthenticationManager
                     AppConfigurationEntry config = configs[i];
                     if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
                     {
-                        m_allowsAssertions = Boolean.TRUE;
+                        c_allowsAssertions = Boolean.TRUE;
                     }
                 }
             }
         }
 
-        return m_allowsAssertions.booleanValue();
+        return c_allowsAssertions.booleanValue();
     }
 
     /**
@@ -351,12 +354,12 @@ public final class AuthenticationManager
      */
     public static final boolean allowsCookieAuthentication()
     {
-        if( !m_useJAAS ) return true;
+        if( !c_useJAAS ) return true;
 
         // Lazily initialize
-        if( m_allowsAuthentication == null )
+        if( c_allowsAuthentication == null )
         {
-            m_allowsAuthentication = Boolean.FALSE;
+            c_allowsAuthentication = Boolean.FALSE;
 
             // Figure out whether cookie assertions are allowed
             Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
@@ -375,13 +378,13 @@ public final class AuthenticationManager
                     AppConfigurationEntry config = configs[i];
                     if ( COOKIE_AUTHENTICATION_MODULE.equals( config.getLoginModuleName() ) )
                     {
-                        m_allowsAuthentication = Boolean.TRUE;
+                        c_allowsAuthentication = Boolean.TRUE;
                     }
                 }
             }
         }
 
-        return m_allowsAuthentication.booleanValue();
+        return c_allowsAuthentication.booleanValue();
     }
     /**
      * Determines whether the supplied Principal is a "role principal".
@@ -393,8 +396,7 @@ public final class AuthenticationManager
      */
     public static final boolean isRolePrincipal( Principal principal )
     {
-        return ( principal instanceof Role ||
-                 principal instanceof GroupPrincipal );
+        return principal instanceof Role || principal instanceof GroupPrincipal;
     }
 
     /**

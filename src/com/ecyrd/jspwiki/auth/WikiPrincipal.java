@@ -45,18 +45,28 @@ public final class WikiPrincipal implements Principal
      * LOGIN_NAME, WIKI_NAME, FULL_NAME or UNSPECIFIED.
      */
     public static final Principal GUEST = new WikiPrincipal( "Guest" );
+
+    /** WikiPrincipal type denoting a user's full name. */
     public static final String FULL_NAME  = "fullName";
+    
+    /** WikiPrincipal type denoting a user's login name. */
     public static final String LOGIN_NAME = "loginName";
+    
+    /** WikiPrincipal type denoting a user's wiki name. */
     public static final String WIKI_NAME  = "wikiName";
+    
+    /** Generic WikiPrincipal of unspecified type. */
     public static final String UNSPECIFIED  = "unspecified";
+    
+    /** Static instance of Comparator that allows Principals to be sorted. */
     public static final Comparator COMPARATOR = new PrincipalComparator();
     
-    private static final String[] validTypes;
+    private static final String[] VALID_TYPES;
     
     static
     {
-        validTypes = new String[] { FULL_NAME, LOGIN_NAME, WIKI_NAME, UNSPECIFIED };
-        Arrays.sort( validTypes );
+        VALID_TYPES = new String[] { FULL_NAME, LOGIN_NAME, WIKI_NAME, UNSPECIFIED };
+        Arrays.sort( VALID_TYPES );
     }
 
     private final String          m_name;
@@ -75,17 +85,18 @@ public final class WikiPrincipal implements Principal
     
     /**
      * Constructs a new WikiPrincipal with a given name and optional type
-     * designator.
+     * designator. If the supplied <code>type</code> parameter is not
+     * {@link #LOGIN_NAME}, {@link #FULL_NAME}, {@link #WIKI_NAME}
+     * or {@link #WIKI_NAME}, this method throws
+     * an {@link IllegalArgumentException}.
      * @param name the name of the Principal
      * @param type the type for this principal, which may be {@link #LOGIN_NAME},
      *            {@link #FULL_NAME}, {@link #WIKI_NAME} or {@link #WIKI_NAME}.
-     * @throws IllegalArgumentException if the type is not {@link #LOGIN_NAME},
-     *             {@link #FULL_NAME}, {@link #WIKI_NAME} or {@link #WIKI_NAME}
      */
     public WikiPrincipal( String name, String type )
     {
         m_name = name;
-        if ( Arrays.binarySearch( validTypes, type ) < 0 )
+        if ( Arrays.binarySearch( VALID_TYPES, type ) < 0 )
         {
             throw new IllegalArgumentException( "Principal type '" + type + "' is invalid.");
         }
@@ -94,6 +105,7 @@ public final class WikiPrincipal implements Principal
 
     /**
      *  Returns the wiki name of the Principal.
+     *  @return the name
      */
     public final String getName()
     {
@@ -103,7 +115,8 @@ public final class WikiPrincipal implements Principal
     /**
      * Two <code>WikiPrincipal</code>s are considered equal if their
      * names are equal (case-sensitive).
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @param obj the object to compare
+     * @return the result of the equality test
      */
     public final boolean equals( Object obj )
     {
@@ -111,12 +124,13 @@ public final class WikiPrincipal implements Principal
         {
             return false;
         }
-        return ( m_name.equals( ( (WikiPrincipal) obj ).getName() ) );
+        return m_name.equals( ( (WikiPrincipal) obj ).getName() );
     }
 
     /**
      *  The hashCode() returned for the WikiPrincipal is the same as
      *  for its name.
+     *  @return the hash code
      */
     public final int hashCode()
     {
@@ -126,6 +140,7 @@ public final class WikiPrincipal implements Principal
     /**
      * Returns the Principal "type": {@link #LOGIN_NAME}, {@link #FULL_NAME},
      * {@link #WIKI_NAME} or {@link #WIKI_NAME}
+     * @return the type
      */
     public final String getType()
     {
@@ -134,7 +149,7 @@ public final class WikiPrincipal implements Principal
     
     /**
      * Returns a human-readable representation of the object.
-     * @see java.lang.Object#toString()
+     * @return the string representation
      */
     public final String toString()
     {

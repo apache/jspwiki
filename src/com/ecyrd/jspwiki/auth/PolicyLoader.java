@@ -128,7 +128,7 @@ public final class PolicyLoader
                 try
                 {
                     Configuration config = Configuration.getConfiguration();
-                    isConfigured = (config != null);
+                    isConfigured = config != null;
                 }
                 catch (SecurityException e) {}
                 return Boolean.valueOf(isConfigured);
@@ -205,7 +205,7 @@ public final class PolicyLoader
             }
 
         }
-        return (policy != null);
+        return policy != null;
     }
 
     /**
@@ -332,8 +332,8 @@ public final class PolicyLoader
         }
 
         // Get policy class; default is Sun provider
-        String default_policy_class;
-        default_policy_class = (String)AccessController.doPrivileged(
+        String defaultPolicyClass;
+        defaultPolicyClass = (String)AccessController.doPrivileged(
             new PrivilegedAction() {
                 public Object run()
                 {
@@ -341,13 +341,13 @@ public final class PolicyLoader
                 }
             });
 
-        if (default_policy_class == null)
+        if (defaultPolicyClass == null)
         {
-            default_policy_class = "sun.security.provider.PolicyFile";
+            defaultPolicyClass = "sun.security.provider.PolicyFile";
         }
 
         // Now, set the new policy
-        final String policy_class = default_policy_class;
+        final String policyClass = defaultPolicyClass;
         AccessController.doPrivileged(new PrivilegedAction() {
 
             public Object run()
@@ -358,7 +358,7 @@ public final class PolicyLoader
                     Policy.setPolicy(null);
                     System.setProperty("java.security.policy", url.toExternalForm());
 
-                    Policy policy = (Policy)Class.forName(policy_class).newInstance();
+                    Policy policy = (Policy)Class.forName(policyClass).newInstance();
                     Policy.setPolicy(policy);
                     return null;
                 }

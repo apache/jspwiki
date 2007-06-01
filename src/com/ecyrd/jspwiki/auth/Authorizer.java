@@ -56,6 +56,7 @@ public interface Authorizer
      * Initializes the authorizer.
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
+     * @throws WikiSecurityException if the Authorizer could not be initialized
      */
     public void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException;
 

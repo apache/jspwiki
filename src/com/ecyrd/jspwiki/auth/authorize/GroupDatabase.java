@@ -1,3 +1,16 @@
+/*
+ * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
+ * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
+ * it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version. This program is distributed
+ * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details. You should have
+ * received a copy of the GNU Lesser General Public License along with this
+ * program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
@@ -20,7 +33,7 @@ public interface GroupDatabase
      * atomically commit changes to the user database. Now, the
      * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
      * are atomic themselves.
-     * @throws WikiSecurityException
+     * @throws WikiSecurityException never...
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
@@ -32,16 +45,20 @@ public interface GroupDatabase
      * {@link NoSuchPrincipalException}. The method commits the results
      * of the delete to persistent storage.
      * @param group the group to remove
+     * @throws WikiSecurityException if the database does not contain the
+     * supplied group (thrown as {@link NoSuchPrincipalException}) or if
+     * the commit did not succeed
      */
-    public void delete( Group group ) throws NoSuchPrincipalException, WikiSecurityException;
+    public void delete( Group group ) throws WikiSecurityException;
 
     /**
      * Initializes the group database based on values from a Properties object.
      * @param engine the wiki engine
      * @param props the properties used to initialize the group database
+     * @throws WikiSecurityException if the database could not be initialized successfully
+     * @throws NoRequiredPropertyException if a required property is not present
      */
-    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException,
-            WikiSecurityException;
+    public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Saves a Group to the group database. Note that this method <em>must</em>
@@ -51,9 +68,10 @@ public interface GroupDatabase
      * create/modify timestamps, upon a successful save, to the Group.
      * The method commits the results of the delete to persistent storage.
      * @param group the Group to save
-     * @param saver the user who saved the Group
+     * @param modifier the user who saved the Group
+     * @throws WikiSecurityException if the Group could not be saved successfully
      */
-    public void save( Group group, Principal saver ) throws WikiSecurityException;
+    public void save( Group group, Principal modifier ) throws WikiSecurityException;
 
     /**
      * Returns all wiki groups that are stored in the GroupDatabase as an array
@@ -66,6 +84,7 @@ public interface GroupDatabase
      * to construct the group. This is so as not to flood GroupManager's event
      * queue with spurious events.
      * @return the wiki groups
+     * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
     public Group[] groups() throws WikiSecurityException;
 }

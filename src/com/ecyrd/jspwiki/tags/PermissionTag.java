@@ -82,6 +82,9 @@ public class PermissionTag
     
     private String[] m_permissionList;
 
+    /**
+     * Initializes the tag.
+     */
     public void initTag()
     {
         super.initTag();
@@ -109,24 +112,24 @@ public class PermissionTag
         WikiSession session        = m_wikiContext.getWikiSession();
         WikiPage    page           = m_wikiContext.getPage();
         AuthorizationManager mgr   = m_wikiContext.getEngine().getAuthorizationManager();
-        boolean got_permission     = false;
+        boolean gotPermission     = false;
         
         if ( CREATE_GROUPS.equals( permission ) || CREATE_PAGES.equals( permission )
             || EDIT_PREFERENCES.equals( permission ) || EDIT_PROFILE.equals( permission )
             || LOGIN.equals( permission ) )
         {
-            got_permission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
+            gotPermission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
         }
         else if ( VIEW_GROUP.equals( permission ) 
             || EDIT_GROUP.equals( permission )
             || DELETE_GROUP.equals( permission ) )
         {
             Command command = m_wikiContext.getCommand();
-            got_permission = false;
+            gotPermission = false;
             if ( command instanceof GroupCommand && command.getTarget() != null )
             {
                 GroupPrincipal group = (GroupPrincipal)command.getTarget();
-                String groupName = group.getWiki() + ":" + group.getName();
+                String groupName = group.getName();
                 String action = "view";
                 if( EDIT_GROUP.equals( permission ) )
                 {
@@ -136,12 +139,12 @@ public class PermissionTag
                 {
                     action = "delete";
                 }
-                got_permission = mgr.checkPermission( session, new GroupPermission( groupName, action ) );
+                gotPermission = mgr.checkPermission( session, new GroupPermission( groupName, action ) );
             }
         }
         else if ( ALL_PERMISSION.equals( permission ) )
         {
-            got_permission = mgr.checkPermission( session, new AllPermission( m_wikiContext.getEngine().getApplicationName() ) );
+            gotPermission = mgr.checkPermission( session, new AllPermission( m_wikiContext.getEngine().getApplicationName() ) );
         }
         else if ( page != null )
         {
@@ -160,13 +163,18 @@ public class PermissionTag
             }
 
             Permission p = PermissionFactory.getPagePermission( page, permission );
-            got_permission = mgr.checkPermission( session,
+            gotPermission = mgr.checkPermission( session,
                                                   p );
         }
         
-        return got_permission;
+        return gotPermission;
     }
     
+    /**
+     * Initializes the tag.
+     * @return the result of the tag: SKIP_BODY or EVAL_BODY_CONTINUE
+     * @throws IOException this exception will never be thrown
+     */
     public final int doWikiStartTag()
         throws IOException
     {
@@ -174,18 +182,18 @@ public class PermissionTag
         {
             String perm = m_permissionList[i];
          
-            boolean has_permission = false;
+            boolean hasPermission = false;
 
             if( perm.charAt(0) == '!' )
             {
-                has_permission = !checkPermission( perm.substring(1) );
+                hasPermission = !checkPermission( perm.substring(1) );
             }
             else
             {
-                has_permission = checkPermission( perm );
+                hasPermission = checkPermission( perm );
             }
             
-            if( has_permission )
+            if( hasPermission )
                 return EVAL_BODY_INCLUDE;
         }
 

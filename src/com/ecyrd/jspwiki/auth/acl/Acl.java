@@ -77,10 +77,10 @@ public interface Acl
     public Enumeration entries();
 
     /**
-     * Returns true, if this Acl is empty.
+     * Returns <code>true</code>, if this Acl is empty.
+     * @return the result
      * @since 2.4.68
      */
-
     public boolean isEmpty();
 
     /**
@@ -88,7 +88,7 @@ public interface Acl
      * control list. The Princiapls returned are those that have been granted
      * either the supplied permission, or a permission implied by the supplied
      * permission. Principals are not "expanded" if they are a role or group.
-     * @param permission
+     * @param permission the permission to search for
      * @return an array of Principals posessing the permission
      */
     public Principal[] findPrincipals( Permission permission );
@@ -96,7 +96,7 @@ public interface Acl
     /**
      * Returns an AclEntry for a supplied Principal, or <code>null</code> if
      * the Principal does not have a matching AclEntry.
-     * @param principal
+     * @param principal the principal to search for
      * @return the AclEntry associated with the principal, or <code>null</code>
      */
     public AclEntry getEntry( Principal principal );
@@ -110,6 +110,7 @@ public interface Acl
 
     /**
      * Returns a string representation of the contents of this Acl.
+     * @return the string representation
      */
     public String toString();
 
