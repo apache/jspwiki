@@ -146,6 +146,12 @@ public class WikiEventManager
 {
     private static final Logger log = Logger.getLogger(WikiEventManager.class);
 
+    /* If true, permits a WikiEventMonitor to be set. */
+    private static boolean permitMonitor = false;
+
+    /* Optional listener to be used as all-event monitor. */
+    private static WikiEventListener c_monitor = null;
+
     /* The Map of client object to WikiEventDelegate. */
     private final Map m_delegates = new HashMap();
 
@@ -195,6 +201,20 @@ public class WikiEventManager
      *  Registers a WikiEventListener with a WikiEventDelegate for
      *  the provided client object.
      *
+     *  <h3>Monitor Listener</h3>
+     *
+     *  If <tt>client</tt> is a reference to the WikiEventManager class
+     *  itself and the compile-time flag {@link #permitMonitor} is true,
+     *  this attaches the listener as an all-event monitor, overwriting
+     *  any previous listener (hence returning true).
+     *  <p>
+     *  You can remove any existing monitor by either calling this method
+     *  with <tt>client</tt> as a reference to this class and the
+     *  <tt>listener</tt> parameter as null, or
+     *  {@link #removeWikiEventListener(Object,WikiEventListener)} with a
+     *  <tt>client</tt> as a reference to this class. The <tt>listener</tt>
+     *  parameter in this case is ignored.
+     *
      * @param client   the client of the event source
      * @param listener the event listener
      * @return true if the listener was added (i.e., it was not already in the list and was added)
@@ -202,8 +222,16 @@ public class WikiEventManager
     public static final boolean addWikiEventListener(
             Object client, WikiEventListener listener )
     {
-        WikiEventDelegate delegate = getInstance().getDelegateFor(client);
-        return delegate.addWikiEventListener(listener);
+        if ( client == WikiEventManager.class )
+        {
+            if ( permitMonitor ) c_monitor = listener;
+            return permitMonitor;
+        }
+        else
+        {
+            WikiEventDelegate delegate = getInstance().getDelegateFor(client);
+            return delegate.addWikiEventListener(listener);
+        }
     }
 
 
@@ -218,8 +246,16 @@ public class WikiEventManager
     public static final boolean removeWikiEventListener(
             Object client, WikiEventListener listener )
     {
-        WikiEventDelegate delegate = getInstance().getDelegateFor(client);
-        return delegate.removeWikiEventListener(listener);
+        if ( client == WikiEventManager.class )
+        {
+            c_monitor = null;
+            return true;
+        }
+        else
+        {
+            WikiEventDelegate delegate = getInstance().getDelegateFor(client);
+            return delegate.removeWikiEventListener(listener);
+        }
     }
 
 
@@ -314,6 +350,7 @@ public class WikiEventManager
     {
         WikiEventDelegate source = getInstance().getDelegateFor(client);
         if ( source != null ) source.fireEvent(event);
+        if ( c_monitor != null ) c_monitor.actionPerformed(event);
     }
 
 
