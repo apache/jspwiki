@@ -128,7 +128,7 @@ public class ProgressManager
          */
         public int getProgress( String progressId )
         {
-            return getProgress( progressId );
+            return ProgressManager.this.getProgress( progressId );
         }
     }
 }
