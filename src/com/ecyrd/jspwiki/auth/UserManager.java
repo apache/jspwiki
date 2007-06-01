@@ -40,7 +40,6 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
-import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.MailUtil;
@@ -66,6 +65,7 @@ public final class UserManager
 
     private static Logger log = Logger.getLogger(UserManager.class);
 
+    /** Message key for the "save profile" message. */
     public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
     private static final String PROP_DATABASE               = "jspwiki.userdatabase";
     protected static final String SAVE_TASK_MESSAGE_KEY     = "task.createUserProfile";
@@ -114,6 +114,7 @@ public final class UserManager
      * lazily initialized by this method, if it does not exist yet. If the
      * initialization fails, this method will use the inner class
      * DummyUserDatabase as a default (which is enough to get JSPWiki running).
+     * @return the dummy user database
      * @since 2.3
      */
     public final UserDatabase getUserDatabase()
@@ -172,7 +173,7 @@ public final class UserManager
     }
 
     /**
-     * Retrieves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the
+     * <p>Retrieves the {@link com.ecyrd.jspwiki.auth.user.UserProfile}for the
      * user in a wiki session. If the user is authenticated, the UserProfile
      * returned will be the one stored in the user database; if one does not
      * exist, a new one will be initialized and returned. If the user is
@@ -183,22 +184,22 @@ public final class UserManager
      * return <code>true</code>, and its login name will will be set
      * automatically if the user is authenticated. Note that this method does
      * not modify the retrieved (or newly created) profile otherwise; other
-     * fields in the user profile may be <code>null</code>.
+     * fields in the user profile may be <code>null</code>.</p>
+     * <p>If a new UserProfile was created, but its
+     * {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()} method returns
+     * <code>false</code>, this method throws an {@link IllegalStateException}.
+     * This is meant as a quality check for UserDatabase providers;
+     * it should only be thrown if the implementation is faulty.</p>
      * @param session the wiki session, which may not be <code>null</code>
      * @return the user's profile, which will be newly initialized if the user
      * is anonymous or asserted, or if the user cannot be found in the user
      * database
-     * @throws WikiSecurityException if the database returns an exception
-     * @throws IllegalStateException if a new UserProfile was created, but its
-     * {@link com.ecyrd.jspwiki.auth.user.UserProfile#isNew()} method returns
-     * <code>false</code>. This is meant as a quality check for UserDatabase
-     * providers; it should only be thrown if the implementation is faulty.
      */
     public final UserProfile getUserProfile( WikiSession session )
     {
         // Look up cached user profile
         UserProfile profile = (UserProfile)m_profiles.get( session );
-        boolean newProfile = ( profile == null );
+        boolean newProfile = profile == null;
         Principal user = null;
 
         // If user is authenticated, figure out if this is an existing profile
@@ -263,15 +264,14 @@ public final class UserManager
      * </p>
      * @param session the wiki session, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
-     * @throws RedirectException if the user profile must be approved before it can be saved
      * @throws DuplicateUserException if the proposed profile's login name or full name collides with another
-     * @throws WikiSecurityException if the current user does not have permission to save the profile
-     * @throws WikiException if approval is required, but this method cannot create a workflow for
-     * some reason; this is not normal, and indicates mis-configuration
-     * or name collision with another user
+     * @throws WikiException if the save fails for some reason. If the current user does not have
+     * permission to save the profile, this will be a {@link com.ecyrd.jspwiki.auth.WikiSecurityException};
+     * if if the user profile must be approved before it can be saved, it will be a 
+     * {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}. All other WikiException
+     * indicate a condition that is not normal is probably due to mis-configuration
      */
-    public final void setUserProfile( WikiSession session, UserProfile profile ) throws WikiSecurityException,
-            DuplicateUserException, WikiException
+    public final void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException
     {
         // Verify user is allowed to save profile!
         Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
@@ -314,14 +314,14 @@ public final class UserManager
         }
 
         // For new accounts, create approval workflow for user profile save.
-        if ( newProfile && oldProfile.isNew() )
+        if ( newProfile && oldProfile != null && oldProfile.isNew() )
         {
             WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
             Principal submitter = session.getUserPrincipal();
             Task completionTask = new SaveUserProfileTask( m_engine );
 
             // Add user profile attribute as Facts for the approver (if required)
-            boolean hasEmail = ( profile.getEmail() != null );
+            boolean hasEmail = profile.getEmail() != null;
             Fact[] facts = new Fact[ hasEmail ? 4 : 3];
             facts[0] = new Fact( PREFS_FULL_NAME, profile.getFullname() );
             facts[1] = new Fact( PREFS_LOGIN_NAME, profile.getLoginName() );
@@ -341,13 +341,12 @@ public final class UserManager
             workflow.setAttribute( SAVED_PROFILE, profile );
             m_engine.getWorkflowManager().start(workflow);
 
-            boolean approvalRequired = ( workflow.getCurrentStep() instanceof Decision );
+            boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
 
             // If the profile requires approval, redirect user to message page
             if ( approvalRequired )
             {
-                throw new RedirectException( "Approval required.",
-                                             m_engine.getURL(WikiContext.VIEW,"ApprovalRequiredForUserProfiles",null,true) );
+                throw new DecisionRequiredException( "This profile must be approved before it becomes active" );
             }
 
             // If the profile doesn't need approval, then just log the user in
@@ -374,7 +373,7 @@ public final class UserManager
         else
         {
             // If login name changed, rename it first
-            if ( nameChanged && !oldProfile.getLoginName().equals( profile.getLoginName() ) )
+            if ( nameChanged && oldProfile != null && !oldProfile.getLoginName().equals( profile.getLoginName() ) )
             {
                 m_database.rename( oldProfile.getLoginName(), profile.getLoginName() );
             }
@@ -543,55 +542,115 @@ public final class UserManager
     public static class DummyUserDatabase extends AbstractUserDatabase
     {
 
+        /**
+         * No-op.
+         * @throws WikiSecurityException never... 
+         */
         public void commit() throws WikiSecurityException
         {
             // No operation
         }
 
-        public void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException
+        /**
+         * No-op.
+         * @param loginName the login name to delete
+         * @throws WikiSecurityException never...
+         */
+        public void deleteByLoginName( String loginName ) throws WikiSecurityException
         {
             // No operation
         }
 
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param index the name to search for
+         * @return the user profile
+         * @throws NoSuchPrincipalException never...
+         */
         public UserProfile findByEmail(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param index the name to search for
+         * @return the user profile
+         * @throws NoSuchPrincipalException never...
+         */
         public UserProfile findByFullName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param index the name to search for
+         * @return the user profile
+         * @throws NoSuchPrincipalException never...
+         */
         public UserProfile findByLoginName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param index the name to search for
+         * @return the user profile
+         * @throws NoSuchPrincipalException never...
+         */
         public UserProfile findByWikiName(String index) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
+        /**
+         * No-op.
+         * @return a zero-length array
+         * @throws WikiSecurityException never...
+         */
         public Principal[] getWikiNames() throws WikiSecurityException
         {
             return new Principal[0];
         }
 
+        /**
+         * No-op.
+         * @param engine the wiki engine
+         * @param props the properties used to initialize the wiki engine
+         * @throws NoRequiredPropertyException never...
+         */
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
         }
 
+        /**
+         * No-op.
+         * @return <code>false</code>
+         */
         public boolean isSharedWithContainer()
         {
             return false;
         }
 
-        public void rename( String loginName, String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param loginName the login name
+         * @param newName the proposed new login name
+         * @throws DuplicateUserException never...
+         * @throws WikiSecurityException never...
+         */
+        public void rename( String loginName, String newName ) throws DuplicateUserException, WikiSecurityException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }
 
+        /**
+         * No-op.
+         * @param profile the user profile
+         * @throws WikiSecurityException never...
+         */
         public void save( UserProfile profile ) throws WikiSecurityException
         {
         }
@@ -625,7 +684,10 @@ public final class UserManager
         }
 
         /**
-         * Saves the user profile to the user database. The
+         * Saves the user profile to the user database.
+         * @return {@link com.ecyrd.jspwiki.workflow.Outcome#STEP_COMPLETE} if the
+         * task completed successfully
+         * @throws WikiException if the save did not complete for some reason
          */
         public Outcome execute() throws WikiException
         {

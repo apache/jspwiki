@@ -12,7 +12,6 @@ import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.filters.FilterException;
-import com.ecyrd.jspwiki.filters.RedirectException;
 
 public class ApprovalWorkflowTest extends TestCase
 {
@@ -170,7 +169,7 @@ public class ApprovalWorkflowTest extends TestCase
         {
             m_engine.saveTextAsJanne(pageName, text);
         }
-        catch ( RedirectException e )
+        catch ( DecisionRequiredException e )
         {
             // Swallow exception, because it is expected...
         }
@@ -202,7 +201,7 @@ public class ApprovalWorkflowTest extends TestCase
         {
             m_engine.saveTextAsJanne(pageName, text);
         }
-        catch ( RedirectException e )
+        catch ( DecisionRequiredException e )
         {
             // Swallow exception, because it is expected...
         }

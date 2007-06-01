@@ -6,6 +6,7 @@
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -196,6 +197,12 @@
         {
             wikiContext.setPage( modifiedPage );
             wiki.saveText( wikiContext, pageText.toString() );
+        }
+        catch( DecisionRequiredException e )
+        {
+        	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
+            response.sendRedirect( redirect );
+            return;
         }
         catch( RedirectException e )
         {

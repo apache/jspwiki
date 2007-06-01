@@ -50,7 +50,6 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
-import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -1486,8 +1485,8 @@ public class WikiEngine
 
     /**
      *  Updates all references for the given page.
+     *  @param page wiki page for which references should be updated
      */
-
     public void updateReferences( WikiPage page )
     {
         String pageData = getPureText( page.getName(), WikiProvider.LATEST_VERSION );
@@ -1504,7 +1503,7 @@ public class WikiEngine
      *  its value resolves to a valid user, {@link com.ecyrd.jspwiki.auth.authorize.Group}
      *  or {@link com.ecyrd.jspwiki.auth.authorize.Role}, this method will
      *  place a {@link com.ecyrd.jspwiki.workflow.Decision} in the approver's
-     *  workflow inbox and throw a {@link com.ecyrd.jspwiki.filters.RedirectException}.
+     *  workflow inbox and throw a {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}.
      *  If the submitting user is authenticated and the page save is rejected,
      *  a notification will be placed in the user's decision queue.
      *
@@ -1512,7 +1511,10 @@ public class WikiEngine
      *  @param context The current WikiContext
      *  @param text    The Wiki markup for the page.
      *  @throws WikiException if the save operation encounters an error during the
-     *  save operation
+     *  save operation. If the page-save operation requires approval, the exception will
+     *  be of type {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}. Individual
+     *  PageFilters, such as the {@link com.ecyrd.jspwiki.filters.SpamFilter} may also 
+     *  throw a {@link com.ecyrd.jspwiki.filters.RedirectException}.
      */
     public void saveText( WikiContext context, String text )
         throws WikiException
@@ -1554,8 +1556,7 @@ public class WikiEngine
         // Let callers know if the page-save requires approval
         if ( workflow.getCurrentStep() instanceof Decision )
         {
-            throw new RedirectException( "Approval required.",
-                                         context.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges") );
+            throw new DecisionRequiredException( "The page contents must be approved before they become active." );
         }
     }
 

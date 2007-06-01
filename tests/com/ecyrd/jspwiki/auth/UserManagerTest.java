@@ -13,11 +13,7 @@ import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.user.*;
-import com.ecyrd.jspwiki.filters.RedirectException;
-import com.ecyrd.jspwiki.workflow.Decision;
-import com.ecyrd.jspwiki.workflow.DecisionQueue;
-import com.ecyrd.jspwiki.workflow.Fact;
-import com.ecyrd.jspwiki.workflow.Outcome;
+import com.ecyrd.jspwiki.workflow.*;
 
 
 
@@ -278,9 +274,9 @@ public class UserManagerTest extends TestCase
       try 
       {
           m_mgr.setUserProfile( session, profile );
-          fail( "We should have caught a RedirectException caused by approval!" );
+          fail( "We should have caught a DecisionRequiredException caused by approval!" );
       }
-      catch ( RedirectException e )
+      catch ( DecisionRequiredException e )
       {
       }
       
@@ -332,9 +328,9 @@ public class UserManagerTest extends TestCase
       try 
       {
           m_mgr.setUserProfile( session, profile );
-          fail( "We should have caught a RedirectException caused by approval!" );
+          fail( "We should have caught a DecisionRequiredException caused by approval!" );
       }
-      catch ( RedirectException e )
+      catch ( DecisionRequiredException e )
       {
       }
       
