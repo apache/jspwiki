@@ -13,10 +13,36 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.ADMIN );
     if(!wikiContext.hasAccess( response )) return;
     
+    //
+    //  This is an experimental feature, so we will turn it off unless the
+    //  user really wants to.
+    //
+    if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.adminui.enable")) )
+    {
+        %>
+        <html>
+        <body>
+           <h1>Disabled</h1>
+           <p>JSPWiki admin UI has been disabled.  This is an experimental feature, and is
+           not guaranteed to work.  You may turn it on by specifying</p>
+           <pre>
+               jspwiki-x.adminui.enable=true
+           </pre>
+           <p>in your <tt>jspwiki.properties</tt> file.</p>
+           <p>Have a nice day.  Don't forget to eat lots of fruits and vegetables.</p>
+        </body>
+        </html>
+        <%
+        return;
+    }
+    
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),
                                                             "admin/AdminTemplate.jsp" );
+    
+    pageContext.setAttribute( "engine", wiki, PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( "context", wikiContext, PageContext.REQUEST_SCOPE );
 
 %><wiki:Include page="<%=contentPage%>" />
