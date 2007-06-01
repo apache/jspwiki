@@ -1,3 +1,26 @@
+2007-05-30  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+       * 2.5.70
+
+       * Many, many little fixes to remove Checkstyle issues.
+
+       * Removed the two-argument constructor from GroupPrincipal
+       and its associated "wiki" field. This interacted in a
+       very subtle way with LocalPolicy to prevent GroupPrincipal
+       privilege grants from being processed correctly. We
+       concluded that this "feature", while intended to be used
+       with multi-wiki environments, was fatally broken from the
+       start. This change is purely "under the covers" and users will
+       not notice the difference or need to do anything special.
+
+       * Minor tweaks to SessionMonitor and AuthorizationManager
+       that should slightly reduce memory leak potential.
+
+       * Introduced a new exception called DecisionRequiredException
+       that denotes when an operation cannot complete because
+       a person must make a decision. It is thrown by WikiEngine.saveText()
+       and UserManager.setProfile().
+
 2007-05-29  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.69
