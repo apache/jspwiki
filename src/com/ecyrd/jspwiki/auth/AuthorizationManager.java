@@ -24,9 +24,9 @@ import java.io.File;
 import java.net.URL;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.freshcookies.security.policy.LocalPolicy;
@@ -102,7 +102,7 @@ public final class AuthorizationManager
     private Authorizer                        m_authorizer      = null;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
-    private Map                               m_cachedPds       = new HashMap();
+    private Map                               m_cachedPds       = new WeakHashMap();
 
     private WikiEngine                        m_engine          = null;
 
@@ -291,7 +291,7 @@ public final class AuthorizationManager
         }
 
         // Any type of user can possess a built-in role
-        if ( principal instanceof Role && Role.isBuiltInRole( ((Role)principal) ) )
+        if ( principal instanceof Role && Role.isBuiltInRole( (Role)principal ) )
         {
             return session.hasPrincipal( principal );
         }
@@ -308,8 +308,8 @@ public final class AuthorizationManager
      * Returns the current external {@link Authorizer} in use. This method
      * is guaranteed to return a properly-initialized Authorizer, unless
      * it could not be initialized. In that case, this method throws
-     * a {@link com.ecyrd.jspwiki.WikiException}.
-     * @throws com.ecyrd.jspwiki.WikiException if the Authorizer could
+     * a {@link com.ecyrd.jspwiki.auth.WikiSecurityException}.
+     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer could
      * not be initialized
      * @return the current Authorizer
      */
@@ -383,6 +383,9 @@ public final class AuthorizationManager
      * Initializes AuthorizationManager with an engine and set of properties.
      * Expects to find property 'jspwiki.authorizer' with a valid Authorizer
      * implementation name to take care of group lookup operations.
+     * @param engine the wiki engine
+     * @param properties the set of properties used to initialize the wiki engine
+     * @throws WikiException if the AuthorizationManager cannot be initialized
      */
     public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {

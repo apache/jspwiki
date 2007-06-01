@@ -59,6 +59,7 @@ public class SessionMonitor implements HttpSessionListener
     /**
      * Returns the instance of the SessionMonitor for this wiki.
      * Only one SessionMonitor exists per WikiEngine.
+     * @param engine the wiki engine
      * @return the session monitor
      */
     public static final SessionMonitor getInstance( WikiEngine engine )
@@ -95,30 +96,18 @@ public class SessionMonitor implements HttpSessionListener
     }
 
     /**
-     *  Just looks for a WikiSession, does not create a new one.
+     *  Just looks for a WikiSession; does not create a new one.
+     * This method may return <code>null</code>, <em>and
+     * callers should check for this value</em>.
      *
-     *  @param session
-     *  @return
+     *  @param session the user's HTTP session
+     *  @return the WikiSession, if found
      */
     private WikiSession findSession( HttpSession session )
     {
         WikiSession wikiSession = null;
         String sid = ( session == null ) ? "(null)" : session.getId();
         WikiSession storedSession = (WikiSession)m_sessions.get( sid );
-        String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
-
-        if( storedSession == null )
-        {
-            try
-            {
-                storedSession = (WikiSession)session.getAttribute( wikiSessionName );
-            }
-            catch( IllegalStateException e )
-            {
-                // We just tried calling on an invalidated session.  This only
-                // happens in very special circumstances, so we can just return
-            }
-        }
 
         // If the weak reference returns a wiki session, return it
         if( storedSession != null )
@@ -148,7 +137,6 @@ public class SessionMonitor implements HttpSessionListener
     {
         WikiSession wikiSession = findSession(session);
         String sid = ( session == null ) ? "(null)" : session.getId();
-        String wikiSessionName = m_engine.getApplicationName() + "-WikiSession";
 
         // Otherwise, create a new guest session and stash it.
         if( wikiSession == null )
@@ -162,7 +150,6 @@ public class SessionMonitor implements HttpSessionListener
             {
                 m_sessions.put( sid, wikiSession );
             }
-            session.setAttribute( wikiSessionName, wikiSession );
         }
 
         return wikiSession;
@@ -244,6 +231,8 @@ public class SessionMonitor implements HttpSessionListener
     /**
      * Fires a WikiSecurityEvent to all registered listeners.
      * @param type  the event type
+     * @param principal the user principal associated with this session
+     * @param session the wiki session
      * @since 2.4.75
      */
     protected final void fireEvent( int type, Principal principal, WikiSession session )
@@ -254,11 +243,20 @@ public class SessionMonitor implements HttpSessionListener
         }
     }
 
+    /**
+     * No-op method that fires when the web container creates a new HTTP session.
+     * @param se the HTTP session event
+     */
     public void sessionCreated( HttpSessionEvent se )
     {
         // No Action Needed when session created
     }
 
+    /**
+     * Removes the user's WikiSession from the internal session cache when the web
+     * container destoys an HTTP session.
+     * @param se the HTTP session event
+     */
     public void sessionDestroyed( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
