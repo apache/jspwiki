@@ -38,8 +38,10 @@ public final class AllPermission extends Permission
     private final String        m_wiki;
 
     /**
-     * Creates a new WikiPermission for a specified set of actions.
-     * @param wiki the wiki to which the permission should apply
+     * Creates a new AllPermission for the given wikis.
+     * 
+     * @param wiki the wiki to which the permission should apply.  If null, will
+     *             apply to all wikis.
      */
     public AllPermission( String wiki )
     {
