@@ -1,25 +1,32 @@
+2007-06-02  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.72
+
+       * D'oh, David's patch didn't make it completely to CVS.  Now
+       it should be there.
+
 2007-06-01  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.71
-       
+
        * Added UserManager.JSONUserModule
-       
+
        * Fixed Admin.jsp such that it can no longer be invoked
        accidentally (don't expect it to be available in initial alphas).
        Turn on "jspwiki-x.adminui.enable=true" to see how it works.
-       
+
        * Added initial, non-functional user management tab in Admin.jsp.
-       
+
        * Added new AjaxWiki object to jspwiki-common.js to simplify AJAX
        calls (mootools is nice, but their AJAX API is insanely complex).
-       
+
        * Added Murray's patch to enable event monitoring.
-       
+
        * Added David Au's patch to fix remaining issues in FCK integration.
 
        * fckconfig.js: Disabled 'Insert Flash' button.
-       
-       * FCK.jsp: Fixed issue where image attachments would not be displayed 
+
+       * FCK.jsp: Fixed issue where image attachments would not be displayed
        when accessing JSPWiki via https.
 
        * PluginContent.java: Fixed issue where plugin error messages were
@@ -28,17 +35,17 @@
        * WysiwygEditingRenderer.java: Fixed issue where pagenames were
        appearing in their URL-encoded format in the href.
 
-       * XHtmlElementToWikiTranslator.java: Beautify the generated wiki markup 
-       by printing a newline character after a linebreak. Fixed issue when 
-       generating wiki links with spaces in the pagename.  Don't print a 
+       * XHtmlElementToWikiTranslator.java: Beautify the generated wiki markup
+       by printing a newline character after a linebreak. Fixed issue when
+       generating wiki links with spaces in the pagename.  Don't print a
        extraneous space after a link or an image anymore.
 
-       * WysiwygEditingRendererTest.java: Added tests for pagenames with 
+       * WysiwygEditingRendererTest.java: Added tests for pagenames with
        spaces.
 
-       * HtmlStringToWikiTranslatorTest.java: Fixed several unit tests broken 
+       * HtmlStringToWikiTranslatorTest.java: Fixed several unit tests broken
        by this latest set of changes.
-    
+
 
 2007-05-30  Andrew Jaquith <andrew AT freshcookies DOT org>
 
