@@ -50,6 +50,12 @@
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
    
    String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
+   
+   String protocol = "http://";
+   if( request.isSecure() )
+   {
+       protocol = "https://";
+   }   
 %>
 
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
@@ -75,7 +81,7 @@
    oFCKeditor.Config['CustomConfigurationsPath'] = '<%=request.getContextPath()%>/scripts/fckconfig.js';
    oFCKeditor.Config['StylesXmlPath'] = '<%=request.getContextPath()%>/scripts/fckstyles.xml';
    oFCKeditor.Config['TemplatesXmlPath'] = '<%=request.getContextPath()%>/scripts/fcktemplates.xml';
-   oFCKeditor.Config['BaseHref'] = 'http://<%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/';
+   oFCKeditor.Config['BaseHref'] = '<%=protocol%><%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/';
    oFCKeditor.Config['EditorAreaCSS'] = '<%=request.getContextPath()%>/templates/<%=templateDir%>/jspwiki.css';
    oFCKeditor.Config['SmileyPath'] = oFCKeditor.Config['BaseHref'] + 'scripts/fckeditor/editor/images/smiley/msn/' ;
    oFCKeditor.Create();

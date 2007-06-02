@@ -282,29 +282,23 @@ public class XHtmlElementToWikiTranslator
                     }
                     else
                     {
-                        m_out.print( " \\\\" );
-
-                        /*
-
-                        //
-                        // Can't use this because it adds extraneous newlines to plugins that have a body.
-                        //
-
                         String parentElementName = base.getName().toLowerCase();
-                        if( parentElementName.matches( "p|div" ) )
+
+                        //
+                        // To beautify the generated wiki markup, we print a newline character after a linebreak.
+                        // It's only safe to do this when the parent element is a <p> or <div>; when the parent
+                        // element is a table cell or list item, a newline character would break the markup.
+                        // We also check that this isn't being done inside a plugin body.
+                        //
+                        if( parentElementName.matches( "p|div" ) 
+                            && !base.getText().matches( "(?s).*\\[\\{.*\\}\\].*" ) )
                         {
-                            //
-                            // To beautify the generated wiki markup, we print a newline character after a linebreak.
-                            // It's only safe to do this when the parent element is a <p> or <div>; when the parent
-                            // element is a table cell or list item, a newline character would break the markup.
-                            //
                             m_out.print( " \\\\\n" );
                         }
-                        else{
+                        else
+                        {
                             m_out.print( " \\\\" );
                         }
-
-                        */
                     }
                     print( e );
                 }
@@ -385,7 +379,7 @@ public class XHtmlElementToWikiTranslator
 
                                         m_out.print( "[" );
                                         print( e );
-                                        if( !e.getTextTrim().replaceAll( "\\s", "" ).equalsIgnoreCase( ref ) )
+                                        if( !e.getTextTrim().equalsIgnoreCase( ref ) )
                                         {
                                             m_out.print( "|" );
                                             print( ref );
@@ -411,7 +405,6 @@ public class XHtmlElementToWikiTranslator
                                     }
                                 }
                             }
-                            m_out.print( " " );
                         }
                     }
                 }
@@ -530,7 +523,6 @@ public class XHtmlElementToWikiTranslator
                         m_out.print( "[" );
                         print( trimLink( e.getAttributeValue( "src" ) ) );
                         m_out.print( "]" );
-                        m_out.print( " " );
                     }
                 }
                 else if( n.equals( "form" ) )

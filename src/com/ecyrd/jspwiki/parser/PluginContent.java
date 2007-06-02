@@ -100,18 +100,23 @@ public class PluginContent extends Text
         }
                
         WikiContext context = doc.getContext();
+        
+        Boolean wysiwygVariable = (Boolean)context.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
+        boolean wysiwygEditorMode = false;
+        if( wysiwygVariable != null )
+        {
+            wysiwygEditorMode = wysiwygVariable.booleanValue();
+        }
 
         try
         {
-            Boolean wysiwygEditorMode = (Boolean)context.getVariable(RenderingManager.WYSIWYG_EDITOR_MODE);
-
             //
             //  Determine whether we should emit the actual code for this plugin or
             //  whether we should execute it.  For some plugins we always execute it,
             //  since they can be edited visually.
             //
             // FIXME: The plugin name matching should not be done here, but in a per-editor resource
-            if( wysiwygEditorMode != null && wysiwygEditorMode.booleanValue() 
+            if( wysiwygEditorMode 
                 && !m_pluginName.matches( EMITTABLE_PLUGINS ) )
             {        
                 result = PLUGIN_START + m_pluginName + SPACE;            
@@ -154,8 +159,15 @@ public class PluginContent extends Text
         }
         catch( Exception e )
         {
-            // log.info("Failed to execute plugin",e);
-            result = JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage()).getText();
+            if( wysiwygEditorMode )
+            {
+                result = "";
+            }
+            else
+            {
+                // log.info("Failed to execute plugin",e);
+                result = JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage()).getText();
+            }
         }
         
         

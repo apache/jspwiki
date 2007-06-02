@@ -26,11 +26,13 @@ public class WysiwygEditingRendererTest extends TestCase
         super.setUp();
         
         m_testEngine.saveText( "WysiwygEditingRendererTest", "test page" );
+        m_testEngine.saveText( "This Pagename Has Spaces", "This Pagename Has Spaces" );
     }
     
     public void tearDown()
     {
         TestEngine.deleteTestPage( "WysiwygEditingRendererTest" );
+        TestEngine.deleteTestPage( "This Pagename Has Spaces" );
     }
 
     private String render(String s) throws IOException
@@ -58,6 +60,9 @@ public class WysiwygEditingRendererTest extends TestCase
         
         src = "[test page|WysiwygEditingRendererTest|class='notWikipageClass']";
         assertEquals( "<a class=\"notWikipageClass\" href=\"WysiwygEditingRendererTest\">test page</a>", render(src) );
+        
+        src = "[This Pagename Has Spaces]";
+        assertEquals( "<a class=\"wikipage\" href=\"This Pagename Has Spaces\">This Pagename Has Spaces</a>", render(src) );
     }
     
     public void testUndefinedPageLink() throws Exception
@@ -70,6 +75,9 @@ public class WysiwygEditingRendererTest extends TestCase
 
         src = "[test page|UndefinedPageLinkHere|class='notEditpageClass']";
         assertEquals( "<a class=\"notEditpageClass\" href=\"UndefinedPageLinkHere\">test page</a>", render(src) );
+        
+        src = "[Non-existent Pagename with Spaces]";
+        assertEquals( "<a class=\"editpage\" href=\"Non-existent Pagename with Spaces\">Non-existent Pagename with Spaces</a>", render(src) );
     }
     
     public static Test suite()
