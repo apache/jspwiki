@@ -45,7 +45,6 @@
   String prefFontSize = null; 
   String prefTimeZone = java.util.TimeZone.getDefault().getID(); /* TODO */
   String prefDateFormat = "dd-MMM-yyyy hh:mm"; /* TODO should this be part of default.properties ??*/
-  String prefEditAreaHeight = "24"; 
 
   Cookie[] cookies = request.getCookies();
   if (cookies != null)
@@ -61,7 +60,6 @@
           if( st.hasMoreTokens() ) prefSkinName = st.nextToken();
           if( st.hasMoreTokens() ) prefDateFormat = st.nextToken();
           if( st.hasMoreTokens() ) prefTimeZone = st.nextToken();
-          if( st.hasMoreTokens() ) prefEditAreaHeight = st.nextToken();
           if( st.hasMoreTokens() ) prefFontSize = st.nextToken();
 
           break;
@@ -71,7 +69,6 @@
   session.setAttribute("prefSkinName",       prefSkinName );
   session.setAttribute("prefDateFormat",     prefDateFormat );
   session.setAttribute("prefTimeZone",       prefTimeZone );
-  session.setAttribute("prefEditAreaHeight", prefEditAreaHeight );
   session.setAttribute("prefFontSize",       prefFontSize );
 
  %>
@@ -120,10 +117,8 @@ Wiki.init({
 	'PrefSkinName': '<c:out value="${prefSkinName}" />',
 	'PrefTimeZone': '<c:out value="${prefTimeZone}" />',
 	'PrefDateFormat': '<c:out value="${prefDateFormat}" />',
-	'PrefFontSize': '<c:out value="${prefFontSize}" />',
-	'PrefEditAreaHeight': <c:out value="${prefEditAreaHeight}" />
+	'PrefFontSize': '<c:out value="${prefFontSize}" />'
 	});
-
 <wiki:IncludeResources type="jsfunction"/>
 
 //]]>

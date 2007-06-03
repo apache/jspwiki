@@ -363,12 +363,29 @@ td .error {
 }
 
 .wikitable * td.split {
-	border-top:1px solid #D9D9D9;
+	border-top:1px solid #d9d9d9;
 } /* CHECK */
 
 /* +++ 350 Attachments +++ */
 #attachments {
 }
+
+#uploax {
+	float:left;
+}
+#progressbar {
+	float:left;
+	margin-left:1em;
+	width:30em;
+	border:2px solid #bbb;
+}
+#progressbar .ajaxprogress {
+	background:url(images/progress.gif) repeat-x;
+	height:18px;
+	text-align:center;
+	width:0%;
+}
+
 .attachtype {
 	line-height:1.6;
 	font-size:11px;
@@ -643,16 +660,13 @@ body.comment {
 	padding:0.25em 2em 0 0;
 	line-height:1.5;
 }
-.pageactions a, .pageactions .actionsMore {
+.pageactions a {
 	padding:0.5em;
-}
-.pageactions .actionsMore { 
-	color:blue;
 }
 .pageactions .pageinfo a  { 
 	padding:0;
 }
-.pageactions .actionsMore:hover, .pageactions a:hover {
+.pageactions a:hover {
 	background-color:#f93;
 }
 .pageactions .pageinfo a:hover {
@@ -676,8 +690,8 @@ body.comment {
 }
 #actionsMorePopup {
 	position:absolute;
-	right:0;
 	top:2em;
+	right:0;
 	z-index:20;
 	background:white;
 	border:2px solid #bbb;
@@ -688,37 +702,31 @@ body.comment {
 	padding:0;
 }
 #actionsMorePopup li {
+	display:block;
+	line-height:1.5;
 }
 #actionsMorePopup li:hover {
 	background-color:#f93;
 }
-#actionsMorePopup a:hover {
-	background-color:transparent;
-}
 #actionsMorePopup a {
-	line-height:1.75;
+	background-color:transparent;
 }
 #actionsMorePopup .actionSeparator { 
 	height:2px;
 	border-bottom:2px solid #bbb;
-	overflow:hidden;
 }
-.quick2top, .quick2bottom  {
-	position:relative;
-}
+
 .quick2top a, .quick2bottom a {
-	display:block; 
- 	height:20px; 
-	left:0.5em;
+	position:absolute; 
+	right:0;
  	overflow:hidden;
 	padding:0; 
-	position:absolute; 
 	text-indent:20px;
 	top:0; 
  	width:20px; 
 }
 .quick2top a {
- 	background-image:url(images/arrup.png) no-repeat center;
+ 	background:url(images/arrup.png) no-repeat center;
 }
 .quick2bottom a {
  	background:url(images/arrdown.png) no-repeat center;
@@ -918,7 +926,7 @@ div.index .section a {
 	margin:1em 0.5em 0 0.5em;
 	padding:0.5em;
 	font-weight:bold;
-	font-size:1.2;
+	font-size:120%;
 	line-height:1.1;
 }
 .weblogcomments {
@@ -1006,7 +1014,6 @@ table.calendar tr.weekdays {
 * html .tabmenu {
 	margin-top:1px;
 }
-
 .tabmenu a {
 	margin-left:-1px;
 	padding:0.25em 0.5em;
@@ -1019,14 +1026,12 @@ table.calendar tr.weekdays {
 }
 .tabmenu a:hover {
 	color:blue;
-	 
 }
 .tabmenu a.activetab {
 	color:black;
 	background:transparent;
 	border-bottom:1px solid white;
 	cursor:default;
-	 
 }
 
 
@@ -1086,7 +1091,8 @@ table.calendar tr.weekdays {
 .tab p, .tab pre, .tab blockquote, .tab label, 
 .tab ul, .tab ol, .tab dl, .xxtab hr {
 	margin:0 auto;
-	padding:0.5em auto;
+	padding-top:0.5em;
+	padding-bottom:0.5em;
 }
 
 
@@ -1199,14 +1205,17 @@ div.collapse li {
 	background-repeat:no-repeat;
 	background-position:0.25em 50%;
 }
-.sortable .sortAscending, .sortable .sortDescending {
+.sortable .sort, .sortable .sortAscending, .sortable .sortDescending {
 	padding-left:16px;
 }
+.sortable .sort {
+	background-image:url(images/sortable.gif);
+}
 .sortable .sortAscending {
-	background-image:url(images/arrdown.png);
+	background-image:url(images/sorted_down.gif);
 }
 .sortable .sortDescending {
-	background-image:url(images/arrup.png);
+	background-image:url(images/sorted_up.gif);
 }
 
 

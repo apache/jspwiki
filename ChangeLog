@@ -1,3 +1,16 @@
+2007-06-03  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+       * 2.5.73
+       
+       * In-page Upload Progress Bar has been added based on jsonrpc backend.
+       (i'm not yet 100% sure on the cross browser compatibility - can anybody 
+       check this on ie win ?)  This replaces the Progress.Popup jsp.
+       
+       * Cookie handling fixed. Bug caused text-area size to be mixed up
+       with font size.
+       
+       * New sort-icons added. Sortable tables have a better visibility now.
+
 2007-06-02  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.72

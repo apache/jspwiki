@@ -64,8 +64,7 @@
     </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
 
-  <span class="quick2top"><a href="#top" 
-        title="<fmt:message key='actions.gototop'/>" >&laquo;</a></span>
+  <span class="quick2top"><a href="#top" title="<fmt:message key='actions.gototop'/>" >&laquo;</a></span>
 
   <%-- summary page info--%>
   <wiki:CheckRequestContext context='view|diff|edit|upload|info'>

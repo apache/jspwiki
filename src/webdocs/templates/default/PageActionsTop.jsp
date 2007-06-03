@@ -165,14 +165,12 @@
       </option>
     </wiki:Permission>
 
-
   </select>
   </form>
 
-  <span class="actionsMore" style="display:none;"><fmt:message key="actions.more"/>
-    <div id='actionsMorePopup'>
-      <ul id='actionsMorePopupItems' ></ul>
-    </div>
+  <span id="actionsMoreLink" style="display:none;">
+    <a href="#"><fmt:message key="actions.more"/></a>
+    <div id='actionsMorePopup'><ul id='actionsMorePopupItems' ></ul></div>
   </span>
 
   <span class="quick2bottom"><a href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a></span>

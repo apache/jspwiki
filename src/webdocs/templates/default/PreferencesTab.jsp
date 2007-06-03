@@ -30,7 +30,7 @@
         name="setCookie" id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />" 
     onsubmit="var s=[];
-             ['prefSkin','prefTimeFormat','prefTimeZone','prefEditSize'].each(function(el){
+             ['prefSkin','prefTimeFormat','prefTimeZone'].each(function(el){
                if($(el)) s.push($(el).getValue());
              });
              if(Wiki.PrefFontSize) s.push(Wiki.PrefFontSize);

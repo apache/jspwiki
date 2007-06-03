@@ -9,8 +9,6 @@
 <fmt:setBundle basename="templates.default"/>
 
 <%!
-  int MAXATTACHNAMELENGTH = 30;
-
   // FIXME: this should better be something like a wiki:Pagination TLD tag
   // FIXME: how to i18n
   //
@@ -169,7 +167,13 @@
 <%-- part 1 : normal wiki pages --%>
 <wiki:PageType type="page">
 
-  <wiki:TabbedSection>
+  <wiki:TabbedSection defaultTab="info">
+  
+  <wiki:Tab id="pagecontent" title="View" accesskey="v" 
+	       url="<%=wikiContext.getURL(WikiContext.VIEW, wikiContext.getPage().getName())%>">
+      <%--<wiki:Include page="PageTab.jsp"/> --%>
+  </wiki:Tab>
+
   <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>" accesskey="i" >
 
   <p>
@@ -354,6 +358,10 @@
 
 <%-- part 2 : attachments --%>
 <wiki:PageType type="attachment">
+<%
+  int MAXATTACHNAMELENGTH = 30;
+  String progressId = wikiContext.getEngine().getProgressManager().getNewProgressIdentifier();
+%>
 
   <wiki:TabbedSection>
   <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.attachment.tab")%>" accesskey="i" >
@@ -361,10 +369,10 @@
   <h3><fmt:message key="info.uploadnew"/></h3>
 
   <wiki:Permission permission="upload">
-  <form action="<wiki:Link context='att' format='url' absolute='true'/>"
+  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>" 
          class="wikiform"
           name="uploadform"
-      onsubmit="return Wiki.submitOnce( this );"
+      onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');"
         method="post" accept-charset="<wiki:ContentEncoding/>"
        enctype="multipart/form-data" >
 
@@ -391,9 +399,10 @@
     <td></td>
     <td>
     <input type="submit" name="upload" value="Upload" style="display:none;"/>
-    <input type="button" name="uploax" value="<fmt:message key='info.uploadnew.submit' />" onclick="this.form.upload.click();"/>
+    <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>" id="uploax" onclick="this.form.upload.click();"/>
     <input type="hidden" name="action"  value="upload" />
     <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format='url'/>" />
+        <div id="progressbar" style="display:none;"><div class="ajaxprogress"></div></div>
     </td>
   </tr>
   </table>

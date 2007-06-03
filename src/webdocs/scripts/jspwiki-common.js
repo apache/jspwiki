@@ -293,14 +293,14 @@ var Wiki = {
 			hover = more.getParent().effect('opacity', {wait:false}).set(0),
 			selection = $('actionsMore');
 
-		more.getParent().getParent().show()
+		$('actionsMoreLink').show()
 		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
 			.addEvent('mouseover',(function(){ hover.start(0.9) }).bind(this));
 		
 		$A(selection.options).each(function(o){
 			if(o.value == "") return;
 			if(o.value == "separator"){
-				new Element('li',{'class':o.className}).setHTML(o.text).inject(more); 
+				new Element('hr').inject(more); 
 			} else {
 				new Element('a',{'class':o.className, 'href':o.value}).setHTML(o.text)
 				.inject( new Element('li').inject(more) );
@@ -318,14 +318,14 @@ var Wiki = {
 
 		var target = el = $(h);
 
-		//walk ancestor list to ensure visibility
+		//FIXME!  walk ancestor list to ensure visibility
 		while( $type(el) == 'element' ){
 			if( el.hasClass('hidetab') ){
 				TabbedSection.onclick( el ); 
 			} else if( el.hasClass('tab') ){
 				//fixme need to jump to the correct toggler
-				alert(el.className+' '+el.getPrevious().className);
-				//node.getPrevious().fireEvent('onClick');
+				//alert(el.className+' '+el.getPrevious().className);
+				//el.getPrevious().fireEvent('onclick');
 			} else if( /*(node.style) &&*/ el.visible() ){
 				//alert('visible');
 				//fixme need to find the correct toggler
@@ -342,8 +342,74 @@ var Wiki = {
 			if( e.type.toLowerCase() == 'button') e.disabled = true;
 		});
 		return true;
+	},
+
+	submitUpload: function(form, progress){
+		$('progressbar').show();
+		this.progressbar =
+		Wiki.jsonrpc.periodical(50, this, ["progressTracker.getProgress",[progress],function(result){
+			if(!result.code) $('progressbar').getFirst().setStyle('width',result+'%').setHTML(result+'%');
+		}]);
+
+		return Wiki.submitOnce(form);
+	},
+
+	JSONid : 10000,
+	jsonrpc: function(method, params, fn) {	
+		new Ajax( Wiki.BaseURL+'JSON-RPC', {
+			postBody: Json.toString({"id":Wiki.JSONid++, "method":method, "params":params}), 
+			method: 'post', 
+			onComplete: function(result){ 
+				var r = Json.evaluate(result,true);
+				if(!r) return
+				if(r.result) fn(r.result);
+				else if(r.error) fn(r.error);
+			}
+		}).request();
+	}	
+}
+
+/* FIXME: redundant with Wiki.jsonrpc */
+/* Helps in making JSPWiki AJAX calls.  Based on mootools code.
+ * Usage: WikiAjax.request( [callback,] method, args... ).
+ */
+var WikiAjax = {
+	request : function(){
+		var args = [];
+		var callback = null;
+		for(var i=0;i<arguments.length;i++) args.push(arguments[i]);
+		if(typeof args[0] == "function") callback = args.shift();
+		var method = args.shift();
+
+		var AjaxRequest = new Ajax( Wiki.BaseURL+'JSON-RPC', {
+			postBody: Json.toString({
+				"id": Wiki.JSONid++, "method": method, "params": args
+			}), 
+			method: 'post', 
+			onComplete: function(result){ 
+				var r = Json.evaluate(result,true);
+				if( !r ) return;
+
+				if( r.error )
+				{
+					e = r.error;
+					if( e.code == 590 )
+						alert( "AJAX Parse Error" );
+					else if( e.code == 591 )
+						alert( "No such method" );
+					else if( e.code == 490 )
+						alert( "Remote exception "+e.msg );
+					else
+						alert( "AJAX error "+e.code );
+						
+					return;
+				}
+				
+				if( !r.result ) return;
+				callback(r.result);
+			}
+		}).request();
 	}
-	
 }
 
 
@@ -815,8 +881,9 @@ var TabbedSection = {
 			tab.removeClass('hidetab').show();
 			break;
 		}
-		
-		//location.hash=tabID;
+		/*
+		location.hash=tabID; //nok screens jumps to much
+		*/
 	}
 }
 
@@ -861,7 +928,8 @@ var WikiAccordion = {
 
 			new Accordion(toggles, contents, {     
 				alwaysHide: !togglemenu,
-				onComplete: function(){
+				//FIXME 
+				xxonComplete: function(){
 							var el = this.elements[this.previous];
 							if (el.offsetHeight > 0) el.setStyle('height', 'auto');  
 				},
@@ -895,7 +963,7 @@ var SearchBox = {
 		q.form.addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
 			//FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
-			  .addEvent('mouseout',function(){ if(!this.hasfocus) this.hover.start(0) }.bind(this))
+			  .addEvent('mouseout',function(){ this.hover.start(0) }.bind(this))
 			  .addEvent('mouseover',function(){ this.hover.start(0.9) }.bind(this));
 		
 		this.hover = $('searchboxMenu').setProperty('visibility','visible')
@@ -985,52 +1053,18 @@ var SearchBox = {
 		$('searchTarget').setHTML( "("+qv+") :" );
 		$('searchSpin').show();
 
-		/*
-		new Ajax( Wiki.TemplateDir+'AJAXCompactSearch.jsp', {
-			update: 'searchOutput', 
-			postBody: $('searchForm').toQueryString(), 
-			method: 'post', 
-			onComplete: function(){ $('searchSpin').hide(); }
-		}).request();
-		*/
-
-		/*
-		new Ajax( Wiki.BaseURL+'JSON-RPC', {
-			postBody: Json.toString({
-				"id": Wiki.JSONid++, "method": "search.getSuggestions", "params": [qv, 20]
-			}), 
-			method: 'post', 
-			onComplete: function(result){ 
+		Wiki.jsonrpc('search.findPages', [qv,20], function(result){
 				$('searchSpin').hide(); 
-				var s = ["<ul>"];
-				Json.evaluate(result).result.list.each(function(el){
-					s.push( "<li><a href='"+Wiki.BaseURL+"Wiki.jsp?page="+el+"'>"+el+"</a></li>");
+				if(!result.list) return;
+				var frag = new Element('ul');
+				result.list.each(function(el){
+					new Element('li').adopt( 
+						new Element('a',{'href':Wiki.BaseURL+"Wiki.jsp?page="+el.map.page}).setHTML(el.map.page), 
+						new Element('span',{'class':'small'}).setHTML("("+el.map.score+")")
+					).injectInside(frag);
 				});
-				s.push("</ul>");
-				$('searchOutput').empty().setHTML(s.join(''));
-			}
-		}).request();
-		*/
-
-		new Ajax( Wiki.BaseURL+'JSON-RPC', {
-			postBody: Json.toString({
-				"id": Wiki.JSONid++, "method": "search.findPages", "params": [qv, 20]
-			}), 
-			method: 'post', 
-			onComplete: function(result){ 
-				$('searchSpin').hide(); 
-				var r = Json.evaluate(result,true),
-					s = ["<ul>"];
-				if(!r || !r.result || !r.result.list) return; /*not safe*/
-				//FIXME : to be mootooled
-				r.result.list.each(function(el){
-					s.push( "<li><a href='"+Wiki.BaseURL+"Wiki.jsp?page="+el.map.page+"'>"+el.map.page+"</a>");
-					s.push( " <span class='small'>("+el.map.score+")</span></li>");
-				});
-				s.push("</ul>");
-				$('searchOutput').empty().setHTML(s.join(''));
-			}
-		}).request();
+				$('searchOutput').empty().adopt(frag);
+		});
 	} ,
 
 
@@ -1160,10 +1194,10 @@ var GraphBar =
 			for(var pi=0; pi < parms.length; pi++){
 				p = parms[pi];
 				if(p == "vertical")	{ isHorizontal = false; }
-				else if(p == "progress")	{ isProgress = true;  }
-				else if(p == "gauge")	{ isGauge = true; }
-				else if(p.indexOf("min") == 0)	{ lbound = parseInt( p.substr(3), 10 ); }
-				else if(p.indexOf("max") == 0)	{ ubound = parseInt( p.substr(3), 10 ); }
+				else if(p == "progress") { isProgress = true;  }
+				else if(p == "gauge") { isGauge = true; }
+				else if(p.indexOf("min") == 0) { lbound = parseInt( p.substr(3), 10 ); }
+				else if(p.indexOf("max") == 0) { ubound = parseInt( p.substr(3), 10 ); }
 				else {
 					p = WikiColors.parse( p );
 					if(!color1) color1 = p; 
@@ -1187,7 +1221,7 @@ var GraphBar =
 			var barData = this.parseBarData( bars, lbound, ubound );
 
 			/* modify DOM for each bar element */
-			var e = new Element( "span" ).addClass('graphBar').setHTML('&nbsp;');
+			var e = new Element('span',{'class':'graphBar'}).setHTML('&nbsp;');
 
 			//alert( color1+" " +color2);
 			bars.each(function(b,j){
@@ -1249,7 +1283,7 @@ var GraphBar =
 
 	parseBarData: function( nodes, lbound, ubound )
 	{
-		var barData = [], count = nodes.length; maxValue = Number.MIN_VALUE, minValue = Number.MAX_VALUE;
+		var barData = [], count = nodes.length, maxValue = Number.MIN_VALUE, minValue = Number.MAX_VALUE;
 		var span = ubound - lbound;
 
 		var isnum = true, isdate = true;
@@ -1271,6 +1305,7 @@ var GraphBar =
 			barData[j] = k;
 		}
 
+		if(maxValue==minValue) maxValue=minValue+1; /* avoid div by 0 */
 		for( var j=0; j < count; j++ ){ /* scale values */
 			barData[j] = parseInt( (span * (barData[j]-minValue) / (maxValue-minValue) ) + lbound ) ;
 		}
@@ -2054,47 +2089,6 @@ var WikiPrettify = {
 	}
 }
 
-/* Helps in making JSPWiki AJAX calls.  Based on mootools code.
- * Usage: WikiAjax.request( [callback,] method, args... ).
- */
-var WikiAjax = {
-	request : function(){
-		var args = [];
-		var callback = null;
-		for(var i=0;i<arguments.length;i++) args.push(arguments[i]);
-		if(typeof args[0] == "function") callback = args.shift();
-		var method = args.shift();
-
-		var AjaxRequest = new Ajax( Wiki.BaseURL+'JSON-RPC', {
-			postBody: Json.toString({
-				"id": Wiki.JSONid++, "method": method, "params": args
-			}), 
-			method: 'post', 
-			onComplete: function(result){ 
-				var r = Json.evaluate(result,true);
-				if( !r ) return;
-
-				if( r.error )
-				{
-					e = r.error;
-					if( e.code == 590 )
-						alert( "AJAX Parse Error" );
-					else if( e.code == 591 )
-						alert( "No such method" );
-					else if( e.code == 490 )
-						alert( "Remote exception "+e.msg );
-					else
-						alert( "AJAX error "+e.code );
-						
-					return;
-				}
-				
-				if( !r.result ) return;
-				callback(r.result);
-			}
-		}).request();
-	}
-}
 
 window.addEvent('load', function(){
 

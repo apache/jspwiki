@@ -4,18 +4,6 @@
 <fmt:setBundle basename="templates.default"/>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 
-<%
-  //  Determine the name for the user's favorites page
-  WikiContext c = WikiContext.findContext( pageContext );
-  String pagename = c.getName();
-  String username = null;
- 
-  username = c.getEngine().getVariable( c, "username" );
-  if( username == null ) username = "";
-
-  String myFav = username + "Favorites";
-%>
-
 <div id="favorites">
 
   <div class="username">
@@ -37,16 +25,14 @@
     </wiki:UserCheck>
   </div>
   
-  <%-- myfavorites ; TODO: move to Test plugin inside LeftMenu page --%>
   <wiki:UserCheck status="known">
-  <wiki:PageExists page="<%=myFav %>">
-    <div class="collapsebox">
-      <h4>
-        <wiki:Link page="<%=myFav %>" ><fmt:message key="fav.myfavorites"/></wiki:Link>
-      </h4>
-      <wiki:InsertPage page="<%=myFav %>"/>
-    </div>
-  </wiki:PageExists>
+  <wiki:Translate>[{Test page='{$username}Favorites'
+
+%%collapsebox-closed
+! [My Favorites|{$username}Favorites]
+[{InsertPage page='{$username}Favorites' }]
+%% }]
+  </wiki:Translate>
   </wiki:UserCheck>
   
   <%-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" --%>

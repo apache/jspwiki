@@ -86,8 +86,7 @@
        onkeyup="getSuggestions(this.id)"
        onclick="setCursorPos(this.id)" 
       onchange="setCursorPos(this.id)"
-          rows="<c:out value='${prefEditAreaHeight}' />"
-          cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+          rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
     <p>
     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
@@ -125,21 +124,33 @@
 <form class='wikiform'>
 <p>
 <%-- Search and replace section --%>
+  <span style="white-space:nowrap;">
   <label for="tbFIND"><fmt:message key="editor.plain.find"/></label>
   <input type="text" name="tbFIND" id="tbFIND" size="16" />
+  </span>
+  <span style="white-space:nowrap;">
   <label for="tbREPLACE"><fmt:message key="editor.plain.replace"/></label>
   <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
+  </span>
+  <span style="white-space:nowrap;">
   <input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
   <label for="tbMatchCASE"><fmt:message key="editor.plain.matchcase"/></label>
+  </span>
+  <span style="white-space:nowrap;">
   <input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
   <label for="tbREGEXP"><fmt:message key="editor.plain.regexp"/></label>
+  </span>
+  <span style="white-space:nowrap;">
   <input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked />
   <label for="tbGLOBAL"><fmt:message key="editor.plain.global"/></label>
+  </span>
+  <span style="white-space:nowrap;">
   <input type="button" name="replace" id="replace" value="<fmt:message key='editor.plain.find.submit' />" 
   onmousedown="EditTools.doReplace()" />
   <input type="button" name="tbREDO" id="tbREDO" value="<fmt:message key='editor.plain.redo.submit' />" 
   onmousedown="EditTools.redoTextarea()" title="Redo" disabled />
   <input type="button" name="tbUNDO" id="tbUNDO" value="<fmt:message key='editor.plain.undo.submit' />" 
   onmousedown="EditTools.undoTextarea()" title="<fmt:message key='editor.plain.undo.title' />" disabled accesskey="z"/>
+  </span>
 </p>
 </form>

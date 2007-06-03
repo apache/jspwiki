@@ -31,7 +31,8 @@
 
   <div id="page">
     <wiki:TabbedSection defaultTab="attachments" >
-      <wiki:Tab id="pagecontent" title="View" accesskey="v" url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
+      <wiki:Tab id="pagecontent" title="View" accesskey="v" 
+			   url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
         <%--<wiki:Include page="PageTab.jsp"/> --%>
       </wiki:Tab>
       <wiki:PageExists>

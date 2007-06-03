@@ -13,34 +13,6 @@
   String progressId = wikiContext.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
 
-<script language="JavaScript">
-function popUp(URL) {
-	day = new Date();
-	id = day.getTime();
-	alert(URL);
-	//id = <%= progressId %>;
-	eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=20,left = 240,top = 502');");
-	//FIXME: use inline ajax call instead of popup
-
-/*
-	new Ajax( Wiki.BaseURL+'JSON-RPC', {
-		postBody: Json.toString({
-		"id": JSONRPC.id++, "method": "progressTracker.getProgress", "params": [<%= progressId %>]
-		}),
-		method: 'post',
-		onComplete: function(result){
-			$('searchSpin').hide();
-			var r = Json.evaluate(result,true);
-
-			alert(r);
-			//and put progress indicator into body html
-		}
-	}).request();
-*/
-
-
-}
-</script>
 <h3><fmt:message key="attach.add"/></h3>
 <wiki:Permission permission="upload">
   <wiki:Permission permission="upload">
@@ -48,7 +20,7 @@ function popUp(URL) {
          class="wikiform"
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>"
-      onsubmit="return Wiki.submitOnce( this );" >
+      onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');" >
     <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
 
     <table>
@@ -57,7 +29,7 @@ function popUp(URL) {
     </tr>
     <tr>
       <td><label for="content"><fmt:message key="attach.add.selectfile"/></label></td>
-      <td><input type="file" name="content" id="content" size="32"/></td>
+      <td><input type="file" name="content" id="content" size="60"/></td>
     </tr>
     <tr>
       <td><label for="changenote"><fmt:message key="attach.add.changenote"/></label></td>
@@ -69,9 +41,10 @@ function popUp(URL) {
       <td></td>
       <td>
         <input type="submit" name="upload" value="Upload<fmt:message key='attach.add.submit'/>" style="display:none;"/>
-        <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>"
-        	onclick="popUp('<wiki:Link jsp='ProgressPopup.jsp' format='url'><wiki:Param name='id' value='<%=progressId%>'/></wiki:Link>'); this.form.upload.click();"/>
-        <input type="hidden" name="action" value="upload" /></td>
+        <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>" id="uploax" 
+        	onclick="this.form.upload.click();"/>
+        <input type="hidden" name="action" value="upload" />
+        <div id="progressbar" style="display:none;"><div class="ajaxprogress"></div></div>
       </td>
     </tr>
     </wiki:Permission>
@@ -148,7 +121,7 @@ function popUp(URL) {
           <input type="button"
                 value="<fmt:message key='attach.delete'/>"
                   src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
-              onclick="alert(this.src);$('deleteForm').setAttribute('action', this.src); $('delete-all').click();" />
+              onclick="$('deleteForm').setProperty('action',this.src); $('delete-all').click();" />
       </td>
       </wiki:Permission>
       <td>
