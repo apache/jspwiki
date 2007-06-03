@@ -31,12 +31,12 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
     public void testAnchor() throws Exception
     {
         assertEquals(
-                     "[startup.bat] ",
+                     "[startup.bat]",
                      html2wiki
-                             .translate( " <a class=\"attachment\" href=\"attach?page=startup.bat\">startup.bat</a><a href=\"PageInfo.jsp?page=startup.bat\"><img src=\"images/attachment_small.png\" alt=\"(att)\" border=\"0\"></a> " ) );
+                             .translate( " <a class=\"attachment\" href=\"attach?page=startup.bat\">startup.bat</a><a href=\"PageInfo.jsp?page=startup.bat\"><img src=\"images/attachment_small.png\" alt=\"(att)\" border=\"0\"></a>" ) );
 
        assertEquals(
-                     "[http://www.startup.de] ",
+                     "[http://www.startup.de]",
                      html2wiki
                              .translate( "<a class=\"external\" href=\"http://www.startup.de\">http://www.startup.de</a><img class=\"outlink\" src=\"images/out.png\" alt=\"\">" ) );
 
@@ -46,13 +46,13 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
                                  + "<table class=\"imageplugin\" align=\"left\" border=\"0\">\r\n" + "\r\n" + "<tbody>\r\n"
                                  + "</tbody></table>\r\n" + "\r\n" + "</p><p>\r\n" + "</p>" ) );
 
-       assertEquals( "[ThisPageDoesNotExist] ", html2wiki
+       assertEquals( "[ThisPageDoesNotExist]", html2wiki
                      .translate( "<a href=\"Edit.jsp?page=ThisPageDoesNotExist\">ThisPageDoesNotExist</a>" ) );
 
-       assertEquals( "[/JSPWiki/wysiwyg/FCKeditor/editor/images/smiley/msn/sad_smile.gif] ", html2wiki
+       assertEquals( "[/JSPWiki/wysiwyg/FCKeditor/editor/images/smiley/msn/sad_smile.gif]", html2wiki
                      .translate( "<img src=\"/JSPWiki/wysiwyg/FCKeditor/editor/images/smiley/msn/sad_smile.gif\" alt=\"\"/>" ) );
 
-       assertEquals( "[AugumentedWikiLinks|AugumentedWikiLinks|title='my \"custom\" title' target='_blank'] ", html2wiki
+       assertEquals( "[AugumentedWikiLinks|AugumentedWikiLinks|title='my \"custom\" title' target='_blank']", html2wiki
                      .translate( "<a class=\"wikipage\" href=\"Wiki.jsp?page=AugumentedWikiLinks\" target=\"_blank\" title=\"my 'custom' title\">AugumentedWikiLinks</a>" ) );
     }
     
@@ -89,7 +89,7 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
                                         + "<tr><td> Fähigkeit</td><td> Bonus auf die Initiative von 1</td></tr></tbody></table></p><p>" ) );
 
        assertEquals(
-                    "| Name: [Christian|ChristianS] \\\\ Geschicklichkeit: 2 \\\\ Hang zu perversen Sexorgien. Jongliert mit Worten und Köpfen. \\\\ [Berian Nachtschleicher|Berian] \\\\ [XLerul] \\\\ [Effifot Erif]\n",
+                    "| Name: [Christian|ChristianS] \\\\ Geschicklichkeit: 2 \\\\ Hang zu perversen Sexorgien. Jongliert mit Worten und Köpfen. \\\\ [Berian Nachtschleicher|Berian] \\\\ [XLerul] \\\\ [Effifot Erif|EffifotErif]\n",
                     html2wiki
                             .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><td> Name: <a class=\"wikipage\" href=\"Wiki.jsp?page=ChristianS\">Christian</a> <br> Geschicklichkeit: 2 <br> Hang zu perversen Sexorgien. Jongliert mit Worten und Köpfen. <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=Berian\">Berian Nachtschleicher</a> <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=XLerul\">XLerul</a> <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=EffifotErif\">Effifot Erif</a></td></tr> </tbody></table>" ) );
 
@@ -112,9 +112,9 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
         assertEquals( "a\n\nb", html2wiki.translate( "a<p>\n</p>b" ) );        
 
         assertEquals(
-                     "\n\\\\__Willkommen__ \\\\ \\\\ Und niemand wird sie sehen \\\\ Eine Page ... \\\\ \\\\\n\nAls Unterthema\n",
+                     "\n\\\\\n__Willkommen__ \\\\\n\\\\\nUnd niemand wird sie sehen \\\\\nEine Page ...\n\nAls Unterthema\n",
                      html2wiki
-                             .translate( "<p> <br><b>Willkommen</b> <br> <br> Und niemand wird sie sehen <br> Eine Page ... <br> <br> </p><p> Als Unterthema</p><p>" ) );
+                             .translate( "<p><br />\n<strong>Willkommen</strong> <br />\n<br />\nUnd niemand wird sie sehen <br />\nEine Page ...</p>\n<p>Als Unterthema</p>" ) );
 
         assertEquals( "\n\u00A0\n\nTop\n\nBottom\n\n\n", html2wiki.translate( "<p>&nbsp;</p><p>Top</p>\n<p></p>\n<p></p>\n<p>Bottom</p> <p> </p>" ) );
     }
@@ -143,9 +143,9 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
         assertEquals( "\n* Punkt 1\n*# Punkt 2\n\n", html2wiki.translate( "<ul><li>Punkt 1<ol><li>Punkt 2</li></ol></li></ul>" ) );
 
         assertEquals(
-                     "\n* eins\n* zwei\n* drei\n\n# eins\n# zwei\n# drei\n\n* ober\n\n** unter\n\n*** unter-unter\n\n**** unter-unter-unter\n\n# ober\n\n## unter\n\n### unter-unter\n\n#### unter-unter-unter\n#### unter-unter-unter\n### unter-unter\n\n* ober\n\n*# unter\n\n*## unter\n\n# ober\n\n#* unter\n\n#** unter\n\n",
+                     "\n# list item 1\n# list item 2\n## list item 2.1\n##* list item 2.1.1\n##* list item 2.1.2\n## list item 2.2\n# list item 3\n## list item 3.1\n##* list item 3.1.1\n## list item 3.2\n# list item 4\n",
                      html2wiki
-                             .translate( "<ul> <li> eins </li> <li> zwei </li> <li> drei </li> </ul> <p> </p><ol> <li> eins </li> <li> zwei </li> <li> drei </li> </ol> <p></p><p> </p><ul> <li> ober </li> <ul> <li> unter </li> <ul> <li> unter-unter </li> <ul> <li> unter-unter-unter </li> </ul> </ul> </ul> </ul> <p></p><p> </p><ol> <li> ober </li> <ol> <li> unter </li> <ol> <li> unter-unter </li> <ol> <li> unter-unter-unter </li> <li> unter-unter-unter </li> </ol> <li> unter-unter </li> </ol> </ol> </ol> <p></p><p> </p><p> </p><ul> <li> ober </li> <ol> <li> unter </li> <ol> <li> unter </li> </ol> </ol> </ul> <p></p><p> </p><p> </p><ol> <li> ober </li> <ul> <li> unter </li> <ul> <li> unter </li> </ul> </ul> </ol> <p></p><p> </p>" ) );
+                             .translate( "<ol> <li>list item 1</li> <li>list item 2 <ol> <li>list item 2.1 <ul> <li>list item 2.1.1</li> <li>list item 2.1.2</li> </ul> </li> <li>list item 2.2</li> </ol> </li> <li>list item 3 <ol> <li>list item 3.1 <ul> <li>list item 3.1.1</li> </ul> </li> <li>list item 3.2</li> </ol> </li> <li>list item 4</li> </ol>" ) );
 
         assertEquals(
                      "\n* Diese Karte kann von jedem editiert und um neue Links erweitert werden. \\\\Klickt einfach unten neben der Karte auf {{{[edit]}}}\n",
@@ -195,7 +195,7 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
     
     public void testCenter() throws Exception
     {
-        assertEquals( "\n%%( text-align: center; )\nHello \\\\World!\n%%\n", html2wiki
+        assertEquals( "\n%%( text-align: center; )\nHello \\\\\nWorld!\n%%\n", html2wiki
                       .translate( "<div style=\"text-align: center;\">Hello<br>World!</div>" ) );
 
               assertEquals( "__%%( text-align: center; display: block; )Hello \\\\World!%%__", html2wiki
