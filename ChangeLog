@@ -1,3 +1,9 @@
+2007-06-04  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.75
+
+       * Performance optimization to JSONSearch.
+
 2007-06-03  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.74
