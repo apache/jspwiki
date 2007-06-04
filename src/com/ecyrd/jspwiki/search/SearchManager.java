@@ -135,7 +135,13 @@ public class SearchManager
             {
                 try
                 {
-                    Collection c = m_searchProvider.findPages( searchString );
+                    Collection c;
+                    
+                    if( m_searchProvider instanceof LuceneSearchProvider )
+                        c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
+                    else
+                        c = m_searchProvider.findPages( searchString );
+                        
                     int count = 0;
                     for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {

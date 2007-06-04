@@ -486,9 +486,18 @@ public class LuceneSearchProvider implements SearchProvider
     public Collection findPages( String query )
         throws ProviderException
     {
+        return findPages( query, FLAG_CONTEXTS );
+    }
+    
+    public static final int FLAG_CONTEXTS = 0x01;
+    
+    public Collection findPages( String query, int flags )
+        throws ProviderException
+    {
         Searcher  searcher = null;
         ArrayList list     = null;
-
+        Highlighter highlighter = null;
+        
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };
@@ -497,9 +506,12 @@ public class LuceneSearchProvider implements SearchProvider
             //QueryParser qp = new QueryParser( LUCENE_PAGE_CONTENTS, getLuceneAnalyzer() );
             Query luceneQuery = qp.parse( query );
 
-            Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
-                                                      new SimpleHTMLEncoder(),
-                                                      new QueryScorer(luceneQuery));
+            if( (flags & FLAG_CONTEXTS) != 0 )
+            {
+                highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
+                                              new SimpleHTMLEncoder(),
+                                              new QueryScorer(luceneQuery));
+            }
 
             try
             {
@@ -535,7 +547,7 @@ public class LuceneSearchProvider implements SearchProvider
                     String text = doc.get(LUCENE_PAGE_CONTENTS);
 
                     String[] fragments = new String[0];
-                    if (text != null)
+                    if( text != null && highlighter != null )
                     {
                         TokenStream tokenStream = getLuceneAnalyzer()
                         .tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text));
