@@ -731,7 +731,7 @@ public class AttachmentServlet
 
         public int getProgress()
         {
-            return (int) (((float)m_currentBytes / m_totalBytes) * 100);
+            return (int) (((float)m_currentBytes / m_totalBytes) * 100 + 0.5);
         }
     }
 
