@@ -33,6 +33,7 @@ import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
 
 /**
  *  <p>Manages WikiSession's for different WikiEngine's.</p>
@@ -244,12 +245,15 @@ public class SessionMonitor implements HttpSessionListener
     }
 
     /**
-     * No-op method that fires when the web container creates a new HTTP session.
+     * Fires when the web container creates a new HTTP session.
+     * 
      * @param se the HTTP session event
      */
     public void sessionCreated( HttpSessionEvent se )
     {
-        // No Action Needed when session created
+        HttpSession session = se.getSession();
+        
+        JSONRPCManager.sessionCreated(session);
     }
 
     /**
