@@ -2,6 +2,10 @@
 
        * 2.5.75
 
+       * JSON interface now actually checks whether the user has
+       permission to call the methods.  This was a relatively major
+       security hole... :-)
+
        * Performance optimization to JSONSearch.
 
 2007-06-03  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
