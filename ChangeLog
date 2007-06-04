@@ -1,3 +1,12 @@
+2007-06-03  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+       * Same version
+
+       * Progress bar fixed to run on Safari or Opera as well.
+       It uses now css style visibility:hidden iso display:none.
+       
+       * Minor css fixes.
+
 2007-06-04  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.75

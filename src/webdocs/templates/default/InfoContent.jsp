@@ -402,7 +402,7 @@
     <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>" id="uploax" onclick="this.form.upload.click();"/>
     <input type="hidden" name="action"  value="upload" />
     <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format='url'/>" />
-        <div id="progressbar" style="display:none;"><div class="ajaxprogress"></div></div>
+        <div id="progressbar"><div class="ajaxprogress"></div></div>
     </td>
   </tr>
   </table>

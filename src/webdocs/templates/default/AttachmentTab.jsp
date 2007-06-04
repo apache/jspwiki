@@ -44,7 +44,7 @@
         <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>" id="uploax" 
         	onclick="this.form.upload.click();"/>
         <input type="hidden" name="action" value="upload" />
-        <div id="progressbar" style="display:none;"><div class="ajaxprogress"></div></div>
+        <div id="progressbar"><div class="ajaxprogress"></div></div>
       </td>
     </tr>
     </wiki:Permission>

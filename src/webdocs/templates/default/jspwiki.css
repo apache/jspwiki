@@ -66,6 +66,7 @@
 }
 #actionsBottom {
 	text-align:right;
+	position:relative;
 }
 
 
@@ -378,6 +379,7 @@ td .error {
 	margin-left:1em;
 	width:30em;
 	border:2px solid #bbb;
+	visibility:hidden;
 }
 #progressbar .ajaxprogress {
 	background:url(images/progress.gif) repeat-x;
@@ -385,7 +387,6 @@ td .error {
 	text-align:center;
 	width:0%;
 }
-
 .attachtype {
 	line-height:1.6;
 	font-size:11px;
@@ -722,7 +723,6 @@ body.comment {
  	overflow:hidden;
 	padding:0; 
 	text-indent:20px;
-	top:0; 
  	width:20px; 
 }
 .quick2top a {

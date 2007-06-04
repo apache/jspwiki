@@ -345,7 +345,7 @@ var Wiki = {
 	},
 
 	submitUpload: function(form, progress){
-		$('progressbar').show();
+		$('progressbar').setStyle('visibility','visible');
 		this.progressbar =
 		Wiki.jsonrpc.periodical(1000, this, ["progressTracker.getProgress",[progress],function(result){
 			if(!result.code) $('progressbar').getFirst().setStyle('width',result+'%').setHTML(result+'%');

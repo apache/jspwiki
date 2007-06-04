@@ -26,7 +26,7 @@
   </div>
   
   <wiki:UserCheck status="known">
-  <wiki:Translate>[{Test page='{$username}Favorites'
+  <wiki:Translate>[{TEST page='{$username}Favorites'
 
 %%collapsebox-closed
 ! [My Favorites|{$username}Favorites]
