@@ -117,6 +117,9 @@ public class WikiEngine
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL      = "jspwiki.baseURL";
 
+    /** The name for the property which allows you to set the current reference
+     *  style.  The value is {@value}.
+     */
     public static final String PROP_REFSTYLE     = "jspwiki.referenceStyle";
 
     /** Property name for the "spaces in titles" -hack. */
@@ -1754,6 +1757,11 @@ public class WikiEngine
      *  <P>
      *  The query is dependent on the actual chosen search provider - each one of them has
      *  a language of its own.
+     *  
+     *  @param query The query string
+     *  @return A Collection of SearchResult objects.
+     *  @throws ProviderException If the searching failed
+     *  @throws IOException       If the searching failed
      */
 
     //
@@ -1875,9 +1883,10 @@ public class WikiEngine
 
     /**
      *  Returns this object's ReferenceManager.
+     *  @return The current ReferenceManager instance.
+     *  
      *  @since 1.6.1
      */
-    // (FIXME: We may want to protect this, though...)
     public ReferenceManager getReferenceManager()
     {
         return m_referenceManager;
@@ -1897,6 +1906,7 @@ public class WikiEngine
     /**
      *  Returns the current plugin manager.
      *  @since 1.6.1
+     *  @return The current PluginManager instance
      */
 
     public PluginManager getPluginManager()
@@ -1939,6 +1949,8 @@ public class WikiEngine
     /**
      *  Returns the current PageManager which is responsible for storing
      *  and managing WikiPages.
+     *  
+     *  @return The current PageManager instance.
      */
     public PageManager getPageManager()
     {
@@ -1959,6 +1971,7 @@ public class WikiEngine
      *  storing and managing attachments.
      *
      *  @since 1.9.31.
+     *  @return The current AttachmentManager instance
      */
     public AttachmentManager getAttachmentManager()
     {
@@ -1967,6 +1980,8 @@ public class WikiEngine
 
     /**
      *  Returns the currently used authorization manager.
+     *  
+     *  @return The current AuthorizationManager instance
      */
     public AuthorizationManager getAuthorizationManager()
     {
@@ -1975,6 +1990,8 @@ public class WikiEngine
 
     /**
      *  Returns the currently used authentication manager.
+     *  
+     *  @return The current AuthenticationManager instance.
      */
     public AuthenticationManager getAuthenticationManager()
     {
@@ -1984,6 +2001,7 @@ public class WikiEngine
     /**
      *  Returns the manager responsible for the filters.
      *  @since 2.1.88
+     *  @return The current FilterManager instance
      */
     public FilterManager getFilterManager()
     {
@@ -1993,6 +2011,7 @@ public class WikiEngine
     /**
      *  Returns the manager responsible for searching the Wiki.
      *  @since 2.2.21
+     *  @return The current SearchManager instance
      */
     public SearchManager getSearchManager()
     {
@@ -2029,6 +2048,10 @@ public class WikiEngine
      *  using a default wiki context.
      *  @param request the HTTP request
      *  @param requestContext the default context to use
+     *  @return a new WikiContext object.
+     *  
+     *  @see com.ecyrd.jspwiki.ui.CommandResolver
+     *  @see com.ecyrd.jspwiki.ui.Command
      *  @since 2.1.15.
      */
     // FIXME: We need to have a version which takes a fixed page
@@ -2050,8 +2073,8 @@ public class WikiEngine
      *  Deletes a page or an attachment completely, including all versions.  If the page
      *  does not exist, does nothing.
      *
-     * @param pageName
-     * @throws ProviderException
+     * @param pageName The name of the page.
+     * @throws ProviderException If something goes wrong.
      */
     public void deletePage( String pageName )
         throws ProviderException
@@ -2082,8 +2105,8 @@ public class WikiEngine
     /**
      *  Deletes a specific version of a page or an attachment.
      *
-     * @param page
-     * @throws ProviderException
+     *  @param page The page object.
+     *  @throws ProviderException If something goes wrong.
      */
     public void deleteVersion( WikiPage page )
         throws ProviderException
@@ -2102,6 +2125,7 @@ public class WikiEngine
      *  Returns the URL of the global RSS file.  May be null, if the
      *  RSS file generation is not operational.
      *  @since 1.7.10
+     *  @return The global RSS url
      */
     public String getGlobalRSSURL()
     {
@@ -2114,7 +2138,11 @@ public class WikiEngine
     }
 
     /**
-     * @since 2.2
+     *  Returns the root path.  The root path is where the WikiEngine is
+     *  located in the file system.
+     *  
+     *  @since 2.2
+     *  @return A path to where the Wiki is installed in the local filesystem.
      */
     public String getRootPath()
     {
@@ -2165,14 +2193,9 @@ public class WikiEngine
     }
 
     /**
-     * Returns the UserDatabase employed by this WikiEngine.
-     * The UserDatabase is lazily initialized.
-     * @since 2.3
-     */
-
-    /**
-     * Returns the UserManager employed by this WikiEngine.
-     * @since 2.3
+     *  Returns the UserManager employed by this WikiEngine.
+     *  @since 2.3
+     *  @return The current UserManager instance.
      */
     public UserManager getUserManager()
     {
@@ -2180,23 +2203,31 @@ public class WikiEngine
     }
 
     /**
-     * Returns the GroupManager employed by this WikiEngine.
-     * @since 2.3
+     *  Returns the GroupManager employed by this WikiEngine.
+     *  @since 2.3
+     *  @return The current GroupManager instance
      */
     public GroupManager getGroupManager()
     {
         return m_groupManager;
     }
 
+    /**
+     *  Returns the current AdminBeanManager.
+     *  
+     *  @return The current AdminBeanManager
+     *  @since  2.6
+     */
     public AdminBeanManager getAdminBeanManager()
     {
         return m_adminBeanManager;
     }
 
     /**
-     * Returns the AclManager employed by this WikiEngine.
-     * The AclManager is lazily initialized.
-     * @since 2.3
+     *  Returns the AclManager employed by this WikiEngine.
+     *  The AclManager is lazily initialized.
+     *  @since 2.3
+     *  @return The current AclManager.
      */
     public AclManager getAclManager()
     {
@@ -2210,20 +2241,29 @@ public class WikiEngine
     }
 
     /**
-     * Returns the DifferenceManager so that texts can be compared.
-     * @return the difference manager
+     *  Returns the DifferenceManager so that texts can be compared.
+     *  @return the difference manager
      */
     public DifferenceManager getDifferenceManager()
     {
         return m_differenceManager;
     }
 
+    /**
+     *  Returns the current EditorManager instance.
+     *  
+     *  @return The current EditorManager.
+     */
     public EditorManager getEditorManager()
     {
         return m_editorManager;
     }
 
-
+    /**
+     *  Returns the current i18n manager.
+     *  
+     *  @return The current Intertan... Interante... Internatatializ... Whatever.
+     */
     public InternationalizationManager getInternationalizationManager()
     {
         return m_internationalizationManager;
