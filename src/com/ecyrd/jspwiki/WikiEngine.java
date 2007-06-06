@@ -270,31 +270,36 @@ public class WikiEngine
     public static synchronized WikiEngine getInstance( ServletConfig config )
         throws InternalWikiException
     {
-        return( getInstance( config.getServletContext(), null ) );
+        return getInstance( config.getServletContext(), null );
     }
 
     /**
-     * Gets a WikiEngine related to the servlet. Works like getInstance(ServletConfig),
-     * but does not force the Properties object. This method is just an optional way
-     * of initializing a WikiEngine for embedded JSPWiki applications; normally, you
-     * should use getInstance(ServletConfig).
+     *  Gets a WikiEngine related to the servlet. Works like getInstance(ServletConfig),
+     *  but does not force the Properties object. This method is just an optional way
+     *  of initializing a WikiEngine for embedded JSPWiki applications; normally, you
+     *  should use getInstance(ServletConfig).
      *
-     * @param config The ServletConfig of the webapp servlet/JSP calling this method.
-     * @param props  A set of properties, or null, if we are to load JSPWiki's default
-     *               jspwiki.properties (this is the usual case).
+     *  @param config The ServletConfig of the webapp servlet/JSP calling this method.
+     *  @param props  A set of properties, or null, if we are to load JSPWiki's default
+     *                jspwiki.properties (this is the usual case).
+     *               
+     *  @return One well-behaving WikiEngine instance.
      */
     public static synchronized WikiEngine getInstance( ServletConfig config,
                                                        Properties props )
     {
-        return( getInstance( config.getServletContext(), props ) );
+        return getInstance( config.getServletContext(), props );
     }
 
     /**
-     * Gets a WikiEngine related to the servlet. Works just like getInstance( ServletConfig )
+     *  Gets a WikiEngine related to the servlet. Works just like getInstance( ServletConfig )
      *
-     * @param context The ServletContext of the webapp servlet/JSP calling this method.
-     * @param props  A set of properties, or null, if we are to load JSPWiki's default
-     *               jspwiki.properties (this is the usual case).
+     *  @param context The ServletContext of the webapp servlet/JSP calling this method.
+     *  @param props  A set of properties, or null, if we are to load JSPWiki's default
+     *                jspwiki.properties (this is the usual case).
+     *               
+     *  @return One fully functional, properly behaving WikiEngine.
+     *  @throws InternalWikiException If the WikiEngine instantiation fails.
      */
 
     // FIXME: Potential make-things-easier thingy here: no need to fetch the wikiengine anymore
@@ -337,6 +342,9 @@ public class WikiEngine
     /**
      *  Instantiate the WikiEngine using a given set of properties.
      *  Use this constructor for testing purposes only.
+     *  
+     *  @param properties A set of properties to use to initialize this WikiEngine.
+     *  @throws WikiException If the initialization fails.
      */
     public WikiEngine( Properties properties )
         throws WikiException
@@ -349,6 +357,12 @@ public class WikiEngine
      *  WikiEngine will figure out where to look for the property
      *  file.
      *  Do not use this method - use WikiEngine.getInstance() instead.
+     *  
+     *  @param context A ServletContext.
+     *  @param appid   An Application ID.  This application is an unique random string which
+     *                 is used to recognize this WikiEngine.
+     *  @param props   The WikiEngine configuration.
+     *  @throws WikiException If the WikiEngine construction fails.
      */
     protected WikiEngine( ServletContext context, String appid, Properties props )
         throws WikiException
@@ -608,7 +622,8 @@ public class WikiEngine
     /**
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
-     * @throws WikiException
+     * 
+     *  @throws WikiException If the reference manager initialization fails.
      */
     public void initReferenceManager() throws WikiException
     {
@@ -661,8 +676,12 @@ public class WikiEngine
     }
 
     /**
-     *  Internal method for getting a property.  This is used by the
-     *  TranslatorReader for example.
+     *  Returns the set of properties that the WikiEngine was initialized
+     *  with.  Note that this method returns a direct reference, so it's possible
+     *  to manipulate the properties.  However, this is not advised unless you
+     *  really know what you're doing.
+     *  
+     *  @return The wiki properties
      */
 
     public Properties getWikiProperties()
@@ -671,8 +690,10 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the JSPWiki working directory.
+     *  Returns the JSPWiki working directory set with "jspwiki.workDir".
+     *  
      *  @since 2.1.100
+     *  @return The working directory.
      */
     public String getWorkDir()
     {
@@ -694,22 +715,28 @@ public class WikiEngine
      *  Returns the current template directory.
      *
      *  @since 1.9.20
+     *  @return The template directory as initialized by the engine.
      */
     public String getTemplateDir()
     {
         return m_templateDir;
     }
 
+    /**
+     *  Returns the current TemplateManager.
+     *  
+     *  @return A TemplateManager instance.
+     */
     public TemplateManager getTemplateManager()
     {
         return m_templateManager;
     }
 
     /**
-     *  Returns the base URL.  Always prepend this to any reference
-     *  you make.
+     *  Returns the base URL, telling where this Wiki actually lives.
      *
      *  @since 1.6.1
+     *  @return The Base URL.
      */
 
     public String getBaseURL()
@@ -721,6 +748,7 @@ public class WikiEngine
      *  Returns the moment when this engine was started.
      *
      *  @since 2.0.15.
+     *  @return The start time of this wiki.
      */
 
     public Date getStartTime()
@@ -738,6 +766,8 @@ public class WikiEngine
      * pageName, in which case it will default to the front page.
      * </p>
      * @since 2.0.3
+     * @param pageName The name of the page.  May be null, in which case defaults to the front page.
+     * @return An absolute URL to the page.
      */
     public String getViewURL( String pageName )
     {
@@ -749,7 +779,11 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the basic URL to an editor.
+     *  Returns the basic URL to an editor.  Please use WikiContext.getURL() or 
+     *  WikiEngine.getURL() instead.
+     *  
+     *  @see #getURL(String, String, String, boolean)
+     *  @see WikiContext#getURL(String, String)
      *  @deprecated
      *
      *  @since 2.0.3
@@ -760,7 +794,11 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the basic attachment URL.
+     *  Returns the basic attachment URL.Please use WikiContext.getURL() or 
+     *  WikiEngine.getURL() instead.
+     *  
+     *  @see #getURL(String, String, String, boolean)
+     *  @see WikiContext#getURL(String, String)
      *  @since 2.0.42.
      *  @deprecated
      */
@@ -771,10 +809,12 @@ public class WikiEngine
 
     /**
      *  Returns an URL if a WikiContext is not available.
+     *  
      *  @param context The WikiContext (VIEW, EDIT, etc...)
      *  @param pageName Name of the page, as usual
      *  @param params List of parameters. May be null, if no parameters.
      *  @param absolute If true, will generate an absolute URL regardless of properties setting.
+     *  @return An URL (absolute or relative).
      */
     public String getURL( String context, String pageName, String params, boolean absolute )
     {
@@ -783,6 +823,8 @@ public class WikiEngine
 
     /**
      *  Returns the default front page, if no page is used.
+     *  
+     *  @return The front page name.
      */
 
     public String getFrontPage()
@@ -847,8 +889,9 @@ public class WikiEngine
     /**
      *  Returns the query string (the portion after the question mark).
      *
+     *  @param request The HTTP request to parse.
      *  @return The query string.  If the query string is null,
-     *   returns an empty string.
+     *          returns an empty string.
      *
      *  @since 2.1.3
      */
@@ -897,6 +940,7 @@ public class WikiEngine
     /**
      *  Returns an URL to some other Wiki that we know.
      *
+     *  @param  wikiName The name of the other wiki.
      *  @return null, if no such reference was found.
      */
     public String getInterWikiURL( String wikiName )
@@ -906,6 +950,8 @@ public class WikiEngine
 
     /**
      *  Returns a collection of all supported InterWiki links.
+     *  
+     *  @return A Collection of Strings.
      */
     public Collection getAllInterWikiLinks()
     {
@@ -926,6 +972,8 @@ public class WikiEngine
 
     /**
      *  Returns a collection of all image types that get inlined.
+     *  
+     *  @return A Collection of Strings with a regexp pattern.
      */
 
     public Collection getAllInlinedImagePatterns()
@@ -936,9 +984,17 @@ public class WikiEngine
     /**
      *  <p>If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns <code>null</code>.
-     *  This method delgates requests to
+     *  This method delegates requests to
      *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getSpecialPageReference(String)}.
      *  </p>
+     *  <p>
+     *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
+     *  setting.  They're typically used to give Wiki page names to e.g. custom JSP
+     *  pages.
+     *  </p>
+     *  
+     *  @param original The page to check
+     *  @return A reference to the page, or null, if there's no special page.
      */
     public String getSpecialPageReference( String original )
     {
@@ -947,6 +1003,8 @@ public class WikiEngine
 
     /**
      *  Returns the name of the application.
+     *  
+     *  @return A string describing the name of this application.
      */
 
     // FIXME: Should use servlet context as a default instead of a constant.
@@ -963,6 +1021,9 @@ public class WikiEngine
      *  this WikiEngine.  However, attachment names are only beautified by
      *  the name.
      *
+     *  @param title The title to beautify
+     *  @return A beautified title (or, if beautification is off, 
+     *          returns the title without modification)
      *  @since 1.7.11
      */
     public String beautifyTitle( String title )
@@ -996,6 +1057,8 @@ public class WikiEngine
      *  in suitable places.  This is really suitable only for HTML output,
      *  as it uses the &amp;nbsp; -character.
      *
+     *  @param title The title to beautify
+     *  @return A beautified title.
      *  @since 2.1.127
      */
     public String beautifyTitleNoBreak( String title )
@@ -1013,10 +1076,10 @@ public class WikiEngine
      *  any version as existing.  Will also consider attachments.
      *
      *  @param page WikiName of the page.
+     *  @return true, if page (or attachment) exists.
      */
     public boolean pageExists( String page )
     {
-
         Attachment att = null;
 
         try
@@ -1043,6 +1106,9 @@ public class WikiEngine
      *  requested version.
      *
      *  @param page Page name
+     *  @param version Page version
+     *  @return True, if page (or alias, or attachment) exists
+     *  @throws ProviderException If the provider fails.
      */
     public boolean pageExists( String page, int version )
         throws ProviderException
@@ -1083,7 +1149,10 @@ public class WikiEngine
     /**
      *  Returns true, if the requested page (or an alias) exists, with the
      *  specified version in the WikiPage.
-     *
+     *  
+     *  @param page A WikiPage object describing the name and version.
+     *  @return true, if the page (or alias, or attachment) exists.
+     *  @throws ProviderException If something goes badly wrong.
      *  @since 2.0
      */
     public boolean pageExists( WikiPage page )
@@ -1104,6 +1173,7 @@ public class WikiEngine
      *  @since 2.0
      *  @param page Page name.
      *  @return The rewritten page name, or null, if the page does not exist.
+     *  @throws ProviderException If something goes wrong in the backend.
      */
     public String getFinalPageName( String page )
         throws ProviderException
@@ -1116,12 +1186,15 @@ public class WikiEngine
      *  called through using an URL.
      *
      *  @since 1.4.1
+     *  @param pagename A name.  Can be actually any string.
+     *  @return A properly encoded name.
+     *  @see #decodeName(String)
      */
     public String encodeName( String pagename )
     {
         try
         {
-            return URLEncoder.encode( pagename, (m_useUTF8 ? "UTF-8" : "ISO-8859-1" ));
+            return URLEncoder.encode( pagename, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
         }
         catch( UnsupportedEncodingException e )
         {
@@ -1129,11 +1202,19 @@ public class WikiEngine
         }
     }
 
+    /**
+     *  Decodes a URL-encoded request back to regular life.  This properly heeds
+     *  the encoding as defined in the settings file.
+     *  
+     *  @param pagerequest The URL-encoded string to decode
+     *  @return A decoded string.
+     *  @see #encodeName(String)
+     */
     public String decodeName( String pagerequest )
     {
         try
         {
-            return URLDecoder.decode( pagerequest, (m_useUTF8 ? "UTF-8" : "ISO-8859-1") );
+            return URLDecoder.decode( pagerequest, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
         }
         catch( UnsupportedEncodingException e )
         {
@@ -1146,6 +1227,7 @@ public class WikiEngine
      *  supposed to be using right now.
      *
      *  @since 1.5.3
+     *  @return The content encoding (either UTF-8 or ISO-8859-1).
      */
     public String getContentEncoding()
     {
@@ -1221,6 +1303,10 @@ public class WikiEngine
      *  page text without any conversions, use getPureText().
      *
      *  @since 1.9.15.
+     *  @param context The WikiContext
+     *  @param page    A page reference (not an attachment)
+     *  @return The page content as HTMLized String.
+     *  @see   #getPureText(WikiPage)
      */
     public String getText( WikiContext context, WikiPage page )
     {
@@ -1282,6 +1368,10 @@ public class WikiEngine
     /**
      *  Returns the converted HTML of the page using a different
      *  context than the default context.
+     *  
+     *  @param  context A WikiContext in which you wish to render this page in.
+     *  @param  page WikiPage reference.
+     *  @return HTML-rendered version of the page.
      */
 
     public String getHTML( WikiContext context, WikiPage page )
@@ -1299,6 +1389,7 @@ public class WikiEngine
      *  Returns the converted HTML of the page.
      *
      *  @param page WikiName of the page to convert.
+     *  @return HTML-rendered version of the page.
      */
     public String getHTML( String page )
     {
@@ -1312,6 +1403,7 @@ public class WikiEngine
      *
      *  @param pagename WikiName of the page to convert.
      *  @param version Version number to fetch
+     *  @return HTML-rendered page text.
      */
     public String getHTML( String pagename, int version )
     {
@@ -1330,6 +1422,8 @@ public class WikiEngine
      *  Converts raw page data to HTML.
      *
      *  @param pagedata Raw page data to convert to HTML
+     *  @param context  The WikiContext in which the page is to be rendered
+     *  @return Rendered page text
      */
     public String textToHTML( WikiContext context, String pagedata )
     {
@@ -1357,7 +1451,7 @@ public class WikiEngine
         if( log.isDebugEnabled() )
             log.debug("Page "+context.getRealPage().getName()+" rendered, took "+sw );
 
-        return( result );
+        return result;
     }
 
     /**
@@ -1376,6 +1470,10 @@ public class WikiEngine
     /**
      *  Reads a WikiPageful of data from a String and returns all links
      *  internal to this Wiki in a Collection.
+     *  
+     *  @param page The WikiPage to scan
+     *  @param pagedata The page contents
+     *  @return a Collection of Strings
      */
     protected Collection scanWikiLinks( WikiPage page, String pagedata )
     {
@@ -1394,6 +1492,13 @@ public class WikiEngine
 
     /**
      *  Just convert WikiText to HTML.
+     *  
+     *  @param context The WikiContext in which to do the conversion
+     *  @param pagedata The data to render
+     *  @param localLinkHook Is called whenever a wiki link is found
+     *  @param extLinkHook   Is called whenever an external link is found
+     *  
+     *  @return HTML-rendered page text.
      */
 
     public String textToHTML( WikiContext context,
@@ -1406,6 +1511,13 @@ public class WikiEngine
 
     /**
      *  Just convert WikiText to HTML.
+     *
+     *  @param context The WikiContext in which to do the conversion
+     *  @param pagedata The data to render
+     *  @param localLinkHook Is called whenever a wiki link is found
+     *  @param extLinkHook   Is called whenever an external link is found
+     *  @param attLinkHook   Is called whenever an attachment link is found  
+     *  @return HTML-rendered page text.
      */
 
     public String textToHTML( WikiContext context,
@@ -1419,6 +1531,16 @@ public class WikiEngine
 
     /**
      *  Helper method for doing the HTML translation.
+     *  
+     *  @param context The WikiContext in which to do the conversion
+     *  @param pagedata The data to render
+     *  @param localLinkHook Is called whenever a wiki link is found
+     *  @param extLinkHook   Is called whenever an external link is found
+     *  @param parseAccessRules Parse the access rules if we encounter them
+     *  @param justParse Just parses the pagedata, does not actually render.  In this case,
+     *                   this methods an empty string.
+     *  @return HTML-rendered page text.
+
      */
     private String textToHTML( WikiContext context,
                                String pagedata,
@@ -1485,6 +1607,7 @@ public class WikiEngine
 
     /**
      *  Updates all references for the given page.
+     *  
      *  @param page wiki page for which references should be updated
      */
     public void updateReferences( WikiPage page )
@@ -2153,6 +2276,7 @@ public class WikiEngine
 
     /**
      *  Gets an attribute from the engine.
+     *  
      *  @param key the attribute name
      *  @return the value
      */
@@ -2163,8 +2287,9 @@ public class WikiEngine
 
     /**
      *  Removes an attribute.
-     * @param key
-     * @return The previous attribute, if it existed.
+     * 
+     *  @param key The key of the attribute to remove.
+     *  @return The previous attribute, if it existed.
      */
     public Object removeAttribute( String key )
     {
@@ -2172,8 +2297,10 @@ public class WikiEngine
     }
 
     /**
-     * Returns a WatchDog for current thread.
-     * @since 2.4.92
+     *  Returns a WatchDog for current thread.
+     * 
+     *  @return The current thread WatchDog.
+     *  @since 2.4.92
      */
     public WatchDog getCurrentWatchDog()
     {
