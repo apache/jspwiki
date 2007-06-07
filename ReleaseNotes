@@ -1,6 +1,10 @@
 
-This is an unstable release of JSPWiki 2.5.  It contains a number of
-bug fixes, which can be found from ChangeLog.
+This is the first alpha release of JSPWiki 2.6.  As such, this is to be
+considered unstable, but feature-complete.
+
+Do not deploy in a production environment, unless you are absolutely sure
+of what you are doing.  However, things you *can* be doing are e.g. donating
+localizations, testing browser and servlet container compatibility, etc.
 
 
 NEW FEATURES
@@ -8,10 +12,35 @@ NEW FEATURES
 
 * JSPWiki source code requires JDK 1.5 to compile, though it should
   still run under JDK 1.4.
-  
-* Workflow packages
+
+* Workflow packages (e.g. for moderating page edits)
 
 * Internationalization
+
+* Spaces in wikinames are now allowed for a more natural-looking page content.
+  However, this does not break existing links - but names with spaces are
+  preferred.
+
+* Support for new link target types, e.g. [cool link|http://google.com|target='_blank']
+  to open the link in a new window.
+
+* SisterSites support
+
+* Local security policies - no more need to use a global security policy
+  to configure JSPWiki security!
+
+* Improved SpamFilter, including Captcha support (currently only supports ASIRRA)
+
+* Far improved FCK WYSIWYG editor support
+
+* All new default template with all sorts of awesome goodies, such as upload
+  progress indicator, etc!
+
+* No more JAR signing!  Unfortunately, though, if you're running JSPWiki with
+  a global security policy, you will still need to sign the JAR yourself using
+  the "ant signjar" command.
+
+* WikiCreole 1.0 support in mixed mode.
 
 UPGRADE NOTES
 =============
@@ -20,7 +49,7 @@ Upgrading from previous releases of 2.4:
 
 * You should be able to just install the JSP files (top-level and
   the default template), and the set of JAR files.
-  
+
 * In addition, please check web.xml for any additional definitions
   that may have been added.
 
@@ -36,11 +65,11 @@ Upgrading from 2.x:
 * Replace jspwiki.properties with your old configuration file.
   It should run unmodified, though you might want to go through
   the new file to see new options.  Most specifically:
-  
+
   * jspwiki.baseURL is now mandatory
-  
+
   * jspwiki.workDir is a good idea to set
-  
+
   * Set jspwiki.security=off, if you don't want JSPWiki to
   use its own security system.  If you do, head over
   to doc.jspwiki.org/2.4 for further instructions.
@@ -60,22 +89,19 @@ EXPERIMENTAL FEATURES
 =====================
 
 There are some features in this release which could mostly be considered
-experimental at best.  The following ones are known to work only 
+experimental at best.  The following ones are known to work only
 partially:
 
 * WebDAV support.  This is known to be broken on pretty many levels...
-
-* XHTML -> WikiMarkup translation.  Spotty, but should work for the most
-  part.
 
 
 KNOWN PROBLEMS
 ==============
 
-* WebDav, static RSS generation and XML-RPC do not yet support the new 
+* WebDav and static RSS generation do not yet support the new
   authentication/permissions scheme.  Therefore, if you have very
   sensitive data in your wiki, you might not want to enable these.
-  
+
 * Not all old plugins work.  Specifically, plugins from 2.2, which
   1) use com.ecyrd.jspwiki package, will fail because they are not
      signed with the same key as jspwiki.jar, and
